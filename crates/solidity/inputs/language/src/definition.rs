@@ -486,7 +486,8 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = AddressKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(value = Atom("address"))]
+                            definitions =
+                                [KeywordDefinition(reserved = Never, value = Atom("address"))]
                         ),
                         Keyword(
                             name = AfterKeyword,
@@ -1392,6 +1393,11 @@ codegen_language_macros::compile!(Language(
                             definitions = [KeywordDefinition(value = Atom("struct"))]
                         ),
                         Keyword(
+                            name = SuperKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(value = Atom("super"))]
+                        ),
+                        Keyword(
                             name = SupportsKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
@@ -1414,6 +1420,11 @@ codegen_language_macros::compile!(Language(
                                 reserved = Till("0.7.0"),
                                 value = Atom("szabo")
                             )]
+                        ),
+                        Keyword(
+                            name = ThisKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(value = Atom("this"))]
                         ),
                         Keyword(
                             name = ThrowKeyword,
@@ -3460,22 +3471,13 @@ codegen_language_macros::compile!(Language(
                                 ),
                                 PrecedenceExpression(
                                     name = MemberAccessExpression,
-                                    operators = [
-                                        PrecedenceOperator(
-                                            model = Postfix,
-                                            fields = (
-                                                period = Required(Period),
-                                                member = Required(Identifier)
-                                            )
-                                        ),
-                                        PrecedenceOperator(
-                                            model = Postfix,
-                                            fields = (
-                                                period = Required(Period),
-                                                member = Required(AddressKeyword)
-                                            )
+                                    operators = [PrecedenceOperator(
+                                        model = Postfix,
+                                        fields = (
+                                            period = Required(Period),
+                                            member = Required(Identifier)
                                         )
-                                    ]
+                                    )]
                                 ),
                                 PrecedenceExpression(
                                     name = IndexAccessExpression,
@@ -3512,6 +3514,8 @@ codegen_language_macros::compile!(Language(
                                     reference = PayableKeyword,
                                     enabled = From("0.6.0")
                                 ),
+                                PrimaryExpression(reference = ThisKeyword),
+                                PrimaryExpression(reference = SuperKeyword),
                                 PrimaryExpression(reference = TrueKeyword),
                                 PrimaryExpression(reference = FalseKeyword),
                                 PrimaryExpression(reference = Identifier)
@@ -4381,19 +4385,8 @@ codegen_language_macros::compile!(Language(
                         Separated(name = YulPaths, reference = YulPath, separator = Comma),
                         Separated(
                             name = YulPath,
-                            reference = YulPathComponent,
+                            reference = YulIdentifier,
                             separator = Period
-                        ),
-                        Enum(
-                            name = YulPathComponent,
-                            variants = [
-                                EnumVariant(reference = YulIdentifier),
-                                EnumVariant(
-                                    // Upstream grammar accepts built-ins but only `address` is valid:
-                                    reference = YulAddressKeyword,
-                                    enabled = From("0.8.10")
-                                )
-                            ]
                         ),
                         Token(
                             name = YulIdentifier,
@@ -4604,7 +4597,8 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = YulAddressKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("address"))]
+                            definitions =
+                                [KeywordDefinition(reserved = Never, value = Atom("address"))]
                         ),
                         Keyword(
                             name = YulAfterKeyword,
@@ -6100,6 +6094,12 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
+                            name = YulSuperKeyword,
+                            identifier = YulIdentifier,
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("super"))]
+                        ),
+                        Keyword(
                             name = YulSupportsKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
@@ -6126,6 +6126,12 @@ codegen_language_macros::compile!(Language(
                             name = YulTimestampKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(value = Atom("timestamp"))]
+                        ),
+                        Keyword(
+                            name = YulThisKeyword,
+                            identifier = YulIdentifier,
+                            definitions =
+                                [KeywordDefinition(enabled = Never, value = Atom("this"))]
                         ),
                         Keyword(
                             name = YulThrowKeyword,

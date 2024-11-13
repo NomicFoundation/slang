@@ -400,7 +400,6 @@ pub slang_solidity::cst::NonterminalKind::YulLiteral
 pub slang_solidity::cst::NonterminalKind::YulParameters
 pub slang_solidity::cst::NonterminalKind::YulParametersDeclaration
 pub slang_solidity::cst::NonterminalKind::YulPath
-pub slang_solidity::cst::NonterminalKind::YulPathComponent
 pub slang_solidity::cst::NonterminalKind::YulPaths
 pub slang_solidity::cst::NonterminalKind::YulReturnsDeclaration
 pub slang_solidity::cst::NonterminalKind::YulStackAssignmentOperator
@@ -607,9 +606,11 @@ pub slang_solidity::cst::TerminalKind::StaticKeyword
 pub slang_solidity::cst::TerminalKind::StorageKeyword
 pub slang_solidity::cst::TerminalKind::StringKeyword
 pub slang_solidity::cst::TerminalKind::StructKeyword
+pub slang_solidity::cst::TerminalKind::SuperKeyword
 pub slang_solidity::cst::TerminalKind::SupportsKeyword
 pub slang_solidity::cst::TerminalKind::SwitchKeyword
 pub slang_solidity::cst::TerminalKind::SzaboKeyword
+pub slang_solidity::cst::TerminalKind::ThisKeyword
 pub slang_solidity::cst::TerminalKind::ThrowKeyword
 pub slang_solidity::cst::TerminalKind::Tilde
 pub slang_solidity::cst::TerminalKind::TransientKeyword
@@ -795,11 +796,13 @@ pub slang_solidity::cst::TerminalKind::YulStringKeyword
 pub slang_solidity::cst::TerminalKind::YulStructKeyword
 pub slang_solidity::cst::TerminalKind::YulSubKeyword
 pub slang_solidity::cst::TerminalKind::YulSuicideKeyword
+pub slang_solidity::cst::TerminalKind::YulSuperKeyword
 pub slang_solidity::cst::TerminalKind::YulSupportsKeyword
 pub slang_solidity::cst::TerminalKind::YulSwitchKeyword
 pub slang_solidity::cst::TerminalKind::YulSzaboKeyword
 pub slang_solidity::cst::TerminalKind::YulTLoadKeyword
 pub slang_solidity::cst::TerminalKind::YulTStoreKeyword
+pub slang_solidity::cst::TerminalKind::YulThisKeyword
 pub slang_solidity::cst::TerminalKind::YulThrowKeyword
 pub slang_solidity::cst::TerminalKind::YulTimestampKeyword
 pub slang_solidity::cst::TerminalKind::YulTrueKeyword

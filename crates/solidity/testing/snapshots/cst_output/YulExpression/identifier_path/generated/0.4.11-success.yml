@@ -7,10 +7,9 @@ Errors: []
 
 Tree:
   - (YulExpression) ► (variant꞉ YulPath): # "foo . bar\n" (0..10)
-      - (item꞉ YulPathComponent) ► (variant꞉ YulIdentifier): "foo" # (0..3)
+      - (item꞉ YulIdentifier): "foo" # (0..3)
       - (leading_trivia꞉ Whitespace): " " # (3..4)
       - (separator꞉ Period): "." # (4..5)
-      - (item꞉ YulPathComponent): # " bar\n" (5..10)
-          - (leading_trivia꞉ Whitespace): " " # (5..6)
-          - (variant꞉ YulIdentifier): "bar" # (6..9)
-          - (trailing_trivia꞉ EndOfLine): "\n" # (9..10)
+      - (leading_trivia꞉ Whitespace): " " # (5..6)
+      - (item꞉ YulIdentifier): "bar" # (6..9)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (9..10)

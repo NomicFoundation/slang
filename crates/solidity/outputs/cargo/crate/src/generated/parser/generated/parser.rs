@@ -58,7 +58,6 @@ pub struct Parser {
     pub(crate) version_is_at_least_0_8_4: bool,
     pub(crate) version_is_at_least_0_8_7: bool,
     pub(crate) version_is_at_least_0_8_8: bool,
-    pub(crate) version_is_at_least_0_8_10: bool,
     pub(crate) version_is_at_least_0_8_13: bool,
     pub(crate) version_is_at_least_0_8_18: bool,
     pub(crate) version_is_at_least_0_8_19: bool,
@@ -194,7 +193,6 @@ impl Parser {
                 version_is_at_least_0_8_4: Version::new(0, 8, 4) <= version,
                 version_is_at_least_0_8_7: Version::new(0, 8, 7) <= version,
                 version_is_at_least_0_8_8: Version::new(0, 8, 8) <= version,
-                version_is_at_least_0_8_10: Version::new(0, 8, 10) <= version,
                 version_is_at_least_0_8_13: Version::new(0, 8, 13) <= version,
                 version_is_at_least_0_8_18: Version::new(0, 8, 18) <= version,
                 version_is_at_least_0_8_19: Version::new(0, 8, 19) <= version,
@@ -2127,44 +2125,22 @@ impl Parser {
             PrecedenceHelper::to_postfix_operator(
                 NonterminalKind::MemberAccessExpression,
                 37u8,
-                ChoiceHelper::run(input, |mut choice, input| {
-                    let result = SequenceHelper::run(|mut seq| {
-                        seq.elem_labeled(
-                            EdgeLabel::Period,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::Period,
-                            ),
-                        )?;
-                        seq.elem_labeled(
-                            EdgeLabel::Member,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::Identifier,
-                            ),
-                        )?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    let result = SequenceHelper::run(|mut seq| {
-                        seq.elem_labeled(
-                            EdgeLabel::Period,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::Period,
-                            ),
-                        )?;
-                        seq.elem_labeled(
-                            EdgeLabel::Member,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::AddressKeyword,
-                            ),
-                        )?;
-                        seq.finish()
-                    });
-                    choice.consider(input, result)?;
-                    choice.finish(input)
+                SequenceHelper::run(|mut seq| {
+                    seq.elem_labeled(
+                        EdgeLabel::Period,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::Period,
+                        ),
+                    )?;
+                    seq.elem_labeled(
+                        EdgeLabel::Member,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::Identifier,
+                        ),
+                    )?;
+                    seq.finish()
                 }),
             )
         };
@@ -2246,6 +2222,16 @@ impl Parser {
                     );
                     choice.consider(input, result)?;
                 }
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::ThisKeyword,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                    input,
+                    TerminalKind::SuperKeyword,
+                );
+                choice.consider(input, result)?;
                 let result = self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::TrueKeyword,
@@ -6666,32 +6652,17 @@ impl Parser {
         SeparatedHelper::run::<_, LexicalContextType::Yul>(
             input,
             self,
-            |input| self.yul_path_component(input).with_label(EdgeLabel::Item),
+            |input| {
+                self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TerminalKind::YulIdentifier,
+                )
+                .with_label(EdgeLabel::Item)
+            },
             TerminalKind::Period,
             EdgeLabel::Separator,
         )
         .with_kind(NonterminalKind::YulPath)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn yul_path_component(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulIdentifier,
-            );
-            choice.consider(input, result)?;
-            if self.version_is_at_least_0_8_10 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulAddressKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            choice.finish(input)
-        })
-        .with_label(EdgeLabel::Variant)
-        .with_kind(NonterminalKind::YulPathComponent)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -9475,7 +9446,6 @@ impl Parser {
                 Self::yul_parameters_declaration.parse(self, input)
             }
             NonterminalKind::YulPath => Self::yul_path.parse(self, input),
-            NonterminalKind::YulPathComponent => Self::yul_path_component.parse(self, input),
             NonterminalKind::YulPaths => Self::yul_paths.parse(self, input),
             NonterminalKind::YulReturnsDeclaration => {
                 Self::yul_returns_declaration.parse(self, input)
@@ -9741,7 +9711,7 @@ impl Lexer for Parser {
                             }
                             Some('d') => {
                                 if scan_chars!(input, 'd', 'r', 'e', 's', 's') {
-                                    KeywordScan::Reserved(TerminalKind::AddressKeyword)
+                                    KeywordScan::Present(TerminalKind::AddressKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10717,11 +10687,33 @@ impl Lexer for Parser {
                                 None => KeywordScan::Absent,
                             },
                             Some('u') => {
-                                if scan_chars!(input, 'p', 'p', 'o', 'r', 't', 's') {
-                                    if self.version_is_at_least_0_5_0 {
-                                        KeywordScan::Reserved(TerminalKind::SupportsKeyword)
-                                    } else {
-                                        KeywordScan::Absent
+                                if scan_chars!(input, 'p') {
+                                    match input.next() {
+                                        Some('e') => {
+                                            if scan_chars!(input, 'r') {
+                                                KeywordScan::Reserved(TerminalKind::SuperKeyword)
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some('p') => {
+                                            if scan_chars!(input, 'o', 'r', 't', 's') {
+                                                if self.version_is_at_least_0_5_0 {
+                                                    KeywordScan::Reserved(
+                                                        TerminalKind::SupportsKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        }
+                                        Some(_) => {
+                                            input.undo();
+                                            KeywordScan::Absent
+                                        }
+                                        None => KeywordScan::Absent,
                                     }
                                 } else {
                                     KeywordScan::Absent
@@ -10752,13 +10744,27 @@ impl Lexer for Parser {
                             None => KeywordScan::Absent,
                         },
                         Some('t') => match input.next() {
-                            Some('h') => {
-                                if scan_chars!(input, 'r', 'o', 'w') {
-                                    KeywordScan::Reserved(TerminalKind::ThrowKeyword)
-                                } else {
+                            Some('h') => match input.next() {
+                                Some('i') => {
+                                    if scan_chars!(input, 's') {
+                                        KeywordScan::Reserved(TerminalKind::ThisKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('r') => {
+                                    if scan_chars!(input, 'o', 'w') {
+                                        KeywordScan::Reserved(TerminalKind::ThrowKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
                                     KeywordScan::Absent
                                 }
-                            }
+                                None => KeywordScan::Absent,
+                            },
                             Some('r') => match input.next() {
                                 Some('a') => {
                                     if scan_chars!(input, 'n', 's', 'i', 'e', 'n', 't') {
@@ -11157,7 +11163,7 @@ impl Lexer for Parser {
                                         }
                                         Some('r') => {
                                             if scan_chars!(input, 'e', 's', 's') {
-                                                KeywordScan::Reserved(
+                                                KeywordScan::Present(
                                                     TerminalKind::YulAddressKeyword,
                                                 )
                                             } else {
@@ -13168,19 +13174,35 @@ impl Lexer for Parser {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some('p') => {
-                                    if scan_chars!(input, 'p', 'o', 'r', 't', 's') {
-                                        if self.version_is_at_least_0_5_0
-                                            && !self.version_is_at_least_0_7_1
-                                        {
-                                            KeywordScan::Reserved(TerminalKind::YulSupportsKeyword)
+                                Some('p') => match input.next() {
+                                    Some('e') => {
+                                        if scan_chars!(input, 'r') {
+                                            KeywordScan::Reserved(TerminalKind::YulSuperKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
-                                    } else {
+                                    }
+                                    Some('p') => {
+                                        if scan_chars!(input, 'o', 'r', 't', 's') {
+                                            if self.version_is_at_least_0_5_0
+                                                && !self.version_is_at_least_0_7_1
+                                            {
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulSupportsKeyword,
+                                                )
+                                            } else {
+                                                KeywordScan::Absent
+                                            }
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
+                                    Some(_) => {
+                                        input.undo();
                                         KeywordScan::Absent
                                     }
-                                }
+                                    None => KeywordScan::Absent,
+                                },
                                 Some(_) => {
                                     input.undo();
                                     KeywordScan::Absent
@@ -13212,17 +13234,31 @@ impl Lexer for Parser {
                             None => KeywordScan::Absent,
                         },
                         Some('t') => match input.next() {
-                            Some('h') => {
-                                if scan_chars!(input, 'r', 'o', 'w') {
-                                    if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TerminalKind::YulThrowKeyword)
+                            Some('h') => match input.next() {
+                                Some('i') => {
+                                    if scan_chars!(input, 's') {
+                                        KeywordScan::Reserved(TerminalKind::YulThisKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
-                                } else {
+                                }
+                                Some('r') => {
+                                    if scan_chars!(input, 'o', 'w') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TerminalKind::YulThrowKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
                                     KeywordScan::Absent
                                 }
-                            }
+                                None => KeywordScan::Absent,
+                            },
                             Some('i') => {
                                 if scan_chars!(input, 'm', 'e', 's', 't', 'a', 'm', 'p') {
                                     KeywordScan::Reserved(TerminalKind::YulTimestampKeyword)

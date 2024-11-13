@@ -14,7 +14,7 @@
 
 ```
 
-<pre ebnf-snippet="AddressKeyword" style="display: none;"><a href="#AddressKeyword"><span class="k">ADDRESS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"address"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="AddressKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#AddressKeyword"><span class="k">ADDRESS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"address"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #AfterKeyword }
 
@@ -538,6 +538,12 @@
 
 <pre ebnf-snippet="StructKeyword" style="display: none;"><a href="#StructKeyword"><span class="k">STRUCT_KEYWORD</span></a><span class="o"> = </span><span class="s2">"struct"</span><span class="o">;</span></pre>
 
+```{ .ebnf #SuperKeyword }
+
+```
+
+<pre ebnf-snippet="SuperKeyword" style="display: none;"><a href="#SuperKeyword"><span class="k">SUPER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"super"</span><span class="o">;</span></pre>
+
 ```{ .ebnf #SupportsKeyword }
 
 ```
@@ -555,6 +561,12 @@
 ```
 
 <pre ebnf-snippet="SzaboKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.7.0 *)</span><br /><span class="cm">(* Reserved until 0.7.0 *)</span><br /><a href="#SzaboKeyword"><span class="k">SZABO_KEYWORD</span></a><span class="o"> = </span><span class="s2">"szabo"</span><span class="o">;</span></pre>
+
+```{ .ebnf #ThisKeyword }
+
+```
+
+<pre ebnf-snippet="ThisKeyword" style="display: none;"><a href="#ThisKeyword"><span class="k">THIS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"this"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ThrowKeyword }
 

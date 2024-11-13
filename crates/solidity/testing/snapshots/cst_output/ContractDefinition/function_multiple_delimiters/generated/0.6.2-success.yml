@@ -72,7 +72,7 @@ Tree:
                                                   - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "(this)" (141..147)
                                                       - (open_paren꞉ OpenParen): "(" # (141..142)
                                                       - (arguments꞉ PositionalArguments): # "this" (142..146)
-                                                          - (item꞉ Expression) ► (variant꞉ Identifier): "this" # (142..146)
+                                                          - (item꞉ Expression) ► (variant꞉ ThisKeyword): "this" # (142..146)
                                                       - (close_paren꞉ CloseParen): ")" # (146..147)
                                               - (period꞉ Period): "." # (147..148)
                                               - (member꞉ Identifier): "balance" # (148..155)

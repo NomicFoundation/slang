@@ -8,10 +8,8 @@ on:
   # Run on every pull request:
   pull_request: {}
 
-  # Run on pushes to any branch except 'main', as we use a merge queue, and test PRs individually before merging them:
-  push:
-    branches-ignore:
-      - "main"
+  # Run on pushes to any branch even 'main', as it is used to refresh the CI cache from scratch, so that it doesn't grow indefinitely:
+  push: {}
 
 # In the event that there is a new push to the ref, cancel any running jobs because they are now obsolete, wasting resources.
 concurrency:
@@ -24,7 +22,7 @@ jobs:
 
     steps:
       - name: "Checkout Repository"
-        uses: "actions/checkout@d632683dd7b4114ad314bca15554477dd762a938"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
 
       # Cache is updated in this workflow, and reused in subsequent workflows.
       # Always start with a fresh cache when running on the main branch.

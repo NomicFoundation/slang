@@ -8,10 +8,10 @@ pub fn setup() -> Vec<ParsedFile> {
     super::parser::run(files)
 }
 
-pub fn run(files: &[ParsedFile]) {
+pub fn run(files: Vec<ParsedFile>) {
     let mut functions_count = 0;
 
-    for file in files {
+    for file in &files {
         let mut cursor = file.tree.cursor_with_offset(TextIndex::ZERO);
 
         while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::FunctionDefinition) {

@@ -1874,7 +1874,9 @@ inherit .lexical_scope
 }
 
 ;; Identifier expressions
-@expr [Expression @name variant: [Identifier]] {
+@expr [Expression @name (
+  variant: [Identifier] | variant: [SuperKeyword] | variant: [ThisKeyword] 
+)] {
   node ref
   attr (ref) node_reference = @name
   attr (ref) parents = [@expr.enclosing_def]
@@ -1910,7 +1912,7 @@ inherit .lexical_scope
 ;; Special case: member accesses to `super` are tagged with "super" to rank
 ;; virtual methods correctly
 [MemberAccessExpression
-    operand: [Expression ["super"]]
+    operand: [Expression [SuperKeyword]]
     @name member: [Identifier]
 ] {
   attr (@name.ref) tag = "super"
@@ -2253,7 +2255,7 @@ inherit .lexical_scope
   edge @path.lexical_scope -> @expr.lexical_scope
 }
 
-@path [YulPath . [YulPathComponent @name [YulIdentifier]]] {
+@path [YulPath @name [YulIdentifier]] {
   node @path.lexical_scope
 
   node ref

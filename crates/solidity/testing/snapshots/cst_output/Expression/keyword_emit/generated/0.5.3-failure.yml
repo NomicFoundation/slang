@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
+    Error: Expected AddressKeyword or BoolKeyword or ByteKeyword or BytesKeyword or DecimalLiteral or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or FalseKeyword or FixedKeyword or HexLiteral or Identifier or IntKeyword or NewKeyword or OpenBracket or OpenParen or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or StringKeyword or SuperKeyword or ThisKeyword or TrueKeyword or TypeKeyword or UfixedKeyword or UintKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/Expression/keyword_emit/input.sol:1:1]
        │
      1 │ emit

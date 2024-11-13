@@ -6,7 +6,7 @@ pub fn setup() -> Bindings {
     super::definitions::run(dependencies)
 }
 
-pub fn run(bindings: &Bindings) {
+pub fn run(bindings: Bindings) {
     let mut reference_count = 0_usize;
     let mut resolved_references = 0_usize;
 

@@ -10,9 +10,6 @@
 use std::ops::Range;
 use std::path::Path;
 
-#[cfg(feature = "term-colors")]
-use colored::Colorize;
-
 //-----------------------------------------------------------------------------
 
 /// Excerpts of source from either the target language file or the tsg rules file.
@@ -88,29 +85,14 @@ impl<'a> std::fmt::Display for Excerpt<'a> {
 
 // coloring functions
 
-#[cfg(feature = "term-colors")]
-fn blue(str: &str) -> impl std::fmt::Display {
-    str.blue()
-}
-#[cfg(not(feature = "term-colors"))]
 fn blue<'a>(str: &'a str) -> impl std::fmt::Display + 'a {
     str
 }
 
-#[cfg(feature = "term-colors")]
-fn green_bold(str: &str) -> impl std::fmt::Display {
-    str.green().bold()
-}
-#[cfg(not(feature = "term-colors"))]
 fn green_bold<'a>(str: &'a str) -> impl std::fmt::Display + 'a {
     str
 }
 
-#[cfg(feature = "term-colors")]
-fn white_bold(str: &str) -> impl std::fmt::Display {
-    str.white().bold()
-}
-#[cfg(not(feature = "term-colors"))]
 fn white_bold<'a>(str: &'a str) -> impl std::fmt::Display + 'a {
     str
 }

@@ -140,12 +140,11 @@ impl SequenceHelper {
                         match &**node {
                             Node::Terminal(terminal) if terminal.kind.is_trivia() => Ok(acc),
                             Node::Terminal(terminal) => {
-                                match acc {
-                                    None => Ok(Some(terminal.kind)),
-                                    Some(..) => {
-                                        debug_assert!(false, "Recovery skipped to multiple terminals: {acc:?}, {terminal:?}");
-                                        Err(())
-                                    }
+                                if acc.is_none() {
+                                    Ok(Some(terminal.kind))
+                                } else {
+                                    debug_assert!(false, "Recovery skipped to multiple terminals: {acc:?}, {terminal:?}");
+                                    Err(())
                                 }
                             }
                             Node::Nonterminal(node) => {
