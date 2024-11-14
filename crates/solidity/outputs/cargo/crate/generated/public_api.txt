@@ -927,3 +927,4 @@ pub fn slang_solidity::parser::Parser::parse(&self, kind: slang_solidity::cst::N
 pub fn slang_solidity::parser::Parser::version(&self) -> &semver::Version
 impl core::fmt::Debug for slang_solidity::parser::Parser
 pub fn slang_solidity::parser::Parser::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub fn slang_solidity::transform_built_ins_node(node: &slang_solidity::cst::Node) -> slang_solidity::cst::Node

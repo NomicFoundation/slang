@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 2
+  3 │         function() v1 = Test.test;
+    │                    ─┬   ──┬─ ──┬─  
+    │                     ╰────────────── def: 3
+    │                           │    │   
+    │                           ╰──────── ref: 1
+    │                                │   
+    │                                ╰─── ref: 2
+  4 │         function() v2 = test;
+    │                    ─┬   ──┬─  
+    │                     ╰───────── def: 4
+    │                           │   
+    │                           ╰─── ref: 2
+  5 │         function() v3 = Foo.bar;
+    │                    ─┬   ─┬─ ─┬─  
+    │                     ╰──────────── def: 5
+    │                          │   │   
+    │                          ╰─────── ref: 6
+    │                              │   
+    │                              ╰─── ref: 7
+    │ 
+  9 │ library Foo {
+    │         ─┬─  
+    │          ╰─── def: 6
+ 10 │     function bar() internal {}
+    │              ─┬─  
+    │               ╰─── def: 7
+────╯

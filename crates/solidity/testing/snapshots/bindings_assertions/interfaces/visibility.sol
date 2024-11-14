@@ -22,9 +22,11 @@ contract Test {
     //<ref:1
     //      ^ref:3
 
-    function my_test() returns (int) {
-        return Example.calculate();
-        //             ^ref:!
-        //     ^ref:1
+    function my_test(Example e) returns (int) {
+        //                   ^def:8
+        //           ^ref:1
+        return e.calculate();
+        //       ^ref:4
+        //     ^ref:8
     }
 }

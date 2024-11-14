@@ -1,0 +1,88 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 2
+  3 │         bytes4 v1 = this.test.selector;
+    │                ─┬   ──┬─ ──┬─ ────┬───  
+    │                 ╰─────────────────────── def: 3
+    │                       │    │      │     
+    │                       ╰───────────────── ref: 1
+    │                            │      │     
+    │                            ╰──────────── ref: 2
+    │                                   │     
+    │                                   ╰───── unresolved
+  4 │         address v2 = this.test.address;
+    │                 ─┬   ──┬─ ──┬─ ───┬───  
+    │                  ╰────────────────────── def: 4
+    │                        │    │     │     
+    │                        ╰──────────────── ref: 1
+    │                             │     │     
+    │                             ╰─────────── ref: 2
+    │                                   │     
+    │                                   ╰───── unresolved
+    │ 
+  6 │         bytes4 v3 = Foo.bar.selector;
+    │                ─┬   ─┬─ ─┬─ ────┬───  
+    │                 ╰───────────────────── def: 5
+    │                      │   │      │     
+    │                      ╰──────────────── ref: 10
+    │                          │      │     
+    │                          ╰──────────── ref: 11
+    │                                 │     
+    │                                 ╰───── unresolved
+    │ 
+  8 │         Foo f1;
+    │         ─┬─ ─┬  
+    │          ╰────── ref: 10
+    │              │  
+    │              ╰── def: 6
+  9 │         bytes4 v4 = f1.bar.selector;
+    │                ─┬   ─┬ ─┬─ ────┬───  
+    │                 ╰──────────────────── def: 7
+    │                      │  │      │     
+    │                      ╰─────────────── ref: 6
+    │                         │      │     
+    │                         ╰──────────── ref: 11
+    │                                │     
+    │                                ╰───── unresolved
+ 10 │         address v5 = f1.bar.address;
+    │                 ─┬   ─┬ ─┬─ ───┬───  
+    │                  ╰─────────────────── def: 8
+    │                       │  │     │     
+    │                       ╰────────────── ref: 6
+    │                          │     │     
+    │                          ╰─────────── ref: 11
+    │                                │     
+    │                                ╰───── unresolved
+    │ 
+ 12 │         bytes4 v6 = Baz.quux.selector;
+    │                ─┬   ─┬─ ──┬─ ────┬───  
+    │                 ╰────────────────────── def: 9
+    │                      │    │      │     
+    │                      ╰───────────────── ref: 12
+    │                           │      │     
+    │                           ╰──────────── ref: 13
+    │                                  │     
+    │                                  ╰───── unresolved
+    │ 
+ 16 │ interface Foo {
+    │           ─┬─  
+    │            ╰─── def: 10
+ 17 │     function bar() external payable;
+    │              ─┬─  
+    │               ╰─── def: 11
+    │ 
+ 20 │ library Baz {
+    │         ─┬─  
+    │          ╰─── def: 12
+ 21 │     function quux() public {}
+    │              ──┬─  
+    │                ╰─── def: 13
+────╯
