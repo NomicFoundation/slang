@@ -2,266 +2,266 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/internals/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/internals/development/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/internals/repository-structure/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/internals/design-docs/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/internals/design-docs/language-definition-v2/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/supported-versions/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/01-file-structure/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/01-file-structure/01-license-specifiers/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/01-file-structure/02-source-unit/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/01-file-structure/03-pragma-directives/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/01-file-structure/04-import-directives/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/01-file-structure/05-using-directives/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/01-file-structure/06-trivia/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/01-file-structure/07-nat-spec-format/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/01-file-structure/08-keywords/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/01-file-structure/09-punctuation/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/01-contracts/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/02-interfaces/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/03-libraries/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/04-structs/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/05-enums/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/06-constants/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/07-state-variables/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/08-functions/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/09-modifiers/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/10-events/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/11-user-defined-value-types/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/02-definitions/12-errors/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/03-types/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/03-types/01-advanced-types/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/03-types/02-elementary-types/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/04-statements/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/04-statements/01-blocks/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/04-statements/02-declaration-statements/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/04-statements/03-control-statements/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/04-statements/04-error-handling/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/05-expressions/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/05-expressions/01-base-expressions/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/05-expressions/02-function-calls/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/05-expressions/03-primary-expressions/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/05-expressions/04-numbers/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/05-expressions/05-strings/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/05-expressions/06-identifiers/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/06-yul/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/06-yul/01-yul-statements/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/06-yul/02-yul-expressions/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/solidity-specification/06-yul/03-yul-keywords/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/concepts/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/introduction/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/tree-query-language/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/npm-package/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/npm-package/installation/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/npm-package/using-queries/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/npm-package/using-the-ast/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/npm-package/using-the-cursor/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/npm-package/using-the-parser/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/installation/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/using-queries/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/using-the-cli/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/using-the-cursor/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
     <url>
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/rust-crate/using-the-parser/</loc>
-         <lastmod>2024-11-08</lastmod>
+         <lastmod>2024-11-14</lastmod>
     </url>
 </urlset>
