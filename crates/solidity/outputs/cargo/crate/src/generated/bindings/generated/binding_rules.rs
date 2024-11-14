@@ -343,6 +343,14 @@ inherit .extended_scope
 
   ; Resolve the "super" keyword to the inherited type
   edge heir.super -> @type_name.push_begin
+
+  if (version-matches "< 0.7.0") {
+    ; `using` directives are inherited in Solidity < 0.7.0
+    node extensions_push_guard
+    attr (extensions_push_guard) push_symbol = "@extensions"
+    edge heir.extensions -> extensions_push_guard
+    edge extensions_push_guard -> @type_name.push_begin
+  }
 }
 
 ;; NOTE: we use anchors here to prevent the query engine from returning all the
@@ -387,13 +395,6 @@ inherit .extended_scope
   edge modifier -> @contract.modifiers
 
   let @contract.enclosing_def = @contract.def
-
-  if (version-matches "< 0.7.0") {
-    ; In Solidity < 0.7.0 using directives are inherited to derived contracts.
-    ; Hence we make our extensions scope accessible through members, which is accessible
-    ; from derived contract's lexical scopes.
-    edge @contract.members -> @contract.extensions
-  }
 
   ; Path to resolve the built-in type for type() expressions
   node type
@@ -449,6 +450,15 @@ inherit .extended_scope
   edge @contract.def -> internal
   edge internal -> @contract.internal
 
+  if (version-matches "< 0.7.0") {
+    ; Expose extensions through an `@extensions` guard on Solidity < 0.7.0 so
+    ; that they can be accessed from sub contract extension scopes
+    node extensions_guard
+    attr (extensions_guard) pop_symbol = "@extensions"
+    edge @contract.def -> extensions_guard
+    edge extensions_guard -> @contract.extensions
+  }
+
   ;; Define "this" and connect it to the contract definition
   node this
   attr (this) pop_symbol = "this"
@@ -490,6 +500,13 @@ inherit .extended_scope
   ;; a contract as compilation context; this allows this contract (a base) to
   ;; access virtual methods in any sub-contract defined in the hierarchy
   attr (@contract.def) import_nodes = [@contract.lexical_scope, @contract.super_import]
+
+  if (version-matches "< 0.7.0") {
+    ; For Solidity < 0.7.0 using directives are inherited, so we need to
+    ; *always* connect the push extensions to the extended scope, regardless of
+    ; whether this contract contains any `using` directive.
+    edge @contract.extended_scope -> @contract.push_extensions
+  }
 }
 
 @contract [ContractDefinition @specifier [InheritanceSpecifier]] {
@@ -648,8 +665,9 @@ inherit .extended_scope
   node @interface.def
   node @interface.members
   node @interface.ns
-  ; this is unused in interfaces, but required for the inheritance rules
+  ; these are unused in interfaces, but required for the inheritance rules
   node @interface.internal
+  node @interface.extensions
 
   edge @interface.lexical_scope -> @interface.members
   edge @interface.lexical_scope -> @interface.ns

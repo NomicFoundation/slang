@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  2 │ library Lib {
+    │         ─┬─  
+    │          ╰─── def: 1
+  3 │     function nop(uint256 x) {}
+    │              ─┬─         ┬  
+    │               ╰───────────── def: 2
+    │                          │  
+    │                          ╰── def: 3
+    │ 
+  5 │ contract Base {
+    │          ──┬─  
+    │            ╰─── def: 4
+  6 │     uint256 totalSupply;
+    │             ─────┬─────  
+    │                  ╰─────── def: 5
+    │ 
+  8 │ contract Middle is Base {
+    │          ───┬──    ──┬─  
+    │             ╰──────────── def: 6
+    │                      │   
+    │                      ╰─── ref: 4
+  9 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+ 11 │ contract Test is Middle {
+    │          ──┬─    ───┬──  
+    │            ╰───────────── def: 7
+    │                     │    
+    │                     ╰──── ref: 6
+ 12 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 8
+ 13 │         totalSupply.nop();
+    │         ─────┬───── ─┬─  
+    │              ╰─────────── ref: 5
+    │                      │   
+    │                      ╰─── unresolved
+────╯

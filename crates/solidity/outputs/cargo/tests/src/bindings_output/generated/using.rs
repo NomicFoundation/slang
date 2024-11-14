@@ -55,6 +55,11 @@ fn in_library() -> Result<()> {
 }
 
 #[test]
+fn inherit_extension() -> Result<()> {
+    run("using", "inherit_extension")
+}
+
+#[test]
 fn inherited_types() -> Result<()> {
     run("using", "inherited_types")
 }
