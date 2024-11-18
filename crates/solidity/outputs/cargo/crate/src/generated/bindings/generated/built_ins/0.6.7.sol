@@ -20,12 +20,12 @@ contract $BuiltIns$ {
   function ripemd160(bytes memory) public returns (bytes20);
   function selfdestruct(address payable recipient) public;
   function sha256(bytes memory) public returns (bytes32);
-  struct $abiType {
-    function(bytes memory, $args) returns ($args) decode;
-    function($args) returns (bytes memory) encode;
-    function($args) returns (bytes memory) encodePacked;
-    function(bytes4 selector, $args) returns (bytes memory) encodeWithSelector;
-    function(string memory, $args) returns (bytes memory) encodeWithSignature;
+  struct $AbiType {
+    function(bytes memory, $Types) returns ($Types) decode;
+    function($Types) returns (bytes memory) encode;
+    function($Args) returns (bytes memory) encodePacked;
+    function(bytes4 selector, $Args) returns (bytes memory) encodeWithSelector;
+    function(string memory, $Args) returns (bytes memory) encodeWithSignature;
   }
   struct $address {
     uint256 balance;
@@ -35,16 +35,16 @@ contract $BuiltIns$ {
     function(bytes memory) returns (bool, bytes memory) staticcall;
     function(uint256) transfer;
   }
-  struct $array {
+  struct $Array {
     uint length;
-    function() returns ($element) push;
-    function($element) push;
+    function() returns ($ValueType) push;
+    function($ValueType) push;
     function() pop;
   }
-  struct $arrayFixed {
+  struct $FixedArray {
     uint length;
   }
-  struct $blockType {
+  struct $BlockType {
     address payable coinbase;
     uint difficulty;
     uint gaslimit;
@@ -54,54 +54,54 @@ contract $BuiltIns$ {
   struct $bytes {
     uint length;
   }
-  struct $bytesType {
-    function($args) returns (bytes memory) concat;
+  struct $BytesType {
+    function($Args) returns (bytes memory) concat;
   }
-  struct $callOptions {
+  struct $CallOptions {
     uint gas;
     uint salt;
     uint value;
   }
-  struct $function {
-    function(uint) returns ($function) gas;
-    function(uint) returns ($function) value;
+  struct $Function {
+    function(uint) returns (function()) gas;
+    function(uint) returns (function()) value;
   }
-  struct $functionExternal {
-    $selector selector;
-    function(uint) returns ($function) gas;
-    function(uint) returns ($function) value;
+  struct $ExternalFunction {
+    bytes4 selector;
+    function(uint) returns (function()) gas;
+    function(uint) returns (function()) value;
   }
-  struct $msgType {
+  struct $MessageType {
     bytes data;
     address payable sender;
     bytes4 sig;
     uint value;
   }
-  struct $stringType {
-    function($args) returns (string memory) concat;
+  struct $StringType {
+    function($Args) returns (string memory) concat;
   }
-  struct $txType {
+  struct $TransactionType {
     uint gasprice;
     address payable origin;
   }
-  struct $typeContractType {
+  struct $ContractTypeType {
     string name;
     bytes creationCode;
     bytes runtimeCode;
     bytes4 interfaceId;
   }
-  struct $typeInterfaceType {
+  struct $InterfaceTypeType {
     string name;
     bytes4 interfaceId;
   }
-  struct $typeIntType {
+  struct $IntTypeType {
   }
-  $function $placeholder;
-  $abiType abi;
-  $blockType block;
-  $bytesType $bytes;
-  $msgType msg;
+  $Function $placeholder;
+  $AbiType abi;
+  $BlockType block;
+  $BytesType $bytes;
+  $MessageType msg;
   uint now;
-  $stringType $string;
-  $txType tx;
+  $StringType $string;
+  $TransactionType tx;
 }

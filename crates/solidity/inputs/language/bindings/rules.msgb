@@ -463,9 +463,9 @@ inherit .star_extension
 
   ; Path to resolve the built-in type for type() expressions
   node type
-  attr (type) pop_symbol = "%type"
+  attr (type) pop_symbol = "@type"
   node type_contract_type
-  attr (type_contract_type) push_symbol = "%typeContractType"
+  attr (type_contract_type) push_symbol = "%ContractTypeType"
   edge @contract.def -> type
   edge type -> type_contract_type
   edge type_contract_type -> @contract.parent_scope
@@ -732,9 +732,9 @@ inherit .star_extension
 
   ; Path to resolve the built-in type for type() expressions
   node type
-  attr (type) pop_symbol = "%type"
+  attr (type) pop_symbol = "@type"
   node type_interface_type
-  attr (type_interface_type) push_symbol = "%typeInterfaceType"
+  attr (type_interface_type) push_symbol = "%InterfaceTypeType"
   edge @interface.def -> type
   edge type -> type_interface_type
   edge type_interface_type -> @interface.parent_scope
@@ -809,9 +809,9 @@ inherit .star_extension
 
   ; Path to resolve the built-in type for type() expressions (same as contracts)
   node type
-  attr (type) pop_symbol = "%type"
+  attr (type) pop_symbol = "@type"
   node type_library_type
-  attr (type_library_type) push_symbol = "%typeContractType"
+  attr (type_library_type) push_symbol = "%ContractTypeType"
   edge @library.def -> type
   edge type -> type_library_type
   edge type_library_type -> @library.lexical_scope
@@ -1117,7 +1117,7 @@ inherit .star_extension
   ;   KeyType
   ;   %mapping <- bottom of the symbol stack
   node mapping
-  attr (mapping) push_symbol = "%mapping"
+  attr (mapping) push_symbol = "%Mapping"
   edge @mapping.output -> mapping
   edge mapping -> @key_type.push_begin
   edge @key_type.push_end -> @value_type.output
@@ -1151,7 +1151,7 @@ inherit .star_extension
   ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
   ; This is the reverse of the pushing path above (to the `.output` node)
   node pop_mapping
-  attr (pop_mapping) pop_symbol = "%mapping"
+  attr (pop_mapping) pop_symbol = "%Mapping"
 
   let @mapping.pop_begin = @value_type.pop_begin
   edge @value_type.pop_end -> @key_type.pop_begin
@@ -1170,11 +1170,11 @@ inherit .star_extension
 }
 
 @array [ArrayTypeName [TypeName] index: [Expression]] {
-  let @array.type_symbol = "%arrayFixed"
+  let @array.type_symbol = "%FixedArray"
 }
 
 @array [ArrayTypeName [OpenBracket] . [CloseBracket]] {
-  let @array.type_symbol = "%array"
+  let @array.type_symbol = "%Array"
 }
 
 @array [ArrayTypeName @type_name [TypeName]] {
@@ -1247,10 +1247,10 @@ inherit .star_extension
 @ftype [FunctionType @attrs [FunctionTypeAttributes]] {
   ; Compute the built-in type of the function
   ; %functionExternal provides access to .selector and .address
-  var type_symbol = "%function"
+  var type_symbol = "%Function"
   scan (source-text @attrs) {
     "external" {
-      set type_symbol = "%functionExternal"
+      set type_symbol = "%ExternalFunction"
     }
   }
 
@@ -1406,10 +1406,10 @@ inherit .star_extension
 }
 
 @function [FunctionDefinition @attrs [FunctionAttributes]] {
-  var type_symbol = "%function"
+  var type_symbol = "%Function"
   scan (source-text @attrs) {
     "\\b(public|external)\\b" {
-      set type_symbol = "%functionExternal"
+      set type_symbol = "%ExternalFunction"
     }
   }
 
@@ -2103,9 +2103,9 @@ inherit .star_extension
 
   ; Path to resolve the built-in type for enums (which is the same as for integer types)
   node type
-  attr (type) pop_symbol = "%type"
+  attr (type) pop_symbol = "@type"
   node type_enum_type
-  attr (type_enum_type) push_symbol = "%typeIntType"
+  attr (type_enum_type) push_symbol = "%IntTypeType"
   edge @enum.def -> type
   edge type -> type_enum_type
   edge type_enum_type -> @enum.lexical_scope
@@ -2229,7 +2229,7 @@ inherit .star_extension
   node typeof
   attr (typeof) push_symbol = "@typeof"
   node error_type
-  attr (error_type) push_symbol = "%errorType"
+  attr (error_type) push_symbol = "%ErrorType"
   edge @error.def -> typeof
   edge typeof -> error_type
   edge error_type -> @error.lexical_scope
@@ -2292,7 +2292,7 @@ inherit .star_extension
   node typeof
   attr (typeof) push_symbol = "@typeof"
   node user_type_type
-  attr (user_type_type) push_symbol = "%userTypeType"
+  attr (user_type_type) push_symbol = "%UserTypeType"
 
   edge @user_type.def -> member_guard
   edge member_guard -> member
@@ -2426,7 +2426,7 @@ inherit .star_extension
   node typeof
   attr (typeof) push_symbol = "@typeof"
   node type
-  attr (type) push_symbol = "%typeIntType"
+  attr (type) push_symbol = "%IntTypeType"
 
   edge @type_expr.output -> typeof
   edge typeof -> type
@@ -2438,7 +2438,7 @@ inherit .star_extension
   node typeof
   attr (typeof) push_symbol = "@typeof"
   node type
-  attr (type) push_symbol = "%type"
+  attr (type) push_symbol = "@type"
 
   edge @type_expr.output -> typeof
   edge typeof -> type
@@ -2502,7 +2502,7 @@ inherit .star_extension
   attr (@options.refs) push_symbol = "@param_names"
 
   node call_options
-  attr (call_options) push_symbol = "%callOptions"
+  attr (call_options) push_symbol = "%CallOptions"
 
   edge @options.refs -> call_options
   edge call_options -> @expr.lexical_scope

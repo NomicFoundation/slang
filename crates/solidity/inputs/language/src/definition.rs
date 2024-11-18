@@ -6733,42 +6733,42 @@ codegen_language_macros::compile!(Language(
             enabled = Till("0.5.0")
         ),
         BuiltInType(
-            name = "$abiType",
+            name = "$AbiType",
             fields = [],
             functions = [
                 BuiltInFunction(
                     name = "decode",
-                    parameters = ["bytes memory", "$args"],
-                    return_type = "$args",
+                    parameters = ["bytes memory", "$Types"],
+                    return_type = "$Types",
                     enabled = From("0.5.0")
                 ),
                 BuiltInFunction(
                     name = "encode",
-                    parameters = ["$args"],
+                    parameters = ["$Types"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
                     name = "encodeCall",
-                    parameters = ["function()", "$args"],
+                    parameters = ["function()", "$Args"],
                     return_type = "bytes memory",
                     enabled = From("0.8.11")
                 ),
                 BuiltInFunction(
                     name = "encodePacked",
-                    parameters = ["$args"],
+                    parameters = ["$Args"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
                     name = "encodeWithSelector",
-                    parameters = ["bytes4 selector", "$args"],
+                    parameters = ["bytes4 selector", "$Args"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
                     name = "encodeWithSignature",
-                    parameters = ["string memory", "$args"],
+                    parameters = ["string memory", "$Args"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 )
@@ -6827,36 +6827,36 @@ codegen_language_macros::compile!(Language(
             ]
         ),
         BuiltInType(
-            name = "$array",
+            name = "$Array",
             fields = [BuiltInField(definition = "uint length")],
             functions = [
                 BuiltInFunction(
                     name = "push",
                     parameters = [],
-                    return_type = "$element",
+                    return_type = "$ValueType",
                     enabled = From("0.6.0")
                 ),
                 BuiltInFunction(
                     name = "push",
-                    parameters = ["$element"],
+                    parameters = ["$ValueType"],
                     return_type = "uint",
                     enabled = Till("0.6.0")
                 ),
                 BuiltInFunction(
                     name = "push",
-                    parameters = ["$element"],
+                    parameters = ["$ValueType"],
                     enabled = From("0.6.0")
                 ),
                 BuiltInFunction(name = "pop", parameters = [])
             ]
         ),
         BuiltInType(
-            name = "$arrayFixed",
+            name = "$FixedArray",
             fields = [BuiltInField(definition = "uint length")],
             functions = []
         ),
         BuiltInType(
-            name = "$blockType",
+            name = "$BlockType",
             fields = [
                 BuiltInField(definition = "uint basefee", enabled = From("0.8.7")),
                 BuiltInField(definition = "uint blobbasefee", enabled = From("0.8.24")),
@@ -6881,16 +6881,16 @@ codegen_language_macros::compile!(Language(
             functions = []
         ),
         BuiltInType(
-            name = "$bytesType",
+            name = "$BytesType",
             fields = [],
             functions = [BuiltInFunction(
                 name = "concat",
-                parameters = ["$args"],
+                parameters = ["$Args"],
                 return_type = "bytes memory"
             )]
         ),
         BuiltInType(
-            name = "$callOptions",
+            name = "$CallOptions",
             fields = [
                 BuiltInField(definition = "uint gas"),
                 BuiltInField(definition = "uint salt"),
@@ -6900,52 +6900,52 @@ codegen_language_macros::compile!(Language(
             enabled = From("0.6.2")
         ),
         BuiltInType(
-            name = "$errorType",
+            name = "$ErrorType",
             fields = [BuiltInField(definition = "bytes4 selector")],
             functions = [],
             enabled = From("0.8.4")
         ),
         BuiltInType(
-            name = "$function",
+            name = "$Function",
             fields = [],
             functions = [
                 BuiltInFunction(
                     name = "gas",
                     parameters = ["uint"],
-                    return_type = "$function",
+                    return_type = "function()",
                     enabled = Till("0.7.0")
                 ),
                 BuiltInFunction(
                     name = "value",
                     parameters = ["uint"],
-                    return_type = "$function",
+                    return_type = "function()",
                     enabled = Till("0.7.0")
                 )
             ]
         ),
         BuiltInType(
-            name = "$functionExternal",
+            name = "$ExternalFunction",
             fields = [
-                BuiltInField(definition = "$address address", enabled = From("0.8.2")),
-                BuiltInField(definition = "$selector selector", enabled = From("0.4.17"))
+                BuiltInField(definition = "address address", enabled = From("0.8.2")),
+                BuiltInField(definition = "bytes4 selector", enabled = From("0.4.17"))
             ],
             functions = [
                 BuiltInFunction(
                     name = "gas",
                     parameters = ["uint"],
-                    return_type = "$function",
+                    return_type = "function()",
                     enabled = Till("0.7.0")
                 ),
                 BuiltInFunction(
                     name = "value",
                     parameters = ["uint"],
-                    return_type = "$function",
+                    return_type = "function()",
                     enabled = Till("0.7.0")
                 )
             ]
         ),
         BuiltInType(
-            name = "$msgType",
+            name = "$MessageType",
             fields = [
                 BuiltInField(definition = "bytes data"),
                 BuiltInField(definition = "uint256 gas", enabled = Till("0.5.0")),
@@ -6960,16 +6960,16 @@ codegen_language_macros::compile!(Language(
             functions = []
         ),
         BuiltInType(
-            name = "$stringType",
+            name = "$StringType",
             fields = [],
             functions = [BuiltInFunction(
                 name = "concat",
-                parameters = ["$args"],
+                parameters = ["$Args"],
                 return_type = "string memory"
             )]
         ),
         BuiltInType(
-            name = "$txType",
+            name = "$TransactionType",
             fields = [
                 BuiltInField(definition = "uint gasprice"),
                 BuiltInField(
@@ -6981,7 +6981,7 @@ codegen_language_macros::compile!(Language(
             functions = []
         ),
         BuiltInType(
-            name = "$typeContractType",
+            name = "$ContractTypeType",
             fields = [
                 BuiltInField(definition = "string name"),
                 BuiltInField(definition = "bytes creationCode", enabled = From("0.5.3")),
@@ -6991,7 +6991,7 @@ codegen_language_macros::compile!(Language(
             functions = []
         ),
         BuiltInType(
-            name = "$typeInterfaceType",
+            name = "$InterfaceTypeType",
             fields = [
                 BuiltInField(definition = "string name"),
                 BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
@@ -6999,7 +6999,7 @@ codegen_language_macros::compile!(Language(
             functions = []
         ),
         BuiltInType(
-            name = "$typeIntType",
+            name = "$IntTypeType",
             fields = [
                 BuiltInField(definition = "int min", enabled = From("0.6.8")),
                 BuiltInField(definition = "int max", enabled = From("0.6.8"))
@@ -7007,29 +7007,29 @@ codegen_language_macros::compile!(Language(
             functions = []
         ),
         BuiltInType(
-            name = "$userTypeType",
+            name = "$UserTypeType",
             fields = [],
             functions = [
                 BuiltInFunction(
                     name = "wrap",
-                    parameters = ["$elementaryType"],
-                    return_type = "$userType"
+                    parameters = ["$WrappedType"],
+                    return_type = "$UserType"
                 ),
                 BuiltInFunction(
                     name = "unwrap",
-                    parameters = ["$userType"],
-                    return_type = "$elementaryType"
+                    parameters = ["$UserType"],
+                    return_type = "$WrappedType"
                 )
             ],
             enabled = From("0.8.8")
         ),
-        BuiltInVariable(definition = "$function $placeholder"),
-        BuiltInVariable(definition = "$abiType abi"),
-        BuiltInVariable(definition = "$blockType block"),
-        BuiltInVariable(definition = "$bytesType $bytes"),
-        BuiltInVariable(definition = "$msgType msg"),
+        BuiltInVariable(definition = "$Function $placeholder"),
+        BuiltInVariable(definition = "$AbiType abi"),
+        BuiltInVariable(definition = "$BlockType block"),
+        BuiltInVariable(definition = "$BytesType $bytes"),
+        BuiltInVariable(definition = "$MessageType msg"),
         BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
-        BuiltInVariable(definition = "$stringType $string"),
-        BuiltInVariable(definition = "$txType tx")
+        BuiltInVariable(definition = "$StringType $string"),
+        BuiltInVariable(definition = "$TransactionType tx")
     ]
 ));
