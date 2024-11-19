@@ -4439,6 +4439,8 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = YulGtKeyword),
                                 EnumVariant(reference = YulInvalidKeyword),
                                 EnumVariant(reference = YulIsZeroKeyword),
+                                EnumVariant(reference = YulJumpKeyword),
+                                EnumVariant(reference = YulJumpiKeyword),
                                 EnumVariant(reference = YulLog0Keyword),
                                 EnumVariant(reference = YulLog1Keyword),
                                 EnumVariant(reference = YulLog2Keyword),
@@ -5552,6 +5554,16 @@ codegen_language_macros::compile!(Language(
                             name = YulIsZeroKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(value = Atom("iszero"))]
+                        ),
+                        Keyword(
+                            name = YulJumpKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("jump"))]
+                        ),
+                        Keyword(
+                            name = YulJumpiKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("jumpi"))]
                         ),
                         Keyword(
                             name = YulKeccak256Keyword,
