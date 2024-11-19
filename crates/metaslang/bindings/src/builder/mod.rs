@@ -282,6 +282,8 @@ static IS_DEFINITION_ATTR: &str = "is_definition";
 static IS_ENDPOINT_ATTR: &str = "is_endpoint";
 static IS_EXPORTED_ATTR: &str = "is_exported";
 static IS_REFERENCE_ATTR: &str = "is_reference";
+static EXTENSION_HOOK_ATTR: &str = "extension_hook";
+static EXTENSION_SCOPE_ATTR: &str = "extension_scope";
 static PARENTS_ATTR: &str = "parents";
 static SCOPE_ATTR: &str = "scope";
 static SOURCE_NODE_ATTR: &str = "source_node";
@@ -302,6 +304,7 @@ static POP_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         EXPORT_NODE_ATTR,
         IMPORT_NODES_ATTR,
         SYNTAX_TYPE_ATTR,
+        EXTENSION_SCOPE_ATTR,
     ])
 });
 static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
@@ -315,6 +318,7 @@ static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         EXPORT_NODE_ATTR,
         IMPORT_NODES_ATTR,
         SYNTAX_TYPE_ATTR,
+        EXTENSION_SCOPE_ATTR,
     ])
 });
 static PUSH_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
@@ -337,7 +341,7 @@ static PUSH_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
     ])
 });
 static SCOPE_ATTRS: Lazy<HashSet<&'static str>> =
-    Lazy::new(|| HashSet::from([TYPE_ATTR, IS_EXPORTED_ATTR, IS_ENDPOINT_ATTR]));
+    Lazy::new(|| HashSet::from([TYPE_ATTR, IS_EXPORTED_ATTR, IS_ENDPOINT_ATTR, EXTENSION_HOOK_ATTR]));
 
 // Edge attribute names
 static PRECEDENCE_ATTR: &str = "precedence";
@@ -362,6 +366,7 @@ pub(crate) struct Builder<'a, KT: KindTypes + 'static> {
     cursors: HashMap<Handle<Node>, Cursor<KT>>,
     definitions_info: HashMap<Handle<Node>, DefinitionBindingInfo<KT>>,
     references_info: HashMap<Handle<Node>, ReferenceBindingInfo>,
+    extension_hooks: HashSet<Handle<Node>>,
 }
 
 pub(crate) struct BuildResult<KT: KindTypes + 'static> {
@@ -370,6 +375,8 @@ pub(crate) struct BuildResult<KT: KindTypes + 'static> {
     pub cursors: HashMap<Handle<Node>, Cursor<KT>>,
     pub definitions_info: HashMap<Handle<Node>, DefinitionBindingInfo<KT>>,
     pub references_info: HashMap<Handle<Node>, ReferenceBindingInfo>,
+    // Nodes where we want to inject extensions
+    pub extension_hooks: HashSet<Handle<Node>>,
 }
 
 impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
@@ -392,6 +399,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             cursors: HashMap::new(),
             definitions_info: HashMap::new(),
             references_info: HashMap::new(),
+            extension_hooks: HashSet::new(),
         }
     }
 
@@ -480,6 +488,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
             cursors: self.cursors,
             definitions_info: self.definitions_info,
             references_info: self.references_info,
+            extension_hooks: self.extension_hooks,
         })
     }
 
@@ -896,6 +905,11 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
                 None => Vec::new(),
             };
 
+            let extension_scope = match node.attributes.get(EXTENSION_SCOPE_ATTR) {
+                Some(extension_scope) => Some(self.node_handle_for_graph_node(extension_scope.as_graph_node_ref()?)),
+                None => None,
+            };
+
             self.definitions_info.insert(
                 node_handle,
                 DefinitionBindingInfo {
@@ -904,11 +918,16 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
                     parents,
                     export_node,
                     import_nodes,
+                    extension_scope,
                 },
             );
         } else if stack_graph_node.is_reference() {
             self.references_info
                 .insert(node_handle, ReferenceBindingInfo { tag, parents });
+        }
+
+        if Self::load_flag(node, EXTENSION_HOOK_ATTR)? {
+            self.extension_hooks.insert(node_handle);
         }
 
         Ok(())
