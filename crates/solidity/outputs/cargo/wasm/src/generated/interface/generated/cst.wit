@@ -500,6 +500,8 @@ interface cst {
                 %yul-invalid-keyword,
                 %yul-is-keyword,
                 %yul-is-zero-keyword,
+                %yul-jump-keyword,
+                %yul-jumpi-keyword,
                 %yul-keccak256-keyword,
                 %yul-leave-keyword,
                 %yul-let-keyword,

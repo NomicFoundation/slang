@@ -520,6 +520,18 @@
 
 <pre ebnf-snippet="YulIsZeroKeyword" style="display: none;"><a href="#YulIsZeroKeyword"><span class="k">YUL_IS_ZERO_KEYWORD</span></a><span class="o"> = </span><span class="s2">"iszero"</span><span class="o">;</span></pre>
 
+```{ .ebnf #YulJumpKeyword }
+
+```
+
+<pre ebnf-snippet="YulJumpKeyword" style="display: none;"><a href="#YulJumpKeyword"><span class="k">YUL_JUMP_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jump"</span><span class="o">;</span></pre>
+
+```{ .ebnf #YulJumpiKeyword }
+
+```
+
+<pre ebnf-snippet="YulJumpiKeyword" style="display: none;"><a href="#YulJumpiKeyword"><span class="k">YUL_JUMPI_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jumpi"</span><span class="o">;</span></pre>
+
 ```{ .ebnf #YulKeccak256Keyword }
 
 ```

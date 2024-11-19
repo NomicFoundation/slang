@@ -722,6 +722,8 @@ pub slang_solidity::cst::TerminalKind::YulInternalKeyword
 pub slang_solidity::cst::TerminalKind::YulInvalidKeyword
 pub slang_solidity::cst::TerminalKind::YulIsKeyword
 pub slang_solidity::cst::TerminalKind::YulIsZeroKeyword
+pub slang_solidity::cst::TerminalKind::YulJumpKeyword
+pub slang_solidity::cst::TerminalKind::YulJumpiKeyword
 pub slang_solidity::cst::TerminalKind::YulKeccak256Keyword
 pub slang_solidity::cst::TerminalKind::YulLeaveKeyword
 pub slang_solidity::cst::TerminalKind::YulLetKeyword
