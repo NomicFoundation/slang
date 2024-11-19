@@ -819,14 +819,17 @@ interface cst {
         /// Returns whether the cursor has completed its traversal.
         is-completed: func() -> bool;
 
-        /// Creates a copy of this cursor at its current position.
+        /// Creates a copy of this cursor at its current position with the same ancestors.
+        /// The new cursor can be moved independently without affecting the original cursor.
         clone: func() -> cursor;
-        /// Creates a new cursor at the same position as this one.
+        /// Creates a copy of this cursor at its current position, but without any ancestors.
+        /// This is useful for limiting the scope of a search or query to the sub-tree only, without backtracking to parent nodes.
+        /// The new cursor can be moved independently without affecting the original cursor.
         spawn: func() -> cursor;
 
         /// Returns the current node under the cursor.
         node: func() -> node;
-        /// Returns the label of the edge to the current node, if any.
+        /// Returns the label of the edge from the parent to the current node, if any.
         label: func() -> option<edge-label>;
 
         /// Returns the current text offset of the cursor.
@@ -834,7 +837,7 @@ interface cst {
         /// Returns the text range covered by the current node.
         text-range: func() -> text-range;
 
-        /// Returns the current depth in the tree.
+        /// Returns the current depth in the tree (i.e. number of ancestors).
         depth: func() -> u32;
 
         /// Returns the list of ancestor nodes up to the root.
@@ -912,23 +915,23 @@ interface cst {
         next: func() -> option<query-match>;
     }
 
-    /// Represents a position in the source text, with different encoding indices.
+    /// Represents a position in the source text, with indices for different unicode encodings of the source.
     record text-index {
         /// Byte offset in UTF-8 encoding.
         utf8: u32,
         /// Character offset in UTF-16 encoding.
         utf16: u32,
-        /// Line number.
+        /// Line number (0-based).
         line: u32,
-        /// Column number.
+        /// Column number (0-based).
         column: u32,
     }
 
     /// Represents a range in the source text.
     record text-range {
-        /// Starting position of the range.
+        /// Starting (inclusive) position of the range.
         start: text-index,
-        /// Ending position of the range.
+        /// Ending (exclusive) position of the range.
         end: text-index,
     }
 }

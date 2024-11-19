@@ -35,7 +35,7 @@ interface parser {
     /// Contains the resulting syntax tree and any errors encountered during parsing.
     resource parse-output {
         /// Returns the root node of the parsed syntax tree.
-        /// Even if there are parsing errors, a partial tree may still be available.
+        /// Even if there are parsing errors, a partial tree will still be available.
         tree: func() -> node;
 
         /// Returns a list of all parsing errors encountered.
