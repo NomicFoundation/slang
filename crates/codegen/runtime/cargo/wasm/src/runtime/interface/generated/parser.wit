@@ -3,24 +3,53 @@
 interface parser {
     use cst.{cursor, node, nonterminal-kind, text-range};
 
+    /// A parser instance that can parse source code into syntax trees.
+    /// Each parser is configured for a specific language version and grammar.
     resource parser {
+        /// Returns the root nonterminal kind for this parser's grammar.
+        /// This represents the starting point for parsing a complete source file.
         root-kind: static func() -> nonterminal-kind;
+
+        /// Returns a list of language versions supported by this parser.
+        /// Each version string represents a specific grammar configuration.
         supported-versions: static func() -> list<string>;
+
+        /// Creates a new parser instance for the specified language version.
         create: static func(version: string) -> result<parser, string>;
 
+        /// Returns the language version this parser instance is configured for.
         version: func() -> string;
+
+        /// Parses the input string starting from the specified nonterminal kind.
         parse: func(kind: nonterminal-kind, input: string) -> parse-output;
     }
 
+    /// Contains information about where the error occurred and what went wrong.
     resource parse-error {
+        /// Returns the text range where the error occurred in the source code.
         text-range: func() -> text-range;
+
+        /// Returns a human-readable message describing the parsing error.
         message: func() -> string;
     }
 
+    /// The output of a parsing operation.
+    /// Contains the resulting syntax tree and any errors encountered during parsing.
     resource parse-output {
+        /// Returns the root node of the parsed syntax tree.
+        /// Even if there are parsing errors, a partial tree may still be available.
         tree: func() -> node;
+
+        /// Returns a list of all parsing errors encountered.
+        /// An empty list indicates successful parsing with no errors.
         errors: func() -> list<parse-error>;
+
+        /// Returns whether the parse was completely successful with no errors.
+        /// This is equivalent to checking if the errors list is empty.
         is-valid: func() -> bool;
+
+        /// Creates a cursor for traversing the parsed syntax tree.
+        /// The cursor starts at the root node of the tree.
         create-tree-cursor: func() -> cursor;
     }
 }

@@ -1,30 +1,44 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 interface cst {
+    /// Represents different kinds of nonterminal nodes in the syntax tree.
+    /// These are nodes that can have child nodes and represent higher-level language constructs.
     enum nonterminal-kind {
+            /// Generated stub.
             stub1,
+            /// Generated stub.
             stub2,
+            /// Generated stub.
             stub3,
     }
 
+    /// Represents different kinds of terminal nodes in the syntax tree.
+    /// These are leaf nodes that represent actual tokens in the source code.
     enum terminal-kind {
-        // Built-in:
+        /// This terminal is created when the parser encounters an unexpected part of the input,
+        /// and it cannot recognize it as any valid syntax in this position in the grammar.
         unrecognized,
+        /// This terminal is created when the parser is expecting a certain terminal, but it cannot find it.
+        /// Adding the missing input in this position may allow the parser to produce a valid tree there.
         missing,
-
-        // Generated:
+            /// Generated stub.
             stub1,
+            /// Generated stub.
             stub2,
+            /// Generated stub.
             stub3,
     }
 
+    //// Useful extension methods for working with terminals and terminal kinds.
     resource terminal-kind-extensions {
+        /// Returns true if the terminal is a trivia token. i.e. whitespace, comments, etc... 
         is-trivia: static func(kind: terminal-kind) -> bool;
+        /// Returns true if the terminal is a valid token in the language grammar.
         is-valid: static func(kind: terminal-kind) -> bool;
     }
 
+    /// Represents the different types of relationships between nodes in the syntax tree.
     enum edge-label {
-        // Built-in:
             %item,
             %variant,
             %separator,
@@ -33,115 +47,192 @@ interface cst {
             %right-operand,
             %leading-trivia,
             %trailing-trivia,
-
-        // Generated:
+            /// Generated stub.
             stub1,
+            /// Generated stub.
             stub2,
+            /// Generated stub.
             stub3,
     }
 
+    /// The super type of all nodes in a tree.
     variant node {
+        /// A nonterminal node that may contain other children nodes.
         nonterminal(nonterminal-node),
+        /// A terminal node that represents a recognized part of the source string.
         terminal(terminal-node)
     }
 
+    /// Represents a non-terminal node in the syntax tree.
+    /// These nodes can have child nodes and represent language constructs.
     resource nonterminal-node {
+        /// Returns a unique numerical identifier of the node.
+        /// It is only valid for the lifetime of the enclosing tree.
+        /// It can change between multiple parses, even for the same source code input.
         id: func() -> u32;
+        /// Returns the kind enum of this nonterminal node.
         kind: func() -> nonterminal-kind;
+        /// Returns the length of the text span this node covers.
         text-length: func() -> text-index;
 
+        /// Returns the list of child edges connected to this node.
         children: func() -> list<edge>;
+        /// Converts the node and its children back to source code text.
         unparse: func() -> string;
+        /// Converts the node to a JSON representation for debugging.
         to-json: func() -> string;
 
+        /// Creates a cursor positioned at the given text offset within this node.
         create-cursor: func(text-offset: text-index) -> cursor;
     }
 
+    /// Represents a terminal node in the syntax tree.
+    /// These are leaf nodes that represent actual tokens from the source code.
     resource terminal-node {
+        /// Returns a unique numerical identifier of the node.
+        /// It is only valid for the lifetime of the enclosing tree.
+        /// It can change between multiple parses, even for the same source code input.
         id: func() -> u32;
+        /// Returns the kind enum of this terminal node.
         kind: func() -> terminal-kind;
+        /// Returns the length of the text span this node covers.
         text-length: func() -> text-index;
 
+        /// Returns the list of child edges connected to this node.
         children: func() -> list<edge>;
+        /// Converts the node back to source code text.
         unparse: func() -> string;
+        /// Converts the node to a JSON representation for debugging.
         to-json: func() -> string;
     }
 
+    /// Represents a connection between nodes in the syntax tree.
     record edge {
+        /// Optional label describing the relationship between nodes.
         label: option<edge-label>,
+        /// The target node of this edge.
         node: node,
     }
 
+    /// Provides navigation and traversal capabilities over the syntax tree.
     resource cursor {
+        /// Resets the cursor to its initial position.
         reset: func();
+        /// Marks the cursor as completed.
         complete: func();
+        /// Returns whether the cursor has completed its traversal.
         is-completed: func() -> bool;
 
+        /// Creates a copy of this cursor at its current position.
         clone: func() -> cursor;
+        /// Creates a new cursor at the same position as this one.
         spawn: func() -> cursor;
 
+        /// Returns the current node under the cursor.
         node: func() -> node;
+        /// Returns the label of the edge to the current node, if any.
         label: func() -> option<edge-label>;
 
+        /// Returns the current text offset of the cursor.
         text-offset: func() -> text-index;
+        /// Returns the text range covered by the current node.
         text-range: func() -> text-range;
 
+        /// Returns the current depth in the tree.
         depth: func() -> u32;
 
+        /// Returns the list of ancestor nodes up to the root.
         ancestors: func() -> list<nonterminal-node>;
 
+        /// Moves to the next node in pre-order traversal.
         go-to-next: func() -> bool;
+        /// Moves to the next node that isn't a descendant of the current node.
         go-to-next-non-descendent: func() -> bool;
+        /// Moves to the previous node in pre-order traversal.
         go-to-previous: func() -> bool;
 
+        /// Moves up to the parent node.
         go-to-parent: func() -> bool;
 
+        /// Moves to the first child of the current node.
         go-to-first-child: func() -> bool;
+        /// Moves to the last child of the current node.
         go-to-last-child: func() -> bool;
+        /// Moves to the nth child of the current node.
         go-to-nth-child: func(child-number: u32) -> bool;
 
+        /// Moves to the next sibling node.
         go-to-next-sibling: func() -> bool;
+        /// Moves to the previous sibling node.
         go-to-previous-sibling: func() -> bool;
 
+        /// Moves to the next terminal node.
         go-to-next-terminal: func() -> bool;
+        /// Moves to the next terminal node of a specific kind.
         go-to-next-terminal-with-kind: func(kind: terminal-kind) -> bool;
+        /// Moves to the next terminal node matching any of the given kinds.
         go-to-next-terminal-with-kinds: func(kinds: list<terminal-kind>) -> bool;
 
+        /// Nonterminal navigation methods
+        /// Moves to the next nonterminal node.
         go-to-next-nonterminal: func() -> bool;
+        /// Moves to the next nonterminal node of a specific kind.
         go-to-next-nonterminal-with-kind: func(kind: nonterminal-kind) -> bool;
+        /// Moves to the next nonterminal node matching any of the given kinds.
         go-to-next-nonterminal-with-kinds: func(kinds: list<nonterminal-kind>) -> bool;
 
+        /// Executes the given queries and returns an iterator over the matches.
         query: func(queries: list<borrow<query>>) -> query-match-iterator;
     }
 
+    /// Represents a tree query for pattern matching in the syntax tree.
     resource query {
+        /// Parses a query string into a query object.
+        /// Throws an error if the query syntax is invalid.
         parse: static func(text: string) -> result<query, query-error>;
     }
 
+    /// Represents an error that occurred while parsing a query.
     record query-error {
+        /// The error message describing what went wrong.
         message: string,
+        /// The line number where the error occurred.
         line: u32,
+        /// The column number where the error occurred.
         column: u32,
     }
 
+    /// Represents a match found by executing a query.
     record query-match {
+        /// The index of the query that produced this match.
         query-number: u32,
+        /// List of captured nodes and their names from the query.
         captures: list<tuple<string, list<cursor>>>,
     }
 
+    /// Iterator over query matches in the syntax tree.
     resource query-match-iterator {
+        /// Returns the next match or None if there are no more matches.
         next: func() -> option<query-match>;
     }
 
+    /// Represents a position in the source text, with different encoding indices.
     record text-index {
+        /// Byte offset in UTF-8 encoding.
         utf8: u32,
+        /// Character offset in UTF-16 encoding.
         utf16: u32,
+        /// Line number.
         line: u32,
+        /// Column number.
         column: u32,
     }
 
+    /// Represents a range in the source text.
     record text-range {
+        /// Starting position of the range.
         start: text-index,
+        /// Ending position of the range.
         end: text-index,
     }
 }
