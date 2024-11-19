@@ -36,6 +36,7 @@ pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     export_node: Option<GraphHandle>,
     #[allow(dead_code)]
     import_nodes: Vec<GraphHandle>,
+    extension_scope: Option<GraphHandle>,
 }
 
 pub(crate) struct ReferenceBindingInfo {
@@ -53,6 +54,7 @@ pub struct Bindings<KT: KindTypes + 'static> {
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
     context: Option<GraphHandle>,
+    extension_hooks: HashSet<GraphHandle>,
 }
 
 pub enum FileDescriptor {
@@ -136,6 +138,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
             context: None,
+            extension_hooks: HashSet::new(),
         }
     }
 
@@ -187,6 +190,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         self.definitions_info
             .extend(result.definitions_info.drain());
         self.references_info.extend(result.references_info.drain());
+        self.extension_hooks.extend(result.extension_hooks.drain());
 
         result
     }
@@ -338,6 +342,10 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         }
         results
     }
+
+    pub(crate) fn is_extension_hook(&self, node_handle: GraphHandle) -> bool {
+        self.extension_hooks.contains(&node_handle)
+    }
 }
 
 struct DisplayCursor<'a, KT: KindTypes + 'static> {
@@ -399,6 +407,13 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .map(|info| &info.parents)
             .map(|handles| self.owner.resolve_handles(handles))
             .unwrap_or_default()
+    }
+
+    pub(crate) fn get_extension_scope(&self) -> Option<GraphHandle> {
+        self.owner
+            .definitions_info
+            .get(&self.handle)
+            .and_then(|info| info.extension_scope)
     }
 
     pub fn to_handle(self) -> DefinitionHandle {
