@@ -1144,7 +1144,7 @@ inherit .star_extension
   ; Special case for mapping public state variables: they can be called
   ; like a function with a key, and it's effectively the same as indexing it.
   node getter_call
-  attr (getter_call) pop_symbol = "()"
+  attr (getter_call) pop_symbol = "@as_getter"
   edge typeof_input -> getter_call
   edge getter_call -> typeof_output
 
@@ -1210,7 +1210,7 @@ inherit .star_extension
   ; like a function with an index, and it's effectively the same as indexing the
   ; array.
   node getter_call
-  attr (getter_call) pop_symbol = "()"
+  attr (getter_call) pop_symbol = "@as_getter"
   edge typeof_input -> getter_call
   edge getter_call -> typeof_output
 
@@ -2072,8 +2072,16 @@ inherit .star_extension
   node call
   attr (call) pop_symbol = "()"
 
+  ; In the general case using the getter can bind to the state variable's type
   edge @state_var.def -> call
   edge call -> @state_var.typeof
+
+  ; Some complex types generate special getters (ie. arrays and mappings index
+  ; their contents, structs flatten most of their fields and return a tuple)
+  node getter
+  attr (getter) push_symbol = "@as_getter"
+  edge call -> getter
+  edge getter -> @state_var.typeof
 }
 
 @state_var [StateVariableDefinition
@@ -2135,12 +2143,12 @@ inherit .star_extension
   attr (@struct.def) definiens_node = @struct
 
   ; Now connect normally to the struct members
-  node type_def
-  attr (type_def) pop_symbol = "@typeof"
+  node @struct.typeof
+  attr (@struct.typeof) pop_symbol = "@typeof"
   node member
   attr (member) pop_symbol = "."
-  edge @struct.def -> type_def
-  edge type_def -> member
+  edge @struct.def -> @struct.typeof
+  edge @struct.typeof -> member
   edge member -> @struct.members
 
   ; Bind member names when using construction with named arguments
@@ -2159,19 +2167,28 @@ inherit .star_extension
 @struct [StructDefinition [StructMembers
     @member item: [StructMember @type_name [TypeName] @name name: [Identifier]]
 ]] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @member
+  node @member.def
+  attr (@member.def) node_definition = @name
+  attr (@member.def) definiens_node = @member
 
-  edge @struct.members -> def
+  edge @struct.members -> @member.def
 
   edge @type_name.type_ref -> @struct.lexical_scope
 
-  node typeof
-  attr (typeof) push_symbol = "@typeof"
+  node @member.typeof
+  attr (@member.typeof) push_symbol = "@typeof"
 
-  edge def -> typeof
-  edge typeof -> @type_name.output
+  edge @member.def -> @member.typeof
+  edge @member.typeof -> @type_name.output
+}
+
+@struct [StructDefinition [StructMembers . @first_member [StructMember]]] {
+  ; As a public getter result, the value returned is a tuple with all our fields flattened
+  ; We only care about the first member for name binding, since tuples are not real types
+  node getter_call
+  attr (getter_call) pop_symbol = "@as_getter"
+  edge @struct.typeof -> getter_call
+  edge getter_call -> @first_member.typeof
 }
 
 

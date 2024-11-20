@@ -6,12 +6,12 @@ References and definitions:
  1 │ contract Base {
    │          ──┬─  
    │            ╰─── def: 1
- 2 │     struct Value { int x; }
-   │            ──┬──       ┬  
-   │              ╰──────────── def: 2
-   │                        │  
-   │                        ╰── def: 3
- 3 │     Value public value;
+ 2 │     struct Owner { address owner; }
+   │            ──┬──           ──┬──  
+   │              ╰──────────────────── def: 2
+   │                              │    
+   │                              ╰──── def: 3
+ 3 │     Owner public owner;
    │     ──┬──        ──┬──  
    │       ╰───────────────── ref: 2
    │                    │    
@@ -27,11 +27,11 @@ References and definitions:
    │                     ╰──────── ref: 1
    │                          │   
    │                          ╰─── def: 7
- 7 │         base.value().x;
-   │         ──┬─ ──┬──   ┬  
-   │           ╰───────────── ref: 7
-   │                │     │  
-   │                ╰──────── ref: 4
-   │                      │  
-   │                      ╰── ref: 3
+ 7 │         base.owner().balance;
+   │         ──┬─ ──┬──   ───┬───  
+   │           ╰─────────────────── ref: 7
+   │                │        │     
+   │                ╰────────────── ref: 4
+   │                         │     
+   │                         ╰───── ref: built-in
 ───╯

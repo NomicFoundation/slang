@@ -1,12 +1,8 @@
-library Lib {
-    function nop(uint256 x) internal {}
-}
 contract Test {
-    using Lib for uint;
     function test(TokenState tokenState) public {
-        tokenState.balanceOf(msg.sender).nop();
+        tokenState.owners(1).balance;
     }
 }
 contract TokenState {
-    mapping(address => uint) public balanceOf;
+    mapping(uint => address) public owners;
 }

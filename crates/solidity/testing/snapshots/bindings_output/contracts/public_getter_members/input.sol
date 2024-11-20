@@ -1,9 +1,8 @@
 contract Base {
-    struct Value { int x; }
-    Value public value;
+    address public owner;
 }
 contract Test {
     function test(Base base) public {
-        base.value().x;
+        base.owner().balance;
     }
 }

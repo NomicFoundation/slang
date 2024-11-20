@@ -1,46 +1,30 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 References and definitions: 
-    ╭─[input.sol:1:1]
-    │
-  1 │ library Lib {
-    │         ─┬─  
-    │          ╰─── def: 1
-  2 │     function nop(uint256 x) internal {}
-    │              ─┬─         ┬  
-    │               ╰───────────── def: 2
-    │                          │  
-    │                          ╰── def: 3
-    │ 
-  4 │ contract Test {
-    │          ──┬─  
-    │            ╰─── def: 4
-  5 │     using Lib for uint;
-    │           ─┬─  
-    │            ╰─── ref: 1
-  6 │     function test(TokenState tokenState) public {
-    │              ──┬─ ─────┬──── ─────┬────  
-    │                ╰───────────────────────── def: 5
-    │                        │          │      
-    │                        ╰───────────────── ref: 7
-    │                                   │      
-    │                                   ╰────── def: 6
-  7 │         tokenState.balanceOf(msg.sender).nop();
-    │         ─────┬──── ────┬──── ─┬─ ───┬──  ─┬─  
-    │              ╰──────────────────────────────── ref: 6
-    │                        │      │     │     │   
-    │                        ╰────────────────────── ref: 8
-    │                               │     │     │   
-    │                               ╰─────────────── ref: built-in
-    │                                     │     │   
-    │                                     ╰───────── ref: built-in
-    │                                           │   
-    │                                           ╰─── ref: 2
-    │ 
- 10 │ contract TokenState {
-    │          ─────┬────  
-    │               ╰────── def: 7
- 11 │     mapping(address => uint) public balanceOf;
-    │                                     ────┬────  
-    │                                         ╰────── def: 8
-────╯
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     function test(TokenState tokenState) public {
+   │              ──┬─ ─────┬──── ─────┬────  
+   │                ╰───────────────────────── def: 2
+   │                        │          │      
+   │                        ╰───────────────── ref: 4
+   │                                   │      
+   │                                   ╰────── def: 3
+ 3 │         tokenState.owners(1).balance;
+   │         ─────┬──── ───┬──    ───┬───  
+   │              ╰──────────────────────── ref: 3
+   │                       │         │     
+   │                       ╰─────────────── ref: 5
+   │                                 │     
+   │                                 ╰───── ref: built-in
+   │ 
+ 6 │ contract TokenState {
+   │          ─────┬────  
+   │               ╰────── def: 4
+ 7 │     mapping(uint => address) public owners;
+   │                                     ───┬──  
+   │                                        ╰──── def: 5
+───╯

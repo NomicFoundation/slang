@@ -5,11 +5,6 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
-fn call_public_getter() -> Result<()> {
-    run("contracts", "call_public_getter")
-}
-
-#[test]
 fn constructor_call_parent() -> Result<()> {
     run("contracts", "constructor_call_parent")
 }
@@ -70,6 +65,11 @@ fn public_array_getters() -> Result<()> {
 }
 
 #[test]
+fn public_getter_members() -> Result<()> {
+    run("contracts", "public_getter_members")
+}
+
+#[test]
 fn public_getters() -> Result<()> {
     run("contracts", "public_getters")
 }
@@ -77,6 +77,11 @@ fn public_getters() -> Result<()> {
 #[test]
 fn public_mapping_getters() -> Result<()> {
     run("contracts", "public_mapping_getters")
+}
+
+#[test]
+fn public_struct_getter() -> Result<()> {
+    run("contracts", "public_struct_getter")
 }
 
 #[test]
