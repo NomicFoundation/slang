@@ -2872,9 +2872,11 @@ inherit .star_extension
   edge @path.lexical_scope -> @expr.lexical_scope
 }
 
-@path [YulPath @name [YulIdentifier]] {
+@path [YulPath] {
   node @path.lexical_scope
+}
 
+@path [YulPath . @name [YulIdentifier]] {
   node ref
   attr (ref) node_reference = @name
 
@@ -2897,6 +2899,24 @@ inherit .star_extension
       }
     }
   }
+}
+
+@path [YulPath [Period] @member [YulIdentifier] .] {
+  ; Yul variable members only apply to external variables and hence are
+  ; automatically bound to a special %YulExternal built-in
+  node ref
+  attr (ref) node_reference = @member
+  node member_of
+  attr (member_of) push_symbol = "."
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node yul_variable
+  attr (yul_variable) push_symbol = "%YulExternal"
+
+  edge ref -> member_of
+  edge member_of -> typeof
+  edge typeof -> yul_variable
+  edge yul_variable -> @path.lexical_scope
 }
 
 @expr [YulExpression @funcall [YulFunctionCallExpression]] {

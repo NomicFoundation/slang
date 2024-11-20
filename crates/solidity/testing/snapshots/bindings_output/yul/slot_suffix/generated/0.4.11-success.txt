@@ -6,15 +6,21 @@ References and definitions:
  1 │ contract Test {
    │          ──┬─  
    │            ╰─── def: 1
- 2 │     function test(bytes storage data) public {
-   │              ──┬─               ──┬─  
-   │                ╰────────────────────── def: 2
-   │                                   │   
-   │                                   ╰─── def: 3
+ 2 │     bytes data;
+   │           ──┬─  
+   │             ╰─── def: 2
+ 3 │     function test() public {
+   │              ──┬─  
+   │                ╰─── def: 3
    │ 
- 4 │             let s := sload(data_slot)
+ 5 │             let s := sload(data_slot)
    │                 ┬          ────┬────  
    │                 ╰───────────────────── def: 4
    │                                │      
-   │                                ╰────── ref: 3
+   │                                ╰────── ref: 2
+ 6 │             let o := sload(data_offset)
+   │                 ┬          ─────┬─────  
+   │                 ╰─────────────────────── def: 5
+   │                                 │       
+   │                                 ╰─────── ref: 2
 ───╯

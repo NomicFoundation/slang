@@ -101,6 +101,11 @@ contract $BuiltIns$ {
     function($WrappedType) returns ($UserType) wrap;
     function($UserType) returns ($WrappedType) unwrap;
   }
+  struct $YulExternal {
+    uint slot;
+    uint offset;
+    uint length;
+  }
   $Function $placeholder;
   $AbiType abi;
   $BlockType block;

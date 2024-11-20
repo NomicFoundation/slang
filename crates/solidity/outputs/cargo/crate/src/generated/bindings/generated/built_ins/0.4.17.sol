@@ -81,6 +81,11 @@ contract $BuiltIns$ {
   }
   struct $IntTypeType {
   }
+  struct $YulExternal {
+    uint slot;
+    uint offset;
+    uint length;
+  }
   $Function $placeholder;
   $AbiType abi;
   $BlockType block;

@@ -7023,6 +7023,17 @@ codegen_language_macros::compile!(Language(
             ],
             enabled = From("0.8.8")
         ),
+        BuiltInType(
+            name = "$YulExternal",
+            fields = [
+                // These apply to state and storage variables
+                BuiltInField(definition = "uint slot"),
+                BuiltInField(definition = "uint offset"),
+                // Dynamic calldata arrays also have a length
+                BuiltInField(definition = "uint length")
+            ],
+            functions = []
+        ),
         BuiltInVariable(definition = "$Function $placeholder"),
         BuiltInVariable(definition = "$AbiType abi"),
         BuiltInVariable(definition = "$BlockType block"),

@@ -20,6 +20,11 @@ fn loops() -> Result<()> {
 }
 
 #[test]
+fn slot_offset_members() -> Result<()> {
+    run("yul", "slot_offset_members")
+}
+
+#[test]
 fn slot_suffix() -> Result<()> {
     run("yul", "slot_suffix")
 }

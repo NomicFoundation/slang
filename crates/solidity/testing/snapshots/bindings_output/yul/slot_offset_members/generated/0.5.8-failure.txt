@@ -13,12 +13,12 @@ References and definitions:
    │              ──┬─  
    │                ╰─── def: 3
    │ 
- 5 │             let s := sload(data_slot)
+ 5 │             let s := sload(data.slot)
    │                 ┬          ────┬────  
    │                 ╰───────────────────── def: 4
    │                                │      
    │                                ╰────── unresolved
- 6 │             let o := sload(data_offset)
+ 6 │             let o := sload(data.offset)
    │                 ┬          ─────┬─────  
    │                 ╰─────────────────────── def: 5
    │                                 │       
