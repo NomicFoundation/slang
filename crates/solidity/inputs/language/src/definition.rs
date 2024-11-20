@@ -6738,37 +6738,37 @@ codegen_language_macros::compile!(Language(
             functions = [
                 BuiltInFunction(
                     name = "decode",
-                    parameters = ["bytes memory", "$Types"],
+                    parameters = ["bytes memory encodedData", "$Types encodedTypesTuple"],
                     return_type = "$Types",
                     enabled = From("0.5.0")
                 ),
                 BuiltInFunction(
                     name = "encode",
-                    parameters = ["$Types"],
+                    parameters = ["$Args valuesToEncode"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
                     name = "encodeCall",
-                    parameters = ["function()", "$Args"],
+                    parameters = ["function() functionPointer", "$Args functionArgumentsTuple"],
                     return_type = "bytes memory",
                     enabled = From("0.8.11")
                 ),
                 BuiltInFunction(
                     name = "encodePacked",
-                    parameters = ["$Args"],
+                    parameters = ["$Args valuesToEncode"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
                     name = "encodeWithSelector",
-                    parameters = ["bytes4 selector", "$Args"],
+                    parameters = ["bytes4 selector", "$Args functionArgumentsTuple"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
                     name = "encodeWithSignature",
-                    parameters = ["string memory", "$Args"],
+                    parameters = ["string memory signature", "$Args valuesToEncode"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 )
@@ -6814,7 +6814,7 @@ codegen_language_macros::compile!(Language(
                 ),
                 BuiltInFunction(
                     name = "send",
-                    parameters = ["uint256"],
+                    parameters = ["uint256 amount"],
                     return_type = "bool"
                 ),
                 BuiltInFunction(
@@ -6823,7 +6823,7 @@ codegen_language_macros::compile!(Language(
                     return_type = "bool, bytes memory",
                     enabled = From("0.5.0")
                 ),
-                BuiltInFunction(name = "transfer", parameters = ["uint256"])
+                BuiltInFunction(name = "transfer", parameters = ["uint256 amount"])
             ]
         ),
         BuiltInType(
@@ -6838,13 +6838,13 @@ codegen_language_macros::compile!(Language(
                 ),
                 BuiltInFunction(
                     name = "push",
-                    parameters = ["$ValueType"],
+                    parameters = ["$ValueType element"],
                     return_type = "uint",
                     enabled = Till("0.6.0")
                 ),
                 BuiltInFunction(
                     name = "push",
-                    parameters = ["$ValueType"],
+                    parameters = ["$ValueType element"],
                     enabled = From("0.6.0")
                 ),
                 BuiltInFunction(name = "pop", parameters = [])
@@ -6885,7 +6885,7 @@ codegen_language_macros::compile!(Language(
             fields = [],
             functions = [BuiltInFunction(
                 name = "concat",
-                parameters = ["$Args"],
+                parameters = ["$Args bytesToConcatenate"],
                 return_type = "bytes memory"
             )]
         ),
@@ -6911,13 +6911,13 @@ codegen_language_macros::compile!(Language(
             functions = [
                 BuiltInFunction(
                     name = "gas",
-                    parameters = ["uint"],
+                    parameters = ["uint amount"],
                     return_type = "function()",
                     enabled = Till("0.7.0")
                 ),
                 BuiltInFunction(
                     name = "value",
-                    parameters = ["uint"],
+                    parameters = ["uint amount"],
                     return_type = "function()",
                     enabled = Till("0.7.0")
                 )
@@ -6932,13 +6932,13 @@ codegen_language_macros::compile!(Language(
             functions = [
                 BuiltInFunction(
                     name = "gas",
-                    parameters = ["uint"],
+                    parameters = ["uint amount"],
                     return_type = "function()",
                     enabled = Till("0.7.0")
                 ),
                 BuiltInFunction(
                     name = "value",
-                    parameters = ["uint"],
+                    parameters = ["uint amount"],
                     return_type = "function()",
                     enabled = Till("0.7.0")
                 )
@@ -6964,7 +6964,7 @@ codegen_language_macros::compile!(Language(
             fields = [],
             functions = [BuiltInFunction(
                 name = "concat",
-                parameters = ["$Args"],
+                parameters = ["$Args stringsToConcatenate"],
                 return_type = "string memory"
             )]
         ),
@@ -7012,12 +7012,12 @@ codegen_language_macros::compile!(Language(
             functions = [
                 BuiltInFunction(
                     name = "wrap",
-                    parameters = ["$WrappedType"],
+                    parameters = ["$WrappedType elementaryType"],
                     return_type = "$UserType"
                 ),
                 BuiltInFunction(
                     name = "unwrap",
-                    parameters = ["$UserType"],
+                    parameters = ["$UserType userType"],
                     return_type = "$WrappedType"
                 )
             ],

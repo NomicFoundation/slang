@@ -25,12 +25,12 @@ contract $BuiltIns$ {
     function(bytes memory) returns (bool) call;
     function(bytes memory) returns (bool, bytes memory) callcode;
     function(bytes memory) returns (bool) delegatecall;
-    function(uint256) returns (bool) send;
-    function(uint256) transfer;
+    function(uint256 amount) returns (bool) send;
+    function(uint256 amount) transfer;
   }
   struct $Array {
     uint length;
-    function($ValueType) returns (uint) push;
+    function($ValueType element) returns (uint) push;
     function() pop;
   }
   struct $FixedArray {
@@ -48,16 +48,16 @@ contract $BuiltIns$ {
     uint length;
   }
   struct $BytesType {
-    function($Args) returns (bytes memory) concat;
+    function($Args bytesToConcatenate) returns (bytes memory) concat;
   }
   struct $Function {
-    function(uint) returns (function()) gas;
-    function(uint) returns (function()) value;
+    function(uint amount) returns (function()) gas;
+    function(uint amount) returns (function()) value;
   }
   struct $ExternalFunction {
     bytes4 selector;
-    function(uint) returns (function()) gas;
-    function(uint) returns (function()) value;
+    function(uint amount) returns (function()) gas;
+    function(uint amount) returns (function()) value;
   }
   struct $MessageType {
     bytes data;
@@ -67,7 +67,7 @@ contract $BuiltIns$ {
     uint value;
   }
   struct $StringType {
-    function($Args) returns (string memory) concat;
+    function($Args stringsToConcatenate) returns (string memory) concat;
   }
   struct $TransactionType {
     uint gasprice;

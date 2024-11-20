@@ -17,12 +17,12 @@ contract $BuiltIns$ {
   function selfdestruct(address payable recipient) public;
   function sha256(bytes memory) public returns (bytes32);
   struct $AbiType {
-    function(bytes memory, $Types) returns ($Types) decode;
-    function($Types) returns (bytes memory) encode;
-    function(function(), $Args) returns (bytes memory) encodeCall;
-    function($Args) returns (bytes memory) encodePacked;
-    function(bytes4 selector, $Args) returns (bytes memory) encodeWithSelector;
-    function(string memory, $Args) returns (bytes memory) encodeWithSignature;
+    function(bytes memory encodedData, $Types encodedTypesTuple) returns ($Types) decode;
+    function($Args valuesToEncode) returns (bytes memory) encode;
+    function(function() functionPointer, $Args functionArgumentsTuple) returns (bytes memory) encodeCall;
+    function($Args valuesToEncode) returns (bytes memory) encodePacked;
+    function(bytes4 selector, $Args functionArgumentsTuple) returns (bytes memory) encodeWithSelector;
+    function(string memory signature, $Args valuesToEncode) returns (bytes memory) encodeWithSignature;
   }
   struct $address {
     uint256 balance;
@@ -30,14 +30,14 @@ contract $BuiltIns$ {
     bytes32 codehash;
     function(bytes memory) returns (bool, bytes memory) call;
     function(bytes memory) returns (bool, bytes memory) delegatecall;
-    function(uint256) returns (bool) send;
+    function(uint256 amount) returns (bool) send;
     function(bytes memory) returns (bool, bytes memory) staticcall;
-    function(uint256) transfer;
+    function(uint256 amount) transfer;
   }
   struct $Array {
     uint length;
     function() returns ($ValueType) push;
-    function($ValueType) push;
+    function($ValueType element) push;
     function() pop;
   }
   struct $FixedArray {
@@ -58,7 +58,7 @@ contract $BuiltIns$ {
     uint length;
   }
   struct $BytesType {
-    function($Args) returns (bytes memory) concat;
+    function($Args bytesToConcatenate) returns (bytes memory) concat;
   }
   struct $CallOptions {
     uint gas;
@@ -81,7 +81,7 @@ contract $BuiltIns$ {
     uint value;
   }
   struct $StringType {
-    function($Args) returns (string memory) concat;
+    function($Args stringsToConcatenate) returns (string memory) concat;
   }
   struct $TransactionType {
     uint gasprice;
@@ -102,8 +102,8 @@ contract $BuiltIns$ {
     int max;
   }
   struct $UserDefinedValueType {
-    function($WrappedType) returns ($UserType) wrap;
-    function($UserType) returns ($WrappedType) unwrap;
+    function($WrappedType elementaryType) returns ($UserType) wrap;
+    function($UserType userType) returns ($WrappedType) unwrap;
   }
   struct $YulExternal {
     uint slot;
