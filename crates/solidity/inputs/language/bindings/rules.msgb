@@ -2309,7 +2309,7 @@ inherit .star_extension
   node typeof
   attr (typeof) push_symbol = "@typeof"
   node user_type_type
-  attr (user_type_type) push_symbol = "%UserTypeType"
+  attr (user_type_type) push_symbol = "%UserDefinedValueType"
 
   edge @user_type.def -> member_guard
   edge member_guard -> member

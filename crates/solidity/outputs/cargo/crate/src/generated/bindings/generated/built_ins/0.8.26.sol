@@ -102,7 +102,7 @@ contract $BuiltIns$ {
     int min;
     int max;
   }
-  struct $UserTypeType {
+  struct $UserDefinedValueType {
     function($WrappedType) returns ($UserType) wrap;
     function($UserType) returns ($WrappedType) unwrap;
   }

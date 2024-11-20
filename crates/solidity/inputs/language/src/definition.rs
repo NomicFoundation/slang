@@ -7007,7 +7007,7 @@ codegen_language_macros::compile!(Language(
             functions = []
         ),
         BuiltInType(
-            name = "$UserTypeType",
+            name = "$UserDefinedValueType",
             fields = [],
             functions = [
                 BuiltInFunction(
