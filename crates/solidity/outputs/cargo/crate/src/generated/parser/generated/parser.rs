@@ -5981,16 +5981,20 @@ impl Parser {
                 TerminalKind::YulIsZeroKeyword,
             );
             choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulJumpKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulJumpiKeyword,
-            );
-            choice.consider(input, result)?;
+            if !self.version_is_at_least_0_5_0 {
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TerminalKind::YulJumpKeyword,
+                );
+                choice.consider(input, result)?;
+            }
+            if !self.version_is_at_least_0_5_0 {
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TerminalKind::YulJumpiKeyword,
+                );
+                choice.consider(input, result)?;
+            }
             let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulLog0Keyword,
@@ -12271,13 +12275,33 @@ impl Lexer for Parser {
                             if scan_chars!(input, 'u', 'm', 'p') {
                                 match input.next() {
                                     Some('i') => {
-                                        KeywordScan::Reserved(TerminalKind::YulJumpiKeyword)
+                                        if self.version_is_at_least_0_4_11 {
+                                            KeywordScan::Reserved(TerminalKind::YulJumpiKeyword)
+                                        } else if !self.version_is_at_least_0_5_0 {
+                                            KeywordScan::Present(TerminalKind::YulJumpiKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
                                     }
                                     Some(_) => {
                                         input.undo();
-                                        KeywordScan::Reserved(TerminalKind::YulJumpKeyword)
+                                        if self.version_is_at_least_0_4_11 {
+                                            KeywordScan::Reserved(TerminalKind::YulJumpKeyword)
+                                        } else if !self.version_is_at_least_0_5_0 {
+                                            KeywordScan::Present(TerminalKind::YulJumpKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
                                     }
-                                    None => KeywordScan::Reserved(TerminalKind::YulJumpKeyword),
+                                    None => {
+                                        if self.version_is_at_least_0_4_11 {
+                                            KeywordScan::Reserved(TerminalKind::YulJumpKeyword)
+                                        } else if !self.version_is_at_least_0_5_0 {
+                                            KeywordScan::Present(TerminalKind::YulJumpKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    }
                                 }
                             } else {
                                 KeywordScan::Absent

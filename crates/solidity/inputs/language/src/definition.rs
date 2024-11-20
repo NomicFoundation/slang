@@ -5569,6 +5569,7 @@ codegen_language_macros::compile!(Language(
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(
                                 enabled = Till("0.5.0"),
+                                reserved = From("0.4.11"),
                                 value = Atom("jumpi")
                             )]
                         ),

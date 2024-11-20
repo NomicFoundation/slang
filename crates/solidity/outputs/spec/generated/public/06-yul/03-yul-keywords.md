@@ -524,13 +524,13 @@
 
 ```
 
-<pre ebnf-snippet="YulJumpKeyword" style="display: none;"><a href="#YulJumpKeyword"><span class="k">YUL_JUMP_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jump"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulJumpKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><span class="cm">(* Reserved in 0.4.11 *)</span><br /><a href="#YulJumpKeyword"><span class="k">YUL_JUMP_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jump"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulJumpiKeyword }
 
 ```
 
-<pre ebnf-snippet="YulJumpiKeyword" style="display: none;"><a href="#YulJumpiKeyword"><span class="k">YUL_JUMPI_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jumpi"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulJumpiKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><span class="cm">(* Reserved in 0.4.11 *)</span><br /><a href="#YulJumpiKeyword"><span class="k">YUL_JUMPI_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jumpi"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulKeccak256Keyword }
 
