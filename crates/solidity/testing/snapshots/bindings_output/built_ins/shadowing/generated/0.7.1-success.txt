@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     int tx;
+    │         ─┬  
+    │          ╰── def: 2
+    │ 
+  4 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 3
+  5 │         int block;
+    │             ──┬──  
+    │               ╰──── def: 4
+  6 │         block;
+    │         ──┬──  
+    │           ╰──── ref: 4
+  7 │         tx;
+    │         ─┬  
+    │          ╰── ref: 2
+  8 │         sha256();
+    │         ───┬──  
+    │            ╰──── ref: 5
+    │ 
+ 11 │     function sha256() public {}
+    │              ───┬──  
+    │                 ╰──── def: 5
+    │ 
+ 14 │ function sha256() {}
+    │          ───┬──  
+    │             ╰──── def: 6
+────╯

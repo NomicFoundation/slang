@@ -1,0 +1,124 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Sample {}
+    │          ───┬──  
+    │             ╰──── def: 1
+    │ 
+  3 │ interface ISample {}
+    │           ───┬───  
+    │              ╰───── def: 2
+    │ 
+  5 │ library Utils {}
+    │         ──┬──  
+    │           ╰──── def: 3
+    │ 
+  7 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 4
+  8 │     enum Direction { North, South, West, East }
+    │          ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+    │              ╰───────────────────────────────── def: 5
+    │                        │      │      │     │   
+    │                        ╰─────────────────────── def: 6
+    │                               │      │     │   
+    │                               ╰──────────────── def: 7
+    │                                      │     │   
+    │                                      ╰───────── def: 8
+    │                                            │   
+    │                                            ╰─── def: 9
+    │ 
+ 10 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 10
+ 11 │         string memory v1 = type(Sample).name;
+    │                       ─┬        ───┬──  ──┬─  
+    │                        ╰────────────────────── def: 11
+    │                                    │      │   
+    │                                    ╰────────── ref: 1
+    │                                           │   
+    │                                           ╰─── ref: built-in
+ 12 │         bytes memory v2 = type(Sample).creationCode;
+    │                      ─┬        ───┬──  ──────┬─────  
+    │                       ╰────────────────────────────── def: 12
+    │                                   │          │       
+    │                                   ╰────────────────── ref: 1
+    │                                              │       
+    │                                              ╰─────── ref: built-in
+ 13 │         bytes memory v3 = type(Sample).runtimeCode;
+    │                      ─┬        ───┬──  ─────┬─────  
+    │                       ╰───────────────────────────── def: 13
+    │                                   │         │       
+    │                                   ╰───────────────── ref: 1
+    │                                             │       
+    │                                             ╰─────── ref: built-in
+    │ 
+ 15 │         string memory v4 = type(ISample).name;
+    │                       ─┬        ───┬───  ──┬─  
+    │                        ╰─────────────────────── def: 14
+    │                                    │       │   
+    │                                    ╰─────────── ref: 2
+    │                                            │   
+    │                                            ╰─── ref: built-in
+ 16 │         bytes4 v5 = type(ISample).interfaceId;
+    │                ─┬        ───┬───  ─────┬─────  
+    │                 ╰────────────────────────────── def: 15
+    │                             │          │       
+    │                             ╰────────────────── ref: 2
+    │                                        │       
+    │                                        ╰─────── ref: built-in
+    │ 
+ 18 │         Direction v6 = type(Direction).min;
+    │         ────┬──── ─┬        ────┬────  ─┬─  
+    │             ╰─────────────────────────────── ref: 5
+    │                    │            │       │   
+    │                    ╰──────────────────────── def: 16
+    │                                 │       │   
+    │                                 ╰─────────── ref: 5
+    │                                         │   
+    │                                         ╰─── unresolved
+ 19 │         Direction v7 = type(Direction).max;
+    │         ────┬──── ─┬        ────┬────  ─┬─  
+    │             ╰─────────────────────────────── ref: 5
+    │                    │            │       │   
+    │                    ╰──────────────────────── def: 17
+    │                                 │       │   
+    │                                 ╰─────────── ref: 5
+    │                                         │   
+    │                                         ╰─── unresolved
+    │ 
+ 21 │         uint v8 = type(uint).min;
+    │              ─┬              ─┬─  
+    │               ╰─────────────────── def: 18
+    │                               │   
+    │                               ╰─── unresolved
+ 22 │         uint v9 = type(uint).max;
+    │              ─┬              ─┬─  
+    │               ╰─────────────────── def: 19
+    │                               │   
+    │                               ╰─── unresolved
+    │ 
+ 24 │         string memory v10 = type(Utils).name;
+    │                       ─┬─        ──┬──  ──┬─  
+    │                        ╰────────────────────── def: 20
+    │                                    │      │   
+    │                                    ╰────────── ref: 3
+    │                                           │   
+    │                                           ╰─── ref: built-in
+ 25 │         bytes memory v11 = type(Utils).creationCode;
+    │                      ─┬─        ──┬──  ──────┬─────  
+    │                       ╰────────────────────────────── def: 21
+    │                                   │          │       
+    │                                   ╰────────────────── ref: 3
+    │                                              │       
+    │                                              ╰─────── ref: built-in
+ 26 │         bytes memory v12 = type(Utils).runtimeCode;
+    │                      ─┬─        ──┬──  ─────┬─────  
+    │                       ╰───────────────────────────── def: 22
+    │                                   │         │       
+    │                                   ╰───────────────── ref: 3
+    │                                             │       
+    │                                             ╰─────── ref: built-in
+────╯

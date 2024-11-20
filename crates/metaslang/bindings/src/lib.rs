@@ -60,6 +60,7 @@ pub enum FileDescriptor {
     System(String),
 }
 
+#[derive(Debug)]
 pub(crate) struct FileDescriptorError;
 
 impl FileDescriptor {
@@ -73,14 +74,21 @@ impl FileDescriptor {
         }
     }
 
-    pub(crate) fn from_string(value: &str) -> Result<Self, FileDescriptorError> {
-        if let Some(path) = value.strip_prefix("user:") {
-            Ok(FileDescriptor::User(path.into()))
-        } else if let Some(path) = value.strip_prefix("system:") {
-            Ok(FileDescriptor::System(path.into()))
-        } else {
-            Err(FileDescriptorError)
-        }
+    pub(crate) fn try_from(value: &str) -> Result<Self, FileDescriptorError> {
+        value
+            .strip_prefix("user:")
+            .map(|path| FileDescriptor::User(path.into()))
+            .or_else(|| {
+                value
+                    .strip_prefix("system:")
+                    .map(|path| FileDescriptor::System(path.into()))
+            })
+            .ok_or(FileDescriptorError)
+    }
+
+    pub(crate) fn from(value: &str) -> Self {
+        Self::try_from(value)
+            .unwrap_or_else(|_| panic!("{value} should be a valid file descriptor"))
     }
 
     pub fn get_path(&self) -> &str {
@@ -372,8 +380,8 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
     pub fn get_file(&self) -> FileDescriptor {
         self.owner.stack_graph[self.handle]
             .file()
-            .and_then(|file| FileDescriptor::from_string(self.owner.stack_graph[file].name()).ok())
-            .unwrap_or_else(|| unreachable!("Definition does not have a valid file descriptor"))
+            .map(|file| FileDescriptor::from(self.owner.stack_graph[file].name()))
+            .expect("Definition does not have a valid file descriptor")
     }
 
     pub(crate) fn has_tag(&self, tag: Tag) -> bool {
@@ -459,8 +467,8 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     pub fn get_file(&self) -> FileDescriptor {
         self.owner.stack_graph[self.handle]
             .file()
-            .and_then(|file| FileDescriptor::from_string(self.owner.stack_graph[file].name()).ok())
-            .unwrap_or_else(|| unreachable!("Reference does not have a valid file descriptor"))
+            .map(|file| FileDescriptor::from(self.owner.stack_graph[file].name()))
+            .expect("Reference does not have a valid file descriptor")
     }
 
     pub fn jump_to_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {

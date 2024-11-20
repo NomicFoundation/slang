@@ -59,7 +59,7 @@ References and definitions:
     │                                            ╰── ref: 5
  25 │         return super.foo();
     │                ──┬── ─┬─  
-    │                  ╰──────── unresolved
+    │                  ╰──────── refs: 3, 5
     │                       │   
     │                       ╰─── ref: 6
 ────╯

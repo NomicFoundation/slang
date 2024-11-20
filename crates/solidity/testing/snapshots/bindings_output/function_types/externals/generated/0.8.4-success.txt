@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── def: 2
+ 3 │         function() external v1;
+   │                             ─┬  
+   │                              ╰── def: 3
+ 4 │         v1.selector;
+   │         ─┬ ────┬───  
+   │          ╰─────────── ref: 3
+   │                │     
+   │                ╰───── ref: built-in
+ 5 │         v1.address;
+   │         ─┬ ───┬───  
+   │          ╰────────── ref: 3
+   │               │     
+   │               ╰───── ref: built-in
+───╯

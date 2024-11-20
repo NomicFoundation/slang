@@ -1,0 +1,39 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Foo {
+    │          ─┬─  
+    │           ╰─── def: 1
+  2 │     int public x;
+    │                ┬  
+    │                ╰── def: 2
+    │ 
+  5 │ contract Bar {
+    │          ─┬─  
+    │           ╰─── def: 3
+  6 │     int public y;
+    │                ┬  
+    │                ╰── def: 4
+  7 │     Foo f;
+    │     ─┬─ ┬  
+    │      ╰───── ref: 1
+    │         │  
+    │         ╰── def: 5
+    │ 
+  9 │     function test() public returns (int) {
+    │              ──┬─  
+    │                ╰─── def: 6
+ 10 │         return y + this.y() + f.x();
+    │                ┬   ──┬─ ┬     ┬ ┬  
+    │                ╰─────────────────── ref: 4
+    │                      │  │     │ │  
+    │                      ╰───────────── ref: 3
+    │                         │     │ │  
+    │                         ╰────────── ref: 4
+    │                               │ │  
+    │                               ╰──── ref: 5
+    │                                 │  
+    │                                 ╰── ref: 2
+────╯

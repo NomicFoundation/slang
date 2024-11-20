@@ -1,0 +1,43 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected Semicolon.
+   ╭─[input.sol:8:26]
+   │
+ 8 │         return ext.sample{ value: 10, gas: 20 }().value;
+   │                          ───────────────┬──────────────  
+   │                                         ╰──────────────── Error occurred here.
+───╯
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface External {
+   │           ────┬───  
+   │               ╰───── def: 1
+ 2 │     struct Data { uint value; }
+   │            ──┬─        ──┬──  
+   │              ╰──────────────── def: 2
+   │                          │    
+   │                          ╰──── def: 3
+ 3 │     function sample() external payable returns (Data memory);
+   │              ───┬──                             ──┬─  
+   │                 ╰───────────────────────────────────── def: 4
+   │                                                   │   
+   │                                                   ╰─── ref: 2
+   │ 
+ 6 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 5
+ 7 │     function test(External ext) public returns (uint) {
+   │              ──┬─ ────┬─── ─┬─  
+   │                ╰──────────────── def: 6
+   │                       │     │   
+   │                       ╰───────── ref: 1
+   │                             │   
+   │                             ╰─── def: 7
+ 8 │         return ext.sample{ value: 10, gas: 20 }().value;
+   │                ─┬─ ───┬──  
+   │                 ╰────────── ref: 7
+   │                       │    
+   │                       ╰──── ref: 4
+───╯

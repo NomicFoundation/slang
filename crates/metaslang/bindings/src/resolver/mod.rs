@@ -129,6 +129,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
             return;
         }
         self.mark_down_aliases();
+        self.mark_down_built_ins();
         self.rank_c3_methods();
         self.results.sort_by(|a, b| b.score.total_cmp(&a.score));
     }
@@ -153,6 +154,14 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                 // result if we only have multiple aliases as possible
                 // definitions
                 result.score += (result.len() - min_len) as f32 / (1 + max_len - min_len) as f32;
+            }
+        }
+    }
+
+    fn mark_down_built_ins(&mut self) {
+        for result in &mut self.results {
+            if result.definition.get_file().is_system() {
+                result.score -= 200.0;
             }
         }
     }
@@ -184,9 +193,12 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         let caller_context_index = mro.iter().position(|x| x == caller_context);
         let super_call = self.reference.has_tag(Tag::Super);
 
-        // mark up methods tagged C3 according to the computed linearisation
+        // Mark up user methods tagged C3 according to the computed linearisation.
+        // Because only contract functions are marked with the C3 tag, this has
+        // the added benefit of prioritizing them over globally defined
+        // functions.
         for result in &mut self.results {
-            if result.definition.has_tag(Tag::C3) {
+            if result.definition.has_tag(Tag::C3) && result.definition.get_file().is_user() {
                 let definition_parents = result.definition.resolve_parents();
                 let Some(definition_context) = definition_parents.first() else {
                     // this should not normally happen: the definition is tagged
