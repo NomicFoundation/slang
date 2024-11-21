@@ -47,6 +47,7 @@ pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
 #[derive(Copy, Clone)]
 pub(crate) struct ResolveOptions {
     pub rank_results: bool,
+    pub apply_c3_linearisation: bool,
     pub use_extension_hooks: bool,
     pub recursive_extension_scopes: bool,
 }
@@ -54,7 +55,8 @@ pub(crate) struct ResolveOptions {
 impl ResolveOptions {
     pub fn reentrant_safe() -> Self {
         Self {
-            rank_results: false,
+            rank_results: true,
+            apply_c3_linearisation: false,
             use_extension_hooks: false,
             recursive_extension_scopes: false,
         }
@@ -65,6 +67,7 @@ impl Default for ResolveOptions {
     fn default() -> Self {
         Self {
             rank_results: true,
+            apply_c3_linearisation: true,
             use_extension_hooks: true,
             recursive_extension_scopes: false,
         }
@@ -130,9 +133,16 @@ impl<KT: KindTypes + 'static> ForwardCandidates<Edge, Edge, GraphEdges, Cancella
         }));
 
         if self.owner.is_extension_hook(node) {
-            // println!("injecting edges to extensions at hook {node:?}");
+            // println!(
+            //     "injecting edges to extensions at hook {node}",
+            //     node = self.owner.stack_graph[node].id().local_id()
+            // );
             let mut extension_edges = Vec::new();
             for extension in self.extensions {
+                // println!(
+                //     "- {extension}",
+                //     extension = self.owner.stack_graph[*extension].id().local_id()
+                // );
                 extension_edges.push(Edge {
                     source: node,
                     sink: *extension,
@@ -228,22 +238,59 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
     fn resolve(&mut self) {
         let reference_paths = if self.options.use_extension_hooks {
+
+            // let debug = self.reference.get_cursor().unwrap().node().unparse() == "addXXX";
+            // if debug {
+            //     println!(
+            //         "Resolving {r} [{idx}] with extensions",
+            //         r = self.reference,
+            //         idx = self.owner.stack_graph[self.reference.handle]
+            //             .id()
+            //             .local_id()
+            //             + 2
+            //     );
+            // }
+
             let ref_parents = self.reference.resolve_parents();
             let mut extensions = HashSet::new();
             for parent in &ref_parents {
+
+                // if debug {
+                //     println!("  Found parent {parent}");
+                // }
+
                 if let Some(extension_scope) = parent.get_extension_scope() {
+
+                    // if debug {
+                    //     println!(
+                    //         "  - adding extension [{scope}]",
+                    //         scope = self.owner.stack_graph[extension_scope].id().local_id() + 2
+                    //     );
+                    // }
+
                     extensions.insert(extension_scope);
                 }
 
                 if self.options.recursive_extension_scopes {
                     let grand_parents = Self::resolve_parents_all(parent.clone());
                     for grand_parent in grand_parents.values().flatten() {
+
+                        // if debug {
+                        //     println!("    Found grandparent {grand_parent}");
+                        // }
+
                         if let Some(extension_scope) = grand_parent.get_extension_scope() {
                             extensions.insert(extension_scope);
+
+                            // if debug {
+                            //     println!(
+                            //         "    - adding parent extension [{scope}]",
+                            //         scope = self.owner.stack_graph[extension_scope].id().local_id() + 2
+                            //     );
+                            // }
                         }
                     }
                 }
-
             }
             let extensions = extensions.drain().collect::<Vec<_>>();
 
@@ -319,7 +366,9 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         }
         self.mark_down_aliases();
         self.mark_down_built_ins();
-        self.rank_c3_methods();
+        if self.options.apply_c3_linearisation {
+            self.rank_c3_methods();
+        }
         self.results.sort_by(|a, b| b.score.total_cmp(&a.score));
     }
 
