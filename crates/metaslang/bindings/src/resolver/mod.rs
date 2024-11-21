@@ -41,6 +41,34 @@ pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
     reference: Reference<'a, KT>,
     partials: PartialPaths,
     results: Vec<ResolvedPath<'a, KT>>,
+    options: ResolveOptions,
+}
+
+#[derive(Copy, Clone)]
+pub(crate) struct ResolveOptions {
+    pub rank_results: bool,
+    pub use_extension_hooks: bool,
+    pub recursive_extension_scopes: bool,
+}
+
+impl ResolveOptions {
+    pub fn reentrant_safe() -> Self {
+        Self {
+            rank_results: false,
+            use_extension_hooks: false,
+            recursive_extension_scopes: false,
+        }
+    }
+}
+
+impl Default for ResolveOptions {
+    fn default() -> Self {
+        Self {
+            rank_results: true,
+            use_extension_hooks: true,
+            recursive_extension_scopes: false,
+        }
+    }
 }
 
 struct ResolvedPath<'a, KT: KindTypes + 'static> {
@@ -125,12 +153,13 @@ impl<KT: KindTypes + 'static> ForwardCandidates<Edge, Edge, GraphEdges, Cancella
 }
 
 impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
-    pub fn build_for(reference: &Reference<'a, KT>) -> Self {
+    pub fn build_for(reference: &Reference<'a, KT>, options: ResolveOptions) -> Self {
         let mut resolver = Self {
             owner: reference.owner,
             reference: reference.clone(),
             partials: PartialPaths::new(),
             results: Vec::new(),
+            options,
         };
         resolver.resolve();
         resolver
@@ -198,21 +227,32 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
     }
 
     fn resolve(&mut self) {
-        let ref_parents = self.reference.resolve_parents();
-        let mut extensions = Vec::new();
-        for parent in &ref_parents {
-            if let Some(extension_scope) = parent.get_extension_scope() {
-                // println!(
-                //     "Parent {parent} of {reference} has extension {extension_scope:?}",
-                //     reference = self.reference
-                // );
-                extensions.push(extension_scope);
-            }
-        }
+        let reference_paths = if self.options.use_extension_hooks {
+            let ref_parents = self.reference.resolve_parents();
+            let mut extensions = HashSet::new();
+            for parent in &ref_parents {
+                if let Some(extension_scope) = parent.get_extension_scope() {
+                    extensions.insert(extension_scope);
+                }
 
-        let reference_paths = self
-            .find_paths_with_extensions(&extensions)
-            .expect("Should never be cancelled");
+                if self.options.recursive_extension_scopes {
+                    let grand_parents = Self::resolve_parents_all(parent.clone());
+                    for grand_parent in grand_parents.values().flatten() {
+                        if let Some(extension_scope) = grand_parent.get_extension_scope() {
+                            extensions.insert(extension_scope);
+                        }
+                    }
+                }
+
+            }
+            let extensions = extensions.drain().collect::<Vec<_>>();
+
+            self.find_paths_with_extensions(&extensions)
+                .expect("Should never be cancelled")
+        } else {
+            self.find_all_complete_partial_paths()
+                .expect("Should never be cancelled")
+        };
 
         let mut added_nodes = HashSet::new();
         for reference_path in &reference_paths {
@@ -249,7 +289,9 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
     pub fn first(&mut self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
         if self.results.len() > 1 {
-            self.rank_results();
+            if self.options.rank_results {
+                self.rank_results();
+            }
 
             let top_score = self.results[0].score;
             let mut results = self

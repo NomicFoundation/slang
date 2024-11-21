@@ -11,7 +11,7 @@ use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
-use resolver::Resolver;
+use resolver::{ResolveOptions, Resolver};
 use semver::Version;
 use stack_graphs::graph::StackGraph;
 
@@ -55,6 +55,7 @@ pub struct Bindings<KT: KindTypes + 'static> {
     cursor_to_references: HashMap<CursorID, GraphHandle>,
     context: Option<GraphHandle>,
     extension_hooks: HashSet<GraphHandle>,
+    resolve_options: ResolveOptions,
 }
 
 pub enum FileDescriptor {
@@ -139,7 +140,12 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             cursor_to_references: HashMap::new(),
             context: None,
             extension_hooks: HashSet::new(),
+            resolve_options: ResolveOptions::default(),
         }
+    }
+
+    pub fn use_recursive_extension_scopes(&mut self) {
+        self.resolve_options.recursive_extension_scopes = true;
     }
 
     pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
@@ -260,10 +266,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
                 } else {
                     // TODO: what should we do if the parent reference
                     // cannot be resolved at this point?
-                    self.to_reference(*handle)
-                        .unwrap()
-                        .jump_to_definition()
-                        .ok()
+                    self.to_reference(*handle).unwrap().simple_resolve().ok()
                 }
             })
             .collect()
@@ -487,11 +490,18 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     }
 
     pub fn jump_to_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
-        Resolver::build_for(self).first()
+        Resolver::build_for(self, self.owner.resolve_options).first()
     }
 
     pub fn definitions(&self) -> Vec<Definition<'a, KT>> {
-        Resolver::build_for(self).all()
+        Resolver::build_for(self, self.owner.resolve_options).all()
+    }
+
+    pub(crate) fn simple_resolve(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
+        Resolver::build_for(
+            self,
+            ResolveOptions::reentrant_safe(),
+        ).first()
     }
 
     pub(crate) fn has_tag(&self, tag: Tag) -> bool {
