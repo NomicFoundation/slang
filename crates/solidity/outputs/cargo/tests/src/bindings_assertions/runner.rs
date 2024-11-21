@@ -30,6 +30,9 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()> {
     let parser = Parser::create(version.clone())?;
     let mut bindings = create_bindings(version)?;
+    if *version < Version::parse("0.7.0").unwrap() {
+        bindings.use_recursive_extension_scopes();
+    }
 
     let mut assertions = Assertions::new();
     let mut skipped = 0;
