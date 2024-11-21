@@ -75,6 +75,11 @@ fn public_getters() -> Result<()> {
 }
 
 #[test]
+fn public_inherited_getter() -> Result<()> {
+    run("contracts", "public_inherited_getter")
+}
+
+#[test]
 fn public_mapping_getters() -> Result<()> {
     run("contracts", "public_mapping_getters")
 }

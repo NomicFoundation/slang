@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract RegistrarAccess {
+    │          ───────┬───────  
+    │                 ╰───────── def: 1
+  2 │     Root root;
+    │     ──┬─ ──┬─  
+    │       ╰──────── ref: 4
+    │            │   
+    │            ╰─── def: 2
+  3 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 3
+  4 │         root.controllers;
+    │         ──┬─ ─────┬─────  
+    │           ╰─────────────── ref: 2
+    │                   │       
+    │                   ╰─────── ref: 6
+    │ 
+  8 │ contract Root is Controllable {}
+    │          ──┬─    ──────┬─────  
+    │            ╰─────────────────── def: 4
+    │                        │       
+    │                        ╰─────── ref: 5
+    │ 
+ 10 │ contract Controllable {
+    │          ──────┬─────  
+    │                ╰─────── def: 5
+ 11 │     mapping (address => bool) public controllers;
+    │                                      ─────┬─────  
+    │                                           ╰─────── def: 6
+────╯

@@ -374,7 +374,7 @@ inherit .star_extension
   ;; members, such as functions and public variables.
   node member
   attr (member) pop_symbol = "."
-  edge member -> @contract.members
+  edge member -> @contract.instance
 
   node type_def
   attr (type_def) pop_symbol = "@typeof"
