@@ -815,6 +815,16 @@ inherit .star_extension
   edge @library.def -> type
   edge type -> type_library_type
   edge type_library_type -> @library.lexical_scope
+
+  ; Define `this` inside libraries to resolve to a special built-in placeholder
+  node this
+  attr (this) pop_symbol = "this"
+  node this_built_in
+  attr (this_built_in) push_symbol = "%this"
+
+  edge @library.lexical_scope -> this
+  edge this -> this_built_in
+  edge this_built_in -> @library.parent_scope
 }
 
 @library [LibraryDefinition [LibraryMembers

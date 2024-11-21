@@ -7041,6 +7041,7 @@ codegen_language_macros::compile!(Language(
         BuiltInVariable(definition = "$MessageType msg"),
         BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
         BuiltInVariable(definition = "$StringType $string"),
-        BuiltInVariable(definition = "$TransactionType tx")
+        BuiltInVariable(definition = "$TransactionType tx"),
+        BuiltInVariable(definition = "$ThisType $this")
     ]
 ));

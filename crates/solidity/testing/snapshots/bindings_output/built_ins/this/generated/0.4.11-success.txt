@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── def: 1
+ 2 │     function test() internal returns (uint) {
+   │              ──┬─  
+   │                ╰─── def: 2
+ 3 │         return address(this).balance;
+   │                        ──┬─  ───┬───  
+   │                          ╰──────────── ref: built-in
+   │                                 │     
+   │                                 ╰───── ref: built-in
+───╯
