@@ -1,13 +1,5 @@
-//! WARNING:
-//! The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
-//! For the function below: `iai::benchmarks::list_contracts`
-//! Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
-
 #![allow(clippy::exit)]
 #![allow(clippy::needless_pass_by_value)]
-
-mod dataset;
-mod tests;
 
 use std::hint::black_box;
 
@@ -17,20 +9,30 @@ use iai_callgrind::{
 };
 use slang_solidity::bindings::Bindings;
 use slang_solidity::parser::ParseOutput;
+use solidity_testing_perf::dataset::SourceFile;
+use solidity_testing_perf::tests::definitions::Dependencies;
+use solidity_testing_perf::tests::parser::ParsedFile;
 
-use crate::dataset::SourceFile;
-use crate::tests::definitions::Dependencies;
-use crate::tests::parser::ParsedFile;
+mod __dependencies_used_in_lib__ {
+    use {infra_utils as _, metaslang_bindings as _, semver as _};
+}
 
 macro_rules! define_benchmark {
     ($name:ident, $payload:ty) => {
-        #[library_benchmark(setup = tests::$name::setup)]
+        #[library_benchmark(setup = solidity_testing_perf::tests::$name::setup)]
         fn $name(payload: $payload) {
-            black_box(tests::$name::run(payload));
+            black_box(solidity_testing_perf::tests::$name::run(payload));
         }
     };
 }
 
+/*
+ * WARNING:
+ * The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
+ * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
+ *
+ * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
+ */
 define_benchmark!(parser, Vec<SourceFile>);
 define_benchmark!(cursor, Vec<ParsedFile>);
 define_benchmark!(query, Vec<ParsedFile>);
@@ -41,6 +43,7 @@ define_benchmark!(references, Bindings);
 library_benchmark_group!(
     name = benchmarks;
 
+    // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
     benchmarks = parser, cursor, query, init_bindings, definitions, references
 );
 
