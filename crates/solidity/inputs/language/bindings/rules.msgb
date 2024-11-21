@@ -311,10 +311,10 @@ inherit .star_extension
   if (version-matches "< 0.7.0") {
     ; `using` directives are inherited in Solidity < 0.7.0, so connect them to
     ; our own extensions scope
-    node extensions_push_guard
-    attr (extensions_push_guard) push_symbol = "@extensions"
-    edge heir.extensions -> extensions_push_guard
-    edge extensions_push_guard -> @type_name.push_begin
+    ; node extensions_push_guard
+    ; attr (extensions_push_guard) push_symbol = "@extensions"
+    ; edge heir.extensions -> extensions_push_guard
+    ; edge extensions_push_guard -> @type_name.push_begin
   }
 }
 
@@ -444,10 +444,10 @@ inherit .star_extension
   if (version-matches "< 0.7.0") {
     ; Expose extensions through an `@extensions` guard on Solidity < 0.7.0 so
     ; that they can be accessed from sub contract extension scopes
-    node extensions_guard
-    attr (extensions_guard) pop_symbol = "@extensions"
-    edge @contract.def -> extensions_guard
-    edge extensions_guard -> @contract.extensions
+    ; node extensions_guard
+    ; attr (extensions_guard) pop_symbol = "@extensions"
+    ; edge @contract.def -> extensions_guard
+    ; edge extensions_guard -> @contract.extensions
 
     ; Since using directives are inherited, we need to *always* connect the push
     ; extensions to the extended scope, regardless of whether this contract
