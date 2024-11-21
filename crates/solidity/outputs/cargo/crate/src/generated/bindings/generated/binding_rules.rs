@@ -79,7 +79,11 @@ inherit .star_extension
 
   ; We may jump to scope here to resolve using the extensions scope provided by
   ; contract/libraries that contain `using` directives
-  edge @source_unit.lexical_scope -> JUMP_TO_SCOPE_NODE
+  ; edge @source_unit.lexical_scope -> JUMP_TO_SCOPE_NODE
+
+  ; This is used to indicate the resolution algorithm that here's where it
+  ; should inject any possible extension scopes
+  attr (@source_unit.lexical_scope) extension_hook
 
   ; Provide a default star extension sink node that gets inherited. This is
   ; connected to from expressions, and those can potentially happen anywhere.
@@ -356,6 +360,7 @@ inherit .star_extension
 
   attr (@contract.def) node_definition = @name
   attr (@contract.def) definiens_node = @contract
+  attr (@contract.def) extension_scope = @contract.extensions
 
   edge @contract.lexical_scope -> @contract.instance
 
@@ -421,7 +426,10 @@ inherit .star_extension
   attr (push_name) push_symbol = (source-text @name)
   edge call -> push_typeof
   edge push_typeof -> push_name
-  edge push_name -> JUMP_TO_SCOPE_NODE
+  node hook
+  attr (hook) extension_hook
+  edge push_name -> hook
+  ; edge push_name -> JUMP_TO_SCOPE_NODE
 
   if (version-matches "< 0.5.0") {
     ; For Solidity < 0.5.0 `this` also acts like an `address`
@@ -449,7 +457,7 @@ inherit .star_extension
     ; Since using directives are inherited, we need to *always* connect the push
     ; extensions to the extended scope, regardless of whether this contract
     ; contains any `using` directive.
-    edge @contract.extended_scope -> @contract.push_extensions
+    ; edge @contract.extended_scope -> @contract.push_extensions
 
     ; For Solidity < 0.7.0 using directives are inherited, so we need to connect
     ; always For newer versions, this connection only happens when there is a
@@ -570,7 +578,7 @@ inherit .star_extension
   ; Connect the extensions push path (this can happen multiple times if there
   ; are multiple `using` directives in the contract, but that's allowed by the
   ; graph builder).
-  edge @contract.extended_scope -> @contract.push_extensions
+  ; edge @contract.extended_scope -> @contract.push_extensions
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -708,7 +716,10 @@ inherit .star_extension
   attr (push_name) push_symbol = (source-text @name)
   edge call -> push_typeof
   edge push_typeof -> push_name
-  edge push_name -> JUMP_TO_SCOPE_NODE
+  node hook
+  attr (hook) extension_hook
+  edge push_name -> hook
+  ; edge push_name -> JUMP_TO_SCOPE_NODE
 
   ;; "namespace" like access path
   node ns_member
@@ -783,8 +794,11 @@ inherit .star_extension
 
   attr (@library.def) node_definition = @name
   attr (@library.def) definiens_node = @library
+  attr (@library.def) extension_scope = @library.extensions
 
   edge @library.lexical_scope -> @library.ns
+
+  let @library.enclosing_def = @library.def
 
   node member
   attr (member) pop_symbol = "."
@@ -850,7 +864,7 @@ inherit .star_extension
   edge @library.extensions -> @using.def
 
   ; Connect the extensions push path
-  edge @library.extended_scope -> @library.push_extensions
+  ; edge @library.extended_scope -> @library.push_extensions
 }
 
 @library [LibraryDefinition [LibraryMembers [ContractMember
@@ -886,17 +900,17 @@ inherit .star_extension
   ; Now we define the path to push the .extensions scope into the scope stack.
   ; We connect this to the extended scope only when there are extensions in the
   ; contract/library.
-  node @contract_or_library.push_extensions
-  attr (@contract_or_library.push_extensions) push_scoped_symbol = "@extend"
-  attr (@contract_or_library.push_extensions) scope = @contract_or_library.extensions
-  node drop_scopes
-  attr (drop_scopes) type = "drop_scopes"
-  node pop_extensions
-  attr (pop_extensions) pop_scoped_symbol = "@extend"
+  ; node @contract_or_library.push_extensions
+  ; attr (@contract_or_library.push_extensions) push_scoped_symbol = "@extend"
+  ; attr (@contract_or_library.push_extensions) scope = @contract_or_library.extensions
+  ; node drop_scopes
+  ; attr (drop_scopes) type = "drop_scopes"
+  ; node pop_extensions
+  ; attr (pop_extensions) pop_scoped_symbol = "@extend"
 
-  edge @contract_or_library.push_extensions -> drop_scopes
-  edge drop_scopes -> pop_extensions
-  edge pop_extensions -> @contract_or_library.lexical_scope
+  ; edge @contract_or_library.push_extensions -> drop_scopes
+  ; edge drop_scopes -> pop_extensions
+  ; edge pop_extensions -> @contract_or_library.lexical_scope
 }
 
 
