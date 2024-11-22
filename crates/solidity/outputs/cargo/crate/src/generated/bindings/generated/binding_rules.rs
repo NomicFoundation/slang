@@ -861,6 +861,7 @@ inherit .star_extension
 ]] {
   edge @library.modifiers -> @modifier.def
   edge @modifier.lexical_scope -> @library.lexical_scope
+  edge @modifier.extended_scope -> @library.extended_scope
 }
 
 @library [LibraryDefinition [LibraryMembers

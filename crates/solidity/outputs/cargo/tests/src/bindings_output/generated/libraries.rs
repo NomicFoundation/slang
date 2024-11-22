@@ -15,6 +15,11 @@ fn modifiers() -> Result<()> {
 }
 
 #[test]
+fn modifiers_scope() -> Result<()> {
+    run("libraries", "modifiers_scope")
+}
+
+#[test]
 fn propagate_dynamic_scope() -> Result<()> {
     run("libraries", "propagate_dynamic_scope")
 }
