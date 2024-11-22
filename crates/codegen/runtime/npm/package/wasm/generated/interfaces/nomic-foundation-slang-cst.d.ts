@@ -19,13 +19,22 @@ export declare enum NonterminalKind {
   Stub3 = "Stub3",
 }
 export declare enum TerminalKind {
+  /**
+   * Built-in:
+   */
   Unrecognized = "Unrecognized",
   Missing = "Missing",
+  /**
+   * Generated:
+   */
   Stub1 = "Stub1",
   Stub2 = "Stub2",
   Stub3 = "Stub3",
 }
 export declare enum EdgeLabel {
+  /**
+   * Built-in:
+   */
   Item = "Item",
   Variant = "Variant",
   Separator = "Separator",
@@ -34,6 +43,9 @@ export declare enum EdgeLabel {
   RightOperand = "RightOperand",
   LeadingTrivia = "LeadingTrivia",
   TrailingTrivia = "TrailingTrivia",
+  /**
+   * Generated:
+   */
   Stub1 = "Stub1",
   Stub2 = "Stub2",
   Stub3 = "Stub3",

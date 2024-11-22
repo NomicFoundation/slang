@@ -29,8 +29,14 @@ export declare enum NonterminalKind {
   TreeNodeChildren = "TreeNodeChildren",
 }
 export declare enum TerminalKind {
+  /**
+   * Built-in:
+   */
   Unrecognized = "Unrecognized",
   Missing = "Missing",
+  /**
+   * Generated:
+   */
   Bang = "Bang",
   CloseBracket = "CloseBracket",
   DelimitedIdentifier = "DelimitedIdentifier",
@@ -47,6 +53,9 @@ export declare enum TerminalKind {
   Whitespace = "Whitespace",
 }
 export declare enum EdgeLabel {
+  /**
+   * Built-in:
+   */
   Item = "Item",
   Variant = "Variant",
   Separator = "Separator",
@@ -55,6 +64,9 @@ export declare enum EdgeLabel {
   RightOperand = "RightOperand",
   LeadingTrivia = "LeadingTrivia",
   TrailingTrivia = "TrailingTrivia",
+  /**
+   * Generated:
+   */
   CloseBracket = "CloseBracket",
   Keyword = "Keyword",
   Member = "Member",

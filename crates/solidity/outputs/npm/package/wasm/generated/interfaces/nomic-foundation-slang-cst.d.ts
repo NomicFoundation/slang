@@ -233,8 +233,14 @@ export declare enum NonterminalKind {
   YulVariableNames = "YulVariableNames",
 }
 export declare enum TerminalKind {
+  /**
+   * Built-in:
+   */
   Unrecognized = "Unrecognized",
   Missing = "Missing",
+  /**
+   * Generated:
+   */
   AbicoderKeyword = "AbicoderKeyword",
   AbstractKeyword = "AbstractKeyword",
   AddressKeyword = "AddressKeyword",
@@ -612,6 +618,9 @@ export declare enum TerminalKind {
   YulYearsKeyword = "YulYearsKeyword",
 }
 export declare enum EdgeLabel {
+  /**
+   * Built-in:
+   */
   Item = "Item",
   Variant = "Variant",
   Separator = "Separator",
@@ -620,6 +629,9 @@ export declare enum EdgeLabel {
   RightOperand = "RightOperand",
   LeadingTrivia = "LeadingTrivia",
   TrailingTrivia = "TrailingTrivia",
+  /**
+   * Generated:
+   */
   AbicoderKeyword = "AbicoderKeyword",
   AbstractKeyword = "AbstractKeyword",
   AddressKeyword = "AddressKeyword",
