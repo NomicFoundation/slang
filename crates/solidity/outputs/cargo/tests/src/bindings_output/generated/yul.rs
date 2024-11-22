@@ -10,6 +10,11 @@ fn conditionals() -> Result<()> {
 }
 
 #[test]
+fn constant_access_from_functions() -> Result<()> {
+    run("yul", "constant_access_from_functions")
+}
+
+#[test]
 fn functions() -> Result<()> {
     run("yul", "functions")
 }

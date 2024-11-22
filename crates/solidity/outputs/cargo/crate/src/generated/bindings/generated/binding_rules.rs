@@ -2800,6 +2800,38 @@ inherit .star_extension
   ;; parameters) are functions (ie. the body of the function doesn't have access
   ;; to any outside variables)
   edge @fundef.lexical_scope -> @block.function_defs
+  ; Exception: but outside constants *are* available, so we provide a guarded
+  ; access to the parent lexical scope. This guard will be popped to link to
+  ; available constants.
+  node yul_function_guard
+  attr (yul_function_guard) push_symbol = "@in_yul_function"
+  edge @fundef.lexical_scope -> yul_function_guard
+  edge yul_function_guard -> @block.lexical_scope
+}
+
+;; Constants need to be available inside Yul functions. This is an exception
+;; since no other external identifiers are, so the path is guarded. We create a
+;; scope in the source unit, contracts and libraries, and guard it from the
+;; lexical scope, so we can link constant definitions here. See the dual path in
+;; the rule above.
+@constant_container ([SourceUnit] | [ContractDefinition] | [LibraryDefinition]) {
+  node @constant_container.yul_functions_guarded_scope
+  attr (@constant_container.yul_functions_guarded_scope) pop_symbol = "@in_yul_function"
+  edge @constant_container.lexical_scope -> @constant_container.yul_functions_guarded_scope
+}
+
+;; Make top-level constants available inside Yul functions
+@source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @constant [ConstantDefinition]]]] {
+  edge @source_unit.yul_functions_guarded_scope -> @constant.def
+}
+
+;; Ditto for contracts, interfaces and libraries
+@contract [_ members: [_ [ContractMember
+    @constant [StateVariableDefinition
+        [StateVariableAttributes [StateVariableAttribute [ConstantKeyword]]]
+    ]
+]]] {
+  edge @contract.yul_functions_guarded_scope -> @constant.def
 }
 
 @fundef [YulFunctionDefinition
