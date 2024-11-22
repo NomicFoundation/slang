@@ -14,7 +14,7 @@ pub struct KindsModel {
     trivia_scanner_names: BTreeSet<Identifier>,
     /// Defines `EdgeLabel` enum variants.
     labels: BTreeSet<Identifier>,
-    /// Built-in labels for edges.
+    /// Predefined labels for edges.
     predefined_labels: &'static [&'static str],
     // Defines the `LexicalContext(Type)` enum and type-level variants.
     lexical_contexts: BTreeSet<Identifier>,
