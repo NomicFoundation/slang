@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
 use codegen_language_definition::model::{
-    BuiltInLabel, EnumItem, EnumVariant, Field, FragmentItem, Identifier, Item, KeywordDefinition,
-    KeywordItem, KeywordValue, Language, OperatorModel, PrecedenceExpression, PrecedenceItem,
-    PrecedenceOperator, PrimaryExpression, RepeatedItem, Scanner, SeparatedItem, StructItem,
-    TokenDefinition, TokenItem, TriviaItem, VersionSpecifier,
+    EnumItem, EnumVariant, Field, FragmentItem, Identifier, Item, KeywordDefinition, KeywordItem,
+    KeywordValue, Language, OperatorModel, PrecedenceExpression, PrecedenceItem,
+    PrecedenceOperator, PredefinedLabel, PrimaryExpression, RepeatedItem, Scanner, SeparatedItem,
+    StructItem, TokenDefinition, TokenItem, TriviaItem, VersionSpecifier,
 };
 use indexmap::IndexMap;
 use inflector::Inflector;
@@ -128,7 +128,7 @@ impl Builder {
 
         let variants = variants.iter().map(|EnumVariant { reference, enabled }| {
             Value::new(
-                Self::build_ref(Some(BuiltInLabel::Variant.as_ref()), reference),
+                Self::build_ref(Some(PredefinedLabel::Variant.as_ref()), reference),
                 Self::build_enabled_comment(enabled),
             )
         });
@@ -151,7 +151,7 @@ impl Builder {
 
         self.add_entry(name, Terminal::No, Inlined::No);
 
-        let label = BuiltInLabel::Item.as_ref();
+        let label = PredefinedLabel::Item.as_ref();
         let expression = if allow_empty.unwrap_or_default() {
             Expression::new_zero_or_more(Self::build_ref(Some(label), reference).into())
         } else {
@@ -178,11 +178,11 @@ impl Builder {
         self.add_entry(name, Terminal::No, Inlined::No);
 
         let mut expression = Expression::new_sequence(vec![
-            Self::build_ref(Some(BuiltInLabel::Item.as_ref()), reference),
+            Self::build_ref(Some(PredefinedLabel::Item.as_ref()), reference),
             Expression::new_zero_or_more(
                 Expression::new_sequence(vec![
-                    Self::build_ref(Some(BuiltInLabel::Separator.as_ref()), separator),
-                    Self::build_ref(Some(BuiltInLabel::Item.as_ref()), reference),
+                    Self::build_ref(Some(PredefinedLabel::Separator.as_ref()), separator),
+                    Self::build_ref(Some(PredefinedLabel::Item.as_ref()), reference),
                 ])
                 .into(),
             ),
@@ -216,7 +216,7 @@ impl Builder {
             let PrecedenceExpression { name, operators } = precedence_expression.as_ref();
 
             values.push(Value::new(
-                Self::build_ref(Some(BuiltInLabel::Variant.as_ref()), name),
+                Self::build_ref(Some(PredefinedLabel::Variant.as_ref()), name),
                 None,
             ));
 
@@ -231,7 +231,7 @@ impl Builder {
             let PrimaryExpression { reference, enabled } = primary_expression;
 
             values.push(Value::new(
-                Self::build_ref(Some(BuiltInLabel::Variant.as_ref()), reference),
+                Self::build_ref(Some(PredefinedLabel::Variant.as_ref()), reference),
                 Self::build_enabled_comment(enabled),
             ));
         }
@@ -265,7 +265,7 @@ impl Builder {
                 leading_comments.push("Prefix unary operator".to_string());
 
                 values.push(Value::new(
-                    Self::build_ref(Some(BuiltInLabel::Operand.as_ref()), base_name),
+                    Self::build_ref(Some(PredefinedLabel::Operand.as_ref()), base_name),
                     None,
                 ));
             }
@@ -275,7 +275,7 @@ impl Builder {
                 values.insert(
                     0,
                     Value::new(
-                        Self::build_ref(Some(BuiltInLabel::Operand.as_ref()), base_name),
+                        Self::build_ref(Some(PredefinedLabel::Operand.as_ref()), base_name),
                         None,
                     ),
                 );
@@ -286,12 +286,12 @@ impl Builder {
                 values.insert(
                     0,
                     Value::new(
-                        Self::build_ref(Some(BuiltInLabel::LeftOperand.as_ref()), base_name),
+                        Self::build_ref(Some(PredefinedLabel::LeftOperand.as_ref()), base_name),
                         None,
                     ),
                 );
                 values.push(Value::new(
-                    Self::build_ref(Some(BuiltInLabel::RightOperand.as_ref()), base_name),
+                    Self::build_ref(Some(PredefinedLabel::RightOperand.as_ref()), base_name),
                     None,
                 ));
             }
@@ -301,12 +301,12 @@ impl Builder {
                 values.insert(
                     0,
                     Value::new(
-                        Self::build_ref(Some(BuiltInLabel::LeftOperand.as_ref()), base_name),
+                        Self::build_ref(Some(PredefinedLabel::LeftOperand.as_ref()), base_name),
                         None,
                     ),
                 );
                 values.push(Value::new(
-                    Self::build_ref(Some(BuiltInLabel::RightOperand.as_ref()), base_name),
+                    Self::build_ref(Some(PredefinedLabel::RightOperand.as_ref()), base_name),
                     None,
                 ));
             }

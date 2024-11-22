@@ -1,4 +1,4 @@
-use codegen_language_definition::model::{self, BuiltInLabel};
+use codegen_language_definition::model::{self, PredefinedLabel};
 use indexmap::{IndexMap, IndexSet};
 use serde::Serialize;
 
@@ -208,7 +208,7 @@ impl AstModel {
         base_name: &model::Identifier,
         expression: &model::PrecedenceExpression,
     ) {
-        let operand = |label: BuiltInLabel| Field {
+        let operand = |label: PredefinedLabel| Field {
             label: label.as_ref().into(),
             r#type: Some(base_name.clone()),
             is_optional: false,
@@ -224,17 +224,17 @@ impl AstModel {
         match operator.model {
             model::OperatorModel::Prefix => {
                 fields.extend(self.convert_fields(&operator.fields));
-                fields.push(operand(BuiltInLabel::Operand));
+                fields.push(operand(PredefinedLabel::Operand));
             }
             model::OperatorModel::Postfix => {
-                fields.push(operand(BuiltInLabel::Operand));
+                fields.push(operand(PredefinedLabel::Operand));
                 fields.extend(self.convert_fields(&operator.fields));
             }
             model::OperatorModel::BinaryLeftAssociative
             | model::OperatorModel::BinaryRightAssociative => {
-                fields.push(operand(BuiltInLabel::LeftOperand));
+                fields.push(operand(PredefinedLabel::LeftOperand));
                 fields.extend(self.convert_fields(&operator.fields));
-                fields.push(operand(BuiltInLabel::RightOperand));
+                fields.push(operand(PredefinedLabel::RightOperand));
             }
         };
 

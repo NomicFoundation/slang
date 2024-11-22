@@ -3,6 +3,7 @@ use clap::{Parser, ValueEnum};
 use infra_utils::cargo::CargoWorkspaceCommands;
 use infra_utils::commands::Command;
 use infra_utils::terminal::Terminal;
+use rayon::iter::{ParallelBridge, ParallelIterator};
 use strum::IntoEnumIterator;
 
 use crate::toolchains::mkdocs::Mkdocs;
@@ -40,7 +41,7 @@ impl OrderedCommand for CheckCommand {
         match self {
             CheckCommand::Cargo => check_cargo(),
             CheckCommand::Rustdoc => check_rustdoc(),
-            CheckCommand::Npm => check_npm()?,
+            CheckCommand::Npm => check_npm(),
             CheckCommand::Mkdocs => check_mkdocs(),
         };
 
@@ -71,12 +72,10 @@ fn check_rustdoc() {
         .run();
 }
 
-fn check_npm() -> Result<()> {
-    for package in WasmPackage::iter() {
-        package.build()?;
-    }
-
-    Ok(())
+fn check_npm() {
+    WasmPackage::iter()
+        .par_bridge()
+        .for_each(|package| package.build().unwrap());
 }
 
 fn check_mkdocs() {
