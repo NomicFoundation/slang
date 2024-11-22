@@ -100,6 +100,11 @@ fn star() -> Result<()> {
 }
 
 #[test]
+fn star_in_library() -> Result<()> {
+    run("using", "star_in_library")
+}
+
+#[test]
 fn star_inherited() -> Result<()> {
     run("using", "star_inherited")
 }

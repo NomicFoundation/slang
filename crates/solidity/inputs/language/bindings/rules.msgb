@@ -825,6 +825,10 @@ inherit .star_extension
   edge @library.lexical_scope -> this
   edge this -> this_built_in
   edge this_built_in -> @library.parent_scope
+
+  ; This is the connection point to resolve attached functions by `using for *`
+  node @library.star_extension
+  attr (@library.star_extension) push_symbol = "@*"
 }
 
 @library [LibraryDefinition [LibraryMembers
@@ -869,6 +873,13 @@ inherit .star_extension
   edge @library.extended_scope -> @library.push_extensions
 }
 
+@library [LibraryDefinition [LibraryMembers [ContractMember
+    [UsingDirective [UsingTarget [Asterisk]]]
+]]] {
+  ; Connect the star extension node to the resolution extended scope if there is
+  ; a `using for *` directive in the library
+  edge @library.star_extension -> @library.extended_scope
+}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Extensions scope rules
