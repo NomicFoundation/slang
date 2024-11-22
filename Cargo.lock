@@ -1245,6 +1245,7 @@ dependencies = [
  "infra_utils",
  "itertools 0.13.0",
  "markdown",
+ "rayon",
  "semver",
  "serde",
  "serde_json",

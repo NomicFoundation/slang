@@ -50,7 +50,7 @@ interface cst {
 
     /// Represents the different types of relationships between nodes in the syntax tree.
     enum edge-label {
-        {%- for label in model.kinds.built_in_labels %}
+        {%- for label in model.kinds.predefined_labels %}
             {{ label | wit_case }},
         {%- endfor %}
 

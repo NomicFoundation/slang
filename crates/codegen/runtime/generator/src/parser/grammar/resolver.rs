@@ -6,7 +6,7 @@ use std::ops::Deref;
 use std::rc::Rc;
 
 use codegen_language_definition::model::{
-    self, BuiltInLabel, FieldsErrorRecovery, Identifier, Item, Language,
+    self, FieldsErrorRecovery, Identifier, Item, Language, PredefinedLabel,
 };
 use indexmap::IndexMap;
 use once_cell::sync::Lazy;
@@ -336,7 +336,7 @@ fn resolve_trivia(
             match resolve_grammar_element(&reference, ctx) {
                 GrammarElement::ScannerDefinition(parser) => {
                     // Hack: This is a sequence of a single scanner in order to emit the names
-                    ParserDefinitionNode::Sequence(vec![Labeled::with_builtin_label(
+                    ParserDefinitionNode::Sequence(vec![Labeled::with_predefined_label(
                         kind.label(),
                         ParserDefinitionNode::ScannerDefinition(parser),
                     )])
@@ -456,14 +456,17 @@ fn resolve_choice(item: model::EnumItem, ctx: &mut ResolveCtx) -> ParserDefiniti
         })
         .collect();
 
-    ParserDefinitionNode::Choice(Labeled::with_builtin_label(BuiltInLabel::Variant, variants))
-        .versioned(item.enabled)
+    ParserDefinitionNode::Choice(Labeled::with_predefined_label(
+        PredefinedLabel::Variant,
+        variants,
+    ))
+    .versioned(item.enabled)
 }
 
 fn resolve_repeated(item: model::RepeatedItem, ctx: &mut ResolveCtx) -> ParserDefinitionNode {
     let reference = Box::new(resolve_grammar_element(&item.reference, ctx).into_parser_def_node());
 
-    let repeated = Labeled::with_builtin_label(BuiltInLabel::Item, reference);
+    let repeated = Labeled::with_predefined_label(PredefinedLabel::Item, reference);
 
     if item.allow_empty.unwrap_or_default() {
         ParserDefinitionNode::ZeroOrMore(repeated).versioned(item.enabled)
@@ -477,8 +480,8 @@ fn resolve_separated(item: model::SeparatedItem, ctx: &mut ResolveCtx) -> Parser
     let separator = resolve_grammar_element(&item.separator, ctx).into_parser_def_node();
 
     let separated = ParserDefinitionNode::SeparatedBy(
-        Labeled::with_builtin_label(BuiltInLabel::Item, Box::new(reference)),
-        Labeled::with_builtin_label(BuiltInLabel::Separator, Box::new(separator)),
+        Labeled::with_predefined_label(PredefinedLabel::Item, Box::new(reference)),
+        Labeled::with_predefined_label(PredefinedLabel::Separator, Box::new(separator)),
     );
 
     if item.allow_empty.unwrap_or_default() {
@@ -507,8 +510,8 @@ fn resolve_precedence(
             "Precedence operator {item} has no primary expressions",
             item = item.name
         ),
-        _ => ParserDefinitionNode::Choice(Labeled::with_builtin_label(
-            BuiltInLabel::Variant,
+        _ => ParserDefinitionNode::Choice(Labeled::with_predefined_label(
+            PredefinedLabel::Variant,
             primaries,
         )),
     });
@@ -593,10 +596,10 @@ enum TriviaKind {
 }
 
 impl TriviaKind {
-    fn label(self) -> BuiltInLabel {
+    fn label(self) -> PredefinedLabel {
         match self {
-            TriviaKind::Leading => BuiltInLabel::LeadingTrivia,
-            TriviaKind::Trailing => BuiltInLabel::TrailingTrivia,
+            TriviaKind::Leading => PredefinedLabel::LeadingTrivia,
+            TriviaKind::Trailing => PredefinedLabel::TrailingTrivia,
         }
     }
 }
@@ -645,7 +648,7 @@ impl VersionWrapped for ParserDefinitionNode {
 trait LabeledExt<T> {
     fn anonymous(node: T) -> Self;
     fn with_ident_name(name: Identifier, node: T) -> Self;
-    fn with_builtin_label(name: BuiltInLabel, node: T) -> Self;
+    fn with_predefined_label(name: PredefinedLabel, node: T) -> Self;
 }
 
 impl<T> LabeledExt<T> for Labeled<T> {
@@ -663,7 +666,7 @@ impl<T> LabeledExt<T> for Labeled<T> {
         }
     }
 
-    fn with_builtin_label(label: BuiltInLabel, value: T) -> Self {
+    fn with_predefined_label(label: PredefinedLabel, value: T) -> Self {
         Self {
             label: label.as_ref().to_owned(),
             value,

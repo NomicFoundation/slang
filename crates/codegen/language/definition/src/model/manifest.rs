@@ -177,7 +177,7 @@ pub struct Topic {
     Clone, Copy, Debug, strum_macros::AsRefStr, strum_macros::EnumIter, strum_macros::VariantNames,
 )]
 #[strum(serialize_all = "snake_case")]
-pub enum BuiltInLabel {
+pub enum PredefinedLabel {
     Item,
     Variant,
     Separator,
