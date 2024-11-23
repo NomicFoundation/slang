@@ -1759,6 +1759,8 @@ YulBuiltInFunction = (* variant: *) YUL_ADD_KEYWORD
                    | (* variant: *) YUL_GT_KEYWORD
                    | (* variant: *) YUL_INVALID_KEYWORD
                    | (* variant: *) YUL_IS_ZERO_KEYWORD
+                   | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
+                   | (* variant: *) YUL_JUMPI_KEYWORD (* Deprecated in 0.5.0 *)
                    | (* variant: *) YUL_LOG_0_KEYWORD
                    | (* variant: *) YUL_LOG_1_KEYWORD
                    | (* variant: *) YUL_LOG_2_KEYWORD
@@ -2064,6 +2066,12 @@ YUL_INVALID_KEYWORD = "invalid";
 YUL_IS_KEYWORD = "is";
 
 YUL_IS_ZERO_KEYWORD = "iszero";
+
+(* Deprecated in 0.5.0 *)
+YUL_JUMP_KEYWORD = "jump";
+
+(* Deprecated in 0.5.0 *)
+YUL_JUMPI_KEYWORD = "jumpi";
 
 (* Introduced in 0.4.12 *)
 (* Reserved in 0.4.12 *)

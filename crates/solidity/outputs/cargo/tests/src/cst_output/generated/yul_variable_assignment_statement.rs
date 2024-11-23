@@ -175,6 +175,16 @@ fn identifier_iszero() -> Result<()> {
 }
 
 #[test]
+fn identifier_jump() -> Result<()> {
+    run("YulVariableAssignmentStatement", "identifier_jump")
+}
+
+#[test]
+fn identifier_jumpi() -> Result<()> {
+    run("YulVariableAssignmentStatement", "identifier_jumpi")
+}
+
+#[test]
 fn identifier_keccak256() -> Result<()> {
     run("YulVariableAssignmentStatement", "identifier_keccak256")
 }

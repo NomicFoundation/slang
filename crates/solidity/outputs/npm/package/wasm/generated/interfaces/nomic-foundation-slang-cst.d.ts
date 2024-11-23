@@ -508,6 +508,8 @@ export declare enum TerminalKind {
   YulInvalidKeyword = "YulInvalidKeyword",
   YulIsKeyword = "YulIsKeyword",
   YulIsZeroKeyword = "YulIsZeroKeyword",
+  YulJumpKeyword = "YulJumpKeyword",
+  YulJumpiKeyword = "YulJumpiKeyword",
   YulKeccak256Keyword = "YulKeccak256Keyword",
   YulLeaveKeyword = "YulLeaveKeyword",
   YulLetKeyword = "YulLetKeyword",

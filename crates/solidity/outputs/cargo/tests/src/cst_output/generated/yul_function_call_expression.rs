@@ -180,6 +180,16 @@ fn built_in_iszero() -> Result<()> {
 }
 
 #[test]
+fn built_in_jump() -> Result<()> {
+    run("YulFunctionCallExpression", "built_in_jump")
+}
+
+#[test]
+fn built_in_jumpi() -> Result<()> {
+    run("YulFunctionCallExpression", "built_in_jumpi")
+}
+
+#[test]
 fn built_in_keccak256() -> Result<()> {
     run("YulFunctionCallExpression", "built_in_keccak256")
 }
