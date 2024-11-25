@@ -2270,9 +2270,11 @@ inherit .lexical_scope
   edge @path.lexical_scope -> @expr.lexical_scope
 }
 
-@path [YulPath @name [YulIdentifier]] {
+@path [YulPath] {
   node @path.lexical_scope
+}
 
+@path [YulPath @name [YulIdentifier]] {
   node ref
   attr (ref) node_reference = @name
 
