@@ -16,6 +16,7 @@ pub enum ParserResult {
 impl Default for ParserResult {
     fn default() -> Self {
         Self::NoMatch(NoMatch {
+            nodes: vec![],
             expected_terminals: vec![],
         })
     }
@@ -36,11 +37,11 @@ impl ParserResult {
 
     /// Whenever a parser didn't run because it's disabled due to versioning. Shorthand for `no_match(vec![])`.
     pub fn disabled() -> Self {
-        Self::no_match(vec![])
+        Self::no_match(vec![], vec![])
     }
 
-    pub fn no_match(expected_terminals: Vec<TerminalKind>) -> Self {
-        ParserResult::NoMatch(NoMatch::new(expected_terminals))
+    pub fn no_match(nodes: Vec<Edge>, expected_terminals: Vec<TerminalKind>) -> Self {
+        ParserResult::NoMatch(NoMatch::new(nodes, expected_terminals))
     }
 
     #[must_use]
@@ -230,13 +231,18 @@ impl IncompleteMatch {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct NoMatch {
+    /// The terminals that were parsed; trivia
+    pub nodes: Vec<Edge>,
     /// Terminals that would have allowed for more progress. Collected for the purposes of error reporting.
     pub expected_terminals: Vec<TerminalKind>,
 }
 
 impl NoMatch {
-    pub fn new(expected_terminals: Vec<TerminalKind>) -> Self {
-        Self { expected_terminals }
+    pub fn new(nodes: Vec<Edge>, expected_terminals: Vec<TerminalKind>) -> Self {
+        Self {
+            nodes,
+            expected_terminals,
+        }
     }
 }
 

@@ -105,7 +105,9 @@ impl ParserResult {
                 ParseResultKind::Incomplete => {
                     ParserResult::incomplete_match(nodes, expected_terminals)
                 }
-                ParseResultKind::NoMatch => ParserResult::no_match(expected_terminals),
+                ParseResultKind::NoMatch => {
+                    ParserResult::no_match(leading_trivia, expected_terminals)
+                }
             }
         }
     }
