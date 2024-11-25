@@ -10,8 +10,6 @@ References and definitions:
    │              ──┬─  
    │                ╰─── def: 2
  3 │         return address(this).balance;
-   │                        ──┬─  ───┬───  
-   │                          ╰──────────── ref: built-in
-   │                                 │     
+   │                              ───┬───  
    │                                 ╰───── ref: built-in
 ───╯

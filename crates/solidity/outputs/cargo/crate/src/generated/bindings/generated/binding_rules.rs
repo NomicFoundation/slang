@@ -309,9 +309,6 @@ inherit .star_extension
   edge heir.ns -> ns_member
   edge ns_member -> @type_name.push_begin
 
-  ; Resolve the "super" keyword reference to the inherited type
-  edge heir.super -> @type_name.push_begin
-
   if (version-matches "< 0.7.0") {
     ; `using` directives are inherited in Solidity < 0.7.0, so connect them to
     ; our own extensions scope
@@ -405,12 +402,6 @@ inherit .star_extension
   attr (this) pop_symbol = "this"
   edge @contract.lexical_scope -> this
   edge this -> member
-
-  ; ... and resolves to the contract itself
-  node name_push
-  attr (name_push) push_symbol = (source-text @name)
-  edge this -> name_push
-  edge name_push -> @contract.lexical_scope
 
   ;; Modifiers are available as a contract type members through a special '@modifier' guard
   node modifier
@@ -530,9 +521,6 @@ inherit .star_extension
   attr (super_instance) push_symbol = "@instance"
   edge @contract.super_import -> super_instance
   edge super_instance -> @contract.super_scope
-
-  ; NOTE: The keyword "super" itself resolves to each of its parent contracts.
-  ; See the related rules in the InheritanceSpecifier section above.
 }
 
 @contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
@@ -748,9 +736,6 @@ inherit .star_extension
 @interface [InterfaceDefinition @specifier [InheritanceSpecifier]] {
   let @specifier.heir = @interface
   attr (@interface.def) parents = @specifier.parent_refs
-
-  ; Define a dummy "super" node required by the rules for InheritanceSpecifier
-  node @interface.super
 }
 
 @interface [InterfaceDefinition [InterfaceMembers
@@ -820,16 +805,6 @@ inherit .star_extension
   edge @library.def -> type
   edge type -> type_library_type
   edge type_library_type -> @library.lexical_scope
-
-  ; Define `this` inside libraries to resolve to a special built-in placeholder
-  node this
-  attr (this) pop_symbol = "this"
-  node this_built_in
-  attr (this_built_in) push_symbol = "%this"
-
-  edge @library.lexical_scope -> this
-  edge this -> this_built_in
-  edge this_built_in -> @library.parent_scope
 
   ; This is the connection point to resolve attached functions by `using for *`
   node @library.star_extension
@@ -2392,15 +2367,21 @@ inherit .star_extension
 }
 
 ;; Identifier expressions
-@expr [Expression @name (
-  variant: [Identifier] | variant: [SuperKeyword] | variant: [ThisKeyword] 
-)] {
+@expr [Expression @name [Identifier]] {
   node ref
   attr (ref) node_reference = @name
   attr (ref) parents = [@expr.enclosing_def]
 
   edge ref -> @expr.lexical_scope
   edge @expr.output -> ref
+}
+
+@expr [Expression @keyword ([ThisKeyword] | [SuperKeyword])] {
+  ; This is almost equivalent to the above rule, except it doesn't generate a reference
+  node keyword
+  attr (keyword) push_symbol = (source-text @keyword)
+  edge keyword -> @expr.lexical_scope
+  edge @expr.output -> keyword
 }
 
 ;; Member access expressions

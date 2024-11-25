@@ -60,10 +60,8 @@ References and definitions:
    │                               │   
    │                               ╰─── ref: built-in
  9 │         uint256 v10 = address(this).balance;
-   │                 ─┬─           ──┬─  ───┬───  
+   │                 ─┬─                 ───┬───  
    │                  ╰─────────────────────────── def: 12
-   │                                 │      │     
-   │                                 ╰──────────── ref: 1
    │                                        │     
    │                                        ╰───── ref: built-in
 ───╯

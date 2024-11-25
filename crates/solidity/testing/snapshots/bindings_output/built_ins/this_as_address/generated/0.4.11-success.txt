@@ -11,8 +11,6 @@ References and definitions:
    │                ╰─── def: 2
    │ 
  4 │         this.balance;
-   │         ──┬─ ───┬───  
-   │           ╰─────────── ref: 1
-   │                 │     
+   │              ───┬───  
    │                 ╰───── ref: built-in
 ───╯

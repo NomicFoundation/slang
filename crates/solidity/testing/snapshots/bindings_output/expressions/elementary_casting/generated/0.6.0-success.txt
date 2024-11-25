@@ -16,9 +16,7 @@ References and definitions:
     │                           │  
     │                           ╰── def: 3
   5 │         address(this).balance;
-    │                 ──┬─  ───┬───  
-    │                   ╰──────────── ref: 1
-    │                          │     
+    │                       ───┬───  
     │                          ╰───── ref: built-in
   6 │         payable(a).call("");
     │                 ┬  ──┬─  

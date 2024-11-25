@@ -24,8 +24,6 @@ References and definitions:
    │              ───┬───  
    │                 ╰───── def: 5
  7 │         super.in_base();
-   │         ──┬── ───┬───  
-   │           ╰──────────── ref: 3
-   │                  │     
+   │               ───┬───  
    │                  ╰───── ref: 2
 ───╯

@@ -22,9 +22,7 @@ References and definitions:
     │              ──┬──  
     │                ╰──── def: 4
   7 │         return super.total().nop();
-    │                ──┬── ──┬──   ─┬─  
-    │                  ╰──────────────── ref: 1
-    │                        │      │   
+    │                      ──┬──   ─┬─  
     │                        ╰────────── ref: 2
     │                               │   
     │                               ╰─── ref: 6

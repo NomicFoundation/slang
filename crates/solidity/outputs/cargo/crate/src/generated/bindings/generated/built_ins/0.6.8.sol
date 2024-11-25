@@ -111,5 +111,4 @@ contract $BuiltIns$ {
   uint now;
   $StringType $string;
   $TransactionType tx;
-  $ThisType $this;
 }

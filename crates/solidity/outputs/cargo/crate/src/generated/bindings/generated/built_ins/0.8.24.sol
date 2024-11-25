@@ -117,5 +117,4 @@ contract $BuiltIns$ {
   $MessageType msg;
   $StringType $string;
   $TransactionType tx;
-  $ThisType $this;
 }
