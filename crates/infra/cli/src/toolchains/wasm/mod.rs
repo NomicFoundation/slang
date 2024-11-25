@@ -22,8 +22,6 @@ impl WasmPackage {
 
         self.transpile_wasm(&wasm_component)?;
 
-        self.generate_types()?;
-
         self.transpile_sources()?;
 
         Ok(())
@@ -78,12 +76,11 @@ impl WasmPackage {
         let temp_dir_handle = tempfile::tempdir()?;
         let temp_dir = temp_dir_handle.path();
 
-        {
-            let wasm_crate = self.wasm_crate();
-            let jco_config = CargoWorkspace::locate_source_crate(wasm_crate)?
-                .join(self.runtime_dir())
-                .join("generated/config.json");
+        let wasm_crate = self.wasm_crate();
+        let runtime_dir = CargoWorkspace::locate_source_crate(wasm_crate)?.join(self.runtime_dir());
+        let jco_config = runtime_dir.join("generated/config.json");
 
+        {
             Command::new("node")
                 .args([
                     "submodules/jco/src/jco.js",
@@ -99,6 +96,20 @@ impl WasmPackage {
                 .run();
         }
 
+        {
+            let wit_directory = runtime_dir.join("interface/generated");
+            Command::new("node")
+                .args([
+                    "submodules/jco/src/jco.js",
+                    "types",
+                    wit_directory.unwrap_str(),
+                ])
+                .property("--name", format!("{wasm_crate}.component"))
+                .property("--configuration-file", jco_config.unwrap_str())
+                .property("--out-dir", temp_dir.unwrap_str())
+                .run();
+        }
+
         let npm_crate = self.npm_crate();
         let output_dir = CargoWorkspace::locate_source_crate(npm_crate)?.join("wasm/generated");
 
@@ -108,6 +119,11 @@ impl WasmPackage {
             let output_path = temp_path.replace_prefix(temp_dir, &output_dir);
 
             match temp_path.unwrap_ext() {
+                "ts" => {
+                    // Copy definition files as-is:
+                    let contents = temp_path.read_to_string()?;
+                    fs.write_file(output_path, contents)?;
+                }
                 "js" => {
                     // Disable type checking for JS, since we have no control over the generated output:
                     let mut contents = temp_path.read_to_string()?;
@@ -124,48 +140,6 @@ impl WasmPackage {
                     fs.mark_generated_file(output_path)?;
                 }
 
-                other => panic!("Unexpected file extension: {other}"),
-            }
-        }
-
-        Ok(())
-    }
-
-    fn generate_types(self) -> Result<()> {
-        let temp_dir_handle = tempfile::tempdir()?;
-        let temp_dir = temp_dir_handle.path();
-
-        let wasm_crate = self.wasm_crate();
-        let runtime_dir = CargoWorkspace::locate_source_crate(wasm_crate)?.join(self.runtime_dir());
-
-        let jco_config = runtime_dir.join("generated/config.json");
-        let wit_directory = runtime_dir.join("interface/generated");
-
-        Command::new("node")
-            .args([
-                "submodules/jco/src/jco.js",
-                "types",
-                wit_directory.unwrap_str(),
-            ])
-            .property("--name", format!("{wasm_crate}.component"))
-            .property("--configuration-file", jco_config.unwrap_str())
-            .property("--out-dir", temp_dir.unwrap_str())
-            .run();
-
-        let npm_crate = self.npm_crate();
-        let output_dir = CargoWorkspace::locate_source_crate(npm_crate)?.join("wasm/generated");
-
-        let mut fs = CodegenFileSystem::new(&output_dir)?;
-
-        for temp_path in FileWalker::from_directory(temp_dir).find_all()? {
-            let output_path = temp_path.replace_prefix(temp_dir, &output_dir);
-
-            match temp_path.unwrap_ext() {
-                "ts" => {
-                    // Copy definition files as-is:
-                    let contents = temp_path.read_to_string()?;
-                    fs.write_file(output_path, contents)?;
-                }
                 other => panic!("Unexpected file extension: {other}"),
             }
         }
