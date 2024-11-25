@@ -5,14 +5,16 @@ rust-version.workspace = true
 edition.workspace = true
 publish = false
 
-[dev-dependencies]
-iai-callgrind = { workspace = true }
+[dependencies]
 infra_utils = { workspace = true }
 semver = { workspace = true }
 metaslang_bindings = { workspace = true }
 slang_solidity = { workspace = true, features = [
   "__experimental_bindings_api",
 ] }
+
+[dev-dependencies]
+iai-callgrind = { workspace = true }
 
 [[bench]]
 name = "iai"
