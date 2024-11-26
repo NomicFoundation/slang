@@ -151,7 +151,7 @@ thiserror = { version = "1.0.68" }
 toml = { version = "0.8.19" }
 trybuild = { version = "1.0.101" }
 url = { version = "2.4.1", features = ["serde"] }
-wasm-tools = { version = "1.202.0" }
+wasm-tools = { version = "1.216.0" }
 
 wit-bindgen = { version = "0.30.0" }
 
