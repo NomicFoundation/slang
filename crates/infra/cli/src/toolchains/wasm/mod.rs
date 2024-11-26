@@ -91,7 +91,7 @@ impl WasmPackage {
                 .property("--out-dir", temp_dir.unwrap_str())
                 .property("--base64-cutoff", "0") // disable inlining core Wasm binaries as base64
                 .flag("--no-namespaced-exports") // disable namespaced exports for typescript compatibility
-                .flag("--no-typescript") // disable generating .d.ts files - we'll do this in `generate_types` with a better generator
+                .flag("--no-typescript") // disable generating .d.ts files - we'll do this with `jco types` below
                 .flag("--valid-lifting-optimization") // optimize component binary validations assuming all lifted values are valid
                 .run();
         }
