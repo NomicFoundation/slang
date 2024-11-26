@@ -124,6 +124,7 @@ impl WasmPackage {
                     let contents = temp_path.read_to_string()?;
                     fs.write_file(output_path, contents)?;
                 }
+
                 "js" => {
                     // Disable type checking for JS, since we have no control over the generated output:
                     let mut contents = temp_path.read_to_string()?;
