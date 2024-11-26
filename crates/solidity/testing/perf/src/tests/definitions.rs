@@ -35,11 +35,7 @@ pub fn run(dependencies: Dependencies) -> Bindings {
         definition_count += bindings.all_definitions().count();
     }
 
-    assert!(
-        // TODO(#1077): finalize the assertion counts once bindings are fully implemented:
-        definition_count >= 723,
-        "Only found {definition_count} definitions"
-    );
+    assert_eq!(definition_count, 2832, "Failed to fetch all definitions");
 
     bindings
 }

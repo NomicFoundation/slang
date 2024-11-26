@@ -1,6 +1,5 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
-use infra_utils::cargo::CargoWorkspace;
 use infra_utils::paths::PathExtensions;
 use semver::Version;
 
@@ -21,12 +20,10 @@ pub struct SourceFile {
 
 impl SourceFile {
     pub fn load_all() -> Vec<Self> {
-        let crate_dir = CargoWorkspace::locate_source_crate("solidity_testing_perf").unwrap();
-
         SOURCES
             .iter()
             .map(|relative_path| {
-                let path = crate_dir.join(relative_path);
+                let path = Path::repo_path(relative_path);
                 let contents = path.read_to_string().unwrap();
 
                 Self { path, contents }

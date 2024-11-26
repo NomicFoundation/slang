@@ -19,15 +19,10 @@ pub fn run(bindings: Bindings) {
         }
     }
 
-    assert!(
-        // TODO(#1077): finalize the assertion counts once bindings are fully implemented:
-        reference_count >= 1491,
-        "Only found {reference_count} references"
-    );
+    assert_eq!(reference_count, 1686, "Failed to fetch all references");
 
-    assert!(
-        // TODO(#1077): finalize the assertion counts once bindings are fully implemented:
-        resolved_references >= 1170,
-        "Only resolved {resolved_references} references"
+    assert_eq!(
+        resolved_references, 1353,
+        "Failed to resolve all references"
     );
 }
