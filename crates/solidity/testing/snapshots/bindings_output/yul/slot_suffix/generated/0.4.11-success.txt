@@ -17,10 +17,10 @@ References and definitions:
    │                 ┬          ────┬────  
    │                 ╰───────────────────── def: 4
    │                                │      
-   │                                ╰────── ref: 2
+   │                                ╰────── ref: built-in
  6 │             let o := sload(data_offset)
    │                 ┬          ─────┬─────  
    │                 ╰─────────────────────── def: 5
    │                                 │       
-   │                                 ╰─────── ref: 2
+   │                                 ╰─────── ref: built-in
 ───╯

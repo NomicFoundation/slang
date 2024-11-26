@@ -2961,16 +2961,29 @@ inherit .star_extension
     ; Before Solidity 0.7.0 storage variables' `.offset` and `.slot` were
     ; accessed by suffixing the name with `_offset` and `_slot`
     scan (source-text @name) {
-      "^(.*)_(slot|offset)$" {
+      "^(.*)_(slot|offset|length)$" {
         let symbol = $0
         let without_suffix = $1
+        let suffix = $2
+
+        ; We bind the whole symbol to the built-in field for the known cases
         node pop_ref
         attr (pop_ref) pop_symbol = symbol
         node push_suffixless
-        attr (push_suffixless) push_symbol = without_suffix
+        attr (push_suffixless) push_symbol = suffix
+        node member_of
+        attr (member_of) push_symbol = "."
+        node typeof
+        attr (typeof) push_symbol = "@typeof"
+        node yul_external
+        attr (yul_external) push_symbol = "%YulExternal"
+
         edge ref -> pop_ref
         edge pop_ref -> push_suffixless
-        edge push_suffixless -> @path.lexical_scope
+        edge push_suffixless -> member_of
+        edge member_of -> typeof
+        edge typeof -> yul_external
+        edge yul_external -> @path.lexical_scope
       }
     }
   }
@@ -2985,13 +2998,13 @@ inherit .star_extension
   attr (member_of) push_symbol = "."
   node typeof
   attr (typeof) push_symbol = "@typeof"
-  node yul_variable
-  attr (yul_variable) push_symbol = "%YulExternal"
+  node yul_external
+  attr (yul_external) push_symbol = "%YulExternal"
 
   edge ref -> member_of
   edge member_of -> typeof
-  edge typeof -> yul_variable
-  edge yul_variable -> @path.lexical_scope
+  edge typeof -> yul_external
+  edge yul_external -> @path.lexical_scope
 }
 
 @expr [YulExpression @funcall [YulFunctionCallExpression]] {
