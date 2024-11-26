@@ -1069,37 +1069,60 @@ inherit .star_extension
   let @elementary.push_end = @elementary.ref
 }
 
-@elementary [ElementaryType variant: [AddressType @address [AddressKeyword]]] {
-  let @elementary.symbol = (format "%{}" (source-text @address))
+@elementary [ElementaryType [AddressType]] {
+  let @elementary.symbol = "%address"
 }
 
-@elementary [ElementaryType @keyword (
-      [BoolKeyword]
-    | [ByteKeyword]
-    | [BytesKeyword]
-    | [StringKeyword]
-    | [IntKeyword]
-    | [UintKeyword]
-    | [FixedKeyword]
-    | [UfixedKeyword]
-)] {
-  var symbol = (source-text @keyword)
-  ; Normalize type aliases
-  scan (source-text @keyword) {
-    "^uint$" {
-      set symbol = "uint256"
-    }
-    "^int$" {
-      set symbol = "int256"
-    }
-    "^fixed$" {
-      set symbol = "fixed128x18"
-    }
-    "^ufixed$" {
-      set symbol = "ufixed128x18"
-    }
+@elementary [ElementaryType [BoolKeyword]] {
+  let @elementary.symbol = "%bool"
+}
+
+@elementary [ElementaryType [ByteKeyword]] {
+  let @elementary.symbol = "%byte"
+}
+
+@elementary [ElementaryType @keyword [BytesKeyword]] {
+  let @elementary.symbol = (format "%{}" (source-text @keyword))
+}
+
+@elementary [ElementaryType [StringKeyword]] {
+  let @elementary.symbol = "%string"
+}
+
+@elementary [ElementaryType @keyword [IntKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "int") {
+    let @elementary.symbol = "%int256"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
   }
-  let @elementary.symbol = (format "%{}" symbol)
+}
+
+@elementary [ElementaryType @keyword [UintKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "uint") {
+    let @elementary.symbol = "%uint256"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
+  }
+}
+
+@elementary [ElementaryType @keyword [FixedKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "fixed") {
+    let @elementary.symbol = "%fixed128x18"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
+  }
+}
+
+@elementary [ElementaryType @keyword [UfixedKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "ufixed") {
+    let @elementary.symbol = "%ufixed128x18"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
+  }
 }
 
 
