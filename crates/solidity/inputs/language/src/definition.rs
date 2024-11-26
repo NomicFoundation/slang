@@ -6738,37 +6738,40 @@ codegen_language_macros::compile!(Language(
             functions = [
                 BuiltInFunction(
                     name = "decode",
-                    parameters = ["bytes memory encodedData", "$Types encodedTypesTuple"],
-                    return_type = "$Types",
+                    parameters = ["bytes memory encodedData", "$Type[] encodedTypesTuple"],
+                    return_type = "$Any[]",
                     enabled = From("0.5.0")
                 ),
                 BuiltInFunction(
                     name = "encode",
-                    parameters = ["$Args valuesToEncode"],
+                    parameters = ["$Any[] valuesToEncode"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
                     name = "encodeCall",
-                    parameters = ["function() functionPointer", "$Args functionArgumentsTuple"],
+                    parameters = [
+                        "function() functionPointer",
+                        "$Any[] functionArgumentsTuple"
+                    ],
                     return_type = "bytes memory",
                     enabled = From("0.8.11")
                 ),
                 BuiltInFunction(
                     name = "encodePacked",
-                    parameters = ["$Args valuesToEncode"],
+                    parameters = ["$Any[] valuesToEncode"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
                     name = "encodeWithSelector",
-                    parameters = ["bytes4 selector", "$Args functionArgumentsTuple"],
+                    parameters = ["bytes4 selector", "$Any[] functionArgumentsTuple"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
                     name = "encodeWithSignature",
-                    parameters = ["string memory signature", "$Args valuesToEncode"],
+                    parameters = ["string memory signature", "$Any[] valuesToEncode"],
                     return_type = "bytes memory",
                     enabled = From("0.4.22")
                 )
@@ -6885,7 +6888,7 @@ codegen_language_macros::compile!(Language(
             fields = [],
             functions = [BuiltInFunction(
                 name = "concat",
-                parameters = ["$Args bytesToConcatenate"],
+                parameters = ["bytes[] bytesToConcatenate"],
                 return_type = "bytes memory"
             )]
         ),
@@ -6964,7 +6967,7 @@ codegen_language_macros::compile!(Language(
             fields = [],
             functions = [BuiltInFunction(
                 name = "concat",
-                parameters = ["$Args stringsToConcatenate"],
+                parameters = ["string[] stringsToConcatenate"],
                 return_type = "string memory"
             )]
         ),

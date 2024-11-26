@@ -48,7 +48,7 @@ contract $BuiltIns$ {
     uint length;
   }
   struct $BytesType {
-    function($Args bytesToConcatenate) returns (bytes memory) concat;
+    function(bytes[] bytesToConcatenate) returns (bytes memory) concat;
   }
   struct $Function {
     function(uint amount) returns (function()) gas;
@@ -66,7 +66,7 @@ contract $BuiltIns$ {
     uint value;
   }
   struct $StringType {
-    function($Args stringsToConcatenate) returns (string memory) concat;
+    function(string[] stringsToConcatenate) returns (string memory) concat;
   }
   struct $TransactionType {
     uint gasprice;

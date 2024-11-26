@@ -23,10 +23,10 @@ contract $BuiltIns$ {
   function sha3(bytes memory) public returns (bytes32);
   function suicide(address payable recipient) public;
   struct $AbiType {
-    function($Args valuesToEncode) returns (bytes memory) encode;
-    function($Args valuesToEncode) returns (bytes memory) encodePacked;
-    function(bytes4 selector, $Args functionArgumentsTuple) returns (bytes memory) encodeWithSelector;
-    function(string memory signature, $Args valuesToEncode) returns (bytes memory) encodeWithSignature;
+    function($Any[] valuesToEncode) returns (bytes memory) encode;
+    function($Any[] valuesToEncode) returns (bytes memory) encodePacked;
+    function(bytes4 selector, $Any[] functionArgumentsTuple) returns (bytes memory) encodeWithSelector;
+    function(string memory signature, $Any[] valuesToEncode) returns (bytes memory) encodeWithSignature;
   }
   struct $address {
     uint256 balance;
@@ -56,7 +56,7 @@ contract $BuiltIns$ {
     uint length;
   }
   struct $BytesType {
-    function($Args bytesToConcatenate) returns (bytes memory) concat;
+    function(bytes[] bytesToConcatenate) returns (bytes memory) concat;
   }
   struct $Function {
     function(uint amount) returns (function()) gas;
@@ -75,7 +75,7 @@ contract $BuiltIns$ {
     uint value;
   }
   struct $StringType {
-    function($Args stringsToConcatenate) returns (string memory) concat;
+    function(string[] stringsToConcatenate) returns (string memory) concat;
   }
   struct $TransactionType {
     uint gasprice;

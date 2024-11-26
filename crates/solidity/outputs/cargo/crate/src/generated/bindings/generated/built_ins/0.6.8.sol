@@ -21,11 +21,11 @@ contract $BuiltIns$ {
   function selfdestruct(address payable recipient) public;
   function sha256(bytes memory) public returns (bytes32);
   struct $AbiType {
-    function(bytes memory encodedData, $Types encodedTypesTuple) returns ($Types) decode;
-    function($Args valuesToEncode) returns (bytes memory) encode;
-    function($Args valuesToEncode) returns (bytes memory) encodePacked;
-    function(bytes4 selector, $Args functionArgumentsTuple) returns (bytes memory) encodeWithSelector;
-    function(string memory signature, $Args valuesToEncode) returns (bytes memory) encodeWithSignature;
+    function(bytes memory encodedData, $Type[] encodedTypesTuple) returns ($Any[]) decode;
+    function($Any[] valuesToEncode) returns (bytes memory) encode;
+    function($Any[] valuesToEncode) returns (bytes memory) encodePacked;
+    function(bytes4 selector, $Any[] functionArgumentsTuple) returns (bytes memory) encodeWithSelector;
+    function(string memory signature, $Any[] valuesToEncode) returns (bytes memory) encodeWithSignature;
   }
   struct $address {
     uint256 balance;
@@ -55,7 +55,7 @@ contract $BuiltIns$ {
     uint length;
   }
   struct $BytesType {
-    function($Args bytesToConcatenate) returns (bytes memory) concat;
+    function(bytes[] bytesToConcatenate) returns (bytes memory) concat;
   }
   struct $CallOptions {
     uint gas;
@@ -78,7 +78,7 @@ contract $BuiltIns$ {
     uint value;
   }
   struct $StringType {
-    function($Args stringsToConcatenate) returns (string memory) concat;
+    function(string[] stringsToConcatenate) returns (string memory) concat;
   }
   struct $TransactionType {
     uint gasprice;
