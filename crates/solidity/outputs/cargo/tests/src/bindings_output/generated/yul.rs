@@ -20,6 +20,11 @@ fn functions() -> Result<()> {
 }
 
 #[test]
+fn identifiers_with_dots() -> Result<()> {
+    run("yul", "identifiers_with_dots")
+}
+
+#[test]
 fn loops() -> Result<()> {
     run("yul", "loops")
 }
