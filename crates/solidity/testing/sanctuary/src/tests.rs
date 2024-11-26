@@ -8,7 +8,8 @@ use itertools::Itertools;
 use metaslang_bindings::PathResolver;
 use semver::Version;
 use slang_solidity::bindings::Bindings;
-use slang_solidity::cst::{NonterminalKind, TextIndex};
+use slang_solidity::cst::{Cursor, NonterminalKind, TextIndex, TextRange};
+use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::parser::{ParseOutput, Parser};
 use slang_solidity::{bindings, transform_built_ins_node};
 
@@ -106,45 +107,32 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
     let output = parser.parse(NonterminalKind::SourceUnit, &source);
     let source_id = file.path.strip_repo_root()?.unwrap_str();
 
-    if output.is_valid() {
-        let mut outcome = TestOutcome::Passed;
+    let with_color = true;
 
-        let bindings = create_bindings(&version, source_id, &output)?;
-
-        for reference in bindings.all_references() {
-            if reference.get_file().is_system() {
-                // skip built-ins
-                continue;
-            }
-            // We're not interested in the exact definition a reference resolves
-            // to, so we lookup all of them and fail if we find none.
-            if reference.definitions().is_empty() {
-                outcome = TestOutcome::Failed;
-                let cursor = reference.get_cursor().unwrap();
-                let report = format!(
-                    "Unresolved reference to `{symbol}` at {file}:{line}:{col}",
-                    symbol = cursor.node().unparse(),
-                    file = reference.get_file().get_path(),
-                    line = cursor.text_offset().line,
-                    col = cursor.text_offset().column,
-                );
-                events.bindings_error(format!("[{version}] {report}"));
-            }
-        }
-
-        events.test(outcome);
-    } else {
-        events.test(TestOutcome::Failed);
-
-        let with_color = true;
-
+    if !output.is_valid() {
         for error in output.errors() {
             let report = slang_solidity::diagnostic::render(error, source_id, &source, with_color);
 
             events.parse_error(format!("[{version}] {report}"));
         }
+
+        events.test(TestOutcome::Failed);
+        return Ok(());
     }
 
+    let unresolved_references = check_bindings(&version, source_id, &output)?;
+    if !unresolved_references.is_empty() {
+        for unresolved in &unresolved_references {
+            let report =
+                slang_solidity::diagnostic::render(unresolved, source_id, &source, with_color);
+            events.bindings_error(format!("[{version}] {report}"));
+        }
+
+        events.test(TestOutcome::Failed);
+        return Ok(());
+    }
+
+    events.test(TestOutcome::Passed);
     Ok(())
 }
 
@@ -190,6 +178,30 @@ fn uses_exotic_parser_bug(file: &Path) -> bool {
         .any(|path| file.ends_with(path))
 }
 
+fn check_bindings(
+    version: &Version,
+    source_id: &str,
+    output: &ParseOutput,
+) -> Result<Vec<UnresolvedReference>> {
+    let mut unresolved = Vec::new();
+    let bindings = create_bindings(version, source_id, output)?;
+
+    for reference in bindings.all_references() {
+        if reference.get_file().is_system() {
+            // skip built-ins
+            continue;
+        }
+        // We're not interested in the exact definition a reference resolves
+        // to, so we lookup all of them and fail if we find none.
+        if reference.definitions().is_empty() {
+            let cursor = reference.get_cursor().unwrap();
+            unresolved.push(UnresolvedReference { cursor });
+        }
+    }
+
+    Ok(unresolved)
+}
+
 fn create_bindings(version: &Version, source_id: &str, output: &ParseOutput) -> Result<Bindings> {
     let mut bindings = bindings::create_with_resolver(
         version.clone(),
@@ -222,5 +234,26 @@ struct SingleFileResolver {
 impl PathResolver for SingleFileResolver {
     fn resolve_path(&self, _context_path: &str, _path_to_resolve: &str) -> Option<String> {
         Some(self.source_id.clone())
+    }
+}
+
+struct UnresolvedReference {
+    pub cursor: Cursor,
+}
+
+impl Diagnostic for UnresolvedReference {
+    fn text_range(&self) -> TextRange {
+        self.cursor.text_range()
+    }
+
+    fn severity(&self) -> Severity {
+        Severity::Error
+    }
+
+    fn message(&self) -> String {
+        format!(
+            "Unresolved reference to `{symbol}`",
+            symbol = self.cursor.node().unparse()
+        )
     }
 }
