@@ -64,7 +64,7 @@ pub(crate) fn select_tests<'d>(
     }
 }
 
-pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
+pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool) -> Result<()> {
     if !file.path.exists() {
         // Index can be out of date:
         events.test(TestOutcome::NotFound);
@@ -120,16 +120,18 @@ pub fn run_test(file: &SourceFile, events: &Events) -> Result<()> {
         return Ok(());
     }
 
-    let unresolved_references = check_bindings(&version, source_id, &output)?;
-    if !unresolved_references.is_empty() {
-        for unresolved in &unresolved_references {
-            let report =
-                slang_solidity::diagnostic::render(unresolved, source_id, &source, with_color);
-            events.bindings_error(format!("[{version}] {report}"));
-        }
+    if check_bindings {
+        let unresolved_references = run_bindings_check(&version, source_id, &output)?;
+        if !unresolved_references.is_empty() {
+            for unresolved in &unresolved_references {
+                let report =
+                    slang_solidity::diagnostic::render(unresolved, source_id, &source, with_color);
+                events.bindings_error(format!("[{version}] {report}"));
+            }
 
-        events.test(TestOutcome::Failed);
-        return Ok(());
+            events.test(TestOutcome::Failed);
+            return Ok(());
+        }
     }
 
     events.test(TestOutcome::Passed);
@@ -178,7 +180,7 @@ fn uses_exotic_parser_bug(file: &Path) -> bool {
         .any(|path| file.ends_with(path))
 }
 
-fn check_bindings(
+fn run_bindings_check(
     version: &Version,
     source_id: &str,
     output: &ParseOutput,
