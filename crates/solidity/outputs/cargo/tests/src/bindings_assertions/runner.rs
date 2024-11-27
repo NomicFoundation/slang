@@ -6,7 +6,7 @@ use semver::Version;
 use slang_solidity::diagnostic;
 use slang_solidity::parser::Parser;
 
-use crate::bindings::create_bindings;
+use crate::bindings::{create_bindings, lookup_definition_by_name};
 use crate::bindings_assertions::assertions::{
     check_assertions, collect_assertions_into, Assertions,
 };
@@ -63,8 +63,7 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
     }
 
     if let Some(context) = multi_part.context {
-        let context_definition = bindings
-            .lookup_definition_by_name(context)
+        let context_definition = lookup_definition_by_name(&bindings, context)
             .expect("context definition to be found")
             .to_handle();
         bindings.set_context(&context_definition);

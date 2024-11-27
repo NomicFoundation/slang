@@ -268,11 +268,6 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             .collect()
     }
 
-    pub fn lookup_definition_by_name(&self, name: &str) -> Option<Definition<'_, KT>> {
-        self.all_definitions()
-            .find(|definition| definition.get_cursor().unwrap().node().unparse() == name)
-    }
-
     pub fn get_context(&self) -> Option<Definition<'_, KT>> {
         self.context.and_then(|handle| self.to_definition(handle))
     }
