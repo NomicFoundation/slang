@@ -21,7 +21,6 @@ inherit .enclosing_def
 
 inherit .parent_scope
 inherit .lexical_scope
-inherit .extended_scope
 
 ; Used to resolve extension methods for `using for *` directives
 ; This is used as a minor optimization to avoid introducing new possible paths
@@ -68,13 +67,6 @@ inherit .star_extension
   ;; inherited) for contracts to resolve bases (both in inheritance lists and
   ;; override specifiers)
   let @source_unit.parent_scope = @source_unit.lexical_scope
-  ; FIXME: we probably need to make extended scope different than lexical scope
-  ; and push an extension scope on that path
-  let @source_unit.extended_scope = @source_unit.lexical_scope
-
-  ; We may jump to scope here to resolve using the extensions scope provided by
-  ; contract/libraries that contain `using` directives
-  ; edge @source_unit.lexical_scope -> JUMP_TO_SCOPE_NODE
 
   ; This is used to indicate the resolution algorithm that here's where it
   ; should inject any possible extension scopes
@@ -107,17 +99,6 @@ inherit .star_extension
   ; to the source unit's
   edge @unit_member.lexical_scope -> @source_unit.lexical_scope
 }
-
-;; Definitions that need to resolve expressions do it through an extended_scope
-@source_unit [SourceUnit [SourceUnitMembers
-    [SourceUnitMember @unit_member (
-          [FunctionDefinition]
-        | [ConstantDefinition]
-    )]
-]] {
-  edge @unit_member.extended_scope -> @source_unit.extended_scope
-}
-
 
 ;; Special case for built-ins: we want to export all symbols in the contract:
 ;; functions, types and state variables. All built-in symbols are defined in an
@@ -307,15 +288,6 @@ inherit .star_extension
   attr (ns_member) push_symbol = "."
   edge heir.ns -> ns_member
   edge ns_member -> @type_name.push_begin
-
-  if (version-matches "< 0.7.0") {
-    ; `using` directives are inherited in Solidity < 0.7.0, so connect them to
-    ; our own extensions scope
-    ; node extensions_push_guard
-    ; attr (extensions_push_guard) push_symbol = "@extensions"
-    ; edge heir.extensions -> extensions_push_guard
-    ; edge extensions_push_guard -> @type_name.push_begin
-  }
 }
 
 ;; The next couple of rules setup a `.parent_refs` attribute to use in the
@@ -345,7 +317,6 @@ inherit .star_extension
 
 @contract [ContractDefinition @name name: [Identifier]] {
   node @contract.lexical_scope
-  node @contract.extended_scope
   node @contract.extensions
   node @contract.def
   node @contract.members
@@ -355,6 +326,7 @@ inherit .star_extension
 
   attr (@contract.def) node_definition = @name
   attr (@contract.def) definiens_node = @contract
+  ; The .extensions node is where `using` directives will hook the definitions
   attr (@contract.def) extension_scope = @contract.extensions
 
   edge @contract.lexical_scope -> @contract.instance
@@ -419,12 +391,12 @@ inherit .star_extension
   attr (push_typeof) push_symbol = "@typeof"
   node push_name
   attr (push_name) push_symbol = (source-text @name)
-  edge call -> push_typeof
-  edge push_typeof -> push_name
   node hook
   attr (hook) extension_hook
+
+  edge call -> push_typeof
+  edge push_typeof -> push_name
   edge push_name -> hook
-  ; edge push_name -> JUMP_TO_SCOPE_NODE
 
   if (version-matches "< 0.5.0") {
     ; For Solidity < 0.5.0 `this` also acts like an `address`
@@ -442,22 +414,10 @@ inherit .star_extension
   attr (@contract.star_extension) push_symbol = "@*"
 
   if (version-matches "< 0.7.0") {
-    ; Expose extensions through an `@extensions` guard on Solidity < 0.7.0 so
-    ; that they can be accessed from sub contract extension scopes
-    ; node extensions_guard
-    ; attr (extensions_guard) pop_symbol = "@extensions"
-    ; edge @contract.def -> extensions_guard
-    ; edge extensions_guard -> @contract.extensions
-
-    ; Since using directives are inherited, we need to *always* connect the push
-    ; extensions to the extended scope, regardless of whether this contract
-    ; contains any `using` directive.
-    ; edge @contract.extended_scope -> @contract.push_extensions
-
     ; For Solidity < 0.7.0 using directives are inherited, so we need to connect
     ; always For newer versions, this connection only happens when there is a
     ; `using for *` directive in the contract (see rule below)
-    edge @contract.star_extension -> @contract.extended_scope
+    edge @contract.star_extension -> @contract.lexical_scope
   }
 
   ; Path to resolve the built-in type for type() expressions
@@ -561,7 +521,6 @@ inherit .star_extension
     )]
 ]] {
   edge @member.lexical_scope -> @contract.lexical_scope
-  edge @member.extended_scope -> @contract.extended_scope
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -569,11 +528,6 @@ inherit .star_extension
 ]] {
   ; Hook the using definition in the extensions scope
   edge @contract.extensions -> @using.def
-
-  ; Connect the extensions push path (this can happen multiple times if there
-  ; are multiple `using` directives in the contract, but that's allowed by the
-  ; graph builder).
-  ; edge @contract.extended_scope -> @contract.push_extensions
 }
 
 @contract [ContractDefinition [ContractMembers
@@ -649,7 +603,7 @@ inherit .star_extension
 ]]] {
   ; Connect the star extension node to the resolution extended scope if there is
   ; a `using for *` directive in the contract
-  edge @contract.star_extension -> @contract.extended_scope
+  edge @contract.star_extension -> @contract.lexical_scope
 }
 
 ; This applies to both state variables and function definitions
@@ -677,9 +631,6 @@ inherit .star_extension
 
   edge @interface.lexical_scope -> @interface.instance
 
-  ; Interfaces don't contain expressions (or `using` directives), so the
-  ; extended scope is the same as the lexical scope
-  let @interface.extended_scope = @interface.lexical_scope
   ; The extensions node is required for the inheritance rules, but not used in interfaces
   let @interface.extensions = (node)
 
@@ -764,7 +715,6 @@ inherit .star_extension
     item: [ContractMember @function variant: [FunctionDefinition]]
 ]] {
   edge @interface.members -> @function.def
-  edge @function.extended_scope -> @interface.extended_scope
 }
 
 [InterfaceDefinition [InterfaceMembers [ContractMember @using [UsingDirective]]]] {
@@ -781,7 +731,6 @@ inherit .star_extension
 
 @library [LibraryDefinition @name name: [Identifier]] {
   node @library.lexical_scope
-  node @library.extended_scope
   node @library.extensions
   node @library.def
   node @library.ns
@@ -789,6 +738,7 @@ inherit .star_extension
 
   attr (@library.def) node_definition = @name
   attr (@library.def) definiens_node = @library
+  ; The .extensions node is where `using` directives will hook the definitions
   attr (@library.def) extension_scope = @library.extensions
 
   edge @library.lexical_scope -> @library.ns
@@ -840,7 +790,6 @@ inherit .star_extension
     )]
 ]] {
   edge @member.lexical_scope -> @library.lexical_scope
-  edge @member.extended_scope -> @library.extended_scope
   edge @library.ns -> @member.def
 }
 
@@ -849,7 +798,6 @@ inherit .star_extension
 ]] {
   edge @library.modifiers -> @modifier.def
   edge @modifier.lexical_scope -> @library.lexical_scope
-  edge @modifier.extended_scope -> @library.extended_scope
 }
 
 @library [LibraryDefinition [LibraryMembers
@@ -857,9 +805,6 @@ inherit .star_extension
 ]] {
   ; Expose the using directive from the extensions scope
   edge @library.extensions -> @using.def
-
-  ; Connect the extensions push path
-  ; edge @library.extended_scope -> @library.push_extensions
 }
 
 @library [LibraryDefinition [LibraryMembers [ContractMember
@@ -867,57 +812,12 @@ inherit .star_extension
 ]]] {
   ; Connect the star extension node to the resolution extended scope if there is
   ; a `using for *` directive in the library
-  edge @library.star_extension -> @library.extended_scope
+  edge @library.star_extension -> @library.lexical_scope
 }
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Extensions scope rules
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; For contracts (and libraries) navigating to the source unit lexical scope
-;; *also* needs to (optionally) propagate an extensions scope to be able to
-;; correctly bind `using` attached functions.
-@contract_or_library ([ContractDefinition] | [LibraryDefinition]) {
-  ; The `.extended_scope` resolution scope used by function bodies and other
-  ; expressions. From there we need to (optionally) push the extensions scope
-  ; (ie. `using` directives definitions) to the scope stack.
-  ; We will connect the path to push the extensions *if* the contract/library
-  ; has a `using` directive. Also, the extended scope links to the lexical scope
-  ; of the contract/library directly, regardless of whether there is a `using`
-  ; directive or not.
-  ; TODO: if we had a query negation operator to detect when there is no `using`
-  ; directive, could we avoid connecting directly when there are extensions?
-  edge @contract_or_library.extended_scope -> @contract_or_library.lexical_scope
-
-  ; The .extensions node is where `using` directives will hook the definitions
-  attr (@contract_or_library.extensions) is_exported
-
-  ; Now we define the path to push the .extensions scope into the scope stack.
-  ; We connect this to the extended scope only when there are extensions in the
-  ; contract/library.
-  ; node @contract_or_library.push_extensions
-  ; attr (@contract_or_library.push_extensions) push_scoped_symbol = "@extend"
-  ; attr (@contract_or_library.push_extensions) scope = @contract_or_library.extensions
-  ; node drop_scopes
-  ; attr (drop_scopes) type = "drop_scopes"
-  ; node pop_extensions
-  ; attr (pop_extensions) pop_scoped_symbol = "@extend"
-
-  ; edge @contract_or_library.push_extensions -> drop_scopes
-  ; edge drop_scopes -> pop_extensions
-  ; edge pop_extensions -> @contract_or_library.lexical_scope
-}
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Using directives
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; The UsingDirective node requires the enclosing context to setup an
-;; .extended_scope scoped variable for it to resolve both targets and subjects.
-;; The resolution connects to the extended scope in order to (potentially) push
-;; the same extension scope again, to resolve chained calls that all make use of
-;; attached functions.
 
 @using [UsingDirective] {
   ; This node acts as a definition in the sense that provides an entry point
@@ -933,7 +833,7 @@ inherit .star_extension
 
 @using [UsingDirective [UsingClause @id_path [IdentifierPath]]] {
   ; resolve the library to be used in the directive
-  edge @id_path.push_end -> @using.extended_scope
+  edge @id_path.push_end -> @using.lexical_scope
 
   ; because we're using the whole library, we don't need to "consume" the
   ; attached function (as when using the deconstruction syntax), but we still
@@ -955,7 +855,7 @@ inherit .star_extension
     ]]
 ]]] {
   ; resolve the function to be used in the directive
-  edge @id_path.push_end -> @using.extended_scope
+  edge @id_path.push_end -> @using.lexical_scope
 
   node dot
   attr (dot) pop_symbol = "."
@@ -982,9 +882,8 @@ inherit .star_extension
   edge @type_name.pop_end -> cast
   edge cast -> @using.clause
 
-  ; resolve the target type of the directive on the extended scope so the
-  ; extension scope gets re-pushed
-  edge @type_name.type_ref -> @using.extended_scope
+  ; resolve the target type of the directive on the lexical scope
+  edge @type_name.type_ref -> @using.lexical_scope
 }
 
 [ContractMember @using [UsingDirective [UsingTarget [Asterisk]]]] {
@@ -1448,7 +1347,6 @@ inherit .star_extension
   }
 
   node @function.lexical_scope
-  node @function.extended_scope
   node @function.def
 
   ; this path from the function definition to the scope allows attaching
@@ -1468,12 +1366,12 @@ inherit .star_extension
 }
 
 @function [FunctionDefinition @params parameters: [ParametersDeclaration]] {
-  edge @params.lexical_scope -> @function.extended_scope
+  edge @params.lexical_scope -> @function.lexical_scope
 
   ;; Input parameters are available in the function scope
-  edge @function.extended_scope -> @params.defs
+  edge @function.lexical_scope -> @params.defs
   ;; ... and shadow other declarations
-  attr (@function.extended_scope -> @params.defs) precedence = 1
+  attr (@function.lexical_scope -> @params.defs) precedence = 1
 
   ;; Connect to paramaters for named argument resolution
   edge @function.def -> @params.names
@@ -1482,12 +1380,12 @@ inherit .star_extension
 @function [FunctionDefinition returns: [ReturnsDeclaration
     @return_params [ParametersDeclaration]
 ]] {
-  edge @return_params.lexical_scope -> @function.extended_scope
+  edge @return_params.lexical_scope -> @function.lexical_scope
 
   ;; Return parameters are available in the function scope
-  edge @function.extended_scope -> @return_params.defs
+  edge @function.lexical_scope -> @return_params.defs
   ;; ... and shadow other declarations
-  attr (@function.extended_scope -> @return_params.defs) precedence = 1
+  attr (@function.lexical_scope -> @return_params.defs) precedence = 1
 }
 
 ;; Only functions that return a single value have an actual return type
@@ -1504,13 +1402,13 @@ inherit .star_extension
 
 ;; Connect the function body's block lexical scope to the function
 @function [FunctionDefinition [FunctionBody @block [Block]]] {
-  edge @block.lexical_scope -> @function.extended_scope
+  edge @block.lexical_scope -> @function.lexical_scope
 }
 
 @function [FunctionDefinition [FunctionAttributes item: [FunctionAttribute
     @modifier [ModifierInvocation]
 ]]] {
-  edge @modifier.lexical_scope -> @function.extended_scope
+  edge @modifier.lexical_scope -> @function.lexical_scope
 }
 
 @modifier [ModifierInvocation @name [IdentifierPath]] {
@@ -1534,18 +1432,17 @@ inherit .star_extension
 ;;; Unnamed functions (deprecated)
 @unnamed_function [UnnamedFunctionDefinition] {
   node @unnamed_function.lexical_scope
-  node @unnamed_function.extended_scope
 }
 
 @unnamed_function [UnnamedFunctionDefinition @params parameters: [ParametersDeclaration]] {
-  edge @params.lexical_scope -> @unnamed_function.extended_scope
+  edge @params.lexical_scope -> @unnamed_function.lexical_scope
 
-  edge @unnamed_function.extended_scope -> @params.defs
-  attr (@unnamed_function.extended_scope -> @params.defs) precedence = 1
+  edge @unnamed_function.lexical_scope -> @params.defs
+  attr (@unnamed_function.lexical_scope -> @params.defs) precedence = 1
 }
 
 @unnamed_function [UnnamedFunctionDefinition [FunctionBody @block [Block]]] {
-  edge @block.lexical_scope -> @unnamed_function.extended_scope
+  edge @block.lexical_scope -> @unnamed_function.lexical_scope
 }
 
 @unnamed_function [UnnamedFunctionDefinition
@@ -1562,17 +1459,16 @@ inherit .star_extension
 
 @constructor [ConstructorDefinition] {
   node @constructor.lexical_scope
-  node @constructor.extended_scope
   node @constructor.def
 }
 
 @constructor [ConstructorDefinition @params parameters: [ParametersDeclaration]] {
-  edge @params.lexical_scope -> @constructor.extended_scope
+  edge @params.lexical_scope -> @constructor.lexical_scope
 
   ;; Input parameters are available in the constructor scope
-  edge @constructor.extended_scope -> @params.defs
+  edge @constructor.lexical_scope -> @params.defs
   ;; ... and shadow other declarations
-  attr (@constructor.extended_scope -> @params.defs) precedence = 1
+  attr (@constructor.lexical_scope -> @params.defs) precedence = 1
 
   ;; Connect to paramaters for named argument resolution
   edge @constructor.def -> @params.names
@@ -1580,13 +1476,13 @@ inherit .star_extension
 
 ;; Connect the constructor body's block lexical scope to the constructor
 @constructor [ConstructorDefinition @block [Block]] {
-  edge @block.lexical_scope -> @constructor.extended_scope
+  edge @block.lexical_scope -> @constructor.lexical_scope
 }
 
 @constructor [ConstructorDefinition [ConstructorAttributes item: [ConstructorAttribute
     @modifier [ModifierInvocation]
 ]]] {
-  edge @modifier.lexical_scope -> @constructor.extended_scope
+  edge @modifier.lexical_scope -> @constructor.lexical_scope
   edge @modifier.identifier -> @constructor.lexical_scope
 }
 
@@ -1637,15 +1533,14 @@ inherit .star_extension
 
 @fallback [FallbackFunctionDefinition] {
   node @fallback.lexical_scope
-  node @fallback.extended_scope
 }
 
 @fallback [FallbackFunctionDefinition @params parameters: [ParametersDeclaration]] {
-  edge @params.lexical_scope -> @fallback.extended_scope
+  edge @params.lexical_scope -> @fallback.lexical_scope
 
   ;; Input parameters are available in the fallback function scope
-  edge @fallback.extended_scope -> @params.defs
-  attr (@fallback.extended_scope -> @params.defs) precedence = 1
+  edge @fallback.lexical_scope -> @params.defs
+  attr (@fallback.lexical_scope -> @params.defs) precedence = 1
 }
 
 @fallback [FallbackFunctionDefinition returns: [ReturnsDeclaration
@@ -1654,12 +1549,12 @@ inherit .star_extension
   edge @return_params.lexical_scope -> @fallback.lexical_scope
 
   ;; Return parameters are available in the fallback function scope
-  edge @fallback.extended_scope -> @return_params.defs
-  attr (@fallback.extended_scope -> @return_params.defs) precedence = 1
+  edge @fallback.lexical_scope -> @return_params.defs
+  attr (@fallback.lexical_scope -> @return_params.defs) precedence = 1
 }
 
 @fallback [FallbackFunctionDefinition [FunctionBody @block [Block]]] {
-  edge @block.lexical_scope -> @fallback.extended_scope
+  edge @block.lexical_scope -> @fallback.lexical_scope
 }
 
 @fallback [FallbackFunctionDefinition [FallbackFunctionAttributes
@@ -1670,11 +1565,10 @@ inherit .star_extension
 
 @receive [ReceiveFunctionDefinition] {
   node @receive.lexical_scope
-  node @receive.extended_scope
 }
 
 @receive [ReceiveFunctionDefinition [FunctionBody @block [Block]]] {
-  edge @block.lexical_scope -> @receive.extended_scope
+  edge @block.lexical_scope -> @receive.lexical_scope
 }
 
 @receive [ReceiveFunctionDefinition [ReceiveFunctionAttributes
@@ -1691,7 +1585,6 @@ inherit .star_extension
 @modifier [ModifierDefinition] {
   node @modifier.def
   node @modifier.lexical_scope
-  node @modifier.extended_scope
 }
 
 @modifier [ModifierDefinition
@@ -1701,7 +1594,7 @@ inherit .star_extension
   attr (@modifier.def) node_definition = @name
   attr (@modifier.def) definiens_node = @modifier
 
-  edge @body.lexical_scope -> @modifier.extended_scope
+  edge @body.lexical_scope -> @modifier.lexical_scope
 
   ; Special case: bind the place holder statement `_` to the built-in
   ; `%placeholder`. This only happens in the body of a modifier.
@@ -1716,11 +1609,11 @@ inherit .star_extension
 }
 
 @modifier [ModifierDefinition @params [ParametersDeclaration]] {
-  edge @params.lexical_scope -> @modifier.extended_scope
+  edge @params.lexical_scope -> @modifier.lexical_scope
 
   ;; Input parameters are available in the modifier scope
-  edge @modifier.extended_scope -> @params.defs
-  attr (@modifier.extended_scope -> @params.defs) precedence = 1
+  edge @modifier.lexical_scope -> @params.defs
+  attr (@modifier.lexical_scope -> @params.defs) precedence = 1
 }
 
 
@@ -2079,7 +1972,6 @@ inherit .star_extension
 
 @state_var [StateVariableDefinition] {
   node @state_var.lexical_scope
-  node @state_var.extended_scope
   node @state_var.def
 }
 
@@ -2121,7 +2013,7 @@ inherit .star_extension
 @state_var [StateVariableDefinition
     [StateVariableDefinitionValue @value [Expression]]
 ] {
-  let @value.lexical_scope = @state_var.extended_scope
+  let @value.lexical_scope = @state_var.lexical_scope
 }
 
 
