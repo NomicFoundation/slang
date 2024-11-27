@@ -1,16 +1,18 @@
+use std::rc::Rc;
+
 use codegen_ebnf::EbnfModel;
 use codegen_language_definition::model::{Identifier, Item, Language, Section, Topic};
 use inflector::Inflector;
 use serde::Serialize;
 
-pub struct SpecModel<'a> {
-    pub language: &'a Language,
+pub struct SpecModel {
+    pub language: Rc<Language>,
     pub sections: Vec<SpecSection>,
     pub ebnf: EbnfModel,
 }
 
-impl<'a> SpecModel<'a> {
-    pub fn build(language: &'a Language) -> Self {
+impl SpecModel {
+    pub fn build(language: Rc<Language>) -> Self {
         let mut sections = Vec::new();
 
         for (section_index, section) in language.sections.iter().enumerate() {

@@ -28,7 +28,7 @@ impl Spec {
     pub fn generate(language: Rc<Language>, output_dir: &Path) -> Result<()> {
         let mut fs = CodegenFileSystem::new(&language.documentation_dir)?;
 
-        let model = SpecModel::build(&language);
+        let model = SpecModel::build(language);
         let public_dir = Self::generate_public_dir(&model)?;
 
         public_dir.write_to_disk(&mut fs, output_dir)?;

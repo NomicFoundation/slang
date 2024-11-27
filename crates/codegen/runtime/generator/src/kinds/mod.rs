@@ -13,15 +13,15 @@ pub struct Kind {
     documentation: String,
 }
 
-struct KindBuilder<'a> {
-    model: SpecModel<'a>,
+struct KindBuilder {
+    model: SpecModel,
     writer: PlainWriter,
 }
 
-impl<'a> KindBuilder<'a> {
-    fn new(language: &'a model::Language) -> KindBuilder<'a> {
+impl KindBuilder {
+    fn new(language: &Rc<model::Language>) -> KindBuilder {
         KindBuilder {
-            model: SpecModel::build(language),
+            model: SpecModel::build(language.to_owned()),
             writer: PlainWriter::default(),
         }
     }
