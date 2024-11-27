@@ -7,7 +7,7 @@ use stack_graphs::partial::{PartialPath, PartialPaths};
 use stack_graphs::stitching::{
     ForwardCandidates, ForwardPartialPathStitcher, GraphEdgeCandidates, GraphEdges, StitcherConfig,
 };
-use stack_graphs::{CancellationError, CancellationFlag};
+use stack_graphs::CancellationError;
 
 use crate::{Bindings, Definition, FileHandle, GraphHandle, Reference, ResolutionError, Tag};
 
@@ -59,13 +59,6 @@ struct ResolvedPath<'a, KT: KindTypes + 'static> {
 impl<'a, KT: KindTypes + 'static> ResolvedPath<'a, KT> {
     pub fn len(&self) -> usize {
         self.partial_path.edges.len()
-    }
-}
-
-pub struct NoCancellation;
-impl CancellationFlag for NoCancellation {
-    fn check(&self, _at: &'static str) -> Result<(), CancellationError> {
-        Ok(())
     }
 }
 
