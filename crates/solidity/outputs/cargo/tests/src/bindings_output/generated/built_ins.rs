@@ -20,6 +20,11 @@ fn arrays() -> Result<()> {
 }
 
 #[test]
+fn bytes() -> Result<()> {
+    run("built_ins", "bytes")
+}
+
+#[test]
 fn function_type() -> Result<()> {
     run("built_ins", "function_type")
 }
@@ -37,6 +42,16 @@ fn global_properties() -> Result<()> {
 #[test]
 fn shadowing() -> Result<()> {
     run("built_ins", "shadowing")
+}
+
+#[test]
+fn this() -> Result<()> {
+    run("built_ins", "this")
+}
+
+#[test]
+fn this_as_address() -> Result<()> {
+    run("built_ins", "this_as_address")
 }
 
 #[test]

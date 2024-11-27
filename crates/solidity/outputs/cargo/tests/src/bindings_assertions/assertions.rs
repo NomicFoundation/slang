@@ -475,7 +475,7 @@ fn find_and_resolve_reference<'a>(
 
     // For the purpose of binding assertions, any failure to resolve to a single
     // definition will be treated as if it was unresolved
-    Ok(reference.jump_to_definition().ok())
+    Ok(reference.resolve_definition().ok())
 }
 
 fn lookup_referenced_definition<'a>(
