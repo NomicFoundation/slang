@@ -9,6 +9,7 @@ publish = false
 anyhow = { workspace = true }
 codegen_ebnf = { workspace = true }
 codegen_language_definition = { workspace = true }
+codegen_spec = { workspace = true }
 indexmap = { workspace = true }
 Inflector = { workspace = true }
 infra_utils = { workspace = true }

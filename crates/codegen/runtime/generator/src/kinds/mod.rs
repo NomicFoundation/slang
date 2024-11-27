@@ -3,6 +3,7 @@ use std::rc::Rc;
 
 use codegen_ebnf::{EbnfModel, PlainWriter};
 use codegen_language_definition::model::{self, Identifier, Item, PredefinedLabel};
+use codegen_spec::SpecModel;
 use serde::Serialize;
 use strum::VariantNames;
 
