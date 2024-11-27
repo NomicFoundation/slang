@@ -130,7 +130,7 @@
 //! To do this, add a `source_node` attribute, whose value is a syntax node capture:
 //!
 //! ``` skip
-//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
+//! @func [FunctionDefinition [FunctionName @id [Identifier]]] {
 //!   node def
 //!   attr (def) type = "pop_symbol", symbol = (source-text @id), source_node = @func, is_definition
 //! }
@@ -161,7 +161,7 @@
 //! `syntax_type` attribute, whose value is a string indicating the syntax type.
 //!
 //! ``` skip
-//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
+//! @func [FunctionDefinition [FunctionName @id [Identifier]]] {
 //!   node def
 //!   ; ...
 //!   attr (def) syntax_type = "function"
@@ -175,7 +175,7 @@
 //! `definiens_node` attribute, whose value is a syntax node that spans the definiens.
 //!
 //! ``` skip
-//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ... @body [FunctionBody] ...] {
+//! @func [FunctionDefinition [FunctionName @id [Identifier]] @body [FunctionBody]] {
 //!   node def
 //!   ; ...
 //!   attr (def) definiens_node = @body
@@ -189,7 +189,7 @@
 //! To connect two stack graph nodes, use the `edge` statement to add an edge between them:
 //!
 //! ``` skip
-//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
+//! @func [FunctionDefinition [FunctionName @id [Identifier]]] {
 //!   node def
 //!   attr (def) type = "pop_symbol", symbol = (source-text @id), source_node = @func, is_definition
 //!   node body
@@ -201,7 +201,7 @@
 //! you can add a `precedence` attribute to each edge to indicate which paths are prioritized:
 //!
 //! ``` skip
-//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
+//! @func [FunctionDefinition [FunctionName @id [Identifier]]] {
 //!   node def
 //!   attr (def) type = "pop_symbol", symbol = (source-text @id), source_node = @func, is_definition
 //!   node body
@@ -220,7 +220,7 @@
 //! ``` skip
 //! global ROOT_NODE
 //!
-//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
+//! @func [FunctionDefinition [FunctionName @id [Identifier]]] {
 //!   node def
 //!   attr (def) type = "pop_symbol", symbol = (source-text @id), source_node = @func, is_definition
 //!   edge ROOT_NODE -> def
@@ -235,13 +235,79 @@
 //! a scope node with a kind as follows:
 //!
 //! ``` skip
-//! @func [FunctionDefinition ... [FunctionName @id [Identifier]] ...] {
+//! @func [FunctionDefinition [FunctionName @id [Identifier]]] {
 //!   ; ...
 //!   node param_scope
 //!   attr (param_scope) debug_kind = "param_scope"
 //!   ; ...
 //! }
 //! ```
+//!
+//! ### Other node attributes introduced in Slang's usage of stack-graphs
+//!
+//! #### `tag` attribute
+//!
+//! This is used to attach a specific meaning to the node, to alter the ranking
+//! algorithm used when attempting to disambiguate between multiple definitions
+//! found for a reference. This is an optional string attribute.
+//!
+//! Possible values:
+//!
+//! - "alias": marks a definition node as a semantic alias of another definition
+//!   (eg. an import alias)
+//!
+//! - "c3": used to mark a function/method definition to be a candidate in
+//!   disambiguation using the C3 linearisation algorithm. In order for C3
+//!   linearisation to be possible, type hierarchy attributes need to be provided
+//!   as well (see `parents` attribute below).
+//!
+//! - "super": marks a reference as a call to super virtual call. This modifies
+//!   the C3 linearisation algorithm by eliminating the candidates that are at
+//!   or further down the hierarchy of where the reference occurs. To determine
+//!   where the reference occurs, we also use the `parents` attribute.
+//!
+//! #### `parents` attribute
+//!
+//! Is used to convey semantic hierarchy. Can be applied to both definitions and
+//! references. It's an optional, list of graph nodes attribute.
+//!
+//! For references it can indicate in which language context the reference
+//! occurs (eg. in which method or class). For definitions it can indicate the
+//! enclosing type of the definition, or parent classes in a class hierarchy.
+//! The parent handles themselves can refer to definitions or references. In the
+//! later case, generally speaking they will need to be resolved at resolution
+//! time in order to be useful.
+//!
+//! #### `export_node` and `import_nodes`
+//!
+//! These are used to define static fixed edges to add via `set_context()`.
+//! Using `set_context()` will modify the underlying stack graph by inserting
+//! edges from the `import_nodes` of all parents (resolved recursively) of the
+//! given context, to the `export_node` associated with the context.
+//!
+//! This can be used to inject virtual method implementations defined in
+//! subclasses in the scope of their parent classes, which are otherwise
+//! lexically inaccessible.
+//!
+//! `export_node` is an optional graph node attribute, and `import_nodes` is an
+//! optional list of graph nodes. Both apply only to definition nodes.
+//!
+//! #### `extension_hook`, `extension_scope` and `inherit_extensions`
+//!
+//! These attributes enable the bindings API to resolve extension methods by
+//! injecting specific scopes at potentially unrelated (lexically speaking)
+//! nodes in the stack graph. Availability and application of extension scopes
+//! depend on the call site (ie. the reference node). Thus, the extension scope
+//! to (potentially) apply when resolving a reference is computed by looking up
+//! the `parents` of the reference and then querying those parent nodes for
+//! their `extension_scope` (an optional scope node). Any extension providing
+//! node can also have the `inherit_extensions` attribute (a boolean) which
+//! indicates that the algorithm should recurse and resolve its parents to
+//! further look for other extensions scopes.
+//!
+//! Finally, the attribute `extension_hook` defines where in the graph should
+//! these extension scopes be injected. This is typically the root lexical
+//! scope. This attribute applies to any scope node and is boolean.
 //!
 
 mod cancellation;
