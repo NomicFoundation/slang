@@ -32,7 +32,6 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         .join("target/bindings_output")
         .join(group_name)
         .join(test_name);
-    fs::create_dir_all(&target_dir)?;
 
     let mut fs = CodegenFileSystem::new(&test_dir)?;
 
@@ -81,9 +80,11 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             "failure"
         };
 
-        if !GitHub::is_running_in_ci() {
-            // Don't run this in CI, since the graph outputs are not committed
-            // to the repository.
+        // Render graph outputs unless we're on CI and only if the RENDER_GRAPHS
+        // environment variable is set.
+        if !GitHub::is_running_in_ci() && std::env::var("RENDER_GRAPHS").is_ok() {
+            fs::create_dir_all(&target_dir)?;
+
             let graph_output = render_mermaid_graph(&parsed_parts);
             match last_graph_output {
                 Some(ref last) if last == &graph_output => (),
