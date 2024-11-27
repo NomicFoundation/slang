@@ -7,11 +7,11 @@ use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use metaslang_bindings::PathResolver;
 use semver::Version;
+use slang_solidity::bindings;
 use slang_solidity::bindings::Bindings;
-use slang_solidity::cst::{Cursor, NonterminalKind, TextIndex, TextRange};
+use slang_solidity::cst::{Cursor, NonterminalKind, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::parser::{ParseOutput, Parser};
-use slang_solidity::{bindings, transform_built_ins_node};
 
 use crate::datasets::{DataSet, SourceFile};
 use crate::events::{Events, TestOutcome};
@@ -211,17 +211,7 @@ fn create_bindings(version: &Version, source_id: &str, output: &ParseOutput) -> 
             source_id: source_id.into(),
         }),
     );
-    let parser = Parser::create(version.clone())?;
-    let built_ins_tree = parser
-        .parse(
-            NonterminalKind::SourceUnit,
-            bindings::get_built_ins(version),
-        )
-        .tree();
-    let built_ins_cursor =
-        transform_built_ins_node(&built_ins_tree).cursor_with_offset(TextIndex::ZERO);
-
-    bindings.add_system_file("built_ins.sol", built_ins_cursor);
+    bindings::add_built_ins(&mut bindings, version)?;
     bindings.add_user_file(source_id, output.create_tree_cursor());
     Ok(bindings)
 }

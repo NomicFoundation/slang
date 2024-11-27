@@ -8,7 +8,6 @@ use iai_callgrind::{
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
 use slang_solidity::bindings::Bindings;
-use slang_solidity::parser::ParseOutput;
 use solidity_testing_perf::dataset::SourceFile;
 use solidity_testing_perf::tests::definitions::Dependencies;
 use solidity_testing_perf::tests::parser::ParsedFile;
@@ -18,6 +17,12 @@ mod __dependencies_used_in_lib__ {
 }
 
 macro_rules! define_benchmark {
+    ($name:ident) => {
+        #[library_benchmark()]
+        fn $name() {
+            black_box(solidity_testing_perf::tests::$name::run());
+        }
+    };
     ($name:ident, $payload:ty) => {
         #[library_benchmark(setup = solidity_testing_perf::tests::$name::setup)]
         fn $name(payload: $payload) {
@@ -36,7 +41,7 @@ macro_rules! define_benchmark {
 define_benchmark!(parser, Vec<SourceFile>);
 define_benchmark!(cursor, Vec<ParsedFile>);
 define_benchmark!(query, Vec<ParsedFile>);
-define_benchmark!(init_bindings, ParseOutput);
+define_benchmark!(init_bindings);
 define_benchmark!(definitions, Dependencies);
 define_benchmark!(references, Bindings);
 
