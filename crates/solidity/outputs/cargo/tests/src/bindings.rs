@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use anyhow::Result;
 use semver::Version;
-use slang_solidity::bindings::{self, Bindings};
+use slang_solidity::bindings::{self, Bindings, Definition};
 use slang_solidity::cst::TextIndex;
 use slang_solidity::parser::Parser;
 use slang_solidity::transform_built_ins_node;
@@ -25,4 +25,10 @@ pub fn create_bindings(version: &Version) -> Result<Bindings> {
 
     bindings.add_system_file("built_ins.sol", built_ins_cursor);
     Ok(bindings)
+}
+
+pub fn lookup_definition_by_name<'a>(bindings: &'a Bindings, name: &str) -> Option<Definition<'a>> {
+    bindings
+        .all_definitions()
+        .find(|definition| definition.get_cursor().unwrap().node().unparse() == name)
 }
