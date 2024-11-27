@@ -8,7 +8,7 @@ use infra_utils::paths::PathExtensions;
 use crate::model::SpecModel;
 
 pub fn generate_topic_page(
-    model: &SpecModel,
+    model: &SpecModel<'_>,
     section_index: usize,
     topic_index: usize,
 ) -> Result<String> {
@@ -69,7 +69,7 @@ pub fn generate_topic_page(
 
 struct HtmlWriter<'m> {
     buffer: &'m mut String,
-    model: &'m SpecModel,
+    model: &'m SpecModel<'m>,
 
     section_index: usize,
     topic_index: usize,

@@ -5,7 +5,7 @@ use itertools::Itertools;
 
 use crate::model::SpecModel;
 
-pub fn generate_supported_versions(model: &SpecModel) -> Result<String> {
+pub fn generate_supported_versions(model: &SpecModel<'_>) -> Result<String> {
     let mut buffer = String::new();
 
     let versions = model

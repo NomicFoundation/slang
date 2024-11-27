@@ -27,8 +27,8 @@ pub enum TerminalKind {
         Stub3,
     {%- else -%}
         {%- for variant in model.kinds.terminal_kinds -%}
-            {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
-            {{ variant }},
+            {{ variant.documentation | indent(prefix = "/// ", first = true, blank = true) }}
+            {{ variant.id }},
         {%- endfor -%}
     {%- endif -%}
 }
