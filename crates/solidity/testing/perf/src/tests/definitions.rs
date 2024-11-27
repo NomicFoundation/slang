@@ -32,10 +32,13 @@ pub fn run(dependencies: Dependencies) -> Bindings {
             path.to_str().unwrap(),
             tree.cursor_with_offset(TextIndex::ZERO),
         );
-        definition_count += bindings.all_definitions().count();
+        definition_count += bindings
+            .all_definitions()
+            .filter(|definition| definition.get_file().is_user())
+            .count();
     }
 
-    assert_eq!(definition_count, 2832, "Failed to fetch all definitions");
+    assert_eq!(definition_count, 2322, "Failed to fetch all definitions");
 
     bindings
 }
