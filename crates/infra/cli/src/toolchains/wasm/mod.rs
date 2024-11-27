@@ -7,7 +7,7 @@ use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
 use strum_macros::EnumIter;
 
-pub const WASM_TARGET: &str = "wasm32-wasi";
+pub const WASM_TARGET: &str = "wasm32-wasip1";
 
 #[derive(Clone, Copy, EnumIter)]
 pub enum WasmPackage {
