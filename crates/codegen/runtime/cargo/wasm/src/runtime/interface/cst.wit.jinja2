@@ -11,6 +11,7 @@ interface cst {
             stub3,
         {%- else %}
             {%- for variant in model.kinds.nonterminal_kinds %}
+                /// This kind represents a `{{ variant.id }}` node, with the following structure: 
                 {%- for line in variant.documentation | split(pat="\n") %}
                 /// {{ line }}
                 {%- endfor %}
@@ -38,6 +39,7 @@ interface cst {
             stub3,
         {%- else %}
             {%- for variant in model.kinds.terminal_kinds %}
+                /// This kind represents a `{{ variant.id }}` node, with the following structure: 
                 {%- for line in variant.documentation | split(pat="\n") %}
                 /// {{ line }}
                 {%- endfor %}
