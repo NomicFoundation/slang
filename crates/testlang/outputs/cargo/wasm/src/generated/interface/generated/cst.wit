@@ -4,18 +4,66 @@ interface cst {
     /// Represents different kinds of nonterminal nodes in the syntax tree.
     /// These are nodes that can have child nodes and represent higher-level language constructs.
     enum nonterminal-kind {
+                /// This kind represents a `AdditionExpression` node, with the following structure:
+                /// (* Left-associative binary operator *)
+                /// AdditionExpression = (* left_operand: *) Expression
+                ///                      (* operator: *) PLUS
+                ///                      (* right_operand: *) Expression;
                 %addition-expression,
+                /// This kind represents a `Expression` node, with the following structure:
+                /// Expression = (* variant: *) AdditionExpression
+                ///            | (* variant: *) NegationExpression
+                ///            | (* variant: *) MemberAccessExpression
+                ///            | (* variant: *) STRING_LITERAL
+                ///            | (* variant: *) IDENTIFIER;
                 %expression,
+                /// This kind represents a `Literal` node, with the following structure:
+                /// Literal = (* variant: *) STRING_LITERAL;
                 %literal,
+                /// This kind represents a `MemberAccessExpression` node, with the following structure:
+                /// (* Postfix unary operator *)
+                /// MemberAccessExpression = (* operand: *) Expression
+                ///                          (* period: *) PERIOD
+                ///                          (* member: *) IDENTIFIER;
                 %member-access-expression,
+                /// This kind represents a `NegationExpression` node, with the following structure:
+                /// (* Prefix unary operator *)
+                /// NegationExpression = (* operator: *) BANG
+                ///                      (* operand: *) Expression;
                 %negation-expression,
+                /// This kind represents a `SeparatedIdentifiers` node, with the following structure:
+                /// (* Introduced in 1.0.0 *)
+                /// SeparatedIdentifiers = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDENTIFIER)*;
                 %separated-identifiers,
+                /// This kind represents a `SourceUnit` node, with the following structure:
+                /// SourceUnit = (* members: *) SourceUnitMembers;
                 %source-unit,
+                /// This kind represents a `SourceUnitMember` node, with the following structure:
+                /// SourceUnitMember = (* variant: *) Tree
+                ///                  | (* variant: *) Expression
+                ///                  | (* variant: *) SeparatedIdentifiers
+                ///                  | (* variant: *) Literal;
                 %source-unit-member,
+                /// This kind represents a `SourceUnitMembers` node, with the following structure:
+                /// SourceUnitMembers = (* item: *) SourceUnitMember+;
                 %source-unit-members,
+                /// This kind represents a `Tree` node, with the following structure:
+                /// Tree = (* keyword: *) TREE_KEYWORD
+                ///        (* name: *) IDENTIFIER?
+                ///        (* node: *) TreeNode
+                ///        (* semicolon: *) SEMICOLON;
                 %tree,
+                /// This kind represents a `TreeNode` node, with the following structure:
+                /// TreeNode = (* open_bracket: *) OPEN_BRACKET
+                ///            (* members: *) TreeNodeChildren
+                ///            (* close_bracket: *) CLOSE_BRACKET;
                 %tree-node,
+                /// This kind represents a `TreeNodeChild` node, with the following structure:
+                /// TreeNodeChild = (* variant: *) TreeNode
+                ///               | (* variant: *) DELIMITED_IDENTIFIER;
                 %tree-node-child,
+                /// This kind represents a `TreeNodeChildren` node, with the following structure:
+                /// TreeNodeChildren = (* item: *) TreeNodeChild+;
                 %tree-node-children,
     }
 
@@ -28,19 +76,47 @@ interface cst {
         /// This terminal is created when the parser is expecting a certain terminal, but it cannot find it.
         /// Adding the missing input in this position may allow the parser to produce a valid tree there.
         missing,
+                /// This kind represents a `Bang` node, with the following structure:
+                /// BANG = "!";
                 %bang,
+                /// This kind represents a `CloseBracket` node, with the following structure:
+                /// CLOSE_BRACKET = "]";
                 %close-bracket,
+                /// This kind represents a `DelimitedIdentifier` node, with the following structure:
+                /// DELIMITED_IDENTIFIER = «DELIMITED_IDENTIFIER_START» «DELIMITED_IDENTIFIER_PART»*;
                 %delimited-identifier,
+                /// This kind represents a `EndOfLine` node, with the following structure:
+                /// END_OF_LINE = "\r"? "\n";
                 %end-of-line,
+                /// This kind represents a `Identifier` node, with the following structure:
+                /// IDENTIFIER = «RAW_IDENTIFIER»;
                 %identifier,
+                /// This kind represents a `MultiLineComment` node, with the following structure:
+                /// MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*/";
                 %multi-line-comment,
+                /// This kind represents a `OpenBracket` node, with the following structure:
+                /// OPEN_BRACKET = "[";
                 %open-bracket,
+                /// This kind represents a `Period` node, with the following structure:
+                /// PERIOD = ".";
                 %period,
+                /// This kind represents a `Plus` node, with the following structure:
+                /// PLUS = "+";
                 %plus,
+                /// This kind represents a `Semicolon` node, with the following structure:
+                /// SEMICOLON = ";";
                 %semicolon,
+                /// This kind represents a `SingleLineComment` node, with the following structure:
+                /// SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
                 %single-line-comment,
+                /// This kind represents a `StringLiteral` node, with the following structure:
+                /// STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
                 %string-literal,
+                /// This kind represents a `TreeKeyword` node, with the following structure:
+                /// TREE_KEYWORD = "tree";
                 %tree-keyword,
+                /// This kind represents a `Whitespace` node, with the following structure:
+                /// WHITESPACE = (" " | "\t")+;
                 %whitespace,
     }
 

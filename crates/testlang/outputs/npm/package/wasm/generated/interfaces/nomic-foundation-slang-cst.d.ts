@@ -18,18 +18,92 @@ export namespace NomicFoundationSlangCst {
  * These are nodes that can have child nodes and represent higher-level language constructs.
  */
 export declare enum NonterminalKind {
+  /**
+   * This kind represents a `AdditionExpression` node, with the following structure:
+   * (* Left-associative binary operator *)
+   * AdditionExpression = (* left_operand: *) Expression
+   * (* operator: *) PLUS
+   * (* right_operand: *) Expression;
+   */
   AdditionExpression = "AdditionExpression",
+  /**
+   * This kind represents a `Expression` node, with the following structure:
+   * Expression = (* variant: *) AdditionExpression
+   * | (* variant: *) NegationExpression
+   * | (* variant: *) MemberAccessExpression
+   * | (* variant: *) STRING_LITERAL
+   * | (* variant: *) IDENTIFIER;
+   */
   Expression = "Expression",
+  /**
+   * This kind represents a `Literal` node, with the following structure:
+   * Literal = (* variant: *) STRING_LITERAL;
+   */
   Literal = "Literal",
+  /**
+   * This kind represents a `MemberAccessExpression` node, with the following structure:
+   * (* Postfix unary operator *)
+   * MemberAccessExpression = (* operand: *) Expression
+   * (* period: *) PERIOD
+   * (* member: *) IDENTIFIER;
+   */
   MemberAccessExpression = "MemberAccessExpression",
+  /**
+   * This kind represents a `NegationExpression` node, with the following structure:
+   * (* Prefix unary operator *)
+   * NegationExpression = (* operator: *) BANG
+   * (* operand: *) Expression;
+   */
   NegationExpression = "NegationExpression",
+  /**
+   * This kind represents a `SeparatedIdentifiers` node, with the following structure:
+   * (* Introduced in 1.0.0 *)
+   * SeparatedIdentifiers = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDENTIFIER)*;
+   */
   SeparatedIdentifiers = "SeparatedIdentifiers",
+  /**
+   * This kind represents a `SourceUnit` node, with the following structure:
+   * SourceUnit = (* members: *) SourceUnitMembers;
+   */
   SourceUnit = "SourceUnit",
+  /**
+   * This kind represents a `SourceUnitMember` node, with the following structure:
+   * SourceUnitMember = (* variant: *) Tree
+   * | (* variant: *) Expression
+   * | (* variant: *) SeparatedIdentifiers
+   * | (* variant: *) Literal;
+   */
   SourceUnitMember = "SourceUnitMember",
+  /**
+   * This kind represents a `SourceUnitMembers` node, with the following structure:
+   * SourceUnitMembers = (* item: *) SourceUnitMember+;
+   */
   SourceUnitMembers = "SourceUnitMembers",
+  /**
+   * This kind represents a `Tree` node, with the following structure:
+   * Tree = (* keyword: *) TREE_KEYWORD
+   * (* name: *) IDENTIFIER?
+   * (* node: *) TreeNode
+   * (* semicolon: *) SEMICOLON;
+   */
   Tree = "Tree",
+  /**
+   * This kind represents a `TreeNode` node, with the following structure:
+   * TreeNode = (* open_bracket: *) OPEN_BRACKET
+   * (* members: *) TreeNodeChildren
+   * (* close_bracket: *) CLOSE_BRACKET;
+   */
   TreeNode = "TreeNode",
+  /**
+   * This kind represents a `TreeNodeChild` node, with the following structure:
+   * TreeNodeChild = (* variant: *) TreeNode
+   * | (* variant: *) DELIMITED_IDENTIFIER;
+   */
   TreeNodeChild = "TreeNodeChild",
+  /**
+   * This kind represents a `TreeNodeChildren` node, with the following structure:
+   * TreeNodeChildren = (* item: *) TreeNodeChild+;
+   */
   TreeNodeChildren = "TreeNodeChildren",
 }
 /**
@@ -47,19 +121,75 @@ export declare enum TerminalKind {
    * Adding the missing input in this position may allow the parser to produce a valid tree there.
    */
   Missing = "Missing",
+  /**
+   * This kind represents a `Bang` node, with the following structure:
+   * BANG = "!";
+   */
   Bang = "Bang",
+  /**
+   * This kind represents a `CloseBracket` node, with the following structure:
+   * CLOSE_BRACKET = "]";
+   */
   CloseBracket = "CloseBracket",
+  /**
+   * This kind represents a `DelimitedIdentifier` node, with the following structure:
+   * DELIMITED_IDENTIFIER = «DELIMITED_IDENTIFIER_START» «DELIMITED_IDENTIFIER_PART»*;
+   */
   DelimitedIdentifier = "DelimitedIdentifier",
+  /**
+   * This kind represents a `EndOfLine` node, with the following structure:
+   * END_OF_LINE = "\r"? "\n";
+   */
   EndOfLine = "EndOfLine",
+  /**
+   * This kind represents a `Identifier` node, with the following structure:
+   * IDENTIFIER = «RAW_IDENTIFIER»;
+   */
   Identifier = "Identifier",
+  /**
+   * This kind represents a `MultiLineComment` node, with the following structure:
+   * MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*\/";
+   */
   MultiLineComment = "MultiLineComment",
+  /**
+   * This kind represents a `OpenBracket` node, with the following structure:
+   * OPEN_BRACKET = "[";
+   */
   OpenBracket = "OpenBracket",
+  /**
+   * This kind represents a `Period` node, with the following structure:
+   * PERIOD = ".";
+   */
   Period = "Period",
+  /**
+   * This kind represents a `Plus` node, with the following structure:
+   * PLUS = "+";
+   */
   Plus = "Plus",
+  /**
+   * This kind represents a `Semicolon` node, with the following structure:
+   * SEMICOLON = ";";
+   */
   Semicolon = "Semicolon",
+  /**
+   * This kind represents a `SingleLineComment` node, with the following structure:
+   * SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
+   */
   SingleLineComment = "SingleLineComment",
+  /**
+   * This kind represents a `StringLiteral` node, with the following structure:
+   * STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+   */
   StringLiteral = "StringLiteral",
+  /**
+   * This kind represents a `TreeKeyword` node, with the following structure:
+   * TREE_KEYWORD = "tree";
+   */
   TreeKeyword = "TreeKeyword",
+  /**
+   * This kind represents a `Whitespace` node, with the following structure:
+   * WHITESPACE = (" " | "\t")+;
+   */
   Whitespace = "Whitespace",
 }
 /**
