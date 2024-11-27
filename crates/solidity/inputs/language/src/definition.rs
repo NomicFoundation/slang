@@ -3,7 +3,7 @@ pub use solidity::SolidityDefinition;
 codegen_language_macros::compile!(Language(
     name = Solidity,
     documentation_dir = "crates/solidity/inputs/language/docs",
-    binding_rules_file = "crates/solidity/inputs/language/bindings/rules.msgb",
+    binding_rules_dir = "crates/solidity/inputs/language/bindings",
     file_extension = ".sol", // TODO: This should be moved to the Solidity-specific 'extensions' sub-module.
     root_item = SourceUnit,
     // TODO(#1020): Define the end-of-file trivia explicitly rather than
