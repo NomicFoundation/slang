@@ -460,6 +460,9 @@ inherit .star_extension
   ; above to connect the instance scope of this contract to the parents.
   let @specifier.heir = @contract
   attr (@contract.def) parents = @specifier.parent_refs
+  if (version-matches "< 0.7.0") {
+    attr (@contract.def) inherit_extensions
+  }
 
   ; The rest of these statements deal with defining and connecting the `super`
   ; keyword path.

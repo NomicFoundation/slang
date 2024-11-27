@@ -32,11 +32,10 @@ pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     definiens: Option<Cursor<KT>>,
     tag: Option<Tag>,
     parents: Vec<GraphHandle>,
-    #[allow(dead_code)]
     export_node: Option<GraphHandle>,
-    #[allow(dead_code)]
     import_nodes: Vec<GraphHandle>,
     extension_scope: Option<GraphHandle>,
+    inherit_extensions: bool,
 }
 
 pub(crate) struct ReferenceBindingInfo {
@@ -55,7 +54,6 @@ pub struct Bindings<KT: KindTypes + 'static> {
     cursor_to_references: HashMap<CursorID, GraphHandle>,
     context: Option<GraphHandle>,
     extension_hooks: HashSet<GraphHandle>,
-    resolve_options: ResolveOptions,
 }
 
 pub enum FileDescriptor {
@@ -140,12 +138,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             cursor_to_references: HashMap::new(),
             context: None,
             extension_hooks: HashSet::new(),
-            resolve_options: ResolveOptions::default(),
         }
-    }
-
-    pub fn use_recursive_extension_scopes(&mut self) {
-        self.resolve_options.recursive_extension_scopes = true;
     }
 
     pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
@@ -419,6 +412,13 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .and_then(|info| info.extension_scope)
     }
 
+    pub(crate) fn inherit_extensions(&self) -> bool {
+        self.owner
+            .definitions_info
+            .get(&self.handle)
+            .map_or(false, |info| info.inherit_extensions)
+    }
+
     pub fn to_handle(self) -> DefinitionHandle {
         DefinitionHandle(self.handle)
     }
@@ -490,18 +490,17 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     }
 
     pub fn jump_to_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
-        Resolver::build_for(self, self.owner.resolve_options).first()
+        Resolver::build_for(self, ResolveOptions::Full).first()
     }
 
     pub fn definitions(&self) -> Vec<Definition<'a, KT>> {
-        Resolver::build_for(self, self.owner.resolve_options).all()
+        Resolver::build_for(self, ResolveOptions::Full).all()
     }
 
     pub(crate) fn simple_resolve(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
-        Resolver::build_for(
-            self,
-            ResolveOptions::reentrant_safe(),
-        ).first()
+        // This was likely originated from a full resolution call, so cut
+        // recursion here by restricting the resolution algorithm.
+        Resolver::build_for(self, ResolveOptions::NonRecursive).first()
     }
 
     pub(crate) fn has_tag(&self, tag: Tag) -> bool {

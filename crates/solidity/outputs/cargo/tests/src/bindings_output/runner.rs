@@ -4,7 +4,6 @@ use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 use metaslang_graph_builder::graph::Graph;
-use semver::Version;
 use slang_solidity::cst::KindTypes;
 use slang_solidity::parser::{ParseOutput, Parser};
 
@@ -39,9 +38,6 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     for version in &VERSION_BREAKS {
         let parser = Parser::create(version.clone())?;
         let mut bindings = create_bindings(version)?;
-        if *version < Version::parse("0.7.0").unwrap() {
-            bindings.use_recursive_extension_scopes();
-        }
 
         let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
         let multi_part = split_multi_file(&contents);

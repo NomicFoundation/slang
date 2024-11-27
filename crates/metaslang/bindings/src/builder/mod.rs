@@ -284,6 +284,7 @@ static IS_EXPORTED_ATTR: &str = "is_exported";
 static IS_REFERENCE_ATTR: &str = "is_reference";
 static EXTENSION_HOOK_ATTR: &str = "extension_hook";
 static EXTENSION_SCOPE_ATTR: &str = "extension_scope";
+static INHERIT_EXTENSIONS_ATTR: &str = "inherit_extensions";
 static PARENTS_ATTR: &str = "parents";
 static SCOPE_ATTR: &str = "scope";
 static SOURCE_NODE_ATTR: &str = "source_node";
@@ -305,6 +306,7 @@ static POP_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         IMPORT_NODES_ATTR,
         SYNTAX_TYPE_ATTR,
         EXTENSION_SCOPE_ATTR,
+        INHERIT_EXTENSIONS_ATTR,
     ])
 });
 static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
@@ -319,6 +321,7 @@ static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         IMPORT_NODES_ATTR,
         SYNTAX_TYPE_ATTR,
         EXTENSION_SCOPE_ATTR,
+        INHERIT_EXTENSIONS_ATTR,
     ])
 });
 static PUSH_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
@@ -340,8 +343,14 @@ static PUSH_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         PARENTS_ATTR,
     ])
 });
-static SCOPE_ATTRS: Lazy<HashSet<&'static str>> =
-    Lazy::new(|| HashSet::from([TYPE_ATTR, IS_EXPORTED_ATTR, IS_ENDPOINT_ATTR, EXTENSION_HOOK_ATTR]));
+static SCOPE_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
+    HashSet::from([
+        TYPE_ATTR,
+        IS_EXPORTED_ATTR,
+        IS_ENDPOINT_ATTR,
+        EXTENSION_HOOK_ATTR,
+    ])
+});
 
 // Edge attribute names
 static PRECEDENCE_ATTR: &str = "precedence";
@@ -906,9 +915,13 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
             };
 
             let extension_scope = match node.attributes.get(EXTENSION_SCOPE_ATTR) {
-                Some(extension_scope) => Some(self.node_handle_for_graph_node(extension_scope.as_graph_node_ref()?)),
+                Some(extension_scope) => {
+                    Some(self.node_handle_for_graph_node(extension_scope.as_graph_node_ref()?))
+                }
                 None => None,
             };
+
+            let inherit_extensions = Self::load_flag(node, INHERIT_EXTENSIONS_ATTR)?;
 
             self.definitions_info.insert(
                 node_handle,
@@ -919,6 +932,7 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
                     export_node,
                     import_nodes,
                     extension_scope,
+                    inherit_extensions,
                 },
             );
         } else if stack_graph_node.is_reference() {
