@@ -21,8 +21,8 @@ pub fn setup() -> ParseOutput {
 pub fn run(built_ins: ParseOutput) -> Bindings {
     let mut bindings = create_with_resolver(SOLC_VERSION, Arc::new(NoOpResolver {}));
 
-    let built_ins_cursor = transform_built_ins_node(&built_ins.tree())
-        .cursor_with_offset(TextIndex::ZERO);
+    let built_ins_cursor =
+        transform_built_ins_node(&built_ins.tree()).cursor_with_offset(TextIndex::ZERO);
 
     bindings.add_system_file("built_ins.sol", built_ins_cursor);
 
