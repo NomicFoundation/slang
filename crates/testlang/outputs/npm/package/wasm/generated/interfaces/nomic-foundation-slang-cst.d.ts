@@ -22,128 +22,196 @@ export namespace NomicFoundationSlangCst {
 export declare enum NonterminalKind {
   /**
    * This kind represents a `AdditionExpression` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
+=======
+>>>>>>> 12615dc60 (Update generated files)
    * (* Left-associative binary operator *)
    * AdditionExpression = (* left_operand: *) Expression
    * (* operator: *) PLUS
    * (* right_operand: *) Expression;
+<<<<<<< HEAD
    * ```
+=======
+>>>>>>> 12615dc60 (Update generated files)
    */
   AdditionExpression = "AdditionExpression",
   /**
    * This kind represents a `Expression` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
+=======
+>>>>>>> 12615dc60 (Update generated files)
    * Expression = (* variant: *) AdditionExpression
    * | (* variant: *) NegationExpression
    * | (* variant: *) MemberAccessExpression
    * | (* variant: *) STRING_LITERAL
    * | (* variant: *) IDENTIFIER;
+<<<<<<< HEAD
    * ```
+=======
+>>>>>>> 12615dc60 (Update generated files)
    */
   Expression = "Expression",
   /**
    * This kind represents a `Literal` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * Literal = (* variant: *) STRING_LITERAL;
    * ```
+=======
+   * Literal = (* variant: *) STRING_LITERAL;
+>>>>>>> 12615dc60 (Update generated files)
    */
   Literal = "Literal",
   /**
    * This kind represents a `MemberAccessExpression` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
+=======
+>>>>>>> 12615dc60 (Update generated files)
    * (* Postfix unary operator *)
    * MemberAccessExpression = (* operand: *) Expression
    * (* period: *) PERIOD
    * (* member: *) IDENTIFIER;
+<<<<<<< HEAD
    * ```
+=======
+>>>>>>> 12615dc60 (Update generated files)
    */
   MemberAccessExpression = "MemberAccessExpression",
   /**
    * This kind represents a `NegationExpression` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * (* Prefix unary operator *)
    * NegationExpression = (* operator: *) BANG
    * (* operand: *) Expression;
    * ```
+=======
+   * (* Prefix unary operator *)
+   * NegationExpression = (* operator: *) BANG
+   * (* operand: *) Expression;
+>>>>>>> 12615dc60 (Update generated files)
    */
   NegationExpression = "NegationExpression",
   /**
    * This kind represents a `SeparatedIdentifiers` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * (* Introduced in 1.0.0 *)
    * SeparatedIdentifiers = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDENTIFIER)*;
    * ```
+=======
+   * (* Introduced in 1.0.0 *)
+   * SeparatedIdentifiers = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDENTIFIER)*;
+>>>>>>> 12615dc60 (Update generated files)
    */
   SeparatedIdentifiers = "SeparatedIdentifiers",
   /**
    * This kind represents a `SourceUnit` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * SourceUnit = (* members: *) SourceUnitMembers;
    * ```
+=======
+   * SourceUnit = (* members: *) SourceUnitMembers;
+>>>>>>> 12615dc60 (Update generated files)
    */
   SourceUnit = "SourceUnit",
   /**
    * This kind represents a `SourceUnitMember` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
+=======
+>>>>>>> 12615dc60 (Update generated files)
    * SourceUnitMember = (* variant: *) Tree
    * | (* variant: *) Expression
    * | (* variant: *) SeparatedIdentifiers
    * | (* variant: *) Literal;
+<<<<<<< HEAD
    * ```
+=======
+>>>>>>> 12615dc60 (Update generated files)
    */
   SourceUnitMember = "SourceUnitMember",
   /**
    * This kind represents a `SourceUnitMembers` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * SourceUnitMembers = (* item: *) SourceUnitMember+;
    * ```
+=======
+   * SourceUnitMembers = (* item: *) SourceUnitMember+;
+>>>>>>> 12615dc60 (Update generated files)
    */
   SourceUnitMembers = "SourceUnitMembers",
   /**
    * This kind represents a `Tree` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
+=======
+>>>>>>> 12615dc60 (Update generated files)
    * Tree = (* keyword: *) TREE_KEYWORD
    * (* name: *) IDENTIFIER?
    * (* node: *) TreeNode
    * (* semicolon: *) SEMICOLON;
+<<<<<<< HEAD
    * ```
+=======
+>>>>>>> 12615dc60 (Update generated files)
    */
   Tree = "Tree",
   /**
    * This kind represents a `TreeNode` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * TreeNode = (* open_bracket: *) OPEN_BRACKET
    * (* members: *) TreeNodeChildren
    * (* close_bracket: *) CLOSE_BRACKET;
    * ```
+=======
+   * TreeNode = (* open_bracket: *) OPEN_BRACKET
+   * (* members: *) TreeNodeChildren
+   * (* close_bracket: *) CLOSE_BRACKET;
+>>>>>>> 12615dc60 (Update generated files)
    */
   TreeNode = "TreeNode",
   /**
    * This kind represents a `TreeNodeChild` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * TreeNodeChild = (* variant: *) TreeNode
    * | (* variant: *) DELIMITED_IDENTIFIER;
    * ```
+=======
+   * TreeNodeChild = (* variant: *) TreeNode
+   * | (* variant: *) DELIMITED_IDENTIFIER;
+>>>>>>> 12615dc60 (Update generated files)
    */
   TreeNodeChild = "TreeNodeChild",
   /**
    * This kind represents a `TreeNodeChildren` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * TreeNodeChildren = (* item: *) TreeNodeChild+;
    * ```
+=======
+   * TreeNodeChildren = (* item: *) TreeNodeChild+;
+>>>>>>> 12615dc60 (Update generated files)
    */
   TreeNodeChildren = "TreeNodeChildren",
 }
@@ -164,114 +232,170 @@ export declare enum TerminalKind {
   Missing = "Missing",
   /**
    * This kind represents a `Bang` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * BANG = "!";
    * ```
+=======
+   * BANG = "!";
+>>>>>>> 12615dc60 (Update generated files)
    */
   Bang = "Bang",
   /**
    * This kind represents a `CloseBracket` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * CLOSE_BRACKET = "]";
    * ```
+=======
+   * CLOSE_BRACKET = "]";
+>>>>>>> 12615dc60 (Update generated files)
    */
   CloseBracket = "CloseBracket",
   /**
    * This kind represents a `DelimitedIdentifier` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * DELIMITED_IDENTIFIER = «DELIMITED_IDENTIFIER_START» «DELIMITED_IDENTIFIER_PART»*;
    * ```
+=======
+   * DELIMITED_IDENTIFIER = «DELIMITED_IDENTIFIER_START» «DELIMITED_IDENTIFIER_PART»*;
+>>>>>>> 12615dc60 (Update generated files)
    */
   DelimitedIdentifier = "DelimitedIdentifier",
   /**
    * This kind represents a `EndOfLine` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * END_OF_LINE = "\r"? "\n";
    * ```
+=======
+   * END_OF_LINE = "\r"? "\n";
+>>>>>>> 12615dc60 (Update generated files)
    */
   EndOfLine = "EndOfLine",
   /**
    * This kind represents a `Identifier` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * IDENTIFIER = «RAW_IDENTIFIER»;
    * ```
+=======
+   * IDENTIFIER = «RAW_IDENTIFIER»;
+>>>>>>> 12615dc60 (Update generated files)
    */
   Identifier = "Identifier",
   /**
    * This kind represents a `MultiLineComment` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*\/";
    * ```
+=======
+   * MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*\/";
+>>>>>>> 12615dc60 (Update generated files)
    */
   MultiLineComment = "MultiLineComment",
   /**
    * This kind represents a `OpenBracket` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * OPEN_BRACKET = "[";
    * ```
+=======
+   * OPEN_BRACKET = "[";
+>>>>>>> 12615dc60 (Update generated files)
    */
   OpenBracket = "OpenBracket",
   /**
    * This kind represents a `Period` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * PERIOD = ".";
    * ```
+=======
+   * PERIOD = ".";
+>>>>>>> 12615dc60 (Update generated files)
    */
   Period = "Period",
   /**
    * This kind represents a `Plus` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * PLUS = "+";
    * ```
+=======
+   * PLUS = "+";
+>>>>>>> 12615dc60 (Update generated files)
    */
   Plus = "Plus",
   /**
    * This kind represents a `Semicolon` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * SEMICOLON = ";";
    * ```
+=======
+   * SEMICOLON = ";";
+>>>>>>> 12615dc60 (Update generated files)
    */
   Semicolon = "Semicolon",
   /**
    * This kind represents a `SingleLineComment` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
    * ```
+=======
+   * SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
+>>>>>>> 12615dc60 (Update generated files)
    */
   SingleLineComment = "SingleLineComment",
   /**
    * This kind represents a `StringLiteral` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
    * ```
+=======
+   * STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+>>>>>>> 12615dc60 (Update generated files)
    */
   StringLiteral = "StringLiteral",
   /**
    * This kind represents a `TreeKeyword` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * TREE_KEYWORD = "tree";
    * ```
+=======
+   * TREE_KEYWORD = "tree";
+>>>>>>> 12615dc60 (Update generated files)
    */
   TreeKeyword = "TreeKeyword",
   /**
    * This kind represents a `Whitespace` node, with the following structure:
+<<<<<<< HEAD
    *
    * ```ebnf
    * WHITESPACE = (" " | "\t")+;
    * ```
+=======
+   * WHITESPACE = (" " | "\t")+;
+>>>>>>> 12615dc60 (Update generated files)
    */
   Whitespace = "Whitespace",
 }
