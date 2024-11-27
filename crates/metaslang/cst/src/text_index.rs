@@ -40,6 +40,14 @@ impl TextIndex {
             }
         }
     }
+
+    pub fn advance_str(&mut self, text: &str) {
+        text.chars().for_each(|c| {
+            if c != '\r' {
+                self.advance(c, None);
+            }
+        });
+    }
 }
 
 impl PartialOrd for TextIndex {

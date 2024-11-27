@@ -91,7 +91,7 @@ impl SeparatedHelper {
                 }
                 ParserResult::NoMatch(no_match) => {
                     return if accum.is_empty() {
-                        ParserResult::no_match(no_match.nodes, no_match.expected_terminals)
+                        ParserResult::no_match(no_match.nodes, None, no_match.expected_terminals)
                     } else {
                         ParserResult::incomplete_match(accum, no_match.expected_terminals)
                     };

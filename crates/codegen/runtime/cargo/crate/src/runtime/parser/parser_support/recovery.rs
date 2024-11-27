@@ -70,7 +70,11 @@ impl ParserResult {
                 )
             }
             ParserResult::NoMatch(result) if acceptance_threshold.0 == 0 => {
-                (vec![], result.expected_terminals, ParseResultKind::NoMatch)
+                (
+                    vec![], /* trivia will be read below */
+                    result.expected_terminals,
+                    ParseResultKind::NoMatch,
+                )
             }
             // No need to recover, so just return as-is.
             _ => return self,
@@ -106,7 +110,7 @@ impl ParserResult {
                     ParserResult::incomplete_match(nodes, expected_terminals)
                 }
                 ParseResultKind::NoMatch => {
-                    ParserResult::no_match(leading_trivia, expected_terminals)
+                    ParserResult::no_match(leading_trivia, None, expected_terminals)
                 }
             }
         }

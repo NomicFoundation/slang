@@ -52,6 +52,10 @@ impl ChoiceHelper {
 
             // Still no match, extend the possible expected terminals.
             (ParserResult::NoMatch(running), ParserResult::NoMatch(next)) => {
+                if running.nodes.is_empty() && !next.nodes.is_empty() {
+                    // transfer nodes
+                    running.nodes.extend(next.nodes.clone());
+                }
                 running
                     .expected_terminals
                     .extend(next.expected_terminals.clone());
@@ -127,7 +131,7 @@ pub fn total_not_skipped_span(result: &ParserResult) -> usize {
         ParserResult::Match(match_) => &match_.nodes,
         ParserResult::IncompleteMatch(incomplete_match) => &incomplete_match.nodes,
         ParserResult::SkippedUntil(skipped) => &skipped.nodes,
-        ParserResult::NoMatch(_) => &[][..],
+        ParserResult::NoMatch(no_match) => &no_match.nodes,
         ParserResult::PrattOperatorMatch(_) => unreachable!(
             "PrattOperatorMatch is always considered a better pick, so it should never be considered here"
         ),
