@@ -44,34 +44,10 @@ pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
     options: ResolveOptions,
 }
 
-#[derive(Copy, Clone)]
-pub(crate) struct ResolveOptions {
-    pub rank_results: bool,
-    pub apply_c3_linearisation: bool,
-    pub use_extension_hooks: bool,
-    pub recursive_extension_scopes: bool,
-}
-
-impl ResolveOptions {
-    pub fn reentrant_safe() -> Self {
-        Self {
-            rank_results: true,
-            apply_c3_linearisation: false,
-            use_extension_hooks: false,
-            recursive_extension_scopes: false,
-        }
-    }
-}
-
-impl Default for ResolveOptions {
-    fn default() -> Self {
-        Self {
-            rank_results: true,
-            apply_c3_linearisation: true,
-            use_extension_hooks: true,
-            recursive_extension_scopes: false,
-        }
-    }
+#[derive(Copy, Clone, Eq, PartialEq)]
+pub(crate) enum ResolveOptions {
+    Full,
+    NonRecursive,
 }
 
 struct ResolvedPath<'a, KT: KindTypes + 'static> {
@@ -173,7 +149,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
     fn resolve(&mut self) {
         let mut reference_paths = Vec::new();
-        if self.options.use_extension_hooks {
+        if self.options == ResolveOptions::Full {
             let ref_parents = self.reference.resolve_parents();
             let mut extensions = HashSet::new();
             for parent in &ref_parents {
@@ -181,7 +157,8 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                     extensions.insert(extension_scope);
                 }
 
-                if self.options.recursive_extension_scopes {
+                if parent.inherit_extensions() {
+                    #[allow(clippy::mutable_key_type)]
                     let grand_parents = Self::resolve_parents_all(parent.clone());
                     for grand_parent in grand_parents.values().flatten() {
                         if let Some(extension_scope) = grand_parent.get_extension_scope() {
@@ -200,7 +177,8 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                 |_graph, _paths, path| {
                     reference_paths.push(path.clone());
                 },
-            ).expect("Should never be cancelled");
+            )
+            .expect("Should never be cancelled");
         } else {
             ForwardPartialPathStitcher::find_all_complete_partial_paths(
                 &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut self.partials, None),
@@ -210,7 +188,8 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
                 |_graph, _paths, path| {
                     reference_paths.push(path.clone());
                 },
-            ).expect("Should never be cancelled");
+            )
+            .expect("Should never be cancelled");
         };
 
         let mut added_nodes = HashSet::new();
@@ -247,9 +226,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
     pub fn first(&mut self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
         if self.results.len() > 1 {
-            if self.options.rank_results {
-                self.rank_results();
-            }
+            self.rank_results();
 
             let top_score = self.results[0].score;
             let mut results = self
@@ -277,7 +254,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         }
         self.mark_down_aliases();
         self.mark_down_built_ins();
-        if self.options.apply_c3_linearisation {
+        if self.options == ResolveOptions::Full {
             self.rank_c3_methods();
         }
         self.results.sort_by(|a, b| b.score.total_cmp(&a.score));
