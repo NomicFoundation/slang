@@ -492,7 +492,7 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
             .expect("Reference does not have a valid file descriptor")
     }
 
-    pub fn jump_to_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
+    pub fn resolve_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
         Resolver::build_for(self, ResolveOptions::Full).first()
     }
 
