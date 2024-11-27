@@ -259,7 +259,10 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
                 } else {
                     // TODO: what should we do if the parent reference
                     // cannot be resolved at this point?
-                    self.to_reference(*handle).unwrap().simple_resolve().ok()
+                    self.to_reference(*handle)
+                        .unwrap()
+                        .non_recursive_resolve()
+                        .ok()
                 }
             })
             .collect()
@@ -497,7 +500,9 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
         Resolver::build_for(self, ResolveOptions::Full).all()
     }
 
-    pub(crate) fn simple_resolve(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
+    pub(crate) fn non_recursive_resolve(
+        &self,
+    ) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
         // This was likely originated from a full resolution call, so cut
         // recursion here by restricting the resolution algorithm.
         Resolver::build_for(self, ResolveOptions::NonRecursive).first()
