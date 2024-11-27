@@ -93,7 +93,10 @@ impl CancellationFlag for NoCancellation {
     }
 }
 
-/// Acts as a database of the edges in the graph.
+/// Candidates for the forward stitching resolution process. This will inject
+/// edges to the the given extensions scopes at extension hook nodes when asked
+/// for forward candidates (ie. `get_forward_candidates`) by the resolution
+/// algorithm. Other than that, it's exactly the same as `GraphEdgeCandidates`.
 struct ResolverCandidates<'a, KT: KindTypes + 'static> {
     owner: &'a Bindings<KT>,
     partials: &'a mut PartialPaths,
@@ -133,16 +136,9 @@ impl<KT: KindTypes + 'static> ForwardCandidates<Edge, Edge, GraphEdges, Cancella
         }));
 
         if self.owner.is_extension_hook(node) {
-            // println!(
-            //     "injecting edges to extensions at hook {node}",
-            //     node = self.owner.stack_graph[node].id().local_id()
-            // );
+            // Inject edges from the extension hook node to each extension scope
             let mut extension_edges = Vec::new();
             for extension in self.extensions {
-                // println!(
-                //     "- {extension}",
-                //     extension = self.owner.stack_graph[*extension].id().local_id()
-                // );
                 extension_edges.push(Edge {
                     source: node,
                     sink: *extension,
@@ -175,140 +171,55 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         resolver
     }
 
-    #[allow(dead_code)]
-    fn find_all_complete_partial_paths(&mut self) -> Result<Vec<PartialPath>, CancellationError> {
-        let mut reference_paths = Vec::new();
-        ForwardPartialPathStitcher::find_all_complete_partial_paths(
-            &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut self.partials, None),
-            once(self.reference.handle),
-            StitcherConfig::default(),
-            &stack_graphs::NoCancellation,
-            |_graph, _paths, path| {
-                reference_paths.push(path.clone());
-            },
-        )?;
-        Ok(reference_paths)
-    }
-
-    fn find_paths_with_extensions(
-        &mut self,
-        extensions: &[GraphHandle],
-    ) -> Result<Vec<PartialPath>, CancellationError> {
-        let mut reference_paths = Vec::new();
-        let mut candidates =
-            ResolverCandidates::new(&self.owner, &mut self.partials, None, extensions);
-        let starting_nodes = once(self.reference.handle);
-        let cancellation_flag = &NoCancellation;
-
-        let (graph, partials, _) = candidates.get_graph_partials_and_db();
-        let initial_paths = starting_nodes
-            .into_iter()
-            .filter(|n| graph[*n].is_reference())
-            .map(|n| {
-                let mut p = PartialPath::from_node(graph, partials, n);
-                p.eliminate_precondition_stack_variables(partials);
-                p
-            })
-            .collect::<Vec<_>>();
-
-        let mut stitcher =
-            ForwardPartialPathStitcher::from_partial_paths(graph, partials, initial_paths);
-
-        stitcher.set_similar_path_detection(true);
-        stitcher.set_collect_stats(false);
-        stitcher.set_check_only_join_nodes(true);
-
-        while !stitcher.is_complete() {
-            cancellation_flag.check("finding complete partial paths")?;
-            for path in stitcher.previous_phase_partial_paths() {
-                candidates.load_forward_candidates(path, cancellation_flag)?;
-            }
-            stitcher.process_next_phase(&mut candidates, |_, _, _| true);
-            let (graph, _, _) = candidates.get_graph_partials_and_db();
-            for path in stitcher.previous_phase_partial_paths() {
-                if path.is_complete(graph) {
-                    //visit(graph, partials, path);
-                    reference_paths.push(path.clone());
-                }
-            }
-        }
-
-        Ok(reference_paths)
-    }
-
     fn resolve(&mut self) {
-        let reference_paths = if self.options.use_extension_hooks {
-
-            // let debug = self.reference.get_cursor().unwrap().node().unparse() == "addXXX";
-            // if debug {
-            //     println!(
-            //         "Resolving {r} [{idx}] with extensions",
-            //         r = self.reference,
-            //         idx = self.owner.stack_graph[self.reference.handle]
-            //             .id()
-            //             .local_id()
-            //             + 2
-            //     );
-            // }
-
+        let mut reference_paths = Vec::new();
+        if self.options.use_extension_hooks {
             let ref_parents = self.reference.resolve_parents();
             let mut extensions = HashSet::new();
             for parent in &ref_parents {
-
-                // if debug {
-                //     println!("  Found parent {parent}");
-                // }
-
                 if let Some(extension_scope) = parent.get_extension_scope() {
-
-                    // if debug {
-                    //     println!(
-                    //         "  - adding extension [{scope}]",
-                    //         scope = self.owner.stack_graph[extension_scope].id().local_id() + 2
-                    //     );
-                    // }
-
                     extensions.insert(extension_scope);
                 }
 
                 if self.options.recursive_extension_scopes {
                     let grand_parents = Self::resolve_parents_all(parent.clone());
                     for grand_parent in grand_parents.values().flatten() {
-
-                        // if debug {
-                        //     println!("    Found grandparent {grand_parent}");
-                        // }
-
                         if let Some(extension_scope) = grand_parent.get_extension_scope() {
                             extensions.insert(extension_scope);
-
-                            // if debug {
-                            //     println!(
-                            //         "    - adding parent extension [{scope}]",
-                            //         scope = self.owner.stack_graph[extension_scope].id().local_id() + 2
-                            //     );
-                            // }
                         }
                     }
                 }
             }
             let extensions = extensions.drain().collect::<Vec<_>>();
 
-            self.find_paths_with_extensions(&extensions)
-                .expect("Should never be cancelled")
+            ForwardPartialPathStitcher::find_all_complete_partial_paths(
+                &mut ResolverCandidates::new(self.owner, &mut self.partials, None, &extensions),
+                once(self.reference.handle),
+                StitcherConfig::default(),
+                &stack_graphs::NoCancellation,
+                |_graph, _paths, path| {
+                    reference_paths.push(path.clone());
+                },
+            ).expect("Should never be cancelled");
         } else {
-            self.find_all_complete_partial_paths()
-                .expect("Should never be cancelled")
+            ForwardPartialPathStitcher::find_all_complete_partial_paths(
+                &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut self.partials, None),
+                once(self.reference.handle),
+                StitcherConfig::default(),
+                &stack_graphs::NoCancellation,
+                |_graph, _paths, path| {
+                    reference_paths.push(path.clone());
+                },
+            ).expect("Should never be cancelled");
         };
 
         let mut added_nodes = HashSet::new();
         for reference_path in &reference_paths {
             let end_node = reference_path.end_node;
 
-            // Because of how we're using the scope stack to propagate dynamic
-            // scopes, we may get multiple results with different scope stack
-            // postconditions but reaching the exact same definition. We only
-            // care about the definition, so we check for uniqueness.
+            // There may be duplicate ending nodes with different
+            // post-conditions in the scope stack, but we only care about the
+            // definition itself. Hence we need to check for uniqueness.
             if !added_nodes.contains(&end_node)
                 && reference_paths
                     .iter()
