@@ -5,7 +5,7 @@ use codegen_ebnf::PlainWriter;
 
 use crate::model::SpecModel;
 
-pub fn generate_grammar_ebnf(model: &SpecModel<'_>) -> Result<String> {
+pub fn generate_grammar_ebnf(model: &SpecModel) -> Result<String> {
     let mut buffer = String::new();
 
     let mut plain_writer = PlainWriter::default();
