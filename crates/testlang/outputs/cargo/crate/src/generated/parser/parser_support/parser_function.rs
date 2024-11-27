@@ -58,25 +58,30 @@ where
         match result {
             ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
 
-            ParserResult::NoMatch(no_match) => {
+            ParserResult::NoMatch(mut no_match) => {
                 let (kind, start) = if input.is_empty() {
                     (TerminalKind::MISSING, TextIndex::ZERO)
                 } else {
-                    let mut stream = ParserContext::new(input);
-                    if let ParserResult::Match(trivia) = Lexer::leading_trivia(parser, &mut stream)
-                    {
-                        let mut ti = TextIndex::ZERO;
-                        trivia.nodes.iter().for_each(|node| {
-                            node.unparse().chars().for_each(|c| ti.advance(c, None));
-                        });
-                        (TerminalKind::UNRECOGNIZED, ti)
-                    } else {
-                        (TerminalKind::UNRECOGNIZED, TextIndex::ZERO)
-                    }
+                    let mut ti = TextIndex::ZERO;
+                    no_match.nodes.iter().for_each(|edge| {
+                        if let Node::Terminal(terminal) = &edge.node {
+                            if terminal.kind.is_valid() {
+                                ti.advance_str(terminal.text.as_str());
+                            }
+                        }
+                    });
+                    (TerminalKind::UNRECOGNIZED, ti)
                 };
 
+                let node = Node::terminal(kind, input[start.utf8..].to_string());
+                let tree = if no_match.kind.is_none() || start.utf8 == 0 {
+                    node
+                } else {
+                    no_match.nodes.push(Edge::anonymous(node));
+                    Node::nonterminal(no_match.kind.unwrap(), no_match.nodes)
+                };
                 ParseOutput {
-                    parse_tree: Node::terminal(kind, input.to_string()),
+                    parse_tree: tree,
                     errors: vec![ParseError::new(
                         start..input.into(),
                         no_match.expected_terminals,

@@ -30,6 +30,7 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
             // so the parse is considered valid but note the expected terminals
             ParserResult::NoMatch(NoMatch {
                 nodes,
+                kind: _,
                 expected_terminals,
             }) if MIN_COUNT == 0 => {
                 return ParserResult::r#match(nodes, expected_terminals);
