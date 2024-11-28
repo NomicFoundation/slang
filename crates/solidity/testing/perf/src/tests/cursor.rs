@@ -1,4 +1,4 @@
-use slang_solidity::cst::{NonterminalKind, TextIndex};
+use slang_solidity::cst::NonterminalKind;
 
 use crate::tests::parser::ParsedFile;
 
@@ -12,7 +12,7 @@ pub fn run(files: Vec<ParsedFile>) {
     let mut functions_count = 0;
 
     for file in &files {
-        let mut cursor = file.tree.cursor_with_offset(TextIndex::ZERO);
+        let mut cursor = file.parse_output.create_tree_cursor();
 
         while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::FunctionDefinition) {
             functions_count += 1;

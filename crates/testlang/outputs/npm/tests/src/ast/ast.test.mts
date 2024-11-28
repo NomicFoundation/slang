@@ -128,9 +128,10 @@ test("throws an exception on on using an incorrect/incomplete CST node", () => {
   const cst = parseOutput.tree;
   assertIsNonterminalNode(cst, NonterminalKind.Tree);
 
-  expect(cst.children).toHaveLength(2);
+  const children = cst.children();
+  expect(children).toHaveLength(2);
 
-  const [contractKeyword, skippedTerminal] = cst.children;
+  const [contractKeyword, skippedTerminal] = children;
   assertIsTerminalNode(contractKeyword!.node, TerminalKind.TreeKeyword, "tree");
   assertIsTerminalNode(skippedTerminal!.node, TerminalKind.Missing, "");
 

@@ -21,7 +21,7 @@ export class ParseError {
 
 export class ParseOutput {
   get tree(): Node;
-  get errors(): ParseError[];
+  errors(): ParseError[];
   isValid(): boolean;
   createTreeCursor(): Cursor;
 }

@@ -56,21 +56,6 @@ impl<T: KindTypes> Cursor<T> {
     }
 }
 
-impl<T: KindTypes> Iterator for Cursor<T> {
-    type Item = Node<T>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.is_completed {
-            None
-        } else {
-            let cur = self.node();
-            self.go_to_next();
-
-            Some(cur)
-        }
-    }
-}
-
 impl<T: KindTypes> Cursor<T> {
     pub(crate) fn new(node: Node<T>, text_offset: TextIndex) -> Self {
         Self {
@@ -159,26 +144,31 @@ impl<T: KindTypes> Cursor<T> {
         depth
     }
 
-    /// Returns an iterator over the current node's ancestors, starting from the parent of the current node.
-    pub fn ancestors(&self) -> impl Iterator<Item = Rc<NonterminalNode<T>>> {
-        struct Iter<T: KindTypes> {
-            a: Option<Rc<PathAncestor<T>>>,
-        }
-        impl<T: KindTypes> Iterator for Iter<T> {
-            type Item = Rc<NonterminalNode<T>>;
+    /// Returns the list of child edges directly connected to this node.
+    pub fn children(&self) -> &[Edge<T>] {
+        self.node.children()
+    }
 
-            fn next(&mut self) -> Option<Self::Item> {
-                if let Some(a) = self.a.take() {
-                    self.a = a.parent.clone();
-                    Some(Rc::clone(&a.nonterminal_node))
-                } else {
-                    None
-                }
-            }
-        }
-        Iter {
-            a: self.parent.clone(),
-        }
+    /// Returns an iterator over all descendants of the current node in pre-order traversal.
+    pub fn descendants(&self) -> CursorIterator<T> {
+        let mut cursor = self.spawn();
+
+        // skip the current node:
+        cursor.go_to_next();
+
+        CursorIterator { cursor }
+    }
+
+    /// Returns an iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the cursor is completed.
+    pub fn consume(self) -> CursorIterator<T> {
+        CursorIterator { cursor: self }
+    }
+
+    /// Returns an iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
+    pub fn ancestors(&self) -> AncestorsIterator<T> {
+        let current = self.parent.clone();
+
+        AncestorsIterator { current }
     }
 
     /// Attempts to go to current node's next one, according to the DFS pre-order traversal.
@@ -189,13 +179,13 @@ impl<T: KindTypes> Cursor<T> {
             return false;
         }
 
-        self.go_to_first_child() || self.go_to_next_non_descendent()
+        self.go_to_first_child() || self.go_to_next_non_descendant()
     }
 
-    /// Attempts to go to current node's next non-descendent.
+    /// Attempts to go to current node's next non-descendant.
     ///
     /// Returns `false` if the cursor is finished and at the root.
-    pub fn go_to_next_non_descendent(&mut self) -> bool {
+    pub fn go_to_next_non_descendant(&mut self) -> bool {
         if self.is_completed {
             return false;
         }
@@ -422,50 +412,42 @@ impl<T: KindTypes> Cursor<T> {
     }
 }
 
-/// A [`Cursor`] that also keeps track of the labels of the nodes it visits.
-pub struct CursorWithEdges<T: KindTypes> {
+pub struct CursorIterator<T: KindTypes> {
     cursor: Cursor<T>,
 }
 
-impl<T: KindTypes> CursorWithEdges<T> {
-    pub fn without_edges(self) -> Cursor<T> {
-        self.cursor
-    }
-}
-
-impl<T: KindTypes> Iterator for CursorWithEdges<T> {
+impl<T: KindTypes> Iterator for CursorIterator<T> {
     type Item = Edge<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let label = self.cursor.label();
+        if self.cursor.is_completed() {
+            return None;
+        }
 
-        self.cursor.next().map(|node| Self::Item { label, node })
+        let current = Edge {
+            label: self.cursor.label(),
+            node: self.cursor.node().clone(),
+        };
+
+        self.cursor.go_to_next();
+
+        Some(current)
     }
 }
 
-impl<T: KindTypes> std::ops::Deref for CursorWithEdges<T> {
-    type Target = Cursor<T>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.cursor
-    }
+pub struct AncestorsIterator<T: KindTypes> {
+    current: Option<Rc<PathAncestor<T>>>,
 }
 
-impl<T: KindTypes> std::ops::DerefMut for CursorWithEdges<T> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.cursor
-    }
-}
+impl<T: KindTypes> Iterator for AncestorsIterator<T> {
+    type Item = Rc<NonterminalNode<T>>;
 
-impl<T: KindTypes> Cursor<T> {
-    /// Returns a [`CursorWithEdges`] that wraps this cursor.
-    pub fn with_edges(self) -> CursorWithEdges<T> {
-        CursorWithEdges::<T>::from(self)
-    }
-}
-
-impl<T: KindTypes> From<Cursor<T>> for CursorWithEdges<T> {
-    fn from(cursor: Cursor<T>) -> Self {
-        CursorWithEdges::<T> { cursor }
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some(current) = self.current.take() {
+            self.current = current.parent.clone();
+            Some(Rc::clone(&current.nonterminal_node))
+        } else {
+            None
+        }
     }
 }

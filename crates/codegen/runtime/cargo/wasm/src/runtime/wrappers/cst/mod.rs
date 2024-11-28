@@ -1,21 +1,26 @@
+use std::rc::Rc;
+
 use crate::wasm_crate::utils::{
     define_rc_wrapper, define_refcell_wrapper, define_wrapper, enum_to_enum, FromFFI, IntoFFI,
 };
 
 mod ffi {
     pub use crate::wasm_crate::bindings::exports::nomic_foundation::slang::cst::{
-        Cursor, CursorBorrow, Edge, EdgeLabel, Guest, GuestCursor, GuestNonterminalNode,
-        GuestQuery, GuestQueryMatchIterator, GuestTerminalKindExtensions, GuestTerminalNode, Node,
-        NonterminalKind, NonterminalNode, NonterminalNodeBorrow, Query, QueryBorrow, QueryError,
-        QueryMatch, QueryMatchIterator, QueryMatchIteratorBorrow, TerminalKind, TerminalNode,
-        TerminalNodeBorrow, TextIndex, TextRange,
+        AncestorsIterator, AncestorsIteratorBorrow, Cursor, CursorBorrow, CursorIterator,
+        CursorIteratorBorrow, Edge, EdgeLabel, Guest, GuestAncestorsIterator, GuestCursor,
+        GuestCursorIterator, GuestNonterminalNode, GuestQuery, GuestQueryMatchIterator,
+        GuestTerminalKindExtensions, GuestTerminalNode, Node, NonterminalKind, NonterminalNode,
+        NonterminalNodeBorrow, Query, QueryBorrow, QueryError, QueryMatch, QueryMatchIterator,
+        QueryMatchIteratorBorrow, TerminalKind, TerminalNode, TerminalNodeBorrow, TextIndex,
+        TextRange,
     };
 }
 
 mod rust {
     pub use crate::rust_crate::cst::{
-        Cursor, Edge, EdgeLabel, Node, NonterminalKind, NonterminalNode, Query, QueryError,
-        QueryMatch, QueryMatchIterator, TerminalKind, TerminalNode, TextIndex, TextRange,
+        AncestorsIterator, Cursor, CursorIterator, Edge, EdgeLabel, Node, NonterminalKind,
+        NonterminalNode, Query, QueryError, QueryMatch, QueryMatchIterator, TerminalKind,
+        TerminalNode, TextIndex, TextRange,
     };
 }
 
@@ -26,6 +31,8 @@ impl ffi::Guest for crate::wasm_crate::World {
     type TerminalNode = TerminalNodeWrapper;
 
     type Cursor = CursorWrapper;
+    type CursorIterator = CursorIteratorWrapper;
+    type AncestorsIterator = AncestorsIteratorWrapper;
 
     type Query = QueryWrapper;
     type QueryMatchIterator = QueryMatchIteratorWrapper;
@@ -109,7 +116,11 @@ define_rc_wrapper! { NonterminalNode {
     }
 
     fn children(&self) -> Vec<ffi::Edge> {
-        self._borrow_ffi().children.iter().map(|edge| edge.clone()._into_ffi()).collect()
+        self._borrow_ffi().children().iter().cloned().map(IntoFFI::_into_ffi).collect()
+    }
+
+    fn descendants(&self) -> ffi::CursorIterator {
+        Rc::clone(self._borrow_ffi()).descendants()._into_ffi()
     }
 
     fn unparse(&self) -> String {
@@ -145,7 +156,11 @@ define_rc_wrapper! { TerminalNode {
     }
 
     fn children(&self) -> Vec<ffi::Edge> {
-        Vec::new()
+        self._borrow_ffi().children().iter().cloned().map(IntoFFI::_into_ffi).collect()
+    }
+
+    fn descendants(&self) -> ffi::CursorIterator {
+        Rc::clone(self._borrow_ffi()).descendants()._into_ffi()
     }
 
     fn unparse(&self) -> String {
@@ -167,7 +182,7 @@ impl IntoFFI<ffi::Edge> for rust::Edge {
     #[inline]
     fn _into_ffi(self) -> ffi::Edge {
         ffi::Edge {
-            label: self.label.map(|label| label._into_ffi()),
+            label: self.label.map(IntoFFI::_into_ffi),
             node: self.node._into_ffi(),
         }
     }
@@ -220,16 +235,28 @@ define_refcell_wrapper! { Cursor {
         self._borrow_ffi().depth().try_into().unwrap()
     }
 
-    fn ancestors(&self) -> Vec<ffi::NonterminalNode> {
-        self._borrow_ffi().ancestors().map(|x|x._into_ffi()).collect()
+    fn children(&self) -> Vec<ffi::Edge> {
+        self._borrow_ffi().children().iter().cloned().map(IntoFFI::_into_ffi).collect()
+    }
+
+    fn descendants(&self) -> ffi::CursorIterator {
+        self._borrow_ffi().descendants()._into_ffi()
+    }
+
+    fn consume(&self) -> ffi::CursorIterator {
+        self._borrow_ffi().clone().consume()._into_ffi()
+    }
+
+    fn ancestors(&self) -> ffi::AncestorsIterator {
+        self._borrow_ffi().ancestors()._into_ffi()
     }
 
     fn go_to_next(&self) -> bool {
         self._borrow_mut_ffi().go_to_next()
     }
 
-    fn go_to_next_non_descendent(&self) -> bool {
-        self._borrow_mut_ffi().go_to_next_non_descendent()
+    fn go_to_next_non_descendant(&self) -> bool {
+        self._borrow_mut_ffi().go_to_next_non_descendant()
     }
 
     fn go_to_previous(&self) -> bool {
@@ -297,6 +324,30 @@ define_refcell_wrapper! { Cursor {
 
 //================================================
 //
+// resource cursor-iterator
+//
+//================================================
+
+define_refcell_wrapper! { CursorIterator {
+    fn next(&self) -> Option<ffi::Edge> {
+        self._borrow_mut_ffi().next().map(IntoFFI::_into_ffi)
+    }
+} }
+
+//================================================
+//
+// resource ancestors-iterator
+//
+//================================================
+
+define_refcell_wrapper! { AncestorsIterator {
+    fn next(&self) -> Option<ffi::NonterminalNode> {
+        self._borrow_mut_ffi().next().map(IntoFFI::_into_ffi)
+    }
+} }
+
+//================================================
+//
 // resource query
 //
 //================================================
@@ -350,7 +401,7 @@ impl IntoFFI<ffi::QueryMatch> for rust::QueryMatch {
             captures: self
                 .captures
                 .into_iter()
-                .map(|(k, v)| (k, v.into_iter().map(|c| c._into_ffi()).collect()))
+                .map(|(k, v)| (k, v.into_iter().map(IntoFFI::_into_ffi).collect()))
                 .collect(),
         }
     }

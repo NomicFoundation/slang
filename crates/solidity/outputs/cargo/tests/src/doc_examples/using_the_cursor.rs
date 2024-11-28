@@ -88,14 +88,12 @@ fn using_the_cursor() -> Result<()> {
 
     {
         // --8<-- [start:using-iterator-api]
-        let cursor = parse_output.create_tree_cursor();
 
-        let identifiers: Vec<_> = cursor
-            .filter_map(|node| {
-                node.as_terminal_with_kind(TerminalKind::Identifier)
-                    .cloned()
-            })
-            .map(|identifier| identifier.text.clone())
+        let identifiers: Vec<_> = parse_output
+            .tree()
+            .descendants()
+            .filter(|node| node.is_terminal_with_kind(TerminalKind::Identifier))
+            .map(|identifier| identifier.unparse())
             .collect();
 
         assert_eq!(identifiers, &["Foo", "Bar", "Baz"]);
@@ -103,21 +101,18 @@ fn using_the_cursor() -> Result<()> {
     }
 
     {
-        // --8<-- [start:using-labeled-cursors]
-        let cursor = parse_output.create_tree_cursor();
+        // --8<-- [start:using-cursors-with-labels]
 
-        let identifiers: Vec<_> = cursor
-            .with_edges()
+        let identifiers: Vec<_> = parse_output
+            .tree()
+            .descendants()
             .filter(|node| node.label == Some(EdgeLabel::Name))
-            .filter_map(|node| {
-                node.as_terminal_with_kind(TerminalKind::Identifier)
-                    .cloned()
-            })
-            .map(|identifier| identifier.text.clone())
+            .filter(|node| node.is_terminal_with_kind(TerminalKind::Identifier))
+            .map(|identifier| identifier.unparse())
             .collect();
 
         assert_eq!(identifiers, &["Foo", "Bar", "Baz"]);
-        // --8<-- [end:using-labeled-cursors]
+        // --8<-- [end:using-cursors-with-labels]
     }
 
     Ok(())

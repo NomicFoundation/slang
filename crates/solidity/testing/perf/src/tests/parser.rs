@@ -1,7 +1,6 @@
 use std::path::PathBuf;
 
-use slang_solidity::cst::Node;
-use slang_solidity::parser::Parser;
+use slang_solidity::parser::{ParseOutput, Parser};
 
 use crate::dataset::{SourceFile, SOLC_VERSION};
 
@@ -11,7 +10,7 @@ pub struct ParsedFile {
     #[allow(dead_code)] // false-positive. it is used below.
     pub contents: String,
 
-    pub tree: Node,
+    pub parse_output: ParseOutput,
 }
 
 pub fn setup() -> Vec<SourceFile> {
@@ -35,7 +34,7 @@ pub fn run(files: Vec<SourceFile>) -> Vec<ParsedFile> {
         results.push(ParsedFile {
             path,
             contents,
-            tree: parse_output.tree(),
+            parse_output,
         });
     }
 

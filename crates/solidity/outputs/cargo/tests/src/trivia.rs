@@ -1,6 +1,6 @@
 use anyhow::Result;
 use semver::Version;
-use slang_solidity::cst::{Node, NonterminalKind, TerminalKind};
+use slang_solidity::cst::{NonterminalKind, TerminalKind};
 use slang_solidity::parser::Parser;
 
 #[test]
@@ -28,15 +28,10 @@ fn compare_end_of_lines(input: &str, expected: &[&str]) -> Result<()> {
     assert!(output.is_valid());
 
     let actual = output
-        .create_tree_cursor()
-        .filter_map(|node| match node {
-            Node::Nonterminal(_) => None,
-
-            Node::Terminal(terminal) => {
-                assert_eq!(terminal.kind, TerminalKind::EndOfLine);
-                Some(terminal.text.clone())
-            }
-        })
+        .tree()
+        .descendants()
+        .filter(|node| node.is_terminal_with_kind(TerminalKind::EndOfLine))
+        .map(|eol| eol.unparse())
         .collect::<Vec<_>>();
 
     let expected = expected.to_vec();
