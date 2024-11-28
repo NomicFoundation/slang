@@ -29,11 +29,10 @@ impl<const MIN_COUNT: usize> RepetitionHelper<MIN_COUNT> {
             // Couldn't get a full match but we allow 0 items - return an empty match
             // so the parse is considered valid but note the expected terminals
             ParserResult::NoMatch(NoMatch {
-                nodes,
                 kind: _,
                 expected_terminals,
             }) if MIN_COUNT == 0 => {
-                return ParserResult::r#match(nodes, expected_terminals);
+                return ParserResult::r#match(vec![], expected_terminals);
             }
             // Don't try repeating if we don't have a full match and we require at least one
             incomplete_or_no_match => return incomplete_or_no_match,

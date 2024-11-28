@@ -16,7 +16,6 @@ pub enum ParserResult {
 impl Default for ParserResult {
     fn default() -> Self {
         Self::NoMatch(NoMatch {
-            nodes: vec![],
             kind: None,
             expected_terminals: vec![],
         })
@@ -38,15 +37,11 @@ impl ParserResult {
 
     /// Whenever a parser didn't run because it's disabled due to versioning. Shorthand for `no_match(vec![], None, vec![])`.
     pub fn disabled() -> Self {
-        Self::no_match(vec![], None, vec![])
+        Self::no_match(None, vec![])
     }
 
-    pub fn no_match(
-        nodes: Vec<Edge>,
-        kind: Option<NonterminalKind>,
-        expected_terminals: Vec<TerminalKind>,
-    ) -> Self {
-        ParserResult::NoMatch(NoMatch::new(nodes, kind, expected_terminals))
+    pub fn no_match(kind: Option<NonterminalKind>, expected_terminals: Vec<TerminalKind>) -> Self {
+        ParserResult::NoMatch(NoMatch::new(kind, expected_terminals))
     }
 
     #[must_use]
@@ -68,7 +63,7 @@ impl ParserResult {
                 ..skipped
             }),
             ParserResult::NoMatch(no_match) => {
-                ParserResult::no_match(no_match.nodes, Some(new_kind), no_match.expected_terminals)
+                ParserResult::no_match(Some(new_kind), no_match.expected_terminals)
             }
             ParserResult::PrattOperatorMatch(_) => {
                 unreachable!("PrattOperatorMatch cannot be converted to a nonterminal")
@@ -238,8 +233,6 @@ impl IncompleteMatch {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct NoMatch {
-    /// The terminals that were parsed; trivia
-    pub nodes: Vec<Edge>,
     /// The nonterminal kind this match is coming from
     pub kind: Option<NonterminalKind>,
     /// Terminals that would have allowed for more progress. Collected for the purposes of error reporting.
@@ -247,13 +240,8 @@ pub struct NoMatch {
 }
 
 impl NoMatch {
-    pub fn new(
-        nodes: Vec<Edge>,
-        kind: Option<NonterminalKind>,
-        expected_terminals: Vec<TerminalKind>,
-    ) -> Self {
+    pub fn new(kind: Option<NonterminalKind>, expected_terminals: Vec<TerminalKind>) -> Self {
         Self {
-            nodes,
             kind,
             expected_terminals,
         }

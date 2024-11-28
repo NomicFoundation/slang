@@ -15,4 +15,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): '// Disallowed post 0.4.25\n"\a"\n' # (0..31)
+  - (StringLiteral): # '// Disallowed post 0.4.25\n"\a"\n' (0..31)
+      - (leading_trivia꞉ SingleLineComment): "// Disallowed post 0.4.25" # (0..25)
+      - (leading_trivia꞉ EndOfLine): "\n" # (25..26)
+      - (UNRECOGNIZED): '"\a"\n' # (26..31)

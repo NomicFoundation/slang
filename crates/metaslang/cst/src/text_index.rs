@@ -42,11 +42,11 @@ impl TextIndex {
     }
 
     pub fn advance_str(&mut self, text: &str) {
-        text.chars().for_each(|c| {
-            if c != '\r' {
-                self.advance(c, None);
-            }
-        });
+        let mut iter = text.chars().peekable();
+        while let Some(c) = iter.next() {
+            let n = iter.peek();
+            self.advance(c, n);
+        }
     }
 }
 
@@ -71,11 +71,7 @@ impl Display for TextIndex {
 impl<T: AsRef<str>> From<T> for TextIndex {
     fn from(s: T) -> Self {
         let mut result = Self::ZERO;
-        let mut iter = s.as_ref().chars().peekable();
-        while let Some(c) = iter.next() {
-            let n = iter.peek();
-            result.advance(c, n);
-        }
+        result.advance_str(s.as_ref());
         result
     }
 }

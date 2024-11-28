@@ -56,32 +56,40 @@ where
         match result {
             ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
 
-            ParserResult::NoMatch(mut no_match) => {
-                let (kind, start) = if input.is_empty() {
-                    (TerminalKind::MISSING, TextIndex::ZERO)
+            ParserResult::NoMatch(no_match) => {
+                let mut trivia_nodes = if let ParserResult::Match(matched) =
+                    Lexer::leading_trivia(parser, &mut stream)
+                {
+                    matched.nodes
                 } else {
-                    let mut ti = TextIndex::ZERO;
-                    no_match.nodes.iter().for_each(|edge| {
-                        if let Node::Terminal(terminal) = &edge.node {
-                            if terminal.kind.is_valid() {
-                                ti.advance_str(terminal.text.as_str());
-                            }
-                        }
-                    });
-                    (TerminalKind::UNRECOGNIZED, ti)
+                    vec![]
                 };
 
-                let node = Node::terminal(kind, input[start.utf8..].to_string());
+                let mut start = TextIndex::ZERO;
+                for edge in &trivia_nodes {
+                    if let Node::Terminal(terminal) = &edge.node {
+                        if terminal.kind.is_valid() {
+                            start.advance_str(terminal.text.as_str());
+                        }
+                    }
+                }
+                let input = &input[start.utf8..];
+                let kind = if input.is_empty() {
+                    TerminalKind::MISSING
+                } else {
+                    TerminalKind::UNRECOGNIZED
+                };
+                let node = Node::terminal(kind, input.to_string());
                 let tree = if no_match.kind.is_none() || start.utf8 == 0 {
                     node
                 } else {
-                    no_match.nodes.push(Edge::anonymous(node));
-                    Node::nonterminal(no_match.kind.unwrap(), no_match.nodes)
+                    trivia_nodes.push(Edge::anonymous(node));
+                    Node::nonterminal(no_match.kind.unwrap(), trivia_nodes)
                 };
                 ParseOutput {
                     parse_tree: tree,
                     errors: vec![ParseError::new(
-                        start..input.into(),
+                        start..start + input.into(),
                         no_match.expected_terminals,
                     )],
                 }
