@@ -13,7 +13,6 @@ impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::cursor::Cursor<T>
 pub fn metaslang_cst::cursor::Cursor<T>::ancestors(&self) -> metaslang_cst::cursor::AncestorsIterator<T>
 pub fn metaslang_cst::cursor::Cursor<T>::children(&self) -> &[metaslang_cst::nodes::Edge<T>]
 pub fn metaslang_cst::cursor::Cursor<T>::complete(&mut self)
-pub fn metaslang_cst::cursor::Cursor<T>::consume(self) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::cursor::Cursor<T>::depth(&self) -> usize
 pub fn metaslang_cst::cursor::Cursor<T>::descendants(&self) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_first_child(&mut self) -> bool
@@ -34,6 +33,7 @@ pub fn metaslang_cst::cursor::Cursor<T>::go_to_previous_sibling(&mut self) -> bo
 pub fn metaslang_cst::cursor::Cursor<T>::is_completed(&self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::label(&self) -> core::option::Option<<T as metaslang_cst::kinds::KindTypes>::EdgeLabel>
 pub fn metaslang_cst::cursor::Cursor<T>::node(&self) -> metaslang_cst::nodes::Node<T>
+pub fn metaslang_cst::cursor::Cursor<T>::remaining_nodes(&self) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::cursor::Cursor<T>::reset(&mut self)
 pub fn metaslang_cst::cursor::Cursor<T>::spawn(&self) -> Self
 pub fn metaslang_cst::cursor::Cursor<T>::text_offset(&self) -> metaslang_cst::text_index::TextIndex

@@ -159,9 +159,11 @@ impl<T: KindTypes> Cursor<T> {
         CursorIterator { cursor }
     }
 
-    /// Returns an iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the cursor is completed.
-    pub fn consume(self) -> CursorIterator<T> {
-        CursorIterator { cursor: self }
+    /// Returns an iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
+    pub fn remaining_nodes(&self) -> CursorIterator<T> {
+        CursorIterator {
+            cursor: self.clone(),
+        }
     }
 
     /// Returns an iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
@@ -426,7 +428,7 @@ impl<T: KindTypes> Iterator for CursorIterator<T> {
 
         let current = Edge {
             label: self.cursor.label(),
-            node: self.cursor.node().clone(),
+            node: self.cursor.node(),
         };
 
         self.cursor.go_to_next();

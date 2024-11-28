@@ -81,7 +81,7 @@ impl<T: KindTypes> std::ops::Deref for Edge<T> {
 
 impl<T: KindTypes> Node<T> {
     pub fn nonterminal(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Self {
-        let text_len = children.iter().map(|node| node.text_len()).sum();
+        let text_len = children.iter().map(|edge| edge.text_len()).sum();
 
         Self::Nonterminal(Rc::new(NonterminalNode {
             kind,

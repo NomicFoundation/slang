@@ -133,7 +133,7 @@ impl Match {
                 edge.node
                     .clone()
                     .cursor_with_offset(TextIndex::ZERO)
-                    .consume()
+                    .remaining_nodes()
             })
             .all(|edge| {
                 edge.as_terminal()
@@ -214,7 +214,7 @@ impl IncompleteMatch {
                 edge.node
                     .clone()
                     .cursor_with_offset(TextIndex::ZERO)
-                    .consume()
+                    .remaining_nodes()
             })
             .try_fold(0u8, |mut acc, edge| {
                 match edge.node {

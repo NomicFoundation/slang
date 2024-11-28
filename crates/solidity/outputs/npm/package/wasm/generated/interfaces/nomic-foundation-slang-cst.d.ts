@@ -794,7 +794,7 @@ export class Cursor {
   get depth(): number;
   children(): Edge[];
   descendants(): CursorIterator;
-  consume(): CursorIterator;
+  remainingNodes(): CursorIterator;
   ancestors(): AncestorsIterator;
   goToNext(): boolean;
   goToNextNonDescendant(): boolean;

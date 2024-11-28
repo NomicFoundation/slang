@@ -139,7 +139,7 @@ pub fn total_not_skipped_span(result: &ParserResult) -> usize {
             edge.node
                 .clone()
                 .cursor_with_offset(TextIndex::ZERO)
-                .consume()
+                .remaining_nodes()
         })
         .filter_map(|edge| match edge.node {
             Node::Terminal(terminal) if terminal.kind.is_valid() => Some(terminal.text.len()),

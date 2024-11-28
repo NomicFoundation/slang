@@ -37,8 +37,8 @@ describe("iterators", () => {
     verifyDescendants(cursor.node.descendants());
   });
 
-  test("cursor.consume()", () => {
-    verifyConsume(cursor.consume());
+  test("cursor.remainingNodes()", () => {
+    verifyRemainingNodes(cursor.remainingNodes());
   });
 
   test("cursor.ancestors()", () => {
@@ -84,7 +84,7 @@ function verifyDescendants(iterator: CursorIterator) {
   ]);
 }
 
-function verifyConsume(iterator: CursorIterator) {
+function verifyRemainingNodes(iterator: CursorIterator) {
   const values = [];
 
   for (const edge of iterator) {

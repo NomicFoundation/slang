@@ -154,8 +154,8 @@ interface cst {
         children: func() -> list<edge>;
         /// Returns an iterator over all descendants of the current node in pre-order traversal.
         descendants: func() -> cursor-iterator;
-        /// Returns an iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the cursor is completed.
-        consume: func() -> cursor-iterator;
+        /// Returns an iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
+        remaining-nodes: func() -> cursor-iterator;
         /// Returns an iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
         ancestors: func() -> ancestors-iterator;
 
@@ -200,7 +200,7 @@ interface cst {
         query: func(queries: list<borrow<query>>) -> query-match-iterator;
     }
 
-    /// Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the cursor is completed.
+    /// Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
     resource cursor-iterator {
         /// Returns the next edge in the iteration, or `undefined` if there are no more edges.
         next: func() -> option<edge>;

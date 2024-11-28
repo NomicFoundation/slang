@@ -245,8 +245,8 @@ define_refcell_wrapper! { Cursor {
         self._borrow_ffi().descendants()._into_ffi()
     }
 
-    fn consume(&self) -> ffi::CursorIterator {
-        self._borrow_ffi().clone().consume()._into_ffi()
+    fn remaining_nodes(&self) -> ffi::CursorIterator {
+        self._borrow_ffi().remaining_nodes()._into_ffi()
     }
 
     fn ancestors(&self) -> ffi::AncestorsIterator {

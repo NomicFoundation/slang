@@ -30,7 +30,7 @@ fn compare_end_of_lines(input: &str, expected: &[&str]) -> Result<()> {
     let actual = output
         .tree()
         .descendants()
-        .filter(|node| node.is_terminal_with_kind(TerminalKind::EndOfLine))
+        .filter(|edge| edge.is_terminal_with_kind(TerminalKind::EndOfLine))
         .map(|eol| eol.unparse())
         .collect::<Vec<_>>();
 

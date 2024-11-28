@@ -143,7 +143,7 @@ where
                         parse_tree
                             .clone()
                             .cursor_with_offset(TextIndex::ZERO)
-                            .consume()
+                            .remaining_nodes()
                             .all(|edge| edge
                                 .as_terminal()
                                 .filter(|tok| !tok.kind.is_valid())
