@@ -21,7 +21,7 @@ test("using the parser", async () => {
   // --8<-- [end:parse-input]
 
   // --8<-- [start:print-errors]
-  for (const error of parseOutput.errors) {
+  for (const error of parseOutput.errors()) {
     console.error(`Error at byte offset ${error.textRange.start.utf8}: ${error.message}`);
   }
   // --8<-- [end:print-errors]
@@ -34,7 +34,7 @@ test("using the parser", async () => {
   const contract = parseOutput.tree;
   assertIsNonterminalNode(contract, NonterminalKind.ContractDefinition);
 
-  const contractChildren = contract.children;
+  const contractChildren = contract.children();
   assert.equal(contractChildren.length, 7);
 
   const [contractKeyword, firstSpace, contractName, secondSpace, openBrace, members, closeBrace] = contractChildren;

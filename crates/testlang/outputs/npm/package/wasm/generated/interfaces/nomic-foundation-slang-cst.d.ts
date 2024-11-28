@@ -5,6 +5,8 @@ export namespace NomicFoundationSlangCst {
   export { NonterminalNode };
   export { TerminalNode };
   export { Cursor };
+  export { CursorIterator };
+  export { AncestorsIterator };
   export { Query };
   export { QueryMatchIterator };
   export { NonterminalKind };
@@ -95,6 +97,11 @@ export interface TextRange {
   end: TextIndex;
 }
 
+export class AncestorsIterator {
+  [Symbol.iterator](): Iterator<NonterminalNode>;
+  next(): NonterminalNode | undefined;
+}
+
 export class Cursor {
   reset(): void;
   complete(): void;
@@ -106,9 +113,12 @@ export class Cursor {
   get textOffset(): TextIndex;
   get textRange(): TextRange;
   get depth(): number;
-  get ancestors(): NonterminalNode[];
+  children(): Edge[];
+  descendants(): CursorIterator;
+  remainingNodes(): CursorIterator;
+  ancestors(): AncestorsIterator;
   goToNext(): boolean;
-  goToNextNonDescendent(): boolean;
+  goToNextNonDescendant(): boolean;
   goToPrevious(): boolean;
   goToParent(): boolean;
   goToFirstChild(): boolean;
@@ -125,6 +135,11 @@ export class Cursor {
   query(queries: Query[]): QueryMatchIterator;
 }
 
+export class CursorIterator {
+  [Symbol.iterator](): Iterator<Edge>;
+  next(): Edge | undefined;
+}
+
 export class NonterminalNode {
   readonly nodeVariant = NodeVariant.NonterminalNode;
 
@@ -137,7 +152,8 @@ export class NonterminalNode {
   get id(): number;
   get kind(): NonterminalKind;
   get textLength(): TextIndex;
-  get children(): Edge[];
+  children(): Edge[];
+  descendants(): CursorIterator;
   unparse(): string;
   toJson(): string;
   createCursor(textOffset: TextIndex): Cursor;
@@ -169,7 +185,8 @@ export class TerminalNode {
   get id(): number;
   get kind(): TerminalKind;
   get textLength(): TextIndex;
-  get children(): Edge[];
+  children(): Edge[];
+  descendants(): CursorIterator;
   unparse(): string;
   toJson(): string;
 }

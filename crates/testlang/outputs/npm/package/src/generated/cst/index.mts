@@ -30,6 +30,12 @@ export type Edge = generated.cst.Edge;
 export const Cursor = generated.cst.Cursor;
 export type Cursor = generated.cst.Cursor;
 
+export const CursorIterator = generated.cst.CursorIterator;
+export type CursorIterator = generated.cst.CursorIterator;
+
+export const AncestorsIterator = generated.cst.AncestorsIterator;
+export type AncestorsIterator = generated.cst.AncestorsIterator;
+
 export const Query = generated.cst.Query;
 export type Query = generated.cst.Query;
 

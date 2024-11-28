@@ -106,7 +106,7 @@ impl Events {
         };
     }
 
-    pub fn parse_error(&self, message: impl AsRef<str>) {
+    fn test_error(&self, message: impl AsRef<str>) {
         match self.failed.position().cmp(&MAX_PRINTED_FAILURES) {
             cmp::Ordering::Less => {
                 self.reporter.println(message);
@@ -120,6 +120,14 @@ impl Events {
                 // Don't print any more messages...
             }
         };
+    }
+
+    pub fn parse_error(&self, message: impl AsRef<str>) {
+        self.test_error(message);
+    }
+
+    pub fn bindings_error(&self, message: impl AsRef<str>) {
+        self.test_error(message);
     }
 
     pub fn trace(&self, message: impl AsRef<str>) {
