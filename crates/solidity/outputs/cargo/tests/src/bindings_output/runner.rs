@@ -3,7 +3,6 @@ use std::fs;
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
-use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 use metaslang_graph_builder::graph::Graph;
 use slang_solidity::cst::KindTypes;
@@ -80,9 +79,9 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             "failure"
         };
 
-        // Render graph outputs unless we're on CI and only if the RENDER_GRAPHS
+        // Render graph outputs only if the __SLANG_BINDINGS_RENDER_GRAPHS__
         // environment variable is set.
-        if !GitHub::is_running_in_ci() && std::env::var("RENDER_GRAPHS").is_ok() {
+        if std::env::var("__SLANG_BINDINGS_RENDER_GRAPHS__").is_ok() {
             fs::create_dir_all(&target_dir)?;
 
             let graph_output = render_mermaid_graph(&parsed_parts);

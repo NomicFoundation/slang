@@ -72,7 +72,7 @@ impl<'a> DotSubGraph<'a> {
         } else if let Some(variable) = graph_node.attributes.get(VARIABLE_DEBUG_ATTR) {
             format!("{variable} [{index}]", index = node.index())
         } else {
-            format!("{}", node.index())
+            format!("[{index}]", index = node.index())
         };
         match node_type {
             Some("push_scoped_symbol") => {
