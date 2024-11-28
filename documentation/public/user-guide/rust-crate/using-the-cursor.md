@@ -62,14 +62,11 @@ Let's use that to extract all `Identifier` nodes from the source text using that
     the "current" will point to the one that is not yet yielded by the iterator.
     This might be an important, when mixing the two styles.
 
-## Using a Cursor with Names
+## Using a Cursor with Labels
 
-In addition to the basic `Cursor`, there's also a `CursorWithLabels` type
-that keeps track of the names of the nodes it visits.
-You can create a `CursorWithLabels` from a `Cursor` by using the `with_labels()` API.
-
+The cursor also keeps track of the labels of the nodes it visits.
 Let's use that to extract all nodes that are labeled `Name`:
 
 ```{ .rust }
---8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/using_the_cursor.rs:using-labeled-cursors"
+--8<-- "crates/solidity/outputs/cargo/tests/src/doc_examples/using_the_cursor.rs:using-cursors-with-labels"
 ```

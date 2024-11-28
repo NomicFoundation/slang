@@ -1,4 +1,4 @@
-use slang_solidity::cst::{Query, TextIndex};
+use slang_solidity::cst::Query;
 
 use crate::tests::parser::ParsedFile;
 
@@ -19,7 +19,7 @@ pub fn run(files: Vec<ParsedFile>) {
     .unwrap()];
 
     for file in &files {
-        let cursor = file.tree.cursor_with_offset(TextIndex::ZERO);
+        let cursor = file.parse_output.create_tree_cursor();
 
         for query_match in cursor.query(queries.clone()) {
             assert_eq!(query_match.captures.len(), 1);
