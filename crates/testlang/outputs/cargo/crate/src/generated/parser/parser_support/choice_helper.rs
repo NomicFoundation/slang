@@ -129,7 +129,7 @@ pub fn total_not_skipped_span(result: &ParserResult) -> usize {
         ParserResult::Match(match_) => &match_.nodes,
         ParserResult::IncompleteMatch(incomplete_match) => &incomplete_match.nodes,
         ParserResult::SkippedUntil(skipped) => &skipped.nodes,
-        ParserResult::NoMatch(_) => &vec![],
+        ParserResult::NoMatch(_) => &[][..],
         ParserResult::PrattOperatorMatch(_) => unreachable!(
             "PrattOperatorMatch is always considered a better pick, so it should never be considered here"
         ),
