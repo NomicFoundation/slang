@@ -31,8 +31,8 @@ terminals (lexical analysis), which then in turn is _parsed_ into the CST.
 The resulting CST is a regular tree data structure that you can visit.
 The tree nodes are represented by the `Node` structure, which can be one of two kinds:
 
--   `NonterminalNode` represent sub-trees, containing a vector of other `Node` children.
--   `TerminalNode` are leaves and represent a terminal (i.e. an identifier, keyword, punctuation) in the source.
+- `NonterminalNode` represent sub-trees, containing a vector of other `Node` children.
+- `TerminalNode` are leaves and represent a terminal (i.e. an identifier, keyword, punctuation) in the source.
 
 ## CST Cursors
 
@@ -43,9 +43,9 @@ It provides several `goTo*()` navigation functions, each returning `true` if the
 cursor was successfully moved, and `false` otherwise. There are three main ways
 to do it:
 
--   According to the DFS order, i.e. `goToNext()` and `goToPrevious()`,
--   According to the relationship between the current node and the next node, i.e. `goToParent()`, `goToFirstChild()`, `goToNextNonDescendant()`
--   According to the kind of the next node, i.e. `goToNextTerminalWithKind(kind)`, `goToNextNonterminalWithKind(kind)`
+- According to the DFS order, i.e. `goToNext()` and `goToPrevious()`,
+- According to the relationship between the current node and the next node, i.e. `goToParent()`, `goToFirstChild()`, `goToNextNonDescendant()`
+- According to the kind of the next node, i.e. `goToNextTerminalWithKind(kind)`, `goToNextNonterminalWithKind(kind)`
 
 As such, the cursor is stateful and keeps track of the path it has taken through the CST.
 It starts at the root it was created at and is completed when it reaches its root when navigating forward.
