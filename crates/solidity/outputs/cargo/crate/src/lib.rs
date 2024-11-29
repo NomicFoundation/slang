@@ -10,11 +10,13 @@ pub mod bindings {
     use crate::cst::TextIndex;
     use crate::parser::{Parser, ParserInitializationError};
 
+    static BUILT_INS_PARSER_VERSION: Version = Version::new(0, 8, 28);
+
     pub fn add_built_ins(
         bindings: &mut Bindings,
         version: &Version,
     ) -> Result<(), ParserInitializationError> {
-        let parser = Parser::create(version.clone())?;
+        let parser = Parser::create(BUILT_INS_PARSER_VERSION.clone())?;
         let built_ins_parse_output = parser.parse(Parser::ROOT_KIND, get_built_ins(version));
         assert!(
             built_ins_parse_output.is_valid(),
