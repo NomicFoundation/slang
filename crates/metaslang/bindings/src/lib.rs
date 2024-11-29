@@ -48,7 +48,8 @@ pub(crate) struct ReferenceBindingInfo {
 }
 
 pub struct BindingGraph<KT: KindTypes + 'static> {
-    graph_builder_file: File<KT>,
+    user_graph_builder_file: File<KT>,
+    system_graph_builder_file: File<KT>,
     functions: Functions<KT>,
     stack_graph: StackGraph,
     cursors: HashMap<GraphHandle, Cursor<KT>>,
@@ -123,16 +124,20 @@ pub trait PathResolver<KT: KindTypes + 'static> {
 impl<KT: KindTypes + 'static> BindingGraph<KT> {
     pub fn create(
         version: Version,
-        binding_rules: &str,
+        user_binding_rules: &str,
+        system_binding_rules: &str,
         path_resolver: Rc<dyn PathResolver<KT>>,
     ) -> Self {
-        let graph_builder_file =
-            File::from_str(binding_rules).expect("Bindings stack graph builder parse error");
+        let user_graph_builder_file =
+            File::from_str(user_binding_rules).expect("Bindings stack graph builder parse error");
+        let system_graph_builder_file =
+            File::from_str(system_binding_rules).expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
         let functions = builder::default_functions(version, path_resolver);
 
         Self {
-            graph_builder_file,
+            user_graph_builder_file,
+            system_graph_builder_file,
             functions,
             stack_graph,
             cursors: HashMap::new(),
@@ -148,13 +153,13 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
     pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let file_kind = FileDescriptor::System(file_path.into());
         let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
-        _ = self.add_file_internal(file, tree_cursor);
+        _ = self.add_system_file_internal(file, tree_cursor);
     }
 
     pub fn add_user_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let file_kind = FileDescriptor::User(file_path.into());
         let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
-        _ = self.add_file_internal(file, tree_cursor);
+        _ = self.add_user_file_internal(file, tree_cursor);
     }
 
     #[cfg(feature = "__private_testing_utils")]
@@ -165,22 +170,49 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
     ) -> metaslang_graph_builder::graph::Graph<KT> {
         let file_kind = FileDescriptor::User(file_path.into());
         let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
-        let result = self.add_file_internal(file, tree_cursor);
+        let result = self.add_user_file_internal(file, tree_cursor);
         result.graph
     }
 
-    fn add_file_internal(&mut self, file: FileHandle, tree_cursor: Cursor<KT>) -> BuildResult<KT> {
+    fn add_system_file_internal(
+        &mut self,
+        file: FileHandle,
+        tree_cursor: Cursor<KT>,
+    ) -> BuildResult<KT> {
         let builder = Builder::new(
-            &self.graph_builder_file,
+            &self.system_graph_builder_file,
             &self.functions,
             &mut self.stack_graph,
             file,
             tree_cursor,
         );
-        let mut result = builder
+        let result = builder
             .build(&builder::NoCancellation)
             .expect("Internal error while building bindings");
 
+        self.add_graph_internal(result)
+    }
+
+    fn add_user_file_internal(
+        &mut self,
+        file: FileHandle,
+        tree_cursor: Cursor<KT>,
+    ) -> BuildResult<KT> {
+        let builder = Builder::new(
+            &self.user_graph_builder_file,
+            &self.functions,
+            &mut self.stack_graph,
+            file,
+            tree_cursor,
+        );
+        let result = builder
+            .build(&builder::NoCancellation)
+            .expect("Internal error while building bindings");
+
+        self.add_graph_internal(result)
+    }
+
+    fn add_graph_internal(&mut self, mut result: BuildResult<KT>) -> BuildResult<KT> {
         for (handle, cursor) in result.cursors.drain() {
             let cursor_id = cursor.node().id();
             if self.stack_graph[handle].is_definition() {

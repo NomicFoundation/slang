@@ -1,8 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 #[allow(clippy::needless_raw_string_hashes)]
-#[allow(dead_code)] // TODO(#982): use to create the graph
-pub const BINDING_RULES_SOURCE: &str = r#####"
+pub const USER_BINDING_RULES_SOURCE: &str = r#####"
     global ROOT_NODE
 global FILE_PATH
 global JUMP_TO_SCOPE_NODE
@@ -2959,6 +2958,1491 @@ inherit .star_extension
 
 @args [YulArguments @arg [YulExpression]] {
   edge @arg.lexical_scope -> @args.lexical_scope
+}
+
+"#####;
+
+#[allow(clippy::needless_raw_string_hashes)]
+pub const SYSTEM_BINDING_RULES_SOURCE: &str = r#####"
+    global ROOT_NODE
+global FILE_PATH
+global JUMP_TO_SCOPE_NODE
+
+attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
+attribute node_reference = node      => type = "push_symbol", node_symbol = node, is_reference
+attribute node_symbol = node         => symbol = (source-text node), source_node = node
+attribute pop_symbol = symbol        => type = "pop_symbol", symbol = symbol
+attribute push_symbol = symbol       => type = "push_symbol", symbol = symbol
+attribute symbol_definition = symbol => type = "pop_symbol", symbol = symbol, is_definition
+attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, is_reference
+
+attribute scoped_node_definition = node => type = "pop_scoped_symbol", node_symbol = node, is_definition
+attribute scoped_node_reference  = node => type = "push_scoped_symbol", node_symbol = node, is_reference
+attribute pop_scoped_symbol = symbol    => type = "pop_scoped_symbol", symbol = symbol
+attribute push_scoped_symbol = symbol   => type = "push_scoped_symbol", symbol = symbol
+
+;; Keeps a link to the enclosing contract definition to provide a parent for
+;; method calls (to correctly resolve virtual methods)
+inherit .enclosing_def
+
+inherit .parent_scope
+inherit .lexical_scope
+
+; Used to resolve extension methods for `using for *` directives
+; This is used as a minor optimization to avoid introducing new possible paths
+; when there are no `using for *` directives in the contract.
+inherit .star_extension
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Source unit (aka .sol file)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@source_unit [SourceUnit] {
+  ;; All lexical_scope nodes eventually connect to the file's root scope
+  node @source_unit.lexical_scope
+
+  ;; This provides all the exported symbols from the file
+  node @source_unit.defs
+
+  ;; Connect to ROOT_NODE to export our symbols
+  node export
+  edge ROOT_NODE -> export
+  edge export -> @source_unit.defs
+
+  if (is-system-file FILE_PATH) {
+    ; If this is a system file (aka. built-ins), export everything through this
+    ; special symbol (which is automatically imported below)
+    attr (export) pop_symbol = "@@built-ins@@"
+
+  } else {
+    ; This is a user file, so we want to export under the file's path symbol
+    attr (export) pop_symbol = FILE_PATH
+
+    ; ... and also import the global built-ins
+    node built_ins
+    attr (built_ins) push_symbol = "@@built-ins@@"
+
+    edge @source_unit.lexical_scope -> built_ins
+    edge built_ins -> ROOT_NODE
+  }
+
+  let @source_unit.enclosing_def = #null
+
+  ;; This defines a parent_scope at the source unit level (this attribute is
+  ;; inherited) for contracts to resolve bases (both in inheritance lists and
+  ;; override specifiers)
+  let @source_unit.parent_scope = @source_unit.lexical_scope
+
+  ; This is used to indicate the resolution algorithm that here's where it
+  ; should inject any possible extension scopes
+  attr (@source_unit.lexical_scope) extension_hook
+
+  ; Provide a default star extension sink node that gets inherited. This is
+  ; connected to from expressions, and those can potentially happen anywhere.
+  node @source_unit.star_extension
+}
+
+;; Top-level definitions...
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @unit_member (
+          [ContractDefinition]
+        | [LibraryDefinition]
+        | [InterfaceDefinition]
+        | [StructDefinition]
+        | [EnumDefinition]
+        | [FunctionDefinition]
+        | [ConstantDefinition]
+        | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
+        | [EventDefinition]
+    )]
+]] {
+  edge @source_unit.lexical_scope -> @unit_member.def
+  edge @source_unit.defs -> @unit_member.def
+
+  ; In the general case, the lexical scope of the definition connects directly
+  ; to the source unit's
+  edge @unit_member.lexical_scope -> @source_unit.lexical_scope
+}
+
+;; Special case for built-ins: we want to export all symbols in the contract:
+;; functions, types and state variables. All built-in symbols are defined in an
+;; internal contract named '%BuiltIns%' (renamed from '$BuiltIns$') so we need
+;; to export all its members and type members directly as a source unit
+;; definition.
+;; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with built-ins generation.
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @contract [ContractDefinition name: ["%BuiltIns%"]]]
+]] {
+  if (is-system-file FILE_PATH) {
+    edge @source_unit.defs -> @contract.instance
+  }
+}
+
+@source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
+  ; TODO: this is the hook for top-level extensions, but this should connect to
+  ; an extensions scope that gets pushed to the scope stack, as in the case of
+  ; contracts/libraries (defined further down below).
+  edge @source_unit.lexical_scope -> @using.def
+}
+
+@source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember
+    @using [UsingDirective [GlobalKeyword]]
+]]] {
+  ; global using directives are exported by this source unit
+  edge @source_unit.defs -> @using.def
+}
+
+;; Import connections to the source unit
+@source_unit [SourceUnit [SourceUnitMembers
+     [SourceUnitMember [ImportDirective
+         [ImportClause @import (
+               [PathImport]
+             | [NamedImport]
+             | [ImportDeconstruction]
+         )]
+     ]]
+]] {
+  node @import.defs
+  edge @source_unit.defs -> @import.defs
+  edge @source_unit.lexical_scope -> @import.defs
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Imports
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[ImportClause
+  [_
+    path: [StringLiteral
+      @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+    ]
+  ]
+] {
+  ;; This node represents the imported file and the @path.import node is used by
+  ;; all subsequent import rules
+  node @path.import
+  let resolved_path = (resolve-path FILE_PATH @path)
+  attr (@path.import) push_symbol = resolved_path
+  edge @path.import -> ROOT_NODE
+}
+
+;;; `import <URI>`
+@import [PathImport
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
+] {
+  ;; This is the "lexical" connection, which makes all symbols exported from the
+  ;; imported source unit available for resolution globally at this' source unit
+  ;; scope
+  edge @import.defs -> @path.import
+}
+
+;;; `import <URI> as <IDENT>`
+@import [PathImport
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
+  alias: [ImportAlias @alias [Identifier]]
+] {
+  node def
+  attr (def) node_definition = @alias
+  attr (def) definiens_node = @import
+  edge @import.defs -> def
+
+  node member
+  attr (member) pop_symbol = "."
+  edge def -> member
+
+  ;; Lexical connection, which makes the import available as a member through
+  ;; the alias identifier
+  edge member -> @path.import
+}
+
+;;; `import * as <IDENT> from <URI>`
+@import [NamedImport
+  alias: [ImportAlias @alias [Identifier]]
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
+] {
+  node def
+  attr (def) node_definition = @alias
+  attr (def) definiens_node = @import
+  edge @import.defs -> def
+
+  node member
+  attr (member) pop_symbol = "."
+  edge def -> member
+
+  ;; Lexical connection, which makes the import available as a member through
+  ;; the alias identifier
+  edge member -> @path.import
+}
+
+;;; `import {<SYMBOL> [as <IDENT>] ...} from <PATH>`
+@import [ImportDeconstruction
+  symbols: [ImportDeconstructionSymbols @symbol [ImportDeconstructionSymbol]]
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
+] {
+  ;; We define these intermediate nodes for convenience only, to make the
+  ;; queries simpler in the two rules below
+  node @symbol.def
+  edge @import.defs -> @symbol.def
+
+  node @symbol.import
+  edge @symbol.import -> @path.import
+}
+
+@symbol [ImportDeconstructionSymbol @name name: [Identifier] .] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @symbol
+  attr (def) tag = "alias"  ; deprioritize this definition
+  edge @symbol.def -> def
+
+  node import
+  attr (import) node_reference = @name
+  edge def -> import
+
+  edge import -> @symbol.import
+}
+
+@symbol [ImportDeconstructionSymbol
+    @name name: [Identifier]
+    alias: [ImportAlias @alias [Identifier]]
+] {
+  node def
+  attr (def) node_definition = @alias
+  attr (def) definiens_node = @symbol
+  attr (def) tag = "alias"  ; deprioritize this definition
+  edge @symbol.def -> def
+
+  node import
+  attr (import) node_reference = @name
+  edge def -> import
+
+  edge import -> @symbol.import
+}
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Contracts
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@contract [ContractDefinition @name name: [Identifier]] {
+  node @contract.lexical_scope
+  node @contract.extensions
+  node @contract.def
+  node @contract.members
+  node @contract.ns
+  node @contract.modifiers
+  node @contract.instance
+
+  attr (@contract.def) node_definition = @name
+  attr (@contract.def) definiens_node = @contract
+  ; The .extensions node is where `using` directives will hook the definitions
+  attr (@contract.def) extension_scope = @contract.extensions
+
+  edge @contract.lexical_scope -> @contract.instance
+
+  ; Instance scope can also see members and our namespace definitions
+  edge @contract.instance -> @contract.members
+  edge @contract.instance -> @contract.ns
+
+  let @contract.enclosing_def = @contract.def
+
+  ;; External "instance" scope access: either member access through a variable
+  ;; of the contract's type, or through calling (which happens on `new`
+  ;; invocations or casting). These should access only externally accessible
+  ;; members, such as functions and public variables.
+  node member
+  attr (member) pop_symbol = "."
+  edge member -> @contract.instance
+
+  node type_def
+  attr (type_def) pop_symbol = "@typeof"
+  edge @contract.def -> type_def
+  edge type_def -> member
+
+  node call
+  attr (call) pop_symbol = "()"
+  edge @contract.def -> call
+  edge call -> member
+
+  ;; "namespace" scope access
+  node ns_member
+  attr (ns_member) pop_symbol = "."
+  edge @contract.def -> ns_member
+  edge ns_member -> @contract.ns
+
+  ; Finally there's an @instance guarded path used by derived contracts to
+  ; access instance accessible members
+  node instance
+  attr (instance) pop_symbol = "@instance"
+  edge @contract.def -> instance
+  edge instance -> @contract.instance
+
+  ; "this" keyword is available in our lexical scope and can access any
+  ; externally available member
+  node this
+  attr (this) pop_symbol = "this"
+  edge @contract.lexical_scope -> this
+  edge this -> member
+
+  ;; Modifiers are available as a contract type members through a special '@modifier' guard
+  node modifier
+  attr (modifier) pop_symbol = "@modifier"
+  edge @contract.ns -> modifier
+  edge modifier -> @contract.modifiers
+
+  ; There may be attached functions to our type. For the general case of
+  ; variables of our type, that's already handled via normal lexical scope
+  ; resolution. But for casting/`new` invocations that we resolve through the
+  ; `()` guard above, we need to explicitly jump to the extension scope from
+  ; here to attempt resolving the attached function. We cannot jump back to the
+  ; parent scope because that would create a cycle in the graph.
+  node push_typeof
+  attr (push_typeof) push_symbol = "@typeof"
+  node push_name
+  attr (push_name) push_symbol = (source-text @name)
+  node hook
+  attr (hook) extension_hook
+
+  edge call -> push_typeof
+  edge push_typeof -> push_name
+  edge push_name -> hook
+
+  if (version-matches "< 0.5.0") {
+    ; For Solidity < 0.5.0 `this` also acts like an `address`
+    node address_ref
+    attr (address_ref) push_symbol = "%address"
+    node address_typeof
+    attr (address_typeof) push_symbol = "@typeof"
+    edge this -> address_typeof
+    edge address_typeof -> address_ref
+    edge address_ref -> @contract.lexical_scope
+  }
+
+  ; This is the connection point to resolve attached functions by `using for *`
+  node @contract.star_extension
+  attr (@contract.star_extension) push_symbol = "@*"
+
+  if (version-matches "< 0.7.0") {
+    ; For Solidity < 0.7.0 using directives are inherited, so we need to connect
+    ; always For newer versions, this connection only happens when there is a
+    ; `using for *` directive in the contract (see rule below)
+    edge @contract.star_extension -> @contract.lexical_scope
+  }
+
+  ; Path to resolve the built-in type for type() expressions
+  node type
+  attr (type) pop_symbol = "@type"
+  node type_contract_type
+  attr (type_contract_type) push_symbol = "%ContractTypeType"
+  edge @contract.def -> type
+  edge type -> type_contract_type
+  edge type_contract_type -> @contract.parent_scope
+
+  ; The following defines the connection nodes the resolution algorithm uses
+  ; *only when setting a compilation context/target*.
+
+  ; This attribute defines the sink of edges added from base contracts when
+  ; setting this contract as the compilation context, and should provide access
+  ; to anything that can be reached through `super`. The instance scope is a bit
+  ; too broad, but `.members` is too narrow as it doesn't allow navigation to
+  ; parent contracts (and from the base we need to be able to reach all
+  ; contracts in the hierarchy).
+  attr (@contract.def) export_node = @contract.instance
+
+  ; This node will eventually connect to the contract's members being compiled
+  ; and grants access to definitions in that contract and all its parents
+  ; (recursively). It only makes sense if `super` is defined (ie. if we have
+  ; parents), but we define it here to be able to use it in the declaration of
+  ; import nodes. This is the dual of the export_node above.
+  node @contract.super_import
+  attr (@contract.super_import) pop_symbol = "."
+
+  ; This defines the source side of edges added to base contracts when setting
+  ; a contract as compilation context; this allows this contract (a base) to
+  ; access virtual methods in any sub-contract defined in the hierarchy (both
+  ; with and without `super`, hence the two connection points).
+  attr (@contract.def) import_nodes = [@contract.lexical_scope, @contract.super_import]
+}
+
+@contract [ContractDefinition @specifier [InheritanceSpecifier]] {
+  ; The `.heir` scoped variable allows the rules for `InheritanceSpecifier`
+  ; above to connect the instance scope of this contract to the parents.
+  let @specifier.heir = @contract
+  attr (@contract.def) parents = @specifier.parent_refs
+  if (version-matches "< 0.7.0") {
+    attr (@contract.def) inherit_extensions
+  }
+
+  ; The rest of these statements deal with defining and connecting the `super`
+  ; keyword path.
+
+  ; `super_scope` is where we hook all references to our parent contracts
+  node @contract.super_scope
+
+  ; Define "super" in the lexical scope
+  node @contract.super
+  attr (@contract.super) pop_symbol = "super"
+  edge @contract.lexical_scope -> @contract.super
+
+  ; This connects `super` to exported scopes from all contracts in the hierarchy
+  ; when setting a contract compilation target (see more detailed description
+  ; above on the definition of the `super_import` node).
+  edge @contract.super -> @contract.super_import
+
+  ; Then connect it through an `@instance` guard to the parent contracts through
+  ; `super_scope`. This allows "instance"-like access to members of parents
+  ; through `super`.
+  node super_instance
+  attr (super_instance) push_symbol = "@instance"
+  edge @contract.super_import -> super_instance
+  edge super_instance -> @contract.super_scope
+}
+
+@contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
+    [InheritanceType @type_name [IdentifierPath]]
+]]] {
+  ;; The base contract defs are directly accesible through our super scope
+  edge @contract.super_scope -> @type_name.push_begin
+}
+
+; Pure definitions that cannot contain expressions
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @member (
+          [EnumDefinition]
+        | [StructDefinition]
+        | [EventDefinition]
+        | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
+    )]
+]] {
+  edge @member.lexical_scope -> @contract.lexical_scope
+}
+
+; Definitions that can contain expressions need two scopes:
+; - normal lexical scope for resolving types
+; - extended scope (extended by using directives) for resolving expressions
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @member (
+          [FunctionDefinition]
+        | [ConstructorDefinition]
+        | [ModifierDefinition]
+        | [FallbackFunctionDefinition]
+        | [ReceiveFunctionDefinition]
+        | [UnnamedFunctionDefinition]
+        | [StateVariableDefinition]
+    )]
+]] {
+  edge @member.lexical_scope -> @contract.lexical_scope
+}
+
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @using [UsingDirective]]
+]] {
+  ; Hook the using definition in the extensions scope
+  edge @contract.extensions -> @using.def
+}
+
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @member (
+          [EnumDefinition]
+        | [StructDefinition]
+        | [EventDefinition]
+        | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
+    )]
+]] {
+  ; These definition go into the "namespace" scope and are accessible externally
+  ; via qualified naming (eg. `Contract.MyStruct`)
+  edge @contract.ns -> @member.def
+}
+
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @state_var [StateVariableDefinition]]
+]] {
+  ; State variables are available to derived contracts.
+  ; TODO: this also exposes private state variables to derived contracts, but we
+  ; can't easily filter them because we don't have negative assertions in our
+  ; query language (we would need to modify this query for anything *not*
+  ; containing a `PrivateKeyword` node)
+  edge @contract.instance -> @state_var.def
+}
+
+;; Public state variables are also exposed as external member functions
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @state_var [StateVariableDefinition
+        [StateVariableAttributes [StateVariableAttribute [PublicKeyword]]]
+    ]]
+]] {
+  edge @contract.members -> @state_var.def
+}
+
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @function [FunctionDefinition]]
+]] {
+  ;; Contract functions are also accessible for an instance of the contract
+  edge @contract.members -> @function.def
+
+  ;; This may prioritize this definition (when there are multiple options)
+  ;; according to the C3 linerisation ordering
+  attr (@function.def) tag = "c3"
+  attr (@function.def) parents = [@contract.def]
+}
+
+@contract [ContractDefinition [ContractMembers
+    [ContractMember @function [FunctionDefinition
+        [FunctionAttributes [FunctionAttribute ([ExternalKeyword] | [PublicKeyword])]]
+    ]]
+]] {
+  ; Public or external functions are also accessible through the contract type
+  ; (to retrieve their `.selector` for example)
+  edge @contract.ns -> @function.def
+}
+
+@contract [ContractDefinition members: [ContractMembers
+    [ContractMember @modifier [ModifierDefinition]]
+]] {
+  ; Modifiers live in their own special scope
+  edge @contract.modifiers -> @modifier.def
+
+  ;; This may prioritize this definition (when there are multiple options)
+  ;; according to the C3 linerisation ordering
+  attr (@modifier.def) tag = "c3"
+  attr (@modifier.def) parents = [@contract.def]
+}
+
+@contract [ContractDefinition [ContractMembers [ContractMember
+    [UsingDirective [UsingTarget [Asterisk]]]
+]]] {
+  ; Connect the star extension node to the resolution extended scope if there is
+  ; a `using for *` directive in the contract
+  edge @contract.star_extension -> @contract.lexical_scope
+}
+
+; This applies to both state variables and function definitions
+@override [OverrideSpecifier [OverridePathsDeclaration [OverridePaths
+    @base_ident [IdentifierPath]
+]]] {
+  ;; Resolve overriden bases when listed in the function or modifiers modifiers
+  edge @base_ident.push_end -> @override.parent_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Interfaces
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@interface [InterfaceDefinition @name name: [Identifier]] {
+  node @interface.lexical_scope
+  node @interface.def
+  node @interface.members
+  node @interface.ns
+  node @interface.instance
+
+  attr (@interface.def) node_definition = @name
+  attr (@interface.def) definiens_node = @interface
+
+  edge @interface.lexical_scope -> @interface.instance
+
+  ; The extensions node is required for the inheritance rules, but not used in interfaces
+  let @interface.extensions = (node)
+
+  edge @interface.instance -> @interface.members
+  edge @interface.instance -> @interface.ns
+
+  ;; External "instance" like access path, to access members of a variable of
+  ;; the interface's type or through a casting call.
+  node member
+  attr (member) pop_symbol = "."
+  edge member -> @interface.instance
+
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+  edge @interface.def -> typeof
+  edge typeof -> member
+
+  node call
+  attr (call) pop_symbol = "()"
+  edge @interface.def -> call
+  edge call -> member
+
+  ; From a call we may need to resolve using the extensions scope, in case there's
+  ; a `using` directive on our type. This path ends up jumping to scope just to
+  ; handle that case.
+  node push_typeof
+  attr (push_typeof) push_symbol = "@typeof"
+  node push_name
+  attr (push_name) push_symbol = (source-text @name)
+  edge call -> push_typeof
+  edge push_typeof -> push_name
+  node hook
+  attr (hook) extension_hook
+  edge push_name -> hook
+  ; edge push_name -> JUMP_TO_SCOPE_NODE
+
+  ;; "namespace" like access path
+  node ns_member
+  attr (ns_member) pop_symbol = "."
+  edge @interface.def -> ns_member
+  edge ns_member -> @interface.ns
+
+  ; Finally there's guarded `@instance` path used by derived contracts to access
+  ; instance accessible members
+  node instance
+  attr (instance) pop_symbol = "@instance"
+  edge @interface.def -> instance
+  edge instance -> @interface.instance
+
+  ; Path to resolve the built-in type for type() expressions
+  node type
+  attr (type) pop_symbol = "@type"
+  node type_interface_type
+  attr (type_interface_type) push_symbol = "%InterfaceTypeType"
+  edge @interface.def -> type
+  edge type -> type_interface_type
+  edge type_interface_type -> @interface.parent_scope
+}
+
+@interface [InterfaceDefinition @specifier [InheritanceSpecifier]] {
+  let @specifier.heir = @interface
+  attr (@interface.def) parents = @specifier.parent_refs
+}
+
+@interface [InterfaceDefinition [InterfaceMembers
+    [ContractMember @member (
+          [EnumDefinition]
+        | [FunctionDefinition]
+        | [StructDefinition]
+        | [EventDefinition]
+        | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
+    )]
+]] {
+  edge @member.lexical_scope -> @interface.lexical_scope
+  edge @interface.ns -> @member.def
+}
+
+;; Allow references (eg. variables of the interface type) to the interface to
+;; access functions
+@interface [InterfaceDefinition members: [InterfaceMembers
+    item: [ContractMember @function variant: [FunctionDefinition]]
+]] {
+  edge @interface.members -> @function.def
+}
+
+[InterfaceDefinition [InterfaceMembers [ContractMember @using [UsingDirective]]]] {
+  ; using directives are not allowed in interfaces, but the grammar allows them
+  ; so we need to create an artificial node here to connect to created edges from
+  ; the instance nodes
+  let @using.lexical_scope = (node)
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Common inheritance rules (apply to contracts and interfaces)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@specifier [InheritanceSpecifier [InheritanceTypes
+    [InheritanceType @type_name [IdentifierPath]]
+]] {
+  ;; This should point to the enclosing contract or interface definition
+  let heir = @specifier.heir
+
+  ;; Resolve base names through the parent scope of our heir (contract or
+  ;; interface), aka the source unit
+  edge @type_name.push_end -> heir.parent_scope
+
+  ; Access instance members of the inherited contract/interface, from the
+  ; instance scope of the inheriting contract/interface
+  node instance
+  attr (instance) push_symbol = "@instance"
+  edge heir.instance -> instance
+  edge instance -> @type_name.push_begin
+
+  ; Base members can also be accessed (from the instance scope) qualified with
+  ; the base name (eg. `Base.something`)
+  node member_pop
+  attr (member_pop) pop_symbol = "."
+  edge heir.instance -> @type_name.pop_begin
+  edge @type_name.pop_end -> member_pop
+  edge member_pop -> instance
+
+  ; Base namespace-like members (ie. enums, structs, etc) are also accessible as
+  ; our own namespace members
+  node ns_member
+  attr (ns_member) push_symbol = "."
+  edge heir.ns -> ns_member
+  edge ns_member -> @type_name.push_begin
+}
+
+;; The next couple of rules setup a `.parent_refs` attribute to use in the
+;; resolution algorithm to perform linearisation of a contract hierarchy.
+
+;; NOTE: we use anchors here to prevent the query engine from returning all the
+;; sublists of possible parents
+@specifier [InheritanceSpecifier [InheritanceTypes . @parents [_]+ .]] {
+  var parent_refs = []
+  for parent in @parents {
+    if (eq (node-type parent) "InheritanceType") {
+      ;; this is intentionally reversed because of how Solidity linearised the contract bases
+      set parent_refs = (concat [parent.ref] parent_refs)
+    }
+  }
+  let @specifier.parent_refs = parent_refs
+}
+
+@parent [InheritanceType @type_name [IdentifierPath]] {
+  let @parent.ref = @type_name.push_begin
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Libraries
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@library [LibraryDefinition @name name: [Identifier]] {
+  node @library.lexical_scope
+  node @library.extensions
+  node @library.def
+  node @library.ns
+  node @library.modifiers
+
+  attr (@library.def) node_definition = @name
+  attr (@library.def) definiens_node = @library
+  ; The .extensions node is where `using` directives will hook the definitions
+  attr (@library.def) extension_scope = @library.extensions
+
+  edge @library.lexical_scope -> @library.ns
+
+  let @library.enclosing_def = @library.def
+
+  node member
+  attr (member) pop_symbol = "."
+  edge @library.def -> member
+  edge member -> @library.ns
+
+  ; Access to modifiers is guarded by a @modifier symbol
+  node modifier
+  attr (modifier) pop_symbol = "@modifier"
+  edge @library.ns -> modifier
+  edge modifier -> @library.modifiers
+
+  ; Path to resolve the built-in type for type() expressions (same as contracts)
+  node type
+  attr (type) pop_symbol = "@type"
+  node type_library_type
+  attr (type_library_type) push_symbol = "%ContractTypeType"
+  edge @library.def -> type
+  edge type -> type_library_type
+  edge type_library_type -> @library.lexical_scope
+
+  ; This is the connection point to resolve attached functions by `using for *`
+  node @library.star_extension
+  attr (@library.star_extension) push_symbol = "@*"
+}
+
+@library [LibraryDefinition [LibraryMembers
+    [ContractMember @member (
+          [EnumDefinition]
+        | [StructDefinition]
+        | [EventDefinition]
+        | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
+    )]
+]] {
+  edge @member.lexical_scope -> @library.lexical_scope
+  edge @library.ns -> @member.def
+}
+
+@library [LibraryDefinition [LibraryMembers
+    [ContractMember @member (
+          [FunctionDefinition]
+        | [StateVariableDefinition [StateVariableAttributes [StateVariableAttribute [ConstantKeyword]]]]
+    )]
+]] {
+  edge @member.lexical_scope -> @library.lexical_scope
+  edge @library.ns -> @member.def
+}
+
+@library [LibraryDefinition [LibraryMembers
+    [ContractMember @modifier [ModifierDefinition]]
+]] {
+  edge @library.modifiers -> @modifier.def
+  edge @modifier.lexical_scope -> @library.lexical_scope
+}
+
+@library [LibraryDefinition [LibraryMembers
+    [ContractMember @using [UsingDirective]]
+]] {
+  ; Expose the using directive from the extensions scope
+  edge @library.extensions -> @using.def
+}
+
+@library [LibraryDefinition [LibraryMembers [ContractMember
+    [UsingDirective [UsingTarget [Asterisk]]]
+]]] {
+  ; Connect the star extension node to the resolution extended scope if there is
+  ; a `using for *` directive in the library
+  edge @library.star_extension -> @library.lexical_scope
+}
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Function, parameter declarations and modifiers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@param [Parameter @type_name [TypeName]] {
+  node @param.lexical_scope
+  node @param.def
+
+  edge @type_name.type_ref -> @param.lexical_scope
+
+  node @param.typeof
+  attr (@param.typeof) push_symbol = "@typeof"
+  edge @param.typeof -> @type_name.output
+}
+
+@param [Parameter @name [Identifier]] {
+  attr (@param.def) node_definition = @name
+  attr (@param.def) definiens_node = @param
+
+  edge @param.def -> @param.typeof
+}
+
+@params [ParametersDeclaration] {
+  node @params.lexical_scope
+  node @params.defs
+
+  ;; This scope can be used to resolve named argument calls
+  node @params.names
+  attr (@params.names) pop_symbol = "@param_names"
+  edge @params.names -> @params.defs
+}
+
+@params [ParametersDeclaration [Parameters @param item: [Parameter]]] {
+  edge @param.lexical_scope -> @params.lexical_scope
+  edge @params.defs -> @param.def
+}
+
+@function [FunctionDefinition @attrs [FunctionAttributes]] {
+  var type_symbol = "%Function"
+  scan (source-text @attrs) {
+    "\\b(public|external)\\b" {
+      set type_symbol = "%ExternalFunction"
+    }
+  }
+
+  node @function.lexical_scope
+  node @function.def
+
+  ; this path from the function definition to the scope allows attaching
+  ; functions to this function's type
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node type_function
+  attr (type_function) push_symbol = type_symbol
+  edge @function.def -> typeof
+  edge typeof -> type_function
+  edge type_function -> @function.lexical_scope
+}
+
+@function [FunctionDefinition name: [FunctionName @name [Identifier]]] {
+  attr (@function.def) node_definition = @name
+  attr (@function.def) definiens_node = @function
+}
+
+@function [FunctionDefinition @params parameters: [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @function.lexical_scope
+
+  ;; Input parameters are available in the function scope
+  edge @function.lexical_scope -> @params.defs
+  ;; ... and shadow other declarations
+  attr (@function.lexical_scope -> @params.defs) precedence = 1
+
+  ;; Connect to paramaters for named argument resolution
+  edge @function.def -> @params.names
+}
+
+@function [FunctionDefinition returns: [ReturnsDeclaration
+    @return_params [ParametersDeclaration]
+]] {
+  edge @return_params.lexical_scope -> @function.lexical_scope
+
+  ;; Return parameters are available in the function scope
+  edge @function.lexical_scope -> @return_params.defs
+  ;; ... and shadow other declarations
+  attr (@function.lexical_scope -> @return_params.defs) precedence = 1
+}
+
+;; Only functions that return a single value have an actual return type
+;; since tuples are not actual types in Solidity
+@function [FunctionDefinition returns: [ReturnsDeclaration
+    [ParametersDeclaration [Parameters . @param [Parameter] .]]
+]] {
+  node call
+  attr (call) pop_symbol = "()"
+
+  edge @function.def -> call
+  edge call -> @param.typeof
+}
+
+;; Connect the function body's block lexical scope to the function
+@function [FunctionDefinition [FunctionBody @block [Block]]] {
+  edge @block.lexical_scope -> @function.lexical_scope
+}
+
+@function [FunctionDefinition [FunctionAttributes item: [FunctionAttribute
+    @modifier [ModifierInvocation]
+]]] {
+  edge @modifier.lexical_scope -> @function.lexical_scope
+}
+
+@modifier [ModifierInvocation @name [IdentifierPath]] {
+  node @modifier.lexical_scope
+
+  node modifier
+  attr (modifier) push_symbol = "@modifier"
+
+  edge @name.push_end -> modifier
+  edge modifier -> @modifier.lexical_scope
+
+  ; This allows resolving @name in the more general scope in constructors (since
+  ; calling a parent constructor is parsed as a modifier invocation)
+  let @modifier.identifier = @name.push_end
+}
+
+@modifier [ModifierInvocation @args [ArgumentsDeclaration]] {
+  edge @args.lexical_scope -> @modifier.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; State Variables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@state_var [StateVariableDefinition] {
+  node @state_var.lexical_scope
+  node @state_var.def
+}
+
+@state_var [StateVariableDefinition
+    @type_name type_name: [TypeName]
+    @name name: [Identifier]
+] {
+  attr (@state_var.def) node_definition = @name
+  attr (@state_var.def) definiens_node = @state_var
+
+  edge @type_name.type_ref -> @state_var.lexical_scope
+
+  node @state_var.typeof
+  attr (@state_var.typeof) push_symbol = "@typeof"
+
+  edge @state_var.def -> @state_var.typeof
+  edge @state_var.typeof -> @type_name.output
+}
+
+@state_var [StateVariableDefinition
+    [StateVariableAttributes [StateVariableAttribute [PublicKeyword]]]
+] {
+  ; Public state variables are used as functions when invoked from an external contract
+  node call
+  attr (call) pop_symbol = "()"
+
+  ; In the general case using the getter can bind to the state variable's type
+  edge @state_var.def -> call
+  edge call -> @state_var.typeof
+
+  ; Some complex types generate special getters (ie. arrays and mappings index
+  ; their contents, structs flatten most of their fields and return a tuple)
+  node getter
+  attr (getter) push_symbol = "@as_getter"
+  edge call -> getter
+  edge getter -> @state_var.typeof
+}
+
+@state_var [StateVariableDefinition
+    [StateVariableDefinitionValue @value [Expression]]
+] {
+  let @value.lexical_scope = @state_var.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Structure definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@struct [StructDefinition @name name: [Identifier]] {
+  node @struct.lexical_scope
+  node @struct.def
+  node @struct.members
+
+  attr (@struct.def) node_definition = @name
+  attr (@struct.def) definiens_node = @struct
+
+  ; Now connect normally to the struct members
+  node @struct.typeof
+  attr (@struct.typeof) pop_symbol = "@typeof"
+  node member
+  attr (member) pop_symbol = "."
+  edge @struct.def -> @struct.typeof
+  edge @struct.typeof -> member
+  edge member -> @struct.members
+
+  ; Bind member names when using construction with named arguments
+  node param_names
+  attr (param_names) pop_symbol = "@param_names"
+  edge @struct.def -> param_names
+  edge param_names -> @struct.members
+
+  ; Used as a function call (ie. casting), should bind to itself
+  node call
+  attr (call) pop_symbol = "()"
+  edge @struct.def -> call
+  edge call -> member
+}
+
+@struct [StructDefinition [StructMembers
+    @member item: [StructMember @type_name [TypeName] @name name: [Identifier]]
+]] {
+  node @member.def
+  attr (@member.def) node_definition = @name
+  attr (@member.def) definiens_node = @member
+
+  edge @struct.members -> @member.def
+
+  edge @type_name.type_ref -> @struct.lexical_scope
+
+  node @member.typeof
+  attr (@member.typeof) push_symbol = "@typeof"
+
+  edge @member.def -> @member.typeof
+  edge @member.typeof -> @type_name.output
+}
+
+@struct [StructDefinition [StructMembers . @first_member [StructMember]]] {
+  ; As a public getter result, the value returned is a tuple with all our fields flattened
+  ; We only care about the first member for name binding, since tuples are not real types
+  node getter_call
+  attr (getter_call) pop_symbol = "@as_getter"
+  edge @struct.typeof -> getter_call
+  edge getter_call -> @first_member.typeof
+}
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Identifier Paths (aka. references to custom types)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; The identifier path builds two graph paths:
+;;
+;; - From right to left, pushing the identifiers and acting as a "reference".
+;;   This path begins at @id_path.push_begin and ends at @id_path.push_end.
+;;
+;; - From left to right, popping the identifiers (used as a definition sink in
+;;   using directives). This path begins at @id_path.pop_begin and ends at
+;;   @id_path.pop_end.
+;;
+;;   NOTE: most of the time, and unless this identifier path is the target of a
+;;   using directive this second path will not be used and will form a
+;;   disconnected graph component. We currently have no way of determining when
+;;   this path is necessary, so we always construct it.
+;;
+;; Additionally the IdentifierPath defines another scoped variable
+;; @id_path.rightmost_identifier which corresponds to the identifier in the last
+;; position in the path, from left to right. This is used in the using directive
+;; rules to be able to pop the name of the attached function.
+
+@id_path [IdentifierPath] {
+  ; This node connects to all parts of the path, for popping. This allows to
+  ; connect at any point of the path. Useful for `using` directives when the
+  ; target type is fully qualified but we want to resolve for the unqualified
+  ; name.
+  node @id_path.all_pop_begin
+}
+
+@id_path [IdentifierPath @name [Identifier]] {
+  node @name.ref
+  attr (@name.ref) node_reference = @name
+  attr (@name.ref) parents = [@id_path.enclosing_def]
+
+  node @name.pop
+  attr (@name.pop) pop_symbol = (source-text @name)
+
+  edge @id_path.all_pop_begin -> @name.pop
+}
+
+@id_path [IdentifierPath @name [Identifier] .] {
+  let @id_path.rightmost_identifier = @name
+
+  let @id_path.push_begin = @name.ref
+  let @id_path.pop_end = @name.pop
+}
+
+[IdentifierPath @left_name [Identifier] . [Period] . @right_name [Identifier]] {
+  node ref_member
+  attr (ref_member) push_symbol = "."
+
+  edge @right_name.ref -> ref_member
+  edge ref_member -> @left_name.ref
+
+  node pop_member
+  attr (pop_member) pop_symbol = "."
+
+  edge @left_name.pop -> pop_member
+  edge pop_member -> @right_name.pop
+}
+
+@id_path [IdentifierPath . @name [Identifier]] {
+  let @id_path.push_end = @name.ref
+  let @id_path.pop_begin = @name.pop
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Type names
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; TypeName nodes should define these scoped variables:
+;;
+;; - @type_name.type_ref represents the node in the graph where we're ready to
+;;   resolve the type, and thus should generally be connected to a (lexical)
+;;   scope node (source node, outside edges connect *from* here).
+;;
+;; - @type_name.output represents the other end of the type and corresponds to a
+;;   state where the type has already been resolved so we can, for example
+;;   resolve its members (sink node, outside edges connect *to* here).
+;;
+;; - @type_name.pop_begin, @type_name.pop_end are used in a definition context,
+;;   ie. when we need to pop the type name symbol(s) from the symbol stack.
+;;   Additionally, @type_name.all_pop_begin links to each symbol in a typename
+;;   (ie. in an identifier path typename), which allows referring to a type both
+;;   qualified and unqualified.
+
+@type_name [TypeName @elementary [ElementaryType]] {
+  let @type_name.type_ref = @elementary.ref
+  let @type_name.output = @elementary.ref
+  let @type_name.pop_begin = @elementary.pop
+  let @type_name.pop_end = @elementary.pop
+  let @type_name.all_pop_begin = @elementary.pop
+}
+
+@type_name [TypeName @id_path [IdentifierPath]] {
+  ;; For an identifier path used as a type, the left-most element is the one
+  ;; that connects to the parent lexical scope, because the name resolution
+  ;; starts at the left of the identifier.
+  let @type_name.type_ref = @id_path.push_end
+
+  ;; Conversely, the complete type is found at the right-most name, and that's
+  ;; where users of this type should link to (eg. a variable declaration).
+  let @type_name.output = @id_path.push_begin
+
+  let @type_name.pop_begin = @id_path.pop_begin
+  let @type_name.pop_end = @id_path.pop_end
+  let @type_name.all_pop_begin = @id_path.all_pop_begin
+}
+
+@type_name [TypeName @type_variant ([ArrayTypeName] | [FunctionType])] {
+  let @type_name.type_ref = @type_variant.lexical_scope
+  let @type_name.output = @type_variant.output
+  let @type_name.pop_begin = @type_variant.pop_begin
+  let @type_name.pop_end = @type_variant.pop_end
+  let @type_name.all_pop_begin = @type_variant.pop_begin
+}
+
+@type_name [TypeName @mapping [MappingType]] {
+  let @type_name.type_ref = @mapping.lexical_scope
+  let @type_name.output = @mapping.output
+  let @type_name.pop_begin = @mapping.pop_begin
+  let @type_name.pop_end = @mapping.pop_end
+  let @type_name.all_pop_begin = @mapping.pop_begin
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Elementary types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@elementary [ElementaryType] {
+  node @elementary.ref
+  attr (@elementary.ref) type = "push_symbol"
+  attr (@elementary.ref) source_node = @elementary, symbol = @elementary.symbol
+
+  node @elementary.pop
+  attr (@elementary.pop) pop_symbol = @elementary.symbol
+
+  ; These variables are a bit redundant, but necessary to easily use elementary
+  ; types as mapping keys
+  let @elementary.pop_begin = @elementary.pop
+  let @elementary.pop_end = @elementary.pop
+  let @elementary.all_pop_begin = @elementary.pop
+
+  let @elementary.push_begin = @elementary.ref
+  let @elementary.push_end = @elementary.ref
+}
+
+@elementary [ElementaryType [AddressType]] {
+  let @elementary.symbol = "%address"
+}
+
+@elementary [ElementaryType [BoolKeyword]] {
+  let @elementary.symbol = "%bool"
+}
+
+@elementary [ElementaryType [ByteKeyword]] {
+  let @elementary.symbol = "%byte"
+}
+
+@elementary [ElementaryType @keyword [BytesKeyword]] {
+  let @elementary.symbol = (format "%{}" (source-text @keyword))
+}
+
+@elementary [ElementaryType [StringKeyword]] {
+  let @elementary.symbol = "%string"
+}
+
+@elementary [ElementaryType @keyword [IntKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "int") {
+    let @elementary.symbol = "%int256"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
+  }
+}
+
+@elementary [ElementaryType @keyword [UintKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "uint") {
+    let @elementary.symbol = "%uint256"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
+  }
+}
+
+@elementary [ElementaryType @keyword [FixedKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "fixed") {
+    let @elementary.symbol = "%fixed128x18"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
+  }
+}
+
+@elementary [ElementaryType @keyword [UfixedKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "ufixed") {
+    let @elementary.symbol = "%ufixed128x18"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
+  }
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Mappings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@mapping [MappingType
+    [MappingKey [MappingKeyType @key_type ([IdentifierPath] | [ElementaryType])]]
+    [MappingValue @value_type [TypeName]]
+] {
+  node @mapping.lexical_scope
+  node @mapping.output
+
+  ; Define the pushing path of the mapping type
+  ;   ValueType <- top of the symbol stack
+  ;   KeyType
+  ;   %mapping <- bottom of the symbol stack
+  node mapping
+  attr (mapping) push_symbol = "%Mapping"
+  edge @mapping.output -> mapping
+  edge mapping -> @key_type.push_begin
+  edge @key_type.push_end -> @value_type.output
+
+  ; Both key and value types need to be resolved
+  edge @value_type.type_ref -> @mapping.lexical_scope
+  edge @key_type.push_end -> @mapping.lexical_scope
+
+  ; The mapping's type exposes the `[]` operator that returns the value type.
+
+  node typeof_input
+  attr (typeof_input) pop_symbol = "@typeof"
+  edge @mapping.output -> typeof_input
+
+  node typeof_output
+  attr (typeof_output) push_symbol = "@typeof"
+  edge typeof_output -> @value_type.output
+
+  node index
+  attr (index) pop_symbol = "[]"
+  edge typeof_input -> index
+  edge index -> typeof_output
+
+  ; Special case for mapping public state variables: they can be called
+  ; like a function with a key, and it's effectively the same as indexing it.
+  node getter_call
+  attr (getter_call) pop_symbol = "@as_getter"
+  edge typeof_input -> getter_call
+  edge getter_call -> typeof_output
+
+  ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
+  ; This is the reverse of the pushing path above (to the `.output` node)
+  node pop_mapping
+  attr (pop_mapping) pop_symbol = "%Mapping"
+
+  let @mapping.pop_begin = @value_type.pop_begin
+  edge @value_type.pop_end -> @key_type.pop_begin
+  edge @key_type.pop_end -> pop_mapping
+  let @mapping.pop_end = pop_mapping
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Arrays types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@array [ArrayTypeName] {
+  node @array.lexical_scope
+  node @array.output
+}
+
+@array [ArrayTypeName [TypeName] index: [Expression]] {
+  let @array.type_symbol = "%FixedArray"
+}
+
+@array [ArrayTypeName [OpenBracket] . [CloseBracket]] {
+  let @array.type_symbol = "%Array"
+}
+
+@array [ArrayTypeName @type_name [TypeName]] {
+  ; Define the pushing path of the array type
+  ;   ValueType <- top of the symbol stack
+  ;   %array / %arrayFixed <- bottom of the symbol stack
+  node array
+  attr (array) push_symbol = @array.type_symbol
+  edge @array.output -> array
+  edge array -> @type_name.output
+
+  ; Resolve the value type itself
+  edge @type_name.type_ref -> @array.lexical_scope
+  ; And also the "type erased" array type so we can resolve built-in members
+  edge array -> @array.lexical_scope
+
+  ; Define the path to resolve index access (aka the `[]` operator)
+
+  node typeof_input
+  attr (typeof_input) pop_symbol = "@typeof"
+  edge @array.output -> typeof_input
+
+  node typeof_output
+  attr (typeof_output) push_symbol = "@typeof"
+  edge typeof_output -> @type_name.output
+
+  node index
+  attr (index) pop_symbol = "[]"
+  edge typeof_input -> index
+  edge index -> typeof_output
+
+  ; Special case for public state variables of type array: they can be called
+  ; like a function with an index, and it's effectively the same as indexing the
+  ; array.
+  node getter_call
+  attr (getter_call) pop_symbol = "@as_getter"
+  edge typeof_input -> getter_call
+  edge getter_call -> typeof_output
+
+  ; Define the special `.push()` built-in that returns the element type (for Solidity >= 0.6.0)
+  if (version-matches ">= 0.6.0") {
+    node built_in_member
+    attr (built_in_member) pop_symbol = "."
+    node push_built_in
+    attr (push_built_in) pop_symbol = "push"
+    node built_in_call
+    attr (built_in_call) pop_symbol = "()"
+
+    edge typeof_input -> built_in_member
+    edge built_in_member -> push_built_in
+    edge push_built_in -> built_in_call
+    edge built_in_call -> typeof_output
+  }
+
+  ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
+  ; This is essentially the reverse of the second path above
+  node pop_array
+  attr (pop_array) pop_symbol = @array.type_symbol
+
+  let @array.pop_begin = @type_name.pop_begin
+  edge @type_name.pop_end -> pop_array
+  let @array.pop_end = pop_array
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Function types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@ftype [FunctionType @attrs [FunctionTypeAttributes]] {
+  ; Compute the built-in type of the function
+  ; %functionExternal provides access to .selector and .address
+  var type_symbol = "%Function"
+  scan (source-text @attrs) {
+    "external" {
+      set type_symbol = "%ExternalFunction"
+    }
+  }
+
+  node @ftype.lexical_scope
+  node @ftype.output
+
+  ; This path pushes the function type to the symbol stack
+  ; TODO: add parameter and return types to distinguish between different function types
+  node function_type
+  attr (function_type) push_symbol = type_symbol
+
+  edge @ftype.output -> function_type
+  edge function_type -> @ftype.lexical_scope
+
+  ; the pop path for the using directive
+  node pop_function_type
+  attr (pop_function_type) pop_symbol = type_symbol
+
+  let @ftype.pop_begin = pop_function_type
+  let @ftype.pop_end = pop_function_type
+}
+
+@ftype [FunctionType @params [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @ftype.lexical_scope
+}
+
+@ftype [FunctionType [ReturnsDeclaration @return_params [ParametersDeclaration]]] {
+  edge @return_params.lexical_scope -> @ftype.lexical_scope
+}
+
+@ftype [FunctionType [ReturnsDeclaration
+    [ParametersDeclaration [Parameters . @param [Parameter] .]]
+]] {
+  ; Variables of a function type type can be "called" and resolve to the type of
+  ; the return parameter. This is only valid if the function returns a single
+  ; value.
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+
+  node call
+  attr (call) pop_symbol = "()"
+
+  edge @ftype.output -> typeof
+  edge typeof -> call
+  edge call -> @param.typeof
 }
 
 "#####;

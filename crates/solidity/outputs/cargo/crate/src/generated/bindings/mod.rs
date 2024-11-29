@@ -34,7 +34,8 @@ pub fn create_with_resolver(
 ) -> Result<BindingGraph, ParserInitializationError> {
     let mut binding_graph = BindingGraph::create(
         version.clone(),
-        binding_rules::BINDING_RULES_SOURCE,
+        binding_rules::USER_BINDING_RULES_SOURCE,
+        binding_rules::SYSTEM_BINDING_RULES_SOURCE,
         resolver,
     );
 
@@ -44,6 +45,11 @@ pub fn create_with_resolver(
 }
 
 #[cfg(feature = "__private_testing_utils")]
-pub fn get_binding_rules() -> &'static str {
-    binding_rules::BINDING_RULES_SOURCE
+pub fn get_user_binding_rules() -> &'static str {
+    binding_rules::USER_BINDING_RULES_SOURCE
+}
+
+#[cfg(feature = "__private_testing_utils")]
+pub fn get_system_binding_rules() -> &'static str {
+    binding_rules::SYSTEM_BINDING_RULES_SOURCE
 }
