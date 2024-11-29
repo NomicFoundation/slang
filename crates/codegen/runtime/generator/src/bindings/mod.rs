@@ -1,4 +1,5 @@
-use std::{collections::BTreeSet, path::Path};
+use std::collections::BTreeSet;
+use std::path::Path;
 
 use anyhow::Result;
 use codegen_language_definition::model;
@@ -8,7 +9,8 @@ use serde::Serialize;
 
 #[derive(Default, Serialize)]
 pub struct BindingsModel {
-    binding_rules_source: String,
+    user_binding_rules_source: String,
+    system_binding_rules_source: String,
     built_ins_versions: BTreeSet<Version>,
     file_extension: String,
 }
@@ -16,12 +18,14 @@ pub struct BindingsModel {
 impl BindingsModel {
     pub fn from_language(language: &model::Language) -> Result<Self> {
         let binding_rules_dir = &language.binding_rules_dir;
-        let binding_rules_source = build_rules(binding_rules_dir, "user-rules.parts")?;
+        let user_binding_rules_source = assemble_rules(binding_rules_dir, "user-rules.parts")?;
+        let system_binding_rules_source = assemble_rules(binding_rules_dir, "system-rules.parts")?;
         let built_ins_versions = language.collect_built_ins_versions();
         let file_extension = language.file_extension.clone().unwrap_or_default();
 
         Ok(Self {
-            binding_rules_source,
+            user_binding_rules_source,
+            system_binding_rules_source,
             built_ins_versions,
             file_extension,
         })
@@ -29,7 +33,7 @@ impl BindingsModel {
 }
 
 // Builds a rules file by concatenating the file parts listed in the given `parts_file`
-fn build_rules(rules_dir: &Path, parts_file: &str) -> Result<String> {
+fn assemble_rules(rules_dir: &Path, parts_file: &str) -> Result<String> {
     // We use `CodegenFileSystem` here to ensure the rules are rebuilt if the rules file changes
     let mut fs = CodegenFileSystem::new(rules_dir)?;
     let parts_contents = fs.read_file(rules_dir.join(parts_file))?;

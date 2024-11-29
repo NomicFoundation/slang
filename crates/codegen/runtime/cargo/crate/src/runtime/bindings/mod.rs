@@ -19,12 +19,22 @@ pub fn create_with_resolver(
     version: Version,
     resolver: Arc<dyn PathResolver + Sync + Send>,
 ) -> Bindings {
-    Bindings::create(version, binding_rules::BINDING_RULES_SOURCE, resolver)
+    Bindings::create(
+        version,
+        binding_rules::USER_BINDING_RULES_SOURCE,
+        binding_rules::SYSTEM_BINDING_RULES_SOURCE,
+        resolver,
+    )
 }
 
 #[cfg(feature = "__private_testing_utils")]
-pub fn get_binding_rules() -> &'static str {
-    binding_rules::BINDING_RULES_SOURCE
+pub fn get_user_binding_rules() -> &'static str {
+    binding_rules::USER_BINDING_RULES_SOURCE
+}
+
+#[cfg(feature = "__private_testing_utils")]
+pub fn get_system_binding_rules() -> &'static str {
+    binding_rules::SYSTEM_BINDING_RULES_SOURCE
 }
 
 pub fn get_built_ins(version: &semver::Version) -> &'static str {

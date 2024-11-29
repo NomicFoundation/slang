@@ -19,7 +19,7 @@ pub fn metaslang_bindings::Bindings<KT>::add_user_file(&mut self, file_path: &st
 pub fn metaslang_bindings::Bindings<KT>::add_user_file_returning_graph(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>) -> metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_bindings::Bindings<KT>::all_definitions(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Definition<'_, KT>> + '_
 pub fn metaslang_bindings::Bindings<KT>::all_references(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Reference<'_, KT>> + '_
-pub fn metaslang_bindings::Bindings<KT>::create(version: semver::Version, binding_rules: &str, path_resolver: alloc::sync::Arc<(dyn metaslang_bindings::PathResolver + core::marker::Sync + core::marker::Send)>) -> Self
+pub fn metaslang_bindings::Bindings<KT>::create(version: semver::Version, user_binding_rules: &str, system_binding_rules: &str, path_resolver: alloc::sync::Arc<(dyn metaslang_bindings::PathResolver + core::marker::Sync + core::marker::Send)>) -> Self
 pub fn metaslang_bindings::Bindings<KT>::definition_at(&self, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Definition<'_, KT>>
 pub fn metaslang_bindings::Bindings<KT>::get_context(&self) -> core::option::Option<metaslang_bindings::Definition<'_, KT>>
 pub fn metaslang_bindings::Bindings<KT>::reference_at(&self, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Reference<'_, KT>>
