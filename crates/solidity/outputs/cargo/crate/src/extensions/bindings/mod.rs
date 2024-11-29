@@ -8,15 +8,21 @@ use crate::bindings::BindingGraph;
 use crate::cst::{Edge, Node, NonterminalNode, TerminalKind, TerminalNode};
 use crate::parser::{Parser, ParserInitializationError};
 
+static BUILT_INS_PARSER_VERSION: Version = Version::new(0, 8, 28);
+
 pub fn add_built_ins(
     binding_graph: &mut BindingGraph,
-    version: Version,
+    version: &Version,
 ) -> Result<(), ParserInitializationError> {
-    let source = get_built_ins_contents(&version);
-    let parser = Parser::create(version)?;
-    let parse_output = parser.parse(Parser::ROOT_KIND, source);
+    let parser = Parser::create(BUILT_INS_PARSER_VERSION.clone())?;
+    let built_ins_parse_output = parser.parse(Parser::ROOT_KIND, get_built_ins_contents(version));
+    assert!(
+        built_ins_parse_output.is_valid(),
+        "built-ins parse without errors"
+    );
 
-    let built_ins_cursor = transform(parse_output.tree()).cursor_with_offset(TextIndex::ZERO);
+    let built_ins_cursor = transform(built_ins_parse_output.tree())
+        .cursor_with_offset(TextIndex::ZERO);
 
     binding_graph.add_system_file("built_ins.sol", built_ins_cursor);
     Ok(())

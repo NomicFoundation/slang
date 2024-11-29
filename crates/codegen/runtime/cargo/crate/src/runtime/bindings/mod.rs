@@ -26,6 +26,7 @@ pub enum BindingGraphInitializationError {
     ParserInitialization(#[from] ParserInitializationError),
 }
 
+#[allow(clippy::needless_pass_by_value)]
 pub fn create_with_resolver(
     version: Version,
     resolver: Rc<dyn PathResolver<KindTypes>>,
@@ -37,7 +38,7 @@ pub fn create_with_resolver(
         resolver,
     );
 
-    crate::extensions::bindings::add_built_ins(&mut binding_graph, version)?;
+    crate::extensions::bindings::add_built_ins(&mut binding_graph, &version)?;
 
     Ok(binding_graph)
 }
