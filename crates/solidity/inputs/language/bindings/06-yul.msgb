@@ -1,0 +1,332 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Yul
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Blocks and statements
+
+@block [YulBlock] {
+  node @block.lexical_scope
+  ; Variables defined in this block (only used to forward the init block
+  ; declarations in a for statement)
+  node @block.variable_defs
+  ; Function definitions accessible from the block (ie. defined in the block, or
+  ; accessible in the enclosing parent block)
+  node @block.function_defs
+
+  edge @block.lexical_scope -> @block.function_defs
+}
+
+@block [YulBlock [YulStatements . @stmt [YulStatement]]] {
+  edge @stmt.lexical_scope -> @block.lexical_scope
+}
+
+@block [YulBlock [YulStatements @stmt [YulStatement]]] {
+  edge @stmt.function_scope -> @block.function_defs
+  edge @block.variable_defs -> @stmt.defs
+}
+
+[YulStatements @left_stmt [YulStatement] . @right_stmt [YulStatement]] {
+  edge @right_stmt.lexical_scope -> @left_stmt.lexical_scope
+  ; variable declaration are accessible from the next statement
+  edge @right_stmt.lexical_scope -> @left_stmt.defs
+}
+
+@stmt [YulStatement] {
+  node @stmt.lexical_scope
+  node @stmt.defs
+  ;; Functions visible in this scope (to propagate to inner function
+  ;; definitions, since the lexical scope is not accessible inside a function
+  ;; body)
+  node @stmt.function_scope
+}
+
+;;; Blocks as statements
+
+@stmt [YulStatement @block variant: [YulBlock]] {
+  edge @block.lexical_scope -> @stmt.lexical_scope
+  edge @block.function_defs -> @stmt.function_scope
+}
+
+;;; Expression as statements
+
+@stmt [YulStatement @expr_stmt [YulExpression]] {
+  edge @expr_stmt.lexical_scope -> @stmt.lexical_scope
+}
+
+;;; Variable declarations
+
+@stmt [YulStatement @var_decl [YulVariableDeclarationStatement]] {
+  edge @var_decl.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.defs -> @var_decl.defs
+}
+
+@var_decl [YulVariableDeclarationStatement] {
+  node @var_decl.lexical_scope
+  node @var_decl.defs
+}
+
+@var_decl [YulVariableDeclarationStatement [YulVariableNames @name [YulIdentifier]]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @var_decl
+
+  edge @var_decl.defs -> def
+}
+
+@var_decl [YulVariableDeclarationStatement [YulVariableDeclarationValue
+    @value [YulExpression]
+]] {
+  edge @value.lexical_scope -> @var_decl.lexical_scope
+}
+
+;;; Variable assignments
+
+@stmt [YulStatement @var_assign [YulVariableAssignmentStatement]] {
+  edge @var_assign.lexical_scope -> @stmt.lexical_scope
+}
+
+@var_assign [YulVariableAssignmentStatement] {
+  node @var_assign.lexical_scope
+}
+
+@var_assign [YulVariableAssignmentStatement [YulPaths @path [YulPath]]] {
+  edge @path.lexical_scope -> @var_assign.lexical_scope
+}
+
+@var_assign [YulVariableAssignmentStatement @expr expression: [YulExpression]] {
+  edge @expr.lexical_scope -> @var_assign.lexical_scope
+}
+
+;;; Function definitions
+
+@block [YulBlock [YulStatements [YulStatement @fundef [YulFunctionDefinition]]]] {
+  ;; Function definitions are hoisted in the enclosing block
+  edge @block.function_defs -> @fundef.def
+  ;; The only definitions available in the function's lexical scope (other than
+  ;; parameters) are functions (ie. the body of the function doesn't have access
+  ;; to any outside variables)
+  edge @fundef.lexical_scope -> @block.function_defs
+  ; Exception: but outside constants *are* available, so we provide a guarded
+  ; access to the parent lexical scope. This guard will be popped to link to
+  ; available constants.
+  node yul_function_guard
+  attr (yul_function_guard) push_symbol = "@in_yul_function"
+  edge @fundef.lexical_scope -> yul_function_guard
+  edge yul_function_guard -> @block.lexical_scope
+}
+
+;; Constants need to be available inside Yul functions. This is an exception
+;; since no other external identifiers are, so the path is guarded. We create a
+;; scope in the source unit, contracts and libraries, and guard it from the
+;; lexical scope, so we can link constant definitions here. See the dual path in
+;; the rule above.
+@constant_container ([SourceUnit] | [ContractDefinition] | [LibraryDefinition]) {
+  node @constant_container.yul_functions_guarded_scope
+  attr (@constant_container.yul_functions_guarded_scope) pop_symbol = "@in_yul_function"
+  edge @constant_container.lexical_scope -> @constant_container.yul_functions_guarded_scope
+}
+
+;; Make top-level constants available inside Yul functions
+@source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @constant [ConstantDefinition]]]] {
+  edge @source_unit.yul_functions_guarded_scope -> @constant.def
+}
+
+;; Ditto for contracts, interfaces and libraries
+@contract [_ members: [_ [ContractMember
+    @constant [StateVariableDefinition
+        [StateVariableAttributes [StateVariableAttribute [ConstantKeyword]]]
+    ]
+]]] {
+  edge @contract.yul_functions_guarded_scope -> @constant.def
+}
+
+@fundef [YulFunctionDefinition
+    @name name: [YulIdentifier]
+    @body body: [YulBlock]
+] {
+  node @fundef.lexical_scope
+  node @fundef.def
+
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @fundef
+
+  edge @fundef.def -> def
+  edge @body.lexical_scope -> @fundef.lexical_scope
+}
+
+@fundef [YulFunctionDefinition [YulParametersDeclaration [YulParameters
+    @param [YulIdentifier]
+]]] {
+  node def
+  attr (def) node_definition = @param
+  attr (def) definiens_node = @param
+
+  edge @fundef.lexical_scope -> def
+}
+
+@fundef [YulFunctionDefinition [YulReturnsDeclaration [YulVariableNames
+    @return_param [YulIdentifier]
+]]] {
+  node def
+  attr (def) node_definition = @return_param
+  attr (def) definiens_node = @return_param
+
+  edge @fundef.lexical_scope -> def
+}
+
+;;; Stack assignment (Solidity < 0.5.0)
+
+@stmt [YulStatement [YulStackAssignmentStatement @name [YulIdentifier]]] {
+  node ref
+  attr (ref) node_reference = @name
+
+  edge ref -> @stmt.lexical_scope
+}
+
+;;; If statements
+
+@stmt [YulStatement [YulIfStatement
+    @condition condition: [YulExpression]
+    @body body: [YulBlock]
+]] {
+  edge @condition.lexical_scope -> @stmt.lexical_scope
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  edge @body.function_defs -> @stmt.function_scope
+}
+
+;;; Switch statements
+
+@stmt [YulStatement [YulSwitchStatement
+    @expr expression: [YulExpression]
+]] {
+  edge @expr.lexical_scope -> @stmt.lexical_scope
+}
+
+@stmt [YulStatement [YulSwitchStatement [YulSwitchCases [YulSwitchCase
+    [_ @body body: [YulBlock]]
+]]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  edge @body.function_defs -> @stmt.function_scope
+}
+
+;;; For statements
+
+@stmt [YulStatement [YulForStatement
+    @init initialization: [YulBlock]
+    @cond condition: [YulExpression]
+    @iter iterator: [YulBlock]
+    @body body: [YulBlock]
+]] {
+  edge @init.lexical_scope -> @stmt.lexical_scope
+  edge @cond.lexical_scope -> @stmt.lexical_scope
+  edge @iter.lexical_scope -> @stmt.lexical_scope
+  edge @body.lexical_scope -> @stmt.lexical_scope
+
+  edge @cond.lexical_scope -> @init.variable_defs
+  edge @iter.lexical_scope -> @init.variable_defs
+  edge @body.lexical_scope -> @init.variable_defs
+}
+
+;;; Label statements (Solidity < 0.5.0)
+
+@block [YulBlock [YulStatements [YulStatement @label [YulLabel @name label: [YulIdentifier]]]]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @label
+
+  ; Labels are hoisted to the beginning of the block
+  edge @block.lexical_scope -> def
+}
+
+;;; Expressions
+
+@expr [YulExpression] {
+  node @expr.lexical_scope
+}
+
+@expr [YulExpression @path [YulPath]] {
+  edge @path.lexical_scope -> @expr.lexical_scope
+}
+
+@path [YulPath] {
+  node @path.lexical_scope
+}
+
+@path [YulPath . @name [YulIdentifier]] {
+  node ref
+  attr (ref) node_reference = @name
+
+  edge ref -> @path.lexical_scope
+
+  if (version-matches "< 0.7.0") {
+    ; Before Solidity 0.7.0 storage variables' `.offset` and `.slot` were
+    ; accessed by suffixing the name with `_offset` and `_slot`
+    scan (source-text @name) {
+      "^(.*)_(slot|offset|length)$" {
+        let symbol = $0
+        let without_suffix = $1
+        let suffix = $2
+
+        ; We bind the whole symbol to the built-in field for the known cases
+        node pop_ref
+        attr (pop_ref) pop_symbol = symbol
+        node push_suffixless
+        attr (push_suffixless) push_symbol = suffix
+        node member_of
+        attr (member_of) push_symbol = "."
+        node typeof
+        attr (typeof) push_symbol = "@typeof"
+        node yul_external
+        attr (yul_external) push_symbol = "%YulExternal"
+
+        edge ref -> pop_ref
+        edge pop_ref -> push_suffixless
+        edge push_suffixless -> member_of
+        edge member_of -> typeof
+        edge typeof -> yul_external
+        edge yul_external -> @path.lexical_scope
+      }
+    }
+  }
+}
+
+@path [YulPath [Period] @member [YulIdentifier] .] {
+  ; Yul variable members only apply to external variables and hence are
+  ; automatically bound to a special %YulExternal built-in
+  node ref
+  attr (ref) node_reference = @member
+  node member_of
+  attr (member_of) push_symbol = "."
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node yul_external
+  attr (yul_external) push_symbol = "%YulExternal"
+
+  edge ref -> member_of
+  edge member_of -> typeof
+  edge typeof -> yul_external
+  edge yul_external -> @path.lexical_scope
+}
+
+@expr [YulExpression @funcall [YulFunctionCallExpression]] {
+  edge @funcall.lexical_scope -> @expr.lexical_scope
+}
+
+@funcall [YulFunctionCallExpression
+  @operand operand: [YulExpression]
+  @args arguments: [YulArguments]
+] {
+  node @funcall.lexical_scope
+
+  edge @operand.lexical_scope -> @funcall.lexical_scope
+  edge @args.lexical_scope -> @funcall.lexical_scope
+}
+
+@args [YulArguments] {
+  node @args.lexical_scope
+}
+
+@args [YulArguments @arg [YulExpression]] {
+  edge @arg.lexical_scope -> @args.lexical_scope
+}

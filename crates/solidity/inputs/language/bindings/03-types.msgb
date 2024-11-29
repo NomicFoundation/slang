@@ -1,0 +1,404 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Identifier Paths (aka. references to custom types)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; The identifier path builds two graph paths:
+;;
+;; - From right to left, pushing the identifiers and acting as a "reference".
+;;   This path begins at @id_path.push_begin and ends at @id_path.push_end.
+;;
+;; - From left to right, popping the identifiers (used as a definition sink in
+;;   using directives). This path begins at @id_path.pop_begin and ends at
+;;   @id_path.pop_end.
+;;
+;;   NOTE: most of the time, and unless this identifier path is the target of a
+;;   using directive this second path will not be used and will form a
+;;   disconnected graph component. We currently have no way of determining when
+;;   this path is necessary, so we always construct it.
+;;
+;; Additionally the IdentifierPath defines another scoped variable
+;; @id_path.rightmost_identifier which corresponds to the identifier in the last
+;; position in the path, from left to right. This is used in the using directive
+;; rules to be able to pop the name of the attached function.
+
+@id_path [IdentifierPath] {
+  ; This node connects to all parts of the path, for popping. This allows to
+  ; connect at any point of the path. Useful for `using` directives when the
+  ; target type is fully qualified but we want to resolve for the unqualified
+  ; name.
+  node @id_path.all_pop_begin
+}
+
+@id_path [IdentifierPath @name [Identifier]] {
+  node @name.ref
+  attr (@name.ref) node_reference = @name
+  attr (@name.ref) parents = [@id_path.enclosing_def]
+
+  node @name.pop
+  attr (@name.pop) pop_symbol = (source-text @name)
+
+  edge @id_path.all_pop_begin -> @name.pop
+}
+
+@id_path [IdentifierPath @name [Identifier] .] {
+  let @id_path.rightmost_identifier = @name
+
+  let @id_path.push_begin = @name.ref
+  let @id_path.pop_end = @name.pop
+}
+
+[IdentifierPath @left_name [Identifier] . [Period] . @right_name [Identifier]] {
+  node ref_member
+  attr (ref_member) push_symbol = "."
+
+  edge @right_name.ref -> ref_member
+  edge ref_member -> @left_name.ref
+
+  node pop_member
+  attr (pop_member) pop_symbol = "."
+
+  edge @left_name.pop -> pop_member
+  edge pop_member -> @right_name.pop
+}
+
+@id_path [IdentifierPath . @name [Identifier]] {
+  let @id_path.push_end = @name.ref
+  let @id_path.pop_begin = @name.pop
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Type names
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; TypeName nodes should define these scoped variables:
+;;
+;; - @type_name.type_ref represents the node in the graph where we're ready to
+;;   resolve the type, and thus should generally be connected to a (lexical)
+;;   scope node (source node, outside edges connect *from* here).
+;;
+;; - @type_name.output represents the other end of the type and corresponds to a
+;;   state where the type has already been resolved so we can, for example
+;;   resolve its members (sink node, outside edges connect *to* here).
+;;
+;; - @type_name.pop_begin, @type_name.pop_end are used in a definition context,
+;;   ie. when we need to pop the type name symbol(s) from the symbol stack.
+;;   Additionally, @type_name.all_pop_begin links to each symbol in a typename
+;;   (ie. in an identifier path typename), which allows referring to a type both
+;;   qualified and unqualified.
+
+@type_name [TypeName @elementary [ElementaryType]] {
+  let @type_name.type_ref = @elementary.ref
+  let @type_name.output = @elementary.ref
+  let @type_name.pop_begin = @elementary.pop
+  let @type_name.pop_end = @elementary.pop
+  let @type_name.all_pop_begin = @elementary.pop
+}
+
+@type_name [TypeName @id_path [IdentifierPath]] {
+  ;; For an identifier path used as a type, the left-most element is the one
+  ;; that connects to the parent lexical scope, because the name resolution
+  ;; starts at the left of the identifier.
+  let @type_name.type_ref = @id_path.push_end
+
+  ;; Conversely, the complete type is found at the right-most name, and that's
+  ;; where users of this type should link to (eg. a variable declaration).
+  let @type_name.output = @id_path.push_begin
+
+  let @type_name.pop_begin = @id_path.pop_begin
+  let @type_name.pop_end = @id_path.pop_end
+  let @type_name.all_pop_begin = @id_path.all_pop_begin
+}
+
+@type_name [TypeName @type_variant ([ArrayTypeName] | [FunctionType])] {
+  let @type_name.type_ref = @type_variant.lexical_scope
+  let @type_name.output = @type_variant.output
+  let @type_name.pop_begin = @type_variant.pop_begin
+  let @type_name.pop_end = @type_variant.pop_end
+  let @type_name.all_pop_begin = @type_variant.pop_begin
+}
+
+@type_name [TypeName @mapping [MappingType]] {
+  let @type_name.type_ref = @mapping.lexical_scope
+  let @type_name.output = @mapping.output
+  let @type_name.pop_begin = @mapping.pop_begin
+  let @type_name.pop_end = @mapping.pop_end
+  let @type_name.all_pop_begin = @mapping.pop_begin
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Elementary types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@elementary [ElementaryType] {
+  node @elementary.ref
+  attr (@elementary.ref) type = "push_symbol"
+  attr (@elementary.ref) source_node = @elementary, symbol = @elementary.symbol
+
+  node @elementary.pop
+  attr (@elementary.pop) pop_symbol = @elementary.symbol
+
+  ; These variables are a bit redundant, but necessary to easily use elementary
+  ; types as mapping keys
+  let @elementary.pop_begin = @elementary.pop
+  let @elementary.pop_end = @elementary.pop
+  let @elementary.all_pop_begin = @elementary.pop
+
+  let @elementary.push_begin = @elementary.ref
+  let @elementary.push_end = @elementary.ref
+}
+
+@elementary [ElementaryType [AddressType]] {
+  let @elementary.symbol = "%address"
+}
+
+@elementary [ElementaryType [BoolKeyword]] {
+  let @elementary.symbol = "%bool"
+}
+
+@elementary [ElementaryType [ByteKeyword]] {
+  let @elementary.symbol = "%byte"
+}
+
+@elementary [ElementaryType @keyword [BytesKeyword]] {
+  let @elementary.symbol = (format "%{}" (source-text @keyword))
+}
+
+@elementary [ElementaryType [StringKeyword]] {
+  let @elementary.symbol = "%string"
+}
+
+@elementary [ElementaryType @keyword [IntKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "int") {
+    let @elementary.symbol = "%int256"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
+  }
+}
+
+@elementary [ElementaryType @keyword [UintKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "uint") {
+    let @elementary.symbol = "%uint256"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
+  }
+}
+
+@elementary [ElementaryType @keyword [FixedKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "fixed") {
+    let @elementary.symbol = "%fixed128x18"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
+  }
+}
+
+@elementary [ElementaryType @keyword [UfixedKeyword]] {
+  let symbol = (source-text @keyword)
+  if (eq symbol "ufixed") {
+    let @elementary.symbol = "%ufixed128x18"
+  } else {
+    let @elementary.symbol = (format "%{}" symbol)
+  }
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Mappings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@mapping [MappingType
+    [MappingKey [MappingKeyType @key_type ([IdentifierPath] | [ElementaryType])]]
+    [MappingValue @value_type [TypeName]]
+] {
+  node @mapping.lexical_scope
+  node @mapping.output
+
+  ; Define the pushing path of the mapping type
+  ;   ValueType <- top of the symbol stack
+  ;   KeyType
+  ;   %mapping <- bottom of the symbol stack
+  node mapping
+  attr (mapping) push_symbol = "%Mapping"
+  edge @mapping.output -> mapping
+  edge mapping -> @key_type.push_begin
+  edge @key_type.push_end -> @value_type.output
+
+  ; Both key and value types need to be resolved
+  edge @value_type.type_ref -> @mapping.lexical_scope
+  edge @key_type.push_end -> @mapping.lexical_scope
+
+  ; The mapping's type exposes the `[]` operator that returns the value type.
+
+  node typeof_input
+  attr (typeof_input) pop_symbol = "@typeof"
+  edge @mapping.output -> typeof_input
+
+  node typeof_output
+  attr (typeof_output) push_symbol = "@typeof"
+  edge typeof_output -> @value_type.output
+
+  node index
+  attr (index) pop_symbol = "[]"
+  edge typeof_input -> index
+  edge index -> typeof_output
+
+  ; Special case for mapping public state variables: they can be called
+  ; like a function with a key, and it's effectively the same as indexing it.
+  node getter_call
+  attr (getter_call) pop_symbol = "@as_getter"
+  edge typeof_input -> getter_call
+  edge getter_call -> typeof_output
+
+  ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
+  ; This is the reverse of the pushing path above (to the `.output` node)
+  node pop_mapping
+  attr (pop_mapping) pop_symbol = "%Mapping"
+
+  let @mapping.pop_begin = @value_type.pop_begin
+  edge @value_type.pop_end -> @key_type.pop_begin
+  edge @key_type.pop_end -> pop_mapping
+  let @mapping.pop_end = pop_mapping
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Arrays types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@array [ArrayTypeName] {
+  node @array.lexical_scope
+  node @array.output
+}
+
+@array [ArrayTypeName [TypeName] index: [Expression]] {
+  let @array.type_symbol = "%FixedArray"
+}
+
+@array [ArrayTypeName [OpenBracket] . [CloseBracket]] {
+  let @array.type_symbol = "%Array"
+}
+
+@array [ArrayTypeName @type_name [TypeName]] {
+  ; Define the pushing path of the array type
+  ;   ValueType <- top of the symbol stack
+  ;   %array / %arrayFixed <- bottom of the symbol stack
+  node array
+  attr (array) push_symbol = @array.type_symbol
+  edge @array.output -> array
+  edge array -> @type_name.output
+
+  ; Resolve the value type itself
+  edge @type_name.type_ref -> @array.lexical_scope
+  ; And also the "type erased" array type so we can resolve built-in members
+  edge array -> @array.lexical_scope
+
+  ; Define the path to resolve index access (aka the `[]` operator)
+
+  node typeof_input
+  attr (typeof_input) pop_symbol = "@typeof"
+  edge @array.output -> typeof_input
+
+  node typeof_output
+  attr (typeof_output) push_symbol = "@typeof"
+  edge typeof_output -> @type_name.output
+
+  node index
+  attr (index) pop_symbol = "[]"
+  edge typeof_input -> index
+  edge index -> typeof_output
+
+  ; Special case for public state variables of type array: they can be called
+  ; like a function with an index, and it's effectively the same as indexing the
+  ; array.
+  node getter_call
+  attr (getter_call) pop_symbol = "@as_getter"
+  edge typeof_input -> getter_call
+  edge getter_call -> typeof_output
+
+  ; Define the special `.push()` built-in that returns the element type (for Solidity >= 0.6.0)
+  if (version-matches ">= 0.6.0") {
+    node built_in_member
+    attr (built_in_member) pop_symbol = "."
+    node push_built_in
+    attr (push_built_in) pop_symbol = "push"
+    node built_in_call
+    attr (built_in_call) pop_symbol = "()"
+
+    edge typeof_input -> built_in_member
+    edge built_in_member -> push_built_in
+    edge push_built_in -> built_in_call
+    edge built_in_call -> typeof_output
+  }
+
+  ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
+  ; This is essentially the reverse of the second path above
+  node pop_array
+  attr (pop_array) pop_symbol = @array.type_symbol
+
+  let @array.pop_begin = @type_name.pop_begin
+  edge @type_name.pop_end -> pop_array
+  let @array.pop_end = pop_array
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Function types
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@ftype [FunctionType @attrs [FunctionTypeAttributes]] {
+  ; Compute the built-in type of the function
+  ; %functionExternal provides access to .selector and .address
+  var type_symbol = "%Function"
+  scan (source-text @attrs) {
+    "external" {
+      set type_symbol = "%ExternalFunction"
+    }
+  }
+
+  node @ftype.lexical_scope
+  node @ftype.output
+
+  ; This path pushes the function type to the symbol stack
+  ; TODO: add parameter and return types to distinguish between different function types
+  node function_type
+  attr (function_type) push_symbol = type_symbol
+
+  edge @ftype.output -> function_type
+  edge function_type -> @ftype.lexical_scope
+
+  ; the pop path for the using directive
+  node pop_function_type
+  attr (pop_function_type) pop_symbol = type_symbol
+
+  let @ftype.pop_begin = pop_function_type
+  let @ftype.pop_end = pop_function_type
+}
+
+@ftype [FunctionType @params [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @ftype.lexical_scope
+}
+
+@ftype [FunctionType [ReturnsDeclaration @return_params [ParametersDeclaration]]] {
+  edge @return_params.lexical_scope -> @ftype.lexical_scope
+}
+
+@ftype [FunctionType [ReturnsDeclaration
+    [ParametersDeclaration [Parameters . @param [Parameter] .]]
+]] {
+  ; Variables of a function type type can be "called" and resolve to the type of
+  ; the return parameter. This is only valid if the function returns a single
+  ; value.
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+
+  node call
+  attr (call) pop_symbol = "()"
+
+  edge @ftype.output -> typeof
+  edge typeof -> call
+  edge call -> @param.typeof
+}

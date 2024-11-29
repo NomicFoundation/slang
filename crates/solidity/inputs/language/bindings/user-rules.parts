@@ -1,1 +1,7 @@
-rules.msgb
+00-top-level.msgb
+01-definitions.msgb
+02-other-definitions.msgb
+03-types.msgb
+04-statements.msgb
+05-expressions.msgb
+06-yul.msgb

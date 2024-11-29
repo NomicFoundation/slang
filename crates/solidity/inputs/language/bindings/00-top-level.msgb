@@ -1,0 +1,267 @@
+global ROOT_NODE
+global FILE_PATH
+global JUMP_TO_SCOPE_NODE
+
+attribute node_definition = node     => type = "pop_symbol", node_symbol = node, is_definition
+attribute node_reference = node      => type = "push_symbol", node_symbol = node, is_reference
+attribute node_symbol = node         => symbol = (source-text node), source_node = node
+attribute pop_symbol = symbol        => type = "pop_symbol", symbol = symbol
+attribute push_symbol = symbol       => type = "push_symbol", symbol = symbol
+attribute symbol_definition = symbol => type = "pop_symbol", symbol = symbol, is_definition
+attribute symbol_reference = symbol  => type = "push_symbol", symbol = symbol, is_reference
+
+attribute scoped_node_definition = node => type = "pop_scoped_symbol", node_symbol = node, is_definition
+attribute scoped_node_reference  = node => type = "push_scoped_symbol", node_symbol = node, is_reference
+attribute pop_scoped_symbol = symbol    => type = "pop_scoped_symbol", symbol = symbol
+attribute push_scoped_symbol = symbol   => type = "push_scoped_symbol", symbol = symbol
+
+;; Keeps a link to the enclosing contract definition to provide a parent for
+;; method calls (to correctly resolve virtual methods)
+inherit .enclosing_def
+
+inherit .parent_scope
+inherit .lexical_scope
+
+; Used to resolve extension methods for `using for *` directives
+; This is used as a minor optimization to avoid introducing new possible paths
+; when there are no `using for *` directives in the contract.
+inherit .star_extension
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Source unit (aka .sol file)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@source_unit [SourceUnit] {
+  ;; All lexical_scope nodes eventually connect to the file's root scope
+  node @source_unit.lexical_scope
+
+  ;; This provides all the exported symbols from the file
+  node @source_unit.defs
+
+  ;; Connect to ROOT_NODE to export our symbols
+  node export
+  edge ROOT_NODE -> export
+  edge export -> @source_unit.defs
+
+  if (is-system-file FILE_PATH) {
+    ; If this is a system file (aka. built-ins), export everything through this
+    ; special symbol (which is automatically imported below)
+    attr (export) pop_symbol = "@@built-ins@@"
+
+  } else {
+    ; This is a user file, so we want to export under the file's path symbol
+    attr (export) pop_symbol = FILE_PATH
+
+    ; ... and also import the global built-ins
+    node built_ins
+    attr (built_ins) push_symbol = "@@built-ins@@"
+
+    edge @source_unit.lexical_scope -> built_ins
+    edge built_ins -> ROOT_NODE
+  }
+
+  let @source_unit.enclosing_def = #null
+
+  ;; This defines a parent_scope at the source unit level (this attribute is
+  ;; inherited) for contracts to resolve bases (both in inheritance lists and
+  ;; override specifiers)
+  let @source_unit.parent_scope = @source_unit.lexical_scope
+
+  ; This is used to indicate the resolution algorithm that here's where it
+  ; should inject any possible extension scopes
+  attr (@source_unit.lexical_scope) extension_hook
+
+  ; Provide a default star extension sink node that gets inherited. This is
+  ; connected to from expressions, and those can potentially happen anywhere.
+  node @source_unit.star_extension
+}
+
+;; Top-level definitions...
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @unit_member (
+          [ContractDefinition]
+        | [LibraryDefinition]
+        | [InterfaceDefinition]
+        | [StructDefinition]
+        | [EnumDefinition]
+        | [FunctionDefinition]
+        | [ConstantDefinition]
+        | [ErrorDefinition]
+        | [UserDefinedValueTypeDefinition]
+        | [EventDefinition]
+    )]
+]] {
+  edge @source_unit.lexical_scope -> @unit_member.def
+  edge @source_unit.defs -> @unit_member.def
+
+  ; In the general case, the lexical scope of the definition connects directly
+  ; to the source unit's
+  edge @unit_member.lexical_scope -> @source_unit.lexical_scope
+}
+
+;; Special case for built-ins: we want to export all symbols in the contract:
+;; functions, types and state variables. All built-in symbols are defined in an
+;; internal contract named '%BuiltIns%' (renamed from '$BuiltIns$') so we need
+;; to export all its members and type members directly as a source unit
+;; definition.
+;; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with built-ins generation.
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @contract [ContractDefinition name: ["%BuiltIns%"]]]
+]] {
+  if (is-system-file FILE_PATH) {
+    edge @source_unit.defs -> @contract.instance
+  }
+}
+
+@source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
+  ; TODO: this is the hook for top-level extensions, but this should connect to
+  ; an extensions scope that gets pushed to the scope stack, as in the case of
+  ; contracts/libraries (defined further down below).
+  edge @source_unit.lexical_scope -> @using.def
+}
+
+@source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember
+    @using [UsingDirective [GlobalKeyword]]
+]]] {
+  ; global using directives are exported by this source unit
+  edge @source_unit.defs -> @using.def
+}
+
+;; Import connections to the source unit
+@source_unit [SourceUnit [SourceUnitMembers
+     [SourceUnitMember [ImportDirective
+         [ImportClause @import (
+               [PathImport]
+             | [NamedImport]
+             | [ImportDeconstruction]
+         )]
+     ]]
+]] {
+  node @import.defs
+  edge @source_unit.defs -> @import.defs
+  edge @source_unit.lexical_scope -> @import.defs
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Imports
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+[ImportClause
+  [_
+    path: [StringLiteral
+      @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+    ]
+  ]
+] {
+  ;; This node represents the imported file and the @path.import node is used by
+  ;; all subsequent import rules
+  node @path.import
+  let resolved_path = (resolve-path FILE_PATH @path)
+  attr (@path.import) push_symbol = resolved_path
+  edge @path.import -> ROOT_NODE
+}
+
+;;; `import <URI>`
+@import [PathImport
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
+] {
+  ;; This is the "lexical" connection, which makes all symbols exported from the
+  ;; imported source unit available for resolution globally at this' source unit
+  ;; scope
+  edge @import.defs -> @path.import
+}
+
+;;; `import <URI> as <IDENT>`
+@import [PathImport
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
+  alias: [ImportAlias @alias [Identifier]]
+] {
+  node def
+  attr (def) node_definition = @alias
+  attr (def) definiens_node = @import
+  edge @import.defs -> def
+
+  node member
+  attr (member) pop_symbol = "."
+  edge def -> member
+
+  ;; Lexical connection, which makes the import available as a member through
+  ;; the alias identifier
+  edge member -> @path.import
+}
+
+;;; `import * as <IDENT> from <URI>`
+@import [NamedImport
+  alias: [ImportAlias @alias [Identifier]]
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
+] {
+  node def
+  attr (def) node_definition = @alias
+  attr (def) definiens_node = @import
+  edge @import.defs -> def
+
+  node member
+  attr (member) pop_symbol = "."
+  edge def -> member
+
+  ;; Lexical connection, which makes the import available as a member through
+  ;; the alias identifier
+  edge member -> @path.import
+}
+
+;;; `import {<SYMBOL> [as <IDENT>] ...} from <PATH>`
+@import [ImportDeconstruction
+  symbols: [ImportDeconstructionSymbols @symbol [ImportDeconstructionSymbol]]
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
+] {
+  ;; We define these intermediate nodes for convenience only, to make the
+  ;; queries simpler in the two rules below
+  node @symbol.def
+  edge @import.defs -> @symbol.def
+
+  node @symbol.import
+  edge @symbol.import -> @path.import
+}
+
+@symbol [ImportDeconstructionSymbol @name name: [Identifier] .] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @symbol
+  attr (def) tag = "alias"  ; deprioritize this definition
+  edge @symbol.def -> def
+
+  node import
+  attr (import) node_reference = @name
+  edge def -> import
+
+  edge import -> @symbol.import
+}
+
+@symbol [ImportDeconstructionSymbol
+    @name name: [Identifier]
+    alias: [ImportAlias @alias [Identifier]]
+] {
+  node def
+  attr (def) node_definition = @alias
+  attr (def) definiens_node = @symbol
+  attr (def) tag = "alias"  ; deprioritize this definition
+  edge @symbol.def -> def
+
+  node import
+  attr (import) node_reference = @name
+  edge def -> import
+
+  edge import -> @symbol.import
+}
+
+

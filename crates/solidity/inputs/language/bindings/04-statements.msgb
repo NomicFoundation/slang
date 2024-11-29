@@ -1,0 +1,354 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Blocks and generic statements
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@block [Block] {
+  node @block.lexical_scope
+  node @block.defs
+}
+
+;; The first statement in a block
+@block [Block [Statements . @stmt [Statement]]] {
+  if (version-matches ">= 0.5.0") {
+    edge @stmt.lexical_scope -> @block.lexical_scope
+  }
+}
+
+@block [Block [Statements @stmt [Statement]]] {
+  ;; Hoist statement definitions for Solidity < 0.5.0
+  if (version-matches "< 0.5.0") {
+    ;; definitions are carried over to the block
+    edge @block.defs -> @stmt.defs
+
+    ;; resolution happens in the context of the block
+    edge @stmt.lexical_scope -> @block.lexical_scope
+
+    ;; and the statement definitions are available block's scope
+    edge @block.lexical_scope -> @stmt.defs
+    ;; ... shadowing declarations in enclosing scopes
+    attr (@block.lexical_scope -> @stmt.defs) precedence = 1
+  }
+}
+
+;; Two consecutive statements
+[Statements @left_stmt [Statement] . @right_stmt [Statement]] {
+  if (version-matches ">= 0.5.0") {
+    edge @right_stmt.lexical_scope -> @left_stmt.lexical_scope
+  }
+}
+
+@stmt [Statement] {
+  node @stmt.lexical_scope
+  node @stmt.defs
+
+  if (version-matches ">= 0.5.0") {
+    ;; For Solidity >= 0.5.0, definitions are immediately available in the
+    ;; statement scope. For < 0.5.0 this is also true, but resolved through the
+    ;; enclosing block's lexical scope.
+    edge @stmt.lexical_scope -> @stmt.defs
+    ;; Statement definitions shadow other declarations in its scope
+    attr (@stmt.lexical_scope -> @stmt.defs) precedence = 1
+  }
+}
+
+;; Statements of type block
+@stmt [Statement @block variant: [Block]] {
+  edge @block.lexical_scope -> @stmt.lexical_scope
+
+  ;; Hoist block definitions (< 0.5.0)
+  if (version-matches "< 0.5.0") {
+    edge @stmt.defs -> @block.defs
+  }
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Expressions & declaration statements
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; In general for statements the structure is [Statement [StmtVariant]] and we
+;; will define the scoped nodes .lexical_scope and (possibly) .defs in the
+;; Statement CST node, skipping scoped nodes in the variant of the statement.
+;;
+;; For expression statements, variable and tuple declarations we define them
+;; separately from the enclosing statement to be able to use them in `for`
+;; initialization and condition clauses directly. Also, because we intend to
+;; reuse them, all of them must have both a .lexical_scope and .defs scoped
+;; nodes (even though .defs doesn't make sense for ExpressionStatement)
+
+@stmt [Statement @expr_stmt [ExpressionStatement]] {
+  edge @expr_stmt.lexical_scope -> @stmt.lexical_scope
+}
+
+@expr_stmt [ExpressionStatement] {
+  node @expr_stmt.lexical_scope
+}
+
+
+;;; Variable declaration statements
+
+@stmt [Statement @var_decl [VariableDeclarationStatement]] {
+  edge @var_decl.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.defs -> @var_decl.def
+}
+
+@var_decl [VariableDeclarationStatement] {
+  node @var_decl.lexical_scope
+  node @var_decl.def
+}
+
+@var_decl [VariableDeclarationStatement
+    [VariableDeclarationType @var_type [TypeName]]
+    @name name: [Identifier]
+] {
+  attr (@var_decl.def) node_definition = @name
+  attr (@var_decl.def) definiens_node = @var_decl
+
+  edge @var_type.type_ref -> @var_decl.lexical_scope
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  edge @var_decl.def -> typeof
+  edge typeof -> @var_type.output
+}
+
+@var_decl [VariableDeclarationStatement
+    [VariableDeclarationType [VarKeyword]]
+    @name name: [Identifier]
+] {
+  attr (@var_decl.def) node_definition = @name
+  attr (@var_decl.def) definiens_node = @var_decl
+}
+
+@var_decl [VariableDeclarationStatement
+    [VariableDeclarationType [VarKeyword]]
+    [VariableDeclarationValue @value [Expression]]
+] {
+  edge @var_decl.def -> @value.output
+}
+
+
+
+;;; Tuple deconstruction statements
+
+@stmt [Statement @tuple_decon [TupleDeconstructionStatement]] {
+  edge @tuple_decon.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.defs -> @tuple_decon.defs
+}
+
+@tuple_decon [TupleDeconstructionStatement] {
+  node @tuple_decon.lexical_scope
+  node @tuple_decon.defs
+}
+
+@tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
+    [TupleDeconstructionElement
+        @tuple_member [TupleMember variant: [UntypedTupleMember
+            @name name: [Identifier]]
+        ]
+    ]
+]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @tuple_member
+
+  edge @tuple_decon.defs -> def
+}
+
+@tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
+    [TupleDeconstructionElement
+        @tuple_member [TupleMember variant: [TypedTupleMember
+            @member_type type_name: [TypeName]
+            @name name: [Identifier]]
+        ]
+    ]
+]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @tuple_member
+
+  edge @tuple_decon.defs -> def
+  edge @member_type.type_ref -> @tuple_decon.lexical_scope
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  edge def -> typeof
+  edge typeof -> @member_type.output
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Control statements
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; If conditionals
+
+@stmt [Statement [IfStatement @body body: [Statement]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  if (version-matches "< 0.5.0") {
+    edge @stmt.defs -> @body.defs
+  }
+}
+
+@stmt [Statement [IfStatement else_branch: [ElseBranch @else_body body: [Statement]]]] {
+  edge @else_body.lexical_scope -> @stmt.lexical_scope
+  if (version-matches "< 0.5.0") {
+    edge @stmt.defs -> @else_body.defs
+  }
+}
+
+;; For loops
+
+@stmt [Statement [ForStatement
+    initialization: [ForStatementInitialization @init_stmt [ExpressionStatement]]
+]] {
+  edge @init_stmt.lexical_scope -> @stmt.lexical_scope
+}
+
+@stmt [Statement [ForStatement
+    initialization: [ForStatementInitialization @init_stmt [VariableDeclarationStatement]]
+]] {
+  edge @init_stmt.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.init_defs -> @init_stmt.def
+}
+
+@stmt [Statement [ForStatement
+    initialization: [ForStatementInitialization @init_stmt [TupleDeconstructionStatement]]
+]] {
+  edge @init_stmt.lexical_scope -> @stmt.lexical_scope
+  edge @stmt.init_defs -> @init_stmt.defs
+}
+
+@stmt [Statement [ForStatement
+    condition: [ForStatementCondition @cond_stmt [ExpressionStatement]]
+]] {
+  edge @cond_stmt.lexical_scope -> @stmt.lexical_scope
+  edge @cond_stmt.lexical_scope -> @stmt.init_defs
+}
+
+@stmt [Statement [ForStatement @iter_expr iterator: [Expression]]] {
+  ; for the iterator expression we need an independent scope node that can
+  ; connect to both the for-statement *and* the definitions in the init
+  ; expression
+  node @iter_expr.lexical_scope
+  edge @iter_expr.lexical_scope -> @stmt.lexical_scope
+  edge @iter_expr.lexical_scope -> @stmt.init_defs
+}
+
+@stmt [Statement [ForStatement @body body: [Statement]]] {
+  node @stmt.init_defs
+
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  edge @body.lexical_scope -> @stmt.init_defs
+  if (version-matches "< 0.5.0") {
+    edge @stmt.defs -> @body.defs
+    edge @stmt.defs -> @stmt.init_defs
+  }
+}
+
+;; While loops
+
+@stmt [Statement [WhileStatement @body body: [Statement]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  if (version-matches "< 0.5.0") {
+    edge @stmt.defs -> @body.defs
+  }
+}
+
+;; Do-while loops
+
+@stmt [Statement [DoWhileStatement @body body: [Statement]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+  if (version-matches "< 0.5.0") {
+    edge @stmt.defs -> @body.defs
+  }
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Error handling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Try-catch statements
+
+@stmt [Statement [TryStatement @body body: [Block]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+}
+
+@stmt [Statement [TryStatement
+    [ReturnsDeclaration @return_params [ParametersDeclaration]]
+    @body body: [Block]
+]] {
+  edge @return_params.lexical_scope -> @stmt.lexical_scope
+  edge @body.lexical_scope -> @return_params.defs
+  ;; Similar to functions, return params shadow other declarations
+  attr (@body.lexical_scope -> @return_params.defs) precedence = 1
+}
+
+@stmt [Statement [TryStatement [CatchClauses [CatchClause
+    @body body: [Block]
+]]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+}
+
+@stmt [Statement [TryStatement [CatchClauses [CatchClause
+    [CatchClauseError @catch_params parameters: [ParametersDeclaration]]
+    @body body: [Block]
+]]]] {
+  edge @catch_params.lexical_scope -> @stmt.lexical_scope
+  edge @body.lexical_scope -> @catch_params.defs
+  ;; Similar to functions, catch params shadow other declarations
+  attr (@body.lexical_scope -> @catch_params.defs) precedence = 1
+}
+
+@stmt [Statement [TryStatement [CatchClauses [CatchClause
+    [CatchClauseError @name [Identifier]]
+]]]] {
+  node ref
+  attr (ref) node_reference = @name
+  edge ref -> @stmt.lexical_scope
+}
+
+;;; Revert statements
+
+@stmt [Statement [RevertStatement @error_ident [IdentifierPath]]] {
+  edge @error_ident.push_end -> @stmt.lexical_scope
+}
+
+@stmt [Statement [RevertStatement @args [ArgumentsDeclaration]]] {
+  edge @args.lexical_scope -> @stmt.lexical_scope
+}
+
+[Statement [RevertStatement
+    @error_ident [IdentifierPath]
+    @args [ArgumentsDeclaration]
+]] {
+  edge @args.refs -> @error_ident.push_begin
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Other statements
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Emit
+@stmt [Statement [EmitStatement
+    @event_ident [IdentifierPath]
+    @args [ArgumentsDeclaration]
+]] {
+  edge @event_ident.push_end -> @stmt.lexical_scope
+  edge @args.lexical_scope -> @stmt.lexical_scope
+  edge @args.refs -> @event_ident.push_begin
+}
+
+;;; Unchecked
+@stmt [Statement [UncheckedBlock @block block: [Block]]] {
+  edge @block.lexical_scope -> @stmt.lexical_scope
+}
+
+;;; Assembly
+@stmt [Statement [AssemblyStatement @body body: [YulBlock]]] {
+  edge @body.lexical_scope -> @stmt.lexical_scope
+}

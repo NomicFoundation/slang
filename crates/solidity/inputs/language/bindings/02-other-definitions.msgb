@@ -1,0 +1,467 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Using directives
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@using [UsingDirective] {
+  ; This node acts as a definition in the sense that provides an entry point
+  ; that pops the target type and pushes the library/functions to attach to the
+  ; target type
+  node @using.def
+
+  ; This internal node connects the definition side of the clause to the target
+  ; for resolution, and allows handling the multiple cases of `using` syntax
+  ; easily
+  node @using.clause
+}
+
+@using [UsingDirective [UsingClause @id_path [IdentifierPath]]] {
+  ; resolve the library to be used in the directive
+  edge @id_path.push_end -> @using.lexical_scope
+
+  ; because we're using the whole library, we don't need to "consume" the
+  ; attached function (as when using the deconstruction syntax), but we still
+  ; need to verify that we're only using this path when resolving a function
+  ; access to the target type, not the target type itself
+  node dot_guard_pop
+  attr (dot_guard_pop) pop_symbol = "."
+  node dot_guard_push
+  attr (dot_guard_push) push_symbol = "."
+
+  edge @using.clause -> dot_guard_pop
+  edge dot_guard_pop -> dot_guard_push
+  edge dot_guard_push -> @id_path.push_begin
+}
+
+@using [UsingDirective [UsingClause [UsingDeconstruction
+    [UsingDeconstructionSymbols [UsingDeconstructionSymbol
+        @id_path [IdentifierPath]
+    ]]
+]]] {
+  ; resolve the function to be used in the directive
+  edge @id_path.push_end -> @using.lexical_scope
+
+  node dot
+  attr (dot) pop_symbol = "."
+  node last_identifier
+  attr (last_identifier) pop_symbol = (source-text @id_path.rightmost_identifier)
+
+  edge @using.clause -> dot
+  edge dot -> last_identifier
+  edge last_identifier -> @id_path.push_begin
+}
+
+@using [UsingDirective [UsingTarget @type_name [TypeName]]] {
+  ; pop the type symbols to connect to the attached function (via @using.clause)
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+  node cast
+  attr (cast) pop_symbol = "()"
+
+  ; We connect to all_pop_begin to be able to resolve both qualified and
+  ; unqualified instances of the target type
+  edge @using.def -> @type_name.all_pop_begin
+  edge @type_name.pop_end -> typeof
+  edge typeof -> @using.clause
+  edge @type_name.pop_end -> cast
+  edge cast -> @using.clause
+
+  ; resolve the target type of the directive on the lexical scope
+  edge @type_name.type_ref -> @using.lexical_scope
+}
+
+[ContractMember @using [UsingDirective [UsingTarget [Asterisk]]]] {
+  ; using X for * is only allowed inside contracts
+  node star
+  attr (star) pop_symbol = "@*"
+  edge @using.def -> star
+  edge star -> @using.clause
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Constructors
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@constructor [ConstructorDefinition] {
+  node @constructor.lexical_scope
+  node @constructor.def
+}
+
+@constructor [ConstructorDefinition @params parameters: [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @constructor.lexical_scope
+
+  ;; Input parameters are available in the constructor scope
+  edge @constructor.lexical_scope -> @params.defs
+  ;; ... and shadow other declarations
+  attr (@constructor.lexical_scope -> @params.defs) precedence = 1
+
+  ;; Connect to paramaters for named argument resolution
+  edge @constructor.def -> @params.names
+}
+
+;; Connect the constructor body's block lexical scope to the constructor
+@constructor [ConstructorDefinition @block [Block]] {
+  edge @block.lexical_scope -> @constructor.lexical_scope
+}
+
+@constructor [ConstructorDefinition [ConstructorAttributes item: [ConstructorAttribute
+    @modifier [ModifierInvocation]
+]]] {
+  edge @modifier.lexical_scope -> @constructor.lexical_scope
+  edge @modifier.identifier -> @constructor.lexical_scope
+}
+
+@contract [ContractDefinition [ContractMembers [ContractMember
+    @constructor [ConstructorDefinition]
+]]] {
+  ;; This link allows calling a constructor with the named parameters syntax
+  edge @contract.def -> @constructor.def
+}
+
+;; Solidity < 0.5.0 constructors
+;; They were declared as functions of the contract's name
+
+@contract [ContractDefinition
+    @contract_name [Identifier]
+    [ContractMembers [ContractMember [FunctionDefinition
+        [FunctionName @function_name [Identifier]]
+        @params [ParametersDeclaration]
+    ]]]
+] {
+  if (version-matches "< 0.5.0") {
+    if (eq (source-text @contract_name) (source-text @function_name)) {
+      ; Connect to paramaters for named argument resolution
+      edge @contract.def -> @params.names
+    }
+  }
+}
+
+[ContractDefinition
+    @contract_name [Identifier]
+    [ContractMembers [ContractMember @function [FunctionDefinition
+        [FunctionName @function_name [Identifier]]
+        [FunctionAttributes [FunctionAttribute @modifier [ModifierInvocation]]]
+    ]]]
+] {
+  if (version-matches "< 0.5.0") {
+    if (eq (source-text @contract_name) (source-text @function_name)) {
+      ; Parent constructor calls are parsed as modifier invocations
+      edge @modifier.identifier -> @function.lexical_scope
+    }
+  }
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Function modifiers
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@modifier [ModifierDefinition] {
+  node @modifier.def
+  node @modifier.lexical_scope
+}
+
+@modifier [ModifierDefinition
+    @name name: [Identifier]
+] {
+  attr (@modifier.def) node_definition = @name
+  attr (@modifier.def) definiens_node = @modifier
+}
+
+@modifier [ModifierDefinition
+    body: [FunctionBody @body [Block]]
+] {
+  edge @body.lexical_scope -> @modifier.lexical_scope
+
+  ; Special case: bind the place holder statement `_` to the built-in
+  ; `%placeholder`. This only happens in the body of a modifier.
+  node placeholder_pop
+  attr (placeholder_pop) pop_symbol = "_"
+  node placeholder_ref
+  attr (placeholder_ref) push_symbol = "%placeholder"
+
+  edge @body.lexical_scope -> placeholder_pop
+  edge placeholder_pop -> placeholder_ref
+  edge placeholder_ref -> @modifier.lexical_scope
+}
+
+@modifier [ModifierDefinition @params [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @modifier.lexical_scope
+
+  ;; Input parameters are available in the modifier scope
+  edge @modifier.lexical_scope -> @params.defs
+  attr (@modifier.lexical_scope -> @params.defs) precedence = 1
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Fallback and receive functions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@fallback [FallbackFunctionDefinition] {
+  node @fallback.lexical_scope
+}
+
+@fallback [FallbackFunctionDefinition @params parameters: [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @fallback.lexical_scope
+
+  ;; Input parameters are available in the fallback function scope
+  edge @fallback.lexical_scope -> @params.defs
+  attr (@fallback.lexical_scope -> @params.defs) precedence = 1
+}
+
+@fallback [FallbackFunctionDefinition returns: [ReturnsDeclaration
+    @return_params [ParametersDeclaration]
+]] {
+  edge @return_params.lexical_scope -> @fallback.lexical_scope
+
+  ;; Return parameters are available in the fallback function scope
+  edge @fallback.lexical_scope -> @return_params.defs
+  attr (@fallback.lexical_scope -> @return_params.defs) precedence = 1
+}
+
+@fallback [FallbackFunctionDefinition [FunctionBody @block [Block]]] {
+  edge @block.lexical_scope -> @fallback.lexical_scope
+}
+
+@fallback [FallbackFunctionDefinition [FallbackFunctionAttributes
+    item: [FallbackFunctionAttribute @modifier [ModifierInvocation]]
+]] {
+  edge @modifier.lexical_scope -> @fallback.lexical_scope
+}
+
+@receive [ReceiveFunctionDefinition] {
+  node @receive.lexical_scope
+}
+
+@receive [ReceiveFunctionDefinition [FunctionBody @block [Block]]] {
+  edge @block.lexical_scope -> @receive.lexical_scope
+}
+
+@receive [ReceiveFunctionDefinition [ReceiveFunctionAttributes
+    item: [ReceiveFunctionAttribute @modifier [ModifierInvocation]]
+]] {
+  edge @modifier.lexical_scope -> @receive.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Unnamed functions (deprecated)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@unnamed_function [UnnamedFunctionDefinition] {
+  node @unnamed_function.lexical_scope
+}
+
+@unnamed_function [UnnamedFunctionDefinition @params parameters: [ParametersDeclaration]] {
+  edge @params.lexical_scope -> @unnamed_function.lexical_scope
+
+  edge @unnamed_function.lexical_scope -> @params.defs
+  attr (@unnamed_function.lexical_scope -> @params.defs) precedence = 1
+}
+
+@unnamed_function [UnnamedFunctionDefinition [FunctionBody @block [Block]]] {
+  edge @block.lexical_scope -> @unnamed_function.lexical_scope
+}
+
+@unnamed_function [UnnamedFunctionDefinition
+    [UnnamedFunctionAttributes [UnnamedFunctionAttribute @modifier [ModifierInvocation]]]
+] {
+  edge @modifier.lexical_scope -> @unnamed_function.lexical_scope
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Enum definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@enum [EnumDefinition @name name: [Identifier]] {
+  node @enum.lexical_scope
+  node @enum.def
+  node @enum.members
+
+  attr (@enum.def) node_definition = @name
+  attr (@enum.def) definiens_node = @enum
+
+  node member
+  attr (member) pop_symbol = "."
+
+  edge @enum.def -> member
+  edge member -> @enum.members
+
+  ; Path to resolve the built-in type for enums (which is the same as for integer types)
+  node type
+  attr (type) pop_symbol = "@type"
+  node type_enum_type
+  attr (type_enum_type) push_symbol = "%IntTypeType"
+  edge @enum.def -> type
+  edge type -> type_enum_type
+  edge type_enum_type -> @enum.lexical_scope
+}
+
+@enum [EnumDefinition
+    members: [EnumMembers @item [Identifier]]
+] {
+  node def
+  attr (def) node_definition = @item
+  attr (def) definiens_node = @item
+
+  edge @enum.members -> def
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Event definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@event [EventDefinition @name name: [Identifier]] {
+  node @event.lexical_scope
+  node @event.def
+
+  attr (@event.def) node_definition = @name
+  attr (@event.def) definiens_node = @event
+
+  node @event.params
+  attr (@event.params) pop_symbol = "@param_names"
+  edge @event.def -> @event.params
+}
+
+@event [EventDefinition [EventParametersDeclaration [EventParameters
+    [EventParameter @type_name type_name: [TypeName]]
+]]] {
+  edge @type_name.type_ref -> @event.lexical_scope
+}
+
+@event [EventDefinition [EventParametersDeclaration [EventParameters
+    @param [EventParameter
+        @name name: [Identifier]
+    ]
+]]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @param
+
+  edge @event.params -> def
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Error definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@error [ErrorDefinition @name name: [Identifier]] {
+  node @error.lexical_scope
+  node @error.def
+
+  attr (@error.def) node_definition = @name
+  attr (@error.def) definiens_node = @error
+
+  node @error.params
+  attr (@error.params) pop_symbol = "@param_names"
+  edge @error.def -> @error.params
+
+  ; Bind to built-in errorType for accessing built-in member `.selector`
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node error_type
+  attr (error_type) push_symbol = "%ErrorType"
+  edge @error.def -> typeof
+  edge typeof -> error_type
+  edge error_type -> @error.lexical_scope
+}
+
+@error [ErrorDefinition [ErrorParametersDeclaration [ErrorParameters
+    [ErrorParameter @type_name type_name: [TypeName]]
+]]] {
+    edge @type_name.type_ref -> @error.lexical_scope
+}
+
+@error [ErrorDefinition [ErrorParametersDeclaration [ErrorParameters
+    @param [ErrorParameter
+        @name name: [Identifier]
+    ]
+]]] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @param
+
+  edge @error.params -> def
+}
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Other named definitions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@constant [ConstantDefinition] {
+  node @constant.lexical_scope
+  node @constant.def
+}
+
+@constant [ConstantDefinition
+    @type_name type_name: [TypeName]
+    @name name: [Identifier]
+] {
+  node def
+  attr (def) node_definition = @name
+  attr (def) definiens_node = @constant
+
+  edge @constant.def -> def
+
+  edge @type_name.type_ref -> @constant.lexical_scope
+}
+
+@user_type [UserDefinedValueTypeDefinition @name [Identifier] @value_type [ElementaryType]] {
+  node @user_type.lexical_scope
+  node @user_type.def
+
+  attr (@user_type.def) node_definition = @name
+  attr (@user_type.def) definiens_node = @user_type
+
+  ; Provide member resolution through the built-in `%userTypeType`
+  ; Because the built-in is defined as a struct, we need to push an extra `@typeof`
+  node member_guard
+  attr (member_guard) pop_symbol = "."
+  node member
+  attr (member) push_symbol = "."
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node user_type_type
+  attr (user_type_type) push_symbol = "%UserDefinedValueType"
+
+  edge @user_type.def -> member_guard
+  edge member_guard -> member
+  edge member -> typeof
+  edge typeof -> user_type_type
+  edge user_type_type -> @user_type.lexical_scope
+
+  ; Hard-code built-in functions `wrap` and `unwrap` in order to be able to
+  ; resolve their return types
+  node wrap
+  attr (wrap) pop_symbol = "wrap"
+  node wrap_call
+  attr (wrap_call) pop_symbol = "()"
+  node wrap_typeof
+  attr (wrap_typeof) push_symbol = "@typeof"
+
+  edge member_guard -> wrap
+  edge wrap -> wrap_call
+  edge wrap_call -> wrap_typeof
+  edge wrap_typeof -> @value_type.ref
+  edge @value_type.ref -> @user_type.lexical_scope
+
+  node unwrap
+  attr (unwrap) pop_symbol = "unwrap"
+  node unwrap_call
+  attr (unwrap_call) pop_symbol = "()"
+  node unwrap_typeof
+  attr (unwrap_typeof) push_symbol = "@typeof"
+  node type_ref
+  attr (type_ref) push_symbol = (source-text @name)
+
+  edge member_guard -> unwrap
+  edge unwrap -> unwrap_call
+  edge unwrap_call -> unwrap_typeof
+  edge unwrap_typeof -> type_ref
+  edge type_ref -> @user_type.lexical_scope
+}
