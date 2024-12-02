@@ -22,289 +22,128 @@ export namespace NomicFoundationSlangCst {
 export declare enum NonterminalKind {
   /**
    * This kind represents a `AdditionExpression` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
    *
    * ```ebnf
-=======
->>>>>>> 12615dc60 (Update generated files)
-=======
-   *
-   * ```ebnf
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    * (* Left-associative binary operator *)
    * AdditionExpression = (* left_operand: *) Expression
    * (* operator: *) PLUS
    * (* right_operand: *) Expression;
-<<<<<<< HEAD
-<<<<<<< HEAD
    * ```
-=======
->>>>>>> 12615dc60 (Update generated files)
-=======
-   * ```
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   AdditionExpression = "AdditionExpression",
   /**
    * This kind represents a `Expression` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
    *
    * ```ebnf
-=======
->>>>>>> 12615dc60 (Update generated files)
-=======
-   *
-   * ```ebnf
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    * Expression = (* variant: *) AdditionExpression
    * | (* variant: *) NegationExpression
    * | (* variant: *) MemberAccessExpression
    * | (* variant: *) STRING_LITERAL
    * | (* variant: *) IDENTIFIER;
-<<<<<<< HEAD
-<<<<<<< HEAD
    * ```
-=======
->>>>>>> 12615dc60 (Update generated files)
-=======
-   * ```
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   Expression = "Expression",
   /**
    * This kind represents a `Literal` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * Literal = (* variant: *) STRING_LITERAL;
    * ```
-<<<<<<< HEAD
-=======
-   * Literal = (* variant: *) STRING_LITERAL;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   Literal = "Literal",
   /**
    * This kind represents a `MemberAccessExpression` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
    *
    * ```ebnf
-=======
->>>>>>> 12615dc60 (Update generated files)
-=======
-   *
-   * ```ebnf
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    * (* Postfix unary operator *)
    * MemberAccessExpression = (* operand: *) Expression
    * (* period: *) PERIOD
    * (* member: *) IDENTIFIER;
-<<<<<<< HEAD
-<<<<<<< HEAD
    * ```
-=======
->>>>>>> 12615dc60 (Update generated files)
-=======
-   * ```
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   MemberAccessExpression = "MemberAccessExpression",
   /**
    * This kind represents a `NegationExpression` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * (* Prefix unary operator *)
    * NegationExpression = (* operator: *) BANG
    * (* operand: *) Expression;
    * ```
-<<<<<<< HEAD
-=======
-   * (* Prefix unary operator *)
-   * NegationExpression = (* operator: *) BANG
-   * (* operand: *) Expression;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   NegationExpression = "NegationExpression",
   /**
    * This kind represents a `SeparatedIdentifiers` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * (* Introduced in 1.0.0 *)
    * SeparatedIdentifiers = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDENTIFIER)*;
    * ```
-<<<<<<< HEAD
-=======
-   * (* Introduced in 1.0.0 *)
-   * SeparatedIdentifiers = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDENTIFIER)*;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   SeparatedIdentifiers = "SeparatedIdentifiers",
   /**
    * This kind represents a `SourceUnit` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * SourceUnit = (* members: *) SourceUnitMembers;
    * ```
-<<<<<<< HEAD
-=======
-   * SourceUnit = (* members: *) SourceUnitMembers;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   SourceUnit = "SourceUnit",
   /**
    * This kind represents a `SourceUnitMember` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
    *
    * ```ebnf
-=======
->>>>>>> 12615dc60 (Update generated files)
-=======
-   *
-   * ```ebnf
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    * SourceUnitMember = (* variant: *) Tree
    * | (* variant: *) Expression
    * | (* variant: *) SeparatedIdentifiers
    * | (* variant: *) Literal;
-<<<<<<< HEAD
-<<<<<<< HEAD
    * ```
-=======
->>>>>>> 12615dc60 (Update generated files)
-=======
-   * ```
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   SourceUnitMember = "SourceUnitMember",
   /**
    * This kind represents a `SourceUnitMembers` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * SourceUnitMembers = (* item: *) SourceUnitMember+;
    * ```
-<<<<<<< HEAD
-=======
-   * SourceUnitMembers = (* item: *) SourceUnitMember+;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   SourceUnitMembers = "SourceUnitMembers",
   /**
    * This kind represents a `Tree` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
    *
    * ```ebnf
-=======
->>>>>>> 12615dc60 (Update generated files)
-=======
-   *
-   * ```ebnf
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    * Tree = (* keyword: *) TREE_KEYWORD
    * (* name: *) IDENTIFIER?
    * (* node: *) TreeNode
    * (* semicolon: *) SEMICOLON;
-<<<<<<< HEAD
-<<<<<<< HEAD
    * ```
-=======
->>>>>>> 12615dc60 (Update generated files)
-=======
-   * ```
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   Tree = "Tree",
   /**
    * This kind represents a `TreeNode` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * TreeNode = (* open_bracket: *) OPEN_BRACKET
    * (* members: *) TreeNodeChildren
    * (* close_bracket: *) CLOSE_BRACKET;
    * ```
-<<<<<<< HEAD
-=======
-   * TreeNode = (* open_bracket: *) OPEN_BRACKET
-   * (* members: *) TreeNodeChildren
-   * (* close_bracket: *) CLOSE_BRACKET;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   TreeNode = "TreeNode",
   /**
    * This kind represents a `TreeNodeChild` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * TreeNodeChild = (* variant: *) TreeNode
    * | (* variant: *) DELIMITED_IDENTIFIER;
    * ```
-<<<<<<< HEAD
-=======
-   * TreeNodeChild = (* variant: *) TreeNode
-   * | (* variant: *) DELIMITED_IDENTIFIER;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   TreeNodeChild = "TreeNodeChild",
   /**
    * This kind represents a `TreeNodeChildren` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * TreeNodeChildren = (* item: *) TreeNodeChild+;
    * ```
-<<<<<<< HEAD
-=======
-   * TreeNodeChildren = (* item: *) TreeNodeChild+;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   TreeNodeChildren = "TreeNodeChildren",
 }
@@ -325,254 +164,114 @@ export declare enum TerminalKind {
   Missing = "Missing",
   /**
    * This kind represents a `Bang` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * BANG = "!";
    * ```
-<<<<<<< HEAD
-=======
-   * BANG = "!";
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   Bang = "Bang",
   /**
    * This kind represents a `CloseBracket` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * CLOSE_BRACKET = "]";
    * ```
-<<<<<<< HEAD
-=======
-   * CLOSE_BRACKET = "]";
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   CloseBracket = "CloseBracket",
   /**
    * This kind represents a `DelimitedIdentifier` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * DELIMITED_IDENTIFIER = «DELIMITED_IDENTIFIER_START» «DELIMITED_IDENTIFIER_PART»*;
    * ```
-<<<<<<< HEAD
-=======
-   * DELIMITED_IDENTIFIER = «DELIMITED_IDENTIFIER_START» «DELIMITED_IDENTIFIER_PART»*;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   DelimitedIdentifier = "DelimitedIdentifier",
   /**
    * This kind represents a `EndOfLine` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * END_OF_LINE = "\r"? "\n";
    * ```
-<<<<<<< HEAD
-=======
-   * END_OF_LINE = "\r"? "\n";
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   EndOfLine = "EndOfLine",
   /**
    * This kind represents a `Identifier` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * IDENTIFIER = «RAW_IDENTIFIER»;
    * ```
-<<<<<<< HEAD
-=======
-   * IDENTIFIER = «RAW_IDENTIFIER»;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   Identifier = "Identifier",
   /**
    * This kind represents a `MultiLineComment` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*\/";
    * ```
-<<<<<<< HEAD
-=======
-   * MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*\/";
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   MultiLineComment = "MultiLineComment",
   /**
    * This kind represents a `OpenBracket` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * OPEN_BRACKET = "[";
    * ```
-<<<<<<< HEAD
-=======
-   * OPEN_BRACKET = "[";
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   OpenBracket = "OpenBracket",
   /**
    * This kind represents a `Period` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * PERIOD = ".";
    * ```
-<<<<<<< HEAD
-=======
-   * PERIOD = ".";
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   Period = "Period",
   /**
    * This kind represents a `Plus` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * PLUS = "+";
    * ```
-<<<<<<< HEAD
-=======
-   * PLUS = "+";
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   Plus = "Plus",
   /**
    * This kind represents a `Semicolon` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * SEMICOLON = ";";
    * ```
-<<<<<<< HEAD
-=======
-   * SEMICOLON = ";";
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   Semicolon = "Semicolon",
   /**
    * This kind represents a `SingleLineComment` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
    * ```
-<<<<<<< HEAD
-=======
-   * SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   SingleLineComment = "SingleLineComment",
   /**
    * This kind represents a `StringLiteral` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
    * ```
-<<<<<<< HEAD
-=======
-   * STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   StringLiteral = "StringLiteral",
   /**
    * This kind represents a `TreeKeyword` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * TREE_KEYWORD = "tree";
    * ```
-<<<<<<< HEAD
-=======
-   * TREE_KEYWORD = "tree";
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   TreeKeyword = "TreeKeyword",
   /**
    * This kind represents a `Whitespace` node, with the following structure:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    *
    * ```ebnf
    * WHITESPACE = (" " | "\t")+;
    * ```
-<<<<<<< HEAD
-=======
-   * WHITESPACE = (" " | "\t")+;
->>>>>>> 12615dc60 (Update generated files)
-=======
->>>>>>> c6865c359 (Regenerated wit outputs with code blocks in doc comments)
    */
   Whitespace = "Whitespace",
 }
