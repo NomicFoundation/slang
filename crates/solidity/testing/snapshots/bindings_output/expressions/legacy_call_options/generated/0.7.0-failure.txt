@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     function test(address rcpt, bytes memory data) public {
+   │              ──┬─         ──┬─               ──┬─  
+   │                ╰─────────────────────────────────── def: 2
+   │                             │                  │   
+   │                             ╰────────────────────── def: 3
+   │                                                │   
+   │                                                ╰─── def: 4
+   │ 
+ 4 │         rcpt.call.value(1)(data);
+   │         ──┬─ ──┬─ ──┬──    ──┬─  
+   │           ╰────────────────────── ref: 3
+   │                │    │        │   
+   │                ╰───────────────── ref: built-in
+   │                     │        │   
+   │                     ╰──────────── unresolved
+   │                              │   
+   │                              ╰─── ref: 4
+ 5 │         rcpt.call.gas(1)(data);
+   │         ──┬─ ──┬─ ─┬─    ──┬─  
+   │           ╰──────────────────── ref: 3
+   │                │   │       │   
+   │                ╰─────────────── ref: built-in
+   │                    │       │   
+   │                    ╰─────────── unresolved
+   │                            │   
+   │                            ╰─── ref: 4
+───╯

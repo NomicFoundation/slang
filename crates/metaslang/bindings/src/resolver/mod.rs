@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::iter::once;
 
 use metaslang_cst::kinds::KindTypes;
@@ -76,19 +76,28 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         )
         .expect("should never be cancelled");
 
+        let mut added_nodes = HashSet::new();
         for reference_path in &reference_paths {
-            if reference_paths
-                .iter()
-                .all(|other| !other.shadows(&mut self.partials, reference_path))
+            let end_node = reference_path.end_node;
+
+            // Because of how we're using the scope stack to propagate dynamic
+            // scopes, we may get multiple results with different scope stack
+            // postconditions but reaching the exact same definition. We only
+            // care about the definition, so we check for uniqueness.
+            if !added_nodes.contains(&end_node)
+                && reference_paths
+                    .iter()
+                    .all(|other| !other.shadows(&mut self.partials, reference_path))
             {
                 self.results.push(ResolvedPath {
                     definition: self
                         .owner
-                        .to_definition(reference_path.end_node)
+                        .to_definition(end_node)
                         .expect("path to end in a definition node"),
                     partial_path: reference_path.clone(),
                     score: 0.0,
                 });
+                added_nodes.insert(end_node);
             }
         }
     }

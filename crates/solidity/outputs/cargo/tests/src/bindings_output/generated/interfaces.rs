@@ -10,6 +10,11 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn own_types_access() -> Result<()> {
+    run("interfaces", "own_types_access")
+}
+
+#[test]
 fn simple() -> Result<()> {
     run("interfaces", "simple")
 }

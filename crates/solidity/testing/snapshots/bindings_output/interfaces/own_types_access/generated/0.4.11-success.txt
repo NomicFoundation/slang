@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface IFoo {
+   │           ──┬─  
+   │             ╰─── def: 1
+ 2 │     struct Bar {
+   │            ─┬─  
+   │             ╰─── def: 2
+ 3 │         int value;
+   │             ──┬──  
+   │               ╰──── def: 3
+   │ 
+ 5 │     function test(Bar memory bar);
+   │              ──┬─ ─┬─        ─┬─  
+   │                ╰────────────────── def: 4
+   │                    │          │   
+   │                    ╰────────────── ref: 2
+   │                               │   
+   │                               ╰─── def: 5
+───╯
