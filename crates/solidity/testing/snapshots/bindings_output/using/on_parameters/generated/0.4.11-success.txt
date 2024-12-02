@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── def: 1
+ 2 │     function nop(uint256 x) internal {}
+   │              ─┬─         ┬  
+   │               ╰───────────── def: 2
+   │                          │  
+   │                          ╰── def: 3
+   │ 
+ 4 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 4
+ 5 │     using Lib for uint256;
+   │           ─┬─  
+   │            ╰─── ref: 1
+ 6 │     function test(uint256 x) public returns (uint256 y) {
+   │              ──┬─         ┬                          ┬  
+   │                ╰──────────────────────────────────────── def: 5
+   │                           │                          │  
+   │                           ╰───────────────────────────── def: 6
+   │                                                      │  
+   │                                                      ╰── def: 7
+ 7 │         x.nop();
+   │         ┬ ─┬─  
+   │         ╰────── ref: 6
+   │            │   
+   │            ╰─── ref: 2
+ 8 │         y.nop();
+   │         ┬ ─┬─  
+   │         ╰────── ref: 7
+   │            │   
+   │            ╰─── ref: 2
+───╯

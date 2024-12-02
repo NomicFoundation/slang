@@ -1,7 +1,17 @@
+enum Answer {
+  Yes,
+  No
+}
+
+function id(Answer ans) returns (Answer) {
+  return ans;
+}
+
 contract Test {
-    enum Answer { Yes, No }
-    function testFunc() {
-        string name = type(Test).name;
-        Answer first = type(Answer).min;
-    }
+  using { id } for Answer;
+
+  function testFunc() {
+    string name = type(Test).name;
+    Answer first = type(Answer).min.id();
+  }
 }

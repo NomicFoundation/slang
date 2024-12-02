@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ContractKeyword or EnumKeyword or FunctionKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
+    ╭─[input.sol:27:1]
+    │
+ 27 │ uint256 constant TOP_LEVEL_CONST = 0;
+    │ ───────────────────┬──────────────────  
+    │                    ╰──────────────────── Error occurred here.
+────╯
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract InContracts {
+    │          ─────┬─────  
+    │               ╰─────── def: 1
+  2 │     uint256 private constant CONTRACT_CONST = 1;
+    │                              ───────┬──────  
+    │                                     ╰──────── def: 2
+    │ 
+  4 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 3
+    │ 
+  6 │             function swap(emptyPtr) {
+    │                      ──┬─ ────┬───  
+    │                        ╰──────────── def: 4
+    │                               │     
+    │                               ╰───── def: 5
+  7 │                 mstore(emptyPtr, CONTRACT_CONST)
+    │                        ────┬───  ───────┬──────  
+    │                            ╰───────────────────── ref: 5
+    │                                         │        
+    │                                         ╰──────── ref: 2
+  8 │                 mstore(emptyPtr, TOP_LEVEL_CONST)
+    │                        ────┬───  ───────┬───────  
+    │                            ╰────────────────────── ref: 5
+    │                                         │         
+    │                                         ╰───────── unresolved
+    │ 
+ 14 │ library InLibraries {
+    │         ─────┬─────  
+    │              ╰─────── def: 6
+ 15 │     uint256 private constant LIB_CONST = 2;
+    │                              ────┬────  
+    │                                  ╰────── def: 7
+    │ 
+ 17 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 8
+    │ 
+ 19 │             function swap(emptyPtr) {
+    │                      ──┬─ ────┬───  
+    │                        ╰──────────── def: 9
+    │                               │     
+    │                               ╰───── def: 10
+ 20 │                 mstore(emptyPtr, LIB_CONST)
+    │                        ────┬───  ────┬────  
+    │                            ╰──────────────── ref: 10
+    │                                      │      
+    │                                      ╰────── ref: 7
+ 21 │                 mstore(emptyPtr, TOP_LEVEL_CONST)
+    │                        ────┬───  ───────┬───────  
+    │                            ╰────────────────────── ref: 10
+    │                                         │         
+    │                                         ╰───────── unresolved
+────╯
