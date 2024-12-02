@@ -40,11 +40,6 @@
         "as_getter": true
       }
     },
-    "nomic-foundation:slang:cst:nonterminal-node.children()": {
-      "Function": {
-        "as_getter": true
-      }
-    },
     "nomic-foundation:slang:cst:terminal-node": {
       "Resource": {
         "custom_inspect": true
@@ -61,11 +56,6 @@
       }
     },
     "nomic-foundation:slang:cst:terminal-node.text-length()": {
-      "Function": {
-        "as_getter": true
-      }
-    },
-    "nomic-foundation:slang:cst:terminal-node.children()": {
       "Function": {
         "as_getter": true
       }
@@ -95,9 +85,14 @@
         "as_getter": true
       }
     },
-    "nomic-foundation:slang:cst:cursor.ancestors()": {
-      "Function": {
-        "as_getter": true
+    "nomic-foundation:slang:cst:cursor-iterator": {
+      "Resource": {
+        "as_iterator": true
+      }
+    },
+    "nomic-foundation:slang:cst:ancestors-iterator": {
+      "Resource": {
+        "as_iterator": true
       }
     },
     "nomic-foundation:slang:cst:query-match.captures": {
@@ -126,11 +121,6 @@
       }
     },
     "nomic-foundation:slang:parser:parse-output.tree()": {
-      "Function": {
-        "as_getter": true
-      }
-    },
-    "nomic-foundation:slang:parser:parse-output.errors()": {
       "Function": {
         "as_getter": true
       }

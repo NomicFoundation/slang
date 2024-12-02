@@ -5,6 +5,8 @@ export namespace NomicFoundationSlangCst {
   export { NonterminalNode };
   export { TerminalNode };
   export { Cursor };
+  export { CursorIterator };
+  export { AncestorsIterator };
   export { Query };
   export { QueryMatchIterator };
   export { NonterminalKind };
@@ -821,18 +823,27 @@ export interface QueryMatch {
 export interface TextIndex {
   /**
    * Byte offset in UTF-8 encoding.
+   * This is useful when working with languages like Rust that use UTF-8.
    */
   utf8: number;
   /**
-   * Character offset in UTF-16 encoding.
+   * Byte offset in UTF-8 encoding.
+   * This is useful when working with languages like JavaScript that use UTF-16.
    */
   utf16: number;
   /**
    * Line number (0-based).
+   * Lines are separated by:
+   *
+   * - carriage return `\r`.
+   * - newline `\n`.
+   * - line separator `\u2028`.
+   * - paragraph separator `\u2029`.
    */
   line: number;
   /**
    * Column number (0-based).
+   * Columns are counted in [unicode scalar values](https://www.unicode.org/glossary/#unicode_scalar_value).
    */
   column: number;
 }
@@ -848,6 +859,14 @@ export interface TextRange {
    * Ending (exclusive) position of the range.
    */
   end: TextIndex;
+}
+
+export class AncestorsIterator {
+  [Symbol.iterator](): Iterator<NonterminalNode>;
+  /**
+   * Returns the next nonterminal node in the iteration, or `undefined` if there are no more nodes.
+   */
+  next(): NonterminalNode | undefined;
 }
 
 export class Cursor {
@@ -895,9 +914,21 @@ export class Cursor {
    */
   get depth(): number;
   /**
-   * Returns the list of ancestor nodes up to the root.
+   * Returns the list of child edges directly connected to this node.
    */
-  get ancestors(): NonterminalNode[];
+  children(): Edge[];
+  /**
+   * Returns an iterator over all descendants of the current node in pre-order traversal.
+   */
+  descendants(): CursorIterator;
+  /**
+   * Returns an iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
+   */
+  remainingNodes(): CursorIterator;
+  /**
+   * Returns an iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
+   */
+  ancestors(): AncestorsIterator;
   /**
    * Moves to the next node in pre-order traversal.
    */
@@ -905,7 +936,7 @@ export class Cursor {
   /**
    * Moves to the next node that isn't a descendant of the current node.
    */
-  goToNextNonDescendent(): boolean;
+  goToNextNonDescendant(): boolean;
   /**
    * Moves to the previous node in pre-order traversal.
    */
@@ -965,6 +996,14 @@ export class Cursor {
   query(queries: Query[]): QueryMatchIterator;
 }
 
+export class CursorIterator {
+  [Symbol.iterator](): Iterator<Edge>;
+  /**
+   * Returns the next edge in the iteration, or `undefined` if there are no more edges.
+   */
+  next(): Edge | undefined;
+}
+
 export class NonterminalNode {
   readonly nodeVariant = NodeVariant.NonterminalNode;
 
@@ -989,9 +1028,13 @@ export class NonterminalNode {
    */
   get textLength(): TextIndex;
   /**
-   * Returns the list of child edges connected to this node.
+   * Returns the list of child edges directly connected to this node.
    */
-  get children(): Edge[];
+  children(): Edge[];
+  /**
+   * Returns an iterator over all descendants of the current node in pre-order traversal.
+   */
+  descendants(): CursorIterator;
   /**
    * Converts the node and its children back to source code text.
    */
@@ -1017,7 +1060,7 @@ export class Query {
 export class QueryMatchIterator {
   [Symbol.iterator](): Iterator<QueryMatch>;
   /**
-   * Returns the next match or None if there are no more matches.
+   * Returns the next match or `undefined` if there are no more matches.
    */
   next(): QueryMatch | undefined;
 }
@@ -1057,9 +1100,13 @@ export class TerminalNode {
    */
   get textLength(): TextIndex;
   /**
-   * Returns the list of child edges connected to this node.
+   * Returns the list of child edges directly connected to this node.
    */
-  get children(): Edge[];
+  children(): Edge[];
+  /**
+   * Returns an iterator over all descendants of this node in pre-order traversal.
+   */
+  descendants(): CursorIterator;
   /**
    * Converts the node back to source code text.
    */

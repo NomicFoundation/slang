@@ -82,8 +82,8 @@ macro_rules! query_matches {
 
 }
 
-fn run_query_test(tree: &Edge, query: &str, matches: Vec<BTreeMap<String, Vec<String>>>) {
-    let cursor = tree.cursor_with_offset(TextIndex::ZERO);
+fn run_query_test(tree: Edge, query: &str, matches: Vec<BTreeMap<String, Vec<String>>>) {
+    let cursor = tree.node.cursor_with_offset(TextIndex::ZERO);
     let query = vec![Query::parse(query).unwrap()];
     let mut matches = matches.into_iter();
     for QueryMatch { captures, .. } in cursor.query(query) {
@@ -137,7 +137,7 @@ fn common_test_tree_with_trivia() -> Edge {
 #[test]
 fn test_spread() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[TreeNode @x1 [DelimitedIdentifier] @x2 [DelimitedIdentifier]]",
         query_matches! {
             {x1: ["A"], x2: ["B"]}
@@ -150,7 +150,7 @@ fn test_spread() {
 #[test]
 fn test_adjacent() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[TreeNode @y1 [DelimitedIdentifier] . @y2 [DelimitedIdentifier]]",
         query_matches! {
             {y1: ["A"], y2: ["B"]}
@@ -162,7 +162,7 @@ fn test_adjacent() {
 #[test]
 fn test_adjacency_skips_trivia() {
     run_query_test(
-        &common_test_tree_with_trivia(),
+        common_test_tree_with_trivia(),
         "[TreeNode @y1 [DelimitedIdentifier] . @y2 [DelimitedIdentifier]]",
         query_matches! {
             {y1: ["A"], y2: ["B"]}
@@ -174,7 +174,7 @@ fn test_adjacency_skips_trivia() {
 #[test]
 fn test_anonymous_node_matcher_skips_trivia() {
     run_query_test(
-        &common_test_tree_with_trivia(),
+        common_test_tree_with_trivia(),
         "[TreeNodeChild @x [_]]",
         query_matches! {
             {x: ["D"]}
@@ -186,7 +186,7 @@ fn test_anonymous_node_matcher_skips_trivia() {
 #[test]
 fn test_child() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[TreeNodeChild @x [DelimitedIdentifier]]",
         query_matches! {
             {x: ["D"]}
@@ -198,7 +198,7 @@ fn test_child() {
 #[test]
 fn test_parent_and_child() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[TreeNode @p node:[_] [TreeNodeChild @c [DelimitedIdentifier]]]",
         query_matches! {
             {c: ["D"], p: ["A"]}
@@ -210,7 +210,7 @@ fn test_parent_and_child() {
 #[test]
 fn test_named() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[TreeNode @x node:[DelimitedIdentifier]]",
         query_matches! {
             {x: ["A"]}
@@ -221,7 +221,7 @@ fn test_named() {
 #[test]
 fn test_multilevel_adjacent() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[_ @x [DelimitedIdentifier] . @y [DelimitedIdentifier]]",
         query_matches! {
             {x: ["A"], y: ["B"]}
@@ -234,7 +234,7 @@ fn test_multilevel_adjacent() {
 #[test]
 fn test_multilevel_named() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[_ @x node:[_]]",
         query_matches! {
             {x: ["A"]}
@@ -246,7 +246,7 @@ fn test_multilevel_named() {
 #[test]
 fn test_text_value() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         r#"[TreeNode @z1 [DelimitedIdentifier] . ["B"] . @z2 [DelimitedIdentifier]]"#,
         query_matches! {
             {z1: ["A"], z2: ["C"]}
@@ -257,7 +257,7 @@ fn test_text_value() {
 #[test]
 fn test_one_or_more() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[TreeNode (@x [DelimitedIdentifier])+ . [_] .]",
         query_matches! {
             {x: ["A", "B", "C"]}
@@ -270,7 +270,7 @@ fn test_one_or_more() {
 #[test]
 fn test_one_or_more_anonymous() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[TreeNode (@x [_])+ .]",
         query_matches! {
             {x: ["A", "B", "C", "DE"]}
@@ -284,7 +284,7 @@ fn test_one_or_more_anonymous() {
 #[test]
 fn test_one_or_more_anonymous_both_adjacent() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[TreeNode . (@x [_])+ .]",
         query_matches! {
             {x: ["A", "B", "C", "DE"]}
@@ -295,7 +295,7 @@ fn test_one_or_more_anonymous_both_adjacent() {
 #[test]
 fn test_one_or_more_anonymous_both_adjacent_with_trivia() {
     run_query_test(
-        &common_test_tree_with_trivia(),
+        common_test_tree_with_trivia(),
         "[TreeNodeChild . @children [_]+ .]",
         query_matches! {
             {children: ["D", "E"]}
@@ -306,7 +306,7 @@ fn test_one_or_more_anonymous_both_adjacent_with_trivia() {
 #[test]
 fn test_zero_or_more() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[TreeNode (@y [DelimitedIdentifier])* . [_] .]",
         query_matches! {
             {y: ["A", "B", "C"]}
@@ -320,7 +320,7 @@ fn test_zero_or_more() {
 #[test]
 fn test_optional() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "[TreeNode (@z [DelimitedIdentifier])? . [_] .]",
         query_matches! {
             {z: ["C"]}
@@ -332,7 +332,7 @@ fn test_optional() {
 #[test]
 fn test_nested() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "@root [TreeNode @z [DelimitedIdentifier] . [_] .]",
         query_matches! {
             {root: ["ABCDE"], z: ["C"]}
@@ -343,7 +343,7 @@ fn test_nested() {
 #[test]
 fn test_alternatives() {
     run_query_test(
-        &common_test_tree(),
+        common_test_tree(),
         "(@x node:[_] | @y [DelimitedIdentifier] . @z [DelimitedIdentifier])",
         query_matches! {
             {x: ["A"]}
@@ -358,7 +358,7 @@ fn test_alternatives() {
 #[test]
 fn test_adjacency_at_beginning_skips_trivia() {
     run_query_test(
-        &common_test_tree_with_trivia(),
+        common_test_tree_with_trivia(),
         "[TreeNodeChild . @x [DelimitedIdentifier]]",
         query_matches! {
             {x: ["D"]}
@@ -369,7 +369,7 @@ fn test_adjacency_at_beginning_skips_trivia() {
 #[test]
 fn test_adjacency_at_end_skips_trivia() {
     run_query_test(
-        &common_test_tree_with_trivia(),
+        common_test_tree_with_trivia(),
         "[TreeNodeChild @x [DelimitedIdentifier] .]",
         query_matches! {
             {x: ["E"]}
@@ -391,8 +391,7 @@ fn flat_tree() -> Edge {
 
 #[test]
 fn test_ellipsis_followed_by_optional_grouping() {
-    run_query_test(
-        &flat_tree(),
+    run_query_test(flat_tree(),
         "[TreeNode @x [DelimitedIdentifier] (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])?]",
         query_matches! {
             {x: ["A"], y: ["B"], z: ["C"]}
@@ -408,8 +407,7 @@ fn test_ellipsis_followed_by_optional_grouping() {
 
 #[test]
 fn test_adjacency_followed_by_optional_grouping() {
-    run_query_test(
-        &flat_tree(),
+    run_query_test(flat_tree(),
         "[TreeNode @x [DelimitedIdentifier] . (@y [DelimitedIdentifier] . @z [DelimitedIdentifier])?]",
         query_matches! {
             {x: ["A"]}
@@ -425,7 +423,7 @@ fn test_adjacency_followed_by_optional_grouping() {
 #[test]
 fn test_captures_followed_by_non_captured_matchers() {
     run_query_test(
-        &flat_tree(),
+        flat_tree(),
         "[TreeNode @x [DelimitedIdentifier] [DelimitedIdentifier]]",
         query_matches! {
             {x: ["A"]}
@@ -441,7 +439,7 @@ fn test_captures_followed_by_non_captured_matchers() {
 #[test]
 fn test_captures_followed_by_anonymous_matchers() {
     run_query_test(
-        &flat_tree(),
+        flat_tree(),
         "[TreeNode @x [DelimitedIdentifier] [_]]",
         query_matches! {
             {x: ["A"]}
@@ -457,7 +455,7 @@ fn test_captures_followed_by_anonymous_matchers() {
 #[test]
 fn test_captures_followed_by_non_captured_optional_matchers() {
     run_query_test(
-        &flat_tree(),
+        flat_tree(),
         "[TreeNode @x [DelimitedIdentifier] [DelimitedIdentifier]?]",
         query_matches! {
             {x: ["A"]}
@@ -477,7 +475,7 @@ fn test_captures_followed_by_non_captured_optional_matchers() {
 #[test]
 fn test_captures_followed_by_captured_optional_matchers() {
     run_query_test(
-        &flat_tree(),
+        flat_tree(),
         "[TreeNode @x [DelimitedIdentifier] @y [DelimitedIdentifier]?]",
         query_matches! {
             {x: ["A"], y: ["B"]}
@@ -530,7 +528,7 @@ fn sample_deep_tree() -> Edge {
 #[test]
 fn test_deeply_nested_matchers() {
     run_query_test(
-        &sample_deep_tree(),
+        sample_deep_tree(),
         "@parent [TreeNode members: [TreeNodeChildren [TreeNodeChild @child variant: [TreeNode]]]]",
         query_matches! {
             {parent: ["[A[BC]]"], child: ["[BC]"]}

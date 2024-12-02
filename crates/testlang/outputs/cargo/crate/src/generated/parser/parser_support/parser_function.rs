@@ -141,8 +141,10 @@ where
                     debug_assert_eq!(
                         errors.is_empty(),
                         parse_tree
+                            .clone()
                             .cursor_with_offset(TextIndex::ZERO)
-                            .all(|node| node
+                            .remaining_nodes()
+                            .all(|edge| edge
                                 .as_terminal()
                                 .filter(|tok| !tok.kind.is_valid())
                                 .is_none())

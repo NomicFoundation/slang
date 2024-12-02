@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use serde::Serialize;
 
-use crate::cursor::Cursor;
+use crate::cursor::{Cursor, CursorIterator};
 use crate::kinds::{BaseKind, KindTypes, TerminalKindExtensions};
 use crate::text_index::TextIndex;
 
@@ -81,7 +81,7 @@ impl<T: KindTypes> std::ops::Deref for Edge<T> {
 
 impl<T: KindTypes> Node<T> {
     pub fn nonterminal(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Self {
-        let text_len = children.iter().map(|node| node.text_len()).sum();
+        let text_len = children.iter().map(|edge| edge.text_len()).sum();
 
         Self::Nonterminal(Rc::new(NonterminalNode {
             kind,
@@ -117,26 +117,22 @@ impl<T: KindTypes> Node<T> {
         }
     }
 
-    /// Returns a slice of the edges (not all descendants) leaving this node.
-    pub fn edges(&self) -> &[Edge<T>] {
+    /// Returns the list of child edges directly connected to this node.
+    pub fn children(&self) -> &[Edge<T>] {
         match self {
-            Self::Nonterminal(node) => &node.children,
-            Self::Terminal(_) => &[],
+            Self::Nonterminal(node) => node.children(),
+            Self::Terminal(node) => node.children(),
         }
     }
 
-    pub fn labeled_edges(&self) -> impl Iterator<Item = &Edge<T>> {
-        self.edges().iter().filter(|edge| edge.label.is_some())
-    }
-
-    /// Returns a slice of the children (not all descendants) of this node.
-    pub fn children(&self) -> &[Edge<T>] {
-        self.edges()
+    /// Returns an iterator over all descendants of the current node in pre-order traversal.
+    pub fn descendants(self) -> CursorIterator<T> {
+        Cursor::new(self, TextIndex::ZERO).descendants()
     }
 
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
-    pub fn cursor_with_offset(&self, text_offset: TextIndex) -> Cursor<T> {
-        Cursor::new(self.clone(), text_offset)
+    pub fn cursor_with_offset(self, text_offset: TextIndex) -> Cursor<T> {
+        Cursor::new(self, text_offset)
     }
 
     /// Reconstructs the original source code from the node and its sub-tree.
@@ -253,9 +249,19 @@ impl<T: KindTypes> NonterminalNode<T> {
         Rc::as_ptr(self) as usize
     }
 
+    /// Returns the list of child edges directly connected to this node.
+    pub fn children(self: &Rc<Self>) -> &[Edge<T>] {
+        &self.children
+    }
+
+    /// Returns an iterator over all descendants of the current node in pre-order traversal.
+    pub fn descendants(self: Rc<Self>) -> CursorIterator<T> {
+        Node::Nonterminal(self).descendants()
+    }
+
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
     pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
-        Cursor::new(Node::Nonterminal(self), text_offset)
+        Node::Nonterminal(self).cursor_with_offset(text_offset)
     }
 
     /// Reconstructs the original source code from the node and its sub-tree.
@@ -280,6 +286,21 @@ impl<T: KindTypes> TerminalNode<T> {
     /// and cannot be used in a persistent/serialised sense.
     pub fn id(self: &Rc<Self>) -> usize {
         Rc::as_ptr(self) as usize
+    }
+
+    /// Returns the list of child edges directly connected to this node.
+    pub fn children(self: &Rc<Self>) -> &[Edge<T>] {
+        &[]
+    }
+
+    /// Returns an iterator over all descendants of the current node in pre-order traversal.
+    pub fn descendants(self: Rc<Self>) -> CursorIterator<T> {
+        Node::Terminal(self).descendants()
+    }
+
+    /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
+    pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
+        Node::Terminal(self).cursor_with_offset(text_offset)
     }
 
     /// Reconstructs the original source code from the node and its sub-tree.
