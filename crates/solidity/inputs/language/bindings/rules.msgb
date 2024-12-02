@@ -2137,6 +2137,28 @@ inherit .star_extension
   edge @enum.def -> type
   edge type -> type_enum_type
   edge type_enum_type -> @enum.lexical_scope
+
+  ; Path to link min and max to the enum's scope (#1158)
+  ; It resolves paths of the form `type(<enum>).min.<something>`
+  node typeof
+  attr (typeof) pop_symbol = "@typeof"
+
+  node built_in_member
+  attr (built_in_member) pop_symbol = "."
+  node min_built_in
+  attr (min_built_in) pop_symbol = "min"
+  node max_built_in
+  attr (max_built_in) pop_symbol = "max"
+  node min_max_accessor
+  attr (min_max_accessor) pop_symbol = "."
+
+  edge type -> typeof
+  edge typeof -> built_in_member
+  edge built_in_member -> min_built_in
+  edge built_in_member -> max_built_in
+  edge min_built_in -> min_max_accessor
+  edge max_built_in -> min_max_accessor
+  edge min_max_accessor -> @enum.lexical_scope
 }
 
 @enum [EnumDefinition
