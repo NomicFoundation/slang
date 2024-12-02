@@ -35,7 +35,7 @@ export class ParseOutput {
    * Returns a list of all parsing errors encountered.
    * An empty list indicates successful parsing with no errors.
    */
-  get errors(): ParseError[];
+  errors(): ParseError[];
   /**
    * Returns whether the parse was completely successful with no errors.
    * This is equivalent to checking if the errors list is empty.

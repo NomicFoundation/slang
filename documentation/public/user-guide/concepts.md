@@ -44,7 +44,7 @@ cursor was successfully moved, and `false` otherwise. There are three main ways
 to do it:
 
 -   According to the DFS order, i.e. `goToNext()` and `goToPrevious()`,
--   According to the relationship between the current node and the next node, i.e. `goToParent()`, `goToFirstChild()`, `goToNextNonDescendent()`
+-   According to the relationship between the current node and the next node, i.e. `goToParent()`, `goToFirstChild()`, `goToNextNonDescendant()`
 -   According to the kind of the next node, i.e. `goToNextTerminalWithKind(kind)`, `goToNextNonterminalWithKind(kind)`
 
 As such, the cursor is stateful and keeps track of the path it has taken through the CST.

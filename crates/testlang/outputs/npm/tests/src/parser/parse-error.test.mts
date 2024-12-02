@@ -8,7 +8,7 @@ test("render error reports", () => {
   const parseOutput = parser.parse(NonterminalKind.SourceUnit, source);
   expect(parseOutput.isValid()).toBeFalsy();
 
-  const errors = parseOutput.errors;
+  const errors = parseOutput.errors();
   expect(errors).toHaveLength(1);
 
   expect(errors[0]!.message).toBe("Expected Identifier or StringLiteral or TreeKeyword.");

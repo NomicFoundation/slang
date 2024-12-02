@@ -131,9 +131,14 @@ impl Match {
     pub fn is_full_recursive(&self) -> bool {
         self.nodes
             .iter()
-            .flat_map(|node| node.cursor_with_offset(TextIndex::ZERO))
-            .all(|node| {
-                node.as_terminal()
+            .flat_map(|edge| {
+                edge.node
+                    .clone()
+                    .cursor_with_offset(TextIndex::ZERO)
+                    .remaining_nodes()
+            })
+            .all(|edge| {
+                edge.as_terminal()
                     .filter(|tok| !tok.kind.is_valid())
                     .is_none()
             })
@@ -207,9 +212,14 @@ impl IncompleteMatch {
         let result = self
             .nodes
             .iter()
-            .flat_map(|node| node.cursor_with_offset(TextIndex::ZERO))
-            .try_fold(0u8, |mut acc, node| {
-                match node {
+            .flat_map(|edge| {
+                edge.node
+                    .clone()
+                    .cursor_with_offset(TextIndex::ZERO)
+                    .remaining_nodes()
+            })
+            .try_fold(0u8, |mut acc, edge| {
+                match edge.node {
                     Node::Terminal(tok) if tok.kind.is_valid() && !tok.kind.is_trivia() => {
                         acc += 1;
                     }
