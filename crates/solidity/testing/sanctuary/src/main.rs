@@ -4,8 +4,12 @@ mod events;
 mod reporting;
 mod tests;
 
+use std::fs::OpenOptions;
+use std::io::Write;
+
 use anyhow::Result;
 use clap::Parser;
+use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 use infra_utils::terminal::{NumbersDefaultDisplay, Terminal};
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
@@ -91,6 +95,26 @@ fn main() -> Result<()> {
         }
 
         events.finish_directory();
+    }
+
+    if GitHub::is_running_in_ci() {
+        let output_file = std::env::var("GITHUB_OUTPUT")?;
+        let key = format!(
+            "__SLANG_SANCTUARY_SHARD_RESULT__{shard_index}",
+            shard_index = sharding_options
+                .shard_index
+                .map(|index| index.to_string())
+                .unwrap_or_default()
+        );
+        let value = serde_json::to_string(&events)?;
+
+        let mut output_file = OpenOptions::new()
+            .create(true)
+            .write(true)
+            .append(true)
+            .open(output_file)?;
+
+        writeln!(output_file, "{key}={value}")?;
     }
 
     let failure_count = events.failure_count();
