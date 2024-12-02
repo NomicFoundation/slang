@@ -6644,436 +6644,443 @@ codegen_language_macros::compile!(Language(
         )
     ],
     built_ins = [
-        BuiltInFunction(
-            name = "addmod",
-            parameters = ["uint x", "uint y", "uint k"],
-            return_type = "uint"
-        ),
-        BuiltInFunction(name = "assert", parameters = ["bool condition"]),
-        BuiltInFunction(
-            name = "blockhash",
-            parameters = ["uint blockNumber"],
-            return_type = "bytes32",
-            enabled = From("0.4.22")
-        ),
-        BuiltInFunction(
-            name = "blobhash",
-            parameters = ["uint index"],
-            return_type = "bytes32",
-            enabled = From("0.8.24")
-        ),
-        BuiltInFunction(
-            name = "ecrecover",
-            parameters = ["bytes32 hash", "uint8 v", "bytes32 r", "bytes32 s"],
-            return_type = "address"
-        ),
-        BuiltInFunction(
-            name = "gasleft",
-            parameters = [],
-            return_type = "uint256",
-            enabled = From("0.4.22")
-        ),
-        BuiltInFunction(
-            name = "keccak256",
-            parameters = ["bytes memory"],
-            return_type = "bytes32"
-        ),
-        BuiltInFunction(
-            name = "log0",
-            parameters = ["bytes32"],
-            enabled = Till("0.8.0")
-        ),
-        BuiltInFunction(
-            name = "log1",
-            parameters = ["bytes32", "bytes32"],
-            enabled = Till("0.8.0")
-        ),
-        BuiltInFunction(
-            name = "log2",
-            parameters = ["bytes32", "bytes32", "bytes32"],
-            enabled = Till("0.8.0")
-        ),
-        BuiltInFunction(
-            name = "log3",
-            parameters = ["bytes32", "bytes32", "bytes32", "bytes32"],
-            enabled = Till("0.8.0")
-        ),
-        BuiltInFunction(
-            name = "log4",
-            parameters = ["bytes32", "bytes32", "bytes32", "bytes32", "bytes32"],
-            enabled = Till("0.8.0")
-        ),
-        BuiltInFunction(
-            name = "mulmod",
-            parameters = ["uint x", "uint y", "uint k"],
-            return_type = "uint"
-        ),
-        BuiltInFunction(name = "require", parameters = ["bool condition"]),
-        BuiltInFunction(
-            name = "require",
-            parameters = ["bool condition", "string memory message"],
-            enabled = From("0.4.22")
-        ),
-        BuiltInFunction(
-            name = "require",
-            parameters = ["bool condition", "Error error"],
-            enabled = From("0.8.26")
-        ),
-        BuiltInFunction(name = "revert", parameters = []),
-        BuiltInFunction(
-            name = "revert",
-            parameters = ["string memory reason"],
-            enabled = From("0.4.22")
-        ),
-        BuiltInFunction(
-            name = "ripemd160",
-            parameters = ["bytes memory"],
-            return_type = "bytes20"
-        ),
-        BuiltInFunction(
-            name = "selfdestruct",
-            parameters = ["address payable recipient"]
-        ),
-        BuiltInFunction(
-            name = "sha256",
-            parameters = ["bytes memory"],
-            return_type = "bytes32"
-        ),
-        BuiltInFunction(
-            name = "sha3",
-            parameters = ["bytes memory"],
-            return_type = "bytes32",
-            enabled = Till("0.5.0")
-        ),
-        BuiltInFunction(
-            name = "suicide",
-            parameters = ["address payable recipient"],
-            enabled = Till("0.5.0")
-        ),
-        BuiltInType(
-            name = "$AbiType",
-            fields = [],
-            functions = [
+        BuiltInContext(
+            // __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with rules file.
+            name = "$SolidityBuiltIns$",
+            definitions = [
                 BuiltInFunction(
-                    name = "decode",
-                    parameters = ["bytes memory encodedData", "$Type[] encodedTypesTuple"],
-                    return_type = "$Any[]",
-                    enabled = From("0.5.0")
+                    name = "addmod",
+                    parameters = ["uint x", "uint y", "uint k"],
+                    return_type = "uint"
                 ),
+                BuiltInFunction(name = "assert", parameters = ["bool condition"]),
                 BuiltInFunction(
-                    name = "encode",
-                    parameters = ["$Any[] valuesToEncode"],
-                    return_type = "bytes memory",
+                    name = "blockhash",
+                    parameters = ["uint blockNumber"],
+                    return_type = "bytes32",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
-                    name = "encodeCall",
-                    parameters = [
-                        "function() functionPointer",
-                        "$Any[] functionArgumentsTuple"
-                    ],
-                    return_type = "bytes memory",
-                    enabled = From("0.8.11")
+                    name = "blobhash",
+                    parameters = ["uint index"],
+                    return_type = "bytes32",
+                    enabled = From("0.8.24")
                 ),
                 BuiltInFunction(
-                    name = "encodePacked",
-                    parameters = ["$Any[] valuesToEncode"],
-                    return_type = "bytes memory",
-                    enabled = From("0.4.22")
+                    name = "ecrecover",
+                    parameters = ["bytes32 hash", "uint8 v", "bytes32 r", "bytes32 s"],
+                    return_type = "address"
                 ),
                 BuiltInFunction(
-                    name = "encodeWithSelector",
-                    parameters = ["bytes4 selector", "$Any[] functionArgumentsTuple"],
-                    return_type = "bytes memory",
-                    enabled = From("0.4.22")
-                ),
-                BuiltInFunction(
-                    name = "encodeWithSignature",
-                    parameters = ["string memory signature", "$Any[] valuesToEncode"],
-                    return_type = "bytes memory",
-                    enabled = From("0.4.22")
-                )
-            ]
-        ),
-        BuiltInType(
-            name = "$address",
-            fields = [
-                BuiltInField(definition = "uint256 balance"),
-                BuiltInField(definition = "bytes code", enabled = From("0.8.0")),
-                BuiltInField(definition = "bytes32 codehash", enabled = From("0.8.0"))
-            ],
-            functions = [
-                BuiltInFunction(
-                    name = "call",
-                    parameters = ["bytes memory"],
-                    return_type = "bool",
-                    enabled = Till("0.5.0")
-                ),
-                BuiltInFunction(
-                    name = "call",
-                    parameters = ["bytes memory"],
-                    return_type = "bool, bytes memory",
-                    enabled = From("0.5.0")
-                ),
-                BuiltInFunction(
-                    name = "callcode",
-                    parameters = ["bytes memory"],
-                    return_type = "bool, bytes memory",
-                    enabled = Till("0.5.0")
-                ),
-                BuiltInFunction(
-                    name = "delegatecall",
-                    parameters = ["bytes memory"],
-                    return_type = "bool",
-                    enabled = Till("0.5.0")
-                ),
-                BuiltInFunction(
-                    name = "delegatecall",
-                    parameters = ["bytes memory"],
-                    return_type = "bool, bytes memory",
-                    enabled = From("0.5.0")
-                ),
-                BuiltInFunction(
-                    name = "send",
-                    parameters = ["uint256 amount"],
-                    return_type = "bool"
-                ),
-                BuiltInFunction(
-                    name = "staticcall",
-                    parameters = ["bytes memory"],
-                    return_type = "bool, bytes memory",
-                    enabled = From("0.5.0")
-                ),
-                BuiltInFunction(name = "transfer", parameters = ["uint256 amount"])
-            ]
-        ),
-        BuiltInType(
-            name = "$Array",
-            fields = [BuiltInField(definition = "uint length")],
-            functions = [
-                BuiltInFunction(
-                    name = "push",
+                    name = "gasleft",
                     parameters = [],
-                    return_type = "$ValueType",
-                    enabled = From("0.6.0")
+                    return_type = "uint256",
+                    enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
-                    name = "push",
-                    parameters = ["$ValueType element"],
-                    return_type = "uint",
-                    enabled = Till("0.6.0")
+                    name = "keccak256",
+                    parameters = ["bytes memory"],
+                    return_type = "bytes32"
                 ),
                 BuiltInFunction(
-                    name = "push",
-                    parameters = ["$ValueType element"],
-                    enabled = From("0.6.0")
-                ),
-                BuiltInFunction(name = "pop", parameters = [])
-            ]
-        ),
-        BuiltInType(
-            name = "$FixedArray",
-            fields = [BuiltInField(definition = "uint length")],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$BlockType",
-            fields = [
-                BuiltInField(definition = "uint basefee", enabled = From("0.8.7")),
-                BuiltInField(definition = "uint blobbasefee", enabled = From("0.8.24")),
-                BuiltInField(definition = "uint chainid", enabled = From("0.8.0")),
-                BuiltInField(definition = "address payable coinbase"),
-                BuiltInField(definition = "uint difficulty"),
-                BuiltInField(definition = "uint gaslimit"),
-                BuiltInField(definition = "uint number"),
-                BuiltInField(definition = "uint prevrandao", enabled = From("0.8.18")),
-                BuiltInField(definition = "uint timestamp")
-            ],
-            functions = [BuiltInFunction(
-                name = "blockhash",
-                parameters = ["uint"],
-                return_type = "bytes32",
-                enabled = Till("0.5.0")
-            )]
-        ),
-        BuiltInType(
-            name = "$bytes",
-            fields = [BuiltInField(definition = "uint length")],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$BytesType",
-            fields = [],
-            functions = [BuiltInFunction(
-                name = "concat",
-                parameters = ["bytes[] bytesToConcatenate"],
-                return_type = "bytes memory"
-            )]
-        ),
-        BuiltInType(
-            name = "$CallOptions",
-            fields = [
-                BuiltInField(definition = "uint gas"),
-                BuiltInField(definition = "uint salt"),
-                BuiltInField(definition = "uint value")
-            ],
-            functions = [],
-            enabled = From("0.6.2")
-        ),
-        BuiltInType(
-            name = "Error",
-            fields = [BuiltInField(definition = "string reason")],
-            functions = [],
-            enabled = From("0.6.0")
-        ),
-        BuiltInType(
-            name = "$ErrorType",
-            fields = [BuiltInField(definition = "bytes4 selector")],
-            functions = [],
-            enabled = From("0.8.4")
-        ),
-        BuiltInType(
-            name = "$Function",
-            fields = [],
-            functions = [
-                BuiltInFunction(
-                    name = "gas",
-                    parameters = ["uint amount"],
-                    return_type = "function()",
-                    enabled = Till("0.7.0")
-                ),
-                BuiltInFunction(
-                    name = "value",
-                    parameters = ["uint amount"],
-                    return_type = "function()",
-                    enabled = Till("0.7.0")
-                )
-            ]
-        ),
-        BuiltInType(
-            name = "$ExternalFunction",
-            fields = [
-                BuiltInField(definition = "address address", enabled = From("0.8.2")),
-                BuiltInField(definition = "bytes4 selector", enabled = From("0.4.17"))
-            ],
-            functions = [
-                BuiltInFunction(
-                    name = "gas",
-                    parameters = ["uint amount"],
-                    return_type = "function()",
-                    enabled = Till("0.7.0")
-                ),
-                BuiltInFunction(
-                    name = "value",
-                    parameters = ["uint amount"],
-                    return_type = "function()",
-                    enabled = Till("0.7.0")
-                )
-            ]
-        ),
-        BuiltInType(
-            name = "$MessageType",
-            fields = [
-                BuiltInField(definition = "bytes data"),
-                BuiltInField(definition = "uint256 gas", enabled = Till("0.5.0")),
-                BuiltInField(
-                    definition = "address payable sender",
+                    name = "log0",
+                    parameters = ["bytes32"],
                     enabled = Till("0.8.0")
                 ),
-                BuiltInField(definition = "address sender", enabled = From("0.8.0")),
-                BuiltInField(definition = "bytes4 sig"),
-                BuiltInField(definition = "uint value")
-            ],
-            functions = []
-        ),
-        BuiltInType(
-            name = "Panic",
-            fields = [BuiltInField(definition = "uint errorCode")],
-            functions = [],
-            enabled = From("0.6.0")
-        ),
-        BuiltInType(
-            name = "$StringType",
-            fields = [],
-            functions = [BuiltInFunction(
-                name = "concat",
-                parameters = ["string[] stringsToConcatenate"],
-                return_type = "string memory"
-            )]
-        ),
-        BuiltInType(
-            name = "$TransactionType",
-            fields = [
-                BuiltInField(definition = "uint gasprice"),
-                BuiltInField(
-                    definition = "address payable origin",
+                BuiltInFunction(
+                    name = "log1",
+                    parameters = ["bytes32", "bytes32"],
                     enabled = Till("0.8.0")
                 ),
-                BuiltInField(definition = "address origin", enabled = From("0.8.0"))
-            ],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$ContractTypeType",
-            fields = [
-                BuiltInField(definition = "string name"),
-                BuiltInField(definition = "bytes creationCode", enabled = From("0.5.3")),
-                BuiltInField(definition = "bytes runtimeCode", enabled = From("0.5.3")),
-                BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
-            ],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$InterfaceTypeType",
-            fields = [
-                BuiltInField(definition = "string name"),
-                BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
-            ],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$IntTypeType",
-            fields = [
-                BuiltInField(definition = "int min", enabled = From("0.6.8")),
-                BuiltInField(definition = "int max", enabled = From("0.6.8"))
-            ],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$UserDefinedValueType",
-            fields = [],
-            functions = [
                 BuiltInFunction(
-                    name = "wrap",
-                    parameters = ["$WrappedType elementaryType"],
-                    return_type = "$UserType"
+                    name = "log2",
+                    parameters = ["bytes32", "bytes32", "bytes32"],
+                    enabled = Till("0.8.0")
                 ),
                 BuiltInFunction(
-                    name = "unwrap",
-                    parameters = ["$UserType userType"],
-                    return_type = "$WrappedType"
-                )
-            ],
-            enabled = From("0.8.8")
+                    name = "log3",
+                    parameters = ["bytes32", "bytes32", "bytes32", "bytes32"],
+                    enabled = Till("0.8.0")
+                ),
+                BuiltInFunction(
+                    name = "log4",
+                    parameters = ["bytes32", "bytes32", "bytes32", "bytes32", "bytes32"],
+                    enabled = Till("0.8.0")
+                ),
+                BuiltInFunction(
+                    name = "mulmod",
+                    parameters = ["uint x", "uint y", "uint k"],
+                    return_type = "uint"
+                ),
+                BuiltInFunction(name = "require", parameters = ["bool condition"]),
+                BuiltInFunction(
+                    name = "require",
+                    parameters = ["bool condition", "string memory message"],
+                    enabled = From("0.4.22")
+                ),
+                BuiltInFunction(
+                    name = "require",
+                    parameters = ["bool condition", "Error error"],
+                    enabled = From("0.8.26")
+                ),
+                BuiltInFunction(name = "revert", parameters = []),
+                BuiltInFunction(
+                    name = "revert",
+                    parameters = ["string memory reason"],
+                    enabled = From("0.4.22")
+                ),
+                BuiltInFunction(
+                    name = "ripemd160",
+                    parameters = ["bytes memory"],
+                    return_type = "bytes20"
+                ),
+                BuiltInFunction(
+                    name = "selfdestruct",
+                    parameters = ["address payable recipient"]
+                ),
+                BuiltInFunction(
+                    name = "sha256",
+                    parameters = ["bytes memory"],
+                    return_type = "bytes32"
+                ),
+                BuiltInFunction(
+                    name = "sha3",
+                    parameters = ["bytes memory"],
+                    return_type = "bytes32",
+                    enabled = Till("0.5.0")
+                ),
+                BuiltInFunction(
+                    name = "suicide",
+                    parameters = ["address payable recipient"],
+                    enabled = Till("0.5.0")
+                ),
+                BuiltInType(
+                    name = "$AbiType",
+                    fields = [],
+                    functions = [
+                        BuiltInFunction(
+                            name = "decode",
+                            parameters = ["bytes memory encodedData", "$Type[] encodedTypesTuple"],
+                            return_type = "$Any[]",
+                            enabled = From("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "encode",
+                            parameters = ["$Any[] valuesToEncode"],
+                            return_type = "bytes memory",
+                            enabled = From("0.4.22")
+                        ),
+                        BuiltInFunction(
+                            name = "encodeCall",
+                            parameters = [
+                                "function() functionPointer",
+                                "$Any[] functionArgumentsTuple"
+                            ],
+                            return_type = "bytes memory",
+                            enabled = From("0.8.11")
+                        ),
+                        BuiltInFunction(
+                            name = "encodePacked",
+                            parameters = ["$Any[] valuesToEncode"],
+                            return_type = "bytes memory",
+                            enabled = From("0.4.22")
+                        ),
+                        BuiltInFunction(
+                            name = "encodeWithSelector",
+                            parameters = ["bytes4 selector", "$Any[] functionArgumentsTuple"],
+                            return_type = "bytes memory",
+                            enabled = From("0.4.22")
+                        ),
+                        BuiltInFunction(
+                            name = "encodeWithSignature",
+                            parameters = ["string memory signature", "$Any[] valuesToEncode"],
+                            return_type = "bytes memory",
+                            enabled = From("0.4.22")
+                        )
+                    ]
+                ),
+                BuiltInType(
+                    name = "$address",
+                    fields = [
+                        BuiltInField(definition = "uint256 balance"),
+                        BuiltInField(definition = "bytes code", enabled = From("0.8.0")),
+                        BuiltInField(definition = "bytes32 codehash", enabled = From("0.8.0"))
+                    ],
+                    functions = [
+                        BuiltInFunction(
+                            name = "call",
+                            parameters = ["bytes memory"],
+                            return_type = "bool",
+                            enabled = Till("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "call",
+                            parameters = ["bytes memory"],
+                            return_type = "bool, bytes memory",
+                            enabled = From("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "callcode",
+                            parameters = ["bytes memory"],
+                            return_type = "bool, bytes memory",
+                            enabled = Till("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "delegatecall",
+                            parameters = ["bytes memory"],
+                            return_type = "bool",
+                            enabled = Till("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "delegatecall",
+                            parameters = ["bytes memory"],
+                            return_type = "bool, bytes memory",
+                            enabled = From("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "send",
+                            parameters = ["uint256 amount"],
+                            return_type = "bool"
+                        ),
+                        BuiltInFunction(
+                            name = "staticcall",
+                            parameters = ["bytes memory"],
+                            return_type = "bool, bytes memory",
+                            enabled = From("0.5.0")
+                        ),
+                        BuiltInFunction(name = "transfer", parameters = ["uint256 amount"])
+                    ]
+                ),
+                BuiltInType(
+                    name = "$Array",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = [
+                        BuiltInFunction(
+                            name = "push",
+                            parameters = [],
+                            return_type = "$ValueType",
+                            enabled = From("0.6.0")
+                        ),
+                        BuiltInFunction(
+                            name = "push",
+                            parameters = ["$ValueType element"],
+                            return_type = "uint",
+                            enabled = Till("0.6.0")
+                        ),
+                        BuiltInFunction(
+                            name = "push",
+                            parameters = ["$ValueType element"],
+                            enabled = From("0.6.0")
+                        ),
+                        BuiltInFunction(name = "pop", parameters = [])
+                    ]
+                ),
+                BuiltInType(
+                    name = "$FixedArray",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$BlockType",
+                    fields = [
+                        BuiltInField(definition = "uint basefee", enabled = From("0.8.7")),
+                        BuiltInField(definition = "uint blobbasefee", enabled = From("0.8.24")),
+                        BuiltInField(definition = "uint chainid", enabled = From("0.8.0")),
+                        BuiltInField(definition = "address payable coinbase"),
+                        BuiltInField(definition = "uint difficulty"),
+                        BuiltInField(definition = "uint gaslimit"),
+                        BuiltInField(definition = "uint number"),
+                        BuiltInField(definition = "uint prevrandao", enabled = From("0.8.18")),
+                        BuiltInField(definition = "uint timestamp")
+                    ],
+                    functions = [BuiltInFunction(
+                        name = "blockhash",
+                        parameters = ["uint"],
+                        return_type = "bytes32",
+                        enabled = Till("0.5.0")
+                    )]
+                ),
+                BuiltInType(
+                    name = "$bytes",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$BytesType",
+                    fields = [],
+                    functions = [BuiltInFunction(
+                        name = "concat",
+                        parameters = ["bytes[] bytesToConcatenate"],
+                        return_type = "bytes memory"
+                    )]
+                ),
+                BuiltInType(
+                    name = "$CallOptions",
+                    fields = [
+                        BuiltInField(definition = "uint gas"),
+                        BuiltInField(definition = "uint salt"),
+                        BuiltInField(definition = "uint value")
+                    ],
+                    functions = [],
+                    enabled = From("0.6.2")
+                ),
+                BuiltInType(
+                    name = "Error",
+                    fields = [BuiltInField(definition = "string reason")],
+                    functions = [],
+                    enabled = From("0.6.0")
+                ),
+                BuiltInType(
+                    name = "$ErrorType",
+                    fields = [BuiltInField(definition = "bytes4 selector")],
+                    functions = [],
+                    enabled = From("0.8.4")
+                ),
+                BuiltInType(
+                    name = "$Function",
+                    fields = [],
+                    functions = [
+                        BuiltInFunction(
+                            name = "gas",
+                            parameters = ["uint amount"],
+                            return_type = "function()",
+                            enabled = Till("0.7.0")
+                        ),
+                        BuiltInFunction(
+                            name = "value",
+                            parameters = ["uint amount"],
+                            return_type = "function()",
+                            enabled = Till("0.7.0")
+                        )
+                    ]
+                ),
+                BuiltInType(
+                    name = "$ExternalFunction",
+                    fields = [
+                        BuiltInField(definition = "address address", enabled = From("0.8.2")),
+                        BuiltInField(definition = "bytes4 selector", enabled = From("0.4.17"))
+                    ],
+                    functions = [
+                        BuiltInFunction(
+                            name = "gas",
+                            parameters = ["uint amount"],
+                            return_type = "function()",
+                            enabled = Till("0.7.0")
+                        ),
+                        BuiltInFunction(
+                            name = "value",
+                            parameters = ["uint amount"],
+                            return_type = "function()",
+                            enabled = Till("0.7.0")
+                        )
+                    ]
+                ),
+                BuiltInType(
+                    name = "$MessageType",
+                    fields = [
+                        BuiltInField(definition = "bytes data"),
+                        BuiltInField(definition = "uint256 gas", enabled = Till("0.5.0")),
+                        BuiltInField(
+                            definition = "address payable sender",
+                            enabled = Till("0.8.0")
+                        ),
+                        BuiltInField(definition = "address sender", enabled = From("0.8.0")),
+                        BuiltInField(definition = "bytes4 sig"),
+                        BuiltInField(definition = "uint value")
+                    ],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "Panic",
+                    fields = [BuiltInField(definition = "uint errorCode")],
+                    functions = [],
+                    enabled = From("0.6.0")
+                ),
+                BuiltInType(
+                    name = "$StringType",
+                    fields = [],
+                    functions = [BuiltInFunction(
+                        name = "concat",
+                        parameters = ["string[] stringsToConcatenate"],
+                        return_type = "string memory"
+                    )]
+                ),
+                BuiltInType(
+                    name = "$TransactionType",
+                    fields = [
+                        BuiltInField(definition = "uint gasprice"),
+                        BuiltInField(
+                            definition = "address payable origin",
+                            enabled = Till("0.8.0")
+                        ),
+                        BuiltInField(definition = "address origin", enabled = From("0.8.0"))
+                    ],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$ContractTypeType",
+                    fields = [
+                        BuiltInField(definition = "string name"),
+                        BuiltInField(definition = "bytes creationCode", enabled = From("0.5.3")),
+                        BuiltInField(definition = "bytes runtimeCode", enabled = From("0.5.3")),
+                        BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
+                    ],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$InterfaceTypeType",
+                    fields = [
+                        BuiltInField(definition = "string name"),
+                        BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
+                    ],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$IntTypeType",
+                    fields = [
+                        BuiltInField(definition = "int min", enabled = From("0.6.8")),
+                        BuiltInField(definition = "int max", enabled = From("0.6.8"))
+                    ],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$UserDefinedValueType",
+                    fields = [],
+                    functions = [
+                        BuiltInFunction(
+                            name = "wrap",
+                            parameters = ["$WrappedType elementaryType"],
+                            return_type = "$UserType"
+                        ),
+                        BuiltInFunction(
+                            name = "unwrap",
+                            parameters = ["$UserType userType"],
+                            return_type = "$WrappedType"
+                        )
+                    ],
+                    enabled = From("0.8.8")
+                ),
+                BuiltInType(
+                    name = "$YulExternal",
+                    fields = [
+                        // These apply to state and storage variables
+                        BuiltInField(definition = "uint slot"),
+                        BuiltInField(definition = "uint offset"),
+                        // Dynamic calldata arrays also have a length
+                        BuiltInField(definition = "uint length")
+                    ],
+                    functions = []
+                ),
+                BuiltInVariable(definition = "$Function $placeholder"),
+                BuiltInVariable(definition = "$AbiType abi"),
+                BuiltInVariable(definition = "$BlockType block"),
+                BuiltInVariable(definition = "$BytesType $bytes"),
+                BuiltInVariable(definition = "$MessageType msg"),
+                BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
+                BuiltInVariable(definition = "$StringType $string"),
+                BuiltInVariable(definition = "$TransactionType tx")
+            ]
         ),
-        BuiltInType(
-            name = "$YulExternal",
-            fields = [
-                // These apply to state and storage variables
-                BuiltInField(definition = "uint slot"),
-                BuiltInField(definition = "uint offset"),
-                // Dynamic calldata arrays also have a length
-                BuiltInField(definition = "uint length")
-            ],
-            functions = []
-        ),
-        BuiltInVariable(definition = "$Function $placeholder"),
-        BuiltInVariable(definition = "$AbiType abi"),
-        BuiltInVariable(definition = "$BlockType block"),
-        BuiltInVariable(definition = "$BytesType $bytes"),
-        BuiltInVariable(definition = "$MessageType msg"),
-        BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
-        BuiltInVariable(definition = "$StringType $string"),
-        BuiltInVariable(definition = "$TransactionType tx")
+        BuiltInContext(name = "$YulBuiltIns$", definitions = [])
     ]
 ));
