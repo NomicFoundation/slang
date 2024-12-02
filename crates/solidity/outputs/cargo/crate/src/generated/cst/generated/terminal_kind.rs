@@ -1,5 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+#[allow(clippy::doc_markdown)]
+#[allow(clippy::doc_link_with_quotes)]
 #[repr(u16)]
 #[derive(
     Debug,
