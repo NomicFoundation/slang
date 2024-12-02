@@ -3,6 +3,7 @@ use std::cmp;
 use console::Color;
 use indicatif::ProgressBar;
 use infra_utils::github::GitHub;
+use serde::{ser::SerializeMap, Serialize};
 
 use crate::reporting::Reporter;
 
@@ -132,5 +133,21 @@ impl Events {
 
     pub fn trace(&self, message: impl AsRef<str>) {
         self.reporter.println(message);
+    }
+}
+
+impl Serialize for Events {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut map = serializer.serialize_map(Some(6))?;
+        map.serialize_entry("source_files", &self.source_files.position())?;
+        map.serialize_entry("passed", &self.passed.position())?;
+        map.serialize_entry("failed", &self.failed.position())?;
+        map.serialize_entry("incompatible", &self.incompatible.position())?;
+        map.serialize_entry("not_found", &self.not_found.position())?;
+        map.serialize_entry("elapsed", &self.all_directories.elapsed())?;
+        map.end()
     }
 }
