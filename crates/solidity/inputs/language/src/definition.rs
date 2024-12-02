@@ -7060,17 +7060,6 @@ codegen_language_macros::compile!(Language(
                     ],
                     enabled = From("0.8.8")
                 ),
-                BuiltInType(
-                    name = "$YulExternal",
-                    fields = [
-                        // These apply to state and storage variables
-                        BuiltInField(definition = "uint slot"),
-                        BuiltInField(definition = "uint offset"),
-                        // Dynamic calldata arrays also have a length
-                        BuiltInField(definition = "uint length")
-                    ],
-                    functions = []
-                ),
                 BuiltInVariable(definition = "$Function $placeholder"),
                 BuiltInVariable(definition = "$AbiType abi"),
                 BuiltInVariable(definition = "$BlockType block"),
@@ -7081,6 +7070,20 @@ codegen_language_macros::compile!(Language(
                 BuiltInVariable(definition = "$TransactionType tx")
             ]
         ),
-        BuiltInContext(name = "$YulBuiltIns$", definitions = [])
+        BuiltInContext(
+            // __SLANG_YUL_BUILT_INS_CONTRACT_NAME__ keep in sync with binding rules file.
+            name = "$YulBuiltIns$",
+            definitions = [BuiltInType(
+                name = "$YulExternal",
+                fields = [
+                    // These apply to state and storage variables
+                    BuiltInField(definition = "uint slot"),
+                    BuiltInField(definition = "uint offset"),
+                    // Dynamic calldata arrays also have a length
+                    BuiltInField(definition = "uint length")
+                ],
+                functions = []
+            )]
+        )
     ]
 ));

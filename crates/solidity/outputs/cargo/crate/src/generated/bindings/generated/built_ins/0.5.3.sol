@@ -88,11 +88,6 @@ contract $SolidityBuiltIns$ {
   }
   struct $IntTypeType {
   }
-  struct $YulExternal {
-    uint slot;
-    uint offset;
-    uint length;
-  }
   $Function $placeholder;
   $AbiType abi;
   $BlockType block;
@@ -103,4 +98,9 @@ contract $SolidityBuiltIns$ {
   $TransactionType tx;
 }
 contract $YulBuiltIns$ {
+  struct $YulExternal {
+    uint slot;
+    uint offset;
+    uint length;
+  }
 }
