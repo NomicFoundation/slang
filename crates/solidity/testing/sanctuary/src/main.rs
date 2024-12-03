@@ -131,7 +131,7 @@ fn run_test_command(command: TestCommand) -> Result<()> {
     if GitHub::is_running_in_ci() {
         let output_path = std::env::var("GITHUB_OUTPUT")?;
         let key = format!(
-            "__SLANG_SANCTUARY_SHARD_RESULT__{shard_index}",
+            "__SLANG_SANCTUARY_SHARD_RESULTS__{shard_index}",
             shard_index = sharding_options
                 .shard_index
                 .map(|index| index.to_string())
