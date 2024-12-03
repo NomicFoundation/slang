@@ -12,14 +12,14 @@ pub struct Kind {
     documentation: String,
 }
 
-struct KindBuilder {
+struct EbnfBuilder {
     model: EbnfModel,
     writer: PlainWriter,
 }
 
-impl KindBuilder {
-    fn new(language: &Rc<model::Language>) -> KindBuilder {
-        KindBuilder {
+impl EbnfBuilder {
+    fn new(language: &Rc<model::Language>) -> EbnfBuilder {
+        EbnfBuilder {
             model: EbnfModel::build(language),
             writer: PlainWriter::default(),
         }
@@ -74,7 +74,7 @@ impl Default for KindsModel {
 
 impl KindsModel {
     pub fn from_language(language: &Rc<model::Language>) -> Self {
-        let mut kind_builder = KindBuilder::new(language);
+        let mut kind_builder = EbnfBuilder::new(language);
 
         let terminal_kinds = language
             .items()
