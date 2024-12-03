@@ -7,10 +7,10 @@ use anyhow::Result;
 use codegen_language_definition::model::Item;
 use inflector::Inflector;
 use once_cell::sync::Lazy;
-use slang_solidity::cst::{CursorWithEdges, Node, NonterminalKind, TextRangeExtensions};
+use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRangeExtensions};
 use solidity_language::SolidityDefinition;
 
-pub fn render(source: &str, errors: &Vec<String>, cursor: CursorWithEdges) -> Result<String> {
+pub fn render(source: &str, errors: &Vec<String>, cursor: Cursor) -> Result<String> {
     let mut w = String::new();
 
     write_source(&mut w, source)?;
@@ -85,7 +85,7 @@ fn write_errors(w: &mut String, errors: &Vec<String>) -> Result<()> {
     Ok(())
 }
 
-fn write_tree(w: &mut String, mut cursor: CursorWithEdges, source: &str) -> Result<()> {
+fn write_tree(w: &mut String, mut cursor: Cursor, source: &str) -> Result<()> {
     writeln!(w, "Tree:")?;
     write_node(w, &mut cursor, source, 0)?;
 
@@ -93,12 +93,7 @@ fn write_tree(w: &mut String, mut cursor: CursorWithEdges, source: &str) -> Resu
     Ok(())
 }
 
-fn write_node(
-    w: &mut String,
-    cursor: &mut CursorWithEdges,
-    source: &str,
-    depth: usize,
-) -> Result<()> {
+fn write_node(w: &mut String, cursor: &mut Cursor, source: &str, depth: usize) -> Result<()> {
     let indentation = " ".repeat(4 * depth);
     write!(w, "{indentation}  - ")?;
 
@@ -131,7 +126,7 @@ fn write_node(
     Ok(())
 }
 
-fn render_key(cursor: &mut CursorWithEdges) -> String {
+fn render_key(cursor: &mut Cursor) -> String {
     let kind = match cursor.node() {
         Node::Nonterminal(nonterminal) => nonterminal.kind.to_string(),
         Node::Terminal(terminal) => terminal.kind.to_string(),
@@ -144,7 +139,7 @@ fn render_key(cursor: &mut CursorWithEdges) -> String {
     }
 }
 
-fn render_value(cursor: &mut CursorWithEdges, source: &str) -> String {
+fn render_value(cursor: &mut Cursor, source: &str) -> String {
     let utf8_range = cursor.text_range().utf8();
     let char_range = {
         let start = source[..utf8_range.start].chars().count();

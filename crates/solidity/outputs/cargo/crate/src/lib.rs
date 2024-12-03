@@ -28,7 +28,7 @@ pub mod bindings {
         Ok(())
     }
 
-    fn transform_built_ins_node(node: &crate::cst::Node) -> crate::cst::Node {
+    pub fn transform_built_ins_node(node: &crate::cst::Node) -> crate::cst::Node {
         use std::rc::Rc;
 
         use crate::cst::{Edge, Node, NonterminalNode, TerminalKind, TerminalNode};

@@ -27,6 +27,10 @@ struct Cli {
     /// Disables parallelism, and logs traces to help with debugging errors or panics.
     #[arg(long, default_value_t = false)]
     trace: bool,
+
+    /// Enables checking bindings for each contract, failing if any symbol cannot be resolved.
+    #[arg(long, default_value_t = false)]
+    check_bindings: bool,
 }
 
 #[derive(Debug, Parser)]
@@ -45,6 +49,7 @@ fn main() -> Result<()> {
         chain,
         sharding_options,
         trace,
+        check_bindings,
     } = Cli::parse();
 
     Terminal::step(format!(
@@ -80,9 +85,9 @@ fn main() -> Result<()> {
         events.start_directory(files.len());
 
         if trace {
-            run_with_traces(files, &events)?;
+            run_with_traces(files, &events, check_bindings)?;
         } else {
-            run_in_parallel(files, &events)?;
+            run_in_parallel(files, &events, check_bindings)?;
         }
 
         events.finish_directory();
@@ -104,14 +109,14 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn run_with_traces(files: &Vec<SourceFile>, events: &Events) -> Result<()> {
+fn run_with_traces(files: &Vec<SourceFile>, events: &Events, check_bindings: bool) -> Result<()> {
     for file in files {
         let compiler = &file.compiler;
         let path = file.path.strip_repo_root()?;
 
         events.trace(format!("[{compiler}] Starting: {path:?}"));
 
-        run_test(file, events)?;
+        run_test(file, events, check_bindings)?;
 
         events.trace(format!("[{compiler}] Finished: {path:?}"));
     }
@@ -119,11 +124,11 @@ fn run_with_traces(files: &Vec<SourceFile>, events: &Events) -> Result<()> {
     Ok(())
 }
 
-fn run_in_parallel(files: &Vec<SourceFile>, events: &Events) -> Result<()> {
+fn run_in_parallel(files: &Vec<SourceFile>, events: &Events, check_bindings: bool) -> Result<()> {
     files
     .par_iter()
     .panic_fuse(/* Halt as soon as possible if a child panics */)
-    .try_for_each(|file| run_test(file, events))
+    .try_for_each(|file| run_test(file, events, check_bindings))
 }
 
 #[test]

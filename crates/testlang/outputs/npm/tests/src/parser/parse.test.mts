@@ -13,9 +13,10 @@ test("parse terminal", () => {
   const parseTree = parser.parse(NonterminalKind.TreeNodeChild, source).tree;
   assertIsNonterminalNode(parseTree, NonterminalKind.TreeNodeChild);
 
-  expect(parseTree.children).toHaveLength(1);
+  const children = parseTree.children();
+  expect(children).toHaveLength(1);
 
-  assertIsTerminalNode(parseTree.children[0]!.node, TerminalKind.DelimitedIdentifier, "About_time");
+  assertIsTerminalNode(children[0]!.node, TerminalKind.DelimitedIdentifier, "About_time");
 });
 
 test("parse nonterminal", () => {
@@ -25,9 +26,10 @@ test("parse nonterminal", () => {
   const parseTree = parser.parse(NonterminalKind.SourceUnit, source).tree;
   assertIsNonterminalNode(parseTree, NonterminalKind.SourceUnit);
 
-  expect(parseTree.children).toHaveLength(1);
+  const children = parseTree.children();
+  expect(children).toHaveLength(1);
 
-  assertIsNonterminalNode(parseTree.children[0]!.node, NonterminalKind.SourceUnitMembers);
+  assertIsNonterminalNode(children[0]!.node, NonterminalKind.SourceUnitMembers);
 });
 
 test("parse unicode characters", () => {
@@ -44,7 +46,7 @@ test("parse unicode characters", () => {
     utf8: 17,
   });
 
-  const terminal = nonTerminal.children[0]!.node;
+  const terminal = nonTerminal.children()[0]!.node;
 
   assertIsTerminalNode(terminal, TerminalKind.StringLiteral, `"some 😁 emoji"`);
 

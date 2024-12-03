@@ -1,5 +1,4 @@
 use slang_solidity::bindings::Bindings;
-use slang_solidity::cst::TextIndex;
 
 use crate::tests::parser::ParsedFile;
 
@@ -25,17 +24,11 @@ pub fn run(dependencies: Dependencies) -> Bindings {
     for ParsedFile {
         path,
         contents: _,
-        tree,
+        parse_output,
     } in &files
     {
-        bindings.add_user_file(
-            path.to_str().unwrap(),
-            tree.cursor_with_offset(TextIndex::ZERO),
-        );
-        definition_count += bindings
-            .all_definitions()
-            .filter(|definition| definition.get_file().is_user())
-            .count();
+        bindings.add_user_file(path.to_str().unwrap(), parse_output.create_tree_cursor());
+        definition_count += bindings.all_definitions().count();
     }
 
     assert_eq!(definition_count, 2322, "Failed to fetch all definitions");

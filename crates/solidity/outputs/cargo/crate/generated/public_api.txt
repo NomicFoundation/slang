@@ -859,8 +859,9 @@ impl serde::ser::Serialize for slang_solidity::cst::TerminalKind
 pub fn slang_solidity::cst::TerminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::cst::TerminalKind> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::cst::TerminalKind) -> &'static str
+pub type slang_solidity::cst::AncestorsIterator = metaslang_cst::cursor::AncestorsIterator<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Cursor = metaslang_cst::cursor::Cursor<slang_solidity::cst::KindTypes>
-pub type slang_solidity::cst::CursorWithEdges = metaslang_cst::cursor::CursorWithEdges<slang_solidity::cst::KindTypes>
+pub type slang_solidity::cst::CursorIterator = metaslang_cst::cursor::CursorIterator<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Edge = metaslang_cst::nodes::Edge<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Node = metaslang_cst::nodes::Node<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::NonterminalNode = metaslang_cst::nodes::NonterminalNode<slang_solidity::cst::KindTypes>

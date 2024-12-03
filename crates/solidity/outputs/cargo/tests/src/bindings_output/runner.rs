@@ -1,7 +1,8 @@
+use std::fs;
+
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
-use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 use metaslang_graph_builder::graph::Graph;
 use slang_solidity::cst::KindTypes;
@@ -24,6 +25,10 @@ pub(crate) struct ParsedPart<'a> {
 pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
         .join("bindings_output")
+        .join(group_name)
+        .join(test_name);
+    let target_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
+        .join("target/bindings_output")
         .join(group_name)
         .join(test_name);
 
@@ -73,26 +78,23 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             "failure"
         };
 
-        if !GitHub::is_running_in_ci() {
-            // Don't run this in CI, since the graph outputs are not committed
-            // to the repository and hence we cannot verify their contents,
-            // which is what `fs.write_file` does in CI.
+        // Render graph outputs only if the __SLANG_BINDINGS_RENDER_GRAPHS__
+        // environment variable is set.
+        if std::env::var("__SLANG_BINDINGS_RENDER_GRAPHS__").is_ok() {
+            fs::create_dir_all(&target_dir)?;
+
             let graph_output = render_mermaid_graph(&parsed_parts);
             match last_graph_output {
                 Some(ref last) if last == &graph_output => (),
                 _ => {
-                    let snapshot_path = test_dir
-                        .join("generated")
-                        .join(format!("{version}-{status}.mmd"));
+                    let snapshot_path = target_dir.join(format!("{version}-{status}.mmd"));
 
-                    fs.write_file(snapshot_path, &graph_output)?;
+                    fs::write(snapshot_path, &graph_output)?;
                     last_graph_output = Some(graph_output);
 
                     let dot_output = render_graphviz_graph(&parsed_parts);
-                    let dot_output_path = test_dir
-                        .join("generated")
-                        .join(format!("{version}-{status}.dot"));
-                    fs.write_file(dot_output_path, &dot_output)?;
+                    let dot_output_path = target_dir.join(format!("{version}-{status}.dot"));
+                    fs::write(dot_output_path, &dot_output)?;
                 }
             };
         }

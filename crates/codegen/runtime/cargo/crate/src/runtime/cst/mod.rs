@@ -41,7 +41,8 @@ pub type TerminalNode = metaslang_cst::nodes::TerminalNode<KindTypes>;
 pub type Edge = metaslang_cst::nodes::Edge<KindTypes>;
 
 pub type Cursor = metaslang_cst::cursor::Cursor<KindTypes>;
-pub type CursorWithEdges = metaslang_cst::cursor::CursorWithEdges<KindTypes>;
+pub type CursorIterator = metaslang_cst::cursor::CursorIterator<KindTypes>;
+pub type AncestorsIterator = metaslang_cst::cursor::AncestorsIterator<KindTypes>;
 
 pub type Query = metaslang_cst::query::Query<KindTypes>;
 pub use metaslang_cst::query::QueryError;
