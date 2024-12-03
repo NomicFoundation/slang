@@ -22,7 +22,7 @@ on:
         default: false
 
 jobs:
-  sanctuary:
+  singleShard:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     strategy:
@@ -59,4 +59,23 @@ jobs:
       - name: "infra run solidity_testing_sanctuary"
         uses: "./.github/actions/devcontainer/run"
         with:
-          runCmd: "./scripts/bin/infra run --release --bin solidity_testing_sanctuary -- --shards-count ${{ env.SHARDS_COUNT }} --shard-index ${{ matrix.shard_index }} ${{ inputs.check_bindings == true && '--check-bindings' || '' }} ${{ inputs.chain }} ${{ inputs.network }}"
+          runCmd: "./scripts/bin/infra run --release --bin solidity_testing_sanctuary -- test --shards-count ${{ env.SHARDS_COUNT }} --shard-index ${{ matrix.shard_index }} ${{ inputs.check_bindings == true && '--check-bindings' || '' }} ${{ inputs.chain }} ${{ inputs.network }}"
+
+  combinedResults:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    needs: [singleShard]
+    if: "!cancelled()"
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+
+      - name: "Output shards results"
+        run: echo '${{ toJSON(needs.singleShard.outputs) }}' > "./target/__SLANG_SANCTUARY_SHARD_RESULTS__.json"
+
+      - name: "infra run solidity_testing_sanctuary"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra run --bin solidity_testing_sanctuary -- show-combined-results ./target/__SLANG_SANCTUARY_SHARD_RESULTS__.json"
