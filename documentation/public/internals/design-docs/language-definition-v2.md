@@ -21,9 +21,9 @@ during iterating/visiting the tree.
 
 The CST is useful for many use cases:
 
--   Tools that only want to deal with document contents, like formatters, and syntax-only linters.
--   For visitors/rewriters that want to run on certain nodes, regardless of their position/parent types.
--   Reconstructing the original input, including trivia/whitespace, and any skipped (unrecognized) parts.
+- Tools that only want to deal with document contents, like formatters, and syntax-only linters.
+- For visitors/rewriters that want to run on certain nodes, regardless of their position/parent types.
+- Reconstructing the original input, including trivia/whitespace, and any skipped (unrecognized) parts.
 
 Here is an example of the node type, similar to what we have now:
 
@@ -357,14 +357,14 @@ During AST construction, we will simply check for `TerminalKind::UNRECOGNIZED` n
 
 Based on the above, I propose the following changes to the current public API:
 
--   Rename `TokenKind` to `TerminalKind`, since it will also refer to trivia.
--   Rename `RuleKind` to `NonterminalKind`, since "rule" is ambiguous.
--   Rename `TerminalKind::SKIPPED`to `UNRECOGNIZED` for clarity.
--   Hide `LexicalContext` and `fn scan(TokenKind)` from the public API, as it is a short-term workaround,
-    and will be replaced later when we have language embedding.
--   Remove `ProductionKind` completely, since it is no longer needed. We only need to expose `fn parse(NonterminalKind)`.
--   Since `EndOFFileTrivia` no longer exists, `ParseResult` should collect any remaining trivia at the end of the input,
-    and include it in the `ParseResult` returned, for any kind of node, not just `SourceUnit`.
+- Rename `TokenKind` to `TerminalKind`, since it will also refer to trivia.
+- Rename `RuleKind` to `NonterminalKind`, since "rule" is ambiguous.
+- Rename `TerminalKind::SKIPPED`to `UNRECOGNIZED` for clarity.
+- Hide `LexicalContext` and `fn scan(TokenKind)` from the public API, as it is a short-term workaround,
+  and will be replaced later when we have language embedding.
+- Remove `ProductionKind` completely, since it is no longer needed. We only need to expose `fn parse(NonterminalKind)`.
+- Since `EndOFFileTrivia` no longer exists, `ParseResult` should collect any remaining trivia at the end of the input,
+  and include it in the `ParseResult` returned, for any kind of node, not just `SourceUnit`.
 
 ## Visitors and Cursors
 
