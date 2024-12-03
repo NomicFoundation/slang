@@ -4,7 +4,8 @@ use console::Color;
 use indicatif::ProgressBar;
 use infra_utils::github::GitHub;
 
-use crate::{reporting::Reporter, results::ShardResults};
+use crate::reporting::Reporter;
+use crate::results::ShardResults;
 
 const MAX_PRINTED_FAILURES: u64 = 1000;
 

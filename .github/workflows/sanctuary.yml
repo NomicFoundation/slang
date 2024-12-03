@@ -73,9 +73,9 @@ jobs:
         uses: "./.github/actions/cache/restore"
 
       - name: "Output shards results"
-        run: echo '${{ toJSON(needs.singleShard.outputs) }}' > "./target/__SLANG_SANCTUARY_SHARD_RESULTS__.json"
+        run: echo '${{ toJSON(needs.singleShard.outputs) }}' > "__SLANG_SANCTUARY_SHARD_RESULTS__.json"
 
       - name: "infra run solidity_testing_sanctuary"
         uses: "./.github/actions/devcontainer/run"
         with:
-          runCmd: "./scripts/bin/infra run --bin solidity_testing_sanctuary -- show-combined-results ./target/__SLANG_SANCTUARY_SHARD_RESULTS__.json"
+          runCmd: "./scripts/bin/infra run --bin solidity_testing_sanctuary -- show-combined-results __SLANG_SANCTUARY_SHARD_RESULTS__.json"
