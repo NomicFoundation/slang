@@ -1,8 +1,9 @@
+use std::collections::BTreeMap;
+use std::time::Duration;
+
 use indicatif::{FormattedDuration, HumanCount};
 use serde::de::{Error, Visitor};
 use serde::{Deserialize, Serialize};
-use std::collections::BTreeMap;
-use std::time::Duration;
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct ShardResults {

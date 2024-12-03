@@ -129,7 +129,7 @@ fn run_test_command(command: TestCommand) -> Result<()> {
     }
 
     if GitHub::is_running_in_ci() {
-        let output_file = std::env::var("GITHUB_OUTPUT")?;
+        let output_path = std::env::var("GITHUB_OUTPUT")?;
         let key = format!(
             "__SLANG_SANCTUARY_SHARD_RESULT__{shard_index}",
             shard_index = sharding_options
@@ -143,9 +143,10 @@ fn run_test_command(command: TestCommand) -> Result<()> {
         let mut output_file = OpenOptions::new()
             .create(true)
             .append(true)
-            .open(output_file)?;
+            .open(&output_path)?;
 
         writeln!(output_file, "{key}={value}")?;
+        println!("Wrote results to {output_path}");
     }
 
     let failure_count = events.failure_count();
