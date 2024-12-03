@@ -1,9 +1,8 @@
 use std::collections::BTreeSet;
 use std::rc::Rc;
 
-use codegen_ebnf::PlainWriter;
+use codegen_ebnf::{EbnfModel, PlainWriter};
 use codegen_language_definition::model::{self, Identifier, Item, PredefinedLabel};
-use codegen_spec::SpecModel;
 use serde::Serialize;
 use strum::VariantNames;
 
@@ -14,20 +13,20 @@ pub struct Kind {
 }
 
 struct KindBuilder {
-    model: SpecModel,
+    model: EbnfModel,
     writer: PlainWriter,
 }
 
 impl KindBuilder {
     fn new(language: &Rc<model::Language>) -> KindBuilder {
         KindBuilder {
-            model: SpecModel::build(language.to_owned()),
+            model: EbnfModel::build(language),
             writer: PlainWriter::default(),
         }
     }
 
     fn build(&mut self, name: &Identifier) -> Kind {
-        if self.model.ebnf.serialize(name, &mut self.writer).is_ok() {
+        if self.model.serialize(name, &mut self.writer).is_ok() {
             Kind {
                 id: name.clone(),
                 documentation: self.writer.flush(),

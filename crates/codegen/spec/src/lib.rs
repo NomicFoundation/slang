@@ -20,7 +20,7 @@ use crate::generators::grammar_ebnf::generate_grammar_ebnf;
 use crate::generators::navigation::{SpecDir, SpecPage};
 use crate::generators::supported_versions::generate_supported_versions;
 use crate::generators::topic_page::generate_topic_page;
-pub use crate::model::SpecModel;
+use crate::model::SpecModel;
 
 pub struct Spec;
 

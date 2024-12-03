@@ -486,7 +486,6 @@ dependencies = [
  "anyhow",
  "codegen_ebnf",
  "codegen_language_definition",
- "codegen_spec",
  "indexmap",
  "infra_utils",
  "once_cell",
