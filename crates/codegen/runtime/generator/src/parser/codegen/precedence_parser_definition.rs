@@ -49,9 +49,9 @@ impl PrecedenceParserDefinitionCodegen for PrecedenceParserDefinitionRef {
                         [inner @ cst::Edge { node: cst::Node::Nonterminal(node), .. }] if node.kind == NonterminalKind::#op_nonterminal_name => {
                             ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                         }
-                        _ => ParserResult::no_match(vec![]),
+                        _ => ParserResult::default(),
                     }
-                    _ => ParserResult::no_match(vec![]),
+                    _ => ParserResult::default(),
                 }
             };
 

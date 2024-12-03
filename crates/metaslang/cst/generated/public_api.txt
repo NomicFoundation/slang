@@ -242,6 +242,7 @@ pub metaslang_cst::text_index::TextIndex::utf8: usize
 impl metaslang_cst::text_index::TextIndex
 pub const metaslang_cst::text_index::TextIndex::ZERO: metaslang_cst::text_index::TextIndex
 pub fn metaslang_cst::text_index::TextIndex::advance(&mut self, c: char, next: core::option::Option<&char>)
+pub fn metaslang_cst::text_index::TextIndex::advance_str(&mut self, text: &str)
 impl core::clone::Clone for metaslang_cst::text_index::TextIndex
 pub fn metaslang_cst::text_index::TextIndex::clone(&self) -> metaslang_cst::text_index::TextIndex
 impl core::cmp::Eq for metaslang_cst::text_index::TextIndex
