@@ -107,7 +107,7 @@ env_logger = { version = "0.11.5" }
 iai-callgrind = { version = "0.12.3" }
 iai-callgrind-runner = { version = "0.12.3" }
 ignore = { version = "0.4.23" }
-indexmap = { version = "2.6.0", features = ["serde"] }
+indexmap = { version = "2.7.0", features = ["serde"] }
 indicatif = { version = "0.17.9", features = ["in_memory"] }
 indoc = { version = "2.0.5" }
 Inflector = { version = "0.11.4" }
@@ -138,7 +138,7 @@ string-interner = { version = "0.17.0", features = [
 ] }
 strum = { version = "0.26.3" }
 strum_macros = { version = "0.26.4" }
-syn = { version = "2.0.89", features = [
+syn = { version = "2.0.90", features = [
     "fold",
     "full",
     "extra-traits",
