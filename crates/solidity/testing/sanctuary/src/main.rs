@@ -5,8 +5,6 @@ mod reporting;
 mod results;
 mod tests;
 
-use std::fs::OpenOptions;
-use std::io::Write;
 use std::path::PathBuf;
 
 use anyhow::Result;
@@ -129,24 +127,13 @@ fn run_test_command(command: TestCommand) -> Result<()> {
     }
 
     if GitHub::is_running_in_ci() {
-        let output_path = std::env::var("GITHUB_OUTPUT")?;
-        let key = format!(
-            "__SLANG_SANCTUARY_SHARD_RESULTS__{shard_index}",
-            shard_index = sharding_options
-                .shard_index
-                .map(|index| index.to_string())
-                .unwrap_or_default()
-        );
+        let output_path = PathBuf::from("target").join("__SLANG_SANCTUARY_SHARD_RESULTS__.json");
         let results = events.to_results();
         let value = serde_json::to_string(&results)?;
 
-        let mut output_file = OpenOptions::new()
-            .create(true)
-            .append(true)
-            .open(&output_path)?;
-
-        writeln!(output_file, "{key}={value}")?;
-        println!("Wrote results to {output_path}");
+        std::fs::create_dir_all(output_path.parent().unwrap())?;
+        std::fs::write(&output_path, value)?;
+        println!("Wrote results to {output_path:?}");
     }
 
     let failure_count = events.failure_count();
