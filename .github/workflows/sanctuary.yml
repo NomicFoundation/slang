@@ -25,22 +25,22 @@ jobs:
   singleShard:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     outputs:
-      __SLANG_SANCTUARY_SHARD_RESULTS__0: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__0 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__1: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__1 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__2: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__2 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__3: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__3 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__4: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__4 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__5: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__5 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__6: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__6 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__7: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__7 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__8: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__8 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__9: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__9 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__10: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__10 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__11: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__11 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__12: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__12 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__13: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__13 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__14: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__14 }}
-      __SLANG_SANCTUARY_SHARD_RESULTS__15: ${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__15 }}
+      __SLANG_SANCTUARY_SHARD_RESULTS__0: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__0 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__1: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__1 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__2: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__2 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__3: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__3 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__4: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__4 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__5: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__5 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__6: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__6 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__7: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__7 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__8: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__8 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__9: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__9 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__10: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__10 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__11: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__11 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__12: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__12 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__13: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__13 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__14: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__14 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__15: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__15 }}"
 
     strategy:
       fail-fast: false # Continue running all shards even if some fail.
@@ -79,13 +79,13 @@ jobs:
           runCmd: "./scripts/bin/infra run --release --bin solidity_testing_sanctuary -- test --shards-count ${{ env.SHARDS_COUNT }} --shard-index ${{ matrix.shard_index }} ${{ inputs.check_bindings == true && '--check-bindings' || '' }} ${{ inputs.chain }} ${{ inputs.network }}"
 
       - name: "Write shard results to output"
-        if:   "!cancelled()"
-        id:   output-shard-results
-        run:  echo "__SLANG_SANCTUARY_SHARD_RESULTS__${{ matrix.shard_index }}=$(cat target/__SLANG_SANCTUARY_SHARD_RESULTS__.json)" >> "$GITHUB_OUTPUT"
+        if: "!cancelled()"
+        id: "output-shard-results"
+        run: 'echo "__SLANG_SANCTUARY_SHARD_RESULTS__${{ matrix.shard_index }}=$(cat target/__SLANG_SANCTUARY_SHARD_RESULTS__.json)" >> "$GITHUB_OUTPUT"'
 
   combinedResults:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-    needs: [singleShard]
+    needs: "singleShard"
     if: "!cancelled()"
     steps:
       - name: "Checkout Repository"
@@ -95,7 +95,7 @@ jobs:
         uses: "./.github/actions/cache/restore"
 
       - name: "Output shards results"
-        run: echo '${{ toJSON(needs.singleShard.outputs) }}' > "__SLANG_SANCTUARY_MATRIX_RESULTS__.json"
+        run: "echo '${{ toJSON(needs.singleShard.outputs) }}' > __SLANG_SANCTUARY_MATRIX_RESULTS__.json"
 
       - name: "Show combined results"
         uses: "./.github/actions/devcontainer/run"
