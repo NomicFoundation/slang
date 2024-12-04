@@ -16,8 +16,8 @@ export type EdgeLabel = generated.cst.EdgeLabel;
 
 export type Node = generated.cst.Node;
 
-export const NodeVariant = generated.cst.NodeKind;
-export type NodeVariant = generated.cst.NodeKind;
+export const NodeType = generated.cst.NodeType;
+export type NodeType = generated.cst.NodeType;
 
 export const NonterminalNode = generated.cst.NonterminalNode;
 export type NonterminalNode = generated.cst.NonterminalNode;

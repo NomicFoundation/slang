@@ -13,7 +13,7 @@ export namespace NomicFoundationSlangCst {
   export { TerminalKind };
   export { EdgeLabel };
   export { Node };
-  export { NodeKind };
+  export { NodeType };
 }
 /**
  * Represents different kinds of nonterminal nodes in the syntax tree.
@@ -302,7 +302,7 @@ export declare enum EdgeLabel {
  * The super type of all nodes in a tree.
  */
 export type Node = NonterminalNode | TerminalNode;
-export enum NodeKind {
+export enum NodeType {
   NonterminalNode = "NonterminalNode",
   TerminalNode = "TerminalNode",
 }
@@ -551,27 +551,27 @@ export class CursorIterator {
  */
 export class NonterminalNode {
   /**
-   * The variant of NodeKind that corresponds to this class.
+   * The variant of `NodeType` that corresponds to this class.
    */
-  readonly type = NodeKind.NonterminalNode;
+  readonly type = NodeType.NonterminalNode;
 
   /**
-   * Coerce this variant to a NonterminalNode, or undefined if this is not the correct kind.
+   * Coerce this variant to a `NonterminalNode`, or `undefined` if this is not the correct type.
    */
   asNonterminalNode(): this;
 
   /**
-   * Return `true` if this object is an instance of NonterminalNode.
+   * Return `true` if this object is an instance of `NonterminalNode`.
    */
   isNonterminalNode(): this is NonterminalNode;
 
   /**
-   * Coerce this variant to a TerminalNode, or undefined if this is not the correct kind.
+   * Coerce this variant to a `TerminalNode`, or `undefined` if this is not the correct type.
    */
   asTerminalNode(): undefined;
 
   /**
-   * Return `true` if this object is an instance of TerminalNode.
+   * Return `true` if this object is an instance of `TerminalNode`.
    */
   isTerminalNode(): false;
 
@@ -653,27 +653,27 @@ export class TerminalKindExtensions {
  */
 export class TerminalNode {
   /**
-   * The variant of NodeKind that corresponds to this class.
+   * The variant of `NodeType` that corresponds to this class.
    */
-  readonly type = NodeKind.TerminalNode;
+  readonly type = NodeType.TerminalNode;
 
   /**
-   * Coerce this variant to a TerminalNode, or undefined if this is not the correct kind.
+   * Coerce this variant to a `TerminalNode`, or `undefined` if this is not the correct type.
    */
   asTerminalNode(): this;
 
   /**
-   * Return `true` if this object is an instance of TerminalNode.
+   * Return `true` if this object is an instance of `TerminalNode`.
    */
   isTerminalNode(): this is TerminalNode;
 
   /**
-   * Coerce this variant to a NonterminalNode, or undefined if this is not the correct kind.
+   * Coerce this variant to a `NonterminalNode`, or `undefined` if this is not the correct type.
    */
   asNonterminalNode(): undefined;
 
   /**
-   * Return `true` if this object is an instance of NonterminalNode.
+   * Return `true` if this object is an instance of `NonterminalNode`.
    */
   isNonterminalNode(): false;
 
