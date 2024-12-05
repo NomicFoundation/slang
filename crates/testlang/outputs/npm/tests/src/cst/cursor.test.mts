@@ -112,10 +112,7 @@ test("access the node using its name", () => {
       const node = innerCursor.node;
       const label = innerCursor.label;
 
-      if (
-        node.type == NodeType.TerminalNode &&
-        (label == EdgeLabel.OpenBracket || label == EdgeLabel.CloseBracket)
-      ) {
+      if (node.type == NodeType.TerminalNode && (label == EdgeLabel.OpenBracket || label == EdgeLabel.CloseBracket)) {
         names.push(node.unparse());
       }
     }
