@@ -1,5 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+#[allow(clippy::doc_markdown)]
+#[allow(clippy::doc_link_with_quotes)]
 #[repr(u8)]
 #[derive(
     Debug,
@@ -23,19 +25,33 @@ pub enum TerminalKind {
     MISSING,
 
     // Generated:
+    /// BANG = "!";
     Bang,
+    /// CLOSE_BRACKET = "]";
     CloseBracket,
+    /// DELIMITED_IDENTIFIER = «DELIMITED_IDENTIFIER_START» «DELIMITED_IDENTIFIER_PART»*;
     DelimitedIdentifier,
+    /// END_OF_LINE = "\r"? "\n";
     EndOfLine,
+    /// IDENTIFIER = «RAW_IDENTIFIER»;
     Identifier,
+    /// MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*/";
     MultiLineComment,
+    /// OPEN_BRACKET = "[";
     OpenBracket,
+    /// PERIOD = ".";
     Period,
+    /// PLUS = "+";
     Plus,
+    /// SEMICOLON = ";";
     Semicolon,
+    /// SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
     SingleLineComment,
+    /// STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
     StringLiteral,
+    /// TREE_KEYWORD = "tree";
     TreeKeyword,
+    /// WHITESPACE = (" " | "\t")+;
     Whitespace,
 }
 
