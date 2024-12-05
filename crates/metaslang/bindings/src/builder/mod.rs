@@ -481,20 +481,21 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
 
         let config = ExecutionConfig::new(self.functions, &variables)
             .lazy(true)
-            .debug_attributes(
-                [DEBUG_ATTR_PREFIX, "msgb_location"]
-                    .concat()
-                    .as_str()
-                    .into(),
-                [DEBUG_ATTR_PREFIX, "msgb_variable"]
-                    .concat()
-                    .as_str()
-                    .into(),
-                [DEBUG_ATTR_PREFIX, "msgb_match_node"]
-                    .concat()
-                    .as_str()
-                    .into(),
-            );
+            // .debug_attributes(
+            //     [DEBUG_ATTR_PREFIX, "msgb_location"]
+            //         .concat()
+            //         .as_str()
+            //         .into(),
+            //     [DEBUG_ATTR_PREFIX, "msgb_variable"]
+            //         .concat()
+            //         .as_str()
+            //         .into(),
+            //     [DEBUG_ATTR_PREFIX, "msgb_match_node"]
+            //         .concat()
+            //         .as_str()
+            //         .into(),
+            // );
+            ;
 
         self.msgb.execute_into(
             &mut self.graph,
