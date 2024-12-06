@@ -11,7 +11,14 @@ interface cst {
             stub3,
         {%- else %}
             {%- for variant in model.kinds.nonterminal_kinds %}
-                {{ variant | wit_case }},
+                /// This kind represents a `{{ variant.id }}` node, with the following structure: 
+                ///
+                /// ```ebnf
+                {%- for line in variant.documentation | split(pat="\n") %}
+                /// {{ line }}
+                {%- endfor %}
+                /// ```
+                {{ variant.id | wit_case }},
             {%- endfor %}
         {%- endif %}
     }
@@ -35,7 +42,14 @@ interface cst {
             stub3,
         {%- else %}
             {%- for variant in model.kinds.terminal_kinds %}
-                {{ variant | wit_case }},
+                /// This kind represents a `{{ variant.id }}` node, with the following structure: 
+                ///
+                /// ```ebnf
+                {%- for line in variant.documentation | split(pat="\n") %}
+                /// {{ line }}
+                {%- endfor %}
+                /// ```
+                {{ variant.id | wit_case }},
             {%- endfor %}
         {%- endif %}
     }

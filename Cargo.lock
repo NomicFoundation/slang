@@ -484,6 +484,7 @@ version = "0.18.3"
 dependencies = [
  "Inflector",
  "anyhow",
+ "codegen_ebnf",
  "codegen_language_definition",
  "indexmap",
  "infra_utils",
