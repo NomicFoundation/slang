@@ -1,4 +1,4 @@
-use std::{collections::HashSet, iter::once};
+use std::{collections::HashMap, iter::once};
 
 use metaslang_cst::kinds::KindTypes;
 use stack_graphs::{
@@ -7,12 +7,13 @@ use stack_graphs::{
     NoCancellation,
 };
 
-use crate::{Bindings, Definition, Reference};
+use crate::{Bindings, Definition, GraphHandle, Reference};
 
 pub struct DatabaseResolver<'a, KT: KindTypes + 'static> {
-    pub owner: &'a Bindings<KT>,
-    pub partials: PartialPaths,
-    pub database: Database,
+    owner: &'a BindingGraph<KT>,
+    partials: PartialPaths,
+    database: Database,
+    references: HashMap<GraphHandle, Vec<GraphHandle>>,
 }
 
 impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
@@ -24,6 +25,7 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
             owner,
             partials,
             database,
+            references: HashMap::new(),
         }
     }
 
@@ -58,7 +60,11 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
         }
     }
 
-    pub fn resolve(&mut self, reference: &Reference<'a, KT>) -> Vec<Definition<'a, KT>> {
+    fn resolve_internal(&mut self, reference: GraphHandle) -> Vec<GraphHandle> {
+        if let Some(definitions) = self.references.get(&reference) {
+            return definitions.to_vec();
+        }
+
         let mut reference_paths = Vec::new();
 
         ForwardPartialPathStitcher::find_all_complete_partial_paths(
@@ -67,7 +73,7 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
                 &mut self.partials,
                 &mut self.database,
             ),
-            once(reference.handle),
+            once(reference),
             StitcherConfig::default(),
             &NoCancellation,
             |_graph, _partials, path| {
@@ -77,26 +83,36 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
         .expect("not cancelled");
 
         let mut results = Vec::new();
-        let mut added_nodes = HashSet::new();
         for reference_path in &reference_paths {
             let end_node = reference_path.end_node;
 
-            // There may be duplicate ending nodes with different
-            // post-conditions in the scope stack, but we only care about the
-            // definition itself. Hence we need to check for uniqueness.
-            if !added_nodes.contains(&end_node)
-                && reference_paths
-                    .iter()
-                    .all(|other| !other.shadows(&mut self.partials, reference_path))
+            if reference_paths
+                .iter()
+                .all(|other| !other.shadows(&mut self.partials, reference_path))
             {
-                results.push(
-                    self.owner
-                        .to_definition(end_node)
-                        .expect("path to end in a definition node"),
-                );
-                added_nodes.insert(end_node);
+                results.push(end_node);
             }
         }
         results
+    }
+
+    pub fn resolve(&mut self, reference: &Reference<'a, KT>) -> Vec<Definition<'a, KT>> {
+        self.resolve_internal(reference.handle)
+            .iter()
+            .map(|handle| {
+                self.owner
+                    .to_definition(*handle)
+                    .expect("handle is a definition")
+            })
+            .collect()
+    }
+
+    pub fn resolve_all(&mut self) {
+        for handle in self.owner.stack_graph.iter_nodes() {
+            if self.owner.stack_graph[handle].is_reference() {
+                let definition_handles = self.resolve_internal(handle);
+                self.references.insert(handle, definition_handles);
+            }
+        }
     }
 }
