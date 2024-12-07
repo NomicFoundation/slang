@@ -117,7 +117,7 @@ test("throws an exception on initializing the wrong type", () => {
   );
 });
 
-test("throws an exception on on using an incorrect/incomplete CST node", () => {
+test("throws an exception on using an incorrect/incomplete CST node", () => {
   const source = `tree`;
 
   const parser = Parser.create("1.0.0");
