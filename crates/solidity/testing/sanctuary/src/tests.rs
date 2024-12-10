@@ -82,8 +82,8 @@ fn nodes(edges: &[Edge]) -> usize {
     max
 }
 
-fn locs(source: &String) -> usize {
-    source.split("\n").count()
+fn locs(source: &str) -> usize {
+    source.split('\n').count()
 }
 
 pub fn run_test(
