@@ -1,4 +1,7 @@
-use std::cmp;
+use std::fs::File;
+use std::io::Write;
+use std::sync::Mutex;
+use std::{cmp, io};
 
 use console::Color;
 use indicatif::ProgressBar;
@@ -16,6 +19,40 @@ pub enum TestOutcome {
     NotFound,
 }
 
+#[derive(Clone)]
+pub(crate) struct Metric {
+    pub file: String,
+    pub bytes: usize,
+    pub locs: usize,
+    pub number_of_contracts: usize,
+    pub total_inheritance_count: usize,
+    pub max_inheritance_count: usize,
+    pub cst_height: usize,
+    pub number_of_nodes: usize,
+    pub number_of_refs: usize,
+    pub parsing_time: u128,
+    pub bindings_time: u128,
+    pub memory_usage: usize,
+}
+
+impl Metric {
+    pub fn new() -> Self {
+        Metric {
+            file: String::new(),
+            bytes: 0,
+            locs: 0,
+            number_of_contracts: 0,
+            total_inheritance_count: 0,
+            max_inheritance_count: 0,
+            cst_height: 0,
+            number_of_nodes: 0,
+            number_of_refs: 0,
+            parsing_time: 0,
+            bindings_time: 0,
+            memory_usage: 0,
+        }
+    }
+}
 pub struct Events {
     reporter: Reporter,
 
@@ -28,6 +65,8 @@ pub struct Events {
     failed: ProgressBar,
     incompatible: ProgressBar,
     not_found: ProgressBar,
+
+    metrics: Mutex<Vec<Metric>>,
 }
 
 impl Events {
@@ -52,6 +91,8 @@ impl Events {
 
         reporter.add_blank();
 
+        let metrics = Mutex::new(vec![]);
+
         Self {
             reporter,
 
@@ -64,6 +105,8 @@ impl Events {
             failed,
             incompatible,
             not_found,
+
+            metrics,
         }
     }
 
@@ -132,5 +175,44 @@ impl Events {
 
     pub fn trace(&self, message: impl AsRef<str>) {
         self.reporter.println(message);
+    }
+
+    pub fn register_metric(&self, metric: Metric) {
+        let mut metrics = self.metrics.lock().unwrap();
+        metrics.push(metric);
+    }
+
+    pub fn print_metrics(&self, metrics_file: Option<String>) -> std::io::Result<()> {
+        let writer: &mut dyn Write = if let Some(file_name) = metrics_file {
+            &mut File::create(file_name.clone())?
+        } else {
+            &mut io::stdout()
+        };
+        writeln!(
+            writer,
+            "file,bytes,locs,number_of_contracts,total_inheritance_count,max_inheritance_count,cst_height,number_of_nodes,number_of_refs,parsing_time,bindings_time,memory_usage"
+        )?;
+
+        let metrics_guard = self.metrics.lock().unwrap();
+        let metrics = metrics_guard.as_slice();
+        for metric in metrics {
+            writeln!(
+                writer,
+                "{},{},{},{},{},{},{},{},{},{},{},{}",
+                metric.file,
+                metric.bytes,
+                metric.locs,
+                metric.number_of_contracts,
+                metric.total_inheritance_count,
+                metric.max_inheritance_count,
+                metric.cst_height,
+                metric.number_of_nodes,
+                metric.number_of_refs,
+                metric.parsing_time,
+                metric.bindings_time,
+                metric.memory_usage
+            )?;
+        }
+        Ok(())
     }
 }
