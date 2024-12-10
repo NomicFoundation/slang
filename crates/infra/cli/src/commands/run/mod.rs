@@ -26,7 +26,7 @@ enum BinaryName {
     /// Runs the Solidity parser against source files from the Sanctuary repositories.
     #[clap(name = "solidity_testing_sanctuary")]
     SolidityTestingSanctuary,
-    /// Runs compatability tests between our language definition and 'solc' actual output.
+    /// Runs compatibility tests between our language definition and 'solc' actual output.
     #[clap(name = "solidity_testing_solc")]
     SolidityTestingSolc,
 }
