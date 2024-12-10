@@ -59,6 +59,11 @@ where
             ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
 
             ParserResult::NoMatch(no_match) => {
+                // Parse leading trivia (see #1172 for details). One could argue that trivia should be parsed
+                // just once, and returned in the `NoMatch` structure. However, in rules like (This | That),
+                // trivia is already parsed twice, one for each branch. And there's a good reason: each branch might
+                // accept different trivia, so it's not clear what the combination of the two rules should return in a
+                // NoMatch. Therefore, we just parse it again. Note that trivia is anyway cached by the parser (#1119).
                 let mut trivia_nodes = if let ParserResult::Match(matched) =
                     Lexer::leading_trivia(parser, &mut stream)
                 {
