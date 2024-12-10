@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ newB: = mload(0x80)                                                              │ 0..19
+
+Errors: # 1 total
+  - >
+    Error: Expected OpenParen.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulStatement/var_assign_colon_and_equals/input.sol:1:5]
+       │
+     1 │ newB: = mload(0x80)
+       │     ────────┬───────  
+       │             ╰───────── Error occurred here.
+    ───╯
+
+Tree:
+  - (YulStatement): # "newB: = mload(0x80)\n" (0..20)
+      - (variant꞉ YulExpression) ► (variant꞉ YulPath): # "newB" (0..4)
+          - (item꞉ YulIdentifier): "newB" # (0..4)
+      - (UNRECOGNIZED): ": = mload(0x80)\n" # (4..20)

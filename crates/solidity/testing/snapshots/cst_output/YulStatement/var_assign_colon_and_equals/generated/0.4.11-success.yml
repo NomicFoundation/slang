@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ newB: = mload(0x80)                                                              │ 0..19
+
+Errors: []
+
+Tree:
+  - (YulStatement) ► (variant꞉ YulVariableAssignmentStatement): # "newB: = mload(0x80)\n" (0..20)
+      - (variables꞉ YulPaths): # "newB" (0..4)
+          - (item꞉ YulPath): # "newB" (0..4)
+              - (item꞉ YulIdentifier): "newB" # (0..4)
+      - (assignment꞉ YulAssignmentOperator) ► (variant꞉ YulColonAndEqual): # ": =" (4..7)
+          - (colon꞉ Colon): ":" # (4..5)
+          - (leading_trivia꞉ Whitespace): " " # (5..6)
+          - (equal꞉ Equal): "=" # (6..7)
+      - (expression꞉ YulExpression) ► (variant꞉ YulFunctionCallExpression): # " mload(0x80)\n" (7..20)
+          - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction): # " mload" (7..13)
+              - (leading_trivia꞉ Whitespace): " " # (7..8)
+              - (variant꞉ YulMLoadKeyword): "mload" # (8..13)
+          - (open_paren꞉ OpenParen): "(" # (13..14)
+          - (arguments꞉ YulArguments): # "0x80" (14..18)
+              - (item꞉ YulExpression) ► (variant꞉ YulLiteral) ► (variant꞉ YulHexLiteral): "0x80" # (14..18)
+          - (close_paren꞉ CloseParen): ")" # (18..19)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)
