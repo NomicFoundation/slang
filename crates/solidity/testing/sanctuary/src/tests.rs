@@ -68,18 +68,24 @@ pub(crate) fn select_tests<'d>(
 
 fn height(edges: &[Edge]) -> usize {
     let mut max = 0;
-    for c in edges {
-        max = max.max(height(c.children()) + 1);
+    for edge in edges {
+        max = max.max(height(edge.children()) + 1);
     }
     max
 }
 
-fn nodes(edges: &[Edge]) -> usize {
-    let mut max = 1;
-    for c in edges {
-        max += nodes(c.children());
+fn nodes(edges: &[Edge]) -> (usize, usize) {
+    let mut nodes_count = 1;
+    let mut without_trivia = 1;
+
+    for edge in edges {
+        let (partial_nodes, partial_without_trivia) = nodes(edge.children());
+        nodes_count += partial_nodes;
+        if !edge.is_trivia() {
+            without_trivia += partial_without_trivia;
+        }
     }
-    max
+    (nodes_count, without_trivia)
 }
 
 fn locs(source: &str) -> usize {
@@ -188,7 +194,9 @@ pub fn run_test(
             .unwrap_or(0);
 
         metric.cst_height = height(output.tree().children());
-        metric.number_of_nodes = nodes(output.tree().children());
+        let (nodes, without_trivia) = nodes(output.tree().children());
+        metric.number_of_nodes = nodes;
+        metric.without_trivia = without_trivia;
     }
 
     if check_bindings {

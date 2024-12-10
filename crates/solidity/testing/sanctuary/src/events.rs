@@ -29,6 +29,7 @@ pub(crate) struct Metric {
     pub max_inheritance_count: usize,
     pub cst_height: usize,
     pub number_of_nodes: usize,
+    pub without_trivia: usize,
     pub number_of_refs: usize,
     pub parsing_time: u128,
     pub bindings_time: u128,
@@ -46,6 +47,7 @@ impl Metric {
             max_inheritance_count: 0,
             cst_height: 0,
             number_of_nodes: 0,
+            without_trivia: 0,
             number_of_refs: 0,
             parsing_time: 0,
             bindings_time: 0,
@@ -190,7 +192,7 @@ impl Events {
         };
         writeln!(
             writer,
-            "file,bytes,locs,number_of_contracts,total_inheritance_count,max_inheritance_count,cst_height,number_of_nodes,number_of_refs,parsing_time,bindings_time,memory_usage"
+            "file,bytes,locs,number_of_contracts,total_inheritance_count,max_inheritance_count,cst_height,number_of_nodes,without_trivia,number_of_refs,parsing_time,bindings_time,memory_usage"
         )?;
 
         let metrics_guard = self.metrics.lock().unwrap();
@@ -198,7 +200,7 @@ impl Events {
         for metric in metrics {
             writeln!(
                 writer,
-                "{},{},{},{},{},{},{},{},{},{},{},{}",
+                "{},{},{},{},{},{},{},{},{},{},{},{},{}",
                 metric.file,
                 metric.bytes,
                 metric.locs,
@@ -207,6 +209,7 @@ impl Events {
                 metric.max_inheritance_count,
                 metric.cst_height,
                 metric.number_of_nodes,
+                metric.without_trivia,
                 metric.number_of_refs,
                 metric.parsing_time,
                 metric.bindings_time,
