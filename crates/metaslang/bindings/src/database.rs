@@ -55,16 +55,8 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
                 },
             )
             .expect("Should never be cancelled");
-        }
-    }
 
-    pub fn dump(&mut self) {
-        for path in self.database.iter_partial_paths() {
-            let path = &self.database[path];
-            println!(
-                "{path}",
-                path = path.display(&self.owner.stack_graph, &mut self.partials)
-            );
+            self.database.ensure_both_directions(&mut self.partials);
         }
     }
 
@@ -107,6 +99,9 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
             return definitions.clone();
         }
 
+        // Save `PartialPaths` state to restore allocations after the resolution
+        // is complete
+        let checkpoint = self.partials.save_checkpoint();
         let mut reference_paths = Vec::new();
 
         if allow_recursion {
@@ -174,6 +169,9 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
                 results.push(end_node);
             }
         }
+
+        // Reclaim arena memory used for this resolution
+        self.partials.restore_checkpoint(checkpoint);
         results
     }
 
@@ -298,7 +296,8 @@ impl<'a, KT: KindTypes + 'static>
     }
 
     fn get_joining_candidate_degree(&self, path: &PartialPath) -> Degree {
-        // TODO: this may not be correct for extension scopes
+        // TODO: this may not be correct for extension scopes, but it's only
+        // used for cycle detection
         self.database
             .database
             .get_incoming_path_degree(path.end_node)
