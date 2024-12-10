@@ -5,6 +5,7 @@ use indicatif::ProgressBar;
 use infra_utils::github::GitHub;
 
 use crate::reporting::Reporter;
+use crate::results::ShardResults;
 
 const MAX_PRINTED_FAILURES: u64 = 1000;
 
@@ -132,5 +133,16 @@ impl Events {
 
     pub fn trace(&self, message: impl AsRef<str>) {
         self.reporter.println(message);
+    }
+
+    pub fn to_results(&self) -> ShardResults {
+        ShardResults {
+            source_files: self.source_files.position(),
+            passed: self.passed.position(),
+            failed: self.failed.position(),
+            incompatible: self.incompatible.position(),
+            not_found: self.not_found.position(),
+            elapsed: self.all_directories.elapsed(),
+        }
     }
 }
