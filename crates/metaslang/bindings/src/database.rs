@@ -90,7 +90,7 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
             let current_parents = self.resolve_parents(current);
             for current_parent in &current_parents {
                 if !results.contains_key(current_parent) {
-                    resolve_queue.push(current_parent.clone());
+                    resolve_queue.push(*current_parent);
                 }
             }
             results.insert(current, current_parents);
@@ -104,7 +104,7 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
         allow_recursion: bool,
     ) -> Vec<GraphHandle> {
         if let Some(definitions) = self.references.get(&reference) {
-            return definitions.to_vec();
+            return definitions.clone();
         }
 
         let mut reference_paths = Vec::new();
@@ -133,7 +133,7 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
 
             ForwardPartialPathStitcher::find_all_complete_partial_paths(
                 &mut DatabaseCandidatesExtended::new(
-                    &self.owner,
+                    self.owner,
                     &mut self.partials,
                     &mut database,
                     extensions,
@@ -194,8 +194,7 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
                 && self
                     .owner
                     .get_file(handle)
-                    .map(|file| file.is_user())
-                    .unwrap_or_default()
+                    .is_some_and(|file| file.is_user())
             {
                 let definition_handles = self.resolve_internal(handle, true);
                 self.references.insert(handle, definition_handles);
@@ -287,9 +286,9 @@ impl<'a, KT: KindTypes + 'static>
                     precedence: 0,
                 };
                 let mut partial_path =
-                    PartialPath::from_node(&self.owner.stack_graph, &mut self.partials, node);
+                    PartialPath::from_node(&self.owner.stack_graph, self.partials, node);
                 partial_path
-                    .append(&self.owner.stack_graph, &mut self.partials, edge)
+                    .append(&self.owner.stack_graph, self.partials, edge)
                     .expect("path can be extended");
                 let edge_handle = self.database.edges.len();
                 self.database.edges.push(partial_path);
@@ -308,6 +307,6 @@ impl<'a, KT: KindTypes + 'static>
     fn get_graph_partials_and_db(
         &mut self,
     ) -> (&StackGraph, &mut PartialPaths, &ExtendedDatabase<'a>) {
-        (&self.owner.stack_graph, self.partials, &self.database)
+        (&self.owner.stack_graph, self.partials, self.database)
     }
 }
