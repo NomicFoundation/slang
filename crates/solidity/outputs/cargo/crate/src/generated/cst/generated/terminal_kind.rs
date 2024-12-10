@@ -296,6 +296,8 @@ pub enum TerminalKind {
     YulInvalidKeyword,
     YulIsKeyword,
     YulIsZeroKeyword,
+    YulJumpKeyword,
+    YulJumpiKeyword,
     YulKeccak256Keyword,
     YulLeaveKeyword,
     YulLetKeyword,

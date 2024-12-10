@@ -772,6 +772,8 @@ inherit .lexical_scope
 @type_name [TypeName @mapping [MappingType]] {
   let @type_name.type_ref = @mapping.lexical_scope
   let @type_name.output = @mapping.output
+  let @type_name.pop_begin = @mapping.pop_begin
+  let @type_name.pop_end = @mapping.pop_end
 }
 
 
@@ -850,6 +852,12 @@ inherit .lexical_scope
 
   ; resolve the value type through our scope
   edge @value_type.type_ref -> @mapping.lexical_scope
+
+  ; We use the value_type's definition path as our own because it's needed when
+  ; a mapping is the target of a `using` directive. It's not correct, but we
+  ; don't have the analog referencing path either.
+  let @mapping.pop_begin = @value_type.pop_begin
+  let @mapping.pop_end = @value_type.pop_end
 }
 
 
@@ -2270,9 +2278,11 @@ inherit .lexical_scope
   edge @path.lexical_scope -> @expr.lexical_scope
 }
 
-@path [YulPath @name [YulIdentifier]] {
+@path [YulPath] {
   node @path.lexical_scope
+}
 
+@path [YulPath @name [YulIdentifier]] {
   node ref
   attr (ref) node_reference = @name
 

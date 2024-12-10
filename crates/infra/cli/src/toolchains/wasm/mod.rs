@@ -7,7 +7,7 @@ use infra_utils::commands::Command;
 use infra_utils::paths::{FileWalker, PathExtensions};
 use strum_macros::EnumIter;
 
-pub const WASM_TARGET: &str = "wasm32-wasi";
+pub const WASM_TARGET: &str = "wasm32-wasip1";
 
 #[derive(Clone, Copy, EnumIter)]
 pub enum WasmPackage {
@@ -76,12 +76,11 @@ impl WasmPackage {
         let temp_dir_handle = tempfile::tempdir()?;
         let temp_dir = temp_dir_handle.path();
 
-        {
-            let wasm_crate = self.wasm_crate();
-            let jco_config = CargoWorkspace::locate_source_crate(wasm_crate)?
-                .join(self.runtime_dir())
-                .join("generated/config.json");
+        let wasm_crate = self.wasm_crate();
+        let runtime_dir = CargoWorkspace::locate_source_crate(wasm_crate)?.join(self.runtime_dir());
+        let jco_config = runtime_dir.join("generated/config.json");
 
+        {
             Command::new("node")
                 .args([
                     "submodules/jco/src/jco.js",
@@ -92,7 +91,22 @@ impl WasmPackage {
                 .property("--out-dir", temp_dir.unwrap_str())
                 .property("--base64-cutoff", "0") // disable inlining core Wasm binaries as base64
                 .flag("--no-namespaced-exports") // disable namespaced exports for typescript compatibility
+                .flag("--no-typescript") // disable generating .d.ts files - we'll do this with `jco types` below
                 .flag("--valid-lifting-optimization") // optimize component binary validations assuming all lifted values are valid
+                .run();
+        }
+
+        {
+            let wit_directory = runtime_dir.join("interface/generated");
+            Command::new("node")
+                .args([
+                    "submodules/jco/src/jco.js",
+                    "types",
+                    wit_directory.unwrap_str(),
+                ])
+                .property("--name", format!("{wasm_crate}.component"))
+                .property("--configuration-file", jco_config.unwrap_str())
+                .property("--out-dir", temp_dir.unwrap_str())
                 .run();
         }
 

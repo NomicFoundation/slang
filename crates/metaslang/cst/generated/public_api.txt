@@ -2,17 +2,23 @@
 
 pub mod metaslang_cst
 pub mod metaslang_cst::cursor
+pub struct metaslang_cst::cursor::AncestorsIterator<T: metaslang_cst::kinds::KindTypes>
+impl<T: metaslang_cst::kinds::KindTypes> core::iter::traits::iterator::Iterator for metaslang_cst::cursor::AncestorsIterator<T>
+pub type metaslang_cst::cursor::AncestorsIterator<T>::Item = alloc::rc::Rc<metaslang_cst::nodes::NonterminalNode<T>>
+pub fn metaslang_cst::cursor::AncestorsIterator<T>::next(&mut self) -> core::option::Option<Self::Item>
 pub struct metaslang_cst::cursor::Cursor<T: metaslang_cst::kinds::KindTypes>
 impl<T: metaslang_cst::kinds::KindTypes + 'static> metaslang_cst::cursor::Cursor<T>
 pub fn metaslang_cst::cursor::Cursor<T>::query(self, queries: alloc::vec::Vec<metaslang_cst::query::Query<T>>) -> metaslang_cst::query::QueryMatchIterator<T>
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::cursor::Cursor<T>
-pub fn metaslang_cst::cursor::Cursor<T>::ancestors(&self) -> impl core::iter::traits::iterator::Iterator<Item = alloc::rc::Rc<metaslang_cst::nodes::NonterminalNode<T>>>
+pub fn metaslang_cst::cursor::Cursor<T>::ancestors(&self) -> metaslang_cst::cursor::AncestorsIterator<T>
+pub fn metaslang_cst::cursor::Cursor<T>::children(&self) -> &[metaslang_cst::nodes::Edge<T>]
 pub fn metaslang_cst::cursor::Cursor<T>::complete(&mut self)
 pub fn metaslang_cst::cursor::Cursor<T>::depth(&self) -> usize
+pub fn metaslang_cst::cursor::Cursor<T>::descendants(&self) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_first_child(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_last_child(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_next(&mut self) -> bool
-pub fn metaslang_cst::cursor::Cursor<T>::go_to_next_non_descendent(&mut self) -> bool
+pub fn metaslang_cst::cursor::Cursor<T>::go_to_next_non_descendant(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_next_nonterminal(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_next_nonterminal_with_kind(&mut self, kind: <T as metaslang_cst::kinds::KindTypes>::NonterminalKind) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_next_nonterminal_with_kinds(&mut self, kinds: &[<T as metaslang_cst::kinds::KindTypes>::NonterminalKind]) -> bool
@@ -27,12 +33,11 @@ pub fn metaslang_cst::cursor::Cursor<T>::go_to_previous_sibling(&mut self) -> bo
 pub fn metaslang_cst::cursor::Cursor<T>::is_completed(&self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::label(&self) -> core::option::Option<<T as metaslang_cst::kinds::KindTypes>::EdgeLabel>
 pub fn metaslang_cst::cursor::Cursor<T>::node(&self) -> metaslang_cst::nodes::Node<T>
+pub fn metaslang_cst::cursor::Cursor<T>::remaining_nodes(&self) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::cursor::Cursor<T>::reset(&mut self)
 pub fn metaslang_cst::cursor::Cursor<T>::spawn(&self) -> Self
 pub fn metaslang_cst::cursor::Cursor<T>::text_offset(&self) -> metaslang_cst::text_index::TextIndex
 pub fn metaslang_cst::cursor::Cursor<T>::text_range(&self) -> metaslang_cst::text_index::TextRange
-impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::cursor::Cursor<T>
-pub fn metaslang_cst::cursor::Cursor<T>::with_edges(self) -> metaslang_cst::cursor::CursorWithEdges<T>
 impl<T: core::clone::Clone + metaslang_cst::kinds::KindTypes> core::clone::Clone for metaslang_cst::cursor::Cursor<T>
 pub fn metaslang_cst::cursor::Cursor<T>::clone(&self) -> metaslang_cst::cursor::Cursor<T>
 impl<T: core::cmp::Eq + metaslang_cst::kinds::KindTypes> core::cmp::Eq for metaslang_cst::cursor::Cursor<T>
@@ -40,25 +45,11 @@ impl<T: core::cmp::PartialEq + metaslang_cst::kinds::KindTypes> core::cmp::Parti
 pub fn metaslang_cst::cursor::Cursor<T>::eq(&self, other: &metaslang_cst::cursor::Cursor<T>) -> bool
 impl<T: core::fmt::Debug + metaslang_cst::kinds::KindTypes> core::fmt::Debug for metaslang_cst::cursor::Cursor<T>
 pub fn metaslang_cst::cursor::Cursor<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl<T: metaslang_cst::kinds::KindTypes> core::convert::From<metaslang_cst::cursor::Cursor<T>> for metaslang_cst::cursor::CursorWithEdges<T>
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::from(cursor: metaslang_cst::cursor::Cursor<T>) -> Self
-impl<T: metaslang_cst::kinds::KindTypes> core::iter::traits::iterator::Iterator for metaslang_cst::cursor::Cursor<T>
-pub type metaslang_cst::cursor::Cursor<T>::Item = metaslang_cst::nodes::Node<T>
-pub fn metaslang_cst::cursor::Cursor<T>::next(&mut self) -> core::option::Option<Self::Item>
 impl<T: metaslang_cst::kinds::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::cursor::Cursor<T>
-pub struct metaslang_cst::cursor::CursorWithEdges<T: metaslang_cst::kinds::KindTypes>
-impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::cursor::CursorWithEdges<T>
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::without_edges(self) -> metaslang_cst::cursor::Cursor<T>
-impl<T: metaslang_cst::kinds::KindTypes> core::convert::From<metaslang_cst::cursor::Cursor<T>> for metaslang_cst::cursor::CursorWithEdges<T>
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::from(cursor: metaslang_cst::cursor::Cursor<T>) -> Self
-impl<T: metaslang_cst::kinds::KindTypes> core::iter::traits::iterator::Iterator for metaslang_cst::cursor::CursorWithEdges<T>
-pub type metaslang_cst::cursor::CursorWithEdges<T>::Item = metaslang_cst::nodes::Edge<T>
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::next(&mut self) -> core::option::Option<Self::Item>
-impl<T: metaslang_cst::kinds::KindTypes> core::ops::deref::Deref for metaslang_cst::cursor::CursorWithEdges<T>
-pub type metaslang_cst::cursor::CursorWithEdges<T>::Target = metaslang_cst::cursor::Cursor<T>
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::deref(&self) -> &Self::Target
-impl<T: metaslang_cst::kinds::KindTypes> core::ops::deref::DerefMut for metaslang_cst::cursor::CursorWithEdges<T>
-pub fn metaslang_cst::cursor::CursorWithEdges<T>::deref_mut(&mut self) -> &mut Self::Target
+pub struct metaslang_cst::cursor::CursorIterator<T: metaslang_cst::kinds::KindTypes>
+impl<T: metaslang_cst::kinds::KindTypes> core::iter::traits::iterator::Iterator for metaslang_cst::cursor::CursorIterator<T>
+pub type metaslang_cst::cursor::CursorIterator<T>::Item = metaslang_cst::nodes::Edge<T>
+pub fn metaslang_cst::cursor::CursorIterator<T>::next(&mut self) -> core::option::Option<Self::Item>
 pub mod metaslang_cst::kinds
 pub trait metaslang_cst::kinds::BaseKind: core::marker::Sized + core::fmt::Debug + core::marker::Copy + core::cmp::PartialEq + core::cmp::Eq + serde::ser::Serialize
 pub fn metaslang_cst::kinds::BaseKind::as_static_str(&self) -> &'static str
@@ -87,8 +78,8 @@ pub fn metaslang_cst::nodes::Node<T>::as_terminal(&self) -> core::option::Option
 pub fn metaslang_cst::nodes::Node<T>::as_terminal_with_kind(&self, kind: <T as metaslang_cst::kinds::KindTypes>::TerminalKind) -> core::option::Option<&alloc::rc::Rc<metaslang_cst::nodes::TerminalNode<T>>>
 pub fn metaslang_cst::nodes::Node<T>::as_terminal_with_kinds(&self, kinds: &[<T as metaslang_cst::kinds::KindTypes>::TerminalKind]) -> core::option::Option<&alloc::rc::Rc<metaslang_cst::nodes::TerminalNode<T>>>
 pub fn metaslang_cst::nodes::Node<T>::children(&self) -> &[metaslang_cst::nodes::Edge<T>]
-pub fn metaslang_cst::nodes::Node<T>::cursor_with_offset(&self, text_offset: metaslang_cst::text_index::TextIndex) -> metaslang_cst::cursor::Cursor<T>
-pub fn metaslang_cst::nodes::Node<T>::edges(&self) -> &[metaslang_cst::nodes::Edge<T>]
+pub fn metaslang_cst::nodes::Node<T>::cursor_with_offset(self, text_offset: metaslang_cst::text_index::TextIndex) -> metaslang_cst::cursor::Cursor<T>
+pub fn metaslang_cst::nodes::Node<T>::descendants(self) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::nodes::Node<T>::id(&self) -> usize
 pub fn metaslang_cst::nodes::Node<T>::into_nonterminal(self) -> core::option::Option<alloc::rc::Rc<metaslang_cst::nodes::NonterminalNode<T>>>
 pub fn metaslang_cst::nodes::Node<T>::into_terminal(self) -> core::option::Option<alloc::rc::Rc<metaslang_cst::nodes::TerminalNode<T>>>
@@ -100,7 +91,6 @@ pub fn metaslang_cst::nodes::Node<T>::is_terminal_with_kind(&self, kind: <T as m
 pub fn metaslang_cst::nodes::Node<T>::is_terminal_with_kinds(&self, kinds: &[<T as metaslang_cst::kinds::KindTypes>::TerminalKind]) -> bool
 pub fn metaslang_cst::nodes::Node<T>::is_trivia(&self) -> bool
 pub fn metaslang_cst::nodes::Node<T>::kind(&self) -> metaslang_cst::nodes::NodeKind<T>
-pub fn metaslang_cst::nodes::Node<T>::labeled_edges(&self) -> impl core::iter::traits::iterator::Iterator<Item = &metaslang_cst::nodes::Edge<T>>
 pub fn metaslang_cst::nodes::Node<T>::nonterminal(kind: <T as metaslang_cst::kinds::KindTypes>::NonterminalKind, children: alloc::vec::Vec<metaslang_cst::nodes::Edge<T>>) -> Self
 pub fn metaslang_cst::nodes::Node<T>::terminal(kind: <T as metaslang_cst::kinds::KindTypes>::TerminalKind, text: alloc::string::String) -> Self
 pub fn metaslang_cst::nodes::Node<T>::text_len(&self) -> metaslang_cst::text_index::TextIndex
@@ -158,7 +148,9 @@ pub metaslang_cst::nodes::NonterminalNode::children: alloc::vec::Vec<metaslang_c
 pub metaslang_cst::nodes::NonterminalNode::kind: <T as metaslang_cst::kinds::KindTypes>::NonterminalKind
 pub metaslang_cst::nodes::NonterminalNode::text_len: metaslang_cst::text_index::TextIndex
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::nodes::NonterminalNode<T>
+pub fn metaslang_cst::nodes::NonterminalNode<T>::children(self: &alloc::rc::Rc<Self>) -> &[metaslang_cst::nodes::Edge<T>]
 pub fn metaslang_cst::nodes::NonterminalNode<T>::cursor_with_offset(self: alloc::rc::Rc<Self>, text_offset: metaslang_cst::text_index::TextIndex) -> metaslang_cst::cursor::Cursor<T>
+pub fn metaslang_cst::nodes::NonterminalNode<T>::descendants(self: alloc::rc::Rc<Self>) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::nodes::NonterminalNode<T>::id(self: &alloc::rc::Rc<Self>) -> usize
 pub fn metaslang_cst::nodes::NonterminalNode<T>::unparse(&self) -> alloc::string::String
 impl<T: core::clone::Clone + metaslang_cst::kinds::KindTypes> core::clone::Clone for metaslang_cst::nodes::NonterminalNode<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::clone::Clone
@@ -175,6 +167,9 @@ pub struct metaslang_cst::nodes::TerminalNode<T: metaslang_cst::kinds::KindTypes
 pub metaslang_cst::nodes::TerminalNode::kind: <T as metaslang_cst::kinds::KindTypes>::TerminalKind
 pub metaslang_cst::nodes::TerminalNode::text: alloc::string::String
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::nodes::TerminalNode<T>
+pub fn metaslang_cst::nodes::TerminalNode<T>::children(self: &alloc::rc::Rc<Self>) -> &[metaslang_cst::nodes::Edge<T>]
+pub fn metaslang_cst::nodes::TerminalNode<T>::cursor_with_offset(self: alloc::rc::Rc<Self>, text_offset: metaslang_cst::text_index::TextIndex) -> metaslang_cst::cursor::Cursor<T>
+pub fn metaslang_cst::nodes::TerminalNode<T>::descendants(self: alloc::rc::Rc<Self>) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::nodes::TerminalNode<T>::id(self: &alloc::rc::Rc<Self>) -> usize
 pub fn metaslang_cst::nodes::TerminalNode<T>::unparse(&self) -> alloc::string::String
 impl<T: core::clone::Clone + metaslang_cst::kinds::KindTypes> core::clone::Clone for metaslang_cst::nodes::TerminalNode<T> where <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::clone::Clone

@@ -505,6 +505,8 @@ interface cst {
                 %yul-invalid-keyword,
                 %yul-is-keyword,
                 %yul-is-zero-keyword,
+                %yul-jump-keyword,
+                %yul-jumpi-keyword,
                 %yul-keccak256-keyword,
                 %yul-leave-keyword,
                 %yul-let-keyword,
@@ -771,8 +773,11 @@ interface cst {
         /// Returns the length of the text span this node covers.
         text-length: func() -> text-index;
 
-        /// Returns the list of child edges connected to this node.
+        /// Returns the list of child edges directly connected to this node.
         children: func() -> list<edge>;
+        /// Returns an iterator over all descendants of the current node in pre-order traversal.
+        descendants: func() -> cursor-iterator;
+
         /// Converts the node and its children back to source code text.
         unparse: func() -> string;
         /// Converts the node to a JSON representation for debugging.
@@ -794,8 +799,11 @@ interface cst {
         /// Returns the length of the text span this node covers.
         text-length: func() -> text-index;
 
-        /// Returns the list of child edges connected to this node.
+        /// Returns the list of child edges directly connected to this node.
         children: func() -> list<edge>;
+        /// Returns an iterator over all descendants of this node in pre-order traversal.
+        descendants: func() -> cursor-iterator;
+
         /// Converts the node back to source code text.
         unparse: func() -> string;
         /// Converts the node to a JSON representation for debugging.
@@ -840,13 +848,19 @@ interface cst {
         /// Returns the current depth in the tree (i.e. number of ancestors).
         depth: func() -> u32;
 
-        /// Returns the list of ancestor nodes up to the root.
-        ancestors: func() -> list<nonterminal-node>;
+        /// Returns the list of child edges directly connected to this node.
+        children: func() -> list<edge>;
+        /// Returns an iterator over all descendants of the current node in pre-order traversal.
+        descendants: func() -> cursor-iterator;
+        /// Returns an iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
+        remaining-nodes: func() -> cursor-iterator;
+        /// Returns an iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
+        ancestors: func() -> ancestors-iterator;
 
         /// Moves to the next node in pre-order traversal.
         go-to-next: func() -> bool;
         /// Moves to the next node that isn't a descendant of the current node.
-        go-to-next-non-descendent: func() -> bool;
+        go-to-next-non-descendant: func() -> bool;
         /// Moves to the previous node in pre-order traversal.
         go-to-previous: func() -> bool;
 
@@ -884,6 +898,18 @@ interface cst {
         query: func(queries: list<borrow<query>>) -> query-match-iterator;
     }
 
+    /// Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
+    resource cursor-iterator {
+        /// Returns the next edge in the iteration, or `undefined` if there are no more edges.
+        next: func() -> option<edge>;
+    }
+
+    /// Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
+    resource ancestors-iterator {
+        /// Returns the next nonterminal node in the iteration, or `undefined` if there are no more nodes.
+        next: func() -> option<nonterminal-node>;
+    }
+
     /// Represents a tree query for pattern matching in the syntax tree.
     resource query {
         /// Parses a query string into a query object.
@@ -911,19 +937,28 @@ interface cst {
 
     /// Iterator over query matches in the syntax tree.
     resource query-match-iterator {
-        /// Returns the next match or None if there are no more matches.
+        /// Returns the next match or `undefined` if there are no more matches.
         next: func() -> option<query-match>;
     }
 
     /// Represents a position in the source text, with indices for different unicode encodings of the source.
     record text-index {
         /// Byte offset in UTF-8 encoding.
+        /// This is useful when working with languages like Rust that use UTF-8.
         utf8: u32,
-        /// Character offset in UTF-16 encoding.
+        /// Byte offset in UTF-8 encoding.
+        /// This is useful when working with languages like JavaScript that use UTF-16.
         utf16: u32,
         /// Line number (0-based).
+        /// Lines are separated by:
+        ///
+        /// - carriage return `\r`.
+        /// - newline `\n`.
+        /// - line separator `\u2028`.
+        /// - paragraph separator `\u2029`.
         line: u32,
         /// Column number (0-based).
+        /// Columns are counted in [unicode scalar values](https://www.unicode.org/glossary/#unicode_scalar_value).
         column: u32,
     }
 

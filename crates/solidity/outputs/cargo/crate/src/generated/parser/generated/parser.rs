@@ -5981,6 +5981,20 @@ impl Parser {
                 TerminalKind::YulIsZeroKeyword,
             );
             choice.consider(input, result)?;
+            if !self.version_is_at_least_0_5_0 {
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TerminalKind::YulJumpKeyword,
+                );
+                choice.consider(input, result)?;
+            }
+            if !self.version_is_at_least_0_5_0 {
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
+                    input,
+                    TerminalKind::YulJumpiKeyword,
+                );
+                choice.consider(input, result)?;
+            }
             let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                 input,
                 TerminalKind::YulLog0Keyword,
@@ -12257,6 +12271,22 @@ impl Lexer for Parser {
                             }
                             None => KeywordScan::Absent,
                         },
+                        Some('j') => {
+                            if scan_chars!(input, 'u', 'm', 'p') {
+                                match input.next() {
+                                    Some('i') => {
+                                        KeywordScan::Reserved(TerminalKind::YulJumpiKeyword)
+                                    }
+                                    Some(_) => {
+                                        input.undo();
+                                        KeywordScan::Reserved(TerminalKind::YulJumpKeyword)
+                                    }
+                                    None => KeywordScan::Reserved(TerminalKind::YulJumpKeyword),
+                                }
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
                         Some('k') => {
                             if scan_chars!(input, 'e', 'c', 'c', 'a', 'k', '2', '5', '6') {
                                 if self.version_is_at_least_0_4_12 {
