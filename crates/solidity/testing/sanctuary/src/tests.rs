@@ -88,8 +88,48 @@ fn nodes(edges: &[Edge]) -> (usize, usize) {
     (nodes_count, without_trivia)
 }
 
+fn hierarchy_height() -> usize {
+    0
+}
+
 fn locs(source: &str) -> usize {
     source.split('\n').count()
+}
+
+struct HeritageGraph {
+    graph: HashMap<String, Vec<String>>,
+}
+
+impl HeritageGraph {
+    pub(crate) fn new() -> HeritageGraph {
+        HeritageGraph {
+            graph: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn add_contract(&mut self, name: String) {
+        self.graph.entry(name).or_insert(vec![]);
+    }
+
+    pub(crate) fn add_link(&mut self, name: String, parent: String) {
+        self.graph.entry(name).and_modify(|v| v.push(parent));
+    }
+
+    pub(crate) fn number_of_contracts(&self) -> usize {
+        self.graph.keys().count()
+    }
+
+    pub(crate) fn heritage_count(&self) -> usize {
+        self.graph.values().map(|v| v.len()).sum()
+    }
+
+    pub(crate) fn heritage_avg(&self) -> usize {
+        self.graph
+            .keys()
+            .map(|k| self.graph.get(k).unwrap().len())
+            .max()
+            .unwrap_or(0)
+    }
 }
 
 pub fn run_test(
@@ -168,30 +208,30 @@ pub fn run_test(
         metric.bytes = source.len();
         metric.locs = locs(&source);
 
-        let query = Query::parse("[ContractDefinition]").unwrap();
-        let query_match = output.create_tree_cursor().query(vec![query]);
-        metric.number_of_contracts = query_match.count();
-
-        let query = Query::parse("[ContractDefinition @contract_name name:[Identifier] inheritance:[InheritanceSpecifier types:[InheritanceTypes @types (item:[InheritanceType])+]]]").unwrap();
-        let query_match = output.create_tree_cursor().query(vec![query]);
-        let mut graph: HashMap<String, Vec<String>> = HashMap::new();
+        let mut graph = HeritageGraph::new();
+        let query1 = Query::parse("[ContractDefinition @contract_name name:[Identifier]]").unwrap();
+        let query2 =
+            Query::parse("[InterfaceDefinition @contract_name name:[Identifier]]").unwrap();
+        let query3 = Query::parse("[ContractDefinition @contract_name name:[Identifier] inheritance:[InheritanceSpecifier types:[InheritanceTypes @types (item:[InheritanceType])+]]]").unwrap();
+        let query4 = Query::parse("[InterfaceDefinition @contract_name name:[Identifier] inheritance:[InheritanceSpecifier types:[InheritanceTypes @types (item:[InheritanceType])+]]]").unwrap();
+        let query_match = output
+            .create_tree_cursor()
+            .query(vec![query1, query2, query3, query4]);
 
         for q in query_match {
             let (_, mut it) = q.capture("contract_name").unwrap();
             let contract_name = it.next().unwrap().node().unparse();
-            let (_, mut it) = q.capture("types").unwrap();
-            let is_type = it.next().unwrap().node().unparse();
-            graph
-                .entry(contract_name)
-                .and_modify(|v| v.push(is_type.clone()))
-                .or_insert(vec![is_type]);
+            if let Some((_, mut it)) = q.capture("types") {
+                let is_type = it.next().unwrap().node().unparse();
+                graph.add_link(contract_name, is_type);
+            } else {
+                graph.add_contract(contract_name);
+            }
         }
-        metric.total_inheritance_count = graph.values().count();
-        metric.max_inheritance_count = graph
-            .keys()
-            .map(|k| graph.get(k).unwrap().len())
-            .max()
-            .unwrap_or(0);
+
+        metric.number_of_contracts = graph.number_of_contracts();
+        metric.total_inheritance_count = graph.heritage_count();
+        metric.max_inheritance_count = graph.heritage_avg();
 
         metric.cst_height = height(output.tree().children());
         let (nodes, without_trivia) = nodes(output.tree().children());
