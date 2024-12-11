@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "returndatasize := 0\n" # (0..20)
+  - (YulVariableAssignmentStatement) ► (UNRECOGNIZED): "returndatasize := 0\n" # (0..20)

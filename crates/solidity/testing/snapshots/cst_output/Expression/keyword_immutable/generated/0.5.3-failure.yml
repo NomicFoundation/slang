@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "immutable" # (0..9)
+  - (Expression) ► (UNRECOGNIZED): "immutable" # (0..9)

@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "macro" # (0..5)
+  - (Expression) ► (UNRECOGNIZED): "macro" # (0..5)
