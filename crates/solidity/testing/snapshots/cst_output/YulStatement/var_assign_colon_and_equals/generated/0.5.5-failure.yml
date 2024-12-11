@@ -1,20 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ newB: = mload(0x80)                                                              │ 0..19
+  1  │ // Makes sure that `newB:` is not parsed as a label here, and that we continue parsing to get a whole assignment statement. │ 0..123
+  2  │ newB: = mload(0x80)                                                                                                         │ 124..143
 
 Errors: # 1 total
   - >
     Error: Expected OpenParen.
-       ╭─[crates/solidity/testing/snapshots/cst_output/YulStatement/var_assign_colon_and_equals/input.sol:1:5]
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulStatement/var_assign_colon_and_equals/input.sol:2:5]
        │
-     1 │ newB: = mload(0x80)
+     2 │ newB: = mload(0x80)
        │     ────────┬───────  
        │             ╰───────── Error occurred here.
     ───╯
 
 Tree:
-  - (YulStatement): # "newB: = mload(0x80)\n" (0..20)
-      - (variant꞉ YulExpression) ► (variant꞉ YulPath): # "newB" (0..4)
-          - (item꞉ YulIdentifier): "newB" # (0..4)
-      - (UNRECOGNIZED): ": = mload(0x80)\n" # (4..20)
+  - (YulStatement): # "// Makes sure that `newB:` is not parsed as a labe..." (0..144)
+      - (variant꞉ YulExpression) ► (variant꞉ YulPath): # "// Makes sure that `newB:` is not parsed as a labe..." (0..128)
+          - (leading_trivia꞉ SingleLineComment): "// Makes sure that `newB:` is not parsed as a labe..." # (0..123)
+          - (leading_trivia꞉ EndOfLine): "\n" # (123..124)
+          - (item꞉ YulIdentifier): "newB" # (124..128)
+      - (UNRECOGNIZED): ": = mload(0x80)\n" # (128..144)

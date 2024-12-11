@@ -1,25 +1,28 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ newB: = mload(0x80)                                                              │ 0..19
+  1  │ // Makes sure that `newB:` is not parsed as a label here, and that we continue parsing to get a whole assignment statement. │ 0..123
+  2  │ newB: = mload(0x80)                                                                                                         │ 124..143
 
 Errors: []
 
 Tree:
-  - (YulStatement) ► (variant꞉ YulVariableAssignmentStatement): # "newB: = mload(0x80)\n" (0..20)
-      - (variables꞉ YulPaths): # "newB" (0..4)
-          - (item꞉ YulPath): # "newB" (0..4)
-              - (item꞉ YulIdentifier): "newB" # (0..4)
-      - (assignment꞉ YulAssignmentOperator) ► (variant꞉ YulColonAndEqual): # ": =" (4..7)
-          - (colon꞉ Colon): ":" # (4..5)
-          - (leading_trivia꞉ Whitespace): " " # (5..6)
-          - (equal꞉ Equal): "=" # (6..7)
-      - (expression꞉ YulExpression) ► (variant꞉ YulFunctionCallExpression): # " mload(0x80)\n" (7..20)
-          - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction): # " mload" (7..13)
-              - (leading_trivia꞉ Whitespace): " " # (7..8)
-              - (variant꞉ YulMLoadKeyword): "mload" # (8..13)
-          - (open_paren꞉ OpenParen): "(" # (13..14)
-          - (arguments꞉ YulArguments): # "0x80" (14..18)
-              - (item꞉ YulExpression) ► (variant꞉ YulLiteral) ► (variant꞉ YulHexLiteral): "0x80" # (14..18)
-          - (close_paren꞉ CloseParen): ")" # (18..19)
-          - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)
+  - (YulStatement) ► (variant꞉ YulVariableAssignmentStatement): # "// Makes sure that `newB:` is not parsed as a labe..." (0..144)
+      - (variables꞉ YulPaths): # "// Makes sure that `newB:` is not parsed as a labe..." (0..128)
+          - (item꞉ YulPath): # "// Makes sure that `newB:` is not parsed as a labe..." (0..128)
+              - (leading_trivia꞉ SingleLineComment): "// Makes sure that `newB:` is not parsed as a labe..." # (0..123)
+              - (leading_trivia꞉ EndOfLine): "\n" # (123..124)
+              - (item꞉ YulIdentifier): "newB" # (124..128)
+      - (assignment꞉ YulAssignmentOperator) ► (variant꞉ YulColonAndEqual): # ": =" (128..131)
+          - (colon꞉ Colon): ":" # (128..129)
+          - (leading_trivia꞉ Whitespace): " " # (129..130)
+          - (equal꞉ Equal): "=" # (130..131)
+      - (expression꞉ YulExpression) ► (variant꞉ YulFunctionCallExpression): # " mload(0x80)\n" (131..144)
+          - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction): # " mload" (131..137)
+              - (leading_trivia꞉ Whitespace): " " # (131..132)
+              - (variant꞉ YulMLoadKeyword): "mload" # (132..137)
+          - (open_paren꞉ OpenParen): "(" # (137..138)
+          - (arguments꞉ YulArguments): # "0x80" (138..142)
+              - (item꞉ YulExpression) ► (variant꞉ YulLiteral) ► (variant꞉ YulHexLiteral): "0x80" # (138..142)
+          - (close_paren꞉ CloseParen): ")" # (142..143)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (143..144)
