@@ -1,7 +1,5 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-#[allow(clippy::doc_markdown)]
-#[allow(clippy::doc_link_with_quotes)]
 #[repr(u8)]
 #[derive(
     Debug,
@@ -19,6 +17,8 @@
     Copy,
 )]
 #[allow(clippy::upper_case_acronyms)]
+#[allow(clippy::doc_markdown)]
+#[allow(clippy::doc_link_with_quotes)]
 pub enum TerminalKind {
     // Built-in:
     UNRECOGNIZED,
