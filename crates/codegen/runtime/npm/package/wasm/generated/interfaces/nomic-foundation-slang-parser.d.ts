@@ -14,6 +14,9 @@ export { NonterminalKind };
 import type { TextRange } from "./nomic-foundation-slang-cst.js";
 export { TextRange };
 
+/**
+ * Contains information about where the error occurred and what went wrong.
+ */
 export class ParseError {
   /**
    * Returns the text range where the error occurred in the source code.
@@ -25,6 +28,10 @@ export class ParseError {
   get message(): string;
 }
 
+/**
+ * The output of a parsing operation.
+ * Contains the resulting syntax tree and any errors encountered during parsing.
+ */
 export class ParseOutput {
   /**
    * Returns the root node of the parsed syntax tree.
@@ -48,6 +55,10 @@ export class ParseOutput {
   createTreeCursor(): Cursor;
 }
 
+/**
+ * A parser instance that can parse source code into syntax trees.
+ * Each parser is configured for a specific language version and grammar.
+ */
 export class Parser {
   /**
    * Returns the root nonterminal kind for this parser's grammar.
