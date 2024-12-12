@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ foo_label:                                                                       │ 0..10
+
+Errors: # 1 total
+  - >
+    Error: Expected OpenParen.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulStatement/label/input.sol:1:10]
+       │
+     1 │ foo_label:
+       │          ─┬  
+       │           ╰── Error occurred here.
+    ───╯
+
+Tree:
+  - (YulStatement): # "foo_label:\n" (0..11)
+      - (variant꞉ YulExpression) ► (variant꞉ YulPath): # "foo_label" (0..9)
+          - (item꞉ YulIdentifier): "foo_label" # (0..9)
+      - (UNRECOGNIZED): ":\n" # (9..11)
