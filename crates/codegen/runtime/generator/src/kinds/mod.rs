@@ -1,15 +1,51 @@
 use std::collections::BTreeSet;
+use std::rc::Rc;
 
+use codegen_ebnf::{EbnfModel, PlainWriter};
 use codegen_language_definition::model::{self, Identifier, Item, PredefinedLabel};
 use serde::Serialize;
 use strum::VariantNames;
 
+#[derive(Serialize, Ord, Eq, PartialEq, PartialOrd)]
+pub struct Kind {
+    id: Identifier,
+    documentation: String,
+}
+
+struct EbnfBuilder {
+    model: EbnfModel,
+    writer: PlainWriter,
+}
+
+impl EbnfBuilder {
+    fn new(language: &Rc<model::Language>) -> EbnfBuilder {
+        EbnfBuilder {
+            model: EbnfModel::build(language),
+            writer: PlainWriter::default(),
+        }
+    }
+
+    fn build(&mut self, name: &Identifier) -> Kind {
+        if self.model.serialize(name, &mut self.writer).is_ok() {
+            Kind {
+                id: name.clone(),
+                documentation: self.writer.flush(),
+            }
+        } else {
+            Kind {
+                id: name.clone(),
+                documentation: String::new(),
+            }
+        }
+    }
+}
+
 #[derive(Serialize)]
 pub struct KindsModel {
     /// Defines the `NonterminalKind` enum variants.
-    nonterminal_kinds: BTreeSet<Identifier>,
+    nonterminal_kinds: BTreeSet<Kind>,
     /// Defines the `TerminalKind` enum variants.
-    terminal_kinds: BTreeSet<Identifier>,
+    terminal_kinds: BTreeSet<Kind>,
     /// Defines `TerminalKind::is_trivia` method.
     trivia_scanner_names: BTreeSet<Identifier>,
     /// Defines `EdgeLabel` enum variants.
@@ -37,32 +73,34 @@ impl Default for KindsModel {
 }
 
 impl KindsModel {
-    pub fn from_language(language: &model::Language) -> Self {
+    pub fn from_language(language: &Rc<model::Language>) -> Self {
+        let mut kind_builder = EbnfBuilder::new(language);
+
         let terminal_kinds = language
             .items()
             .filter(|item| item.is_terminal() && !matches!(item, Item::Fragment { .. }))
-            .map(|item| item.name().clone())
+            .map(|item| kind_builder.build(item.name()))
             .collect();
 
         let mut nonterminal_kinds = BTreeSet::default();
         for item in language.items() {
             match item {
                 Item::Struct { item } => {
-                    nonterminal_kinds.insert(item.name.clone());
+                    nonterminal_kinds.insert(kind_builder.build(&item.name));
                 }
                 Item::Enum { item } => {
-                    nonterminal_kinds.insert(item.name.clone());
+                    nonterminal_kinds.insert(kind_builder.build(&item.name));
                 }
                 Item::Repeated { item } => {
-                    nonterminal_kinds.insert(item.name.clone());
+                    nonterminal_kinds.insert(kind_builder.build(&item.name));
                 }
                 Item::Separated { item } => {
-                    nonterminal_kinds.insert(item.name.clone());
+                    nonterminal_kinds.insert(kind_builder.build(&item.name));
                 }
                 Item::Precedence { item } => {
-                    nonterminal_kinds.insert(item.name.clone());
+                    nonterminal_kinds.insert(kind_builder.build(&item.name));
                     for op in &item.precedence_expressions {
-                        nonterminal_kinds.insert(op.name.clone());
+                        nonterminal_kinds.insert(kind_builder.build(&op.name));
                     }
                 }
                 // Terminals

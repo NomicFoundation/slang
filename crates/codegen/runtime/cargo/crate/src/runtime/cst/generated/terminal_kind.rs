@@ -17,6 +17,8 @@
     Copy,
 )]
 #[allow(clippy::upper_case_acronyms)]
+#[allow(clippy::doc_markdown)]
+#[allow(clippy::doc_link_with_quotes)]
 pub enum TerminalKind {
     // Built-in:
     UNRECOGNIZED,
