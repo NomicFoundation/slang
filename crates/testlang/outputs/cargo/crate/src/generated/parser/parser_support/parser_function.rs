@@ -59,16 +59,44 @@ where
             ParserResult::PrattOperatorMatch(..) => unreachable!("PrattOperatorMatch is internal"),
 
             ParserResult::NoMatch(no_match) => {
+                // Parse leading trivia (see #1172 for details). One could argue that trivia should be parsed
+                // just once, and returned in the `NoMatch` structure. However, in rules like (This | That),
+                // trivia is already parsed twice, one for each branch. And there's a good reason: each branch might
+                // accept different trivia, so it's not clear what the combination of the two rules should return in a
+                // NoMatch. Therefore, we just parse it again. Note that trivia is anyway cached by the parser (#1119).
+                let mut trivia_nodes = if let ParserResult::Match(matched) =
+                    Lexer::leading_trivia(parser, &mut stream)
+                {
+                    matched.nodes
+                } else {
+                    vec![]
+                };
+
+                let mut start = TextIndex::ZERO;
+                for edge in &trivia_nodes {
+                    if let Node::Terminal(terminal) = &edge.node {
+                        if terminal.kind.is_valid() {
+                            start.advance_str(terminal.text.as_str());
+                        }
+                    }
+                }
+                let input = &input[start.utf8..];
                 let kind = if input.is_empty() {
                     TerminalKind::MISSING
                 } else {
                     TerminalKind::UNRECOGNIZED
                 };
-
+                let node = Node::terminal(kind, input.to_string());
+                let tree = if no_match.kind.is_none() || start.utf8 == 0 {
+                    node
+                } else {
+                    trivia_nodes.push(Edge::anonymous(node));
+                    Node::nonterminal(no_match.kind.unwrap(), trivia_nodes)
+                };
                 ParseOutput {
-                    parse_tree: Node::terminal(kind, input.to_string()),
+                    parse_tree: tree,
                     errors: vec![ParseError::new(
-                        TextIndex::ZERO..input.into(),
+                        start..start + input.into(),
                         no_match.expected_terminals,
                     )],
                 }

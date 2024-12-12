@@ -87,9 +87,9 @@ impl Parser {
                 }] if node.kind == NonterminalKind::AdditionExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
-                _ => ParserResult::no_match(vec![]),
+                _ => ParserResult::default(),
             },
-            _ => ParserResult::no_match(vec![]),
+            _ => ParserResult::default(),
         }
     }
 
@@ -237,9 +237,9 @@ impl Parser {
                 }] if node.kind == NonterminalKind::MemberAccessExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
-                _ => ParserResult::no_match(vec![]),
+                _ => ParserResult::default(),
             },
-            _ => ParserResult::no_match(vec![]),
+            _ => ParserResult::default(),
         }
     }
 
@@ -260,9 +260,9 @@ impl Parser {
                 }] if node.kind == NonterminalKind::NegationExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
-                _ => ParserResult::no_match(vec![]),
+                _ => ParserResult::default(),
             },
-            _ => ParserResult::no_match(vec![]),
+            _ => ParserResult::default(),
         }
     }
 
