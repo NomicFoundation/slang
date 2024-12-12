@@ -1618,9 +1618,9 @@ pub enum NonterminalKind {
     ///              | (* variant: *) YulLeaveStatement (* Introduced in 0.6.0 *)
     ///              | (* variant: *) YulBreakStatement
     ///              | (* variant: *) YulContinueStatement
+    ///              | (* variant: *) YulVariableAssignmentStatement
     ///              | (* variant: *) YulLabel (* Deprecated in 0.5.0 *)
     ///              | (* variant: *) YulVariableDeclarationStatement
-    ///              | (* variant: *) YulVariableAssignmentStatement
     ///              | (* variant: *) YulExpression;
     /// ```
     YulStatement,
