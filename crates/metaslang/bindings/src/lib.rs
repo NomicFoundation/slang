@@ -22,6 +22,7 @@ type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
 type CursorID = usize;
 
+pub use database::DatabaseResolver;
 pub use location::{BindingLocation, BuiltInLocation, UserFileLocation};
 
 pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
