@@ -8,3 +8,8 @@ use crate::bindings_output::runner::run;
 fn custom_types() -> Result<()> {
     run("errors", "custom_types")
 }
+
+#[test]
+fn selector() -> Result<()> {
+    run("errors", "selector")
+}

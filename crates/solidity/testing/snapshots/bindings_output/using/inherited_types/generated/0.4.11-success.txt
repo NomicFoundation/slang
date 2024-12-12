@@ -1,0 +1,52 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IPool {
+    │           ──┬──  
+    │             ╰──── def: 1
+  2 │     struct Info {
+    │            ──┬─  
+    │              ╰─── def: 2
+  3 │         uint256 amount;
+    │                 ───┬──  
+    │                    ╰──── def: 3
+    │ 
+  6 │ library Math {
+    │         ──┬─  
+    │           ╰─── def: 4
+  7 │     function nop(uint256 x) public {}
+    │              ─┬─         ┬  
+    │               ╰───────────── def: 5
+    │                          │  
+    │                          ╰── def: 6
+    │ 
+  9 │ contract Test is IPool {
+    │          ──┬─    ──┬──  
+    │            ╰──────────── def: 7
+    │                    │    
+    │                    ╰──── ref: 1
+ 10 │     mapping(uint256 => Info) infos;
+    │                        ──┬─  ──┬──  
+    │                          ╰────────── ref: 2
+    │                                │    
+    │                                ╰──── def: 8
+ 11 │     using Math for uint256;
+    │           ──┬─  
+    │             ╰─── ref: 4
+ 12 │     function test(uint256 x) public {
+    │              ──┬─         ┬  
+    │                ╰───────────── def: 9
+    │                           │  
+    │                           ╰── def: 10
+ 13 │         infos[x].amount.nop();
+    │         ──┬── ┬  ───┬── ─┬─  
+    │           ╰────────────────── ref: 8
+    │               │     │    │   
+    │               ╰────────────── ref: 10
+    │                     │    │   
+    │                     ╰──────── ref: 3
+    │                          │   
+    │                          ╰─── ref: 5
+────╯

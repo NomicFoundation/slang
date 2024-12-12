@@ -1,45 +1,32 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 References and definitions: 
-    ╭─[input.sol:1:1]
-    │
-  1 │ library Lib {
-    │         ─┬─  
-    │          ╰─── def: 1
-  2 │     struct Counter {
-    │            ───┬───  
-    │               ╰───── def: 2
-  3 │         uint value;
-    │              ──┬──  
-    │                ╰──── def: 3
-    │ 
-  6 │     function increment(Counter memory _counter) public {}
-    │              ────┬──── ───┬───        ────┬───  
-    │                  ╰────────────────────────────── def: 4
-    │                           │               │     
-    │                           ╰───────────────────── ref: 2
-    │                                           │     
-    │                                           ╰───── def: 5
-    │ 
-  9 │ contract Test {
-    │          ──┬─  
-    │            ╰─── def: 6
- 10 │     using Lib for *;
-    │           ─┬─  
-    │            ╰─── ref: 1
-    │ 
- 12 │     function test(Lib.Counter memory c) public {
-    │              ──┬─ ─┬─ ───┬───        ┬  
-    │                ╰──────────────────────── def: 7
-    │                    │     │           │  
-    │                    ╰──────────────────── ref: 1
-    │                          │           │  
-    │                          ╰────────────── ref: 2
-    │                                      │  
-    │                                      ╰── def: 8
- 13 │         c.increment();
-    │         ┬ ────┬────  
-    │         ╰──────────── ref: 8
-    │               │      
-    │               ╰────── ref: 4
-────╯
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── def: 1
+ 2 │     function increment(uint x) public {}
+   │              ────┬────      ┬  
+   │                  ╰───────────── def: 2
+   │                             │  
+   │                             ╰── def: 3
+   │ 
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 4
+ 6 │     using Lib for *;
+   │           ─┬─  
+   │            ╰─── ref: 1
+   │ 
+ 8 │     function test(uint x) public {
+   │              ──┬─      ┬  
+   │                ╰────────── def: 5
+   │                        │  
+   │                        ╰── def: 6
+ 9 │         x.increment();
+   │         ┬ ────┬────  
+   │         ╰──────────── ref: 6
+   │               │      
+   │               ╰────── ref: 2
+───╯

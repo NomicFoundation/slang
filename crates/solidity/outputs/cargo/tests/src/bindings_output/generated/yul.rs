@@ -10,13 +10,33 @@ fn conditionals() -> Result<()> {
 }
 
 #[test]
+fn constant_access_from_functions() -> Result<()> {
+    run("yul", "constant_access_from_functions")
+}
+
+#[test]
 fn functions() -> Result<()> {
     run("yul", "functions")
 }
 
 #[test]
+fn identifiers_with_dots() -> Result<()> {
+    run("yul", "identifiers_with_dots")
+}
+
+#[test]
 fn loops() -> Result<()> {
     run("yul", "loops")
+}
+
+#[test]
+fn slot_offset_members() -> Result<()> {
+    run("yul", "slot_offset_members")
+}
+
+#[test]
+fn slot_suffix() -> Result<()> {
+    run("yul", "slot_suffix")
 }
 
 #[test]

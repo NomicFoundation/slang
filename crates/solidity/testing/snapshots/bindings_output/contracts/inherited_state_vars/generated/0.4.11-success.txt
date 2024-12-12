@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     int in_base;
+    │         ───┬───  
+    │            ╰───── def: 2
+    │ 
+  4 │ contract Middle is Base {
+    │          ───┬──    ──┬─  
+    │             ╰──────────── def: 3
+    │                      │   
+    │                      ╰─── ref: 1
+  5 │     int in_middle;
+    │         ────┬────  
+    │             ╰────── def: 4
+    │ 
+  7 │ contract Test is Middle {
+    │          ──┬─    ───┬──  
+    │            ╰───────────── def: 5
+    │                     │    
+    │                     ╰──── ref: 3
+  8 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 6
+  9 │         in_base;
+    │         ───┬───  
+    │            ╰───── ref: 2
+ 10 │         in_middle;
+    │         ────┬────  
+    │             ╰────── ref: 4
+────╯
