@@ -7,8 +7,8 @@ export namespace NomicFoundationSlangParser {
 }
 import type { Cursor } from "./nomic-foundation-slang-cst.js";
 export { Cursor };
-import type { Node } from "./nomic-foundation-slang-cst.js";
-export { Node };
+import type { NonterminalNode } from "./nomic-foundation-slang-cst.js";
+export { NonterminalNode };
 import type { NonterminalKind } from "./nomic-foundation-slang-cst.js";
 export { NonterminalKind };
 import type { TextRange } from "./nomic-foundation-slang-cst.js";
@@ -30,7 +30,7 @@ export class ParseOutput {
    * Returns the root node of the parsed syntax tree.
    * Even if there are parsing errors, a partial tree will still be available.
    */
-  get tree(): Node;
+  get tree(): NonterminalNode;
   /**
    * Returns a list of all parsing errors encountered.
    * An empty list indicates successful parsing with no errors.
