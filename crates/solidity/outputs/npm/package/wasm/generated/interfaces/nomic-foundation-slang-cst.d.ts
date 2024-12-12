@@ -13,7 +13,7 @@ export namespace NomicFoundationSlangCst {
   export { TerminalKind };
   export { EdgeLabel };
   export { Node };
-  export { NodeVariant };
+  export { NodeType };
 }
 /**
  * Represents different kinds of nonterminal nodes in the syntax tree.
@@ -5964,7 +5964,7 @@ export declare enum EdgeLabel {
  * The super type of all nodes in a tree.
  */
 export type Node = NonterminalNode | TerminalNode;
-export enum NodeVariant {
+export enum NodeType {
   NonterminalNode = "NonterminalNode",
   TerminalNode = "TerminalNode",
 }
@@ -6055,6 +6055,9 @@ export interface TextRange {
   end: TextIndex;
 }
 
+/**
+ * Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
+ */
 export class AncestorsIterator {
   [Symbol.iterator](): Iterator<NonterminalNode>;
   /**
@@ -6063,6 +6066,9 @@ export class AncestorsIterator {
   next(): NonterminalNode | undefined;
 }
 
+/**
+ * Provides navigation and traversal capabilities over the syntax tree.
+ */
 export class Cursor {
   /**
    * Resets the cursor to its initial position.
@@ -6190,6 +6196,9 @@ export class Cursor {
   query(queries: Query[]): QueryMatchIterator;
 }
 
+/**
+ * Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
+ */
 export class CursorIterator {
   [Symbol.iterator](): Iterator<Edge>;
   /**
@@ -6198,13 +6207,34 @@ export class CursorIterator {
   next(): Edge | undefined;
 }
 
+/**
+ * Represents a non-terminal node in the syntax tree.
+ * These nodes can have child nodes and represent language constructs.
+ */
 export class NonterminalNode {
-  readonly nodeVariant = NodeVariant.NonterminalNode;
+  /**
+   * The variant of `NodeType` that corresponds to this class.
+   */
+  readonly type = NodeType.NonterminalNode;
 
+  /**
+   * Coerce this variant to a `NonterminalNode`, or `undefined` if this is not the correct type.
+   */
   asNonterminalNode(): this;
+
+  /**
+   * Return `true` if this object is an instance of `NonterminalNode`.
+   */
   isNonterminalNode(): this is NonterminalNode;
 
+  /**
+   * Coerce this variant to a `TerminalNode`, or `undefined` if this is not the correct type.
+   */
   asTerminalNode(): undefined;
+
+  /**
+   * Return `true` if this object is an instance of `TerminalNode`.
+   */
   isTerminalNode(): false;
 
   /**
@@ -6243,6 +6273,9 @@ export class NonterminalNode {
   createCursor(textOffset: TextIndex): Cursor;
 }
 
+/**
+ * Represents a tree query for pattern matching in the syntax tree.
+ */
 export class Query {
   /**
    * Parses a query string into a query object.
@@ -6251,6 +6284,9 @@ export class Query {
   static parse(text: string): Query;
 }
 
+/**
+ * Iterator over query matches in the syntax tree.
+ */
 export class QueryMatchIterator {
   [Symbol.iterator](): Iterator<QueryMatch>;
   /**
@@ -6259,6 +6295,9 @@ export class QueryMatchIterator {
   next(): QueryMatch | undefined;
 }
 
+/**
+ * Useful extension methods for working with terminals and terminal kinds.
+ */
 export class TerminalKindExtensions {
   /**
    * Returns true if the terminal is a trivia token. i.e. whitespace, comments, etc...
@@ -6270,13 +6309,34 @@ export class TerminalKindExtensions {
   static isValid(kind: TerminalKind): boolean;
 }
 
+/**
+ * Represents a terminal node in the syntax tree.
+ * These are leaf nodes that represent actual tokens from the source code.
+ */
 export class TerminalNode {
-  readonly nodeVariant = NodeVariant.TerminalNode;
+  /**
+   * The variant of `NodeType` that corresponds to this class.
+   */
+  readonly type = NodeType.TerminalNode;
 
+  /**
+   * Coerce this variant to a `TerminalNode`, or `undefined` if this is not the correct type.
+   */
   asTerminalNode(): this;
+
+  /**
+   * Return `true` if this object is an instance of `TerminalNode`.
+   */
   isTerminalNode(): this is TerminalNode;
 
+  /**
+   * Coerce this variant to a `NonterminalNode`, or `undefined` if this is not the correct type.
+   */
   asNonterminalNode(): undefined;
+
+  /**
+   * Return `true` if this object is an instance of `NonterminalNode`.
+   */
   isNonterminalNode(): false;
 
   /**

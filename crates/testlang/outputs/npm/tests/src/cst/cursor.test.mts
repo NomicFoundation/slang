@@ -2,7 +2,7 @@ import { Parser } from "@slang-private/testlang-npm-package/parser";
 import {
   Cursor,
   EdgeLabel,
-  NodeVariant,
+  NodeType,
   assertIsNonterminalNode,
   assertIsTerminalNode,
   NonterminalKind,
@@ -112,10 +112,7 @@ test("access the node using its name", () => {
       const node = innerCursor.node;
       const label = innerCursor.label;
 
-      if (
-        node.nodeVariant == NodeVariant.TerminalNode &&
-        (label == EdgeLabel.OpenBracket || label == EdgeLabel.CloseBracket)
-      ) {
+      if (node.type == NodeType.TerminalNode && (label == EdgeLabel.OpenBracket || label == EdgeLabel.CloseBracket)) {
         names.push(node.unparse());
       }
     }
