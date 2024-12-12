@@ -1,5 +1,29 @@
 # changelog
 
+## 0.19.0
+
+### Minor Changes
+
+- [#1156](https://github.com/NomicFoundation/slang/pull/1156) [`3a82f06`](https://github.com/NomicFoundation/slang/commit/3a82f0640efb1c32f895f721429c8e4fe0d18d85) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `node.descendants()` and `cursor.descendants()` APIs to allow iterating over all descendants of the current node in pre-order traversal.
+
+- [#1156](https://github.com/NomicFoundation/slang/pull/1156) [`3a82f06`](https://github.com/NomicFoundation/slang/commit/3a82f0640efb1c32f895f721429c8e4fe0d18d85) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - fix `node.children()` and `parseOutput.errors()` return types
+
+- [#1156](https://github.com/NomicFoundation/slang/pull/1156) [`3a82f06`](https://github.com/NomicFoundation/slang/commit/3a82f0640efb1c32f895f721429c8e4fe0d18d85) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `cursor.ancestors()` API to allow iterating over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
+
+- [#1156](https://github.com/NomicFoundation/slang/pull/1156) [`3a82f06`](https://github.com/NomicFoundation/slang/commit/3a82f0640efb1c32f895f721429c8e4fe0d18d85) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `cursor.remainingNodes()` API to allow iterating over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
+
+- [#1172](https://github.com/NomicFoundation/slang/pull/1172) [`6102886`](https://github.com/NomicFoundation/slang/commit/61028868a879977145fcf98ae378572c6e9b9e4d) Thanks [@beta-ziliani](https://github.com/beta-ziliani)! - Improved error recovery, where leading trivia are always parsed and included before an erroneous terminal.
+
+### Patch Changes
+
+- [#1134](https://github.com/NomicFoundation/slang/pull/1134) [`cfc62f2`](https://github.com/NomicFoundation/slang/commit/cfc62f29e2bd505f702544d98b68316b20bbe37e) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - remove `YulPathComponent` and just use `YulIdentifier` instead.
+
+- [#1138](https://github.com/NomicFoundation/slang/pull/1138) [`44a706f`](https://github.com/NomicFoundation/slang/commit/44a706f6c59d021d24a10e14528498d2336d7145) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `ThisKeyword` and `SuperKeyword` to the grammar, instead of parsing them as identifiers.
+
+- [#1134](https://github.com/NomicFoundation/slang/pull/1134) [`cfc62f2`](https://github.com/NomicFoundation/slang/commit/cfc62f29e2bd505f702544d98b68316b20bbe37e) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - unreserve `AddressKeyword`, and let it be used for `MemberAccessExpression`, `StructMember`, etc...
+
+- [#1154](https://github.com/NomicFoundation/slang/pull/1154) [`7b9b478`](https://github.com/NomicFoundation/slang/commit/7b9b478d8b356b247d7f0aa6ae274de0b9d32da2) Thanks [@beta-ziliani](https://github.com/beta-ziliani)! - Adding support for deprecated keywords `jump` and `jumpi`
+
 ## 0.18.3
 
 ### Patch Changes
