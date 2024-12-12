@@ -368,9 +368,8 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
     }
 
     pub fn get_file(&self) -> FileDescriptor {
-        self.owner.stack_graph[self.handle]
-            .file()
-            .map(|file| FileDescriptor::from(self.owner.stack_graph[file].name()))
+        self.owner
+            .get_file(self.handle)
             .expect("Definition does not have a valid file descriptor")
     }
 
@@ -384,17 +383,11 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
     }
 
     pub(crate) fn get_extension_scope(&self) -> Option<GraphHandle> {
-        self.owner
-            .definitions_info
-            .get(&self.handle)
-            .and_then(|info| info.extension_scope)
+        self.owner.get_extension_scope(self.handle)
     }
 
     pub(crate) fn inherit_extensions(&self) -> bool {
-        self.owner
-            .definitions_info
-            .get(&self.handle)
-            .map_or(false, |info| info.inherit_extensions)
+        self.owner.inherits_extensions(self.handle)
     }
 }
 
@@ -468,9 +461,8 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     }
 
     pub fn get_file(&self) -> FileDescriptor {
-        self.owner.stack_graph[self.handle]
-            .file()
-            .map(|file| FileDescriptor::from(self.owner.stack_graph[file].name()))
+        self.owner
+            .get_file(self.handle)
             .expect("Reference does not have a valid file descriptor")
     }
 
