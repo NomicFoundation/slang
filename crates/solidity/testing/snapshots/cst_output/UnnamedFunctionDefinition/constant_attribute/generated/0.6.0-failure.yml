@@ -7,13 +7,15 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected end of file.
-       ╭─[crates/solidity/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol:1:1]
+       ╭─[crates/solidity/testing/snapshots/cst_output/UnnamedFunctionDefinition/constant_attribute/input.sol:2:1]
        │
-     1 │ ╭─▶ // Split into `view` and `pure` in 0.4.16
-     2 │ ├─▶ function () constant {}
-       │ │                             
-       │ ╰───────────────────────────── Error occurred here.
+     2 │ function () constant {}
+       │ ────────────┬───────────  
+       │             ╰───────────── Error occurred here.
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "// Split into `view` and `pure` in 0.4.16\nfunction..." # (0..66)
+  - (UnnamedFunctionDefinition): # "// Split into `view` and `pure` in 0.4.16\nfunction..." (0..66)
+      - (leading_trivia꞉ SingleLineComment): "// Split into `view` and `pure` in 0.4.16" # (0..41)
+      - (leading_trivia꞉ EndOfLine): "\n" # (41..42)
+      - (UNRECOGNIZED): "function () constant {}\n" # (42..66)

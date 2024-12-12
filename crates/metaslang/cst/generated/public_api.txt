@@ -153,6 +153,8 @@ pub fn metaslang_cst::nodes::NonterminalNode<T>::cursor_with_offset(self: alloc:
 pub fn metaslang_cst::nodes::NonterminalNode<T>::descendants(self: alloc::rc::Rc<Self>) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::nodes::NonterminalNode<T>::id(self: &alloc::rc::Rc<Self>) -> usize
 pub fn metaslang_cst::nodes::NonterminalNode<T>::unparse(&self) -> alloc::string::String
+impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::nodes::NonterminalNode<T>
+pub fn metaslang_cst::nodes::NonterminalNode<T>::new(kind: <T as metaslang_cst::kinds::KindTypes>::NonterminalKind, children: alloc::vec::Vec<metaslang_cst::nodes::Edge<T>>) -> Self
 impl<T: core::clone::Clone + metaslang_cst::kinds::KindTypes> core::clone::Clone for metaslang_cst::nodes::NonterminalNode<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::clone::Clone
 pub fn metaslang_cst::nodes::NonterminalNode<T>::clone(&self) -> metaslang_cst::nodes::NonterminalNode<T>
 impl<T: core::cmp::Eq + metaslang_cst::kinds::KindTypes> core::cmp::Eq for metaslang_cst::nodes::NonterminalNode<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::cmp::Eq
@@ -242,6 +244,7 @@ pub metaslang_cst::text_index::TextIndex::utf8: usize
 impl metaslang_cst::text_index::TextIndex
 pub const metaslang_cst::text_index::TextIndex::ZERO: metaslang_cst::text_index::TextIndex
 pub fn metaslang_cst::text_index::TextIndex::advance(&mut self, c: char, next: core::option::Option<&char>)
+pub fn metaslang_cst::text_index::TextIndex::advance_str(&mut self, text: &str)
 impl core::clone::Clone for metaslang_cst::text_index::TextIndex
 pub fn metaslang_cst::text_index::TextIndex::clone(&self) -> metaslang_cst::text_index::TextIndex
 impl core::cmp::Eq for metaslang_cst::text_index::TextIndex

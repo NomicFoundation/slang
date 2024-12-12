@@ -21,7 +21,7 @@ pub struct ChoiceHelper {
 impl ChoiceHelper {
     pub fn new(input: &mut ParserContext<'_>) -> Self {
         Self {
-            result: ParserResult::no_match(vec![]),
+            result: ParserResult::default(),
             start_position: input.mark(),
             recovered_errors: vec![],
             last_progress: input.position(),

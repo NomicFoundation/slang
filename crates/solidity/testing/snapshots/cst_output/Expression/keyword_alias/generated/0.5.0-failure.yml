@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "alias" # (0..5)
+  - (Expression) ► (UNRECOGNIZED): "alias" # (0..5)
