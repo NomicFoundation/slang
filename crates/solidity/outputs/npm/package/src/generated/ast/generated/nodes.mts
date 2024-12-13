@@ -4936,9 +4936,9 @@ export class YulStatement {
     | YulLeaveStatement
     | YulBreakStatement
     | YulContinueStatement
+    | YulVariableAssignmentStatement
     | YulLabel
     | YulVariableDeclarationStatement
-    | YulVariableAssignmentStatement
     | YulExpression = once(() => {
     const variant = generated.ast.Selectors.choice(this.cst);
 
@@ -4961,12 +4961,12 @@ export class YulStatement {
         return new YulBreakStatement(variant as NonterminalNode);
       case NonterminalKind.YulContinueStatement:
         return new YulContinueStatement(variant as NonterminalNode);
+      case NonterminalKind.YulVariableAssignmentStatement:
+        return new YulVariableAssignmentStatement(variant as NonterminalNode);
       case NonterminalKind.YulLabel:
         return new YulLabel(variant as NonterminalNode);
       case NonterminalKind.YulVariableDeclarationStatement:
         return new YulVariableDeclarationStatement(variant as NonterminalNode);
-      case NonterminalKind.YulVariableAssignmentStatement:
-        return new YulVariableAssignmentStatement(variant as NonterminalNode);
       case NonterminalKind.YulExpression:
         return new YulExpression(variant as NonterminalNode);
 
@@ -4989,9 +4989,9 @@ export class YulStatement {
     | YulLeaveStatement
     | YulBreakStatement
     | YulContinueStatement
+    | YulVariableAssignmentStatement
     | YulLabel
     | YulVariableDeclarationStatement
-    | YulVariableAssignmentStatement
     | YulExpression {
     return this.fetch();
   }

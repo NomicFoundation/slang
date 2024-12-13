@@ -6775,13 +6775,13 @@ impl Parser {
             choice.consider(input, result)?;
             let result = self.yul_continue_statement(input);
             choice.consider(input, result)?;
+            let result = self.yul_variable_assignment_statement(input);
+            choice.consider(input, result)?;
             if !self.version_is_at_least_0_5_0 {
                 let result = self.yul_label(input);
                 choice.consider(input, result)?;
             }
             let result = self.yul_variable_declaration_statement(input);
-            choice.consider(input, result)?;
-            let result = self.yul_variable_assignment_statement(input);
             choice.consider(input, result)?;
             let result = self.yul_expression(input);
             choice.consider(input, result)?;

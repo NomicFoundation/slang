@@ -15,6 +15,8 @@
 )]
 #[derive(Clone, Copy)] 
 #[allow(clippy::upper_case_acronyms)]
+#[allow(clippy::doc_markdown)]
+#[allow(clippy::doc_link_with_quotes)]
 pub enum TerminalKind {
     // Built-in:
     UNRECOGNIZED,
@@ -27,8 +29,10 @@ pub enum TerminalKind {
         Stub3,
     {%- else -%}
         {%- for variant in model.kinds.terminal_kinds -%}
-            {# variant.documentation | indent(prefix = "/// ", first = true, blank = true) #}
-            {{ variant }},
+            /// ```ebnf
+            {{ variant.documentation | indent(prefix = "/// ", first = true, blank = true) }}
+            /// ```
+            {{ variant.id }},
         {%- endfor -%}
     {%- endif -%}
 }
