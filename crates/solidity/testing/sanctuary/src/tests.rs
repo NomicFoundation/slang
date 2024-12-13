@@ -1,20 +1,22 @@
 use std::cmp::min;
+use std::collections::HashMap;
 use std::path::Path;
 use std::sync::Arc;
+use std::time::Instant;
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use metaslang_bindings::PathResolver;
 use semver::Version;
-use slang_solidity::bindings::Bindings;
-use slang_solidity::cst::{Cursor, NonterminalKind, TextIndex, TextRange};
+use slang_solidity::bindings::{self, transform_built_ins_node, Bindings};
+use slang_solidity::cst::{Cursor, Edge, NonterminalKind, Query, TextIndex, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::parser::{ParseOutput, Parser};
-use slang_solidity::{bindings, transform_built_ins_node};
 
+use crate::counting_allocator::CountingAlloc;
 use crate::datasets::{DataSet, SourceFile};
-use crate::events::{Events, TestOutcome};
+use crate::events::{Events, Metric, TestOutcome};
 use crate::ShardingOptions;
 
 pub struct TestSelection<'d> {
@@ -64,7 +66,114 @@ pub(crate) fn select_tests<'d>(
     }
 }
 
-pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool) -> Result<()> {
+fn height(edges: &[Edge]) -> usize {
+    let mut max = 0;
+    for edge in edges {
+        max = max.max(height(edge.children()) + 1);
+    }
+    max
+}
+
+fn nodes(edges: &[Edge]) -> (usize, usize) {
+    let mut nodes_count = 1;
+    let mut without_trivia = 1;
+
+    for edge in edges {
+        let (partial_nodes, partial_without_trivia) = nodes(edge.children());
+        nodes_count += partial_nodes;
+        if !edge.is_trivia() {
+            without_trivia += partial_without_trivia;
+        }
+    }
+    (nodes_count, without_trivia)
+}
+
+fn locs(source: &str) -> usize {
+    source.split('\n').count()
+}
+
+#[derive(Debug)]
+struct HeritageGraphNode {
+    parents: Vec<String>,
+    using_fors: usize,
+}
+struct MetricsGraph {
+    graph: HashMap<String, HeritageGraphNode>,
+}
+
+impl HeritageGraphNode {
+    pub fn new() -> Self {
+        HeritageGraphNode {
+            parents: vec![],
+            using_fors: 0,
+        }
+    }
+
+    pub fn push_parent(&mut self, parent: String) {
+        self.parents.push(parent);
+    }
+
+    pub fn parents(&self) -> &Vec<String> {
+        &self.parents
+    }
+}
+impl MetricsGraph {
+    pub(crate) fn new() -> MetricsGraph {
+        MetricsGraph {
+            graph: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn add_contract(&mut self, name: String) {
+        self.graph.entry(name).or_insert(HeritageGraphNode::new());
+    }
+
+    pub(crate) fn add_link(&mut self, name: String, parent: String) {
+        self.add_contract(parent.clone());
+        self.graph.entry(name).and_modify(|v| v.push_parent(parent));
+    }
+
+    pub(crate) fn add_using_for(&mut self, name: String) {
+        self.graph.entry(name).and_modify(|v| v.using_fors += 1);
+    }
+
+    pub(crate) fn number_of_contracts(&self) -> usize {
+        self.graph.keys().count()
+    }
+
+    pub(crate) fn inheritance_count(&self) -> usize {
+        self.graph.values().map(|v| v.parents().len()).sum()
+    }
+
+    pub(crate) fn number_of_using_fors(&self) -> usize {
+        self.graph.values().map(|v| v.using_fors).sum()
+    }
+
+    fn node_height(&self, name: &String) -> usize {
+        let node = self.graph.get(name).unwrap();
+        let mut height = 0;
+        for parent in node.parents() {
+            let parent_height = self.node_height(parent);
+            height = height.max(parent_height + 1);
+        }
+        height
+    }
+
+    pub(crate) fn inheritance_height(&self) -> usize {
+        self.graph
+            .keys()
+            .map(|contract| self.node_height(contract))
+            .max()
+            .unwrap_or(0)
+    }
+}
+
+pub fn run_test(
+    file: &SourceFile,
+    events: &Events,
+    check_bindings: bool,
+    collect_metrics: bool,
+) -> Result<()> {
     if !file.path.exists() {
         // Index can be out of date:
         events.test(TestOutcome::NotFound);
@@ -103,9 +212,18 @@ pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool) -> Res
         // https://github.com/tintinweb/smart-contract-sanctuary/issues/32
         .replace("&#39;", "\"");
 
+    let mut metric = Metric::new();
+
+    let parsing_time = Instant::now();
     let parser = Parser::create(version.clone())?;
     let output = parser.parse(NonterminalKind::SourceUnit, &source);
-    let source_id = file.path.strip_repo_root()?.unwrap_str();
+    metric.parsing_time = parsing_time.elapsed().as_micros();
+
+    let source_id = file
+        .path
+        .strip_repo_root()
+        .unwrap_or(Path::new("none"))
+        .unwrap_str();
 
     let with_color = true;
 
@@ -120,8 +238,31 @@ pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool) -> Res
         return Ok(());
     }
 
+    if collect_metrics {
+        let file_name = file.path.to_str().unwrap_or("unknown");
+        metric.file = file_name.to_string();
+        metric.bytes = source.len();
+        metric.locs = locs(&source);
+
+        let graph = build_graph(&output);
+
+        metric.number_of_contracts = graph.number_of_contracts();
+        metric.total_inheritance_count = graph.inheritance_count();
+        metric.inheritance_tree_height = graph.inheritance_height();
+        metric.number_of_using_fors = graph.number_of_using_fors();
+
+        metric.cst_height = height(output.tree().children());
+        let (nodes, without_trivia) = nodes(output.tree().children());
+        metric.number_of_nodes = nodes;
+        metric.without_trivia = without_trivia;
+    }
+
     if check_bindings {
-        let unresolved_references = run_bindings_check(&version, source_id, &output)?;
+        CountingAlloc::reset();
+        let bindings_time = Instant::now();
+        let (ref_count, unresolved_references) = run_bindings_check(&version, source_id, &output)?;
+        metric.bindings_time = bindings_time.elapsed().as_micros();
+        metric.memory_usage = CountingAlloc::allocated();
         if !unresolved_references.is_empty() {
             for unresolved in &unresolved_references {
                 let report =
@@ -132,10 +273,48 @@ pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool) -> Res
             events.test(TestOutcome::Failed);
             return Ok(());
         }
+        metric.number_of_refs = ref_count;
+    }
+
+    if collect_metrics {
+        events.register_metric(metric);
     }
 
     events.test(TestOutcome::Passed);
     Ok(())
+}
+
+fn build_graph(output: &ParseOutput) -> MetricsGraph {
+    let mut graph = MetricsGraph::new();
+    let query1 = Query::parse("[ContractDefinition @contract_name name:[Identifier]]").unwrap();
+    let query2 = Query::parse("[InterfaceDefinition @contract_name name:[Identifier]]").unwrap();
+    let query3 = Query::parse("[ContractDefinition @contract_name name:[Identifier] inheritance:[InheritanceSpecifier types:[InheritanceTypes @types (item:[InheritanceType])+]]]").unwrap();
+    let query4 = Query::parse("[InterfaceDefinition @contract_name name:[Identifier] inheritance:[InheritanceSpecifier types:[InheritanceTypes @types (item:[InheritanceType])+]]]").unwrap();
+    let query5 = Query::parse("[ContractDefinition @contract_name name:[Identifier] [ContractMembers item:[ContractMember @using (variant:[UsingDirective])+]]]").unwrap();
+    let query_match = output
+        .create_tree_cursor()
+        .query(vec![query1, query2, query3, query4, query5]);
+
+    for q in query_match {
+        let (_, mut it) = q.capture("contract_name").unwrap();
+        let contract_name = it.next().unwrap().node().unparse();
+        graph.add_contract(contract_name.clone());
+        if let Some((_, mut it)) = q.capture("types") {
+            let is_type = it.next().unwrap().node();
+            let mut is_type = is_type.children().iter().filter(|p| !p.is_trivia());
+            let next = is_type.next().unwrap();
+            let remaining = next
+                .children()
+                .iter()
+                .filter(|n| !n.is_trivia())
+                .collect_vec();
+            assert_eq!(remaining.len(), 1);
+            graph.add_link(contract_name, remaining.first().unwrap().unparse());
+        } else if q.capture("using").is_some() {
+            graph.add_using_for(contract_name);
+        }
+    }
+    graph
 }
 
 fn extract_compiler_version(compiler: &str) -> Option<Version> {
@@ -184,15 +363,17 @@ fn run_bindings_check(
     version: &Version,
     source_id: &str,
     output: &ParseOutput,
-) -> Result<Vec<UnresolvedReference>> {
+) -> Result<(usize, Vec<UnresolvedReference>)> {
     let mut unresolved = Vec::new();
     let bindings = create_bindings(version, source_id, output)?;
+    let mut ref_count: usize = 0;
 
     for reference in bindings.all_references() {
         if reference.get_file().is_system() {
             // skip built-ins
             continue;
         }
+        ref_count += 1;
         // We're not interested in the exact definition a reference resolves
         // to, so we lookup all of them and fail if we find none.
         if reference.definitions().is_empty() {
@@ -201,7 +382,7 @@ fn run_bindings_check(
         }
     }
 
-    Ok(unresolved)
+    Ok((ref_count, unresolved))
 }
 
 fn create_bindings(version: &Version, source_id: &str, output: &ParseOutput) -> Result<Bindings> {

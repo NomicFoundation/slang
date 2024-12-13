@@ -5,6 +5,9 @@ rust-version.workspace = true
 edition.workspace = true
 publish = false
 
+[features]
+mem_profiler = []
+
 [dependencies]
 anyhow = { workspace = true }
 clap = { workspace = true }

@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Base {}
+   │          ──┬─  
+   │            ╰─── def: 1
+   │ 
+ 3 │ contract Test is Base {
+   │          ──┬─    ──┬─  
+   │            ╰─────────── def: 2
+   │                    │   
+   │                    ╰─── ref: 1
+ 4 │     constructor() Base() {
+   │                   ──┬─  
+   │                     ╰─── ref: 1
+───╯

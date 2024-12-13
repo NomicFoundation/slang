@@ -5,8 +5,18 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn binary_operators() -> Result<()> {
+    run("expressions", "binary_operators")
+}
+
+#[test]
 fn call_options() -> Result<()> {
     run("expressions", "call_options")
+}
+
+#[test]
+fn elementary_casting() -> Result<()> {
+    run("expressions", "elementary_casting")
 }
 
 #[test]
@@ -27,6 +37,21 @@ fn funcalls_named_args() -> Result<()> {
 #[test]
 fn funcalls_output() -> Result<()> {
     run("expressions", "funcalls_output")
+}
+
+#[test]
+fn legacy_call_options() -> Result<()> {
+    run("expressions", "legacy_call_options")
+}
+
+#[test]
+fn literal_address() -> Result<()> {
+    run("expressions", "literal_address")
+}
+
+#[test]
+fn literal_integers() -> Result<()> {
+    run("expressions", "literal_integers")
 }
 
 #[test]

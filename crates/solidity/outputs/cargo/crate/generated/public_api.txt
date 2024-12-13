@@ -2,6 +2,7 @@
 
 pub mod slang_solidity
 pub mod slang_solidity::bindings
+pub fn slang_solidity::bindings::add_built_ins(bindings: &mut slang_solidity::bindings::Bindings, version: &semver::Version) -> core::result::Result<(), slang_solidity::parser::ParserInitializationError>
 pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, resolver: alloc::sync::Arc<(dyn metaslang_bindings::PathResolver + core::marker::Sync + core::marker::Send)>) -> slang_solidity::bindings::Bindings
 pub fn slang_solidity::bindings::get_binding_rules() -> &'static str
 pub fn slang_solidity::bindings::get_built_ins(version: &semver::Version) -> &'static str
@@ -930,4 +931,3 @@ pub fn slang_solidity::parser::Parser::parse(&self, kind: slang_solidity::cst::N
 pub fn slang_solidity::parser::Parser::version(&self) -> &semver::Version
 impl core::fmt::Debug for slang_solidity::parser::Parser
 pub fn slang_solidity::parser::Parser::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub fn slang_solidity::transform_built_ins_node(node: &slang_solidity::cst::Node) -> slang_solidity::cst::Node

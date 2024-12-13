@@ -18,3 +18,8 @@ fn params() -> Result<()> {
 fn state_vars() -> Result<()> {
     run("variables", "state_vars")
 }
+
+#[test]
+fn var_declaration() -> Result<()> {
+    run("variables", "var_declaration")
+}
