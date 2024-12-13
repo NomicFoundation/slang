@@ -4,6 +4,7 @@ use std::sync::atomic::Ordering::Relaxed;
 pub struct CountingAlloc;
 
 #[cfg_attr(feature = "mem_profiler", global_allocator)]
+#[allow(dead_code)]
 static COUNTING_ALLOCATOR: CountingAlloc = CountingAlloc;
 
 static ALLOCATED: AtomicUsize = AtomicUsize::new(0);

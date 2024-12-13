@@ -26,8 +26,9 @@ pub(crate) struct Metric {
     pub locs: usize,
     pub number_of_contracts: usize,
     pub total_inheritance_count: usize,
-    pub max_inheritance_count: usize,
+    pub inheritance_tree_height: usize,
     pub cst_height: usize,
+    pub number_of_using_fors: usize,
     pub number_of_nodes: usize,
     pub without_trivia: usize,
     pub number_of_refs: usize,
@@ -44,8 +45,9 @@ impl Metric {
             locs: 0,
             number_of_contracts: 0,
             total_inheritance_count: 0,
-            max_inheritance_count: 0,
+            inheritance_tree_height: 0,
             cst_height: 0,
+            number_of_using_fors: 0,
             number_of_nodes: 0,
             without_trivia: 0,
             number_of_refs: 0,
@@ -192,7 +194,7 @@ impl Events {
         };
         writeln!(
             writer,
-            "file,bytes,locs,number_of_contracts,total_inheritance_count,max_inheritance_count,cst_height,number_of_nodes,without_trivia,number_of_refs,parsing_time,bindings_time,memory_usage"
+            "file,bytes,locs,number_of_contracts,total_inheritance_count,inheritance_tree_height,cst_height,using_fors,number_of_nodes,without_trivia,number_of_refs,parsing_time,bindings_time,memory_usage"
         )?;
 
         let metrics_guard = self.metrics.lock().unwrap();
@@ -200,14 +202,15 @@ impl Events {
         for metric in metrics {
             writeln!(
                 writer,
-                "{},{},{},{},{},{},{},{},{},{},{},{},{}",
+                "{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
                 metric.file,
                 metric.bytes,
                 metric.locs,
                 metric.number_of_contracts,
                 metric.total_inheritance_count,
-                metric.max_inheritance_count,
+                metric.inheritance_tree_height,
                 metric.cst_height,
+                metric.number_of_using_fors,
                 metric.number_of_nodes,
                 metric.without_trivia,
                 metric.number_of_refs,
