@@ -89,7 +89,7 @@ testlang_npm_package = { path = "crates/testlang/outputs/npm/package", version =
 #
 # External
 #
-anyhow = { version = "1.0.93", features = ["backtrace", "std"] }
+anyhow = { version = "1.0.94", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
 # Currently 'bencher' backend API is under development/unstable.
 # They recommend always running with the latest CLI version from 'main' until it is stabilized.
@@ -125,8 +125,8 @@ rayon = { version = "1.10.0" }
 regex = { version = "1.11.1" }
 reqwest = { version = "0.12.9", features = ["blocking"] }
 rustdoc-json = { version = "0.9.3" }
-semver = { version = "1.0.23", features = ["serde"] }
-serde = { version = "1.0.215", features = ["derive", "rc"] }
+semver = { version = "1.0.24", features = ["serde"] }
+serde = { version = "1.0.216", features = ["derive", "rc"] }
 serde_json = { version = "1.0.133", features = ["preserve_order"] }
 similar-asserts = { version = "1.6.0" }
 smallvec = { version = "1.7.0", features = ["union"] }
