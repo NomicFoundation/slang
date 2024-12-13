@@ -132,7 +132,7 @@ fn run_test_command(command: TestCommand) -> Result<()> {
         let value = serde_json::to_string(&results)?;
 
         std::fs::create_dir_all(output_path.parent().unwrap())?;
-        std::fs::write(&output_path, value)?;
+        output_path.write_string(value)?;
         println!("Wrote results to {output_path:?}");
     }
 
@@ -177,7 +177,7 @@ fn run_in_parallel(files: &Vec<SourceFile>, events: &Events, check_bindings: boo
 fn run_show_combined_results_command(command: ShowCombinedResultsCommand) -> Result<()> {
     let ShowCombinedResultsCommand { results_file } = command;
 
-    let contents = String::from_utf8(std::fs::read(results_file)?)?;
+    let contents = results_file.read_to_string()?;
     let all_results: AllResults = serde_json::from_str(&contents)?;
     display_all_results(&all_results);
     Ok(())
