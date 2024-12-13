@@ -9,14 +9,19 @@ Source: >
 Errors: # 1 total
   - >
     Error: Expected ContractKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol:1:1]
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/unicode_in_doc_comments/input.sol:4:1]
        │
-     1 │ ╭─▶ // ╒════════════════════════════════════════════════════════════════╕
-       ┆ ┆   
-     4 │ ├─▶ unexpected
-       │ │                
-       │ ╰──────────────── Error occurred here.
+     4 │ unexpected
+       │ ─────┬─────  
+       │      ╰─────── Error occurred here.
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "// ╒══════════════════════════════════════════════..." # (0..489)
+  - (ContractDefinition): # "// ╒══════════════════════════════════════════════..." (0..489)
+      - (leading_trivia꞉ SingleLineComment): "// ╒══════════════════════════════════════════════..." # (0..201)
+      - (leading_trivia꞉ EndOfLine): "\n" # (201..202)
+      - (leading_trivia꞉ SingleLineComment): "// │ More Info: https://github.com/NomicFoundation..." # (202..275)
+      - (leading_trivia꞉ EndOfLine): "\n" # (275..276)
+      - (leading_trivia꞉ SingleLineComment): "// ╘══════════════════════════════════════════════..." # (276..477)
+      - (leading_trivia꞉ EndOfLine): "\n" # (477..478)
+      - (UNRECOGNIZED): "unexpected\n" # (478..489)

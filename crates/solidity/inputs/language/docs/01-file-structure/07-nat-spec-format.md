@@ -4,9 +4,9 @@ Solidity contracts can use a special form of comments to provide rich documentat
 
 It is recommended that Solidity contracts are fully annotated using NatSpec for all public interfaces (everything in the ABI). It is used in:
 
--   Developer-focused output, for documenting, sharing, and reusing the source code.
--   User-facing output, at the time that they will interact with the contract (i.e. sign a transaction).
--   Machine-readable output, to be used by downstream tools.
+- Developer-focused output, for documenting, sharing, and reusing the source code.
+- User-facing output, at the time that they will interact with the contract (i.e. sign a transaction).
+- Machine-readable output, to be used by downstream tools.
 
 Documentation can be inserted above each `contract`, `interface`, `library`,
 `function`, `event` and `state variable`.
@@ -71,8 +71,8 @@ This function will multiply 10 by 7
 
 Functions without NatSpec will automatically inherit the documentation of their base function. Exceptions to this are:
 
--   When the parameter names are different.
--   When there is more than one base function.
--   When there is an explicit `@inheritdoc` tag which specifies which contract should be used to inherit.
+- When the parameter names are different.
+- When there is more than one base function.
+- When there is an explicit `@inheritdoc` tag which specifies which contract should be used to inherit.
 
 --8<-- "crates/solidity/inputs/language/snippets/under-construction.md"

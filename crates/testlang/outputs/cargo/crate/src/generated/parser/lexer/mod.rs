@@ -96,7 +96,7 @@ pub(crate) trait Lexer {
             .is_some_and(|t| t.accepted_as(kind))
         {
             input.set_position(start);
-            return ParserResult::no_match(vec![kind]);
+            return ParserResult::no_match(None, vec![kind]);
         }
         let end = input.position();
 
@@ -131,7 +131,7 @@ pub(crate) trait Lexer {
             .is_some_and(|t| t.accepted_as(kind))
         {
             input.set_position(restore);
-            return ParserResult::no_match(vec![kind]);
+            return ParserResult::no_match(None, vec![kind]);
         }
         let end = input.position();
         children.push(Edge::anonymous(Node::terminal(

@@ -89,7 +89,7 @@ testlang_npm_package = { path = "crates/testlang/outputs/npm/package", version =
 #
 # External
 #
-anyhow = { version = "1.0.93", features = ["backtrace", "std"] }
+anyhow = { version = "1.0.94", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
 # Currently 'bencher' backend API is under development/unstable.
 # They recommend always running with the latest CLI version from 'main' until it is stabilized.
@@ -107,7 +107,7 @@ env_logger = { version = "0.11.5" }
 iai-callgrind = { version = "0.12.3" }
 iai-callgrind-runner = { version = "0.12.3" }
 ignore = { version = "0.4.23" }
-indexmap = { version = "2.6.0", features = ["serde"] }
+indexmap = { version = "2.7.0", features = ["serde"] }
 indicatif = { version = "0.17.9", features = ["in_memory"] }
 indoc = { version = "2.0.5" }
 Inflector = { version = "0.11.4" }
@@ -125,8 +125,8 @@ rayon = { version = "1.10.0" }
 regex = { version = "1.11.1" }
 reqwest = { version = "0.12.9", features = ["blocking"] }
 rustdoc-json = { version = "0.9.3" }
-semver = { version = "1.0.23", features = ["serde"] }
-serde = { version = "1.0.215", features = ["derive", "rc"] }
+semver = { version = "1.0.24", features = ["serde"] }
+serde = { version = "1.0.216", features = ["derive", "rc"] }
 serde_json = { version = "1.0.133", features = ["preserve_order"] }
 similar-asserts = { version = "1.6.0" }
 smallvec = { version = "1.7.0", features = ["union"] }
@@ -138,7 +138,7 @@ string-interner = { version = "0.17.0", features = [
 ] }
 strum = { version = "0.26.3" }
 strum_macros = { version = "0.26.4" }
-syn = { version = "2.0.89", features = [
+syn = { version = "2.0.90", features = [
     "fold",
     "full",
     "extra-traits",
@@ -150,7 +150,7 @@ tera = { version = "1.20.0" }
 thiserror = { version = "1.0.68" }
 toml = { version = "0.8.19" }
 trybuild = { version = "1.0.101" }
-url = { version = "2.4.1", features = ["serde"] }
+url = { version = "2.5.4", features = ["serde"] }
 wasm-tools = { version = "1.216.0" }
 wit-bindgen = { version = "0.30.0" }
 

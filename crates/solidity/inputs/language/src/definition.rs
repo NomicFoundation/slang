@@ -4178,9 +4178,9 @@ codegen_language_macros::compile!(Language(
                                 EnumVariant(reference = YulLeaveStatement, enabled = From("0.6.0")),
                                 EnumVariant(reference = YulBreakStatement),
                                 EnumVariant(reference = YulContinueStatement),
+                                EnumVariant(reference = YulVariableAssignmentStatement),
                                 EnumVariant(reference = YulLabel, enabled = Till("0.5.0")),
                                 EnumVariant(reference = YulVariableDeclarationStatement),
-                                EnumVariant(reference = YulVariableAssignmentStatement),
                                 EnumVariant(reference = YulExpression)
                             ]
                         ),

@@ -46,7 +46,7 @@ impl SpecDir {
         writeln!(index)?;
 
         let mut navigation = String::new();
-        writeln!(navigation, "-   [{title}](./index.md)")?;
+        writeln!(navigation, "- [{title}](./index.md)")?;
 
         for entry in entries {
             match entry {
@@ -57,8 +57,8 @@ impl SpecDir {
                         entries: _,
                     },
                 ) => {
-                    writeln!(index, "-   [{child_title}](./{child_slug}/index.md)")?;
-                    writeln!(navigation, "-   [{child_title}](./{child_slug}/)")?;
+                    writeln!(index, "- [{child_title}](./{child_slug}/index.md)")?;
+                    writeln!(navigation, "- [{child_title}](./{child_slug}/)")?;
 
                     child.write_to_disk(fs, &current_dir)?;
                 }
@@ -67,8 +67,8 @@ impl SpecDir {
                     slug: child_slug,
                     contents,
                 }) => {
-                    writeln!(index, "-   [{child_title}](./{child_slug}.md)")?;
-                    writeln!(navigation, "-   [{child_title}](./{child_slug}.md)")?;
+                    writeln!(index, "- [{child_title}](./{child_slug}.md)")?;
+                    writeln!(navigation, "- [{child_title}](./{child_slug}.md)")?;
 
                     fs.write_file(current_dir.join(format!("{child_slug}.md")), contents)?;
                 }
