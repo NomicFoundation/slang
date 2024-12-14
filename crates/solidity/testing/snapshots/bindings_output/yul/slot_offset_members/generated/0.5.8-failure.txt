@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     bytes data;
+   │           ──┬─  
+   │             ╰─── def: 2
+ 3 │     function test() public {
+   │              ──┬─  
+   │                ╰─── def: 3
+   │ 
+ 5 │             let s := sload(data.slot)
+   │                 ┬          ────┬────  
+   │                 ╰───────────────────── def: 4
+   │                                │      
+   │                                ╰────── unresolved
+ 6 │             let o := sload(data.offset)
+   │                 ┬          ─────┬─────  
+   │                 ╰─────────────────────── def: 5
+   │                                 │       
+   │                                 ╰─────── unresolved
+───╯

@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     struct Value { int x; }
+   │            ──┬──       ┬  
+   │              ╰──────────── def: 2
+   │                        │  
+   │                        ╰── def: 3
+ 3 │     function test(Value memory value) public {
+   │              ──┬─ ──┬──        ──┬──  
+   │                ╰────────────────────── def: 4
+   │                     │            │    
+   │                     ╰───────────────── ref: 2
+   │                                  │    
+   │                                  ╰──── def: 5
+ 4 │         var v = value;
+   │             ┬   ──┬──  
+   │             ╰────────── def: 6
+   │                   │    
+   │                   ╰──── ref: 5
+ 5 │         v.x;
+   │         ┬ ┬  
+   │         ╰──── refs: 6, 5
+   │           │  
+   │           ╰── ref: 3
+───╯

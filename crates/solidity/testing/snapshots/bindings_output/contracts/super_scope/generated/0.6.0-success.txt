@@ -22,8 +22,6 @@ References and definitions:
     │                                                 │  
     │                                                 ╰── ref: 1
  13 │         return super.foo();
-    │                ──┬── ─┬─  
-    │                  ╰──────── ref: 1
-    │                       │   
+    │                      ─┬─  
     │                       ╰─── ref: 2
 ────╯

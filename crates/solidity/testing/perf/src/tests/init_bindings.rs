@@ -2,7 +2,9 @@ use std::sync::Arc;
 
 use metaslang_bindings::PathResolver;
 use slang_solidity::bindings::{create_with_resolver, get_built_ins, Bindings};
+use slang_solidity::cst::TextIndex;
 use slang_solidity::parser::{ParseOutput, Parser};
+use slang_solidity::transform_built_ins_node;
 
 use crate::dataset::SOLC_VERSION;
 
@@ -19,7 +21,10 @@ pub fn setup() -> ParseOutput {
 pub fn run(built_ins: ParseOutput) -> Bindings {
     let mut bindings = create_with_resolver(SOLC_VERSION, Arc::new(NoOpResolver {}));
 
-    bindings.add_system_file("built_ins.sol", built_ins.create_tree_cursor());
+    let built_ins_cursor =
+        transform_built_ins_node(&built_ins.tree()).cursor_with_offset(TextIndex::ZERO);
+
+    bindings.add_system_file("built_ins.sol", built_ins_cursor);
 
     bindings
 }
