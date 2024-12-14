@@ -1,5 +1,9 @@
 #[allow(clippy::needless_raw_string_hashes)]
-#[allow(dead_code)] // TODO(#982): use to create the graph
-pub const BINDING_RULES_SOURCE: &str = r#####"
-    {{ model.bindings.binding_rules_source }}
+pub const USER_BINDING_RULES_SOURCE: &str = r#####"
+    {{ model.bindings.user_binding_rules_source }}
+"#####;
+
+#[allow(clippy::needless_raw_string_hashes)]
+pub const SYSTEM_BINDING_RULES_SOURCE: &str = r#####"
+    {{ model.bindings.system_binding_rules_source }}
 "#####;

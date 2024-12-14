@@ -17,7 +17,7 @@ pub fn run(bindings: Bindings) {
         }
         reference_count += 1;
 
-        let resolution = reference.jump_to_definition();
+        let resolution = reference.resolve_definition();
         if resolution.is_ok() {
             resolved_references += 1;
         }

@@ -11,7 +11,7 @@ use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
-use resolver::Resolver;
+use resolver::{ResolveOptions, Resolver};
 use semver::Version;
 use stack_graphs::graph::StackGraph;
 
@@ -32,10 +32,10 @@ pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     definiens: Option<Cursor<KT>>,
     tag: Option<Tag>,
     parents: Vec<GraphHandle>,
-    #[allow(dead_code)]
     export_node: Option<GraphHandle>,
-    #[allow(dead_code)]
     import_nodes: Vec<GraphHandle>,
+    extension_scope: Option<GraphHandle>,
+    inherit_extensions: bool,
 }
 
 pub(crate) struct ReferenceBindingInfo {
@@ -44,7 +44,8 @@ pub(crate) struct ReferenceBindingInfo {
 }
 
 pub struct Bindings<KT: KindTypes + 'static> {
-    graph_builder_file: File<KT>,
+    user_graph_builder_file: File<KT>,
+    system_graph_builder_file: File<KT>,
     functions: Functions<KT>,
     stack_graph: StackGraph,
     cursors: HashMap<GraphHandle, Cursor<KT>>,
@@ -53,6 +54,7 @@ pub struct Bindings<KT: KindTypes + 'static> {
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
     context: Option<GraphHandle>,
+    extension_hooks: HashSet<GraphHandle>,
 }
 
 pub enum FileDescriptor {
@@ -118,16 +120,20 @@ pub trait PathResolver {
 impl<KT: KindTypes + 'static> Bindings<KT> {
     pub fn create(
         version: Version,
-        binding_rules: &str,
+        user_binding_rules: &str,
+        system_binding_rules: &str,
         path_resolver: Arc<dyn PathResolver + Sync + Send>,
     ) -> Self {
-        let graph_builder_file =
-            File::from_str(binding_rules).expect("Bindings stack graph builder parse error");
+        let user_graph_builder_file =
+            File::from_str(user_binding_rules).expect("Bindings stack graph builder parse error");
+        let system_graph_builder_file =
+            File::from_str(system_binding_rules).expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
         let functions = builder::default_functions(version, path_resolver);
 
         Self {
-            graph_builder_file,
+            user_graph_builder_file,
+            system_graph_builder_file,
             functions,
             stack_graph,
             cursors: HashMap::new(),
@@ -136,19 +142,20 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
             context: None,
+            extension_hooks: HashSet::new(),
         }
     }
 
     pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let file_kind = FileDescriptor::System(file_path.into());
         let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
-        _ = self.add_file_internal(file, tree_cursor);
+        _ = self.add_system_file_internal(file, tree_cursor);
     }
 
     pub fn add_user_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let file_kind = FileDescriptor::User(file_path.into());
         let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
-        _ = self.add_file_internal(file, tree_cursor);
+        _ = self.add_user_file_internal(file, tree_cursor);
     }
 
     #[cfg(feature = "__private_testing_utils")]
@@ -159,22 +166,49 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
     ) -> metaslang_graph_builder::graph::Graph<KT> {
         let file_kind = FileDescriptor::User(file_path.into());
         let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
-        let result = self.add_file_internal(file, tree_cursor);
+        let result = self.add_user_file_internal(file, tree_cursor);
         result.graph
     }
 
-    fn add_file_internal(&mut self, file: FileHandle, tree_cursor: Cursor<KT>) -> BuildResult<KT> {
+    fn add_system_file_internal(
+        &mut self,
+        file: FileHandle,
+        tree_cursor: Cursor<KT>,
+    ) -> BuildResult<KT> {
         let builder = Builder::new(
-            &self.graph_builder_file,
+            &self.system_graph_builder_file,
             &self.functions,
             &mut self.stack_graph,
             file,
             tree_cursor,
         );
-        let mut result = builder
+        let result = builder
             .build(&builder::NoCancellation)
             .expect("Internal error while building bindings");
 
+        self.add_graph_internal(result)
+    }
+
+    fn add_user_file_internal(
+        &mut self,
+        file: FileHandle,
+        tree_cursor: Cursor<KT>,
+    ) -> BuildResult<KT> {
+        let builder = Builder::new(
+            &self.user_graph_builder_file,
+            &self.functions,
+            &mut self.stack_graph,
+            file,
+            tree_cursor,
+        );
+        let result = builder
+            .build(&builder::NoCancellation)
+            .expect("Internal error while building bindings");
+
+        self.add_graph_internal(result)
+    }
+
+    fn add_graph_internal(&mut self, mut result: BuildResult<KT>) -> BuildResult<KT> {
         for (handle, cursor) in result.cursors.drain() {
             let cursor_id = cursor.node().id();
             if self.stack_graph[handle].is_definition() {
@@ -187,6 +221,7 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         self.definitions_info
             .extend(result.definitions_info.drain());
         self.references_info.extend(result.references_info.drain());
+        self.extension_hooks.extend(result.extension_hooks.drain());
 
         result
     }
@@ -258,16 +293,11 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
                     // cannot be resolved at this point?
                     self.to_reference(*handle)
                         .unwrap()
-                        .jump_to_definition()
+                        .non_recursive_resolve()
                         .ok()
                 }
             })
             .collect()
-    }
-
-    pub fn lookup_definition_by_name(&self, name: &str) -> Option<Definition<'_, KT>> {
-        self.all_definitions()
-            .find(|definition| definition.get_cursor().unwrap().node().unparse() == name)
     }
 
     pub fn get_context(&self) -> Option<Definition<'_, KT>> {
@@ -338,6 +368,10 @@ impl<KT: KindTypes + 'static> Bindings<KT> {
         }
         results
     }
+
+    pub(crate) fn is_extension_hook(&self, node_handle: GraphHandle) -> bool {
+        self.extension_hooks.contains(&node_handle)
+    }
 }
 
 struct DisplayCursor<'a, KT: KindTypes + 'static> {
@@ -399,6 +433,20 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .map(|info| &info.parents)
             .map(|handles| self.owner.resolve_handles(handles))
             .unwrap_or_default()
+    }
+
+    pub(crate) fn get_extension_scope(&self) -> Option<GraphHandle> {
+        self.owner
+            .definitions_info
+            .get(&self.handle)
+            .and_then(|info| info.extension_scope)
+    }
+
+    pub(crate) fn inherit_extensions(&self) -> bool {
+        self.owner
+            .definitions_info
+            .get(&self.handle)
+            .map_or(false, |info| info.inherit_extensions)
     }
 
     pub fn to_handle(self) -> DefinitionHandle {
@@ -471,12 +519,20 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
             .expect("Reference does not have a valid file descriptor")
     }
 
-    pub fn jump_to_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
-        Resolver::build_for(self).first()
+    pub fn resolve_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
+        Resolver::build_for(self, ResolveOptions::Full).first()
     }
 
     pub fn definitions(&self) -> Vec<Definition<'a, KT>> {
-        Resolver::build_for(self).all()
+        Resolver::build_for(self, ResolveOptions::Full).all()
+    }
+
+    pub(crate) fn non_recursive_resolve(
+        &self,
+    ) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
+        // This was likely originated from a full resolution call, so cut
+        // recursion here by restricting the resolution algorithm.
+        Resolver::build_for(self, ResolveOptions::NonRecursive).first()
     }
 
     pub(crate) fn has_tag(&self, tag: Tag) -> bool {

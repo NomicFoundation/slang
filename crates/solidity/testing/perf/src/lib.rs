@@ -19,6 +19,12 @@ mod unit_tests {
                 crate::tests::$name::run(payload);
             }
         };
+        ($name:ident, empty_payload) => {
+            #[test]
+            fn $name() {
+                crate::tests::$name::run();
+            }
+        };
     }
 
     /*
@@ -27,7 +33,7 @@ mod unit_tests {
     define_test!(parser);
     define_test!(cursor);
     define_test!(query);
-    define_test!(init_bindings);
+    define_test!(init_bindings, empty_payload);
     define_test!(definitions);
     define_test!(references);
 }

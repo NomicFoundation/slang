@@ -1,32 +1,48 @@
 use std::collections::BTreeSet;
+use std::path::Path;
 
 use anyhow::Result;
 use codegen_language_definition::model;
 use infra_utils::codegen::CodegenFileSystem;
-use infra_utils::paths::PathExtensions;
 use semver::Version;
 use serde::Serialize;
 
 #[derive(Default, Serialize)]
 pub struct BindingsModel {
-    binding_rules_source: String,
+    user_binding_rules_source: String,
+    system_binding_rules_source: String,
     built_ins_versions: BTreeSet<Version>,
     file_extension: String,
 }
 
 impl BindingsModel {
     pub fn from_language(language: &model::Language) -> Result<Self> {
-        // We use `CodegenFileSystem` here to ensure the rules are rebuilt if the rules file changes
-        let binding_rules_dir = language.binding_rules_file.unwrap_parent();
-        let mut fs = CodegenFileSystem::new(binding_rules_dir)?;
-        let binding_rules_source = fs.read_file(&language.binding_rules_file)?;
+        let binding_rules_dir = &language.binding_rules_dir;
+        let user_binding_rules_source = assemble_rules(binding_rules_dir, "user-rules.parts")?;
+        let system_binding_rules_source = assemble_rules(binding_rules_dir, "system-rules.parts")?;
         let built_ins_versions = language.collect_built_ins_versions();
         let file_extension = language.file_extension.clone().unwrap_or_default();
 
         Ok(Self {
-            binding_rules_source,
+            user_binding_rules_source,
+            system_binding_rules_source,
             built_ins_versions,
             file_extension,
         })
     }
+}
+
+// Builds a rules file by concatenating the file parts listed in the given `parts_file`
+fn assemble_rules(rules_dir: &Path, parts_file: &str) -> Result<String> {
+    // We use `CodegenFileSystem` here to ensure the rules are rebuilt if the rules file changes
+    let mut fs = CodegenFileSystem::new(rules_dir)?;
+    let parts_contents = fs.read_file(rules_dir.join(parts_file))?;
+    let mut parts = Vec::new();
+    for part_name in parts_contents.lines() {
+        if part_name.is_empty() {
+            continue;
+        }
+        parts.push(fs.read_file(rules_dir.join(part_name))?);
+    }
+    Ok(parts.join("\n"))
 }

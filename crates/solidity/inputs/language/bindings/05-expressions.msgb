@@ -1,0 +1,320 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Expressions
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Expressions have two important scoped variables:
+;; - @expr.lexical_scope should be set by the enclosing node to provide a scope
+;;   for name resolution
+;; - @expr.output is a node provided by the expression and represents the output
+;;   of the expression for chaining eg. with a member access
+
+@expr [Expression] {
+  ;; this is an output scope for use in member access (and other uses)
+  node @expr.output
+}
+
+;; Identifier expressions
+@expr [Expression @name [Identifier]] {
+  node ref
+  attr (ref) node_reference = @name
+  attr (ref) parents = [@expr.enclosing_def]
+
+  edge ref -> @expr.lexical_scope
+  edge @expr.output -> ref
+}
+
+@expr [Expression @keyword ([ThisKeyword] | [SuperKeyword])] {
+  ; This is almost equivalent to the above rule, except it doesn't generate a reference
+  node keyword
+  attr (keyword) push_symbol = (source-text @keyword)
+  edge keyword -> @expr.lexical_scope
+  edge @expr.output -> keyword
+}
+
+;; Member access expressions
+@expr [Expression [MemberAccessExpression
+    @operand operand: [Expression]
+    @name member: [Identifier]
+]] {
+  node @name.ref
+  attr (@name.ref) node_reference = @name
+  attr (@name.ref) parents = [@expr.enclosing_def]
+
+  node member
+  attr (member) push_symbol = "."
+
+  edge @name.ref -> member
+  edge member -> @operand.output
+
+  edge @expr.output -> @name.ref
+
+  ; Shortcut path for expressions inside contracts with using X for * directives
+  edge member -> @expr.star_extension
+}
+
+;; Special case: member accesses to `super` are tagged with "super" to rank
+;; virtual methods correctly
+[MemberAccessExpression
+    operand: [Expression [SuperKeyword]]
+    @name member: [Identifier]
+] {
+  attr (@name.ref) tag = "super"
+}
+
+;; Elementary types used as expressions (eg. for type casting, or for built-ins like `string.concat`)
+@expr [Expression @type [ElementaryType]] {
+  edge @expr.output -> @type.ref
+  edge @type.ref -> @expr.lexical_scope
+
+  ; Elementary types can also be used for casting; instead of defining built-in
+  ; struct for each available elementary type, we define a special path here
+  node call
+  attr (call) pop_symbol = "()"
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  edge @expr.output -> call
+  edge call -> typeof
+  edge typeof -> @type.ref
+}
+
+;; Index access expressions
+@expr [Expression [IndexAccessExpression
+    @operand operand: [Expression]
+]] {
+  node index
+  attr (index) push_symbol = "[]"
+
+  edge @expr.output -> index
+  edge index -> @operand.output
+}
+
+;; Type expressions
+@type_expr [Expression [TypeExpression @type [TypeName]]] {
+  edge @type.type_ref -> @type_expr.lexical_scope
+}
+
+@type_expr [Expression [TypeExpression [TypeName [ElementaryType ([IntKeyword] | [UintKeyword])]]]] {
+  ; For integer types the type's type is fixed
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node type
+  attr (type) push_symbol = "%IntTypeType"
+
+  edge @type_expr.output -> typeof
+  edge typeof -> type
+  edge type -> @type_expr.lexical_scope
+}
+
+@type_expr [Expression [TypeExpression [TypeName @id_path [IdentifierPath]]]] {
+  ; For other identifiers, resolve it through a pseudo-member `%type`
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node type
+  attr (type) push_symbol = "@type"
+
+  edge @type_expr.output -> typeof
+  edge typeof -> type
+  edge type -> @id_path.push_begin
+}
+
+;; New expressions
+
+@new_expr [Expression [NewExpression @type [TypeName]]] {
+  edge @type.type_ref -> @new_expr.lexical_scope
+  edge @new_expr.output -> @type.output
+}
+
+
+;;; Function call expressions
+
+@args [ArgumentsDeclaration] {
+  node @args.lexical_scope
+
+  node @args.refs
+  attr (@args.refs) push_symbol = "@param_names"
+}
+
+@named_arg [NamedArgument @name [Identifier] [Colon] [Expression]] {
+  node @named_arg.lexical_scope
+
+  node @named_arg.ref
+  attr (@named_arg.ref) node_reference = @name
+}
+
+@args [ArgumentsDeclaration [NamedArgumentsDeclaration
+    [NamedArgumentGroup [NamedArguments @argument [NamedArgument]]]
+]] {
+  edge @argument.lexical_scope -> @args.lexical_scope
+  edge @argument.ref -> @args.refs
+}
+
+@funcall [Expression [FunctionCallExpression
+    @operand [Expression]
+    @args [ArgumentsDeclaration]
+]] {
+  edge @args.lexical_scope -> @funcall.lexical_scope
+
+  ;; Connect to the output of the function name to be able to resolve named arguments
+  edge @args.refs -> @operand.output
+
+  node call
+  attr (call) push_symbol = "()"
+
+  edge @funcall.output -> call
+  edge call -> @operand.output
+}
+
+
+;;; Call options
+
+@expr [Expression [CallOptionsExpression @operand [Expression] @options [CallOptions]]] {
+  edge @expr.output -> @operand.output
+
+  node @options.refs
+  attr (@options.refs) push_symbol = "@param_names"
+
+  node call_options
+  attr (call_options) push_symbol = "%CallOptions"
+
+  edge @options.refs -> call_options
+  edge call_options -> @expr.lexical_scope
+}
+
+@expr [Expression [CallOptionsExpression
+    @options [CallOptions @named_arg [NamedArgument]]
+]] {
+  edge @named_arg.lexical_scope -> @expr.lexical_scope
+  edge @named_arg.ref -> @options.refs
+}
+
+
+;;; Payable
+; These work like `address`, should they should bind to `%address`
+@expr [Expression [PayableKeyword]] {
+  node ref
+  attr (ref) push_symbol = "%address"
+
+  edge ref -> @expr.lexical_scope
+  edge @expr.output -> ref
+}
+
+
+;;; Tuple expressions
+
+; Parenthesized expressions are parsed as tuples of a single value
+@expr [Expression [TupleExpression [TupleValues . [TupleValue @operand [Expression]] .]]] {
+  edge @expr.output -> @operand.output
+}
+
+;;; Arithmetic, bitwise & logical operators, etc
+
+; Bind to the left operand only: assignment expressions
+@expr [Expression [_
+    @left_operand left_operand: [Expression]
+    (
+          [Equal]
+        | [BarEqual]
+        | [PlusEqual]
+        | [MinusEqual]
+        | [CaretEqual]
+        | [SlashEqual]
+        | [PercentEqual]
+        | [AsteriskEqual]
+        | [AmpersandEqual]
+        | [LessThanLessThanEqual]
+        | [GreaterThanGreaterThanEqual]
+        | [GreaterThanGreaterThanGreaterThanEqual]
+    )
+]] {
+  edge @expr.output -> @left_operand.output
+}
+
+; Unary operators postfix
+@expr [Expression [_
+    @operand operand: [Expression]
+    ([PlusPlus] | [MinusMinus])
+]] {
+  edge @expr.output -> @operand.output
+}
+
+; Unary operators prefix
+@expr [Expression [_
+    ([PlusPlus] | [MinusMinus] | [Tilde] | [Bang] | [Minus] | [Plus])
+    @operand operand: [Expression]
+]] {
+  edge @expr.output -> @operand.output
+}
+
+; Bind to both operands: logical and/or, arithmetic, bit-wise expressions
+@expr [Expression [_
+    @left_operand left_operand: [Expression]
+    (
+          [BarBar]
+        | [AmpersandAmpersand]
+
+        | [Plus]
+        | [Minus]
+        | [Asterisk]
+        | [Slash]
+        | [Percent]
+        | [AsteriskAsterisk]
+
+        | [Bar]
+        | [Caret]
+        | [Ampersand]
+
+        | [LessThanLessThan]
+        | [GreaterThanGreaterThan]
+        | [GreaterThanGreaterThanGreaterThan]
+    )
+    @right_operand right_operand: [Expression]
+]] {
+  edge @expr.output -> @left_operand.output
+  edge @expr.output -> @right_operand.output
+}
+
+; Comparison operators bind to bool type
+@expr [Expression [_
+    (
+          [EqualEqual]
+        | [BangEqual]
+        | [LessThan]
+        | [GreaterThan]
+        | [LessThanEqual]
+        | [GreaterThanEqual]
+    )
+]] {
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node bool
+  attr (bool) push_symbol = "%bool"
+  edge @expr.output -> typeof
+  edge typeof -> bool
+  edge bool -> @expr.lexical_scope
+}
+
+; Ternary conditional expression binds to both branches
+@expr [Expression [ConditionalExpression
+    @true_expression true_expression: [Expression]
+    @false_expression false_expression: [Expression]
+]] {
+  edge @expr.output -> @true_expression.output
+  edge @expr.output -> @false_expression.output
+}
+
+
+;;; Literal Address Expressions
+@expr [Expression [HexNumberExpression @hex_literal [HexLiteral]]] {
+  scan (source-text @hex_literal) {
+    "0x[0-9a-fA-F]{40}" {
+      ; Treat it as a valid address
+      node typeof
+      attr (typeof) push_symbol = "@typeof"
+      node address
+      attr (address) push_symbol = "%address"
+      edge @expr.output -> typeof
+      edge typeof -> address
+      edge address -> @expr.lexical_scope
+    }
+  }
+}
