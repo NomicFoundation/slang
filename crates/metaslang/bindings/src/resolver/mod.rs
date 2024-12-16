@@ -293,19 +293,12 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
             return;
         };
 
-        // if the bindings has some context set, use it instead of the caller's
-        // to compute the full linearised ordering of methods
-        let resolution_context = match self.owner.get_context() {
-            Some(context) => context,
-            None => caller_context.clone(),
-        };
-
         #[allow(clippy::mutable_key_type)]
-        let parents = Self::resolve_parents_all(resolution_context.clone());
+        let parents = Self::resolve_parents_all(caller_context.clone());
 
-        let Some(mro) = c3::linearise(&resolution_context, &parents) else {
+        let Some(mro) = c3::linearise(caller_context, &parents) else {
             // linearisation failed
-            eprintln!("Linearisation of {resolution_context} failed");
+            eprintln!("Linearisation of {caller_context} failed");
             return;
         };
 

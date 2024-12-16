@@ -32,7 +32,7 @@ References and definitions:
     │               ╰─── def: 6
  11 │         super.foo();
     │               ─┬─  
-    │                ╰─── ref: 4
+    │                ╰─── ref: 2
     │ 
  14 │ contract D is B, C {
     │          ┬    ┬  ┬  

@@ -25,16 +25,6 @@ fn linearisation_order() -> Result<()> {
 }
 
 #[test]
-fn linearisation_with_context() -> Result<()> {
-    run("contracts", "linearisation_with_context")
-}
-
-#[test]
-fn virtual_lookup() -> Result<()> {
-    run("contracts", "virtual_lookup")
-}
-
-#[test]
 fn virtual_single() -> Result<()> {
     run("contracts", "virtual_single")
 }

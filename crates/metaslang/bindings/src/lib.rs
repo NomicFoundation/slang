@@ -23,8 +23,6 @@ type CursorID = usize;
 
 pub use location::{BindingLocation, BuiltInLocation, UserFileLocation};
 
-pub struct DefinitionHandle(GraphHandle);
-
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum Tag {
     Alias,
@@ -36,8 +34,6 @@ pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     definiens: Option<Cursor<KT>>,
     tag: Option<Tag>,
     parents: Vec<GraphHandle>,
-    export_node: Option<GraphHandle>,
-    import_nodes: Vec<GraphHandle>,
     extension_scope: Option<GraphHandle>,
     inherit_extensions: bool,
 }
@@ -56,7 +52,6 @@ pub struct BindingGraph<KT: KindTypes + 'static> {
     references_info: HashMap<GraphHandle, ReferenceBindingInfo>,
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
-    context: Option<GraphHandle>,
     extension_hooks: HashSet<GraphHandle>,
 }
 
@@ -140,7 +135,6 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             references_info: HashMap::new(),
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
-            context: None,
             extension_hooks: HashSet::new(),
         }
     }
@@ -267,75 +261,6 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             .collect()
     }
 
-    pub fn get_context(&self) -> Option<Definition<'_, KT>> {
-        self.context.and_then(|handle| self.to_definition(handle))
-    }
-
-    pub fn set_context(&mut self, context: &DefinitionHandle) {
-        assert!(
-            self.context.is_none(),
-            "Changing current binding context is not supported"
-        );
-        let context_handle = context.0;
-
-        assert!(
-            self.to_definition(context_handle).is_some(),
-            "Not a definition"
-        );
-        self.context = Some(context_handle);
-
-        // Retrieve export node from context
-        let Some(info) = self.definitions_info.get(&context_handle) else {
-            // no extra information for the definition; this shouldn't happen,
-            // but in that case we have nothing else to do
-            return;
-        };
-        let Some(export_node) = info.export_node else {
-            // no export node in the context definition
-            return;
-        };
-
-        // Find all parents of the context
-        let all_parents = self.find_all_parents(context_handle);
-
-        // Add stack graph edges to link to import nodes in all parents. This
-        // makes definitions in the export node scope reachable directly from
-        // all import nodes in all the parents.
-        for parent in &all_parents {
-            let Some(parent_info) = self.definitions_info.get(parent) else {
-                continue;
-            };
-            for import_node in &parent_info.import_nodes {
-                self.stack_graph.add_edge(*import_node, export_node, 0);
-            }
-        }
-    }
-
-    fn find_all_parents(&self, definition_handle: GraphHandle) -> HashSet<GraphHandle> {
-        let mut results = HashSet::new();
-        let mut resolve_queue = Vec::new();
-        resolve_queue.push(definition_handle);
-
-        while let Some(definition) = resolve_queue.pop() {
-            let Some(definition_parents) = self
-                .definitions_info
-                .get(&definition)
-                .map(|info| &info.parents)
-            else {
-                continue;
-            };
-
-            let parents = self.resolve_handles(definition_parents);
-            for parent in &parents {
-                if !results.contains(&parent.handle) {
-                    resolve_queue.push(parent.handle);
-                }
-                results.insert(parent.handle);
-            }
-        }
-        results
-    }
-
     pub(crate) fn is_extension_hook(&self, node_handle: GraphHandle) -> bool {
         self.extension_hooks.contains(&node_handle)
     }
@@ -442,10 +367,6 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .definitions_info
             .get(&self.handle)
             .map_or(false, |info| info.inherit_extensions)
-    }
-
-    pub fn to_handle(self) -> DefinitionHandle {
-        DefinitionHandle(self.handle)
     }
 }
 

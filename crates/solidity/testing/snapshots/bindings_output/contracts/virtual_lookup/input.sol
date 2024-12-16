@@ -1,4 +1,3 @@
-// --- context: Derived
 contract Base {
     function foo() public {}
     function bar() public {

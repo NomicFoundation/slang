@@ -342,8 +342,6 @@ static SCOPE_TYPE: &str = "scope";
 static DEBUG_ATTR_PREFIX: &str = "debug_";
 static DEFINIENS_NODE_ATTR: &str = "definiens_node";
 static EMPTY_SOURCE_SPAN_ATTR: &str = "empty_source_span";
-static EXPORT_NODE_ATTR: &str = "export_node";
-static IMPORT_NODES_ATTR: &str = "import_nodes";
 static IS_DEFINITION_ATTR: &str = "is_definition";
 static IS_ENDPOINT_ATTR: &str = "is_endpoint";
 static IS_EXPORTED_ATTR: &str = "is_exported";
@@ -368,8 +366,6 @@ static POP_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         DEFINIENS_NODE_ATTR,
         TAG_ATTR,
         PARENTS_ATTR,
-        EXPORT_NODE_ATTR,
-        IMPORT_NODES_ATTR,
         SYNTAX_TYPE_ATTR,
         EXTENSION_SCOPE_ATTR,
         INHERIT_EXTENSIONS_ATTR,
@@ -383,8 +379,6 @@ static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         DEFINIENS_NODE_ATTR,
         TAG_ATTR,
         PARENTS_ATTR,
-        EXPORT_NODE_ATTR,
-        IMPORT_NODES_ATTR,
         SYNTAX_TYPE_ATTR,
         EXTENSION_SCOPE_ATTR,
         INHERIT_EXTENSIONS_ATTR,
@@ -960,26 +954,6 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
                 None => None,
             };
 
-            let export_node = match node.attributes.get(EXPORT_NODE_ATTR) {
-                Some(export_node) => {
-                    Some(self.node_handle_for_graph_node(export_node.as_graph_node_ref()?))
-                }
-                None => None,
-            };
-
-            let import_nodes = match node.attributes.get(IMPORT_NODES_ATTR) {
-                Some(import_nodes) => import_nodes
-                    .as_list()?
-                    .iter()
-                    .flat_map(|value| {
-                        value
-                            .as_graph_node_ref()
-                            .map(|id| self.node_handle_for_graph_node(id))
-                    })
-                    .collect(),
-                None => Vec::new(),
-            };
-
             let extension_scope = match node.attributes.get(EXTENSION_SCOPE_ATTR) {
                 Some(extension_scope) => {
                     Some(self.node_handle_for_graph_node(extension_scope.as_graph_node_ref()?))
@@ -995,8 +969,6 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
                     definiens,
                     tag,
                     parents,
-                    export_node,
-                    import_nodes,
                     extension_scope,
                     inherit_extensions,
                 },
