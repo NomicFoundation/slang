@@ -18,16 +18,14 @@ References and definitions:
     │              ╰─────────────────── def: 5
     │                             │    
     │                             ╰──── def: 6
-  4 │     function calculate() returns (Choice);
-    │              ────┬────            ───┬──  
-    │                  ╰──────────────────────── def: 7
-    │                                      │    
-    │                                      ╰──── ref: 2
-  5 │     function get_book() returns (Book);
-    │              ────┬───            ──┬─  
-    │                  ╰───────────────────── def: 8
-    │                                    │   
-    │                                    ╰─── ref: 5
+  4 │     function calculate() external returns (int);
+    │              ────┬────  
+    │                  ╰────── def: 7
+  5 │     function get_book() external returns (Book memory);
+    │              ────┬───                     ──┬─  
+    │                  ╰────────────────────────────── def: 8
+    │                                             │   
+    │                                             ╰─── ref: 5
     │ 
   8 │ contract Test {
     │          ──┬─  
@@ -52,4 +50,17 @@ References and definitions:
     │               ╰──────── ref: 5
     │                    │   
     │                    ╰─── def: 11
+    │ 
+ 12 │     function test(Example e) public returns (int) {
+    │              ──┬─ ───┬─── ┬  
+    │                ╰───────────── def: 12
+    │                      │    │  
+    │                      ╰─────── ref: 1
+    │                           │  
+    │                           ╰── def: 13
+ 13 │         return e.calculate();
+    │                ┬ ────┬────  
+    │                ╰──────────── ref: 13
+    │                      │      
+    │                      ╰────── ref: 7
 ────╯

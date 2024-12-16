@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     type Internal is uint;
+   │          ────┬───  
+   │              ╰───── def: 2
+   │ 
+ 4 │     function test() public returns (uint) {
+   │              ──┬─  
+   │                ╰─── def: 3
+ 5 │         Internal inter = Internal.wrap(10);
+   │         ────┬─── ──┬──   ────┬─── ──┬─  
+   │             ╰─────────────────────────── ref: 2
+   │                    │         │      │   
+   │                    ╰──────────────────── def: 4
+   │                              │      │   
+   │                              ╰────────── ref: 2
+   │                                     │   
+   │                                     ╰─── ref: built-in
+ 6 │         return Internal.unwrap(inter);
+   │                ────┬─── ───┬── ──┬──  
+   │                    ╰────────────────── ref: 2
+   │                            │     │    
+   │                            ╰────────── ref: built-in
+   │                                  │    
+   │                                  ╰──── ref: 4
+───╯

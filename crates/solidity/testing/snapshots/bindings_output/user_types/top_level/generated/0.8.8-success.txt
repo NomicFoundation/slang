@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     function test() public pure returns (uint) {
+   │              ──┬─  
+   │                ╰─── def: 2
+ 3 │         TopLevel tl = TopLevel.wrap(20);
+   │         ────┬─── ─┬   ────┬─── ──┬─  
+   │             ╰──────────────────────── ref: 4
+   │                   │       │      │   
+   │                   ╰────────────────── def: 3
+   │                           │      │   
+   │                           ╰────────── ref: 4
+   │                                  │   
+   │                                  ╰─── ref: built-in
+ 4 │         return TopLevel.unwrap(tl);
+   │                ────┬─── ───┬── ─┬  
+   │                    ╰─────────────── ref: 4
+   │                            │    │  
+   │                            ╰─────── ref: built-in
+   │                                 │  
+   │                                 ╰── ref: 3
+   │ 
+ 8 │ type TopLevel is uint256;
+   │      ────┬───  
+   │          ╰───── def: 4
+───╯
