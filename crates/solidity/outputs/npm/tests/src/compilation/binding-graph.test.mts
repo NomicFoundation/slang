@@ -99,12 +99,10 @@ test("binding graph", async () => {
     assertUserFileLocation(reference.location, "child.sol", TerminalKind.Identifier, 7);
 
     const defs = reference.definitions();
-    assert.equal(defs.length, 0);
-    // TODO: there should be one built-in definition, right?
-    // assert.equal(defs.length, 1);
+    assert.equal(defs.length, 1);
 
-    // assert(defs[0]!.nameLocation.isBuiltInLocation());
-    // assert(defs[0]!.definiensLocation.isBuiltInLocation());
+    assert(defs[0]!.nameLocation.isBuiltInLocation());
+    assert(defs[0]!.definiensLocation.isBuiltInLocation());
   }
 
   // Done! No more identifiers in the file.

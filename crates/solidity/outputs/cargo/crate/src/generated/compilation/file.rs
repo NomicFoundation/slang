@@ -1,7 +1,5 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
 use std::collections::BTreeMap;
 
 use metaslang_cst::text_index::TextIndex;

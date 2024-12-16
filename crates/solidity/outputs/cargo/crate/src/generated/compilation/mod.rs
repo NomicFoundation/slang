@@ -1,7 +1,5 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
 mod file;
 mod internal_builder;
 mod unit;

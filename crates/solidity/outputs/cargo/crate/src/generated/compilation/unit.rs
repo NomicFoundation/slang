@@ -1,21 +1,21 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
 use std::cell::OnceCell;
 use std::collections::BTreeMap;
 use std::rc::Rc;
 
 use semver::Version;
 
-use crate::bindings::{create_with_resolver, BindingGraph, PathResolver};
+use crate::bindings::{
+    create_with_resolver, BindingGraph, BindingGraphInitializationError, PathResolver,
+};
 use crate::compilation::File;
 use crate::cst::{Cursor, KindTypes};
 
 pub struct CompilationUnit {
     language_version: Version,
     files: BTreeMap<String, Rc<File>>,
-    binding_graph: OnceCell<Rc<BindingGraph>>,
+    binding_graph: OnceCell<Result<Rc<BindingGraph>, BindingGraphInitializationError>>,
 }
 
 impl CompilationUnit {
@@ -39,20 +39,20 @@ impl CompilationUnit {
         self.files.get(id).cloned()
     }
 
-    pub fn binding_graph(&self) -> &Rc<BindingGraph> {
+    pub fn binding_graph(&self) -> &Result<Rc<BindingGraph>, BindingGraphInitializationError> {
         self.binding_graph.get_or_init(|| {
             let resolver = Resolver {
                 files: self.files.clone(),
             };
 
             let mut binding_graph =
-                create_with_resolver(self.language_version.clone(), Rc::new(resolver));
+                create_with_resolver(self.language_version.clone(), Rc::new(resolver))?;
 
             for (id, file) in &self.files {
                 binding_graph.add_user_file(id, file.create_tree_cursor());
             }
 
-            Rc::new(binding_graph)
+            Ok(Rc::new(binding_graph))
         })
     }
 }

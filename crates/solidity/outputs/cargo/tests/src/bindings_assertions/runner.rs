@@ -1,17 +1,18 @@
 use std::fs;
+use std::rc::Rc;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use semver::Version;
-use slang_solidity::diagnostic;
 use slang_solidity::parser::Parser;
+use slang_solidity::{bindings, diagnostic};
 
-use crate::bindings::create_binding_graph;
 use crate::bindings_assertions::assertions::{
     check_assertions, collect_assertions_into, Assertions,
 };
 use crate::generated::VERSION_BREAKS;
 use crate::multi_part_file::{split_multi_file, Part};
+use crate::resolver::TestsPathResolver;
 
 pub fn run(group_name: &str, test_name: &str) -> Result<()> {
     let file_name = format!("{test_name}.sol");
@@ -29,7 +30,8 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 
 fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()> {
     let parser = Parser::create(version.clone())?;
-    let mut binding_graph = create_binding_graph(version)?;
+    let mut binding_graph =
+        bindings::create_with_resolver(version.clone(), Rc::new(TestsPathResolver {}))?;
 
     let mut assertions = Assertions::new();
     let mut skipped = 0;

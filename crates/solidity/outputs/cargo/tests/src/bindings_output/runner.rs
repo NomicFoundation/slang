@@ -1,19 +1,21 @@
 use std::fs;
+use std::rc::Rc;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use metaslang_graph_builder::graph::Graph;
+use slang_solidity::bindings;
 use slang_solidity::cst::KindTypes;
 use slang_solidity::parser::{ParseOutput, Parser};
 
 use super::graph::graphviz::render as render_graphviz_graph;
 use super::graph::mermaid::render as render_mermaid_graph;
 use super::renderer::render_bindings;
-use crate::bindings::create_binding_graph;
 use crate::generated::VERSION_BREAKS;
 use crate::multi_part_file::{split_multi_file, Part};
+use crate::resolver::TestsPathResolver;
 
 pub(crate) struct ParsedPart<'a> {
     pub path: &'a str,
@@ -42,7 +44,8 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 
     for version in &VERSION_BREAKS {
         let parser = Parser::create(version.clone())?;
-        let mut binding_graph = create_binding_graph(version)?;
+        let mut binding_graph =
+            bindings::create_with_resolver(version.clone(), Rc::new(TestsPathResolver {}))?;
 
         let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
         let multi_part = split_multi_file(&contents);

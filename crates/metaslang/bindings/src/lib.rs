@@ -258,12 +258,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
                 if self.stack_graph[*handle].is_definition() {
                     self.to_definition(*handle)
                 } else {
-                    // TODO: what should we do if the parent reference
-                    // cannot be resolved at this point?
-                    self.to_reference(*handle)
-                        .unwrap()
-                        .jump_to_definition()
-                        .ok()
+                    self.to_reference(*handle)?.jump_to_definition().ok()
                 }
             })
             .collect()

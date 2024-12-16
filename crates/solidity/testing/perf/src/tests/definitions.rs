@@ -8,7 +8,7 @@ pub struct Dependencies {
 }
 
 pub fn setup() -> Dependencies {
-    let binding_graph = super::init_bindings::run(super::init_bindings::setup());
+    let binding_graph = super::init_bindings::run();
     let files = super::parser::run(super::parser::setup());
 
     Dependencies {

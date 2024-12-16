@@ -15,6 +15,14 @@ mod unit_tests {
         ($name:ident) => {
             #[test]
             fn $name() {
+                crate::tests::$name::run();
+            }
+        };
+    }
+    macro_rules! define_payload_test {
+        ($name:ident) => {
+            #[test]
+            fn $name() {
                 let payload = crate::tests::$name::setup();
                 crate::tests::$name::run(payload);
             }
@@ -24,10 +32,10 @@ mod unit_tests {
     /*
      * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
      */
-    define_test!(parser);
-    define_test!(cursor);
-    define_test!(query);
+    define_payload_test!(parser);
+    define_payload_test!(cursor);
+    define_payload_test!(query);
     define_test!(init_bindings);
-    define_test!(definitions);
-    define_test!(references);
+    define_payload_test!(definitions);
+    define_payload_test!(references);
 }

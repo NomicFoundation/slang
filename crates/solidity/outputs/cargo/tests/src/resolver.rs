@@ -16,7 +16,7 @@ impl PathResolver<KindTypes> for TestsPathResolver {
             normalize_path(path, get_parent_path(context_path))
         } else {
             // Direct import: this path will be used as-is
-            Some(path.to_string())
+            Some(path.to_owned())
         }
     }
 }
