@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "szabo" # (0..5)
+  - (Expression) ► (UNRECOGNIZED): "szabo" # (0..5)

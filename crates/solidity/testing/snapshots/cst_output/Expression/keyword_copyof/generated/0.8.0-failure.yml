@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "copyof" # (0..6)
+  - (Expression) ► (UNRECOGNIZED): "copyof" # (0..6)

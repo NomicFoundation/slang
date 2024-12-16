@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::cst::{Edge, Node, TerminalKind, TerminalKindExtensions, TextIndex};
+use crate::cst::{Edge, Node, NonterminalNode, TerminalKind, TerminalKindExtensions, TextIndex};
 use crate::parser::lexer::Lexer;
 use crate::parser::parser_support::context::ParserContext;
 use crate::parser::parser_support::parser_result::{
@@ -85,14 +85,9 @@ where
                     TerminalKind::UNRECOGNIZED
                 };
                 let node = Node::terminal(kind, input.to_string());
-                let tree = if no_match.kind.is_none() || start.utf8 == 0 {
-                    node
-                } else {
-                    trivia_nodes.push(Edge::anonymous(node));
-                    Node::nonterminal(no_match.kind.unwrap(), trivia_nodes)
-                };
+                trivia_nodes.push(Edge::anonymous(node));
                 ParseOutput {
-                    parse_tree: tree,
+                    parse_tree: Rc::new(NonterminalNode::new(no_match.kind.unwrap(), trivia_nodes)),
                     errors: vec![ParseError::new(
                         start..start + input.into(),
                         no_match.expected_terminals,
@@ -156,18 +151,17 @@ where
                     ));
 
                     ParseOutput {
-                        parse_tree: Node::nonterminal(topmost_node.kind, new_children),
+                        parse_tree: Rc::new(NonterminalNode::new(topmost_node.kind, new_children)),
                         errors,
                     }
                 } else {
-                    let parse_tree = Node::Nonterminal(topmost_node);
+                    let parse_tree = topmost_node;
                     let errors = stream.into_errors();
 
                     // Sanity check: Make sure that succesful parse is equivalent to not having any invalid nodes
                     debug_assert_eq!(
                         errors.is_empty(),
-                        parse_tree
-                            .clone()
+                        Rc::clone(&parse_tree)
                             .cursor_with_offset(TextIndex::ZERO)
                             .remaining_nodes()
                             .all(|edge| edge

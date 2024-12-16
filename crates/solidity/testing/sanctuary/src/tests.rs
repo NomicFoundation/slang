@@ -8,7 +8,7 @@ use itertools::Itertools;
 use metaslang_bindings::PathResolver;
 use semver::Version;
 use slang_solidity::bindings::Bindings;
-use slang_solidity::cst::{Cursor, NonterminalKind, TextIndex, TextRange};
+use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextIndex, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::parser::{ParseOutput, Parser};
 use slang_solidity::{bindings, transform_built_ins_node};
@@ -218,8 +218,8 @@ fn create_bindings(version: &Version, source_id: &str, output: &ParseOutput) -> 
             bindings::get_built_ins(version),
         )
         .tree();
-    let built_ins_cursor =
-        transform_built_ins_node(&built_ins_tree).cursor_with_offset(TextIndex::ZERO);
+    let built_ins_cursor = transform_built_ins_node(&Node::Nonterminal(built_ins_tree))
+        .cursor_with_offset(TextIndex::ZERO);
 
     bindings.add_system_file("built_ins.sol", built_ins_cursor);
     bindings.add_user_file(source_id, output.create_tree_cursor());

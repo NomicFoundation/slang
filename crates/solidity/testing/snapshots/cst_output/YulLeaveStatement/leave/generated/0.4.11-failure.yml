@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "leave" # (0..5)
+  - (YulLeaveStatement) ► (UNRECOGNIZED): "leave" # (0..5)

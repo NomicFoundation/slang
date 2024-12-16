@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "throw;" # (0..6)
+  - (ThrowStatement) ► (UNRECOGNIZED): "throw;" # (0..6)
