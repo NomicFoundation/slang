@@ -8,7 +8,7 @@
 //! Functions that can be called by graph DSL files
 
 use std::collections::HashMap;
-use std::sync::Arc;
+use std::rc::Rc;
 
 use metaslang_cst::kinds::KindTypes;
 
@@ -86,7 +86,7 @@ where
 /// A library of named functions.
 #[derive(Default)]
 pub struct Functions<KT: KindTypes> {
-    functions: HashMap<Identifier, Arc<dyn Function<KT> + Send + Sync>>,
+    functions: HashMap<Identifier, Rc<dyn Function<KT>>>,
 }
 
 impl<KT: KindTypes> Functions<KT> {
@@ -144,9 +144,9 @@ impl<KT: KindTypes> Functions<KT> {
     /// Adds a new function to this library.
     pub fn add<F>(&mut self, name: Identifier, function: F)
     where
-        F: Function<KT> + Send + Sync + 'static,
+        F: Function<KT> + 'static,
     {
-        self.functions.insert(name, Arc::new(function));
+        self.functions.insert(name, Rc::new(function));
     }
 
     /// Calls a named function, returning an error if there is no function with that name.

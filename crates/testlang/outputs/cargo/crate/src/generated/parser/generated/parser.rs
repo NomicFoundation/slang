@@ -27,12 +27,13 @@ use crate::parser::scanner_macros::{
     scan_not_followed_by, scan_one_or_more, scan_optional, scan_sequence, scan_zero_or_more,
 };
 use crate::parser::ParseOutput;
+use crate::utils::LanguageFacts;
 
 #[derive(Debug)]
 pub struct Parser {
     #[allow(dead_code)]
     pub(crate) version_is_at_least_1_0_0: bool,
-    pub version: Version,
+    language_version: Version,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -42,30 +43,28 @@ pub enum ParserInitializationError {
 }
 
 impl Parser {
-    pub const SUPPORTED_VERSIONS: &'static [Version] = &[
-        Version::new(1, 0, 0),
-        Version::new(1, 0, 1),
-        Version::new(1, 1, 0),
-        Version::new(1, 1, 1),
-    ];
-
     pub const ROOT_KIND: NonterminalKind = NonterminalKind::SourceUnit;
 
-    pub fn create(version: Version) -> std::result::Result<Self, ParserInitializationError> {
-        if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
+    pub fn create(
+        language_version: Version,
+    ) -> std::result::Result<Self, ParserInitializationError> {
+        if LanguageFacts::SUPPORTED_VERSIONS
+            .binary_search(&language_version)
+            .is_ok()
+        {
             Ok(Self {
-                version_is_at_least_1_0_0: Version::new(1, 0, 0) <= version,
-                version,
+                version_is_at_least_1_0_0: Version::new(1, 0, 0) <= language_version,
+                language_version,
             })
         } else {
             Err(ParserInitializationError::UnsupportedLanguageVersion(
-                version,
+                language_version,
             ))
         }
     }
 
-    pub fn version(&self) -> &Version {
-        &self.version
+    pub fn language_version(&self) -> &Version {
+        &self.language_version
     } /********************************************
        *         Parser Functions
        ********************************************/

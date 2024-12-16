@@ -1,0 +1,72 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+interface bindings {
+    use cst.{cursor};
+
+    /// A giant graph that contains name binding information for all source files within the compilation unit.
+    /// It stores cursors to all definitions and references, and can resolve the edges between them.
+    resource binding-graph {
+        /// If the provided cursor points at a definition `Identifier`, it will return the 
+        /// corresponding definition. Otherwise, it will return `undefined`.
+        definition-at: func(cursor: borrow<cursor>) -> option<definition>;
+
+        /// If the provided cursor points at a reference `Identifier`, it will return the 
+        /// corresponding reference. Otherwise, it will return `undefined`.
+        reference-at: func(cursor: borrow<cursor>) -> option<reference>;
+    }
+
+    /// Represents a definition in the binding graph.
+    resource definition {
+        /// Returns a unique numerical identifier of the definition.
+        /// It is only valid for the lifetime of the binding graph.
+        /// It can change between multiple graphs, even for the same source code input.
+        id: func() -> u32;
+
+        /// Returns the location of the definition's name.
+        /// For `contract X {}`, that is the location of the `X` `Identifier` node.
+        name-location: func() -> binding-location;
+
+        /// Returns the location of the definition's definiens.
+        /// For `contract X {}`, that is the location of the parent `ContractDefinition` node.
+        definiens-location: func() -> binding-location;
+    }
+
+    /// Represents a reference in the binding graph.
+    resource reference {
+        /// Returns a unique numerical identifier of the reference.
+        /// It is only valid for the lifetime of the binding graph.
+        /// It can change between multiple graphs, even for the same source code input.
+        id: func() -> u32;
+
+        /// Returns the location of the reference.
+        /// For `new X()`, that is the location of the `X` `Identifier` node.
+        location: func() -> binding-location;
+
+        /// Returns a list of all definitions related to this reference.
+        /// Most references have a single definition, but some have multiple, such as when a symbol
+        /// is imported from another file, and renamed (re-defined) in the current file.
+        definitions: func() -> list<definition>;
+    }
+
+    /// Represents a location of a symbol (definition or reference) in the binding graph.
+    /// It can either be in a user file, or a built-in in the language.
+    variant binding-location {
+        /// Represents a location of a user-defined symbol in a user file.
+        user-file(user-file-location),
+        /// Represents a location of a built-in symbol in the language.
+        built-in(built-in-location)
+    }
+
+    /// Represents a location of a user-defined symbol in a user file.
+    resource user-file-location {
+        /// Returns the ID of the file that contains the symbol.
+        file-id: func() -> string;
+        
+        /// Returns a cursor to the CST node that contains the symbol.
+        cursor: func() -> cursor;
+    }
+
+    /// Represents a location of a built-in symbol in the language.
+    resource built-in-location {
+    }
+}

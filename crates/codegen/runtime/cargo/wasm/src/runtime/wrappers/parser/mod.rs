@@ -1,10 +1,10 @@
 use crate::wasm_crate::utils::{define_wrapper, FromFFI, IntoFFI};
 
 mod ffi {
-    pub use crate::wasm_crate::bindings::exports::nomic_foundation::slang::cst::{
+    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{
         Cursor, Node, TextRange,
     };
-    pub use crate::wasm_crate::bindings::exports::nomic_foundation::slang::parser::{
+    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::parser::{
         Guest, GuestParseError, GuestParseOutput, GuestParser, NonterminalKind, ParseError,
         ParseErrorBorrow, ParseOutput, ParseOutputBorrow, Parser, ParserBorrow,
     };
@@ -31,22 +31,15 @@ define_wrapper! { Parser {
         rust::Parser::ROOT_KIND._into_ffi()
     }
 
-    fn supported_versions() -> Vec<String> {
-        rust::Parser::SUPPORTED_VERSIONS
-            .iter()
-            .map(|v| v.to_string())
-            .collect()
-    }
-
-    fn create(version: String) -> Result<ffi::Parser, String> {
-        semver::Version::parse(&version)
-            .map_err(|_| format!("Invalid semantic version: '{version}'"))
+    fn create(language_version: String) -> Result<ffi::Parser, String> {
+        semver::Version::parse(&language_version)
+            .map_err(|_| format!("Invalid semantic version: '{language_version}'"))
             .and_then(|version| rust::Parser::create(version).map_err(|e| e.to_string()))
             .map(IntoFFI::_into_ffi)
     }
 
-    fn version(&self) -> String {
-        self._borrow_ffi().version.to_string()
+    fn language_version(&self) -> String {
+        self._borrow_ffi().language_version().to_string()
     }
 
     fn parse(&self, kind: ffi::NonterminalKind, input: String) -> ffi::ParseOutput {
@@ -78,7 +71,7 @@ define_wrapper! { ParseError {
 
 define_wrapper! { ParseOutput {
     fn tree(&self) -> ffi::Node {
-        self._borrow_ffi().tree()._into_ffi()
+        self._borrow_ffi().tree().clone()._into_ffi()
     }
 
     fn errors(&self) -> Vec<ffi::ParseError> {

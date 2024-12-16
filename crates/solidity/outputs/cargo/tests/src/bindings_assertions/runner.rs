@@ -6,7 +6,7 @@ use semver::Version;
 use slang_solidity::diagnostic;
 use slang_solidity::parser::Parser;
 
-use crate::bindings::create_bindings;
+use crate::bindings::create_binding_graph;
 use crate::bindings_assertions::assertions::{
     check_assertions, collect_assertions_into, Assertions,
 };
@@ -29,7 +29,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 
 fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()> {
     let parser = Parser::create(version.clone())?;
-    let mut bindings = create_bindings(version)?;
+    let mut binding_graph = create_binding_graph(version)?;
 
     let mut assertions = Assertions::new();
     let mut skipped = 0;
@@ -53,7 +53,7 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
             eprintln!("\nParse errors for version {version}\nFile: {file_path}\n{report}");
         }
 
-        bindings.add_user_file(file_path, parse_output.create_tree_cursor());
+        binding_graph.add_user_file(file_path, parse_output.create_tree_cursor());
         skipped += collect_assertions_into(
             &mut assertions,
             parse_output.create_tree_cursor(),
@@ -63,14 +63,14 @@ fn check_assertions_with_version(version: &Version, contents: &str) -> Result<()
     }
 
     if let Some(context) = multi_part.context {
-        let context_definition = bindings
+        let context_definition = binding_graph
             .lookup_definition_by_name(context)
             .expect("context definition to be found")
             .to_handle();
-        bindings.set_context(&context_definition);
+        binding_graph.set_context(&context_definition);
     }
 
-    let result = check_assertions(&bindings, &assertions, version);
+    let result = check_assertions(&binding_graph, &assertions, version);
 
     match result {
         Ok(count) => {

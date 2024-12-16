@@ -1,16 +1,22 @@
 use metaslang_bindings::PathResolver;
+use slang_solidity::cst::{Cursor, KindTypes};
 
 pub struct TestsPathResolver;
 
-impl PathResolver for TestsPathResolver {
-    fn resolve_path(&self, context_path: &str, path_to_resolve: &str) -> Option<String> {
-        if is_relative_path(path_to_resolve) {
+impl PathResolver<KindTypes> for TestsPathResolver {
+    fn resolve_path(&self, context_path: &str, path_to_resolve: &Cursor) -> Option<String> {
+        let path = path_to_resolve.node().unparse();
+        let path = path
+            .strip_prefix(|c| matches!(c, '"' | '\''))?
+            .strip_suffix(|c| matches!(c, '"' | '\''))?;
+
+        if is_relative_path(path) {
             // Relative import: the actual path will be computed using the
             // context path (ie. the path of the importing source unit)
-            normalize_path(path_to_resolve, get_parent_path(context_path))
+            normalize_path(path, get_parent_path(context_path))
         } else {
             // Direct import: this path will be used as-is
-            Some(path_to_resolve.to_string())
+            Some(path.to_string())
         }
     }
 }

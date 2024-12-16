@@ -1,8 +1,8 @@
-use std::sync::Arc;
+use std::rc::Rc;
 
 use metaslang_bindings::PathResolver;
-use slang_solidity::bindings::{create_with_resolver, get_built_ins, Bindings};
-use slang_solidity::cst::TextIndex;
+use slang_solidity::bindings::{create_with_resolver, get_built_ins, BindingGraph};
+use slang_solidity::cst::{Cursor, KindTypes, TextIndex};
 use slang_solidity::parser::{ParseOutput, Parser};
 use slang_solidity::transform_built_ins_node;
 
@@ -18,21 +18,21 @@ pub fn setup() -> ParseOutput {
     built_ins
 }
 
-pub fn run(built_ins: ParseOutput) -> Bindings {
-    let mut bindings = create_with_resolver(SOLC_VERSION, Arc::new(NoOpResolver {}));
+pub fn run(built_ins: ParseOutput) -> BindingGraph {
+    let mut binding_graph = create_with_resolver(SOLC_VERSION, Rc::new(NoOpResolver {}));
 
     let built_ins_cursor =
-        transform_built_ins_node(&built_ins.tree()).cursor_with_offset(TextIndex::ZERO);
+        transform_built_ins_node(built_ins.tree()).cursor_with_offset(TextIndex::ZERO);
 
-    bindings.add_system_file("built_ins.sol", built_ins_cursor);
+    binding_graph.add_system_file("built_ins.sol", built_ins_cursor);
 
-    bindings
+    binding_graph
 }
 
 struct NoOpResolver;
 
-impl PathResolver for NoOpResolver {
-    fn resolve_path(&self, _context_path: &str, path_to_resolve: &str) -> Option<String> {
-        Some(path_to_resolve.to_string())
+impl PathResolver<KindTypes> for NoOpResolver {
+    fn resolve_path(&self, _context_path: &str, path_to_resolve: &Cursor) -> Option<String> {
+        Some(path_to_resolve.node().unparse())
     }
 }

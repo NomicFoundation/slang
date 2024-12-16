@@ -21,7 +21,10 @@ testlang_language = { workspace = true }
 paste = { workspace = true }
 semver = { workspace = true }
 serde_json = { workspace = true }
-slang_testlang = { workspace = true }
+slang_testlang = { workspace = true, features = [
+  "__experimental_bindings_api",
+  "__private_compilation_api",
+] }
 wit-bindgen = { workspace = true }
 
 [lints]

@@ -1,16 +1,17 @@
 use std::cmp::min;
 use std::path::Path;
-use std::sync::Arc;
+use std::rc::Rc;
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use metaslang_bindings::PathResolver;
 use semver::Version;
-use slang_solidity::bindings::Bindings;
-use slang_solidity::cst::{Cursor, NonterminalKind, TextIndex, TextRange};
+use slang_solidity::bindings::BindingGraph;
+use slang_solidity::cst::{Cursor, KindTypes, NonterminalKind, TextIndex, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::parser::{ParseOutput, Parser};
+use slang_solidity::utils::LanguageFacts;
 use slang_solidity::{bindings, transform_built_ins_node};
 
 use crate::datasets::{DataSet, SourceFile};
@@ -152,7 +153,7 @@ fn extract_compiler_version(compiler: &str) -> Option<Version> {
         panic!("Unrecognized compiler/version: '{compiler}'");
     };
 
-    if &version < Parser::SUPPORTED_VERSIONS.first().unwrap() {
+    if &version < LanguageFacts::SUPPORTED_VERSIONS.first().unwrap() {
         // Version is too early:
         return None;
     }
@@ -186,9 +187,9 @@ fn run_bindings_check(
     output: &ParseOutput,
 ) -> Result<Vec<UnresolvedReference>> {
     let mut unresolved = Vec::new();
-    let bindings = create_bindings(version, source_id, output)?;
+    let binding_graph = create_bindings(version, source_id, output)?;
 
-    for reference in bindings.all_references() {
+    for reference in binding_graph.all_references() {
         if reference.get_file().is_system() {
             // skip built-ins
             continue;
@@ -196,7 +197,7 @@ fn run_bindings_check(
         // We're not interested in the exact definition a reference resolves
         // to, so we lookup all of them and fail if we find none.
         if reference.definitions().is_empty() {
-            let cursor = reference.get_cursor().unwrap();
+            let cursor = reference.get_cursor().to_owned();
             unresolved.push(UnresolvedReference { cursor });
         }
     }
@@ -204,37 +205,39 @@ fn run_bindings_check(
     Ok(unresolved)
 }
 
-fn create_bindings(version: &Version, source_id: &str, output: &ParseOutput) -> Result<Bindings> {
-    let mut bindings = bindings::create_with_resolver(
+fn create_bindings(
+    version: &Version,
+    source_id: &str,
+    output: &ParseOutput,
+) -> Result<BindingGraph> {
+    let mut binding_graph = bindings::create_with_resolver(
         version.clone(),
-        Arc::new(SingleFileResolver {
+        Rc::new(SingleFileResolver {
             source_id: source_id.into(),
         }),
     );
     let parser = Parser::create(version.clone())?;
-    let built_ins_tree = parser
-        .parse(
-            NonterminalKind::SourceUnit,
-            bindings::get_built_ins(version),
-        )
-        .tree();
+    let built_ins = parser.parse(
+        NonterminalKind::SourceUnit,
+        bindings::get_built_ins(version),
+    );
     let built_ins_cursor =
-        transform_built_ins_node(&built_ins_tree).cursor_with_offset(TextIndex::ZERO);
+        transform_built_ins_node(built_ins.tree()).cursor_with_offset(TextIndex::ZERO);
 
-    bindings.add_system_file("built_ins.sol", built_ins_cursor);
-    bindings.add_user_file(source_id, output.create_tree_cursor());
-    Ok(bindings)
+    binding_graph.add_system_file("built_ins.sol", built_ins_cursor);
+    binding_graph.add_user_file(source_id, output.create_tree_cursor());
+    Ok(binding_graph)
 }
 
-/// Bindings `PathResolver` that always resolves to the given `source_id`.
+/// The `PathResolver` that always resolves to the given `source_id`.
 /// This is useful for Sanctuary since all dependencies are concatenated in the
 /// same file, but the import directives are retained.
 struct SingleFileResolver {
     source_id: String,
 }
 
-impl PathResolver for SingleFileResolver {
-    fn resolve_path(&self, _context_path: &str, _path_to_resolve: &str) -> Option<String> {
+impl PathResolver<KindTypes> for SingleFileResolver {
+    fn resolve_path(&self, _context_path: &str, _path_to_resolve: &Cursor) -> Option<String> {
         Some(self.source_id.clone())
     }
 }

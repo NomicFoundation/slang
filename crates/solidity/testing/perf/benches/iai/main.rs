@@ -7,7 +7,7 @@ use iai_callgrind::{
     library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
-use slang_solidity::bindings::Bindings;
+use slang_solidity::bindings::BindingGraph;
 use slang_solidity::parser::ParseOutput;
 use solidity_testing_perf::dataset::SourceFile;
 use solidity_testing_perf::tests::definitions::Dependencies;
@@ -38,7 +38,7 @@ define_benchmark!(cursor, Vec<ParsedFile>);
 define_benchmark!(query, Vec<ParsedFile>);
 define_benchmark!(init_bindings, ParseOutput);
 define_benchmark!(definitions, Dependencies);
-define_benchmark!(references, Bindings);
+define_benchmark!(references, BindingGraph);
 
 library_benchmark_group!(
     name = benchmarks;

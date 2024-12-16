@@ -11,7 +11,7 @@ use slang_solidity::parser::{ParseOutput, Parser};
 use super::graph::graphviz::render as render_graphviz_graph;
 use super::graph::mermaid::render as render_mermaid_graph;
 use super::renderer::render_bindings;
-use crate::bindings::create_bindings;
+use crate::bindings::create_binding_graph;
 use crate::generated::VERSION_BREAKS;
 use crate::multi_part_file::{split_multi_file, Part};
 
@@ -42,7 +42,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 
     for version in &VERSION_BREAKS {
         let parser = Parser::create(version.clone())?;
-        let mut bindings = create_bindings(version)?;
+        let mut binding_graph = create_binding_graph(version)?;
 
         let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
         let multi_part = split_multi_file(&contents);
@@ -52,8 +52,8 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         } in &multi_part.parts
         {
             let parse_output = parser.parse(Parser::ROOT_KIND, contents);
-            let graph =
-                bindings.add_user_file_returning_graph(path, parse_output.create_tree_cursor());
+            let graph = binding_graph
+                .add_user_file_returning_graph(path, parse_output.create_tree_cursor());
             parsed_parts.push(ParsedPart {
                 path,
                 contents,
@@ -63,14 +63,14 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         }
 
         if let Some(context) = multi_part.context {
-            let context_definition = bindings
+            let context_definition = binding_graph
                 .lookup_definition_by_name(context)
                 .expect("context definition to be found")
                 .to_handle();
-            bindings.set_context(&context_definition);
+            binding_graph.set_context(&context_definition);
         }
 
-        let (bindings_output, all_resolved) = render_bindings(&bindings, &parsed_parts)?;
+        let (bindings_output, all_resolved) = render_bindings(&binding_graph, &parsed_parts)?;
 
         let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());
         let status = if parse_success && all_resolved {

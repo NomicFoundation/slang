@@ -1,9 +1,9 @@
 use semver::Version;
-use slang_testlang::parser::Parser;
+use slang_testlang::utils::LanguageFacts;
 
 #[test]
 fn list_supported_versions() {
-    let versions = Parser::SUPPORTED_VERSIONS;
+    let versions = LanguageFacts::SUPPORTED_VERSIONS;
 
     assert!(!versions.is_empty());
     assert!(!versions.contains(&Version::new(0, 0, 0)));

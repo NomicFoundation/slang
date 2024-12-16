@@ -5,7 +5,7 @@ use metaslang_cst::kinds::KindTypes;
 use stack_graphs::partial::{PartialPath, PartialPaths};
 use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
 
-use crate::{Bindings, Definition, Reference, ResolutionError, Tag};
+use crate::{BindingGraph, Definition, Reference, ResolutionError, Tag};
 
 mod c3;
 
@@ -33,7 +33,7 @@ mod c3;
 /// applied to definitions pointing to virtual methods.
 ///
 pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
-    owner: &'a Bindings<KT>,
+    owner: &'a BindingGraph<KT>,
     reference: Reference<'a, KT>,
     partials: PartialPaths,
     results: Vec<ResolvedPath<'a, KT>>,

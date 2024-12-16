@@ -91,6 +91,7 @@ fn using_the_cursor() -> Result<()> {
 
         let identifiers: Vec<_> = parse_output
             .tree()
+            .clone()
             .descendants()
             .filter(|edge| edge.is_terminal_with_kind(TerminalKind::Identifier))
             .map(|identifier| identifier.unparse())
@@ -105,6 +106,7 @@ fn using_the_cursor() -> Result<()> {
 
         let identifiers: Vec<_> = parse_output
             .tree()
+            .clone()
             .descendants()
             .filter(|edge| edge.label == Some(EdgeLabel::Name))
             .filter(|edge| edge.is_terminal_with_kind(TerminalKind::Identifier))
