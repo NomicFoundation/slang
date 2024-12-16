@@ -46,5 +46,5 @@ References and definitions:
     │               ╰─── def: 8
  16 │         super.foo();
     │               ─┬─  
-    │                ╰─── ref: 6
+    │                ╰─── refs: 4, 6, 2
 ────╯

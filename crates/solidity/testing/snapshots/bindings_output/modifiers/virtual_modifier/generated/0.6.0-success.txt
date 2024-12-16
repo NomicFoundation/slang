@@ -28,5 +28,5 @@ References and definitions:
    │              ──┬─          ─┬─  
    │                ╰──────────────── def: 5
    │                             │   
-   │                             ╰─── ref: 4
+   │                             ╰─── refs: 4, 2
 ───╯
