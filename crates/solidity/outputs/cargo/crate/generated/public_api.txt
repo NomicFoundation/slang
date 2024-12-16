@@ -4,9 +4,20 @@ pub mod slang_solidity
 pub mod slang_solidity::bindings
 pub use slang_solidity::bindings::BuiltInLocation
 pub use slang_solidity::bindings::PathResolver
-pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, resolver: alloc::rc::Rc<dyn metaslang_bindings::PathResolver<slang_solidity::cst::KindTypes>>) -> slang_solidity::bindings::BindingGraph
+pub mod slang_solidity::bindings::built_ins
+pub fn slang_solidity::bindings::built_ins::get_built_ins_contents(version: &semver::Version) -> &'static str
+pub enum slang_solidity::bindings::BindingGraphInitializationError
+pub slang_solidity::bindings::BindingGraphInitializationError::ParserInitialization(slang_solidity::parser::ParserInitializationError)
+impl core::convert::From<slang_solidity::parser::ParserInitializationError> for slang_solidity::bindings::BindingGraphInitializationError
+pub fn slang_solidity::bindings::BindingGraphInitializationError::from(source: slang_solidity::parser::ParserInitializationError) -> Self
+impl core::error::Error for slang_solidity::bindings::BindingGraphInitializationError
+pub fn slang_solidity::bindings::BindingGraphInitializationError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
+impl core::fmt::Debug for slang_solidity::bindings::BindingGraphInitializationError
+pub fn slang_solidity::bindings::BindingGraphInitializationError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity::bindings::BindingGraphInitializationError
+pub fn slang_solidity::bindings::BindingGraphInitializationError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, resolver: alloc::rc::Rc<dyn metaslang_bindings::PathResolver<slang_solidity::cst::KindTypes>>) -> core::result::Result<slang_solidity::bindings::BindingGraph, slang_solidity::parser::ParserInitializationError>
 pub fn slang_solidity::bindings::get_binding_rules() -> &'static str
-pub fn slang_solidity::bindings::get_built_ins(version: &semver::Version) -> &'static str
 pub type slang_solidity::bindings::BindingGraph = metaslang_bindings::BindingGraph<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::BindingLocation = metaslang_bindings::location::BindingLocation<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::Definition<'a> = metaslang_bindings::Definition<'a, slang_solidity::cst::KindTypes>
@@ -17,7 +28,7 @@ pub struct slang_solidity::compilation::AddFileResponse
 pub slang_solidity::compilation::AddFileResponse::import_paths: alloc::vec::Vec<slang_solidity::cst::Cursor>
 pub struct slang_solidity::compilation::CompilationUnit
 impl slang_solidity::compilation::CompilationUnit
-pub fn slang_solidity::compilation::CompilationUnit::binding_graph(&self) -> &alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
+pub fn slang_solidity::compilation::CompilationUnit::binding_graph(&self) -> &core::result::Result<alloc::rc::Rc<slang_solidity::bindings::BindingGraph>, slang_solidity::bindings::BindingGraphInitializationError>
 pub fn slang_solidity::compilation::CompilationUnit::file(&self, id: &str) -> core::option::Option<alloc::rc::Rc<slang_solidity::compilation::File>>
 pub fn slang_solidity::compilation::CompilationUnit::files(&self) -> alloc::vec::Vec<alloc::rc::Rc<slang_solidity::compilation::File>>
 pub fn slang_solidity::compilation::CompilationUnit::language_version(&self) -> &semver::Version
@@ -30,7 +41,7 @@ impl core::clone::Clone for slang_solidity::compilation::File
 pub fn slang_solidity::compilation::File::clone(&self) -> slang_solidity::compilation::File
 pub struct slang_solidity::compilation::InternalCompilationBuilder
 impl slang_solidity::compilation::InternalCompilationBuilder
-pub fn slang_solidity::compilation::InternalCompilationBuilder::add_file(&mut self, id: alloc::string::String, contents: &str) -> core::result::Result<slang_solidity::compilation::AddFileResponse, AddFileError>
+pub fn slang_solidity::compilation::InternalCompilationBuilder::add_file(&mut self, id: alloc::string::String, contents: &str) -> slang_solidity::compilation::AddFileResponse
 pub fn slang_solidity::compilation::InternalCompilationBuilder::build(&self) -> slang_solidity::compilation::CompilationUnit
 pub fn slang_solidity::compilation::InternalCompilationBuilder::create(language_version: semver::Version) -> core::result::Result<Self, CompilationInitializationError>
 pub fn slang_solidity::compilation::InternalCompilationBuilder::resolve_import(&mut self, source_file_id: &str, import_path: &slang_solidity::cst::Cursor, destination_file_id: alloc::string::String) -> core::result::Result<(), ResolveImportError>
@@ -912,6 +923,8 @@ pub fn slang_solidity::diagnostic::render<D: slang_solidity::diagnostic::Diagnos
 pub mod slang_solidity::parser
 pub enum slang_solidity::parser::ParserInitializationError
 pub slang_solidity::parser::ParserInitializationError::UnsupportedLanguageVersion(semver::Version)
+impl core::convert::From<slang_solidity::parser::ParserInitializationError> for slang_solidity::bindings::BindingGraphInitializationError
+pub fn slang_solidity::bindings::BindingGraphInitializationError::from(source: slang_solidity::parser::ParserInitializationError) -> Self
 impl core::error::Error for slang_solidity::parser::ParserInitializationError
 impl core::fmt::Debug for slang_solidity::parser::ParserInitializationError
 pub fn slang_solidity::parser::ParserInitializationError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -961,4 +974,3 @@ pub struct slang_solidity::utils::LanguageFacts
 impl slang_solidity::utils::LanguageFacts
 pub const slang_solidity::utils::LanguageFacts::NAME: &'static str
 pub const slang_solidity::utils::LanguageFacts::SUPPORTED_VERSIONS: &'static [semver::Version]
-pub fn slang_solidity::transform_built_ins_node(node: &slang_solidity::cst::Node) -> slang_solidity::cst::Node
