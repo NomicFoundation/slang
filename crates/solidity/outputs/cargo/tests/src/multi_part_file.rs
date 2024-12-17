@@ -9,7 +9,6 @@ pub(crate) struct Part<'a> {
 
 #[derive(Debug, PartialEq)]
 pub(crate) struct MultiPart<'a> {
-    pub(crate) context: Option<&'a str>,
     pub(crate) parts: Vec<Part<'a>>,
 }
 
@@ -24,23 +23,7 @@ pub(crate) struct MultiPart<'a> {
 /// case, the returned vector will contain a single entry with the contents
 /// below the separator line.
 ///
-/// The leading section before the first path separator may contain context
-/// information of the form:
-///   // --- context: Derived
-///
-/// Other than that, non-whitespace content is not allowed before the first
-/// path separator.
-///
 pub fn split_multi_file(contents: &str) -> MultiPart<'_> {
-    let context_re = Regex::new(r"(?m)\A// -{3,} context: (.+)\s*\n").unwrap();
-    let (context, contents) = match context_re.captures(contents) {
-        Some(context_capture) => (
-            Some(context_capture.get(1).unwrap().as_str()),
-            &contents[context_capture.get(0).unwrap().end()..],
-        ),
-        None => (None, contents),
-    };
-
     let separator_re = Regex::new(r"(?m)^// -{3,} path: (.+)\s*\n").unwrap();
     let mut last_path: Option<&str> = None;
     let mut last_start = None;
@@ -80,7 +63,7 @@ pub fn split_multi_file(contents: &str) -> MultiPart<'_> {
     };
     parts.push(last_part);
 
-    MultiPart { context, parts }
+    MultiPart { parts }
 }
 
 #[test]
@@ -98,7 +81,6 @@ fn splits_a_multi_file() {
     "#};
 
     let result = split_multi_file(multi_file_contents);
-    assert!(result.context.is_none());
     assert_eq!(3, result.parts.len());
     assert_eq!(
         result.parts[0],
@@ -158,35 +140,4 @@ fn disallows_content_before_first_path_tag() {
     "#};
 
     let _ = split_multi_file(file_contents);
-}
-
-#[test]
-fn captures_context() {
-    let file_contents = indoc! {r#"
-        // --- context: Base
-        contract Base {}
-    "#};
-    let result = split_multi_file(file_contents);
-    assert_eq!(Some("Base"), result.context);
-    assert_eq!(1, result.parts.len());
-    assert_eq!("input.sol", result.parts[0].name);
-    assert_eq!("contract Base {}\n", result.parts[0].contents);
-}
-
-#[test]
-fn captures_context_and_split_a_multi_file() {
-    let file_contents = indoc! {r#"
-        // --- context: Derived
-        // --- path: lib/base.sol
-        contract Base {}
-        // --- path: main.sol
-        contract Derived is Base {}
-    "#};
-    let result = split_multi_file(file_contents);
-    assert_eq!(Some("Derived"), result.context);
-    assert_eq!(2, result.parts.len());
-    assert_eq!("lib/base.sol", result.parts[0].name);
-    assert_eq!("contract Base {}\n", result.parts[0].contents);
-    assert_eq!("main.sol", result.parts[1].name);
-    assert_eq!("contract Derived is Base {}\n", result.parts[1].contents);
 }
