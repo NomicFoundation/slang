@@ -1,23 +1,26 @@
-use slang_solidity::bindings::Bindings;
+use slang_solidity::bindings::BindingGraph;
 
 use crate::tests::parser::ParsedFile;
 
 pub struct Dependencies {
-    pub bindings: Bindings,
+    pub binding_graph: BindingGraph,
     pub files: Vec<ParsedFile>,
 }
 
 pub fn setup() -> Dependencies {
-    let bindings = super::init_bindings::run(super::init_bindings::setup());
+    let binding_graph = super::init_bindings::run();
     let files = super::parser::run(super::parser::setup());
 
-    Dependencies { bindings, files }
+    Dependencies {
+        binding_graph,
+        files,
+    }
 }
 
-pub fn run(dependencies: Dependencies) -> Bindings {
+pub fn run(dependencies: Dependencies) -> BindingGraph {
     let mut definition_count = 0_usize;
     let Dependencies {
-        mut bindings,
+        mut binding_graph,
         files,
     } = dependencies;
 
@@ -27,8 +30,8 @@ pub fn run(dependencies: Dependencies) -> Bindings {
         parse_output,
     } in &files
     {
-        bindings.add_user_file(path.to_str().unwrap(), parse_output.create_tree_cursor());
-        definition_count += bindings
+        binding_graph.add_user_file(path.to_str().unwrap(), parse_output.create_tree_cursor());
+        definition_count += binding_graph
             .all_definitions()
             .filter(|definition| definition.get_file().is_user())
             .count();
@@ -36,5 +39,5 @@ pub fn run(dependencies: Dependencies) -> Bindings {
 
     assert_eq!(definition_count, 2322, "Failed to fetch all definitions");
 
-    bindings
+    binding_graph
 }

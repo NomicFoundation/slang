@@ -48,10 +48,9 @@ export type TextIndex = generated.cst.TextIndex;
 
 export type TextRange = generated.cst.TextRange;
 
-/*
- * Helpers:
+/**
+ * Asserts that this node is a `NonterminalNode` with the provided kind and text.
  */
-
 export function assertIsNonterminalNode(
   node: unknown,
   kind?: NonterminalKind,
@@ -70,6 +69,9 @@ export function assertIsNonterminalNode(
   }
 }
 
+/**
+ * Asserts that this node is a `TerminalKind` with the provided kind and text.
+ */
 export function assertIsTerminalNode(node: unknown, kind?: TerminalKind, text?: string): asserts node is TerminalNode {
   if (!(node instanceof TerminalNode)) {
     throw new Error("Node provided is not a TerminalNode.");

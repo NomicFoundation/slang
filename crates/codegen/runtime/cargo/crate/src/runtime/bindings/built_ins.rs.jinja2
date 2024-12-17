@@ -1,7 +1,8 @@
 use semver::Version;
 
+// TODO: This should be moved to the Solidity-specific 'extensions' sub-module.
 #[allow(unused_variables)]
-pub fn get_contents(version: &Version) -> &'static str {
+pub fn get_built_ins_contents(version: &Version) -> &'static str {
     {%- if not rendering_in_stubs -%}
         {%- for version in model.bindings.built_ins_versions %}
             {%- if not loop.first -%}

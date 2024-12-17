@@ -101,9 +101,9 @@ test("use cursor goToNext()", () => {
 test("access the node using its name", () => {
   const source = "tree [A [B C] D];";
   const parser = Parser.create("1.0.0");
-  const parseTree = parser.parse(NonterminalKind.SourceUnit, source);
+  const parseOutput = parser.parse(NonterminalKind.SourceUnit, source);
 
-  const cursor = parseTree.createTreeCursor();
+  const cursor = parseOutput.createTreeCursor();
   let names: string[] = [];
 
   while (cursor.goToNextNonterminalWithKind(NonterminalKind.TreeNode)) {

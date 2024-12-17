@@ -4,31 +4,46 @@
 mod binding_rules;
 
 #[path = "generated/built_ins.rs"]
-mod built_ins;
+pub mod built_ins;
 
-use std::sync::Arc;
+use std::rc::Rc;
 
-use metaslang_bindings::{self, PathResolver};
 use semver::Version;
 
 use crate::cst::KindTypes;
 
-pub type Bindings = metaslang_bindings::Bindings<KindTypes>;
+pub type BindingGraph = metaslang_bindings::BindingGraph<KindTypes>;
 pub type Definition<'a> = metaslang_bindings::Definition<'a, KindTypes>;
 pub type Reference<'a> = metaslang_bindings::Reference<'a, KindTypes>;
+pub type BindingLocation = metaslang_bindings::BindingLocation<KindTypes>;
+pub type UserFileLocation = metaslang_bindings::UserFileLocation<KindTypes>;
+
+pub use metaslang_bindings::{BuiltInLocation, PathResolver};
+
+use crate::parser::ParserInitializationError;
+
+#[derive(thiserror::Error, Debug)]
+pub enum BindingGraphInitializationError {
+    #[error(transparent)]
+    ParserInitialization(#[from] ParserInitializationError),
+}
 
 pub fn create_with_resolver(
     version: Version,
-    resolver: Arc<dyn PathResolver + Sync + Send>,
-) -> Bindings {
-    Bindings::create(version, binding_rules::BINDING_RULES_SOURCE, resolver)
+    resolver: Rc<dyn PathResolver<KindTypes>>,
+) -> Result<BindingGraph, ParserInitializationError> {
+    let mut binding_graph = BindingGraph::create(
+        version.clone(),
+        binding_rules::BINDING_RULES_SOURCE,
+        resolver,
+    );
+
+    crate::extensions::bindings::add_built_ins(&mut binding_graph, version)?;
+
+    Ok(binding_graph)
 }
 
 #[cfg(feature = "__private_testing_utils")]
 pub fn get_binding_rules() -> &'static str {
     binding_rules::BINDING_RULES_SOURCE
-}
-
-pub fn get_built_ins(version: &semver::Version) -> &'static str {
-    built_ins::get_contents(version)
 }

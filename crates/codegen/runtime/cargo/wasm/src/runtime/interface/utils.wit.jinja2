@@ -1,0 +1,7 @@
+interface utils {
+    /// Provides information about the supported language versions and the grammar.
+    resource language-facts {
+        /// Returns a list of language versions supported by Slang, sorted ascendingly.
+        supported-versions: static func() -> list<string>;
+    }
+}

@@ -6,10 +6,10 @@ mod selectors;
 use crate::wasm_crate::utils::IntoFFI;
 
 mod ffi {
-    pub use crate::wasm_crate::bindings::exports::nomic_foundation::slang::ast::{
+    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::ast::{
         Guest, GuestSelectors,
     };
-    pub use crate::wasm_crate::bindings::exports::nomic_foundation::slang::cst::{
+    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{
         Node, NonterminalNodeBorrow,
     };
 }

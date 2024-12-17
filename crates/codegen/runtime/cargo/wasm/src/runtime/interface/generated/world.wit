@@ -4,6 +4,9 @@ package nomic-foundation:slang;
 
 world slang {
     export ast;
+    export bindings;
+    export compilation;
     export cst;
     export parser;
+    export utils;
 }

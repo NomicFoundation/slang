@@ -1,16 +1,16 @@
-use slang_solidity::bindings::Bindings;
+use slang_solidity::bindings::BindingGraph;
 
-pub fn setup() -> Bindings {
+pub fn setup() -> BindingGraph {
     let dependencies = super::definitions::setup();
 
     super::definitions::run(dependencies)
 }
 
-pub fn run(bindings: Bindings) {
+pub fn run(binding_graph: BindingGraph) {
     let mut reference_count = 0_usize;
     let mut resolved_references = 0_usize;
 
-    for reference in bindings.all_references() {
+    for reference in binding_graph.all_references() {
         if reference.get_file().is_system() {
             // skip built-ins
             continue;
