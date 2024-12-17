@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Test {
+    │         ──┬─  
+    │           ╰─── def: 1
+  2 │     enum Choice { Yes, No }
+    │          ───┬──   ─┬─  ─┬  
+    │             ╰────────────── def: 2
+    │                    │    │  
+    │                    ╰─────── def: 3
+    │                         │  
+    │                         ╰── def: 4
+    │ 
+  4 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 5
+  5 │         (int x, int y) = (1, 2);
+    │              ┬      ┬  
+    │              ╰───────── def: 6
+    │                     │  
+    │                     ╰── def: 7
+  6 │         (int z, , int w) = (1, 2, 3);
+    │              ┬        ┬  
+    │              ╰─────────── def: 8
+    │                       │  
+    │                       ╰── def: 9
+  7 │         assert(x == z);
+    │         ───┬── ┬    ┬  
+    │            ╰─────────── ref: built-in
+    │                │    │  
+    │                ╰─────── ref: 6
+    │                     │  
+    │                     ╰── ref: 8
+  8 │         assert(y < w);
+    │         ───┬── ┬   ┬  
+    │            ╰────────── ref: built-in
+    │                │   │  
+    │                ╰────── ref: 7
+    │                    │  
+    │                    ╰── ref: 9
+  9 │         (, Choice c) = (Choice.Yes, Choice.No);
+    │            ───┬── ┬     ───┬── ─┬─  ───┬── ─┬  
+    │               ╰──────────────────────────────── ref: 2
+    │                   │        │    │      │    │  
+    │                   ╰──────────────────────────── def: 10
+    │                            │    │      │    │  
+    │                            ╰─────────────────── ref: 2
+    │                                 │      │    │  
+    │                                 ╰────────────── ref: 3
+    │                                        │    │  
+    │                                        ╰─────── ref: 2
+    │                                             │  
+    │                                             ╰── ref: 4
+    │ 
+ 11 │         assert(c == Choice.No);
+    │         ───┬── ┬    ───┬── ─┬  
+    │            ╰─────────────────── ref: built-in
+    │                │       │    │  
+    │                ╰─────────────── ref: 10
+    │                        │    │  
+    │                        ╰─────── ref: 2
+    │                             │  
+    │                             ╰── ref: 4
+────╯

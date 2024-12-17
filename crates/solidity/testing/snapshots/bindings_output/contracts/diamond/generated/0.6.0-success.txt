@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract A {
+    │          ┬  
+    │          ╰── def: 1
+  2 │     function foo() public virtual {
+    │              ─┬─  
+    │               ╰─── def: 2
+    │ 
+  6 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── def: 3
+    │               │  
+    │               ╰── ref: 1
+  7 │     function foo() public virtual override {
+    │              ─┬─  
+    │               ╰─── def: 4
+    │ 
+ 11 │ contract C is A {
+    │          ┬    ┬  
+    │          ╰─────── def: 5
+    │               │  
+    │               ╰── ref: 1
+    │ 
+ 14 │ contract D is B, C {
+    │          ┬    ┬  ┬  
+    │          ╰────────── def: 6
+    │               │  │  
+    │               ╰───── ref: 3
+    │                  │  
+    │                  ╰── ref: 5
+ 15 │     function foo() public virtual override {
+    │              ─┬─  
+    │               ╰─── def: 7
+ 16 │         super.foo();
+    │               ─┬─  
+    │                ╰─── refs: 4, 2
+────╯
