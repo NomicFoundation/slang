@@ -10,10 +10,10 @@ test("parse terminal", () => {
   const source = "About_time";
   const parser = Parser.create("1.0.0");
 
-  const parseTree = parser.parse(NonterminalKind.TreeNodeChild, source).tree;
-  assertIsNonterminalNode(parseTree, NonterminalKind.TreeNodeChild);
+  const tree = parser.parse(NonterminalKind.TreeNodeChild, source).tree;
+  assertIsNonterminalNode(tree, NonterminalKind.TreeNodeChild);
 
-  const children = parseTree.children();
+  const children = tree.children();
   expect(children).toHaveLength(1);
 
   assertIsTerminalNode(children[0]!.node, TerminalKind.DelimitedIdentifier, "About_time");
@@ -23,10 +23,10 @@ test("parse nonterminal", () => {
   const source = `tree [A [B C] D];`;
   const parser = Parser.create("1.0.0");
 
-  const parseTree = parser.parse(NonterminalKind.SourceUnit, source).tree;
-  assertIsNonterminalNode(parseTree, NonterminalKind.SourceUnit);
+  const tree = parser.parse(NonterminalKind.SourceUnit, source).tree;
+  assertIsNonterminalNode(tree, NonterminalKind.SourceUnit);
 
-  const children = parseTree.children();
+  const children = tree.children();
   expect(children).toHaveLength(1);
 
   assertIsNonterminalNode(children[0]!.node, NonterminalKind.SourceUnitMembers);

@@ -1,0 +1,153 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+export namespace NomicFoundationSlangBindings {
+  export { BindingGraph };
+  export { Definition };
+  export { Reference };
+  export { UserFileLocation };
+  export { BuiltInLocation };
+  export { BindingLocation };
+  export { BindingLocationType };
+}
+import type { Cursor } from "./nomic-foundation-slang-cst.js";
+export { Cursor };
+/**
+ * Represents a location of a symbol (definition or reference) in the binding graph.
+ * It can either be in a user file, or a built-in in the language.
+ */
+export type BindingLocation = UserFileLocation | BuiltInLocation;
+export enum BindingLocationType {
+  UserFileLocation = "UserFileLocation",
+  BuiltInLocation = "BuiltInLocation",
+}
+
+/**
+ * A giant graph that contains name binding information for all source files within the compilation unit.
+ * It stores cursors to all definitions and references, and can resolve the edges between them.
+ */
+export class BindingGraph {
+  /**
+   * If the provided cursor points at a definition `Identifier`, it will return the
+   * corresponding definition. Otherwise, it will return `undefined`.
+   */
+  definitionAt(cursor: Cursor): Definition | undefined;
+  /**
+   * If the provided cursor points at a reference `Identifier`, it will return the
+   * corresponding reference. Otherwise, it will return `undefined`.
+   */
+  referenceAt(cursor: Cursor): Reference | undefined;
+}
+
+/**
+ * Represents a location of a built-in symbol in the language.
+ */
+export class BuiltInLocation {
+  /**
+   * The variant of `BindingLocationType` that corresponds to this class.
+   */
+  readonly type = BindingLocationType.BuiltInLocation;
+
+  /**
+   * Coerce this variant to a `BuiltInLocation`, or `undefined` if this is not the correct type.
+   */
+  asBuiltInLocation(): this;
+
+  /**
+   * Return `true` if this object is an instance of `BuiltInLocation`.
+   */
+  isBuiltInLocation(): this is BuiltInLocation;
+
+  /**
+   * Coerce this variant to a `UserFileLocation`, or `undefined` if this is not the correct type.
+   */
+  asUserFileLocation(): undefined;
+
+  /**
+   * Return `true` if this object is an instance of `UserFileLocation`.
+   */
+  isUserFileLocation(): false;
+}
+
+/**
+ * Represents a definition in the binding graph.
+ */
+export class Definition {
+  /**
+   * Returns a unique numerical identifier of the definition.
+   * It is only valid for the lifetime of the binding graph.
+   * It can change between multiple graphs, even for the same source code input.
+   */
+  get id(): number;
+  /**
+   * Returns the location of the definition's name.
+   * For `contract X {}`, that is the location of the `X` `Identifier` node.
+   */
+  get nameLocation(): BindingLocation;
+  /**
+   * Returns the location of the definition's definiens.
+   * For `contract X {}`, that is the location of the parent `ContractDefinition` node.
+   */
+  get definiensLocation(): BindingLocation;
+}
+
+/**
+ * Represents a reference in the binding graph.
+ */
+export class Reference {
+  /**
+   * Returns a unique numerical identifier of the reference.
+   * It is only valid for the lifetime of the binding graph.
+   * It can change between multiple graphs, even for the same source code input.
+   */
+  get id(): number;
+  /**
+   * Returns the location of the reference.
+   * For `new X()`, that is the location of the `X` `Identifier` node.
+   */
+  get location(): BindingLocation;
+  /**
+   * Returns a list of all definitions related to this reference.
+   * Most references have a single definition, but some have multiple, such as when a symbol
+   * is imported from another file, and renamed (re-defined) in the current file.
+   */
+  definitions(): Definition[];
+}
+
+/**
+ * Represents a location of a user-defined symbol in a user file.
+ */
+export class UserFileLocation {
+  /**
+   * The variant of `BindingLocationType` that corresponds to this class.
+   */
+  readonly type = BindingLocationType.UserFileLocation;
+
+  /**
+   * Coerce this variant to a `UserFileLocation`, or `undefined` if this is not the correct type.
+   */
+  asUserFileLocation(): this;
+
+  /**
+   * Return `true` if this object is an instance of `UserFileLocation`.
+   */
+  isUserFileLocation(): this is UserFileLocation;
+
+  /**
+   * Coerce this variant to a `BuiltInLocation`, or `undefined` if this is not the correct type.
+   */
+  asBuiltInLocation(): undefined;
+
+  /**
+   * Return `true` if this object is an instance of `BuiltInLocation`.
+   */
+  isBuiltInLocation(): false;
+
+  /**
+   * Returns the ID of the file that contains the symbol.
+   */
+  get fileId(): string;
+  /**
+   * Returns a cursor to the CST node that contains the symbol.
+   */
+  get cursor(): Cursor;
+}

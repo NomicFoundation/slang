@@ -2,6 +2,7 @@
 // The final code (generated in output crates) is checked for dead-code anyways.
 #![allow(dead_code, unused_imports)]
 
+mod extensions;
 mod runtime;
 
 pub use runtime::*;

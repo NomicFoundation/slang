@@ -29,6 +29,7 @@ fn compare_end_of_lines(input: &str, expected: &[&str]) -> Result<()> {
 
     let actual = output
         .tree()
+        .clone()
         .descendants()
         .filter(|edge| edge.is_terminal_with_kind(TerminalKind::EndOfLine))
         .map(|eol| eol.unparse())

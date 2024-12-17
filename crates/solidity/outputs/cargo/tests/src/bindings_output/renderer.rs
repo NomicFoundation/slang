@@ -4,7 +4,7 @@ use std::ops::Range;
 use anyhow::Result;
 use ariadne::{Color, Config, FnCache, Label, Report, ReportBuilder, ReportKind, Source};
 use metaslang_bindings::ResolutionError;
-use slang_solidity::bindings::{Bindings, Definition, Reference};
+use slang_solidity::bindings::{BindingGraph, Definition, Reference};
 use slang_solidity::diagnostic;
 
 use super::runner::ParsedPart;
@@ -12,13 +12,13 @@ use super::runner::ParsedPart;
 type ReportSpan<'a> = (&'a str, Range<usize>);
 
 pub(crate) fn render_bindings(
-    bindings: &Bindings,
+    binding_graph: &BindingGraph,
     parsed_parts: &[ParsedPart<'_>],
 ) -> Result<(String, bool)> {
     let mut buffer: Vec<u8> = Vec::new();
     let mut all_resolved = true;
 
-    let all_definitions = collect_all_definitions(bindings);
+    let all_definitions = collect_all_definitions(binding_graph);
 
     for part in parsed_parts {
         if !part.parse_output.is_valid() {
@@ -28,7 +28,7 @@ pub(crate) fn render_bindings(
             buffer.push(b'\n');
         }
 
-        let part_references = bindings
+        let part_references = binding_graph
             .all_references()
             .filter(|reference| reference.get_file().is_user_path(part.path));
         let (bindings_report, part_all_resolved) =
@@ -52,10 +52,10 @@ pub(crate) fn render_bindings(
 
 // We collect all non built-in definitions in a vector to be able to identify
 // them by a numeric index
-fn collect_all_definitions(bindings: &Bindings) -> Vec<Definition<'_>> {
+fn collect_all_definitions(binding_graph: &BindingGraph) -> Vec<Definition<'_>> {
     let mut definitions: Vec<Definition<'_>> = Vec::new();
-    for definition in bindings.all_definitions() {
-        if definition.get_file().is_user() && definition.get_cursor().is_some() {
+    for definition in binding_graph.all_definitions() {
+        if definition.get_file().is_user() {
             definitions.push(definition);
         }
     }
@@ -86,15 +86,12 @@ fn build_report_for_part<'a>(
     .with_config(Config::default().with_color(false));
 
     for (index, definition) in all_definitions.iter().enumerate() {
-        let Some(cursor) = definition.get_cursor() else {
-            continue;
-        };
         if !definition.get_file().is_user_path(part.path) {
             continue;
         }
 
         let range = {
-            let range = cursor.text_range();
+            let range = definition.get_cursor().text_range();
             let start = part.contents[..range.start.utf8].chars().count();
             let end = part.contents[..range.end.utf8].chars().count();
             start..end
@@ -107,12 +104,8 @@ fn build_report_for_part<'a>(
     let mut all_resolved = true;
 
     for reference in part_references {
-        let Some(cursor) = reference.get_cursor() else {
-            continue;
-        };
-
         let range = {
-            let range = cursor.text_range();
+            let range = reference.get_cursor().text_range();
             let start = part.contents[..range.start.utf8].chars().count();
             let end = part.contents[..range.end.utf8].chars().count();
             start..end

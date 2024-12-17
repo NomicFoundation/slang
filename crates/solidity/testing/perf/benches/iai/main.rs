@@ -7,7 +7,7 @@ use iai_callgrind::{
     library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
-use slang_solidity::bindings::Bindings;
+use slang_solidity::bindings::BindingGraph;
 use solidity_testing_perf::dataset::SourceFile;
 use solidity_testing_perf::tests::definitions::Dependencies;
 use solidity_testing_perf::tests::parser::ParsedFile;
@@ -18,11 +18,13 @@ mod __dependencies_used_in_lib__ {
 
 macro_rules! define_benchmark {
     ($name:ident) => {
-        #[library_benchmark()]
+        #[library_benchmark]
         fn $name() {
             black_box(solidity_testing_perf::tests::$name::run());
         }
     };
+}
+macro_rules! define_payload_benchmark {
     ($name:ident, $payload:ty) => {
         #[library_benchmark(setup = solidity_testing_perf::tests::$name::setup)]
         fn $name(payload: $payload) {
@@ -38,12 +40,12 @@ macro_rules! define_benchmark {
  *
  * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
  */
-define_benchmark!(parser, Vec<SourceFile>);
-define_benchmark!(cursor, Vec<ParsedFile>);
-define_benchmark!(query, Vec<ParsedFile>);
+define_payload_benchmark!(parser, Vec<SourceFile>);
+define_payload_benchmark!(cursor, Vec<ParsedFile>);
+define_payload_benchmark!(query, Vec<ParsedFile>);
 define_benchmark!(init_bindings);
-define_benchmark!(definitions, Dependencies);
-define_benchmark!(references, Bindings);
+define_payload_benchmark!(definitions, Dependencies);
+define_payload_benchmark!(references, BindingGraph);
 
 library_benchmark_group!(
     name = benchmarks;

@@ -1,21 +1,24 @@
-use std::sync::Arc;
+use std::rc::Rc;
 
 use metaslang_bindings::PathResolver;
-use slang_solidity::bindings::{add_built_ins, create_with_resolver, Bindings};
+use slang_solidity::bindings::{create_with_resolver, BindingGraph};
+use slang_solidity::cst::{Cursor, KindTypes};
 
 use crate::dataset::SOLC_VERSION;
 
-pub fn run() -> Bindings {
-    let mut bindings = create_with_resolver(SOLC_VERSION, Arc::new(NoOpResolver {}));
-    add_built_ins(&mut bindings, &SOLC_VERSION).unwrap();
-
-    bindings
+pub fn run() -> BindingGraph {
+    create_with_resolver(SOLC_VERSION, Rc::new(NoOpResolver {})).unwrap()
 }
 
 struct NoOpResolver;
 
-impl PathResolver for NoOpResolver {
-    fn resolve_path(&self, _context_path: &str, path_to_resolve: &str) -> Option<String> {
-        Some(path_to_resolve.to_string())
+impl PathResolver<KindTypes> for NoOpResolver {
+    fn resolve_path(&self, _context_path: &str, path_to_resolve: &Cursor) -> Option<String> {
+        let path = path_to_resolve.node().unparse();
+        let path = path
+            .strip_prefix(|c| matches!(c, '"' | '\''))?
+            .strip_suffix(|c| matches!(c, '"' | '\''))?;
+
+        Some(path.to_owned())
     }
 }

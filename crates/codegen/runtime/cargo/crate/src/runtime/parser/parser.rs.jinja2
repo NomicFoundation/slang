@@ -11,6 +11,7 @@
 use semver::Version;
 
 use crate::cst;
+use crate::utils::LanguageFacts;
 use crate::cst::{
     EdgeLabel, IsLexicalContext, LexicalContext, LexicalContextType, NonterminalKind, TerminalKind,
 };
@@ -37,7 +38,7 @@ pub struct Parser {
         {%- endfor -%}
     {%- endif -%}
 
-    pub version: Version,
+    language_version: Version,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -47,34 +48,26 @@ pub enum ParserInitializationError {
 }
 
 impl Parser {
-    pub const SUPPORTED_VERSIONS: &'static [Version] = &[
-        {%- if not rendering_in_stubs -%}
-            {% for version in model.all_language_versions %}
-                Version::new({{ version | split(pat=".") | join(sep=", ") }}),
-            {% endfor %}
-        {%- endif -%}
-    ];
-
     pub const ROOT_KIND: NonterminalKind = NonterminalKind::{{ model.kinds.root_kind }};
 
-    pub fn create(version: Version) -> std::result::Result<Self, ParserInitializationError> {
-        if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
+    pub fn create(language_version: Version) -> std::result::Result<Self, ParserInitializationError> {
+        if LanguageFacts::SUPPORTED_VERSIONS.binary_search(&language_version).is_ok() {
             Ok(Self {
                 {%- if not rendering_in_stubs -%}
                     {%- for version in model.breaking_language_versions %}
-                        version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= version,
+                        version_is_at_least_{{ version | replace(from=".", to="_") }}: Version::new({{ version | split(pat=".") | join(sep=", ") }}) <= language_version,
                     {%- endfor -%}
                 {%- endif -%}
 
-                version,
+                language_version,
             })
         } else {
-            Err(ParserInitializationError::UnsupportedLanguageVersion(version))
+            Err(ParserInitializationError::UnsupportedLanguageVersion(language_version))
         }
     }
 
-    pub fn version(&self) -> &Version {
-        &self.version
+    pub fn language_version(&self) -> &Version {
+        &self.language_version
     }
 
     {%- if not rendering_in_stubs -%}

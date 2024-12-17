@@ -9,7 +9,7 @@ use stack_graphs::stitching::{
 };
 use stack_graphs::CancellationError;
 
-use crate::{Bindings, Definition, FileHandle, GraphHandle, Reference, ResolutionError, Tag};
+use crate::{BindingGraph, Definition, FileHandle, GraphHandle, Reference, ResolutionError, Tag};
 
 mod c3;
 
@@ -37,7 +37,7 @@ mod c3;
 /// applied to definitions pointing to virtual methods.
 ///
 pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
-    owner: &'a Bindings<KT>,
+    owner: &'a BindingGraph<KT>,
     reference: Reference<'a, KT>,
     partials: PartialPaths,
     results: Vec<ResolvedPath<'a, KT>>,
@@ -67,7 +67,7 @@ impl<'a, KT: KindTypes + 'static> ResolvedPath<'a, KT> {
 /// for forward candidates (ie. `get_forward_candidates`) by the resolution
 /// algorithm. Other than that, it's exactly the same as `GraphEdgeCandidates`.
 struct ResolverCandidates<'a, KT: KindTypes + 'static> {
-    owner: &'a Bindings<KT>,
+    owner: &'a BindingGraph<KT>,
     partials: &'a mut PartialPaths,
     file: Option<FileHandle>,
     edges: GraphEdges,
@@ -76,7 +76,7 @@ struct ResolverCandidates<'a, KT: KindTypes + 'static> {
 
 impl<'a, KT: KindTypes + 'static> ResolverCandidates<'a, KT> {
     pub fn new(
-        owner: &'a Bindings<KT>,
+        owner: &'a BindingGraph<KT>,
         partials: &'a mut PartialPaths,
         file: Option<FileHandle>,
         extensions: &'a [GraphHandle],

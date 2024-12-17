@@ -8,15 +8,11 @@ interface parser {
         /// This represents the starting point for parsing a complete source file.
         root-kind: static func() -> nonterminal-kind;
 
-        /// Returns a list of language versions supported by this parser.
-        /// Each version string represents a specific grammar configuration.
-        supported-versions: static func() -> list<string>;
-
         /// Creates a new parser instance for the specified language version.
-        create: static func(version: string) -> result<parser, string>;
+        create: static func(language-version: string) -> result<parser, string>;
 
         /// Returns the language version this parser instance is configured for.
-        version: func() -> string;
+        language-version: func() -> string;
 
         /// Parses the input string starting from the specified nonterminal kind.
         parse: func(kind: nonterminal-kind, input: string) -> parse-output;

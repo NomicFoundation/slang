@@ -5,7 +5,7 @@ use crate::wasm_crate::utils::{
 };
 
 mod ffi {
-    pub use crate::wasm_crate::bindings::exports::nomic_foundation::slang::cst::{
+    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{
         AncestorsIterator, AncestorsIteratorBorrow, Cursor, CursorBorrow, CursorIterator,
         CursorIteratorBorrow, Edge, EdgeLabel, Guest, GuestAncestorsIterator, GuestCursor,
         GuestCursorIterator, GuestNonterminalNode, GuestQuery, GuestQueryMatchIterator,

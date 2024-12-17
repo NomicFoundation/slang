@@ -153,21 +153,29 @@ inherit .star_extension
 ;;; Imports
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-[ImportClause [_ @path path: [StringLiteral]]] {
+[ImportClause
+  [_
+    path: [StringLiteral
+      @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+    ]
+  ]
+] {
   ;; This node represents the imported file and the @path.import node is used by
   ;; all subsequent import rules
   node @path.import
-  scan (source-text @path) {
-    "^\\s*[\"'](.+)[\"']\\s*$" {
-      let resolved_path = (resolve-path FILE_PATH $1)
-      attr (@path.import) push_symbol = resolved_path
-    }
-  }
+
+  let resolved_path = (resolve-path FILE_PATH @path)
+  attr (@path.import) push_symbol = resolved_path
+
   edge @path.import -> ROOT_NODE
 }
 
 ;;; `import <URI>`
-@import [PathImport @path path: [StringLiteral] .] {
+@import [PathImport
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
+] {
   ;; This is the "lexical" connection, which makes all symbols exported from the
   ;; imported source unit available for resolution globally at this' source unit
   ;; scope
@@ -176,8 +184,10 @@ inherit .star_extension
 
 ;;; `import <URI> as <IDENT>`
 @import [PathImport
-   @path path: [StringLiteral]
-   alias: [ImportAlias @alias [Identifier]]
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
+  alias: [ImportAlias @alias [Identifier]]
 ] {
   node def
   attr (def) node_definition = @alias
@@ -195,8 +205,10 @@ inherit .star_extension
 
 ;;; `import * as <IDENT> from <URI>`
 @import [NamedImport
-    alias: [ImportAlias @alias [Identifier]]
-    @path path: [StringLiteral]
+  alias: [ImportAlias @alias [Identifier]]
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
 ] {
   node def
   attr (def) node_definition = @alias
@@ -214,8 +226,10 @@ inherit .star_extension
 
 ;;; `import {<SYMBOL> [as <IDENT>] ...} from <PATH>`
 @import [ImportDeconstruction
-    symbols: [ImportDeconstructionSymbols @symbol [ImportDeconstructionSymbol]]
-    @path path: [StringLiteral]
+  symbols: [ImportDeconstructionSymbols @symbol [ImportDeconstructionSymbol]]
+  path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+  ]
 ] {
   ;; We define these intermediate nodes for convenience only, to make the
   ;; queries simpler in the two rules below

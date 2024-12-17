@@ -27,10 +27,11 @@ use crate::parser::scanner_macros::{
     scan_not_followed_by, scan_one_or_more, scan_optional, scan_sequence, scan_zero_or_more,
 };
 use crate::parser::ParseOutput;
+use crate::utils::LanguageFacts;
 
 #[derive(Debug)]
 pub struct Parser {
-    pub version: Version,
+    language_version: Version,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -40,22 +41,25 @@ pub enum ParserInitializationError {
 }
 
 impl Parser {
-    pub const SUPPORTED_VERSIONS: &'static [Version] = &[];
-
     pub const ROOT_KIND: NonterminalKind = NonterminalKind::Stub1;
 
-    pub fn create(version: Version) -> std::result::Result<Self, ParserInitializationError> {
-        if Self::SUPPORTED_VERSIONS.binary_search(&version).is_ok() {
-            Ok(Self { version })
+    pub fn create(
+        language_version: Version,
+    ) -> std::result::Result<Self, ParserInitializationError> {
+        if LanguageFacts::SUPPORTED_VERSIONS
+            .binary_search(&language_version)
+            .is_ok()
+        {
+            Ok(Self { language_version })
         } else {
             Err(ParserInitializationError::UnsupportedLanguageVersion(
-                version,
+                language_version,
             ))
         }
     }
 
-    pub fn version(&self) -> &Version {
-        &self.version
+    pub fn language_version(&self) -> &Version {
+        &self.language_version
     }
 
     pub fn parse(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
