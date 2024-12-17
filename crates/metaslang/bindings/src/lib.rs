@@ -251,11 +251,11 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         // either definitions or references
         handles
             .iter()
-            .filter_map(|handle| {
+            .flat_map(|handle| {
                 if self.stack_graph[*handle].is_definition() {
-                    self.to_definition(*handle)
+                    vec![self.to_definition(*handle).unwrap()]
                 } else {
-                    self.to_reference(*handle)?.non_recursive_resolve().ok()
+                    self.to_reference(*handle).unwrap().non_recursive_resolve()
                 }
             })
             .collect()
@@ -336,14 +336,6 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .file()
             .map(|file| FileDescriptor::from(self.owner.stack_graph[file].name()))
             .expect("Definition does not have a valid file descriptor")
-    }
-
-    pub(crate) fn has_tag(&self, tag: Tag) -> bool {
-        self.owner
-            .definitions_info
-            .get(&self.handle)
-            .and_then(|info| info.tag)
-            .is_some_and(|definition_tag| definition_tag == tag)
     }
 
     pub(crate) fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
@@ -446,28 +438,16 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
             .expect("Reference does not have a valid file descriptor")
     }
 
-    pub fn resolve_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
-        Resolver::build_for(self, ResolveOptions::Full).first()
-    }
-
     pub fn definitions(&self) -> Vec<Definition<'a, KT>> {
         Resolver::build_for(self, ResolveOptions::Full).all()
     }
 
     pub(crate) fn non_recursive_resolve(
         &self,
-    ) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
+    ) -> Vec<Definition<'a, KT>> {
         // This was likely originated from a full resolution call, so cut
         // recursion here by restricting the resolution algorithm.
-        Resolver::build_for(self, ResolveOptions::NonRecursive).first()
-    }
-
-    pub(crate) fn has_tag(&self, tag: Tag) -> bool {
-        self.owner
-            .references_info
-            .get(&self.handle)
-            .and_then(|info| info.tag)
-            .is_some_and(|reference_tag| reference_tag == tag)
+        Resolver::build_for(self, ResolveOptions::NonRecursive).all()
     }
 
     pub(crate) fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {

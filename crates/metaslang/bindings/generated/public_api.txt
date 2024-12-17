@@ -63,7 +63,6 @@ pub fn metaslang_bindings::Reference<'a, KT>::get_cursor(&self) -> &metaslang_cs
 pub fn metaslang_bindings::Reference<'a, KT>::get_file(&self) -> metaslang_bindings::FileDescriptor
 pub fn metaslang_bindings::Reference<'a, KT>::id(&self) -> usize
 pub fn metaslang_bindings::Reference<'a, KT>::location(&self) -> metaslang_bindings::BindingLocation<KT>
-pub fn metaslang_bindings::Reference<'a, KT>::resolve_definition(&self) -> core::result::Result<metaslang_bindings::Definition<'a, KT>, metaslang_bindings::ResolutionError<'a, KT>>
 impl<'a, KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Reference<'a, KT>
 pub fn metaslang_bindings::Reference<'a, KT>::clone(&self) -> metaslang_bindings::Reference<'a, KT>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> core::cmp::PartialEq for metaslang_bindings::Reference<'_, KT>
