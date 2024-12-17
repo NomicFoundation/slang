@@ -2,11 +2,16 @@
 
 use anyhow::Result;
 
-use crate::bindings_assertions::runner::run;
+use crate::bindings_output::runner::run;
 
 #[test]
 fn c99_scopes() -> Result<()> {
     run("scoping", "c99_scopes")
+}
+
+#[test]
+fn functions() -> Result<()> {
+    run("scoping", "functions")
 }
 
 #[test]

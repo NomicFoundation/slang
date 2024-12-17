@@ -15,6 +15,7 @@ mod interfaces;
 mod libraries;
 mod mappings;
 mod modifiers;
+mod scoping;
 mod structs;
 mod user_types;
 mod using;

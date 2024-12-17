@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Sample {
+    │          ───┬──  
+    │             ╰──── def: 1
+  2 │     function test() returns (int) {
+    │              ──┬─  
+    │                ╰─── def: 2
+  3 │         return from_sample() + top_level() + MyLib.from_lib();
+    │                ─────┬─────     ────┬────     ──┬── ────┬───  
+    │                     ╰──────────────────────────────────────── ref: 3
+    │                                    │           │       │     
+    │                                    ╰───────────────────────── ref: 6
+    │                                                │       │     
+    │                                                ╰───────────── ref: 4
+    │                                                        │     
+    │                                                        ╰───── ref: 5
+    │ 
+  5 │     function from_sample() returns (int) {
+    │              ─────┬─────  
+    │                   ╰─────── def: 3
+    │ 
+ 10 │ library MyLib {
+    │         ──┬──  
+    │           ╰──── def: 4
+ 11 │     function from_lib() returns (int) {
+    │              ────┬───  
+    │                  ╰───── def: 5
+    │ 
+ 16 │ function top_level() returns (int) {
+    │          ────┬────  
+    │              ╰────── def: 6
+────╯

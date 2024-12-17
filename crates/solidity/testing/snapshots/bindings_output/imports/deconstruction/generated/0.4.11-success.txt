@@ -1,0 +1,52 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import {Foo} from "lib/foo.sol";
+   │         ─┬─  
+   │          ╰─── def: 1
+   │          │   
+   │          ╰─── ref: 5
+ 2 │ import {Bar as LocalBar} from "lib/bar.sol";
+   │         ─┬─    ────┬───  
+   │          ╰─────────────── ref: 7
+   │                    │     
+   │                    ╰───── def: 2
+   │ 
+ 4 │ contract Sample {
+   │          ───┬──  
+   │             ╰──── def: 3
+ 5 │     function test() returns (int) {
+   │              ──┬─  
+   │                ╰─── def: 4
+ 6 │         return Foo.foo() + LocalBar.bar();
+   │                ─┬─ ─┬─     ────┬─── ─┬─  
+   │                 ╰──────────────────────── refs: 1, 5
+   │                     │          │     │   
+   │                     ╰──────────────────── ref: 6
+   │                                │     │   
+   │                                ╰───────── refs: 2, 7
+   │                                      │   
+   │                                      ╰─── ref: 8
+───╯
+References and definitions: 
+   ╭─[lib/foo.sol:1:1]
+   │
+ 1 │ library Foo {
+   │         ─┬─  
+   │          ╰─── def: 5
+ 2 │     function foo() returns (int) {
+   │              ─┬─  
+   │               ╰─── def: 6
+───╯
+References and definitions: 
+   ╭─[lib/bar.sol:1:1]
+   │
+ 1 │ library Bar {
+   │         ─┬─  
+   │          ╰─── def: 7
+ 2 │     function bar() returns (int) {
+   │              ─┬─  
+   │               ╰─── def: 8
+───╯

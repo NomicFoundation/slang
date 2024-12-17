@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Foo {
+   │          ─┬─  
+   │           ╰─── def: 1
+ 2 │     uint x = 10;
+   │          ┬  
+   │          ╰── def: 2
+   │ 
+ 4 │     function a_func(uint x) returns (uint) {
+   │              ───┬──      ┬  
+   │                 ╰─────────── def: 3
+   │                          │  
+   │                          ╰── def: 4
+ 5 │         uint y = x + 1;
+   │              ┬   ┬  
+   │              ╰────── def: 5
+   │                  │  
+   │                  ╰── ref: 6
+   │ 
+ 7 │             uint x = 20;
+   │                  ┬  
+   │                  ╰── def: 6
+ 8 │             return x + y;
+   │                    ┬   ┬  
+   │                    ╰────── ref: 6
+   │                        │  
+   │                        ╰── ref: 5
+───╯
