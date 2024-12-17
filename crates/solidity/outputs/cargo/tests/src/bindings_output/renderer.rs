@@ -111,7 +111,7 @@ fn build_report_for_part<'a>(
             start..end
         };
 
-        let definition = reference.jump_to_definition();
+        let definition = reference.resolve_definition();
         let message = match definition {
             Ok(definition) => {
                 if definition.get_file().is_system() {

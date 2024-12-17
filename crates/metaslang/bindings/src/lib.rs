@@ -12,7 +12,7 @@ use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
-use resolver::Resolver;
+use resolver::{ResolveOptions, Resolver};
 use semver::Version;
 use stack_graphs::graph::StackGraph;
 
@@ -36,10 +36,10 @@ pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     definiens: Option<Cursor<KT>>,
     tag: Option<Tag>,
     parents: Vec<GraphHandle>,
-    #[allow(dead_code)]
     export_node: Option<GraphHandle>,
-    #[allow(dead_code)]
     import_nodes: Vec<GraphHandle>,
+    extension_scope: Option<GraphHandle>,
+    inherit_extensions: bool,
 }
 
 pub(crate) struct ReferenceBindingInfo {
@@ -57,6 +57,7 @@ pub struct BindingGraph<KT: KindTypes + 'static> {
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
     context: Option<GraphHandle>,
+    extension_hooks: HashSet<GraphHandle>,
 }
 
 pub enum FileDescriptor {
@@ -140,6 +141,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
             context: None,
+            extension_hooks: HashSet::new(),
         }
     }
 
@@ -191,6 +193,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         self.definitions_info
             .extend(result.definitions_info.drain());
         self.references_info.extend(result.references_info.drain());
+        self.extension_hooks.extend(result.extension_hooks.drain());
 
         result
     }
@@ -258,15 +261,10 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
                 if self.stack_graph[*handle].is_definition() {
                     self.to_definition(*handle)
                 } else {
-                    self.to_reference(*handle)?.jump_to_definition().ok()
+                    self.to_reference(*handle)?.non_recursive_resolve().ok()
                 }
             })
             .collect()
-    }
-
-    pub fn lookup_definition_by_name(&self, name: &str) -> Option<Definition<'_, KT>> {
-        self.all_definitions()
-            .find(|definition| definition.get_cursor().node().unparse() == name)
     }
 
     pub fn get_context(&self) -> Option<Definition<'_, KT>> {
@@ -336,6 +334,10 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             }
         }
         results
+    }
+
+    pub(crate) fn is_extension_hook(&self, node_handle: GraphHandle) -> bool {
+        self.extension_hooks.contains(&node_handle)
     }
 }
 
@@ -428,6 +430,20 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
             .unwrap_or_default()
     }
 
+    pub(crate) fn get_extension_scope(&self) -> Option<GraphHandle> {
+        self.owner
+            .definitions_info
+            .get(&self.handle)
+            .and_then(|info| info.extension_scope)
+    }
+
+    pub(crate) fn inherit_extensions(&self) -> bool {
+        self.owner
+            .definitions_info
+            .get(&self.handle)
+            .map_or(false, |info| info.inherit_extensions)
+    }
+
     pub fn to_handle(self) -> DefinitionHandle {
         DefinitionHandle(self.handle)
     }
@@ -509,12 +525,20 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
             .expect("Reference does not have a valid file descriptor")
     }
 
-    pub fn jump_to_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
-        Resolver::build_for(self).first()
+    pub fn resolve_definition(&self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
+        Resolver::build_for(self, ResolveOptions::Full).first()
     }
 
     pub fn definitions(&self) -> Vec<Definition<'a, KT>> {
-        Resolver::build_for(self).all()
+        Resolver::build_for(self, ResolveOptions::Full).all()
+    }
+
+    pub(crate) fn non_recursive_resolve(
+        &self,
+    ) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
+        // This was likely originated from a full resolution call, so cut
+        // recursion here by restricting the resolution algorithm.
+        Resolver::build_for(self, ResolveOptions::NonRecursive).first()
     }
 
     pub(crate) fn has_tag(&self, tag: Tag) -> bool {
