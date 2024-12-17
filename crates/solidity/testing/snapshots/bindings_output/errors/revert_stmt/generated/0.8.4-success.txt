@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     error InvalidState();
+    │           ──────┬─────  
+    │                 ╰─────── def: 2
+    │ 
+  4 │     function testRevert() public {
+    │              ─────┬────  
+    │                   ╰────── def: 3
+  5 │         revert InvalidState();
+    │                ──────┬─────  
+    │                      ╰─────── ref: 2
+    │ 
+  8 │     function testOtherRevert() public {
+    │              ───────┬───────  
+    │                     ╰───────── def: 4
+  9 │         int code = 10;
+    │             ──┬─  
+    │               ╰─── def: 5
+ 10 │         revert Utils.GenericError(code);
+    │                ──┬── ──────┬───── ──┬─  
+    │                  ╰────────────────────── ref: 6
+    │                            │        │   
+    │                            ╰──────────── ref: 7
+    │                                     │   
+    │                                     ╰─── ref: 5
+    │ 
+ 14 │ library Utils {
+    │         ──┬──  
+    │           ╰──── def: 6
+ 15 │     error GenericError(int code);
+    │           ──────┬─────     ──┬─  
+    │                 ╰──────────────── def: 7
+    │                              │   
+    │                              ╰─── def: 8
+────╯

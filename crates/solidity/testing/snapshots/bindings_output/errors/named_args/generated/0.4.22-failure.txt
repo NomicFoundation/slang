@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected Equal or Semicolon.
+   ╭─[input.sol:3:19]
+   │
+ 3 │ ╭─▶     error Failure (
+   ┆ ┆   
+ 6 │ ├─▶     );
+   │ │            
+   │ ╰──────────── Error occurred here.
+───╯
+Error: Expected Equal or Semicolon.
+   ╭─[input.sol:8:23]
+   │
+ 8 │         revert Failure({cause: Cause.NotAuthorized, details: "not owner"});
+   │                       ──────────────────────────┬─────────────────────────  
+   │                                                 ╰─────────────────────────── Error occurred here.
+───╯
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     enum Cause { InsuficientFunds, NotAuthorized, InvalidDate }
+   │          ──┬──   ────────┬───────  ──────┬──────  ─────┬─────  
+   │            ╰─────────────────────────────────────────────────── def: 2
+   │                          │               │             │       
+   │                          ╰───────────────────────────────────── def: 3
+   │                                          │             │       
+   │                                          ╰───────────────────── def: 4
+   │                                                        │       
+   │                                                        ╰─────── def: 5
+ 3 │     error Failure (
+   │     ──┬── ───┬───  
+   │       ╰──────────── unresolved
+   │              │     
+   │              ╰───── def: 6
+   │ 
+ 7 │     function test() public {
+   │              ──┬─  
+   │                ╰─── def: 7
+ 8 │         revert Failure({cause: Cause.NotAuthorized, details: "not owner"});
+   │         ───┬── ───┬───  
+   │            ╰──────────── refs: built-in, built-in
+   │                   │     
+   │                   ╰───── def: 8
+───╯
