@@ -11,8 +11,6 @@ use stack_graphs::CancellationError;
 
 use crate::{BindingGraph, Definition, FileHandle, GraphHandle, Reference};
 
-mod c3;
-
 /// The resolver executes algorithms to resolve a reference to one or more
 /// definitions. The reference may not be resolvable in the current state of the
 /// bindings (eg. you may still need to add an imported file), so it may not be
@@ -29,12 +27,6 @@ mod c3;
 ///
 /// 2. Virtual methods: a reference should find valid paths to all available
 ///    definitions in a class hierarchy.
-///
-/// The multiple definitions can be ranked by one or more secondary algorithms
-/// to be applied by this resolver. For example, an alias import definition
-/// would be downgraded, allowing the resolver to prefer the actual definition
-/// if found (it may not be available yet). Or a topological ordering may be
-/// applied to definitions pointing to virtual methods.
 ///
 pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
     owner: &'a BindingGraph<KT>,
