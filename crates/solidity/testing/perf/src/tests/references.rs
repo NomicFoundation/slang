@@ -26,7 +26,7 @@ pub fn run(binding_graph: BindingGraph) {
     assert_eq!(reference_count, 1652, "Failed to fetch all references");
 
     assert_eq!(
-        resolved_references, 1409,
+        resolved_references, 1490,
         "Failed to resolve all references"
     );
 }
