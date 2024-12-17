@@ -1,4 +1,5 @@
 import path from "node:path";
+import fs from "node:fs";
 import assert from "node:assert";
 import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
 import { readRepoFile } from "../utils/files.mjs";
@@ -13,11 +14,21 @@ export async function createBuilder(): Promise<CompilationBuilder> {
 
     resolveImport: async (sourceFileId, importPath) => {
       const importLiteral = importPath.node.unparse();
-      assert(importLiteral.startsWith('"'));
-      assert(importLiteral.endsWith('"'));
+      assert(importLiteral.startsWith('"') || importLiteral.startsWith('\''));
+      assert(importLiteral.endsWith('"') || importLiteral.endsWith('\''));
 
       const importString = importLiteral.slice(1, -1);
-      return path.join(sourceFileId, "..", importString);
+      let i = 0;
+      while (i < 5) {
+        let splat = Array(i + 1).fill("..");
+        let file = path.join(sourceFileId, ...splat, importString);
+        let real_file = path.join("crates/solidity/outputs/npm/tests/src/compilation/inputs", file);
+        if (fs.statSync(real_file, { throwIfNoEntry: false })) {
+          return file;
+        }
+        i++;
+      }
+      throw `Can't resolve import ${importPath}`
     },
   });
 

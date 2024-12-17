@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@nomicfoundation/slang": "file:../package"
+    "@nomicfoundation/slang": "file:../package",
+    "mathjs": "^14.0.1"
   },
   "devDependencies": {
     "@types/jest": "29.5.14",
