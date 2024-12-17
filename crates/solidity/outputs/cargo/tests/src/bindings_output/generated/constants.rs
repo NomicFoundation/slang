@@ -2,11 +2,11 @@
 
 use anyhow::Result;
 
-use crate::bindings_assertions::runner::run;
+use crate::bindings_output::runner::run;
 
 #[test]
-fn simple() -> Result<()> {
-    run("constants", "simple")
+fn in_contract() -> Result<()> {
+    run("constants", "in_contract")
 }
 
 #[test]

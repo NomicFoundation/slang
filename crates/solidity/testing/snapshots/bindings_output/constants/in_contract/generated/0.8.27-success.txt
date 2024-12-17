@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Constants {
+    │          ────┬────  
+    │              ╰────── def: 1
+  2 │     enum Direction { NORTH, SOUTH, EAST, WEST }
+    │          ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+    │              ╰───────────────────────────────── def: 2
+    │                        │      │      │     │   
+    │                        ╰─────────────────────── def: 3
+    │                               │      │     │   
+    │                               ╰──────────────── def: 4
+    │                                      │     │   
+    │                                      ╰───────── def: 5
+    │                                            │   
+    │                                            ╰─── def: 6
+    │ 
+  4 │     address public constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
+    │                             ─────┬────  
+    │                                  ╰────── def: 7
+  5 │     uint256 public constant MY_UINT = 123;
+    │                             ───┬───  
+    │                                ╰───── def: 8
+  6 │     Direction public constant MY_DIRECTION = Direction.EAST;
+    │     ────┬────                 ──────┬─────   ────┬──── ──┬─  
+    │         ╰──────────────────────────────────────────────────── ref: 2
+    │                                     │            │       │   
+    │                                     ╰──────────────────────── def: 9
+    │                                                  │       │   
+    │                                                  ╰─────────── ref: 2
+    │                                                          │   
+    │                                                          ╰─── ref: 5
+    │ 
+  8 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 10
+  9 │         assert(MY_DIRECTION != Direction.NORTH);
+    │         ───┬── ──────┬─────    ────┬──── ──┬──  
+    │            ╰──────────────────────────────────── ref: built-in
+    │                      │             │       │    
+    │                      ╰────────────────────────── ref: 9
+    │                                    │       │    
+    │                                    ╰──────────── ref: 2
+    │                                            │    
+    │                                            ╰──── ref: 3
+ 10 │         assert(MY_UINT > 100);
+    │         ───┬── ───┬───  
+    │            ╰──────────── ref: built-in
+    │                   │     
+    │                   ╰───── ref: 8
+ 11 │         require(msg.sender == MY_ADDRESS);
+    │         ───┬─── ─┬─ ───┬──    ─────┬────  
+    │            ╰────────────────────────────── refs: built-in, built-in, built-in
+    │                  │     │           │      
+    │                  ╰──────────────────────── ref: built-in
+    │                        │           │      
+    │                        ╰────────────────── ref: built-in
+    │                                    │      
+    │                                    ╰────── ref: 7
+────╯

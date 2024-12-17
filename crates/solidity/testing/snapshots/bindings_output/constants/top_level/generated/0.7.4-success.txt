@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Constants {
+    │          ────┬────  
+    │              ╰────── def: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 2
+  3 │         assert(MY_DIRECTION != Direction.NORTH);
+    │         ───┬── ──────┬─────    ────┬──── ──┬──  
+    │            ╰──────────────────────────────────── ref: built-in
+    │                      │             │       │    
+    │                      ╰────────────────────────── ref: 10
+    │                                    │       │    
+    │                                    ╰──────────── ref: 3
+    │                                            │    
+    │                                            ╰──── ref: 4
+  4 │         assert(MY_UINT > 100);
+    │         ───┬── ───┬───  
+    │            ╰──────────── ref: built-in
+    │                   │     
+    │                   ╰───── ref: 9
+  5 │         require(msg.sender == MY_ADDRESS);
+    │         ───┬─── ─┬─ ───┬──    ─────┬────  
+    │            ╰────────────────────────────── refs: built-in, built-in
+    │                  │     │           │      
+    │                  ╰──────────────────────── ref: built-in
+    │                        │           │      
+    │                        ╰────────────────── ref: built-in
+    │                                    │      
+    │                                    ╰────── ref: 8
+    │ 
+  9 │ enum Direction { NORTH, SOUTH, EAST, WEST }
+    │      ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+    │          ╰───────────────────────────────── def: 3
+    │                    │      │      │     │   
+    │                    ╰─────────────────────── def: 4
+    │                           │      │     │   
+    │                           ╰──────────────── def: 5
+    │                                  │     │   
+    │                                  ╰───────── def: 6
+    │                                        │   
+    │                                        ╰─── def: 7
+    │ 
+ 11 │ address constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
+    │                  ─────┬────  
+    │                       ╰────── def: 8
+ 12 │ uint256 constant MY_UINT = 123;
+    │                  ───┬───  
+    │                     ╰───── def: 9
+ 13 │ Direction constant MY_DIRECTION = Direction.EAST;
+    │ ────┬────          ──────┬─────   ────┬──── ──┬─  
+    │     ╰───────────────────────────────────────────── ref: 3
+    │                          │            │       │   
+    │                          ╰──────────────────────── def: 10
+    │                                       │       │   
+    │                                       ╰─────────── ref: 3
+    │                                               │   
+    │                                               ╰─── ref: 6
+────╯

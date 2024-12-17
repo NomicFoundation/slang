@@ -2,6 +2,7 @@
 
 mod arrays;
 mod built_ins;
+mod constants;
 mod contracts;
 mod control;
 mod enums;
