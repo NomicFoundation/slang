@@ -433,9 +433,7 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
         Resolver::build_for(self, ResolveOptions::Full).all()
     }
 
-    pub(crate) fn non_recursive_resolve(
-        &self,
-    ) -> Vec<Definition<'a, KT>> {
+    pub(crate) fn non_recursive_resolve(&self) -> Vec<Definition<'a, KT>> {
         // This was likely originated from a full resolution call, so cut
         // recursion here by restricting the resolution algorithm.
         Resolver::build_for(self, ResolveOptions::NonRecursive).all()

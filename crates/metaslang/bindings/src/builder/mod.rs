@@ -355,14 +355,8 @@ static PUSH_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         PARENTS_ATTR,
     ])
 });
-static PUSH_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
-    HashSet::from([
-        TYPE_ATTR,
-        SYMBOL_ATTR,
-        IS_REFERENCE_ATTR,
-        PARENTS_ATTR,
-    ])
-});
+static PUSH_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> =
+    Lazy::new(|| HashSet::from([TYPE_ATTR, SYMBOL_ATTR, IS_REFERENCE_ATTR, PARENTS_ATTR]));
 static SCOPE_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
     HashSet::from([
         TYPE_ATTR,
