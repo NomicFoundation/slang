@@ -2437,7 +2437,6 @@ dependencies = [
  "slang_solidity",
  "solidity_language",
  "strum_macros",
- "thiserror",
 ]
 
 [[package]]
