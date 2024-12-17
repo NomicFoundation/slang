@@ -239,7 +239,6 @@ inherit .star_extension
   node def
   attr (def) node_definition = @name
   attr (def) definiens_node = @symbol
-  attr (def) tag = "alias"  ; deprioritize this definition
   edge @symbol.def -> def
 
   node import
@@ -256,7 +255,6 @@ inherit .star_extension
   node def
   attr (def) node_definition = @alias
   attr (def) definiens_node = @symbol
-  attr (def) tag = "alias"  ; deprioritize this definition
   edge @symbol.def -> def
 
   node import
@@ -563,7 +561,6 @@ inherit .star_extension
 
   ;; This may prioritize this definition (when there are multiple options)
   ;; according to the C3 linerisation ordering
-  attr (@function.def) tag = "c3"
   attr (@function.def) parents = [@contract.def]
 }
 
@@ -585,7 +582,6 @@ inherit .star_extension
 
   ;; This may prioritize this definition (when there are multiple options)
   ;; according to the C3 linerisation ordering
-  attr (@modifier.def) tag = "c3"
   attr (@modifier.def) parents = [@contract.def]
 }
 
@@ -2318,15 +2314,6 @@ inherit .star_extension
 
   ; Shortcut path for expressions inside contracts with using X for * directives
   edge member -> @expr.star_extension
-}
-
-;; Special case: member accesses to `super` are tagged with "super" to rank
-;; virtual methods correctly
-[MemberAccessExpression
-    operand: [Expression [SuperKeyword]]
-    @name member: [Identifier]
-] {
-  attr (@name.ref) tag = "super"
 }
 
 ;; Elementary types used as expressions (eg. for type casting, or for built-ins like `string.concat`)

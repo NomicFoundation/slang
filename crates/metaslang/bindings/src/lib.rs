@@ -23,23 +23,14 @@ type CursorID = usize;
 
 pub use location::{BindingLocation, BuiltInLocation, UserFileLocation};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Tag {
-    Alias,
-    C3,
-    Super,
-}
-
 pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     definiens: Option<Cursor<KT>>,
-    tag: Option<Tag>,
     parents: Vec<GraphHandle>,
     extension_scope: Option<GraphHandle>,
     inherit_extensions: bool,
 }
 
 pub(crate) struct ReferenceBindingInfo {
-    tag: Option<Tag>,
     parents: Vec<GraphHandle>,
 }
 
