@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ enum Answer {
+    │      ───┬──  
+    │         ╰──── def: 1
+  2 │   Yes
+    │   ─┬─  
+    │    ╰─── def: 2
+    │ 
+  5 │ library Id {
+    │         ─┬  
+    │          ╰── def: 3
+  6 │   function id(Answer ans) returns (Answer) {
+    │            ─┬ ───┬── ─┬─           ───┬──  
+    │             ╰────────────────────────────── def: 4
+    │                  │    │               │    
+    │                  ╰───────────────────────── ref: 1
+    │                       │               │    
+    │                       ╰──────────────────── def: 5
+    │                                       │    
+    │                                       ╰──── ref: 1
+  7 │     return ans;
+    │            ─┬─  
+    │             ╰─── ref: 5
+    │ 
+ 11 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 6
+ 12 │   using Id for Answer;
+    │         ─┬     ───┬──  
+    │          ╰───────────── ref: 3
+    │                   │    
+    │                   ╰──── ref: 1
+    │ 
+ 14 │   function testFunc() {
+    │            ────┬───  
+    │                ╰───── def: 7
+ 15 │     type(Answer).min.id();
+    │          ───┬──  ─┬─ ─┬  
+    │             ╰──────────── ref: 1
+    │                   │   │  
+    │                   ╰────── ref: built-in
+    │                       │  
+    │                       ╰── unresolved
+────╯
