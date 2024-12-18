@@ -76,10 +76,11 @@ async function testFile(file: string) {
       // console.log(`UNDEF: ${cursor.node}`);
       neitherDefNorRef += 1;
     }
-    else {
+
+    if (defs + refs + emptyRef + neitherDefNorRef > 1) {
+      // don't push the first one, as that one might trigger the build of the graph
       gotoDefTimes.push(gotoDefTime);
     }
-
   }
 
   const measure = round(performance.now() - start);
