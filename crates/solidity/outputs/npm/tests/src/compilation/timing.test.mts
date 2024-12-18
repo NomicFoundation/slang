@@ -1,6 +1,6 @@
 import { TerminalKind } from "@nomicfoundation/slang/cst";
 import { createBuilder } from "./common.mjs";
-import { max, mean, std } from "mathjs";
+import { max, mean, round, std } from "mathjs";
 
 test("DoodledBears sanctuary", async () => {
   await testFile("015E220901014BAE4f7e168925CD74e725e23692_DoodledBears.sol");
@@ -53,7 +53,7 @@ async function testFile(file: string) {
     const reference = unit.bindingGraph.referenceAt(cursor);
 
     if (reference) {
-      const defs = reference.definitions.length;
+      const defs = reference.definitions().length;
       if (defs > 1) {
         ambiguousRefs++;
       }
@@ -82,9 +82,9 @@ async function testFile(file: string) {
 
   }
 
-  const measure = performance.now() - start;
-  const maxGoto = max(gotoDefTimes);
-  const meanGoto = mean(gotoDefTimes);
-  const stdGoto = std(gotoDefTimes);
-  console.log(`file: ${file}\n\trefs: ${refs}\tdefs: ${defs}\tneither: ${neitherDefNorRef}\tambiguous: ${ambiguousRefs}\tempty refs: ${emptyRef}\n\ttime: ${measure}\n\tmax: ${maxGoto}\tmean: ${meanGoto}\tstd: ${stdGoto}`);
+  const measure = round(performance.now() - start);
+  const maxGoto = round(max(gotoDefTimes));
+  const meanGoto = round(mean(gotoDefTimes));
+  const stdGoto = round(std(gotoDefTimes));
+  console.log(`file: ${file}\n\trefs: ${refs}\tdefs: ${defs}\tneither: ${neitherDefNorRef}\tambiguous: ${ambiguousRefs}\tempty refs: ${emptyRef}\n\ttotal time: ${measure}ms\tmax: ${maxGoto}ms\tmean: ${meanGoto}ms\tstd: ${stdGoto}ms`);
 }
