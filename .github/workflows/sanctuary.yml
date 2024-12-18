@@ -41,6 +41,22 @@ jobs:
       __SLANG_SANCTUARY_SHARD_RESULTS__13: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__13 }}"
       __SLANG_SANCTUARY_SHARD_RESULTS__14: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__14 }}"
       __SLANG_SANCTUARY_SHARD_RESULTS__15: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__15 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__16: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__16 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__17: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__17 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__18: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__18 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__19: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__19 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__20: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__20 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__21: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__21 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__22: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__22 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__23: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__23 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__24: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__24 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__25: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__25 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__26: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__26 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__27: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__27 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__28: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__28 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__29: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__29 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__30: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__30 }}"
+      __SLANG_SANCTUARY_SHARD_RESULTS__31: "${{ steps.output-shard-results.outputs.__SLANG_SANCTUARY_SHARD_RESULTS__31 }}"
 
     strategy:
       fail-fast: false # Continue running all shards even if some fail.
@@ -62,9 +78,25 @@ jobs:
           - 13
           - 14
           - 15
+          - 16
+          - 17
+          - 18
+          - 19
+          - 20
+          - 21
+          - 22
+          - 23
+          - 24
+          - 25
+          - 26
+          - 27
+          - 28
+          - 29
+          - 30
+          - 31
 
     env:
-      SHARDS_COUNT: 16 # Length of the 'shard_index' array above.
+      SHARDS_COUNT: 32 # Length of the 'shard_index' array above.
 
     steps:
       - name: "Checkout Repository"
