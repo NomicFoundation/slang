@@ -41,29 +41,50 @@ async function testFile(file: string) {
   const unit = builder.build();
   const cursor = unit.file(file)!.createTreeCursor();
 
-  let undefinedRefs = 0;
-  let definedRefs = 0;
+  let neitherDefNorRef = 0;
+  let defs = 0;
+  let refs = 0;
+  let ambiguousRefs = 0;
+  let emptyRef = 0;
+
   while (cursor.goToNextTerminalWithKind(TerminalKind.Identifier)) {
     const startDefRef = performance.now();
-    const definition = unit.bindingGraph.definitionAt(cursor)!;
-    const reference = unit.bindingGraph.referenceAt(cursor)!;
+    const definition = unit.bindingGraph.definitionAt(cursor);
+    const reference = unit.bindingGraph.referenceAt(cursor);
+
+    if (reference) {
+      const defs = reference.definitions.length;
+      if (defs > 1) {
+        ambiguousRefs++;
+      }
+      else if (defs > 0) {
+        refs++;
+      }
+      else {
+        emptyRef++;
+      }
+    }
+
     const gotoDefTime = performance.now() - startDefRef;
+
+    if (definition) {
+      defs++;
+    }
 
     const value = definition || reference;
     if (!value) {
-      //      console.log(`UNDEF: ${cursor.node}`);
-      undefinedRefs += 1;
+      // console.log(`UNDEF: ${cursor.node}`);
+      neitherDefNorRef += 1;
     }
     else {
-      gotoDefTimes[definedRefs] = gotoDefTime
-      definedRefs += 1;
+      gotoDefTimes.push(gotoDefTime);
     }
-    //assert.notEqual(definition || reference, undefined);
+
   }
 
   const measure = performance.now() - start;
   const maxGoto = max(gotoDefTimes);
   const meanGoto = mean(gotoDefTimes);
   const stdGoto = std(gotoDefTimes);
-  console.log(`file: ${file}\n\tundef: ${undefinedRefs}\n\tdef: ${definedRefs}\n\ttime: ${measure}\n\tmax: ${maxGoto}\tmean: ${meanGoto}\tstd: ${stdGoto}`);
+  console.log(`file: ${file}\n\trefs: ${refs}\tdefs: ${defs}\tneither: ${neitherDefNorRef}\tambiguous: ${ambiguousRefs}\tempty refs: ${emptyRef}\n\ttime: ${measure}\n\tmax: ${maxGoto}\tmean: ${meanGoto}\tstd: ${stdGoto}`);
 }
