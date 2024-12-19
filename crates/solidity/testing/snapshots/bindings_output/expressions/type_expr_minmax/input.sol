@@ -13,5 +13,6 @@ contract Test {
 
   function testFunc() {
     type(Answer).min.id();
+    type(Answer).max.id();
   }
 }

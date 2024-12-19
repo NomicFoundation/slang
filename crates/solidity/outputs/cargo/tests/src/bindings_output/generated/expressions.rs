@@ -70,6 +70,6 @@ fn type_expr() -> Result<()> {
 }
 
 #[test]
-fn type_expr_min() -> Result<()> {
-    run("expressions", "type_expr_min")
+fn type_expr_minmax() -> Result<()> {
+    run("expressions", "type_expr_minmax")
 }

@@ -2075,16 +2075,21 @@ inherit .star_extension
   attr (built_in_member) pop_symbol = "."
   node min_built_in
   attr (min_built_in) pop_symbol = "min"
-  node min_replace
-  attr (min_replace) push_symbol =  (source-text @name)
-  node min_type_of
-  attr (min_type_of) push_symbol = "@typeof"
+  node max_built_in
+  attr (max_built_in) pop_symbol = "max"
+  node minmax_type_of
+  attr (minmax_type_of) push_symbol = "@typeof"
+  node minmax_replace
+  attr (minmax_replace) push_symbol =  (source-text @name)
 
   edge type -> typeof
   edge typeof -> built_in_member
   edge built_in_member -> min_built_in
-  edge min_built_in -> min_type_of
-  edge min_type_of -> min_replace
+  edge built_in_member -> max_built_in
+  edge min_built_in -> minmax_type_of
+  edge max_built_in -> minmax_type_of
+  edge minmax_type_of -> minmax_replace
+  edge minmax_replace -> @enum.lexical_scope
 }
 
 @enum [EnumDefinition

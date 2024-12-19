@@ -44,5 +44,12 @@ References and definitions:
     │                   │   │  
     │                   ╰────── unresolved
     │                       │  
-    │                       ╰── unresolved
+    │                       ╰── ref: 4
+ 16 │     type(Answer).max.id();
+    │          ───┬──  ─┬─ ─┬  
+    │             ╰──────────── ref: 1
+    │                   │   │  
+    │                   ╰────── unresolved
+    │                       │  
+    │                       ╰── ref: 4
 ────╯
