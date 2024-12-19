@@ -2087,12 +2087,20 @@ inherit .star_extension
   edge minmax_replace -> @enum.lexical_scope
 }
 
-@enum [EnumDefinition
+@enum [EnumDefinition @name name: [Identifier]
     members: [EnumMembers @item [Identifier]]
 ] {
   node def
   attr (def) node_definition = @item
   attr (def) definiens_node = @item
+
+  node type_of
+  attr (type_of) push_symbol = "@typeof"
+  node type_def
+  attr (type_def) push_symbol =  (source-text @name)
+  edge def -> type_of
+  edge type_of -> type_def
+  edge type_def -> @enum.lexical_scope
 
   edge @enum.members -> def
 }

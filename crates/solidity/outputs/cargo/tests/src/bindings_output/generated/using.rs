@@ -15,6 +15,11 @@ fn binding_enum() -> Result<()> {
 }
 
 #[test]
+fn binding_enum_member() -> Result<()> {
+    run("using", "binding_enum_member")
+}
+
+#[test]
 fn casting() -> Result<()> {
     run("using", "casting")
 }
