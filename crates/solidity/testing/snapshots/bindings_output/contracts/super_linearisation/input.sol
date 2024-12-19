@@ -1,4 +1,3 @@
-// --- context: D
 contract A {
     function foo() public {}
 }

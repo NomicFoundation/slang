@@ -14,7 +14,7 @@ References and definitions:
    │               ╰─── def: 3
  4 │         foo();
    │         ─┬─  
-   │          ╰─── ref: 5
+   │          ╰─── ref: 2
    │ 
  8 │ contract Derived is Base {
    │          ───┬───    ──┬─  

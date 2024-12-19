@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected CloseBrace or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or OpenBrace or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulAddKeyword or YulAddModKeyword or YulAddressKeyword or YulAndKeyword or YulBalanceKeyword or YulBaseFeeKeyword or YulBlockHashKeyword or YulBreakKeyword or YulByteKeyword or YulCallCodeKeyword or YulCallDataCopyKeyword or YulCallDataLoadKeyword or YulCallDataSizeKeyword or YulCallKeyword or YulCallValueKeyword or YulCallerKeyword or YulChainIdKeyword or YulCoinBaseKeyword or YulContinueKeyword or YulCreate2Keyword or YulCreateKeyword or YulDecimalLiteral or YulDelegateCallKeyword or YulDivKeyword or YulEqKeyword or YulExpKeyword or YulExtCodeCopyKeyword or YulExtCodeHashKeyword or YulExtCodeSizeKeyword or YulFalseKeyword or YulForKeyword or YulFunctionKeyword or YulGasKeyword or YulGasLimitKeyword or YulGasPriceKeyword or YulGtKeyword or YulHexLiteral or YulIdentifier or YulIfKeyword or YulInvalidKeyword or YulIsZeroKeyword or YulKeccak256Keyword or YulLeaveKeyword or YulLetKeyword or YulLog0Keyword or YulLog1Keyword or YulLog2Keyword or YulLog3Keyword or YulLog4Keyword or YulLtKeyword or YulMLoadKeyword or YulMSizeKeyword or YulMStore8Keyword or YulMStoreKeyword or YulModKeyword or YulMulKeyword or YulMulModKeyword or YulNotKeyword or YulNumberKeyword or YulOrKeyword or YulOriginKeyword or YulPopKeyword or YulPrevRandaoKeyword or YulReturnDataCopyKeyword or YulReturnDataSizeKeyword or YulReturnKeyword or YulRevertKeyword or YulSDivKeyword or YulSLoadKeyword or YulSModKeyword or YulSStoreKeyword or YulSarKeyword or YulSelfBalanceKeyword or YulSelfDestructKeyword or YulSgtKeyword or YulShlKeyword or YulShrKeyword or YulSignExtendKeyword or YulSltKeyword or YulStaticCallKeyword or YulStopKeyword or YulSubKeyword or YulSwitchKeyword or YulTimestampKeyword or YulTrueKeyword or YulXorKeyword.
+   ╭─[input.sol:6:13]
+   │
+ 6 │ ╭─▶             =: x
+ 7 │ ├─▶         }
+   │ │               
+   │ ╰─────────────── Error occurred here.
+───╯
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract YulStackAssignment {
+   │          ─────────┬────────  
+   │                   ╰────────── def: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── def: 2
+   │ 
+ 4 │             let x := 0
+   │                 ┬  
+   │                 ╰── def: 3
+───╯

@@ -21,10 +21,10 @@ References and definitions:
     │           ╰──── ref: 4
   7 │         tx;
     │         ─┬  
-    │          ╰── ref: 2
+    │          ╰── refs: 2, built-in
   8 │         sha256();
     │         ───┬──  
-    │            ╰──── ref: 5
+    │            ╰──── refs: 6, 5, built-in
     │ 
  11 │     function sha256() public {}
     │              ───┬──  

@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract YulStackAssignment {
+   │          ─────────┬────────  
+   │                   ╰────────── def: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── def: 2
+   │ 
+ 4 │             let x := 0
+   │                 ┬  
+   │                 ╰── def: 3
+   │ 
+ 6 │             =: x
+   │                ┬  
+   │                ╰── ref: 3
+───╯

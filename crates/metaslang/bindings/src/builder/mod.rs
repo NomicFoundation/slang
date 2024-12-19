@@ -245,27 +245,6 @@
 //!
 //! ### Other node attributes introduced in Slang's usage of stack-graphs
 //!
-//! #### `tag` attribute
-//!
-//! This is used to attach a specific meaning to the node, to alter the ranking
-//! algorithm used when attempting to disambiguate between multiple definitions
-//! found for a reference. This is an optional string attribute.
-//!
-//! Possible values:
-//!
-//! - "alias": marks a definition node as a semantic alias of another definition
-//!   (eg. an import alias)
-//!
-//! - "c3": used to mark a function/method definition to be a candidate in
-//!   disambiguation using the C3 linearisation algorithm. In order for C3
-//!   linearisation to be possible, type hierarchy attributes need to be provided
-//!   as well (see `parents` attribute below).
-//!
-//! - "super": marks a reference as a call to super virtual call. This modifies
-//!   the C3 linearisation algorithm by eliminating the candidates that are at
-//!   or further down the hierarchy of where the reference occurs. To determine
-//!   where the reference occurs, we also use the `parents` attribute.
-//!
 //! #### `parents` attribute
 //!
 //! Is used to convey semantic hierarchy. Can be applied to both definitions and
@@ -277,20 +256,6 @@
 //! The parent handles themselves can refer to definitions or references. In the
 //! later case, generally speaking they will need to be resolved at resolution
 //! time in order to be useful.
-//!
-//! #### `export_node` and `import_nodes`
-//!
-//! These are used to define static fixed edges to add via `set_context()`.
-//! Using `set_context()` will modify the underlying stack graph by inserting
-//! edges from the `import_nodes` of all parents (resolved recursively) of the
-//! given context, to the `export_node` associated with the context.
-//!
-//! This can be used to inject virtual method implementations defined in
-//! subclasses in the scope of their parent classes, which are otherwise
-//! lexically inaccessible.
-//!
-//! `export_node` is an optional graph node attribute, and `import_nodes` is an
-//! optional list of graph nodes. Both apply only to definition nodes.
 //!
 //! #### `extension_hook`, `extension_scope` and `inherit_extensions`
 //!
@@ -328,7 +293,7 @@ use stack_graphs::arena::Handle;
 use stack_graphs::graph::{File, Node, NodeID, StackGraph};
 use thiserror::Error;
 
-use crate::{DefinitionBindingInfo, ReferenceBindingInfo, Tag};
+use crate::{DefinitionBindingInfo, ReferenceBindingInfo};
 
 // Node type values
 static DROP_SCOPES_TYPE: &str = "drop_scopes";
@@ -342,8 +307,6 @@ static SCOPE_TYPE: &str = "scope";
 static DEBUG_ATTR_PREFIX: &str = "debug_";
 static DEFINIENS_NODE_ATTR: &str = "definiens_node";
 static EMPTY_SOURCE_SPAN_ATTR: &str = "empty_source_span";
-static EXPORT_NODE_ATTR: &str = "export_node";
-static IMPORT_NODES_ATTR: &str = "import_nodes";
 static IS_DEFINITION_ATTR: &str = "is_definition";
 static IS_ENDPOINT_ATTR: &str = "is_endpoint";
 static IS_EXPORTED_ATTR: &str = "is_exported";
@@ -356,7 +319,6 @@ static SCOPE_ATTR: &str = "scope";
 static SOURCE_NODE_ATTR: &str = "source_node";
 static SYMBOL_ATTR: &str = "symbol";
 static SYNTAX_TYPE_ATTR: &str = "syntax_type";
-static TAG_ATTR: &str = "tag";
 static TYPE_ATTR: &str = "type";
 
 // Expected attributes per node type
@@ -366,10 +328,7 @@ static POP_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         SYMBOL_ATTR,
         IS_DEFINITION_ATTR,
         DEFINIENS_NODE_ATTR,
-        TAG_ATTR,
         PARENTS_ATTR,
-        EXPORT_NODE_ATTR,
-        IMPORT_NODES_ATTR,
         SYNTAX_TYPE_ATTR,
         EXTENSION_SCOPE_ATTR,
         INHERIT_EXTENSIONS_ATTR,
@@ -381,10 +340,7 @@ static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         SYMBOL_ATTR,
         IS_DEFINITION_ATTR,
         DEFINIENS_NODE_ATTR,
-        TAG_ATTR,
         PARENTS_ATTR,
-        EXPORT_NODE_ATTR,
-        IMPORT_NODES_ATTR,
         SYNTAX_TYPE_ATTR,
         EXTENSION_SCOPE_ATTR,
         INHERIT_EXTENSIONS_ATTR,
@@ -396,19 +352,11 @@ static PUSH_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         SYMBOL_ATTR,
         SCOPE_ATTR,
         IS_REFERENCE_ATTR,
-        TAG_ATTR,
         PARENTS_ATTR,
     ])
 });
-static PUSH_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
-    HashSet::from([
-        TYPE_ATTR,
-        SYMBOL_ATTR,
-        IS_REFERENCE_ATTR,
-        TAG_ATTR,
-        PARENTS_ATTR,
-    ])
-});
+static PUSH_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> =
+    Lazy::new(|| HashSet::from([TYPE_ATTR, SYMBOL_ATTR, IS_REFERENCE_ATTR, PARENTS_ATTR]));
 static SCOPE_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
     HashSet::from([
         TYPE_ATTR,
@@ -596,8 +544,6 @@ pub enum BuildError {
     ExecutionError(ExecutionError),
     #[error("Expected exported symbol scope in {0}, got {1}")]
     SymbolScopeError(String, String),
-    #[error("Unknown tag ‘{0}’")]
-    UnknownTag(String),
     #[error("Parent must be either a reference or definition")]
     InvalidParent(GraphNodeRef),
 }
@@ -940,16 +886,6 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
             None => Vec::new(),
         };
 
-        let tag = match node.attributes.get(TAG_ATTR) {
-            Some(tag_value) => Some(match tag_value.as_str()? {
-                "alias" => Tag::Alias,
-                "c3" => Tag::C3,
-                "super" => Tag::Super,
-                other_type => return Err(BuildError::UnknownTag(other_type.to_string())),
-            }),
-            None => None,
-        };
-
         if stack_graph_node.is_definition() {
             let definiens = match node.attributes.get(DEFINIENS_NODE_ATTR) {
                 Some(definiens_node) => {
@@ -958,26 +894,6 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
                     Some(definiens_node.clone())
                 }
                 None => None,
-            };
-
-            let export_node = match node.attributes.get(EXPORT_NODE_ATTR) {
-                Some(export_node) => {
-                    Some(self.node_handle_for_graph_node(export_node.as_graph_node_ref()?))
-                }
-                None => None,
-            };
-
-            let import_nodes = match node.attributes.get(IMPORT_NODES_ATTR) {
-                Some(import_nodes) => import_nodes
-                    .as_list()?
-                    .iter()
-                    .flat_map(|value| {
-                        value
-                            .as_graph_node_ref()
-                            .map(|id| self.node_handle_for_graph_node(id))
-                    })
-                    .collect(),
-                None => Vec::new(),
             };
 
             let extension_scope = match node.attributes.get(EXTENSION_SCOPE_ATTR) {
@@ -993,17 +909,14 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
                 node_handle,
                 DefinitionBindingInfo {
                     definiens,
-                    tag,
                     parents,
-                    export_node,
-                    import_nodes,
                     extension_scope,
                     inherit_extensions,
                 },
             );
         } else if stack_graph_node.is_reference() {
             self.references_info
-                .insert(node_handle, ReferenceBindingInfo { tag, parents });
+                .insert(node_handle, ReferenceBindingInfo { parents });
         }
 
         if Self::load_flag(node, EXTENSION_HOOK_ATTR)? {
