@@ -1,9 +1,10 @@
 mod builder;
 mod location;
+mod resolved;
 mod resolver;
 
 use std::collections::{HashMap, HashSet};
-use std::fmt::{self, Debug, Display};
+use std::fmt::Debug;
 use std::rc::Rc;
 
 use builder::BuildResult;
@@ -21,6 +22,7 @@ type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
 type CursorID = usize;
 
 pub use location::{BindingLocation, BuiltInLocation, UserFileLocation};
+pub use resolved::{BindingGraph, Definition, Reference};
 
 pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     definiens: Cursor<KT>,
@@ -33,7 +35,7 @@ pub(crate) struct ReferenceBindingInfo {
     parents: Vec<GraphHandle>,
 }
 
-pub struct BindingGraph<KT: KindTypes + 'static> {
+pub struct BindingGraphBuilder<KT: KindTypes + 'static> {
     graph_builder_file: File<KT>,
     functions: Functions<KT>,
     stack_graph: StackGraph,
@@ -43,9 +45,9 @@ pub struct BindingGraph<KT: KindTypes + 'static> {
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
     extension_hooks: HashSet<GraphHandle>,
-    resolved_references: Option<HashMap<GraphHandle, Vec<GraphHandle>>>,
 }
 
+#[derive(Clone)]
 pub enum FileDescriptor {
     User(String),
     System(String),
@@ -106,7 +108,7 @@ pub trait PathResolver<KT: KindTypes + 'static> {
     fn resolve_path(&self, context_path: &str, path_to_resolve: &Cursor<KT>) -> Option<String>;
 }
 
-impl<KT: KindTypes + 'static> BindingGraph<KT> {
+impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
     pub fn create(
         version: Version,
         binding_rules: &str,
@@ -127,7 +129,6 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
             extension_hooks: HashSet::new(),
-            resolved_references: None,
         }
     }
 
@@ -184,11 +185,10 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         result
     }
 
-    pub fn resolve(mut self) -> Rc<BindingGraph<KT>> {
+    pub fn resolve(self) -> Rc<BindingGraph<KT>> {
         let resolver = Resolver::new(&self);
         let resolved_references = resolver.resolve();
-        self.resolved_references = Some(resolved_references);
-        Rc::new(self)
+        BindingGraph::build(self, resolved_references)
     }
 
     fn get_parents(&self, handle: GraphHandle) -> Vec<GraphHandle> {
@@ -233,224 +233,5 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
 
     pub(crate) fn is_extension_hook(&self, node_handle: GraphHandle) -> bool {
         self.extension_hooks.contains(&node_handle)
-    }
-
-    pub fn all_definitions(self: &Rc<Self>) -> impl Iterator<Item = Definition<KT>> + '_ {
-        self.stack_graph
-            .iter_nodes()
-            .filter_map(|handle| self.to_definition(handle))
-    }
-
-    fn to_definition(self: &Rc<Self>, handle: GraphHandle) -> Option<Definition<KT>> {
-        if self.stack_graph[handle].is_definition() {
-            Some(Definition {
-                owner: Rc::clone(self),
-                handle,
-            })
-        } else {
-            None
-        }
-    }
-
-    pub fn all_references(self: &Rc<Self>) -> impl Iterator<Item = Reference<KT>> + '_ {
-        self.stack_graph
-            .iter_nodes()
-            .filter_map(|handle| self.to_reference(handle))
-    }
-
-    fn to_reference(self: &Rc<Self>, handle: GraphHandle) -> Option<Reference<KT>> {
-        if self.stack_graph[handle].is_reference() {
-            Some(Reference {
-                owner: Rc::clone(self),
-                handle,
-            })
-        } else {
-            None
-        }
-    }
-
-    pub fn definition_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Definition<KT>> {
-        let cursor_id = cursor.node().id();
-        self.cursor_to_definitions
-            .get(&cursor_id)
-            .map(|handle| Definition {
-                owner: Rc::clone(self),
-                handle: *handle,
-            })
-    }
-
-    pub fn reference_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Reference<KT>> {
-        let cursor_id = cursor.node().id();
-        self.cursor_to_references
-            .get(&cursor_id)
-            .map(|handle| Reference {
-                owner: Rc::clone(self),
-                handle: *handle,
-            })
-    }
-}
-
-struct DisplayCursor<'a, KT: KindTypes + 'static> {
-    cursor: &'a Cursor<KT>,
-    file: FileDescriptor,
-}
-
-impl<'a, KT: KindTypes + 'static> fmt::Display for DisplayCursor<'a, KT> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let offset = self.cursor.text_offset();
-        write!(
-            f,
-            "`{}` at {}:{}:{}",
-            self.cursor.node().unparse(),
-            self.file.get_path(),
-            offset.line + 1,
-            offset.column + 1,
-        )
-    }
-}
-
-#[derive(Clone)]
-pub struct Definition<KT: KindTypes + 'static> {
-    owner: Rc<BindingGraph<KT>>,
-    handle: GraphHandle,
-}
-
-impl<KT: KindTypes + 'static> Definition<KT> {
-    pub fn id(&self) -> usize {
-        self.get_cursor().node().id()
-    }
-
-    pub fn name_location(&self) -> BindingLocation<KT> {
-        match self.get_file() {
-            FileDescriptor::System(_) => BindingLocation::built_in(),
-            FileDescriptor::User(file_id) => {
-                BindingLocation::user_file(file_id, self.get_cursor().to_owned())
-            }
-        }
-    }
-
-    pub fn definiens_location(&self) -> BindingLocation<KT> {
-        match self.get_file() {
-            FileDescriptor::System(_) => BindingLocation::built_in(),
-            FileDescriptor::User(file_id) => {
-                BindingLocation::user_file(file_id, self.get_definiens_cursor().to_owned())
-            }
-        }
-    }
-
-    pub fn get_cursor(&self) -> &Cursor<KT> {
-        self.owner
-            .cursors
-            .get(&self.handle)
-            .expect("Definition does not have a valid cursor")
-    }
-
-    pub fn get_definiens_cursor(&self) -> &Cursor<KT> {
-        &self
-            .owner
-            .definitions_info
-            .get(&self.handle)
-            .expect("Definition does not have valid binding info")
-            .definiens
-    }
-
-    pub fn get_file(&self) -> FileDescriptor {
-        self.owner
-            .get_file(self.handle)
-            .expect("Definition does not have a valid file descriptor")
-    }
-}
-
-impl<KT: KindTypes + 'static> Display for Definition<KT> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "definition {}",
-            DisplayCursor {
-                cursor: self.get_cursor(),
-                file: self.get_file()
-            }
-        )
-    }
-}
-
-impl<KT: KindTypes + 'static> Debug for Definition<KT> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{self}")
-    }
-}
-
-impl<KT: KindTypes + 'static> PartialEq for Definition<KT> {
-    fn eq(&self, other: &Self) -> bool {
-        Rc::ptr_eq(&self.owner, &other.owner) && self.handle == other.handle
-    }
-}
-
-impl<KT: KindTypes + 'static> Eq for Definition<KT> {}
-
-#[derive(Clone)]
-pub struct Reference<KT: KindTypes + 'static> {
-    owner: Rc<BindingGraph<KT>>,
-    handle: GraphHandle,
-}
-
-impl<KT: KindTypes + 'static> Reference<KT> {
-    pub fn id(&self) -> usize {
-        self.get_cursor().node().id()
-    }
-
-    pub fn location(&self) -> BindingLocation<KT> {
-        match self.get_file() {
-            FileDescriptor::System(_) => BindingLocation::built_in(),
-            FileDescriptor::User(file_id) => {
-                BindingLocation::user_file(file_id, self.get_cursor().to_owned())
-            }
-        }
-    }
-
-    pub fn get_cursor(&self) -> &Cursor<KT> {
-        self.owner
-            .cursors
-            .get(&self.handle)
-            .expect("Reference does not have a valid cursor")
-    }
-
-    pub fn get_file(&self) -> FileDescriptor {
-        self.owner
-            .get_file(self.handle)
-            .expect("Reference does not have a valid file descriptor")
-    }
-
-    pub fn definitions(&self) -> Vec<Definition<KT>> {
-        self.owner
-            .resolved_references
-            .as_ref()
-            .expect("BindingGraph should be resolved")[&self.handle]
-            .iter()
-            .map(|handle| {
-                self.owner
-                    .to_definition(*handle)
-                    .expect("handle to be a definition")
-            })
-            .collect()
-    }
-}
-
-impl<KT: KindTypes + 'static> Display for Reference<KT> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "reference {}",
-            DisplayCursor {
-                cursor: self.get_cursor(),
-                file: self.get_file()
-            }
-        )
-    }
-}
-
-impl<KT: KindTypes + 'static> PartialEq for Reference<KT> {
-    fn eq(&self, other: &Self) -> bool {
-        Rc::ptr_eq(&self.owner, &other.owner) && self.handle == other.handle
     }
 }

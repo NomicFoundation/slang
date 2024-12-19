@@ -1,12 +1,12 @@
 use std::rc::Rc;
 
 use metaslang_bindings::PathResolver;
-use slang_solidity::bindings::{create_with_resolver, BindingGraph};
+use slang_solidity::bindings::{create_with_resolver, BindingGraphBuilder};
 use slang_solidity::cst::{Cursor, KindTypes};
 
 use crate::dataset::SOLC_VERSION;
 
-pub fn run() -> BindingGraph {
+pub fn run() -> BindingGraphBuilder {
     create_with_resolver(SOLC_VERSION, Rc::new(NoOpResolver {})).unwrap()
 }
 

@@ -19,17 +19,21 @@ pub fn metaslang_bindings::FileDescriptor::get_path(&self) -> &str
 pub fn metaslang_bindings::FileDescriptor::is_system(&self) -> bool
 pub fn metaslang_bindings::FileDescriptor::is_user(&self) -> bool
 pub fn metaslang_bindings::FileDescriptor::is_user_path(&self, path: &str) -> bool
+impl core::clone::Clone for metaslang_bindings::FileDescriptor
+pub fn metaslang_bindings::FileDescriptor::clone(&self) -> metaslang_bindings::FileDescriptor
 pub struct metaslang_bindings::BindingGraph<KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::BindingGraph<KT>
-pub fn metaslang_bindings::BindingGraph<KT>::add_system_file(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>)
-pub fn metaslang_bindings::BindingGraph<KT>::add_user_file(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>)
-pub fn metaslang_bindings::BindingGraph<KT>::add_user_file_returning_graph(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>) -> metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_bindings::BindingGraph<KT>::all_definitions(self: &alloc::rc::Rc<Self>) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Definition<KT>> + '_
 pub fn metaslang_bindings::BindingGraph<KT>::all_references(self: &alloc::rc::Rc<Self>) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Reference<KT>> + '_
-pub fn metaslang_bindings::BindingGraph<KT>::create(version: semver::Version, binding_rules: &str, path_resolver: alloc::rc::Rc<dyn metaslang_bindings::PathResolver<KT>>) -> Self
 pub fn metaslang_bindings::BindingGraph<KT>::definition_at(self: &alloc::rc::Rc<Self>, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Definition<KT>>
 pub fn metaslang_bindings::BindingGraph<KT>::reference_at(self: &alloc::rc::Rc<Self>, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Reference<KT>>
-pub fn metaslang_bindings::BindingGraph<KT>::resolve(self) -> alloc::rc::Rc<metaslang_bindings::BindingGraph<KT>>
+pub struct metaslang_bindings::BindingGraphBuilder<KT: metaslang_cst::kinds::KindTypes + 'static>
+impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::BindingGraphBuilder<KT>
+pub fn metaslang_bindings::BindingGraphBuilder<KT>::add_system_file(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>)
+pub fn metaslang_bindings::BindingGraphBuilder<KT>::add_user_file(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>)
+pub fn metaslang_bindings::BindingGraphBuilder<KT>::add_user_file_returning_graph(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>) -> metaslang_graph_builder::graph::Graph<KT>
+pub fn metaslang_bindings::BindingGraphBuilder<KT>::create(version: semver::Version, binding_rules: &str, path_resolver: alloc::rc::Rc<dyn metaslang_bindings::PathResolver<KT>>) -> Self
+pub fn metaslang_bindings::BindingGraphBuilder<KT>::resolve(self) -> alloc::rc::Rc<metaslang_bindings::BindingGraph<KT>>
 pub struct metaslang_bindings::BuiltInLocation
 impl core::clone::Clone for metaslang_bindings::BuiltInLocation
 pub fn metaslang_bindings::BuiltInLocation::clone(&self) -> metaslang_bindings::BuiltInLocation

@@ -7,8 +7,7 @@ use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use metaslang_bindings::PathResolver;
 use semver::Version;
-use slang_solidity::bindings;
-use slang_solidity::bindings::BindingGraph;
+use slang_solidity::bindings::{self, BindingGraphBuilder};
 use slang_solidity::cst::{Cursor, KindTypes, NonterminalKind, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::parser::{ParseOutput, Parser};
@@ -209,17 +208,17 @@ fn create_bindings(
     version: &Version,
     source_id: &str,
     output: &ParseOutput,
-) -> Result<BindingGraph> {
-    let mut binding_graph = bindings::create_with_resolver(
+) -> Result<BindingGraphBuilder> {
+    let mut binding_graph_builder = bindings::create_with_resolver(
         version.clone(),
         Rc::new(SingleFileResolver {
             source_id: source_id.into(),
         }),
     )?;
 
-    binding_graph.add_user_file(source_id, output.create_tree_cursor());
+    binding_graph_builder.add_user_file(source_id, output.create_tree_cursor());
 
-    Ok(binding_graph)
+    Ok(binding_graph_builder)
 }
 
 /// The `PathResolver` that always resolves to the given `source_id`.
