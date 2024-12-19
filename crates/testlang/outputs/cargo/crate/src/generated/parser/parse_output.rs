@@ -12,8 +12,8 @@ pub struct ParseOutput {
 }
 
 impl ParseOutput {
-    pub fn tree(&self) -> Rc<NonterminalNode> {
-        Rc::clone(&self.parse_tree)
+    pub fn tree(&self) -> &Rc<NonterminalNode> {
+        &self.parse_tree
     }
 
     pub fn errors(&self) -> &Vec<ParseError> {

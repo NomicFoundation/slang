@@ -1,5 +1,6 @@
 use std::cmp::min;
 use std::path::Path;
+use std::rc::Rc;
 use std::sync::Arc;
 
 use anyhow::Result;
@@ -212,13 +213,12 @@ fn create_bindings(version: &Version, source_id: &str, output: &ParseOutput) -> 
         }),
     );
     let parser = Parser::create(version.clone())?;
-    let built_ins_tree = parser
-        .parse(
-            NonterminalKind::SourceUnit,
-            bindings::get_built_ins(version),
-        )
-        .tree();
-    let built_ins_cursor = transform_built_ins_node(&Node::Nonterminal(built_ins_tree))
+    let built_ins_parser = parser.parse(
+        NonterminalKind::SourceUnit,
+        bindings::get_built_ins(version),
+    );
+    let built_ins_tree = built_ins_parser.tree();
+    let built_ins_cursor = transform_built_ins_node(&Node::Nonterminal(Rc::clone(built_ins_tree)))
         .cursor_with_offset(TextIndex::ZERO);
 
     bindings.add_system_file("built_ins.sol", built_ins_cursor);

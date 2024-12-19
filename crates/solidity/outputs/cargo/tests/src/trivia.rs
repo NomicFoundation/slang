@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use anyhow::Result;
 use semver::Version;
 use slang_solidity::cst::{NonterminalKind, TerminalKind};
@@ -27,8 +29,7 @@ fn compare_end_of_lines(input: &str, expected: &[&str]) -> Result<()> {
     let output = parser.parse(NonterminalKind::SourceUnit, input);
     assert!(output.is_valid());
 
-    let actual = output
-        .tree()
+    let actual = Rc::clone(output.tree())
         .descendants()
         .filter(|edge| edge.is_terminal_with_kind(TerminalKind::EndOfLine))
         .map(|eol| eol.unparse())

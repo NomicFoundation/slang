@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use std::sync::Arc;
 
 use anyhow::Result;
@@ -21,7 +22,7 @@ pub fn create_bindings(version: &Version) -> Result<Bindings> {
     );
 
     let built_ins_cursor =
-        transform_built_ins_node(&Node::Nonterminal(built_ins_parse_output.tree()))
+        transform_built_ins_node(&Node::Nonterminal(Rc::clone(built_ins_parse_output.tree())))
             .cursor_with_offset(TextIndex::ZERO);
 
     bindings.add_system_file("built_ins.sol", built_ins_cursor);

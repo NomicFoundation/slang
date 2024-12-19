@@ -1,5 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use std::rc::Rc;
+
 use crate::wasm_crate::utils::{define_wrapper, FromFFI, IntoFFI};
 
 mod ffi {
@@ -80,7 +82,7 @@ define_wrapper! { ParseError {
 
 define_wrapper! { ParseOutput {
     fn tree(&self) -> ffi::NonterminalNode {
-        self._borrow_ffi().tree()._into_ffi()
+        Rc::clone(self._borrow_ffi().tree())._into_ffi()
     }
 
     fn errors(&self) -> Vec<ffi::ParseError> {
