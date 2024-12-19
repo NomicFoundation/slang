@@ -65,6 +65,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             });
         }
 
+        binding_graph.resolve();
         let (bindings_output, all_resolved) = render_bindings(&binding_graph, &parsed_parts)?;
 
         let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());

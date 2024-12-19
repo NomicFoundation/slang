@@ -29,20 +29,15 @@ pub fn metaslang_bindings::BindingGraph<KT>::add_user_file(&mut self, file_path:
 pub fn metaslang_bindings::BindingGraph<KT>::add_user_file_returning_graph(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>) -> metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_bindings::BindingGraph<KT>::all_definitions(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Definition<'_, KT>> + '_
 pub fn metaslang_bindings::BindingGraph<KT>::all_references(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Reference<'_, KT>> + '_
-pub fn metaslang_bindings::BindingGraph<KT>::build_database(&self) -> metaslang_bindings::DatabaseResolver<'_, KT>
 pub fn metaslang_bindings::BindingGraph<KT>::create(version: semver::Version, binding_rules: &str, path_resolver: alloc::rc::Rc<dyn metaslang_bindings::PathResolver<KT>>) -> Self
 pub fn metaslang_bindings::BindingGraph<KT>::definition_at(&self, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Definition<'_, KT>>
 pub fn metaslang_bindings::BindingGraph<KT>::reference_at(&self, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Reference<'_, KT>>
+pub fn metaslang_bindings::BindingGraph<KT>::resolve(&mut self)
 pub struct metaslang_bindings::BuiltInLocation
 impl core::clone::Clone for metaslang_bindings::BuiltInLocation
 pub fn metaslang_bindings::BuiltInLocation::clone(&self) -> metaslang_bindings::BuiltInLocation
 impl core::fmt::Debug for metaslang_bindings::BuiltInLocation
 pub fn metaslang_bindings::BuiltInLocation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct metaslang_bindings::DatabaseResolver<'a, KT: metaslang_cst::kinds::KindTypes + 'static>
-impl<'a, KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::DatabaseResolver<'a, KT>
-pub fn metaslang_bindings::DatabaseResolver<'a, KT>::new(owner: &'a metaslang_bindings::BindingGraph<KT>) -> Self
-pub fn metaslang_bindings::DatabaseResolver<'a, KT>::resolve(&mut self, reference: &metaslang_bindings::Reference<'a, KT>) -> alloc::vec::Vec<metaslang_bindings::Definition<'a, KT>>
-pub fn metaslang_bindings::DatabaseResolver<'a, KT>::resolve_all(&mut self)
 pub struct metaslang_bindings::Definition<'a, KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<'a, KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Definition<'a, KT>
 pub fn metaslang_bindings::Definition<'a, KT>::definiens_location(&self) -> metaslang_bindings::BindingLocation<KT>

@@ -535,6 +535,8 @@ pub enum BuildError {
     MissingSymbol(GraphNodeRef),
     #[error("Missing ‘scope’ attribute on graph node")]
     MissingScope(GraphNodeRef),
+    #[error("Missing ‘definiens’ attribute on graph node")]
+    MissingDefiniens(GraphNodeRef),
     #[error("Unknown ‘{0}’ flag type {1}")]
     UnknownFlagType(String, String),
     #[error("Unknown node type {0}")]
@@ -892,9 +894,9 @@ impl<'a, KT: KindTypes> Builder<'a, KT> {
                 Some(definiens_node) => {
                     let syntax_node_ref = definiens_node.as_syntax_node_ref()?;
                     let definiens_node = &self.graph[syntax_node_ref];
-                    Some(definiens_node.clone())
+                    definiens_node.clone()
                 }
-                None => None,
+                None => return Err(BuildError::MissingDefiniens(node_ref)),
             };
 
             let extension_scope = match node.attributes.get(EXTENSION_SCOPE_ATTR) {

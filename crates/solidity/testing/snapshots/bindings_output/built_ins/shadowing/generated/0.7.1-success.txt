@@ -24,7 +24,7 @@ References and definitions:
     │          ╰── refs: 2, built-in
   8 │         sha256();
     │         ───┬──  
-    │            ╰──── refs: 6, 5, built-in
+    │            ╰──── refs: 5, 6, built-in
     │ 
  11 │     function sha256() public {}
     │              ───┬──  
