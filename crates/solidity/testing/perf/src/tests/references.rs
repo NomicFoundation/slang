@@ -1,12 +1,14 @@
+use std::rc::Rc;
+
 use slang_solidity::bindings::BindingGraph;
 
-pub fn setup() -> BindingGraph {
+pub fn setup() -> Rc<BindingGraph> {
     let dependencies = super::definitions::setup();
 
     super::definitions::run(dependencies)
 }
 
-pub fn run(binding_graph: BindingGraph) {
+pub fn run(binding_graph: Rc<BindingGraph>) {
     let mut reference_count = 0_usize;
     let mut resolved_references = 0_usize;
 
@@ -17,8 +19,8 @@ pub fn run(binding_graph: BindingGraph) {
         }
         reference_count += 1;
 
-        let resolution = reference.resolve_definition();
-        if resolution.is_ok() {
+        let definitions = reference.definitions();
+        if !definitions.is_empty() {
             resolved_references += 1;
         }
     }
@@ -26,7 +28,7 @@ pub fn run(binding_graph: BindingGraph) {
     assert_eq!(reference_count, 1652, "Failed to fetch all references");
 
     assert_eq!(
-        resolved_references, 1409,
+        resolved_references, 1490,
         "Failed to resolve all references"
     );
 }

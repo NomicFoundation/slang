@@ -2,6 +2,7 @@
 #![allow(clippy::needless_pass_by_value)]
 
 use std::hint::black_box;
+use std::rc::Rc;
 
 use iai_callgrind::{
     library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
@@ -45,7 +46,7 @@ define_payload_benchmark!(cursor, Vec<ParsedFile>);
 define_payload_benchmark!(query, Vec<ParsedFile>);
 define_benchmark!(init_bindings);
 define_payload_benchmark!(definitions, Dependencies);
-define_payload_benchmark!(references, BindingGraph);
+define_payload_benchmark!(references, Rc<BindingGraph>);
 
 library_benchmark_group!(
     name = benchmarks;

@@ -2,3 +2,7 @@
 	path = "submodules/jco"
 	url = "https://github.com/NomicFoundation/jco"
 	branch = "nomic-enhancements-release"
+[submodule "submodules/stack-graphs"]
+	path = "submodules/stack-graphs"
+	url = "https://github.com/NomicFoundation/stack-graphs"
+	branch = "partial-paths-checkpoint"

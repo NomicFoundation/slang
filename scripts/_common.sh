@@ -46,3 +46,9 @@ if ! output=$(
 
   exit 1
 fi
+
+if [ ! -f submodules/stack-graphs/stack-graphs/Cargo.toml ]; then
+  # We declare stack-graphs as our dependency in root's Cargo.toml so we need to
+  # check it out in order to run `cargo build`
+  git submodule update --init --progress
+fi

@@ -1,0 +1,62 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     struct Coords {
+    │            ───┬──  
+    │               ╰──── def: 2
+  3 │         int x;
+    │             ┬  
+    │             ╰── def: 3
+  4 │         int y;
+    │             ┬  
+    │             ╰── def: 4
+    │ 
+  6 │     enum HitTest {
+    │          ───┬───  
+    │             ╰───── def: 5
+  7 │         Inside,
+    │         ───┬──  
+    │            ╰──── def: 6
+  8 │         Outside
+    │         ───┬───  
+    │            ╰───── def: 7
+    │ 
+ 10 │     struct Box {
+    │            ─┬─  
+    │             ╰─── def: 8
+ 11 │         function (Coords memory) external returns (HitTest) hitTest;
+    │                   ───┬──                           ───┬───  ───┬───  
+    │                      ╰─────────────────────────────────────────────── ref: 2
+    │                                                       │        │     
+    │                                                       ╰────────────── ref: 5
+    │                                                                │     
+    │                                                                ╰───── def: 9
+    │ 
+ 14 │     function insideBox(Box memory b, Coords memory p) public returns (bool) {
+    │              ────┬──── ─┬─        ┬  ───┬──        ┬  
+    │                  ╰──────────────────────────────────── def: 10
+    │                         │         │     │          │  
+    │                         ╰───────────────────────────── ref: 8
+    │                                   │     │          │  
+    │                                   ╰─────────────────── def: 11
+    │                                         │          │  
+    │                                         ╰───────────── ref: 2
+    │                                                    │  
+    │                                                    ╰── def: 12
+ 15 │         return b.hitTest(p) == HitTest.Inside;
+    │                ┬ ───┬─── ┬     ───┬─── ───┬──  
+    │                ╰─────────────────────────────── ref: 11
+    │                     │    │        │       │    
+    │                     ╰────────────────────────── ref: 9
+    │                          │        │       │    
+    │                          ╰───────────────────── ref: 12
+    │                                   │       │    
+    │                                   ╰──────────── ref: 5
+    │                                           │    
+    │                                           ╰──── ref: 6
+────╯

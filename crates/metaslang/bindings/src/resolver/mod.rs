@@ -2,361 +2,299 @@ use std::collections::{HashMap, HashSet};
 use std::iter::once;
 
 use metaslang_cst::kinds::KindTypes;
+use stack_graphs::arena::Handle;
 use stack_graphs::graph::{Degree, Edge, StackGraph};
 use stack_graphs::partial::{PartialPath, PartialPaths};
 use stack_graphs::stitching::{
-    ForwardCandidates, ForwardPartialPathStitcher, GraphEdgeCandidates, GraphEdges, StitcherConfig,
+    Database, DatabaseCandidates, ForwardCandidates, ForwardPartialPathStitcher, StitcherConfig,
+    ToAppendable,
 };
-use stack_graphs::CancellationError;
+use stack_graphs::{CancellationError, NoCancellation};
 
-use crate::{BindingGraph, Definition, FileHandle, GraphHandle, Reference, ResolutionError, Tag};
+use crate::{BindingGraphBuilder, GraphHandle};
 
-mod c3;
-
-/// The resolver executes algorithms to resolve a reference to one or more
-/// definitions. The reference may not be resolvable in the current state of the
-/// bindings (eg. you may still need to add an imported file), so it may not be
-/// able to find any definitions, or the definitions it finds may be an
-/// incomplete set (eg. finding only an import alias, but not the actual
-/// definition). The base algorithm will omit shadowed paths (ie. those
-/// discarded by higher precedence edges) from the results, but there are other
-/// circumstances when many definitions may be found:
-///
-/// 1. Destructuring imports (with or without aliases): these are
-///    represented in the graph as intermediate definition nodes along the
-///    path to the actual definition; hence why this function will return
-///    the longest path available.
-///
-/// 2. Virtual methods: a reference should find valid paths to all available
-///    definitions in a class hierarchy.
-///
-/// The multiple definitions can be ranked by one or more secondary algorithms
-/// to be applied by this resolver. For example, an alias import definition
-/// would be downgraded, allowing the resolver to prefer the actual definition
-/// if found (it may not be available yet). Or a topological ordering may be
-/// applied to definitions pointing to virtual methods.
-///
 pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
-    owner: &'a BindingGraph<KT>,
-    reference: Reference<'a, KT>,
+    owner: &'a BindingGraphBuilder<KT>,
     partials: PartialPaths,
-    results: Vec<ResolvedPath<'a, KT>>,
-    options: ResolveOptions,
-}
-
-#[derive(Copy, Clone, Eq, PartialEq)]
-pub(crate) enum ResolveOptions {
-    Full,
-    NonRecursive,
-}
-
-struct ResolvedPath<'a, KT: KindTypes + 'static> {
-    pub partial_path: PartialPath,
-    pub definition: Definition<'a, KT>,
-    pub score: f32,
-}
-
-impl<'a, KT: KindTypes + 'static> ResolvedPath<'a, KT> {
-    pub fn len(&self) -> usize {
-        self.partial_path.edges.len()
-    }
-}
-
-/// Candidates for the forward stitching resolution process. This will inject
-/// edges to the the given extensions scopes at extension hook nodes when asked
-/// for forward candidates (ie. `get_forward_candidates`) by the resolution
-/// algorithm. Other than that, it's exactly the same as `GraphEdgeCandidates`.
-struct ResolverCandidates<'a, KT: KindTypes + 'static> {
-    owner: &'a BindingGraph<KT>,
-    partials: &'a mut PartialPaths,
-    file: Option<FileHandle>,
-    edges: GraphEdges,
-    extensions: &'a [GraphHandle],
-}
-
-impl<'a, KT: KindTypes + 'static> ResolverCandidates<'a, KT> {
-    pub fn new(
-        owner: &'a BindingGraph<KT>,
-        partials: &'a mut PartialPaths,
-        file: Option<FileHandle>,
-        extensions: &'a [GraphHandle],
-    ) -> Self {
-        Self {
-            owner,
-            partials,
-            file,
-            edges: GraphEdges,
-            extensions,
-        }
-    }
-}
-
-impl<KT: KindTypes + 'static> ForwardCandidates<Edge, Edge, GraphEdges, CancellationError>
-    for ResolverCandidates<'_, KT>
-{
-    fn get_forward_candidates<R>(&mut self, path: &PartialPath, result: &mut R)
-    where
-        R: std::iter::Extend<Edge>,
-    {
-        let node = path.end_node;
-        result.extend(self.owner.stack_graph.outgoing_edges(node).filter(|e| {
-            self.file
-                .map_or(true, |file| self.owner.stack_graph[e.sink].is_in_file(file))
-        }));
-
-        if self.owner.is_extension_hook(node) {
-            // Inject edges from the extension hook node to each extension scope
-            let mut extension_edges = Vec::new();
-            for extension in self.extensions {
-                extension_edges.push(Edge {
-                    source: node,
-                    sink: *extension,
-                    precedence: 0,
-                });
-            }
-            result.extend(extension_edges);
-        }
-    }
-
-    fn get_joining_candidate_degree(&self, path: &PartialPath) -> Degree {
-        self.owner.stack_graph.incoming_edge_degree(path.end_node)
-    }
-
-    fn get_graph_partials_and_db(&mut self) -> (&StackGraph, &mut PartialPaths, &GraphEdges) {
-        (&self.owner.stack_graph, self.partials, &self.edges)
-    }
+    database: Database,
+    references: HashMap<GraphHandle, Vec<GraphHandle>>,
 }
 
 impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
-    pub fn build_for(reference: &Reference<'a, KT>, options: ResolveOptions) -> Self {
+    pub fn new(owner: &'a BindingGraphBuilder<KT>) -> Self {
+        let database = Database::new();
+        let partials = PartialPaths::new();
+
         let mut resolver = Self {
-            owner: reference.owner,
-            reference: reference.clone(),
-            partials: PartialPaths::new(),
-            results: Vec::new(),
-            options,
+            owner,
+            partials,
+            database,
+            references: HashMap::new(),
         };
-        resolver.resolve();
+        resolver.build();
         resolver
     }
 
-    fn resolve(&mut self) {
+    fn build(&mut self) {
+        for file in self.owner.stack_graph.iter_files() {
+            ForwardPartialPathStitcher::find_minimal_partial_path_set_in_file(
+                &self.owner.stack_graph,
+                &mut self.partials,
+                file,
+                StitcherConfig::default(),
+                &NoCancellation,
+                |stack_graph, partials, path| {
+                    self.database
+                        .add_partial_path(stack_graph, partials, path.clone());
+                },
+            )
+            .expect("Should never be cancelled");
+
+            self.database.ensure_both_directions(&mut self.partials);
+        }
+    }
+
+    fn resolve_parents(&mut self, reference: GraphHandle) -> Vec<GraphHandle> {
+        self.owner
+            .get_parents(reference)
+            .iter()
+            .flat_map(|handle| {
+                if self.owner.is_definition(*handle) {
+                    vec![*handle]
+                } else {
+                    self.resolve_internal(*handle, false)
+                }
+            })
+            .collect()
+    }
+
+    fn resolve_parents_recursively(&mut self, parent: GraphHandle) -> Vec<GraphHandle> {
+        let mut results = HashMap::new();
+        let mut resolve_queue = Vec::new();
+        resolve_queue.push(parent);
+        while let Some(current) = resolve_queue.pop() {
+            let current_parents = self.resolve_parents(current);
+            for current_parent in &current_parents {
+                if !results.contains_key(current_parent) {
+                    resolve_queue.push(*current_parent);
+                }
+            }
+            results.insert(current, current_parents);
+        }
+        results.into_values().flatten().collect()
+    }
+
+    fn resolve_internal(
+        &mut self,
+        reference: GraphHandle,
+        allow_recursion: bool,
+    ) -> Vec<GraphHandle> {
+        if let Some(definitions) = self.references.get(&reference) {
+            return definitions.clone();
+        }
+
+        // Save `PartialPaths` state to restore allocations after the resolution
+        // is complete
+        let checkpoint = self.partials.save_checkpoint();
         let mut reference_paths = Vec::new();
-        if self.options == ResolveOptions::Full {
-            let ref_parents = self.reference.resolve_parents();
+
+        if allow_recursion {
+            // look for extension scopes to apply to the reference
+            let ref_parents = self.resolve_parents(reference);
             let mut extensions = HashSet::new();
             for parent in &ref_parents {
-                if let Some(extension_scope) = parent.get_extension_scope() {
+                if let Some(extension_scope) = self.owner.get_extension_scope(*parent) {
                     extensions.insert(extension_scope);
                 }
 
-                if parent.inherit_extensions() {
-                    #[allow(clippy::mutable_key_type)]
-                    let grand_parents = Self::resolve_parents_all(parent.clone());
-                    for grand_parent in grand_parents.values().flatten() {
-                        if let Some(extension_scope) = grand_parent.get_extension_scope() {
+                if self.owner.inherits_extensions(*parent) {
+                    let grand_parents = self.resolve_parents_recursively(*parent);
+                    for grand_parent in &grand_parents {
+                        if let Some(extension_scope) = self.owner.get_extension_scope(*grand_parent)
+                        {
                             extensions.insert(extension_scope);
                         }
                     }
                 }
             }
             let extensions = extensions.drain().collect::<Vec<_>>();
+            let mut database = ExtendedDatabase::new(&mut self.database);
 
             ForwardPartialPathStitcher::find_all_complete_partial_paths(
-                &mut ResolverCandidates::new(self.owner, &mut self.partials, None, &extensions),
-                once(self.reference.handle),
+                &mut DatabaseCandidatesExtended::new(
+                    self.owner,
+                    &mut self.partials,
+                    &mut database,
+                    extensions,
+                ),
+                once(reference),
                 StitcherConfig::default(),
-                &stack_graphs::NoCancellation,
-                |_graph, _paths, path| {
+                &NoCancellation,
+                |_graph, _partials, path| {
                     reference_paths.push(path.clone());
                 },
             )
-            .expect("Should never be cancelled");
+            .expect("not cancelled");
         } else {
             ForwardPartialPathStitcher::find_all_complete_partial_paths(
-                &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut self.partials, None),
-                once(self.reference.handle),
+                &mut DatabaseCandidates::new(
+                    &self.owner.stack_graph,
+                    &mut self.partials,
+                    &mut self.database,
+                ),
+                once(reference),
                 StitcherConfig::default(),
-                &stack_graphs::NoCancellation,
-                |_graph, _paths, path| {
+                &NoCancellation,
+                |_graph, _partials, path| {
                     reference_paths.push(path.clone());
                 },
             )
-            .expect("Should never be cancelled");
-        };
+            .expect("not cancelled");
+        }
 
-        let mut added_nodes = HashSet::new();
+        let mut results = Vec::new();
         for reference_path in &reference_paths {
             let end_node = reference_path.end_node;
 
-            // There may be duplicate ending nodes with different
-            // post-conditions in the scope stack, but we only care about the
-            // definition itself. Hence we need to check for uniqueness.
-            if !added_nodes.contains(&end_node)
-                && reference_paths
-                    .iter()
-                    .all(|other| !other.shadows(&mut self.partials, reference_path))
+            if reference_paths
+                .iter()
+                .all(|other| !other.shadows(&mut self.partials, reference_path))
             {
-                self.results.push(ResolvedPath {
-                    definition: self
-                        .owner
-                        .to_definition(end_node)
-                        .expect("path to end in a definition node"),
-                    partial_path: reference_path.clone(),
-                    score: 0.0,
-                });
-                added_nodes.insert(end_node);
+                results.push(end_node);
             }
         }
-    }
 
-    pub fn all(&self) -> Vec<Definition<'a, KT>> {
-        self.results
-            .iter()
-            .map(|path| path.definition.clone())
-            .collect()
-    }
-
-    pub fn first(&mut self) -> Result<Definition<'a, KT>, ResolutionError<'a, KT>> {
-        if self.results.len() > 1 {
-            self.rank_results();
-
-            let top_score = self.results[0].score;
-            let mut results = self
-                .results
-                .iter()
-                .take_while(|result| (result.score - top_score).abs() < f32::EPSILON)
-                .map(|result| result.definition.clone())
-                .collect::<Vec<_>>();
-            if results.len() > 1 {
-                Err(ResolutionError::AmbiguousDefinitions(results))
-            } else {
-                Ok(results.swap_remove(0))
-            }
-        } else {
-            self.results
-                .first()
-                .map(|path| path.definition.clone())
-                .ok_or(ResolutionError::Unresolved)
-        }
-    }
-
-    fn rank_results(&mut self) {
-        if self.results.is_empty() {
-            return;
-        }
-        self.mark_down_aliases();
-        self.mark_down_built_ins();
-        if self.options == ResolveOptions::Full {
-            self.rank_c3_methods();
-        }
-        self.results.sort_by(|a, b| b.score.total_cmp(&a.score));
-    }
-
-    fn mark_down_aliases(&mut self) {
-        // compute min and max path lengths
-        let (min_len, max_len) =
-            self.results
-                .iter()
-                .fold((usize::MAX, usize::MIN), |(min_len, max_len), result| {
-                    let len = result.len();
-                    (min_len.min(len), max_len.max(len))
-                });
-
-        for result in &mut self.results {
-            // mark down alias definitions
-            #[allow(clippy::cast_precision_loss)]
-            if result.definition.has_tag(Tag::Alias) {
-                result.score -= 100.0;
-
-                // but prioritize longer paths so that we can still return a
-                // result if we only have multiple aliases as possible
-                // definitions
-                result.score += (result.len() - min_len) as f32 / (1 + max_len - min_len) as f32;
-            }
-        }
-    }
-
-    fn mark_down_built_ins(&mut self) {
-        for result in &mut self.results {
-            if result.definition.get_file().is_system() {
-                result.score -= 200.0;
-            }
-        }
-    }
-
-    fn rank_c3_methods(&mut self) {
-        // compute the linearisation to use for ranking
-        let caller_parents = self.reference.resolve_parents();
-        let Some(caller_context) = caller_parents.first() else {
-            // the reference does not provide an enclosing definition, so nothing to do here
-            return;
-        };
-
-        // if the bindings has some context set, use it instead of the caller's
-        // to compute the full linearised ordering of methods
-        let resolution_context = match self.owner.get_context() {
-            Some(context) => context,
-            None => caller_context.clone(),
-        };
-
-        #[allow(clippy::mutable_key_type)]
-        let parents = Self::resolve_parents_all(resolution_context.clone());
-
-        let Some(mro) = c3::linearise(&resolution_context, &parents) else {
-            // linearisation failed
-            eprintln!("Linearisation of {resolution_context} failed");
-            return;
-        };
-
-        let caller_context_index = mro.iter().position(|x| x == caller_context);
-        let super_call = self.reference.has_tag(Tag::Super);
-
-        // Mark up user methods tagged C3 according to the computed linearisation.
-        // Because only contract functions are marked with the C3 tag, this has
-        // the added benefit of prioritizing them over globally defined
-        // functions.
-        for result in &mut self.results {
-            if result.definition.has_tag(Tag::C3) && result.definition.get_file().is_user() {
-                let definition_parents = result.definition.resolve_parents();
-                let Some(definition_context) = definition_parents.first() else {
-                    // this should not normally happen: the definition is tagged
-                    // with the C3 selector but does not provide a resolvable
-                    // enclosing definition
-                    continue;
-                };
-
-                // find the definition context in the linearised result
-                #[allow(clippy::cast_precision_loss)]
-                if let Some(index) = mro.iter().position(|x| x == definition_context) {
-                    // if this is a super call, ignore all implementations at or
-                    // before (as in more derived) than the caller's
-                    if !super_call
-                        || (caller_context_index.is_none() || index > caller_context_index.unwrap())
-                    {
-                        result.score += 100.0 * (mro.len() - index) as f32;
-                    }
-                }
-            }
-        }
-    }
-
-    #[allow(clippy::mutable_key_type)]
-    fn resolve_parents_all(
-        context: Definition<'a, KT>,
-    ) -> HashMap<Definition<'a, KT>, Vec<Definition<'a, KT>>> {
-        let mut results = HashMap::new();
-        let mut resolve_queue = Vec::new();
-        resolve_queue.push(context);
-        while let Some(current) = resolve_queue.pop() {
-            let current_parents = current.resolve_parents();
-            for current_parent in &current_parents {
-                if !results.contains_key(current_parent) {
-                    resolve_queue.push(current_parent.clone());
-                }
-            }
-            results.insert(current, current_parents);
-        }
+        // Reclaim arena memory used for this resolution
+        self.partials.restore_checkpoint(checkpoint);
         results
+    }
+
+    pub(crate) fn resolve(mut self) -> HashMap<GraphHandle, Vec<GraphHandle>> {
+        for handle in self.owner.stack_graph.iter_nodes() {
+            if self.owner.is_reference(handle)
+                && self
+                    .owner
+                    .get_file(handle)
+                    .is_some_and(|file| file.is_user())
+            {
+                let definition_handles = self.resolve_internal(handle, true);
+                self.references.insert(handle, definition_handles);
+            }
+        }
+        self.references
+    }
+}
+
+// This is a partial paths database, but we also need to keep track of edges
+// added to connect to extension scopes
+struct ExtendedDatabase<'a> {
+    pub database: &'a mut Database,
+    pub edges: Vec<PartialPath>,
+}
+
+impl<'a> ExtendedDatabase<'a> {
+    fn new(database: &'a mut Database) -> Self {
+        Self {
+            database,
+            edges: Vec::new(),
+        }
+    }
+}
+
+// These are handles to partial paths or edges in `ExtendedDatabase`
+#[derive(Clone, Debug)]
+enum ExtendedHandle {
+    Handle(Handle<PartialPath>),
+    Edge(usize),
+}
+
+impl ToAppendable<ExtendedHandle, PartialPath> for ExtendedDatabase<'_> {
+    fn get_appendable<'a>(&'a self, handle: &'a ExtendedHandle) -> &'a PartialPath {
+        match handle {
+            ExtendedHandle::Handle(handle) => self.database.get_appendable(handle),
+            ExtendedHandle::Edge(edge) => &self.edges[*edge],
+        }
+    }
+}
+
+struct DatabaseCandidatesExtended<'a, KT: KindTypes + 'static> {
+    owner: &'a BindingGraphBuilder<KT>,
+    partials: &'a mut PartialPaths,
+    database: &'a mut ExtendedDatabase<'a>,
+    extensions: Vec<GraphHandle>,
+}
+
+impl<'a, KT: KindTypes + 'static> DatabaseCandidatesExtended<'a, KT> {
+    fn new(
+        owner: &'a BindingGraphBuilder<KT>,
+        partials: &'a mut PartialPaths,
+        database: &'a mut ExtendedDatabase<'a>,
+        extensions: Vec<GraphHandle>,
+    ) -> Self {
+        Self {
+            owner,
+            partials,
+            database,
+            extensions,
+        }
+    }
+}
+
+impl<'a, KT: KindTypes + 'static>
+    ForwardCandidates<ExtendedHandle, PartialPath, ExtendedDatabase<'a>, CancellationError>
+    for DatabaseCandidatesExtended<'a, KT>
+{
+    // Return the forward candidates from the encapsulated `Database` and inject
+    // the extension edges if the given path's end is an extension hook
+    fn get_forward_candidates<R>(&mut self, path: &PartialPath, result: &mut R)
+    where
+        R: std::iter::Extend<ExtendedHandle>,
+    {
+        let node = path.end_node;
+
+        let mut db_candidates = Vec::new();
+        self.database.database.find_candidate_partial_paths(
+            &self.owner.stack_graph,
+            self.partials,
+            path,
+            &mut db_candidates,
+        );
+        result.extend(
+            db_candidates
+                .iter()
+                .map(|candidate| ExtendedHandle::Handle(*candidate)),
+        );
+
+        if self.owner.is_extension_hook(node) {
+            for extension in &self.extensions {
+                let edge = Edge {
+                    source: node,
+                    sink: *extension,
+                    precedence: 0,
+                };
+                let mut partial_path =
+                    PartialPath::from_node(&self.owner.stack_graph, self.partials, node);
+                partial_path
+                    .append(&self.owner.stack_graph, self.partials, edge)
+                    .expect("path can be extended");
+                let edge_handle = self.database.edges.len();
+                self.database.edges.push(partial_path);
+                result.extend(once(ExtendedHandle::Edge(edge_handle)));
+            }
+        }
+    }
+
+    fn get_joining_candidate_degree(&self, path: &PartialPath) -> Degree {
+        // TODO: this may not be correct for extension scopes, but it's only
+        // used for cycle detection
+        self.database
+            .database
+            .get_incoming_path_degree(path.end_node)
+    }
+
+    fn get_graph_partials_and_db(
+        &mut self,
+    ) -> (&StackGraph, &mut PartialPaths, &ExtendedDatabase<'a>) {
+        (&self.owner.stack_graph, self.partials, self.database)
     }
 }

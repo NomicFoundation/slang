@@ -13,7 +13,6 @@ use slang_solidity::parser::{ParseOutput, Parser};
 use super::graph::graphviz::render as render_graphviz_graph;
 use super::graph::mermaid::render as render_mermaid_graph;
 use super::renderer::render_bindings;
-use crate::bindings::lookup_definition_by_name;
 use crate::generated::VERSION_BREAKS;
 use crate::multi_part_file::{split_multi_file, Part};
 use crate::resolver::TestsPathResolver;
@@ -66,13 +65,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             });
         }
 
-        if let Some(context) = multi_part.context {
-            let context_definition = lookup_definition_by_name(&binding_graph, context)
-                .expect("context definition to be found")
-                .to_handle();
-            binding_graph.set_context(&context_definition);
-        }
-
+        let binding_graph = binding_graph.resolve();
         let (bindings_output, all_resolved) = render_bindings(&binding_graph, &parsed_parts)?;
 
         let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());

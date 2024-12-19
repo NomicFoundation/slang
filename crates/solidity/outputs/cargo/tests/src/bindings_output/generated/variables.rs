@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn destructuring() -> Result<()> {
+    run("variables", "destructuring")
+}
+
+#[test]
 fn local_vars() -> Result<()> {
     run("variables", "local_vars")
 }

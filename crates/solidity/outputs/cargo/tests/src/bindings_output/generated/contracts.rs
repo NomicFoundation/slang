@@ -25,6 +25,11 @@ fn constructors() -> Result<()> {
 }
 
 #[test]
+fn diamond() -> Result<()> {
+    run("contracts", "diamond")
+}
+
+#[test]
 fn fallback_receive() -> Result<()> {
     run("contracts", "fallback_receive")
 }

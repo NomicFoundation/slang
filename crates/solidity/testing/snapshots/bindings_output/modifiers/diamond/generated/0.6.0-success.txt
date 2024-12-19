@@ -45,5 +45,5 @@ References and definitions:
     │              ──┬─          ─┬─  
     │                ╰──────────────── def: 8
     │                             │   
-    │                             ╰─── ref: 4
+    │                             ╰─── refs: 6, 4, 2
 ────╯
