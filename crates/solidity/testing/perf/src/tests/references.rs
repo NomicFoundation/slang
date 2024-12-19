@@ -1,16 +1,16 @@
+use std::rc::Rc;
+
 use slang_solidity::bindings::BindingGraph;
 
-pub fn setup() -> BindingGraph {
+pub fn setup() -> Rc<BindingGraph> {
     let dependencies = super::definitions::setup();
 
     super::definitions::run(dependencies)
 }
 
-pub fn run(mut binding_graph: BindingGraph) {
+pub fn run(binding_graph: Rc<BindingGraph>) {
     let mut reference_count = 0_usize;
     let mut resolved_references = 0_usize;
-
-    binding_graph.resolve();
 
     for reference in binding_graph.all_references() {
         if reference.get_file().is_system() {

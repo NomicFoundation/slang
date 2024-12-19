@@ -1,5 +1,6 @@
 use std::iter::once;
 use std::ops::Range;
+use std::rc::Rc;
 
 use anyhow::Result;
 use ariadne::{Color, Config, FnCache, Label, Report, ReportBuilder, ReportKind, Source};
@@ -11,7 +12,7 @@ use super::runner::ParsedPart;
 type ReportSpan<'a> = (&'a str, Range<usize>);
 
 pub(crate) fn render_bindings(
-    binding_graph: &BindingGraph,
+    binding_graph: &Rc<BindingGraph>,
     parsed_parts: &[ParsedPart<'_>],
 ) -> Result<(String, bool)> {
     let mut buffer: Vec<u8> = Vec::new();
@@ -51,8 +52,8 @@ pub(crate) fn render_bindings(
 
 // We collect all non built-in definitions in a vector to be able to identify
 // them by a numeric index
-fn collect_all_definitions(binding_graph: &BindingGraph) -> Vec<Definition<'_>> {
-    let mut definitions: Vec<Definition<'_>> = Vec::new();
+fn collect_all_definitions(binding_graph: &Rc<BindingGraph>) -> Vec<Definition> {
+    let mut definitions: Vec<Definition> = Vec::new();
     for definition in binding_graph.all_definitions() {
         if definition.get_file().is_user() {
             definitions.push(definition);
@@ -74,8 +75,8 @@ impl ParsedPart<'_> {
 
 fn build_report_for_part<'a>(
     part: &'a ParsedPart<'a>,
-    all_definitions: &'a [Definition<'a>],
-    part_references: impl Iterator<Item = Reference<'a>> + 'a,
+    all_definitions: &'a [Definition],
+    part_references: impl Iterator<Item = Reference> + 'a,
 ) -> (Report<'a, ReportSpan<'a>>, bool) {
     let mut builder: ReportBuilder<'_, ReportSpan<'_>> = Report::build(
         ReportKind::Custom("References and definitions", Color::Unset),

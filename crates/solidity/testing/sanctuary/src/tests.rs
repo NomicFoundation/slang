@@ -187,8 +187,7 @@ fn run_bindings_check(
     output: &ParseOutput,
 ) -> Result<Vec<UnresolvedReference>> {
     let mut unresolved = Vec::new();
-    let mut binding_graph = create_bindings(version, source_id, output)?;
-    binding_graph.resolve();
+    let binding_graph = create_bindings(version, source_id, output)?.resolve();
 
     for reference in binding_graph.all_references() {
         if reference.get_file().is_system() {

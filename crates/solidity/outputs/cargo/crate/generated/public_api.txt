@@ -20,8 +20,8 @@ pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, 
 pub fn slang_solidity::bindings::get_binding_rules() -> &'static str
 pub type slang_solidity::bindings::BindingGraph = metaslang_bindings::BindingGraph<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::BindingLocation = metaslang_bindings::location::BindingLocation<slang_solidity::cst::KindTypes>
-pub type slang_solidity::bindings::Definition<'a> = metaslang_bindings::Definition<'a, slang_solidity::cst::KindTypes>
-pub type slang_solidity::bindings::Reference<'a> = metaslang_bindings::Reference<'a, slang_solidity::cst::KindTypes>
+pub type slang_solidity::bindings::Definition = metaslang_bindings::Definition<slang_solidity::cst::KindTypes>
+pub type slang_solidity::bindings::Reference = metaslang_bindings::Reference<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::UserFileLocation = metaslang_bindings::location::UserFileLocation<slang_solidity::cst::KindTypes>
 pub mod slang_solidity::compilation
 pub struct slang_solidity::compilation::AddFileResponse
