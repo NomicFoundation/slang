@@ -185,6 +185,8 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
     }
 }
 
+// This is a partial paths database, but we also need to keep track of edges
+// added to connect to extension scopes
 struct ExtendedDatabase<'a> {
     pub database: &'a mut Database,
     pub edges: Vec<PartialPath>,
@@ -199,6 +201,7 @@ impl<'a> ExtendedDatabase<'a> {
     }
 }
 
+// These are handles to partial paths or edges in `ExtendedDatabase`
 #[derive(Clone, Debug)]
 enum ExtendedHandle {
     Handle(Handle<PartialPath>),
@@ -241,6 +244,8 @@ impl<'a, KT: KindTypes + 'static>
     ForwardCandidates<ExtendedHandle, PartialPath, ExtendedDatabase<'a>, CancellationError>
     for DatabaseCandidatesExtended<'a, KT>
 {
+    // Return the forward candidates from the encapsulated `Database` and inject
+    // the extension edges if the given path's end is an extension hook
     fn get_forward_candidates<R>(&mut self, path: &PartialPath, result: &mut R)
     where
         R: std::iter::Extend<ExtendedHandle>,
