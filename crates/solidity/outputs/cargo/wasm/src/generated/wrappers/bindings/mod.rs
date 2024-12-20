@@ -27,8 +27,8 @@ mod rust {
         pub definiens_location: BindingLocation,
     }
 
-    impl From<crate::rust_crate::bindings::Definition<'_>> for Definition {
-        fn from(definition: crate::rust_crate::bindings::Definition<'_>) -> Self {
+    impl From<crate::rust_crate::bindings::Definition> for Definition {
+        fn from(definition: crate::rust_crate::bindings::Definition) -> Self {
             Self {
                 id: definition.id(),
                 name_location: definition.name_location(),
@@ -47,8 +47,8 @@ mod rust {
         pub definitions: Vec<Definition>,
     }
 
-    impl From<crate::rust_crate::bindings::Reference<'_>> for Reference {
-        fn from(reference: crate::rust_crate::bindings::Reference<'_>) -> Self {
+    impl From<crate::rust_crate::bindings::Reference> for Reference {
+        fn from(reference: crate::rust_crate::bindings::Reference) -> Self {
             Self {
                 id: reference.id(),
                 location: reference.location(),

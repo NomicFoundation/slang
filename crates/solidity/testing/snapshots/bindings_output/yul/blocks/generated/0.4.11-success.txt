@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract AssemblyBlocks {
+    │          ───────┬──────  
+    │                 ╰──────── def: 1
+  2 │     function yul_let(uint256 x) public returns (uint256 z) {
+    │              ───┬───         ┬                          ┬  
+    │                 ╰────────────────────────────────────────── def: 2
+    │                              │                          │  
+    │                              ╰───────────────────────────── def: 3
+    │                                                         │  
+    │                                                         ╰── def: 4
+    │ 
+  4 │             let zero := 0
+    │                 ──┬─  
+    │                   ╰─── def: 5
+  5 │             let v := zero
+    │                 ┬    ──┬─  
+    │                 ╰────────── def: 6
+    │                        │   
+    │                        ╰─── ref: 5
+    │ 
+  7 │                 let y := x
+    │                     ┬    ┬  
+    │                     ╰─────── def: 7
+    │                          │  
+    │                          ╰── ref: 3
+  8 │                 z := v
+    │                 ┬    ┬  
+    │                 ╰─────── ref: 4
+    │                      │  
+    │                      ╰── ref: 6
+  9 │                 v := y
+    │                 ┬    ┬  
+    │                 ╰─────── ref: 6
+    │                      │  
+    │                      ╰── ref: 7
+    │ 
+ 11 │             v := zero
+    │             ┬    ──┬─  
+    │             ╰────────── ref: 6
+    │                    │   
+    │                    ╰─── ref: 5
+────╯

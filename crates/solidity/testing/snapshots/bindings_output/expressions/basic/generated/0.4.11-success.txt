@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     function playground() public returns (int) {
+   │              ─────┬────  
+   │                   ╰────── def: 2
+ 3 │         int x = 1;
+   │             ┬  
+   │             ╰── def: 3
+ 4 │         int y = x + 2;
+   │             ┬   ┬  
+   │             ╰────── def: 4
+   │                 │  
+   │                 ╰── ref: 3
+ 5 │         return (x + y * x) / y;
+   │                 ┬   ┬   ┬    ┬  
+   │                 ╰─────────────── ref: 3
+   │                     │   │    │  
+   │                     ╰─────────── ref: 4
+   │                         │    │  
+   │                         ╰─────── ref: 3
+   │                              │  
+   │                              ╰── ref: 4
+───╯

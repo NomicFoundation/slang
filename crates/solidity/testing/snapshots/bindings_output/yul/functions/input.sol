@@ -1,13 +1,23 @@
 contract AssemblyFunctions {
     function test(uint256 x) public returns (uint256 r) {
         assembly {
-            let y := add(x, 5)
-            x, y := swap(x, y)
-            r := add(x, y)
+            function outer1(a) -> b {
+                b := add(a, 1)
+            }
 
-            function swap(a, b) -> c, d {
-                c := b
-                d := a
+            {
+                r := add(outer1(x), inner(x))
+                function inner(f) -> g {
+                    g:= mul(f, outer2(f))
+                }
+            }
+
+            function outer2(c) -> d {
+                d := mul(c, outer2_inner(c))
+
+                function outer2_inner(e) -> f {
+                    f := e
+                }
             }
         }
     }

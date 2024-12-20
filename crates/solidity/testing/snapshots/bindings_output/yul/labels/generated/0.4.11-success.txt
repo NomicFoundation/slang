@@ -1,0 +1,46 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── def: 2
+    │ 
+  4 │             let n := calldataload(4)
+    │                 ┬  
+    │                 ╰── def: 5
+  5 │             let a := 1
+    │                 ┬  
+    │                 ╰── def: 6
+  6 │             let b := a
+    │                 ┬    ┬  
+    │                 ╰─────── def: 7
+    │                      │  
+    │                      ╰── ref: 6
+  7 │         loop:
+    │         ──┬─  
+    │           ╰─── def: 3
+  8 │             jumpi(loopend, eq(n, 0))
+    │                   ───┬───     ┬  
+    │                      ╰─────────── ref: 4
+    │                               │  
+    │                               ╰── ref: 5
+  9 │             n := sub(n, 1)
+    │             ┬        ┬  
+    │             ╰─────────── ref: 5
+    │                      │  
+    │                      ╰── ref: 5
+ 10 │             jump(loop)
+    │                  ──┬─  
+    │                    ╰─── ref: 3
+ 11 │         loopend:
+    │         ───┬───  
+    │            ╰───── def: 4
+ 12 │             mstore(0, a)
+    │                       ┬  
+    │                       ╰── ref: 6
+────╯
