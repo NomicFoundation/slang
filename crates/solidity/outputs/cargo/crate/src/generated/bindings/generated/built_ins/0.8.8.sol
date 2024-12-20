@@ -113,4 +113,6 @@ contract $BuiltIns$ {
   $MessageType msg;
   $StringType $string;
   $TransactionType tx;
+  error Error(string memory reason);
+  error Panic(uint errorCode);
 }

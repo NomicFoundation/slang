@@ -7062,6 +7062,14 @@ codegen_language_macros::compile!(Language(
         BuiltInVariable(definition = "$MessageType msg"),
         BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
         BuiltInVariable(definition = "$StringType $string"),
-        BuiltInVariable(definition = "$TransactionType tx")
+        BuiltInVariable(definition = "$TransactionType tx"),
+        BuiltInVariable(
+            definition = "error Error(string memory reason)",
+            enabled = From("0.6.0")
+        ),
+        BuiltInVariable(
+            definition = "error Panic(uint errorCode)",
+            enabled = From("0.6.0")
+        )
     ]
 ));

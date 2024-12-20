@@ -1942,6 +1942,15 @@ inherit .star_extension
   attr (@body.lexical_scope -> @catch_params.defs) precedence = 1
 }
 
+@stmt [Statement [TryStatement [CatchClauses [CatchClause
+    [CatchClauseError @name [Identifier]]
+]]]] {
+  node ref
+  attr (ref) node_reference = @name
+
+  edge ref -> @stmt.lexical_scope
+}
+
 
 ;;; Revert statements
 

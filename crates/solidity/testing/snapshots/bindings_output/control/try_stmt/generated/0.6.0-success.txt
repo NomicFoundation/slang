@@ -1,12 +1,5 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Missing definitions/references:: 
-    ╭─[input.sol:1:1]
-    │
- 12 │         } catch Error(string memory reason) {
-    │                 ──┬──  
-    │                   ╰──── missing definition/reference
-────╯
 References and definitions: 
     ╭─[input.sol:1:1]
     │
@@ -64,7 +57,9 @@ References and definitions:
     │                     ┬  
     │                     ╰── ref: 14
  12 │         } catch Error(string memory reason) {
-    │                                     ───┬──  
+    │                 ──┬──               ───┬──  
+    │                   ╰───────────────────────── ref: built-in
+    │                                        │    
     │                                        ╰──── def: 15
  13 │             last_reason = reason;
     │             ─────┬─────   ───┬──  

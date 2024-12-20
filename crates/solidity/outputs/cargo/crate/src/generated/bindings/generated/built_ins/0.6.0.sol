@@ -102,4 +102,6 @@ contract $BuiltIns$ {
   uint now;
   $StringType $string;
   $TransactionType tx;
+  error Error(string memory reason);
+  error Panic(uint errorCode);
 }
