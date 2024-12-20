@@ -105,8 +105,8 @@ fn check_bindings_coverage<'a>(
     .with_config(Config::default().with_color(false));
 
     let query = Query::parse("@identifier ([Identifier] | [YulIdentifier])").unwrap();
-    let cursor = part.parse_output.create_tree_cursor();
-    for result in cursor.query(vec![query]) {
+    let tree_cursor = part.parse_output.create_tree_cursor();
+    for result in tree_cursor.query(vec![query]) {
         let identifier_cursor = result.captures.get("identifier").unwrap().first().unwrap();
         let parent = {
             let mut parent_cursor = identifier_cursor.spawn();
