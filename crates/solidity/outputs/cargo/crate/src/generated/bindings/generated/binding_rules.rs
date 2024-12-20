@@ -2080,7 +2080,7 @@ inherit .star_extension
   node minmax_type_of
   attr (minmax_type_of) push_symbol = "@typeof"
   node minmax_replace
-  attr (minmax_replace) push_symbol =  (source-text @name)
+  attr (minmax_replace) push_symbol = (source-text @name)
 
   edge type -> typeof
   edge typeof -> built_in_member
@@ -2102,7 +2102,7 @@ inherit .star_extension
   node type_of
   attr (type_of) push_symbol = "@typeof"
   node type_def
-  attr (type_def) push_symbol =  (source-text @name)
+  attr (type_def) push_symbol = (source-text @name)
   edge def -> type_of
   edge type_of -> type_def
   edge type_def -> @enum.lexical_scope
