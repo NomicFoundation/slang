@@ -1606,11 +1606,14 @@ inherit .star_extension
 
 @modifier [ModifierDefinition
     @name name: [Identifier]
-    body: [FunctionBody @body [Block]]
 ] {
   attr (@modifier.def) node_definition = @name
   attr (@modifier.def) definiens_node = @modifier
+}
 
+@modifier [ModifierDefinition
+    body: [FunctionBody @body [Block]]
+] {
   edge @body.lexical_scope -> @modifier.lexical_scope
 
   ; Special case: bind the place holder statement `_` to the built-in
