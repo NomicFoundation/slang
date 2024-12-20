@@ -29,3 +29,25 @@ References and definitions:
    │                                          │     
    │                                          ╰───── def: 6
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function someFunc(int x) returns (int) {
+   │ │ │                         ──┬──  
+   │ │ │                           ╰──── definiens: 3
+   ┆ ┆ ┆   
+ 4 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 5 │ │         function divide(int dividend, int divisor) returns (int);
+   │ │     ──────────────────────────┬────┬───────┬──────────────────────  
+   │ │                               ╰───────────────────────────────────── definiens: 5
+   │ │                                    │       │                        
+   │ │                                    ╰──────────────────────────────── definiens: 4
+   │ │                                            │                        
+   │ │                                            ╰──────────────────────── definiens: 6
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

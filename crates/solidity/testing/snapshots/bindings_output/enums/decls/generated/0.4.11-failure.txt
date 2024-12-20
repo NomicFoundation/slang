@@ -44,3 +44,42 @@ References and definitions:
     │                           │   
     │                           ╰─── def: 12
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ contract Test {
+  2 │     │       enum Answer { Yes, No }
+    │     │   ──────────────┬────┬────┬───  
+    │     │                 ╰─────────────── definiens: 2
+    │     │                      │    │     
+    │     │                      ╰────────── definiens: 3
+    │     │                           │     
+    │     │                           ╰───── definiens: 4
+  3 │   │ ├─▶ }
+    │   │ │       
+    │   │ ╰─────── definiens: 1
+  4 │   ╭───▶ 
+    ┆   ┆     
+  6 │   │         enum Respuesta { Si, No }
+    │   │     ───────────────┬──────┬───┬───  
+    │   │                    ╰──────────────── definiens: 6
+    │   │                           │   │     
+    │   │                           ╰───────── definiens: 7
+    │   │                               │     
+    │   │                               ╰───── definiens: 8
+  7 │ │ ├───▶ }
+    │ │ │         
+    │ │ ╰───────── definiens: 5
+  8 │ ╭─────▶ 
+    ┆ ┆       
+ 10 │ │           enum Repondre { Oui, Non }
+    │ │       ───────────────┬─────┬────┬────  
+    │ │                      ╰───────────────── definiens: 10
+    │ │                            │    │      
+    │ │                            ╰─────────── definiens: 11
+    │ │                                 │      
+    │ │                                 ╰────── definiens: 12
+ 11 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 9
+────╯

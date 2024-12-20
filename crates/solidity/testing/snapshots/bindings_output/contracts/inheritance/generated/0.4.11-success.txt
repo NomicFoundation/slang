@@ -22,3 +22,26 @@ References and definitions:
    │                    ────┬────  
    │                        ╰────── ref: 2
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭───│ ▶ contract Base {
+  2 │   │   ╭─▶     function base_func() returns (int) {
+    ┆   ┆   ┆   
+  4 │   │   ├─▶     }
+    │   │   │           
+    │   │   ╰─────────── definiens: 2
+  5 │ │ ├─────▶ }
+    │ │ │           
+    │ │ ╰─────────── definiens: 1
+  6 │ ╭───────▶ 
+    ┆ ┆   ┆     
+  8 │ │   ╭───▶     function some_func() returns (int) {
+    ┆ ┆   ┆     
+ 10 │ │   ├───▶     }
+    │ │   │             
+    │ │   ╰───────────── definiens: 4
+ 11 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 3
+────╯

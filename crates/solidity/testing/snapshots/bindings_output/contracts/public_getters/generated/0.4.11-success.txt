@@ -35,3 +35,30 @@ References and definitions:
     │                                 │  
     │                                 ╰── ref: 2
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ contract Foo {
+  2 │     │       int public x;
+    │     │   ─────────┬────────  
+    │     │            ╰────────── definiens: 2
+  3 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  4 │ ╭─────▶ 
+    ┆ ┆       
+  6 │ │           int public y;
+    │ │       ─────────┬────────  
+    │ │                ╰────────── definiens: 4
+  7 │ │ │         Foo f;
+    │ │ │     ─────┬─────  
+    │ │ │          ╰─────── definiens: 5
+  8 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+ 11 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 6
+ 12 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 3
+────╯

@@ -11,6 +11,7 @@ Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyw
    │ ╰────── Error occurred here.
 ───╯
 References and definitions: 
+Definiens: 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
    ╭─[other.sol:1:1]
@@ -22,3 +23,4 @@ Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyw
    │ ╰─────── Error occurred here.
 ───╯
 References and definitions: 
+Definiens: 

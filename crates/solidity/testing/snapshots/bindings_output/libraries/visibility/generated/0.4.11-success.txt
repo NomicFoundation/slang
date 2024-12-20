@@ -79,3 +79,52 @@ References and definitions:
     │                               │         
     │                               ╰───────── ref: 9
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────────▶ library MyLib {
+  2 │ │               enum Choice { One, Two }
+    │ │           ──────────────┬────┬────┬────  
+    │ │                         ╰──────────────── definiens: 2
+    │ │                              │    │      
+    │ │                              ╰─────────── definiens: 3
+    │ │                                   │      
+    │ │                                   ╰────── definiens: 4
+  3 │ │     │         struct Book { string author; }
+    │ │     │     ─────────────────┬──────┬──────────  
+    │ │     │                      ╰─────────────────── definiens: 5
+    │ │     │                             │            
+    │ │     │                             ╰──────────── definiens: 6
+  4 │ │     ╭───▶ 
+  5 │ │     │         function build_book(string memory author) public returns (Book memory) {
+    │ │     │                             ──────────┬─────────  
+    │ │     │                                       ╰─────────── definiens: 8
+    ┆ ┆     ┆     
+  7 │ │     ├─│ ▶     }
+    │ │     │ │           
+    │ │     ╰───────────── definiens: 7
+  8 │ │       ╭─▶ 
+    ┆ ┆       ┆   
+ 11 │ │       ├─▶     }
+    │ │       │           
+    │ │       ╰─────────── definiens: 9
+ 12 │ ├─│ ──────▶ }
+    │ │ │             
+    │ ╰─────────────── definiens: 1
+ 13 │   ╭───────▶ 
+    ┆   ┆         
+ 15 │   │             MyLib.Choice choice;
+    │   │         ────────────┬────────────  
+    │   │                     ╰────────────── definiens: 11
+ 16 │   │ │           MyLib.Book book;
+    │   │ │       ──────────┬──────────  
+    │   │ │                 ╰──────────── definiens: 12
+ 17 │   │ ╭─────▶ 
+    ┆   ┆ ┆       
+ 21 │   │ ├─────▶     }
+    │   │ │               
+    │   │ ╰─────────────── definiens: 13
+ 22 │   ├───────▶ }
+    │   │             
+    │   ╰───────────── definiens: 10
+────╯

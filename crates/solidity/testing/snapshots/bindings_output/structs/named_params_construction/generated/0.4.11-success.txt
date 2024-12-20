@@ -37,3 +37,26 @@ References and definitions:
    │                                                        │    
    │                                                        ╰──── ref: built-in
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───│ ▶ contract Test {
+  2 │ │   ╭─▶     struct Funder {
+  3 │ │   │           address addr;
+    │ │   │   ───────────┬──────────  
+    │ │   │              ╰──────────── definiens: 3
+  4 │ │   │           uint amount;
+    │ │   │   ──────────┬──────────  
+    │ │   │             ╰──────────── definiens: 4
+  5 │ │ │ ├─▶     }
+    │ │ │ │           
+    │ │ │ ╰─────────── definiens: 2
+  6 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+  9 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 10 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
+────╯

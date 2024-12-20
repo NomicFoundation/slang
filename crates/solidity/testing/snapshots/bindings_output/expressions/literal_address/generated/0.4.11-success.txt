@@ -17,3 +17,18 @@ References and definitions:
    │                                                                   │   
    │                                                                   ╰─── ref: 3
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test(bytes memory data) public {
+   │ │ │                     ────────┬────────  
+   │ │ │                             ╰────────── definiens: 3
+   ┆ ┆ ┆   
+ 4 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 5 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

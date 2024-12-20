@@ -36,3 +36,30 @@ References and definitions:
    │            │   
    │            ╰─── ref: 2
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ library Lib {
+  2 │     │       function nop(uint256 x) internal {}
+    │     │   ────────────────────┬┬──────────────────  
+    │     │                       ╰───────────────────── definiens: 2
+    │     │                        │                    
+    │     │                        ╰──────────────────── definiens: 3
+  3 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  4 │ ╭─────▶ contract Test {
+    ┆ ┆ ┆     
+  6 │ │ ╭───▶     function test(uint256 x) public returns (uint256 y) {
+    │ │ │                       ────┬────                  ────┬────  
+    │ │ │                           ╰───────────────────────────────── definiens: 6
+    │ │ │                                                      │      
+    │ │ │                                                      ╰────── definiens: 7
+    ┆ ┆ ┆     
+  9 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 10 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 4
+────╯

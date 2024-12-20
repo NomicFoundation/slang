@@ -34,3 +34,27 @@ References and definitions:
     │                                   │     
     │                                   ╰───── unresolved
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  3 │   ╭─────▶ 
+    ┆   ┆ ┆     
+  5 │   │ ╭───▶     function foo() public pure virtual returns (string memory) {
+    ┆   ┆ ┆     
+  7 │   │ ├───▶     }
+    │   │ │             
+    │   │ ╰───────────── definiens: 2
+  8 │ │ ├─────▶ }
+    │ │ │           
+    │ │ ╰─────────── definiens: 1
+  9 │ ╭───────▶ 
+    ┆ ┆     ┆   
+ 11 │ │     ╭─▶     //    A super;
+ 12 │ │     ├─▶     function foo() public pure virtual override(A) returns (string memory) {
+    │ │     │                                                                                  
+    │ │     ╰────────────────────────────────────────────────────────────────────────────────── definiens: 4
+    ┆ ┆         
+ 15 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 3
+────╯

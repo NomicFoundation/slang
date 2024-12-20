@@ -39,3 +39,31 @@ References and definitions:
    │                                                     │    
    │                                                     ╰──── ref: 3
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ interface External {
+  2 │     │       struct Data { uint value; }
+    │     │   ────────────────┬──────┬────────  
+    │     │                   ╰───────────────── definiens: 2
+    │     │                          │          
+    │     │                          ╰────────── definiens: 3
+  3 │     │       function sample() external payable returns (Data memory);
+    │     │   ───────────────────────────────┬──────────────────────────────  
+    │     │                                  ╰──────────────────────────────── definiens: 4
+  4 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  5 │ ╭─────▶ 
+    ┆ ┆ ┆     
+  7 │ │ ╭───▶     function test(External ext) public returns (uint) {
+    │ │ │                       ──────┬─────  
+    │ │ │                             ╰─────── definiens: 7
+    ┆ ┆ ┆     
+  9 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 6
+ 10 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 5
+────╯

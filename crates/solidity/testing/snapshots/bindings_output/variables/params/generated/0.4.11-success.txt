@@ -45,3 +45,40 @@ References and definitions:
     │                 │  
     │                 ╰── ref: 9
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────│ ▶ contract Foo {
+  2 │ │     ╭─▶     function bar(uint z) returns (uint) {
+    │ │     │                    ───┬──  
+    │ │     │                       ╰──── definiens: 3
+    ┆ ┆     ┆   
+  4 │ │ │   ├─▶     }
+    │ │ │   │           
+    │ │ │   ╰─────────── definiens: 2
+  5 │ │ ╭─────▶ 
+  6 │ │ │           function baz(int x, int y) returns (int) {
+    │ │ │                        ──┬── ───┬──  
+    │ │ │                          ╰─────────── definiens: 5
+    │ │ │                                 │    
+    │ │ │                                 ╰──── definiens: 6
+    ┆ ┆ ┆       
+  8 │ │ ├─│ ──▶     }
+    │ │ │ │             
+    │ │ ╰─────────────── definiens: 4
+  9 │ │   ╭───▶ 
+ 10 │ │   │         function quux(int x, int y) returns (int z) {
+    │ │   │                       ──┬── ───┬──           ──┬──  
+    │ │   │                         ╰─────────────────────────── definiens: 8
+    │ │   │                                │               │    
+    │ │   │                                ╰──────────────────── definiens: 9
+    │ │   │                                                │    
+    │ │   │                                                ╰──── definiens: 10
+    ┆ ┆   ┆     
+ 12 │ │   ├───▶     }
+    │ │   │             
+    │ │   ╰───────────── definiens: 7
+ 13 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 1
+────╯

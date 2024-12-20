@@ -29,3 +29,26 @@ References and definitions:
    │                 │     
    │                 ╰───── ref: 2
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │     ╭─▶ contract Base {
+ 2 │     │       function in_base() internal {}
+   │     │   ─────────────────┬─────────────────  
+   │     │                    ╰─────────────────── definiens: 2
+ 3 │     ├─▶ }
+   │     │       
+   │     ╰─────── definiens: 1
+ 4 │ │       contract Middle is Base {}
+   │ │       ─────────────┬─────────────  
+   │ │                    ╰─────────────── definiens: 3
+ 5 │ ╭─│ ──▶ contract Test is Middle {
+ 6 │ │ ╭───▶     function test() public {
+   ┆ ┆ ┆     
+ 8 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 5
+ 9 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 4
+───╯

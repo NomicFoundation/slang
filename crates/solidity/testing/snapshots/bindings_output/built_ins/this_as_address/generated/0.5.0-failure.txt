@@ -14,3 +14,16 @@ References and definitions:
    │              ───┬───  
    │                 ╰───── unresolved
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public {
+   ┆ ┆ ┆   
+ 5 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

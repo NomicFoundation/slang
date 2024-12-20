@@ -1,0 +1,60 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Foo {}
+   │          ─┬─  
+   │           ╰─── def: 1
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 2
+ 4 │     function test() public {
+   │              ──┬─  
+   │                ╰─── def: 3
+ 5 │         try new Foo() {
+   │                 ─┬─  
+   │                  ╰─── ref: 1
+ 6 │         } catch Panic(uint code) {
+   │                 ──┬──      ──┬─  
+   │                   ╰────────────── ref: built-in
+   │                              │   
+   │                              ╰─── def: 4
+ 7 │             code;
+   │             ──┬─  
+   │               ╰─── ref: 4
+ 8 │         } catch Error(string memory message) {
+   │                 ──┬──               ───┬───  
+   │                   ╰────────────────────────── ref: built-in
+   │                                        │     
+   │                                        ╰───── def: 5
+ 9 │             message;
+   │             ───┬───  
+   │                ╰───── ref: 5
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ │     contract Foo {}
+    │ │     ────────┬───────  
+    │ │             ╰───────── definiens: 1
+  2 │ ╭───▶ 
+    ┆ ┆ ┆   
+  4 │ │ ╭─▶     function test() public {
+    ┆ ┆ ┆   
+  6 │ │ │           } catch Panic(uint code) {
+    │ │ │                         ────┬────  
+    │ │ │                             ╰────── definiens: 4
+    ┆ ┆ ┆   
+  8 │ │ │           } catch Error(string memory message) {
+    │ │ │                         ──────────┬──────────  
+    │ │ │                                   ╰──────────── definiens: 5
+    ┆ ┆ ┆   
+ 11 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 3
+ 12 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 2
+────╯

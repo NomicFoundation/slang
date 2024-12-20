@@ -11,6 +11,7 @@ Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryK
    │ ╰────── Error occurred here.
 ───╯
 References and definitions: 
+Definiens: 
 References and definitions: 
    ╭─[main.sol:1:1]
    │
@@ -35,4 +36,23 @@ References and definitions:
    │         ╰──────────── ref: 4
    │               │      
    │               ╰────── unresolved
+───╯
+Definiens: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ │     import {Counter} from "counter.sol";
+   │ │             ───┬───  
+   │ │                ╰───── definiens: 1
+ 2 │ ╭───▶ 
+   ┆ ┆ ┆   
+ 4 │ │ ╭─▶     function test(Counter memory c) public {
+   │ │ │                     ────────┬───────  
+   │ │ │                             ╰───────── definiens: 4
+   ┆ ┆ ┆   
+ 6 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 3
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 2
 ───╯

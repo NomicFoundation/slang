@@ -27,3 +27,26 @@ References and definitions:
    │                               │   
    │                               ╰─── ref: 3
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───│ ▶ contract Test {
+  2 │ │   ╭─▶     event Log(
+  3 │ │   │           string name,
+    │ │   │   ─────────┬─────────  
+    │ │   │            ╰─────────── definiens: 3
+  4 │ │   │           uint level
+    │ │   │   ─────────┬─────────  
+    │ │   │            ╰─────────── definiens: 4
+  5 │ │ │ ├─▶     );
+    │ │ │ │            
+    │ │ │ ╰──────────── definiens: 2
+  6 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+  9 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 10 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
+────╯

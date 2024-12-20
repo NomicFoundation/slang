@@ -36,3 +36,33 @@ References and definitions:
     │                ────┬───  
     │                    ╰───── ref: 4
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭─│ ────▶ contract Test {
+  2 │   │ ╭─────▶     function test_call() public returns (uint) {
+    ┆   ┆ ┆       
+  4 │   │ ├─────▶     }
+    │   │ │               
+    │   │ ╰─────────────── definiens: 2
+  5 │ │ ├───────▶ }
+    │ │ │             
+    │ │ ╰───────────── definiens: 1
+  6 │ ╭─────────▶ 
+    ┆ ┆       ┆   
+  8 │ │       ╭─▶     struct Resource {
+  9 │ │       │           uint value;
+    │ │       │   ──────────┬─────────  
+    │ │       │             ╰─────────── definiens: 5
+ 10 │ │     │ ├─▶     }
+    │ │     │ │           
+    │ │     │ ╰─────────── definiens: 4
+ 11 │ │     ╭───▶ 
+    ┆ ┆     ┆     
+ 14 │ │     ├───▶     }
+    │ │     │             
+    │ │     ╰───────────── definiens: 6
+ 15 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 3
+────╯

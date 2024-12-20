@@ -21,3 +21,23 @@ References and definitions:
    │                               │   
    │                               ╰─── def: 5
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ interface IFoo {
+ 2 │ │ ╭─▶     struct Bar {
+ 3 │ │ │           int value;
+   │ │ │   ─────────┬─────────  
+   │ │ │            ╰─────────── definiens: 3
+ 4 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 5 │ │         function test(Bar memory bar);
+   │ │     ─────────────────┬───────┬─────────  
+   │ │                      ╰─────────────────── definiens: 4
+   │ │                              │           
+   │ │                              ╰─────────── definiens: 5
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

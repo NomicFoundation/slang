@@ -120,3 +120,75 @@ References and definitions:
     │                                 │   
     │                                 ╰─── ref: 13
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────────▶ contract Mappings {
+  2 │ │                 enum Direction { North, East, South, West }
+    │ │             ───────────────────────┬┬─────┬─────┬──────┬────  
+    │ │                                    ╰────────────────────────── definiens: 3
+    │ │                                     │     │     │      │      
+    │ │                                     ╰───────────────────────── definiens: 2
+    │ │                                           │     │      │      
+    │ │                                           ╰─────────────────── definiens: 4
+    │ │                                                 │      │      
+    │ │                                                 ╰───────────── definiens: 5
+    │ │                                                        │      
+    │ │                                                        ╰────── definiens: 6
+  3 │ │       │         enum Kind { Zombie, Bat, Skeleton, Dragon }
+    │ │       │     ───────────────────┬────┬┬───────┬────────┬─────  
+    │ │       │                        ╰────────────────────────────── definiens: 8
+    │ │       │                             ││       │        │       
+    │ │       │                             ╰───────────────────────── definiens: 7
+    │ │       │                              │       │        │       
+    │ │       │                              ╰──────────────────────── definiens: 9
+    │ │       │                                      │        │       
+    │ │       │                                      ╰──────────────── definiens: 10
+    │ │       │                                               │       
+    │ │       │                                               ╰─────── definiens: 11
+  4 │ │       ╭───▶     struct Monster {
+  5 │ │       │             Kind kind;
+    │ │       │     ─────────┬─────────  
+    │ │       │              ╰─────────── definiens: 13
+  6 │ │       │             uint life;
+    │ │       │     ─────────┬─────────  
+    │ │       │              ╰─────────── definiens: 14
+  7 │ │       ├─│ ▶     }
+    │ │       │ │           
+    │ │       ╰───────────── definiens: 12
+  8 │ │         ╭─▶ 
+  9 │ │   │     ├─▶     mapping(Direction => Monster) monsters;
+    │ │   │     │                                                 
+    │ │   │     ╰───────────────────────────────────────────────── definiens: 15
+ 10 │ │   ╭───────▶ 
+ 11 │ │   │             function spawn(Direction _dir, Kind _kind) public {
+    │ │   │                            ───────┬────── ─────┬─────  
+    │ │   │                                   ╰──────────────────── definiens: 17
+    │ │   │                                                │       
+    │ │   │                                                ╰─────── definiens: 18
+    ┆ ┆   ┆         
+ 13 │ │ │ ├───────▶     }
+    │ │ │ │                 
+    │ │ │ ╰───────────────── definiens: 16
+ 14 │ │ ╭─────────▶ 
+ 15 │ │ │               function attack(Direction _dir, uint _power) public {
+    │ │ │                               ───────┬────── ──────┬─────  
+    │ │ │                                      ╰───────────────────── definiens: 20
+    │ │ │                                                    │       
+    │ │ │                                                    ╰─────── definiens: 21
+    ┆ ┆ ┆           
+ 21 │ │ ├───│ ────▶     }
+    │ │ │   │               
+    │ │ ╰─────────────────── definiens: 19
+ 22 │ │     ╭─────▶ 
+ 23 │ │     │           function get_type(Direction _dir) public returns (Kind) {
+    │ │     │                             ───────┬──────  
+    │ │     │                                    ╰──────── definiens: 23
+    ┆ ┆     ┆       
+ 25 │ │     ├─────▶     }
+    │ │     │               
+    │ │     ╰─────────────── definiens: 22
+ 26 │ ├───────────▶ }
+    │ │                 
+    │ ╰───────────────── definiens: 1
+────╯

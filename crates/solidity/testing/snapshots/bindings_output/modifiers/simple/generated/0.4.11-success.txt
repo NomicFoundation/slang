@@ -35,3 +35,24 @@ References and definitions:
     │                                       │       
     │                                       ╰─────── ref: 3
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ contract FunctionModifier {
+  2 │ │ │         bool public locked;
+    │ │ │     ────────────┬───────────  
+    │ │ │                 ╰───────────── definiens: 2
+  3 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+ 10 │ │ ├─│ ▶     }
+    │ │ │ │           
+    │ │ ╰───────────── definiens: 3
+ 11 │ │   ╭─▶ 
+    ┆ ┆   ┆   
+ 14 │ │   ├─▶     }
+    │ │   │           
+    │ │   ╰─────────── definiens: 4
+ 15 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
+────╯

@@ -20,6 +20,17 @@ References and definitions:
    │          ──┬──  
    │            ╰──── def: 2
 ───╯
+Definiens: 
+   ╭─[counter.sol:1:1]
+   │
+ 1 │ ╭─▶ struct Counter {
+ 2 │ │       uint value;
+   │ │   ────────┬───────  
+   │ │           ╰───────── definiens: 2
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+───╯
 References and definitions: 
    ╭─[main.sol:1:1]
    │
@@ -44,4 +55,23 @@ References and definitions:
    │         ╰──────────── ref: 6
    │               │      
    │               ╰────── unresolved
+───╯
+Definiens: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ │     import {Counter} from "counter.sol";
+   │ │             ───┬───  
+   │ │                ╰───── definiens: 3
+ 2 │ ╭───▶ 
+   ┆ ┆ ┆   
+ 4 │ │ ╭─▶     function test(Counter memory c) public {
+   │ │ │                     ────────┬───────  
+   │ │ │                             ╰───────── definiens: 6
+   ┆ ┆ ┆   
+ 6 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 5
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 4
 ───╯

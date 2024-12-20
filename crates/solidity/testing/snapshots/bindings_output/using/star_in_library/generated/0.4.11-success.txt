@@ -31,3 +31,30 @@ References and definitions:
    │                               │  
    │                               ╰── def: 7
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─────▶ library Lib {
+   ┆ ┆   ┆   
+ 3 │ │   ╭─▶     function test(uint x) internal {
+   │ │   │                     ───┬──  
+   │ │   │                        ╰──── definiens: 3
+   ┆ ┆   ┆   
+ 5 │ │   ├─▶     }
+   │ │   │           
+   │ │   ╰─────────── definiens: 2
+ 6 │ ├─│ ──▶ }
+   │ │ │         
+   │ ╰─────────── definiens: 1
+ 7 │   ╭───▶ library Math {
+ 8 │   │         function add(uint x, uint y) internal {}
+   │   │     ────────────────────┬─┬────┬─────────────────  
+   │   │                         ╰────────────────────────── definiens: 6
+   │   │                           │    │                   
+   │   │                           ╰──────────────────────── definiens: 5
+   │   │                                │                   
+   │   │                                ╰─────────────────── definiens: 7
+ 9 │   ├───▶ }
+   │   │         
+   │   ╰───────── definiens: 4
+───╯

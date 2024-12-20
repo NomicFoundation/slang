@@ -11,3 +11,4 @@ Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryK
     │ ╰─────── Error occurred here.
 ────╯
 References and definitions: 
+Definiens: 

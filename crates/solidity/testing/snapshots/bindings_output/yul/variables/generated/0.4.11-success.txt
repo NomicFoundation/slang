@@ -19,3 +19,22 @@ References and definitions:
    │             ┬  
    │             ╰── ref: 3
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract AssemblyVariable {
+ 2 │ │ ╭─▶     function yul_let() public returns (uint256 z) {
+   │ │ │                                          ────┬────  
+   │ │ │                                              ╰────── definiens: 3
+   ┆ ┆ ┆   
+ 4 │ │ │               let x := 123
+   │ │ │   ────────────┬────────────  
+   │ │ │               ╰────────────── definiens: 4
+   ┆ ┆ ┆   
+ 7 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 8 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

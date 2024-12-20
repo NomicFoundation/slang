@@ -29,3 +29,28 @@ References and definitions:
    │                            │      
    │                            ╰────── ref: 2
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │     ╭─▶ library Address {
+ 2 │     │       function sendValue(address payable recipient) internal {}
+   │     │   ───────────────────────────────┬───┬──────────────────────────  
+   │     │                                  ╰──────────────────────────────── definiens: 2
+   │     │                                      │                            
+   │     │                                      ╰──────────────────────────── definiens: 3
+ 3 │ │   ├─▶ }
+   │ │   │       
+   │ │   ╰─────── definiens: 1
+ 4 │ ╭─────▶ contract Test {
+   ┆ ┆ ┆     
+ 6 │ │ ╭───▶     function test(address _rcpt) public {
+   │ │ │                       ──────┬──────  
+   │ │ │                             ╰──────── definiens: 6
+   ┆ ┆ ┆     
+ 8 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 5
+ 9 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 4
+───╯

@@ -28,3 +28,20 @@ References and definitions:
    │                                       │     
    │                                       ╰───── def: 4
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │   ╭─▶ struct Counter {
+ 2 │   │       uint value;
+   │   │   ────────┬───────  
+   │   │           ╰───────── definiens: 2
+ 3 │ │ ├─▶ }
+   │ │ │       
+   │ │ ╰─────── definiens: 1
+ 4 │ ╭───▶ 
+ 5 │ ├───▶ function increment(Counter memory _counter) public {}
+   │ │                        ───────────┬───────────              
+   │ │                                   ╰───────────────────────── definiens: 4
+   │ │                                                             
+   │ ╰───────────────────────────────────────────────────────────── definiens: 3
+───╯

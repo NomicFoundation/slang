@@ -34,3 +34,25 @@ References and definitions:
    │                            │  
    │                            ╰── ref: 5
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ │     type ShortString is bytes32;
+   │ │     ──────────────┬──────────────  
+   │ │                   ╰──────────────── definiens: 1
+ 2 │ ╭───▶ 
+   ┆ ┆ ┆   
+ 4 │ │ ╭─▶     function test(bytes32 data) public {
+   │ │ │                     ──────┬─────  
+   │ │ │                           ╰─────── definiens: 4
+ 5 │ │ │           ShortString s = ShortString.wrap(data);
+   │ │ │   ────────────────────────┬───────────────────────  
+   │ │ │                           ╰───────────────────────── definiens: 5
+   ┆ ┆ ┆   
+ 7 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 3
+ 8 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 2
+───╯

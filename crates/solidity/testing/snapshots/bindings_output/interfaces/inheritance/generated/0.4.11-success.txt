@@ -61,3 +61,47 @@ References and definitions:
     │                    │    
     │                    ╰──── ref: 5
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭───▶ interface Counter {
+  2 │     │         enum Type { up, down }
+    │     │     ─────────────┬───┬────┬────  
+    │     │                  ╰─────────────── definiens: 2
+    │     │                      │    │      
+    │     │                      ╰─────────── definiens: 3
+    │     │                           │      
+    │     │                           ╰────── definiens: 4
+  3 │     │         function count() external returns (uint);
+    │     │     ───────────────────────┬──────────────────────  
+    │     │                            ╰──────────────────────── definiens: 5
+  4 │     ├─│ ▶ }
+    │     │ │       
+    │     ╰───────── definiens: 1
+  5 │       ╭─▶ 
+    ┆       ┆   
+  7 │       │       function increment() external;
+    │       │   ─────────────────┬─────────────────  
+    │       │                    ╰─────────────────── definiens: 7
+  8 │ │     ├─▶ }
+    │ │     │       
+    │ │     ╰─────── definiens: 6
+  9 │ ╭───────▶ 
+    ┆ ┆ ┆       
+ 11 │ │ ╭─────▶     function test(address _counter) public returns (uint) {
+    │ │ │                         ────────┬───────  
+    │ │ │                                 ╰───────── definiens: 10
+ 12 │ │ │               MutableCounter m = MutableCounter(_counter);
+    │ │ │       ──────────────────────────┬──────────────────────────  
+    │ │ │                                 ╰──────────────────────────── definiens: 11
+ 13 │ │ │               MutableCounter.Type t;
+    │ │ │       ───────────────┬───────────────  
+    │ │ │                      ╰───────────────── definiens: 12
+    ┆ ┆ ┆       
+ 16 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 9
+ 17 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 8
+────╯

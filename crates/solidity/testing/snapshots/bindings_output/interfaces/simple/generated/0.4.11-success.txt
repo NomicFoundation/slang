@@ -26,3 +26,26 @@ References and definitions:
    │                                    │    
    │                                    ╰──── ref: 2
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │     ╭─▶ interface Counter {
+ 2 │     │       function count() external returns (uint);
+   │     │   ───────────────────────┬──────────────────────  
+   │     │                          ╰──────────────────────── definiens: 2
+ 3 │ │   ├─▶ }
+   │ │   │       
+   │ │   ╰─────── definiens: 1
+ 4 │ ╭─────▶ 
+   ┆ ┆ ┆     
+ 6 │ │ ╭───▶     function test(address _counter) public returns (uint) {
+   │ │ │                       ────────┬───────  
+   │ │ │                               ╰───────── definiens: 5
+   ┆ ┆ ┆     
+ 8 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 4
+ 9 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 3
+───╯

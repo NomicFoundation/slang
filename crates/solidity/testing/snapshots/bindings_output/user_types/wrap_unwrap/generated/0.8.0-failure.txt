@@ -11,3 +11,4 @@ Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword
    │ ╰─────── Error occurred here.
 ───╯
 References and definitions: 
+Definiens: 

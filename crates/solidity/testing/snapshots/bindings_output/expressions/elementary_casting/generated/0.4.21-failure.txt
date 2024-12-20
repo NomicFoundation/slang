@@ -38,3 +38,30 @@ References and definitions:
     │                        │  
     │                        ╰── def: 6
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ contract Test {
+    ┆ ┆ ┆     
+  3 │ │ ╭───▶ 
+  4 │ │ │         function test(address a) public {
+    │ │ │                       ────┬────  
+    │ │ │                           ╰────── definiens: 3
+    ┆ ┆ ┆     
+  8 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 2
+  9 │ ├───│ ▶ }
+    │ │   │       
+    │ ╰─────────── definiens: 1
+ 10 │     ╭─▶ 
+    ┆     ┆   
+ 12 │     │       function noop(uint x) public returns (uint) {}
+    │     │   ─────────────────────┬───┬─────────────────────────  
+    │     │                        ╰─────────────────────────────── definiens: 6
+    │     │                            │                           
+    │     │                            ╰─────────────────────────── definiens: 5
+ 13 │     ├─▶ }
+    │     │       
+    │     ╰─────── definiens: 4
+────╯

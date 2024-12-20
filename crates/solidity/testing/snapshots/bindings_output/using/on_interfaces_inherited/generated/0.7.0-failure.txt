@@ -46,3 +46,36 @@ References and definitions:
     │                    │     
     │                    ╰───── unresolved
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─────▶ library LibFoo {
+  2 │     │           function use_foo(IFoo x) public returns (int) {}
+    │     │       ────────────────────────┬─┬──────────────────────────  
+    │     │                               ╰────────────────────────────── definiens: 3
+    │     │                                 │                            
+    │     │                                 ╰──────────────────────────── definiens: 2
+  3 │     ├───│ ▶ }
+    │     │   │       
+    │     ╰─────────── definiens: 1
+  4 │         ╭─▶ interface IFoo {
+  5 │       │ ├─▶ }
+    │       │ │       
+    │       │ ╰─────── definiens: 4
+  6 │       ╭───▶ contract Base {
+    ┆       ┆     
+  8 │ │     ├───▶ }
+    │ │     │         
+    │ │     ╰───────── definiens: 5
+  9 │ ╭─│ ──────▶ contract Test is Base {
+ 10 │ │ ╭───────▶     function test(address x) public {
+    │ │ │                           ────┬────  
+    │ │ │                               ╰────── definiens: 8
+    ┆ ┆ ┆         
+ 13 │ │ ├───────▶     }
+    │ │ │                 
+    │ │ ╰───────────────── definiens: 7
+ 14 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 6
+────╯

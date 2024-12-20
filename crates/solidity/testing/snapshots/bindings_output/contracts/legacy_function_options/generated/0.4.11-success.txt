@@ -33,3 +33,26 @@ References and definitions:
    │                                   │    
    │                                   ╰──── ref: built-in
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │     ╭─▶ contract RefundVault {
+ 2 │     │       function deposit() public payable {}
+   │     │   ────────────────────┬────────────────────  
+   │     │                       ╰────────────────────── definiens: 2
+ 3 │ │   ├─▶ }
+   │ │   │       
+   │ │   ╰─────── definiens: 1
+ 4 │ ╭─────▶ contract Test {
+ 5 │ │ │         RefundVault public vault;
+   │ │ │     ───────────────┬──────────────  
+   │ │ │                    ╰──────────────── definiens: 4
+ 6 │ │ ╭───▶     function test() internal {
+   ┆ ┆ ┆     
+ 8 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 5
+ 9 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 3
+───╯

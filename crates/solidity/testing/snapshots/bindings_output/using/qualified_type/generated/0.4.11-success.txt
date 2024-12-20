@@ -47,3 +47,36 @@ References and definitions:
     │                         │   
     │                         ╰─── ref: 5
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────│ ▶ library Lib {
+  2 │ │     ╭─▶     struct Value {
+  3 │ │     │           int x;
+    │ │     │   ───────┬───────  
+    │ │     │          ╰───────── definiens: 3
+  4 │ │     ├─▶     }
+    │ │     │           
+    │ │     ╰─────────── definiens: 2
+  5 │ │             function getValue() external returns (Value memory) {}
+    │ │         ─────────────────────────────┬─────────────────────────────  
+    │ │                                      ╰─────────────────────────────── definiens: 4
+  6 │ │             function use(Value memory x) external {}
+    │ │         ──────────────────────┬─┬────────────────────  
+    │ │                               ╰──────────────────────── definiens: 5
+    │ │                                 │                      
+    │ │                                 ╰────────────────────── definiens: 6
+  7 │ ├─│ ────▶ }
+    │ │ │           
+    │ ╰───────────── definiens: 1
+  8 │   ╭─────▶ contract Test {
+    ┆   ┆ ┆     
+ 10 │   │ ╭───▶     function test() internal {
+    ┆   ┆ ┆     
+ 12 │   │ ├───▶     }
+    │   │ │             
+    │   │ ╰───────────── definiens: 8
+ 13 │   ├─────▶ }
+    │   │           
+    │   ╰─────────── definiens: 7
+────╯

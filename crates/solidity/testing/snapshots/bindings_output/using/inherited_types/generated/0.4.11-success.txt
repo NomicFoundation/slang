@@ -50,3 +50,42 @@ References and definitions:
     │                          │   
     │                          ╰─── ref: 5
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭───│ ▶ interface IPool {
+  2 │     │   ╭─▶     struct Info {
+  3 │     │   │           uint256 amount;
+    │     │   │   ────────────┬───────────  
+    │     │   │               ╰───────────── definiens: 3
+  4 │     │   ├─▶     }
+    │     │   │           
+    │     │   ╰─────────── definiens: 2
+  5 │     ├─│ ──▶ }
+    │     │ │         
+    │     ╰─────────── definiens: 1
+  6 │       ╭───▶ library Math {
+  7 │       │         function nop(uint256 x) public {}
+    │       │     ───────────────────┬─┬────────────────  
+    │       │                        ╰──────────────────── definiens: 5
+    │       │                          │                  
+    │       │                          ╰────────────────── definiens: 6
+  8 │ │     ├───▶ }
+    │ │     │         
+    │ │     ╰───────── definiens: 4
+  9 │ ╭─────────▶ contract Test is IPool {
+ 10 │ │               mapping(uint256 => Info) infos;
+    │ │           ──────────────────┬─────────────────  
+    │ │                             ╰─────────────────── definiens: 8
+    ┆ ┆ ┆         
+ 12 │ │ ╭───────▶     function test(uint256 x) public {
+    │ │ │                           ────┬────  
+    │ │ │                               ╰────── definiens: 10
+    ┆ ┆ ┆         
+ 14 │ │ ├───────▶     }
+    │ │ │                 
+    │ │ ╰───────────────── definiens: 9
+ 15 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 7
+────╯

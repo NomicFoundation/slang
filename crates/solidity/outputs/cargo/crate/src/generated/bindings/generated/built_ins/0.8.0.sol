@@ -60,6 +60,9 @@ contract $BuiltIns$ {
     uint salt;
     uint value;
   }
+  struct Error {
+    string reason;
+  }
   struct $Function {
   }
   struct $ExternalFunction {
@@ -70,6 +73,9 @@ contract $BuiltIns$ {
     address sender;
     bytes4 sig;
     uint value;
+  }
+  struct Panic {
+    uint errorCode;
   }
   struct $StringType {
     function(string[] stringsToConcatenate) returns (string memory) concat;

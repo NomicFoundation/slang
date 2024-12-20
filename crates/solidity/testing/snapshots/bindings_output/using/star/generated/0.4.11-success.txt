@@ -30,3 +30,29 @@ References and definitions:
    │               │      
    │               ╰────── ref: 2
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ library Lib {
+  2 │     │       function increment(uint x) public {}
+    │     │   ────────────────────┬─────┬──────────────  
+    │     │                       ╰────────────────────── definiens: 2
+    │     │                             │                
+    │     │                             ╰──────────────── definiens: 3
+  3 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  4 │ ╭─────▶ 
+    ┆ ┆       
+  7 │ │ ╭───▶ 
+  8 │ │ │         function test(uint x) public {
+    │ │ │                       ───┬──  
+    │ │ │                          ╰──── definiens: 6
+    ┆ ┆ ┆     
+ 10 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 11 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 4
+────╯

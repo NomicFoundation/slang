@@ -65,3 +65,41 @@ References and definitions:
     │                          │  
     │                          ╰── def: 10
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ │       type ShortString is bytes32;
+    │ │       ──────────────┬──────────────  
+    │ │                     ╰──────────────── definiens: 1
+  2 │ ╭─────▶ 
+    ┆ ┆       
+  6 │ │ ╭───▶ 
+  7 │ │ │         function test(bytes32 data) public {
+    │ │ │                       ──────┬─────  
+    │ │ │                             ╰─────── definiens: 4
+  8 │ │ │             ShortString s;
+    │ │ │     ───────────┬───────────  
+    │ │ │                ╰───────────── definiens: 5
+    ┆ ┆ ┆     
+ 12 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 3
+ 13 │ ├───│ ▶ }
+    │ │   │       
+    │ ╰─────────── definiens: 2
+ 14 │     ╭─▶ 
+    ┆     ┆   
+ 16 │     │       function nop(ShortString x) internal {}
+    │     │   ──────────────────────┬┬────────────────────  
+    │     │                         ╰─────────────────────── definiens: 7
+    │     │                          │                      
+    │     │                          ╰────────────────────── definiens: 8
+ 17 │     │       function pon(bytes32 x) internal {}
+    │     │   ────────────────────┬┬──────────────────  
+    │     │                       ╰───────────────────── definiens: 9
+    │     │                        │                    
+    │     │                        ╰──────────────────── definiens: 10
+ 18 │     ├─▶ }
+    │     │       
+    │     ╰─────── definiens: 6
+────╯

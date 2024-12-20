@@ -50,3 +50,44 @@ References and definitions:
    │                       ─────┬─────  
    │                            ╰─────── def: 13
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ │     interface DataFeed { function getData(address token) external returns (uint value); }
+    │ │     ───────────────────────────────────────────┬┬──────┬────────────────────────┬─────────  
+    │ │                                                ╰──────────────────────────────────────────── definiens: 1
+    │ │                                                 │      │                        │           
+    │ │                                                 ╰─────────────────────────────────────────── definiens: 3
+    │ │                                                        │                        │           
+    │ │                                                        ╰──────────────────────────────────── definiens: 2
+    │ │                                                                                 │           
+    │ │                                                                                 ╰─────────── definiens: 4
+  2 │ ╭───▶ 
+    ┆ ┆     
+  4 │ │         DataFeed feed;
+    │ │     ─────────┬─────────  
+    │ │              ╰─────────── definiens: 6
+  5 │ │         uint errorCount;
+    │ │     ──────────┬──────────  
+    │ │               ╰──────────── definiens: 7
+  6 │ │ │       uint lastValue;
+    │ │ │   ──────────┬─────────  
+    │ │ │             ╰─────────── definiens: 8
+  7 │ │ ╭─▶     function rate(address token) public returns (uint value, bool success) {
+    │ │ │                     ──────┬──────                  ─────┬──── ──────┬──────  
+    │ │ │                           ╰────────────────────────────────────────────────── definiens: 10
+    │ │ │                                                         │           │        
+    │ │ │                                                         ╰──────────────────── definiens: 11
+    │ │ │                                                                     │        
+    │ │ │                                                                     ╰──────── definiens: 12
+  8 │ │ │           string memory last_reason;
+    │ │ │   ─────────────────┬─────────────────  
+    │ │ │                    ╰─────────────────── definiens: 13
+    ┆ ┆ ┆   
+ 20 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 9
+ 21 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 5
+────╯
