@@ -10,10 +10,28 @@ References and definitions:
    │            ─┬─  
    │             ╰─── ref: 2
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 2 │ ╭─▶ 
+   ┆ ┆   
+ 5 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+───╯
 References and definitions: 
    ╭─[other.sol:1:1]
    │
  1 │ function bar() pure returns (int) {
    │          ─┬─  
    │           ╰─── def: 2
+───╯
+Definiens: 
+   ╭─[other.sol:1:1]
+   │
+ 1 │ ╭─▶ function bar() pure returns (int) {
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 2
 ───╯

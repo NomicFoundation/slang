@@ -54,3 +54,30 @@ References and definitions:
     │                             │   
     │                             ╰─── unresolved
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │       ╭─▶ contract Base {
+    ┆       ┆   
+  3 │ │     ├─▶ }
+    │ │     │       
+    │ │     ╰─────── definiens: 1
+  4 │ ╭───────▶ 
+    ┆ ┆         
+  7 │ ├─│ ────▶ }
+    │ │ │           
+    │ ╰───────────── definiens: 2
+  8 │   ╭─────▶ 
+    ┆   ┆       
+ 11 │   ├─│ ──▶ }
+    │   │ │         
+    │   ╰─────────── definiens: 3
+ 12 │     ╭───▶ 
+    ┆     ┆     
+ 14 │     │         function test() public foo {}
+    │     │     ─────────────────┬────────────────  
+    │     │                      ╰────────────────── definiens: 5
+ 15 │     ├───▶ }
+    │     │         
+    │     ╰───────── definiens: 4
+────╯

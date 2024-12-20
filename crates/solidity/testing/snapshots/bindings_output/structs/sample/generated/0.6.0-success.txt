@@ -179,3 +179,92 @@ References and definitions:
     │                                   │    
     │                                   ╰──── ref: 25
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │           ╭───▶ struct Funder {
+  2 │           │         address addr;
+    │           │     ─────────┬────────  
+    │           │              ╰────────── definiens: 2
+  3 │           │         uint amount;
+    │           │     ────────┬────────  
+    │           │             ╰────────── definiens: 3
+  4 │ │         ├───▶ }
+    │ │         │         
+    │ │         ╰───────── definiens: 1
+  5 │ ╭─────────────▶ 
+    ┆ ┆       ┆       
+  7 │ │       ╭─────▶     struct Campaign {
+  8 │ │       │               address payable beneficiary;
+    │ │       │       ──────────────────┬──────────────────  
+    │ │       │                         ╰──────────────────── definiens: 6
+  9 │ │       │               uint fundingGoal;
+    │ │       │       ─────────────┬────────────  
+    │ │       │                    ╰────────────── definiens: 7
+ 10 │ │       │               uint numFunders;
+    │ │       │       ────────────┬────────────  
+    │ │       │                   ╰────────────── definiens: 8
+ 11 │ │       │               uint amount;
+    │ │       │       ──────────┬──────────  
+    │ │       │                 ╰──────────── definiens: 9
+ 12 │ │       │               mapping(uint => Funder) funders;
+    │ │       │       ────────────────────┬────────────────────  
+    │ │       │                           ╰────────────────────── definiens: 10
+ 13 │ │       ├───│ ▶     }
+    │ │       │   │           
+    │ │       ╰─────────────── definiens: 5
+ 14 │ │           ╭─▶ 
+ 15 │ │           ├─▶     uint numCampaigns;
+    │ │           │                            
+    │ │           ╰──────────────────────────── definiens: 11
+ 16 │ │   │               mapping(uint => Campaign) campaigns;
+    │ │   │           ────────────────────┬────────────────────  
+    │ │   │                               ╰────────────────────── definiens: 12
+ 17 │ │   ╭─────────▶ 
+ 18 │ │   │               function newCampaign(address payable beneficiary, uint goal) public returns (uint campaignID) {
+    │ │   │                                    ─────────────┬───────────── ─────┬────                  ───────┬───────  
+    │ │   │                                                 ╰─────────────────────────────────────────────────────────── definiens: 14
+    │ │   │                                                                     │                             │         
+    │ │   │                                                                     ╰─────────────────────────────────────── definiens: 15
+    │ │   │                                                                                                   │         
+    │ │   │                                                                                                   ╰───────── definiens: 16
+    ┆ ┆   ┆           
+ 20 │ │   │                   Campaign storage c = campaigns[campaignID];
+    │ │   │           ──────────────────────────┬─────────────────────────  
+    │ │   │                                     ╰─────────────────────────── definiens: 17
+    ┆ ┆   ┆           
+ 23 │ │   ├─│ ──────▶     }
+    │ │   │ │                 
+    │ │   ╰─────────────────── definiens: 13
+ 24 │ │     ╭───────▶ 
+ 25 │ │     │             function contribute(uint campaignID) public payable {
+    │ │     │                                 ───────┬───────  
+    │ │     │                                        ╰───────── definiens: 19
+ 26 │ │     │                 Campaign storage c = campaigns[campaignID];
+    │ │     │         ──────────────────────────┬─────────────────────────  
+    │ │     │                                   ╰─────────────────────────── definiens: 20
+    ┆ ┆     ┆         
+ 29 │ │ │   ├───────▶     }
+    │ │ │   │                 
+    │ │ │   ╰───────────────── definiens: 18
+ 30 │ │ ╭───────────▶ 
+ 31 │ │ │                 function checkGoalReached(uint campaignID) public returns (bool reached) {
+    │ │ │                                           ───────┬───────                  ──────┬─────  
+    │ │ │                                                  ╰─────────────────────────────────────── definiens: 22
+    │ │ │                                                                                  │       
+    │ │ │                                                                                  ╰─────── definiens: 23
+ 32 │ │ │                     Campaign storage c = campaigns[campaignID];
+    │ │ │             ──────────────────────────┬─────────────────────────  
+    │ │ │                                       ╰─────────────────────────── definiens: 24
+    ┆ ┆ ┆             
+ 35 │ │ │                     uint amount = c.amount;
+    │ │ │             ────────────────┬───────────────  
+    │ │ │                             ╰───────────────── definiens: 25
+    ┆ ┆ ┆             
+ 39 │ │ ├───────────▶     }
+    │ │ │                     
+    │ │ ╰───────────────────── definiens: 21
+ 40 │ ├─────────────▶ }
+    │ │                   
+    │ ╰─────────────────── definiens: 4
+────╯

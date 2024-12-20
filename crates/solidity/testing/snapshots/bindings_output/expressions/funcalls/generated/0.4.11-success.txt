@@ -26,3 +26,24 @@ References and definitions:
    │              ─┬─  
    │               ╰─── def: 5
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭───▶ contract Test {
+ 2 │ │ │       int y;
+   │ │ │   ─────┬─────  
+   │ │ │        ╰─────── definiens: 2
+ 3 │ │ ╭─▶     function someFunc(int x) returns (int) {
+   │ │ │                         ──┬──  
+   │ │ │                           ╰──── definiens: 4
+   ┆ ┆ ┆   
+ 5 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 3
+ 6 │ │         function add(int, int) returns (int);
+   │ │     ─────────────────────┬────────────────────  
+   │ │                          ╰────────────────────── definiens: 5
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

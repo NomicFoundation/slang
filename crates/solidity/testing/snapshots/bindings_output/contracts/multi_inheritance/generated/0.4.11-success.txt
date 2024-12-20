@@ -36,3 +36,32 @@ References and definitions:
     │                            │    
     │                            ╰──── ref: 4
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │       ╭─▶ contract Base1 {
+  2 │       │       function base1() returns (int) { return 1; }
+    │       │   ────────────────────────┬────────────────────────  
+    │       │                           ╰────────────────────────── definiens: 2
+  3 │     │ ├─▶ }
+    │     │ │       
+    │     │ ╰─────── definiens: 1
+  4 │     ╭───▶ 
+    ┆     ┆     
+  6 │     │         function base2() returns (int) { return 2; }
+    │     │     ────────────────────────┬────────────────────────  
+    │     │                             ╰────────────────────────── definiens: 4
+  7 │ │   ├───▶ }
+    │ │   │         
+    │ │   ╰───────── definiens: 3
+  8 │ ╭───────▶ 
+    ┆ ┆         
+ 13 │ │ ╭─────▶     function test() returns (int) {
+    ┆ ┆ ┆       
+ 15 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 6
+ 16 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 5
+────╯

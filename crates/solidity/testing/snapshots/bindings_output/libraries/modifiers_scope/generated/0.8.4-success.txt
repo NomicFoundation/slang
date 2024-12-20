@@ -17,3 +17,19 @@ References and definitions:
    │            ────────┬───────  
    │                    ╰───────── ref: 2
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭───▶ library Lib {
+ 2 │ │ │     error IndexOutOfBounds();
+   │ │ │   ──────────────┬─────────────  
+   │ │ │                 ╰─────────────── definiens: 2
+ 3 │ │ ╭─▶ 
+   ┆ ┆ ┆   
+ 6 │ │ ├─▶   }
+   │ │ │         
+   │ │ ╰───────── definiens: 3
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

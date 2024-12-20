@@ -42,3 +42,44 @@ References and definitions:
     │                            │      
     │                            ╰────── def: 10
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │         ╭─▶ struct TopLevelStruct {
+  2 │         │     int x;
+    │         │   ────┬────  
+    │         │       ╰────── definiens: 2
+  3 │   │     ├─▶ }
+    │   │     │       
+    │   │     ╰─────── definiens: 1
+  4 │   ╭───────▶ 
+    ┆   ┆   ┆     
+  6 │   │   ╭───▶   struct LibStruct {
+  7 │   │   │         int y;
+    │   │   │     ─────┬─────  
+    │   │   │          ╰─────── definiens: 5
+  8 │   │   │         TopLevelStruct top_level_struct;
+    │   │   │     ──────────────────┬──────────────────  
+    │   │   │                       ╰──────────────────── definiens: 6
+  9 │   │   ├───▶   }
+    │   │   │           
+    │   │   ╰─────────── definiens: 4
+ 10 │ │ ├───────▶ }
+    │ │ │             
+    │ │ ╰───────────── definiens: 3
+ 11 │ ╭─────────▶ 
+    ┆ ┆   ┆       
+ 13 │ │   ╭─────▶   struct ContractStruct {
+ 14 │ │   │           int z;
+    │ │   │       ─────┬─────  
+    │ │   │            ╰─────── definiens: 9
+ 15 │ │   │           SomeLib.LibStruct lib_struct;
+    │ │   │       ─────────────────┬────────────────  
+    │ │   │                        ╰────────────────── definiens: 10
+ 16 │ │   ├─────▶   }
+    │ │   │             
+    │ │   ╰───────────── definiens: 8
+ 17 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 7
+────╯

@@ -33,3 +33,31 @@ References and definitions:
     │                                      ─────┬─────  
     │                                           ╰─────── def: 6
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────▶ contract RegistrarAccess {
+  2 │ │   │         Root root;
+    │ │   │     ───────┬───────  
+    │ │   │            ╰───────── definiens: 2
+  3 │ │   ╭───▶     function test() public {
+    ┆ ┆   ┆     
+  5 │ │   ├───▶     }
+    │ │   │             
+    │ │   ╰───────────── definiens: 3
+  6 │ ├─────│ ▶ }
+    │ │     │       
+    │ ╰───────────── definiens: 1
+  7 │       ╭─▶ 
+  8 │   │   ├─▶ contract Root is Controllable {}
+    │   │   │                                      
+    │   │   ╰────────────────────────────────────── definiens: 4
+  9 │   ╭─────▶ 
+    ┆   ┆       
+ 11 │   │           mapping (address => bool) public controllers;
+    │   │       ─────────────────────────┬────────────────────────  
+    │   │                                ╰────────────────────────── definiens: 6
+ 12 │   ├─────▶ }
+    │   │           
+    │   ╰─────────── definiens: 5
+────╯

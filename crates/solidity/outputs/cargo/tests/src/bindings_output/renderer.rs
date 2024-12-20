@@ -34,20 +34,31 @@ pub(crate) fn render_bindings(
         let (bindings_report, part_all_resolved) =
             build_report_for_part(part, &all_definitions, part_references);
         all_resolved = all_resolved && part_all_resolved;
+        write_part_report(part, &bindings_report, &mut buffer)?;
 
-        let file_cache = FnCache::new(
-            (move |id| Err(Box::new(format!("Failed to fetch source '{id}'")) as _)) as fn(&_) -> _,
-        )
-        .with_sources(
-            once(part)
-                .map(|part| (part.path, Source::from(part.contents)))
-                .collect(),
-        );
-        bindings_report.write(file_cache, &mut buffer)?;
+        let definiens_report = build_definiens_report(part, &all_definitions);
+        write_part_report(part, &definiens_report, &mut buffer)?;
     }
 
     let result = String::from_utf8(buffer)?;
     Ok((result, all_resolved))
+}
+
+fn write_part_report<'a>(
+    part: &'a ParsedPart<'a>,
+    report: &Report<'a, ReportSpan<'a>>,
+    buffer: &'a mut Vec<u8>,
+) -> Result<()> {
+    let file_cache = FnCache::new(
+        (move |id| Err(Box::new(format!("Failed to fetch source '{id}'")) as _)) as fn(&_) -> _,
+    )
+    .with_sources(
+        once(part)
+            .map(|part| (part.path, Source::from(part.contents)))
+            .collect(),
+    );
+    report.write(file_cache, buffer)?;
+    Ok(())
 }
 
 // We collect all non built-in definitions in a vector to be able to identify
@@ -150,4 +161,31 @@ fn build_report_for_part<'a>(
     }
 
     (builder.finish(), all_resolved)
+}
+
+fn build_definiens_report<'a>(
+    part: &'a ParsedPart<'a>,
+    all_definitions: &'a [Definition<'a>],
+) -> Report<'a, ReportSpan<'a>> {
+    let mut builder: ReportBuilder<'_, ReportSpan<'_>> =
+        Report::build(ReportKind::Custom("Definiens", Color::Unset), part.path, 0)
+            .with_config(Config::default().with_color(false));
+
+    for (index, definition) in all_definitions.iter().enumerate() {
+        if !definition.get_file().is_user_path(part.path) {
+            continue;
+        }
+
+        let range = {
+            let range = definition.get_definiens_cursor().text_range();
+            let start = part.contents[..range.start.utf8].chars().count();
+            let end = part.contents[..range.end.utf8].chars().count();
+            start..end
+        };
+
+        let message = format!("definiens: {}", index + 1);
+        builder = builder.with_label(Label::new((part.path, range)).with_message(message));
+    }
+
+    builder.finish()
 }

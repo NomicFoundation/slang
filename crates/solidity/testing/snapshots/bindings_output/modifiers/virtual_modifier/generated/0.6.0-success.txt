@@ -30,3 +30,25 @@ References and definitions:
    │                             │   
    │                             ╰─── ref: 4
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │   ╭─▶ contract Base {
+ 2 │   │       modifier foo virtual { _; }
+   │   │   ────────────────┬───────────────  
+   │   │                   ╰───────────────── definiens: 2
+ 3 │ │ ├─▶ }
+   │ │ │       
+   │ │ ╰─────── definiens: 1
+ 4 │ ╭───▶ 
+   ┆ ┆     
+ 6 │ │         modifier foo override(Base) { _; }
+   │ │     ───────────────────┬───────────────────  
+   │ │                        ╰───────────────────── definiens: 4
+ 7 │ │         function test() public foo {}
+   │ │     ─────────────────┬────────────────  
+   │ │                      ╰────────────────── definiens: 5
+ 8 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 3
+───╯

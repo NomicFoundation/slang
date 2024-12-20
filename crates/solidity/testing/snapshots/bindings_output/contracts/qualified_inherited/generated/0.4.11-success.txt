@@ -24,3 +24,23 @@ References and definitions:
    │                  │      
    │                  ╰────── ref: 2
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │     ╭─▶ contract Base {
+ 2 │     │       bool renounced;
+   │     │   ──────────┬─────────  
+   │     │             ╰─────────── definiens: 2
+ 3 │ │   ├─▶ }
+   │ │   │       
+   │ │   ╰─────── definiens: 1
+ 4 │ ╭─│ ──▶ contract Test is Base {
+ 5 │ │ ╭───▶     function test() public {
+   ┆ ┆ ┆     
+ 7 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 4
+ 8 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 3
+───╯

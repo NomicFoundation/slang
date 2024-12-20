@@ -42,3 +42,38 @@ References and definitions:
     │                      │   
     │                      ╰─── ref: 2
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────────▶ // In Solidity < 0.7.0 using directives are inherited in sub contracts
+    ┆ ┆           
+  3 │ │               function nop(uint256 x) {}
+    │ │           ───────────────┬─────┬─────────  
+    │ │                          ╰───────────────── definiens: 2
+    │ │                                │           
+    │ │                                ╰─────────── definiens: 3
+  4 │ ├───────│ ▶ }
+    │ │       │       
+    │ ╰─────────────── definiens: 1
+  5 │         ╭─▶ contract Base {
+  6 │         │       uint256 totalSupply;
+    │         │   ────────────┬────────────  
+    │         │               ╰────────────── definiens: 5
+  7 │       │ ├─▶ }
+    │       │ │       
+    │       │ ╰─────── definiens: 4
+  8 │       ╭───▶ contract Middle is Base {
+    ┆       ┆     
+ 10 │   │   ├───▶ }
+    │   │   │         
+    │   │   ╰───────── definiens: 6
+ 11 │   ╭─│ ────▶ contract Test is Middle {
+ 12 │   │ ╭─────▶     function test() public {
+    ┆   ┆ ┆       
+ 14 │   │ ├─────▶     }
+    │   │ │               
+    │   │ ╰─────────────── definiens: 8
+ 15 │   ├───────▶ }
+    │   │             
+    │   ╰───────────── definiens: 7
+────╯

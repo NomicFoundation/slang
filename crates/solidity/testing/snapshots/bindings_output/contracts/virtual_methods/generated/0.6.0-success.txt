@@ -49,3 +49,47 @@ References and definitions:
     │                      ─┬─  
     │                       ╰─── ref: 6
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  3 │         ╭───────▶ 
+    ┆         ┆     ┆   
+  5 │         │     ╭─▶     function foo() public pure virtual returns (string memory) {
+    ┆         ┆     ┆   
+  7 │         │     ├─▶     }
+    │         │     │           
+    │         │     ╰─────────── definiens: 2
+  8 │     │   ├───────▶ }
+    │     │   │             
+    │     │   ╰───────────── definiens: 1
+  9 │     ╭───────────▶ 
+    ┆     ┆     ┆       
+ 11 │     │     ╭─────▶     function foo() public pure virtual override(A) returns (string memory) {
+    ┆     ┆     ┆       
+ 13 │     │     ├─────▶     }
+    │     │     │               
+    │     │     ╰─────────────── definiens: 4
+ 14 │     ├─│ ────────▶ }
+    │     │ │               
+    │     ╰───────────────── definiens: 3
+ 15 │       ╭─────────▶ 
+    ┆       ┆     ┆     
+ 17 │       │     ╭───▶     function foo() public pure virtual override returns (string memory) {
+    ┆       ┆     ┆     
+ 19 │       │     ├───▶     }
+    │       │     │             
+    │       │     ╰───────────── definiens: 6
+ 20 │ │     ├─────────▶ }
+    │ │     │               
+    │ │     ╰─────────────── definiens: 5
+ 21 │ ╭───────────────▶ 
+    ┆ ┆ ┆               
+ 23 │ │ ╭─────────────▶     // D.foo() returns "C"
+    ┆ ┆ ┆               
+ 26 │ │ ├─────────────▶     }
+    │ │ │                       
+    │ │ ╰─────────────────────── definiens: 8
+ 27 │ ├───────────────▶ }
+    │ │                     
+    │ ╰───────────────────── definiens: 7
+────╯

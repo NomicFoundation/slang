@@ -39,3 +39,37 @@ References and definitions:
     │                                   │    
     │                                   ╰──── ref: 4
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────│ ▶ contract Test {
+  2 │ │     ╭─▶     enum Severity {
+  3 │ │     │           INFO,
+    │ │     │           ──┬─  
+    │ │     │             ╰─── definiens: 3
+  4 │ │     │           ERROR
+    │ │     │           ──┬──  
+    │ │     │             ╰──── definiens: 4
+  5 │ │   │ ├─▶     }
+    │ │   │ │           
+    │ │   │ ╰─────────── definiens: 2
+  6 │ │   ╭───▶ 
+    ┆ ┆   ┆     
+  8 │ │   │             Severity severity,
+    │ │   │     ────────────┬────────────  
+    │ │   │                 ╰────────────── definiens: 6
+  9 │ │   │             string cause
+    │ │   │     ──────────┬──────────  
+    │ │   │               ╰──────────── definiens: 7
+ 10 │ │ │ ├───▶     );
+    │ │ │ │              
+    │ │ │ ╰────────────── definiens: 5
+ 11 │ │ ╭─────▶ 
+    ┆ ┆ ┆       
+ 14 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 8
+ 15 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 1
+────╯

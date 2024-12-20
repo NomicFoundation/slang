@@ -42,3 +42,31 @@ References and definitions:
     │            │    
     │            ╰──── ref: 1
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  2 │   ╭─────▶ 
+  3 │   │       function invoke(function(uint) x) {
+    │   │                       ────────┬───────  
+    │   │                               ╰───────── definiens: 2
+    ┆   ┆       
+  5 │   ├───│ ▶ }
+    │   │   │       
+    │   ╰─────────── definiens: 1
+  6 │       ╭─▶ 
+  7 │ │     ├─▶ function foo(uint x) {}
+    │ │     │                ───┬──       
+    │ │     │                   ╰───────── definiens: 4
+    │ │     │                             
+    │ │     ╰───────────────────────────── definiens: 3
+  8 │ ╭───────▶ 
+    ┆ ┆         
+ 11 │ │   ╭───▶ 
+ 12 │ │   ├───▶     function (uint) bar = foo;
+    │ │   │                                      
+    │ │   ╰────────────────────────────────────── definiens: 6
+    ┆ ┆         
+ 14 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 5
+────╯

@@ -27,3 +27,26 @@ References and definitions:
    │                                          │    
    │                                          ╰──── ref: 4
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───│ ▶ contract Test {
+  2 │ │   ╭─▶     error Failure(
+  3 │ │   │           uint severity,
+    │ │   │   ──────────┬──────────  
+    │ │   │             ╰──────────── definiens: 3
+  4 │ │   │           string cause
+    │ │   │   ──────────┬──────────  
+    │ │   │             ╰──────────── definiens: 4
+  5 │ │ │ ├─▶     );
+    │ │ │ │            
+    │ │ │ ╰──────────── definiens: 2
+  6 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+  9 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 10 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
+────╯

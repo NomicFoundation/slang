@@ -25,3 +25,27 @@ References and definitions:
     │                      ─┬─  
     │                       ╰─── ref: 2
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  3 │     ╭───▶ 
+    ┆     ┆ ┆   
+  5 │     │ ╭─▶     function foo() public pure virtual returns (string memory) {
+    ┆     ┆ ┆   
+  7 │     │ ├─▶     }
+    │     │ │           
+    │     │ ╰─────────── definiens: 2
+  8 │ │   ├───▶ }
+    │ │   │         
+    │ │   ╰───────── definiens: 1
+  9 │ ╭───────▶ 
+    ┆ ┆ ┆       
+ 11 │ │ ╭─────▶     //    A super;
+    ┆ ┆ ┆       
+ 14 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 4
+ 15 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 3
+────╯

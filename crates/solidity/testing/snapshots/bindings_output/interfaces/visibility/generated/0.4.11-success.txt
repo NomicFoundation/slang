@@ -53,3 +53,40 @@ References and definitions:
     │                    │   
     │                    ╰─── def: 11
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───▶ interface Example {
+  2 │ │         enum Choice { One, Two }
+    │ │     ──────────────┬────┬────┬────  
+    │ │                   ╰──────────────── definiens: 2
+    │ │                        │    │      
+    │ │                        ╰─────────── definiens: 3
+    │ │                             │      
+    │ │                             ╰────── definiens: 4
+  3 │ │         struct Book { string author; }
+    │ │     ─────────────────┬──────┬──────────  
+    │ │                      ╰─────────────────── definiens: 5
+    │ │                             │            
+    │ │                             ╰──────────── definiens: 6
+  4 │ │         function calculate() returns (Choice);
+    │ │     ─────────────────────┬─────────────────────  
+    │ │                          ╰─────────────────────── definiens: 7
+  5 │ │         function get_book() returns (Book);
+    │ │     ────────────────────┬───────────────────  
+    │ │                         ╰───────────────────── definiens: 8
+  6 │ ├─│ ▶ }
+    │ │ │       
+    │ ╰───────── definiens: 1
+  7 │   ╭─▶ 
+    ┆   ┆   
+  9 │   │       Example.Choice choice = Example.Choice.One;
+    │   │   ────────────────────────┬───────────────────────  
+    │   │                           ╰───────────────────────── definiens: 10
+ 10 │   │       Example.Book book;
+    │   │   ───────────┬───────────  
+    │   │              ╰───────────── definiens: 11
+ 11 │   ├─▶ }
+    │   │       
+    │   ╰─────── definiens: 9
+────╯

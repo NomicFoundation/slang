@@ -29,3 +29,23 @@ References and definitions:
    │                        │  
    │                        ╰── ref: 3
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭───│ ▶ contract Test {
+ 2 │ │   ╭─▶     struct Value {
+ 3 │ │   │           int x;
+   │ │   │   ───────┬───────  
+   │ │   │          ╰───────── definiens: 3
+ 4 │ │ │ ├─▶     }
+   │ │ │ │           
+   │ │ │ ╰─────────── definiens: 2
+ 5 │ │ ╭───▶     function test() public {
+   ┆ ┆ ┆     
+ 8 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 4
+ 9 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 1
+───╯

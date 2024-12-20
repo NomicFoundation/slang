@@ -28,3 +28,30 @@ References and definitions:
    │                 │  
    │                 ╰── refs: 3, 4
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭───▶ contract A {
+  2 │   │         function A(int _x) {}
+    │   │     ─────────────┬────┬───────  
+    │   │                  ╰────────────── definiens: 2
+    │   │                       │         
+    │   │                       ╰───────── definiens: 3
+    ┆   ┆     
+  4 │   │         constructor(int _x) {}
+    │   │                     ───┬──  
+    │   │                        ╰──── definiens: 4
+  5 │ │ ├───▶ }
+    │ │ │         
+    │ │ ╰───────── definiens: 1
+  6 │ ╭─────▶ 
+    ┆ ┆   ┆   
+  8 │ │   ╭─▶     function foo() public {
+    ┆ ┆   ┆   
+ 10 │ │   ├─▶     }
+    │ │   │           
+    │ │   ╰─────────── definiens: 6
+ 11 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 5
+────╯

@@ -98,3 +98,35 @@ References and definitions:
     │                   │     
     │                   ╰───── ref: 2
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ library Lib {
+  2 │     │       function nop_uint(uint x) public returns (uint) {}
+    │     │   ─────────────────────────┬─┬───────────────────────────  
+    │     │                            ╰─────────────────────────────── definiens: 3
+    │     │                              │                             
+    │     │                              ╰───────────────────────────── definiens: 2
+  3 │     │       function nop_bool(bool x) public returns (bool) {}
+    │     │   ─────────────────────────┬─┬───────────────────────────  
+    │     │                            ╰─────────────────────────────── definiens: 5
+    │     │                              │                             
+    │     │                              ╰───────────────────────────── definiens: 4
+  4 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  5 │ ╭─────▶ 
+    ┆ ┆       
+  9 │ │ ╭───▶     function test(uint a, uint b) public {
+    │ │ │                       ───┬── ───┬───  
+    │ │ │                          ╰──────────── definiens: 8
+    │ │ │                                 │     
+    │ │ │                                 ╰───── definiens: 9
+    ┆ ┆ ┆     
+ 20 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 7
+ 21 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 6
+────╯

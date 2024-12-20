@@ -39,3 +39,22 @@ References and definitions:
    │            │   
    │            ╰─── ref: built-in
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───▶ contract Test {
+  2 │ │ │       uint[] a;
+    │ │ │   ───────┬──────  
+    │ │ │          ╰──────── definiens: 2
+  3 │ │ ╭─▶     function testArray() public {
+  4 │ │ │           uint[] storage b = new uint[](5);
+    │ │ │   ─────────────────────┬────────────────────  
+    │ │ │                        ╰────────────────────── definiens: 4
+    ┆ ┆ ┆   
+ 10 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 3
+ 11 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯

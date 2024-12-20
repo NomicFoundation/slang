@@ -60,3 +60,39 @@ References and definitions:
     │                      │  
     │                      ╰── ref: 7
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─│ ──▶ contract AssemblyFunctions {
+  2 │ │ ╭───▶     function test(uint256 x) public returns (uint256 r) {
+    │ │ │                       ────┬────                  ────┬────  
+    │ │ │                           ╰───────────────────────────────── definiens: 3
+    │ │ │                                                      │      
+    │ │ │                                                      ╰────── definiens: 4
+    ┆ ┆ ┆     
+  4 │ │ │                 let y := add(x, 5)
+    │ │ │     ───────────────┬───────────────  
+    │ │ │                    ╰───────────────── definiens: 5
+    ┆ ┆ ┆     
+  7 │ │ │ ╭─▶ 
+  8 │ │ │ │               function swap(a, b) -> c, d {
+    │ │ │ │                             ┬  ┬     ┬  ┬  
+    │ │ │ │                             ╰────────────── definiens: 7
+    │ │ │ │                                │     │  │  
+    │ │ │ │                                ╰─────────── definiens: 8
+    │ │ │ │                                      │  │  
+    │ │ │ │                                      ╰───── definiens: 9
+    │ │ │ │                                         │  
+    │ │ │ │                                         ╰── definiens: 10
+    ┆ ┆ ┆ ┆   
+ 11 │ │ │ ├─▶             }
+    │ │ │ │                   
+    │ │ │ ╰─────────────────── definiens: 6
+    ┆ ┆ ┆     
+ 13 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 2
+ 14 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
+────╯

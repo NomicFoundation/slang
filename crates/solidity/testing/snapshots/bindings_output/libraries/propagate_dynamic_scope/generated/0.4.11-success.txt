@@ -47,3 +47,38 @@ References and definitions:
     │                                      │   
     │                                      ╰─── ref: 5
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭───▶ interface IERC20Upgradable {
+  2 │     │         function allowance(address owner) external returns (uint256);
+    │     │     ─────────────────────────────┬───┬────────────────────────────────  
+    │     │                                  ╰────────────────────────────────────── definiens: 3
+    │     │                                      │                                  
+    │     │                                      ╰────────────────────────────────── definiens: 2
+  3 │     ├─│ ▶ }
+    │     │ │       
+    │     ╰───────── definiens: 1
+  4 │       ╭─▶ library Math {
+  5 │       │       function nop(uint256 x) public {}
+    │       │   ───────────────────┬─┬────────────────  
+    │       │                      ╰──────────────────── definiens: 5
+    │       │                        │                  
+    │       │                        ╰────────────────── definiens: 6
+  6 │ │     ├─▶ }
+    │ │     │       
+    │ │     ╰─────── definiens: 4
+  7 │ ╭───────▶ library Test {
+    ┆ ┆ ┆       
+  9 │ │ ╭─────▶ 
+ 10 │ │ │           function test(IERC20Upgradable token) internal {
+    │ │ │                         ───────────┬──────────  
+    │ │ │                                    ╰──────────── definiens: 9
+    ┆ ┆ ┆       
+ 12 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 8
+ 13 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 7
+────╯

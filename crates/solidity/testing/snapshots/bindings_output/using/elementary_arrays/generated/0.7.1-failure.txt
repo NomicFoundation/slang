@@ -22,3 +22,14 @@ References and definitions:
    │            ───┬──  
    │               ╰──── ref: 2
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ function first(uint[] memory values) returns (uint) {
+   │ │                  ──────────┬─────────  
+   │ │                            ╰─────────── definiens: 2
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+───╯

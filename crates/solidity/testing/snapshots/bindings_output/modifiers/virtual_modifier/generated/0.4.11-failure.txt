@@ -29,3 +29,17 @@ References and definitions:
    │                    │   
    │                    ╰─── ref: 1
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │   ╭─▶ contract Base {
+   ┆   ┆   
+ 3 │ │ ├─▶ }
+   │ │ │       
+   │ │ ╰─────── definiens: 1
+ 4 │ ╭───▶ 
+   ┆ ┆     
+ 8 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 2
+───╯

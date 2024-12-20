@@ -49,3 +49,37 @@ References and definitions:
     │               │      
     │               ╰────── ref: 4
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭─────│ ▶ library Lib {
+  2 │   │     ╭─▶     struct Counter {
+  3 │   │     │           uint value;
+    │   │     │   ──────────┬─────────  
+    │   │     │             ╰─────────── definiens: 3
+  4 │   │   │ ├─▶     }
+    │   │   │ │           
+    │   │   │ ╰─────────── definiens: 2
+  5 │   │   ╭───▶ 
+  6 │   │   ├───▶     function increment(Counter memory _counter) public {}
+    │   │   │                            ───────────┬───────────              
+    │   │   │                                       ╰───────────────────────── definiens: 5
+    │   │   │                                                                 
+    │   │   ╰───────────────────────────────────────────────────────────────── definiens: 4
+  7 │ │ ├───────▶ }
+    │ │ │             
+    │ │ ╰───────────── definiens: 1
+  8 │ ╭─────────▶ 
+    ┆ ┆           
+ 11 │ │   ╭─────▶ 
+ 12 │ │   │           function test(Lib.Counter memory c) public {
+    │ │   │                         ──────────┬─────────  
+    │ │   │                                   ╰─────────── definiens: 8
+    ┆ ┆   ┆       
+ 14 │ │   ├─────▶     }
+    │ │   │               
+    │ │   ╰─────────────── definiens: 7
+ 15 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 6
+────╯

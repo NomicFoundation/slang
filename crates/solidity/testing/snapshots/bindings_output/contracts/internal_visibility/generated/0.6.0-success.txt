@@ -39,3 +39,29 @@ References and definitions:
     │                        │        
     │                        ╰──────── ref: 4
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ abstract contract Ownable {
+  2 │     │       address internal owner;
+    │     │   ──────────────┬─────────────  
+    │     │                 ╰─────────────── definiens: 2
+  3 │     │       address default_visibility;
+    │     │   ────────────────┬───────────────  
+    │     │                   ╰───────────────── definiens: 3
+  4 │     │       function _internal_only() internal {}
+    │     │   ─────────────────────┬────────────────────  
+    │     │                        ╰────────────────────── definiens: 4
+  5 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  6 │ ╭─│ ──▶ contract Test is Ownable {
+  7 │ │ ╭───▶     function test() public {
+    ┆ ┆ ┆     
+ 12 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 6
+ 13 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 5
+────╯

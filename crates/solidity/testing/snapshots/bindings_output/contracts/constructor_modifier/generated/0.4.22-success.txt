@@ -28,3 +28,22 @@ References and definitions:
    │                                                │    
    │                                                ╰──── ref: 4
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     modifier validAddress(address _addr) {
+   │ │ │                             ──────┬──────  
+   │ │ │                                   ╰──────── definiens: 3
+   ┆ ┆ ┆   
+ 5 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+   ┆ ┆     
+ 7 │ │         constructor (address _addr) validAddress(_addr) {}
+   │ │                      ──────┬──────  
+   │ │                            ╰──────── definiens: 4
+ 8 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

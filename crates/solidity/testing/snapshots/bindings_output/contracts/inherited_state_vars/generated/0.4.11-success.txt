@@ -34,3 +34,30 @@ References and definitions:
     │         ────┬────  
     │             ╰────── ref: 4
 ────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │       ╭─▶ contract Base {
+  2 │       │       int in_base;
+    │       │   ────────┬────────  
+    │       │           ╰────────── definiens: 2
+  3 │     │ ├─▶ }
+    │     │ │       
+    │     │ ╰─────── definiens: 1
+  4 │     ╭───▶ contract Middle is Base {
+  5 │     │         int in_middle;
+    │     │     ─────────┬─────────  
+    │     │              ╰─────────── definiens: 4
+  6 │ │   ├───▶ }
+    │ │   │         
+    │ │   ╰───────── definiens: 3
+  7 │ ╭─│ ────▶ contract Test is Middle {
+  8 │ │ ╭─────▶     function test() public {
+    ┆ ┆ ┆       
+ 11 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 6
+ 12 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 5
+────╯

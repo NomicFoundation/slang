@@ -39,3 +39,25 @@ References and definitions:
    │                     │  
    │                     ╰── ref: 5
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─│ ▶ contract Test {
+  2 │ │ ╭─▶     function test() public {
+  3 │ │ │           int x = 1;
+    │ │ │   ─────────┬─────────  
+    │ │ │            ╰─────────── definiens: 3
+  4 │ │ │           int y = 0;
+    │ │ │   ─────────┬─────────  
+    │ │ │            ╰─────────── definiens: 4
+  5 │ │ │           for (int i = x - 1; i < 10 && x < 500; i++) {
+    │ │ │                ───────┬──────  
+    │ │ │                       ╰──────── definiens: 5
+    ┆ ┆ ┆   
+  9 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 2
+ 10 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯

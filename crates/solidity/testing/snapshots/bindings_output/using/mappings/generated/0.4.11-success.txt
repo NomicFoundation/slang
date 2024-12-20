@@ -30,3 +30,29 @@ References and definitions:
    │                                                   │  
    │                                                   ╰── def: 6
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ contract Test {
+    ┆ ┆       
+  3 │ │   │       mapping(address => uint) balances;
+    │ │   │   ───────────────────┬───────────────────  
+    │ │   │                      ╰───────────────────── definiens: 2
+  4 │ │   ╭─▶     function test() public {
+    ┆ ┆   ┆   
+  6 │ │   ├─▶     }
+    │ │   │           
+    │ │   ╰─────────── definiens: 3
+  7 │ ├─│ ──▶ }
+    │ │ │         
+    │ ╰─────────── definiens: 1
+  8 │   ╭───▶ library Lib {
+  9 │   │         function nop(mapping(address => uint) storage m) internal {}
+    │   │     ────────────────────────────────┬─┬──────────────────────────────  
+    │   │                                     ╰────────────────────────────────── definiens: 5
+    │   │                                       │                                
+    │   │                                       ╰──────────────────────────────── definiens: 6
+ 10 │   ├───▶ }
+    │   │         
+    │   ╰───────── definiens: 4
+────╯

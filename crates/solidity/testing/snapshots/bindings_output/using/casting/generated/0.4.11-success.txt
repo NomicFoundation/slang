@@ -39,3 +39,32 @@ References and definitions:
    │                            │       
    │                            ╰─────── ref: 3
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │       ╭─▶ interface IERC20 {
+  2 │     │ ├─▶ }
+    │     │ │       
+    │     │ ╰─────── definiens: 1
+  3 │     ╭───▶ library SafeERC20 {
+  4 │     │         function safeApprove(IERC20 token) internal {}
+    │     │     ─────────────────────────┬─────┬───────────────────  
+    │     │                              ╰─────────────────────────── definiens: 3
+    │     │                                    │                     
+    │     │                                    ╰───────────────────── definiens: 4
+  5 │ │   ├───▶ }
+    │ │   │         
+    │ │   ╰───────── definiens: 2
+  6 │ ╭───────▶ contract Test {
+    ┆ ┆ ┆       
+  8 │ │ ╭─────▶     function test(address token) public {
+    │ │ │                         ──────┬──────  
+    │ │ │                               ╰──────── definiens: 7
+    ┆ ┆ ┆       
+ 10 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 6
+ 11 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 5
+────╯

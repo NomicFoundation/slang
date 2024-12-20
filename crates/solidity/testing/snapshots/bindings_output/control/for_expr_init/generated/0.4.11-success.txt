@@ -28,3 +28,22 @@ References and definitions:
    │             ┬  
    │             ╰── ref: 3
 ───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test_non_decl_init() public {
+ 3 │ │ │           int z;
+   │ │ │   ───────┬───────  
+   │ │ │          ╰───────── definiens: 3
+ 4 │ │ │           int w = 0;
+   │ │ │   ─────────┬─────────  
+   │ │ │            ╰─────────── definiens: 4
+   ┆ ┆ ┆   
+ 8 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯
