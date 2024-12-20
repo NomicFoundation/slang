@@ -5,6 +5,7 @@ use anyhow::Result;
 use ariadne::{Color, Config, FnCache, Label, Report, ReportBuilder, ReportKind, Source};
 use metaslang_bindings::ResolutionError;
 use slang_solidity::bindings::{BindingGraph, Definition, Reference};
+use slang_solidity::cst::{NonterminalKind, Query};
 use slang_solidity::diagnostic;
 
 use super::runner::ParsedPart;
@@ -26,6 +27,13 @@ pub(crate) fn render_bindings(
             buffer.extend_from_slice("Parse errors:\n".as_bytes());
             buffer.append(&mut parse_errors_report);
             buffer.push(b'\n');
+        }
+
+        let (coverage_report, part_identifiers_bound) =
+            check_bindings_coverage(part, binding_graph);
+        all_resolved = all_resolved && part_identifiers_bound;
+        if !part_identifiers_bound {
+            write_part_report(part, &coverage_report, &mut buffer)?;
         }
 
         let part_references = binding_graph
@@ -82,6 +90,51 @@ impl ParsedPart<'_> {
             .collect::<Vec<_>>()
             .join("\n")
     }
+}
+
+fn check_bindings_coverage<'a>(
+    part: &'a ParsedPart<'a>,
+    binding_graph: &'a BindingGraph,
+) -> (Report<'a, ReportSpan<'a>>, bool) {
+    let mut all_identifiers_bound = true;
+    let mut builder: ReportBuilder<'_, ReportSpan<'_>> = Report::build(
+        ReportKind::Custom("Missing definitions/references:", Color::Unset),
+        part.path,
+        0,
+    )
+    .with_config(Config::default().with_color(false));
+
+    let query = Query::parse("@identifier ([Identifier] | [YulIdentifier])").unwrap();
+    let cursor = part.parse_output.create_tree_cursor();
+    for result in cursor.query(vec![query]) {
+        let identifier_cursor = result.captures.get("identifier").unwrap().first().unwrap();
+        let parent = {
+            let mut parent_cursor = identifier_cursor.spawn();
+            parent_cursor.go_to_parent();
+            parent_cursor.node()
+        };
+        if parent.is_nonterminal_with_kind(NonterminalKind::ExperimentalFeature) {
+            // ignore identifiers in `pragma experimental` directives
+            continue;
+        }
+        if binding_graph.definition_at(identifier_cursor).is_none()
+            && binding_graph.reference_at(identifier_cursor).is_none()
+        {
+            let range = {
+                let range = identifier_cursor.text_range();
+                let start = part.contents[..range.start.utf8].chars().count();
+                let end = part.contents[..range.end.utf8].chars().count();
+                start..end
+            };
+
+            builder = builder.with_label(
+                Label::new((part.path, range)).with_message("missing definition/reference"),
+            );
+            all_identifiers_bound = false;
+        }
+    }
+
+    (builder.finish(), all_identifiers_bound)
 }
 
 fn build_report_for_part<'a>(

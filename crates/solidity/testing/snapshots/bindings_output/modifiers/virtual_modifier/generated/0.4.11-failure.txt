@@ -16,6 +16,17 @@ Error: Expected OpenBrace or Semicolon.
    │ │                                       
    │ ╰─────────────────────────────────────── Error occurred here.
 ───╯
+Missing definitions/references:: 
+   ╭─[input.sol:1:1]
+   │
+ 2 │     modifier foo virtual { _; }
+   │              ─┬─  
+   │               ╰─── missing definition/reference
+   │ 
+ 6 │     modifier foo override(Base) { _; }
+   │              ─┬─  
+   │               ╰─── missing definition/reference
+───╯
 References and definitions: 
    ╭─[input.sol:1:1]
    │
