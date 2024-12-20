@@ -62,6 +62,9 @@ contract $BuiltIns$ {
     uint salt;
     uint value;
   }
+  struct Error {
+    string reason;
+  }
   struct $Function {
     function(uint amount) returns (function()) gas;
     function(uint amount) returns (function()) value;
@@ -76,6 +79,9 @@ contract $BuiltIns$ {
     address payable sender;
     bytes4 sig;
     uint value;
+  }
+  struct Panic {
+    uint errorCode;
   }
   struct $StringType {
     function(string[] stringsToConcatenate) returns (string memory) concat;
@@ -111,6 +117,4 @@ contract $BuiltIns$ {
   uint now;
   $StringType $string;
   $TransactionType tx;
-  error Error(string memory reason);
-  error Panic(uint errorCode);
 }

@@ -6921,6 +6921,12 @@ codegen_language_macros::compile!(Language(
             enabled = From("0.6.2")
         ),
         BuiltInType(
+            name = "Error",
+            fields = [BuiltInField(definition = "string reason")],
+            functions = [],
+            enabled = From("0.6.0")
+        ),
+        BuiltInType(
             name = "$ErrorType",
             fields = [BuiltInField(definition = "bytes4 selector")],
             functions = [],
@@ -6979,6 +6985,12 @@ codegen_language_macros::compile!(Language(
                 BuiltInField(definition = "uint value")
             ],
             functions = []
+        ),
+        BuiltInType(
+            name = "Panic",
+            fields = [BuiltInField(definition = "uint errorCode")],
+            functions = [],
+            enabled = From("0.6.0")
         ),
         BuiltInType(
             name = "$StringType",
@@ -7062,14 +7074,6 @@ codegen_language_macros::compile!(Language(
         BuiltInVariable(definition = "$MessageType msg"),
         BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
         BuiltInVariable(definition = "$StringType $string"),
-        BuiltInVariable(definition = "$TransactionType tx"),
-        BuiltInVariable(
-            definition = "error Error(string memory reason)",
-            enabled = From("0.6.0")
-        ),
-        BuiltInVariable(
-            definition = "error Panic(uint errorCode)",
-            enabled = From("0.6.0")
-        )
+        BuiltInVariable(definition = "$TransactionType tx")
     ]
 ));
