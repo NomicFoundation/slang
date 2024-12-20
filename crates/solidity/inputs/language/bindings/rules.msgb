@@ -2075,7 +2075,7 @@ inherit .star_extension
   node minmax_type_of
   attr (minmax_type_of) push_symbol = "@typeof"
   node minmax_replace
-  attr (minmax_replace) push_symbol =  (source-text @name)
+  attr (minmax_replace) push_symbol = (source-text @name)
 
   edge type -> typeof
   edge typeof -> built_in_member
