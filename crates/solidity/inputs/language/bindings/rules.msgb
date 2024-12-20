@@ -2097,7 +2097,7 @@ inherit .star_extension
   node type_of
   attr (type_of) push_symbol = "@typeof"
   node type_def
-  attr (type_def) push_symbol =  (source-text @name)
+  attr (type_def) push_symbol = (source-text @name)
   edge def -> type_of
   edge type_of -> type_def
   edge type_def -> @enum.lexical_scope
