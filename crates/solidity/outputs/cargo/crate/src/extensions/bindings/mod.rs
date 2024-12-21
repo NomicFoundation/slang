@@ -16,7 +16,8 @@ pub fn add_built_ins(
     let parser = Parser::create(version)?;
     let parse_output = parser.parse(Parser::ROOT_KIND, source);
 
-    let built_ins_cursor = transform(parse_output.tree()).cursor_with_offset(TextIndex::ZERO);
+    let built_ins_cursor =
+        transform(&Node::Nonterminal(parse_output.tree())).cursor_with_offset(TextIndex::ZERO);
 
     binding_graph.add_system_file("built_ins.sol", built_ins_cursor);
     Ok(())

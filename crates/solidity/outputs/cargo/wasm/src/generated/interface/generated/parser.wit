@@ -1,7 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 interface parser {
-    use cst.{cursor, node, nonterminal-kind, text-range};
+    use cst.{cursor, nonterminal-node, nonterminal-kind, text-range};
 
     /// A parser instance that can parse source code into syntax trees.
     /// Each parser is configured for a specific language version and grammar.
@@ -34,7 +34,7 @@ interface parser {
     resource parse-output {
         /// Returns the root node of the parsed syntax tree.
         /// Even if there are parsing errors, a partial tree will still be available.
-        tree: func() -> node;
+        tree: func() -> nonterminal-node;
 
         /// Returns a list of all parsing errors encountered.
         /// An empty list indicates successful parsing with no errors.

@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "and := 0\n" # (0..9)
+  - (YulVariableAssignmentStatement) ► (UNRECOGNIZED): "and := 0\n" # (0..9)

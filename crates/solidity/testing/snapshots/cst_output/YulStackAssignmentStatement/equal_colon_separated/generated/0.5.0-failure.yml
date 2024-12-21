@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "= : success\n" # (0..12)
+  - (YulStackAssignmentStatement) ► (UNRECOGNIZED): "= : success\n" # (0..12)

@@ -4,7 +4,7 @@ use crate::wasm_crate::utils::{define_wrapper, FromFFI, IntoFFI};
 
 mod ffi {
     pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{
-        Cursor, Node, TextRange,
+        Cursor, NonterminalNode, TextRange,
     };
     pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::parser::{
         Guest, GuestParseError, GuestParseOutput, GuestParser, NonterminalKind, ParseError,
@@ -72,8 +72,8 @@ define_wrapper! { ParseError {
 //================================================
 
 define_wrapper! { ParseOutput {
-    fn tree(&self) -> ffi::Node {
-        self._borrow_ffi().tree().clone()._into_ffi()
+    fn tree(&self) -> ffi::NonterminalNode {
+        self._borrow_ffi().tree()._into_ffi()
     }
 
     fn errors(&self) -> Vec<ffi::ParseError> {
