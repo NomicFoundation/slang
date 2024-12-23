@@ -5,14 +5,14 @@ References and definitions:
    │
  1 │ contract Foo {}
    │          ─┬─  
-   │           ╰─── def: 1
+   │           ╰─── name: 1
    │ 
  3 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 2
+   │            ╰─── name: 2
  4 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 3
+   │                ╰─── name: 3
  5 │         try new Foo() {
    │                 ─┬─  
    │                  ╰─── ref: 1
@@ -20,7 +20,7 @@ References and definitions:
    │                 ──┬──      ──┬─  
    │                   ╰────────────── ref: built-in
    │                              │   
-   │                              ╰─── def: 4
+   │                              ╰─── name: 4
  7 │             code;
    │             ──┬─  
    │               ╰─── ref: 4
@@ -28,7 +28,7 @@ References and definitions:
    │                 ──┬──               ───┬───  
    │                   ╰────────────────────────── ref: built-in
    │                                        │     
-   │                                        ╰───── def: 5
+   │                                        ╰───── name: 5
  9 │             message;
    │             ───┬───  
    │                ╰───── ref: 5

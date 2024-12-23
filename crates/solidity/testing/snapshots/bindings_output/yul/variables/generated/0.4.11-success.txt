@@ -5,16 +5,16 @@ References and definitions:
    │
  1 │ contract AssemblyVariable {
    │          ────────┬───────  
-   │                  ╰───────── def: 1
+   │                  ╰───────── name: 1
  2 │     function yul_let() public returns (uint256 z) {
    │              ───┬───                           ┬  
-   │                 ╰───────────────────────────────── def: 2
+   │                 ╰───────────────────────────────── name: 2
    │                                                │  
-   │                                                ╰── def: 3
+   │                                                ╰── name: 3
    │ 
  4 │             let x := 123
    │                 ┬  
-   │                 ╰── def: 4
+   │                 ╰── name: 4
  5 │             z := 456
    │             ┬  
    │             ╰── ref: 3

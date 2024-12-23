@@ -5,16 +5,16 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test_for_empty_init() public {
    │              ─────────┬─────────  
-   │                       ╰─────────── def: 2
+   │                       ╰─────────── name: 2
  3 │         int i = 1;
    │             ┬  
-   │             ╰── def: 3
+   │             ╰── name: 3
  4 │         int x = 0;
    │             ┬  
-   │             ╰── def: 4
+   │             ╰── name: 4
  5 │         for (; i < 10; i++) {
    │                ┬       ┬  
    │                ╰────────── ref: 3

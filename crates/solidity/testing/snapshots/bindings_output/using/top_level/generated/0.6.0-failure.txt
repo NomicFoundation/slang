@@ -15,10 +15,10 @@ References and definitions:
    │
  1 │ struct Counter {
    │        ───┬───  
-   │           ╰───── def: 1
+   │           ╰───── name: 1
  2 │     uint value;
    │          ──┬──  
-   │            ╰──── def: 2
+   │            ╰──── name: 2
 ───╯
 Definiens: 
    ╭─[input.sol:1:1]

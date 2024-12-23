@@ -5,25 +5,25 @@ References and definitions:
     │
   1 │ library MyLib {
     │         ──┬──  
-    │           ╰──── def: 1
+    │           ╰──── name: 1
   2 │     enum Choice { One, Two }
     │          ───┬──   ─┬─  ─┬─  
-    │             ╰─────────────── def: 2
+    │             ╰─────────────── name: 2
     │                    │    │   
-    │                    ╰──────── def: 3
+    │                    ╰──────── name: 3
     │                         │   
-    │                         ╰─── def: 4
+    │                         ╰─── name: 4
   3 │     struct Book { string author; }
     │            ──┬─          ───┬──  
-    │              ╰─────────────────── def: 5
+    │              ╰─────────────────── name: 5
     │                             │    
-    │                             ╰──── def: 6
+    │                             ╰──── name: 6
     │ 
   5 │     function build_book(string memory author) public returns (Book memory) {
     │              ─────┬────               ───┬──                  ──┬─  
-    │                   ╰───────────────────────────────────────────────── def: 7
+    │                   ╰───────────────────────────────────────────────── name: 7
     │                                          │                      │   
-    │                                          ╰────────────────────────── def: 8
+    │                                          ╰────────────────────────── name: 8
     │                                                                 │   
     │                                                                 ╰─── ref: 5
   6 │         return Book(author);
@@ -34,7 +34,7 @@ References and definitions:
     │ 
   9 │     function favorite_choice() public returns (Choice) {
     │              ───────┬───────                   ───┬──  
-    │                     ╰────────────────────────────────── def: 9
+    │                     ╰────────────────────────────────── name: 9
     │                                                   │    
     │                                                   ╰──── ref: 2
  10 │         return Choice.One;
@@ -45,25 +45,25 @@ References and definitions:
     │ 
  14 │ contract UsingLib {
     │          ────┬───  
-    │              ╰───── def: 10
+    │              ╰───── name: 10
  15 │     MyLib.Choice choice;
     │     ──┬── ───┬── ───┬──  
     │       ╰────────────────── ref: 1
     │              │      │    
     │              ╰─────────── ref: 2
     │                     │    
-    │                     ╰──── def: 11
+    │                     ╰──── name: 11
  16 │     MyLib.Book book;
     │     ──┬── ──┬─ ──┬─  
     │       ╰────────────── ref: 1
     │             │    │   
     │             ╰──────── ref: 5
     │                  │   
-    │                  ╰─── def: 12
+    │                  ╰─── name: 12
     │ 
  18 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 13
+    │                ╰─── name: 13
  19 │         book = MyLib.build_book("John Doe");
     │         ──┬─   ──┬── ─────┬────  
     │           ╰────────────────────── ref: 12

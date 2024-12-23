@@ -5,22 +5,22 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     function test() public returns (int) {
     │              ──┬─  
-    │                ╰─── def: 2
+    │                ╰─── name: 2
   3 │         int x = 1;
     │             ┬  
-    │             ╰── def: 3
+    │             ╰── name: 3
   4 │         int y = 2;
     │             ┬  
-    │             ╰── def: 4
+    │             ╰── name: 4
   5 │         if (x > 1) {
     │             ┬  
     │             ╰── ref: 3
   6 │             int z = 3;
     │                 ┬  
-    │                 ╰── def: 5
+    │                 ╰── name: 5
   7 │             y = x + 10;
     │             ┬   ┬  
     │             ╰────── ref: 4
@@ -29,7 +29,7 @@ References and definitions:
     │ 
   9 │             int w = 4;
     │                 ┬  
-    │                 ╰── def: 6
+    │                 ╰── name: 6
  10 │             y = x + 20;
     │             ┬   ┬  
     │             ╰────── ref: 4
@@ -38,7 +38,7 @@ References and definitions:
     │ 
  12 │         int r = x + y;
     │             ┬   ┬   ┬  
-    │             ╰────────── def: 7
+    │             ╰────────── name: 7
     │                 │   │  
     │                 ╰────── ref: 3
     │                     │  

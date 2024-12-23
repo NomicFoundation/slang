@@ -5,45 +5,45 @@ References and definitions:
     │
   1 │ contract A {
     │          ┬  
-    │          ╰── def: 1
+    │          ╰── name: 1
   2 │     function foo() public {}
     │              ─┬─  
-    │               ╰─── def: 2
+    │               ╰─── name: 2
     │ 
   4 │ contract B is A {
     │          ┬    ┬  
-    │          ╰─────── def: 3
+    │          ╰─────── name: 3
     │               │  
     │               ╰── ref: 1
   5 │     function foo() public {
     │              ─┬─  
-    │               ╰─── def: 4
+    │               ╰─── name: 4
   6 │         super.foo();
     │               ─┬─  
     │                ╰─── ref: 2
     │ 
   9 │ contract C is A {
     │          ┬    ┬  
-    │          ╰─────── def: 5
+    │          ╰─────── name: 5
     │               │  
     │               ╰── ref: 1
  10 │     function foo() public {
     │              ─┬─  
-    │               ╰─── def: 6
+    │               ╰─── name: 6
  11 │         super.foo();
     │               ─┬─  
     │                ╰─── ref: 4
     │ 
  14 │ contract D is B, C {
     │          ┬    ┬  ┬  
-    │          ╰────────── def: 7
+    │          ╰────────── name: 7
     │               │  │  
     │               ╰───── ref: 3
     │                  │  
     │                  ╰── ref: 5
  15 │     function foo() public {
     │              ─┬─  
-    │               ╰─── def: 8
+    │               ╰─── name: 8
  16 │         super.foo();
     │               ─┬─  
     │                ╰─── ref: 6

@@ -9,22 +9,22 @@ References and definitions:
     │ 
   3 │ function invoke(function(uint) x) {
     │          ───┬──                ┬  
-    │             ╰───────────────────── def: 1
+    │             ╰───────────────────── name: 1
     │                                │  
-    │                                ╰── def: 2
+    │                                ╰── name: 2
   4 │     x(1);
     │     ┬  
     │     ╰── ref: 2
     │ 
   7 │ function foo(uint x) {}
     │          ─┬─      ┬  
-    │           ╰────────── def: 3
+    │           ╰────────── name: 3
     │                   │  
-    │                   ╰── def: 4
+    │                   ╰── name: 4
     │ 
   9 │ function test() {
     │          ──┬─  
-    │            ╰─── def: 5
+    │            ╰─── name: 5
  10 │     foo.invoke();
     │     ─┬─ ───┬──  
     │      ╰────────── ref: 3
@@ -33,7 +33,7 @@ References and definitions:
     │ 
  12 │     function (uint) bar = foo;
     │                     ─┬─   ─┬─  
-    │                      ╰───────── def: 6
+    │                      ╰───────── name: 6
     │                            │   
     │                            ╰─── ref: 3
  13 │     bar.invoke();

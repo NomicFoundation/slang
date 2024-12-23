@@ -5,19 +5,19 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     function testBytes() public {
     │              ────┬────  
-    │                  ╰────── def: 2
+    │                  ╰────── name: 2
   3 │         bytes memory b1;
     │                      ─┬  
-    │                       ╰── def: 3
+    │                       ╰── name: 3
   4 │         bytes memory b2;
     │                      ─┬  
-    │                       ╰── def: 4
+    │                       ╰── name: 4
   5 │         bytes memory b3 = bytes.concat(b1, b2);
     │                      ─┬         ───┬── ─┬  ─┬  
-    │                       ╰──────────────────────── def: 5
+    │                       ╰──────────────────────── name: 5
     │                                    │    │   │  
     │                                    ╰─────────── ref: built-in
     │                                         │   │  
@@ -32,16 +32,16 @@ References and definitions:
     │ 
   9 │     function testString() public {
     │              ─────┬────  
-    │                   ╰────── def: 6
+    │                   ╰────── name: 6
  10 │         string memory s1;
     │                       ─┬  
-    │                        ╰── def: 7
+    │                        ╰── name: 7
  11 │         string memory s2;
     │                       ─┬  
-    │                        ╰── def: 8
+    │                        ╰── name: 8
  12 │         string memory s3 = string.concat(s1, s2);
     │                       ─┬          ───┬── ─┬  ─┬  
-    │                        ╰───────────────────────── def: 9
+    │                        ╰───────────────────────── name: 9
     │                                      │    │   │  
     │                                      ╰─────────── ref: built-in
     │                                           │   │  

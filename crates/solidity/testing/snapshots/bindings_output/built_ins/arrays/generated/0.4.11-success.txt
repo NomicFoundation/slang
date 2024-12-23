@@ -5,16 +5,16 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     uint[] a;
    │            ┬  
-   │            ╰── def: 2
+   │            ╰── name: 2
  3 │     function testArray() public {
    │              ────┬────  
-   │                  ╰────── def: 3
+   │                  ╰────── name: 3
  4 │         uint[] storage b = new uint[](5);
    │                        ┬  
-   │                        ╰── def: 4
+   │                        ╰── name: 4
  5 │         assert(b.length == 5);
    │         ───┬── ┬ ───┬──  
    │            ╰───────────── ref: built-in

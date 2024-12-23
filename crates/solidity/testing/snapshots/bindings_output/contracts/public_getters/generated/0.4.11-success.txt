@@ -5,26 +5,26 @@ References and definitions:
     │
   1 │ contract Foo {
     │          ─┬─  
-    │           ╰─── def: 1
+    │           ╰─── name: 1
   2 │     int public x;
     │                ┬  
-    │                ╰── def: 2
+    │                ╰── name: 2
     │ 
   5 │ contract Bar {
     │          ─┬─  
-    │           ╰─── def: 3
+    │           ╰─── name: 3
   6 │     int public y;
     │                ┬  
-    │                ╰── def: 4
+    │                ╰── name: 4
   7 │     Foo f;
     │     ─┬─ ┬  
     │      ╰───── ref: 1
     │         │  
-    │         ╰── def: 5
+    │         ╰── name: 5
     │ 
   9 │     function test() public returns (int) {
     │              ──┬─  
-    │                ╰─── def: 6
+    │                ╰─── name: 6
  10 │         return y + this.y() + f.x();
     │                ┬        ┬     ┬ ┬  
     │                ╰─────────────────── ref: 4

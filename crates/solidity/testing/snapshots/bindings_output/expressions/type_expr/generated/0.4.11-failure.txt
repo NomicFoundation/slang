@@ -20,25 +20,25 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     enum Answer { Yes, No }
    │          ───┬──   ─┬─  ─┬  
-   │             ╰────────────── def: 2
+   │             ╰────────────── name: 2
    │                    │    │  
-   │                    ╰─────── def: 3
+   │                    ╰─────── name: 3
    │                         │  
-   │                         ╰── def: 4
+   │                         ╰── name: 4
  3 │     function testFunc() {
    │              ────┬───  
-   │                  ╰───── def: 5
+   │                  ╰───── name: 5
  4 │         string name = type(Test).name;
    │                ──┬─  
-   │                  ╰─── def: 6
+   │                  ╰─── name: 6
  5 │         Answer first = type(Answer).min;
    │         ───┬── ──┬──  
    │            ╰────────── ref: 2
    │                  │    
-   │                  ╰──── def: 7
+   │                  ╰──── name: 7
 ───╯
 Definiens: 
    ╭─[input.sol:1:1]

@@ -15,7 +15,7 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
 ───╯
 Definiens: 
    ╭─[input.sol:1:1]

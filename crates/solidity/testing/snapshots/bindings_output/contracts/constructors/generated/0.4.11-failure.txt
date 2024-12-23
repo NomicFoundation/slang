@@ -15,10 +15,10 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     string public name;
    │                   ──┬─  
-   │                     ╰─── def: 2
+   │                     ╰─── name: 2
    │ 
  4 │     constructor(string memory _name) {
    │     ─────┬─────  

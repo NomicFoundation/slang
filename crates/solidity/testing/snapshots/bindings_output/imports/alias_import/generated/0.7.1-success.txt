@@ -5,11 +5,11 @@ References and definitions:
    │
  1 │ import "./other.sol" as other;
    │                         ──┬──  
-   │                           ╰──── def: 1
+   │                           ╰──── name: 1
    │ 
  3 │ function foo() returns (int) {
    │          ─┬─  
-   │           ╰─── def: 2
+   │           ╰─── name: 2
  4 │     return other.bar();
    │            ──┬── ─┬─  
    │              ╰──────── ref: 1
@@ -33,7 +33,7 @@ References and definitions:
    │
  1 │ function bar() pure returns (int) {
    │          ─┬─  
-   │           ╰─── def: 3
+   │           ╰─── name: 3
 ───╯
 Definiens: 
    ╭─[other.sol:1:1]

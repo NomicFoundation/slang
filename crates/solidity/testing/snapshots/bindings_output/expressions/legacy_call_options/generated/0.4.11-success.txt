@@ -5,14 +5,14 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test(address rcpt, bytes memory data) public {
    │              ──┬─         ──┬─               ──┬─  
-   │                ╰─────────────────────────────────── def: 2
+   │                ╰─────────────────────────────────── name: 2
    │                             │                  │   
-   │                             ╰────────────────────── def: 3
+   │                             ╰────────────────────── name: 3
    │                                                │   
-   │                                                ╰─── def: 4
+   │                                                ╰─── name: 4
    │ 
  4 │         rcpt.call.value(1)(data);
    │         ──┬─ ──┬─ ──┬──    ──┬─  

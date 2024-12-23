@@ -5,20 +5,20 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     struct Funder {
    │            ───┬──  
-   │               ╰──── def: 2
+   │               ╰──── name: 2
  3 │         address addr;
    │                 ──┬─  
-   │                   ╰─── def: 3
+   │                   ╰─── name: 3
  4 │         uint amount;
    │              ───┬──  
-   │                 ╰──── def: 4
+   │                 ╰──── name: 4
    │ 
  7 │     function buildFunder() public payable returns (Funder memory) {
    │              ─────┬─────                           ───┬──  
-   │                   ╰──────────────────────────────────────── def: 5
+   │                   ╰──────────────────────────────────────── name: 5
    │                                                       │    
    │                                                       ╰──── ref: 2
  8 │         return Funder({addr: msg.sender, amount: msg.value});

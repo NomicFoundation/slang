@@ -5,25 +5,25 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     struct Value {
    │            ──┬──  
-   │              ╰──── def: 2
+   │              ╰──── name: 2
  3 │         uint value;
    │              ──┬──  
-   │                ╰──── def: 3
+   │                ╰──── name: 3
    │ 
  5 │     mapping(uint => Value) values;
    │                     ──┬──  ───┬──  
    │                       ╰──────────── ref: 2
    │                               │    
-   │                               ╰──── def: 4
+   │                               ╰──── name: 4
    │ 
  7 │     function test(uint _id) public returns (uint) {
    │              ──┬─      ─┬─  
-   │                ╰──────────── def: 5
+   │                ╰──────────── name: 5
    │                         │   
-   │                         ╰─── def: 6
+   │                         ╰─── name: 6
  8 │         return values[_id].value;
    │                ───┬── ─┬─  ──┬──  
    │                   ╰─────────────── ref: 4

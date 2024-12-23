@@ -161,7 +161,7 @@ fn build_report_for_part<'a>(
             start..end
         };
 
-        let message = format!("def: {}", index + 1);
+        let message = format!("name: {}", index + 1);
         builder = builder.with_label(Label::new((part.path, range)).with_message(message));
     }
 

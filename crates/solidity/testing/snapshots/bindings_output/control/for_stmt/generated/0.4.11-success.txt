@@ -5,19 +5,19 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  3 │         int x = 1;
    │             ┬  
-   │             ╰── def: 3
+   │             ╰── name: 3
  4 │         int y = 0;
    │             ┬  
-   │             ╰── def: 4
+   │             ╰── name: 4
  5 │         for (int i = x - 1; i < 10 && x < 500; i++) {
    │                  ┬   ┬      ┬         ┬        ┬  
-   │                  ╰──────────────────────────────── def: 5
+   │                  ╰──────────────────────────────── name: 5
    │                      │      │         │        │  
    │                      ╰──────────────────────────── ref: 3
    │                             │         │        │  

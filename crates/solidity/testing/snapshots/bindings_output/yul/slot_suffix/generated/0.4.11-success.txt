@@ -5,22 +5,22 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     bytes data;
    │           ──┬─  
-   │             ╰─── def: 2
+   │             ╰─── name: 2
  3 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 3
+   │                ╰─── name: 3
    │ 
  5 │             let s := sload(data_slot)
    │                 ┬          ────┬────  
-   │                 ╰───────────────────── def: 4
+   │                 ╰───────────────────── name: 4
    │                                │      
    │                                ╰────── ref: built-in
  6 │             let o := sload(data_offset)
    │                 ┬          ─────┬─────  
-   │                 ╰─────────────────────── def: 5
+   │                 ╰─────────────────────── name: 5
    │                                 │       
    │                                 ╰─────── ref: built-in
 ───╯

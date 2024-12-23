@@ -5,21 +5,21 @@ References and definitions:
     │
   1 │ library Lib {
     │         ─┬─  
-    │          ╰─── def: 1
+    │          ╰─── name: 1
   2 │     function nop_uint(uint x) public returns (uint) {}
     │              ────┬───      ┬  
-    │                  ╰──────────── def: 2
+    │                  ╰──────────── name: 2
     │                            │  
-    │                            ╰── def: 3
+    │                            ╰── name: 3
   3 │     function nop_bool(bool x) public returns (bool) {}
     │              ────┬───      ┬  
-    │                  ╰──────────── def: 4
+    │                  ╰──────────── name: 4
     │                            │  
-    │                            ╰── def: 5
+    │                            ╰── name: 5
     │ 
   6 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 6
+    │            ╰─── name: 6
   7 │     using Lib for uint;
     │           ─┬─  
     │            ╰─── ref: 1
@@ -28,11 +28,11 @@ References and definitions:
     │            ╰─── ref: 1
   9 │     function test(uint a, uint b) public {
     │              ──┬─      ┬       ┬  
-    │                ╰────────────────── def: 7
+    │                ╰────────────────── name: 7
     │                        │       │  
-    │                        ╰────────── def: 8
+    │                        ╰────────── name: 8
     │                                │  
-    │                                ╰── def: 9
+    │                                ╰── name: 9
  10 │         (a += b).nop_uint();
     │          ┬    ┬  ────┬───  
     │          ╰───────────────── ref: 8

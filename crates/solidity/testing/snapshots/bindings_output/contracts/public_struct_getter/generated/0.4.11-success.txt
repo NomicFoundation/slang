@@ -5,28 +5,28 @@ References and definitions:
    │
  1 │ contract Base {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     struct Owner { address owner; }
    │            ──┬──           ──┬──  
-   │              ╰──────────────────── def: 2
+   │              ╰──────────────────── name: 2
    │                              │    
-   │                              ╰──── def: 3
+   │                              ╰──── name: 3
  3 │     Owner public owner;
    │     ──┬──        ──┬──  
    │       ╰───────────────── ref: 2
    │                    │    
-   │                    ╰──── def: 4
+   │                    ╰──── name: 4
    │ 
  5 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 5
+   │            ╰─── name: 5
  6 │     function test(Base base) public {
    │              ──┬─ ──┬─ ──┬─  
-   │                ╰───────────── def: 6
+   │                ╰───────────── name: 6
    │                     │    │   
    │                     ╰──────── ref: 1
    │                          │   
-   │                          ╰─── def: 7
+   │                          ╰─── name: 7
  7 │         base.owner().balance;
    │         ──┬─ ──┬──   ───┬───  
    │           ╰─────────────────── ref: 7

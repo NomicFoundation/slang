@@ -5,20 +5,20 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     function testTx() public {
     │              ───┬──  
-    │                 ╰──── def: 2
+    │                 ╰──── name: 2
   3 │         address origin = tx.origin;
     │                 ───┬──   ─┬ ───┬──  
-    │                    ╰──────────────── def: 3
+    │                    ╰──────────────── name: 3
     │                           │    │    
     │                           ╰───────── ref: built-in
     │                                │    
     │                                ╰──── ref: built-in
   4 │         uint price = tx.gasprice;
     │              ──┬──   ─┬ ────┬───  
-    │                ╰────────────────── def: 4
+    │                ╰────────────────── name: 4
     │                       │     │     
     │                       ╰─────────── ref: built-in
     │                             │     
@@ -26,66 +26,66 @@ References and definitions:
     │ 
   7 │     function testBlock() public {
     │              ────┬────  
-    │                  ╰────── def: 5
+    │                  ╰────── name: 5
   8 │         uint v1 = block.basefee;
     │              ─┬   ──┬── ───┬───  
-    │               ╰────────────────── def: 6
+    │               ╰────────────────── name: 6
     │                     │      │     
     │                     ╰──────────── ref: built-in
     │                            │     
     │                            ╰───── ref: built-in
   9 │         uint v2 = block.blobbasefee;
     │              ─┬   ──┬── ─────┬─────  
-    │               ╰────────────────────── def: 7
+    │               ╰────────────────────── name: 7
     │                     │        │       
     │                     ╰──────────────── ref: built-in
     │                              │       
     │                              ╰─────── ref: built-in
  10 │         uint v3 = block.chainid;
     │              ─┬   ──┬── ───┬───  
-    │               ╰────────────────── def: 8
+    │               ╰────────────────── name: 8
     │                     │      │     
     │                     ╰──────────── ref: built-in
     │                            │     
     │                            ╰───── ref: built-in
  11 │         address v4 = block.coinbase;
     │                 ─┬   ──┬── ────┬───  
-    │                  ╰─────────────────── def: 9
+    │                  ╰─────────────────── name: 9
     │                        │       │     
     │                        ╰───────────── ref: built-in
     │                                │     
     │                                ╰───── ref: built-in
  12 │         uint v5 = block.difficulty;
     │              ─┬   ──┬── ─────┬────  
-    │               ╰───────────────────── def: 10
+    │               ╰───────────────────── name: 10
     │                     │        │      
     │                     ╰─────────────── ref: built-in
     │                              │      
     │                              ╰────── ref: built-in
  13 │         uint v6 = block.gaslimit;
     │              ─┬   ──┬── ────┬───  
-    │               ╰─────────────────── def: 11
+    │               ╰─────────────────── name: 11
     │                     │       │     
     │                     ╰───────────── ref: built-in
     │                             │     
     │                             ╰───── ref: built-in
  14 │         uint v7 = block.number;
     │              ─┬   ──┬── ───┬──  
-    │               ╰───────────────── def: 12
+    │               ╰───────────────── name: 12
     │                     │      │    
     │                     ╰─────────── ref: built-in
     │                            │    
     │                            ╰──── ref: built-in
  15 │         uint v8 = block.prevrandao;
     │              ─┬   ──┬── ─────┬────  
-    │               ╰───────────────────── def: 13
+    │               ╰───────────────────── name: 13
     │                     │        │      
     │                     ╰─────────────── ref: built-in
     │                              │      
     │                              ╰────── ref: built-in
  16 │         uint v9 = block.timestamp;
     │              ─┬   ──┬── ────┬────  
-    │               ╰──────────────────── def: 14
+    │               ╰──────────────────── name: 14
     │                     │       │      
     │                     ╰────────────── ref: built-in
     │                             │      
@@ -93,31 +93,31 @@ References and definitions:
     │ 
  19 │     function testMsg() public {
     │              ───┬───  
-    │                 ╰───── def: 15
+    │                 ╰───── name: 15
  20 │         bytes v1 = msg.data;
     │               ─┬   ─┬─ ──┬─  
-    │                ╰───────────── def: 16
+    │                ╰───────────── name: 16
     │                     │    │   
     │                     ╰──────── ref: built-in
     │                          │   
     │                          ╰─── ref: built-in
  21 │         address v2 = msg.sender;
     │                 ─┬   ─┬─ ───┬──  
-    │                  ╰─────────────── def: 17
+    │                  ╰─────────────── name: 17
     │                       │     │    
     │                       ╰────────── ref: built-in
     │                             │    
     │                             ╰──── ref: built-in
  22 │         bytes4 v3 = msg.sig;
     │                ─┬   ─┬─ ─┬─  
-    │                 ╰──────────── def: 18
+    │                 ╰──────────── name: 18
     │                      │   │   
     │                      ╰─────── ref: built-in
     │                          │   
     │                          ╰─── ref: built-in
  23 │         uint v4 = msg.value;
     │              ─┬   ─┬─ ──┬──  
-    │               ╰────────────── def: 19
+    │               ╰────────────── name: 19
     │                    │    │    
     │                    ╰───────── ref: built-in
     │                         │    

@@ -5,22 +5,22 @@ References and definitions:
     │
   1 │ library LibFoo {
     │         ───┬──  
-    │            ╰──── def: 1
+    │            ╰──── name: 1
   2 │     function use_foo(IFoo x) public returns (int) {}
     │              ───┬─── ──┬─ ┬  
-    │                 ╰──────────── def: 2
+    │                 ╰──────────── name: 2
     │                        │  │  
     │                        ╰───── ref: 4
     │                           │  
-    │                           ╰── def: 3
+    │                           ╰── name: 3
     │ 
   4 │ interface IFoo {
     │           ──┬─  
-    │             ╰─── def: 4
+    │             ╰─── name: 4
     │ 
   6 │ contract Base {
     │          ──┬─  
-    │            ╰─── def: 5
+    │            ╰─── name: 5
   7 │     using LibFoo for IFoo;
     │           ───┬──     ──┬─  
     │              ╰───────────── ref: 1
@@ -29,14 +29,14 @@ References and definitions:
     │ 
   9 │ contract Test is Base {
     │          ──┬─    ──┬─  
-    │            ╰─────────── def: 6
+    │            ╰─────────── name: 6
     │                    │   
     │                    ╰─── ref: 5
  10 │     function test(address x) public {
     │              ──┬─         ┬  
-    │                ╰───────────── def: 7
+    │                ╰───────────── name: 7
     │                           │  
-    │                           ╰── def: 8
+    │                           ╰── name: 8
     │ 
  12 │         IFoo(x).use_foo();
     │         ──┬─ ┬  ───┬───  

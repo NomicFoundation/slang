@@ -13,17 +13,17 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     int tx;
     │         ─┬  
-    │          ╰── def: 2
+    │          ╰── name: 2
     │ 
   4 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 3
+    │                ╰─── name: 3
   5 │         int block;
     │             ──┬──  
-    │               ╰──── def: 4
+    │               ╰──── name: 4
   6 │         block;
     │         ──┬──  
     │           ╰──── ref: 4
@@ -36,7 +36,7 @@ References and definitions:
     │ 
  11 │     function sha256() public {}
     │              ───┬──  
-    │                 ╰──── def: 5
+    │                 ╰──── name: 5
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

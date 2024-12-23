@@ -5,16 +5,16 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     using Lib for uint;
     │           ─┬─  
     │            ╰─── ref: 4
     │ 
   4 │     function test(address a) public {
     │              ──┬─         ┬  
-    │                ╰───────────── def: 2
+    │                ╰───────────── name: 2
     │                           │  
-    │                           ╰── def: 3
+    │                           ╰── name: 3
   5 │         address(this).balance;
     │                       ───┬───  
     │                          ╰───── ref: built-in
@@ -29,12 +29,12 @@ References and definitions:
     │ 
  11 │ library Lib {
     │         ─┬─  
-    │          ╰─── def: 4
+    │          ╰─── name: 4
  12 │     function noop(uint x) public returns (uint) {}
     │              ──┬─      ┬  
-    │                ╰────────── def: 5
+    │                ╰────────── name: 5
     │                        │  
-    │                        ╰── def: 6
+    │                        ╰── name: 6
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

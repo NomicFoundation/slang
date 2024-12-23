@@ -5,14 +5,14 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function foo() public {}
    │              ─┬─  
-   │               ╰─── def: 2
+   │               ╰─── name: 2
    │ 
  4 │     function bar() public returns (int) {
    │              ─┬─  
-   │               ╰─── def: 3
+   │               ╰─── name: 3
  5 │         this.foo();
    │              ─┬─  
    │               ╰─── ref: 2

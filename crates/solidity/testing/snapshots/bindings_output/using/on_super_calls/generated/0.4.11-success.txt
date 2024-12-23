@@ -5,14 +5,14 @@ References and definitions:
     │
   1 │ contract A {
     │          ┬  
-    │          ╰── def: 1
+    │          ╰── name: 1
   2 │     function total() public returns (uint256) {}
     │              ──┬──  
-    │                ╰──── def: 2
+    │                ╰──── name: 2
     │ 
   4 │ contract B is A {
     │          ┬    ┬  
-    │          ╰─────── def: 3
+    │          ╰─────── name: 3
     │               │  
     │               ╰── ref: 1
   5 │     using Lib for uint256;
@@ -20,7 +20,7 @@ References and definitions:
     │            ╰─── ref: 5
   6 │     function total() public returns (uint256) {
     │              ──┬──  
-    │                ╰──── def: 4
+    │                ╰──── name: 4
   7 │         return super.total().nop();
     │                      ──┬──   ─┬─  
     │                        ╰────────── ref: 2
@@ -29,12 +29,12 @@ References and definitions:
     │ 
  10 │ library Lib {
     │         ─┬─  
-    │          ╰─── def: 5
+    │          ╰─── name: 5
  11 │     function nop(uint256 x) internal returns (uint256) {}
     │              ─┬─         ┬  
-    │               ╰───────────── def: 6
+    │               ╰───────────── name: 6
     │                          │  
-    │                          ╰── def: 7
+    │                          ╰── name: 7
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

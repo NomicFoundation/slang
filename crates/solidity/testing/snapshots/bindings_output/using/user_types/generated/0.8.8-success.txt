@@ -5,11 +5,11 @@ References and definitions:
     │
   1 │ type ShortString is bytes32;
     │      ─────┬─────  
-    │           ╰─────── def: 1
+    │           ╰─────── name: 1
     │ 
   3 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 2
+    │            ╰─── name: 2
   4 │     using Lib for ShortString;
     │           ─┬─     ─────┬─────  
     │            ╰─────────────────── ref: 6
@@ -21,14 +21,14 @@ References and definitions:
     │ 
   7 │     function test(bytes32 data) public {
     │              ──┬─         ──┬─  
-    │                ╰──────────────── def: 3
+    │                ╰──────────────── name: 3
     │                             │   
-    │                             ╰─── def: 4
+    │                             ╰─── name: 4
   8 │         ShortString s;
     │         ─────┬───── ┬  
     │              ╰───────── ref: 1
     │                     │  
-    │                     ╰── def: 5
+    │                     ╰── name: 5
     │ 
  10 │         ShortString.wrap(data).nop();
     │         ─────┬───── ──┬─ ──┬─  ─┬─  
@@ -51,19 +51,19 @@ References and definitions:
     │ 
  15 │ library Lib {
     │         ─┬─  
-    │          ╰─── def: 6
+    │          ╰─── name: 6
  16 │     function nop(ShortString x) internal {}
     │              ─┬─ ─────┬───── ┬  
-    │               ╰───────────────── def: 7
+    │               ╰───────────────── name: 7
     │                       │      │  
     │                       ╰───────── ref: 1
     │                              │  
-    │                              ╰── def: 8
+    │                              ╰── name: 8
  17 │     function pon(bytes32 x) internal {}
     │              ─┬─         ┬  
-    │               ╰───────────── def: 9
+    │               ╰───────────── name: 9
     │                          │  
-    │                          ╰── def: 10
+    │                          ╰── name: 10
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

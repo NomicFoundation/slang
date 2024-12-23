@@ -5,22 +5,22 @@ References and definitions:
    │
  1 │ library Lib {
    │         ─┬─  
-   │          ╰─── def: 1
+   │          ╰─── name: 1
  2 │     function nop(uint256 x) internal {}
    │              ─┬─         ┬  
-   │               ╰───────────── def: 2
+   │               ╰───────────── name: 2
    │                          │  
-   │                          ╰── def: 3
+   │                          ╰── name: 3
    │ 
  4 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 4
+   │            ╰─── name: 4
  5 │     using Lib for uint256;
    │           ─┬─  
    │            ╰─── ref: 1
  6 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 5
+   │                ╰─── name: 5
  7 │         (50 * 10**uint(4)).nop();
    │                            ─┬─  
    │                             ╰─── ref: 2

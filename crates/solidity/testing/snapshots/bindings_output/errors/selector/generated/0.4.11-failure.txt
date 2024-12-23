@@ -13,16 +13,16 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     error TestError();
    │     ──┬── ────┬────  
    │       ╰────────────── unresolved
    │               │      
-   │               ╰────── def: 2
+   │               ╰────── name: 2
    │ 
  4 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 3
+   │                ╰─── name: 3
  5 │         TestError.selector;
    │         ────┬──── ────┬───  
    │             ╰─────────────── ref: 2

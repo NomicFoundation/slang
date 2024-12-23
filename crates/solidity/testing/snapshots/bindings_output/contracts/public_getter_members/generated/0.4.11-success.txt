@@ -5,21 +5,21 @@ References and definitions:
    │
  1 │ contract Base {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     address public owner;
    │                    ──┬──  
-   │                      ╰──── def: 2
+   │                      ╰──── name: 2
    │ 
  4 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 3
+   │            ╰─── name: 3
  5 │     function test(Base base) public {
    │              ──┬─ ──┬─ ──┬─  
-   │                ╰───────────── def: 4
+   │                ╰───────────── name: 4
    │                     │    │   
    │                     ╰──────── ref: 1
    │                          │   
-   │                          ╰─── def: 5
+   │                          ╰─── name: 5
  6 │         base.owner().balance;
    │         ──┬─ ──┬──   ───┬───  
    │           ╰─────────────────── ref: 5

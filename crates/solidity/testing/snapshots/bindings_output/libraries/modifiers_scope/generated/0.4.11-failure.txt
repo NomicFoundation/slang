@@ -20,21 +20,21 @@ References and definitions:
    │
  1 │ library Lib {
    │         ─┬─  
-   │          ╰─── def: 1
+   │          ╰─── name: 1
  2 │   error IndexOutOfBounds();
    │   ──┬── ────────┬───────  
    │     ╰───────────────────── unresolved
    │                 │         
-   │                 ╰───────── def: 2
+   │                 ╰───────── name: 2
    │ 
  4 │   modifier test() {
    │            ──┬─  
-   │              ╰─── def: 3
+   │              ╰─── name: 3
  5 │     revert IndexOutOfBounds();
    │     ───┬── ────────┬───────  
    │        ╰───────────────────── ref: built-in
    │                    │         
-   │                    ╰───────── def: 4
+   │                    ╰───────── name: 4
 ───╯
 Definiens: 
    ╭─[input.sol:1:1]

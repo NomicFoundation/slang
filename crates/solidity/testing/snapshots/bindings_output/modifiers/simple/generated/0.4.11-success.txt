@@ -5,14 +5,14 @@ References and definitions:
     │
   1 │ contract FunctionModifier {
     │          ────────┬───────  
-    │                  ╰───────── def: 1
+    │                  ╰───────── name: 1
   2 │     bool public locked;
     │                 ───┬──  
-    │                    ╰──── def: 2
+    │                    ╰──── name: 2
     │ 
   4 │     modifier noReentrancy() {
     │              ──────┬─────  
-    │                    ╰─────── def: 3
+    │                    ╰─────── name: 3
   5 │         assert(!locked);
     │         ───┬──  ───┬──  
     │            ╰──────────── ref: built-in
@@ -31,7 +31,7 @@ References and definitions:
     │ 
  12 │     function decrement() public noReentrancy {
     │              ────┬────          ──────┬─────  
-    │                  ╰──────────────────────────── def: 4
+    │                  ╰──────────────────────────── name: 4
     │                                       │       
     │                                       ╰─────── ref: 3
 ────╯

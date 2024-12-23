@@ -5,19 +5,19 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     event TestEvent(int id);
    │           ────┬────     ─┬  
-   │               ╰───────────── def: 2
+   │               ╰───────────── name: 2
    │                          │  
-   │                          ╰── def: 3
+   │                          ╰── name: 3
    │ 
  4 │     function test_emit() public {
    │              ────┬────  
-   │                  ╰────── def: 4
+   │                  ╰────── name: 4
  5 │         int x = 1;
    │             ┬  
-   │             ╰── def: 5
+   │             ╰── name: 5
    │ 
  7 │         emit TestEvent(x);
    │              ────┬──── ┬  

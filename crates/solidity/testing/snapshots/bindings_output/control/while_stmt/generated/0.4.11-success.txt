@@ -5,13 +5,13 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  3 │         int i = 1;
    │             ┬  
-   │             ╰── def: 3
+   │             ╰── name: 3
  4 │         while (i < 100) {
    │                ┬  
    │                ╰── ref: 3

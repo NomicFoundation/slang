@@ -5,29 +5,29 @@ References and definitions:
     │
   1 │ contract CrowdFunding {
     │          ──────┬─────  
-    │                ╰─────── def: 1
+    │                ╰─────── name: 1
   2 │     struct Campaign {
     │            ────┬───  
-    │                ╰───── def: 2
+    │                ╰───── name: 2
   3 │         address payable beneficiary;
     │                         ─────┬─────  
-    │                              ╰─────── def: 3
+    │                              ╰─────── name: 3
   4 │         uint fundingGoal;
     │              ─────┬─────  
-    │                   ╰─────── def: 4
+    │                   ╰─────── name: 4
     │ 
   7 │     function newCampaign(address payable beneficiary, uint goal) public {
     │              ─────┬─────                 ─────┬─────       ──┬─  
-    │                   ╰────────────────────────────────────────────── def: 5
+    │                   ╰────────────────────────────────────────────── name: 5
     │                                               │              │   
-    │                                               ╰────────────────── def: 6
+    │                                               ╰────────────────── name: 6
     │                                                              │   
-    │                                                              ╰─── def: 7
+    │                                                              ╰─── name: 7
   8 │         Campaign storage c;
     │         ────┬───         ┬  
     │             ╰─────────────── ref: 2
     │                          │  
-    │                          ╰── def: 8
+    │                          ╰── name: 8
   9 │         c.beneficiary = beneficiary;
     │         ┬ ─────┬─────   ─────┬─────  
     │         ╰──────────────────────────── ref: 8

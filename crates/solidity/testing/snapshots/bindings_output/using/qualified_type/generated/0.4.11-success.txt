@@ -5,30 +5,30 @@ References and definitions:
     │
   1 │ library Lib {
     │         ─┬─  
-    │          ╰─── def: 1
+    │          ╰─── name: 1
   2 │     struct Value {
     │            ──┬──  
-    │              ╰──── def: 2
+    │              ╰──── name: 2
   3 │         int x;
     │             ┬  
-    │             ╰── def: 3
+    │             ╰── name: 3
     │ 
   5 │     function getValue() external returns (Value memory) {}
     │              ────┬───                     ──┬──  
-    │                  ╰─────────────────────────────── def: 4
+    │                  ╰─────────────────────────────── name: 4
     │                                             │    
     │                                             ╰──── ref: 2
   6 │     function use(Value memory x) external {}
     │              ─┬─ ──┬──        ┬  
-    │               ╰────────────────── def: 5
+    │               ╰────────────────── name: 5
     │                    │          │  
     │                    ╰───────────── ref: 2
     │                               │  
-    │                               ╰── def: 6
+    │                               ╰── name: 6
     │ 
   8 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 7
+    │            ╰─── name: 7
   9 │     using Lib for Lib.Value;
     │           ─┬─     ─┬─ ──┬──  
     │            ╰───────────────── ref: 1
@@ -38,7 +38,7 @@ References and definitions:
     │                         ╰──── ref: 2
  10 │     function test() internal {
     │              ──┬─  
-    │                ╰─── def: 8
+    │                ╰─── name: 8
  11 │         Lib.getValue().use();
     │         ─┬─ ────┬───   ─┬─  
     │          ╰────────────────── ref: 1

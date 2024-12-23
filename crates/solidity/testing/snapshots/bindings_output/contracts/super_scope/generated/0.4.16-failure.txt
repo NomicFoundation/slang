@@ -5,22 +5,22 @@ References and definitions:
     │
   4 │ contract A {
     │          ┬  
-    │          ╰── def: 1
+    │          ╰── name: 1
   5 │     function foo() public pure virtual returns (string memory) {
     │              ─┬─               ───┬───  
-    │               ╰───────────────────────── def: 2
+    │               ╰───────────────────────── name: 2
     │                                   │     
     │                                   ╰───── unresolved
     │ 
  10 │ contract B is A {
     │          ┬    ┬  
-    │          ╰─────── def: 3
+    │          ╰─────── name: 3
     │               │  
     │               ╰── ref: 1
     │ 
  12 │     function foo() public pure virtual override(A) returns (string memory) {
     │              ─┬─               ───┬─── ────┬─── ┬  
-    │               ╰──────────────────────────────────── def: 4
+    │               ╰──────────────────────────────────── name: 4
     │                                   │        │    │  
     │                                   ╰──────────────── unresolved
     │                                            │    │  

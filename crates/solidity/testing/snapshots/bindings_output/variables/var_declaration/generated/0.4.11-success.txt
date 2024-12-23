@@ -5,22 +5,22 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     struct Value { int x; }
    │            ──┬──       ┬  
-   │              ╰──────────── def: 2
+   │              ╰──────────── name: 2
    │                        │  
-   │                        ╰── def: 3
+   │                        ╰── name: 3
  3 │     function test(Value memory value) public {
    │              ──┬─ ──┬──        ──┬──  
-   │                ╰────────────────────── def: 4
+   │                ╰────────────────────── name: 4
    │                     │            │    
    │                     ╰───────────────── ref: 2
    │                                  │    
-   │                                  ╰──── def: 5
+   │                                  ╰──── name: 5
  4 │         var v = value;
    │             ┬   ──┬──  
-   │             ╰────────── def: 6
+   │             ╰────────── name: 6
    │                   │    
    │                   ╰──── ref: 5
  5 │         v.x;

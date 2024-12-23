@@ -5,27 +5,27 @@ References and definitions:
     │
   1 │ library Lib {
     │         ─┬─  
-    │          ╰─── def: 1
+    │          ╰─── name: 1
   2 │     uint private constant X = 1;
     │                           ┬  
-    │                           ╰── def: 2
+    │                           ╰── name: 2
   3 │     uint public constant Y = 2;
     │                          ┬  
-    │                          ╰── def: 3
+    │                          ╰── name: 3
     │ 
   5 │     function test() public returns (uint) {
     │              ──┬─  
-    │                ╰─── def: 4
+    │                ╰─── name: 4
   6 │         return X;
     │                ┬  
     │                ╰── ref: 2
     │ 
  10 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 5
+    │            ╰─── name: 5
  11 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 6
+    │                ╰─── name: 6
  12 │         Lib.Y;
     │         ─┬─ ┬  
     │          ╰───── ref: 1

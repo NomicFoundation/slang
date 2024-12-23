@@ -5,18 +5,18 @@ References and definitions:
     │
   1 │ struct Counter {
     │        ───┬───  
-    │           ╰───── def: 1
+    │           ╰───── name: 1
   2 │     uint value;
     │          ──┬──  
-    │            ╰──── def: 2
+    │            ╰──── name: 2
     │ 
   5 │ function increment(Counter memory _counter) public {}
     │          ────┬──── ───┬───        ────┬───  
-    │              ╰────────────────────────────── def: 3
+    │              ╰────────────────────────────── name: 3
     │                       │               │     
     │                       ╰───────────────────── ref: 1
     │                                       │     
-    │                                       ╰───── def: 4
+    │                                       ╰───── name: 4
     │ 
   7 │ using {increment} for Counter;
     │        ────┬────      ───┬───  
@@ -26,14 +26,14 @@ References and definitions:
     │ 
   9 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 5
+    │            ╰─── name: 5
  10 │     function test(Counter memory c) public {
     │              ──┬─ ───┬───        ┬  
-    │                ╰──────────────────── def: 6
+    │                ╰──────────────────── name: 6
     │                      │           │  
     │                      ╰────────────── ref: 1
     │                                  │  
-    │                                  ╰── def: 7
+    │                                  ╰── name: 7
  11 │         c.increment();
     │         ┬ ────┬────  
     │         ╰──────────── ref: 7

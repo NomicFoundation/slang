@@ -5,53 +5,53 @@ References and definitions:
     │
   1 │ contract BuiltInsTest {
     │          ──────┬─────  
-    │                ╰─────── def: 1
+    │                ╰─────── name: 1
   2 │     function testRequire() public {
     │              ─────┬─────  
-    │                   ╰─────── def: 2
+    │                   ╰─────── name: 2
   3 │         require(true, "should always succeed");
     │         ───┬───  
     │            ╰───── ref: built-in
     │ 
   6 │     function testRevert() public {
     │              ─────┬────  
-    │                   ╰────── def: 3
+    │                   ╰────── name: 3
   7 │         revert("testing revert");
     │         ───┬──  
     │            ╰──── ref: built-in
     │ 
  10 │     function testAssert() public {
     │              ─────┬────  
-    │                   ╰────── def: 4
+    │                   ╰────── name: 4
  11 │         assert(2 + 2 == 4);
     │         ───┬──  
     │            ╰──── ref: built-in
     │ 
  14 │     function testMath() public {
     │              ────┬───  
-    │                  ╰───── def: 5
+    │                  ╰───── name: 5
  15 │         bytes memory x1;
     │                      ─┬  
-    │                       ╰── def: 6
+    │                       ╰── name: 6
     │ 
  17 │         uint v1 = addmod(1, 2, 3);
     │              ─┬   ───┬──  
-    │               ╰─────────── def: 7
+    │               ╰─────────── name: 7
     │                      │    
     │                      ╰──── ref: built-in
  18 │         bytes32 v2 = blockhash(1);
     │                 ─┬   ────┬────  
-    │                  ╰────────────── def: 8
+    │                  ╰────────────── name: 8
     │                          │      
     │                          ╰────── unresolved
  19 │         bytes32 v3 = blobhash(2);
     │                 ─┬   ────┬───  
-    │                  ╰───────────── def: 9
+    │                  ╰───────────── name: 9
     │                          │     
     │                          ╰───── unresolved
  20 │         address v4 = ecrecover(v2, 1, v2, v2);
     │                 ─┬   ────┬──── ─┬     ─┬  ─┬  
-    │                  ╰──────────────────────────── def: 10
+    │                  ╰──────────────────────────── name: 10
     │                          │      │      │   │  
     │                          ╰──────────────────── ref: built-in
     │                                 │      │   │  
@@ -62,31 +62,31 @@ References and definitions:
     │                                            ╰── ref: 8
  21 │         uint256 v5 = gasleft();
     │                 ─┬   ───┬───  
-    │                  ╰──────────── def: 11
+    │                  ╰──────────── name: 11
     │                         │     
     │                         ╰───── unresolved
  22 │         bytes32 v6 = keccak256(x1);
     │                 ─┬   ────┬──── ─┬  
-    │                  ╰───────────────── def: 12
+    │                  ╰───────────────── name: 12
     │                          │      │  
     │                          ╰───────── ref: built-in
     │                                 │  
     │                                 ╰── ref: 6
  23 │         uint v7 = mulmod(1, 2, 3);
     │              ─┬   ───┬──  
-    │               ╰─────────── def: 13
+    │               ╰─────────── name: 13
     │                      │    
     │                      ╰──── ref: built-in
  24 │         bytes20 v8 = ripemd160(x1);
     │                 ─┬   ────┬──── ─┬  
-    │                  ╰───────────────── def: 14
+    │                  ╰───────────────── name: 14
     │                          │      │  
     │                          ╰───────── ref: built-in
     │                                 │  
     │                                 ╰── ref: 6
  25 │         bytes32 v9 = sha256(x1);
     │                 ─┬   ───┬── ─┬  
-    │                  ╰────────────── def: 15
+    │                  ╰────────────── name: 15
     │                         │    │  
     │                         ╰─────── ref: built-in
     │                              │  
@@ -94,20 +94,20 @@ References and definitions:
     │ 
  28 │     function testSelfDestruct() public {
     │              ────────┬───────  
-    │                      ╰───────── def: 16
+    │                      ╰───────── name: 16
  29 │         selfdestruct(address(0x0));
     │         ──────┬─────  
     │               ╰─────── ref: built-in
     │ 
  32 │     function testAbiFunctions() public {
     │              ────────┬───────  
-    │                      ╰───────── def: 17
+    │                      ╰───────── name: 17
  33 │         bytes memory x1;
     │                      ─┬  
-    │                       ╰── def: 18
+    │                       ╰── name: 18
  34 │         uint v1 = abi.decode(x1, (uint));
     │              ─┬   ─┬─ ───┬── ─┬  
-    │               ╰────────────────── def: 19
+    │               ╰────────────────── name: 19
     │                    │     │    │  
     │                    ╰───────────── ref: built-in
     │                          │    │  
@@ -116,7 +116,7 @@ References and definitions:
     │                               ╰── ref: 18
  35 │         bytes memory v2 = abi.encode(v1);
     │                      ─┬   ─┬─ ───┬── ─┬  
-    │                       ╰────────────────── def: 20
+    │                       ╰────────────────── name: 20
     │                            │     │    │  
     │                            ╰───────────── ref: built-in
     │                                  │    │  
@@ -125,7 +125,7 @@ References and definitions:
     │                                       ╰── ref: 19
  36 │         bytes memory v3 = abi.encodeCall(this.testMath, (1, 2, 3));
     │                      ─┬   ─┬─ ─────┬────      ────┬───  
-    │                       ╰───────────────────────────────── def: 21
+    │                       ╰───────────────────────────────── name: 21
     │                            │       │              │     
     │                            ╰──────────────────────────── ref: built-in
     │                                    │              │     
@@ -134,14 +134,14 @@ References and definitions:
     │                                                   ╰───── ref: 5
  37 │         bytes memory v4 = abi.encodePacked(10, 20);
     │                      ─┬   ─┬─ ──────┬─────  
-    │                       ╰───────────────────── def: 22
+    │                       ╰───────────────────── name: 22
     │                            │        │       
     │                            ╰──────────────── ref: built-in
     │                                     │       
     │                                     ╰─────── unresolved
  38 │         bytes memory v5 = abi.encodeWithSelector(this.testMath.selector, (1, 2, 3));
     │                      ─┬   ─┬─ ─────────┬────────      ────┬─── ────┬───  
-    │                       ╰────────────────────────────────────────────────── def: 23
+    │                       ╰────────────────────────────────────────────────── name: 23
     │                            │           │                  │        │     
     │                            ╰───────────────────────────────────────────── ref: built-in
     │                                        │                  │        │     
@@ -152,10 +152,10 @@ References and definitions:
     │                                                                    ╰───── ref: built-in
  39 │         string memory x2;
     │                       ─┬  
-    │                        ╰── def: 24
+    │                        ╰── name: 24
  40 │         bytes memory v6 = abi.encodeWithSignature(x2, (1, 2, 3));
     │                      ─┬   ─┬─ ─────────┬───────── ─┬  
-    │                       ╰─────────────────────────────── def: 25
+    │                       ╰─────────────────────────────── name: 25
     │                            │           │           │  
     │                            ╰────────────────────────── ref: built-in
     │                                        │           │  

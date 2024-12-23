@@ -5,20 +5,20 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     error Failure(
    │           ───┬───  
-   │              ╰───── def: 2
+   │              ╰───── name: 2
  3 │         uint severity,
    │              ────┬───  
-   │                  ╰───── def: 3
+   │                  ╰───── name: 3
  4 │         string cause
    │                ──┬──  
-   │                  ╰──── def: 4
+   │                  ╰──── name: 4
    │ 
  7 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 5
+   │                ╰─── name: 5
  8 │         revert Failure({severity: 100, cause: "Testing"});
    │                ───┬───  ────┬───       ──┬──  
    │                   ╰─────────────────────────── ref: 2

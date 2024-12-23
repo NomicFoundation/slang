@@ -22,31 +22,31 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     enum Severity {
     │          ────┬───  
-    │              ╰───── def: 2
+    │              ╰───── name: 2
   3 │         INFO,
     │         ──┬─  
-    │           ╰─── def: 3
+    │           ╰─── name: 3
   4 │         ERROR
     │         ──┬──  
-    │           ╰──── def: 4
+    │           ╰──── name: 4
     │ 
   7 │     error Failure(
     │     ──┬── ───┬───  
     │       ╰──────────── unresolved
     │              │     
-    │              ╰───── def: 5
+    │              ╰───── name: 5
     │ 
  12 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 6
+    │                ╰─── name: 6
  13 │         revert Failure(Severity.ERROR, "Testing");
     │         ───┬── ───┬───  
     │            ╰──────────── refs: built-in, built-in
     │                   │     
-    │                   ╰───── def: 7
+    │                   ╰───── name: 7
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

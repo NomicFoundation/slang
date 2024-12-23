@@ -5,16 +5,16 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  3 │         int x = 1;
    │             ┬  
-   │             ╰── def: 3
+   │             ╰── name: 3
  4 │         for (int i = 0;; i++) {
    │                  ┬       ┬  
-   │                  ╰────────── def: 4
+   │                  ╰────────── name: 4
    │                          │  
    │                          ╰── ref: 4
  5 │             x = x * 2;

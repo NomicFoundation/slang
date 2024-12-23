@@ -5,22 +5,22 @@ References and definitions:
    │
  1 │ contract RefundVault {
    │          ─────┬─────  
-   │               ╰─────── def: 1
+   │               ╰─────── name: 1
  2 │     function deposit() public payable {}
    │              ───┬───  
-   │                 ╰───── def: 2
+   │                 ╰───── name: 2
    │ 
  4 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 3
+   │            ╰─── name: 3
  5 │     RefundVault public vault;
    │     ─────┬─────        ──┬──  
    │          ╰──────────────────── ref: 1
    │                          │    
-   │                          ╰──── def: 4
+   │                          ╰──── name: 4
  6 │     function test() internal {
    │              ──┬─  
-   │                ╰─── def: 5
+   │                ╰─── name: 5
  7 │         vault.deposit.value(msg.value)();
    │         ──┬── ───┬─── ──┬── ─┬─ ──┬──  
    │           ╰──────────────────────────── ref: 4

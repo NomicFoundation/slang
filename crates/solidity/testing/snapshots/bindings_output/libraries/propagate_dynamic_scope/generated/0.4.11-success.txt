@@ -5,36 +5,36 @@ References and definitions:
     │
   1 │ interface IERC20Upgradable {
     │           ────────┬───────  
-    │                   ╰───────── def: 1
+    │                   ╰───────── name: 1
   2 │     function allowance(address owner) external returns (uint256);
     │              ────┬────         ──┬──  
-    │                  ╰──────────────────── def: 2
+    │                  ╰──────────────────── name: 2
     │                                  │    
-    │                                  ╰──── def: 3
+    │                                  ╰──── name: 3
     │ 
   4 │ library Math {
     │         ──┬─  
-    │           ╰─── def: 4
+    │           ╰─── name: 4
   5 │     function nop(uint256 x) public {}
     │              ─┬─         ┬  
-    │               ╰───────────── def: 5
+    │               ╰───────────── name: 5
     │                          │  
-    │                          ╰── def: 6
+    │                          ╰── name: 6
     │ 
   7 │ library Test {
     │         ──┬─  
-    │           ╰─── def: 7
+    │           ╰─── name: 7
   8 │     using Math for uint256;
     │           ──┬─  
     │             ╰─── ref: 4
     │ 
  10 │     function test(IERC20Upgradable token) internal {
     │              ──┬─ ────────┬─────── ──┬──  
-    │                ╰────────────────────────── def: 8
+    │                ╰────────────────────────── name: 8
     │                           │          │    
     │                           ╰─────────────── ref: 1
     │                                      │    
-    │                                      ╰──── def: 9
+    │                                      ╰──── name: 9
  11 │         token.allowance(msg.sender).nop();
     │         ──┬── ────┬──── ─┬─ ───┬──  ─┬─  
     │           ╰────────────────────────────── ref: 9

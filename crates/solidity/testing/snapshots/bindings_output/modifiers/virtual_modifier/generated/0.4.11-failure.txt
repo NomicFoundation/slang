@@ -21,19 +21,19 @@ References and definitions:
    │
  1 │ contract Base {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     modifier foo virtual { _; }
    │              ─┬─  
-   │               ╰─── def: 2
+   │               ╰─── name: 2
    │ 
  5 │ contract Test is Base {
    │          ──┬─    ──┬─  
-   │            ╰─────────── def: 3
+   │            ╰─────────── name: 3
    │                    │   
    │                    ╰─── ref: 1
  6 │     modifier foo override(Base) { _; }
    │              ─┬─  
-   │               ╰─── def: 4
+   │               ╰─── name: 4
 ───╯
 Definiens: 
    ╭─[input.sol:1:1]

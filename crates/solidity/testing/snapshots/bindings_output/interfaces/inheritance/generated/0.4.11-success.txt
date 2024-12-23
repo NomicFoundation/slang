@@ -5,40 +5,40 @@ References and definitions:
     │
   1 │ interface Counter {
     │           ───┬───  
-    │              ╰───── def: 1
+    │              ╰───── name: 1
   2 │     enum Type { up, down }
     │          ──┬─   ─┬  ──┬─  
-    │            ╰────────────── def: 2
+    │            ╰────────────── name: 2
     │                  │    │   
-    │                  ╰──────── def: 3
+    │                  ╰──────── name: 3
     │                       │   
-    │                       ╰─── def: 4
+    │                       ╰─── name: 4
   3 │     function count() external returns (uint);
     │              ──┬──  
-    │                ╰──── def: 5
+    │                ╰──── name: 5
     │ 
   6 │ interface MutableCounter is Counter {
     │           ───────┬──────    ───┬───  
-    │                  ╰─────────────────── def: 6
+    │                  ╰─────────────────── name: 6
     │                                │     
     │                                ╰───── ref: 1
   7 │     function increment() external;
     │              ────┬────  
-    │                  ╰────── def: 7
+    │                  ╰────── name: 7
     │ 
  10 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 8
+    │            ╰─── name: 8
  11 │     function test(address _counter) public returns (uint) {
     │              ──┬─         ────┬───  
-    │                ╰──────────────────── def: 9
+    │                ╰──────────────────── name: 9
     │                               │     
-    │                               ╰───── def: 10
+    │                               ╰───── name: 10
  12 │         MutableCounter m = MutableCounter(_counter);
     │         ───────┬────── ┬   ───────┬────── ────┬───  
     │                ╰──────────────────────────────────── ref: 6
     │                        │          │           │     
-    │                        ╰──────────────────────────── def: 11
+    │                        ╰──────────────────────────── name: 11
     │                                   │           │     
     │                                   ╰───────────────── ref: 6
     │                                               │     
@@ -49,7 +49,7 @@ References and definitions:
     │                          │  │  
     │                          ╰───── ref: 2
     │                             │  
-    │                             ╰── def: 12
+    │                             ╰── name: 12
  14 │         m.increment();
     │         ┬ ────┬────  
     │         ╰──────────── ref: 11

@@ -5,10 +5,10 @@ References and definitions:
    │
  1 │ library Lib {
    │         ─┬─  
-   │          ╰─── def: 1
+   │          ╰─── name: 1
  2 │     function test() internal returns (uint) {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  3 │         return address(this).balance;
    │                              ───┬───  
    │                                 ╰───── ref: built-in

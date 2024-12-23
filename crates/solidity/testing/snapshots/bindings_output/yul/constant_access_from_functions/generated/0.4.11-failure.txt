@@ -13,20 +13,20 @@ References and definitions:
     │
   1 │ contract InContracts {
     │          ─────┬─────  
-    │               ╰─────── def: 1
+    │               ╰─────── name: 1
   2 │     uint256 private constant CONTRACT_CONST = 1;
     │                              ───────┬──────  
-    │                                     ╰──────── def: 2
+    │                                     ╰──────── name: 2
     │ 
   4 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 3
+    │                ╰─── name: 3
     │ 
   6 │             function swap(emptyPtr) {
     │                      ──┬─ ────┬───  
-    │                        ╰──────────── def: 4
+    │                        ╰──────────── name: 4
     │                               │     
-    │                               ╰───── def: 5
+    │                               ╰───── name: 5
   7 │                 mstore(emptyPtr, CONTRACT_CONST)
     │                        ────┬───  ───────┬──────  
     │                            ╰───────────────────── ref: 5
@@ -40,20 +40,20 @@ References and definitions:
     │ 
  14 │ library InLibraries {
     │         ─────┬─────  
-    │              ╰─────── def: 6
+    │              ╰─────── name: 6
  15 │     uint256 private constant LIB_CONST = 2;
     │                              ────┬────  
-    │                                  ╰────── def: 7
+    │                                  ╰────── name: 7
     │ 
  17 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 8
+    │                ╰─── name: 8
     │ 
  19 │             function swap(emptyPtr) {
     │                      ──┬─ ────┬───  
-    │                        ╰──────────── def: 9
+    │                        ╰──────────── name: 9
     │                               │     
-    │                               ╰───── def: 10
+    │                               ╰───── name: 10
  20 │                 mstore(emptyPtr, LIB_CONST)
     │                        ────┬───  ────┬────  
     │                            ╰──────────────── ref: 10

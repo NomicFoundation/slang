@@ -5,16 +5,16 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test_non_decl_init() public {
    │              ─────────┬────────  
-   │                       ╰────────── def: 2
+   │                       ╰────────── name: 2
  3 │         int z;
    │             ┬  
-   │             ╰── def: 3
+   │             ╰── name: 3
  4 │         int w = 0;
    │             ┬  
-   │             ╰── def: 4
+   │             ╰── name: 4
  5 │         for (z = 10; z > 0; w += z) {
    │              ┬       ┬      ┬    ┬  
    │              ╰────────────────────── ref: 3

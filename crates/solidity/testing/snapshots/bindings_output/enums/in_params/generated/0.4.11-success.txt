@@ -5,30 +5,30 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     enum Answer { Yes, No }
     │          ───┬──   ─┬─  ─┬  
-    │             ╰────────────── def: 2
+    │             ╰────────────── name: 2
     │                    │    │  
-    │                    ╰─────── def: 3
+    │                    ╰─────── name: 3
     │                         │  
-    │                         ╰── def: 4
+    │                         ╰── name: 4
     │ 
   4 │     function setAnswer(Answer ans) {
     │              ────┬──── ───┬── ─┬─  
-    │                  ╰───────────────── def: 5
+    │                  ╰───────────────── name: 5
     │                           │    │   
     │                           ╰──────── ref: 2
     │                                │   
-    │                                ╰─── def: 6
+    │                                ╰─── name: 6
     │ 
   7 │     function getAnswer() returns (Answer ans) {
     │              ────┬────            ───┬── ─┬─  
-    │                  ╰──────────────────────────── def: 7
+    │                  ╰──────────────────────────── name: 7
     │                                      │    │   
     │                                      ╰──────── ref: 2
     │                                           │   
-    │                                           ╰─── def: 8
+    │                                           ╰─── name: 8
   8 │         ans = Answer.Yes;
     │         ─┬─   ───┬── ─┬─  
     │          ╰──────────────── ref: 8
@@ -39,7 +39,7 @@ References and definitions:
     │ 
  11 │     function getOtherAnswer() returns (Answer) {
     │              ───────┬──────            ───┬──  
-    │                     ╰────────────────────────── def: 9
+    │                     ╰────────────────────────── name: 9
     │                                           │    
     │                                           ╰──── ref: 2
  12 │         return Answer.No;

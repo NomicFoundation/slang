@@ -5,20 +5,20 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     event Log(
    │           ─┬─  
-   │            ╰─── def: 2
+   │            ╰─── name: 2
  3 │         string name,
    │                ──┬─  
-   │                  ╰─── def: 3
+   │                  ╰─── name: 3
  4 │         uint level
    │              ──┬──  
-   │                ╰──── def: 4
+   │                ╰──── name: 4
    │ 
  7 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 5
+   │                ╰─── name: 5
  8 │         emit Log({level: 1, name: "Testing"});
    │              ─┬─  ──┬──     ──┬─  
    │               ╰─────────────────── ref: 2

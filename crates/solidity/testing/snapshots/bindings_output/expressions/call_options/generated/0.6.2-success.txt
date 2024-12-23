@@ -5,28 +5,28 @@ References and definitions:
    │
  1 │ interface External {
    │           ────┬───  
-   │               ╰───── def: 1
+   │               ╰───── name: 1
  2 │     struct Data { uint value; }
    │            ──┬─        ──┬──  
-   │              ╰──────────────── def: 2
+   │              ╰──────────────── name: 2
    │                          │    
-   │                          ╰──── def: 3
+   │                          ╰──── name: 3
  3 │     function sample() external payable returns (Data memory);
    │              ───┬──                             ──┬─  
-   │                 ╰───────────────────────────────────── def: 4
+   │                 ╰───────────────────────────────────── name: 4
    │                                                   │   
    │                                                   ╰─── ref: 2
    │ 
  6 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 5
+   │            ╰─── name: 5
  7 │     function test(External ext) public returns (uint) {
    │              ──┬─ ────┬─── ─┬─  
-   │                ╰──────────────── def: 6
+   │                ╰──────────────── name: 6
    │                       │     │   
    │                       ╰───────── ref: 1
    │                             │   
-   │                             ╰─── def: 7
+   │                             ╰─── name: 7
  8 │         return ext.sample{ value: 10, gas: 20 }().value;
    │                ─┬─ ───┬──  ──┬──      ─┬─         ──┬──  
    │                 ╰──────────────────────────────────────── ref: 7

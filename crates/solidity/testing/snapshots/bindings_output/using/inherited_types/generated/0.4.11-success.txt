@@ -5,41 +5,41 @@ References and definitions:
     │
   1 │ interface IPool {
     │           ──┬──  
-    │             ╰──── def: 1
+    │             ╰──── name: 1
   2 │     struct Info {
     │            ──┬─  
-    │              ╰─── def: 2
+    │              ╰─── name: 2
   3 │         uint256 amount;
     │                 ───┬──  
-    │                    ╰──── def: 3
+    │                    ╰──── name: 3
     │ 
   6 │ library Math {
     │         ──┬─  
-    │           ╰─── def: 4
+    │           ╰─── name: 4
   7 │     function nop(uint256 x) public {}
     │              ─┬─         ┬  
-    │               ╰───────────── def: 5
+    │               ╰───────────── name: 5
     │                          │  
-    │                          ╰── def: 6
+    │                          ╰── name: 6
     │ 
   9 │ contract Test is IPool {
     │          ──┬─    ──┬──  
-    │            ╰──────────── def: 7
+    │            ╰──────────── name: 7
     │                    │    
     │                    ╰──── ref: 1
  10 │     mapping(uint256 => Info) infos;
     │                        ──┬─  ──┬──  
     │                          ╰────────── ref: 2
     │                                │    
-    │                                ╰──── def: 8
+    │                                ╰──── name: 8
  11 │     using Math for uint256;
     │           ──┬─  
     │             ╰─── ref: 4
  12 │     function test(uint256 x) public {
     │              ──┬─         ┬  
-    │                ╰───────────── def: 9
+    │                ╰───────────── name: 9
     │                           │  
-    │                           ╰── def: 10
+    │                           ╰── name: 10
  13 │         infos[x].amount.nop();
     │         ──┬── ┬  ───┬── ─┬─  
     │           ╰────────────────── ref: 8

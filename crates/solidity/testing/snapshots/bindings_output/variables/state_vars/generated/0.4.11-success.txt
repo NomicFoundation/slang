@@ -5,14 +5,14 @@ References and definitions:
    │
  1 │ contract Foo {
    │          ─┬─  
-   │           ╰─── def: 1
+   │           ╰─── name: 1
  2 │     uint x;
    │          ┬  
-   │          ╰── def: 2
+   │          ╰── name: 2
    │ 
  4 │     function bar() returns (uint) {
    │              ─┬─  
-   │               ╰─── def: 3
+   │               ╰─── name: 3
  5 │         return x;
    │                ┬  
    │                ╰── ref: 2

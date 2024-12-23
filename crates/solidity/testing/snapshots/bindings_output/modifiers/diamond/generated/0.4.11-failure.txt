@@ -27,39 +27,39 @@ References and definitions:
     │
   1 │ contract Base {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     modifier foo virtual { _; }
     │              ─┬─  
-    │               ╰─── def: 2
+    │               ╰─── name: 2
     │ 
   5 │ contract A is Base {
     │          ┬    ──┬─  
-    │          ╰────────── def: 3
+    │          ╰────────── name: 3
     │                 │   
     │                 ╰─── ref: 1
   6 │     modifier foo virtual override { _; }
     │              ─┬─  
-    │               ╰─── def: 4
+    │               ╰─── name: 4
     │ 
   9 │ contract B is Base {
     │          ┬    ──┬─  
-    │          ╰────────── def: 5
+    │          ╰────────── name: 5
     │                 │   
     │                 ╰─── ref: 1
  10 │     modifier foo virtual override { _; }
     │              ─┬─  
-    │               ╰─── def: 6
+    │               ╰─── name: 6
     │ 
  13 │ contract Test is B, A {
     │          ──┬─    ┬  ┬  
-    │            ╰─────────── def: 7
+    │            ╰─────────── name: 7
     │                  │  │  
     │                  ╰───── ref: 5
     │                     │  
     │                     ╰── ref: 3
  14 │     function test() public foo {}
     │              ──┬─          ─┬─  
-    │                ╰──────────────── def: 8
+    │                ╰──────────────── name: 8
     │                             │   
     │                             ╰─── ref: 4
 ────╯

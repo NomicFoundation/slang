@@ -5,15 +5,15 @@ References and definitions:
     │
   1 │ contract RegistrarAccess {
     │          ───────┬───────  
-    │                 ╰───────── def: 1
+    │                 ╰───────── name: 1
   2 │     Root root;
     │     ──┬─ ──┬─  
     │       ╰──────── ref: 4
     │            │   
-    │            ╰─── def: 2
+    │            ╰─── name: 2
   3 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 3
+    │                ╰─── name: 3
   4 │         root.controllers;
     │         ──┬─ ─────┬─────  
     │           ╰─────────────── ref: 2
@@ -22,16 +22,16 @@ References and definitions:
     │ 
   8 │ contract Root is Controllable {}
     │          ──┬─    ──────┬─────  
-    │            ╰─────────────────── def: 4
+    │            ╰─────────────────── name: 4
     │                        │       
     │                        ╰─────── ref: 5
     │ 
  10 │ contract Controllable {
     │          ──────┬─────  
-    │                ╰─────── def: 5
+    │                ╰─────── name: 5
  11 │     mapping (address => bool) public controllers;
     │                                      ─────┬─────  
-    │                                           ╰─────── def: 6
+    │                                           ╰─────── name: 6
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

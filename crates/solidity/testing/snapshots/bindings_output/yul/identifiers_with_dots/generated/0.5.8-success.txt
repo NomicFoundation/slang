@@ -5,17 +5,17 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
    │ 
  4 │             let x.y.z := 0
    │                 ──┬──  
-   │                   ╰──── def: 3
+   │                   ╰──── name: 3
  5 │             let r := add(x.y.z, 20)
    │                 ┬        ──┬──  
-   │                 ╰─────────────── def: 4
+   │                 ╰─────────────── name: 4
    │                            │    
    │                            ╰──── ref: 3
 ───╯

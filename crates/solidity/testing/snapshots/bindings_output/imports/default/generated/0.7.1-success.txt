@@ -5,7 +5,7 @@ References and definitions:
    │
  3 │ function foo() returns (int) {
    │          ─┬─  
-   │           ╰─── def: 1
+   │           ╰─── name: 1
  4 │     return bar();
    │            ─┬─  
    │             ╰─── ref: 2
@@ -24,7 +24,7 @@ References and definitions:
    │
  1 │ function bar() pure returns (int) {
    │          ─┬─  
-   │           ╰─── def: 2
+   │           ╰─── name: 2
 ───╯
 Definiens: 
    ╭─[other.sol:1:1]

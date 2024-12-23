@@ -5,28 +5,28 @@ References and definitions:
     │
   1 │ contract CustomArrays {
     │          ──────┬─────  
-    │                ╰─────── def: 1
+    │                ╰─────── name: 1
   2 │     struct Value {
     │            ──┬──  
-    │              ╰──── def: 2
+    │              ╰──── name: 2
   3 │         uint value;
     │              ──┬──  
-    │                ╰──── def: 3
+    │                ╰──── name: 3
     │ 
   6 │     Value[] values;
     │     ──┬──   ───┬──  
     │       ╰───────────── ref: 2
     │                │    
-    │                ╰──── def: 4
+    │                ╰──── name: 4
   7 │     Value[][5] matrix;
     │     ──┬──      ───┬──  
     │       ╰──────────────── ref: 2
     │                   │    
-    │                   ╰──── def: 5
+    │                   ╰──── name: 5
     │ 
   9 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 6
+    │                ╰─── name: 6
  10 │         matrix[0][1].value += values[1].value;
     │         ───┬──       ──┬──    ───┬──    ──┬──  
     │            ╰─────────────────────────────────── ref: 5

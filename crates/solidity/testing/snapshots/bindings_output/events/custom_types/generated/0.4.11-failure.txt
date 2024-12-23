@@ -13,37 +13,37 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     enum Severity {
     │          ────┬───  
-    │              ╰───── def: 2
+    │              ╰───── name: 2
   3 │         INFO,
     │         ──┬─  
-    │           ╰─── def: 3
+    │           ╰─── name: 3
   4 │         ERROR
     │         ──┬──  
-    │           ╰──── def: 4
+    │           ╰──── name: 4
     │ 
   7 │     event Log(
     │           ─┬─  
-    │            ╰─── def: 5
+    │            ╰─── name: 5
   8 │         Severity level,
     │         ────┬─── ──┬──  
     │             ╰─────────── ref: 2
     │                    │    
-    │                    ╰──── def: 6
+    │                    ╰──── name: 6
   9 │         string name
     │                ──┬─  
-    │                  ╰─── def: 7
+    │                  ╰─── name: 7
     │ 
  12 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 8
+    │                ╰─── name: 8
  13 │         emit Log(Severity.INFO, "Testing");
     │         ──┬─ ─┬─  
     │           ╰─────── unresolved
     │               │   
-    │               ╰─── def: 9
+    │               ╰─── name: 9
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

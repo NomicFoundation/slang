@@ -5,17 +5,17 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     struct Value {
    │            ──┬──  
-   │              ╰──── def: 2
+   │              ╰──── name: 2
  3 │         int x;
    │             ┬  
-   │             ╰── def: 3
+   │             ╰── name: 3
    │ 
  5 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 4
+   │                ╰─── name: 4
  6 │         Value(10).x;
    │         ──┬──     ┬  
    │           ╰────────── ref: 2
