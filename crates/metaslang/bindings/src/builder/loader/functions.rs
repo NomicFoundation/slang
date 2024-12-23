@@ -63,7 +63,8 @@ mod resolver {
     use metaslang_graph_builder::graph::{Graph, Value};
     use metaslang_graph_builder::ExecutionError;
 
-    use crate::{FileDescriptor, PathResolver};
+    use crate::builder::FileDescriptor;
+    use crate::PathResolver;
 
     pub fn add_functions<KT: KindTypes + 'static>(
         functions: &mut Functions<KT>,
