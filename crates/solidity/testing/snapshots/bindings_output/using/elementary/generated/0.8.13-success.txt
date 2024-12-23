@@ -5,9 +5,9 @@ References and definitions:
    │
  1 │ function square(int value) returns (int) {}
    │          ───┬──     ──┬──  
-   │             ╰────────────── def: 1
+   │             ╰────────────── name: 1
    │                       │    
-   │                       ╰──── def: 2
+   │                       ╰──── name: 2
    │ 
  3 │ using {square} for int;
    │        ───┬──  
@@ -15,12 +15,30 @@ References and definitions:
    │ 
  5 │ function test(int x) returns (int) {
    │          ──┬─     ┬  
-   │            ╰───────── def: 3
+   │            ╰───────── name: 3
    │                   │  
-   │                   ╰── def: 4
+   │                   ╰── name: 4
  6 │     return x.square();
    │            ┬ ───┬──  
    │            ╰───────── ref: 4
    │                 │    
    │                 ╰──── ref: 1
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │     function square(int value) returns (int) {}
+   │     ────────────────────┬─┬─────────────────────  
+   │                         ╰───────────────────────── definiens: 2
+   │                           │                       
+   │                           ╰─────────────────────── definiens: 1
+   │ 
+ 4 │ ╭─▶ 
+ 5 │ │   function test(int x) returns (int) {
+   │ │                 ──┬──  
+   │ │                   ╰──── definiens: 4
+   ┆ ┆   
+ 7 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 3
 ───╯

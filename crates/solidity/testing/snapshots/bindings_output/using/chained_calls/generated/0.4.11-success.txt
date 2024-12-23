@@ -5,47 +5,47 @@ References and definitions:
     │
   1 │ library Foo {
     │         ─┬─  
-    │          ╰─── def: 1
+    │          ╰─── name: 1
   2 │     struct Bar {
     │            ─┬─  
-    │             ╰─── def: 2
+    │             ╰─── name: 2
   3 │         uint value;
     │              ──┬──  
-    │                ╰──── def: 3
+    │                ╰──── name: 3
     │ 
   5 │     function noop(uint x) public returns (uint) {}
     │              ──┬─      ┬  
-    │                ╰────────── def: 4
+    │                ╰────────── name: 4
     │                        │  
-    │                        ╰── def: 5
+    │                        ╰── name: 5
   6 │     function bar(uint x) public returns (Bar) {}
     │              ─┬─      ┬                  ─┬─  
-    │               ╰─────────────────────────────── def: 6
+    │               ╰─────────────────────────────── name: 6
     │                       │                   │   
-    │                       ╰─────────────────────── def: 7
+    │                       ╰─────────────────────── name: 7
     │                                           │   
     │                                           ╰─── ref: 2
     │ 
   9 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 8
+    │            ╰─── name: 8
  10 │     using Foo for uint;
     │           ─┬─  
     │            ╰─── ref: 1
  11 │     function test(uint a, Foo.Bar memory b) public {
     │              ──┬─      ┬  ─┬─ ─┬─        ┬  
-    │                ╰──────────────────────────── def: 9
+    │                ╰──────────────────────────── name: 9
     │                        │   │   │         │  
-    │                        ╰──────────────────── def: 10
+    │                        ╰──────────────────── name: 10
     │                            │   │         │  
     │                            ╰──────────────── ref: 1
     │                                │         │  
     │                                ╰──────────── ref: 2
     │                                          │  
-    │                                          ╰── def: 11
+    │                                          ╰── name: 11
  12 │         uint[] memory xs;
     │                       ─┬  
-    │                        ╰── def: 12
+    │                        ╰── name: 12
  13 │         a.noop().noop().noop();
     │         ┬ ──┬─   ──┬─   ──┬─  
     │         ╰───────────────────── ref: 10
@@ -75,4 +75,46 @@ References and definitions:
     │                 ╰────────── ref: 4
     │                        │   
     │                        ╰─── ref: 4
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─│ ▶ library Foo {
+  2 │     │ ╭─▶     struct Bar {
+  3 │     │ │           uint value;
+    │     │ │   ──────────┬─────────  
+    │     │ │             ╰─────────── definiens: 3
+  4 │     │ ├─▶     }
+    │     │ │           
+    │     │ ╰─────────── definiens: 2
+  5 │     │         function noop(uint x) public returns (uint) {}
+    │     │     ─────────────────────┬───┬─────────────────────────  
+    │     │                          ╰─────────────────────────────── definiens: 5
+    │     │                              │                           
+    │     │                              ╰─────────────────────────── definiens: 4
+  6 │     │         function bar(uint x) public returns (Bar) {}
+    │     │     ────────────────────┬───┬────────────────────────  
+    │     │                         ╰────────────────────────────── definiens: 7
+    │     │                             │                          
+    │     │                             ╰────────────────────────── definiens: 6
+  7 │ │   ├───▶ }
+    │ │   │         
+    │ │   ╰───────── definiens: 1
+  8 │ ╭───────▶ 
+    ┆ ┆         
+ 11 │ │ ╭─────▶     function test(uint a, Foo.Bar memory b) public {
+    │ │ │                         ───┬── ────────┬────────  
+    │ │ │                            ╰────────────────────── definiens: 10
+    │ │ │                                        │          
+    │ │ │                                        ╰────────── definiens: 11
+ 12 │ │ │               uint[] memory xs;
+    │ │ │       ─────────────┬────────────  
+    │ │ │                    ╰────────────── definiens: 12
+    ┆ ┆ ┆       
+ 16 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 9
+ 17 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 8
 ────╯

@@ -5,26 +5,49 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     bytes data;
    │           ──┬─  
-   │             ╰─── def: 2
+   │             ╰─── name: 2
  3 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 3
+   │                ╰─── name: 3
    │ 
  5 │             let s := sload(data.slot)
    │                 ┬          ──┬─ ──┬─  
-   │                 ╰───────────────────── def: 4
+   │                 ╰───────────────────── name: 4
    │                              │    │   
    │                              ╰──────── ref: 2
    │                                   │   
    │                                   ╰─── ref: built-in
  6 │             let o := sload(data.offset)
    │                 ┬          ──┬─ ───┬──  
-   │                 ╰─────────────────────── def: 5
+   │                 ╰─────────────────────── name: 5
    │                              │     │    
    │                              ╰────────── ref: 2
    │                                    │    
    │                                    ╰──── ref: built-in
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭───▶ contract Test {
+ 2 │ │ │       bytes data;
+   │ │ │   ────────┬───────  
+   │ │ │           ╰───────── definiens: 2
+ 3 │ │ ╭─▶     function test() public {
+   ┆ ┆ ┆   
+ 5 │ │ │               let s := sload(data.slot)
+   │ │ │   ───────────────────┬──────────────────  
+   │ │ │                      ╰──────────────────── definiens: 4
+ 6 │ │ │               let o := sload(data.offset)
+   │ │ │   ────────────────────┬───────────────────  
+   │ │ │                       ╰───────────────────── definiens: 5
+   ┆ ┆ ┆   
+ 8 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 3
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

@@ -5,17 +5,33 @@ References and definitions:
    │
  1 │ library Test {
    │         ──┬─  
-   │           ╰─── def: 1
+   │           ╰─── name: 1
  2 │     modifier withinRange() {
    │              ─────┬─────  
-   │                   ╰─────── def: 2
+   │                   ╰─────── name: 2
  3 │         _;
    │         ┬  
    │         ╰── ref: built-in
    │ 
  5 │     function test() internal withinRange() {}
    │              ──┬─            ─────┬─────  
-   │                ╰────────────────────────── def: 3
+   │                ╰────────────────────────── name: 3
    │                                   │       
    │                                   ╰─────── ref: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ library Test {
+ 2 │ │ ╭─▶     modifier withinRange() {
+   ┆ ┆ ┆   
+ 4 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 5 │ │         function test() internal withinRange() {}
+   │ │     ───────────────────────┬──────────────────────  
+   │ │                            ╰──────────────────────── definiens: 3
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

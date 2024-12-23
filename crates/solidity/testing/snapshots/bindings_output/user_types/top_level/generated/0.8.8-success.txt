@@ -5,15 +5,15 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public pure returns (uint) {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  3 │         TopLevel tl = TopLevel.wrap(20);
    │         ────┬─── ─┬   ────┬─── ──┬─  
    │             ╰──────────────────────── ref: 4
    │                   │       │      │   
-   │                   ╰────────────────── def: 3
+   │                   ╰────────────────── name: 3
    │                           │      │   
    │                           ╰────────── ref: 4
    │                                  │   
@@ -28,5 +28,25 @@ References and definitions:
    │ 
  8 │ type TopLevel is uint256;
    │      ────┬───  
-   │          ╰───── def: 4
+   │          ╰───── name: 4
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ──▶ contract Test {
+ 2 │ │ ╭───▶     function test() public pure returns (uint) {
+ 3 │ │ │             TopLevel tl = TopLevel.wrap(20);
+   │ │ │     ────────────────────┬────────────────────  
+   │ │ │                         ╰────────────────────── definiens: 3
+   ┆ ┆ ┆     
+ 5 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 2
+ 6 │ ├───│ ▶ }
+   │ │   │       
+   │ ╰─────────── definiens: 1
+ 7 │     ╭─▶ 
+ 8 │     ├─▶ type TopLevel is uint256;
+   │     │                               
+   │     ╰─────────────────────────────── definiens: 4
 ───╯

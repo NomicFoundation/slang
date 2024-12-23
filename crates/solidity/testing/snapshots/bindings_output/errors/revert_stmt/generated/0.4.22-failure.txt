@@ -34,40 +34,78 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     error InvalidState();
     │     ──┬── ──────┬─────  
     │       ╰───────────────── unresolved
     │                 │       
-    │                 ╰─────── def: 2
+    │                 ╰─────── name: 2
     │ 
   4 │     function testRevert() public {
     │              ─────┬────  
-    │                   ╰────── def: 3
+    │                   ╰────── name: 3
   5 │         revert InvalidState();
     │         ───┬── ──────┬─────  
     │            ╰───────────────── refs: built-in, built-in
     │                      │       
-    │                      ╰─────── def: 4
+    │                      ╰─────── name: 4
     │ 
   8 │     function testOtherRevert() public {
     │              ───────┬───────  
-    │                     ╰───────── def: 5
+    │                     ╰───────── name: 5
   9 │         int code = 10;
     │             ──┬─  
-    │               ╰─── def: 6
+    │               ╰─── name: 6
  10 │         revert Utils.GenericError(code);
     │         ───┬── ──┬──  
     │            ╰────────── refs: built-in, built-in
     │                  │    
-    │                  ╰──── def: 7
+    │                  ╰──── name: 7
     │ 
  14 │ library Utils {
     │         ──┬──  
-    │           ╰──── def: 8
+    │           ╰──── name: 8
  15 │     error GenericError(int code);
     │     ──┬── ──────┬─────  
     │       ╰───────────────── unresolved
     │                 │       
-    │                 ╰─────── def: 9
+    │                 ╰─────── name: 9
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────▶ contract Test {
+  2 │ │   │         error InvalidState();
+    │ │   │     ─────────────┬────────────  
+    │ │   │                  ╰────────────── definiens: 2
+  3 │ │   ╭───▶ 
+    ┆ ┆   ┆     
+  5 │ │   │             revert InvalidState();
+    │ │   │     ───────────────┬───────────────  
+    │ │   │                    ╰───────────────── definiens: 4
+  6 │ │ │ ├───▶     }
+    │ │ │ │             
+    │ │ │ ╰───────────── definiens: 3
+  7 │ │ ╭─────▶ 
+    ┆ ┆ ┆       
+  9 │ │ │               int code = 10;
+    │ │ │       ───────────┬───────────  
+    │ │ │                  ╰───────────── definiens: 6
+ 10 │ │ │               revert Utils.GenericError(code);
+    │ │ │       ────────────────────┬────────────────────  
+    │ │ │                           ╰────────────────────── definiens: 7
+ 11 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 5
+ 12 │ ├─────│ ▶ }
+    │ │     │       
+    │ ╰───────────── definiens: 1
+ 13 │       ╭─▶ 
+    ┆       ┆   
+ 15 │       │       error GenericError(int code);
+    │       │   ─────────────────┬────────────────  
+    │       │                    ╰────────────────── definiens: 9
+ 16 │       ├─▶ }
+    │       │       
+    │       ╰─────── definiens: 8
 ────╯

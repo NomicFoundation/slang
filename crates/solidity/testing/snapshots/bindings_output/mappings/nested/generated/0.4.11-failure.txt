@@ -15,8 +15,20 @@ References and definitions:
    │
  1 │ contract NestedMapping {
    │          ──────┬──────  
-   │                ╰──────── def: 1
+   │                ╰──────── name: 1
  2 │     mapping(address => mapping(uint256 => bool)) public nested;
    │                                                         ───┬──  
-   │                                                            ╰──── def: 2
+   │                                                            ╰──── name: 2
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─▶ contract NestedMapping {
+  2 │ │       mapping(address => mapping(uint256 => bool)) public nested;
+    │ │   ────────────────────────────────┬───────────────────────────────  
+    │ │                                   ╰───────────────────────────────── definiens: 2
+    ┆ ┆   
+ 15 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+────╯

@@ -5,21 +5,21 @@ References and definitions:
    │
  1 │ import {Foo} from "lib/foo.sol";
    │         ─┬─  
-   │          ╰─── def: 1
+   │          ╰─── name: 1
    │          │   
    │          ╰─── ref: 5
  2 │ import {Bar as LocalBar} from "lib/bar.sol";
    │         ─┬─    ────┬───  
    │          ╰─────────────── ref: 7
    │                    │     
-   │                    ╰───── def: 2
+   │                    ╰───── name: 2
    │ 
  4 │ contract Sample {
    │          ───┬──  
-   │             ╰──── def: 3
+   │             ╰──── name: 3
  5 │     function test() returns (int) {
    │              ──┬─  
-   │                ╰─── def: 4
+   │                ╰─── name: 4
  6 │         return Foo.foo() + LocalBar.bar();
    │                ─┬─ ─┬─     ────┬─── ─┬─  
    │                 ╰──────────────────────── refs: 1, 5
@@ -30,23 +30,69 @@ References and definitions:
    │                                      │   
    │                                      ╰─── ref: 8
 ───╯
+Definiens: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │       import {Foo} from "lib/foo.sol";
+   │               ─┬─  
+   │                ╰─── definiens: 1
+ 2 │ │     import {Bar as LocalBar} from "lib/bar.sol";
+   │ │             ───────┬───────  
+   │ │                    ╰───────── definiens: 2
+ 3 │ ╭───▶ 
+   ┆ ┆ ┆   
+ 5 │ │ ╭─▶     function test() returns (int) {
+   ┆ ┆ ┆   
+ 7 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 4
+ 8 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 3
+───╯
 References and definitions: 
    ╭─[lib/foo.sol:1:1]
    │
  1 │ library Foo {
    │         ─┬─  
-   │          ╰─── def: 5
+   │          ╰─── name: 5
  2 │     function foo() returns (int) {
    │              ─┬─  
-   │               ╰─── def: 6
+   │               ╰─── name: 6
+───╯
+Definiens: 
+   ╭─[lib/foo.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ library Foo {
+ 2 │ │ ╭─▶     function foo() returns (int) {
+   ┆ ┆ ┆   
+ 4 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 6
+ 5 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 5
 ───╯
 References and definitions: 
    ╭─[lib/bar.sol:1:1]
    │
  1 │ library Bar {
    │         ─┬─  
-   │          ╰─── def: 7
+   │          ╰─── name: 7
  2 │     function bar() returns (int) {
    │              ─┬─  
-   │               ╰─── def: 8
+   │               ╰─── name: 8
+───╯
+Definiens: 
+   ╭─[lib/bar.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ library Bar {
+ 2 │ │ ╭─▶     function bar() returns (int) {
+   ┆ ┆ ┆   
+ 4 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 8
+ 5 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 7
 ───╯

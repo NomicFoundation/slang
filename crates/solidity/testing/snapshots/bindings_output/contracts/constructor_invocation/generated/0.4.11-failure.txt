@@ -13,12 +13,12 @@ References and definitions:
    │
  1 │ contract A {
    │          ┬  
-   │          ╰── def: 1
+   │          ╰── name: 1
  2 │     function A(int _x) {}
    │              ┬     ─┬  
-   │              ╰───────── def: 2
+   │              ╰───────── name: 2
    │                     │  
-   │                     ╰── def: 3
+   │                     ╰── name: 3
    │ 
  4 │     constructor(int _x) {}
    │     ─────┬─────  
@@ -26,13 +26,37 @@ References and definitions:
    │ 
  7 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 4
+   │            ╰─── name: 4
  8 │     function foo() public {
    │              ─┬─  
-   │               ╰─── def: 5
+   │               ╰─── name: 5
  9 │         new A({_x: 2});
    │             ┬  ─┬  
    │             ╰────── ref: 1
    │                 │  
    │                 ╰── ref: 3
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭───▶ contract A {
+  2 │   │         function A(int _x) {}
+    │   │     ─────────────┬────┬───────  
+    │   │                  ╰────────────── definiens: 2
+    │   │                       │         
+    │   │                       ╰───────── definiens: 3
+    ┆   ┆     
+  5 │ │ ├───▶ }
+    │ │ │         
+    │ │ ╰───────── definiens: 1
+  6 │ ╭─────▶ 
+    ┆ ┆   ┆   
+  8 │ │   ╭─▶     function foo() public {
+    ┆ ┆   ┆   
+ 10 │ │   ├─▶     }
+    │ │   │           
+    │ │   ╰─────────── definiens: 5
+ 11 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 4
+────╯

@@ -5,10 +5,10 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     function test() public returns (int32) {
     │              ──┬─  
-    │                ╰─── def: 2
+    │                ╰─── name: 2
   3 │         return MyLib.LibType.unwrap(MyLib.create());
     │                ──┬── ───┬─── ───┬── ──┬── ───┬──  
     │                  ╰──────────────────────────────── ref: 3
@@ -23,14 +23,14 @@ References and definitions:
     │ 
   7 │ library MyLib {
     │         ──┬──  
-    │           ╰──── def: 3
+    │           ╰──── name: 3
   8 │     type LibType is int32;
     │          ───┬───  
-    │             ╰───── def: 4
+    │             ╰───── name: 4
     │ 
  10 │     function create() public returns (LibType) {
     │              ───┬──                   ───┬───  
-    │                 ╰────────────────────────────── def: 5
+    │                 ╰────────────────────────────── name: 5
     │                                          │     
     │                                          ╰───── ref: 4
  11 │         return LibType.wrap(30);
@@ -38,4 +38,30 @@ References and definitions:
     │                   ╰────────── ref: 4
     │                          │   
     │                          ╰─── ref: built-in
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭─│ ──▶ contract Test {
+  2 │   │ ╭───▶     function test() public returns (int32) {
+    ┆   ┆ ┆     
+  4 │   │ ├───▶     }
+    │   │ │             
+    │   │ ╰───────────── definiens: 2
+  5 │ │ ├─────▶ }
+    │ │ │           
+    │ │ ╰─────────── definiens: 1
+  6 │ ╭───────▶ 
+    ┆ ┆         
+  8 │ │     │       type LibType is int32;
+    │ │     │   ─────────────┬─────────────  
+    │ │     │                ╰─────────────── definiens: 4
+  9 │ │     ╭─▶ 
+    ┆ ┆     ┆   
+ 12 │ │     ├─▶     }
+    │ │     │           
+    │ │     ╰─────────── definiens: 5
+ 13 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 3
 ────╯

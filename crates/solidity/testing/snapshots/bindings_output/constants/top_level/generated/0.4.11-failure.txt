@@ -15,10 +15,10 @@ References and definitions:
    │
  1 │ contract Constants {
    │          ────┬────  
-   │              ╰────── def: 1
+   │              ╰────── name: 1
  2 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  3 │         assert(MY_DIRECTION != Direction.NORTH);
    │         ───┬── ──────┬─────    ────┬──── ──┬──  
    │            ╰──────────────────────────────────── ref: built-in
@@ -42,4 +42,17 @@ References and definitions:
    │                        ╰────────────────── ref: built-in
    │                                    │      
    │                                    ╰────── unresolved
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Constants {
+ 2 │ │ ╭─▶     function test() public {
+   ┆ ┆ ┆   
+ 6 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

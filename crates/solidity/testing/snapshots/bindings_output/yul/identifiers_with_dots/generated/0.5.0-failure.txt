@@ -15,12 +15,29 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
    │ 
  4 │             let x.y.z := 0
    │                 ┬  
-   │                 ╰── def: 3
+   │                 ╰── name: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public {
+   ┆ ┆ ┆   
+ 4 │ │ │               let x.y.z := 0
+   │ │ │   ────────┬────────  
+   │ │ │           ╰────────── definiens: 3
+   ┆ ┆ ┆   
+ 7 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 8 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

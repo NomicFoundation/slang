@@ -14,17 +14,37 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function sub(uint a, uint b) public returns (uint) {
    │              ─┬─      ┬       ┬  
-   │               ╰────────────────── def: 2
+   │               ╰────────────────── name: 2
    │                       │       │  
-   │                       ╰────────── def: 3
+   │                       ╰────────── name: 3
    │                               │  
-   │                               ╰── def: 4
+   │                               ╰── name: 4
  3 │         uint c = a;
    │              ┬   ┬  
-   │              ╰────── def: 5
+   │              ╰────── name: 5
    │                  │  
    │                  ╰── ref: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function sub(uint a, uint b) public returns (uint) {
+   │ │ │                    ───┬── ───┬───  
+   │ │ │                       ╰──────────── definiens: 3
+   │ │ │                              │     
+   │ │ │                              ╰───── definiens: 4
+ 3 │ │ │           uint c = a;
+   │ │ │   ──────────┬─────────  
+   │ │ │             ╰─────────── definiens: 5
+   ┆ ┆ ┆   
+ 5 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

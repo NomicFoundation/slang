@@ -5,26 +5,26 @@ References and definitions:
    │
  1 │ library Lib {
    │         ─┬─  
-   │          ╰─── def: 1
+   │          ╰─── name: 1
  2 │     function nop(uint256 x) internal {}
    │              ─┬─         ┬  
-   │               ╰───────────── def: 2
+   │               ╰───────────── name: 2
    │                          │  
-   │                          ╰── def: 3
+   │                          ╰── name: 3
    │ 
  4 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 4
+   │            ╰─── name: 4
  5 │     using Lib for uint256;
    │           ─┬─  
    │            ╰─── ref: 1
  6 │     function test(uint256 x) public returns (uint256 y) {
    │              ──┬─         ┬                          ┬  
-   │                ╰──────────────────────────────────────── def: 5
+   │                ╰──────────────────────────────────────── name: 5
    │                           │                          │  
-   │                           ╰───────────────────────────── def: 6
+   │                           ╰───────────────────────────── name: 6
    │                                                      │  
-   │                                                      ╰── def: 7
+   │                                                      ╰── name: 7
  7 │         x.nop();
    │         ┬ ─┬─  
    │         ╰────── ref: 6
@@ -36,3 +36,30 @@ References and definitions:
    │            │   
    │            ╰─── ref: 2
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ library Lib {
+  2 │     │       function nop(uint256 x) internal {}
+    │     │   ────────────────────┬┬──────────────────  
+    │     │                       ╰───────────────────── definiens: 2
+    │     │                        │                    
+    │     │                        ╰──────────────────── definiens: 3
+  3 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  4 │ ╭─────▶ contract Test {
+    ┆ ┆ ┆     
+  6 │ │ ╭───▶     function test(uint256 x) public returns (uint256 y) {
+    │ │ │                       ────┬────                  ────┬────  
+    │ │ │                           ╰───────────────────────────────── definiens: 6
+    │ │ │                                                      │      
+    │ │ │                                                      ╰────── definiens: 7
+    ┆ ┆ ┆     
+  9 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 10 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 4
+────╯

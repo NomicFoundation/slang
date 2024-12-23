@@ -5,16 +5,16 @@ References and definitions:
     │
   1 │ contract Mapping {
     │          ───┬───  
-    │             ╰───── def: 1
+    │             ╰───── name: 1
   2 │     mapping(address => uint256) public myMap;
     │                                        ──┬──  
-    │                                          ╰──── def: 2
+    │                                          ╰──── name: 2
     │ 
   4 │     function get(address _addr) public view returns (uint256) {
     │              ─┬─         ──┬──  
-    │               ╰───────────────── def: 3
+    │               ╰───────────────── name: 3
     │                            │    
-    │                            ╰──── def: 4
+    │                            ╰──── name: 4
   5 │         return myMap[_addr];
     │                ──┬── ──┬──  
     │                  ╰────────── ref: 2
@@ -23,11 +23,11 @@ References and definitions:
     │ 
   8 │     function set(address _addr, uint256 _i) public {
     │              ─┬─         ──┬──          ─┬  
-    │               ╰───────────────────────────── def: 5
+    │               ╰───────────────────────────── name: 5
     │                            │             │  
-    │                            ╰──────────────── def: 6
+    │                            ╰──────────────── name: 6
     │                                          │  
-    │                                          ╰── def: 7
+    │                                          ╰── name: 7
   9 │         myMap[_addr] = _i;
     │         ──┬── ──┬──    ─┬  
     │           ╰──────────────── ref: 2
@@ -38,12 +38,49 @@ References and definitions:
     │ 
  12 │     function remove(address _addr) public {
     │              ───┬──         ──┬──  
-    │                 ╰────────────────── def: 8
+    │                 ╰────────────────── name: 8
     │                               │    
-    │                               ╰──── def: 9
+    │                               ╰──── name: 9
  13 │         delete myMap[_addr];
     │                ──┬── ──┬──  
     │                  ╰────────── ref: 2
     │                        │    
     │                        ╰──── ref: 9
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────▶ contract Mapping {
+  2 │ │ │           mapping(address => uint256) public myMap;
+    │ │ │       ───────────────────────┬──────────────────────  
+    │ │ │                              ╰──────────────────────── definiens: 2
+  3 │ │ ╭─────▶ 
+  4 │ │ │           function get(address _addr) public view returns (uint256) {
+    │ │ │                        ──────┬──────  
+    │ │ │                              ╰──────── definiens: 4
+    ┆ ┆ ┆       
+  6 │ │ ├─│ ──▶     }
+    │ │ │ │             
+    │ │ ╰─────────────── definiens: 3
+  7 │ │   ╭───▶ 
+  8 │ │   │         function set(address _addr, uint256 _i) public {
+    │ │   │                      ──────┬────── ─────┬─────  
+    │ │   │                            ╰──────────────────── definiens: 6
+    │ │   │                                         │       
+    │ │   │                                         ╰─────── definiens: 7
+    ┆ ┆   ┆     
+ 10 │ │   ├─│ ▶     }
+    │ │   │ │           
+    │ │   ╰───────────── definiens: 5
+ 11 │ │     ╭─▶ 
+ 12 │ │     │       function remove(address _addr) public {
+    │ │     │                       ──────┬──────  
+    │ │     │                             ╰──────── definiens: 9
+    ┆ ┆     ┆   
+ 14 │ │     ├─▶     }
+    │ │     │           
+    │ │     ╰─────────── definiens: 8
+ 15 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 1
 ────╯

@@ -5,12 +5,12 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function someFunc(int x) returns (int) {
    │              ────┬───     ┬  
-   │                  ╰─────────── def: 2
+   │                  ╰─────────── name: 2
    │                           │  
-   │                           ╰── def: 3
+   │                           ╰── name: 3
  3 │         return divide({ dividend: x, divisor: 3 });
    │                ───┬──   ────┬───  ┬  ───┬───  
    │                   ╰─────────────────────────── ref: 4
@@ -23,9 +23,31 @@ References and definitions:
    │ 
  5 │     function divide(int dividend, int divisor) returns (int);
    │              ───┬──     ────┬───      ───┬───  
-   │                 ╰────────────────────────────── def: 4
+   │                 ╰────────────────────────────── name: 4
    │                             │            │     
-   │                             ╰────────────────── def: 5
+   │                             ╰────────────────── name: 5
    │                                          │     
-   │                                          ╰───── def: 6
+   │                                          ╰───── name: 6
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function someFunc(int x) returns (int) {
+   │ │ │                         ──┬──  
+   │ │ │                           ╰──── definiens: 3
+   ┆ ┆ ┆   
+ 4 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 5 │ │         function divide(int dividend, int divisor) returns (int);
+   │ │     ──────────────────────────┬────┬───────┬──────────────────────  
+   │ │                               ╰───────────────────────────────────── definiens: 5
+   │ │                                    │       │                        
+   │ │                                    ╰──────────────────────────────── definiens: 4
+   │ │                                            │                        
+   │ │                                            ╰──────────────────────── definiens: 6
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

@@ -5,38 +5,38 @@ References and definitions:
     │
   1 │ interface Example {
     │           ───┬───  
-    │              ╰───── def: 1
+    │              ╰───── name: 1
   2 │     enum Choice { One, Two }
     │          ───┬──   ─┬─  ─┬─  
-    │             ╰─────────────── def: 2
+    │             ╰─────────────── name: 2
     │                    │    │   
-    │                    ╰──────── def: 3
+    │                    ╰──────── name: 3
     │                         │   
-    │                         ╰─── def: 4
+    │                         ╰─── name: 4
   3 │     struct Book { string author; }
     │            ──┬─          ───┬──  
-    │              ╰─────────────────── def: 5
+    │              ╰─────────────────── name: 5
     │                             │    
-    │                             ╰──── def: 6
+    │                             ╰──── name: 6
   4 │     function calculate() external returns (int);
     │              ────┬────  
-    │                  ╰────── def: 7
+    │                  ╰────── name: 7
   5 │     function get_book() external returns (Book memory);
     │              ────┬───                     ──┬─  
-    │                  ╰────────────────────────────── def: 8
+    │                  ╰────────────────────────────── name: 8
     │                                             │   
     │                                             ╰─── ref: 5
     │ 
   8 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 9
+    │            ╰─── name: 9
   9 │     Example.Choice choice = Example.Choice.One;
     │     ───┬─── ───┬── ───┬──   ───┬─── ───┬── ─┬─  
     │        ╰──────────────────────────────────────── ref: 1
     │                │      │        │       │    │   
     │                ╰──────────────────────────────── ref: 2
     │                       │        │       │    │   
-    │                       ╰───────────────────────── def: 10
+    │                       ╰───────────────────────── name: 10
     │                                │       │    │   
     │                                ╰──────────────── ref: 1
     │                                        │    │   
@@ -49,18 +49,63 @@ References and definitions:
     │               │    │   
     │               ╰──────── ref: 5
     │                    │   
-    │                    ╰─── def: 11
+    │                    ╰─── name: 11
     │ 
  12 │     function test(Example e) public returns (int) {
     │              ──┬─ ───┬─── ┬  
-    │                ╰───────────── def: 12
+    │                ╰───────────── name: 12
     │                      │    │  
     │                      ╰─────── ref: 1
     │                           │  
-    │                           ╰── def: 13
+    │                           ╰── name: 13
  13 │         return e.calculate();
     │                ┬ ────┬────  
     │                ╰──────────── ref: 13
     │                      │      
     │                      ╰────── ref: 7
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ interface Example {
+  2 │ │           enum Choice { One, Two }
+    │ │       ──────────────┬────┬────┬────  
+    │ │                     ╰──────────────── definiens: 2
+    │ │                          │    │      
+    │ │                          ╰─────────── definiens: 3
+    │ │                               │      
+    │ │                               ╰────── definiens: 4
+  3 │ │           struct Book { string author; }
+    │ │       ─────────────────┬──────┬──────────  
+    │ │                        ╰─────────────────── definiens: 5
+    │ │                               │            
+    │ │                               ╰──────────── definiens: 6
+  4 │ │           function calculate() external returns (int);
+    │ │       ────────────────────────┬────────────────────────  
+    │ │                               ╰────────────────────────── definiens: 7
+  5 │ │           function get_book() external returns (Book memory);
+    │ │       ────────────────────────────┬───────────────────────────  
+    │ │                                   ╰───────────────────────────── definiens: 8
+  6 │ ├─│ ──▶ }
+    │ │ │         
+    │ ╰─────────── definiens: 1
+  7 │   ╭───▶ 
+    ┆   ┆     
+  9 │   │         Example.Choice choice = Example.Choice.One;
+    │   │     ────────────────────────┬───────────────────────  
+    │   │                             ╰───────────────────────── definiens: 10
+ 10 │   │ │       Example.Book book;
+    │   │ │   ───────────┬───────────  
+    │   │ │              ╰───────────── definiens: 11
+ 11 │   │ ╭─▶ 
+ 12 │   │ │       function test(Example e) public returns (int) {
+    │   │ │                     ────┬────  
+    │   │ │                         ╰────── definiens: 13
+    ┆   ┆ ┆   
+ 14 │   │ ├─▶     }
+    │   │ │           
+    │   │ ╰─────────── definiens: 12
+ 15 │   ├───▶ }
+    │   │         
+    │   ╰───────── definiens: 9
 ────╯

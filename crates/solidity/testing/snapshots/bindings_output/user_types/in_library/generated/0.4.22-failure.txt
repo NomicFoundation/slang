@@ -15,10 +15,10 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public returns (int32) {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  3 │         return MyLib.LibType.unwrap(MyLib.create());
    │                ──┬── ───┬─── ───┬── ──┬── ───┬──  
    │                  ╰──────────────────────────────── ref: 3
@@ -33,5 +33,23 @@ References and definitions:
    │ 
  7 │ library MyLib {
    │         ──┬──  
-   │           ╰──── def: 3
+   │           ╰──── name: 3
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭─│ ▶ contract Test {
+  2 │   │ ╭─▶     function test() public returns (int32) {
+    ┆   ┆ ┆   
+  4 │   │ ├─▶     }
+    │   │ │           
+    │   │ ╰─────────── definiens: 2
+  5 │ │ ├───▶ }
+    │ │ │         
+    │ │ ╰───────── definiens: 1
+  6 │ ╭─────▶ 
+    ┆ ┆       
+ 13 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 3
+────╯

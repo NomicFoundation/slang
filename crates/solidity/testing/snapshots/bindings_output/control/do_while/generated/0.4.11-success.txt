@@ -5,17 +5,17 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  3 │         int i = 1;
    │             ┬  
-   │             ╰── def: 3
+   │             ╰── name: 3
    │ 
  5 │             int odd = i % 2;
    │                 ─┬─   ┬  
-   │                  ╰─────── def: 4
+   │                  ╰─────── name: 4
    │                       │  
    │                       ╰── ref: 3
  6 │             i *= 3;
@@ -24,4 +24,24 @@ References and definitions:
  7 │         } while (i < 100);
    │                  ┬  
    │                  ╰── ref: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public {
+ 3 │ │ │           int i = 1;
+   │ │ │   ─────────┬─────────  
+   │ │ │            ╰─────────── definiens: 3
+   ┆ ┆ ┆   
+ 5 │ │ │               int odd = i % 2;
+   │ │ │   ──────────────┬──────────────  
+   │ │ │                 ╰──────────────── definiens: 4
+   ┆ ┆ ┆   
+ 8 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

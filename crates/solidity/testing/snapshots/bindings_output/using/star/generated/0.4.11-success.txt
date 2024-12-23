@@ -5,28 +5,54 @@ References and definitions:
    │
  1 │ library Lib {
    │         ─┬─  
-   │          ╰─── def: 1
+   │          ╰─── name: 1
  2 │     function increment(uint x) public {}
    │              ────┬────      ┬  
-   │                  ╰───────────── def: 2
+   │                  ╰───────────── name: 2
    │                             │  
-   │                             ╰── def: 3
+   │                             ╰── name: 3
    │ 
  5 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 4
+   │            ╰─── name: 4
  6 │     using Lib for *;
    │           ─┬─  
    │            ╰─── ref: 1
    │ 
  8 │     function test(uint x) public {
    │              ──┬─      ┬  
-   │                ╰────────── def: 5
+   │                ╰────────── name: 5
    │                        │  
-   │                        ╰── def: 6
+   │                        ╰── name: 6
  9 │         x.increment();
    │         ┬ ────┬────  
    │         ╰──────────── ref: 6
    │               │      
    │               ╰────── ref: 2
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ library Lib {
+  2 │     │       function increment(uint x) public {}
+    │     │   ────────────────────┬─────┬──────────────  
+    │     │                       ╰────────────────────── definiens: 2
+    │     │                             │                
+    │     │                             ╰──────────────── definiens: 3
+  3 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  4 │ ╭─────▶ 
+    ┆ ┆       
+  7 │ │ ╭───▶ 
+  8 │ │ │         function test(uint x) public {
+    │ │ │                       ───┬──  
+    │ │ │                          ╰──── definiens: 6
+    ┆ ┆ ┆     
+ 10 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 11 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 4
+────╯

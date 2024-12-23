@@ -5,30 +5,30 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     enum Severity { Info, Error }
     │          ────┬───   ──┬─  ──┬──  
-    │              ╰─────────────────── def: 2
+    │              ╰─────────────────── name: 2
     │                       │     │    
-    │                       ╰────────── def: 3
+    │                       ╰────────── name: 3
     │                             │    
-    │                             ╰──── def: 4
+    │                             ╰──── name: 4
     │ 
   4 │     event Log (
     │           ─┬─  
-    │            ╰─── def: 5
+    │            ╰─── name: 5
   5 │         Severity level,
     │         ────┬─── ──┬──  
     │             ╰─────────── ref: 2
     │                    │    
-    │                    ╰──── def: 6
+    │                    ╰──── name: 6
   6 │         string message
     │                ───┬───  
-    │                   ╰───── def: 7
+    │                   ╰───── name: 7
     │ 
   9 │     function test() {
     │              ──┬─  
-    │                ╰─── def: 8
+    │                ╰─── name: 8
  10 │         emit Log({message: "testing", level: Severity.Info});
     │              ─┬─  ───┬───             ──┬──  ────┬─── ──┬─  
     │               ╰───────────────────────────────────────────── ref: 5
@@ -40,4 +40,35 @@ References and definitions:
     │                                                  ╰────────── ref: 2
     │                                                         │   
     │                                                         ╰─── ref: 3
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ contract Test {
+  2 │ │   │       enum Severity { Info, Error }
+    │ │   │   ─────────────────┬────┬─────┬─────  
+    │ │   │                    ╰────────────────── definiens: 2
+    │ │   │                         │     │       
+    │ │   │                         ╰───────────── definiens: 3
+    │ │   │                               │       
+    │ │   │                               ╰─────── definiens: 4
+  3 │ │   ╭─▶ 
+    ┆ ┆   ┆   
+  5 │ │   │           Severity level,
+    │ │   │   ───────────┬──────────  
+    │ │   │              ╰──────────── definiens: 6
+  6 │ │   │           string message
+    │ │   │   ───────────┬───────────  
+    │ │   │              ╰───────────── definiens: 7
+  7 │ │ │ ├─▶     );
+    │ │ │ │            
+    │ │ │ ╰──────────── definiens: 5
+  8 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+ 11 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 8
+ 12 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
 ────╯

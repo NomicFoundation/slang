@@ -11,3 +11,4 @@ Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyw
     │ ╰─────── Error occurred here.
 ────╯
 References and definitions: 
+Definiens: 

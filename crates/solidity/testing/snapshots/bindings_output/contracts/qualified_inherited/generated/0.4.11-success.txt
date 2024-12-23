@@ -5,22 +5,42 @@ References and definitions:
    │
  1 │ contract Base {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     bool renounced;
    │          ────┬────  
-   │              ╰────── def: 2
+   │              ╰────── name: 2
    │ 
  4 │ contract Test is Base {
    │          ──┬─    ──┬─  
-   │            ╰─────────── def: 3
+   │            ╰─────────── name: 3
    │                    │   
    │                    ╰─── ref: 1
  5 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 4
+   │                ╰─── name: 4
  6 │         Base.renounced = true;
    │         ──┬─ ────┬────  
    │           ╰───────────── ref: 1
    │                  │      
    │                  ╰────── ref: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │     ╭─▶ contract Base {
+ 2 │     │       bool renounced;
+   │     │   ──────────┬─────────  
+   │     │             ╰─────────── definiens: 2
+ 3 │ │   ├─▶ }
+   │ │   │       
+   │ │   ╰─────── definiens: 1
+ 4 │ ╭─│ ──▶ contract Test is Base {
+ 5 │ │ ╭───▶     function test() public {
+   ┆ ┆ ┆     
+ 7 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 4
+ 8 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 3
 ───╯

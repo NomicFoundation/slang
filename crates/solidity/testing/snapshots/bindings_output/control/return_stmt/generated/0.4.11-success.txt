@@ -5,14 +5,30 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public returns (int) {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  3 │         int x = 1;
    │             ┬  
-   │             ╰── def: 3
+   │             ╰── name: 3
  4 │         return x;
    │                ┬  
    │                ╰── ref: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public returns (int) {
+ 3 │ │ │           int x = 1;
+   │ │ │   ─────────┬─────────  
+   │ │ │            ╰─────────── definiens: 3
+   ┆ ┆ ┆   
+ 5 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

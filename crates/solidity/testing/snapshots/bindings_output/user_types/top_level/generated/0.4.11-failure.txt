@@ -22,8 +22,20 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public pure returns (uint) {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ contract Test {
+ 2 │ │       function test() public pure returns (uint) {
+   │ │   ─────────────┬────────────  
+   │ │                ╰────────────── definiens: 2
+   ┆ ┆   
+ 6 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
 ───╯

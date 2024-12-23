@@ -13,15 +13,15 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public pure returns (uint) {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  3 │         TopLevel tl = TopLevel.wrap(20);
    │         ────┬─── ─┬   ────┬─── ──┬─  
    │             ╰──────────────────────── unresolved
    │                   │       │      │   
-   │                   ╰────────────────── def: 3
+   │                   ╰────────────────── name: 3
    │                           │      │   
    │                           ╰────────── unresolved
    │                                  │   
@@ -33,4 +33,20 @@ References and definitions:
    │                            ╰─────── unresolved
    │                                 │  
    │                                 ╰── ref: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public pure returns (uint) {
+ 3 │ │ │           TopLevel tl = TopLevel.wrap(20);
+   │ │ │   ────────────────────┬────────────────────  
+   │ │ │                       ╰────────────────────── definiens: 3
+   ┆ ┆ ┆   
+ 5 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

@@ -22,19 +22,40 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     error Failure(
    │     ──┬── ───┬───  
    │       ╰──────────── unresolved
    │              │     
-   │              ╰───── def: 2
+   │              ╰───── name: 2
    │ 
  7 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 3
+   │                ╰─── name: 3
  8 │         revert Failure({severity: 100, cause: "Testing"});
    │         ───┬── ───┬───  
    │            ╰──────────── refs: built-in, built-in
    │                   │     
-   │                   ╰───── def: 4
+   │                   ╰───── name: 4
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───│ ▶ contract Test {
+  2 │ │   ╭─▶     error Failure(
+    ┆ ┆   ┆   
+  5 │ │ │ ├─▶     );
+    │ │ │ │            
+    │ │ │ ╰──────────── definiens: 2
+  6 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+  8 │ │ │             revert Failure({severity: 100, cause: "Testing"});
+    │ │ │     ─────────────────────────────┬─────────────────────────────  
+    │ │ │                                  ╰─────────────────────────────── definiens: 4
+  9 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 3
+ 10 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
+────╯

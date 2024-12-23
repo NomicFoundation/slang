@@ -55,6 +55,11 @@ fn return_stmt() -> Result<()> {
 }
 
 #[test]
+fn try_catch() -> Result<()> {
+    run("control", "try_catch")
+}
+
+#[test]
 fn try_stmt() -> Result<()> {
     run("control", "try_stmt")
 }

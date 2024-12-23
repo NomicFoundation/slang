@@ -5,9 +5,18 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
    │ 
  3 │         revert();
    │         ───┬──  
    │            ╰──── ref: built-in
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ contract Test {
+   ┆ ┆   
+ 5 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
 ───╯

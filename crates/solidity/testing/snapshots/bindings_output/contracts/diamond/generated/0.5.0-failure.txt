@@ -23,40 +23,75 @@ References and definitions:
     │
   1 │ contract A {
     │          ┬  
-    │          ╰── def: 1
+    │          ╰── name: 1
   2 │     function foo() public virtual {
     │              ─┬─          ───┬───  
-    │               ╰──────────────────── def: 2
+    │               ╰──────────────────── name: 2
     │                              │     
     │                              ╰───── unresolved
     │ 
   6 │ contract B is A {
     │          ┬    ┬  
-    │          ╰─────── def: 3
+    │          ╰─────── name: 3
     │               │  
     │               ╰── ref: 1
   7 │     function foo() public virtual override {
     │              ─┬─          ───┬───  
-    │               ╰──────────────────── def: 4
+    │               ╰──────────────────── name: 4
     │                              │     
     │                              ╰───── unresolved
     │ 
  11 │ contract C is A {
     │          ┬    ┬  
-    │          ╰─────── def: 5
+    │          ╰─────── name: 5
     │               │  
     │               ╰── ref: 1
     │ 
  14 │ contract D is B, C {
     │          ┬    ┬  ┬  
-    │          ╰────────── def: 6
+    │          ╰────────── name: 6
     │               │  │  
     │               ╰───── ref: 3
     │                  │  
     │                  ╰── ref: 5
  15 │     function foo() public virtual override {
     │              ─┬─          ───┬───  
-    │               ╰──────────────────── def: 7
+    │               ╰──────────────────── name: 7
     │                              │     
     │                              ╰───── unresolved
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─│ ──▶ contract A {
+  2 │     │ ╭───▶     function foo() public virtual {
+  3 │     │ ├───▶     }
+    │     │ │             
+    │     │ ╰───────────── definiens: 2
+  4 │   │ ├─────▶ }
+    │   │ │           
+    │   │ ╰─────────── definiens: 1
+  5 │   ╭───────▶ 
+    ┆   ┆         
+  7 │   │             function foo() public virtual override {
+    │   │         ────────────────┬────────────────  
+    │   │                         ╰────────────────── definiens: 4
+    ┆   ┆         
+  9 │   ├─────│ ▶ }
+    │   │     │       
+    │   ╰───────────── definiens: 3
+ 10 │         ╭─▶ 
+    ┆         ┆   
+ 12 │ │       ├─▶ }
+    │ │       │       
+    │ │       ╰─────── definiens: 5
+ 13 │ ╭─────────▶ 
+    ┆ ┆           
+ 15 │ │               function foo() public virtual override {
+    │ │           ────────────────┬────────────────  
+    │ │                           ╰────────────────── definiens: 7
+    ┆ ┆           
+ 18 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 6
 ────╯

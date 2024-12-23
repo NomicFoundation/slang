@@ -1584,11 +1584,14 @@ inherit .star_extension
 
 @modifier [ModifierDefinition
     @name name: [Identifier]
-    body: [FunctionBody @body [Block]]
 ] {
   attr (@modifier.def) node_definition = @name
   attr (@modifier.def) definiens_node = @modifier
+}
 
+@modifier [ModifierDefinition
+    body: [FunctionBody @body [Block]]
+] {
   edge @body.lexical_scope -> @modifier.lexical_scope
 
   ; Special case: bind the place holder statement `_` to the built-in
@@ -1915,6 +1918,15 @@ inherit .star_extension
   edge @body.lexical_scope -> @catch_params.defs
   ;; Similar to functions, catch params shadow other declarations
   attr (@body.lexical_scope -> @catch_params.defs) precedence = 1
+}
+
+@stmt [Statement [TryStatement [CatchClauses [CatchClause
+    [CatchClauseError @name [Identifier]]
+]]]] {
+  node ref
+  attr (ref) node_reference = @name
+
+  edge ref -> @stmt.lexical_scope
 }
 
 

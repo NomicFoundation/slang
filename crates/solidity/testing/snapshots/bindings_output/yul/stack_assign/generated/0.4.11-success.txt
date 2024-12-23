@@ -5,16 +5,33 @@ References and definitions:
    │
  1 │ contract YulStackAssignment {
    │          ─────────┬────────  
-   │                   ╰────────── def: 1
+   │                   ╰────────── name: 1
  2 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
    │ 
  4 │             let x := 0
    │                 ┬  
-   │                 ╰── def: 3
+   │                 ╰── name: 3
    │ 
  6 │             =: x
    │                ┬  
    │                ╰── ref: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract YulStackAssignment {
+ 2 │ │ ╭─▶     function test() public {
+   ┆ ┆ ┆   
+ 4 │ │ │               let x := 0
+   │ │ │   ───────────┬───────────  
+   │ │ │              ╰───────────── definiens: 3
+   ┆ ┆ ┆   
+ 8 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯
