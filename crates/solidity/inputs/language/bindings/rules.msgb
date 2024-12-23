@@ -93,6 +93,8 @@ inherit .star_extension
     )]
 ]] {
   edge @source_unit.lexical_scope -> @unit_member.def
+  attr (@source_unit.lexical_scope -> @unit_member.def) precedence = 1
+
   edge @source_unit.defs -> @unit_member.def
 
   ; In the general case, the lexical scope of the definition connects directly
@@ -342,6 +344,7 @@ inherit .star_extension
   attr (@contract.def) extension_scope = @contract.extensions
 
   edge @contract.lexical_scope -> @contract.instance
+  attr (@contract.lexical_scope -> @contract.instance) precedence = 1
 
   ; Instance scope can also see members and our namespace definitions
   edge @contract.instance -> @contract.members

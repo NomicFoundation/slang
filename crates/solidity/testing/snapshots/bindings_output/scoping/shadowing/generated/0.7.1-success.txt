@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ function foo() {}
+    │          ─┬─  
+    │           ╰─── def: 1
+  2 │ function bar() {}
+    │          ─┬─  
+    │           ╰─── def: 2
+    │ 
+  4 │ contract Base {
+    │          ──┬─  
+    │            ╰─── def: 3
+  5 │     function bar() public {}
+    │              ─┬─  
+    │               ╰─── def: 4
+    │ 
+  8 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── def: 5
+    │                    │   
+    │                    ╰─── ref: 3
+  9 │     int x;
+    │         ┬  
+    │         ╰── def: 6
+    │ 
+ 11 │     function test(int x) public {
+    │              ──┬─     ┬  
+    │                ╰───────── def: 7
+    │                       │  
+    │                       ╰── def: 8
+ 12 │         foo();
+    │         ─┬─  
+    │          ╰─── ref: 9
+ 13 │         bar();
+    │         ─┬─  
+    │          ╰─── ref: 4
+ 14 │         x;
+    │         ┬  
+    │         ╰── ref: 8
+    │ 
+ 17 │     function foo() internal {}
+    │              ─┬─  
+    │               ╰─── def: 9
+────╯

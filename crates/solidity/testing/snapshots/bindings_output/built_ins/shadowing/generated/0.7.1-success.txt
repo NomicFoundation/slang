@@ -21,10 +21,10 @@ References and definitions:
     │           ╰──── ref: 4
   7 │         tx;
     │         ─┬  
-    │          ╰── refs: 2, built-in
+    │          ╰── ref: 2
   8 │         sha256();
     │         ───┬──  
-    │            ╰──── refs: 6, 5, built-in
+    │            ╰──── ref: 5
     │ 
  11 │     function sha256() public {}
     │              ───┬──  
@@ -33,4 +33,11 @@ References and definitions:
  14 │ function sha256() {}
     │          ───┬──  
     │             ╰──── def: 6
+    │ 
+ 16 │ function top_level() {
+    │          ────┬────  
+    │              ╰────── def: 7
+ 17 │     sha256();
+    │     ───┬──  
+    │        ╰──── ref: 6
 ────╯

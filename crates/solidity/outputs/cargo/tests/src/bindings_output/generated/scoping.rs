@@ -18,3 +18,8 @@ fn functions() -> Result<()> {
 fn hoisting_scopes() -> Result<()> {
     run("scoping", "hoisting_scopes")
 }
+
+#[test]
+fn shadowing() -> Result<()> {
+    run("scoping", "shadowing")
+}
