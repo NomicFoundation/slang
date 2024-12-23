@@ -5,20 +5,20 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 2
+    │                ╰─── name: 2
   3 │         bytes4 v1 = this.test.selector;
     │                ─┬        ──┬─ ────┬───  
-    │                 ╰─────────────────────── def: 3
+    │                 ╰─────────────────────── name: 3
     │                            │      │     
     │                            ╰──────────── ref: 2
     │                                   │     
     │                                   ╰───── ref: built-in
   4 │         address v2 = this.test.address;
     │                 ─┬        ──┬─ ───┬───  
-    │                  ╰────────────────────── def: 4
+    │                  ╰────────────────────── name: 4
     │                             │     │     
     │                             ╰─────────── ref: 2
     │                                   │     
@@ -26,7 +26,7 @@ References and definitions:
     │ 
   6 │         bytes4 v3 = Foo.bar.selector;
     │                ─┬   ─┬─ ─┬─ ────┬───  
-    │                 ╰───────────────────── def: 5
+    │                 ╰───────────────────── name: 5
     │                      │   │      │     
     │                      ╰──────────────── ref: 10
     │                          │      │     
@@ -38,10 +38,10 @@ References and definitions:
     │         ─┬─ ─┬  
     │          ╰────── ref: 10
     │              │  
-    │              ╰── def: 6
+    │              ╰── name: 6
   9 │         bytes4 v4 = f1.bar.selector;
     │                ─┬   ─┬ ─┬─ ────┬───  
-    │                 ╰──────────────────── def: 7
+    │                 ╰──────────────────── name: 7
     │                      │  │      │     
     │                      ╰─────────────── ref: 6
     │                         │      │     
@@ -50,7 +50,7 @@ References and definitions:
     │                                ╰───── ref: built-in
  10 │         address v5 = f1.bar.address;
     │                 ─┬   ─┬ ─┬─ ───┬───  
-    │                  ╰─────────────────── def: 8
+    │                  ╰─────────────────── name: 8
     │                       │  │     │     
     │                       ╰────────────── ref: 6
     │                          │     │     
@@ -60,7 +60,7 @@ References and definitions:
     │ 
  12 │         bytes4 v6 = Baz.quux.selector;
     │                ─┬   ─┬─ ──┬─ ────┬───  
-    │                 ╰────────────────────── def: 9
+    │                 ╰────────────────────── name: 9
     │                      │    │      │     
     │                      ╰───────────────── ref: 12
     │                           │      │     
@@ -70,15 +70,67 @@ References and definitions:
     │ 
  16 │ interface Foo {
     │           ─┬─  
-    │            ╰─── def: 10
+    │            ╰─── name: 10
  17 │     function bar() external payable;
     │              ─┬─  
-    │               ╰─── def: 11
+    │               ╰─── name: 11
     │ 
  20 │ library Baz {
     │         ─┬─  
-    │          ╰─── def: 12
+    │          ╰─── name: 12
  21 │     function quux() public {}
     │              ──┬─  
-    │                ╰─── def: 13
+    │                ╰─── name: 13
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─│ ──────────▶ contract Test {
+  2 │ │ ╭───────────▶     function test() public {
+  3 │ │ │                     bytes4 v1 = this.test.selector;
+    │ │ │             ────────────────────┬───────────────────  
+    │ │ │                                 ╰───────────────────── definiens: 3
+  4 │ │ │       │             address v2 = this.test.address;
+    │ │ │       │     ────────────────────┬───────────────────  
+    │ │ │       │                         ╰───────────────────── definiens: 4
+  5 │ │ │       ╭───▶ 
+  6 │ │ │       ├─│ ▶         bytes4 v3 = Foo.bar.selector;
+    │ │ │       │ │                                           
+    │ │ │       ╰───────────────────────────────────────────── definiens: 5
+  7 │ │ │         ╭─▶ 
+  8 │ │ │         ├─▶         Foo f1;
+    │ │ │         │                     
+    │ │ │         ╰───────────────────── definiens: 6
+  9 │ │ │                     bytes4 v4 = f1.bar.selector;
+    │ │ │             ──────────────────┬──────────────────  
+    │ │ │                               ╰──────────────────── definiens: 7
+ 10 │ │ │     │               address v5 = f1.bar.address;
+    │ │ │     │       ──────────────────┬──────────────────  
+    │ │ │     │                         ╰──────────────────── definiens: 8
+ 11 │ │ │     ╭─────▶ 
+ 12 │ │ │     ├─────▶         bytes4 v6 = Baz.quux.selector;
+    │ │ │     │                                                
+    │ │ │     ╰──────────────────────────────────────────────── definiens: 9
+ 13 │ │ ├───────────▶     }
+    │ │ │                     
+    │ │ ╰───────────────────── definiens: 2
+ 14 │ ├───│ ────────▶ }
+    │ │   │               
+    │ ╰─────────────────── definiens: 1
+ 15 │     ╭─────────▶ 
+    ┆     ┆           
+ 17 │     │               function bar() external payable;
+    │     │           ──────────────────┬──────────────────  
+    │     │                             ╰──────────────────── definiens: 11
+ 18 │     ├─│ ──────▶ }
+    │     │ │             
+    │     ╰─────────────── definiens: 10
+ 19 │       ╭───────▶ 
+    ┆       ┆         
+ 21 │       │             function quux() public {}
+    │       │         ───────────────┬──────────────  
+    │       │                        ╰──────────────── definiens: 13
+ 22 │       ├───────▶ }
+    │       │             
+    │       ╰───────────── definiens: 12
 ────╯

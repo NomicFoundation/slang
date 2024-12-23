@@ -5,23 +5,45 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     event TestEvent(int id);
    │           ────┬────     ─┬  
-   │               ╰───────────── def: 2
+   │               ╰───────────── name: 2
    │                          │  
-   │                          ╰── def: 3
+   │                          ╰── name: 3
    │ 
  4 │     function test_emit() public {
    │              ────┬────  
-   │                  ╰────── def: 4
+   │                  ╰────── name: 4
  5 │         int x = 1;
    │             ┬  
-   │             ╰── def: 5
+   │             ╰── name: 5
    │ 
  7 │         emit TestEvent(x);
    │              ────┬──── ┬  
    │                  ╰──────── ref: 2
    │                        │  
    │                        ╰── ref: 5
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭───▶ contract Test {
+ 2 │ │ │       event TestEvent(int id);
+   │ │ │   ──────────────┬────────┬─────  
+   │ │ │                 ╰──────────────── definiens: 2
+   │ │ │                          │       
+   │ │ │                          ╰─────── definiens: 3
+ 3 │ │ ╭─▶ 
+   ┆ ┆ ┆   
+ 5 │ │ │           int x = 1;
+   │ │ │   ─────────┬─────────  
+   │ │ │            ╰─────────── definiens: 5
+   ┆ ┆ ┆   
+ 8 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 4
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

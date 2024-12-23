@@ -5,24 +5,24 @@ References and definitions:
    │
  1 │ library Lib {
    │         ─┬─  
-   │          ╰─── def: 1
+   │          ╰─── name: 1
  2 │     function nop(uint x) internal {}
    │              ─┬─      ┬  
-   │               ╰────────── def: 2
+   │               ╰────────── name: 2
    │                       │  
-   │                       ╰── def: 3
+   │                       ╰── name: 3
    │ 
  4 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 4
+   │            ╰─── name: 4
  5 │     using Lib for uint;
    │           ─┬─  
    │            ╰─── ref: 1
  6 │     function test(uint256[] memory data) public {
    │              ──┬─                  ──┬─  
-   │                ╰───────────────────────── def: 5
+   │                ╰───────────────────────── name: 5
    │                                      │   
-   │                                      ╰─── def: 6
+   │                                      ╰─── name: 6
  7 │         data.length.nop();
    │         ──┬─ ───┬── ─┬─  
    │           ╰────────────── ref: 6
@@ -30,4 +30,29 @@ References and definitions:
    │                 ╰──────── ref: built-in
    │                      │   
    │                      ╰─── ref: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │     ╭─▶ library Lib {
+ 2 │     │       function nop(uint x) internal {}
+   │     │   ──────────────────┬─┬────────────────  
+   │     │                     ╰──────────────────── definiens: 2
+   │     │                       │                  
+   │     │                       ╰────────────────── definiens: 3
+ 3 │ │   ├─▶ }
+   │ │   │       
+   │ │   ╰─────── definiens: 1
+ 4 │ ╭─────▶ contract Test {
+   ┆ ┆ ┆     
+ 6 │ │ ╭───▶     function test(uint256[] memory data) public {
+   │ │ │                       ──────────┬──────────  
+   │ │ │                                 ╰──────────── definiens: 6
+   ┆ ┆ ┆     
+ 8 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 5
+ 9 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 4
 ───╯

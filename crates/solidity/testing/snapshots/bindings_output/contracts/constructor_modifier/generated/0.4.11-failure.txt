@@ -13,12 +13,12 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     modifier validAddress(address _addr) {
    │              ──────┬─────         ──┬──  
-   │                    ╰───────────────────── def: 2
+   │                    ╰───────────────────── name: 2
    │                                     │    
-   │                                     ╰──── def: 3
+   │                                     ╰──── name: 3
  3 │         assert(_addr != address(0));
    │         ───┬── ──┬──  
    │            ╰────────── ref: built-in
@@ -31,4 +31,20 @@ References and definitions:
  7 │     constructor (address _addr) validAddress(_addr) {}
    │     ─────┬─────  
    │          ╰─────── unresolved
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     modifier validAddress(address _addr) {
+   │ │ │                             ──────┬──────  
+   │ │ │                                   ╰──────── definiens: 3
+   ┆ ┆ ┆   
+ 5 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+   ┆ ┆     
+ 8 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

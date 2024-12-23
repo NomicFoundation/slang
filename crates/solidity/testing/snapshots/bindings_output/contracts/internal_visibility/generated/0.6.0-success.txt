@@ -5,25 +5,25 @@ References and definitions:
     │
   1 │ abstract contract Ownable {
     │                   ───┬───  
-    │                      ╰───── def: 1
+    │                      ╰───── name: 1
   2 │     address internal owner;
     │                      ──┬──  
-    │                        ╰──── def: 2
+    │                        ╰──── name: 2
   3 │     address default_visibility;
     │             ─────────┬────────  
-    │                      ╰────────── def: 3
+    │                      ╰────────── name: 3
   4 │     function _internal_only() internal {}
     │              ───────┬──────  
-    │                     ╰──────── def: 4
+    │                     ╰──────── name: 4
     │ 
   6 │ contract Test is Ownable {
     │          ──┬─    ───┬───  
-    │            ╰────────────── def: 5
+    │            ╰────────────── name: 5
     │                     │     
     │                     ╰───── ref: 1
   7 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 6
+    │                ╰─── name: 6
   8 │         owner;
     │         ──┬──  
     │           ╰──── ref: 2
@@ -38,4 +38,30 @@ References and definitions:
     │            ╰──────────────────── ref: 1
     │                        │        
     │                        ╰──────── ref: 4
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ abstract contract Ownable {
+  2 │     │       address internal owner;
+    │     │   ──────────────┬─────────────  
+    │     │                 ╰─────────────── definiens: 2
+  3 │     │       address default_visibility;
+    │     │   ────────────────┬───────────────  
+    │     │                   ╰───────────────── definiens: 3
+  4 │     │       function _internal_only() internal {}
+    │     │   ─────────────────────┬────────────────────  
+    │     │                        ╰────────────────────── definiens: 4
+  5 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  6 │ ╭─│ ──▶ contract Test is Ownable {
+  7 │ │ ╭───▶     function test() public {
+    ┆ ┆ ┆     
+ 12 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 6
+ 13 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 5
 ────╯

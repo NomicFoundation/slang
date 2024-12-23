@@ -5,9 +5,9 @@ References and definitions:
    │
  1 │ function first(uint[] memory values) returns (uint) {
    │          ──┬──               ───┬──  
-   │            ╰───────────────────────── def: 1
+   │            ╰───────────────────────── name: 1
    │                                 │    
-   │                                 ╰──── def: 2
+   │                                 ╰──── name: 2
  2 │     return values[0];
    │            ───┬──  
    │               ╰──── ref: 2
@@ -18,12 +18,32 @@ References and definitions:
    │ 
  7 │ function test(uint[] memory values) returns (uint) {
    │          ──┬─               ───┬──  
-   │            ╰──────────────────────── def: 3
+   │            ╰──────────────────────── name: 3
    │                                │    
-   │                                ╰──── def: 4
+   │                                ╰──── name: 4
  8 │     return values.first();
    │            ───┬── ──┬──  
    │               ╰────────── ref: 4
    │                     │    
    │                     ╰──── ref: 1
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │   ╭─▶ function first(uint[] memory values) returns (uint) {
+   │   │                  ──────────┬─────────  
+   │   │                            ╰─────────── definiens: 2
+   ┆   ┆   
+ 3 │   ├─▶ }
+   │   │       
+   │   ╰─────── definiens: 1
+   │ 
+ 6 │ ╭───▶ 
+ 7 │ │     function test(uint[] memory values) returns (uint) {
+   │ │                   ──────────┬─────────  
+   │ │                             ╰─────────── definiens: 4
+   ┆ ┆     
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 3
 ───╯

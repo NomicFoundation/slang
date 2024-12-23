@@ -20,19 +20,38 @@ References and definitions:
    │
  1 │ library Lib {
    │         ─┬─  
-   │          ╰─── def: 1
+   │          ╰─── name: 1
  2 │   error IndexOutOfBounds();
    │   ──┬── ────────┬───────  
    │     ╰───────────────────── unresolved
    │                 │         
-   │                 ╰───────── def: 2
+   │                 ╰───────── name: 2
    │ 
  4 │   modifier test() {
    │            ──┬─  
-   │              ╰─── def: 3
+   │              ╰─── name: 3
  5 │     revert IndexOutOfBounds();
    │     ───┬── ────────┬───────  
    │        ╰───────────────────── refs: built-in, built-in
    │                    │         
-   │                    ╰───────── def: 4
+   │                    ╰───────── name: 4
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭───▶ library Lib {
+ 2 │ │ │     error IndexOutOfBounds();
+   │ │ │   ──────────────┬─────────────  
+   │ │ │                 ╰─────────────── definiens: 2
+ 3 │ │ ╭─▶ 
+   ┆ ┆ ┆   
+ 5 │ │ │       revert IndexOutOfBounds();
+   │ │ │   ───────────────┬───────────────  
+   │ │ │                  ╰───────────────── definiens: 4
+ 6 │ │ ├─▶   }
+   │ │ │         
+   │ │ ╰───────── definiens: 3
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

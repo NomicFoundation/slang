@@ -15,16 +15,33 @@ References and definitions:
    │
  1 │ struct Counter {
    │        ───┬───  
-   │           ╰───── def: 1
+   │           ╰───── name: 1
  2 │     uint value;
    │          ──┬──  
-   │            ╰──── def: 2
+   │            ╰──── name: 2
    │ 
  5 │ function increment(Counter memory _counter) public {}
    │          ────┬──── ───┬───        ────┬───  
-   │              ╰────────────────────────────── def: 3
+   │              ╰────────────────────────────── name: 3
    │                       │               │     
    │                       ╰───────────────────── ref: 1
    │                                       │     
-   │                                       ╰───── def: 4
+   │                                       ╰───── name: 4
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │   ╭─▶ struct Counter {
+ 2 │   │       uint value;
+   │   │   ────────┬───────  
+   │   │           ╰───────── definiens: 2
+ 3 │ │ ├─▶ }
+   │ │ │       
+   │ │ ╰─────── definiens: 1
+ 4 │ ╭───▶ 
+ 5 │ ├───▶ function increment(Counter memory _counter) public {}
+   │ │                        ───────────┬───────────              
+   │ │                                   ╰───────────────────────── definiens: 4
+   │ │                                                             
+   │ ╰───────────────────────────────────────────────────────────── definiens: 3
 ───╯

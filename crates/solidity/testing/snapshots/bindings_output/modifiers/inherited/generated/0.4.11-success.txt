@@ -5,21 +5,41 @@ References and definitions:
    │
  1 │ contract Base {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     modifier foo { _; }
    │              ─┬─   ┬  
-   │               ╰─────── def: 2
+   │               ╰─────── name: 2
    │                    │  
    │                    ╰── ref: built-in
    │ 
  5 │ contract Test is Base {
    │          ──┬─    ──┬─  
-   │            ╰─────────── def: 3
+   │            ╰─────────── name: 3
    │                    │   
    │                    ╰─── ref: 1
  6 │     function test() public foo {
    │              ──┬─          ─┬─  
-   │                ╰──────────────── def: 4
+   │                ╰──────────────── name: 4
    │                             │   
    │                             ╰─── ref: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │   ╭───▶ contract Base {
+ 2 │   │         modifier foo { _; }
+   │   │     ────────────┬───────────  
+   │   │                 ╰───────────── definiens: 2
+ 3 │ │ ├───▶ }
+   │ │ │         
+   │ │ ╰───────── definiens: 1
+ 4 │ ╭─────▶ 
+   ┆ ┆   ┆   
+ 6 │ │   ╭─▶     function test() public foo {
+ 7 │ │   ├─▶     }
+   │ │   │           
+   │ │   ╰─────────── definiens: 4
+ 8 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 3
 ───╯

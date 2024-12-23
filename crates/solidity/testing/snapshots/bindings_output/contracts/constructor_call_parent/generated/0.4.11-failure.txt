@@ -14,14 +14,26 @@ References and definitions:
    │
  1 │ contract Base {}
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
    │ 
  3 │ contract Test is Base {
    │          ──┬─    ──┬─  
-   │            ╰─────────── def: 2
+   │            ╰─────────── name: 2
    │                    │   
    │                    ╰─── ref: 1
  4 │     constructor() Base() {
    │     ─────┬─────  
    │          ╰─────── unresolved
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ │   contract Base {}
+   │ │   ────────┬────────  
+   │ │           ╰────────── definiens: 1
+ 2 │ ╭─▶ 
+   ┆ ┆   
+ 6 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 2
 ───╯

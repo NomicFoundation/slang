@@ -5,13 +5,13 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  3 │         int i = 1;
    │             ┬  
-   │             ╰── def: 3
+   │             ╰── name: 3
    │ 
  5 │             if (i > 10) break;
    │                 ┬  
@@ -19,4 +19,20 @@ References and definitions:
  6 │             i++;
    │             ┬  
    │             ╰── ref: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public {
+ 3 │ │ │           int i = 1;
+   │ │ │   ─────────┬─────────  
+   │ │ │            ╰─────────── definiens: 3
+   ┆ ┆ ┆   
+ 8 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

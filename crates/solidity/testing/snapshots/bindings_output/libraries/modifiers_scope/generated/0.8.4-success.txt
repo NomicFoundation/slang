@@ -5,15 +5,31 @@ References and definitions:
    │
  1 │ library Lib {
    │         ─┬─  
-   │          ╰─── def: 1
+   │          ╰─── name: 1
  2 │   error IndexOutOfBounds();
    │         ────────┬───────  
-   │                 ╰───────── def: 2
+   │                 ╰───────── name: 2
    │ 
  4 │   modifier test() {
    │            ──┬─  
-   │              ╰─── def: 3
+   │              ╰─── name: 3
  5 │     revert IndexOutOfBounds();
    │            ────────┬───────  
    │                    ╰───────── ref: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭───▶ library Lib {
+ 2 │ │ │     error IndexOutOfBounds();
+   │ │ │   ──────────────┬─────────────  
+   │ │ │                 ╰─────────────── definiens: 2
+ 3 │ │ ╭─▶ 
+   ┆ ┆ ┆   
+ 6 │ │ ├─▶   }
+   │ │ │         
+   │ │ ╰───────── definiens: 3
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

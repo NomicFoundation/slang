@@ -5,19 +5,39 @@ References and definitions:
    │
  1 │ interface IFoo {
    │           ──┬─  
-   │             ╰─── def: 1
+   │             ╰─── name: 1
  2 │     struct Bar {
    │            ─┬─  
-   │             ╰─── def: 2
+   │             ╰─── name: 2
  3 │         int value;
    │             ──┬──  
-   │               ╰──── def: 3
+   │               ╰──── name: 3
    │ 
  5 │     function test(Bar memory bar);
    │              ──┬─ ─┬─        ─┬─  
-   │                ╰────────────────── def: 4
+   │                ╰────────────────── name: 4
    │                    │          │   
    │                    ╰────────────── ref: 2
    │                               │   
-   │                               ╰─── def: 5
+   │                               ╰─── name: 5
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ interface IFoo {
+ 2 │ │ ╭─▶     struct Bar {
+ 3 │ │ │           int value;
+   │ │ │   ─────────┬─────────  
+   │ │ │            ╰─────────── definiens: 3
+ 4 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 5 │ │         function test(Bar memory bar);
+   │ │     ─────────────────┬───────┬─────────  
+   │ │                      ╰─────────────────── definiens: 4
+   │ │                              │           
+   │ │                              ╰─────────── definiens: 5
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

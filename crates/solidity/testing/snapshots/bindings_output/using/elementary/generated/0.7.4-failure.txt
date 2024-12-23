@@ -15,7 +15,16 @@ References and definitions:
    │
  1 │ function square(int value) returns (int) {}
    │          ───┬──     ──┬──  
-   │             ╰────────────── def: 1
+   │             ╰────────────── name: 1
    │                       │    
-   │                       ╰──── def: 2
+   │                       ╰──── name: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ function square(int value) returns (int) {}
+   │ ────────────────────┬─┬─────────────────────  
+   │                     ╰───────────────────────── definiens: 2
+   │                       │                       
+   │                       ╰─────────────────────── definiens: 1
 ───╯

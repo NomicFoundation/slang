@@ -27,30 +27,74 @@ References and definitions:
     │
   1 │ contract Base {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
+  2 │     modifier foo virtual { _; }
+    │              ─┬─  
+    │               ╰─── name: 2
     │ 
   5 │ contract A is Base {
     │          ┬    ──┬─  
-    │          ╰────────── def: 2
+    │          ╰────────── name: 3
     │                 │   
     │                 ╰─── ref: 1
+  6 │     modifier foo virtual override { _; }
+    │              ─┬─  
+    │               ╰─── name: 4
     │ 
   9 │ contract B is Base {
     │          ┬    ──┬─  
-    │          ╰────────── def: 3
+    │          ╰────────── name: 5
     │                 │   
     │                 ╰─── ref: 1
+ 10 │     modifier foo virtual override { _; }
+    │              ─┬─  
+    │               ╰─── name: 6
     │ 
  13 │ contract Test is B, A {
     │          ──┬─    ┬  ┬  
-    │            ╰─────────── def: 4
+    │            ╰─────────── name: 7
     │                  │  │  
-    │                  ╰───── ref: 3
+    │                  ╰───── ref: 5
     │                     │  
-    │                     ╰── ref: 2
+    │                     ╰── ref: 3
  14 │     function test() public foo {}
     │              ──┬─          ─┬─  
-    │                ╰──────────────── def: 5
+    │                ╰──────────────── name: 8
     │                             │   
-    │                             ╰─── unresolved
+    │                             ╰─── ref: 4
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │       ╭─▶ contract Base {
+  2 │       │       modifier foo virtual { _; }
+    │       │   ────────┬───────  
+    │       │           ╰───────── definiens: 2
+  3 │ │     ├─▶ }
+    │ │     │       
+    │ │     ╰─────── definiens: 1
+  4 │ ╭───────▶ 
+    ┆ ┆         
+  6 │ │             modifier foo virtual override { _; }
+    │ │         ────────┬───────  
+    │ │                 ╰───────── definiens: 4
+  7 │ ├─│ ────▶ }
+    │ │ │           
+    │ ╰───────────── definiens: 3
+  8 │   ╭─────▶ 
+    ┆   ┆       
+ 10 │   │           modifier foo virtual override { _; }
+    │   │       ────────┬───────  
+    │   │               ╰───────── definiens: 6
+ 11 │   ├─│ ──▶ }
+    │   │ │         
+    │   ╰─────────── definiens: 5
+ 12 │     ╭───▶ 
+    ┆     ┆     
+ 14 │     │         function test() public foo {}
+    │     │     ─────────────────┬────────────────  
+    │     │                      ╰────────────────── definiens: 8
+ 15 │     ├───▶ }
+    │     │         
+    │     ╰───────── definiens: 7
 ────╯

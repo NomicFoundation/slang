@@ -15,8 +15,19 @@ References and definitions:
    │
  1 │ struct Counter {
    │        ───┬───  
-   │           ╰───── def: 1
+   │           ╰───── name: 1
  2 │     uint value;
    │          ──┬──  
-   │            ╰──── def: 2
+   │            ╰──── name: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ struct Counter {
+ 2 │ │       uint value;
+   │ │   ────────┬───────  
+   │ │           ╰───────── definiens: 2
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
 ───╯

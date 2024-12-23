@@ -5,21 +5,21 @@ References and definitions:
     │
   4 │ contract A {
     │          ┬  
-    │          ╰── def: 1
+    │          ╰── name: 1
   5 │     function foo() public pure virtual returns (string memory) {
     │              ─┬─               ───┬───  
-    │               ╰───────────────────────── def: 2
+    │               ╰───────────────────────── name: 2
     │                                   │     
     │                                   ╰───── unresolved
     │ 
  10 │ contract B is A {
     │          ┬    ┬  
-    │          ╰─────── def: 3
+    │          ╰─────── name: 3
     │               │  
     │               ╰── ref: 1
  11 │     function foo() public pure virtual override(A) returns (string memory) {
     │              ─┬─               ───┬─── ────┬─── ┬  
-    │               ╰──────────────────────────────────── def: 4
+    │               ╰──────────────────────────────────── name: 4
     │                                   │        │    │  
     │                                   ╰──────────────── unresolved
     │                                            │    │  
@@ -29,12 +29,12 @@ References and definitions:
     │ 
  16 │ contract C is A {
     │          ┬    ┬  
-    │          ╰─────── def: 5
+    │          ╰─────── name: 5
     │               │  
     │               ╰── ref: 1
  17 │     function foo() public pure virtual override returns (string memory) {
     │              ─┬─               ───┬─── ────┬───  
-    │               ╰────────────────────────────────── def: 6
+    │               ╰────────────────────────────────── name: 6
     │                                   │        │     
     │                                   ╰────────────── unresolved
     │                                            │     
@@ -42,7 +42,7 @@ References and definitions:
     │ 
  22 │ contract D is B, C {
     │          ┬    ┬  ┬  
-    │          ╰────────── def: 7
+    │          ╰────────── name: 7
     │               │  │  
     │               ╰───── ref: 3
     │                  │  
@@ -50,7 +50,7 @@ References and definitions:
     │ 
  24 │     function foo() public pure override(B, C) returns (string memory) {
     │              ─┬─               ────┬─── ┬  ┬  
-    │               ╰─────────────────────────────── def: 8
+    │               ╰─────────────────────────────── name: 8
     │                                    │    │  │  
     │                                    ╰────────── unresolved
     │                                         │  │  
@@ -60,4 +60,48 @@ References and definitions:
  25 │         return super.foo();
     │                      ─┬─  
     │                       ╰─── ref: 6
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  3 │         ╭───────▶ 
+    ┆         ┆     ┆   
+  5 │         │     ╭─▶     function foo() public pure virtual returns (string memory) {
+    ┆         ┆     ┆   
+  7 │         │     ├─▶     }
+    │         │     │           
+    │         │     ╰─────────── definiens: 2
+  8 │     │   ├───────▶ }
+    │     │   │             
+    │     │   ╰───────────── definiens: 1
+  9 │     ╭───────────▶ 
+    ┆     ┆     ┆       
+ 11 │     │     ╭─────▶     function foo() public pure virtual override(A) returns (string memory) {
+    ┆     ┆     ┆       
+ 13 │     │     ├─────▶     }
+    │     │     │               
+    │     │     ╰─────────────── definiens: 4
+ 14 │     ├─│ ────────▶ }
+    │     │ │               
+    │     ╰───────────────── definiens: 3
+ 15 │       ╭─────────▶ 
+    ┆       ┆     ┆     
+ 17 │       │     ╭───▶     function foo() public pure virtual override returns (string memory) {
+    ┆       ┆     ┆     
+ 19 │       │     ├───▶     }
+    │       │     │             
+    │       │     ╰───────────── definiens: 6
+ 20 │ │     ├─────────▶ }
+    │ │     │               
+    │ │     ╰─────────────── definiens: 5
+ 21 │ ╭───────────────▶ 
+    ┆ ┆ ┆               
+ 23 │ │ ╭─────────────▶     // D.foo() returns "C"
+    ┆ ┆ ┆               
+ 26 │ │ ├─────────────▶     }
+    │ │ │                       
+    │ │ ╰─────────────────────── definiens: 8
+ 27 │ ├───────────────▶ }
+    │ │                     
+    │ ╰───────────────────── definiens: 7
 ────╯

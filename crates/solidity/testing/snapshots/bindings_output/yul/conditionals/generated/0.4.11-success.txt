@@ -5,14 +5,14 @@ References and definitions:
     │
   1 │ contract AssemblyConditionals {
     │          ──────────┬─────────  
-    │                    ╰─────────── def: 1
+    │                    ╰─────────── name: 1
   2 │     function yul_if(uint256 x) public returns (uint256 z) {
     │              ───┬──         ┬                          ┬  
-    │                 ╰───────────────────────────────────────── def: 2
+    │                 ╰───────────────────────────────────────── name: 2
     │                             │                          │  
-    │                             ╰───────────────────────────── def: 3
+    │                             ╰───────────────────────────── name: 3
     │                                                        │  
-    │                                                        ╰── def: 4
+    │                                                        ╰── name: 4
     │ 
   4 │             if lt(x, 10) { z := 99 }
     │                   ┬        ┬  
@@ -22,11 +22,11 @@ References and definitions:
     │ 
   8 │     function yul_switch(uint256 x) public returns (uint256 z) {
     │              ─────┬────         ┬                          ┬  
-    │                   ╰─────────────────────────────────────────── def: 5
+    │                   ╰─────────────────────────────────────────── name: 5
     │                                 │                          │  
-    │                                 ╰───────────────────────────── def: 6
+    │                                 ╰───────────────────────────── name: 6
     │                                                            │  
-    │                                                            ╰── def: 7
+    │                                                            ╰── name: 7
     │ 
  10 │             switch x
     │                    ┬  
@@ -40,4 +40,31 @@ References and definitions:
  13 │             default { z := 0 }
     │                       ┬  
     │                       ╰── ref: 7
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───│ ▶ contract AssemblyConditionals {
+  2 │ │   ╭─▶     function yul_if(uint256 x) public returns (uint256 z) {
+    │ │   │                       ────┬────                  ────┬────  
+    │ │   │                           ╰───────────────────────────────── definiens: 3
+    │ │   │                                                      │      
+    │ │   │                                                      ╰────── definiens: 4
+    ┆ ┆   ┆   
+  6 │ │ │ ├─▶     }
+    │ │ │ │           
+    │ │ │ ╰─────────── definiens: 2
+  7 │ │ ╭───▶ 
+  8 │ │ │         function yul_switch(uint256 x) public returns (uint256 z) {
+    │ │ │                             ────┬────                  ────┬────  
+    │ │ │                                 ╰───────────────────────────────── definiens: 6
+    │ │ │                                                            │      
+    │ │ │                                                            ╰────── definiens: 7
+    ┆ ┆ ┆     
+ 15 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 16 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
 ────╯

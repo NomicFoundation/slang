@@ -5,15 +5,15 @@ References and definitions:
    │
  1 │ library Lib {
    │         ─┬─  
-   │          ╰─── def: 1
+   │          ╰─── name: 1
  2 │     using Math for *;
    │           ──┬─  
    │             ╰─── ref: 4
  3 │     function test(uint x) internal {
    │              ──┬─      ┬  
-   │                ╰────────── def: 2
+   │                ╰────────── name: 2
    │                        │  
-   │                        ╰── def: 3
+   │                        ╰── name: 3
  4 │         x.add(1);
    │         ┬ ─┬─  
    │         ╰────── ref: 3
@@ -22,12 +22,39 @@ References and definitions:
    │ 
  7 │ library Math {
    │         ──┬─  
-   │           ╰─── def: 4
+   │           ╰─── name: 4
  8 │     function add(uint x, uint y) internal {}
    │              ─┬─      ┬       ┬  
-   │               ╰────────────────── def: 5
+   │               ╰────────────────── name: 5
    │                       │       │  
-   │                       ╰────────── def: 6
+   │                       ╰────────── name: 6
    │                               │  
-   │                               ╰── def: 7
+   │                               ╰── name: 7
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─────▶ library Lib {
+   ┆ ┆   ┆   
+ 3 │ │   ╭─▶     function test(uint x) internal {
+   │ │   │                     ───┬──  
+   │ │   │                        ╰──── definiens: 3
+   ┆ ┆   ┆   
+ 5 │ │   ├─▶     }
+   │ │   │           
+   │ │   ╰─────────── definiens: 2
+ 6 │ ├─│ ──▶ }
+   │ │ │         
+   │ ╰─────────── definiens: 1
+ 7 │   ╭───▶ library Math {
+ 8 │   │         function add(uint x, uint y) internal {}
+   │   │     ────────────────────┬─┬────┬─────────────────  
+   │   │                         ╰────────────────────────── definiens: 6
+   │   │                           │    │                   
+   │   │                           ╰──────────────────────── definiens: 5
+   │   │                                │                   
+   │   │                                ╰─────────────────── definiens: 7
+ 9 │   ├───▶ }
+   │   │         
+   │   ╰───────── definiens: 4
 ───╯
