@@ -1506,8 +1506,8 @@ checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
 
 [[package]]
 name = "lsp-positions"
-version = "0.3.3"
-source = "git+https://github.com/NomicFoundation/stack-graphs?rev=ff0bf655ca68f24ad06bff0c4860316af1fa556d#ff0bf655ca68f24ad06bff0c4860316af1fa556d"
+version = "0.3.4"
+source = "git+https://github.com/NomicFoundation/stack-graphs?branch=nomic#9631ed9c7de4443525491745d46557dc16a7355c"
 dependencies = [
  "memchr",
  "unicode-segmentation",
@@ -2563,8 +2563,8 @@ checksum = "a8f112729512f8e442d81f95a8a7ddf2b7c6b8a1a6f509a95864142b30cab2d3"
 
 [[package]]
 name = "stack-graphs"
-version = "0.14.0"
-source = "git+https://github.com/NomicFoundation/stack-graphs?rev=ff0bf655ca68f24ad06bff0c4860316af1fa556d#ff0bf655ca68f24ad06bff0c4860316af1fa556d"
+version = "0.14.1"
+source = "git+https://github.com/NomicFoundation/stack-graphs?branch=nomic#9631ed9c7de4443525491745d46557dc16a7355c"
 dependencies = [
  "bitvec",
  "controlled-option",
