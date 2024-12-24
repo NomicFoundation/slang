@@ -21,8 +21,8 @@ pub fn add_built_ins(
         "built-ins parse without errors"
     );
 
-    let built_ins_cursor = transform(built_ins_parse_output.tree())
-        .cursor_with_offset(TextIndex::ZERO);
+    let built_ins_cursor =
+        transform(built_ins_parse_output.tree()).cursor_with_offset(TextIndex::ZERO);
 
     binding_graph.add_system_file("built_ins.sol", built_ins_cursor);
     Ok(())
