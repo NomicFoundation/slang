@@ -10,6 +10,16 @@ fn custom_types() -> Result<()> {
 }
 
 #[test]
+fn named_args() -> Result<()> {
+    run("errors", "named_args")
+}
+
+#[test]
+fn revert_stmt() -> Result<()> {
+    run("errors", "revert_stmt")
+}
+
+#[test]
 fn selector() -> Result<()> {
     run("errors", "selector")
 }

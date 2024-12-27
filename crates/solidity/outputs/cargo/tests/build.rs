@@ -14,11 +14,6 @@ fn main() -> Result<()> {
         &tests_crate.join("src/generated"),
     )?;
 
-    lang_def.generate_bindings_assertions_tests(
-        &snapshots_crate.join("bindings_assertions"),
-        &tests_crate.join("src/bindings_assertions/generated"),
-    )?;
-
     lang_def.generate_bindings_output_tests(
         &snapshots_crate.join("bindings_output"),
         &tests_crate.join("src/bindings_output/generated"),

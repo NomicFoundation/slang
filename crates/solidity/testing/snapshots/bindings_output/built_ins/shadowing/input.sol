@@ -12,3 +12,7 @@ contract Test {
 }
 
 function sha256() {}
+
+function top_level() {
+    sha256();
+}

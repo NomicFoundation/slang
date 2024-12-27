@@ -3,7 +3,6 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, FnCache, Label, Report, ReportBuilder, ReportKind, Source};
-use metaslang_bindings::ResolutionError;
 use slang_solidity::bindings::{BindingGraph, Definition, Reference};
 use slang_solidity::cst::{NonterminalKind, Query};
 use slang_solidity::diagnostic;
@@ -175,33 +174,34 @@ fn build_report_for_part<'a>(
             start..end
         };
 
-        let definition = reference.resolve_definition();
-        let message = match definition {
-            Ok(definition) => {
+        let definitions = reference.definitions();
+        let message = match definitions.len() {
+            0 => {
+                all_resolved = false;
+                "unresolved".to_string()
+            }
+            1 => {
+                let definition = definitions.first().unwrap();
                 if definition.get_file().is_system() {
                     "ref: built-in".to_string()
                 } else {
                     let def_id = all_definitions
                         .iter()
-                        .position(|d| *d == definition)
+                        .position(|d| d == definition)
                         .unwrap();
                     format!("ref: {}", def_id + 1)
                 }
             }
-            Err(ResolutionError::Unresolved) => {
-                all_resolved = false;
-                "unresolved".to_string()
-            }
-            Err(ResolutionError::AmbiguousDefinitions(ambiguous_definitions)) => {
-                let ref_labels = ambiguous_definitions
+            _ => {
+                let ref_labels = definitions
                     .iter()
-                    .filter_map(|ambiguous_definition| {
-                        if ambiguous_definition.get_file().is_system() {
+                    .filter_map(|definition| {
+                        if definition.get_file().is_system() {
                             Some("built-in".to_string())
                         } else {
                             all_definitions
                                 .iter()
-                                .position(|d| d == ambiguous_definition)
+                                .position(|d| d == definition)
                                 .map(|index| format!("{}", index + 1))
                         }
                     })

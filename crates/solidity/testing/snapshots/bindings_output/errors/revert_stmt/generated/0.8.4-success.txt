@@ -1,0 +1,77 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     error InvalidState();
+    │           ──────┬─────  
+    │                 ╰─────── name: 2
+    │ 
+  4 │     function testRevert() public {
+    │              ─────┬────  
+    │                   ╰────── name: 3
+  5 │         revert InvalidState();
+    │                ──────┬─────  
+    │                      ╰─────── ref: 2
+    │ 
+  8 │     function testOtherRevert() public {
+    │              ───────┬───────  
+    │                     ╰───────── name: 4
+  9 │         int code = 10;
+    │             ──┬─  
+    │               ╰─── name: 5
+ 10 │         revert Utils.GenericError(code);
+    │                ──┬── ──────┬───── ──┬─  
+    │                  ╰────────────────────── ref: 6
+    │                            │        │   
+    │                            ╰──────────── ref: 7
+    │                                     │   
+    │                                     ╰─── ref: 5
+    │ 
+ 14 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 6
+ 15 │     error GenericError(int code);
+    │           ──────┬─────     ──┬─  
+    │                 ╰──────────────── name: 7
+    │                              │   
+    │                              ╰─── name: 8
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────▶ contract Test {
+  2 │ │   │         error InvalidState();
+    │ │   │     ─────────────┬────────────  
+    │ │   │                  ╰────────────── definiens: 2
+  3 │ │   ╭───▶ 
+    ┆ ┆   ┆     
+  6 │ │ │ ├───▶     }
+    │ │ │ │             
+    │ │ │ ╰───────────── definiens: 3
+  7 │ │ ╭─────▶ 
+    ┆ ┆ ┆       
+  9 │ │ │               int code = 10;
+    │ │ │       ───────────┬───────────  
+    │ │ │                  ╰───────────── definiens: 5
+    ┆ ┆ ┆       
+ 11 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 4
+ 12 │ ├─────│ ▶ }
+    │ │     │       
+    │ ╰───────────── definiens: 1
+ 13 │       ╭─▶ 
+    ┆       ┆   
+ 15 │       │       error GenericError(int code);
+    │       │   ─────────────────┬─────────┬──────  
+    │       │                    ╰────────────────── definiens: 7
+    │       │                              │        
+    │       │                              ╰──────── definiens: 8
+ 16 │       ├─▶ }
+    │       │       
+    │       ╰─────── definiens: 6
+────╯

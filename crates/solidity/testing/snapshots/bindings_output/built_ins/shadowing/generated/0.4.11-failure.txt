@@ -4,9 +4,11 @@ Parse errors:
 Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
     ╭─[input.sol:14:1]
     │
- 14 │ function sha256() {}
-    │ ──────────┬──────────  
-    │           ╰──────────── Error occurred here.
+ 14 │ ╭─▶ function sha256() {}
+    ┆ ┆   
+ 18 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
 ────╯
 References and definitions: 
     ╭─[input.sol:1:1]
