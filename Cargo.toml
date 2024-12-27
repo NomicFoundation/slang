@@ -29,6 +29,7 @@ members = [
     "crates/solidity/inputs/language",
     "crates/solidity/outputs/cargo/cli",
     "crates/solidity/outputs/cargo/crate",
+    "crates/solidity/outputs/cargo/grammar_export",
     "crates/solidity/outputs/cargo/tests",
     "crates/solidity/outputs/cargo/wasm",
     "crates/solidity/outputs/npm/package",
@@ -70,6 +71,7 @@ metaslang_cst = { path = "crates/metaslang/cst", version = "0.18.3" }
 
 slang_solidity = { path = "crates/solidity/outputs/cargo/crate", version = "0.18.3" }
 slang_solidity_cli = { path = "crates/solidity/outputs/cargo/cli", version = "0.18.3" }
+slang_solidity_grammar_export = { path = "crates/solidity/outputs/cargo/slang_solidity_grammar_export", version = "0.18.3" }
 solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "0.18.3" }
 solidity_cargo_wasm = { path = "crates/solidity/outputs/cargo/wasm", version = "0.18.3" }
 solidity_language = { path = "crates/solidity/inputs/language", version = "0.18.3" }

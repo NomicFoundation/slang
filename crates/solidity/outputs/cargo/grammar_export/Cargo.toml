@@ -1,0 +1,28 @@
+[package]
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+# __SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)
+# publish = true
+
+name = "slang_solidity_grammar_export"
+description = ""
+homepage = "https://nomicfoundation.github.io/slang/"
+repository = "https://github.com/NomicFoundation/slang/"
+authors = [
+  "Nomic Foundation <packages@nomic.foundation>",
+  "Antony Blakey <antony@nomic.foundation>",
+  "Igor Matuszewski <igor@nomic.foundation>",
+  "Omar Tawfik <omar@nomic.foundation>",
+]
+
+[[bin]]
+name = "slang_solidity_grammar_export"
+path = "src/main.rs"
+
+[dependencies]
+serde_json = { workspace = true }
+solidity_language = { workspace = true }
+
+[lints]
+workspace = true

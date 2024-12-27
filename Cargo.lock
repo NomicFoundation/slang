@@ -2376,6 +2376,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "slang_solidity_grammar_export"
+version = "0.18.3"
+dependencies = [
+ "serde_json",
+ "solidity_language",
+]
+
+[[package]]
 name = "slang_testlang"
 version = "0.18.3"
 dependencies = [
