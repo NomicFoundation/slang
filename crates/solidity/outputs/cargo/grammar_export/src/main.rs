@@ -1,6 +1,6 @@
 fn main() {
     println!(
         "{}",
-        serde_json::to_string(&solidity_language::SolidityDefinition::create().sections).unwrap()
+        serde_json::to_string(&solidity_language::SolidityDefinition::create()).unwrap()
     );
 }
