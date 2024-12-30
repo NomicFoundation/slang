@@ -19,4 +19,4 @@ Tree:
       - (leading_trivia꞉ SingleLineComment): "// This form is always reserved until 0.7.1 in Yul..." # (0..51)
       - (leading_trivia꞉ EndOfLine): "\n" # (51..52)
       - (let_keyword꞉ YulLetKeyword): "let" # (52..55)
-      - (UNRECOGNIZED): " ufixed8x8\n" # (55..66)
+      - (root꞉ UNRECOGNIZED): " ufixed8x8\n" # (55..66)

@@ -24,4 +24,4 @@ Tree:
       - (leading_trivia꞉ EndOfLine): "\n" # (275..276)
       - (leading_trivia꞉ SingleLineComment): "// ╘══════════════════════════════════════════════..." # (276..477)
       - (leading_trivia꞉ EndOfLine): "\n" # (477..478)
-      - (UNRECOGNIZED): "unexpected\n" # (478..489)
+      - (root꞉ UNRECOGNIZED): "unexpected\n" # (478..489)

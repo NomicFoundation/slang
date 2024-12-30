@@ -184,7 +184,7 @@ impl IntoFFI<ffi::Edge> for rust::Edge {
     #[inline]
     fn _into_ffi(self) -> ffi::Edge {
         ffi::Edge {
-            label: self.label.map(IntoFFI::_into_ffi),
+            label: IntoFFI::_into_ffi(self.label),
             node: self.node._into_ffi(),
         }
     }
@@ -221,8 +221,8 @@ define_refcell_wrapper! { Cursor {
         self._borrow_ffi().node()._into_ffi()
     }
 
-    fn label(&self) -> Option<ffi::EdgeLabel> {
-        self._borrow_ffi().label().map(IntoFFI::_into_ffi)
+    fn label(&self) -> ffi::EdgeLabel {
+        IntoFFI::_into_ffi(self._borrow_ffi().label())
     }
 
     fn text_offset(&self) -> ffi::TextIndex {

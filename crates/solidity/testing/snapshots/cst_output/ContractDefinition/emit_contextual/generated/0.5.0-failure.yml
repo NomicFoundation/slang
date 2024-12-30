@@ -71,7 +71,7 @@ Tree:
                               - (leading_trivia꞉ Whitespace): "        " # (189..197)
                               - (variant꞉ UintKeyword): "uint256" # (197..204)
                           - (leading_trivia꞉ Whitespace): " " # (204..205)
-                          - (UNRECOGNIZED): "emit" # (205..209)
+                          - (root꞉ UNRECOGNIZED): "emit" # (205..209)
                           - (semicolon꞉ Semicolon): ";" # (209..210)
                           - (trailing_trivia꞉ EndOfLine): "\n" # (210..211)
                       - (item꞉ Statement) ► (variant꞉ EmitStatement): # "        emit Deposit();\n" (211..235)

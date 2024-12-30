@@ -19,4 +19,4 @@ Tree:
           - (operand꞉ Expression) ► (variant꞉ Identifier): "a" # (0..1)
           - (period꞉ Period): "." # (1..2)
           - (member꞉ Identifier): "b" # (2..3)
-      - (UNRECOGNIZED): '{value: 0}{gas: 1}("")' # (3..25)
+      - (root꞉ UNRECOGNIZED): '{value: 0}{gas: 1}("")' # (3..25)

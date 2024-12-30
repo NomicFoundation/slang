@@ -21,6 +21,6 @@ Tree:
           - (leading_trivia꞉ EndOfLine): "\n" # (43..44)
           - (variant꞉ UintKeyword): "uint" # (44..48)
       - (leading_trivia꞉ Whitespace): " " # (48..49)
-      - (UNRECOGNIZED): "ufixed184x80" # (49..61)
+      - (root꞉ UNRECOGNIZED): "ufixed184x80" # (49..61)
       - (semicolon꞉ Semicolon): ";" # (61..62)
       - (trailing_trivia꞉ EndOfLine): "\n" # (62..63)

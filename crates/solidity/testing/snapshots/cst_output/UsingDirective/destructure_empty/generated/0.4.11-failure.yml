@@ -20,6 +20,6 @@ Tree:
       - (leading_trivia꞉ EndOfLine): "\n" # (40..41)
       - (using_keyword꞉ UsingKeyword): "using" # (41..46)
       - (leading_trivia꞉ Whitespace): " " # (46..47)
-      - (UNRECOGNIZED): "{} for *" # (47..55)
+      - (root꞉ UNRECOGNIZED): "{} for *" # (47..55)
       - (semicolon꞉ Semicolon): ";" # (55..56)
       - (trailing_trivia꞉ EndOfLine): "\n" # (56..57)

@@ -17,4 +17,4 @@ Tree:
   - (DecimalNumberExpression): # "10 years\n" (0..9)
       - (literal꞉ DecimalLiteral): "10" # (0..2)
       - (leading_trivia꞉ Whitespace): " " # (2..3)
-      - (UNRECOGNIZED): "years\n" # (3..9)
+      - (root꞉ UNRECOGNIZED): "years\n" # (3..9)

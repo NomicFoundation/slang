@@ -80,7 +80,7 @@ Tree:
                               - (item꞉ Identifier): "emit" # (219..223)
                           - (leading_trivia꞉ Whitespace): " " # (223..224)
                           - (name꞉ Identifier): "Deposit" # (224..231)
-                          - (UNRECOGNIZED): "()" # (231..233)
+                          - (root꞉ UNRECOGNIZED): "()" # (231..233)
                           - (semicolon꞉ Semicolon): ";" # (233..234)
                           - (trailing_trivia꞉ EndOfLine): "\n" # (234..235)
                   - (leading_trivia꞉ Whitespace): "    " # (235..239)

@@ -4629,6 +4629,7 @@ interface cst {
 
     /// Represents the different types of relationships between nodes in the syntax tree.
     enum edge-label {
+            %root,
             %item,
             %variant,
             %separator,
@@ -4823,7 +4824,7 @@ interface cst {
     /// Represents a connection between nodes in the syntax tree.
     record edge {
         /// Optional label describing the relationship between nodes.
-        label: option<edge-label>,
+        label: edge-label,
         /// The target node of this edge.
         node: node,
     }
@@ -4848,7 +4849,7 @@ interface cst {
         /// Returns the current node under the cursor.
         node: func() -> node;
         /// Returns the label of the edge from the parent to the current node, if any.
-        label: func() -> option<edge-label>;
+        label: func() -> edge-label;
 
         /// Returns the current text offset of the cursor.
         text-offset: func() -> text-index;

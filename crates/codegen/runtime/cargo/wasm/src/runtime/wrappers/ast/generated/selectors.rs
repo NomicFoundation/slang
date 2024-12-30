@@ -83,15 +83,15 @@ impl Helper {
             let Edge { label, node } = self.node.children.get(self.index)?;
 
             match label {
-                // Skip unlabeled nodes:
-                | None
+                // Skip root nodes:
+                | EdgeLabel::Root
                 // Skip trivia:
-                | Some(EdgeLabel::LeadingTrivia | EdgeLabel::TrailingTrivia) => {
+                | EdgeLabel::LeadingTrivia | EdgeLabel::TrailingTrivia => {
                     self.index += 1;
                     continue;
                 }
                 // Otherwise, return the edge:
-                Some(other_label) => {
+                other_label => {
                     return Some((*other_label, node.clone()));
                 }
             }

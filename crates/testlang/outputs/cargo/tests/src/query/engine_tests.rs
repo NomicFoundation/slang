@@ -4,7 +4,7 @@ use slang_testlang::cst::{
     Cursor, Edge, EdgeLabel, Node, NonterminalKind, Query, QueryMatch, TerminalKind, TextIndex,
 };
 
-fn terminal(label: Option<EdgeLabel>, kind: TerminalKind, text: &str) -> Edge {
+fn terminal(label: EdgeLabel, kind: TerminalKind, text: &str) -> Edge {
     Edge {
         label,
         node: Node::terminal(kind, text.to_string()),
@@ -12,7 +12,7 @@ fn terminal(label: Option<EdgeLabel>, kind: TerminalKind, text: &str) -> Edge {
 }
 
 fn nonterminal<const N: usize>(
-    label: Option<EdgeLabel>,
+    label: EdgeLabel,
     kind: NonterminalKind,
     children: [Edge; N],
 ) -> Edge {
@@ -44,28 +44,28 @@ macro_rules! cst_tree {
     ( @inner [ $($child:expr)* ]) => { [ $($child),* ] };
 
     ( @inner [ $($child:expr)* ] $label:ident : $terminal_kind:ident $text:literal $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* terminal(Some(EdgeLabel::$label), TerminalKind::$terminal_kind, $text) ] $($($rest)*)?)
+        cst_tree!(@inner [ $($child)* terminal(EdgeLabel::$label, TerminalKind::$terminal_kind, $text) ] $($($rest)*)?)
     };
 
     ( @inner [ $($child:expr)* ] $terminal_kind:ident $text:literal $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* terminal(None, TerminalKind::$terminal_kind, $text) ] $($($rest)*)?)
+        cst_tree!(@inner [ $($child)* terminal(EdgeLabel::Root, TerminalKind::$terminal_kind, $text) ] $($($rest)*)?)
     };
 
     ( @inner [ $($child:expr)* ] $label:ident : $non_terminal_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* nonterminal(Some(EdgeLabel::$label), NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
+        cst_tree!(@inner [ $($child)* nonterminal(EdgeLabel::$label, NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
     };
 
     ( @inner [ $($child:expr)* ] $non_terminal_kind:ident [ $($children:tt)* ] $(, $($rest:tt)*)? ) => {
-        cst_tree!(@inner [ $($child)* nonterminal(None, NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
+        cst_tree!(@inner [ $($child)* nonterminal(EdgeLabel::Root, NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*)) ] $($($rest)*)?)
     };
 
     // Start with a nonterminal
     ( $label:ident : $non_terminal_kind:ident [ $($children:tt)* ] ) => {
-        nonterminal(Some(EdgeLabel::$label), NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*))
+        nonterminal(EdgeLabel::$label, NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*))
     };
 
     ( $non_terminal_kind:ident [ $($children:tt)* ] ) => {
-        nonterminal(None, NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*))
+        nonterminal(EdgeLabel::Root, NonterminalKind::$non_terminal_kind, cst_tree!(@inner [] $($children)*))
     };
 
 }

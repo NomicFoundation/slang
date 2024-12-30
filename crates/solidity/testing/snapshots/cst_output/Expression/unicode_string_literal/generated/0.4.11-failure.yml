@@ -16,4 +16,4 @@ Errors: # 1 total
 Tree:
   - (Expression): # 'unicode"This Emoji: 😃"' (0..25)
       - (variant꞉ Identifier): "unicode" # (0..7)
-      - (UNRECOGNIZED): '"This Emoji: 😃"' # (7..25)
+      - (root꞉ UNRECOGNIZED): '"This Emoji: 😃"' # (7..25)

@@ -20,6 +20,6 @@ Tree:
       - (leading_trivia꞉ Whitespace): " " # (4..5)
       - (name꞉ Identifier): "transient" # (5..14)
       - (leading_trivia꞉ Whitespace): " " # (14..15)
-      - (UNRECOGNIZED): "foo" # (15..18)
+      - (root꞉ UNRECOGNIZED): "foo" # (15..18)
       - (semicolon꞉ Semicolon): ";" # (18..19)
       - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)

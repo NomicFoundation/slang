@@ -67,4 +67,4 @@ Tree:
               - (semicolon꞉ Semicolon): ";" # (40..41)
               - (trailing_trivia꞉ EndOfLine): "\n" # (41..42)
       - (leading_trivia꞉ EndOfLine): "\n" # (42..43)
-      - (UNRECOGNIZED): "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # (43..243)
+      - (root꞉ UNRECOGNIZED): "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # (43..243)

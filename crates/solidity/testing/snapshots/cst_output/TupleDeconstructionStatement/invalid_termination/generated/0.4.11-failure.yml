@@ -39,4 +39,4 @@ Tree:
                   - (literal꞉ DecimalLiteral): "135" # (15..18)
           - (close_paren꞉ CloseParen): ")" # (18..19)
           - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)
-      - (UNRECOGNIZED): "/**/\n{ throw; \n" # (20..35)
+      - (root꞉ UNRECOGNIZED): "/**/\n{ throw; \n" # (20..35)

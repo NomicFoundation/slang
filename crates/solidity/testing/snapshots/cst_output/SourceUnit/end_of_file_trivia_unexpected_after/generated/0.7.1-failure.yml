@@ -35,4 +35,4 @@ Tree:
       - (leading_trivia꞉ MultiLineComment): "/* new lines after this */" # (20..46)
       - (leading_trivia꞉ EndOfLine): "\n" # (46..47)
       - (leading_trivia꞉ EndOfLine): "\n" # (47..48)
-      - (UNRECOGNIZED): "unexpectedchars\n" # (48..64)
+      - (root꞉ UNRECOGNIZED): "unexpectedchars\n" # (48..64)

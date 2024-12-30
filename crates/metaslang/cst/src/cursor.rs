@@ -133,6 +133,10 @@ impl<T: KindTypes> Cursor<T> {
         self.node.clone()
     }
 
+    pub fn has_open_parent(&self) -> bool {
+        matches!(self.parent, Parent::Open(_))
+    }
+
     pub fn label(&self) -> T::EdgeLabel {
         if let Some(parent) = self.parent.get_readable() {
             let this = &parent.nonterminal_node.children[self.child_number];

@@ -19,4 +19,4 @@ Tree:
       - (leading_trivia꞉ SingleLineComment): "// Unreserved in Yul specifically since 0.7.1:" # (0..46)
       - (leading_trivia꞉ EndOfLine): "\n" # (46..47)
       - (let_keyword꞉ YulLetKeyword): "let" # (47..50)
-      - (UNRECOGNIZED): " bytes\n" # (50..57)
+      - (root꞉ UNRECOGNIZED): " bytes\n" # (50..57)

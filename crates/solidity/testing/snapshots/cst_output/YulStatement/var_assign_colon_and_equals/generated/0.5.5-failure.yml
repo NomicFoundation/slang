@@ -20,4 +20,4 @@ Tree:
           - (leading_trivia꞉ SingleLineComment): "// Makes sure that `newB:` is not parsed as a labe..." # (0..123)
           - (leading_trivia꞉ EndOfLine): "\n" # (123..124)
           - (item꞉ YulIdentifier): "newB" # (124..128)
-      - (UNRECOGNIZED): ": = mload(0x80)\n" # (128..144)
+      - (root꞉ UNRECOGNIZED): ": = mload(0x80)\n" # (128..144)

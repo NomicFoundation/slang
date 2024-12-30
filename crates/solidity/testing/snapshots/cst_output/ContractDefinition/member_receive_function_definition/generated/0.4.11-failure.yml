@@ -31,5 +31,5 @@ Tree:
                   - (leading_trivia꞉ Whitespace): "  " # (18..20)
                   - (item꞉ Identifier): "receive" # (20..27)
               - (attributes꞉ StateVariableAttributes): [] # (27..27)
-      - (UNRECOGNIZED): "() {\n  }\n" # (27..36)
+      - (root꞉ UNRECOGNIZED): "() {\n  }\n" # (27..36)
       - (close_brace꞉ CloseBrace): "}" # (36..37)

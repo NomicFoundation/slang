@@ -7,7 +7,7 @@ use anyhow::Result;
 use codegen_language_definition::model::Item;
 use inflector::Inflector;
 use once_cell::sync::Lazy;
-use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRangeExtensions};
+use slang_solidity::cst::{Cursor, KindTypes, Node, NonterminalKind, TextRangeExtensions};
 use solidity_language::SolidityDefinition;
 
 pub fn render(source: &str, errors: &Vec<String>, cursor: Cursor) -> Result<String> {
@@ -132,8 +132,11 @@ fn render_key(cursor: &mut Cursor) -> String {
         Node::Terminal(terminal) => terminal.kind.to_string(),
     };
 
-    if let Some(label) = cursor.label() {
-        format!("({label}꞉ {kind})", label = label.as_ref().to_snake_case())
+    if cursor.has_open_parent() {
+        format!(
+            "({label}꞉ {kind})",
+            label = cursor.label().as_ref().to_snake_case()
+        )
     } else {
         format!("({kind})")
     }

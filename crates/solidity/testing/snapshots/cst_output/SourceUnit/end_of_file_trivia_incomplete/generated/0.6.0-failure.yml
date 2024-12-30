@@ -28,4 +28,4 @@ Tree:
               - (close_brace꞉ CloseBrace): "}" # (12..13)
               - (trailing_trivia꞉ EndOfLine): "\n" # (13..14)
       - (leading_trivia꞉ EndOfLine): "\n" # (14..15)
-      - (UNRECOGNIZED): "/* unterminated comment\n" # (15..39)
+      - (root꞉ UNRECOGNIZED): "/* unterminated comment\n" # (15..39)

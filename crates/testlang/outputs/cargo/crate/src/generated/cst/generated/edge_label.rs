@@ -18,6 +18,7 @@
 #[derive(Clone, Copy)]
 pub enum EdgeLabel {
     // Built-in:
+    Root,
     Item,
     Variant,
     Separator,
@@ -41,3 +42,9 @@ pub enum EdgeLabel {
 }
 
 impl crate::cst::EdgeLabelExtensions for EdgeLabel {}
+
+impl Default for EdgeLabel {
+    fn default() -> Self {
+        Self::Root
+    }
+}

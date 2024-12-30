@@ -31,5 +31,5 @@ Tree:
                   - (leading_trivia꞉ Whitespace): "  " # (18..20)
                   - (item꞉ Identifier): "fallback" # (20..28)
               - (attributes꞉ StateVariableAttributes): [] # (28..28)
-      - (UNRECOGNIZED): "() {\n  }\n" # (28..37)
+      - (root꞉ UNRECOGNIZED): "() {\n  }\n" # (28..37)
       - (close_brace꞉ CloseBrace): "}" # (37..38)

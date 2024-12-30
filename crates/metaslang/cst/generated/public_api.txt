@@ -30,8 +30,9 @@ pub fn metaslang_cst::cursor::Cursor<T>::go_to_nth_child(&mut self, child_number
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_parent(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_previous(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_previous_sibling(&mut self) -> bool
+pub fn metaslang_cst::cursor::Cursor<T>::has_open_parent(&self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::is_completed(&self) -> bool
-pub fn metaslang_cst::cursor::Cursor<T>::label(&self) -> core::option::Option<<T as metaslang_cst::kinds::KindTypes>::EdgeLabel>
+pub fn metaslang_cst::cursor::Cursor<T>::label(&self) -> <T as metaslang_cst::kinds::KindTypes>::EdgeLabel
 pub fn metaslang_cst::cursor::Cursor<T>::node(&self) -> metaslang_cst::nodes::Node<T>
 pub fn metaslang_cst::cursor::Cursor<T>::remaining_nodes(&self) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::cursor::Cursor<T>::reset(&mut self)
@@ -57,7 +58,7 @@ pub fn metaslang_cst::kinds::BaseKind::try_from_str(str: &str) -> core::result::
 impl<T> metaslang_cst::kinds::BaseKind for T where T: core::marker::Sized + core::fmt::Debug + core::marker::Copy + core::cmp::Eq + serde::ser::Serialize + for<'a> core::convert::TryFrom<&'a str> + core::convert::Into<&'static str>
 pub fn T::as_static_str(&self) -> &'static str
 pub fn T::try_from_str(str: &str) -> core::result::Result<Self, alloc::string::String>
-pub trait metaslang_cst::kinds::EdgeLabelExtensions: metaslang_cst::kinds::BaseKind
+pub trait metaslang_cst::kinds::EdgeLabelExtensions: metaslang_cst::kinds::BaseKind + core::default::Default
 pub trait metaslang_cst::kinds::KindTypes: core::fmt::Debug + core::clone::Clone + core::cmp::PartialEq
 pub type metaslang_cst::kinds::KindTypes::EdgeLabel: metaslang_cst::kinds::EdgeLabelExtensions
 pub type metaslang_cst::kinds::KindTypes::NonterminalKind: metaslang_cst::kinds::NonterminalKindExtensions
@@ -126,7 +127,7 @@ impl<T: metaslang_cst::kinds::KindTypes> core::fmt::Display for metaslang_cst::n
 pub fn metaslang_cst::nodes::NodeKind<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl<T: metaslang_cst::kinds::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::nodes::NodeKind<T>
 pub struct metaslang_cst::nodes::Edge<T: metaslang_cst::kinds::KindTypes>
-pub metaslang_cst::nodes::Edge::label: core::option::Option<<T as metaslang_cst::kinds::KindTypes>::EdgeLabel>
+pub metaslang_cst::nodes::Edge::label: <T as metaslang_cst::kinds::KindTypes>::EdgeLabel
 pub metaslang_cst::nodes::Edge::node: metaslang_cst::nodes::Node<T>
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::nodes::Edge<T>
 pub fn metaslang_cst::nodes::Edge<T>::anonymous(node: metaslang_cst::nodes::Node<T>) -> Self
@@ -141,7 +142,7 @@ impl<T: metaslang_cst::kinds::KindTypes> core::marker::StructuralPartialEq for m
 impl<T: metaslang_cst::kinds::KindTypes> core::ops::deref::Deref for metaslang_cst::nodes::Edge<T>
 pub type metaslang_cst::nodes::Edge<T>::Target = metaslang_cst::nodes::Node<T>
 pub fn metaslang_cst::nodes::Edge<T>::deref(&self) -> &Self::Target
-impl<T> serde::ser::Serialize for metaslang_cst::nodes::Edge<T> where T: serde::ser::Serialize + metaslang_cst::kinds::KindTypes
+impl<T> serde::ser::Serialize for metaslang_cst::nodes::Edge<T> where T: serde::ser::Serialize + metaslang_cst::kinds::KindTypes, <T as metaslang_cst::kinds::KindTypes>::EdgeLabel: serde::ser::Serialize
 pub fn metaslang_cst::nodes::Edge<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 pub struct metaslang_cst::nodes::NonterminalNode<T: metaslang_cst::kinds::KindTypes>
 pub metaslang_cst::nodes::NonterminalNode::children: alloc::vec::Vec<metaslang_cst::nodes::Edge<T>>

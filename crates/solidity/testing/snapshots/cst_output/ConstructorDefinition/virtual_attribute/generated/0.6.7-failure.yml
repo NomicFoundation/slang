@@ -22,4 +22,4 @@ Tree:
           - (parameters꞉ Parameters): [] # (13..13)
           - (close_paren꞉ CloseParen): ")" # (13..14)
       - (attributes꞉ ConstructorAttributes): [] # (14..14)
-      - (UNRECOGNIZED): " virtual {}\n" # (14..26)
+      - (root꞉ UNRECOGNIZED): " virtual {}\n" # (14..26)

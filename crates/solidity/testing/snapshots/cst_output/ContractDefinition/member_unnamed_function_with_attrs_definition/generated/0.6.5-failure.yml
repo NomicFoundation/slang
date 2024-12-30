@@ -41,6 +41,6 @@ Tree:
                           - (variant꞉ PayableKeyword): "payable" # (40..47)
               - (attributes꞉ StateVariableAttributes): [] # (47..47)
               - (leading_trivia꞉ Whitespace): " " # (47..48)
-      - (UNRECOGNIZED): "{}\n" # (48..51)
+      - (root꞉ UNRECOGNIZED): "{}\n" # (48..51)
       - (close_brace꞉ CloseBrace): "}" # (51..52)
       - (trailing_trivia꞉ EndOfLine): "\n" # (52..53)

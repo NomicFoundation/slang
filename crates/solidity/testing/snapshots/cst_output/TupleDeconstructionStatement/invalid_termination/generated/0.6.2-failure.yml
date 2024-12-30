@@ -43,7 +43,7 @@ Tree:
           - (leading_trivia꞉ EndOfLine): "\n" # (24..25)
           - (open_brace꞉ OpenBrace): "{" # (25..26)
       - (leading_trivia꞉ Whitespace): " " # (26..27)
-      - (UNRECOGNIZED): "throw" # (27..32)
+      - (root꞉ UNRECOGNIZED): "throw" # (27..32)
       - (semicolon꞉ Semicolon): ";" # (32..33)
       - (trailing_trivia꞉ Whitespace): " " # (33..34)
       - (trailing_trivia꞉ EndOfLine): "\n" # (34..35)
