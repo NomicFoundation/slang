@@ -77,13 +77,13 @@ impl ParserResult {
             label: prev_label, ..
         }) = self.significant_node_mut()
         {
-            *prev_label = Some(label);
+            *prev_label = label;
         }
         // Also allow to name a single trivia terminal node
         else if let ParserResult::Match(Match { nodes, .. }) = &mut self {
             if let [node] = nodes.as_mut_slice() {
                 if node.as_terminal().is_some_and(|tok| tok.kind.is_trivia()) {
-                    node.label = Some(label);
+                    node.label = label;
                 }
             }
         }

@@ -34,3 +34,9 @@ pub enum EdgeLabel {
 }
 
 impl crate::cst::EdgeLabelExtensions for EdgeLabel {}
+
+impl Default for EdgeLabel {
+    fn default() -> Self {
+        Self::{{ model.kinds.predefined_labels[0] | pascal_case }}
+    }
+}

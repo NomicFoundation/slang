@@ -6,10 +6,34 @@ use crate::kinds::KindTypes;
 use crate::nodes::{Edge, Node, NonterminalNode};
 use crate::text_index::{TextIndex, TextRange};
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum Parent<T: KindTypes> {
+    None,
+    Open(Rc<PathAncestor<T>>),
+    Closed(Rc<PathAncestor<T>>),
+}
+
+impl<T: KindTypes> Parent<T> {
+    fn as_closed(&self) -> Parent<T> {
+        match self {
+            Parent::Open(ancestor) => Parent::Closed(ancestor.to_owned()),
+            _ => self.clone(),
+        }
+    }
+
+    fn get_readable(&self) -> Option<&Rc<PathAncestor<T>>> {
+        match self {
+            Parent::Open(ancestor) => Some(ancestor),
+            Parent::Closed(ancestor) => Some(ancestor),
+            Parent::None => None,
+        }
+    }
+}
+
 /// A node in the ancestor path of a [`Cursor`].
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct PathAncestor<T: KindTypes> {
-    parent: Option<Rc<PathAncestor<T>>>,
+    parent: Parent<T>,
     nonterminal_node: Rc<NonterminalNode<T>>,
     child_number: usize,
     text_offset: TextIndex,
@@ -21,7 +45,7 @@ struct PathAncestor<T: KindTypes> {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Cursor<T: KindTypes> {
     /// The parent path of this cursor
-    parent: Option<Rc<PathAncestor<T>>>,
+    parent: Parent<T>,
     /// The node the cursor is currently pointing to.
     node: Node<T>,
     /// The index of the current child node in the parent's children.
@@ -59,7 +83,7 @@ impl<T: KindTypes> Cursor<T> {
 impl<T: KindTypes> Cursor<T> {
     pub(crate) fn new(node: Node<T>, text_offset: TextIndex) -> Self {
         Self {
-            parent: None,
+            parent: Parent::None,
             node,
             child_number: 0,
             text_offset,
@@ -75,9 +99,9 @@ impl<T: KindTypes> Cursor<T> {
 
     /// Completes the cursor, setting it to the root node.
     pub fn complete(&mut self) {
-        if let Some(parent) = &self.parent.clone() {
+        if let Parent::Open(parent) = &self.parent.clone() {
             let mut parent = parent;
-            while let Some(grandparent) = &parent.parent {
+            while let Parent::Open(grandparent) = &parent.parent {
                 parent = grandparent;
             }
             self.set_from_ancestor_node(parent);
@@ -92,7 +116,7 @@ impl<T: KindTypes> Cursor<T> {
     pub fn spawn(&self) -> Self {
         Self {
             is_completed: false,
-            parent: None,
+            parent: self.parent.as_closed(),
             node: self.node.clone(),
             child_number: 0,
             text_offset: self.text_offset,
@@ -109,12 +133,13 @@ impl<T: KindTypes> Cursor<T> {
         self.node.clone()
     }
 
-    pub fn label(&self) -> Option<T::EdgeLabel> {
-        self.parent.as_ref().and_then(|parent| {
+    pub fn label(&self) -> T::EdgeLabel {
+        if let Some(parent) = self.parent.get_readable() {
             let this = &parent.nonterminal_node.children[self.child_number];
-
             this.label
-        })
+        } else {
+            T::EdgeLabel::default()
+        }
     }
 
     /// Returns the text offset that corresponds to the beginning of the currently pointed to node.
@@ -132,10 +157,10 @@ impl<T: KindTypes> Cursor<T> {
     /// Returns the depth of the current node in the CST, i.e. the number of ancestors.
     pub fn depth(&self) -> usize {
         let mut depth = 0;
-        if let Some(parent) = &self.parent {
+        if let Parent::Open(parent) = &self.parent {
             let mut parent = parent;
             depth += 1;
-            while let Some(grandparent) = &parent.parent {
+            while let Parent::Open(grandparent) = &parent.parent {
                 depth += 1;
                 parent = grandparent;
             }
@@ -224,7 +249,7 @@ impl<T: KindTypes> Cursor<T> {
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_parent(&mut self) -> bool {
-        if let Some(parent) = &self.parent.clone() {
+        if let Parent::Open(parent) = &self.parent.clone() {
             self.set_from_ancestor_node(parent);
 
             true
@@ -246,7 +271,7 @@ impl<T: KindTypes> Cursor<T> {
         // If the current cursor is a node and it has children, go to first children
         if let Some(new_parent) = self.as_ancestor_node() {
             if let Some(new_child) = new_parent.nonterminal_node.children.first().cloned() {
-                self.parent = Some(new_parent);
+                self.parent = Parent::Open(new_parent);
                 self.node = new_child.node;
                 self.child_number = 0;
 
@@ -273,7 +298,7 @@ impl<T: KindTypes> Cursor<T> {
                 for sibling in &new_parent.nonterminal_node.children[..self.child_number] {
                     self.text_offset += sibling.text_len();
                 }
-                self.parent = Some(new_parent);
+                self.parent = Parent::Open(new_parent);
 
                 return true;
             }
@@ -303,7 +328,7 @@ impl<T: KindTypes> Cursor<T> {
                 for sibling in &new_parent.nonterminal_node.children[..self.child_number] {
                     self.text_offset += sibling.text_len();
                 }
-                self.parent = Some(new_parent);
+                self.parent = Parent::Open(new_parent);
 
                 return true;
             }
@@ -320,7 +345,7 @@ impl<T: KindTypes> Cursor<T> {
             return false;
         }
 
-        if let Some(parent) = &self.parent {
+        if let Parent::Open(parent) = &self.parent {
             let new_child_number = self.child_number + 1;
             if let Some(new_child) = parent.nonterminal_node.children.get(new_child_number) {
                 self.text_offset += self.node.text_len();
@@ -342,7 +367,7 @@ impl<T: KindTypes> Cursor<T> {
             return false;
         }
 
-        if let Some(parent) = &self.parent {
+        if let Parent::Open(parent) = &self.parent {
             if self.child_number > 0 {
                 let new_child_number = self.child_number - 1;
                 let new_child = &parent.nonterminal_node.children[new_child_number];
@@ -438,14 +463,15 @@ impl<T: KindTypes> Iterator for CursorIterator<T> {
 }
 
 pub struct AncestorsIterator<T: KindTypes> {
-    current: Option<Rc<PathAncestor<T>>>,
+    current: Parent<T>,
 }
 
 impl<T: KindTypes> Iterator for AncestorsIterator<T> {
     type Item = Rc<NonterminalNode<T>>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if let Some(current) = self.current.take() {
+        // if let Some(current) = self.current.take() {
+        if let Parent::Open(current) = self.current.clone() {
             self.current = current.parent.clone();
             Some(Rc::clone(&current.nonterminal_node))
         } else {

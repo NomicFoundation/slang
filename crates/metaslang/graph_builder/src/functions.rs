@@ -283,7 +283,6 @@ pub mod stdlib {
                 let index = parent
                     .children()
                     .iter()
-                    .filter(|edge| edge.label.is_some())
                     .position(|edge| edge.node == node)
                     .ok_or(ExecutionError::FunctionFailed(
                         "named-child-index".into(),
@@ -403,11 +402,7 @@ pub mod stdlib {
             ) -> Result<Value, ExecutionError> {
                 let cursor = &graph[parameters.param()?.into_syntax_node_ref()?];
                 parameters.finish()?;
-                let named_child_count = cursor
-                    .children()
-                    .iter()
-                    .filter(|edge| edge.label.is_some())
-                    .count();
+                let named_child_count = cursor.children().len();
                 Ok(Value::Integer(named_child_count as u32))
             }
         }
