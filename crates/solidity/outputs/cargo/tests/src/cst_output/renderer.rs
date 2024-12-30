@@ -7,7 +7,7 @@ use anyhow::Result;
 use codegen_language_definition::model::Item;
 use inflector::Inflector;
 use once_cell::sync::Lazy;
-use slang_solidity::cst::{Cursor, KindTypes, Node, NonterminalKind, TextRangeExtensions};
+use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRangeExtensions};
 use solidity_language::SolidityDefinition;
 
 pub fn render(source: &str, errors: &Vec<String>, cursor: Cursor) -> Result<String> {
