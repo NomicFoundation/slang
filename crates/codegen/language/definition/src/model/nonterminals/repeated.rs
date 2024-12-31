@@ -9,7 +9,9 @@ pub struct RepeatedItem {
     pub name: Identifier,
     pub reference: Identifier,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub allow_empty: Option<bool>,
 }
