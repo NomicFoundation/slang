@@ -8,6 +8,7 @@ use crate::model::{Identifier, VersionSpecifier};
 pub struct EnumItem {
     pub name: Identifier,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 
     pub variants: Vec<EnumVariant>,
@@ -18,5 +19,6 @@ pub struct EnumItem {
 pub struct EnumVariant {
     pub reference: Identifier,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 }
