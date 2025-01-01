@@ -29,6 +29,7 @@ pub fn metaslang_bindings::BindingGraph<KT>::add_user_file(&mut self, file_path:
 pub fn metaslang_bindings::BindingGraph<KT>::add_user_file_returning_graph(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>) -> metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_bindings::BindingGraph<KT>::all_definitions(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Definition<'_, KT>> + '_
 pub fn metaslang_bindings::BindingGraph<KT>::all_references(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Reference<'_, KT>> + '_
+pub fn metaslang_bindings::BindingGraph<KT>::build_database(&self) -> database::DatabaseResolver<'_, KT>
 pub fn metaslang_bindings::BindingGraph<KT>::create(version: semver::Version, binding_rules: &str, path_resolver: alloc::rc::Rc<dyn metaslang_bindings::PathResolver<KT>>) -> Self
 pub fn metaslang_bindings::BindingGraph<KT>::definition_at(&self, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Definition<'_, KT>>
 pub fn metaslang_bindings::BindingGraph<KT>::reference_at(&self, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Reference<'_, KT>>

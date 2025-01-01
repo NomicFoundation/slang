@@ -1,19 +1,15 @@
-use std::{
-    collections::{HashMap, HashSet},
-    iter::once,
-};
+use std::collections::{HashMap, HashSet};
+use std::iter::once;
 
 use metaslang_cst::kinds::KindTypes;
-use stack_graphs::{
-    arena::Handle,
-    graph::{Degree, Edge, StackGraph},
-    partial::{PartialPath, PartialPaths},
-    stitching::{
-        Database, DatabaseCandidates, ForwardCandidates, ForwardPartialPathStitcher,
-        StitcherConfig, ToAppendable,
-    },
-    CancellationError, NoCancellation,
+use stack_graphs::arena::Handle;
+use stack_graphs::graph::{Degree, Edge, StackGraph};
+use stack_graphs::partial::{PartialPath, PartialPaths};
+use stack_graphs::stitching::{
+    Database, DatabaseCandidates, ForwardCandidates, ForwardPartialPathStitcher, StitcherConfig,
+    ToAppendable,
 };
+use stack_graphs::{CancellationError, NoCancellation};
 
 use crate::{BindingGraph, Definition, GraphHandle, Reference};
 
@@ -29,15 +25,17 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
         let database = Database::new();
         let partials = PartialPaths::new();
 
-        Self {
+        let mut resolver = Self {
             owner,
             partials,
             database,
             references: HashMap::new(),
-        }
+        };
+        resolver.build();
+        resolver
     }
 
-    pub fn build(&mut self) {
+    fn build(&mut self) {
         for file in self.owner.stack_graph.iter_files() {
             println!(
                 "Finding minimal paths for {file}",
