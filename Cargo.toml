@@ -89,7 +89,7 @@ testlang_npm_package = { path = "crates/testlang/outputs/npm/package", version =
 #
 # External
 #
-anyhow = { version = "1.0.94", features = ["backtrace", "std"] }
+anyhow = { version = "1.0.95", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
 # Currently 'bencher' backend API is under development/unstable.
 # They recommend always running with the latest CLI version from 'main' until it is stabilized.
@@ -101,9 +101,9 @@ cargo-xwin = { version = "0.14.2" }
 cargo-zigbuild = { version = "0.18.3" }
 clap = { version = "4.5.13", features = ["derive", "wrap_help"] }
 clap_complete = { version = "4.5.13" }
-console = { version = "0.15.8" }
+console = { version = "0.15.10" }
 derive-new = { version = "0.6.0" }
-env_logger = { version = "0.11.5" }
+env_logger = { version = "0.11.6" }
 iai-callgrind = { version = "0.12.3" }
 iai-callgrind-runner = { version = "0.12.3" }
 ignore = { version = "0.4.23" }
@@ -120,14 +120,14 @@ once_cell = { version = "1.20.2" }
 paste = { version = "1.0.15" }
 proc-macro2 = { version = "1.0.92" }
 public-api = { version = "0.37.0" }
-quote = { version = "1.0.37" }
+quote = { version = "1.0.38" }
 rayon = { version = "1.10.0" }
 regex = { version = "1.11.1" }
-reqwest = { version = "0.12.9", features = ["blocking"] }
-rustdoc-json = { version = "0.9.3" }
+reqwest = { version = "0.12.12", features = ["blocking"] }
+rustdoc-json = { version = "0.9.4" }
 semver = { version = "1.0.24", features = ["serde"] }
-serde = { version = "1.0.216", features = ["derive", "rc"] }
-serde_json = { version = "1.0.133", features = ["preserve_order"] }
+serde = { version = "1.0.217", features = ["derive", "rc"] }
+serde_json = { version = "1.0.134", features = ["preserve_order"] }
 similar-asserts = { version = "1.6.0" }
 smallvec = { version = "1.7.0", features = ["union"] }
 stack-graphs = { version = "0.13.0" }
@@ -138,7 +138,7 @@ string-interner = { version = "0.17.0", features = [
 ] }
 strum = { version = "0.26.3" }
 strum_macros = { version = "0.26.4" }
-syn = { version = "2.0.90", features = [
+syn = { version = "2.0.93", features = [
     "fold",
     "full",
     "extra-traits",
