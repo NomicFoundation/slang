@@ -50,6 +50,8 @@ impl CompilationUnit {
                 binding_graph.add_user_file(id, file.create_tree_cursor());
             }
 
+            binding_graph.resolve();
+
             Ok(Rc::new(binding_graph))
         })
     }

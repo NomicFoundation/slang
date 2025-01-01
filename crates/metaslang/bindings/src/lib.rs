@@ -1,5 +1,4 @@
 mod builder;
-mod database;
 mod location;
 mod resolver;
 
@@ -13,7 +12,7 @@ use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
-use resolver::{ResolveOptions, Resolver};
+use resolver::Resolver;
 use semver::Version;
 use stack_graphs::graph::StackGraph;
 
@@ -22,11 +21,10 @@ type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
 type CursorID = usize;
 
-pub use database::DatabaseResolver;
 pub use location::{BindingLocation, BuiltInLocation, UserFileLocation};
 
 pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
-    definiens: Option<Cursor<KT>>,
+    definiens: Cursor<KT>,
     parents: Vec<GraphHandle>,
     extension_scope: Option<GraphHandle>,
     inherit_extensions: bool,
@@ -46,6 +44,7 @@ pub struct BindingGraph<KT: KindTypes + 'static> {
     cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     cursor_to_references: HashMap<CursorID, GraphHandle>,
     extension_hooks: HashSet<GraphHandle>,
+    resolved_references: Option<HashMap<GraphHandle, Vec<GraphHandle>>>,
 }
 
 pub enum FileDescriptor {
@@ -129,6 +128,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             cursor_to_definitions: HashMap::new(),
             cursor_to_references: HashMap::new(),
             extension_hooks: HashSet::new(),
+            resolved_references: None,
         }
     }
 
@@ -185,8 +185,10 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         result
     }
 
-    pub fn build_database(&self) -> database::DatabaseResolver<'_, KT> {
-        database::DatabaseResolver::new(self)
+    pub fn resolve(&mut self) {
+        let resolver = Resolver::new(self);
+        let resolved_references = resolver.resolve();
+        self.resolved_references = Some(resolved_references);
     }
 
     fn get_parents(&self, handle: GraphHandle) -> Vec<GraphHandle> {
@@ -203,19 +205,12 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         }
     }
 
-    fn to_definition(&self, handle: GraphHandle) -> Option<Definition<'_, KT>> {
-        if self.stack_graph[handle].is_definition() {
-            Some(Definition {
-                owner: self,
-                handle,
-            })
-        } else {
-            None
-        }
-    }
-
     fn is_definition(&self, handle: GraphHandle) -> bool {
         self.stack_graph[handle].is_definition()
+    }
+
+    fn is_reference(&self, handle: GraphHandle) -> bool {
+        self.stack_graph[handle].is_reference()
     }
 
     fn get_extension_scope(&self, handle: GraphHandle) -> Option<GraphHandle> {
@@ -230,10 +225,37 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             .is_some_and(|info| info.inherit_extensions)
     }
 
+    fn get_file(&self, handle: GraphHandle) -> Option<FileDescriptor> {
+        self.stack_graph[handle]
+            .file()
+            .map(|file| FileDescriptor::from(self.stack_graph[file].name()))
+    }
+
+    pub(crate) fn is_extension_hook(&self, node_handle: GraphHandle) -> bool {
+        self.extension_hooks.contains(&node_handle)
+    }
+
     pub fn all_definitions(&self) -> impl Iterator<Item = Definition<'_, KT>> + '_ {
         self.stack_graph
             .iter_nodes()
             .filter_map(|handle| self.to_definition(handle))
+    }
+
+    fn to_definition(&self, handle: GraphHandle) -> Option<Definition<'_, KT>> {
+        if self.stack_graph[handle].is_definition() {
+            Some(Definition {
+                owner: self,
+                handle,
+            })
+        } else {
+            None
+        }
+    }
+
+    pub fn all_references(&self) -> impl Iterator<Item = Reference<'_, KT>> + '_ {
+        self.stack_graph
+            .iter_nodes()
+            .filter_map(|handle| self.to_reference(handle))
     }
 
     fn to_reference(&self, handle: GraphHandle) -> Option<Reference<'_, KT>> {
@@ -245,16 +267,6 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         } else {
             None
         }
-    }
-
-    fn is_reference(&self, handle: GraphHandle) -> bool {
-        self.stack_graph[handle].is_reference()
-    }
-
-    pub fn all_references(&self) -> impl Iterator<Item = Reference<'_, KT>> + '_ {
-        self.stack_graph
-            .iter_nodes()
-            .filter_map(|handle| self.to_reference(handle))
     }
 
     pub fn definition_at(&self, cursor: &Cursor<KT>) -> Option<Definition<'_, KT>> {
@@ -275,31 +287,6 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
                 owner: self,
                 handle: *handle,
             })
-    }
-
-    fn get_file(&self, handle: GraphHandle) -> Option<FileDescriptor> {
-        self.stack_graph[handle]
-            .file()
-            .map(|file| FileDescriptor::from(self.stack_graph[file].name()))
-    }
-
-    fn resolve_handles(&self, handles: &[GraphHandle]) -> Vec<Definition<'_, KT>> {
-        // NOTE: the Builder ensures that all handles in the parents are
-        // either definitions or references
-        handles
-            .iter()
-            .flat_map(|handle| {
-                if self.stack_graph[*handle].is_definition() {
-                    vec![self.to_definition(*handle).unwrap()]
-                } else {
-                    self.to_reference(*handle).unwrap().non_recursive_resolve()
-                }
-            })
-            .collect()
-    }
-
-    pub(crate) fn is_extension_hook(&self, node_handle: GraphHandle) -> bool {
-        self.extension_hooks.contains(&node_handle)
     }
 }
 
@@ -359,36 +346,18 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
     }
 
     pub fn get_definiens_cursor(&self) -> &Cursor<KT> {
-        self.owner
+        &self
+            .owner
             .definitions_info
             .get(&self.handle)
             .expect("Definition does not have valid binding info")
             .definiens
-            .as_ref()
-            .expect("Definiens does not have a valid cursor")
     }
 
     pub fn get_file(&self) -> FileDescriptor {
         self.owner
             .get_file(self.handle)
             .expect("Definition does not have a valid file descriptor")
-    }
-
-    pub(crate) fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
-        self.owner
-            .definitions_info
-            .get(&self.handle)
-            .map(|info| &info.parents)
-            .map(|handles| self.owner.resolve_handles(handles))
-            .unwrap_or_default()
-    }
-
-    pub(crate) fn get_extension_scope(&self) -> Option<GraphHandle> {
-        self.owner.get_extension_scope(self.handle)
-    }
-
-    pub(crate) fn inherit_extensions(&self) -> bool {
-        self.owner.inherits_extensions(self.handle)
     }
 }
 
@@ -468,22 +437,17 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     }
 
     pub fn definitions(&self) -> Vec<Definition<'a, KT>> {
-        Resolver::build_for(self, ResolveOptions::Full).all()
-    }
-
-    pub(crate) fn non_recursive_resolve(&self) -> Vec<Definition<'a, KT>> {
-        // This was likely originated from a full resolution call, so cut
-        // recursion here by restricting the resolution algorithm.
-        Resolver::build_for(self, ResolveOptions::NonRecursive).all()
-    }
-
-    pub(crate) fn resolve_parents(&self) -> Vec<Definition<'a, KT>> {
         self.owner
-            .references_info
-            .get(&self.handle)
-            .map(|info| &info.parents)
-            .map(|handles| self.owner.resolve_handles(handles))
-            .unwrap_or_default()
+            .resolved_references
+            .as_ref()
+            .expect("BindingGraph should be resolved")[&self.handle]
+            .iter()
+            .map(|handle| {
+                self.owner
+                    .to_definition(*handle)
+                    .expect("handle to be a definition")
+            })
+            .collect()
     }
 }
 

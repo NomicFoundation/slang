@@ -6,9 +6,11 @@ pub fn setup() -> BindingGraph {
     super::definitions::run(dependencies)
 }
 
-pub fn run(binding_graph: BindingGraph) {
+pub fn run(mut binding_graph: BindingGraph) {
     let mut reference_count = 0_usize;
     let mut resolved_references = 0_usize;
+
+    binding_graph.resolve();
 
     for reference in binding_graph.all_references() {
         if reference.get_file().is_system() {
