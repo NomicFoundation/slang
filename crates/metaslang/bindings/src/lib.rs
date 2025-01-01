@@ -404,11 +404,6 @@ pub struct Reference<'a, KT: KindTypes + 'static> {
     handle: GraphHandle,
 }
 
-pub enum ResolutionError<'a, KT: KindTypes + 'static> {
-    Unresolved,
-    AmbiguousDefinitions(Vec<Definition<'a, KT>>),
-}
-
 impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     pub fn id(&self) -> usize {
         self.get_cursor().node().id()
