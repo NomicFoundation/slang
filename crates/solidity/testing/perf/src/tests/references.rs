@@ -7,7 +7,7 @@ pub fn setup() -> BindingGraphBuilder {
 }
 
 pub fn run(binding_graph_builder: BindingGraphBuilder) {
-    let binding_graph = binding_graph_builder.resolve();
+    let binding_graph = binding_graph_builder.build();
 
     let definition_count = binding_graph
         .all_definitions()

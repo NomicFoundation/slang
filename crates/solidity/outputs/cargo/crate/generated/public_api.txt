@@ -16,7 +16,7 @@ impl core::fmt::Debug for slang_solidity::bindings::BindingGraphInitializationEr
 pub fn slang_solidity::bindings::BindingGraphInitializationError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::fmt::Display for slang_solidity::bindings::BindingGraphInitializationError
 pub fn slang_solidity::bindings::BindingGraphInitializationError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, resolver: alloc::rc::Rc<dyn metaslang_bindings::builder::PathResolver<slang_solidity::cst::KindTypes>>) -> core::result::Result<slang_solidity::bindings::BindingGraphBuilder, slang_solidity::parser::ParserInitializationError>
+pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, resolver: alloc::rc::Rc<dyn metaslang_bindings::builder::PathResolver<slang_solidity::cst::KindTypes>>) -> core::result::Result<slang_solidity::bindings::BindingGraphBuilder, slang_solidity::bindings::BindingGraphInitializationError>
 pub fn slang_solidity::bindings::get_binding_rules() -> &'static str
 pub type slang_solidity::bindings::BindingGraph = metaslang_bindings::graph::BindingGraph<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::BindingGraphBuilder = metaslang_bindings::builder::BindingGraphBuilder<slang_solidity::cst::KindTypes>

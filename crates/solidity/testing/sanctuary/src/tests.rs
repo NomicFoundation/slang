@@ -7,8 +7,8 @@ use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use metaslang_bindings::PathResolver;
 use semver::Version;
-use slang_solidity::bindings::{self, BindingGraphBuilder};
-use slang_solidity::cst::{Cursor, KindTypes, NonterminalKind, Query, TextRange};
+use slang_solidity::bindings::{self, BindingGraph};
+use slang_solidity::cst::{Cursor, KindTypes, NonterminalKind, TerminalKind, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::parser::{ParseOutput, Parser};
 use slang_solidity::utils::LanguageFacts;
@@ -186,7 +186,7 @@ fn run_bindings_check(
     output: &ParseOutput,
 ) -> Result<Vec<BindingError>> {
     let mut errors = Vec::new();
-    let binding_graph = create_bindings(version, source_id, output)?.resolve();
+    let binding_graph = create_bindings(version, source_id, output)?;
 
     for reference in binding_graph.all_references() {
         if reference.get_file().is_system() {
@@ -201,27 +201,28 @@ fn run_bindings_check(
         }
     }
 
-    // Check that all `Identifier` and `YulIdentifier` nodes are bound to either
-    // a definition or a reference
-    let query = Query::parse("@identifier ([Identifier] | [YulIdentifier])").unwrap();
-    let tree_cursor = output.create_tree_cursor();
-    for result in tree_cursor.query(vec![query]) {
-        let identifier_cursor = result.captures.get("identifier").unwrap().first().unwrap();
-        let parent = {
-            let mut parent_cursor = identifier_cursor.spawn();
-            parent_cursor.go_to_parent();
-            parent_cursor.node()
-        };
-        if parent.is_nonterminal_with_kind(NonterminalKind::ExperimentalFeature) {
-            // ignore identifiers in `pragma experimental` directives
+    // Check that all `Identifier` and `YulIdentifier` nodes are bound to either a definition or a reference:
+
+    let mut cursor = output.create_tree_cursor();
+
+    while cursor
+        .go_to_next_terminal_with_kinds(&[TerminalKind::Identifier, TerminalKind::YulIdentifier])
+    {
+        if matches!(
+            cursor.ancestors().next(),
+            Some(ancestor) if ancestor.kind == NonterminalKind::ExperimentalFeature
+        ) {
+            // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
             continue;
         }
-        if binding_graph.definition_at(identifier_cursor).is_none()
-            && binding_graph.reference_at(identifier_cursor).is_none()
+
+        if binding_graph.definition_at(&cursor).is_none()
+            && binding_graph.reference_at(&cursor).is_none()
         {
-            errors.push(BindingError::UnboundIdentifier(identifier_cursor.clone()));
+            errors.push(BindingError::UnboundIdentifier(cursor.clone()));
         }
     }
+
     Ok(errors)
 }
 
@@ -229,17 +230,17 @@ fn create_bindings(
     version: &Version,
     source_id: &str,
     output: &ParseOutput,
-) -> Result<BindingGraphBuilder> {
-    let mut binding_graph_builder = bindings::create_with_resolver(
+) -> Result<Rc<BindingGraph>> {
+    let mut builder = bindings::create_with_resolver(
         version.clone(),
         Rc::new(SingleFileResolver {
             source_id: source_id.into(),
         }),
     )?;
 
-    binding_graph_builder.add_user_file(source_id, output.create_tree_cursor());
+    builder.add_user_file(source_id, output.create_tree_cursor());
 
-    Ok(binding_graph_builder)
+    Ok(builder.build())
 }
 
 /// The `PathResolver` that always resolves to the given `source_id`.

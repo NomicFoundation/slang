@@ -32,7 +32,7 @@ pub enum BindingGraphInitializationError {
 pub fn create_with_resolver(
     version: Version,
     resolver: Rc<dyn PathResolver<KindTypes>>,
-) -> Result<BindingGraphBuilder, ParserInitializationError> {
+) -> Result<BindingGraphBuilder, BindingGraphInitializationError> {
     let mut binding_graph = BindingGraphBuilder::create(
         version.clone(),
         binding_rules::BINDING_RULES_SOURCE,

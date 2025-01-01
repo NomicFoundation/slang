@@ -44,7 +44,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
 
     for version in &VERSION_BREAKS {
         let parser = Parser::create(version.clone())?;
-        let mut binding_graph =
+        let mut builder =
             bindings::create_with_resolver(version.clone(), Rc::new(TestsPathResolver {}))?;
 
         let mut parsed_parts: Vec<ParsedPart<'_>> = Vec::new();
@@ -55,8 +55,8 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         } in &multi_part.parts
         {
             let parse_output = parser.parse(Parser::ROOT_KIND, contents);
-            let graph = binding_graph
-                .add_user_file_returning_graph(path, parse_output.create_tree_cursor());
+            let graph =
+                builder.add_user_file_returning_graph(path, parse_output.create_tree_cursor());
             parsed_parts.push(ParsedPart {
                 path,
                 contents,
@@ -65,7 +65,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             });
         }
 
-        let binding_graph = binding_graph.resolve();
+        let binding_graph = builder.build();
         let (bindings_output, all_resolved) = render_bindings(&binding_graph, &parsed_parts)?;
 
         let parse_success = parsed_parts.iter().all(|part| part.parse_output.is_valid());

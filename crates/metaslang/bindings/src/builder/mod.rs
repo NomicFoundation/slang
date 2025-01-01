@@ -181,7 +181,7 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         result
     }
 
-    pub fn resolve(self) -> Rc<BindingGraph<KT>> {
+    pub fn build(self) -> Rc<BindingGraph<KT>> {
         let resolver = Resolver::new(&self);
         let resolved_references = resolver.resolve();
         BindingGraph::build(self, resolved_references)

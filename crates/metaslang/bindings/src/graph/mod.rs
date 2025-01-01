@@ -37,30 +37,30 @@ pub struct BindingGraph<KT: KindTypes + 'static> {
 
 impl<KT: KindTypes + 'static> BindingGraph<KT> {
     pub(crate) fn build(
-        binding_graph: BindingGraphBuilder<KT>,
+        builder: BindingGraphBuilder<KT>,
         resolved_references: HashMap<GraphHandle, Vec<GraphHandle>>,
     ) -> Rc<Self> {
         let mut files = HashMap::new();
-        for handle in binding_graph.stack_graph.iter_files() {
+        for handle in builder.stack_graph.iter_files() {
             files.insert(
                 handle,
-                FileDescriptor::from(binding_graph.stack_graph[handle].name()),
+                FileDescriptor::from(builder.stack_graph[handle].name()),
             );
         }
         let mut definitions = BTreeMap::new();
         let mut references = BTreeMap::new();
-        for handle in binding_graph.stack_graph.iter_nodes() {
-            let graph_node = &binding_graph.stack_graph[handle];
+        for handle in builder.stack_graph.iter_nodes() {
+            let graph_node = &builder.stack_graph[handle];
             let Some(file) = graph_node.file() else {
                 continue;
             };
             if graph_node.is_definition() {
-                let cursor = binding_graph
+                let cursor = builder
                     .cursors
                     .get(&handle)
                     .expect("Definition to have a valid cursor")
                     .clone();
-                let definiens = binding_graph.definitions_info[&handle].definiens.clone();
+                let definiens = builder.definitions_info[&handle].definiens.clone();
                 definitions.insert(
                     handle,
                     DefinitionInfo {
@@ -70,7 +70,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
                     },
                 );
             } else if graph_node.is_reference() {
-                let cursor = binding_graph
+                let cursor = builder
                     .cursors
                     .get(&handle)
                     .expect("Reference to have a valid cursor")
@@ -83,8 +83,8 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             files,
             definitions,
             references,
-            cursor_to_definitions: binding_graph.cursor_to_definitions,
-            cursor_to_references: binding_graph.cursor_to_references,
+            cursor_to_definitions: builder.cursor_to_definitions,
+            cursor_to_references: builder.cursor_to_references,
             resolved_references,
         })
     }
