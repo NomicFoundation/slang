@@ -4,7 +4,6 @@ mod resolver;
 
 use std::collections::{HashMap, HashSet};
 use std::fmt::{self, Debug, Display};
-use std::hash::Hash;
 use std::rc::Rc;
 
 use builder::BuildResult;
@@ -185,10 +184,11 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         result
     }
 
-    pub fn resolve(&mut self) {
-        let resolver = Resolver::new(self);
+    pub fn resolve(mut self) -> Rc<BindingGraph<KT>> {
+        let resolver = Resolver::new(&self);
         let resolved_references = resolver.resolve();
         self.resolved_references = Some(resolved_references);
+        Rc::new(self)
     }
 
     fn get_parents(&self, handle: GraphHandle) -> Vec<GraphHandle> {
@@ -235,16 +235,16 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         self.extension_hooks.contains(&node_handle)
     }
 
-    pub fn all_definitions(&self) -> impl Iterator<Item = Definition<'_, KT>> + '_ {
+    pub fn all_definitions(self: &Rc<Self>) -> impl Iterator<Item = Definition<KT>> + '_ {
         self.stack_graph
             .iter_nodes()
             .filter_map(|handle| self.to_definition(handle))
     }
 
-    fn to_definition(&self, handle: GraphHandle) -> Option<Definition<'_, KT>> {
+    fn to_definition(self: &Rc<Self>, handle: GraphHandle) -> Option<Definition<KT>> {
         if self.stack_graph[handle].is_definition() {
             Some(Definition {
-                owner: self,
+                owner: Rc::clone(self),
                 handle,
             })
         } else {
@@ -252,16 +252,16 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         }
     }
 
-    pub fn all_references(&self) -> impl Iterator<Item = Reference<'_, KT>> + '_ {
+    pub fn all_references(self: &Rc<Self>) -> impl Iterator<Item = Reference<KT>> + '_ {
         self.stack_graph
             .iter_nodes()
             .filter_map(|handle| self.to_reference(handle))
     }
 
-    fn to_reference(&self, handle: GraphHandle) -> Option<Reference<'_, KT>> {
+    fn to_reference(self: &Rc<Self>, handle: GraphHandle) -> Option<Reference<KT>> {
         if self.stack_graph[handle].is_reference() {
             Some(Reference {
-                owner: self,
+                owner: Rc::clone(self),
                 handle,
             })
         } else {
@@ -269,22 +269,22 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         }
     }
 
-    pub fn definition_at(&self, cursor: &Cursor<KT>) -> Option<Definition<'_, KT>> {
+    pub fn definition_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Definition<KT>> {
         let cursor_id = cursor.node().id();
         self.cursor_to_definitions
             .get(&cursor_id)
             .map(|handle| Definition {
-                owner: self,
+                owner: Rc::clone(self),
                 handle: *handle,
             })
     }
 
-    pub fn reference_at(&self, cursor: &Cursor<KT>) -> Option<Reference<'_, KT>> {
+    pub fn reference_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Reference<KT>> {
         let cursor_id = cursor.node().id();
         self.cursor_to_references
             .get(&cursor_id)
             .map(|handle| Reference {
-                owner: self,
+                owner: Rc::clone(self),
                 handle: *handle,
             })
     }
@@ -310,12 +310,12 @@ impl<'a, KT: KindTypes + 'static> fmt::Display for DisplayCursor<'a, KT> {
 }
 
 #[derive(Clone)]
-pub struct Definition<'a, KT: KindTypes + 'static> {
-    owner: &'a BindingGraph<KT>,
+pub struct Definition<KT: KindTypes + 'static> {
+    owner: Rc<BindingGraph<KT>>,
     handle: GraphHandle,
 }
 
-impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
+impl<KT: KindTypes + 'static> Definition<KT> {
     pub fn id(&self) -> usize {
         self.get_cursor().node().id()
     }
@@ -361,7 +361,7 @@ impl<'a, KT: KindTypes + 'static> Definition<'a, KT> {
     }
 }
 
-impl<KT: KindTypes + 'static> Display for Definition<'_, KT> {
+impl<KT: KindTypes + 'static> Display for Definition<KT> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -374,37 +374,27 @@ impl<KT: KindTypes + 'static> Display for Definition<'_, KT> {
     }
 }
 
-impl<KT: KindTypes + 'static> Debug for Definition<'_, KT> {
+impl<KT: KindTypes + 'static> Debug for Definition<KT> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{self}")
     }
 }
 
-impl<KT: KindTypes + 'static> PartialEq for Definition<'_, KT> {
+impl<KT: KindTypes + 'static> PartialEq for Definition<KT> {
     fn eq(&self, other: &Self) -> bool {
-        let our_owner: *const BindingGraph<KT> = self.owner;
-        let other_owner: *const BindingGraph<KT> = other.owner;
-        our_owner == other_owner && self.handle == other.handle
+        Rc::ptr_eq(&self.owner, &other.owner) && self.handle == other.handle
     }
 }
 
-impl<KT: KindTypes + 'static> Eq for Definition<'_, KT> {}
-
-impl<KT: KindTypes + 'static> Hash for Definition<'_, KT> {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        let owner: *const BindingGraph<KT> = self.owner;
-        owner.hash(state);
-        self.handle.hash(state);
-    }
-}
+impl<KT: KindTypes + 'static> Eq for Definition<KT> {}
 
 #[derive(Clone)]
-pub struct Reference<'a, KT: KindTypes + 'static> {
-    owner: &'a BindingGraph<KT>,
+pub struct Reference<KT: KindTypes + 'static> {
+    owner: Rc<BindingGraph<KT>>,
     handle: GraphHandle,
 }
 
-impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
+impl<KT: KindTypes + 'static> Reference<KT> {
     pub fn id(&self) -> usize {
         self.get_cursor().node().id()
     }
@@ -431,7 +421,7 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
             .expect("Reference does not have a valid file descriptor")
     }
 
-    pub fn definitions(&self) -> Vec<Definition<'a, KT>> {
+    pub fn definitions(&self) -> Vec<Definition<KT>> {
         self.owner
             .resolved_references
             .as_ref()
@@ -446,7 +436,7 @@ impl<'a, KT: KindTypes + 'static> Reference<'a, KT> {
     }
 }
 
-impl<KT: KindTypes + 'static> Display for Reference<'_, KT> {
+impl<KT: KindTypes + 'static> Display for Reference<KT> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
@@ -459,10 +449,8 @@ impl<KT: KindTypes + 'static> Display for Reference<'_, KT> {
     }
 }
 
-impl<KT: KindTypes + 'static> PartialEq for Reference<'_, KT> {
+impl<KT: KindTypes + 'static> PartialEq for Reference<KT> {
     fn eq(&self, other: &Self) -> bool {
-        let our_owner: *const BindingGraph<KT> = self.owner;
-        let other_owner: *const BindingGraph<KT> = other.owner;
-        our_owner == other_owner && self.handle == other.handle
+        Rc::ptr_eq(&self.owner, &other.owner) && self.handle == other.handle
     }
 }
