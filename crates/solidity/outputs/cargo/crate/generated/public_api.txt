@@ -16,12 +16,13 @@ impl core::fmt::Debug for slang_solidity::bindings::BindingGraphInitializationEr
 pub fn slang_solidity::bindings::BindingGraphInitializationError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::fmt::Display for slang_solidity::bindings::BindingGraphInitializationError
 pub fn slang_solidity::bindings::BindingGraphInitializationError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, resolver: alloc::rc::Rc<dyn metaslang_bindings::PathResolver<slang_solidity::cst::KindTypes>>) -> core::result::Result<slang_solidity::bindings::BindingGraph, slang_solidity::parser::ParserInitializationError>
+pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, resolver: alloc::rc::Rc<dyn metaslang_bindings::PathResolver<slang_solidity::cst::KindTypes>>) -> core::result::Result<slang_solidity::bindings::BindingGraphBuilder, slang_solidity::parser::ParserInitializationError>
 pub fn slang_solidity::bindings::get_binding_rules() -> &'static str
-pub type slang_solidity::bindings::BindingGraph = metaslang_bindings::BindingGraph<slang_solidity::cst::KindTypes>
+pub type slang_solidity::bindings::BindingGraph = metaslang_bindings::resolved::BindingGraph<slang_solidity::cst::KindTypes>
+pub type slang_solidity::bindings::BindingGraphBuilder = metaslang_bindings::BindingGraphBuilder<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::BindingLocation = metaslang_bindings::location::BindingLocation<slang_solidity::cst::KindTypes>
-pub type slang_solidity::bindings::Definition = metaslang_bindings::Definition<slang_solidity::cst::KindTypes>
-pub type slang_solidity::bindings::Reference = metaslang_bindings::Reference<slang_solidity::cst::KindTypes>
+pub type slang_solidity::bindings::Definition = metaslang_bindings::resolved::Definition<slang_solidity::cst::KindTypes>
+pub type slang_solidity::bindings::Reference = metaslang_bindings::resolved::Reference<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::UserFileLocation = metaslang_bindings::location::UserFileLocation<slang_solidity::cst::KindTypes>
 pub mod slang_solidity::compilation
 pub struct slang_solidity::compilation::AddFileResponse

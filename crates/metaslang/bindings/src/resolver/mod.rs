@@ -11,17 +11,17 @@ use stack_graphs::stitching::{
 };
 use stack_graphs::{CancellationError, NoCancellation};
 
-use crate::{BindingGraph, GraphHandle};
+use crate::{BindingGraphBuilder, GraphHandle};
 
 pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
-    owner: &'a BindingGraph<KT>,
+    owner: &'a BindingGraphBuilder<KT>,
     partials: PartialPaths,
     database: Database,
     references: HashMap<GraphHandle, Vec<GraphHandle>>,
 }
 
 impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
-    pub fn new(owner: &'a BindingGraph<KT>) -> Self {
+    pub fn new(owner: &'a BindingGraphBuilder<KT>) -> Self {
         let database = Database::new();
         let partials = PartialPaths::new();
 
@@ -218,7 +218,7 @@ impl ToAppendable<ExtendedHandle, PartialPath> for ExtendedDatabase<'_> {
 }
 
 struct DatabaseCandidatesExtended<'a, KT: KindTypes + 'static> {
-    owner: &'a BindingGraph<KT>,
+    owner: &'a BindingGraphBuilder<KT>,
     partials: &'a mut PartialPaths,
     database: &'a mut ExtendedDatabase<'a>,
     extensions: Vec<GraphHandle>,
@@ -226,7 +226,7 @@ struct DatabaseCandidatesExtended<'a, KT: KindTypes + 'static> {
 
 impl<'a, KT: KindTypes + 'static> DatabaseCandidatesExtended<'a, KT> {
     fn new(
-        owner: &'a BindingGraph<KT>,
+        owner: &'a BindingGraphBuilder<KT>,
         partials: &'a mut PartialPaths,
         database: &'a mut ExtendedDatabase<'a>,
         extensions: Vec<GraphHandle>,
