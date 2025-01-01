@@ -2,13 +2,12 @@
 #![allow(clippy::needless_pass_by_value)]
 
 use std::hint::black_box;
-use std::rc::Rc;
 
 use iai_callgrind::{
     library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
-use slang_solidity::bindings::BindingGraph;
+use slang_solidity::bindings::BindingGraphBuilder;
 use solidity_testing_perf::dataset::SourceFile;
 use solidity_testing_perf::tests::definitions::Dependencies;
 use solidity_testing_perf::tests::parser::ParsedFile;
@@ -46,7 +45,7 @@ define_payload_benchmark!(cursor, Vec<ParsedFile>);
 define_payload_benchmark!(query, Vec<ParsedFile>);
 define_benchmark!(init_bindings);
 define_payload_benchmark!(definitions, Dependencies);
-define_payload_benchmark!(references, Rc<BindingGraph>);
+define_payload_benchmark!(references, BindingGraphBuilder);
 
 library_benchmark_group!(
     name = benchmarks;

@@ -1,14 +1,21 @@
-use std::rc::Rc;
+use slang_solidity::bindings::BindingGraphBuilder;
 
-use slang_solidity::bindings::BindingGraph;
-
-pub fn setup() -> Rc<BindingGraph> {
+pub fn setup() -> BindingGraphBuilder {
     let dependencies = super::definitions::setup();
 
     super::definitions::run(dependencies)
 }
 
-pub fn run(binding_graph: Rc<BindingGraph>) {
+pub fn run(binding_graph_builder: BindingGraphBuilder) {
+    let binding_graph = binding_graph_builder.resolve();
+
+    let definition_count = binding_graph
+        .all_definitions()
+        .filter(|definition| definition.get_file().is_user())
+        .count();
+
+    assert_eq!(definition_count, 882, "Failed to fetch all definitions");
+
     let mut reference_count = 0_usize;
     let mut resolved_references = 0_usize;
 

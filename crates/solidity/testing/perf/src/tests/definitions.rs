@@ -1,6 +1,4 @@
-use std::rc::Rc;
-
-use slang_solidity::bindings::{BindingGraph, BindingGraphBuilder};
+use slang_solidity::bindings::BindingGraphBuilder;
 
 use crate::tests::parser::ParsedFile;
 
@@ -19,7 +17,7 @@ pub fn setup() -> Dependencies {
     }
 }
 
-pub fn run(dependencies: Dependencies) -> Rc<BindingGraph> {
+pub fn run(dependencies: Dependencies) -> BindingGraphBuilder {
     let Dependencies {
         mut binding_graph_builder,
         files,
@@ -35,13 +33,5 @@ pub fn run(dependencies: Dependencies) -> Rc<BindingGraph> {
             .add_user_file(path.to_str().unwrap(), parse_output.create_tree_cursor());
     }
 
-    let binding_graph = binding_graph_builder.resolve();
-    let definition_count = binding_graph
-        .all_definitions()
-        .filter(|definition| definition.get_file().is_user())
-        .count();
-
-    assert_eq!(definition_count, 882, "Failed to fetch all definitions");
-
-    binding_graph
+    binding_graph_builder
 }
