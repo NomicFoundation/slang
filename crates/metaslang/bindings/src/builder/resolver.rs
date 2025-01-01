@@ -11,7 +11,7 @@ use stack_graphs::stitching::{
 };
 use stack_graphs::{CancellationError, NoCancellation};
 
-use crate::{BindingGraphBuilder, GraphHandle};
+use super::{BindingGraphBuilder, GraphHandle};
 
 pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
     owner: &'a BindingGraphBuilder<KT>,

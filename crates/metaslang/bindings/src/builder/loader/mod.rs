@@ -293,7 +293,7 @@ use stack_graphs::arena::Handle;
 use stack_graphs::graph::{File, Node, NodeID, StackGraph};
 use thiserror::Error;
 
-use crate::{DefinitionBindingInfo, ReferenceBindingInfo};
+use crate::builder::{DefinitionBindingInfo, ReferenceBindingInfo};
 
 // Node type values
 static DROP_SCOPES_TYPE: &str = "drop_scopes";
@@ -392,7 +392,7 @@ pub(crate) struct Loader<'a, KT: KindTypes + 'static> {
     extension_hooks: HashSet<Handle<Node>>,
 }
 
-pub(crate) struct BuildResult<KT: KindTypes + 'static> {
+pub(crate) struct LoadResult<KT: KindTypes + 'static> {
     #[cfg(feature = "__private_testing_utils")]
     pub graph: Graph<KT>,
     pub cursors: HashMap<Handle<Node>, Cursor<KT>>,
@@ -476,7 +476,7 @@ impl<'a, KT: KindTypes + 'static> Loader<'a, KT> {
     pub fn execute(
         mut self,
         cancellation_flag: &dyn CancellationFlag,
-    ) -> Result<BuildResult<KT>, BuildError> {
+    ) -> Result<LoadResult<KT>, BuildError> {
         let variables = self.build_global_variables();
 
         let config = ExecutionConfig::new(self.functions, &variables)
@@ -506,7 +506,7 @@ impl<'a, KT: KindTypes + 'static> Loader<'a, KT> {
 
         self.load(cancellation_flag)?;
 
-        Ok(BuildResult {
+        Ok(LoadResult {
             #[cfg(feature = "__private_testing_utils")]
             graph: self.graph,
             cursors: self.cursors,
