@@ -377,7 +377,7 @@ pub const JUMP_TO_SCOPE_NODE_VAR: &str = "JUMP_TO_SCOPE_NODE";
 /// Name of the variable used to pass the file path.
 pub const FILE_PATH_VAR: &str = "FILE_PATH";
 
-pub(crate) struct Builder<'a, KT: KindTypes + 'static> {
+pub(crate) struct Loader<'a, KT: KindTypes + 'static> {
     msgb: &'a GraphBuilderFile<KT>,
     functions: &'a Functions<KT>,
     stack_graph: &'a mut StackGraph,
@@ -402,7 +402,7 @@ pub(crate) struct BuildResult<KT: KindTypes + 'static> {
     pub extension_hooks: HashSet<Handle<Node>>,
 }
 
-impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
+impl<'a, KT: KindTypes + 'static> Loader<'a, KT> {
     pub fn new(
         msgb: &'a GraphBuilderFile<KT>,
         functions: &'a Functions<KT>,
@@ -410,7 +410,7 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         file: Handle<File>,
         tree_cursor: Cursor<KT>,
     ) -> Self {
-        Builder {
+        Loader {
             msgb,
             functions,
             stack_graph,
@@ -472,8 +472,8 @@ impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
         variables
     }
 
-    /// Executes this builder.
-    pub fn build(
+    /// Executes this loader.
+    pub fn execute(
         mut self,
         cancellation_flag: &dyn CancellationFlag,
     ) -> Result<BuildResult<KT>, BuildError> {
@@ -566,7 +566,7 @@ impl From<ExecutionError> for BuildError {
     }
 }
 
-impl<'a, KT: KindTypes + 'static> Builder<'a, KT> {
+impl<'a, KT: KindTypes + 'static> Loader<'a, KT> {
     fn load(&mut self, cancellation_flag: &dyn CancellationFlag) -> Result<(), BuildError> {
         let cancellation_flag: &dyn stack_graphs::CancellationFlag = &cancellation_flag;
 
@@ -696,7 +696,7 @@ enum NodeType {
     Scope,
 }
 
-impl<'a, KT: KindTypes> Builder<'a, KT> {
+impl<'a, KT: KindTypes> Loader<'a, KT> {
     /// Get the `NodeID` corresponding to a `Graph` node.
     ///
     /// By default, graph nodes get their index shifted by [`self.injected_node_count`] as their

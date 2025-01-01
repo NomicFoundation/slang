@@ -1,4 +1,4 @@
-mod builder;
+mod loader;
 mod location;
 mod resolved;
 mod resolver;
@@ -7,7 +7,7 @@ use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
 use std::rc::Rc;
 
-use builder::BuildResult;
+use loader::BuildResult;
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 use metaslang_graph_builder::ast::File;
@@ -16,7 +16,7 @@ use resolver::Resolver;
 use semver::Version;
 use stack_graphs::graph::StackGraph;
 
-type Builder<'a, KT> = builder::Builder<'a, KT>;
+type Loader<'a, KT> = loader::Loader<'a, KT>;
 type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
 type CursorID = usize;
@@ -117,7 +117,7 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         let graph_builder_file =
             File::from_str(binding_rules).expect("Bindings stack graph builder parse error");
         let stack_graph = StackGraph::new();
-        let functions = builder::default_functions(version, path_resolver);
+        let functions = loader::default_functions(version, path_resolver);
 
         Self {
             graph_builder_file,
@@ -157,15 +157,15 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
     }
 
     fn add_file_internal(&mut self, file: FileHandle, tree_cursor: Cursor<KT>) -> BuildResult<KT> {
-        let builder = Builder::new(
+        let loader = Loader::new(
             &self.graph_builder_file,
             &self.functions,
             &mut self.stack_graph,
             file,
             tree_cursor,
         );
-        let mut result = builder
-            .build(&builder::NoCancellation)
+        let mut result = loader
+            .execute(&loader::NoCancellation)
             .expect("Internal error while building bindings");
 
         for (handle, cursor) in result.cursors.drain() {
