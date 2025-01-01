@@ -1,13 +1,21 @@
-use std::{collections::HashMap, iter::once};
+use std::{
+    collections::{HashMap, HashSet},
+    iter::once,
+};
 
 use metaslang_cst::kinds::KindTypes;
 use stack_graphs::{
-    partial::PartialPaths,
-    stitching::{Database, DatabaseCandidates, ForwardPartialPathStitcher, StitcherConfig},
-    NoCancellation,
+    arena::Handle,
+    graph::{Degree, Edge, StackGraph},
+    partial::{PartialPath, PartialPaths},
+    stitching::{
+        Database, DatabaseCandidates, ForwardCandidates, ForwardPartialPathStitcher,
+        StitcherConfig, ToAppendable,
+    },
+    CancellationError, NoCancellation,
 };
 
-use crate::{Bindings, Definition, GraphHandle, Reference};
+use crate::{BindingGraph, Definition, GraphHandle, Reference};
 
 pub struct DatabaseResolver<'a, KT: KindTypes + 'static> {
     owner: &'a BindingGraph<KT>,
@@ -17,7 +25,7 @@ pub struct DatabaseResolver<'a, KT: KindTypes + 'static> {
 }
 
 impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
-    pub fn new(owner: &'a Bindings<KT>) -> Self {
+    pub fn new(owner: &'a BindingGraph<KT>) -> Self {
         let database = Database::new();
         let partials = PartialPaths::new();
 
@@ -60,27 +68,100 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
         }
     }
 
-    fn resolve_internal(&mut self, reference: GraphHandle) -> Vec<GraphHandle> {
+    fn resolve_parents(&mut self, reference: GraphHandle) -> Vec<GraphHandle> {
+        self.owner
+            .get_parents(reference)
+            .iter()
+            .flat_map(|handle| {
+                if self.owner.is_definition(*handle) {
+                    vec![*handle]
+                } else {
+                    self.resolve_internal(*handle, false)
+                }
+            })
+            .collect()
+    }
+
+    fn resolve_parents_recursively(&mut self, parent: GraphHandle) -> Vec<GraphHandle> {
+        let mut results = HashMap::new();
+        let mut resolve_queue = Vec::new();
+        resolve_queue.push(parent);
+        while let Some(current) = resolve_queue.pop() {
+            let current_parents = self.resolve_parents(current);
+            for current_parent in &current_parents {
+                if !results.contains_key(current_parent) {
+                    resolve_queue.push(current_parent.clone());
+                }
+            }
+            results.insert(current, current_parents);
+        }
+        results.into_values().flatten().collect()
+    }
+
+    fn resolve_internal(
+        &mut self,
+        reference: GraphHandle,
+        allow_recursion: bool,
+    ) -> Vec<GraphHandle> {
         if let Some(definitions) = self.references.get(&reference) {
             return definitions.to_vec();
         }
 
         let mut reference_paths = Vec::new();
 
-        ForwardPartialPathStitcher::find_all_complete_partial_paths(
-            &mut DatabaseCandidates::new(
-                &self.owner.stack_graph,
-                &mut self.partials,
-                &mut self.database,
-            ),
-            once(reference),
-            StitcherConfig::default(),
-            &NoCancellation,
-            |_graph, _partials, path| {
-                reference_paths.push(path.clone());
-            },
-        )
-        .expect("not cancelled");
+        if allow_recursion {
+            // look for extension scopes to apply to the reference
+            let ref_parents = self.resolve_parents(reference);
+            let mut extensions = HashSet::new();
+            for parent in &ref_parents {
+                if let Some(extension_scope) = self.owner.get_extension_scope(*parent) {
+                    extensions.insert(extension_scope);
+                }
+
+                if self.owner.inherits_extensions(*parent) {
+                    let grand_parents = self.resolve_parents_recursively(*parent);
+                    for grand_parent in &grand_parents {
+                        if let Some(extension_scope) = self.owner.get_extension_scope(*grand_parent)
+                        {
+                            extensions.insert(extension_scope);
+                        }
+                    }
+                }
+            }
+            let extensions = extensions.drain().collect::<Vec<_>>();
+            let mut database = ExtendedDatabase::new(&mut self.database);
+
+            ForwardPartialPathStitcher::find_all_complete_partial_paths(
+                &mut DatabaseCandidatesExtended::new(
+                    &self.owner,
+                    &mut self.partials,
+                    &mut database,
+                    extensions,
+                ),
+                once(reference),
+                StitcherConfig::default(),
+                &NoCancellation,
+                |_graph, _partials, path| {
+                    reference_paths.push(path.clone());
+                },
+            )
+            .expect("not cancelled");
+        } else {
+            ForwardPartialPathStitcher::find_all_complete_partial_paths(
+                &mut DatabaseCandidates::new(
+                    &self.owner.stack_graph,
+                    &mut self.partials,
+                    &mut self.database,
+                ),
+                once(reference),
+                StitcherConfig::default(),
+                &NoCancellation,
+                |_graph, _partials, path| {
+                    reference_paths.push(path.clone());
+                },
+            )
+            .expect("not cancelled");
+        }
 
         let mut results = Vec::new();
         for reference_path in &reference_paths {
@@ -97,7 +178,7 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
     }
 
     pub fn resolve(&mut self, reference: &Reference<'a, KT>) -> Vec<Definition<'a, KT>> {
-        self.resolve_internal(reference.handle)
+        self.resolve_internal(reference.handle, true)
             .iter()
             .map(|handle| {
                 self.owner
@@ -109,10 +190,124 @@ impl<'a, KT: KindTypes + 'static> DatabaseResolver<'a, KT> {
 
     pub fn resolve_all(&mut self) {
         for handle in self.owner.stack_graph.iter_nodes() {
-            if self.owner.stack_graph[handle].is_reference() {
-                let definition_handles = self.resolve_internal(handle);
+            if self.owner.is_reference(handle)
+                && self
+                    .owner
+                    .get_file(handle)
+                    .map(|file| file.is_user())
+                    .unwrap_or_default()
+            {
+                let definition_handles = self.resolve_internal(handle, true);
                 self.references.insert(handle, definition_handles);
             }
         }
+    }
+}
+
+struct ExtendedDatabase<'a> {
+    pub database: &'a mut Database,
+    pub edges: Vec<PartialPath>,
+}
+
+impl<'a> ExtendedDatabase<'a> {
+    fn new(database: &'a mut Database) -> Self {
+        Self {
+            database,
+            edges: Vec::new(),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+enum ExtendedHandle {
+    Handle(Handle<PartialPath>),
+    Edge(usize),
+}
+
+impl ToAppendable<ExtendedHandle, PartialPath> for ExtendedDatabase<'_> {
+    fn get_appendable<'a>(&'a self, handle: &'a ExtendedHandle) -> &'a PartialPath {
+        match handle {
+            ExtendedHandle::Handle(handle) => self.database.get_appendable(handle),
+            ExtendedHandle::Edge(edge) => &self.edges[*edge],
+        }
+    }
+}
+
+struct DatabaseCandidatesExtended<'a, KT: KindTypes + 'static> {
+    owner: &'a BindingGraph<KT>,
+    partials: &'a mut PartialPaths,
+    database: &'a mut ExtendedDatabase<'a>,
+    extensions: Vec<GraphHandle>,
+}
+
+impl<'a, KT: KindTypes + 'static> DatabaseCandidatesExtended<'a, KT> {
+    fn new(
+        owner: &'a BindingGraph<KT>,
+        partials: &'a mut PartialPaths,
+        database: &'a mut ExtendedDatabase<'a>,
+        extensions: Vec<GraphHandle>,
+    ) -> Self {
+        Self {
+            owner,
+            partials,
+            database,
+            extensions,
+        }
+    }
+}
+
+impl<'a, KT: KindTypes + 'static>
+    ForwardCandidates<ExtendedHandle, PartialPath, ExtendedDatabase<'a>, CancellationError>
+    for DatabaseCandidatesExtended<'a, KT>
+{
+    fn get_forward_candidates<R>(&mut self, path: &PartialPath, result: &mut R)
+    where
+        R: std::iter::Extend<ExtendedHandle>,
+    {
+        let node = path.end_node;
+
+        let mut db_candidates = Vec::new();
+        self.database.database.find_candidate_partial_paths(
+            &self.owner.stack_graph,
+            self.partials,
+            path,
+            &mut db_candidates,
+        );
+        result.extend(
+            db_candidates
+                .iter()
+                .map(|candidate| ExtendedHandle::Handle(*candidate)),
+        );
+
+        if self.owner.is_extension_hook(node) {
+            for extension in &self.extensions {
+                let edge = Edge {
+                    source: node,
+                    sink: *extension,
+                    precedence: 0,
+                };
+                let mut partial_path =
+                    PartialPath::from_node(&self.owner.stack_graph, &mut self.partials, node);
+                partial_path
+                    .append(&self.owner.stack_graph, &mut self.partials, edge)
+                    .expect("path can be extended");
+                let edge_handle = self.database.edges.len();
+                self.database.edges.push(partial_path);
+                result.extend(once(ExtendedHandle::Edge(edge_handle)));
+            }
+        }
+    }
+
+    fn get_joining_candidate_degree(&self, path: &PartialPath) -> Degree {
+        // TODO: this may not be correct for extension scopes
+        self.database
+            .database
+            .get_incoming_path_degree(path.end_node)
+    }
+
+    fn get_graph_partials_and_db(
+        &mut self,
+    ) -> (&StackGraph, &mut PartialPaths, &ExtendedDatabase<'a>) {
+        (&self.owner.stack_graph, self.partials, &self.database)
     }
 }

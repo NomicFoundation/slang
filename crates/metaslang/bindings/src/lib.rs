@@ -1,7 +1,7 @@
 mod builder;
+mod database;
 mod location;
 mod resolver;
-mod database;
 
 use std::collections::{HashMap, HashSet};
 use std::fmt::{self, Debug, Display};
@@ -188,6 +188,20 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         database::DatabaseResolver::new(self)
     }
 
+    fn get_parents(&self, handle: GraphHandle) -> Vec<GraphHandle> {
+        if self.is_definition(handle) {
+            self.definitions_info
+                .get(&handle)
+                .map(|info| info.parents.clone())
+                .unwrap_or_default()
+        } else {
+            self.references_info
+                .get(&handle)
+                .map(|info| info.parents.clone())
+                .unwrap_or_default()
+        }
+    }
+
     fn to_definition(&self, handle: GraphHandle) -> Option<Definition<'_, KT>> {
         if self.stack_graph[handle].is_definition() {
             Some(Definition {
@@ -197,6 +211,23 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         } else {
             None
         }
+    }
+
+    fn is_definition(&self, handle: GraphHandle) -> bool {
+        self.stack_graph[handle].is_definition()
+    }
+
+    fn get_extension_scope(&self, handle: GraphHandle) -> Option<GraphHandle> {
+        self.definitions_info
+            .get(&handle)
+            .and_then(|info| info.extension_scope)
+    }
+
+    fn inherits_extensions(&self, handle: GraphHandle) -> bool {
+        self.definitions_info
+            .get(&handle)
+            .map(|info| info.inherit_extensions)
+            .unwrap_or_default()
     }
 
     pub fn all_definitions(&self) -> impl Iterator<Item = Definition<'_, KT>> + '_ {
@@ -214,6 +245,10 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         } else {
             None
         }
+    }
+
+    fn is_reference(&self, handle: GraphHandle) -> bool {
+        self.stack_graph[handle].is_reference()
     }
 
     pub fn all_references(&self) -> impl Iterator<Item = Reference<'_, KT>> + '_ {
@@ -240,6 +275,12 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
                 owner: self,
                 handle: *handle,
             })
+    }
+
+    fn get_file(&self, handle: GraphHandle) -> Option<FileDescriptor> {
+        self.stack_graph[handle]
+            .file()
+            .map(|file| FileDescriptor::from(self.stack_graph[file].name()))
     }
 
     fn resolve_handles(&self, handles: &[GraphHandle]) -> Vec<Definition<'_, KT>> {
