@@ -3,6 +3,7 @@
 interface ast {
     use cst.{node, nonterminal-node};
 
+    /// @internal
     resource selectors {
         sequence: static func(node: borrow<nonterminal-node>) -> result<list<option<node>>, string>;
         choice: static func(node: borrow<nonterminal-node>) -> result<node, string>;

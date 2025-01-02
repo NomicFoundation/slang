@@ -11,7 +11,7 @@ interface cst {
             stub3,
         {%- else %}
             {%- for variant in model.kinds.nonterminal_kinds %}
-                /// This kind represents a `{{ variant.id }}` node, with the following structure: 
+                /// Represents a node with kind `{{ variant.id | pascal_case }}`, having the following structure:
                 ///
                 /// ```ebnf
                 {%- for line in variant.documentation | split(pat="\n") %}
@@ -42,7 +42,7 @@ interface cst {
             stub3,
         {%- else %}
             {%- for variant in model.kinds.terminal_kinds %}
-                /// This kind represents a `{{ variant.id }}` node, with the following structure: 
+                /// Represents a node with kind `{{ variant.id | pascal_case }}`, having the following structure:
                 ///
                 /// ```ebnf
                 {%- for line in variant.documentation | split(pat="\n") %}
@@ -65,6 +65,7 @@ interface cst {
     /// Represents the different types of relationships between nodes in the syntax tree.
     enum edge-label {
         {%- for label in model.kinds.predefined_labels %}
+            /// Represents a child node with the label `{{ label | snake_case }}`.
             {{ label | wit_case }},
         {%- endfor %}
 
@@ -76,8 +77,9 @@ interface cst {
             /// Generated stub.
             stub3,
         {%- else %}
-            {%- for variant in model.kinds.labels %}
-                {{ variant | wit_case }},
+            {%- for label in model.kinds.labels %}
+                /// Represents a child node with the label `{{ label | snake_case }}`.
+                {{ label | wit_case }},
             {%- endfor %}
         {%- endif %}
     }

@@ -21,7 +21,7 @@ export namespace NomicFoundationSlangCst {
  */
 export declare enum NonterminalKind {
   /**
-   * This kind represents a `AdditionExpression` node, with the following structure:
+   * Represents a node with kind `AdditionExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -32,7 +32,7 @@ export declare enum NonterminalKind {
    */
   AdditionExpression = "AdditionExpression",
   /**
-   * This kind represents a `Expression` node, with the following structure:
+   * Represents a node with kind `Expression`, having the following structure:
    *
    * ```ebnf
    * Expression = (* variant: *) AdditionExpression
@@ -44,7 +44,7 @@ export declare enum NonterminalKind {
    */
   Expression = "Expression",
   /**
-   * This kind represents a `Literal` node, with the following structure:
+   * Represents a node with kind `Literal`, having the following structure:
    *
    * ```ebnf
    * Literal = (* variant: *) STRING_LITERAL;
@@ -52,7 +52,7 @@ export declare enum NonterminalKind {
    */
   Literal = "Literal",
   /**
-   * This kind represents a `MemberAccessExpression` node, with the following structure:
+   * Represents a node with kind `MemberAccessExpression`, having the following structure:
    *
    * ```ebnf
    * (* Postfix unary operator *)
@@ -63,7 +63,7 @@ export declare enum NonterminalKind {
    */
   MemberAccessExpression = "MemberAccessExpression",
   /**
-   * This kind represents a `NegationExpression` node, with the following structure:
+   * Represents a node with kind `NegationExpression`, having the following structure:
    *
    * ```ebnf
    * (* Prefix unary operator *)
@@ -73,7 +73,7 @@ export declare enum NonterminalKind {
    */
   NegationExpression = "NegationExpression",
   /**
-   * This kind represents a `SeparatedIdentifiers` node, with the following structure:
+   * Represents a node with kind `SeparatedIdentifiers`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 1.0.0 *)
@@ -82,7 +82,7 @@ export declare enum NonterminalKind {
    */
   SeparatedIdentifiers = "SeparatedIdentifiers",
   /**
-   * This kind represents a `SourceUnit` node, with the following structure:
+   * Represents a node with kind `SourceUnit`, having the following structure:
    *
    * ```ebnf
    * SourceUnit = (* members: *) SourceUnitMembers;
@@ -90,7 +90,7 @@ export declare enum NonterminalKind {
    */
   SourceUnit = "SourceUnit",
   /**
-   * This kind represents a `SourceUnitMember` node, with the following structure:
+   * Represents a node with kind `SourceUnitMember`, having the following structure:
    *
    * ```ebnf
    * SourceUnitMember = (* variant: *) Tree
@@ -101,7 +101,7 @@ export declare enum NonterminalKind {
    */
   SourceUnitMember = "SourceUnitMember",
   /**
-   * This kind represents a `SourceUnitMembers` node, with the following structure:
+   * Represents a node with kind `SourceUnitMembers`, having the following structure:
    *
    * ```ebnf
    * SourceUnitMembers = (* item: *) SourceUnitMember+;
@@ -109,7 +109,7 @@ export declare enum NonterminalKind {
    */
   SourceUnitMembers = "SourceUnitMembers",
   /**
-   * This kind represents a `Tree` node, with the following structure:
+   * Represents a node with kind `Tree`, having the following structure:
    *
    * ```ebnf
    * Tree = (* keyword: *) TREE_KEYWORD
@@ -120,7 +120,7 @@ export declare enum NonterminalKind {
    */
   Tree = "Tree",
   /**
-   * This kind represents a `TreeNode` node, with the following structure:
+   * Represents a node with kind `TreeNode`, having the following structure:
    *
    * ```ebnf
    * TreeNode = (* open_bracket: *) OPEN_BRACKET
@@ -130,7 +130,7 @@ export declare enum NonterminalKind {
    */
   TreeNode = "TreeNode",
   /**
-   * This kind represents a `TreeNodeChild` node, with the following structure:
+   * Represents a node with kind `TreeNodeChild`, having the following structure:
    *
    * ```ebnf
    * TreeNodeChild = (* variant: *) TreeNode
@@ -139,7 +139,7 @@ export declare enum NonterminalKind {
    */
   TreeNodeChild = "TreeNodeChild",
   /**
-   * This kind represents a `TreeNodeChildren` node, with the following structure:
+   * Represents a node with kind `TreeNodeChildren`, having the following structure:
    *
    * ```ebnf
    * TreeNodeChildren = (* item: *) TreeNodeChild+;
@@ -163,7 +163,7 @@ export declare enum TerminalKind {
    */
   Missing = "Missing",
   /**
-   * This kind represents a `Bang` node, with the following structure:
+   * Represents a node with kind `Bang`, having the following structure:
    *
    * ```ebnf
    * BANG = "!";
@@ -171,7 +171,7 @@ export declare enum TerminalKind {
    */
   Bang = "Bang",
   /**
-   * This kind represents a `CloseBracket` node, with the following structure:
+   * Represents a node with kind `CloseBracket`, having the following structure:
    *
    * ```ebnf
    * CLOSE_BRACKET = "]";
@@ -179,7 +179,7 @@ export declare enum TerminalKind {
    */
   CloseBracket = "CloseBracket",
   /**
-   * This kind represents a `DelimitedIdentifier` node, with the following structure:
+   * Represents a node with kind `DelimitedIdentifier`, having the following structure:
    *
    * ```ebnf
    * DELIMITED_IDENTIFIER = «DELIMITED_IDENTIFIER_START» «DELIMITED_IDENTIFIER_PART»*;
@@ -187,7 +187,7 @@ export declare enum TerminalKind {
    */
   DelimitedIdentifier = "DelimitedIdentifier",
   /**
-   * This kind represents a `EndOfLine` node, with the following structure:
+   * Represents a node with kind `EndOfLine`, having the following structure:
    *
    * ```ebnf
    * END_OF_LINE = "\r"? "\n";
@@ -195,7 +195,7 @@ export declare enum TerminalKind {
    */
   EndOfLine = "EndOfLine",
   /**
-   * This kind represents a `Identifier` node, with the following structure:
+   * Represents a node with kind `Identifier`, having the following structure:
    *
    * ```ebnf
    * IDENTIFIER = «RAW_IDENTIFIER»;
@@ -203,7 +203,7 @@ export declare enum TerminalKind {
    */
   Identifier = "Identifier",
   /**
-   * This kind represents a `MultiLineComment` node, with the following structure:
+   * Represents a node with kind `MultiLineComment`, having the following structure:
    *
    * ```ebnf
    * MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*\/";
@@ -211,7 +211,7 @@ export declare enum TerminalKind {
    */
   MultiLineComment = "MultiLineComment",
   /**
-   * This kind represents a `OpenBracket` node, with the following structure:
+   * Represents a node with kind `OpenBracket`, having the following structure:
    *
    * ```ebnf
    * OPEN_BRACKET = "[";
@@ -219,7 +219,7 @@ export declare enum TerminalKind {
    */
   OpenBracket = "OpenBracket",
   /**
-   * This kind represents a `Period` node, with the following structure:
+   * Represents a node with kind `Period`, having the following structure:
    *
    * ```ebnf
    * PERIOD = ".";
@@ -227,7 +227,7 @@ export declare enum TerminalKind {
    */
   Period = "Period",
   /**
-   * This kind represents a `Plus` node, with the following structure:
+   * Represents a node with kind `Plus`, having the following structure:
    *
    * ```ebnf
    * PLUS = "+";
@@ -235,7 +235,7 @@ export declare enum TerminalKind {
    */
   Plus = "Plus",
   /**
-   * This kind represents a `Semicolon` node, with the following structure:
+   * Represents a node with kind `Semicolon`, having the following structure:
    *
    * ```ebnf
    * SEMICOLON = ";";
@@ -243,7 +243,7 @@ export declare enum TerminalKind {
    */
   Semicolon = "Semicolon",
   /**
-   * This kind represents a `SingleLineComment` node, with the following structure:
+   * Represents a node with kind `SingleLineComment`, having the following structure:
    *
    * ```ebnf
    * SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
@@ -251,7 +251,7 @@ export declare enum TerminalKind {
    */
   SingleLineComment = "SingleLineComment",
   /**
-   * This kind represents a `StringLiteral` node, with the following structure:
+   * Represents a node with kind `StringLiteral`, having the following structure:
    *
    * ```ebnf
    * STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
@@ -259,7 +259,7 @@ export declare enum TerminalKind {
    */
   StringLiteral = "StringLiteral",
   /**
-   * This kind represents a `TreeKeyword` node, with the following structure:
+   * Represents a node with kind `TreeKeyword`, having the following structure:
    *
    * ```ebnf
    * TREE_KEYWORD = "tree";
@@ -267,7 +267,7 @@ export declare enum TerminalKind {
    */
   TreeKeyword = "TreeKeyword",
   /**
-   * This kind represents a `Whitespace` node, with the following structure:
+   * Represents a node with kind `Whitespace`, having the following structure:
    *
    * ```ebnf
    * WHITESPACE = (" " | "\t")+;
@@ -279,31 +279,96 @@ export declare enum TerminalKind {
  * Represents the different types of relationships between nodes in the syntax tree.
  */
 export declare enum EdgeLabel {
+  /**
+   * Represents a child node with the label `item`.
+   */
   Item = "Item",
+  /**
+   * Represents a child node with the label `variant`.
+   */
   Variant = "Variant",
+  /**
+   * Represents a child node with the label `separator`.
+   */
   Separator = "Separator",
+  /**
+   * Represents a child node with the label `operand`.
+   */
   Operand = "Operand",
+  /**
+   * Represents a child node with the label `left_operand`.
+   */
   LeftOperand = "LeftOperand",
+  /**
+   * Represents a child node with the label `right_operand`.
+   */
   RightOperand = "RightOperand",
+  /**
+   * Represents a child node with the label `leading_trivia`.
+   */
   LeadingTrivia = "LeadingTrivia",
+  /**
+   * Represents a child node with the label `trailing_trivia`.
+   */
   TrailingTrivia = "TrailingTrivia",
+  /**
+   * Represents a child node with the label `close_bracket`.
+   */
   CloseBracket = "CloseBracket",
+  /**
+   * Represents a child node with the label `keyword`.
+   */
   Keyword = "Keyword",
+  /**
+   * Represents a child node with the label `member`.
+   */
   Member = "Member",
+  /**
+   * Represents a child node with the label `members`.
+   */
   Members = "Members",
+  /**
+   * Represents a child node with the label `name`.
+   */
   Name = "Name",
+  /**
+   * Represents a child node with the label `node`.
+   */
   Node = "Node",
+  /**
+   * Represents a child node with the label `open_bracket`.
+   */
   OpenBracket = "OpenBracket",
+  /**
+   * Represents a child node with the label `operator`.
+   */
   Operator = "Operator",
+  /**
+   * Represents a child node with the label `period`.
+   */
   Period = "Period",
+  /**
+   * Represents a child node with the label `semicolon`.
+   */
   Semicolon = "Semicolon",
 }
 /**
  * The super type of all nodes in a tree.
  */
 export type Node = NonterminalNode | TerminalNode;
+
+/**
+ * Enumerates different variants of the `Node` type.
+ */
 export enum NodeType {
+  /**
+   * Represents a variant of type `NonterminalNode`.
+   */
   NonterminalNode = "NonterminalNode",
+
+  /**
+   * Represents a variant of type `TerminalNode`.
+   */
   TerminalNode = "TerminalNode",
 }
 /**
@@ -397,6 +462,9 @@ export interface TextRange {
  * Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
  */
 export class AncestorsIterator {
+  /**
+   * Returns an iterator over `NonterminalNode` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<NonterminalNode>;
   /**
    * Returns the next nonterminal node in the iteration, or `undefined` if there are no more nodes.
@@ -538,6 +606,9 @@ export class Cursor {
  * Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
  */
 export class CursorIterator {
+  /**
+   * Returns an iterator over `Edge` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<Edge>;
   /**
    * Returns the next edge in the iteration, or `undefined` if there are no more edges.
@@ -626,6 +697,9 @@ export class Query {
  * Iterator over query matches in the syntax tree.
  */
 export class QueryMatchIterator {
+  /**
+   * Returns an iterator over `QueryMatch` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<QueryMatch>;
   /**
    * Returns the next match or `undefined` if there are no more matches.

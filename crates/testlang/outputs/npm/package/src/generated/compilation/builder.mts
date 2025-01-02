@@ -3,10 +3,7 @@
 import { Cursor } from "../cst/index.mjs";
 import { CompilationUnit } from "./index.mjs";
 
-import * as generated from "../../../wasm/index.mjs";
-
-const InternalCompilationBuilder = generated.compilation.InternalCompilationBuilder;
-type InternalCompilationBuilder = generated.compilation.InternalCompilationBuilder;
+import * as wasm from "../../../wasm/index.mjs";
 
 /**
  * User-provided options and callbacks necessary for the `CompilationBuilder` class to perform its job.
@@ -51,7 +48,7 @@ export class CompilationBuilder {
   private readonly seenFiles: Set<string> = new Set();
 
   private constructor(
-    private readonly internalBuilder: InternalCompilationBuilder,
+    private readonly internalBuilder: wasm.compilation.InternalCompilationBuilder,
 
     /**
      * The user-supplied configuration.
@@ -63,7 +60,7 @@ export class CompilationBuilder {
    * Creates a new compilation builder for the specified language version.
    */
   public static create(config: CompilationBuilderConfig): CompilationBuilder {
-    const internalBuilder = InternalCompilationBuilder.create(config.languageVersion);
+    const internalBuilder = wasm.compilation.InternalCompilationBuilder.create(config.languageVersion);
     return new CompilationBuilder(internalBuilder, config);
   }
 
