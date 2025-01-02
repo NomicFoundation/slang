@@ -1604,10 +1604,8 @@ impl Helper {
             let edge = self.node.children.get(self.index)?;
 
             match edge.label {
-                // Skip root nodes:
-                | EdgeLabel::Root
                 // Skip trivia:
-                | EdgeLabel::LeadingTrivia | EdgeLabel::TrailingTrivia => {
+                EdgeLabel::LeadingTrivia | EdgeLabel::TrailingTrivia => {
                     self.index += 1;
                     continue;
                 }
