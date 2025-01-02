@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-contract $BuiltIns$ {
+contract $SolidityBuiltIns$ {
   function addmod(uint x, uint y, uint k) public returns (uint);
   function assert(bool condition) public;
   function blockhash(uint blockNumber) public returns (bytes32);
@@ -98,11 +98,6 @@ contract $BuiltIns$ {
     int min;
     int max;
   }
-  struct $YulExternal {
-    uint slot;
-    uint offset;
-    uint length;
-  }
   $Function $placeholder;
   $AbiType abi;
   $BlockType block;
@@ -110,4 +105,11 @@ contract $BuiltIns$ {
   $MessageType msg;
   $StringType $string;
   $TransactionType tx;
+}
+contract $YulBuiltIns$ {
+  struct $YulExternal {
+    uint slot;
+    uint offset;
+    uint length;
+  }
 }

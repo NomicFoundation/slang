@@ -7,6 +7,13 @@ use strum_macros::EnumDiscriminants;
 use crate::model::VersionSpecifier;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
+pub struct BuiltInContext {
+    pub name: String,
+    pub definitions: Vec<BuiltIn>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, EnumDiscriminants, ParseInputTokens, WriteOutputTokens)]
 pub enum BuiltIn {
     BuiltInFunction { item: Rc<BuiltInFunction> },
