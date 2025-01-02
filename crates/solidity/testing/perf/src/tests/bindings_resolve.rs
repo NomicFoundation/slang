@@ -1,5 +1,6 @@
 use std::rc::Rc;
 
+use infra_utils::paths::PathExtensions;
 use slang_solidity::bindings::BindingGraph;
 use slang_solidity::cst::{NonterminalKind, TerminalKind};
 
@@ -11,7 +12,7 @@ pub struct BuiltBindingGraph {
 }
 
 pub fn setup() -> BuiltBindingGraph {
-    let files = super::bindings_build::setup();
+    let files = super::parser::run(super::parser::setup());
     let binding_graph = super::bindings_build::run(files.clone());
 
     BuiltBindingGraph {
@@ -35,9 +36,12 @@ pub fn run(dependencies: BuiltBindingGraph) {
         ]) {
             if matches!(
                 cursor.ancestors().next(),
-                Some(ancestor) if ancestor.kind == NonterminalKind::ExperimentalFeature
-            ) {
+                Some(ancestor)
                 // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
+                if ancestor.kind == NonterminalKind::ExperimentalFeature ||
+                // TODO(#1213): unbound named parameters in mapping types
+                ancestor.kind == NonterminalKind::MappingKey
+            ) {
                 continue;
             }
 
@@ -45,9 +49,11 @@ pub fn run(dependencies: BuiltBindingGraph) {
                 && binding_graph.reference_at(&cursor).is_none()
             {
                 panic!(
-                    "Unbound identifier: '{value}' at '{range:?}'.",
+                    "Unbound identifier: '{value}' in '{file_path}:{line}:{column}'.",
                     value = cursor.node().unparse(),
-                    range = cursor.text_range()
+                    file_path = file.path.unwrap_str(),
+                    line = cursor.text_range().start.line + 1,
+                    column = cursor.text_range().start.column + 1,
                 );
             }
         }

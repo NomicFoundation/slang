@@ -48,6 +48,7 @@ pub fn slang_solidity::compilation::InternalCompilationBuilder::create(language_
 pub fn slang_solidity::compilation::InternalCompilationBuilder::resolve_import(&mut self, source_file_id: &str, import_path: &slang_solidity::cst::Cursor, destination_file_id: alloc::string::String) -> core::result::Result<(), ResolveImportError>
 pub mod slang_solidity::cst
 pub use slang_solidity::cst::EdgeLabelExtensions
+pub use slang_solidity::cst::NodeKind
 pub use slang_solidity::cst::NonterminalKindExtensions
 pub use slang_solidity::cst::QueryError
 pub use slang_solidity::cst::TerminalKindExtensions

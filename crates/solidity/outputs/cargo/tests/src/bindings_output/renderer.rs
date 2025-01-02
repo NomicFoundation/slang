@@ -111,9 +111,12 @@ fn check_bindings_coverage<'a>(
     {
         if matches!(
             cursor.ancestors().next(),
-            Some(ancestor) if ancestor.kind == NonterminalKind::ExperimentalFeature
-        ) {
+            Some(ancestor)
             // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
+            if ancestor.kind == NonterminalKind::ExperimentalFeature ||
+            // TODO(#1213): unbound named parameters in mapping types
+            ancestor.kind == NonterminalKind::MappingKey
+        ) {
             continue;
         }
 
