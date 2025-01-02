@@ -10,9 +10,10 @@ use semver::Version;
 
 use crate::cst::KindTypes;
 
+pub type BindingGraphBuilder = metaslang_bindings::BindingGraphBuilder<KindTypes>;
 pub type BindingGraph = metaslang_bindings::BindingGraph<KindTypes>;
-pub type Definition<'a> = metaslang_bindings::Definition<'a, KindTypes>;
-pub type Reference<'a> = metaslang_bindings::Reference<'a, KindTypes>;
+pub type Definition = metaslang_bindings::Definition<KindTypes>;
+pub type Reference = metaslang_bindings::Reference<KindTypes>;
 pub type BindingLocation = metaslang_bindings::BindingLocation<KindTypes>;
 pub type UserFileLocation = metaslang_bindings::UserFileLocation<KindTypes>;
 
@@ -29,8 +30,8 @@ pub enum BindingGraphInitializationError {
 pub fn create_with_resolver(
     version: Version,
     resolver: Rc<dyn PathResolver<KindTypes>>,
-) -> Result<BindingGraph, ParserInitializationError> {
-    let mut binding_graph = BindingGraph::create(
+) -> Result<BindingGraphBuilder, BindingGraphInitializationError> {
+    let mut binding_graph = BindingGraphBuilder::create(
         version.clone(),
         binding_rules::BINDING_RULES_SOURCE,
         resolver,

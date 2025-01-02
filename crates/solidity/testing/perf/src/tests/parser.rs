@@ -4,6 +4,7 @@ use slang_solidity::parser::{ParseOutput, Parser};
 
 use crate::dataset::{SourceFile, SOLC_VERSION};
 
+#[derive(Clone)]
 pub struct ParsedFile {
     pub path: PathBuf,
 

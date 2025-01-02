@@ -1,10 +1,11 @@
 use std::iter::once;
 use std::ops::Range;
+use std::rc::Rc;
 
 use anyhow::Result;
 use ariadne::{Color, Config, FnCache, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity::bindings::{BindingGraph, Definition, Reference};
-use slang_solidity::cst::{NonterminalKind, Query};
+use slang_solidity::cst::{NonterminalKind, TerminalKind};
 use slang_solidity::diagnostic;
 
 use super::runner::ParsedPart;
@@ -12,7 +13,7 @@ use super::runner::ParsedPart;
 type ReportSpan<'a> = (&'a str, Range<usize>);
 
 pub(crate) fn render_bindings(
-    binding_graph: &BindingGraph,
+    binding_graph: &Rc<BindingGraph>,
     parsed_parts: &[ParsedPart<'_>],
 ) -> Result<(String, bool)> {
     let mut buffer: Vec<u8> = Vec::new();
@@ -70,8 +71,8 @@ fn write_part_report<'a>(
 
 // We collect all non built-in definitions in a vector to be able to identify
 // them by a numeric index
-fn collect_all_definitions(binding_graph: &BindingGraph) -> Vec<Definition<'_>> {
-    let mut definitions: Vec<Definition<'_>> = Vec::new();
+fn collect_all_definitions(binding_graph: &Rc<BindingGraph>) -> Vec<Definition> {
+    let mut definitions: Vec<Definition> = Vec::new();
     for definition in binding_graph.all_definitions() {
         if definition.get_file().is_user() {
             definitions.push(definition);
@@ -93,7 +94,7 @@ impl ParsedPart<'_> {
 
 fn check_bindings_coverage<'a>(
     part: &'a ParsedPart<'a>,
-    binding_graph: &'a BindingGraph,
+    binding_graph: &Rc<BindingGraph>,
 ) -> (Report<'a, ReportSpan<'a>>, bool) {
     let mut all_identifiers_bound = true;
     let mut builder: ReportBuilder<'_, ReportSpan<'_>> = Report::build(
@@ -103,24 +104,27 @@ fn check_bindings_coverage<'a>(
     )
     .with_config(Config::default().with_color(false));
 
-    let query = Query::parse("@identifier ([Identifier] | [YulIdentifier])").unwrap();
-    let tree_cursor = part.parse_output.create_tree_cursor();
-    for result in tree_cursor.query(vec![query]) {
-        let identifier_cursor = result.captures.get("identifier").unwrap().first().unwrap();
-        let parent = {
-            let mut parent_cursor = identifier_cursor.spawn();
-            parent_cursor.go_to_parent();
-            parent_cursor.node()
-        };
-        if parent.is_nonterminal_with_kind(NonterminalKind::ExperimentalFeature) {
-            // ignore identifiers in `pragma experimental` directives
+    let mut cursor = part.parse_output.create_tree_cursor();
+
+    while cursor
+        .go_to_next_terminal_with_kinds(&[TerminalKind::Identifier, TerminalKind::YulIdentifier])
+    {
+        if matches!(
+            cursor.ancestors().next(),
+            Some(ancestor)
+            // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
+            if ancestor.kind == NonterminalKind::ExperimentalFeature ||
+            // TODO(#1213): unbound named parameters in mapping types
+            ancestor.kind == NonterminalKind::MappingKey
+        ) {
             continue;
         }
-        if binding_graph.definition_at(identifier_cursor).is_none()
-            && binding_graph.reference_at(identifier_cursor).is_none()
+
+        if binding_graph.definition_at(&cursor).is_none()
+            && binding_graph.reference_at(&cursor).is_none()
         {
             let range = {
-                let range = identifier_cursor.text_range();
+                let range = cursor.text_range();
                 let start = part.contents[..range.start.utf8].chars().count();
                 let end = part.contents[..range.end.utf8].chars().count();
                 start..end
@@ -138,8 +142,8 @@ fn check_bindings_coverage<'a>(
 
 fn build_report_for_part<'a>(
     part: &'a ParsedPart<'a>,
-    all_definitions: &'a [Definition<'a>],
-    part_references: impl Iterator<Item = Reference<'a>> + 'a,
+    all_definitions: &'a [Definition],
+    part_references: impl Iterator<Item = Reference> + 'a,
 ) -> (Report<'a, ReportSpan<'a>>, bool) {
     let mut builder: ReportBuilder<'_, ReportSpan<'_>> = Report::build(
         ReportKind::Custom("References and definitions", Color::Unset),
@@ -218,7 +222,7 @@ fn build_report_for_part<'a>(
 
 fn build_definiens_report<'a>(
     part: &'a ParsedPart<'a>,
-    all_definitions: &'a [Definition<'a>],
+    all_definitions: &'a [Definition],
 ) -> Report<'a, ReportSpan<'a>> {
     let mut builder: ReportBuilder<'_, ReportSpan<'_>> =
         Report::build(ReportKind::Custom("Definiens", Color::Unset), part.path, 0)

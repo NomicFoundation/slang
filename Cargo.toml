@@ -130,7 +130,7 @@ serde = { version = "1.0.217", features = ["derive", "rc"] }
 serde_json = { version = "1.0.134", features = ["preserve_order"] }
 similar-asserts = { version = "1.6.0" }
 smallvec = { version = "1.7.0", features = ["union"] }
-stack-graphs = { version = "0.13.0" }
+stack-graphs = { git = "https://github.com/NomicFoundation/stack-graphs", branch = "nomic" }
 string-interner = { version = "0.17.0", features = [
     "std",
     "inline-more",

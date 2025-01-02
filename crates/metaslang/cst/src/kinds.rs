@@ -48,3 +48,31 @@ pub trait KindTypes: std::fmt::Debug + Clone + PartialEq {
     type TerminalKind: TerminalKindExtensions;
     type EdgeLabel: EdgeLabelExtensions;
 }
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum NodeKind<T: KindTypes> {
+    Nonterminal(T::NonterminalKind),
+    Terminal(T::TerminalKind),
+}
+
+impl<T: KindTypes> From<NodeKind<T>> for &'static str {
+    fn from(val: NodeKind<T>) -> Self {
+        match val {
+            NodeKind::Nonterminal(t) => t.as_static_str(),
+            NodeKind::Terminal(t) => t.as_static_str(),
+        }
+    }
+}
+
+impl<T: KindTypes> std::fmt::Display for NodeKind<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            NodeKind::Nonterminal(t) => {
+                write!(f, "{}", t.as_static_str())
+            }
+            NodeKind::Terminal(t) => {
+                write!(f, "{}", t.as_static_str())
+            }
+        }
+    }
+}

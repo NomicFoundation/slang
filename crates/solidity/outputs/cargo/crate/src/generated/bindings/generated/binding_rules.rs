@@ -76,6 +76,7 @@ inherit .star_extension
   ; This is used to indicate the resolution algorithm that here's where it
   ; should inject any possible extension scopes
   attr (@source_unit.lexical_scope) extension_hook
+  attr (@source_unit.lexical_scope) is_endpoint
 
   ; Provide a default star extension sink node that gets inherited. This is
   ; connected to from expressions, and those can potentially happen anywhere.
@@ -347,6 +348,7 @@ inherit .star_extension
   attr (@contract.def) definiens_node = @contract
   ; The .extensions node is where `using` directives will hook the definitions
   attr (@contract.def) extension_scope = @contract.extensions
+  attr (@contract.extensions) is_exported
 
   edge @contract.lexical_scope -> @contract.instance
   attr (@contract.lexical_scope -> @contract.instance) precedence = 1
@@ -413,6 +415,7 @@ inherit .star_extension
   attr (push_name) push_symbol = (source-text @name)
   node hook
   attr (hook) extension_hook
+  attr (hook) is_endpoint
 
   edge call -> push_typeof
   edge push_typeof -> push_name
@@ -659,6 +662,7 @@ inherit .star_extension
   edge push_typeof -> push_name
   node hook
   attr (hook) extension_hook
+  attr (hook) is_endpoint
   edge push_name -> hook
   ; edge push_name -> JUMP_TO_SCOPE_NODE
 
@@ -735,6 +739,7 @@ inherit .star_extension
   attr (@library.def) definiens_node = @library
   ; The .extensions node is where `using` directives will hook the definitions
   attr (@library.def) extension_scope = @library.extensions
+  attr (@library.extensions) is_exported
 
   edge @library.lexical_scope -> @library.ns
 
