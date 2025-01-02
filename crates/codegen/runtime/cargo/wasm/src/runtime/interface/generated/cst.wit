@@ -115,7 +115,7 @@ interface cst {
 
     /// Represents a connection between nodes in the syntax tree.
     record edge {
-        /// Optional label describing the relationship between nodes.
+        /// Describes the relationship between this node and its parent.
         label: edge-label,
         /// The target node of this edge.
         node: node,
