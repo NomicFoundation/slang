@@ -20,11 +20,9 @@
 #[allow(clippy::doc_markdown)]
 #[allow(clippy::doc_link_with_quotes)]
 pub enum TerminalKind {
-    // Built-in:
     UNRECOGNIZED,
     MISSING,
 
-    // Generated:
     Stub1,
     Stub2,
     Stub3,

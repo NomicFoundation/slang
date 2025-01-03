@@ -65,13 +65,37 @@ export declare enum TerminalKind {
  * Represents the different types of relationships between nodes in the syntax tree.
  */
 export declare enum EdgeLabel {
+  /**
+   * Represents a child node with the label `item`.
+   */
   Item = "Item",
+  /**
+   * Represents a child node with the label `variant`.
+   */
   Variant = "Variant",
+  /**
+   * Represents a child node with the label `separator`.
+   */
   Separator = "Separator",
+  /**
+   * Represents a child node with the label `operand`.
+   */
   Operand = "Operand",
+  /**
+   * Represents a child node with the label `left_operand`.
+   */
   LeftOperand = "LeftOperand",
+  /**
+   * Represents a child node with the label `right_operand`.
+   */
   RightOperand = "RightOperand",
+  /**
+   * Represents a child node with the label `leading_trivia`.
+   */
   LeadingTrivia = "LeadingTrivia",
+  /**
+   * Represents a child node with the label `trailing_trivia`.
+   */
   TrailingTrivia = "TrailingTrivia",
   /**
    * Generated stub.
@@ -90,8 +114,19 @@ export declare enum EdgeLabel {
  * The super type of all nodes in a tree.
  */
 export type Node = NonterminalNode | TerminalNode;
+
+/**
+ * Enumerates different variants of the `Node` type.
+ */
 export enum NodeType {
+  /**
+   * Represents a variant of type `NonterminalNode`.
+   */
   NonterminalNode = "NonterminalNode",
+
+  /**
+   * Represents a variant of type `TerminalNode`.
+   */
   TerminalNode = "TerminalNode",
 }
 /**
@@ -185,6 +220,9 @@ export interface TextRange {
  * Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
  */
 export class AncestorsIterator {
+  /**
+   * Returns an iterator over `NonterminalNode` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<NonterminalNode>;
   /**
    * Returns the next nonterminal node in the iteration, or `undefined` if there are no more nodes.
@@ -326,6 +364,9 @@ export class Cursor {
  * Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
  */
 export class CursorIterator {
+  /**
+   * Returns an iterator over `Edge` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<Edge>;
   /**
    * Returns the next edge in the iteration, or `undefined` if there are no more edges.
@@ -414,6 +455,9 @@ export class Query {
  * Iterator over query matches in the syntax tree.
  */
 export class QueryMatchIterator {
+  /**
+   * Returns an iterator over `QueryMatch` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<QueryMatch>;
   /**
    * Returns the next match or `undefined` if there are no more matches.

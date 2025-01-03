@@ -15,20 +15,25 @@
 )]
 #[strum(serialize_all = "snake_case")]
 #[derive(Clone, Copy)]
+/// Represents the different types of relationships between nodes in the syntax tree.
 pub enum EdgeLabel {
-    // Built-in:
+    {# Built-in: #}
+
     {% for label in model.kinds.predefined_labels -%}
+        /// Represents a child node with the label `{{ label | snake_case }}`.
         {{ label | pascal_case }},
     {%- endfor %}
 
-    // Generated:
+    {# Generated: #}
+
     {% if rendering_in_stubs -%}
         Stub1,
         Stub2,
         Stub3,
     {%- else -%}
-        {% for variant in model.kinds.labels -%}
-            {{ variant | pascal_case }},
+        {% for label in model.kinds.labels -%}
+            /// Represents a child node with the label `{{ label | snake_case }}`.
+            {{ label | pascal_case }},
         {%- endfor -%}
     {%- endif -%}
 }

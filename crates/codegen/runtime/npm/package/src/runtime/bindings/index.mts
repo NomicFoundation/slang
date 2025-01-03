@@ -1,21 +1,34 @@
-import * as generated from "../../../wasm/index.mjs";
+import * as wasm from "../../../wasm/index.mjs";
 
-export const BindingGraph = generated.bindings.BindingGraph;
-export type BindingGraph = generated.bindings.BindingGraph;
+/** {@inheritDoc wasm.bindings.BindingGraph} */
+export const BindingGraph = wasm.bindings.BindingGraph;
+/** {@inheritDoc wasm.bindings.BindingGraph} */
+export type BindingGraph = wasm.bindings.BindingGraph;
 
-export const Definition = generated.bindings.Definition;
-export type Definition = generated.bindings.Definition;
+/** {@inheritDoc wasm.bindings.Definition} */
+export const Definition = wasm.bindings.Definition;
+/** {@inheritDoc wasm.bindings.Definition} */
+export type Definition = wasm.bindings.Definition;
 
-export const Reference = generated.bindings.Reference;
-export type Reference = generated.bindings.Reference;
+/** {@inheritDoc wasm.bindings.Reference} */
+export const Reference = wasm.bindings.Reference;
+/** {@inheritDoc wasm.bindings.Reference} */
+export type Reference = wasm.bindings.Reference;
 
-export type BindingLocation = generated.bindings.BindingLocation;
+/** {@inheritDoc wasm.bindings.BindingLocation} */
+export type BindingLocation = wasm.bindings.BindingLocation;
 
-export const BindingLocationType = generated.bindings.BindingLocationType;
-export type BindingLocationType = generated.bindings.BindingLocationType;
+/** {@inheritDoc wasm.bindings.BindingLocationType} */
+export const BindingLocationType = wasm.bindings.BindingLocationType;
+/** {@inheritDoc wasm.bindings.BindingLocationType} */
+export type BindingLocationType = wasm.bindings.BindingLocationType;
 
-export const UserFileLocation = generated.bindings.UserFileLocation;
-export type UserFileLocation = generated.bindings.UserFileLocation;
+/** {@inheritDoc wasm.bindings.UserFileLocation} */
+export const UserFileLocation = wasm.bindings.UserFileLocation;
+/** {@inheritDoc wasm.bindings.UserFileLocation} */
+export type UserFileLocation = wasm.bindings.UserFileLocation;
 
-export const BuiltInLocation = generated.bindings.BuiltInLocation;
-export type BuiltInLocation = generated.bindings.BuiltInLocation;
+/** {@inheritDoc wasm.bindings.BuiltInLocation} */
+export const BuiltInLocation = wasm.bindings.BuiltInLocation;
+/** {@inheritDoc wasm.bindings.BuiltInLocation} */
+export type BuiltInLocation = wasm.bindings.BuiltInLocation;

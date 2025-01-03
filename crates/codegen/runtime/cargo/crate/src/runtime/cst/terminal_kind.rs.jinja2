@@ -18,21 +18,27 @@
 #[allow(clippy::doc_markdown)]
 #[allow(clippy::doc_link_with_quotes)]
 pub enum TerminalKind {
-    // Built-in:
+    {# Built-in: #}
+
     UNRECOGNIZED,
     MISSING,
 
-    // Generated:
+    {# Generated: #}
+
     {% if rendering_in_stubs -%}
         Stub1,
         Stub2,
         Stub3,
     {%- else -%}
         {%- for variant in model.kinds.terminal_kinds -%}
+            /// Represents a node with kind `{{ variant.id | pascal_case }}`, having the following structure:
+            ///
             /// ```ebnf
-            {{ variant.documentation | indent(prefix = "/// ", first = true, blank = true) }}
+            {%- for line in variant.documentation | split(pat="\n") %}
+            /// {{ line }}
+            {%- endfor %}
             /// ```
-            {{ variant.id }},
+            {{ variant.id | pascal_case }},
         {%- endfor -%}
     {%- endif -%}
 }

@@ -1,12 +1,18 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-import * as generated from "../../../wasm/index.mjs";
+import * as wasm from "../../../wasm/index.mjs";
 
-export const Parser = generated.parser.Parser;
-export type Parser = generated.parser.Parser;
+/** {@inheritDoc wasm.parser.Parser} */
+export const Parser = wasm.parser.Parser;
+/** {@inheritDoc wasm.parser.Parser} */
+export type Parser = wasm.parser.Parser;
 
-export const ParseError = generated.parser.ParseError;
-export type ParseError = generated.parser.ParseError;
+/** {@inheritDoc wasm.parser.ParseError} */
+export const ParseError = wasm.parser.ParseError;
+/** {@inheritDoc wasm.parser.ParseError} */
+export type ParseError = wasm.parser.ParseError;
 
-export const ParseOutput = generated.parser.ParseOutput;
-export type ParseOutput = generated.parser.ParseOutput;
+/** {@inheritDoc wasm.parser.ParseOutput} */
+export const ParseOutput = wasm.parser.ParseOutput;
+/** {@inheritDoc wasm.parser.ParseOutput} */
+export type ParseOutput = wasm.parser.ParseOutput;

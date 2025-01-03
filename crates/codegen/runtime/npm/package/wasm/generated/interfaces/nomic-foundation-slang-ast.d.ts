@@ -7,6 +7,10 @@ import type { Node } from "./nomic-foundation-slang-cst.js";
 export { Node };
 import type { NonterminalNode } from "./nomic-foundation-slang-cst.js";
 export { NonterminalNode };
+
+/**
+ * @internal
+ */
 export class Selectors {
   static sequence(node: NonterminalNode): (Node | undefined)[];
   static choice(node: NonterminalNode): Node;

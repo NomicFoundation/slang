@@ -24,10 +24,14 @@ pub enum NonterminalKind {
         Stub3,
     {%- else -%}
         {%- for variant in model.kinds.nonterminal_kinds -%}
+            /// Represents a node with kind `{{ variant.id | pascal_case }}`, having the following structure:
+            ///
             /// ```ebnf
-            {{ variant.documentation | indent(prefix = "/// ", first = true, blank = true) }}
+            {%- for line in variant.documentation | split(pat="\n") %}
+            /// {{ line }}
+            {%- endfor %}
             /// ```
-            {{ variant.id }},
+            {{ variant.id | pascal_case }},
         {%- endfor -%}
     {%- endif -%}
 }

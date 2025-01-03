@@ -77,6 +77,8 @@ export class File {
  *
  * This is an internal API, and exposed via a public `CompilationBuilder` wrapper class written in TypeScript.
  * This allows storing/invoking user supplied callbacks in TypeScript, rather than Rust, which has its limitations.
+ *
+ * @internal
  */
 export class InternalCompilationBuilder {
   /**

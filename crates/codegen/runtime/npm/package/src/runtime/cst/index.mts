@@ -1,87 +1,81 @@
-import * as generated from "../../../wasm/index.mjs";
+import * as wasm from "../../../wasm/index.mjs";
 
-export const NonterminalKind = generated.cst.NonterminalKind;
-export type NonterminalKind = generated.cst.NonterminalKind;
+export * from "./assertions.mjs";
 
-export const TerminalKind = generated.cst.TerminalKind;
-export type TerminalKind = generated.cst.TerminalKind;
+/** {@inheritDoc wasm.cst.NonterminalKind} */
+export const NonterminalKind = wasm.cst.NonterminalKind;
+/** {@inheritDoc wasm.cst.NonterminalKind} */
+export type NonterminalKind = wasm.cst.NonterminalKind;
 
-export const TerminalKindExtensions = generated.cst.TerminalKindExtensions;
-export type TerminalKindExtensions = generated.cst.TerminalKindExtensions;
+/** {@inheritDoc wasm.cst.TerminalKind} */
+export const TerminalKind = wasm.cst.TerminalKind;
+/** {@inheritDoc wasm.cst.TerminalKind} */
+export type TerminalKind = wasm.cst.TerminalKind;
 
-export const EdgeLabel = generated.cst.EdgeLabel;
-export type EdgeLabel = generated.cst.EdgeLabel;
+/** {@inheritDoc wasm.cst.TerminalKindExtensions} */
+export const TerminalKindExtensions = wasm.cst.TerminalKindExtensions;
+/** {@inheritDoc wasm.cst.TerminalKindExtensions} */
+export type TerminalKindExtensions = wasm.cst.TerminalKindExtensions;
 
-export type Node = generated.cst.Node;
+/** {@inheritDoc wasm.cst.EdgeLabel} */
+export const EdgeLabel = wasm.cst.EdgeLabel;
+/** {@inheritDoc wasm.cst.EdgeLabel} */
+export type EdgeLabel = wasm.cst.EdgeLabel;
 
-export const NodeType = generated.cst.NodeType;
-export type NodeType = generated.cst.NodeType;
+/** {@inheritDoc wasm.cst.Node} */
+export type Node = wasm.cst.Node;
 
-export const NonterminalNode = generated.cst.NonterminalNode;
-export type NonterminalNode = generated.cst.NonterminalNode;
+/** {@inheritDoc wasm.cst.NodeType} */
+export const NodeType = wasm.cst.NodeType;
+/** {@inheritDoc wasm.cst.NodeType} */
+export type NodeType = wasm.cst.NodeType;
 
-export const TerminalNode = generated.cst.TerminalNode;
-export type TerminalNode = generated.cst.TerminalNode;
+/** {@inheritDoc wasm.cst.NonterminalNode} */
+export const NonterminalNode = wasm.cst.NonterminalNode;
+/** {@inheritDoc wasm.cst.NonterminalNode} */
+export type NonterminalNode = wasm.cst.NonterminalNode;
 
-export type Edge = generated.cst.Edge;
+/** {@inheritDoc wasm.cst.TerminalNode} */
+export const TerminalNode = wasm.cst.TerminalNode;
+/** {@inheritDoc wasm.cst.TerminalNode} */
+export type TerminalNode = wasm.cst.TerminalNode;
 
-export const Cursor = generated.cst.Cursor;
-export type Cursor = generated.cst.Cursor;
+/** {@inheritDoc wasm.cst.Edge} */
+export type Edge = wasm.cst.Edge;
 
-export const CursorIterator = generated.cst.CursorIterator;
-export type CursorIterator = generated.cst.CursorIterator;
+/** {@inheritDoc wasm.cst.Cursor} */
+export const Cursor = wasm.cst.Cursor;
+/** {@inheritDoc wasm.cst.Cursor} */
+export type Cursor = wasm.cst.Cursor;
 
-export const AncestorsIterator = generated.cst.AncestorsIterator;
-export type AncestorsIterator = generated.cst.AncestorsIterator;
+/** {@inheritDoc wasm.cst.CursorIterator} */
+export const CursorIterator = wasm.cst.CursorIterator;
+/** {@inheritDoc wasm.cst.CursorIterator} */
+export type CursorIterator = wasm.cst.CursorIterator;
 
-export const Query = generated.cst.Query;
-export type Query = generated.cst.Query;
+/** {@inheritDoc wasm.cst.AncestorsIterator} */
+export const AncestorsIterator = wasm.cst.AncestorsIterator;
+/** {@inheritDoc wasm.cst.AncestorsIterator} */
+export type AncestorsIterator = wasm.cst.AncestorsIterator;
 
-export type QueryError = generated.cst.QueryError;
+/** {@inheritDoc wasm.cst.Query} */
+export const Query = wasm.cst.Query;
+/** {@inheritDoc wasm.cst.Query} */
+export type Query = wasm.cst.Query;
 
-export type QueryMatch = generated.cst.QueryMatch;
+/** {@inheritDoc wasm.cst.QueryError} */
+export type QueryError = wasm.cst.QueryError;
 
-export const QueryMatchIterator = generated.cst.QueryMatchIterator;
-export type QueryMatchIterator = generated.cst.QueryMatchIterator;
+/** {@inheritDoc wasm.cst.QueryMatch} */
+export type QueryMatch = wasm.cst.QueryMatch;
 
-export type TextIndex = generated.cst.TextIndex;
+/** {@inheritDoc wasm.cst.QueryMatchIterator} */
+export const QueryMatchIterator = wasm.cst.QueryMatchIterator;
+/** {@inheritDoc wasm.cst.QueryMatchIterator} */
+export type QueryMatchIterator = wasm.cst.QueryMatchIterator;
 
-export type TextRange = generated.cst.TextRange;
+/** {@inheritDoc wasm.cst.TextIndex} */
+export type TextIndex = wasm.cst.TextIndex;
 
-/**
- * Asserts that this node is a `NonterminalNode` with the provided kind and text.
- */
-export function assertIsNonterminalNode(
-  node: unknown,
-  kind?: NonterminalKind,
-  text?: string,
-): asserts node is NonterminalNode {
-  if (!(node instanceof NonterminalNode)) {
-    throw new Error("Node provided is not a NonterminalNode.");
-  }
-
-  if (kind !== undefined && kind !== node.kind) {
-    throw new Error(`Node's NonterminalKind is expected to be '${kind}', but got '${node.kind}'.`);
-  }
-
-  if (text !== undefined && text !== node.unparse()) {
-    throw new Error(`Node's text content is expected to be '${text}', but got '${node.unparse()}'.`);
-  }
-}
-
-/**
- * Asserts that this node is a `TerminalKind` with the provided kind and text.
- */
-export function assertIsTerminalNode(node: unknown, kind?: TerminalKind, text?: string): asserts node is TerminalNode {
-  if (!(node instanceof TerminalNode)) {
-    throw new Error("Node provided is not a TerminalNode.");
-  }
-
-  if (kind !== undefined && kind !== node.kind) {
-    throw new Error(`Node's TerminalKind is expected to be '${kind}', but got '${node.kind}'.`);
-  }
-
-  if (text !== undefined && text !== node.unparse()) {
-    throw new Error(`Node's text content is expected to be '${text}', but got '${node.unparse()}'.`);
-  }
-}
+/** {@inheritDoc wasm.cst.TextRange} */
+export type TextRange = wasm.cst.TextRange;

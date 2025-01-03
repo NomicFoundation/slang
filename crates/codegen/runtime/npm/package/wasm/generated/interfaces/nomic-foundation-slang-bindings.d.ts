@@ -16,8 +16,19 @@ export { Cursor };
  * It can either be in a user file, or a built-in in the language.
  */
 export type BindingLocation = UserFileLocation | BuiltInLocation;
+
+/**
+ * Enumerates different variants of the `BindingLocation` type.
+ */
 export enum BindingLocationType {
+  /**
+   * Represents a variant of type `UserFileLocation`.
+   */
   UserFileLocation = "UserFileLocation",
+
+  /**
+   * Represents a variant of type `BuiltInLocation`.
+   */
   BuiltInLocation = "BuiltInLocation",
 }
 

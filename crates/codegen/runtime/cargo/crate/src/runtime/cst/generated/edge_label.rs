@@ -16,18 +16,25 @@
 )]
 #[strum(serialize_all = "snake_case")]
 #[derive(Clone, Copy)]
+/// Represents the different types of relationships between nodes in the syntax tree.
 pub enum EdgeLabel {
-    // Built-in:
+    /// Represents a child node with the label `item`.
     Item,
+    /// Represents a child node with the label `variant`.
     Variant,
+    /// Represents a child node with the label `separator`.
     Separator,
+    /// Represents a child node with the label `operand`.
     Operand,
+    /// Represents a child node with the label `left_operand`.
     LeftOperand,
+    /// Represents a child node with the label `right_operand`.
     RightOperand,
+    /// Represents a child node with the label `leading_trivia`.
     LeadingTrivia,
+    /// Represents a child node with the label `trailing_trivia`.
     TrailingTrivia,
 
-    // Generated:
     Stub1,
     Stub2,
     Stub3,
