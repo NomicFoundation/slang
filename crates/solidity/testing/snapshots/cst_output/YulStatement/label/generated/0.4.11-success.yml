@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulStatement) ► (variant꞉ YulLabel): # "foo_label:\n" (0..11)
+  - (root꞉ YulStatement) ► (variant꞉ YulLabel): # "foo_label:\n" (0..11)
       - (label꞉ YulIdentifier): "foo_label" # (0..9)
       - (colon꞉ Colon): ":" # (9..10)
       - (trailing_trivia꞉ EndOfLine): "\n" # (10..11)

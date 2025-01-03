@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "foo" # (0..3)
+  - (root꞉ UNRECOGNIZED): "foo" # (0..3)

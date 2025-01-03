@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ MemberAccessExpression): # "x.y" (0..3)
+  - (root꞉ Expression) ► (variant꞉ MemberAccessExpression): # "x.y" (0..3)
       - (operand꞉ Expression) ► (variant꞉ Identifier): "x" # (0..1)
       - (period꞉ Period): "." # (1..2)
       - (member꞉ Identifier): "y" # (2..3)

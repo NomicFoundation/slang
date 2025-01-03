@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "sizeof" # (0..6)
+  - (root꞉ UNRECOGNIZED): "sizeof" # (0..6)

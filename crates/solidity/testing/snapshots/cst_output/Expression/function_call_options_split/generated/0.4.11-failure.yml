@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Expression): # 'a.b{value: 0}{gas: 1}("")' (0..25)
+  - (root꞉ Expression): # 'a.b{value: 0}{gas: 1}("")' (0..25)
       - (variant꞉ MemberAccessExpression): # "a.b" (0..3)
           - (operand꞉ Expression) ► (variant꞉ Identifier): "a" # (0..1)
           - (period꞉ Period): "." # (1..2)

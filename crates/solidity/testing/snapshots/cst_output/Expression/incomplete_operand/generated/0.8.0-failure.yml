@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Expression): # "2 * new\n" (0..8)
+  - (root꞉ Expression): # "2 * new\n" (0..8)
       - (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "2" # (0..1)
       - (root꞉ MultiplicativeExpression): # " *" (1..3)
           - (leading_trivia꞉ Whitespace): " " # (1..2)

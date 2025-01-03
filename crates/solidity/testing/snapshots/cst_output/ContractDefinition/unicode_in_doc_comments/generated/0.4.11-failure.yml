@@ -17,7 +17,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "// ╒══════════════════════════════════════════════..." (0..489)
+  - (root꞉ ContractDefinition): # "// ╒══════════════════════════════════════════════..." (0..489)
       - (leading_trivia꞉ SingleLineComment): "// ╒══════════════════════════════════════════════..." # (0..201)
       - (leading_trivia꞉ EndOfLine): "\n" # (201..202)
       - (leading_trivia꞉ SingleLineComment): "// │ More Info: https://github.com/NomicFoundation..." # (202..275)

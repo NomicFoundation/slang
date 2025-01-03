@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "gaslimit()\n" (0..11)
+  - (root꞉ YulFunctionCallExpression): # "gaslimit()\n" (0..11)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulGasLimitKeyword): "gaslimit" # (0..8)
       - (open_paren꞉ OpenParen): "(" # (8..9)
       - (arguments꞉ YulArguments): [] # (9..9)

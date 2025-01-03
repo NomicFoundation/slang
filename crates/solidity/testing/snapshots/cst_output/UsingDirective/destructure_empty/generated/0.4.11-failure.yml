@@ -15,7 +15,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UsingDirective): # "// Empty using symbols list is not valid\nusing {} ..." (0..57)
+  - (root꞉ UsingDirective): # "// Empty using symbols list is not valid\nusing {} ..." (0..57)
       - (leading_trivia꞉ SingleLineComment): "// Empty using symbols list is not valid" # (0..40)
       - (leading_trivia꞉ EndOfLine): "\n" # (40..41)
       - (using_keyword꞉ UsingKeyword): "using" # (41..46)

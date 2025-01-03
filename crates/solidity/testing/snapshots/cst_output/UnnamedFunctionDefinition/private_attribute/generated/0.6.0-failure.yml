@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "function () private {}\n" # (0..23)
+  - (root꞉ UNRECOGNIZED): "function () private {}\n" # (0..23)

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (TupleExpression): # "(first, second, third, fourth)" (0..30)
+  - (root꞉ TupleExpression): # "(first, second, third, fourth)" (0..30)
       - (open_paren꞉ OpenParen): "(" # (0..1)
       - (items꞉ TupleValues): # "first, second, third, fourth" (1..29)
           - (item꞉ TupleValue) ► (expression꞉ Expression) ► (variant꞉ Identifier): "first" # (1..6)

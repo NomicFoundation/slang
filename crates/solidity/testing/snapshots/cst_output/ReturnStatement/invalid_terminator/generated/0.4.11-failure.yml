@@ -17,7 +17,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ReturnStatement): # "return a + 2 * some invalid tokens\n\n;\n" (0..38)
+  - (root꞉ ReturnStatement): # "return a + 2 * some invalid tokens\n\n;\n" (0..38)
       - (return_keyword꞉ ReturnKeyword): "return" # (0..6)
       - (expression꞉ Expression) ► (variant꞉ AdditiveExpression): # " a + 2 * some" (6..19)
           - (left_operand꞉ Expression): # " a" (6..8)

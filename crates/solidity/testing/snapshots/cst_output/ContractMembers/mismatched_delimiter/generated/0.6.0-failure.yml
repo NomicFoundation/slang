@@ -27,7 +27,7 @@ Errors: # 2 total
     ───╯
 
 Tree:
-  - (ContractMembers): # "function someFunc() public {\n    {\n        uint256..." (0..74)
+  - (root꞉ ContractMembers): # "function someFunc() public {\n    {\n        uint256..." (0..74)
       - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "function someFunc() public {\n    {\n        uint256..." (0..74)
           - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
           - (name꞉ FunctionName): # " someFunc" (8..17)

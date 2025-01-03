@@ -14,6 +14,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SourceUnit): # "function foo() { }" (0..18)
+  - (root꞉ SourceUnit): # "function foo() { }" (0..18)
       - (members꞉ SourceUnitMembers): [] # (0..0)
       - (root꞉ UNRECOGNIZED): "function foo() { }" # (0..18)

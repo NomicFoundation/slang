@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableDeclarationStatement): # "let x, y, z := foo()\n" (0..21)
+  - (root꞉ YulVariableDeclarationStatement): # "let x, y, z := foo()\n" (0..21)
       - (let_keyword꞉ YulLetKeyword): "let" # (0..3)
       - (variables꞉ YulVariableNames): # " x, y, z" (3..11)
           - (leading_trivia꞉ Whitespace): " " # (3..4)

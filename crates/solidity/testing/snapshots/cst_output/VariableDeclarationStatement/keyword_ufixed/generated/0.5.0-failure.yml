@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (VariableDeclarationStatement): # "uint ufixed;\n" (0..13)
+  - (root꞉ VariableDeclarationStatement): # "uint ufixed;\n" (0..13)
       - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (0..4)
       - (leading_trivia꞉ Whitespace): " " # (4..5)
       - (root꞉ UNRECOGNIZED): "ufixed" # (5..11)

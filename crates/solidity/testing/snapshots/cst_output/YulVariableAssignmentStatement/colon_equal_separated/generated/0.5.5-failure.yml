@@ -15,7 +15,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulVariableAssignmentStatement): # '// ColonEqual was two separate tokens before "0.5....' (0..64)
+  - (root꞉ YulVariableAssignmentStatement): # '// ColonEqual was two separate tokens before "0.5....' (0..64)
       - (variables꞉ YulPaths): # '// ColonEqual was two separate tokens before "0.5....' (0..57)
           - (item꞉ YulPath): # '// ColonEqual was two separate tokens before "0.5....' (0..57)
               - (leading_trivia꞉ SingleLineComment): '// ColonEqual was two separate tokens before "0.5....' # (0..53)

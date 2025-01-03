@@ -15,7 +15,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulVariableDeclarationStatement): # "// Unreserved in Yul specifically since 0.7.1:\nlet..." (0..59)
+  - (root꞉ YulVariableDeclarationStatement): # "// Unreserved in Yul specifically since 0.7.1:\nlet..." (0..59)
       - (leading_trivia꞉ SingleLineComment): "// Unreserved in Yul specifically since 0.7.1:" # (0..46)
       - (leading_trivia꞉ EndOfLine): "\n" # (46..47)
       - (let_keyword꞉ YulLetKeyword): "let" # (47..50)

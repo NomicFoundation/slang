@@ -38,7 +38,7 @@ Errors: # 1 total
     ────╯
 
 Tree:
-  - (SourceUnit): # "// SPDX-License-Identifier: MIT\npragma solidity ^0..." (0..793)
+  - (root꞉ SourceUnit): # "// SPDX-License-Identifier: MIT\npragma solidity ^0..." (0..793)
       - (members꞉ SourceUnitMembers): # "// SPDX-License-Identifier: MIT\npragma solidity ^0..." (0..56)
           - (item꞉ SourceUnitMember) ► (variant꞉ PragmaDirective): # "// SPDX-License-Identifier: MIT\npragma solidity ^0..." (0..56)
               - (leading_trivia꞉ SingleLineComment): "// SPDX-License-Identifier: MIT" # (0..31)

@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ConstructorDefinition): # "constructor () virtual {}\n" (0..26)
+  - (root꞉ ConstructorDefinition): # "constructor () virtual {}\n" (0..26)
       - (constructor_keyword꞉ ConstructorKeyword): "constructor" # (0..11)
       - (parameters꞉ ParametersDeclaration): # " ()" (11..14)
           - (leading_trivia꞉ Whitespace): " " # (11..12)

@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "constructor () override {}\n" # (0..27)
+  - (root꞉ UNRECOGNIZED): "constructor () override {}\n" # (0..27)

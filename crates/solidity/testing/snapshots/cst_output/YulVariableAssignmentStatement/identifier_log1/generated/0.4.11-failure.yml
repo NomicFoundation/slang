@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "log1 := 0\n" # (0..10)
+  - (root꞉ UNRECOGNIZED): "log1 := 0\n" # (0..10)

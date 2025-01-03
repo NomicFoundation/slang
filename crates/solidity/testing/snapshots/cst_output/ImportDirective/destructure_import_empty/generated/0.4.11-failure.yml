@@ -15,7 +15,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ImportDirective): # '// Empty imports are not valid\nimport {} from "foo...' (0..53)
+  - (root꞉ ImportDirective): # '// Empty imports are not valid\nimport {} from "foo...' (0..53)
       - (leading_trivia꞉ SingleLineComment): "// Empty imports are not valid" # (0..30)
       - (leading_trivia꞉ EndOfLine): "\n" # (30..31)
       - (import_keyword꞉ ImportKeyword): "import" # (31..37)

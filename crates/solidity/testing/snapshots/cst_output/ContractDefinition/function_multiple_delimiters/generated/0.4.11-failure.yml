@@ -22,7 +22,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "// SPDX-License-Identifier: MIT\ncontract ABC {\n  f..." (0..352)
+  - (root꞉ ContractDefinition): # "// SPDX-License-Identifier: MIT\ncontract ABC {\n  f..." (0..352)
       - (leading_trivia꞉ SingleLineComment): "// SPDX-License-Identifier: MIT" # (0..31)
       - (leading_trivia꞉ EndOfLine): "\n" # (31..32)
       - (contract_keyword꞉ ContractKeyword): "contract" # (32..40)

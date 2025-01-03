@@ -15,7 +15,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulStatement): # "// Makes sure that `newB:` is not parsed as a labe..." (0..144)
+  - (root꞉ YulStatement): # "// Makes sure that `newB:` is not parsed as a labe..." (0..144)
       - (variant꞉ YulExpression) ► (variant꞉ YulPath): # "// Makes sure that `newB:` is not parsed as a labe..." (0..128)
           - (leading_trivia꞉ SingleLineComment): "// Makes sure that `newB:` is not parsed as a labe..." # (0..123)
           - (leading_trivia꞉ EndOfLine): "\n" # (123..124)

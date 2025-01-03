@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "1e2" # (0..3)
+  - (root꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "1e2" # (0..3)

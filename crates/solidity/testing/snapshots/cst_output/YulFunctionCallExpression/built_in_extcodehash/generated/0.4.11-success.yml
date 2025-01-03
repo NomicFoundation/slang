@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "extcodehash()\n" (0..14)
+  - (root꞉ YulFunctionCallExpression): # "extcodehash()\n" (0..14)
       - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "extcodehash" (0..11)
           - (item꞉ YulIdentifier): "extcodehash" # (0..11)
       - (open_paren꞉ OpenParen): "(" # (11..12)

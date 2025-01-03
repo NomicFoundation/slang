@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableDeclarationStatement): # "let a.b.c := 1\n" (0..15)
+  - (root꞉ YulVariableDeclarationStatement): # "let a.b.c := 1\n" (0..15)
       - (let_keyword꞉ YulLetKeyword): "let" # (0..3)
       - (variables꞉ YulVariableNames): # " a.b.c" (3..9)
           - (leading_trivia꞉ Whitespace): " " # (3..4)

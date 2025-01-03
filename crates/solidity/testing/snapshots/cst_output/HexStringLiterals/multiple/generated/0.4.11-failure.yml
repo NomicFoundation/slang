@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): 'hex"ab" hex''cd''' # (0..15)
+  - (root꞉ UNRECOGNIZED): 'hex"ab" hex''cd''' # (0..15)

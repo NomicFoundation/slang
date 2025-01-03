@@ -23,7 +23,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "// Constructors introduced in 0.4.22 but `construc..." (0..191)
+  - (root꞉ ContractDefinition): # "// Constructors introduced in 0.4.22 but `construc..." (0..191)
       - (leading_trivia꞉ SingleLineComment): "// Constructors introduced in 0.4.22 but `construc..." # (0..91)
       - (leading_trivia꞉ EndOfLine): "\n" # (91..92)
       - (leading_trivia꞉ EndOfLine): "\n" # (92..93)

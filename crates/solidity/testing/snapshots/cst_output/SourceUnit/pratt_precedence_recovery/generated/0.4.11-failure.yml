@@ -18,7 +18,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SourceUnit) ► (members꞉ SourceUnitMembers): # "contract A {\n\tfunction a() {\n\t\t2 + (\n\t}\n}\n" (0..42)
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "contract A {\n\tfunction a() {\n\t\t2 + (\n\t}\n}\n" (0..42)
       - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract A {\n\tfunction a() {\n\t\t2 + (\n\t}\n}\n" (0..42)
           - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
           - (leading_trivia꞉ Whitespace): " " # (8..9)

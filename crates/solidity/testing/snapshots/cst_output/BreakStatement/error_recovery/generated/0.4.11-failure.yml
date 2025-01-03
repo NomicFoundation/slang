@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (BreakStatement): # "break invalid ;\n" (0..16)
+  - (root꞉ BreakStatement): # "break invalid ;\n" (0..16)
       - (break_keyword꞉ BreakKeyword): "break" # (0..5)
       - (leading_trivia꞉ Whitespace): " " # (5..6)
       - (root꞉ UNRECOGNIZED): "invalid " # (6..14)

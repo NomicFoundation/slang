@@ -16,7 +16,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SourceUnit): # "contract X {}\n\n/* unterminated comment\n" (0..39)
+  - (root꞉ SourceUnit): # "contract X {}\n\n/* unterminated comment\n" (0..39)
       - (members꞉ SourceUnitMembers): # "contract X {}\n" (0..14)
           - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract X {}\n" (0..14)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)

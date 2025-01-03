@@ -24,7 +24,7 @@ Errors: # 2 total
     ───╯
 
 Tree:
-  - (Statements): # "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n" (0..43)
+  - (root꞉ Statements): # "\nthrow invalid ;\n{ 1 * 2; 3 * b invalid; }\n" (0..43)
       - (item꞉ Statement) ► (variant꞉ ThrowStatement): # "\nthrow invalid ;\n" (0..17)
           - (leading_trivia꞉ EndOfLine): "\n" # (0..1)
           - (throw_keyword꞉ ThrowKeyword): "throw" # (1..6)

@@ -117,10 +117,6 @@ impl<T: KindTypes> Cursor<T> {
         self.node.clone()
     }
 
-    pub fn has_open_parent(&self) -> bool {
-        matches!(self.parent, Parent::Connected(_))
-    }
-
     pub fn label(&self) -> T::EdgeLabel {
         match &self.parent {
             Parent::Connected(parent) => {

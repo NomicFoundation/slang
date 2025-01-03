@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "mutable" # (0..7)
+  - (root꞉ UNRECOGNIZED): "mutable" # (0..7)

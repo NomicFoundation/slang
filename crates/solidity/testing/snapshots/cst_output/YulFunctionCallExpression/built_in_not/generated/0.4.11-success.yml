@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "not()\n" (0..6)
+  - (root꞉ YulFunctionCallExpression): # "not()\n" (0..6)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulNotKeyword): "not" # (0..3)
       - (open_paren꞉ OpenParen): "(" # (3..4)
       - (arguments꞉ YulArguments): [] # (4..4)

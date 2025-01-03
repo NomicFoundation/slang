@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Expression): # " (new FooBar){value: 5}()\n" (0..26)
+  - (root꞉ Expression): # " (new FooBar){value: 5}()\n" (0..26)
       - (variant꞉ TupleExpression): # " (new FooBar)" (0..13)
           - (leading_trivia꞉ Whitespace): " " # (0..1)
           - (open_paren꞉ OpenParen): "(" # (1..2)

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "address()\n" (0..10)
+  - (root꞉ YulFunctionCallExpression): # "address()\n" (0..10)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulAddressKeyword): "address" # (0..7)
       - (open_paren꞉ OpenParen): "(" # (7..8)
       - (arguments꞉ YulArguments): [] # (8..8)

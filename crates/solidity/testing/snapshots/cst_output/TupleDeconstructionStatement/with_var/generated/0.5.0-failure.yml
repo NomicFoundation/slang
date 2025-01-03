@@ -15,7 +15,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TupleDeconstructionStatement): # '// "var" should be disabled in "0.5.0":\nvar (foo, ...' (0..62)
+  - (root꞉ TupleDeconstructionStatement): # '// "var" should be disabled in "0.5.0":\nvar (foo, ...' (0..62)
       - (leading_trivia꞉ SingleLineComment): '// "var" should be disabled in "0.5.0":' # (0..39)
       - (leading_trivia꞉ EndOfLine): "\n" # (39..40)
       - (root꞉ UNRECOGNIZED): "var (foo, bar) = rhs;\n" # (40..62)

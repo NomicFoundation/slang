@@ -12,7 +12,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (0..58)
+  - (root꞉ ContractDefinition): # "contract Sample {\n  enum State {\n    A,\n    B,\n   ..." (0..58)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Sample" # (9..15)

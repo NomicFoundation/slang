@@ -22,7 +22,7 @@ Errors: # 2 total
     ───╯
 
 Tree:
-  - (Statements): # "for(int)\n" (0..9)
+  - (root꞉ Statements): # "for(int)\n" (0..9)
       - (item꞉ Statement) ► (variant꞉ ForStatement): # "for(int)\n" (0..9)
           - (for_keyword꞉ ForKeyword): "for" # (0..3)
           - (open_paren꞉ OpenParen): "(" # (3..4)

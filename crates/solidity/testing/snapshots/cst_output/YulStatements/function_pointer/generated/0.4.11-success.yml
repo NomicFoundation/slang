@@ -10,7 +10,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulStatements): # "{\n\t// https://github.com/ethereum/solidity/blob/eb..." (0..214)
+  - (root꞉ YulStatements): # "{\n\t// https://github.com/ethereum/solidity/blob/eb..." (0..214)
       - (item꞉ YulStatement) ► (variant꞉ YulBlock): # "{\n\t// https://github.com/ethereum/solidity/blob/eb..." (0..214)
           - (open_brace꞉ OpenBrace): "{" # (0..1)
           - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)

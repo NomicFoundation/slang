@@ -113,7 +113,7 @@ Errors: # 12 total
     ────╯
 
 Tree:
-  - (ContractMembers): # "function all() override(some.ident unexpected toke..." (0..560)
+  - (root꞉ ContractMembers): # "function all() override(some.ident unexpected toke..." (0..560)
       - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "function all() override(some.ident unexpected toke..." (0..309)
           - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
           - (name꞉ FunctionName): # " all" (8..12)

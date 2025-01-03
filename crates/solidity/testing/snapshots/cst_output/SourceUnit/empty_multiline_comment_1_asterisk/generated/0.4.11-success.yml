@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (SourceUnit): # "/*/ needs another one to terminate: /*/\n" (0..40)
+  - (root꞉ SourceUnit): # "/*/ needs another one to terminate: /*/\n" (0..40)
       - (members꞉ SourceUnitMembers): [] # (0..0)
       - (leading_trivia꞉ MultiLineComment): "/*/ needs another one to terminate: /*/" # (0..39)
       - (leading_trivia꞉ EndOfLine): "\n" # (39..40)

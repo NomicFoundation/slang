@@ -41,7 +41,7 @@ Errors: # 3 total
     ────╯
 
 Tree:
-  - (ContractDefinition): # "contract Contract {\n\tfunction _transfer(address wh..." (0..212)
+  - (root꞉ ContractDefinition): # "contract Contract {\n\tfunction _transfer(address wh..." (0..212)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Contract" # (9..17)

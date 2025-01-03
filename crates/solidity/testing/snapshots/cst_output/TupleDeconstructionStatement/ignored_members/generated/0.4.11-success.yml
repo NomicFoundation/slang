@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (TupleDeconstructionStatement): # "(, second, , fourth) = rhs;" (0..27)
+  - (root꞉ TupleDeconstructionStatement): # "(, second, , fourth) = rhs;" (0..27)
       - (open_paren꞉ OpenParen): "(" # (0..1)
       - (elements꞉ TupleDeconstructionElements): # ", second, , fourth" (1..19)
           - (item꞉ TupleDeconstructionElement): [] # (1..1)

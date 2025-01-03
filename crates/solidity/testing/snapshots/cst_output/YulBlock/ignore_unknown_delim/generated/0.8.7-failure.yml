@@ -20,7 +20,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulBlock): # "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..." (0..85)
+  - (root꞉ YulBlock): # "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..." (0..85)
       - (open_brace꞉ OpenBrace): "{" # (0..1)
       - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)
       - (statements꞉ YulStatements): # "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..." (2..83)

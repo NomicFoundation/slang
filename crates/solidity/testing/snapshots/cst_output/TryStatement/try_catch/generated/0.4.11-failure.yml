@@ -22,7 +22,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TryStatement): # "// Make sure that error recovery won't lead to mis..." (0..171)
+  - (root꞉ TryStatement): # "// Make sure that error recovery won't lead to mis..." (0..171)
       - (leading_trivia꞉ SingleLineComment): "// Make sure that error recovery won't lead to mis..." # (0..57)
       - (leading_trivia꞉ EndOfLine): "\n" # (57..58)
       - (leading_trivia꞉ SingleLineComment): "// ambiguous function call options with the block ..." # (58..136)

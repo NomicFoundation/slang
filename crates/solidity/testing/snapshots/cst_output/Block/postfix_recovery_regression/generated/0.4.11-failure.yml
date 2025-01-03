@@ -20,7 +20,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Block): # "// Make sure we don't panic when encountering an u..." (0..122)
+  - (root꞉ Block): # "// Make sure we don't panic when encountering an u..." (0..122)
       - (leading_trivia꞉ SingleLineComment): "// Make sure we don't panic when encountering an u..." # (0..93)
       - (leading_trivia꞉ EndOfLine): "\n" # (93..94)
       - (leading_trivia꞉ EndOfLine): "\n" # (94..95)

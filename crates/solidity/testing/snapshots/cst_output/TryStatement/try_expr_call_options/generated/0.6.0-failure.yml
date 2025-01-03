@@ -27,7 +27,7 @@ Errors: # 2 total
     ───╯
 
 Tree:
-  - (TryStatement): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" (0..42)
+  - (root꞉ TryStatement): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" (0..42)
       - (try_keyword꞉ TryKeyword): "try" # (0..3)
       - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # " foo()" (3..9)
           - (operand꞉ Expression): # " foo" (3..7)

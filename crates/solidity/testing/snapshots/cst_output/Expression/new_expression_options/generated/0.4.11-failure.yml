@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Expression): # "new Foo{value: 10}\n" (0..19)
+  - (root꞉ Expression): # "new Foo{value: 10}\n" (0..19)
       - (variant꞉ NewExpression): # "new Foo" (0..7)
           - (new_keyword꞉ NewKeyword): "new" # (0..3)
           - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " Foo" (3..7)

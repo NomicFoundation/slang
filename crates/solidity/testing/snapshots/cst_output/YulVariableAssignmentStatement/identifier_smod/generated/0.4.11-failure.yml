@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "smod := 0\n" # (0..10)
+  - (root꞉ UNRECOGNIZED): "smod := 0\n" # (0..10)

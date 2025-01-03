@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (EventDefinition): # "event MyEvent;\n" (0..15)
+  - (root꞉ EventDefinition): # "event MyEvent;\n" (0..15)
       - (event_keyword꞉ EventKeyword): "event" # (0..5)
       - (leading_trivia꞉ Whitespace): " " # (5..6)
       - (name꞉ Identifier): "MyEvent" # (6..13)

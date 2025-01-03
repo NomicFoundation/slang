@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ConditionalExpression): # "foo ? (a + b) : (c + d)" (0..23)
+  - (root꞉ ConditionalExpression): # "foo ? (a + b) : (c + d)" (0..23)
       - (operand꞉ Expression) ► (variant꞉ Identifier): "foo" # (0..3)
       - (leading_trivia꞉ Whitespace): " " # (3..4)
       - (question_mark꞉ QuestionMark): "?" # (4..5)
