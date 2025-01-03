@@ -9,25 +9,8 @@ use crate::text_index::{TextIndex, TextRange};
 #[derive(Clone, Debug, PartialEq, Eq)]
 enum Parent<T: KindTypes> {
     None,
-    Open(Rc<PathAncestor<T>>),
-    Closed(Rc<PathAncestor<T>>),
-}
-
-impl<T: KindTypes> Parent<T> {
-    fn as_closed(&self) -> Parent<T> {
-        match self {
-            Parent::Open(ancestor) => Parent::Closed(ancestor.to_owned()),
-            _ => self.clone(),
-        }
-    }
-
-    fn get_readable(&self) -> Option<&Rc<PathAncestor<T>>> {
-        match self {
-            Parent::Open(ancestor) => Some(ancestor),
-            Parent::Closed(ancestor) => Some(ancestor),
-            Parent::None => None,
-        }
-    }
+    Disconnected(T::EdgeLabel),
+    Connected(Rc<PathAncestor<T>>),
 }
 
 /// A node in the ancestor path of a [`Cursor`].
@@ -99,9 +82,9 @@ impl<T: KindTypes> Cursor<T> {
 
     /// Completes the cursor, setting it to the root node.
     pub fn complete(&mut self) {
-        if let Parent::Open(parent) = &self.parent.clone() {
+        if let Parent::Connected(parent) = &self.parent.clone() {
             let mut parent = parent;
-            while let Parent::Open(grandparent) = &parent.parent {
+            while let Parent::Connected(grandparent) = &parent.parent {
                 parent = grandparent;
             }
             self.set_from_ancestor_node(parent);
@@ -114,9 +97,10 @@ impl<T: KindTypes> Cursor<T> {
     /// even though the path is reset.
     #[must_use]
     pub fn spawn(&self) -> Self {
+        let label = self.label();
         Self {
             is_completed: false,
-            parent: self.parent.as_closed(),
+            parent: Parent::Disconnected(label),
             node: self.node.clone(),
             child_number: 0,
             text_offset: self.text_offset,
@@ -134,15 +118,17 @@ impl<T: KindTypes> Cursor<T> {
     }
 
     pub fn has_open_parent(&self) -> bool {
-        matches!(self.parent, Parent::Open(_))
+        matches!(self.parent, Parent::Connected(_))
     }
 
     pub fn label(&self) -> T::EdgeLabel {
-        if let Some(parent) = self.parent.get_readable() {
-            let this = &parent.nonterminal_node.children[self.child_number];
-            this.label
-        } else {
-            T::EdgeLabel::default()
+        match &self.parent {
+            Parent::Connected(parent) => {
+                let this = &parent.nonterminal_node.children[self.child_number];
+                this.label
+            }
+            Parent::Disconnected(label) => *label,
+            Parent::None => T::EdgeLabel::default(),
         }
     }
 
@@ -161,10 +147,10 @@ impl<T: KindTypes> Cursor<T> {
     /// Returns the depth of the current node in the CST, i.e. the number of ancestors.
     pub fn depth(&self) -> usize {
         let mut depth = 0;
-        if let Parent::Open(parent) = &self.parent {
+        if let Parent::Connected(parent) = &self.parent {
             let mut parent = parent;
             depth += 1;
-            while let Parent::Open(grandparent) = &parent.parent {
+            while let Parent::Connected(grandparent) = &parent.parent {
                 depth += 1;
                 parent = grandparent;
             }
@@ -253,7 +239,7 @@ impl<T: KindTypes> Cursor<T> {
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_parent(&mut self) -> bool {
-        if let Parent::Open(parent) = &self.parent.clone() {
+        if let Parent::Connected(parent) = &self.parent.clone() {
             self.set_from_ancestor_node(parent);
 
             true
@@ -275,7 +261,7 @@ impl<T: KindTypes> Cursor<T> {
         // If the current cursor is a node and it has children, go to first children
         if let Some(new_parent) = self.as_ancestor_node() {
             if let Some(new_child) = new_parent.nonterminal_node.children.first().cloned() {
-                self.parent = Parent::Open(new_parent);
+                self.parent = Parent::Connected(new_parent);
                 self.node = new_child.node;
                 self.child_number = 0;
 
@@ -302,7 +288,7 @@ impl<T: KindTypes> Cursor<T> {
                 for sibling in &new_parent.nonterminal_node.children[..self.child_number] {
                     self.text_offset += sibling.text_len();
                 }
-                self.parent = Parent::Open(new_parent);
+                self.parent = Parent::Connected(new_parent);
 
                 return true;
             }
@@ -332,7 +318,7 @@ impl<T: KindTypes> Cursor<T> {
                 for sibling in &new_parent.nonterminal_node.children[..self.child_number] {
                     self.text_offset += sibling.text_len();
                 }
-                self.parent = Parent::Open(new_parent);
+                self.parent = Parent::Connected(new_parent);
 
                 return true;
             }
@@ -349,7 +335,7 @@ impl<T: KindTypes> Cursor<T> {
             return false;
         }
 
-        if let Parent::Open(parent) = &self.parent {
+        if let Parent::Connected(parent) = &self.parent {
             let new_child_number = self.child_number + 1;
             if let Some(new_child) = parent.nonterminal_node.children.get(new_child_number) {
                 self.text_offset += self.node.text_len();
@@ -371,7 +357,7 @@ impl<T: KindTypes> Cursor<T> {
             return false;
         }
 
-        if let Parent::Open(parent) = &self.parent {
+        if let Parent::Connected(parent) = &self.parent {
             if self.child_number > 0 {
                 let new_child_number = self.child_number - 1;
                 let new_child = &parent.nonterminal_node.children[new_child_number];
@@ -474,8 +460,7 @@ impl<T: KindTypes> Iterator for AncestorsIterator<T> {
     type Item = Rc<NonterminalNode<T>>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        // if let Some(current) = self.current.take() {
-        if let Parent::Open(current) = self.current.clone() {
+        if let Parent::Connected(current) = self.current.clone() {
             self.current = current.parent.clone();
             Some(Rc::clone(&current.nonterminal_node))
         } else {
