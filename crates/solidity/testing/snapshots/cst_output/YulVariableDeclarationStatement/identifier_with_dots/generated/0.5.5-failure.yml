@@ -19,4 +19,4 @@ Tree:
       - (variables꞉ YulVariableNames): # " a" (3..5)
           - (leading_trivia꞉ Whitespace): " " # (3..4)
           - (item꞉ YulIdentifier): "a" # (4..5)
-      - (root꞉ UNRECOGNIZED): ".b.c := 1\n" # (5..15)
+      - (unrecognized꞉ UNRECOGNIZED): ".b.c := 1\n" # (5..15)

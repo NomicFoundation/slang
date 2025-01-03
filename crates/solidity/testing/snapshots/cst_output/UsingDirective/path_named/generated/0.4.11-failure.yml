@@ -25,5 +25,5 @@ Tree:
           - (leading_trivia꞉ Whitespace): " " # (13..14)
           - (item꞉ Identifier): "bar" # (14..17)
       - (leading_trivia꞉ Whitespace): " " # (17..18)
-      - (root꞉ UNRECOGNIZED): "global" # (18..24)
+      - (unrecognized꞉ UNRECOGNIZED): "global" # (18..24)
       - (semicolon꞉ Semicolon): ";" # (24..25)

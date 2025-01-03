@@ -193,4 +193,4 @@ Tree:
               - (semicolon꞉ Semicolon): ";" # (215..216)
               - (trailing_trivia꞉ EndOfLine): "\n" # (216..217)
       - (leading_trivia꞉ EndOfLine): "\n" # (217..218)
-      - (root꞉ UNRECOGNIZED): "event E1(uint256 value);\n" # (218..243)
+      - (unrecognized꞉ UNRECOGNIZED): "event E1(uint256 value);\n" # (218..243)

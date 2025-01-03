@@ -23,7 +23,7 @@ Tree:
               - (item꞉ UsingDeconstructionSymbol) ► (name꞉ IdentifierPath): # "div" (7..10)
                   - (item꞉ Identifier): "div" # (7..10)
           - (leading_trivia꞉ Whitespace): " " # (10..11)
-          - (root꞉ UNRECOGNIZED): "as /" # (11..15)
+          - (unrecognized꞉ UNRECOGNIZED): "as /" # (11..15)
           - (close_brace꞉ CloseBrace): "}" # (15..16)
       - (leading_trivia꞉ Whitespace): " " # (16..17)
       - (for_keyword꞉ ForKeyword): "for" # (17..20)

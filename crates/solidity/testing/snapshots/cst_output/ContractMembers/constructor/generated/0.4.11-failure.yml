@@ -19,4 +19,4 @@ Tree:
           - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # "constructor" (0..11)
               - (item꞉ Identifier): "constructor" # (0..11)
           - (attributes꞉ StateVariableAttributes): [] # (11..11)
-      - (root꞉ UNRECOGNIZED): "() public {}\n" # (11..24)
+      - (unrecognized꞉ UNRECOGNIZED): "() public {}\n" # (11..24)

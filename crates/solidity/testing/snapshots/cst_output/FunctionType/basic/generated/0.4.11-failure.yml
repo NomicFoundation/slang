@@ -27,4 +27,4 @@ Tree:
               - (leading_trivia꞉ Whitespace): " " # (15..16)
               - (variant꞉ InternalKeyword): "internal" # (16..24)
       - (leading_trivia꞉ Whitespace): " " # (24..25)
-      - (root꞉ UNRECOGNIZED): "pure returns (uint)\n" # (25..45)
+      - (unrecognized꞉ UNRECOGNIZED): "pure returns (uint)\n" # (25..45)

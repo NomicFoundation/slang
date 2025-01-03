@@ -28,4 +28,4 @@ Tree:
       - (leading_trivia꞉ SingleLineComment): "// ambiguous function call options with the block ..." # (58..136)
       - (leading_trivia꞉ EndOfLine): "\n" # (136..137)
       - (leading_trivia꞉ EndOfLine): "\n" # (137..138)
-      - (root꞉ UNRECOGNIZED): "try foo() {\n  bar();\n} catch {\n}\n" # (138..171)
+      - (unrecognized꞉ UNRECOGNIZED): "try foo() {\n  bar();\n} catch {\n}\n" # (138..171)

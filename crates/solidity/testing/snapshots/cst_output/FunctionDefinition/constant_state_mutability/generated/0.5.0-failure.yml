@@ -24,4 +24,4 @@ Tree:
           - (parameters꞉ Parameters): [] # (11..11)
           - (close_paren꞉ CloseParen): ")" # (11..12)
       - (attributes꞉ FunctionAttributes): [] # (12..12)
-      - (root꞉ UNRECOGNIZED): " constant {}" # (12..24)
+      - (unrecognized꞉ UNRECOGNIZED): " constant {}" # (12..24)

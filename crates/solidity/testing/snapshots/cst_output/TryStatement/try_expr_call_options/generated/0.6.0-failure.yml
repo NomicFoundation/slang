@@ -44,6 +44,6 @@ Tree:
               - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement) ► (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ IdentifierPath): # " x" (11..13)
                   - (leading_trivia꞉ Whitespace): " " # (11..12)
                   - (item꞉ Identifier): "x" # (12..13)
-          - (root꞉ UNRECOGNIZED): ": 1 " # (13..17)
+          - (unrecognized꞉ UNRECOGNIZED): ": 1 " # (13..17)
           - (close_brace꞉ CloseBrace): "}" # (17..18)
-      - (root꞉ UNRECOGNIZED): " {\n  bar();\n} catch {\n}\n" # (18..42)
+      - (unrecognized꞉ UNRECOGNIZED): " {\n  bar();\n} catch {\n}\n" # (18..42)

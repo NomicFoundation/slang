@@ -20,4 +20,4 @@ Tree:
           - (separator꞉ Period): "." # (3..4)
           - (item꞉ Identifier): "bar" # (4..7)
       - (leading_trivia꞉ Whitespace): " " # (7..8)
-      - (root꞉ UNRECOGNIZED): "as /" # (8..12)
+      - (unrecognized꞉ UNRECOGNIZED): "as /" # (8..12)

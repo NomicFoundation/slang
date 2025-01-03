@@ -48,5 +48,5 @@ Tree:
                       - (leading_trivia꞉ Whitespace): " " # (74..75)
                       - (variant꞉ ExternalKeyword): "external" # (75..83)
       - (leading_trivia꞉ Whitespace): " " # (83..84)
-      - (root꞉ UNRECOGNIZED): "view returns (uint);\n\n    // increments the counte..." # (84..171)
+      - (unrecognized꞉ UNRECOGNIZED): "view returns (uint);\n\n    // increments the counte..." # (84..171)
       - (close_brace꞉ CloseBrace): "}" # (171..172)

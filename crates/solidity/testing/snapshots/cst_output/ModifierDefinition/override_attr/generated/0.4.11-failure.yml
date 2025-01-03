@@ -27,4 +27,4 @@ Tree:
                   - (name꞉ Identifier): "a" # (18..19)
           - (close_paren꞉ CloseParen): ")" # (19..20)
       - (attributes꞉ ModifierAttributes): [] # (20..20)
-      - (root꞉ UNRECOGNIZED): " override { _; }\n" # (20..37)
+      - (unrecognized꞉ UNRECOGNIZED): " override { _; }\n" # (20..37)

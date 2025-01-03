@@ -70,7 +70,7 @@ Tree:
                               - (leading_trivia꞉ Whitespace): "\t\t" # (160..162)
                               - (variant꞉ UintKeyword): "uint256" # (162..169)
                           - (leading_trivia꞉ Whitespace): " " # (169..170)
-                          - (root꞉ UNRECOGNIZED): "constructor" # (170..181)
+                          - (unrecognized꞉ UNRECOGNIZED): "constructor" # (170..181)
                           - (semicolon꞉ Semicolon): ";" # (181..182)
                           - (trailing_trivia꞉ EndOfLine): "\n" # (182..183)
                   - (leading_trivia꞉ Whitespace): "    " # (183..187)

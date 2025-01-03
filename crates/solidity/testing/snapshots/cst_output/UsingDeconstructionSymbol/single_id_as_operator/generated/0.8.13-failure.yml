@@ -18,4 +18,4 @@ Tree:
       - (name꞉ IdentifierPath): # "foo" (0..3)
           - (item꞉ Identifier): "foo" # (0..3)
       - (leading_trivia꞉ Whitespace): " " # (3..4)
-      - (root꞉ UNRECOGNIZED): "as /" # (4..8)
+      - (unrecognized꞉ UNRECOGNIZED): "as /" # (4..8)

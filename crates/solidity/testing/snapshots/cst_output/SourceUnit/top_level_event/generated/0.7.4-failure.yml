@@ -16,4 +16,4 @@ Errors: # 1 total
 Tree:
   - (root꞉ SourceUnit): # "event E1(uint256 value);\n" (0..25)
       - (members꞉ SourceUnitMembers): [] # (0..0)
-      - (root꞉ UNRECOGNIZED): "event E1(uint256 value);\n" # (0..25)
+      - (unrecognized꞉ UNRECOGNIZED): "event E1(uint256 value);\n" # (0..25)

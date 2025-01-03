@@ -19,5 +19,5 @@ Tree:
       - (open_paren꞉ OpenParen): "(" # (7..8)
       - (key_type꞉ MappingKey) ► (key_type꞉ MappingKeyType) ► (variant꞉ ElementaryType) ► (variant꞉ StringKeyword): "string" # (8..14)
       - (leading_trivia꞉ Whitespace): " " # (14..15)
-      - (root꞉ UNRECOGNIZED): "Foo => bytes32 Bar" # (15..33)
+      - (unrecognized꞉ UNRECOGNIZED): "Foo => bytes32 Bar" # (15..33)
       - (close_paren꞉ CloseParen): ")" # (33..34)

@@ -56,10 +56,17 @@ impl SeparatedHelper {
                             } else {
                                 TerminalKind::UNRECOGNIZED
                             };
-                            accum.push(Edge::root(Node::terminal(
-                                kind,
-                                input.content(skipped_range.utf8()),
-                            )));
+
+                            let label = if kind == TerminalKind::UNRECOGNIZED {
+                                EdgeLabel::Unrecognized
+                            } else {
+                                EdgeLabel::default()
+                            };
+
+                            accum.push(Edge {
+                                label,
+                                node: Node::terminal(kind, input.content(skipped_range.utf8())),
+                            });
                             input.emit(ParseError::new(
                                 skipped_range,
                                 incomplete.expected_terminals,

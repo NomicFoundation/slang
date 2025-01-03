@@ -31,7 +31,7 @@ Tree:
               - (attributes꞉ StateVariableAttributes): [] # (25..25)
               - (leading_trivia꞉ Whitespace): " " # (25..26)
               - (name꞉ Identifier): "Error1" # (26..32)
-              - (root꞉ UNRECOGNIZED): "()" # (32..34)
+              - (unrecognized꞉ UNRECOGNIZED): "()" # (32..34)
               - (semicolon꞉ Semicolon): ";" # (34..35)
               - (trailing_trivia꞉ EndOfLine): "\n" # (35..36)
       - (close_brace꞉ CloseBrace): "}" # (36..37)

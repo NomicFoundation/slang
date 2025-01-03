@@ -177,6 +177,7 @@ pub slang_solidity::cst::EdgeLabel::TypeName
 pub slang_solidity::cst::EdgeLabel::Types
 pub slang_solidity::cst::EdgeLabel::UncheckedKeyword
 pub slang_solidity::cst::EdgeLabel::Unit
+pub slang_solidity::cst::EdgeLabel::Unrecognized
 pub slang_solidity::cst::EdgeLabel::UsingKeyword
 pub slang_solidity::cst::EdgeLabel::Value
 pub slang_solidity::cst::EdgeLabel::ValueType

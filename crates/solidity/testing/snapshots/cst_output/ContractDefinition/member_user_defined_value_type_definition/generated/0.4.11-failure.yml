@@ -25,5 +25,5 @@ Tree:
       - (trailing_trivia꞉ EndOfLine): "\n" # (17..18)
       - (members꞉ ContractMembers): [] # (18..18)
       - (leading_trivia꞉ Whitespace): "  " # (18..20)
-      - (root꞉ UNRECOGNIZED): "type Foo is bool;\n" # (20..38)
+      - (unrecognized꞉ UNRECOGNIZED): "type Foo is bool;\n" # (20..38)
       - (close_brace꞉ CloseBrace): "}" # (38..39)

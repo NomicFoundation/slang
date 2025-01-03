@@ -22,4 +22,4 @@ Tree:
           - (parameters꞉ Parameters): [] # (10..10)
           - (close_paren꞉ CloseParen): ")" # (10..11)
       - (attributes꞉ UnnamedFunctionAttributes): [] # (11..11)
-      - (root꞉ UNRECOGNIZED): " internal {}\n" # (11..24)
+      - (unrecognized꞉ UNRECOGNIZED): " internal {}\n" # (11..24)

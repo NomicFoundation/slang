@@ -118,7 +118,7 @@ Tree:
                                   - (variant꞉ Identifier): "recipient" # (225..234)
                               - (period꞉ Period): "." # (234..235)
                               - (member꞉ Identifier): "call" # (235..239)
-                          - (root꞉ UNRECOGNIZED): '{ value: amount }("")' # (239..260)
+                          - (unrecognized꞉ UNRECOGNIZED): '{ value: amount }("")' # (239..260)
                           - (semicolon꞉ Semicolon): ";" # (260..261)
                           - (trailing_trivia꞉ EndOfLine): "\n" # (261..262)
                       - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # '    require(success, "Address: unable to send valu...' (262..346)

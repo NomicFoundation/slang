@@ -48,7 +48,7 @@ Tree:
                           - (leading_trivia꞉ Whitespace): " " # (48..49)
                           - (variant꞉ InternalKeyword): "internal" # (49..57)
               - (leading_trivia꞉ Whitespace): " " # (57..58)
-              - (root꞉ UNRECOGNIZED): "pure returns (uint) func" # (58..82)
+              - (unrecognized꞉ UNRECOGNIZED): "pure returns (uint) func" # (58..82)
               - (semicolon꞉ Semicolon): ";" # (82..83)
               - (trailing_trivia꞉ EndOfLine): "\n" # (83..84)
       - (close_brace꞉ CloseBrace): "}" # (84..85)

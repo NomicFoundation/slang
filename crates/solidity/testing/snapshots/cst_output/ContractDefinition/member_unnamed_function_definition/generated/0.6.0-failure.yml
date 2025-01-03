@@ -38,5 +38,5 @@ Tree:
                   - (attributes꞉ FunctionTypeAttributes): [] # (31..31)
               - (attributes꞉ StateVariableAttributes): [] # (31..31)
               - (leading_trivia꞉ Whitespace): " " # (31..32)
-      - (root꞉ UNRECOGNIZED): "{\n  }\n" # (32..38)
+      - (unrecognized꞉ UNRECOGNIZED): "{\n  }\n" # (32..38)
       - (close_brace꞉ CloseBrace): "}" # (38..39)

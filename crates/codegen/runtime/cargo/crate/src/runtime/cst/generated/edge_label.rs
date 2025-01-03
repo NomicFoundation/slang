@@ -19,6 +19,7 @@
 pub enum EdgeLabel {
     // Built-in:
     Root,
+    Unrecognized,
     Item,
     Variant,
     Separator,

@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use crate::cst::{Edge, Node, TerminalKind, TerminalKindExtensions, TextIndex};
+use crate::cst::{Edge, EdgeLabel, Node, TerminalKind, TerminalKindExtensions, TextIndex};
 use crate::parser::lexer::Lexer;
 use crate::parser::parser_support::context::ParserContext;
 use crate::parser::parser_support::parser_result::{
@@ -84,11 +84,18 @@ where
                 } else {
                     TerminalKind::UNRECOGNIZED
                 };
+
+                let label = if kind == TerminalKind::UNRECOGNIZED {
+                    EdgeLabel::Unrecognized
+                } else {
+                    EdgeLabel::default()
+                };
+
                 let node = Node::terminal(kind, input.to_string());
                 let tree = if no_match.kind.is_none() || start.utf8 == 0 {
                     node
                 } else {
-                    trivia_nodes.push(Edge::root(node));
+                    trivia_nodes.push(Edge { label, node });
                     Node::nonterminal(no_match.kind.unwrap(), trivia_nodes)
                 };
                 ParseOutput {
@@ -144,9 +151,19 @@ where
                     } else {
                         TerminalKind::UNRECOGNIZED
                     };
+
+                    let label = if kind == TerminalKind::UNRECOGNIZED {
+                        EdgeLabel::Unrecognized
+                    } else {
+                        EdgeLabel::default()
+                    };
+
                     let skipped_node = Node::terminal(kind, input[start..].to_string());
                     let mut new_children = topmost_node.children.clone();
-                    new_children.push(Edge::root(skipped_node));
+                    new_children.push(Edge {
+                        label,
+                        node: skipped_node,
+                    });
 
                     let start_index = stream.text_index_at(start);
                     let mut errors = stream.into_errors();

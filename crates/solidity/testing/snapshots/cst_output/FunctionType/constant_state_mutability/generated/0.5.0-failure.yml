@@ -23,4 +23,4 @@ Tree:
           - (close_paren꞉ CloseParen): ")" # (10..11)
       - (attributes꞉ FunctionTypeAttributes): [] # (11..11)
       - (leading_trivia꞉ Whitespace): " " # (11..12)
-      - (root꞉ UNRECOGNIZED): "constant internal returns (uint)\n" # (12..45)
+      - (unrecognized꞉ UNRECOGNIZED): "constant internal returns (uint)\n" # (12..45)

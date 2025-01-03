@@ -31,5 +31,5 @@ Tree:
                   - (leading_trivia꞉ Whitespace): "  " # (18..20)
                   - (item꞉ Identifier): "constructor" # (20..31)
               - (attributes꞉ StateVariableAttributes): [] # (31..31)
-      - (root꞉ UNRECOGNIZED): "() public {\n  }\n" # (31..47)
+      - (unrecognized꞉ UNRECOGNIZED): "() public {\n  }\n" # (31..47)
       - (close_brace꞉ CloseBrace): "}" # (47..48)

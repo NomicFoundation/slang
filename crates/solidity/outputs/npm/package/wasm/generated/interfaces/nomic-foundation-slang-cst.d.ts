@@ -5828,6 +5828,7 @@ export declare enum TerminalKind {
  */
 export declare enum EdgeLabel {
   Root = "Root",
+  Unrecognized = "Unrecognized",
   Item = "Item",
   Variant = "Variant",
   Separator = "Separator",

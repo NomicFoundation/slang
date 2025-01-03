@@ -84,7 +84,7 @@ Tree:
                                   - (leading_trivia꞉ Whitespace): "    " # (99..103)
                                   - (item꞉ Identifier): "unchecked" # (103..112)
                               - (leading_trivia꞉ Whitespace): " " # (112..113)
-                      - (root꞉ UNRECOGNIZED): "{\n      uint256 c = a + b;\n      if (c < a) return..." # (113..208)
+                      - (unrecognized꞉ UNRECOGNIZED): "{\n      uint256 c = a + b;\n      if (c < a) return..." # (113..208)
                       - (close_brace꞉ CloseBrace): "}" # (208..209)
                       - (trailing_trivia꞉ EndOfLine): "\n" # (209..210)
           - (close_brace꞉ CloseBrace): "}" # (210..211)

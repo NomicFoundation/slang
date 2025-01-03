@@ -162,10 +162,17 @@ impl SequenceHelper {
                     } else {
                         TerminalKind::UNRECOGNIZED
                     };
-                    running.nodes.push(Edge::root(Node::terminal(
+
+                    let label = if kind == TerminalKind::UNRECOGNIZED {
+                        EdgeLabel::Unrecognized
+                    } else {
+                        EdgeLabel::default()
+                    };
+
+                    running.nodes.push(Edge{label, node: Node::terminal(
                         kind,
                         std::mem::take(&mut running.skipped),
-                    )));
+                    )});
                     running.nodes.extend(next.nodes);
 
                     self.result = State::Running(ParserResult::Match(Match {

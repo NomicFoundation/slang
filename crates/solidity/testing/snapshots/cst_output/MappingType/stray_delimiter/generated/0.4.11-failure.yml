@@ -23,6 +23,6 @@ Tree:
       - (value_type꞉ MappingValue) ► (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # " bytes32" (17..25)
           - (leading_trivia꞉ Whitespace): " " # (17..18)
           - (variant꞉ BytesKeyword): "bytes32" # (18..25)
-      - (root꞉ UNRECOGNIZED): "] arg" # (25..30)
+      - (unrecognized꞉ UNRECOGNIZED): "] arg" # (25..30)
       - (close_paren꞉ CloseParen): ")" # (30..31)
       - (trailing_trivia꞉ EndOfLine): "\n" # (31..32)

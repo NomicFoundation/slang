@@ -17,4 +17,4 @@ Tree:
   - (root꞉ YulStatement): # "foo_label:\n" (0..11)
       - (variant꞉ YulExpression) ► (variant꞉ YulPath): # "foo_label" (0..9)
           - (item꞉ YulIdentifier): "foo_label" # (0..9)
-      - (root꞉ UNRECOGNIZED): ":\n" # (9..11)
+      - (unrecognized꞉ UNRECOGNIZED): ":\n" # (9..11)

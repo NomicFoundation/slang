@@ -19,4 +19,4 @@ Tree:
           - (operand꞉ Expression) ► (variant꞉ Identifier): "foo" # (0..3)
           - (period꞉ Period): "." # (3..4)
           - (member꞉ Identifier): "deposit" # (4..11)
-      - (root꞉ UNRECOGNIZED): "{value: 100}\n" # (11..24)
+      - (unrecognized꞉ UNRECOGNIZED): "{value: 100}\n" # (11..24)
