@@ -53,7 +53,7 @@ pub fn generate_topic_page(
         }
     }
 
-    let documentation_dir = model.language.documentation_dir.strip_repo_root()?;
+    let documentation_dir = &model.language.documentation_dir;
 
     writeln!(buffer)?;
     writeln!(

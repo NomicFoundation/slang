@@ -9,8 +9,11 @@ use crate::model::{Field, FieldsErrorRecovery, Identifier, VersionSpecifier};
 pub struct StructItem {
     pub name: Identifier,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub error_recovery: Option<FieldsErrorRecovery>,
+
     pub fields: IndexMap<Identifier, Field>,
 }

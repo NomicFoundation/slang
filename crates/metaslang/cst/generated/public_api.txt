@@ -51,6 +51,22 @@ impl<T: metaslang_cst::kinds::KindTypes> core::iter::traits::iterator::Iterator 
 pub type metaslang_cst::cursor::CursorIterator<T>::Item = metaslang_cst::nodes::Edge<T>
 pub fn metaslang_cst::cursor::CursorIterator<T>::next(&mut self) -> core::option::Option<Self::Item>
 pub mod metaslang_cst::kinds
+pub enum metaslang_cst::kinds::NodeKind<T: metaslang_cst::kinds::KindTypes>
+pub metaslang_cst::kinds::NodeKind::Nonterminal(<T as metaslang_cst::kinds::KindTypes>::NonterminalKind)
+pub metaslang_cst::kinds::NodeKind::Terminal(<T as metaslang_cst::kinds::KindTypes>::TerminalKind)
+impl<T: core::clone::Clone + metaslang_cst::kinds::KindTypes> core::clone::Clone for metaslang_cst::kinds::NodeKind<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::clone::Clone, <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::clone::Clone
+pub fn metaslang_cst::kinds::NodeKind<T>::clone(&self) -> metaslang_cst::kinds::NodeKind<T>
+impl<T: core::cmp::Eq + metaslang_cst::kinds::KindTypes> core::cmp::Eq for metaslang_cst::kinds::NodeKind<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::cmp::Eq, <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::cmp::Eq
+impl<T: core::cmp::PartialEq + metaslang_cst::kinds::KindTypes> core::cmp::PartialEq for metaslang_cst::kinds::NodeKind<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::cmp::PartialEq, <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::cmp::PartialEq
+pub fn metaslang_cst::kinds::NodeKind<T>::eq(&self, other: &metaslang_cst::kinds::NodeKind<T>) -> bool
+impl<T: core::fmt::Debug + metaslang_cst::kinds::KindTypes> core::fmt::Debug for metaslang_cst::kinds::NodeKind<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::fmt::Debug, <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::fmt::Debug
+pub fn metaslang_cst::kinds::NodeKind<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<T: core::marker::Copy + metaslang_cst::kinds::KindTypes> core::marker::Copy for metaslang_cst::kinds::NodeKind<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::marker::Copy, <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::marker::Copy
+impl<T: metaslang_cst::kinds::KindTypes> core::convert::From<metaslang_cst::kinds::NodeKind<T>> for &'static str
+pub fn &'static str::from(val: metaslang_cst::kinds::NodeKind<T>) -> Self
+impl<T: metaslang_cst::kinds::KindTypes> core::fmt::Display for metaslang_cst::kinds::NodeKind<T>
+pub fn metaslang_cst::kinds::NodeKind<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl<T: metaslang_cst::kinds::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::kinds::NodeKind<T>
 pub trait metaslang_cst::kinds::BaseKind: core::marker::Sized + core::fmt::Debug + core::marker::Copy + core::cmp::PartialEq + core::cmp::Eq + serde::ser::Serialize
 pub fn metaslang_cst::kinds::BaseKind::as_static_str(&self) -> &'static str
 pub fn metaslang_cst::kinds::BaseKind::try_from_str(str: &str) -> core::result::Result<Self, alloc::string::String>
@@ -90,7 +106,7 @@ pub fn metaslang_cst::nodes::Node<T>::is_terminal(&self) -> bool
 pub fn metaslang_cst::nodes::Node<T>::is_terminal_with_kind(&self, kind: <T as metaslang_cst::kinds::KindTypes>::TerminalKind) -> bool
 pub fn metaslang_cst::nodes::Node<T>::is_terminal_with_kinds(&self, kinds: &[<T as metaslang_cst::kinds::KindTypes>::TerminalKind]) -> bool
 pub fn metaslang_cst::nodes::Node<T>::is_trivia(&self) -> bool
-pub fn metaslang_cst::nodes::Node<T>::kind(&self) -> metaslang_cst::nodes::NodeKind<T>
+pub fn metaslang_cst::nodes::Node<T>::kind(&self) -> metaslang_cst::kinds::NodeKind<T>
 pub fn metaslang_cst::nodes::Node<T>::nonterminal(kind: <T as metaslang_cst::kinds::KindTypes>::NonterminalKind, children: alloc::vec::Vec<metaslang_cst::nodes::Edge<T>>) -> Self
 pub fn metaslang_cst::nodes::Node<T>::terminal(kind: <T as metaslang_cst::kinds::KindTypes>::TerminalKind, text: alloc::string::String) -> Self
 pub fn metaslang_cst::nodes::Node<T>::text_len(&self) -> metaslang_cst::text_index::TextIndex
@@ -109,22 +125,6 @@ pub fn metaslang_cst::nodes::Node<T>::from(terminal: alloc::rc::Rc<metaslang_cst
 impl<T: metaslang_cst::kinds::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::nodes::Node<T>
 impl<T> serde::ser::Serialize for metaslang_cst::nodes::Node<T> where T: serde::ser::Serialize + metaslang_cst::kinds::KindTypes
 pub fn metaslang_cst::nodes::Node<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
-pub enum metaslang_cst::nodes::NodeKind<T: metaslang_cst::kinds::KindTypes>
-pub metaslang_cst::nodes::NodeKind::Nonterminal(<T as metaslang_cst::kinds::KindTypes>::NonterminalKind)
-pub metaslang_cst::nodes::NodeKind::Terminal(<T as metaslang_cst::kinds::KindTypes>::TerminalKind)
-impl<T: core::clone::Clone + metaslang_cst::kinds::KindTypes> core::clone::Clone for metaslang_cst::nodes::NodeKind<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::clone::Clone, <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::clone::Clone
-pub fn metaslang_cst::nodes::NodeKind<T>::clone(&self) -> metaslang_cst::nodes::NodeKind<T>
-impl<T: core::cmp::Eq + metaslang_cst::kinds::KindTypes> core::cmp::Eq for metaslang_cst::nodes::NodeKind<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::cmp::Eq, <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::cmp::Eq
-impl<T: core::cmp::PartialEq + metaslang_cst::kinds::KindTypes> core::cmp::PartialEq for metaslang_cst::nodes::NodeKind<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::cmp::PartialEq, <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::cmp::PartialEq
-pub fn metaslang_cst::nodes::NodeKind<T>::eq(&self, other: &metaslang_cst::nodes::NodeKind<T>) -> bool
-impl<T: core::fmt::Debug + metaslang_cst::kinds::KindTypes> core::fmt::Debug for metaslang_cst::nodes::NodeKind<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::fmt::Debug, <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::fmt::Debug
-pub fn metaslang_cst::nodes::NodeKind<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl<T: core::marker::Copy + metaslang_cst::kinds::KindTypes> core::marker::Copy for metaslang_cst::nodes::NodeKind<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::marker::Copy, <T as metaslang_cst::kinds::KindTypes>::TerminalKind: core::marker::Copy
-impl<T: metaslang_cst::kinds::KindTypes> core::convert::From<metaslang_cst::nodes::NodeKind<T>> for &'static str
-pub fn &'static str::from(val: metaslang_cst::nodes::NodeKind<T>) -> Self
-impl<T: metaslang_cst::kinds::KindTypes> core::fmt::Display for metaslang_cst::nodes::NodeKind<T>
-pub fn metaslang_cst::nodes::NodeKind<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl<T: metaslang_cst::kinds::KindTypes> core::marker::StructuralPartialEq for metaslang_cst::nodes::NodeKind<T>
 pub struct metaslang_cst::nodes::Edge<T: metaslang_cst::kinds::KindTypes>
 pub metaslang_cst::nodes::Edge::label: <T as metaslang_cst::kinds::KindTypes>::EdgeLabel
 pub metaslang_cst::nodes::Edge::node: metaslang_cst::nodes::Node<T>

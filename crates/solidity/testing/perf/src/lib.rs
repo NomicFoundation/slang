@@ -11,14 +11,6 @@ mod __dependencies_used_in_benches__ {
 
 #[cfg(test)]
 mod unit_tests {
-    macro_rules! define_test {
-        ($name:ident) => {
-            #[test]
-            fn $name() {
-                crate::tests::$name::run();
-            }
-        };
-    }
     macro_rules! define_payload_test {
         ($name:ident) => {
             #[test]
@@ -35,7 +27,6 @@ mod unit_tests {
     define_payload_test!(parser);
     define_payload_test!(cursor);
     define_payload_test!(query);
-    define_test!(init_bindings);
-    define_payload_test!(definitions);
-    define_payload_test!(references);
+    define_payload_test!(bindings_build);
+    define_payload_test!(bindings_resolve);
 }

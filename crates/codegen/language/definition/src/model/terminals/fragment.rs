@@ -8,6 +8,7 @@ use crate::model::{Identifier, Scanner, VersionSpecifier};
 pub struct FragmentItem {
     pub name: Identifier,
 
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub enabled: Option<VersionSpecifier>,
 
     pub scanner: Scanner,
