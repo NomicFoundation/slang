@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): 'unicode"emoji 😃"happy\n' # (0..25)
+  - (root꞉ UNRECOGNIZED): 'unicode"emoji 😃"happy\n' # (0..25)

@@ -13,7 +13,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (SourceUnit) ► (members꞉ SourceUnitMembers): # "contract First {}\n\n\n// Newlines both before and af..." (0..148)
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "contract First {}\n\n\n// Newlines both before and af..." (0..148)
       - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract First {}\n" (0..18)
           - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
           - (leading_trivia꞉ Whitespace): " " # (8..9)

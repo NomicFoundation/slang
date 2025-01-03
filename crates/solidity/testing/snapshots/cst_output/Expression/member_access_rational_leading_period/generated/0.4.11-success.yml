@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ FunctionCallExpression): # ".1.fromUint()\n" (0..14)
+  - (root꞉ Expression) ► (variant꞉ FunctionCallExpression): # ".1.fromUint()\n" (0..14)
       - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # ".1.fromUint" (0..11)
           - (operand꞉ Expression) ► (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): ".1" # (0..2)
           - (period꞉ Period): "." # (2..3)

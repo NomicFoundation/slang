@@ -7,7 +7,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (VariableDeclarationStatement): # "// Always valid as an identifier (never reserved):..." (0..70)
+  - (root꞉ VariableDeclarationStatement): # "// Always valid as an identifier (never reserved):..." (0..70)
       - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # "// Always valid as an identifier (never reserved):..." (0..55)
           - (leading_trivia꞉ SingleLineComment): "// Always valid as an identifier (never reserved):" # (0..50)
           - (leading_trivia꞉ EndOfLine): "\n" # (50..51)

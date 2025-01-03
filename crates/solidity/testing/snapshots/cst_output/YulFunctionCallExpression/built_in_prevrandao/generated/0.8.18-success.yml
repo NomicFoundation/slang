@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "prevrandao()\n" (0..13)
+  - (root꞉ YulFunctionCallExpression): # "prevrandao()\n" (0..13)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulPrevRandaoKeyword): "prevrandao" # (0..10)
       - (open_paren꞉ OpenParen): "(" # (10..11)
       - (arguments꞉ YulArguments): [] # (11..11)

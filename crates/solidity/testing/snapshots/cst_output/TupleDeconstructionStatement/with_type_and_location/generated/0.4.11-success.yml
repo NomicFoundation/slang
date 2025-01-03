@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (TupleDeconstructionStatement): # "(bool memory x, bool storage y) = rhs;" (0..38)
+  - (root꞉ TupleDeconstructionStatement): # "(bool memory x, bool storage y) = rhs;" (0..38)
       - (open_paren꞉ OpenParen): "(" # (0..1)
       - (elements꞉ TupleDeconstructionElements): # "bool memory x, bool storage y" (1..30)
           - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ TypedTupleMember): # "bool memory x" (1..14)

@@ -15,7 +15,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SourceUnit): # "contract Sample {\n  function" (0..28)
+  - (root꞉ SourceUnit): # "contract Sample {\n  function" (0..28)
       - (members꞉ SourceUnitMembers): # "contract Sample {\n  function" (0..28)
           - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract Sample {\n  function" (0..28)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
@@ -28,4 +28,4 @@ Tree:
                   - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "  function" (18..28)
                       - (leading_trivia꞉ Whitespace): "  " # (18..20)
                       - (function_keyword꞉ FunctionKeyword): "function" # (20..28)
-      - (MISSING): "" # (28..28)
+      - (root꞉ MISSING): "" # (28..28)

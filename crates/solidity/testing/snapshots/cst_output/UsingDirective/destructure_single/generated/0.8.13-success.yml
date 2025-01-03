@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (UsingDirective): # "using {add} for Int global;" (0..27)
+  - (root꞉ UsingDirective): # "using {add} for Int global;" (0..27)
       - (using_keyword꞉ UsingKeyword): "using" # (0..5)
       - (clause꞉ UsingClause) ► (variant꞉ UsingDeconstruction): # " {add}" (5..11)
           - (leading_trivia꞉ Whitespace): " " # (5..6)

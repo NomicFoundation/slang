@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ FunctionCallExpression): # "address(value)" (0..14)
+  - (root꞉ Expression) ► (variant꞉ FunctionCallExpression): # "address(value)" (0..14)
       - (operand꞉ Expression) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType) ► (address_keyword꞉ AddressKeyword): "address" # (0..7)
       - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "(value)" (7..14)
           - (open_paren꞉ OpenParen): "(" # (7..8)

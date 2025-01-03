@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "returndatasize := 0\n" (0..20)
+  - (root꞉ YulVariableAssignmentStatement): # "returndatasize := 0\n" (0..20)
       - (variables꞉ YulPaths): # "returndatasize" (0..14)
           - (item꞉ YulPath): # "returndatasize" (0..14)
               - (item꞉ YulIdentifier): "returndatasize" # (0..14)

@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UsingDirective): # "using foo for bar global;" (0..25)
+  - (root꞉ UsingDirective): # "using foo for bar global;" (0..25)
       - (using_keyword꞉ UsingKeyword): "using" # (0..5)
       - (clause꞉ UsingClause) ► (variant꞉ IdentifierPath): # " foo" (5..9)
           - (leading_trivia꞉ Whitespace): " " # (5..6)
@@ -25,5 +25,5 @@ Tree:
           - (leading_trivia꞉ Whitespace): " " # (13..14)
           - (item꞉ Identifier): "bar" # (14..17)
       - (leading_trivia꞉ Whitespace): " " # (17..18)
-      - (UNRECOGNIZED): "global" # (18..24)
+      - (unrecognized꞉ UNRECOGNIZED): "global" # (18..24)
       - (semicolon꞉ Semicolon): ";" # (24..25)

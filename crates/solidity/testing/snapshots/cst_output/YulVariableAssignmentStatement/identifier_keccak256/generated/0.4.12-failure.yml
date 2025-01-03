@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "keccak256 := 0\n" # (0..15)
+  - (root꞉ UNRECOGNIZED): "keccak256 := 0\n" # (0..15)

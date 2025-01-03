@@ -14,13 +14,13 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (FunctionType): # "function (byte) internal pure returns (uint)\n" (0..45)
+  - (root꞉ FunctionType): # "function (byte) internal pure returns (uint)\n" (0..45)
       - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
       - (parameters꞉ ParametersDeclaration): # " (byte)" (8..15)
           - (leading_trivia꞉ Whitespace): " " # (8..9)
           - (open_paren꞉ OpenParen): "(" # (9..10)
           - (parameters꞉ Parameters): [] # (10..10)
-          - (UNRECOGNIZED): "byte" # (10..14)
+          - (unrecognized꞉ UNRECOGNIZED): "byte" # (10..14)
           - (close_paren꞉ CloseParen): ")" # (14..15)
       - (attributes꞉ FunctionTypeAttributes): # " internal pure" (15..29)
           - (item꞉ FunctionTypeAttribute): # " internal" (15..24)

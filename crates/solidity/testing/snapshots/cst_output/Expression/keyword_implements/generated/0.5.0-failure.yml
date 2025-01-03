@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "implements" # (0..10)
+  - (root꞉ UNRECOGNIZED): "implements" # (0..10)

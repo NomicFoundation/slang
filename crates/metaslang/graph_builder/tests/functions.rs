@@ -17,6 +17,7 @@ use {log as _, regex as _, serde_json as _, smallvec as _, string_interner as _,
     Clone,
     Copy,
     Debug,
+    Default,
     Eq,
     PartialEq,
     serde::Serialize,
@@ -24,6 +25,7 @@ use {log as _, regex as _, serde_json as _, smallvec as _, string_interner as _,
     strum_macros::EnumString,
 )]
 pub enum DummyKind {
+    #[default]
     Module,
 }
 impl metaslang_cst::kinds::TerminalKindExtensions for DummyKind {}

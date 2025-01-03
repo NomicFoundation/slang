@@ -132,11 +132,10 @@ fn render_key(cursor: &mut Cursor) -> String {
         Node::Terminal(terminal) => terminal.kind.to_string(),
     };
 
-    if let Some(label) = cursor.label() {
-        format!("({label}꞉ {kind})", label = label.as_ref().to_snake_case())
-    } else {
-        format!("({kind})")
-    }
+    format!(
+        "({label}꞉ {kind})",
+        label = cursor.label().as_ref().to_snake_case()
+    )
 }
 
 fn render_value(cursor: &mut Cursor, source: &str) -> String {

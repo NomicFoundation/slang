@@ -14,13 +14,13 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Expression): # "2 * new\n" (0..8)
+  - (root꞉ Expression): # "2 * new\n" (0..8)
       - (variant꞉ DecimalNumberExpression) ► (literal꞉ DecimalLiteral): "2" # (0..1)
-      - (MultiplicativeExpression): # " *" (1..3)
+      - (root꞉ MultiplicativeExpression): # " *" (1..3)
           - (leading_trivia꞉ Whitespace): " " # (1..2)
           - (operator꞉ Asterisk): "*" # (2..3)
       - (variant꞉ NewExpression): # " new\n" (3..8)
           - (leading_trivia꞉ Whitespace): " " # (3..4)
           - (new_keyword꞉ NewKeyword): "new" # (4..7)
           - (trailing_trivia꞉ EndOfLine): "\n" # (7..8)
-      - (MISSING): "" # (8..8)
+      - (root꞉ MISSING): "" # (8..8)

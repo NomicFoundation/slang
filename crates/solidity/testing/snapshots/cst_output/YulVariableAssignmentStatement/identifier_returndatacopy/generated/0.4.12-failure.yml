@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "returndatacopy := 0\n" # (0..20)
+  - (root꞉ UNRECOGNIZED): "returndatacopy := 0\n" # (0..20)

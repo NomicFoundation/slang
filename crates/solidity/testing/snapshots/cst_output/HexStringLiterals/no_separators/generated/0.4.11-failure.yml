@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): 'hex"1234567890abcdef"' # (0..21)
+  - (root꞉ UNRECOGNIZED): 'hex"1234567890abcdef"' # (0..21)

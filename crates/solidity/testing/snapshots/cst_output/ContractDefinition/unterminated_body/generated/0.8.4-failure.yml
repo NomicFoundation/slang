@@ -14,11 +14,11 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "contract Sample {" (0..17)
+  - (root꞉ ContractDefinition): # "contract Sample {" (0..17)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Sample" # (9..15)
       - (leading_trivia꞉ Whitespace): " " # (15..16)
       - (open_brace꞉ OpenBrace): "{" # (16..17)
       - (members꞉ ContractMembers): [] # (17..17)
-      - (MISSING): "" # (17..17)
+      - (root꞉ MISSING): "" # (17..17)

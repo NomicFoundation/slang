@@ -14,10 +14,10 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Expression): # "new Foo{value: 10}\n" (0..19)
+  - (root꞉ Expression): # "new Foo{value: 10}\n" (0..19)
       - (variant꞉ NewExpression): # "new Foo" (0..7)
           - (new_keyword꞉ NewKeyword): "new" # (0..3)
           - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " Foo" (3..7)
               - (leading_trivia꞉ Whitespace): " " # (3..4)
               - (item꞉ Identifier): "Foo" # (4..7)
-      - (UNRECOGNIZED): "{value: 10}\n" # (7..19)
+      - (unrecognized꞉ UNRECOGNIZED): "{value: 10}\n" # (7..19)

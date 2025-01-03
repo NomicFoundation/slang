@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (UnicodeStringLiterals): # 'unicode"happy 😃" unicode''sad 😔''' (0..37)
+  - (root꞉ UnicodeStringLiterals): # 'unicode"happy 😃" unicode''sad 😔''' (0..37)
       - (item꞉ UnicodeStringLiteral) ► (variant꞉ DoubleQuotedUnicodeStringLiteral): 'unicode"happy 😃"' # (0..19)
       - (item꞉ UnicodeStringLiteral): # " unicode'sad 😔'" (19..37)
           - (leading_trivia꞉ Whitespace): " " # (19..20)

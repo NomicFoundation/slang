@@ -16,7 +16,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "contract Test {\n  field;\n}\n" (0..27)
+  - (root꞉ ContractDefinition): # "contract Test {\n  field;\n}\n" (0..27)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Test" # (9..13)
@@ -29,7 +29,7 @@ Tree:
                   - (leading_trivia꞉ Whitespace): "  " # (16..18)
                   - (item꞉ Identifier): "field" # (18..23)
               - (attributes꞉ StateVariableAttributes): [] # (23..23)
-              - (MISSING): "" # (23..23)
+              - (root꞉ MISSING): "" # (23..23)
               - (semicolon꞉ Semicolon): ";" # (23..24)
               - (trailing_trivia꞉ EndOfLine): "\n" # (24..25)
       - (close_brace꞉ CloseBrace): "}" # (25..26)

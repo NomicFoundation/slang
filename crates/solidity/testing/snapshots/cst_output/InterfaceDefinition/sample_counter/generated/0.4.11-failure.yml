@@ -22,7 +22,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (InterfaceDefinition): # "interface ICounter {\n    // returns the current co..." (0..172)
+  - (root꞉ InterfaceDefinition): # "interface ICounter {\n    // returns the current co..." (0..172)
       - (interface_keyword꞉ InterfaceKeyword): "interface" # (0..9)
       - (leading_trivia꞉ Whitespace): " " # (9..10)
       - (name꞉ Identifier): "ICounter" # (10..18)
@@ -48,5 +48,5 @@ Tree:
                       - (leading_trivia꞉ Whitespace): " " # (74..75)
                       - (variant꞉ ExternalKeyword): "external" # (75..83)
       - (leading_trivia꞉ Whitespace): " " # (83..84)
-      - (UNRECOGNIZED): "view returns (uint);\n\n    // increments the counte..." # (84..171)
+      - (unrecognized꞉ UNRECOGNIZED): "view returns (uint);\n\n    // increments the counte..." # (84..171)
       - (close_brace꞉ CloseBrace): "}" # (171..172)

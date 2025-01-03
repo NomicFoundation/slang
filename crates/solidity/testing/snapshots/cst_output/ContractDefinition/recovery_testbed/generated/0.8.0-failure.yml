@@ -41,7 +41,7 @@ Errors: # 3 total
     ────╯
 
 Tree:
-  - (ContractDefinition): # "contract Contract {\n\tfunction _transfer(address wh..." (0..212)
+  - (root꞉ ContractDefinition): # "contract Contract {\n\tfunction _transfer(address wh..." (0..212)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Contract" # (9..17)
@@ -60,7 +60,7 @@ Tree:
                   - (parameters꞉ Parameters): # "address" (40..47)
                       - (item꞉ Parameter) ► (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType) ► (address_keyword꞉ AddressKeyword): "address" # (40..47)
                   - (leading_trivia꞉ Whitespace): " " # (47..48)
-                  - (UNRECOGNIZED): "while" # (48..53)
+                  - (unrecognized꞉ UNRECOGNIZED): "while" # (48..53)
                   - (close_paren꞉ CloseParen): ")" # (53..54)
               - (attributes꞉ FunctionAttributes): # " private" (54..62)
                   - (item꞉ FunctionAttribute): # " private" (54..62)
@@ -75,7 +75,7 @@ Tree:
                           - (leading_trivia꞉ Whitespace): "\t\t" # (65..67)
                           - (if_keyword꞉ IfKeyword): "if" # (67..69)
                           - (open_paren꞉ OpenParen): "(" # (69..70)
-                          - (UNRECOGNIZED): "while == pair && !_isExcludedFromFee[to]" # (70..110)
+                          - (unrecognized꞉ UNRECOGNIZED): "while == pair && !_isExcludedFromFee[to]" # (70..110)
                           - (close_paren꞉ CloseParen): ")" # (110..111)
                           - (body꞉ Statement) ► (variant꞉ Block): # "{\n\t\t\tuint256 a = 1;\n\t\t}\n" (111..135)
                               - (open_brace꞉ OpenBrace): "{" # (111..112)
@@ -146,7 +146,7 @@ Tree:
                                       - (leading_trivia꞉ Whitespace): " " # (195..196)
                                       - (name꞉ Identifier): "sequence" # (196..204)
                                       - (leading_trivia꞉ Whitespace): " " # (204..205)
-                              - (MISSING): "" # (205..205)
+                              - (root꞉ MISSING): "" # (205..205)
                               - (close_brace꞉ CloseBrace): "}" # (205..206)
                               - (trailing_trivia꞉ EndOfLine): "\n" # (206..207)
                   - (leading_trivia꞉ Whitespace): "\t" # (207..208)

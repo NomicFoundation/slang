@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ReceiveFunctionDefinition): # "receive () {}" (0..13)
+  - (root꞉ ReceiveFunctionDefinition): # "receive () {}" (0..13)
       - (receive_keyword꞉ ReceiveKeyword): "receive" # (0..7)
       - (parameters꞉ ParametersDeclaration): # " ()" (7..10)
           - (leading_trivia꞉ Whitespace): " " # (7..8)

@@ -10,7 +10,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (EnumDefinition): # "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}" (0..41)
+  - (root꞉ EnumDefinition): # "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}" (0..41)
       - (enum_keyword꞉ EnumKeyword): "enum" # (0..4)
       - (leading_trivia꞉ Whitespace): " " # (4..5)
       - (name꞉ Identifier): "Foo" # (5..8)

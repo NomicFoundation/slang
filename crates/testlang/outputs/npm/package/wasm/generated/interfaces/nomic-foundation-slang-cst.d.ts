@@ -279,6 +279,8 @@ export declare enum TerminalKind {
  * Represents the different types of relationships between nodes in the syntax tree.
  */
 export declare enum EdgeLabel {
+  Root = "Root",
+  Unrecognized = "Unrecognized",
   Item = "Item",
   Variant = "Variant",
   Separator = "Separator",
@@ -313,7 +315,7 @@ export interface Edge {
   /**
    * Optional label describing the relationship between nodes.
    */
-  label?: EdgeLabel;
+  label: EdgeLabel;
   /**
    * The target node of this edge.
    */
@@ -438,7 +440,7 @@ export class Cursor {
   /**
    * Returns the label of the edge from the parent to the current node, if any.
    */
-  get label(): EdgeLabel | undefined;
+  get label(): EdgeLabel;
   /**
    * Returns the current text offset of the cursor.
    */

@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "jumpi()\n" # (0..8)
+  - (root꞉ UNRECOGNIZED): "jumpi()\n" # (0..8)

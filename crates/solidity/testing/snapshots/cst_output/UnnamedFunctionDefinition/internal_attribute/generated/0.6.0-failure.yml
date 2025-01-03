@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "function () internal {}\n" # (0..24)
+  - (root꞉ UNRECOGNIZED): "function () internal {}\n" # (0..24)

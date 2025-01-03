@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "function () public {}\n" # (0..22)
+  - (root꞉ UNRECOGNIZED): "function () public {}\n" # (0..22)

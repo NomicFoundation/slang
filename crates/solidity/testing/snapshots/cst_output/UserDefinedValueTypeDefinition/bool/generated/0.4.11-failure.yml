@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "type Foo is bool;" # (0..17)
+  - (root꞉ UNRECOGNIZED): "type Foo is bool;" # (0..17)

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "returndatasize()\n" (0..17)
+  - (root꞉ YulFunctionCallExpression): # "returndatasize()\n" (0..17)
       - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "returndatasize" (0..14)
           - (item꞉ YulIdentifier): "returndatasize" # (0..14)
       - (open_paren꞉ OpenParen): "(" # (14..15)

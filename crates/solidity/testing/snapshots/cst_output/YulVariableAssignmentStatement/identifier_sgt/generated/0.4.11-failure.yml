@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "sgt := 0\n" # (0..9)
+  - (root꞉ UNRECOGNIZED): "sgt := 0\n" # (0..9)

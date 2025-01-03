@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "basefee := 0\n" (0..13)
+  - (root꞉ YulVariableAssignmentStatement): # "basefee := 0\n" (0..13)
       - (variables꞉ YulPaths): # "basefee" (0..7)
           - (item꞉ YulPath): # "basefee" (0..7)
               - (item꞉ YulIdentifier): "basefee" # (0..7)

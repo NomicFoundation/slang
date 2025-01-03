@@ -18,7 +18,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (SourceUnit): # "contract X { }\n    \n/* new lines after this */\n\nun..." (0..64)
+  - (root꞉ SourceUnit): # "contract X { }\n    \n/* new lines after this */\n\nun..." (0..64)
       - (members꞉ SourceUnitMembers): # "contract X { }\n" (0..15)
           - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract X { }\n" (0..15)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
@@ -35,4 +35,4 @@ Tree:
       - (leading_trivia꞉ MultiLineComment): "/* new lines after this */" # (20..46)
       - (leading_trivia꞉ EndOfLine): "\n" # (46..47)
       - (leading_trivia꞉ EndOfLine): "\n" # (47..48)
-      - (UNRECOGNIZED): "unexpectedchars\n" # (48..64)
+      - (unrecognized꞉ UNRECOGNIZED): "unexpectedchars\n" # (48..64)

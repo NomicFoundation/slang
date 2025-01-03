@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "extcodesize()\n" (0..14)
+  - (root꞉ YulFunctionCallExpression): # "extcodesize()\n" (0..14)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulExtCodeSizeKeyword): "extcodesize" # (0..11)
       - (open_paren꞉ OpenParen): "(" # (11..12)
       - (arguments꞉ YulArguments): [] # (12..12)

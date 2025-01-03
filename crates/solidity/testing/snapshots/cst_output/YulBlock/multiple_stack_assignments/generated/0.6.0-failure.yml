@@ -23,7 +23,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulBlock): # "{\n  1\n  2\n  3\n  =: success\n  =: success\n  =: succe..." (0..55)
+  - (root꞉ YulBlock): # "{\n  1\n  2\n  3\n  =: success\n  =: success\n  =: succe..." (0..55)
       - (open_brace꞉ OpenBrace): "{" # (0..1)
       - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)
       - (statements꞉ YulStatements): # "  1\n  2\n  3\n" (2..14)
@@ -40,6 +40,6 @@ Tree:
               - (variant꞉ YulDecimalLiteral): "3" # (12..13)
               - (trailing_trivia꞉ EndOfLine): "\n" # (13..14)
       - (leading_trivia꞉ Whitespace): "  " # (14..16)
-      - (UNRECOGNIZED): "=: success\n  =: success\n  =: success\n" # (16..53)
+      - (unrecognized꞉ UNRECOGNIZED): "=: success\n  =: success\n  =: success\n" # (16..53)
       - (close_brace꞉ CloseBrace): "}" # (53..54)
       - (trailing_trivia꞉ EndOfLine): "\n" # (54..55)

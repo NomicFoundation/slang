@@ -7,7 +7,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableDeclarationStatement): # '// ColonEqual was two separate tokens before "0.5....' (0..68)
+  - (root꞉ YulVariableDeclarationStatement): # '// ColonEqual was two separate tokens before "0.5....' (0..68)
       - (leading_trivia꞉ SingleLineComment): '// ColonEqual was two separate tokens before "0.5....' # (0..53)
       - (leading_trivia꞉ EndOfLine): "\n" # (53..54)
       - (let_keyword꞉ YulLetKeyword): "let" # (54..57)

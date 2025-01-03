@@ -7,7 +7,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (UnnamedFunctionDefinition): # "// Split into `view` and `pure` in 0.4.16\nfunction..." (0..66)
+  - (root꞉ UnnamedFunctionDefinition): # "// Split into `view` and `pure` in 0.4.16\nfunction..." (0..66)
       - (leading_trivia꞉ SingleLineComment): "// Split into `view` and `pure` in 0.4.16" # (0..41)
       - (leading_trivia꞉ EndOfLine): "\n" # (41..42)
       - (function_keyword꞉ FunctionKeyword): "function" # (42..50)

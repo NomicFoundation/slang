@@ -7,7 +7,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulStatement) ► (variant꞉ YulVariableAssignmentStatement): # "// Makes sure that `newB:` is not parsed as a labe..." (0..144)
+  - (root꞉ YulStatement) ► (variant꞉ YulVariableAssignmentStatement): # "// Makes sure that `newB:` is not parsed as a labe..." (0..144)
       - (variables꞉ YulPaths): # "// Makes sure that `newB:` is not parsed as a labe..." (0..128)
           - (item꞉ YulPath): # "// Makes sure that `newB:` is not parsed as a labe..." (0..128)
               - (leading_trivia꞉ SingleLineComment): "// Makes sure that `newB:` is not parsed as a labe..." # (0..123)

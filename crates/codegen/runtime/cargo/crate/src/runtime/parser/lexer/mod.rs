@@ -99,10 +99,7 @@ pub(crate) trait Lexer {
         let end = input.position();
 
         ParserResult::r#match(
-            vec![Edge::anonymous(Node::terminal(
-                kind,
-                input.content(start..end),
-            ))],
+            vec![Edge::root(Node::terminal(kind, input.content(start..end)))],
             vec![],
         )
     }
@@ -132,10 +129,7 @@ pub(crate) trait Lexer {
             return ParserResult::no_match(None, vec![kind]);
         }
         let end = input.position();
-        children.push(Edge::anonymous(Node::terminal(
-            kind,
-            input.content(start..end),
-        )));
+        children.push(Edge::root(Node::terminal(kind, input.content(start..end))));
 
         let restore = input.position();
         if let ParserResult::Match(r#match) = self.trailing_trivia(input) {

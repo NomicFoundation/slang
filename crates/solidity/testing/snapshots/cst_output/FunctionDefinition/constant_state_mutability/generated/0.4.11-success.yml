@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (FunctionDefinition): # "function a() constant {}" (0..24)
+  - (root꞉ FunctionDefinition): # "function a() constant {}" (0..24)
       - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
       - (name꞉ FunctionName): # " a" (8..10)
           - (leading_trivia꞉ Whitespace): " " # (8..9)

@@ -176,7 +176,7 @@ impl PrecedenceHelper {
                 let left_nodes = match left {
                     Some(Expression { nodes }) => {
                         vec![Edge {
-                            label: Some(left_label),
+                            label: left_label,
                             node: Node::nonterminal(child_kind, nodes),
                         }]
                     }
@@ -187,7 +187,7 @@ impl PrecedenceHelper {
                 let right_nodes = match right {
                     Some(Expression { nodes }) => {
                         vec![Edge {
-                            label: Some(right_label),
+                            label: right_label,
                             node: Node::nonterminal(child_kind, nodes),
                         }]
                     }
@@ -199,7 +199,7 @@ impl PrecedenceHelper {
 
                 Expression {
                     nodes: vec![Edge {
-                        label: Some(EdgeLabel::Variant),
+                        label: EdgeLabel::Variant,
                         node: Node::nonterminal(kind, children),
                     }],
                 }

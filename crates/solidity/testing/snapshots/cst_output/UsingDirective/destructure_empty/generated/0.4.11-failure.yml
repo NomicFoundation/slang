@@ -15,11 +15,11 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UsingDirective): # "// Empty using symbols list is not valid\nusing {} ..." (0..57)
+  - (root꞉ UsingDirective): # "// Empty using symbols list is not valid\nusing {} ..." (0..57)
       - (leading_trivia꞉ SingleLineComment): "// Empty using symbols list is not valid" # (0..40)
       - (leading_trivia꞉ EndOfLine): "\n" # (40..41)
       - (using_keyword꞉ UsingKeyword): "using" # (41..46)
       - (leading_trivia꞉ Whitespace): " " # (46..47)
-      - (UNRECOGNIZED): "{} for *" # (47..55)
+      - (unrecognized꞉ UNRECOGNIZED): "{} for *" # (47..55)
       - (semicolon꞉ Semicolon): ";" # (55..56)
       - (trailing_trivia꞉ EndOfLine): "\n" # (56..57)

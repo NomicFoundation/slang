@@ -15,12 +15,12 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (VariableDeclarationStatement): # "// This form is only reserved since 0.4.14:\nuint u..." (0..63)
+  - (root꞉ VariableDeclarationStatement): # "// This form is only reserved since 0.4.14:\nuint u..." (0..63)
       - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # "// This form is only reserved since 0.4.14:\nuint" (0..48)
           - (leading_trivia꞉ SingleLineComment): "// This form is only reserved since 0.4.14:" # (0..43)
           - (leading_trivia꞉ EndOfLine): "\n" # (43..44)
           - (variant꞉ UintKeyword): "uint" # (44..48)
       - (leading_trivia꞉ Whitespace): " " # (48..49)
-      - (UNRECOGNIZED): "ufixed184x80" # (49..61)
+      - (unrecognized꞉ UNRECOGNIZED): "ufixed184x80" # (49..61)
       - (semicolon꞉ Semicolon): ";" # (61..62)
       - (trailing_trivia꞉ EndOfLine): "\n" # (62..63)

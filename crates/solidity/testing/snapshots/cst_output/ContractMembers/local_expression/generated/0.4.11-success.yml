@@ -8,7 +8,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractMembers): # "function func() {\n  uint a = 1 + 2 * 3;\n}\n" (0..42)
+  - (root꞉ ContractMembers): # "function func() {\n  uint a = 1 + 2 * 3;\n}\n" (0..42)
       - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "function func() {\n  uint a = 1 + 2 * 3;\n}\n" (0..42)
           - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
           - (name꞉ FunctionName): # " func" (8..13)

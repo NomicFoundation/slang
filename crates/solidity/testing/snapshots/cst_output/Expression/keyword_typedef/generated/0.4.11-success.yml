@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ Identifier): "typedef" # (0..7)
+  - (root꞉ Expression) ► (variant꞉ Identifier): "typedef" # (0..7)

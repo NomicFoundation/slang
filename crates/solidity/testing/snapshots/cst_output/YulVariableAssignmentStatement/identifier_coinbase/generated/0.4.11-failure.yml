@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "coinbase := 0\n" # (0..14)
+  - (root꞉ UNRECOGNIZED): "coinbase := 0\n" # (0..14)

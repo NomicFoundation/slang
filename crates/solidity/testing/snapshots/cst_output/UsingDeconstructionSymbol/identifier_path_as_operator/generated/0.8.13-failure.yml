@@ -14,10 +14,10 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UsingDeconstructionSymbol): # "foo.bar as /" (0..12)
+  - (root꞉ UsingDeconstructionSymbol): # "foo.bar as /" (0..12)
       - (name꞉ IdentifierPath): # "foo.bar" (0..7)
           - (item꞉ Identifier): "foo" # (0..3)
           - (separator꞉ Period): "." # (3..4)
           - (item꞉ Identifier): "bar" # (4..7)
       - (leading_trivia꞉ Whitespace): " " # (7..8)
-      - (UNRECOGNIZED): "as /" # (8..12)
+      - (unrecognized꞉ UNRECOGNIZED): "as /" # (8..12)
