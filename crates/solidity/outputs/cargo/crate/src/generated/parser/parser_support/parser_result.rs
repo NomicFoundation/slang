@@ -50,18 +50,18 @@ impl ParserResult {
     pub fn with_kind(self, new_kind: NonterminalKind) -> ParserResult {
         match self {
             ParserResult::Match(r#match) => ParserResult::r#match(
-                vec![Edge::anonymous(Node::nonterminal(new_kind, r#match.nodes))],
+                vec![Edge::root(Node::nonterminal(new_kind, r#match.nodes))],
                 r#match.expected_terminals,
             ),
             ParserResult::IncompleteMatch(incomplete_match) => ParserResult::incomplete_match(
-                vec![Edge::anonymous(Node::nonterminal(
+                vec![Edge::root(Node::nonterminal(
                     new_kind,
                     incomplete_match.nodes,
                 ))],
                 incomplete_match.expected_terminals,
             ),
             ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
-                nodes: vec![Edge::anonymous(Node::nonterminal(new_kind, skipped.nodes))],
+                nodes: vec![Edge::root(Node::nonterminal(new_kind, skipped.nodes))],
                 ..skipped
             }),
             ParserResult::NoMatch(no_match) => {
@@ -178,7 +178,7 @@ impl PrattElement {
             Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {
-                vec![Edge::anonymous(Node::nonterminal(kind, nodes))]
+                vec![Edge::root(Node::nonterminal(kind, nodes))]
             }
         }
     }

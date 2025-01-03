@@ -160,7 +160,7 @@ impl SequenceHelper {
                     } else {
                         TerminalKind::UNRECOGNIZED
                     };
-                    running.nodes.push(Edge::anonymous(Node::terminal(
+                    running.nodes.push(Edge::root(Node::terminal(
                         kind,
                         std::mem::take(&mut running.skipped),
                     )));

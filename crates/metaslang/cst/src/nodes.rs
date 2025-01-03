@@ -65,8 +65,8 @@ pub struct Edge<T: KindTypes> {
 }
 
 impl<T: KindTypes> Edge<T> {
-    /// Creates an anonymous node (without a label).
-    pub fn anonymous(node: Node<T>) -> Self {
+    /// Creates an edge to a root node (using the default label).
+    pub fn root(node: Node<T>) -> Self {
         Self {
             label: T::EdgeLabel::default(),
             node,

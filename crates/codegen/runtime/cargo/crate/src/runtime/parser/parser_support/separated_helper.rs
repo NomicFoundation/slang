@@ -56,7 +56,7 @@ impl SeparatedHelper {
                             } else {
                                 TerminalKind::UNRECOGNIZED
                             };
-                            accum.push(Edge::anonymous(Node::terminal(
+                            accum.push(Edge::root(Node::terminal(
                                 kind,
                                 input.content(skipped_range.utf8()),
                             )));

@@ -130,7 +130,7 @@ pub struct metaslang_cst::nodes::Edge<T: metaslang_cst::kinds::KindTypes>
 pub metaslang_cst::nodes::Edge::label: <T as metaslang_cst::kinds::KindTypes>::EdgeLabel
 pub metaslang_cst::nodes::Edge::node: metaslang_cst::nodes::Node<T>
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::nodes::Edge<T>
-pub fn metaslang_cst::nodes::Edge<T>::anonymous(node: metaslang_cst::nodes::Node<T>) -> Self
+pub fn metaslang_cst::nodes::Edge<T>::root(node: metaslang_cst::nodes::Node<T>) -> Self
 impl<T: core::clone::Clone + metaslang_cst::kinds::KindTypes> core::clone::Clone for metaslang_cst::nodes::Edge<T> where <T as metaslang_cst::kinds::KindTypes>::EdgeLabel: core::clone::Clone
 pub fn metaslang_cst::nodes::Edge<T>::clone(&self) -> metaslang_cst::nodes::Edge<T>
 impl<T: core::cmp::Eq + metaslang_cst::kinds::KindTypes> core::cmp::Eq for metaslang_cst::nodes::Edge<T> where <T as metaslang_cst::kinds::KindTypes>::EdgeLabel: core::cmp::Eq

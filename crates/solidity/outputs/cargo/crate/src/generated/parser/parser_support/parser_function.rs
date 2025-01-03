@@ -90,7 +90,7 @@ where
                 let tree = if no_match.kind.is_none() || start.utf8 == 0 {
                     node
                 } else {
-                    trivia_nodes.push(Edge::anonymous(node));
+                    trivia_nodes.push(Edge::root(node));
                     Node::nonterminal(no_match.kind.unwrap(), trivia_nodes)
                 };
                 ParseOutput {
@@ -148,7 +148,7 @@ where
                     };
                     let skipped_node = Node::terminal(kind, input[start..].to_string());
                     let mut new_children = topmost_node.children.clone();
-                    new_children.push(Edge::anonymous(skipped_node));
+                    new_children.push(Edge::root(skipped_node));
 
                     let start_index = stream.text_index_at(start);
                     let mut errors = stream.into_errors();
