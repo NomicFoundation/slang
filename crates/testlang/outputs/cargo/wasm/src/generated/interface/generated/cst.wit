@@ -148,7 +148,7 @@ interface cst {
                 /// This kind represents a `MultiLineComment` node, with the following structure: 
                 ///
                 /// ```ebnf
-                /// MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*/";
+                /// MULTI_LINE_COMMENT = "/*" (?!"*") (!"*" | ("*" (?!"/")))* "*/";
                 /// ```
                 %multi-line-comment,
                 /// This kind represents a `OpenBracket` node, with the following structure: 
@@ -178,13 +178,13 @@ interface cst {
                 /// This kind represents a `SingleLineComment` node, with the following structure: 
                 ///
                 /// ```ebnf
-                /// SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
+                /// SINGLE_LINE_COMMENT = "//" (?!"/") (!("\r" | "\n"))*;
                 /// ```
                 %single-line-comment,
                 /// This kind represents a `StringLiteral` node, with the following structure: 
                 ///
                 /// ```ebnf
-                /// STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+                /// STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' | "\\" | "\r" | "\n"))* '"';
                 /// ```
                 %string-literal,
                 /// This kind represents a `TreeKeyword` node, with the following structure: 

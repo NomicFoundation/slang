@@ -110,7 +110,7 @@
 
 ```
 
-<pre ebnf-snippet="VersionSpecifierFragment" style="display: none;"><a href="#VersionSpecifierFragment"><span class="k">«VERSION_SPECIFIER_FRAGMENT»</span></a><span class="o"> = </span><span class="o">(</span><span class="o">(</span><span class="s2">"0"</span><span class="o">…</span><span class="s2">"9"</span><span class="o">)</span><span class="o"> | </span><span class="s2">"x"</span><span class="o"> | </span><span class="s2">"X"</span><span class="o"> | </span><span class="s2">"*"</span><span class="o">)</span><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionSpecifierFragment" style="display: none;"><a href="#VersionSpecifierFragment"><span class="k">«VERSION_SPECIFIER_FRAGMENT»</span></a><span class="o"> = </span><span class="o">(</span><span class="s2">"0"</span><span class="o">…</span><span class="s2">"9"</span><span class="o"> | </span><span class="s2">"x"</span><span class="o"> | </span><span class="s2">"X"</span><span class="o"> | </span><span class="s2">"*"</span><span class="o">)</span><span class="o">+</span><span class="o">;</span></pre>
 
 ```{ .ebnf #AbicoderKeyword }
 

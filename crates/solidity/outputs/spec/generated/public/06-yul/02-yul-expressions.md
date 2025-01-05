@@ -56,12 +56,12 @@
 
 ```
 
-<pre ebnf-snippet="YulDecimalLiteral" style="display: none;"><a href="#YulDecimalLiteral"><span class="k">YUL_DECIMAL_LITERAL</span></a><span class="o"> = </span><span class="s2">"0"</span><span class="o"> | </span><span class="o">(</span><span class="o">(</span><span class="s2">"1"</span><span class="o">…</span><span class="s2">"9"</span><span class="o">)</span><span class="o"> </span><span class="o">(</span><span class="s2">"0"</span><span class="o">…</span><span class="s2">"9"</span><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulDecimalLiteral" style="display: none;"><a href="#YulDecimalLiteral"><span class="k">YUL_DECIMAL_LITERAL</span></a><span class="o"> = </span><span class="o">(</span><span class="s2">"0"</span><span class="o"> | </span><span class="o">(</span><span class="s2">"1"</span><span class="o">…</span><span class="s2">"9"</span><span class="o"> </span><span class="s2">"0"</span><span class="o">…</span><span class="s2">"9"</span><span class="o">*</span><span class="o">)</span><span class="o">)</span><span class="o"> </span><span class="o">(?!</span><a href="../../05-expressions/06-identifiers#IdentifierStart"><span class="k">«IDENTIFIER_START»</span></a><span class="o">)</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulHexLiteral }
 
 ```
 
-<pre ebnf-snippet="YulHexLiteral" style="display: none;"><a href="#YulHexLiteral"><span class="k">YUL_HEX_LITERAL</span></a><span class="o"> = </span><span class="s2">"0x"</span><span class="o"> </span><a href="../../05-expressions/05-strings#HexCharacter"><span class="k">«HEX_CHARACTER»</span></a><span class="o">+</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulHexLiteral" style="display: none;"><a href="#YulHexLiteral"><span class="k">YUL_HEX_LITERAL</span></a><span class="o"> = </span><span class="s2">"0x"</span><span class="o"> </span><a href="../../05-expressions/05-strings#HexCharacter"><span class="k">«HEX_CHARACTER»</span></a><span class="o">+</span><span class="o"> </span><span class="o">(?!</span><a href="../../05-expressions/06-identifiers#IdentifierStart"><span class="k">«IDENTIFIER_START»</span></a><span class="o">)</span><span class="o">;</span></pre>
 
 --8<-- "crates/solidity/inputs/language/docs/06-yul/02-yul-expressions.md"

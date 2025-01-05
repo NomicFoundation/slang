@@ -206,7 +206,7 @@ export declare enum TerminalKind {
    * This kind represents a `MultiLineComment` node, with the following structure:
    *
    * ```ebnf
-   * MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*\/";
+   * MULTI_LINE_COMMENT = "/*" (?!"*") (!"*" | ("*" (?!"/")))* "*\/";
    * ```
    */
   MultiLineComment = "MultiLineComment",
@@ -246,7 +246,7 @@ export declare enum TerminalKind {
    * This kind represents a `SingleLineComment` node, with the following structure:
    *
    * ```ebnf
-   * SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
+   * SINGLE_LINE_COMMENT = "//" (?!"/") (!("\r" | "\n"))*;
    * ```
    */
   SingleLineComment = "SingleLineComment",
@@ -254,7 +254,7 @@ export declare enum TerminalKind {
    * This kind represents a `StringLiteral` node, with the following structure:
    *
    * ```ebnf
-   * STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+   * STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' | "\\" | "\r" | "\n"))* '"';
    * ```
    */
   StringLiteral = "StringLiteral",

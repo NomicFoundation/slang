@@ -260,7 +260,7 @@
 
 ```
 
-<pre ebnf-snippet="Slash" style="display: none;"><a href="#Slash"><span class="k">SLASH</span></a><span class="o"> = </span><span class="s2">"/"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="Slash" style="display: none;"><a href="#Slash"><span class="k">SLASH</span></a><span class="o"> = </span><span class="s2">"/"</span><span class="o"> </span><span class="o">(?!</span><span class="s2">"*"</span><span class="o"> | </span><span class="s2">"/"</span><span class="o"> | </span><span class="s2">"="</span><span class="o">)</span><span class="o">;</span></pre>
 
 ```{ .ebnf #SlashEqual }
 

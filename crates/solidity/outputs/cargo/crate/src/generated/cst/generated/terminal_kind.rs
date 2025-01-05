@@ -207,18 +207,18 @@ pub enum TerminalKind {
     /// ```
     DaysKeyword,
     /// ```ebnf
-    /// DECIMAL_LITERAL = "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»?;
+    /// DECIMAL_LITERAL = "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
     ///
-    /// DECIMAL_LITERAL = «DECIMAL_DIGITS» «DECIMAL_EXPONENT»?;
-    ///
-    /// (* Deprecated in 0.5.0 *)
-    /// DECIMAL_LITERAL = «DECIMAL_DIGITS» "." «DECIMAL_EXPONENT»?;
+    /// DECIMAL_LITERAL = «DECIMAL_DIGITS» (?!".") «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
     ///
     /// (* Deprecated in 0.5.0 *)
-    /// DECIMAL_LITERAL = «DECIMAL_DIGITS» "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»?;
+    /// DECIMAL_LITERAL = «DECIMAL_DIGITS» "." (?!«DECIMAL_DIGITS») «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
+    ///
+    /// (* Deprecated in 0.5.0 *)
+    /// DECIMAL_LITERAL = «DECIMAL_DIGITS» "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
     ///
     /// (* Introduced in 0.5.0 *)
-    /// DECIMAL_LITERAL = «DECIMAL_DIGITS» ("." «DECIMAL_DIGITS»)? «DECIMAL_EXPONENT»?;
+    /// DECIMAL_LITERAL = «DECIMAL_DIGITS» ("." «DECIMAL_DIGITS»)? «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
     /// ```
     DecimalLiteral,
     /// ```ebnf
@@ -244,17 +244,17 @@ pub enum TerminalKind {
     DoubleQuotedHexStringLiteral,
     /// ```ebnf
     /// (* Deprecated in 0.4.25 *)
-    /// DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE_ARBITRARY» | !('"' "\\" "\r" "\n"))* '"';
+    /// DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE_ARBITRARY» | !('"' | "\\" | "\r" | "\n"))* '"';
     ///
     /// (* Introduced in 0.4.25 and deprecated in 0.7.0. *)
-    /// DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+    /// DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' | "\\" | "\r" | "\n"))* '"';
     ///
-    /// DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | (" "…"!") | ("#"…"[") | ("]"…"~"))* '"';
+    /// DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | " "…"!" | "#"…"[" | "]"…"~")* '"';
     /// ```
     DoubleQuotedStringLiteral,
     /// ```ebnf
     /// (* Introduced in 0.7.0 *)
-    /// DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+    /// DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' («ESCAPE_SEQUENCE» | !('"' | "\\" | "\r" | "\n"))* '"';
     /// ```
     DoubleQuotedUnicodeStringLiteral,
     /// ```ebnf
@@ -406,10 +406,10 @@ pub enum TerminalKind {
     /// ```
     HexKeyword,
     /// ```ebnf
-    /// HEX_LITERAL = "0x" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)*;
+    /// HEX_LITERAL = "0x" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)* (?!«IDENTIFIER_START»);
     ///
     /// (* Deprecated in 0.5.0 *)
-    /// HEX_LITERAL = "0X" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)*;
+    /// HEX_LITERAL = "0X" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)* (?!«IDENTIFIER_START»);
     /// ```
     HexLiteral,
     /// ```ebnf
@@ -533,11 +533,11 @@ pub enum TerminalKind {
     /// ```
     ModifierKeyword,
     /// ```ebnf
-    /// MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*/";
+    /// MULTI_LINE_COMMENT = "/*" (?!"*" !"/") (!"*" | ("*" (?!"/")))* "*/";
     /// ```
     MultiLineComment,
     /// ```ebnf
-    /// MULTI_LINE_NAT_SPEC_COMMENT = "/**" (!"*" | "*")* "*/";
+    /// MULTI_LINE_NAT_SPEC_COMMENT = "/**" (?!"/") (!"*" | ("*" (?!"/")))* "*/";
     /// ```
     MultiLineNatSpecComment,
     /// ```ebnf
@@ -676,11 +676,11 @@ pub enum TerminalKind {
     /// ```
     Semicolon,
     /// ```ebnf
-    /// SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
+    /// SINGLE_LINE_COMMENT = "//" (?!"/") (!("\r" | "\n"))*;
     /// ```
     SingleLineComment,
     /// ```ebnf
-    /// SINGLE_LINE_NAT_SPEC_COMMENT = "///" (!("\r" "\n"))*;
+    /// SINGLE_LINE_NAT_SPEC_COMMENT = "///" (!("\r" | "\n"))*;
     /// ```
     SingleLineNatSpecComment,
     /// ```ebnf
@@ -689,17 +689,17 @@ pub enum TerminalKind {
     SingleQuotedHexStringLiteral,
     /// ```ebnf
     /// (* Deprecated in 0.4.25 *)
-    /// SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE_ARBITRARY» | !("'" "\\" "\r" "\n"))* "'";
+    /// SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE_ARBITRARY» | !("'" | "\\" | "\r" | "\n"))* "'";
     ///
     /// (* Introduced in 0.4.25 and deprecated in 0.7.0. *)
-    /// SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
+    /// SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | !("'" | "\\" | "\r" | "\n"))* "'";
     ///
-    /// SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | (" "…"&") | ("("…"[") | ("]"…"~"))* "'";
+    /// SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | " "…"&" | "("…"[" | "]"…"~")* "'";
     /// ```
     SingleQuotedStringLiteral,
     /// ```ebnf
     /// (* Introduced in 0.7.0 *)
-    /// SINGLE_QUOTED_UNICODE_STRING_LITERAL = "unicode'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
+    /// SINGLE_QUOTED_UNICODE_STRING_LITERAL = "unicode'" («ESCAPE_SEQUENCE» | !("'" | "\\" | "\r" | "\n"))* "'";
     /// ```
     SingleQuotedUnicodeStringLiteral,
     /// ```ebnf
@@ -712,7 +712,7 @@ pub enum TerminalKind {
     /// ```
     SizeOfKeyword,
     /// ```ebnf
-    /// SLASH = "/";
+    /// SLASH = "/" (?!"*" | "/" | "=");
     /// ```
     Slash,
     /// ```ebnf
@@ -1062,7 +1062,7 @@ pub enum TerminalKind {
     /// ```
     YulDaysKeyword,
     /// ```ebnf
-    /// YUL_DECIMAL_LITERAL = "0" | (("1"…"9") ("0"…"9")*);
+    /// YUL_DECIMAL_LITERAL = ("0" | ("1"…"9" "0"…"9"*)) (?!«IDENTIFIER_START»);
     /// ```
     YulDecimalLiteral,
     /// ```ebnf
@@ -1219,7 +1219,7 @@ pub enum TerminalKind {
     /// ```
     YulHexKeyword,
     /// ```ebnf
-    /// YUL_HEX_LITERAL = "0x" «HEX_CHARACTER»+;
+    /// YUL_HEX_LITERAL = "0x" «HEX_CHARACTER»+ (?!«IDENTIFIER_START»);
     /// ```
     YulHexLiteral,
     /// ```ebnf
