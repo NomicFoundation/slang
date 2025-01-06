@@ -60,7 +60,7 @@ References and definitions:
    │              ──┬─ ───┬───        ┬  
    │                ╰──────────────────── name: 7
    │                      │           │  
-   │                      ╰────────────── ref: 1
+   │                      ╰────────────── refs: 5, 1
    │                                  │  
    │                                  ╰── name: 8
  5 │         c.increment();

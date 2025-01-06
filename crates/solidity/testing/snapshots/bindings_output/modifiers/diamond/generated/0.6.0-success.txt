@@ -45,7 +45,7 @@ References and definitions:
     │              ──┬─          ─┬─  
     │                ╰──────────────── name: 8
     │                             │   
-    │                             ╰─── ref: 4
+    │                             ╰─── refs: 6, 4, 2
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

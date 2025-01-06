@@ -59,7 +59,7 @@ References and definitions:
     │                                            ╰── ref: 5
  25 │         return super.foo();
     │                      ─┬─  
-    │                       ╰─── ref: 6
+    │                       ╰─── refs: 4, 6, 2
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

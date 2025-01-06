@@ -32,7 +32,7 @@ References and definitions:
     │               ╰─── name: 6
  11 │         super.foo();
     │               ─┬─  
-    │                ╰─── ref: 4
+    │                ╰─── ref: 2
     │ 
  14 │ contract D is B, C {
     │          ┬    ┬  ┬  
@@ -46,7 +46,7 @@ References and definitions:
     │               ╰─── name: 8
  16 │         super.foo();
     │               ─┬─  
-    │                ╰─── ref: 6
+    │                ╰─── refs: 4, 6, 2
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

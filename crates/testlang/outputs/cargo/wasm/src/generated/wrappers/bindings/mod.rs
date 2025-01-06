@@ -14,52 +14,8 @@ mod ffi {
 
 mod rust {
     pub use crate::rust_crate::bindings::{
-        BindingGraph, BindingLocation, BuiltInLocation, UserFileLocation,
+        BindingGraph, BindingLocation, BuiltInLocation, Definition, Reference, UserFileLocation,
     };
-
-    /// TODO: This is a work-around for the fact that `metaslang_bindings` internals (handles, locators, etc...) are exposed.
-    /// We should clean this when we finally publish `__experimental_bindings_api`.
-    /// That means removing the types below, and using the original types instead.
-    #[derive(Debug, Clone)]
-    pub struct Definition {
-        pub id: usize,
-        pub name_location: BindingLocation,
-        pub definiens_location: BindingLocation,
-    }
-
-    impl From<crate::rust_crate::bindings::Definition<'_>> for Definition {
-        fn from(definition: crate::rust_crate::bindings::Definition<'_>) -> Self {
-            Self {
-                id: definition.id(),
-                name_location: definition.name_location(),
-                definiens_location: definition.definiens_location(),
-            }
-        }
-    }
-
-    /// TODO: This is a work-around for the fact that `metaslang_bindings` internals (handles, locators, etc...) are exposed.
-    /// We should clean this when we finally publish `__experimental_bindings_api`.
-    /// That means removing the types below, and using the original types instead.
-    #[derive(Debug, Clone)]
-    pub struct Reference {
-        pub id: usize,
-        pub location: BindingLocation,
-        pub definitions: Vec<Definition>,
-    }
-
-    impl From<crate::rust_crate::bindings::Reference<'_>> for Reference {
-        fn from(reference: crate::rust_crate::bindings::Reference<'_>) -> Self {
-            Self {
-                id: reference.id(),
-                location: reference.location(),
-                definitions: reference
-                    .definitions()
-                    .into_iter()
-                    .map(Into::into)
-                    .collect(),
-            }
-        }
-    }
 }
 
 impl ffi::Guest for crate::wasm_crate::World {
@@ -102,15 +58,15 @@ define_rc_wrapper! { BindingGraph {
 
 define_wrapper! { Definition {
     fn id(&self) -> u32 {
-        self._borrow_ffi().id.try_into().unwrap()
+        self._borrow_ffi().id().try_into().unwrap()
     }
 
     fn name_location(&self) -> ffi::BindingLocation {
-        self._borrow_ffi().name_location.clone()._into_ffi()
+        self._borrow_ffi().name_location()._into_ffi()
     }
 
     fn definiens_location(&self) -> ffi::BindingLocation {
-        self._borrow_ffi().definiens_location.clone()._into_ffi()
+        self._borrow_ffi().definiens_location()._into_ffi()
     }
 } }
 
@@ -122,15 +78,15 @@ define_wrapper! { Definition {
 
 define_wrapper! { Reference {
     fn id(&self) -> u32 {
-        self._borrow_ffi().id.try_into().unwrap()
+        self._borrow_ffi().id().try_into().unwrap()
     }
 
     fn location(&self) -> ffi::BindingLocation {
-        self._borrow_ffi().location.clone()._into_ffi()
+        self._borrow_ffi().location().clone()._into_ffi()
     }
 
     fn definitions(&self) -> Vec<ffi::Definition> {
-        self._borrow_ffi().definitions.iter().cloned().map(IntoFFI::_into_ffi).collect()
+        self._borrow_ffi().definitions().iter().cloned().map(IntoFFI::_into_ffi).collect()
     }
 } }
 

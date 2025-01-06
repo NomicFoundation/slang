@@ -1,0 +1,111 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected Equal or Semicolon.
+   ╭─[input.sol:2:23]
+   │
+ 2 │     error InvalidState();
+   │                       ─┬  
+   │                        ╰── Error occurred here.
+───╯
+Error: Expected Equal or Semicolon.
+   ╭─[input.sol:5:28]
+   │
+ 5 │         revert InvalidState();
+   │                            ─┬  
+   │                             ╰── Error occurred here.
+───╯
+Error: Expected Equal or Semicolon.
+    ╭─[input.sol:10:21]
+    │
+ 10 │         revert Utils.GenericError(code);
+    │                     ─────────┬─────────  
+    │                              ╰─────────── Error occurred here.
+────╯
+Error: Expected Equal or Semicolon.
+    ╭─[input.sol:15:23]
+    │
+ 15 │     error GenericError(int code);
+    │                       ─────┬────  
+    │                            ╰────── Error occurred here.
+────╯
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     error InvalidState();
+    │     ──┬── ──────┬─────  
+    │       ╰───────────────── unresolved
+    │                 │       
+    │                 ╰─────── name: 2
+    │ 
+  4 │     function testRevert() public {
+    │              ─────┬────  
+    │                   ╰────── name: 3
+  5 │         revert InvalidState();
+    │         ───┬── ──────┬─────  
+    │            ╰───────────────── refs: built-in, built-in
+    │                      │       
+    │                      ╰─────── name: 4
+    │ 
+  8 │     function testOtherRevert() public {
+    │              ───────┬───────  
+    │                     ╰───────── name: 5
+  9 │         int code = 10;
+    │             ──┬─  
+    │               ╰─── name: 6
+ 10 │         revert Utils.GenericError(code);
+    │         ───┬── ──┬──  
+    │            ╰────────── refs: built-in, built-in
+    │                  │    
+    │                  ╰──── name: 7
+    │ 
+ 14 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 8
+ 15 │     error GenericError(int code);
+    │     ──┬── ──────┬─────  
+    │       ╰───────────────── unresolved
+    │                 │       
+    │                 ╰─────── name: 9
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────▶ contract Test {
+  2 │ │   │         error InvalidState();
+    │ │   │     ─────────────┬────────────  
+    │ │   │                  ╰────────────── definiens: 2
+  3 │ │   ╭───▶ 
+    ┆ ┆   ┆     
+  5 │ │   │             revert InvalidState();
+    │ │   │     ───────────────┬───────────────  
+    │ │   │                    ╰───────────────── definiens: 4
+  6 │ │ │ ├───▶     }
+    │ │ │ │             
+    │ │ │ ╰───────────── definiens: 3
+  7 │ │ ╭─────▶ 
+    ┆ ┆ ┆       
+  9 │ │ │               int code = 10;
+    │ │ │       ───────────┬───────────  
+    │ │ │                  ╰───────────── definiens: 6
+ 10 │ │ │               revert Utils.GenericError(code);
+    │ │ │       ────────────────────┬────────────────────  
+    │ │ │                           ╰────────────────────── definiens: 7
+ 11 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 5
+ 12 │ ├─────│ ▶ }
+    │ │     │       
+    │ ╰───────────── definiens: 1
+ 13 │       ╭─▶ 
+    ┆       ┆   
+ 15 │       │       error GenericError(int code);
+    │       │   ─────────────────┬────────────────  
+    │       │                    ╰────────────────── definiens: 9
+ 16 │       ├─▶ }
+    │       │       
+    │       ╰─────── definiens: 8
+────╯

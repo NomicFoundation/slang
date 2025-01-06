@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn do_while() -> Result<()> {
+    run("control", "do_while")
+}
+
+#[test]
 fn emit_event() -> Result<()> {
     run("control", "emit_event")
 }
@@ -45,6 +50,11 @@ fn if_else() -> Result<()> {
 }
 
 #[test]
+fn return_stmt() -> Result<()> {
+    run("control", "return_stmt")
+}
+
+#[test]
 fn try_catch() -> Result<()> {
     run("control", "try_catch")
 }
@@ -52,6 +62,11 @@ fn try_catch() -> Result<()> {
 #[test]
 fn try_stmt() -> Result<()> {
     run("control", "try_stmt")
+}
+
+#[test]
+fn unchecked() -> Result<()> {
+    run("control", "unchecked")
 }
 
 #[test]

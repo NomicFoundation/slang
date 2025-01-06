@@ -10,7 +10,7 @@ mod terminal_kind;
 pub use edge_label::EdgeLabel;
 pub(crate) use lexical_context::{IsLexicalContext, LexicalContext, LexicalContextType};
 pub use metaslang_cst::kinds::{
-    EdgeLabelExtensions, NonterminalKindExtensions, TerminalKindExtensions,
+    EdgeLabelExtensions, NodeKind, NonterminalKindExtensions, TerminalKindExtensions,
 };
 pub use nonterminal_kind::NonterminalKind;
 pub use terminal_kind::TerminalKind;

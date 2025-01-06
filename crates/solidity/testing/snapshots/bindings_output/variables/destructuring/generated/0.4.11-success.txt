@@ -1,0 +1,102 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Test {
+    │         ──┬─  
+    │           ╰─── name: 1
+  2 │     enum Choice { Yes, No }
+    │          ───┬──   ─┬─  ─┬  
+    │             ╰────────────── name: 2
+    │                    │    │  
+    │                    ╰─────── name: 3
+    │                         │  
+    │                         ╰── name: 4
+    │ 
+  4 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 5
+  5 │         (int x, int y) = (1, 2);
+    │              ┬      ┬  
+    │              ╰───────── name: 6
+    │                     │  
+    │                     ╰── name: 7
+  6 │         (int z, , int w) = (1, 2, 3);
+    │              ┬        ┬  
+    │              ╰─────────── name: 8
+    │                       │  
+    │                       ╰── name: 9
+  7 │         assert(x == z);
+    │         ───┬── ┬    ┬  
+    │            ╰─────────── ref: built-in
+    │                │    │  
+    │                ╰─────── ref: 6
+    │                     │  
+    │                     ╰── ref: 8
+  8 │         assert(y < w);
+    │         ───┬── ┬   ┬  
+    │            ╰────────── ref: built-in
+    │                │   │  
+    │                ╰────── ref: 7
+    │                    │  
+    │                    ╰── ref: 9
+  9 │         (, Choice c) = (Choice.Yes, Choice.No);
+    │            ───┬── ┬     ───┬── ─┬─  ───┬── ─┬  
+    │               ╰──────────────────────────────── ref: 2
+    │                   │        │    │      │    │  
+    │                   ╰──────────────────────────── name: 10
+    │                            │    │      │    │  
+    │                            ╰─────────────────── ref: 2
+    │                                 │      │    │  
+    │                                 ╰────────────── ref: 3
+    │                                        │    │  
+    │                                        ╰─────── ref: 2
+    │                                             │  
+    │                                             ╰── ref: 4
+    │ 
+ 11 │         assert(c == Choice.No);
+    │         ───┬── ┬    ───┬── ─┬  
+    │            ╰─────────────────── ref: built-in
+    │                │       │    │  
+    │                ╰─────────────── ref: 10
+    │                        │    │  
+    │                        ╰─────── ref: 2
+    │                             │  
+    │                             ╰── ref: 4
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───▶ library Test {
+  2 │ │ │       enum Choice { Yes, No }
+    │ │ │   ──────────────┬────┬────┬───  
+    │ │ │                 ╰─────────────── definiens: 2
+    │ │ │                      │    │     
+    │ │ │                      ╰────────── definiens: 3
+    │ │ │                           │     
+    │ │ │                           ╰───── definiens: 4
+  3 │ │ ╭─▶ 
+    ┆ ┆ ┆   
+  5 │ │ │           (int x, int y) = (1, 2);
+    │ │ │            ──┬── ───┬──  
+    │ │ │              ╰─────────── definiens: 6
+    │ │ │                     │    
+    │ │ │                     ╰──── definiens: 7
+  6 │ │ │           (int z, , int w) = (1, 2, 3);
+    │ │ │            ──┬──   ───┬──  
+    │ │ │              ╰───────────── definiens: 8
+    │ │ │                       │    
+    │ │ │                       ╰──── definiens: 9
+    ┆ ┆ ┆   
+  9 │ │ │           (, Choice c) = (Choice.Yes, Choice.No);
+    │ │ │             ────┬────  
+    │ │ │                 ╰────── definiens: 10
+    ┆ ┆ ┆   
+ 12 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 5
+ 13 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯

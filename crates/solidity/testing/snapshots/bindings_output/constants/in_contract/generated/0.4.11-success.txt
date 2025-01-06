@@ -1,0 +1,97 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Constants {
+    │          ────┬────  
+    │              ╰────── name: 1
+  2 │     enum Direction { NORTH, SOUTH, EAST, WEST }
+    │          ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+    │              ╰───────────────────────────────── name: 2
+    │                        │      │      │     │   
+    │                        ╰─────────────────────── name: 3
+    │                               │      │     │   
+    │                               ╰──────────────── name: 4
+    │                                      │     │   
+    │                                      ╰───────── name: 5
+    │                                            │   
+    │                                            ╰─── name: 6
+    │ 
+  4 │     address public constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
+    │                             ─────┬────  
+    │                                  ╰────── name: 7
+  5 │     uint256 public constant MY_UINT = 123;
+    │                             ───┬───  
+    │                                ╰───── name: 8
+  6 │     Direction public constant MY_DIRECTION = Direction.EAST;
+    │     ────┬────                 ──────┬─────   ────┬──── ──┬─  
+    │         ╰──────────────────────────────────────────────────── ref: 2
+    │                                     │            │       │   
+    │                                     ╰──────────────────────── name: 9
+    │                                                  │       │   
+    │                                                  ╰─────────── ref: 2
+    │                                                          │   
+    │                                                          ╰─── ref: 5
+    │ 
+  8 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 10
+  9 │         assert(MY_DIRECTION != Direction.NORTH);
+    │         ───┬── ──────┬─────    ────┬──── ──┬──  
+    │            ╰──────────────────────────────────── ref: built-in
+    │                      │             │       │    
+    │                      ╰────────────────────────── ref: 9
+    │                                    │       │    
+    │                                    ╰──────────── ref: 2
+    │                                            │    
+    │                                            ╰──── ref: 3
+ 10 │         assert(MY_UINT > 100);
+    │         ───┬── ───┬───  
+    │            ╰──────────── ref: built-in
+    │                   │     
+    │                   ╰───── ref: 8
+ 11 │         require(msg.sender == MY_ADDRESS);
+    │         ───┬─── ─┬─ ───┬──    ─────┬────  
+    │            ╰────────────────────────────── ref: built-in
+    │                  │     │           │      
+    │                  ╰──────────────────────── ref: built-in
+    │                        │           │      
+    │                        ╰────────────────── ref: built-in
+    │                                    │      
+    │                                    ╰────── ref: 7
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ contract Constants {
+  2 │ │   │       enum Direction { NORTH, SOUTH, EAST, WEST }
+    │ │   │   ───────────────────────┬┬─────┬──────┬─────┬────  
+    │ │   │                          ╰────────────────────────── definiens: 3
+    │ │   │                           │     │      │     │      
+    │ │   │                           ╰───────────────────────── definiens: 2
+    │ │   │                                 │      │     │      
+    │ │   │                                 ╰─────────────────── definiens: 4
+    │ │   │                                        │     │      
+    │ │   │                                        ╰──────────── definiens: 5
+    │ │   │                                              │      
+    │ │   │                                              ╰────── definiens: 6
+  3 │ │   ╭─▶ 
+  4 │ │   ├─▶     address public constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
+    │ │   │                                                                                          
+    │ │   ╰────────────────────────────────────────────────────────────────────────────────────────── definiens: 7
+  5 │ │           uint256 public constant MY_UINT = 123;
+    │ │       ─────────────────────┬─────────────────────  
+    │ │                            ╰─────────────────────── definiens: 8
+  6 │ │ │         Direction public constant MY_DIRECTION = Direction.EAST;
+    │ │ │     ──────────────────────────────┬──────────────────────────────  
+    │ │ │                                   ╰──────────────────────────────── definiens: 9
+  7 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+ 12 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 10
+ 13 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
+────╯

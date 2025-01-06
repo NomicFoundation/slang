@@ -7,8 +7,7 @@ use super::model::{
     ASTNode, AlternativesASTNode, CaptureASTNode, NodeMatchASTNode, NodeSelector, OneOrMoreASTNode,
     OptionalASTNode, Query, SequenceASTNode,
 };
-use crate::kinds::{KindTypes, TerminalKindExtensions};
-use crate::nodes::NodeKind;
+use crate::kinds::{KindTypes, NodeKind, TerminalKindExtensions};
 use crate::query::CaptureQuantifier;
 
 impl<T: KindTypes + 'static> Cursor<T> {

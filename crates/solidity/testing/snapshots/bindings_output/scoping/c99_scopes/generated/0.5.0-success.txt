@@ -1,0 +1,60 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Foo {
+   │          ─┬─  
+   │           ╰─── name: 1
+ 2 │     uint x = 10;
+   │          ┬  
+   │          ╰── name: 2
+   │ 
+ 4 │     function a_func(uint x) returns (uint) {
+   │              ───┬──      ┬  
+   │                 ╰─────────── name: 3
+   │                          │  
+   │                          ╰── name: 4
+   │ 
+ 6 │         uint y = x + 1;
+   │              ┬   ┬  
+   │              ╰────── name: 5
+   │                  │  
+   │                  ╰── ref: 4
+   │ 
+ 8 │             uint x = 20;
+   │                  ┬  
+   │                  ╰── name: 6
+ 9 │             return x + y;
+   │                    ┬   ┬  
+   │                    ╰────── ref: 6
+   │                        │  
+   │                        ╰── ref: 5
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ contract Foo {
+  2 │ │ │         uint x = 10;
+    │ │ │     ────────┬────────  
+    │ │ │             ╰────────── definiens: 2
+  3 │ │ ╭───▶ 
+  4 │ │ │ │       function a_func(uint x) returns (uint) {
+    │ │ │ │                       ───┬──  
+    │ │ │ │                          ╰──── definiens: 4
+  5 │ │ │ ╭─▶         // Solidity < 0.5.0 binds the following `x` differently than >= 0.5.0
+  6 │ │ │ ├─▶         uint y = x + 1;
+    │ │ │ │                             
+    │ │ │ ╰───────────────────────────── definiens: 5
+    ┆ ┆ ┆     
+  8 │ │ │                 uint x = 20;
+    │ │ │     ────────────┬────────────  
+    │ │ │                 ╰────────────── definiens: 6
+    ┆ ┆ ┆     
+ 11 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 3
+ 12 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
+────╯
