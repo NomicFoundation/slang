@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Address {
+   │         ───┬───  
+   │            ╰───── def: 1
+ 2 │     function sendValue(address payable recipient) internal {}
+   │              ────┬────                 ────┬────  
+   │                  ╰──────────────────────────────── def: 2
+   │                                            │      
+   │                                            ╰────── def: 3
+   │ 
+ 4 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 4
+ 5 │     using Address for address payable;
+   │           ───┬───  
+   │              ╰───── ref: 1
+ 6 │     function test(address _rcpt) public {
+   │              ──┬─         ──┬──  
+   │                ╰───────────────── def: 5
+   │                             │    
+   │                             ╰──── def: 6
+ 7 │         payable(_rcpt).sendValue();
+   │                 ──┬──  ────┬────  
+   │                   ╰─────────────── ref: 6
+   │                            │      
+   │                            ╰────── ref: 2
+───╯

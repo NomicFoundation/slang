@@ -1,11 +1,15 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::iter::once;
 
 use metaslang_cst::kinds::KindTypes;
+use stack_graphs::graph::{Degree, Edge, StackGraph};
 use stack_graphs::partial::{PartialPath, PartialPaths};
-use stack_graphs::stitching::{ForwardPartialPathStitcher, GraphEdgeCandidates, StitcherConfig};
+use stack_graphs::stitching::{
+    ForwardCandidates, ForwardPartialPathStitcher, GraphEdgeCandidates, GraphEdges, StitcherConfig,
+};
+use stack_graphs::CancellationError;
 
-use crate::{Bindings, Definition, Reference, ResolutionError, Tag};
+use crate::{BindingGraph, Definition, FileHandle, GraphHandle, Reference, ResolutionError, Tag};
 
 mod c3;
 
@@ -33,10 +37,17 @@ mod c3;
 /// applied to definitions pointing to virtual methods.
 ///
 pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
-    owner: &'a Bindings<KT>,
+    owner: &'a BindingGraph<KT>,
     reference: Reference<'a, KT>,
     partials: PartialPaths,
     results: Vec<ResolvedPath<'a, KT>>,
+    options: ResolveOptions,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq)]
+pub(crate) enum ResolveOptions {
+    Full,
+    NonRecursive,
 }
 
 struct ResolvedPath<'a, KT: KindTypes + 'static> {
@@ -51,13 +62,79 @@ impl<'a, KT: KindTypes + 'static> ResolvedPath<'a, KT> {
     }
 }
 
+/// Candidates for the forward stitching resolution process. This will inject
+/// edges to the the given extensions scopes at extension hook nodes when asked
+/// for forward candidates (ie. `get_forward_candidates`) by the resolution
+/// algorithm. Other than that, it's exactly the same as `GraphEdgeCandidates`.
+struct ResolverCandidates<'a, KT: KindTypes + 'static> {
+    owner: &'a BindingGraph<KT>,
+    partials: &'a mut PartialPaths,
+    file: Option<FileHandle>,
+    edges: GraphEdges,
+    extensions: &'a [GraphHandle],
+}
+
+impl<'a, KT: KindTypes + 'static> ResolverCandidates<'a, KT> {
+    pub fn new(
+        owner: &'a BindingGraph<KT>,
+        partials: &'a mut PartialPaths,
+        file: Option<FileHandle>,
+        extensions: &'a [GraphHandle],
+    ) -> Self {
+        Self {
+            owner,
+            partials,
+            file,
+            edges: GraphEdges,
+            extensions,
+        }
+    }
+}
+
+impl<KT: KindTypes + 'static> ForwardCandidates<Edge, Edge, GraphEdges, CancellationError>
+    for ResolverCandidates<'_, KT>
+{
+    fn get_forward_candidates<R>(&mut self, path: &PartialPath, result: &mut R)
+    where
+        R: std::iter::Extend<Edge>,
+    {
+        let node = path.end_node;
+        result.extend(self.owner.stack_graph.outgoing_edges(node).filter(|e| {
+            self.file
+                .map_or(true, |file| self.owner.stack_graph[e.sink].is_in_file(file))
+        }));
+
+        if self.owner.is_extension_hook(node) {
+            // Inject edges from the extension hook node to each extension scope
+            let mut extension_edges = Vec::new();
+            for extension in self.extensions {
+                extension_edges.push(Edge {
+                    source: node,
+                    sink: *extension,
+                    precedence: 0,
+                });
+            }
+            result.extend(extension_edges);
+        }
+    }
+
+    fn get_joining_candidate_degree(&self, path: &PartialPath) -> Degree {
+        self.owner.stack_graph.incoming_edge_degree(path.end_node)
+    }
+
+    fn get_graph_partials_and_db(&mut self) -> (&StackGraph, &mut PartialPaths, &GraphEdges) {
+        (&self.owner.stack_graph, self.partials, &self.edges)
+    }
+}
+
 impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
-    pub fn build_for(reference: &Reference<'a, KT>) -> Self {
+    pub fn build_for(reference: &Reference<'a, KT>, options: ResolveOptions) -> Self {
         let mut resolver = Self {
             owner: reference.owner,
             reference: reference.clone(),
             partials: PartialPaths::new(),
             results: Vec::new(),
+            options,
         };
         resolver.resolve();
         resolver
@@ -65,30 +142,70 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
     fn resolve(&mut self) {
         let mut reference_paths = Vec::new();
-        ForwardPartialPathStitcher::find_all_complete_partial_paths(
-            &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut self.partials, None),
-            once(self.reference.handle),
-            StitcherConfig::default(),
-            &stack_graphs::NoCancellation,
-            |_graph, _paths, path| {
-                reference_paths.push(path.clone());
-            },
-        )
-        .expect("should never be cancelled");
+        if self.options == ResolveOptions::Full {
+            let ref_parents = self.reference.resolve_parents();
+            let mut extensions = HashSet::new();
+            for parent in &ref_parents {
+                if let Some(extension_scope) = parent.get_extension_scope() {
+                    extensions.insert(extension_scope);
+                }
 
+                if parent.inherit_extensions() {
+                    #[allow(clippy::mutable_key_type)]
+                    let grand_parents = Self::resolve_parents_all(parent.clone());
+                    for grand_parent in grand_parents.values().flatten() {
+                        if let Some(extension_scope) = grand_parent.get_extension_scope() {
+                            extensions.insert(extension_scope);
+                        }
+                    }
+                }
+            }
+            let extensions = extensions.drain().collect::<Vec<_>>();
+
+            ForwardPartialPathStitcher::find_all_complete_partial_paths(
+                &mut ResolverCandidates::new(self.owner, &mut self.partials, None, &extensions),
+                once(self.reference.handle),
+                StitcherConfig::default(),
+                &stack_graphs::NoCancellation,
+                |_graph, _paths, path| {
+                    reference_paths.push(path.clone());
+                },
+            )
+            .expect("Should never be cancelled");
+        } else {
+            ForwardPartialPathStitcher::find_all_complete_partial_paths(
+                &mut GraphEdgeCandidates::new(&self.owner.stack_graph, &mut self.partials, None),
+                once(self.reference.handle),
+                StitcherConfig::default(),
+                &stack_graphs::NoCancellation,
+                |_graph, _paths, path| {
+                    reference_paths.push(path.clone());
+                },
+            )
+            .expect("Should never be cancelled");
+        };
+
+        let mut added_nodes = HashSet::new();
         for reference_path in &reference_paths {
-            if reference_paths
-                .iter()
-                .all(|other| !other.shadows(&mut self.partials, reference_path))
+            let end_node = reference_path.end_node;
+
+            // There may be duplicate ending nodes with different
+            // post-conditions in the scope stack, but we only care about the
+            // definition itself. Hence we need to check for uniqueness.
+            if !added_nodes.contains(&end_node)
+                && reference_paths
+                    .iter()
+                    .all(|other| !other.shadows(&mut self.partials, reference_path))
             {
                 self.results.push(ResolvedPath {
                     definition: self
                         .owner
-                        .to_definition(reference_path.end_node)
+                        .to_definition(end_node)
                         .expect("path to end in a definition node"),
                     partial_path: reference_path.clone(),
                     score: 0.0,
                 });
+                added_nodes.insert(end_node);
             }
         }
     }
@@ -130,7 +247,9 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         }
         self.mark_down_aliases();
         self.mark_down_built_ins();
-        self.rank_c3_methods();
+        if self.options == ResolveOptions::Full {
+            self.rank_c3_methods();
+        }
         self.results.sort_by(|a, b| b.score.total_cmp(&a.score));
     }
 

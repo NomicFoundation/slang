@@ -10,6 +10,11 @@ fn declaration() -> Result<()> {
 }
 
 #[test]
+fn function_call() -> Result<()> {
+    run("structs", "function_call")
+}
+
+#[test]
 fn named_params_construction() -> Result<()> {
     run("structs", "named_params_construction")
 }

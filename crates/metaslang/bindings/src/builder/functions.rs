@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::rc::Rc;
 
 use metaslang_cst::kinds::KindTypes;
 use metaslang_graph_builder::functions::Functions;
@@ -8,7 +8,7 @@ use crate::PathResolver;
 
 pub fn default_functions<KT: KindTypes + 'static>(
     version: Version,
-    path_resolver: Arc<dyn PathResolver + Sync + Send>,
+    path_resolver: Rc<dyn PathResolver<KT>>,
 ) -> Functions<KT> {
     let mut functions = Functions::stdlib();
     version::add_version_functions(&mut functions, version);
@@ -56,7 +56,7 @@ mod version {
 }
 
 mod resolver {
-    use std::sync::Arc;
+    use std::rc::Rc;
 
     use metaslang_cst::kinds::KindTypes;
     use metaslang_graph_builder::functions::{Function, Functions, Parameters};
@@ -67,24 +67,24 @@ mod resolver {
 
     pub fn add_functions<KT: KindTypes + 'static>(
         functions: &mut Functions<KT>,
-        path_resolver: Arc<dyn PathResolver + Sync + Send>,
+        path_resolver: Rc<dyn PathResolver<KT>>,
     ) {
         functions.add("resolve-path".into(), ResolvePath { path_resolver });
         functions.add("is-system-file".into(), IsSystemFile {});
     }
 
-    struct ResolvePath {
-        path_resolver: Arc<dyn PathResolver + Sync + Send>,
+    struct ResolvePath<KT: KindTypes + 'static> {
+        path_resolver: Rc<dyn PathResolver<KT>>,
     }
 
-    impl<KT: KindTypes> Function<KT> for ResolvePath {
+    impl<KT: KindTypes + 'static> Function<KT> for ResolvePath<KT> {
         fn call(
             &self,
-            _graph: &mut Graph<KT>,
+            graph: &mut Graph<KT>,
             parameters: &mut dyn Parameters,
         ) -> Result<Value, ExecutionError> {
             let context_path = parameters.param()?.into_string()?;
-            let path_to_resolve = parameters.param()?.into_string()?;
+            let path_to_resolve = &graph[parameters.param()?.as_syntax_node_ref()?];
             parameters.finish()?;
 
             let context_file_descriptor = FileDescriptor::try_from(&context_path);
@@ -101,13 +101,14 @@ mod resolver {
             let resolved_path = self
                 .path_resolver
                 .as_ref()
-                .resolve_path(&context_user_path, &path_to_resolve)
+                .resolve_path(&context_user_path, path_to_resolve)
                 .map_or_else(
                     || {
                         // In case we cannot resolve the path, we return a special value that is unique
                         // per context/path pait. This way, we can still run incrementally and resolve
                         // other symbols in the file:
-                        format!("__SLANG_UNRESOLVED_PATH__{context_path}__{path_to_resolve}__")
+                        let node_id = path_to_resolve.node().id();
+                        format!("__SLANG_UNRESOLVED_PATH__{context_path}__{node_id}__")
                     },
                     |resolved_path| FileDescriptor::User(resolved_path).as_string(),
                 );

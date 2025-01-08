@@ -1,5 +1,65 @@
 {
   "mappings": {
+    "nomic-foundation:slang:bindings:definition.id()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
+    "nomic-foundation:slang:bindings:definition.name-location()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
+    "nomic-foundation:slang:bindings:definition.definiens-location()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
+    "nomic-foundation:slang:bindings:reference.id()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
+    "nomic-foundation:slang:bindings:reference.location()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
+    "nomic-foundation:slang:bindings:binding-location": {
+      "Variant": {
+        "as_direct_union_of_resource_classes": true
+      }
+    },
+    "nomic-foundation:slang:bindings:user-file-location.file-id()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
+    "nomic-foundation:slang:bindings:user-file-location.cursor()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
+    "nomic-foundation:slang:compilation:compilation-unit.language-version()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
+    "nomic-foundation:slang:compilation:compilation-unit.binding-graph()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
+    "nomic-foundation:slang:compilation:file.id()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
+    "nomic-foundation:slang:compilation:file.tree()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
     "nomic-foundation:slang:cst:terminal-kind": {
       "Enum": {
         "as_typescript_enum": true
@@ -105,7 +165,7 @@
         "as_iterator": true
       }
     },
-    "nomic-foundation:slang:parser:parser.version()": {
+    "nomic-foundation:slang:parser:parser.language-version()": {
       "Function": {
         "as_getter": true
       }

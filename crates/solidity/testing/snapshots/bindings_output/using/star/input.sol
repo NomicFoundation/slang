@@ -1,15 +1,11 @@
 library Lib {
-    struct Counter {
-        uint value;
-    }
-
-    function increment(Counter memory _counter) public {}
+    function increment(uint x) public {}
 }
 
 contract Test {
     using Lib for *;
 
-    function test(Lib.Counter memory c) public {
-        c.increment();
+    function test(uint x) public {
+        x.increment();
     }
 }

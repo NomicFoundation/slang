@@ -5,15 +5,15 @@ use std::rc::Rc;
 use crate::cst::{Cursor, NonterminalNode, TextIndex};
 use crate::parser::ParseError;
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct ParseOutput {
-    pub(crate) parse_tree: Rc<NonterminalNode>,
+    pub(crate) tree: Rc<NonterminalNode>,
     pub(crate) errors: Vec<ParseError>,
 }
 
 impl ParseOutput {
     pub fn tree(&self) -> &Rc<NonterminalNode> {
-        &self.parse_tree
+        &self.tree
     }
 
     pub fn errors(&self) -> &Vec<ParseError> {
@@ -26,6 +26,6 @@ impl ParseOutput {
 
     /// Creates a cursor that starts at the root of the parse tree.
     pub fn create_tree_cursor(&self) -> Cursor {
-        Rc::clone(&self.parse_tree).cursor_with_offset(TextIndex::ZERO)
+        Rc::clone(&self.tree).cursor_with_offset(TextIndex::ZERO)
     }
 }

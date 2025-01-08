@@ -17,7 +17,10 @@ codegen_runtime_generator = { workspace = true }
 infra_utils = { workspace = true }
 
 [dependencies]
-codegen_runtime_cargo_crate = { workspace = true }
+codegen_runtime_cargo_crate = { workspace = true, features = [
+  "__experimental_bindings_api",
+  "__private_compilation_api",
+] }
 paste = { workspace = true }
 semver = { workspace = true }
 serde_json = { workspace = true }

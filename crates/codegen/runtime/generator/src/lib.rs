@@ -63,6 +63,7 @@ struct ModelWrapper {
 #[derive(Serialize)]
 struct RuntimeModel {
     slang_version: Version,
+    language_name: String,
     all_language_versions: BTreeSet<Version>,
     breaking_language_versions: BTreeSet<Version>,
 
@@ -76,6 +77,7 @@ impl RuntimeModel {
     fn from_language(language: &Rc<Language>) -> Result<Self> {
         Ok(Self {
             slang_version: CargoWorkspace::local_version()?,
+            language_name: language.name.to_string(),
             all_language_versions: language.versions.iter().cloned().collect(),
             breaking_language_versions: language.collect_breaking_versions(),
 
@@ -91,6 +93,7 @@ impl Default for RuntimeModel {
     fn default() -> Self {
         Self {
             slang_version: Version::new(0, 0, 0),
+            language_name: "CodegenRuntime".to_string(),
             all_language_versions: BTreeSet::default(),
             breaking_language_versions: BTreeSet::default(),
 

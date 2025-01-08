@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── def: 1
+  2 │     struct Value {
+    │            ──┬──  
+    │              ╰──── def: 2
+  3 │         int x;
+    │             ┬  
+    │             ╰── def: 3
+    │ 
+  5 │     function getValue() external returns (Value memory) {}
+    │              ────┬───                     ──┬──  
+    │                  ╰─────────────────────────────── def: 4
+    │                                             │    
+    │                                             ╰──── ref: 2
+  6 │     function use(Value memory x) external {}
+    │              ─┬─ ──┬──        ┬  
+    │               ╰────────────────── def: 5
+    │                    │          │  
+    │                    ╰───────────── ref: 2
+    │                               │  
+    │                               ╰── def: 6
+    │ 
+  8 │ contract Test {
+    │          ──┬─  
+    │            ╰─── def: 7
+  9 │     using Lib for Lib.Value;
+    │           ─┬─     ─┬─ ──┬──  
+    │            ╰───────────────── ref: 1
+    │                    │    │    
+    │                    ╰───────── ref: 1
+    │                         │    
+    │                         ╰──── ref: 2
+ 10 │     function test() internal {
+    │              ──┬─  
+    │                ╰─── def: 8
+ 11 │         Lib.getValue().use();
+    │         ─┬─ ────┬───   ─┬─  
+    │          ╰────────────────── ref: 1
+    │                 │       │   
+    │                 ╰─────────── ref: 4
+    │                         │   
+    │                         ╰─── ref: 5
+────╯

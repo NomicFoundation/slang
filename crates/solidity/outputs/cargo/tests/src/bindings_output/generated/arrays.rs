@@ -8,3 +8,8 @@ use crate::bindings_output::runner::run;
 fn indexing() -> Result<()> {
     run("arrays", "indexing")
 }
+
+#[test]
+fn length() -> Result<()> {
+    run("arrays", "length")
+}

@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── def: 1
+ 2 │     function test(TokenState tokenState) public {
+   │              ──┬─ ─────┬──── ─────┬────  
+   │                ╰───────────────────────── def: 2
+   │                        │          │      
+   │                        ╰───────────────── ref: 4
+   │                                   │      
+   │                                   ╰────── def: 3
+ 3 │         tokenState.owners(1).balance;
+   │         ─────┬──── ───┬──    ───┬───  
+   │              ╰──────────────────────── ref: 3
+   │                       │         │     
+   │                       ╰─────────────── ref: 5
+   │                                 │     
+   │                                 ╰───── ref: built-in
+   │ 
+ 6 │ contract TokenState {
+   │          ─────┬────  
+   │               ╰────── def: 4
+ 7 │     mapping(uint => address) public owners;
+   │                                     ───┬──  
+   │                                        ╰──── def: 5
+───╯

@@ -89,7 +89,7 @@ where
                 let node = Node::terminal(kind, input.to_string());
                 trivia_nodes.push(Edge::anonymous(node));
                 ParseOutput {
-                    parse_tree: Rc::new(NonterminalNode::new(expected, trivia_nodes)),
+                    tree: Rc::new(NonterminalNode::new(expected, trivia_nodes)),
                     errors: vec![ParseError::new(
                         start..start + input.into(),
                         no_match.expected_terminals,
@@ -153,17 +153,17 @@ where
                     ));
 
                     ParseOutput {
-                        parse_tree: Rc::new(NonterminalNode::new(topmost_node.kind, new_children)),
+                        tree: Rc::new(NonterminalNode::new(topmost_node.kind, new_children)),
                         errors,
                     }
                 } else {
-                    let parse_tree = topmost_node;
+                    let tree = topmost_node;
                     let errors = stream.into_errors();
 
                     // Sanity check: Make sure that succesful parse is equivalent to not having any invalid nodes
                     debug_assert_eq!(
                         errors.is_empty(),
-                        Rc::clone(&parse_tree)
+                        Rc::clone(&tree)
                             .cursor_with_offset(TextIndex::ZERO)
                             .remaining_nodes()
                             .all(|edge| edge
@@ -172,7 +172,7 @@ where
                                 .is_none())
                     );
 
-                    ParseOutput { parse_tree, errors }
+                    ParseOutput { tree, errors }
                 }
             }
         }
