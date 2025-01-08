@@ -650,21 +650,29 @@ impl Parser {
 
     pub fn parse(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
         match kind {
-            NonterminalKind::AdditionExpression => Self::addition_expression.parse(self, input),
-            NonterminalKind::Expression => Self::expression.parse(self, input),
-            NonterminalKind::Literal => Self::literal.parse(self, input),
-            NonterminalKind::MemberAccessExpression => {
-                Self::member_access_expression.parse(self, input)
+            NonterminalKind::AdditionExpression => {
+                Self::addition_expression.parse(self, input, kind)
             }
-            NonterminalKind::NegationExpression => Self::negation_expression.parse(self, input),
-            NonterminalKind::SeparatedIdentifiers => Self::separated_identifiers.parse(self, input),
-            NonterminalKind::SourceUnit => Self::source_unit.parse(self, input),
-            NonterminalKind::SourceUnitMember => Self::source_unit_member.parse(self, input),
-            NonterminalKind::SourceUnitMembers => Self::source_unit_members.parse(self, input),
-            NonterminalKind::Tree => Self::tree.parse(self, input),
-            NonterminalKind::TreeNode => Self::tree_node.parse(self, input),
-            NonterminalKind::TreeNodeChild => Self::tree_node_child.parse(self, input),
-            NonterminalKind::TreeNodeChildren => Self::tree_node_children.parse(self, input),
+            NonterminalKind::Expression => Self::expression.parse(self, input, kind),
+            NonterminalKind::Literal => Self::literal.parse(self, input, kind),
+            NonterminalKind::MemberAccessExpression => {
+                Self::member_access_expression.parse(self, input, kind)
+            }
+            NonterminalKind::NegationExpression => {
+                Self::negation_expression.parse(self, input, kind)
+            }
+            NonterminalKind::SeparatedIdentifiers => {
+                Self::separated_identifiers.parse(self, input, kind)
+            }
+            NonterminalKind::SourceUnit => Self::source_unit.parse(self, input, kind),
+            NonterminalKind::SourceUnitMember => Self::source_unit_member.parse(self, input, kind),
+            NonterminalKind::SourceUnitMembers => {
+                Self::source_unit_members.parse(self, input, kind)
+            }
+            NonterminalKind::Tree => Self::tree.parse(self, input, kind),
+            NonterminalKind::TreeNode => Self::tree_node.parse(self, input, kind),
+            NonterminalKind::TreeNodeChild => Self::tree_node_child.parse(self, input, kind),
+            NonterminalKind::TreeNodeChildren => Self::tree_node_children.parse(self, input, kind),
         }
     }
 }

@@ -1,6 +1,8 @@
 use std::rc::Rc;
 
-use crate::cst::{Edge, Node, NonterminalNode, TerminalKind, TerminalKindExtensions, TextIndex};
+use crate::cst::{
+    Edge, Node, NonterminalKind, NonterminalNode, TerminalKind, TerminalKindExtensions, TextIndex,
+};
 use crate::parser::lexer::Lexer;
 use crate::parser::parser_support::context::ParserContext;
 use crate::parser::parser_support::parser_result::{
@@ -12,7 +14,7 @@ pub trait ParserFunction<P>
 where
     Self: Fn(&P, &mut ParserContext<'_>) -> ParserResult,
 {
-    fn parse(&self, parser: &P, input: &str) -> ParseOutput;
+    fn parse(&self, parser: &P, input: &str, expected: NonterminalKind) -> ParseOutput;
 }
 
 impl<P, F> ParserFunction<P> for F
@@ -21,7 +23,7 @@ where
     F: Fn(&P, &mut ParserContext<'_>) -> ParserResult,
 {
     #[allow(clippy::too_many_lines)]
-    fn parse(&self, parser: &P, input: &str) -> ParseOutput {
+    fn parse(&self, parser: &P, input: &str, expected: NonterminalKind) -> ParseOutput {
         let mut stream = ParserContext::new(input);
         let mut result = self(parser, &mut stream);
 
@@ -46,7 +48,7 @@ where
                 let mut new_children = nonterminal.children.clone();
                 new_children.extend(eof_trivia);
 
-                topmost.node = Node::nonterminal(nonterminal.kind, new_children);
+                topmost.node = Node::nonterminal(expected, new_children);
             }
         }
 
@@ -87,7 +89,7 @@ where
                 let node = Node::terminal(kind, input.to_string());
                 trivia_nodes.push(Edge::anonymous(node));
                 ParseOutput {
-                    parse_tree: Rc::new(NonterminalNode::new(no_match.kind.unwrap(), trivia_nodes)),
+                    parse_tree: Rc::new(NonterminalNode::new(expected, trivia_nodes)),
                     errors: vec![ParseError::new(
                         start..start + input.into(),
                         no_match.expected_terminals,
