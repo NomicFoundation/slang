@@ -213,11 +213,11 @@ fn create_bindings(version: &Version, source_id: &str, output: &ParseOutput) -> 
         }),
     );
     let parser = Parser::create(version.clone())?;
-    let built_ins_parser = parser.parse(
+    let built_ins_output = parser.parse(
         NonterminalKind::SourceUnit,
         bindings::get_built_ins(version),
     );
-    let built_ins_tree = built_ins_parser.tree();
+    let built_ins_tree = built_ins_output.tree();
     let built_ins_cursor = transform_built_ins_node(&Node::Nonterminal(Rc::clone(built_ins_tree)))
         .cursor_with_offset(TextIndex::ZERO);
 
