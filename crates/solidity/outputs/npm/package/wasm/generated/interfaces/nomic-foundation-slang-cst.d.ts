@@ -5975,7 +5975,7 @@ export enum NodeType {
  */
 export interface Edge {
   /**
-   * Optional label describing the relationship between nodes.
+   * Describes the relationship between this node and its parent.
    */
   label: EdgeLabel;
   /**
@@ -6100,7 +6100,7 @@ export class Cursor {
    */
   get node(): Node;
   /**
-   * Returns the label of the edge from the parent to the current node, if any.
+   * Returns a label that describes the relationship between the current node and its parent.
    */
   get label(): EdgeLabel;
   /**
