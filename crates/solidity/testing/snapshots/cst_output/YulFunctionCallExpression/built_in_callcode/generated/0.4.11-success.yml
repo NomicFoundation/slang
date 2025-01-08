@@ -7,7 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "callcode()\n" (0..11)
-      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulCallCodeKeyword): "callcode" # (0..8)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "callcode" (0..8)
+          - (item꞉ YulIdentifier): "callcode" # (0..8)
       - (open_paren꞉ OpenParen): "(" # (8..9)
       - (arguments꞉ YulArguments): [] # (9..9)
       - (close_paren꞉ CloseParen): ")" # (9..10)

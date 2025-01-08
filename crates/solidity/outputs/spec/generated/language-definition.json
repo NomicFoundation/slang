@@ -6091,89 +6091,8 @@
                 "item": {
                   "name": "YulBuiltInFunction",
                   "variants": [
-                    { "reference": "YulAddKeyword" },
-                    { "reference": "YulAddModKeyword" },
-                    { "reference": "YulAddressKeyword" },
-                    { "reference": "YulAndKeyword" },
-                    { "reference": "YulBalanceKeyword" },
-                    { "reference": "YulBlockHashKeyword" },
-                    { "reference": "YulByteKeyword" },
-                    { "reference": "YulCallCodeKeyword" },
-                    { "reference": "YulCallDataCopyKeyword" },
-                    { "reference": "YulCallDataLoadKeyword" },
-                    { "reference": "YulCallDataSizeKeyword" },
-                    { "reference": "YulCallerKeyword" },
-                    { "reference": "YulCallKeyword" },
-                    { "reference": "YulCallValueKeyword" },
-                    { "reference": "YulCoinBaseKeyword" },
-                    { "reference": "YulCreateKeyword" },
-                    { "reference": "YulDelegateCallKeyword" },
-                    { "reference": "YulDivKeyword" },
-                    { "reference": "YulEqKeyword" },
-                    { "reference": "YulExpKeyword" },
-                    { "reference": "YulExtCodeCopyKeyword" },
-                    { "reference": "YulExtCodeSizeKeyword" },
-                    { "reference": "YulGasKeyword" },
-                    { "reference": "YulGasLimitKeyword" },
-                    { "reference": "YulGasPriceKeyword" },
-                    { "reference": "YulGtKeyword" },
-                    { "reference": "YulInvalidKeyword" },
-                    { "reference": "YulIsZeroKeyword" },
                     { "reference": "YulJumpKeyword", "enabled": { "Till": { "till": "0.5.0" } } },
-                    { "reference": "YulJumpiKeyword", "enabled": { "Till": { "till": "0.5.0" } } },
-                    { "reference": "YulLog0Keyword" },
-                    { "reference": "YulLog1Keyword" },
-                    { "reference": "YulLog2Keyword" },
-                    { "reference": "YulLog3Keyword" },
-                    { "reference": "YulLog4Keyword" },
-                    { "reference": "YulLtKeyword" },
-                    { "reference": "YulMLoadKeyword" },
-                    { "reference": "YulModKeyword" },
-                    { "reference": "YulMSizeKeyword" },
-                    { "reference": "YulMStore8Keyword" },
-                    { "reference": "YulMStoreKeyword" },
-                    { "reference": "YulMulKeyword" },
-                    { "reference": "YulMulModKeyword" },
-                    { "reference": "YulNotKeyword" },
-                    { "reference": "YulNumberKeyword" },
-                    { "reference": "YulOriginKeyword" },
-                    { "reference": "YulOrKeyword" },
-                    { "reference": "YulPopKeyword" },
-                    { "reference": "YulReturnKeyword" },
-                    { "reference": "YulRevertKeyword" },
-                    { "reference": "YulSDivKeyword" },
-                    { "reference": "YulSelfDestructKeyword" },
-                    { "reference": "YulSgtKeyword" },
-                    { "reference": "YulSignExtendKeyword" },
-                    { "reference": "YulSLoadKeyword" },
-                    { "reference": "YulSltKeyword" },
-                    { "reference": "YulSModKeyword" },
-                    { "reference": "YulSStoreKeyword" },
-                    { "reference": "YulStopKeyword" },
-                    { "reference": "YulSubKeyword" },
-                    { "reference": "YulTimestampKeyword" },
-                    { "reference": "YulXorKeyword" },
-                    { "reference": "YulKeccak256Keyword", "enabled": { "From": { "from": "0.4.12" } } },
-                    { "reference": "YulSha3Keyword", "enabled": { "Till": { "till": "0.5.0" } } },
-                    { "reference": "YulSuicideKeyword", "enabled": { "Till": { "till": "0.5.0" } } },
-                    { "reference": "YulReturnDataCopyKeyword", "enabled": { "From": { "from": "0.4.12" } } },
-                    { "reference": "YulReturnDataSizeKeyword", "enabled": { "From": { "from": "0.4.12" } } },
-                    { "reference": "YulStaticCallKeyword", "enabled": { "From": { "from": "0.4.12" } } },
-                    { "reference": "YulCreate2Keyword", "enabled": { "From": { "from": "0.4.12" } } },
-                    { "reference": "YulExtCodeHashKeyword", "enabled": { "From": { "from": "0.5.0" } } },
-                    { "reference": "YulSarKeyword" },
-                    { "reference": "YulShlKeyword" },
-                    { "reference": "YulShrKeyword" },
-                    { "reference": "YulChainIdKeyword" },
-                    { "reference": "YulSelfBalanceKeyword" },
-                    { "reference": "YulBaseFeeKeyword", "enabled": { "From": { "from": "0.8.7" } } },
-                    { "reference": "YulDifficultyKeyword", "enabled": { "Till": { "till": "0.8.18" } } },
-                    { "reference": "YulPrevRandaoKeyword", "enabled": { "From": { "from": "0.8.18" } } },
-                    { "reference": "YulBlobBaseFeeKeyword", "enabled": { "From": { "from": "0.8.24" } } },
-                    { "reference": "YulBlobHashKeyword", "enabled": { "From": { "from": "0.8.24" } } },
-                    { "reference": "YulTLoadKeyword", "enabled": { "From": { "from": "0.8.24" } } },
-                    { "reference": "YulTStoreKeyword", "enabled": { "From": { "from": "0.8.24" } } },
-                    { "reference": "YulMCopyKeyword", "enabled": { "From": { "from": "0.8.24" } } }
+                    { "reference": "YulJumpiKeyword", "enabled": { "Till": { "till": "0.5.0" } } }
                   ]
                 }
               }
@@ -6261,48 +6180,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulAbstractKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": "Never",
-                      "reserved": { "Till": { "till": "0.7.1" } },
-                      "value": { "Atom": { "atom": "abstract" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulAddKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "add" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulAddModKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "addmod" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulAddressKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "address" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulAfterKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -6327,15 +6204,6 @@
                       "value": { "Atom": { "atom": "alias" } }
                     }
                   ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulAndKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "and" } } }]
                 }
               }
             },
@@ -6417,69 +6285,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulBalanceKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "balance" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulBaseFeeKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.8.7" } },
-                      "reserved": { "From": { "from": "0.8.7" } },
-                      "value": { "Atom": { "atom": "basefee" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulBlobBaseFeeKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.8.24" } },
-                      "reserved": { "From": { "from": "0.8.25" } },
-                      "value": { "Atom": { "atom": "blobbasefee" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulBlobHashKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.8.24" } },
-                      "reserved": { "From": { "from": "0.8.25" } },
-                      "value": { "Atom": { "atom": "blobhash" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulBlockHashKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "blockhash" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulBoolKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -6498,15 +6303,6 @@
                   "name": "YulBreakKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [{ "value": { "Atom": { "atom": "break" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulByteKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "byte" } } }]
                 }
               }
             },
@@ -6576,24 +6372,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulCallCodeKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "callcode" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulCallDataCopyKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "calldatacopy" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulCallDataKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -6603,51 +6381,6 @@
                       "value": { "Atom": { "atom": "calldata" } }
                     }
                   ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulCallDataLoadKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "calldataload" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulCallDataSizeKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "calldatasize" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulCallerKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "caller" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulCallKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "call" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulCallValueKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "callvalue" } } }]
                 }
               }
             },
@@ -6672,26 +6405,6 @@
                       "value": { "Atom": { "atom": "catch" } }
                     }
                   ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulChainIdKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    { "reserved": { "From": { "from": "0.5.12" } }, "value": { "Atom": { "atom": "chainid" } } }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulCoinBaseKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "coinbase" } } }]
                 }
               }
             },
@@ -6767,30 +6480,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulCreateKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "create" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulCreate2Keyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.4.12" } },
-                      "reserved": { "From": { "from": "0.4.12" } },
-                      "value": { "Atom": { "atom": "create2" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulDaysKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -6830,15 +6519,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulDelegateCallKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "delegatecall" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulDeleteKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -6848,26 +6528,6 @@
                       "value": { "Atom": { "atom": "delete" } }
                     }
                   ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulDifficultyKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    { "enabled": { "Till": { "till": "0.8.18" } }, "value": { "Atom": { "atom": "difficulty" } } }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulDivKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "div" } } }]
                 }
               }
             },
@@ -6934,15 +6594,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulEqKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "eq" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulEtherKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -6967,48 +6618,6 @@
                       "value": { "Atom": { "atom": "event" } }
                     }
                   ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulExpKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "exp" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulExtCodeCopyKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "extcodecopy" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulExtCodeHashKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.5.0" } },
-                      "reserved": { "From": { "from": "0.5.0" } },
-                      "value": { "Atom": { "atom": "extcodehash" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulExtCodeSizeKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "extcodesize" } } }]
                 }
               }
             },
@@ -7434,42 +7043,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulGasKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "gas" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulGasLimitKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "gaslimit" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulGasPriceKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "gasprice" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulGtKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "gt" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulGweiKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -7701,15 +7274,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulInvalidKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "invalid" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulIsKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -7719,15 +7283,6 @@
                       "value": { "Atom": { "atom": "is" } }
                     }
                   ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulIsZeroKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "iszero" } } }]
                 }
               }
             },
@@ -7749,21 +7304,6 @@
                   "identifier": "YulIdentifier",
                   "definitions": [
                     { "enabled": { "Till": { "till": "0.5.0" } }, "value": { "Atom": { "atom": "jumpi" } } }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulKeccak256Keyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.4.12" } },
-                      "reserved": { "From": { "from": "0.4.12" } },
-                      "value": { "Atom": { "atom": "keccak256" } }
-                    }
                   ]
                 }
               }
@@ -7804,60 +7344,6 @@
                       "value": { "Atom": { "atom": "library" } }
                     }
                   ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulLog0Keyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "log0" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulLog1Keyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "log1" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulLog2Keyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "log2" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulLog3Keyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "log3" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulLog4Keyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "log4" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulLtKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "lt" } } }]
                 }
               }
             },
@@ -7939,39 +7425,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulMCopyKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.8.24" } },
-                      "reserved": { "From": { "from": "0.8.25" } },
-                      "value": { "Atom": { "atom": "mcopy" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulMLoadKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "mload" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulModKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "mod" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulModifierKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -7981,51 +7434,6 @@
                       "value": { "Atom": { "atom": "modifier" } }
                     }
                   ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulMSizeKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "msize" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulMStoreKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "mstore" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulMStore8Keyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "mstore8" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulMulKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "mul" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulMulModKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "mulmod" } } }]
                 }
               }
             },
@@ -8062,15 +7470,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulNotKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "not" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulNullKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -8086,15 +7485,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulNumberKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "number" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulOfKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -8104,24 +7494,6 @@
                       "value": { "Atom": { "atom": "of" } }
                     }
                   ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulOrKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "or" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulOriginKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "origin" } } }]
                 }
               }
             },
@@ -8173,15 +7545,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulPopKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "pop" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulPragmaKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -8189,21 +7552,6 @@
                       "enabled": "Never",
                       "reserved": { "Till": { "till": "0.7.1" } },
                       "value": { "Atom": { "atom": "pragma" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulPrevRandaoKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.8.18" } },
-                      "reserved": { "From": { "from": "0.8.18" } },
-                      "value": { "Atom": { "atom": "prevrandao" } }
                     }
                   ]
                 }
@@ -8317,45 +7665,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulReturnDataCopyKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.4.12" } },
-                      "reserved": { "From": { "from": "0.4.12" } },
-                      "value": { "Atom": { "atom": "returndatacopy" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulReturnDataSizeKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.4.12" } },
-                      "reserved": { "From": { "from": "0.4.12" } },
-                      "value": { "Atom": { "atom": "returndatasize" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulReturnKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "return" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulReturnsKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -8365,35 +7674,6 @@
                       "value": { "Atom": { "atom": "returns" } }
                     }
                   ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulRevertKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "revert" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSarKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    { "reserved": { "From": { "from": "0.4.21" } }, "value": { "Atom": { "atom": "sar" } } }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSDivKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "sdiv" } } }]
                 }
               }
             },
@@ -8430,81 +7710,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulSelfBalanceKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    { "reserved": { "From": { "from": "0.5.12" } }, "value": { "Atom": { "atom": "selfbalance" } } }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSelfDestructKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "selfdestruct" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSgtKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "sgt" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSha3Keyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "Till": { "till": "0.5.0" } },
-                      "reserved": { "Till": { "till": "0.5.0" } },
-                      "value": { "Atom": { "atom": "sha3" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulShlKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    { "reserved": { "From": { "from": "0.4.21" } }, "value": { "Atom": { "atom": "shl" } } }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulShrKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    { "reserved": { "From": { "from": "0.4.21" } }, "value": { "Atom": { "atom": "shr" } } }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSignExtendKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "signextend" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulSizeOfKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
@@ -8512,57 +7717,6 @@
                       "enabled": "Never",
                       "reserved": { "Range": { "from": "0.5.0", "till": "0.7.1" } },
                       "value": { "Atom": { "atom": "sizeof" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSLoadKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "sload" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSltKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "slt" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSModKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "smod" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSStoreKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "sstore" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulStaticCallKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.4.12" } },
-                      "reserved": { "From": { "from": "0.4.12" } },
-                      "value": { "Atom": { "atom": "staticcall" } }
                     }
                   ]
                 }
@@ -8580,15 +7734,6 @@
                       "value": { "Atom": { "atom": "static" } }
                     }
                   ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulStopKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "stop" } } }]
                 }
               }
             },
@@ -8632,30 +7777,6 @@
                       "enabled": "Never",
                       "reserved": { "Till": { "till": "0.7.1" } },
                       "value": { "Atom": { "atom": "struct" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSubKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "sub" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulSuicideKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "Till": { "till": "0.5.0" } },
-                      "reserved": { "Till": { "till": "0.5.0" } },
-                      "value": { "Atom": { "atom": "suicide" } }
                     }
                   ]
                 }
@@ -8712,15 +7833,6 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulTimestampKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "timestamp" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulThisKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [{ "enabled": "Never", "value": { "Atom": { "atom": "this" } } }]
@@ -8745,39 +7857,9 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "YulTLoadKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.8.24" } },
-                      "reserved": { "From": { "from": "0.8.25" } },
-                      "value": { "Atom": { "atom": "tload" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
                   "name": "YulTrueKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [{ "value": { "Atom": { "atom": "true" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulTStoreKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.8.24" } },
-                      "reserved": { "From": { "from": "0.8.25" } },
-                      "value": { "Atom": { "atom": "tstore" } }
-                    }
-                  ]
                 }
               }
             },
@@ -9370,15 +8452,6 @@
                   ]
                 }
               }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulXorKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "xor" } } }]
-                }
-              }
             }
           ]
         }
@@ -9387,478 +8460,875 @@
   ],
   "built_ins": [
     {
-      "BuiltInFunction": {
-        "item": { "name": "addmod", "parameters": ["uint x", "uint y", "uint k"], "return_type": "uint" }
-      }
-    },
-    { "BuiltInFunction": { "item": { "name": "assert", "parameters": ["bool condition"] } } },
-    {
-      "BuiltInFunction": {
-        "item": {
-          "name": "blockhash",
-          "parameters": ["uint blockNumber"],
-          "return_type": "bytes32",
-          "enabled": { "From": { "from": "0.4.22" } }
-        }
-      }
-    },
-    {
-      "BuiltInFunction": {
-        "item": {
-          "name": "blobhash",
-          "parameters": ["uint index"],
-          "return_type": "bytes32",
-          "enabled": { "From": { "from": "0.8.24" } }
-        }
-      }
-    },
-    {
-      "BuiltInFunction": {
-        "item": {
-          "name": "ecrecover",
-          "parameters": ["bytes32 hash", "uint8 v", "bytes32 r", "bytes32 s"],
-          "return_type": "address"
-        }
-      }
-    },
-    {
-      "BuiltInFunction": {
-        "item": { "name": "gasleft", "return_type": "uint256", "enabled": { "From": { "from": "0.4.22" } } }
-      }
-    },
-    {
-      "BuiltInFunction": { "item": { "name": "keccak256", "parameters": ["bytes memory"], "return_type": "bytes32" } }
-    },
-    {
-      "BuiltInFunction": {
-        "item": { "name": "log0", "parameters": ["bytes32"], "enabled": { "Till": { "till": "0.8.0" } } }
-      }
-    },
-    {
-      "BuiltInFunction": {
-        "item": { "name": "log1", "parameters": ["bytes32", "bytes32"], "enabled": { "Till": { "till": "0.8.0" } } }
-      }
-    },
-    {
-      "BuiltInFunction": {
-        "item": {
-          "name": "log2",
-          "parameters": ["bytes32", "bytes32", "bytes32"],
-          "enabled": { "Till": { "till": "0.8.0" } }
-        }
-      }
-    },
-    {
-      "BuiltInFunction": {
-        "item": {
-          "name": "log3",
-          "parameters": ["bytes32", "bytes32", "bytes32", "bytes32"],
-          "enabled": { "Till": { "till": "0.8.0" } }
-        }
-      }
-    },
-    {
-      "BuiltInFunction": {
-        "item": {
-          "name": "log4",
-          "parameters": ["bytes32", "bytes32", "bytes32", "bytes32", "bytes32"],
-          "enabled": { "Till": { "till": "0.8.0" } }
-        }
-      }
-    },
-    {
-      "BuiltInFunction": {
-        "item": { "name": "mulmod", "parameters": ["uint x", "uint y", "uint k"], "return_type": "uint" }
-      }
-    },
-    { "BuiltInFunction": { "item": { "name": "require", "parameters": ["bool condition"] } } },
-    {
-      "BuiltInFunction": {
-        "item": {
-          "name": "require",
-          "parameters": ["bool condition", "string memory message"],
-          "enabled": { "From": { "from": "0.4.22" } }
-        }
-      }
-    },
-    {
-      "BuiltInFunction": {
-        "item": {
-          "name": "require",
-          "parameters": ["bool condition", "Error error"],
-          "enabled": { "From": { "from": "0.8.26" } }
-        }
-      }
-    },
-    { "BuiltInFunction": { "item": { "name": "revert" } } },
-    {
-      "BuiltInFunction": {
-        "item": {
-          "name": "revert",
-          "parameters": ["string memory reason"],
-          "enabled": { "From": { "from": "0.4.22" } }
-        }
-      }
-    },
-    {
-      "BuiltInFunction": { "item": { "name": "ripemd160", "parameters": ["bytes memory"], "return_type": "bytes20" } }
-    },
-    { "BuiltInFunction": { "item": { "name": "selfdestruct", "parameters": ["address payable recipient"] } } },
-    { "BuiltInFunction": { "item": { "name": "sha256", "parameters": ["bytes memory"], "return_type": "bytes32" } } },
-    {
-      "BuiltInFunction": {
-        "item": {
-          "name": "sha3",
-          "parameters": ["bytes memory"],
-          "return_type": "bytes32",
-          "enabled": { "Till": { "till": "0.5.0" } }
-        }
-      }
-    },
-    {
-      "BuiltInFunction": {
-        "item": {
-          "name": "suicide",
-          "parameters": ["address payable recipient"],
-          "enabled": { "Till": { "till": "0.5.0" } }
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$AbiType",
-          "functions": [
-            {
-              "name": "decode",
-              "parameters": ["bytes memory encodedData", "$Type[] encodedTypesTuple"],
-              "return_type": "$Any[]",
-              "enabled": { "From": { "from": "0.5.0" } }
-            },
-            {
-              "name": "encode",
-              "parameters": ["$Any[] valuesToEncode"],
-              "return_type": "bytes memory",
-              "enabled": { "From": { "from": "0.4.22" } }
-            },
-            {
-              "name": "encodeCall",
-              "parameters": ["function() functionPointer", "$Any[] functionArgumentsTuple"],
-              "return_type": "bytes memory",
-              "enabled": { "From": { "from": "0.8.11" } }
-            },
-            {
-              "name": "encodePacked",
-              "parameters": ["$Any[] valuesToEncode"],
-              "return_type": "bytes memory",
-              "enabled": { "From": { "from": "0.4.22" } }
-            },
-            {
-              "name": "encodeWithSelector",
-              "parameters": ["bytes4 selector", "$Any[] functionArgumentsTuple"],
-              "return_type": "bytes memory",
-              "enabled": { "From": { "from": "0.4.22" } }
-            },
-            {
-              "name": "encodeWithSignature",
-              "parameters": ["string memory signature", "$Any[] valuesToEncode"],
-              "return_type": "bytes memory",
+      "name": "$SolidityBuiltIns$",
+      "definitions": [
+        {
+          "BuiltInFunction": {
+            "item": { "name": "addmod", "parameters": ["uint x", "uint y", "uint k"], "return_type": "uint" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "assert", "parameters": ["bool condition"] } } },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "blockhash",
+              "parameters": ["uint blockNumber"],
+              "return_type": "bytes32",
               "enabled": { "From": { "from": "0.4.22" } }
             }
-          ]
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$address",
-          "fields": [
-            { "definition": "uint256 balance" },
-            { "definition": "bytes code", "enabled": { "From": { "from": "0.8.0" } } },
-            { "definition": "bytes32 codehash", "enabled": { "From": { "from": "0.8.0" } } }
-          ],
-          "functions": [
-            {
-              "name": "call",
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "blobhash",
+              "parameters": ["uint index"],
+              "return_type": "bytes32",
+              "enabled": { "From": { "from": "0.8.24" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "ecrecover",
+              "parameters": ["bytes32 hash", "uint8 v", "bytes32 r", "bytes32 s"],
+              "return_type": "address"
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "gasleft", "return_type": "uint256", "enabled": { "From": { "from": "0.4.22" } } }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "keccak256", "parameters": ["bytes memory"], "return_type": "bytes32" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "log0", "parameters": ["bytes32"], "enabled": { "Till": { "till": "0.8.0" } } }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "log1", "parameters": ["bytes32", "bytes32"], "enabled": { "Till": { "till": "0.8.0" } } }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "log2",
+              "parameters": ["bytes32", "bytes32", "bytes32"],
+              "enabled": { "Till": { "till": "0.8.0" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "log3",
+              "parameters": ["bytes32", "bytes32", "bytes32", "bytes32"],
+              "enabled": { "Till": { "till": "0.8.0" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "log4",
+              "parameters": ["bytes32", "bytes32", "bytes32", "bytes32", "bytes32"],
+              "enabled": { "Till": { "till": "0.8.0" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "mulmod", "parameters": ["uint x", "uint y", "uint k"], "return_type": "uint" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "require", "parameters": ["bool condition"] } } },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "require",
+              "parameters": ["bool condition", "string memory message"],
+              "enabled": { "From": { "from": "0.4.22" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "require",
+              "parameters": ["bool condition", "Error error"],
+              "enabled": { "From": { "from": "0.8.26" } }
+            }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "revert" } } },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "revert",
+              "parameters": ["string memory reason"],
+              "enabled": { "From": { "from": "0.4.22" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "ripemd160", "parameters": ["bytes memory"], "return_type": "bytes20" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "selfdestruct", "parameters": ["address payable recipient"] } } },
+        {
+          "BuiltInFunction": { "item": { "name": "sha256", "parameters": ["bytes memory"], "return_type": "bytes32" } }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "sha3",
               "parameters": ["bytes memory"],
-              "return_type": "bool",
-              "enabled": { "Till": { "till": "0.5.0" } }
-            },
-            {
-              "name": "call",
-              "parameters": ["bytes memory"],
-              "return_type": "bool, bytes memory",
-              "enabled": { "From": { "from": "0.5.0" } }
-            },
-            {
-              "name": "callcode",
-              "parameters": ["bytes memory"],
-              "return_type": "bool, bytes memory",
-              "enabled": { "Till": { "till": "0.5.0" } }
-            },
-            {
-              "name": "delegatecall",
-              "parameters": ["bytes memory"],
-              "return_type": "bool",
-              "enabled": { "Till": { "till": "0.5.0" } }
-            },
-            {
-              "name": "delegatecall",
-              "parameters": ["bytes memory"],
-              "return_type": "bool, bytes memory",
-              "enabled": { "From": { "from": "0.5.0" } }
-            },
-            { "name": "send", "parameters": ["uint256 amount"], "return_type": "bool" },
-            {
-              "name": "staticcall",
-              "parameters": ["bytes memory"],
-              "return_type": "bool, bytes memory",
-              "enabled": { "From": { "from": "0.5.0" } }
-            },
-            { "name": "transfer", "parameters": ["uint256 amount"] }
-          ]
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$Array",
-          "fields": [{ "definition": "uint length" }],
-          "functions": [
-            { "name": "push", "return_type": "$ValueType", "enabled": { "From": { "from": "0.6.0" } } },
-            {
-              "name": "push",
-              "parameters": ["$ValueType element"],
-              "return_type": "uint",
-              "enabled": { "Till": { "till": "0.6.0" } }
-            },
-            { "name": "push", "parameters": ["$ValueType element"], "enabled": { "From": { "from": "0.6.0" } } },
-            { "name": "pop" }
-          ]
-        }
-      }
-    },
-    { "BuiltInType": { "item": { "name": "$FixedArray", "fields": [{ "definition": "uint length" }] } } },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$BlockType",
-          "fields": [
-            { "definition": "uint basefee", "enabled": { "From": { "from": "0.8.7" } } },
-            { "definition": "uint blobbasefee", "enabled": { "From": { "from": "0.8.24" } } },
-            { "definition": "uint chainid", "enabled": { "From": { "from": "0.8.0" } } },
-            { "definition": "address payable coinbase" },
-            { "definition": "uint difficulty" },
-            { "definition": "uint gaslimit" },
-            { "definition": "uint number" },
-            { "definition": "uint prevrandao", "enabled": { "From": { "from": "0.8.18" } } },
-            { "definition": "uint timestamp" }
-          ],
-          "functions": [
-            {
-              "name": "blockhash",
-              "parameters": ["uint"],
               "return_type": "bytes32",
               "enabled": { "Till": { "till": "0.5.0" } }
             }
-          ]
-        }
-      }
-    },
-    { "BuiltInType": { "item": { "name": "$bytes", "fields": [{ "definition": "uint length" }] } } },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$BytesType",
-          "functions": [
-            { "name": "concat", "parameters": ["bytes[] bytesToConcatenate"], "return_type": "bytes memory" }
-          ]
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$CallOptions",
-          "fields": [{ "definition": "uint gas" }, { "definition": "uint salt" }, { "definition": "uint value" }],
-          "enabled": { "From": { "from": "0.6.2" } }
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "Error",
-          "fields": [{ "definition": "string reason" }],
-          "enabled": { "From": { "from": "0.6.0" } }
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$ErrorType",
-          "fields": [{ "definition": "bytes4 selector" }],
-          "enabled": { "From": { "from": "0.8.4" } }
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$Function",
-          "functions": [
-            {
-              "name": "gas",
-              "parameters": ["uint amount"],
-              "return_type": "function()",
-              "enabled": { "Till": { "till": "0.7.0" } }
-            },
-            {
-              "name": "value",
-              "parameters": ["uint amount"],
-              "return_type": "function()",
-              "enabled": { "Till": { "till": "0.7.0" } }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "suicide",
+              "parameters": ["address payable recipient"],
+              "enabled": { "Till": { "till": "0.5.0" } }
             }
-          ]
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$ExternalFunction",
-          "fields": [
-            { "definition": "address address", "enabled": { "From": { "from": "0.8.2" } } },
-            { "definition": "bytes4 selector", "enabled": { "From": { "from": "0.4.17" } } }
-          ],
-          "functions": [
-            {
-              "name": "gas",
-              "parameters": ["uint amount"],
-              "return_type": "function()",
-              "enabled": { "Till": { "till": "0.7.0" } }
-            },
-            {
-              "name": "value",
-              "parameters": ["uint amount"],
-              "return_type": "function()",
-              "enabled": { "Till": { "till": "0.7.0" } }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$AbiType",
+              "functions": [
+                {
+                  "name": "decode",
+                  "parameters": ["bytes memory encodedData", "$Type[] encodedTypesTuple"],
+                  "return_type": "$Any[]",
+                  "enabled": { "From": { "from": "0.5.0" } }
+                },
+                {
+                  "name": "encode",
+                  "parameters": ["$Any[] valuesToEncode"],
+                  "return_type": "bytes memory",
+                  "enabled": { "From": { "from": "0.4.22" } }
+                },
+                {
+                  "name": "encodeCall",
+                  "parameters": ["function() functionPointer", "$Any[] functionArgumentsTuple"],
+                  "return_type": "bytes memory",
+                  "enabled": { "From": { "from": "0.8.11" } }
+                },
+                {
+                  "name": "encodePacked",
+                  "parameters": ["$Any[] valuesToEncode"],
+                  "return_type": "bytes memory",
+                  "enabled": { "From": { "from": "0.4.22" } }
+                },
+                {
+                  "name": "encodeWithSelector",
+                  "parameters": ["bytes4 selector", "$Any[] functionArgumentsTuple"],
+                  "return_type": "bytes memory",
+                  "enabled": { "From": { "from": "0.4.22" } }
+                },
+                {
+                  "name": "encodeWithSignature",
+                  "parameters": ["string memory signature", "$Any[] valuesToEncode"],
+                  "return_type": "bytes memory",
+                  "enabled": { "From": { "from": "0.4.22" } }
+                }
+              ]
             }
-          ]
-        }
-      }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$address",
+              "fields": [
+                { "definition": "uint256 balance" },
+                { "definition": "bytes code", "enabled": { "From": { "from": "0.8.0" } } },
+                { "definition": "bytes32 codehash", "enabled": { "From": { "from": "0.8.0" } } }
+              ],
+              "functions": [
+                {
+                  "name": "call",
+                  "parameters": ["bytes memory"],
+                  "return_type": "bool",
+                  "enabled": { "Till": { "till": "0.5.0" } }
+                },
+                {
+                  "name": "call",
+                  "parameters": ["bytes memory"],
+                  "return_type": "bool, bytes memory",
+                  "enabled": { "From": { "from": "0.5.0" } }
+                },
+                {
+                  "name": "callcode",
+                  "parameters": ["bytes memory"],
+                  "return_type": "bool, bytes memory",
+                  "enabled": { "Till": { "till": "0.5.0" } }
+                },
+                {
+                  "name": "delegatecall",
+                  "parameters": ["bytes memory"],
+                  "return_type": "bool",
+                  "enabled": { "Till": { "till": "0.5.0" } }
+                },
+                {
+                  "name": "delegatecall",
+                  "parameters": ["bytes memory"],
+                  "return_type": "bool, bytes memory",
+                  "enabled": { "From": { "from": "0.5.0" } }
+                },
+                { "name": "send", "parameters": ["uint256 amount"], "return_type": "bool" },
+                {
+                  "name": "staticcall",
+                  "parameters": ["bytes memory"],
+                  "return_type": "bool, bytes memory",
+                  "enabled": { "From": { "from": "0.5.0" } }
+                },
+                { "name": "transfer", "parameters": ["uint256 amount"] }
+              ]
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$Array",
+              "fields": [{ "definition": "uint length" }],
+              "functions": [
+                { "name": "push", "return_type": "$ValueType", "enabled": { "From": { "from": "0.6.0" } } },
+                {
+                  "name": "push",
+                  "parameters": ["$ValueType element"],
+                  "return_type": "uint",
+                  "enabled": { "Till": { "till": "0.6.0" } }
+                },
+                { "name": "push", "parameters": ["$ValueType element"], "enabled": { "From": { "from": "0.6.0" } } },
+                { "name": "pop" }
+              ]
+            }
+          }
+        },
+        { "BuiltInType": { "item": { "name": "$FixedArray", "fields": [{ "definition": "uint length" }] } } },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$BlockType",
+              "fields": [
+                { "definition": "uint basefee", "enabled": { "From": { "from": "0.8.7" } } },
+                { "definition": "uint blobbasefee", "enabled": { "From": { "from": "0.8.24" } } },
+                { "definition": "uint chainid", "enabled": { "From": { "from": "0.8.0" } } },
+                { "definition": "address payable coinbase" },
+                { "definition": "uint difficulty" },
+                { "definition": "uint gaslimit" },
+                { "definition": "uint number" },
+                { "definition": "uint prevrandao", "enabled": { "From": { "from": "0.8.18" } } },
+                { "definition": "uint timestamp" }
+              ],
+              "functions": [
+                {
+                  "name": "blockhash",
+                  "parameters": ["uint"],
+                  "return_type": "bytes32",
+                  "enabled": { "Till": { "till": "0.5.0" } }
+                }
+              ]
+            }
+          }
+        },
+        { "BuiltInType": { "item": { "name": "$bytes", "fields": [{ "definition": "uint length" }] } } },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$BytesType",
+              "functions": [
+                { "name": "concat", "parameters": ["bytes[] bytesToConcatenate"], "return_type": "bytes memory" }
+              ]
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$CallOptions",
+              "fields": [{ "definition": "uint gas" }, { "definition": "uint salt" }, { "definition": "uint value" }],
+              "enabled": { "From": { "from": "0.6.2" } }
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "Error",
+              "fields": [{ "definition": "string reason" }],
+              "enabled": { "From": { "from": "0.6.0" } }
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$ErrorType",
+              "fields": [{ "definition": "bytes4 selector" }],
+              "enabled": { "From": { "from": "0.8.4" } }
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$Function",
+              "functions": [
+                {
+                  "name": "gas",
+                  "parameters": ["uint amount"],
+                  "return_type": "function()",
+                  "enabled": { "Till": { "till": "0.7.0" } }
+                },
+                {
+                  "name": "value",
+                  "parameters": ["uint amount"],
+                  "return_type": "function()",
+                  "enabled": { "Till": { "till": "0.7.0" } }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$ExternalFunction",
+              "fields": [
+                { "definition": "address address", "enabled": { "From": { "from": "0.8.2" } } },
+                { "definition": "bytes4 selector", "enabled": { "From": { "from": "0.4.17" } } }
+              ],
+              "functions": [
+                {
+                  "name": "gas",
+                  "parameters": ["uint amount"],
+                  "return_type": "function()",
+                  "enabled": { "Till": { "till": "0.7.0" } }
+                },
+                {
+                  "name": "value",
+                  "parameters": ["uint amount"],
+                  "return_type": "function()",
+                  "enabled": { "Till": { "till": "0.7.0" } }
+                }
+              ]
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$MessageType",
+              "fields": [
+                { "definition": "bytes data" },
+                { "definition": "uint256 gas", "enabled": { "Till": { "till": "0.5.0" } } },
+                { "definition": "address payable sender", "enabled": { "Till": { "till": "0.8.0" } } },
+                { "definition": "address sender", "enabled": { "From": { "from": "0.8.0" } } },
+                { "definition": "bytes4 sig" },
+                { "definition": "uint value" }
+              ]
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "Panic",
+              "fields": [{ "definition": "uint errorCode" }],
+              "enabled": { "From": { "from": "0.6.0" } }
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$StringType",
+              "functions": [
+                { "name": "concat", "parameters": ["string[] stringsToConcatenate"], "return_type": "string memory" }
+              ]
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$TransactionType",
+              "fields": [
+                { "definition": "uint gasprice" },
+                { "definition": "address payable origin", "enabled": { "Till": { "till": "0.8.0" } } },
+                { "definition": "address origin", "enabled": { "From": { "from": "0.8.0" } } }
+              ]
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$ContractTypeType",
+              "fields": [
+                { "definition": "string name" },
+                { "definition": "bytes creationCode", "enabled": { "From": { "from": "0.5.3" } } },
+                { "definition": "bytes runtimeCode", "enabled": { "From": { "from": "0.5.3" } } },
+                { "definition": "bytes4 interfaceId", "enabled": { "From": { "from": "0.6.7" } } }
+              ]
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$InterfaceTypeType",
+              "fields": [
+                { "definition": "string name" },
+                { "definition": "bytes4 interfaceId", "enabled": { "From": { "from": "0.6.7" } } }
+              ]
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$IntTypeType",
+              "fields": [
+                { "definition": "int min", "enabled": { "From": { "from": "0.6.8" } } },
+                { "definition": "int max", "enabled": { "From": { "from": "0.6.8" } } }
+              ]
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$UserDefinedValueType",
+              "functions": [
+                { "name": "wrap", "parameters": ["$WrappedType elementaryType"], "return_type": "$UserType" },
+                { "name": "unwrap", "parameters": ["$UserType userType"], "return_type": "$WrappedType" }
+              ],
+              "enabled": { "From": { "from": "0.8.8" } }
+            }
+          }
+        },
+        { "BuiltInVariable": { "item": { "definition": "$Function $placeholder" } } },
+        { "BuiltInVariable": { "item": { "definition": "$AbiType abi" } } },
+        { "BuiltInVariable": { "item": { "definition": "$BlockType block" } } },
+        { "BuiltInVariable": { "item": { "definition": "$BytesType $bytes" } } },
+        { "BuiltInVariable": { "item": { "definition": "$MessageType msg" } } },
+        { "BuiltInVariable": { "item": { "definition": "uint now", "enabled": { "Till": { "till": "0.7.0" } } } } },
+        { "BuiltInVariable": { "item": { "definition": "$StringType $string" } } },
+        { "BuiltInVariable": { "item": { "definition": "$TransactionType tx" } } }
+      ]
     },
     {
-      "BuiltInType": {
-        "item": {
-          "name": "$MessageType",
-          "fields": [
-            { "definition": "bytes data" },
-            { "definition": "uint256 gas", "enabled": { "Till": { "till": "0.5.0" } } },
-            { "definition": "address payable sender", "enabled": { "Till": { "till": "0.8.0" } } },
-            { "definition": "address sender", "enabled": { "From": { "from": "0.8.0" } } },
-            { "definition": "bytes4 sig" },
-            { "definition": "uint value" }
-          ]
+      "name": "$YulBuiltIns$",
+      "definitions": [
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "$YulExternal",
+              "fields": [
+                { "definition": "uint256 slot" },
+                { "definition": "uint256 offset" },
+                { "definition": "uint256 length" }
+              ]
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "add", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "addmod",
+              "parameters": ["uint256 x", "uint256 y", "uint256 m"],
+              "return_type": "uint256"
+            }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "address", "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "and", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "balance", "parameters": ["uint256 a"], "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": { "item": { "name": "blockhash", "parameters": ["uint256 b"], "return_type": "uint256" } }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "byte", "parameters": ["uint256 n", "uint256 x"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "callcode",
+              "parameters": [
+                "uint256 g",
+                "uint256 a",
+                "uint256 v",
+                "uint256 in",
+                "uint256 insize",
+                "uint256 out",
+                "uint256 outsize"
+              ],
+              "return_type": "uint256"
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "calldatacopy", "parameters": ["uint256 t", "uint256 f", "uint256 s"] }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "calldataload", "parameters": ["uint256 p"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "calldatasize", "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "caller", "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "call",
+              "parameters": [
+                "uint256 g",
+                "uint256 a",
+                "uint256 v",
+                "uint256 in",
+                "uint256 insize",
+                "uint256 out",
+                "uint256 outsize"
+              ],
+              "return_type": "uint256"
+            }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "callvalue", "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "coinbase", "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "create",
+              "parameters": ["uint256 v", "uint256 p", "uint256 n"],
+              "return_type": "uint256"
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "delegatecall",
+              "parameters": [
+                "uint256 g",
+                "uint256 a",
+                "uint256 in",
+                "uint256 insize",
+                "uint256 out",
+                "uint256 outsize"
+              ],
+              "return_type": "uint256"
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "div", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "eq", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "exp", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "extcodecopy", "parameters": ["uint256 a", "uint256 t", "uint256 f", "uint256 s"] }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "extcodesize", "parameters": ["uint256 a"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "gas", "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "gaslimit", "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "gasprice", "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "gt", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "invalid" } } },
+        { "BuiltInFunction": { "item": { "name": "iszero", "parameters": ["uint256 x"], "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "log0", "parameters": ["uint256 p", "uint256 s"] } } },
+        { "BuiltInFunction": { "item": { "name": "log1", "parameters": ["uint256 p", "uint256 s", "uint256 t1"] } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "log2", "parameters": ["uint256 p", "uint256 s", "uint256 t1", "uint256 t2"] }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "log3",
+              "parameters": ["uint256 p", "uint256 s", "uint256 t1", "uint256 t2", "uint256 t3"]
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "log4",
+              "parameters": ["uint256 p", "uint256 s", "uint256 t1", "uint256 t2", "uint256 t3"]
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "lt", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "mload", "parameters": ["uint256 p"], "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "mod", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "msize", "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "mstore8", "parameters": ["uint256 p", "uint256 v"] } } },
+        { "BuiltInFunction": { "item": { "name": "mstore", "parameters": ["uint256 p", "uint256 v"] } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "mul", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "mulmod",
+              "parameters": ["uint256 x", "uint256 y", "uint256 m"],
+              "return_type": "uint256"
+            }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "not", "parameters": ["uint256 x"], "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "number", "parameters": ["uint256 x"], "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "origin", "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "or", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "pop", "parameters": ["uint256 x"], "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "return", "parameters": ["uint256 p", "uint256 s"] } } },
+        { "BuiltInFunction": { "item": { "name": "revert", "parameters": ["uint256 p", "uint256 s"] } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "sdiv", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "selfdestruct", "parameters": ["uint256 a"] } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "sgt", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "signextend", "parameters": ["uint256 i", "uint256 x"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "sload", "parameters": ["uint256 p"], "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "slt", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "smod", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "sstore", "parameters": ["uint256 p", "uint256 v"] } } },
+        { "BuiltInFunction": { "item": { "name": "stop" } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "sub", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "timestamp", "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "xor", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "keccak256",
+              "parameters": ["uint256 p", "uint256 n"],
+              "return_type": "uint256",
+              "enabled": { "From": { "from": "0.4.12" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "sha3", "return_type": "uint256", "enabled": { "Till": { "till": "0.5.0" } } }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "suicide", "return_type": "uint256", "enabled": { "Till": { "till": "0.5.0" } } }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "returndatacopy", "parameters": ["uint256 t", "uint256 f", "uint256 s"] }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "returndatasize", "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "staticcall",
+              "parameters": [
+                "uint256 g",
+                "uint256 a",
+                "uint256 in",
+                "uint256 insize",
+                "uint256 out",
+                "uint256 outsize"
+              ],
+              "return_type": "uint256",
+              "enabled": { "From": { "from": "0.4.12" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "create2",
+              "parameters": ["uint256 v", "uint256 p", "uint256 n", "uint256 s"],
+              "return_type": "uint256",
+              "enabled": { "From": { "from": "0.4.12" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "extcodehash",
+              "parameters": ["uint256 a"],
+              "return_type": "uint256",
+              "enabled": { "From": { "from": "0.5.0" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "sar", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "shl", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "shr", "parameters": ["uint256 x", "uint256 y"], "return_type": "uint256" }
+          }
+        },
+        { "BuiltInFunction": { "item": { "name": "chainid", "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "selfbalance", "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "basefee", "return_type": "uint256", "enabled": { "From": { "from": "0.8.7" } } }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "difficulty", "return_type": "uint256", "enabled": { "Till": { "till": "0.8.18" } } }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "prevrandao", "return_type": "uint256", "enabled": { "From": { "from": "0.8.18" } } }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": { "name": "blobbasefee", "return_type": "uint256", "enabled": { "From": { "from": "0.8.24" } } }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "blobhash",
+              "parameters": ["uint256 i"],
+              "return_type": "uint256",
+              "enabled": { "From": { "from": "0.8.24" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "tload",
+              "parameters": ["uint256 p"],
+              "return_type": "uint256",
+              "enabled": { "From": { "from": "0.8.24" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "tstore",
+              "parameters": ["uint256 p", "uint256 v"],
+              "enabled": { "From": { "from": "0.8.24" } }
+            }
+          }
+        },
+        {
+          "BuiltInFunction": {
+            "item": {
+              "name": "mcopy",
+              "parameters": ["uint256 t", "uint256 f", "uint256 s"],
+              "enabled": { "From": { "from": "0.8.24" } }
+            }
+          }
         }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "Panic",
-          "fields": [{ "definition": "uint errorCode" }],
-          "enabled": { "From": { "from": "0.6.0" } }
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$StringType",
-          "functions": [
-            { "name": "concat", "parameters": ["string[] stringsToConcatenate"], "return_type": "string memory" }
-          ]
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$TransactionType",
-          "fields": [
-            { "definition": "uint gasprice" },
-            { "definition": "address payable origin", "enabled": { "Till": { "till": "0.8.0" } } },
-            { "definition": "address origin", "enabled": { "From": { "from": "0.8.0" } } }
-          ]
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$ContractTypeType",
-          "fields": [
-            { "definition": "string name" },
-            { "definition": "bytes creationCode", "enabled": { "From": { "from": "0.5.3" } } },
-            { "definition": "bytes runtimeCode", "enabled": { "From": { "from": "0.5.3" } } },
-            { "definition": "bytes4 interfaceId", "enabled": { "From": { "from": "0.6.7" } } }
-          ]
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$InterfaceTypeType",
-          "fields": [
-            { "definition": "string name" },
-            { "definition": "bytes4 interfaceId", "enabled": { "From": { "from": "0.6.7" } } }
-          ]
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$IntTypeType",
-          "fields": [
-            { "definition": "int min", "enabled": { "From": { "from": "0.6.8" } } },
-            { "definition": "int max", "enabled": { "From": { "from": "0.6.8" } } }
-          ]
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$UserDefinedValueType",
-          "functions": [
-            { "name": "wrap", "parameters": ["$WrappedType elementaryType"], "return_type": "$UserType" },
-            { "name": "unwrap", "parameters": ["$UserType userType"], "return_type": "$WrappedType" }
-          ],
-          "enabled": { "From": { "from": "0.8.8" } }
-        }
-      }
-    },
-    {
-      "BuiltInType": {
-        "item": {
-          "name": "$YulExternal",
-          "fields": [{ "definition": "uint slot" }, { "definition": "uint offset" }, { "definition": "uint length" }]
-        }
-      }
-    },
-    { "BuiltInVariable": { "item": { "definition": "$Function $placeholder" } } },
-    { "BuiltInVariable": { "item": { "definition": "$AbiType abi" } } },
-    { "BuiltInVariable": { "item": { "definition": "$BlockType block" } } },
-    { "BuiltInVariable": { "item": { "definition": "$BytesType $bytes" } } },
-    { "BuiltInVariable": { "item": { "definition": "$MessageType msg" } } },
-    { "BuiltInVariable": { "item": { "definition": "uint now", "enabled": { "Till": { "till": "0.7.0" } } } } },
-    { "BuiltInVariable": { "item": { "definition": "$StringType $string" } } },
-    { "BuiltInVariable": { "item": { "definition": "$TransactionType tx" } } }
+      ]
+    }
   ]
 }

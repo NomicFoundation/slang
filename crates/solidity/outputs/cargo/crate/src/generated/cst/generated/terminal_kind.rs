@@ -872,24 +872,6 @@ pub enum TerminalKind {
     YearsKeyword,
     /// ```ebnf
     /// (* Reserved until 0.7.1 *)
-    /// YUL_ABSTRACT_KEYWORD = "abstract";
-    /// ```
-    YulAbstractKeyword,
-    /// ```ebnf
-    /// YUL_ADD_KEYWORD = "add";
-    /// ```
-    YulAddKeyword,
-    /// ```ebnf
-    /// YUL_ADD_MOD_KEYWORD = "addmod";
-    /// ```
-    YulAddModKeyword,
-    /// ```ebnf
-    /// (* Never reserved *)
-    /// YUL_ADDRESS_KEYWORD = "address";
-    /// ```
-    YulAddressKeyword,
-    /// ```ebnf
-    /// (* Reserved until 0.7.1 *)
     /// YUL_AFTER_KEYWORD = "after";
     /// ```
     YulAfterKeyword,
@@ -898,10 +880,6 @@ pub enum TerminalKind {
     /// YUL_ALIAS_KEYWORD = "alias";
     /// ```
     YulAliasKeyword,
-    /// ```ebnf
-    /// YUL_AND_KEYWORD = "and";
-    /// ```
-    YulAndKeyword,
     /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_ANONYMOUS_KEYWORD = "anonymous";
@@ -928,32 +906,6 @@ pub enum TerminalKind {
     /// ```
     YulAutoKeyword,
     /// ```ebnf
-    /// YUL_BALANCE_KEYWORD = "balance";
-    /// ```
-    YulBalanceKeyword,
-    /// ```ebnf
-    /// (* Introduced in 0.8.7 *)
-    /// (* Reserved in 0.8.7 *)
-    /// YUL_BASE_FEE_KEYWORD = "basefee";
-    /// ```
-    YulBaseFeeKeyword,
-    /// ```ebnf
-    /// (* Introduced in 0.8.24 *)
-    /// (* Reserved in 0.8.25 *)
-    /// YUL_BLOB_BASE_FEE_KEYWORD = "blobbasefee";
-    /// ```
-    YulBlobBaseFeeKeyword,
-    /// ```ebnf
-    /// (* Introduced in 0.8.24 *)
-    /// (* Reserved in 0.8.25 *)
-    /// YUL_BLOB_HASH_KEYWORD = "blobhash";
-    /// ```
-    YulBlobHashKeyword,
-    /// ```ebnf
-    /// YUL_BLOCK_HASH_KEYWORD = "blockhash";
-    /// ```
-    YulBlockHashKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.5.10 *)
     /// YUL_BOOL_KEYWORD = "bool";
     /// ```
@@ -963,47 +915,15 @@ pub enum TerminalKind {
     /// ```
     YulBreakKeyword,
     /// ```ebnf
-    /// YUL_BYTE_KEYWORD = "byte";
-    /// ```
-    YulByteKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_BYTES_KEYWORD = "bytes" ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32")?;
     /// ```
     YulBytesKeyword,
     /// ```ebnf
-    /// YUL_CALL_CODE_KEYWORD = "callcode";
-    /// ```
-    YulCallCodeKeyword,
-    /// ```ebnf
-    /// YUL_CALL_DATA_COPY_KEYWORD = "calldatacopy";
-    /// ```
-    YulCallDataCopyKeyword,
-    /// ```ebnf
     /// (* Reserved from 0.5.0 until 0.7.1 *)
     /// YUL_CALL_DATA_KEYWORD = "calldata";
     /// ```
     YulCallDataKeyword,
-    /// ```ebnf
-    /// YUL_CALL_DATA_LOAD_KEYWORD = "calldataload";
-    /// ```
-    YulCallDataLoadKeyword,
-    /// ```ebnf
-    /// YUL_CALL_DATA_SIZE_KEYWORD = "calldatasize";
-    /// ```
-    YulCallDataSizeKeyword,
-    /// ```ebnf
-    /// YUL_CALL_KEYWORD = "call";
-    /// ```
-    YulCallKeyword,
-    /// ```ebnf
-    /// YUL_CALL_VALUE_KEYWORD = "callvalue";
-    /// ```
-    YulCallValueKeyword,
-    /// ```ebnf
-    /// YUL_CALLER_KEYWORD = "caller";
-    /// ```
-    YulCallerKeyword,
     /// ```ebnf
     /// YUL_CASE_KEYWORD = "case";
     /// ```
@@ -1013,15 +933,6 @@ pub enum TerminalKind {
     /// YUL_CATCH_KEYWORD = "catch";
     /// ```
     YulCatchKeyword,
-    /// ```ebnf
-    /// (* Reserved in 0.5.12 *)
-    /// YUL_CHAIN_ID_KEYWORD = "chainid";
-    /// ```
-    YulChainIdKeyword,
-    /// ```ebnf
-    /// YUL_COIN_BASE_KEYWORD = "coinbase";
-    /// ```
-    YulCoinBaseKeyword,
     /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_CONSTANT_KEYWORD = "constant";
@@ -1047,16 +958,6 @@ pub enum TerminalKind {
     /// ```
     YulCopyOfKeyword,
     /// ```ebnf
-    /// (* Introduced in 0.4.12 *)
-    /// (* Reserved in 0.4.12 *)
-    /// YUL_CREATE_2_KEYWORD = "create2";
-    /// ```
-    YulCreate2Keyword,
-    /// ```ebnf
-    /// YUL_CREATE_KEYWORD = "create";
-    /// ```
-    YulCreateKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_DAYS_KEYWORD = "days";
     /// ```
@@ -1075,23 +976,10 @@ pub enum TerminalKind {
     /// ```
     YulDefineKeyword,
     /// ```ebnf
-    /// YUL_DELEGATE_CALL_KEYWORD = "delegatecall";
-    /// ```
-    YulDelegateCallKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_DELETE_KEYWORD = "delete";
     /// ```
     YulDeleteKeyword,
-    /// ```ebnf
-    /// (* Deprecated in 0.8.18 *)
-    /// YUL_DIFFICULTY_KEYWORD = "difficulty";
-    /// ```
-    YulDifficultyKeyword,
-    /// ```ebnf
-    /// YUL_DIV_KEYWORD = "div";
-    /// ```
-    YulDivKeyword,
     /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_DO_KEYWORD = "do";
@@ -1113,10 +1001,6 @@ pub enum TerminalKind {
     /// ```
     YulEnumKeyword,
     /// ```ebnf
-    /// YUL_EQ_KEYWORD = "eq";
-    /// ```
-    YulEqKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_ETHER_KEYWORD = "ether";
     /// ```
@@ -1126,24 +1010,6 @@ pub enum TerminalKind {
     /// YUL_EVENT_KEYWORD = "event";
     /// ```
     YulEventKeyword,
-    /// ```ebnf
-    /// YUL_EXP_KEYWORD = "exp";
-    /// ```
-    YulExpKeyword,
-    /// ```ebnf
-    /// YUL_EXT_CODE_COPY_KEYWORD = "extcodecopy";
-    /// ```
-    YulExtCodeCopyKeyword,
-    /// ```ebnf
-    /// (* Introduced in 0.5.0 *)
-    /// (* Reserved in 0.5.0 *)
-    /// YUL_EXT_CODE_HASH_KEYWORD = "extcodehash";
-    /// ```
-    YulExtCodeHashKeyword,
-    /// ```ebnf
-    /// YUL_EXT_CODE_SIZE_KEYWORD = "extcodesize";
-    /// ```
-    YulExtCodeSizeKeyword,
     /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_EXTERNAL_KEYWORD = "external";
@@ -1193,22 +1059,6 @@ pub enum TerminalKind {
     /// YUL_FUNCTION_KEYWORD = "function";
     /// ```
     YulFunctionKeyword,
-    /// ```ebnf
-    /// YUL_GAS_KEYWORD = "gas";
-    /// ```
-    YulGasKeyword,
-    /// ```ebnf
-    /// YUL_GAS_LIMIT_KEYWORD = "gaslimit";
-    /// ```
-    YulGasLimitKeyword,
-    /// ```ebnf
-    /// YUL_GAS_PRICE_KEYWORD = "gasprice";
-    /// ```
-    YulGasPriceKeyword,
-    /// ```ebnf
-    /// YUL_GT_KEYWORD = "gt";
-    /// ```
-    YulGtKeyword,
     /// ```ebnf
     /// (* Reserved from 0.7.0 until 0.7.1 *)
     /// YUL_GWEI_KEYWORD = "gwei";
@@ -1284,18 +1134,10 @@ pub enum TerminalKind {
     /// ```
     YulInternalKeyword,
     /// ```ebnf
-    /// YUL_INVALID_KEYWORD = "invalid";
-    /// ```
-    YulInvalidKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_IS_KEYWORD = "is";
     /// ```
     YulIsKeyword,
-    /// ```ebnf
-    /// YUL_IS_ZERO_KEYWORD = "iszero";
-    /// ```
-    YulIsZeroKeyword,
     /// ```ebnf
     /// (* Deprecated in 0.5.0 *)
     /// YUL_JUMP_KEYWORD = "jump";
@@ -1306,12 +1148,6 @@ pub enum TerminalKind {
     /// YUL_JUMPI_KEYWORD = "jumpi";
     /// ```
     YulJumpiKeyword,
-    /// ```ebnf
-    /// (* Introduced in 0.4.12 *)
-    /// (* Reserved in 0.4.12 *)
-    /// YUL_KECCAK_256_KEYWORD = "keccak256";
-    /// ```
-    YulKeccak256Keyword,
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// (* Reserved in 0.7.1 *)
@@ -1327,52 +1163,6 @@ pub enum TerminalKind {
     /// YUL_LIBRARY_KEYWORD = "library";
     /// ```
     YulLibraryKeyword,
-    /// ```ebnf
-    /// YUL_LOG_0_KEYWORD = "log0";
-    /// ```
-    YulLog0Keyword,
-    /// ```ebnf
-    /// YUL_LOG_1_KEYWORD = "log1";
-    /// ```
-    YulLog1Keyword,
-    /// ```ebnf
-    /// YUL_LOG_2_KEYWORD = "log2";
-    /// ```
-    YulLog2Keyword,
-    /// ```ebnf
-    /// YUL_LOG_3_KEYWORD = "log3";
-    /// ```
-    YulLog3Keyword,
-    /// ```ebnf
-    /// YUL_LOG_4_KEYWORD = "log4";
-    /// ```
-    YulLog4Keyword,
-    /// ```ebnf
-    /// YUL_LT_KEYWORD = "lt";
-    /// ```
-    YulLtKeyword,
-    /// ```ebnf
-    /// (* Introduced in 0.8.24 *)
-    /// (* Reserved in 0.8.25 *)
-    /// YUL_M_COPY_KEYWORD = "mcopy";
-    /// ```
-    YulMCopyKeyword,
-    /// ```ebnf
-    /// YUL_M_LOAD_KEYWORD = "mload";
-    /// ```
-    YulMLoadKeyword,
-    /// ```ebnf
-    /// YUL_M_SIZE_KEYWORD = "msize";
-    /// ```
-    YulMSizeKeyword,
-    /// ```ebnf
-    /// YUL_M_STORE_8_KEYWORD = "mstore8";
-    /// ```
-    YulMStore8Keyword,
-    /// ```ebnf
-    /// YUL_M_STORE_KEYWORD = "mstore";
-    /// ```
-    YulMStoreKeyword,
     /// ```ebnf
     /// (* Reserved from 0.5.0 until 0.7.1 *)
     /// YUL_MACRO_KEYWORD = "macro";
@@ -1399,22 +1189,10 @@ pub enum TerminalKind {
     /// ```
     YulMinutesKeyword,
     /// ```ebnf
-    /// YUL_MOD_KEYWORD = "mod";
-    /// ```
-    YulModKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_MODIFIER_KEYWORD = "modifier";
     /// ```
     YulModifierKeyword,
-    /// ```ebnf
-    /// YUL_MUL_KEYWORD = "mul";
-    /// ```
-    YulMulKeyword,
-    /// ```ebnf
-    /// YUL_MUL_MOD_KEYWORD = "mulmod";
-    /// ```
-    YulMulModKeyword,
     /// ```ebnf
     /// (* Reserved from 0.5.0 until 0.7.1 *)
     /// YUL_MUTABLE_KEYWORD = "mutable";
@@ -1426,31 +1204,15 @@ pub enum TerminalKind {
     /// ```
     YulNewKeyword,
     /// ```ebnf
-    /// YUL_NOT_KEYWORD = "not";
-    /// ```
-    YulNotKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_NULL_KEYWORD = "null";
     /// ```
     YulNullKeyword,
     /// ```ebnf
-    /// YUL_NUMBER_KEYWORD = "number";
-    /// ```
-    YulNumberKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_OF_KEYWORD = "of";
     /// ```
     YulOfKeyword,
-    /// ```ebnf
-    /// YUL_OR_KEYWORD = "or";
-    /// ```
-    YulOrKeyword,
-    /// ```ebnf
-    /// YUL_ORIGIN_KEYWORD = "origin";
-    /// ```
-    YulOriginKeyword,
     /// ```ebnf
     /// (* Reserved from 0.5.0 until 0.7.1 *)
     /// YUL_OVERRIDE_KEYWORD = "override";
@@ -1467,20 +1229,10 @@ pub enum TerminalKind {
     /// ```
     YulPayableKeyword,
     /// ```ebnf
-    /// YUL_POP_KEYWORD = "pop";
-    /// ```
-    YulPopKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_PRAGMA_KEYWORD = "pragma";
     /// ```
     YulPragmaKeyword,
-    /// ```ebnf
-    /// (* Introduced in 0.8.18 *)
-    /// (* Reserved in 0.8.18 *)
-    /// YUL_PREV_RANDAO_KEYWORD = "prevrandao";
-    /// ```
-    YulPrevRandaoKeyword,
     /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_PRIVATE_KEYWORD = "private";
@@ -1517,51 +1269,10 @@ pub enum TerminalKind {
     /// ```
     YulRelocatableKeyword,
     /// ```ebnf
-    /// (* Introduced in 0.4.12 *)
-    /// (* Reserved in 0.4.12 *)
-    /// YUL_RETURN_DATA_COPY_KEYWORD = "returndatacopy";
-    /// ```
-    YulReturnDataCopyKeyword,
-    /// ```ebnf
-    /// (* Introduced in 0.4.12 *)
-    /// (* Reserved in 0.4.12 *)
-    /// YUL_RETURN_DATA_SIZE_KEYWORD = "returndatasize";
-    /// ```
-    YulReturnDataSizeKeyword,
-    /// ```ebnf
-    /// YUL_RETURN_KEYWORD = "return";
-    /// ```
-    YulReturnKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_RETURNS_KEYWORD = "returns";
     /// ```
     YulReturnsKeyword,
-    /// ```ebnf
-    /// YUL_REVERT_KEYWORD = "revert";
-    /// ```
-    YulRevertKeyword,
-    /// ```ebnf
-    /// YUL_S_DIV_KEYWORD = "sdiv";
-    /// ```
-    YulSDivKeyword,
-    /// ```ebnf
-    /// YUL_S_LOAD_KEYWORD = "sload";
-    /// ```
-    YulSLoadKeyword,
-    /// ```ebnf
-    /// YUL_S_MOD_KEYWORD = "smod";
-    /// ```
-    YulSModKeyword,
-    /// ```ebnf
-    /// YUL_S_STORE_KEYWORD = "sstore";
-    /// ```
-    YulSStoreKeyword,
-    /// ```ebnf
-    /// (* Reserved in 0.4.21 *)
-    /// YUL_SAR_KEYWORD = "sar";
-    /// ```
-    YulSarKeyword,
     /// ```ebnf
     /// (* Reserved from 0.5.0 until 0.7.1 *)
     /// YUL_SEALED_KEYWORD = "sealed";
@@ -1573,62 +1284,15 @@ pub enum TerminalKind {
     /// ```
     YulSecondsKeyword,
     /// ```ebnf
-    /// (* Reserved in 0.5.12 *)
-    /// YUL_SELF_BALANCE_KEYWORD = "selfbalance";
-    /// ```
-    YulSelfBalanceKeyword,
-    /// ```ebnf
-    /// YUL_SELF_DESTRUCT_KEYWORD = "selfdestruct";
-    /// ```
-    YulSelfDestructKeyword,
-    /// ```ebnf
-    /// YUL_SGT_KEYWORD = "sgt";
-    /// ```
-    YulSgtKeyword,
-    /// ```ebnf
-    /// (* Deprecated in 0.5.0 *)
-    /// (* Reserved until 0.5.0 *)
-    /// YUL_SHA_3_KEYWORD = "sha3";
-    /// ```
-    YulSha3Keyword,
-    /// ```ebnf
-    /// (* Reserved in 0.4.21 *)
-    /// YUL_SHL_KEYWORD = "shl";
-    /// ```
-    YulShlKeyword,
-    /// ```ebnf
-    /// (* Reserved in 0.4.21 *)
-    /// YUL_SHR_KEYWORD = "shr";
-    /// ```
-    YulShrKeyword,
-    /// ```ebnf
-    /// YUL_SIGN_EXTEND_KEYWORD = "signextend";
-    /// ```
-    YulSignExtendKeyword,
-    /// ```ebnf
     /// (* Reserved from 0.5.0 until 0.7.1 *)
     /// YUL_SIZE_OF_KEYWORD = "sizeof";
     /// ```
     YulSizeOfKeyword,
     /// ```ebnf
-    /// YUL_SLT_KEYWORD = "slt";
-    /// ```
-    YulSltKeyword,
-    /// ```ebnf
-    /// (* Introduced in 0.4.12 *)
-    /// (* Reserved in 0.4.12 *)
-    /// YUL_STATIC_CALL_KEYWORD = "staticcall";
-    /// ```
-    YulStaticCallKeyword,
-    /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_STATIC_KEYWORD = "static";
     /// ```
     YulStaticKeyword,
-    /// ```ebnf
-    /// YUL_STOP_KEYWORD = "stop";
-    /// ```
-    YulStopKeyword,
     /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_STORAGE_KEYWORD = "storage";
@@ -1644,16 +1308,6 @@ pub enum TerminalKind {
     /// YUL_STRUCT_KEYWORD = "struct";
     /// ```
     YulStructKeyword,
-    /// ```ebnf
-    /// YUL_SUB_KEYWORD = "sub";
-    /// ```
-    YulSubKeyword,
-    /// ```ebnf
-    /// (* Deprecated in 0.5.0 *)
-    /// (* Reserved until 0.5.0 *)
-    /// YUL_SUICIDE_KEYWORD = "suicide";
-    /// ```
-    YulSuicideKeyword,
     /// ```ebnf
     /// YUL_SUPER_KEYWORD = "super";
     /// ```
@@ -1673,18 +1327,6 @@ pub enum TerminalKind {
     /// ```
     YulSzaboKeyword,
     /// ```ebnf
-    /// (* Introduced in 0.8.24 *)
-    /// (* Reserved in 0.8.25 *)
-    /// YUL_T_LOAD_KEYWORD = "tload";
-    /// ```
-    YulTLoadKeyword,
-    /// ```ebnf
-    /// (* Introduced in 0.8.24 *)
-    /// (* Reserved in 0.8.25 *)
-    /// YUL_T_STORE_KEYWORD = "tstore";
-    /// ```
-    YulTStoreKeyword,
-    /// ```ebnf
     /// YUL_THIS_KEYWORD = "this";
     /// ```
     YulThisKeyword,
@@ -1693,10 +1335,6 @@ pub enum TerminalKind {
     /// YUL_THROW_KEYWORD = "throw";
     /// ```
     YulThrowKeyword,
-    /// ```ebnf
-    /// YUL_TIMESTAMP_KEYWORD = "timestamp";
-    /// ```
-    YulTimestampKeyword,
     /// ```ebnf
     /// YUL_TRUE_KEYWORD = "true";
     /// ```
@@ -1783,10 +1421,6 @@ pub enum TerminalKind {
     /// YUL_WHILE_KEYWORD = "while";
     /// ```
     YulWhileKeyword,
-    /// ```ebnf
-    /// YUL_XOR_KEYWORD = "xor";
-    /// ```
-    YulXorKeyword,
     /// ```ebnf
     /// (* Reserved until 0.7.1 *)
     /// YUL_YEARS_KEYWORD = "years";

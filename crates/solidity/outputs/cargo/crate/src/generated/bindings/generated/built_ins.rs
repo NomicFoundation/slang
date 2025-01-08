@@ -5,8 +5,10 @@ use semver::Version;
 // TODO: This should be moved to the Solidity-specific 'extensions' sub-module.
 #[allow(unused_variables)]
 pub fn get_built_ins_contents(version: &Version) -> &'static str {
-    if *version < Version::new(0, 4, 17) {
+    if *version < Version::new(0, 4, 12) {
         include_str!("./built_ins/0.4.11.sol")
+    } else if *version < Version::new(0, 4, 17) {
+        include_str!("./built_ins/0.4.12.sol")
     } else if *version < Version::new(0, 4, 22) {
         include_str!("./built_ins/0.4.17.sol")
     } else if *version < Version::new(0, 5, 0) {

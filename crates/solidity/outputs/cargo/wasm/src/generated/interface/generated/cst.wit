@@ -1771,89 +1771,8 @@ interface cst {
                 /// This kind represents a `YulBuiltInFunction` node, with the following structure: 
                 ///
                 /// ```ebnf
-                /// YulBuiltInFunction = (* variant: *) YUL_ADD_KEYWORD
-                ///                    | (* variant: *) YUL_ADD_MOD_KEYWORD
-                ///                    | (* variant: *) YUL_ADDRESS_KEYWORD
-                ///                    | (* variant: *) YUL_AND_KEYWORD
-                ///                    | (* variant: *) YUL_BALANCE_KEYWORD
-                ///                    | (* variant: *) YUL_BLOCK_HASH_KEYWORD
-                ///                    | (* variant: *) YUL_BYTE_KEYWORD
-                ///                    | (* variant: *) YUL_CALL_CODE_KEYWORD
-                ///                    | (* variant: *) YUL_CALL_DATA_COPY_KEYWORD
-                ///                    | (* variant: *) YUL_CALL_DATA_LOAD_KEYWORD
-                ///                    | (* variant: *) YUL_CALL_DATA_SIZE_KEYWORD
-                ///                    | (* variant: *) YUL_CALLER_KEYWORD
-                ///                    | (* variant: *) YUL_CALL_KEYWORD
-                ///                    | (* variant: *) YUL_CALL_VALUE_KEYWORD
-                ///                    | (* variant: *) YUL_COIN_BASE_KEYWORD
-                ///                    | (* variant: *) YUL_CREATE_KEYWORD
-                ///                    | (* variant: *) YUL_DELEGATE_CALL_KEYWORD
-                ///                    | (* variant: *) YUL_DIV_KEYWORD
-                ///                    | (* variant: *) YUL_EQ_KEYWORD
-                ///                    | (* variant: *) YUL_EXP_KEYWORD
-                ///                    | (* variant: *) YUL_EXT_CODE_COPY_KEYWORD
-                ///                    | (* variant: *) YUL_EXT_CODE_SIZE_KEYWORD
-                ///                    | (* variant: *) YUL_GAS_KEYWORD
-                ///                    | (* variant: *) YUL_GAS_LIMIT_KEYWORD
-                ///                    | (* variant: *) YUL_GAS_PRICE_KEYWORD
-                ///                    | (* variant: *) YUL_GT_KEYWORD
-                ///                    | (* variant: *) YUL_INVALID_KEYWORD
-                ///                    | (* variant: *) YUL_IS_ZERO_KEYWORD
-                ///                    | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
-                ///                    | (* variant: *) YUL_JUMPI_KEYWORD (* Deprecated in 0.5.0 *)
-                ///                    | (* variant: *) YUL_LOG_0_KEYWORD
-                ///                    | (* variant: *) YUL_LOG_1_KEYWORD
-                ///                    | (* variant: *) YUL_LOG_2_KEYWORD
-                ///                    | (* variant: *) YUL_LOG_3_KEYWORD
-                ///                    | (* variant: *) YUL_LOG_4_KEYWORD
-                ///                    | (* variant: *) YUL_LT_KEYWORD
-                ///                    | (* variant: *) YUL_M_LOAD_KEYWORD
-                ///                    | (* variant: *) YUL_MOD_KEYWORD
-                ///                    | (* variant: *) YUL_M_SIZE_KEYWORD
-                ///                    | (* variant: *) YUL_M_STORE_8_KEYWORD
-                ///                    | (* variant: *) YUL_M_STORE_KEYWORD
-                ///                    | (* variant: *) YUL_MUL_KEYWORD
-                ///                    | (* variant: *) YUL_MUL_MOD_KEYWORD
-                ///                    | (* variant: *) YUL_NOT_KEYWORD
-                ///                    | (* variant: *) YUL_NUMBER_KEYWORD
-                ///                    | (* variant: *) YUL_ORIGIN_KEYWORD
-                ///                    | (* variant: *) YUL_OR_KEYWORD
-                ///                    | (* variant: *) YUL_POP_KEYWORD
-                ///                    | (* variant: *) YUL_RETURN_KEYWORD
-                ///                    | (* variant: *) YUL_REVERT_KEYWORD
-                ///                    | (* variant: *) YUL_S_DIV_KEYWORD
-                ///                    | (* variant: *) YUL_SELF_DESTRUCT_KEYWORD
-                ///                    | (* variant: *) YUL_SGT_KEYWORD
-                ///                    | (* variant: *) YUL_SIGN_EXTEND_KEYWORD
-                ///                    | (* variant: *) YUL_S_LOAD_KEYWORD
-                ///                    | (* variant: *) YUL_SLT_KEYWORD
-                ///                    | (* variant: *) YUL_S_MOD_KEYWORD
-                ///                    | (* variant: *) YUL_S_STORE_KEYWORD
-                ///                    | (* variant: *) YUL_STOP_KEYWORD
-                ///                    | (* variant: *) YUL_SUB_KEYWORD
-                ///                    | (* variant: *) YUL_TIMESTAMP_KEYWORD
-                ///                    | (* variant: *) YUL_XOR_KEYWORD
-                ///                    | (* variant: *) YUL_KECCAK_256_KEYWORD (* Introduced in 0.4.12 *)
-                ///                    | (* variant: *) YUL_SHA_3_KEYWORD (* Deprecated in 0.5.0 *)
-                ///                    | (* variant: *) YUL_SUICIDE_KEYWORD (* Deprecated in 0.5.0 *)
-                ///                    | (* variant: *) YUL_RETURN_DATA_COPY_KEYWORD (* Introduced in 0.4.12 *)
-                ///                    | (* variant: *) YUL_RETURN_DATA_SIZE_KEYWORD (* Introduced in 0.4.12 *)
-                ///                    | (* variant: *) YUL_STATIC_CALL_KEYWORD (* Introduced in 0.4.12 *)
-                ///                    | (* variant: *) YUL_CREATE_2_KEYWORD (* Introduced in 0.4.12 *)
-                ///                    | (* variant: *) YUL_EXT_CODE_HASH_KEYWORD (* Introduced in 0.5.0 *)
-                ///                    | (* variant: *) YUL_SAR_KEYWORD
-                ///                    | (* variant: *) YUL_SHL_KEYWORD
-                ///                    | (* variant: *) YUL_SHR_KEYWORD
-                ///                    | (* variant: *) YUL_CHAIN_ID_KEYWORD
-                ///                    | (* variant: *) YUL_SELF_BALANCE_KEYWORD
-                ///                    | (* variant: *) YUL_BASE_FEE_KEYWORD (* Introduced in 0.8.7 *)
-                ///                    | (* variant: *) YUL_DIFFICULTY_KEYWORD (* Deprecated in 0.8.18 *)
-                ///                    | (* variant: *) YUL_PREV_RANDAO_KEYWORD (* Introduced in 0.8.18 *)
-                ///                    | (* variant: *) YUL_BLOB_BASE_FEE_KEYWORD (* Introduced in 0.8.24 *)
-                ///                    | (* variant: *) YUL_BLOB_HASH_KEYWORD (* Introduced in 0.8.24 *)
-                ///                    | (* variant: *) YUL_T_LOAD_KEYWORD (* Introduced in 0.8.24 *)
-                ///                    | (* variant: *) YUL_T_STORE_KEYWORD (* Introduced in 0.8.24 *)
-                ///                    | (* variant: *) YUL_M_COPY_KEYWORD; (* Introduced in 0.8.24 *)
+                /// YulBuiltInFunction = (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
+                ///                    | (* variant: *) YUL_JUMPI_KEYWORD; (* Deprecated in 0.5.0 *)
                 /// ```
                 %yul-built-in-function,
                 /// This kind represents a `YulColonAndEqual` node, with the following structure: 
@@ -3313,32 +3232,6 @@ interface cst {
                 /// YEARS_KEYWORD = "years";
                 /// ```
                 %years-keyword,
-                /// This kind represents a `YulAbstractKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Reserved until 0.7.1 *)
-                /// YUL_ABSTRACT_KEYWORD = "abstract";
-                /// ```
-                %yul-abstract-keyword,
-                /// This kind represents a `YulAddKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_ADD_KEYWORD = "add";
-                /// ```
-                %yul-add-keyword,
-                /// This kind represents a `YulAddModKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_ADD_MOD_KEYWORD = "addmod";
-                /// ```
-                %yul-add-mod-keyword,
-                /// This kind represents a `YulAddressKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Never reserved *)
-                /// YUL_ADDRESS_KEYWORD = "address";
-                /// ```
-                %yul-address-keyword,
                 /// This kind represents a `YulAfterKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3353,12 +3246,6 @@ interface cst {
                 /// YUL_ALIAS_KEYWORD = "alias";
                 /// ```
                 %yul-alias-keyword,
-                /// This kind represents a `YulAndKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_AND_KEYWORD = "and";
-                /// ```
-                %yul-and-keyword,
                 /// This kind represents a `YulAnonymousKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3394,42 +3281,6 @@ interface cst {
                 /// YUL_AUTO_KEYWORD = "auto";
                 /// ```
                 %yul-auto-keyword,
-                /// This kind represents a `YulBalanceKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_BALANCE_KEYWORD = "balance";
-                /// ```
-                %yul-balance-keyword,
-                /// This kind represents a `YulBaseFeeKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.8.7 *)
-                /// (* Reserved in 0.8.7 *)
-                /// YUL_BASE_FEE_KEYWORD = "basefee";
-                /// ```
-                %yul-base-fee-keyword,
-                /// This kind represents a `YulBlobBaseFeeKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.8.24 *)
-                /// (* Reserved in 0.8.25 *)
-                /// YUL_BLOB_BASE_FEE_KEYWORD = "blobbasefee";
-                /// ```
-                %yul-blob-base-fee-keyword,
-                /// This kind represents a `YulBlobHashKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.8.24 *)
-                /// (* Reserved in 0.8.25 *)
-                /// YUL_BLOB_HASH_KEYWORD = "blobhash";
-                /// ```
-                %yul-blob-hash-keyword,
-                /// This kind represents a `YulBlockHashKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_BLOCK_HASH_KEYWORD = "blockhash";
-                /// ```
-                %yul-block-hash-keyword,
                 /// This kind represents a `YulBoolKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3443,12 +3294,6 @@ interface cst {
                 /// YUL_BREAK_KEYWORD = "break";
                 /// ```
                 %yul-break-keyword,
-                /// This kind represents a `YulByteKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_BYTE_KEYWORD = "byte";
-                /// ```
-                %yul-byte-keyword,
                 /// This kind represents a `YulBytesKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3456,18 +3301,6 @@ interface cst {
                 /// YUL_BYTES_KEYWORD = "bytes" ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32")?;
                 /// ```
                 %yul-bytes-keyword,
-                /// This kind represents a `YulCallCodeKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_CALL_CODE_KEYWORD = "callcode";
-                /// ```
-                %yul-call-code-keyword,
-                /// This kind represents a `YulCallDataCopyKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_CALL_DATA_COPY_KEYWORD = "calldatacopy";
-                /// ```
-                %yul-call-data-copy-keyword,
                 /// This kind represents a `YulCallDataKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3475,36 +3308,6 @@ interface cst {
                 /// YUL_CALL_DATA_KEYWORD = "calldata";
                 /// ```
                 %yul-call-data-keyword,
-                /// This kind represents a `YulCallDataLoadKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_CALL_DATA_LOAD_KEYWORD = "calldataload";
-                /// ```
-                %yul-call-data-load-keyword,
-                /// This kind represents a `YulCallDataSizeKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_CALL_DATA_SIZE_KEYWORD = "calldatasize";
-                /// ```
-                %yul-call-data-size-keyword,
-                /// This kind represents a `YulCallKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_CALL_KEYWORD = "call";
-                /// ```
-                %yul-call-keyword,
-                /// This kind represents a `YulCallValueKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_CALL_VALUE_KEYWORD = "callvalue";
-                /// ```
-                %yul-call-value-keyword,
-                /// This kind represents a `YulCallerKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_CALLER_KEYWORD = "caller";
-                /// ```
-                %yul-caller-keyword,
                 /// This kind represents a `YulCaseKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3518,19 +3321,6 @@ interface cst {
                 /// YUL_CATCH_KEYWORD = "catch";
                 /// ```
                 %yul-catch-keyword,
-                /// This kind represents a `YulChainIdKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Reserved in 0.5.12 *)
-                /// YUL_CHAIN_ID_KEYWORD = "chainid";
-                /// ```
-                %yul-chain-id-keyword,
-                /// This kind represents a `YulCoinBaseKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_COIN_BASE_KEYWORD = "coinbase";
-                /// ```
-                %yul-coin-base-keyword,
                 /// This kind represents a `YulConstantKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3565,20 +3355,6 @@ interface cst {
                 /// YUL_COPY_OF_KEYWORD = "copyof";
                 /// ```
                 %yul-copy-of-keyword,
-                /// This kind represents a `YulCreate2Keyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.4.12 *)
-                /// (* Reserved in 0.4.12 *)
-                /// YUL_CREATE_2_KEYWORD = "create2";
-                /// ```
-                %yul-create2-keyword,
-                /// This kind represents a `YulCreateKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_CREATE_KEYWORD = "create";
-                /// ```
-                %yul-create-keyword,
                 /// This kind represents a `YulDaysKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3605,12 +3381,6 @@ interface cst {
                 /// YUL_DEFINE_KEYWORD = "define";
                 /// ```
                 %yul-define-keyword,
-                /// This kind represents a `YulDelegateCallKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_DELEGATE_CALL_KEYWORD = "delegatecall";
-                /// ```
-                %yul-delegate-call-keyword,
                 /// This kind represents a `YulDeleteKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3618,19 +3388,6 @@ interface cst {
                 /// YUL_DELETE_KEYWORD = "delete";
                 /// ```
                 %yul-delete-keyword,
-                /// This kind represents a `YulDifficultyKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Deprecated in 0.8.18 *)
-                /// YUL_DIFFICULTY_KEYWORD = "difficulty";
-                /// ```
-                %yul-difficulty-keyword,
-                /// This kind represents a `YulDivKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_DIV_KEYWORD = "div";
-                /// ```
-                %yul-div-keyword,
                 /// This kind represents a `YulDoKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3659,12 +3416,6 @@ interface cst {
                 /// YUL_ENUM_KEYWORD = "enum";
                 /// ```
                 %yul-enum-keyword,
-                /// This kind represents a `YulEqKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_EQ_KEYWORD = "eq";
-                /// ```
-                %yul-eq-keyword,
                 /// This kind represents a `YulEtherKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3679,32 +3430,6 @@ interface cst {
                 /// YUL_EVENT_KEYWORD = "event";
                 /// ```
                 %yul-event-keyword,
-                /// This kind represents a `YulExpKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_EXP_KEYWORD = "exp";
-                /// ```
-                %yul-exp-keyword,
-                /// This kind represents a `YulExtCodeCopyKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_EXT_CODE_COPY_KEYWORD = "extcodecopy";
-                /// ```
-                %yul-ext-code-copy-keyword,
-                /// This kind represents a `YulExtCodeHashKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.5.0 *)
-                /// (* Reserved in 0.5.0 *)
-                /// YUL_EXT_CODE_HASH_KEYWORD = "extcodehash";
-                /// ```
-                %yul-ext-code-hash-keyword,
-                /// This kind represents a `YulExtCodeSizeKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_EXT_CODE_SIZE_KEYWORD = "extcodesize";
-                /// ```
-                %yul-ext-code-size-keyword,
                 /// This kind represents a `YulExternalKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3770,30 +3495,6 @@ interface cst {
                 /// YUL_FUNCTION_KEYWORD = "function";
                 /// ```
                 %yul-function-keyword,
-                /// This kind represents a `YulGasKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_GAS_KEYWORD = "gas";
-                /// ```
-                %yul-gas-keyword,
-                /// This kind represents a `YulGasLimitKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_GAS_LIMIT_KEYWORD = "gaslimit";
-                /// ```
-                %yul-gas-limit-keyword,
-                /// This kind represents a `YulGasPriceKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_GAS_PRICE_KEYWORD = "gasprice";
-                /// ```
-                %yul-gas-price-keyword,
-                /// This kind represents a `YulGtKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_GT_KEYWORD = "gt";
-                /// ```
-                %yul-gt-keyword,
                 /// This kind represents a `YulGweiKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3898,12 +3599,6 @@ interface cst {
                 /// YUL_INTERNAL_KEYWORD = "internal";
                 /// ```
                 %yul-internal-keyword,
-                /// This kind represents a `YulInvalidKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_INVALID_KEYWORD = "invalid";
-                /// ```
-                %yul-invalid-keyword,
                 /// This kind represents a `YulIsKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3911,12 +3606,6 @@ interface cst {
                 /// YUL_IS_KEYWORD = "is";
                 /// ```
                 %yul-is-keyword,
-                /// This kind represents a `YulIsZeroKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_IS_ZERO_KEYWORD = "iszero";
-                /// ```
-                %yul-is-zero-keyword,
                 /// This kind represents a `YulJumpKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3931,14 +3620,6 @@ interface cst {
                 /// YUL_JUMPI_KEYWORD = "jumpi";
                 /// ```
                 %yul-jumpi-keyword,
-                /// This kind represents a `YulKeccak256Keyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.4.12 *)
-                /// (* Reserved in 0.4.12 *)
-                /// YUL_KECCAK_256_KEYWORD = "keccak256";
-                /// ```
-                %yul-keccak256-keyword,
                 /// This kind represents a `YulLeaveKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -3960,74 +3641,6 @@ interface cst {
                 /// YUL_LIBRARY_KEYWORD = "library";
                 /// ```
                 %yul-library-keyword,
-                /// This kind represents a `YulLog0Keyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_LOG_0_KEYWORD = "log0";
-                /// ```
-                %yul-log0-keyword,
-                /// This kind represents a `YulLog1Keyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_LOG_1_KEYWORD = "log1";
-                /// ```
-                %yul-log1-keyword,
-                /// This kind represents a `YulLog2Keyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_LOG_2_KEYWORD = "log2";
-                /// ```
-                %yul-log2-keyword,
-                /// This kind represents a `YulLog3Keyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_LOG_3_KEYWORD = "log3";
-                /// ```
-                %yul-log3-keyword,
-                /// This kind represents a `YulLog4Keyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_LOG_4_KEYWORD = "log4";
-                /// ```
-                %yul-log4-keyword,
-                /// This kind represents a `YulLtKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_LT_KEYWORD = "lt";
-                /// ```
-                %yul-lt-keyword,
-                /// This kind represents a `YulMCopyKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.8.24 *)
-                /// (* Reserved in 0.8.25 *)
-                /// YUL_M_COPY_KEYWORD = "mcopy";
-                /// ```
-                %yul-mcopy-keyword,
-                /// This kind represents a `YulMLoadKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_M_LOAD_KEYWORD = "mload";
-                /// ```
-                %yul-mload-keyword,
-                /// This kind represents a `YulMSizeKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_M_SIZE_KEYWORD = "msize";
-                /// ```
-                %yul-msize-keyword,
-                /// This kind represents a `YulMStore8Keyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_M_STORE_8_KEYWORD = "mstore8";
-                /// ```
-                %yul-mstore8-keyword,
-                /// This kind represents a `YulMStoreKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_M_STORE_KEYWORD = "mstore";
-                /// ```
-                %yul-mstore-keyword,
                 /// This kind represents a `YulMacroKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4063,12 +3676,6 @@ interface cst {
                 /// YUL_MINUTES_KEYWORD = "minutes";
                 /// ```
                 %yul-minutes-keyword,
-                /// This kind represents a `YulModKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_MOD_KEYWORD = "mod";
-                /// ```
-                %yul-mod-keyword,
                 /// This kind represents a `YulModifierKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4076,18 +3683,6 @@ interface cst {
                 /// YUL_MODIFIER_KEYWORD = "modifier";
                 /// ```
                 %yul-modifier-keyword,
-                /// This kind represents a `YulMulKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_MUL_KEYWORD = "mul";
-                /// ```
-                %yul-mul-keyword,
-                /// This kind represents a `YulMulModKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_MUL_MOD_KEYWORD = "mulmod";
-                /// ```
-                %yul-mul-mod-keyword,
                 /// This kind represents a `YulMutableKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4102,12 +3697,6 @@ interface cst {
                 /// YUL_NEW_KEYWORD = "new";
                 /// ```
                 %yul-new-keyword,
-                /// This kind represents a `YulNotKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_NOT_KEYWORD = "not";
-                /// ```
-                %yul-not-keyword,
                 /// This kind represents a `YulNullKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4115,12 +3704,6 @@ interface cst {
                 /// YUL_NULL_KEYWORD = "null";
                 /// ```
                 %yul-null-keyword,
-                /// This kind represents a `YulNumberKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_NUMBER_KEYWORD = "number";
-                /// ```
-                %yul-number-keyword,
                 /// This kind represents a `YulOfKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4128,18 +3711,6 @@ interface cst {
                 /// YUL_OF_KEYWORD = "of";
                 /// ```
                 %yul-of-keyword,
-                /// This kind represents a `YulOrKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_OR_KEYWORD = "or";
-                /// ```
-                %yul-or-keyword,
-                /// This kind represents a `YulOriginKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_ORIGIN_KEYWORD = "origin";
-                /// ```
-                %yul-origin-keyword,
                 /// This kind represents a `YulOverrideKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4161,12 +3732,6 @@ interface cst {
                 /// YUL_PAYABLE_KEYWORD = "payable";
                 /// ```
                 %yul-payable-keyword,
-                /// This kind represents a `YulPopKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_POP_KEYWORD = "pop";
-                /// ```
-                %yul-pop-keyword,
                 /// This kind represents a `YulPragmaKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4174,14 +3739,6 @@ interface cst {
                 /// YUL_PRAGMA_KEYWORD = "pragma";
                 /// ```
                 %yul-pragma-keyword,
-                /// This kind represents a `YulPrevRandaoKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.8.18 *)
-                /// (* Reserved in 0.8.18 *)
-                /// YUL_PREV_RANDAO_KEYWORD = "prevrandao";
-                /// ```
-                %yul-prev-randao-keyword,
                 /// This kind represents a `YulPrivateKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4231,28 +3788,6 @@ interface cst {
                 /// YUL_RELOCATABLE_KEYWORD = "relocatable";
                 /// ```
                 %yul-relocatable-keyword,
-                /// This kind represents a `YulReturnDataCopyKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.4.12 *)
-                /// (* Reserved in 0.4.12 *)
-                /// YUL_RETURN_DATA_COPY_KEYWORD = "returndatacopy";
-                /// ```
-                %yul-return-data-copy-keyword,
-                /// This kind represents a `YulReturnDataSizeKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.4.12 *)
-                /// (* Reserved in 0.4.12 *)
-                /// YUL_RETURN_DATA_SIZE_KEYWORD = "returndatasize";
-                /// ```
-                %yul-return-data-size-keyword,
-                /// This kind represents a `YulReturnKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_RETURN_KEYWORD = "return";
-                /// ```
-                %yul-return-keyword,
                 /// This kind represents a `YulReturnsKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4260,43 +3795,6 @@ interface cst {
                 /// YUL_RETURNS_KEYWORD = "returns";
                 /// ```
                 %yul-returns-keyword,
-                /// This kind represents a `YulRevertKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_REVERT_KEYWORD = "revert";
-                /// ```
-                %yul-revert-keyword,
-                /// This kind represents a `YulSDivKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_S_DIV_KEYWORD = "sdiv";
-                /// ```
-                %yul-sdiv-keyword,
-                /// This kind represents a `YulSLoadKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_S_LOAD_KEYWORD = "sload";
-                /// ```
-                %yul-sload-keyword,
-                /// This kind represents a `YulSModKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_S_MOD_KEYWORD = "smod";
-                /// ```
-                %yul-smod-keyword,
-                /// This kind represents a `YulSStoreKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_S_STORE_KEYWORD = "sstore";
-                /// ```
-                %yul-sstore-keyword,
-                /// This kind represents a `YulSarKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Reserved in 0.4.21 *)
-                /// YUL_SAR_KEYWORD = "sar";
-                /// ```
-                %yul-sar-keyword,
                 /// This kind represents a `YulSealedKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4311,53 +3809,6 @@ interface cst {
                 /// YUL_SECONDS_KEYWORD = "seconds";
                 /// ```
                 %yul-seconds-keyword,
-                /// This kind represents a `YulSelfBalanceKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Reserved in 0.5.12 *)
-                /// YUL_SELF_BALANCE_KEYWORD = "selfbalance";
-                /// ```
-                %yul-self-balance-keyword,
-                /// This kind represents a `YulSelfDestructKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_SELF_DESTRUCT_KEYWORD = "selfdestruct";
-                /// ```
-                %yul-self-destruct-keyword,
-                /// This kind represents a `YulSgtKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_SGT_KEYWORD = "sgt";
-                /// ```
-                %yul-sgt-keyword,
-                /// This kind represents a `YulSha3Keyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Deprecated in 0.5.0 *)
-                /// (* Reserved until 0.5.0 *)
-                /// YUL_SHA_3_KEYWORD = "sha3";
-                /// ```
-                %yul-sha3-keyword,
-                /// This kind represents a `YulShlKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Reserved in 0.4.21 *)
-                /// YUL_SHL_KEYWORD = "shl";
-                /// ```
-                %yul-shl-keyword,
-                /// This kind represents a `YulShrKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Reserved in 0.4.21 *)
-                /// YUL_SHR_KEYWORD = "shr";
-                /// ```
-                %yul-shr-keyword,
-                /// This kind represents a `YulSignExtendKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_SIGN_EXTEND_KEYWORD = "signextend";
-                /// ```
-                %yul-sign-extend-keyword,
                 /// This kind represents a `YulSizeOfKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4365,20 +3816,6 @@ interface cst {
                 /// YUL_SIZE_OF_KEYWORD = "sizeof";
                 /// ```
                 %yul-size-of-keyword,
-                /// This kind represents a `YulSltKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_SLT_KEYWORD = "slt";
-                /// ```
-                %yul-slt-keyword,
-                /// This kind represents a `YulStaticCallKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.4.12 *)
-                /// (* Reserved in 0.4.12 *)
-                /// YUL_STATIC_CALL_KEYWORD = "staticcall";
-                /// ```
-                %yul-static-call-keyword,
                 /// This kind represents a `YulStaticKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4386,12 +3823,6 @@ interface cst {
                 /// YUL_STATIC_KEYWORD = "static";
                 /// ```
                 %yul-static-keyword,
-                /// This kind represents a `YulStopKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_STOP_KEYWORD = "stop";
-                /// ```
-                %yul-stop-keyword,
                 /// This kind represents a `YulStorageKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4413,20 +3844,6 @@ interface cst {
                 /// YUL_STRUCT_KEYWORD = "struct";
                 /// ```
                 %yul-struct-keyword,
-                /// This kind represents a `YulSubKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_SUB_KEYWORD = "sub";
-                /// ```
-                %yul-sub-keyword,
-                /// This kind represents a `YulSuicideKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Deprecated in 0.5.0 *)
-                /// (* Reserved until 0.5.0 *)
-                /// YUL_SUICIDE_KEYWORD = "suicide";
-                /// ```
-                %yul-suicide-keyword,
                 /// This kind represents a `YulSuperKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4453,22 +3870,6 @@ interface cst {
                 /// YUL_SZABO_KEYWORD = "szabo";
                 /// ```
                 %yul-szabo-keyword,
-                /// This kind represents a `YulTLoadKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.8.24 *)
-                /// (* Reserved in 0.8.25 *)
-                /// YUL_T_LOAD_KEYWORD = "tload";
-                /// ```
-                %yul-tload-keyword,
-                /// This kind represents a `YulTStoreKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.8.24 *)
-                /// (* Reserved in 0.8.25 *)
-                /// YUL_T_STORE_KEYWORD = "tstore";
-                /// ```
-                %yul-tstore-keyword,
                 /// This kind represents a `YulThisKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4482,12 +3883,6 @@ interface cst {
                 /// YUL_THROW_KEYWORD = "throw";
                 /// ```
                 %yul-throw-keyword,
-                /// This kind represents a `YulTimestampKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_TIMESTAMP_KEYWORD = "timestamp";
-                /// ```
-                %yul-timestamp-keyword,
                 /// This kind represents a `YulTrueKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf
@@ -4604,12 +3999,6 @@ interface cst {
                 /// YUL_WHILE_KEYWORD = "while";
                 /// ```
                 %yul-while-keyword,
-                /// This kind represents a `YulXorKeyword` node, with the following structure: 
-                ///
-                /// ```ebnf
-                /// YUL_XOR_KEYWORD = "xor";
-                /// ```
-                %yul-xor-keyword,
                 /// This kind represents a `YulYearsKeyword` node, with the following structure: 
                 ///
                 /// ```ebnf

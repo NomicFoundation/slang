@@ -4411,125 +4411,123 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = YulBuiltInFunction,
                             variants = [
-                                EnumVariant(reference = YulAddKeyword),
-                                EnumVariant(reference = YulAddModKeyword),
-                                EnumVariant(reference = YulAddressKeyword),
-                                EnumVariant(reference = YulAndKeyword),
-                                EnumVariant(reference = YulBalanceKeyword),
-                                EnumVariant(reference = YulBlockHashKeyword),
-                                EnumVariant(reference = YulByteKeyword),
-                                EnumVariant(reference = YulCallCodeKeyword),
-                                EnumVariant(reference = YulCallDataCopyKeyword),
-                                EnumVariant(reference = YulCallDataLoadKeyword),
-                                EnumVariant(reference = YulCallDataSizeKeyword),
-                                EnumVariant(reference = YulCallerKeyword),
-                                EnumVariant(reference = YulCallKeyword),
-                                EnumVariant(reference = YulCallValueKeyword),
-                                EnumVariant(reference = YulCoinBaseKeyword),
-                                EnumVariant(reference = YulCreateKeyword),
-                                EnumVariant(reference = YulDelegateCallKeyword),
-                                EnumVariant(reference = YulDivKeyword),
-                                EnumVariant(reference = YulEqKeyword),
-                                EnumVariant(reference = YulExpKeyword),
-                                EnumVariant(reference = YulExtCodeCopyKeyword),
-                                EnumVariant(reference = YulExtCodeSizeKeyword),
-                                EnumVariant(reference = YulGasKeyword),
-                                EnumVariant(reference = YulGasLimitKeyword),
-                                EnumVariant(reference = YulGasPriceKeyword),
-                                EnumVariant(reference = YulGtKeyword),
-                                EnumVariant(reference = YulInvalidKeyword),
-                                EnumVariant(reference = YulIsZeroKeyword),
+                                // EnumVariant(reference = YulAddKeyword),
+                                // EnumVariant(reference = YulAddModKeyword),
+                                // EnumVariant(reference = YulAddressKeyword),
+                                // EnumVariant(reference = YulAndKeyword),
+                                // EnumVariant(reference = YulBalanceKeyword),
+                                // EnumVariant(reference = YulBlockHashKeyword),
+                                // EnumVariant(reference = YulByteKeyword),
+                                // EnumVariant(reference = YulCallCodeKeyword),
+                                // EnumVariant(reference = YulCallDataCopyKeyword),
+                                // EnumVariant(reference = YulCallDataLoadKeyword),
+                                // EnumVariant(reference = YulCallDataSizeKeyword),
+                                // EnumVariant(reference = YulCallerKeyword),
+                                // EnumVariant(reference = YulCallKeyword),
+                                // EnumVariant(reference = YulCallValueKeyword),
+                                // EnumVariant(reference = YulCoinBaseKeyword),
+                                // EnumVariant(reference = YulCreateKeyword),
+                                // EnumVariant(reference = YulDelegateCallKeyword),
+                                // EnumVariant(reference = YulDivKeyword),
+                                // EnumVariant(reference = YulEqKeyword),
+                                // EnumVariant(reference = YulExpKeyword),
+                                // EnumVariant(reference = YulExtCodeCopyKeyword),
+                                // EnumVariant(reference = YulExtCodeSizeKeyword),
+                                // EnumVariant(reference = YulGasKeyword),
+                                // EnumVariant(reference = YulGasLimitKeyword),
+                                // EnumVariant(reference = YulGasPriceKeyword),
+                                // EnumVariant(reference = YulGtKeyword),
+                                // EnumVariant(reference = YulInvalidKeyword),
+                                // EnumVariant(reference = YulIsZeroKeyword),
                                 EnumVariant(reference = YulJumpKeyword, enabled = Till("0.5.0")),
-                                EnumVariant(reference = YulJumpiKeyword, enabled = Till("0.5.0")),
-                                EnumVariant(reference = YulLog0Keyword),
-                                EnumVariant(reference = YulLog1Keyword),
-                                EnumVariant(reference = YulLog2Keyword),
-                                EnumVariant(reference = YulLog3Keyword),
-                                EnumVariant(reference = YulLog4Keyword),
-                                EnumVariant(reference = YulLtKeyword),
-                                EnumVariant(reference = YulMLoadKeyword),
-                                EnumVariant(reference = YulModKeyword),
-                                EnumVariant(reference = YulMSizeKeyword),
-                                EnumVariant(reference = YulMStore8Keyword),
-                                EnumVariant(reference = YulMStoreKeyword),
-                                EnumVariant(reference = YulMulKeyword),
-                                EnumVariant(reference = YulMulModKeyword),
-                                EnumVariant(reference = YulNotKeyword),
-                                EnumVariant(reference = YulNumberKeyword),
-                                EnumVariant(reference = YulOriginKeyword),
-                                EnumVariant(reference = YulOrKeyword),
-                                EnumVariant(reference = YulPopKeyword),
-                                EnumVariant(reference = YulReturnKeyword),
-                                EnumVariant(reference = YulRevertKeyword),
-                                EnumVariant(reference = YulSDivKeyword),
-                                EnumVariant(reference = YulSelfDestructKeyword),
-                                EnumVariant(reference = YulSgtKeyword),
-                                EnumVariant(reference = YulSignExtendKeyword),
-                                EnumVariant(reference = YulSLoadKeyword),
-                                EnumVariant(reference = YulSltKeyword),
-                                EnumVariant(reference = YulSModKeyword),
-                                EnumVariant(reference = YulSStoreKeyword),
-                                EnumVariant(reference = YulStopKeyword),
-                                EnumVariant(reference = YulSubKeyword),
-                                EnumVariant(reference = YulTimestampKeyword),
-                                EnumVariant(reference = YulXorKeyword),
-                                EnumVariant(
-                                    reference = YulKeccak256Keyword,
-                                    enabled = From("0.4.12")
-                                ),
-                                EnumVariant(reference = YulSha3Keyword, enabled = Till("0.5.0")),
-                                EnumVariant(reference = YulSuicideKeyword, enabled = Till("0.5.0")),
-                                // 'Byzantium' hard-fork updates:
-                                EnumVariant(
-                                    reference = YulReturnDataCopyKeyword,
-                                    enabled = From("0.4.12")
-                                ),
-                                EnumVariant(
-                                    reference = YulReturnDataSizeKeyword,
-                                    enabled = From("0.4.12")
-                                ),
-                                EnumVariant(
-                                    reference = YulStaticCallKeyword,
-                                    enabled = From("0.4.12")
-                                ),
-                                // 'Constantinople' hard-fork updates:
-                                EnumVariant(
-                                    reference = YulCreate2Keyword,
-                                    enabled = From("0.4.12")
-                                ),
-                                EnumVariant(
-                                    reference = YulExtCodeHashKeyword,
-                                    enabled = From("0.5.0")
-                                ),
-                                EnumVariant(reference = YulSarKeyword),
-                                EnumVariant(reference = YulShlKeyword),
-                                EnumVariant(reference = YulShrKeyword),
-                                // 'Instanbul' hard-fork updates:
-                                EnumVariant(reference = YulChainIdKeyword),
-                                EnumVariant(reference = YulSelfBalanceKeyword),
-                                // 'London' hard-fork updates:
-                                EnumVariant(reference = YulBaseFeeKeyword, enabled = From("0.8.7")),
-                                // 'Paris' hard-fork updates:
-                                EnumVariant(
-                                    reference = YulDifficultyKeyword,
-                                    enabled = Till("0.8.18")
-                                ),
-                                EnumVariant(
-                                    reference = YulPrevRandaoKeyword,
-                                    enabled = From("0.8.18")
-                                ),
-                                // 'Cancun' hard-fork updates:
-                                EnumVariant(
-                                    reference = YulBlobBaseFeeKeyword,
-                                    enabled = From("0.8.24")
-                                ),
-                                EnumVariant(
-                                    reference = YulBlobHashKeyword,
-                                    enabled = From("0.8.24")
-                                ),
-                                EnumVariant(reference = YulTLoadKeyword, enabled = From("0.8.24")),
-                                EnumVariant(reference = YulTStoreKeyword, enabled = From("0.8.24")),
-                                EnumVariant(reference = YulMCopyKeyword, enabled = From("0.8.24"))
+                                EnumVariant(reference = YulJumpiKeyword, enabled = Till("0.5.0")) // EnumVariant(reference = YulLog0Keyword),
+                                                                                                  // EnumVariant(reference = YulLog1Keyword),
+                                                                                                  // EnumVariant(reference = YulLog2Keyword),
+                                                                                                  // EnumVariant(reference = YulLog3Keyword),
+                                                                                                  // EnumVariant(reference = YulLog4Keyword),
+                                                                                                  // EnumVariant(reference = YulLtKeyword),
+                                                                                                  // EnumVariant(reference = YulMLoadKeyword),
+                                                                                                  // EnumVariant(reference = YulModKeyword),
+                                                                                                  // EnumVariant(reference = YulMSizeKeyword),
+                                                                                                  // EnumVariant(reference = YulMStore8Keyword),
+                                                                                                  // EnumVariant(reference = YulMStoreKeyword),
+                                                                                                  // EnumVariant(reference = YulMulKeyword),
+                                                                                                  // EnumVariant(reference = YulMulModKeyword),
+                                                                                                  // EnumVariant(reference = YulNotKeyword),
+                                                                                                  // EnumVariant(reference = YulNumberKeyword),
+                                                                                                  // EnumVariant(reference = YulOriginKeyword),
+                                                                                                  // EnumVariant(reference = YulOrKeyword),
+                                                                                                  // EnumVariant(reference = YulPopKeyword),
+                                                                                                  // EnumVariant(reference = YulReturnKeyword),
+                                                                                                  // EnumVariant(reference = YulRevertKeyword),
+                                                                                                  // EnumVariant(reference = YulSDivKeyword),
+                                                                                                  // EnumVariant(reference = YulSelfDestructKeyword),
+                                                                                                  // EnumVariant(reference = YulSgtKeyword),
+                                                                                                  // EnumVariant(reference = YulSignExtendKeyword),
+                                                                                                  // EnumVariant(reference = YulSLoadKeyword),
+                                                                                                  // EnumVariant(reference = YulSltKeyword),
+                                                                                                  // EnumVariant(reference = YulSModKeyword),
+                                                                                                  // EnumVariant(reference = YulSStoreKeyword),
+                                                                                                  // EnumVariant(reference = YulStopKeyword),
+                                                                                                  // EnumVariant(reference = YulSubKeyword),
+                                                                                                  // EnumVariant(reference = YulTimestampKeyword),
+                                                                                                  // EnumVariant(reference = YulXorKeyword),
+                                                                                                  // EnumVariant(
+                                                                                                  //     reference = YulKeccak256Keyword,
+                                                                                                  //     enabled = From("0.4.12")
+                                                                                                  // ),
+                                                                                                  // EnumVariant(reference = YulSha3Keyword, enabled = Till("0.5.0")) // EnumVariant(reference = YulSuicideKeyword, enabled = Till("0.5.0")),
+                                                                                                  // 'Byzantium' hard-fork updates:
+                                                                                                  // EnumVariant(
+                                                                                                  //     reference = YulReturnDataCopyKeyword,
+                                                                                                  //     enabled = From("0.4.12")
+                                                                                                  // ),
+                                                                                                  // EnumVariant(
+                                                                                                  //     reference = YulReturnDataSizeKeyword,
+                                                                                                  //     enabled = From("0.4.12")
+                                                                                                  // ),
+                                                                                                  // EnumVariant(
+                                                                                                  //     reference = YulStaticCallKeyword,
+                                                                                                  //     enabled = From("0.4.12")
+                                                                                                  // ),
+                                                                                                  // // 'Constantinople' hard-fork updates:
+                                                                                                  // EnumVariant(
+                                                                                                  //     reference = YulCreate2Keyword,
+                                                                                                  //     enabled = From("0.4.12")
+                                                                                                  // ),
+                                                                                                  // EnumVariant(
+                                                                                                  //     reference = YulExtCodeHashKeyword,
+                                                                                                  //     enabled = From("0.5.0")
+                                                                                                  // ),
+                                                                                                  // EnumVariant(reference = YulSarKeyword),
+                                                                                                  // EnumVariant(reference = YulShlKeyword),
+                                                                                                  // EnumVariant(reference = YulShrKeyword),
+                                                                                                  // // 'Instanbul' hard-fork updates:
+                                                                                                  // EnumVariant(reference = YulChainIdKeyword),
+                                                                                                  // EnumVariant(reference = YulSelfBalanceKeyword),
+                                                                                                  // // 'London' hard-fork updates:
+                                                                                                  // EnumVariant(reference = YulBaseFeeKeyword, enabled = From("0.8.7")),
+                                                                                                  // // 'Paris' hard-fork updates:
+                                                                                                  // EnumVariant(
+                                                                                                  //     reference = YulDifficultyKeyword,
+                                                                                                  //     enabled = Till("0.8.18")
+                                                                                                  // ),
+                                                                                                  // EnumVariant(
+                                                                                                  //     reference = YulPrevRandaoKeyword,
+                                                                                                  //     enabled = From("0.8.18")
+                                                                                                  // ),
+                                                                                                  // // 'Cancun' hard-fork updates:
+                                                                                                  // EnumVariant(
+                                                                                                  //     reference = YulBlobBaseFeeKeyword,
+                                                                                                  //     enabled = From("0.8.24")
+                                                                                                  // ),
+                                                                                                  // EnumVariant(
+                                                                                                  //     reference = YulBlobHashKeyword,
+                                                                                                  //     enabled = From("0.8.24")
+                                                                                                  // ),
+                                                                                                  // EnumVariant(reference = YulTLoadKeyword, enabled = From("0.8.24")),
+                                                                                                  // EnumVariant(reference = YulTStoreKeyword, enabled = From("0.8.24")),
+                                                                                                  // EnumVariant(reference = YulMCopyKeyword, enabled = From("0.8.24"))
                             ]
                         ),
                         Enum(
@@ -4577,31 +4575,31 @@ codegen_language_macros::compile!(Language(
                     title = "Yul Keywords",
                     lexical_context = Yul,
                     items = [
-                        Keyword(
-                            name = YulAbstractKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = Never,
-                                reserved = Till("0.7.1"),
-                                value = Atom("abstract")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulAddKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("add"))]
-                        ),
-                        Keyword(
-                            name = YulAddModKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("addmod"))]
-                        ),
-                        Keyword(
-                            name = YulAddressKeyword,
-                            identifier = YulIdentifier,
-                            definitions =
-                                [KeywordDefinition(reserved = Never, value = Atom("address"))]
-                        ),
+                        // Keyword(
+                        //     name = YulAbstractKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = Never,
+                        //         reserved = Till("0.7.1"),
+                        //         value = Atom("abstract")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulAddKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("add"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulAddModKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("addmod"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulAddressKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions =
+                        //         [KeywordDefinition(reserved = Never, value = Atom("address"))]
+                        // ),
                         Keyword(
                             name = YulAfterKeyword,
                             identifier = YulIdentifier,
@@ -4620,11 +4618,11 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("alias")
                             )]
                         ),
-                        Keyword(
-                            name = YulAndKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("and"))]
-                        ),
+                        // Keyword(
+                        //     name = YulAndKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("and"))]
+                        // ),
                         Keyword(
                             name = YulAnonymousKeyword,
                             identifier = YulIdentifier,
@@ -4670,43 +4668,43 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("auto")
                             )]
                         ),
-                        Keyword(
-                            name = YulBalanceKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("balance"))]
-                        ),
-                        Keyword(
-                            name = YulBaseFeeKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.7"),
-                                reserved = From("0.8.7"),
-                                value = Atom("basefee")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulBlobBaseFeeKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.24"),
-                                reserved = From("0.8.25"),
-                                value = Atom("blobbasefee")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulBlobHashKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.24"),
-                                reserved = From("0.8.25"),
-                                value = Atom("blobhash")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulBlockHashKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("blockhash"))]
-                        ),
+                        // Keyword(
+                        //     name = YulBalanceKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("balance"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulBaseFeeKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.8.7"),
+                        //         reserved = From("0.8.7"),
+                        //         value = Atom("basefee")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulBlobBaseFeeKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.8.24"),
+                        //         reserved = From("0.8.25"),
+                        //         value = Atom("blobbasefee")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulBlobHashKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.8.24"),
+                        //         reserved = From("0.8.25"),
+                        //         value = Atom("blobhash")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulBlockHashKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("blockhash"))]
+                        // ),
                         Keyword(
                             name = YulBoolKeyword,
                             identifier = YulIdentifier,
@@ -4721,11 +4719,11 @@ codegen_language_macros::compile!(Language(
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(value = Atom("break"))]
                         ),
-                        Keyword(
-                            name = YulByteKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("byte"))]
-                        ),
+                        // Keyword(
+                        //     name = YulByteKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("byte"))]
+                        // ),
                         Keyword(
                             name = YulBytesKeyword,
                             identifier = YulIdentifier,
@@ -4771,16 +4769,16 @@ codegen_language_macros::compile!(Language(
                                 ])
                             )]
                         ),
-                        Keyword(
-                            name = YulCallCodeKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("callcode"))]
-                        ),
-                        Keyword(
-                            name = YulCallDataCopyKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("calldatacopy"))]
-                        ),
+                        // Keyword(
+                        //     name = YulCallCodeKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("callcode"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulCallDataCopyKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("calldatacopy"))]
+                        // ),
                         Keyword(
                             name = YulCallDataKeyword,
                             identifier = YulIdentifier,
@@ -4790,31 +4788,31 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("calldata")
                             )]
                         ),
-                        Keyword(
-                            name = YulCallDataLoadKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("calldataload"))]
-                        ),
-                        Keyword(
-                            name = YulCallDataSizeKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("calldatasize"))]
-                        ),
-                        Keyword(
-                            name = YulCallerKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("caller"))]
-                        ),
-                        Keyword(
-                            name = YulCallKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("call"))]
-                        ),
-                        Keyword(
-                            name = YulCallValueKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("callvalue"))]
-                        ),
+                        // Keyword(
+                        //     name = YulCallDataLoadKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("calldataload"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulCallDataSizeKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("calldatasize"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulCallerKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("caller"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulCallKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("call"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulCallValueKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("callvalue"))]
+                        // ),
                         Keyword(
                             name = YulCaseKeyword,
                             identifier = YulIdentifier,
@@ -4829,19 +4827,19 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("catch")
                             )]
                         ),
-                        Keyword(
-                            name = YulChainIdKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                reserved = From("0.5.12"),
-                                value = Atom("chainid")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulCoinBaseKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("coinbase"))]
-                        ),
+                        // Keyword(
+                        //     name = YulChainIdKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         reserved = From("0.5.12"),
+                        //         value = Atom("chainid")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulCoinBaseKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("coinbase"))]
+                        // ),
                         Keyword(
                             name = YulConstantKeyword,
                             identifier = YulIdentifier,
@@ -4883,20 +4881,20 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("copyof")
                             )]
                         ),
-                        Keyword(
-                            name = YulCreateKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("create"))]
-                        ),
-                        Keyword(
-                            name = YulCreate2Keyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.4.12"),
-                                reserved = From("0.4.12"),
-                                value = Atom("create2")
-                            )]
-                        ),
+                        // Keyword(
+                        //     name = YulCreateKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("create"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulCreate2Keyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.4.12"),
+                        //         reserved = From("0.4.12"),
+                        //         value = Atom("create2")
+                        //     )]
+                        // ),
                         Keyword(
                             name = YulDaysKeyword,
                             identifier = YulIdentifier,
@@ -4920,11 +4918,11 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("define")
                             )]
                         ),
-                        Keyword(
-                            name = YulDelegateCallKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("delegatecall"))]
-                        ),
+                        // Keyword(
+                        //     name = YulDelegateCallKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("delegatecall"))]
+                        // ),
                         Keyword(
                             name = YulDeleteKeyword,
                             identifier = YulIdentifier,
@@ -4934,20 +4932,20 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("delete")
                             )]
                         ),
-                        Keyword(
-                            // Replaced by 'YulPrevRandaoKeyword' in 'London' hard-fork update:
-                            name = YulDifficultyKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = Till("0.8.18"),
-                                value = Atom("difficulty")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulDivKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("div"))]
-                        ),
+                        // Keyword(
+                        //     // Replaced by 'YulPrevRandaoKeyword' in 'London' hard-fork update:
+                        //     name = YulDifficultyKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = Till("0.8.18"),
+                        //         value = Atom("difficulty")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulDivKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("div"))]
+                        // ),
                         Keyword(
                             name = YulDoKeyword,
                             identifier = YulIdentifier,
@@ -4984,11 +4982,11 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("enum")
                             )]
                         ),
-                        Keyword(
-                            name = YulEqKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("eq"))]
-                        ),
+                        // Keyword(
+                        //     name = YulEqKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("eq"))]
+                        // ),
                         Keyword(
                             name = YulEtherKeyword,
                             identifier = YulIdentifier,
@@ -5007,31 +5005,31 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("event")
                             )]
                         ),
-                        Keyword(
-                            name = YulExpKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("exp"))]
-                        ),
-                        Keyword(
-                            name = YulExtCodeCopyKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("extcodecopy"))]
-                        ),
-                        Keyword(
-                            // NOTE: Only considered as part of 'Constantinople' target by 'solc' since '0.5.5':
-                            name = YulExtCodeHashKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.5.0"),
-                                reserved = From("0.5.0"),
-                                value = Atom("extcodehash")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulExtCodeSizeKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("extcodesize"))]
-                        ),
+                        // Keyword(
+                        //     name = YulExpKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("exp"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulExtCodeCopyKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("extcodecopy"))]
+                        // ),
+                        // Keyword(
+                        //     // NOTE: Only considered as part of 'Constantinople' target by 'solc' since '0.5.5':
+                        //     name = YulExtCodeHashKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.5.0"),
+                        //         reserved = From("0.5.0"),
+                        //         value = Atom("extcodehash")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulExtCodeSizeKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("extcodesize"))]
+                        // ),
                         Keyword(
                             name = YulExternalKeyword,
                             identifier = YulIdentifier,
@@ -5371,26 +5369,26 @@ codegen_language_macros::compile!(Language(
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(value = Atom("function"))]
                         ),
-                        Keyword(
-                            name = YulGasKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("gas"))]
-                        ),
-                        Keyword(
-                            name = YulGasLimitKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("gaslimit"))]
-                        ),
-                        Keyword(
-                            name = YulGasPriceKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("gasprice"))]
-                        ),
-                        Keyword(
-                            name = YulGtKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("gt"))]
-                        ),
+                        // Keyword(
+                        //     name = YulGasKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("gas"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulGasLimitKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("gaslimit"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulGasPriceKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("gasprice"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulGtKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("gt"))]
+                        // ),
                         Keyword(
                             name = YulGweiKeyword,
                             identifier = YulIdentifier,
@@ -5536,11 +5534,11 @@ codegen_language_macros::compile!(Language(
                                 ])
                             )]
                         ),
-                        Keyword(
-                            name = YulInvalidKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("invalid"))]
-                        ),
+                        // Keyword(
+                        //     name = YulInvalidKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("invalid"))]
+                        // ),
                         Keyword(
                             name = YulIsKeyword,
                             identifier = YulIdentifier,
@@ -5550,11 +5548,11 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("is")
                             )]
                         ),
-                        Keyword(
-                            name = YulIsZeroKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("iszero"))]
-                        ),
+                        // Keyword(
+                        //     name = YulIsZeroKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("iszero"))]
+                        // ),
                         Keyword(
                             name = YulJumpKeyword,
                             identifier = YulIdentifier,
@@ -5571,15 +5569,15 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("jumpi")
                             )]
                         ),
-                        Keyword(
-                            name = YulKeccak256Keyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.4.12"),
-                                reserved = From("0.4.12"),
-                                value = Atom("keccak256")
-                            )]
-                        ),
+                        // Keyword(
+                        //     name = YulKeccak256Keyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.4.12"),
+                        //         reserved = From("0.4.12"),
+                        //         value = Atom("keccak256")
+                        //     )]
+                        // ),
                         Keyword(
                             name = YulLeaveKeyword,
                             identifier = YulIdentifier,
@@ -5603,36 +5601,36 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("library")
                             )]
                         ),
-                        Keyword(
-                            name = YulLog0Keyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("log0"))]
-                        ),
-                        Keyword(
-                            name = YulLog1Keyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("log1"))]
-                        ),
-                        Keyword(
-                            name = YulLog2Keyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("log2"))]
-                        ),
-                        Keyword(
-                            name = YulLog3Keyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("log3"))]
-                        ),
-                        Keyword(
-                            name = YulLog4Keyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("log4"))]
-                        ),
-                        Keyword(
-                            name = YulLtKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("lt"))]
-                        ),
+                        // Keyword(
+                        //     name = YulLog0Keyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("log0"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulLog1Keyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("log1"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulLog2Keyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("log2"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulLog3Keyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("log3"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulLog4Keyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("log4"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulLtKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("lt"))]
+                        // ),
                         Keyword(
                             name = YulMacroKeyword,
                             identifier = YulIdentifier,
@@ -5678,25 +5676,25 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("minutes")
                             )]
                         ),
-                        Keyword(
-                            name = YulMCopyKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.24"),
-                                reserved = From("0.8.25"),
-                                value = Atom("mcopy")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulMLoadKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("mload"))]
-                        ),
-                        Keyword(
-                            name = YulModKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("mod"))]
-                        ),
+                        // Keyword(
+                        //     name = YulMCopyKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.8.24"),
+                        //         reserved = From("0.8.25"),
+                        //         value = Atom("mcopy")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulMLoadKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("mload"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulModKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("mod"))]
+                        // ),
                         Keyword(
                             name = YulModifierKeyword,
                             identifier = YulIdentifier,
@@ -5706,31 +5704,31 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("modifier")
                             )]
                         ),
-                        Keyword(
-                            name = YulMSizeKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("msize"))]
-                        ),
-                        Keyword(
-                            name = YulMStoreKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("mstore"))]
-                        ),
-                        Keyword(
-                            name = YulMStore8Keyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("mstore8"))]
-                        ),
-                        Keyword(
-                            name = YulMulKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("mul"))]
-                        ),
-                        Keyword(
-                            name = YulMulModKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("mulmod"))]
-                        ),
+                        // Keyword(
+                        //     name = YulMSizeKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("msize"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulMStoreKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("mstore"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulMStore8Keyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("mstore8"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulMulKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("mul"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulMulModKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("mulmod"))]
+                        // ),
                         Keyword(
                             name = YulMutableKeyword,
                             identifier = YulIdentifier,
@@ -5749,11 +5747,11 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("new")
                             )]
                         ),
-                        Keyword(
-                            name = YulNotKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("not"))]
-                        ),
+                        // Keyword(
+                        //     name = YulNotKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("not"))]
+                        // ),
                         Keyword(
                             name = YulNullKeyword,
                             identifier = YulIdentifier,
@@ -5763,11 +5761,11 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("null")
                             )]
                         ),
-                        Keyword(
-                            name = YulNumberKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("number"))]
-                        ),
+                        // Keyword(
+                        //     name = YulNumberKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("number"))]
+                        // ),
                         Keyword(
                             name = YulOfKeyword,
                             identifier = YulIdentifier,
@@ -5777,16 +5775,16 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("of")
                             )]
                         ),
-                        Keyword(
-                            name = YulOrKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("or"))]
-                        ),
-                        Keyword(
-                            name = YulOriginKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("origin"))]
-                        ),
+                        // Keyword(
+                        //     name = YulOrKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("or"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulOriginKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("origin"))]
+                        // ),
                         Keyword(
                             name = YulOverrideKeyword,
                             identifier = YulIdentifier,
@@ -5814,11 +5812,11 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("payable")
                             )]
                         ),
-                        Keyword(
-                            name = YulPopKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("pop"))]
-                        ),
+                        // Keyword(
+                        //     name = YulPopKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("pop"))]
+                        // ),
                         Keyword(
                             name = YulPragmaKeyword,
                             identifier = YulIdentifier,
@@ -5828,15 +5826,15 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("pragma")
                             )]
                         ),
-                        Keyword(
-                            name = YulPrevRandaoKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.18"),
-                                reserved = From("0.8.18"),
-                                value = Atom("prevrandao")
-                            )]
-                        ),
+                        // Keyword(
+                        //     name = YulPrevRandaoKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.8.18"),
+                        //         reserved = From("0.8.18"),
+                        //         value = Atom("prevrandao")
+                        //     )]
+                        // ),
                         Keyword(
                             name = YulPrivateKeyword,
                             identifier = YulIdentifier,
@@ -5900,29 +5898,29 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("relocatable")
                             )]
                         ),
-                        Keyword(
-                            name = YulReturnDataCopyKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.4.12"),
-                                reserved = From("0.4.12"),
-                                value = Atom("returndatacopy")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulReturnDataSizeKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.4.12"),
-                                reserved = From("0.4.12"),
-                                value = Atom("returndatasize")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulReturnKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("return"))]
-                        ),
+                        // Keyword(
+                        //     name = YulReturnDataCopyKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.4.12"),
+                        //         reserved = From("0.4.12"),
+                        //         value = Atom("returndatacopy")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulReturnDataSizeKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.4.12"),
+                        //         reserved = From("0.4.12"),
+                        //         value = Atom("returndatasize")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulReturnKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("return"))]
+                        // ),
                         Keyword(
                             name = YulReturnsKeyword,
                             identifier = YulIdentifier,
@@ -5932,24 +5930,24 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("returns")
                             )]
                         ),
-                        Keyword(
-                            name = YulRevertKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("revert"))]
-                        ),
-                        Keyword(
-                            name = YulSarKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                reserved = From("0.4.21"),
-                                value = Atom("sar")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulSDivKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("sdiv"))]
-                        ),
+                        // Keyword(
+                        //     name = YulRevertKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("revert"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulSarKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         reserved = From("0.4.21"),
+                        //         value = Atom("sar")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulSDivKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("sdiv"))]
+                        // ),
                         Keyword(
                             name = YulSealedKeyword,
                             identifier = YulIdentifier,
@@ -5968,55 +5966,55 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("seconds")
                             )]
                         ),
-                        Keyword(
-                            name = YulSelfBalanceKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                reserved = From("0.5.12"),
-                                value = Atom("selfbalance")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulSelfDestructKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("selfdestruct"))]
-                        ),
-                        Keyword(
-                            name = YulSgtKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("sgt"))]
-                        ),
-                        Keyword(
-                            // Replaced by 'YulKeccak256Keyword' in '0.4.12', and removed in '0.5.0':
-                            name = YulSha3Keyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = Till("0.5.0"),
-                                reserved = Till("0.5.0"),
-                                value = Atom("sha3")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulShlKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                reserved = From("0.4.21"),
-                                value = Atom("shl")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulShrKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                reserved = From("0.4.21"),
-                                value = Atom("shr")
-                            )]
-                        ),
-                        Keyword(
-                            name = YulSignExtendKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("signextend"))]
-                        ),
+                        // Keyword(
+                        //     name = YulSelfBalanceKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         reserved = From("0.5.12"),
+                        //         value = Atom("selfbalance")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulSelfDestructKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("selfdestruct"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulSgtKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("sgt"))]
+                        // ),
+                        // Keyword(
+                        //     // Replaced by 'YulKeccak256Keyword' in '0.4.12', and removed in '0.5.0':
+                        //     name = YulSha3Keyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = Till("0.5.0"),
+                        //         reserved = Till("0.5.0"),
+                        //         value = Atom("sha3")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulShlKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         reserved = From("0.4.21"),
+                        //         value = Atom("shl")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulShrKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         reserved = From("0.4.21"),
+                        //         value = Atom("shr")
+                        //     )]
+                        // ),
+                        // Keyword(
+                        //     name = YulSignExtendKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("signextend"))]
+                        // ),
                         Keyword(
                             name = YulSizeOfKeyword,
                             identifier = YulIdentifier,
@@ -6026,35 +6024,35 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("sizeof")
                             )]
                         ),
-                        Keyword(
-                            name = YulSLoadKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("sload"))]
-                        ),
-                        Keyword(
-                            name = YulSltKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("slt"))]
-                        ),
-                        Keyword(
-                            name = YulSModKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("smod"))]
-                        ),
-                        Keyword(
-                            name = YulSStoreKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("sstore"))]
-                        ),
-                        Keyword(
-                            name = YulStaticCallKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.4.12"),
-                                reserved = From("0.4.12"),
-                                value = Atom("staticcall")
-                            )]
-                        ),
+                        // Keyword(
+                        //     name = YulSLoadKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("sload"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulSltKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("slt"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulSModKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("smod"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulSStoreKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("sstore"))]
+                        // ),
+                        // Keyword(
+                        //     name = YulStaticCallKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.4.12"),
+                        //         reserved = From("0.4.12"),
+                        //         value = Atom("staticcall")
+                        //     )]
+                        // ),
                         Keyword(
                             name = YulStaticKeyword,
                             identifier = YulIdentifier,
@@ -6064,11 +6062,11 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("static")
                             )]
                         ),
-                        Keyword(
-                            name = YulStopKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("stop"))]
-                        ),
+                        // Keyword(
+                        //     name = YulStopKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("stop"))]
+                        // ),
                         Keyword(
                             name = YulStorageKeyword,
                             identifier = YulIdentifier,
@@ -6096,21 +6094,21 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("struct")
                             )]
                         ),
-                        Keyword(
-                            name = YulSubKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("sub"))]
-                        ),
-                        Keyword(
-                            // Introduced as alias to 'YulSelfDestructKeyword' in '0.2.0', and removed in '0.5.0':
-                            name = YulSuicideKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = Till("0.5.0"),
-                                reserved = Till("0.5.0"),
-                                value = Atom("suicide")
-                            )]
-                        ),
+                        // Keyword(
+                        //     name = YulSubKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("sub"))]
+                        // ),
+                        // Keyword(
+                        //     // Introduced as alias to 'YulSelfDestructKeyword' in '0.2.0', and removed in '0.5.0':
+                        //     name = YulSuicideKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = Till("0.5.0"),
+                        //         reserved = Till("0.5.0"),
+                        //         value = Atom("suicide")
+                        //     )]
+                        // ),
                         Keyword(
                             name = YulSuperKeyword,
                             identifier = YulIdentifier,
@@ -6140,11 +6138,11 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("szabo")
                             )]
                         ),
-                        Keyword(
-                            name = YulTimestampKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("timestamp"))]
-                        ),
+                        // Keyword(
+                        //     name = YulTimestampKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(value = Atom("timestamp"))]
+                        // ),
                         Keyword(
                             name = YulThisKeyword,
                             identifier = YulIdentifier,
@@ -6160,29 +6158,29 @@ codegen_language_macros::compile!(Language(
                                 value = Atom("throw")
                             )]
                         ),
-                        Keyword(
-                            name = YulTLoadKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.24"),
-                                reserved = From("0.8.25"),
-                                value = Atom("tload")
-                            )]
-                        ),
+                        // Keyword(
+                        //     name = YulTLoadKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.8.24"),
+                        //         reserved = From("0.8.25"),
+                        //         value = Atom("tload")
+                        //     )]
+                        // ),
                         Keyword(
                             name = YulTrueKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(value = Atom("true"))]
                         ),
-                        Keyword(
-                            name = YulTStoreKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.8.24"),
-                                reserved = From("0.8.25"),
-                                value = Atom("tstore")
-                            )]
-                        ),
+                        // Keyword(
+                        //     name = YulTStoreKeyword,
+                        //     identifier = YulIdentifier,
+                        //     definitions = [KeywordDefinition(
+                        //         enabled = From("0.8.24"),
+                        //         reserved = From("0.8.25"),
+                        //         value = Atom("tstore")
+                        //     )]
+                        // ),
                         Keyword(
                             name = YulTryKeyword,
                             identifier = YulIdentifier,
@@ -6632,448 +6630,842 @@ codegen_language_macros::compile!(Language(
                                 reserved = Till("0.7.1"),
                                 value = Atom("years")
                             )]
-                        ),
-                        Keyword(
-                            name = YulXorKeyword,
-                            identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("xor"))]
-                        )
+                        ) // Keyword(
+                          //     name = YulXorKeyword,
+                          //     identifier = YulIdentifier,
+                          //     definitions = [KeywordDefinition(value = Atom("xor"))]
+                          // )
                     ]
                 )
             ]
         )
     ],
     built_ins = [
-        BuiltInFunction(
-            name = "addmod",
-            parameters = ["uint x", "uint y", "uint k"],
-            return_type = "uint"
-        ),
-        BuiltInFunction(name = "assert", parameters = ["bool condition"]),
-        BuiltInFunction(
-            name = "blockhash",
-            parameters = ["uint blockNumber"],
-            return_type = "bytes32",
-            enabled = From("0.4.22")
-        ),
-        BuiltInFunction(
-            name = "blobhash",
-            parameters = ["uint index"],
-            return_type = "bytes32",
-            enabled = From("0.8.24")
-        ),
-        BuiltInFunction(
-            name = "ecrecover",
-            parameters = ["bytes32 hash", "uint8 v", "bytes32 r", "bytes32 s"],
-            return_type = "address"
-        ),
-        BuiltInFunction(
-            name = "gasleft",
-            parameters = [],
-            return_type = "uint256",
-            enabled = From("0.4.22")
-        ),
-        BuiltInFunction(
-            name = "keccak256",
-            parameters = ["bytes memory"],
-            return_type = "bytes32"
-        ),
-        BuiltInFunction(
-            name = "log0",
-            parameters = ["bytes32"],
-            enabled = Till("0.8.0")
-        ),
-        BuiltInFunction(
-            name = "log1",
-            parameters = ["bytes32", "bytes32"],
-            enabled = Till("0.8.0")
-        ),
-        BuiltInFunction(
-            name = "log2",
-            parameters = ["bytes32", "bytes32", "bytes32"],
-            enabled = Till("0.8.0")
-        ),
-        BuiltInFunction(
-            name = "log3",
-            parameters = ["bytes32", "bytes32", "bytes32", "bytes32"],
-            enabled = Till("0.8.0")
-        ),
-        BuiltInFunction(
-            name = "log4",
-            parameters = ["bytes32", "bytes32", "bytes32", "bytes32", "bytes32"],
-            enabled = Till("0.8.0")
-        ),
-        BuiltInFunction(
-            name = "mulmod",
-            parameters = ["uint x", "uint y", "uint k"],
-            return_type = "uint"
-        ),
-        BuiltInFunction(name = "require", parameters = ["bool condition"]),
-        BuiltInFunction(
-            name = "require",
-            parameters = ["bool condition", "string memory message"],
-            enabled = From("0.4.22")
-        ),
-        BuiltInFunction(
-            name = "require",
-            parameters = ["bool condition", "Error error"],
-            enabled = From("0.8.26")
-        ),
-        BuiltInFunction(name = "revert", parameters = []),
-        BuiltInFunction(
-            name = "revert",
-            parameters = ["string memory reason"],
-            enabled = From("0.4.22")
-        ),
-        BuiltInFunction(
-            name = "ripemd160",
-            parameters = ["bytes memory"],
-            return_type = "bytes20"
-        ),
-        BuiltInFunction(
-            name = "selfdestruct",
-            parameters = ["address payable recipient"]
-        ),
-        BuiltInFunction(
-            name = "sha256",
-            parameters = ["bytes memory"],
-            return_type = "bytes32"
-        ),
-        BuiltInFunction(
-            name = "sha3",
-            parameters = ["bytes memory"],
-            return_type = "bytes32",
-            enabled = Till("0.5.0")
-        ),
-        BuiltInFunction(
-            name = "suicide",
-            parameters = ["address payable recipient"],
-            enabled = Till("0.5.0")
-        ),
-        BuiltInType(
-            name = "$AbiType",
-            fields = [],
-            functions = [
+        BuiltInContext(
+            // __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with rules file.
+            name = "$SolidityBuiltIns$",
+            definitions = [
                 BuiltInFunction(
-                    name = "decode",
-                    parameters = ["bytes memory encodedData", "$Type[] encodedTypesTuple"],
-                    return_type = "$Any[]",
-                    enabled = From("0.5.0")
+                    name = "addmod",
+                    parameters = ["uint x", "uint y", "uint k"],
+                    return_type = "uint"
                 ),
+                BuiltInFunction(name = "assert", parameters = ["bool condition"]),
                 BuiltInFunction(
-                    name = "encode",
-                    parameters = ["$Any[] valuesToEncode"],
-                    return_type = "bytes memory",
+                    name = "blockhash",
+                    parameters = ["uint blockNumber"],
+                    return_type = "bytes32",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
-                    name = "encodeCall",
-                    parameters = [
-                        "function() functionPointer",
-                        "$Any[] functionArgumentsTuple"
-                    ],
-                    return_type = "bytes memory",
-                    enabled = From("0.8.11")
+                    name = "blobhash",
+                    parameters = ["uint index"],
+                    return_type = "bytes32",
+                    enabled = From("0.8.24")
                 ),
                 BuiltInFunction(
-                    name = "encodePacked",
-                    parameters = ["$Any[] valuesToEncode"],
-                    return_type = "bytes memory",
+                    name = "ecrecover",
+                    parameters = ["bytes32 hash", "uint8 v", "bytes32 r", "bytes32 s"],
+                    return_type = "address"
+                ),
+                BuiltInFunction(
+                    name = "gasleft",
+                    parameters = [],
+                    return_type = "uint256",
                     enabled = From("0.4.22")
                 ),
                 BuiltInFunction(
-                    name = "encodeWithSelector",
-                    parameters = ["bytes4 selector", "$Any[] functionArgumentsTuple"],
-                    return_type = "bytes memory",
-                    enabled = From("0.4.22")
-                ),
-                BuiltInFunction(
-                    name = "encodeWithSignature",
-                    parameters = ["string memory signature", "$Any[] valuesToEncode"],
-                    return_type = "bytes memory",
-                    enabled = From("0.4.22")
-                )
-            ]
-        ),
-        BuiltInType(
-            name = "$address",
-            fields = [
-                BuiltInField(definition = "uint256 balance"),
-                BuiltInField(definition = "bytes code", enabled = From("0.8.0")),
-                BuiltInField(definition = "bytes32 codehash", enabled = From("0.8.0"))
-            ],
-            functions = [
-                BuiltInFunction(
-                    name = "call",
+                    name = "keccak256",
                     parameters = ["bytes memory"],
-                    return_type = "bool",
+                    return_type = "bytes32"
+                ),
+                BuiltInFunction(
+                    name = "log0",
+                    parameters = ["bytes32"],
+                    enabled = Till("0.8.0")
+                ),
+                BuiltInFunction(
+                    name = "log1",
+                    parameters = ["bytes32", "bytes32"],
+                    enabled = Till("0.8.0")
+                ),
+                BuiltInFunction(
+                    name = "log2",
+                    parameters = ["bytes32", "bytes32", "bytes32"],
+                    enabled = Till("0.8.0")
+                ),
+                BuiltInFunction(
+                    name = "log3",
+                    parameters = ["bytes32", "bytes32", "bytes32", "bytes32"],
+                    enabled = Till("0.8.0")
+                ),
+                BuiltInFunction(
+                    name = "log4",
+                    parameters = ["bytes32", "bytes32", "bytes32", "bytes32", "bytes32"],
+                    enabled = Till("0.8.0")
+                ),
+                BuiltInFunction(
+                    name = "mulmod",
+                    parameters = ["uint x", "uint y", "uint k"],
+                    return_type = "uint"
+                ),
+                BuiltInFunction(name = "require", parameters = ["bool condition"]),
+                BuiltInFunction(
+                    name = "require",
+                    parameters = ["bool condition", "string memory message"],
+                    enabled = From("0.4.22")
+                ),
+                BuiltInFunction(
+                    name = "require",
+                    parameters = ["bool condition", "Error error"],
+                    enabled = From("0.8.26")
+                ),
+                BuiltInFunction(name = "revert", parameters = []),
+                BuiltInFunction(
+                    name = "revert",
+                    parameters = ["string memory reason"],
+                    enabled = From("0.4.22")
+                ),
+                BuiltInFunction(
+                    name = "ripemd160",
+                    parameters = ["bytes memory"],
+                    return_type = "bytes20"
+                ),
+                BuiltInFunction(
+                    name = "selfdestruct",
+                    parameters = ["address payable recipient"]
+                ),
+                BuiltInFunction(
+                    name = "sha256",
+                    parameters = ["bytes memory"],
+                    return_type = "bytes32"
+                ),
+                BuiltInFunction(
+                    name = "sha3",
+                    parameters = ["bytes memory"],
+                    return_type = "bytes32",
                     enabled = Till("0.5.0")
                 ),
                 BuiltInFunction(
-                    name = "call",
-                    parameters = ["bytes memory"],
-                    return_type = "bool, bytes memory",
-                    enabled = From("0.5.0")
+                    name = "suicide",
+                    parameters = ["address payable recipient"],
+                    enabled = Till("0.5.0")
+                ),
+                BuiltInType(
+                    name = "$AbiType",
+                    fields = [],
+                    functions = [
+                        BuiltInFunction(
+                            name = "decode",
+                            parameters = ["bytes memory encodedData", "$Type[] encodedTypesTuple"],
+                            return_type = "$Any[]",
+                            enabled = From("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "encode",
+                            parameters = ["$Any[] valuesToEncode"],
+                            return_type = "bytes memory",
+                            enabled = From("0.4.22")
+                        ),
+                        BuiltInFunction(
+                            name = "encodeCall",
+                            parameters = [
+                                "function() functionPointer",
+                                "$Any[] functionArgumentsTuple"
+                            ],
+                            return_type = "bytes memory",
+                            enabled = From("0.8.11")
+                        ),
+                        BuiltInFunction(
+                            name = "encodePacked",
+                            parameters = ["$Any[] valuesToEncode"],
+                            return_type = "bytes memory",
+                            enabled = From("0.4.22")
+                        ),
+                        BuiltInFunction(
+                            name = "encodeWithSelector",
+                            parameters = ["bytes4 selector", "$Any[] functionArgumentsTuple"],
+                            return_type = "bytes memory",
+                            enabled = From("0.4.22")
+                        ),
+                        BuiltInFunction(
+                            name = "encodeWithSignature",
+                            parameters = ["string memory signature", "$Any[] valuesToEncode"],
+                            return_type = "bytes memory",
+                            enabled = From("0.4.22")
+                        )
+                    ]
+                ),
+                BuiltInType(
+                    name = "$address",
+                    fields = [
+                        BuiltInField(definition = "uint256 balance"),
+                        BuiltInField(definition = "bytes code", enabled = From("0.8.0")),
+                        BuiltInField(definition = "bytes32 codehash", enabled = From("0.8.0"))
+                    ],
+                    functions = [
+                        BuiltInFunction(
+                            name = "call",
+                            parameters = ["bytes memory"],
+                            return_type = "bool",
+                            enabled = Till("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "call",
+                            parameters = ["bytes memory"],
+                            return_type = "bool, bytes memory",
+                            enabled = From("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "callcode",
+                            parameters = ["bytes memory"],
+                            return_type = "bool, bytes memory",
+                            enabled = Till("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "delegatecall",
+                            parameters = ["bytes memory"],
+                            return_type = "bool",
+                            enabled = Till("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "delegatecall",
+                            parameters = ["bytes memory"],
+                            return_type = "bool, bytes memory",
+                            enabled = From("0.5.0")
+                        ),
+                        BuiltInFunction(
+                            name = "send",
+                            parameters = ["uint256 amount"],
+                            return_type = "bool"
+                        ),
+                        BuiltInFunction(
+                            name = "staticcall",
+                            parameters = ["bytes memory"],
+                            return_type = "bool, bytes memory",
+                            enabled = From("0.5.0")
+                        ),
+                        BuiltInFunction(name = "transfer", parameters = ["uint256 amount"])
+                    ]
+                ),
+                BuiltInType(
+                    name = "$Array",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = [
+                        BuiltInFunction(
+                            name = "push",
+                            parameters = [],
+                            return_type = "$ValueType",
+                            enabled = From("0.6.0")
+                        ),
+                        BuiltInFunction(
+                            name = "push",
+                            parameters = ["$ValueType element"],
+                            return_type = "uint",
+                            enabled = Till("0.6.0")
+                        ),
+                        BuiltInFunction(
+                            name = "push",
+                            parameters = ["$ValueType element"],
+                            enabled = From("0.6.0")
+                        ),
+                        BuiltInFunction(name = "pop", parameters = [])
+                    ]
+                ),
+                BuiltInType(
+                    name = "$FixedArray",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$BlockType",
+                    fields = [
+                        BuiltInField(definition = "uint basefee", enabled = From("0.8.7")),
+                        BuiltInField(definition = "uint blobbasefee", enabled = From("0.8.24")),
+                        BuiltInField(definition = "uint chainid", enabled = From("0.8.0")),
+                        BuiltInField(definition = "address payable coinbase"),
+                        BuiltInField(definition = "uint difficulty"),
+                        BuiltInField(definition = "uint gaslimit"),
+                        BuiltInField(definition = "uint number"),
+                        BuiltInField(definition = "uint prevrandao", enabled = From("0.8.18")),
+                        BuiltInField(definition = "uint timestamp")
+                    ],
+                    functions = [BuiltInFunction(
+                        name = "blockhash",
+                        parameters = ["uint"],
+                        return_type = "bytes32",
+                        enabled = Till("0.5.0")
+                    )]
+                ),
+                BuiltInType(
+                    name = "$bytes",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$BytesType",
+                    fields = [],
+                    functions = [BuiltInFunction(
+                        name = "concat",
+                        parameters = ["bytes[] bytesToConcatenate"],
+                        return_type = "bytes memory"
+                    )]
+                ),
+                BuiltInType(
+                    name = "$CallOptions",
+                    fields = [
+                        BuiltInField(definition = "uint gas"),
+                        BuiltInField(definition = "uint salt"),
+                        BuiltInField(definition = "uint value")
+                    ],
+                    functions = [],
+                    enabled = From("0.6.2")
+                ),
+                BuiltInType(
+                    name = "Error",
+                    fields = [BuiltInField(definition = "string reason")],
+                    functions = [],
+                    enabled = From("0.6.0")
+                ),
+                BuiltInType(
+                    name = "$ErrorType",
+                    fields = [BuiltInField(definition = "bytes4 selector")],
+                    functions = [],
+                    enabled = From("0.8.4")
+                ),
+                BuiltInType(
+                    name = "$Function",
+                    fields = [],
+                    functions = [
+                        BuiltInFunction(
+                            name = "gas",
+                            parameters = ["uint amount"],
+                            return_type = "function()",
+                            enabled = Till("0.7.0")
+                        ),
+                        BuiltInFunction(
+                            name = "value",
+                            parameters = ["uint amount"],
+                            return_type = "function()",
+                            enabled = Till("0.7.0")
+                        )
+                    ]
+                ),
+                BuiltInType(
+                    name = "$ExternalFunction",
+                    fields = [
+                        BuiltInField(definition = "address address", enabled = From("0.8.2")),
+                        BuiltInField(definition = "bytes4 selector", enabled = From("0.4.17"))
+                    ],
+                    functions = [
+                        BuiltInFunction(
+                            name = "gas",
+                            parameters = ["uint amount"],
+                            return_type = "function()",
+                            enabled = Till("0.7.0")
+                        ),
+                        BuiltInFunction(
+                            name = "value",
+                            parameters = ["uint amount"],
+                            return_type = "function()",
+                            enabled = Till("0.7.0")
+                        )
+                    ]
+                ),
+                BuiltInType(
+                    name = "$MessageType",
+                    fields = [
+                        BuiltInField(definition = "bytes data"),
+                        BuiltInField(definition = "uint256 gas", enabled = Till("0.5.0")),
+                        BuiltInField(
+                            definition = "address payable sender",
+                            enabled = Till("0.8.0")
+                        ),
+                        BuiltInField(definition = "address sender", enabled = From("0.8.0")),
+                        BuiltInField(definition = "bytes4 sig"),
+                        BuiltInField(definition = "uint value")
+                    ],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "Panic",
+                    fields = [BuiltInField(definition = "uint errorCode")],
+                    functions = [],
+                    enabled = From("0.6.0")
+                ),
+                BuiltInType(
+                    name = "$StringType",
+                    fields = [],
+                    functions = [BuiltInFunction(
+                        name = "concat",
+                        parameters = ["string[] stringsToConcatenate"],
+                        return_type = "string memory"
+                    )]
+                ),
+                BuiltInType(
+                    name = "$TransactionType",
+                    fields = [
+                        BuiltInField(definition = "uint gasprice"),
+                        BuiltInField(
+                            definition = "address payable origin",
+                            enabled = Till("0.8.0")
+                        ),
+                        BuiltInField(definition = "address origin", enabled = From("0.8.0"))
+                    ],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$ContractTypeType",
+                    fields = [
+                        BuiltInField(definition = "string name"),
+                        BuiltInField(definition = "bytes creationCode", enabled = From("0.5.3")),
+                        BuiltInField(definition = "bytes runtimeCode", enabled = From("0.5.3")),
+                        BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
+                    ],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$InterfaceTypeType",
+                    fields = [
+                        BuiltInField(definition = "string name"),
+                        BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
+                    ],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$IntTypeType",
+                    fields = [
+                        BuiltInField(definition = "int min", enabled = From("0.6.8")),
+                        BuiltInField(definition = "int max", enabled = From("0.6.8"))
+                    ],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "$UserDefinedValueType",
+                    fields = [],
+                    functions = [
+                        BuiltInFunction(
+                            name = "wrap",
+                            parameters = ["$WrappedType elementaryType"],
+                            return_type = "$UserType"
+                        ),
+                        BuiltInFunction(
+                            name = "unwrap",
+                            parameters = ["$UserType userType"],
+                            return_type = "$WrappedType"
+                        )
+                    ],
+                    enabled = From("0.8.8")
+                ),
+                BuiltInVariable(definition = "$Function $placeholder"),
+                BuiltInVariable(definition = "$AbiType abi"),
+                BuiltInVariable(definition = "$BlockType block"),
+                BuiltInVariable(definition = "$BytesType $bytes"),
+                BuiltInVariable(definition = "$MessageType msg"),
+                BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
+                BuiltInVariable(definition = "$StringType $string"),
+                BuiltInVariable(definition = "$TransactionType tx")
+            ]
+        ),
+        BuiltInContext(
+            // __SLANG_YUL_BUILT_INS_CONTRACT_NAME__ keep in sync with binding rules file.
+            name = "$YulBuiltIns$",
+            definitions = [
+                BuiltInType(
+                    name = "$YulExternal",
+                    fields = [
+                        // These apply to state and storage variables
+                        BuiltInField(definition = "uint256 slot"),
+                        BuiltInField(definition = "uint256 offset"),
+                        // Dynamic calldata arrays also have a length
+                        BuiltInField(definition = "uint256 length")
+                    ],
+                    functions = []
+                ),
+                BuiltInFunction(
+                    name = "add",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "addmod",
+                    parameters = ["uint256 x", "uint256 y", "uint256 m"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(name = "address", parameters = [], return_type = "uint256"),
+                BuiltInFunction(
+                    name = "and",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "balance",
+                    parameters = ["uint256 a"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "blockhash",
+                    parameters = ["uint256 b"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "byte",
+                    parameters = ["uint256 n", "uint256 x"],
+                    return_type = "uint256"
                 ),
                 BuiltInFunction(
                     name = "callcode",
-                    parameters = ["bytes memory"],
-                    return_type = "bool, bytes memory",
-                    enabled = Till("0.5.0")
+                    parameters = [
+                        "uint256 g",
+                        "uint256 a",
+                        "uint256 v",
+                        "uint256 in",
+                        "uint256 insize",
+                        "uint256 out",
+                        "uint256 outsize"
+                    ],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "calldatacopy",
+                    parameters = ["uint256 t", "uint256 f", "uint256 s"]
+                ),
+                BuiltInFunction(
+                    name = "calldataload",
+                    parameters = ["uint256 p"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "calldatasize",
+                    parameters = [],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(name = "caller", parameters = [], return_type = "uint256"),
+                BuiltInFunction(
+                    name = "call",
+                    parameters = [
+                        "uint256 g",
+                        "uint256 a",
+                        "uint256 v",
+                        "uint256 in",
+                        "uint256 insize",
+                        "uint256 out",
+                        "uint256 outsize"
+                    ],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(name = "callvalue", parameters = [], return_type = "uint256"),
+                BuiltInFunction(name = "coinbase", parameters = [], return_type = "uint256"),
+                BuiltInFunction(
+                    name = "create",
+                    parameters = ["uint256 v", "uint256 p", "uint256 n"],
+                    return_type = "uint256"
                 ),
                 BuiltInFunction(
                     name = "delegatecall",
-                    parameters = ["bytes memory"],
-                    return_type = "bool",
+                    parameters = [
+                        "uint256 g",
+                        "uint256 a",
+                        "uint256 in",
+                        "uint256 insize",
+                        "uint256 out",
+                        "uint256 outsize"
+                    ],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "div",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "eq",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "exp",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "extcodecopy",
+                    parameters = ["uint256 a", "uint256 t", "uint256 f", "uint256 s"]
+                ),
+                BuiltInFunction(
+                    name = "extcodesize",
+                    parameters = ["uint256 a"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(name = "gas", parameters = [], return_type = "uint256"),
+                BuiltInFunction(name = "gaslimit", parameters = [], return_type = "uint256"),
+                BuiltInFunction(name = "gasprice", parameters = [], return_type = "uint256"),
+                BuiltInFunction(
+                    name = "gt",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(name = "invalid", parameters = []),
+                BuiltInFunction(
+                    name = "iszero",
+                    parameters = ["uint256 x"],
+                    return_type = "uint256"
+                ),
+                // TODO These don't appear to be available as functions - do we need to keep YulBuiltInFunction?
+                // BuiltInFunction(name = "jump", parameters = [], return_type = ""),
+                // EnumVariant(reference = YulJumpKeyword, enabled = Till("0.5.0")),
+                // BuiltInFunction(name = "jumpi", parameters = [], return_type = ""),
+                // EnumVariant(reference = YulJumpiKeyword, enabled = Till("0.5.0")),
+                BuiltInFunction(name = "log0", parameters = ["uint256 p", "uint256 s"]),
+                BuiltInFunction(
+                    name = "log1",
+                    parameters = ["uint256 p", "uint256 s", "uint256 t1"]
+                ),
+                BuiltInFunction(
+                    name = "log2",
+                    parameters = ["uint256 p", "uint256 s", "uint256 t1", "uint256 t2"]
+                ),
+                BuiltInFunction(
+                    name = "log3",
+                    parameters = [
+                        "uint256 p",
+                        "uint256 s",
+                        "uint256 t1",
+                        "uint256 t2",
+                        "uint256 t3"
+                    ]
+                ),
+                BuiltInFunction(
+                    name = "log4",
+                    parameters = [
+                        "uint256 p",
+                        "uint256 s",
+                        "uint256 t1",
+                        "uint256 t2",
+                        "uint256 t3"
+                    ]
+                ),
+                BuiltInFunction(
+                    name = "lt",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "mload",
+                    parameters = ["uint256 p"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "mod",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(name = "msize", parameters = [], return_type = "uint256"),
+                BuiltInFunction(name = "mstore8", parameters = ["uint256 p", "uint256 v"]),
+                BuiltInFunction(name = "mstore", parameters = ["uint256 p", "uint256 v"]),
+                BuiltInFunction(
+                    name = "mul",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "mulmod",
+                    parameters = ["uint256 x", "uint256 y", "uint256 m"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "not",
+                    parameters = ["uint256 x"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "number",
+                    parameters = ["uint256 x"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(name = "origin", parameters = [], return_type = "uint256"),
+                BuiltInFunction(
+                    name = "or",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "pop",
+                    parameters = ["uint256 x"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(name = "return", parameters = ["uint256 p", "uint256 s"]),
+                BuiltInFunction(name = "revert", parameters = ["uint256 p", "uint256 s"]),
+                BuiltInFunction(
+                    name = "sdiv",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(name = "selfdestruct", parameters = ["uint256 a"]),
+                BuiltInFunction(
+                    name = "sgt",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "signextend",
+                    parameters = ["uint256 i", "uint256 x"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "sload",
+                    parameters = ["uint256 p"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "slt",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "smod",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(name = "sstore", parameters = ["uint256 p", "uint256 v"]),
+                BuiltInFunction(name = "stop", parameters = []),
+                BuiltInFunction(
+                    name = "sub",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(name = "timestamp", parameters = [], return_type = "uint256"),
+                BuiltInFunction(
+                    name = "xor",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "keccak256",
+                    parameters = ["uint256 p", "uint256 n"],
+                    return_type = "uint256",
+                    enabled = From("0.4.12")
+                ),
+                BuiltInFunction(
+                    name = "sha3",
+                    parameters = [],
+                    return_type = "uint256",
                     enabled = Till("0.5.0")
                 ),
                 BuiltInFunction(
-                    name = "delegatecall",
-                    parameters = ["bytes memory"],
-                    return_type = "bool, bytes memory",
-                    enabled = From("0.5.0")
+                    name = "suicide",
+                    parameters = [],
+                    return_type = "uint256",
+                    enabled = Till("0.5.0")
+                ),
+                // 'Byzantium' hard-fork updates:
+                BuiltInFunction(
+                    name = "returndatacopy",
+                    parameters = ["uint256 t", "uint256 f", "uint256 s"]
                 ),
                 BuiltInFunction(
-                    name = "send",
-                    parameters = ["uint256 amount"],
-                    return_type = "bool"
+                    name = "returndatasize",
+                    parameters = [],
+                    return_type = "uint256"
                 ),
                 BuiltInFunction(
                     name = "staticcall",
-                    parameters = ["bytes memory"],
-                    return_type = "bool, bytes memory",
+                    parameters = [
+                        "uint256 g",
+                        "uint256 a",
+                        "uint256 in",
+                        "uint256 insize",
+                        "uint256 out",
+                        "uint256 outsize"
+                    ],
+                    return_type = "uint256",
+                    enabled = From("0.4.12")
+                ),
+                // 'Constantinople' hard-fork updates:
+                BuiltInFunction(
+                    name = "create2",
+                    parameters = ["uint256 v", "uint256 p", "uint256 n", "uint256 s"],
+                    return_type = "uint256",
+                    enabled = From("0.4.12")
+                ),
+                BuiltInFunction(
+                    name = "extcodehash",
+                    parameters = ["uint256 a"],
+                    return_type = "uint256",
                     enabled = From("0.5.0")
                 ),
-                BuiltInFunction(name = "transfer", parameters = ["uint256 amount"])
-            ]
-        ),
-        BuiltInType(
-            name = "$Array",
-            fields = [BuiltInField(definition = "uint length")],
-            functions = [
                 BuiltInFunction(
-                    name = "push",
+                    name = "sar",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "shl",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                BuiltInFunction(
+                    name = "shr",
+                    parameters = ["uint256 x", "uint256 y"],
+                    return_type = "uint256"
+                ),
+                // 'Instanbul' hard-fork updates:
+                BuiltInFunction(name = "chainid", parameters = [], return_type = "uint256"),
+                BuiltInFunction(
+                    name = "selfbalance",
                     parameters = [],
-                    return_type = "$ValueType",
-                    enabled = From("0.6.0")
+                    return_type = "uint256"
+                ),
+                // 'London' hard-fork updates:
+                BuiltInFunction(
+                    name = "basefee",
+                    parameters = [],
+                    return_type = "uint256",
+                    enabled = From("0.8.7")
+                ),
+                // 'Paris' hard-fork updates:
+                BuiltInFunction(
+                    name = "difficulty",
+                    parameters = [],
+                    return_type = "uint256",
+                    enabled = Till("0.8.18")
                 ),
                 BuiltInFunction(
-                    name = "push",
-                    parameters = ["$ValueType element"],
-                    return_type = "uint",
-                    enabled = Till("0.6.0")
+                    name = "prevrandao",
+                    parameters = [],
+                    return_type = "uint256",
+                    enabled = From("0.8.18")
+                ),
+                // 'Cancun' hard-fork updates:
+                BuiltInFunction(
+                    name = "blobbasefee",
+                    parameters = [],
+                    return_type = "uint256",
+                    enabled = From("0.8.24")
                 ),
                 BuiltInFunction(
-                    name = "push",
-                    parameters = ["$ValueType element"],
-                    enabled = From("0.6.0")
-                ),
-                BuiltInFunction(name = "pop", parameters = [])
-            ]
-        ),
-        BuiltInType(
-            name = "$FixedArray",
-            fields = [BuiltInField(definition = "uint length")],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$BlockType",
-            fields = [
-                BuiltInField(definition = "uint basefee", enabled = From("0.8.7")),
-                BuiltInField(definition = "uint blobbasefee", enabled = From("0.8.24")),
-                BuiltInField(definition = "uint chainid", enabled = From("0.8.0")),
-                BuiltInField(definition = "address payable coinbase"),
-                BuiltInField(definition = "uint difficulty"),
-                BuiltInField(definition = "uint gaslimit"),
-                BuiltInField(definition = "uint number"),
-                BuiltInField(definition = "uint prevrandao", enabled = From("0.8.18")),
-                BuiltInField(definition = "uint timestamp")
-            ],
-            functions = [BuiltInFunction(
-                name = "blockhash",
-                parameters = ["uint"],
-                return_type = "bytes32",
-                enabled = Till("0.5.0")
-            )]
-        ),
-        BuiltInType(
-            name = "$bytes",
-            fields = [BuiltInField(definition = "uint length")],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$BytesType",
-            fields = [],
-            functions = [BuiltInFunction(
-                name = "concat",
-                parameters = ["bytes[] bytesToConcatenate"],
-                return_type = "bytes memory"
-            )]
-        ),
-        BuiltInType(
-            name = "$CallOptions",
-            fields = [
-                BuiltInField(definition = "uint gas"),
-                BuiltInField(definition = "uint salt"),
-                BuiltInField(definition = "uint value")
-            ],
-            functions = [],
-            enabled = From("0.6.2")
-        ),
-        BuiltInType(
-            name = "Error",
-            fields = [BuiltInField(definition = "string reason")],
-            functions = [],
-            enabled = From("0.6.0")
-        ),
-        BuiltInType(
-            name = "$ErrorType",
-            fields = [BuiltInField(definition = "bytes4 selector")],
-            functions = [],
-            enabled = From("0.8.4")
-        ),
-        BuiltInType(
-            name = "$Function",
-            fields = [],
-            functions = [
-                BuiltInFunction(
-                    name = "gas",
-                    parameters = ["uint amount"],
-                    return_type = "function()",
-                    enabled = Till("0.7.0")
+                    name = "blobhash",
+                    parameters = ["uint256 i"],
+                    return_type = "uint256",
+                    enabled = From("0.8.24")
                 ),
                 BuiltInFunction(
-                    name = "value",
-                    parameters = ["uint amount"],
-                    return_type = "function()",
-                    enabled = Till("0.7.0")
+                    name = "tload",
+                    parameters = ["uint256 p"],
+                    return_type = "uint256",
+                    enabled = From("0.8.24")
+                ),
+                BuiltInFunction(
+                    name = "tstore",
+                    parameters = ["uint256 p", "uint256 v"],
+                    enabled = From("0.8.24")
+                ),
+                BuiltInFunction(
+                    name = "mcopy",
+                    parameters = ["uint256 t", "uint256 f", "uint256 s"],
+                    enabled = From("0.8.24")
                 )
             ]
-        ),
-        BuiltInType(
-            name = "$ExternalFunction",
-            fields = [
-                BuiltInField(definition = "address address", enabled = From("0.8.2")),
-                BuiltInField(definition = "bytes4 selector", enabled = From("0.4.17"))
-            ],
-            functions = [
-                BuiltInFunction(
-                    name = "gas",
-                    parameters = ["uint amount"],
-                    return_type = "function()",
-                    enabled = Till("0.7.0")
-                ),
-                BuiltInFunction(
-                    name = "value",
-                    parameters = ["uint amount"],
-                    return_type = "function()",
-                    enabled = Till("0.7.0")
-                )
-            ]
-        ),
-        BuiltInType(
-            name = "$MessageType",
-            fields = [
-                BuiltInField(definition = "bytes data"),
-                BuiltInField(definition = "uint256 gas", enabled = Till("0.5.0")),
-                BuiltInField(
-                    definition = "address payable sender",
-                    enabled = Till("0.8.0")
-                ),
-                BuiltInField(definition = "address sender", enabled = From("0.8.0")),
-                BuiltInField(definition = "bytes4 sig"),
-                BuiltInField(definition = "uint value")
-            ],
-            functions = []
-        ),
-        BuiltInType(
-            name = "Panic",
-            fields = [BuiltInField(definition = "uint errorCode")],
-            functions = [],
-            enabled = From("0.6.0")
-        ),
-        BuiltInType(
-            name = "$StringType",
-            fields = [],
-            functions = [BuiltInFunction(
-                name = "concat",
-                parameters = ["string[] stringsToConcatenate"],
-                return_type = "string memory"
-            )]
-        ),
-        BuiltInType(
-            name = "$TransactionType",
-            fields = [
-                BuiltInField(definition = "uint gasprice"),
-                BuiltInField(
-                    definition = "address payable origin",
-                    enabled = Till("0.8.0")
-                ),
-                BuiltInField(definition = "address origin", enabled = From("0.8.0"))
-            ],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$ContractTypeType",
-            fields = [
-                BuiltInField(definition = "string name"),
-                BuiltInField(definition = "bytes creationCode", enabled = From("0.5.3")),
-                BuiltInField(definition = "bytes runtimeCode", enabled = From("0.5.3")),
-                BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
-            ],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$InterfaceTypeType",
-            fields = [
-                BuiltInField(definition = "string name"),
-                BuiltInField(definition = "bytes4 interfaceId", enabled = From("0.6.7"))
-            ],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$IntTypeType",
-            fields = [
-                BuiltInField(definition = "int min", enabled = From("0.6.8")),
-                BuiltInField(definition = "int max", enabled = From("0.6.8"))
-            ],
-            functions = []
-        ),
-        BuiltInType(
-            name = "$UserDefinedValueType",
-            fields = [],
-            functions = [
-                BuiltInFunction(
-                    name = "wrap",
-                    parameters = ["$WrappedType elementaryType"],
-                    return_type = "$UserType"
-                ),
-                BuiltInFunction(
-                    name = "unwrap",
-                    parameters = ["$UserType userType"],
-                    return_type = "$WrappedType"
-                )
-            ],
-            enabled = From("0.8.8")
-        ),
-        BuiltInType(
-            name = "$YulExternal",
-            fields = [
-                // These apply to state and storage variables
-                BuiltInField(definition = "uint slot"),
-                BuiltInField(definition = "uint offset"),
-                // Dynamic calldata arrays also have a length
-                BuiltInField(definition = "uint length")
-            ],
-            functions = []
-        ),
-        BuiltInVariable(definition = "$Function $placeholder"),
-        BuiltInVariable(definition = "$AbiType abi"),
-        BuiltInVariable(definition = "$BlockType block"),
-        BuiltInVariable(definition = "$BytesType $bytes"),
-        BuiltInVariable(definition = "$MessageType msg"),
-        BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
-        BuiltInVariable(definition = "$StringType $string"),
-        BuiltInVariable(definition = "$TransactionType tx")
+        )
     ]
 ));

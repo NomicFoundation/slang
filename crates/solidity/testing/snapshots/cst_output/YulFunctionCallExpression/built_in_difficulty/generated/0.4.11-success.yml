@@ -7,7 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "difficulty()\n" (0..13)
-      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulDifficultyKeyword): "difficulty" # (0..10)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "difficulty" (0..10)
+          - (item꞉ YulIdentifier): "difficulty" # (0..10)
       - (open_paren꞉ OpenParen): "(" # (10..11)
       - (arguments꞉ YulArguments): [] # (11..11)
       - (close_paren꞉ CloseParen): ")" # (11..12)

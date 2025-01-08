@@ -2162,89 +2162,8 @@ export declare enum NonterminalKind {
    * This kind represents a `YulBuiltInFunction` node, with the following structure:
    *
    * ```ebnf
-   * YulBuiltInFunction = (* variant: *) YUL_ADD_KEYWORD
-   * | (* variant: *) YUL_ADD_MOD_KEYWORD
-   * | (* variant: *) YUL_ADDRESS_KEYWORD
-   * | (* variant: *) YUL_AND_KEYWORD
-   * | (* variant: *) YUL_BALANCE_KEYWORD
-   * | (* variant: *) YUL_BLOCK_HASH_KEYWORD
-   * | (* variant: *) YUL_BYTE_KEYWORD
-   * | (* variant: *) YUL_CALL_CODE_KEYWORD
-   * | (* variant: *) YUL_CALL_DATA_COPY_KEYWORD
-   * | (* variant: *) YUL_CALL_DATA_LOAD_KEYWORD
-   * | (* variant: *) YUL_CALL_DATA_SIZE_KEYWORD
-   * | (* variant: *) YUL_CALLER_KEYWORD
-   * | (* variant: *) YUL_CALL_KEYWORD
-   * | (* variant: *) YUL_CALL_VALUE_KEYWORD
-   * | (* variant: *) YUL_COIN_BASE_KEYWORD
-   * | (* variant: *) YUL_CREATE_KEYWORD
-   * | (* variant: *) YUL_DELEGATE_CALL_KEYWORD
-   * | (* variant: *) YUL_DIV_KEYWORD
-   * | (* variant: *) YUL_EQ_KEYWORD
-   * | (* variant: *) YUL_EXP_KEYWORD
-   * | (* variant: *) YUL_EXT_CODE_COPY_KEYWORD
-   * | (* variant: *) YUL_EXT_CODE_SIZE_KEYWORD
-   * | (* variant: *) YUL_GAS_KEYWORD
-   * | (* variant: *) YUL_GAS_LIMIT_KEYWORD
-   * | (* variant: *) YUL_GAS_PRICE_KEYWORD
-   * | (* variant: *) YUL_GT_KEYWORD
-   * | (* variant: *) YUL_INVALID_KEYWORD
-   * | (* variant: *) YUL_IS_ZERO_KEYWORD
-   * | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
-   * | (* variant: *) YUL_JUMPI_KEYWORD (* Deprecated in 0.5.0 *)
-   * | (* variant: *) YUL_LOG_0_KEYWORD
-   * | (* variant: *) YUL_LOG_1_KEYWORD
-   * | (* variant: *) YUL_LOG_2_KEYWORD
-   * | (* variant: *) YUL_LOG_3_KEYWORD
-   * | (* variant: *) YUL_LOG_4_KEYWORD
-   * | (* variant: *) YUL_LT_KEYWORD
-   * | (* variant: *) YUL_M_LOAD_KEYWORD
-   * | (* variant: *) YUL_MOD_KEYWORD
-   * | (* variant: *) YUL_M_SIZE_KEYWORD
-   * | (* variant: *) YUL_M_STORE_8_KEYWORD
-   * | (* variant: *) YUL_M_STORE_KEYWORD
-   * | (* variant: *) YUL_MUL_KEYWORD
-   * | (* variant: *) YUL_MUL_MOD_KEYWORD
-   * | (* variant: *) YUL_NOT_KEYWORD
-   * | (* variant: *) YUL_NUMBER_KEYWORD
-   * | (* variant: *) YUL_ORIGIN_KEYWORD
-   * | (* variant: *) YUL_OR_KEYWORD
-   * | (* variant: *) YUL_POP_KEYWORD
-   * | (* variant: *) YUL_RETURN_KEYWORD
-   * | (* variant: *) YUL_REVERT_KEYWORD
-   * | (* variant: *) YUL_S_DIV_KEYWORD
-   * | (* variant: *) YUL_SELF_DESTRUCT_KEYWORD
-   * | (* variant: *) YUL_SGT_KEYWORD
-   * | (* variant: *) YUL_SIGN_EXTEND_KEYWORD
-   * | (* variant: *) YUL_S_LOAD_KEYWORD
-   * | (* variant: *) YUL_SLT_KEYWORD
-   * | (* variant: *) YUL_S_MOD_KEYWORD
-   * | (* variant: *) YUL_S_STORE_KEYWORD
-   * | (* variant: *) YUL_STOP_KEYWORD
-   * | (* variant: *) YUL_SUB_KEYWORD
-   * | (* variant: *) YUL_TIMESTAMP_KEYWORD
-   * | (* variant: *) YUL_XOR_KEYWORD
-   * | (* variant: *) YUL_KECCAK_256_KEYWORD (* Introduced in 0.4.12 *)
-   * | (* variant: *) YUL_SHA_3_KEYWORD (* Deprecated in 0.5.0 *)
-   * | (* variant: *) YUL_SUICIDE_KEYWORD (* Deprecated in 0.5.0 *)
-   * | (* variant: *) YUL_RETURN_DATA_COPY_KEYWORD (* Introduced in 0.4.12 *)
-   * | (* variant: *) YUL_RETURN_DATA_SIZE_KEYWORD (* Introduced in 0.4.12 *)
-   * | (* variant: *) YUL_STATIC_CALL_KEYWORD (* Introduced in 0.4.12 *)
-   * | (* variant: *) YUL_CREATE_2_KEYWORD (* Introduced in 0.4.12 *)
-   * | (* variant: *) YUL_EXT_CODE_HASH_KEYWORD (* Introduced in 0.5.0 *)
-   * | (* variant: *) YUL_SAR_KEYWORD
-   * | (* variant: *) YUL_SHL_KEYWORD
-   * | (* variant: *) YUL_SHR_KEYWORD
-   * | (* variant: *) YUL_CHAIN_ID_KEYWORD
-   * | (* variant: *) YUL_SELF_BALANCE_KEYWORD
-   * | (* variant: *) YUL_BASE_FEE_KEYWORD (* Introduced in 0.8.7 *)
-   * | (* variant: *) YUL_DIFFICULTY_KEYWORD (* Deprecated in 0.8.18 *)
-   * | (* variant: *) YUL_PREV_RANDAO_KEYWORD (* Introduced in 0.8.18 *)
-   * | (* variant: *) YUL_BLOB_BASE_FEE_KEYWORD (* Introduced in 0.8.24 *)
-   * | (* variant: *) YUL_BLOB_HASH_KEYWORD (* Introduced in 0.8.24 *)
-   * | (* variant: *) YUL_T_LOAD_KEYWORD (* Introduced in 0.8.24 *)
-   * | (* variant: *) YUL_T_STORE_KEYWORD (* Introduced in 0.8.24 *)
-   * | (* variant: *) YUL_M_COPY_KEYWORD; (* Introduced in 0.8.24 *)
+   * YulBuiltInFunction = (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
+   * | (* variant: *) YUL_JUMPI_KEYWORD; (* Deprecated in 0.5.0 *)
    * ```
    */
   YulBuiltInFunction = "YulBuiltInFunction",
@@ -4137,40 +4056,6 @@ export declare enum TerminalKind {
    */
   YearsKeyword = "YearsKeyword",
   /**
-   * This kind represents a `YulAbstractKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Reserved until 0.7.1 *)
-   * YUL_ABSTRACT_KEYWORD = "abstract";
-   * ```
-   */
-  YulAbstractKeyword = "YulAbstractKeyword",
-  /**
-   * This kind represents a `YulAddKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_ADD_KEYWORD = "add";
-   * ```
-   */
-  YulAddKeyword = "YulAddKeyword",
-  /**
-   * This kind represents a `YulAddModKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_ADD_MOD_KEYWORD = "addmod";
-   * ```
-   */
-  YulAddModKeyword = "YulAddModKeyword",
-  /**
-   * This kind represents a `YulAddressKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Never reserved *)
-   * YUL_ADDRESS_KEYWORD = "address";
-   * ```
-   */
-  YulAddressKeyword = "YulAddressKeyword",
-  /**
    * This kind represents a `YulAfterKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -4188,14 +4073,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulAliasKeyword = "YulAliasKeyword",
-  /**
-   * This kind represents a `YulAndKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_AND_KEYWORD = "and";
-   * ```
-   */
-  YulAndKeyword = "YulAndKeyword",
   /**
    * This kind represents a `YulAnonymousKeyword` node, with the following structure:
    *
@@ -4242,52 +4119,6 @@ export declare enum TerminalKind {
    */
   YulAutoKeyword = "YulAutoKeyword",
   /**
-   * This kind represents a `YulBalanceKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_BALANCE_KEYWORD = "balance";
-   * ```
-   */
-  YulBalanceKeyword = "YulBalanceKeyword",
-  /**
-   * This kind represents a `YulBaseFeeKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.8.7 *)
-   * (* Reserved in 0.8.7 *)
-   * YUL_BASE_FEE_KEYWORD = "basefee";
-   * ```
-   */
-  YulBaseFeeKeyword = "YulBaseFeeKeyword",
-  /**
-   * This kind represents a `YulBlobBaseFeeKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.8.24 *)
-   * (* Reserved in 0.8.25 *)
-   * YUL_BLOB_BASE_FEE_KEYWORD = "blobbasefee";
-   * ```
-   */
-  YulBlobBaseFeeKeyword = "YulBlobBaseFeeKeyword",
-  /**
-   * This kind represents a `YulBlobHashKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.8.24 *)
-   * (* Reserved in 0.8.25 *)
-   * YUL_BLOB_HASH_KEYWORD = "blobhash";
-   * ```
-   */
-  YulBlobHashKeyword = "YulBlobHashKeyword",
-  /**
-   * This kind represents a `YulBlockHashKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_BLOCK_HASH_KEYWORD = "blockhash";
-   * ```
-   */
-  YulBlockHashKeyword = "YulBlockHashKeyword",
-  /**
    * This kind represents a `YulBoolKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -4305,14 +4136,6 @@ export declare enum TerminalKind {
    */
   YulBreakKeyword = "YulBreakKeyword",
   /**
-   * This kind represents a `YulByteKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_BYTE_KEYWORD = "byte";
-   * ```
-   */
-  YulByteKeyword = "YulByteKeyword",
-  /**
    * This kind represents a `YulBytesKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -4322,22 +4145,6 @@ export declare enum TerminalKind {
    */
   YulBytesKeyword = "YulBytesKeyword",
   /**
-   * This kind represents a `YulCallCodeKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_CALL_CODE_KEYWORD = "callcode";
-   * ```
-   */
-  YulCallCodeKeyword = "YulCallCodeKeyword",
-  /**
-   * This kind represents a `YulCallDataCopyKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_CALL_DATA_COPY_KEYWORD = "calldatacopy";
-   * ```
-   */
-  YulCallDataCopyKeyword = "YulCallDataCopyKeyword",
-  /**
    * This kind represents a `YulCallDataKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -4346,46 +4153,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulCallDataKeyword = "YulCallDataKeyword",
-  /**
-   * This kind represents a `YulCallDataLoadKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_CALL_DATA_LOAD_KEYWORD = "calldataload";
-   * ```
-   */
-  YulCallDataLoadKeyword = "YulCallDataLoadKeyword",
-  /**
-   * This kind represents a `YulCallDataSizeKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_CALL_DATA_SIZE_KEYWORD = "calldatasize";
-   * ```
-   */
-  YulCallDataSizeKeyword = "YulCallDataSizeKeyword",
-  /**
-   * This kind represents a `YulCallKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_CALL_KEYWORD = "call";
-   * ```
-   */
-  YulCallKeyword = "YulCallKeyword",
-  /**
-   * This kind represents a `YulCallValueKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_CALL_VALUE_KEYWORD = "callvalue";
-   * ```
-   */
-  YulCallValueKeyword = "YulCallValueKeyword",
-  /**
-   * This kind represents a `YulCallerKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_CALLER_KEYWORD = "caller";
-   * ```
-   */
-  YulCallerKeyword = "YulCallerKeyword",
   /**
    * This kind represents a `YulCaseKeyword` node, with the following structure:
    *
@@ -4403,23 +4170,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulCatchKeyword = "YulCatchKeyword",
-  /**
-   * This kind represents a `YulChainIdKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Reserved in 0.5.12 *)
-   * YUL_CHAIN_ID_KEYWORD = "chainid";
-   * ```
-   */
-  YulChainIdKeyword = "YulChainIdKeyword",
-  /**
-   * This kind represents a `YulCoinBaseKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_COIN_BASE_KEYWORD = "coinbase";
-   * ```
-   */
-  YulCoinBaseKeyword = "YulCoinBaseKeyword",
   /**
    * This kind represents a `YulConstantKeyword` node, with the following structure:
    *
@@ -4465,24 +4215,6 @@ export declare enum TerminalKind {
    */
   YulCopyOfKeyword = "YulCopyOfKeyword",
   /**
-   * This kind represents a `YulCreate2Keyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.4.12 *)
-   * (* Reserved in 0.4.12 *)
-   * YUL_CREATE_2_KEYWORD = "create2";
-   * ```
-   */
-  YulCreate2Keyword = "YulCreate2Keyword",
-  /**
-   * This kind represents a `YulCreateKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_CREATE_KEYWORD = "create";
-   * ```
-   */
-  YulCreateKeyword = "YulCreateKeyword",
-  /**
    * This kind represents a `YulDaysKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -4517,14 +4249,6 @@ export declare enum TerminalKind {
    */
   YulDefineKeyword = "YulDefineKeyword",
   /**
-   * This kind represents a `YulDelegateCallKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_DELEGATE_CALL_KEYWORD = "delegatecall";
-   * ```
-   */
-  YulDelegateCallKeyword = "YulDelegateCallKeyword",
-  /**
    * This kind represents a `YulDeleteKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -4533,23 +4257,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulDeleteKeyword = "YulDeleteKeyword",
-  /**
-   * This kind represents a `YulDifficultyKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Deprecated in 0.8.18 *)
-   * YUL_DIFFICULTY_KEYWORD = "difficulty";
-   * ```
-   */
-  YulDifficultyKeyword = "YulDifficultyKeyword",
-  /**
-   * This kind represents a `YulDivKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_DIV_KEYWORD = "div";
-   * ```
-   */
-  YulDivKeyword = "YulDivKeyword",
   /**
    * This kind represents a `YulDoKeyword` node, with the following structure:
    *
@@ -4587,14 +4294,6 @@ export declare enum TerminalKind {
    */
   YulEnumKeyword = "YulEnumKeyword",
   /**
-   * This kind represents a `YulEqKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_EQ_KEYWORD = "eq";
-   * ```
-   */
-  YulEqKeyword = "YulEqKeyword",
-  /**
    * This kind represents a `YulEtherKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -4612,40 +4311,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulEventKeyword = "YulEventKeyword",
-  /**
-   * This kind represents a `YulExpKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_EXP_KEYWORD = "exp";
-   * ```
-   */
-  YulExpKeyword = "YulExpKeyword",
-  /**
-   * This kind represents a `YulExtCodeCopyKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_EXT_CODE_COPY_KEYWORD = "extcodecopy";
-   * ```
-   */
-  YulExtCodeCopyKeyword = "YulExtCodeCopyKeyword",
-  /**
-   * This kind represents a `YulExtCodeHashKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.5.0 *)
-   * (* Reserved in 0.5.0 *)
-   * YUL_EXT_CODE_HASH_KEYWORD = "extcodehash";
-   * ```
-   */
-  YulExtCodeHashKeyword = "YulExtCodeHashKeyword",
-  /**
-   * This kind represents a `YulExtCodeSizeKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_EXT_CODE_SIZE_KEYWORD = "extcodesize";
-   * ```
-   */
-  YulExtCodeSizeKeyword = "YulExtCodeSizeKeyword",
   /**
    * This kind represents a `YulExternalKeyword` node, with the following structure:
    *
@@ -4727,38 +4392,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulFunctionKeyword = "YulFunctionKeyword",
-  /**
-   * This kind represents a `YulGasKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_GAS_KEYWORD = "gas";
-   * ```
-   */
-  YulGasKeyword = "YulGasKeyword",
-  /**
-   * This kind represents a `YulGasLimitKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_GAS_LIMIT_KEYWORD = "gaslimit";
-   * ```
-   */
-  YulGasLimitKeyword = "YulGasLimitKeyword",
-  /**
-   * This kind represents a `YulGasPriceKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_GAS_PRICE_KEYWORD = "gasprice";
-   * ```
-   */
-  YulGasPriceKeyword = "YulGasPriceKeyword",
-  /**
-   * This kind represents a `YulGtKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_GT_KEYWORD = "gt";
-   * ```
-   */
-  YulGtKeyword = "YulGtKeyword",
   /**
    * This kind represents a `YulGweiKeyword` node, with the following structure:
    *
@@ -4894,14 +4527,6 @@ export declare enum TerminalKind {
    */
   YulInternalKeyword = "YulInternalKeyword",
   /**
-   * This kind represents a `YulInvalidKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_INVALID_KEYWORD = "invalid";
-   * ```
-   */
-  YulInvalidKeyword = "YulInvalidKeyword",
-  /**
    * This kind represents a `YulIsKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -4910,14 +4535,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulIsKeyword = "YulIsKeyword",
-  /**
-   * This kind represents a `YulIsZeroKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_IS_ZERO_KEYWORD = "iszero";
-   * ```
-   */
-  YulIsZeroKeyword = "YulIsZeroKeyword",
   /**
    * This kind represents a `YulJumpKeyword` node, with the following structure:
    *
@@ -4936,16 +4553,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulJumpiKeyword = "YulJumpiKeyword",
-  /**
-   * This kind represents a `YulKeccak256Keyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.4.12 *)
-   * (* Reserved in 0.4.12 *)
-   * YUL_KECCAK_256_KEYWORD = "keccak256";
-   * ```
-   */
-  YulKeccak256Keyword = "YulKeccak256Keyword",
   /**
    * This kind represents a `YulLeaveKeyword` node, with the following structure:
    *
@@ -4973,96 +4580,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulLibraryKeyword = "YulLibraryKeyword",
-  /**
-   * This kind represents a `YulLog0Keyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_LOG_0_KEYWORD = "log0";
-   * ```
-   */
-  YulLog0Keyword = "YulLog0Keyword",
-  /**
-   * This kind represents a `YulLog1Keyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_LOG_1_KEYWORD = "log1";
-   * ```
-   */
-  YulLog1Keyword = "YulLog1Keyword",
-  /**
-   * This kind represents a `YulLog2Keyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_LOG_2_KEYWORD = "log2";
-   * ```
-   */
-  YulLog2Keyword = "YulLog2Keyword",
-  /**
-   * This kind represents a `YulLog3Keyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_LOG_3_KEYWORD = "log3";
-   * ```
-   */
-  YulLog3Keyword = "YulLog3Keyword",
-  /**
-   * This kind represents a `YulLog4Keyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_LOG_4_KEYWORD = "log4";
-   * ```
-   */
-  YulLog4Keyword = "YulLog4Keyword",
-  /**
-   * This kind represents a `YulLtKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_LT_KEYWORD = "lt";
-   * ```
-   */
-  YulLtKeyword = "YulLtKeyword",
-  /**
-   * This kind represents a `YulMCopyKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.8.24 *)
-   * (* Reserved in 0.8.25 *)
-   * YUL_M_COPY_KEYWORD = "mcopy";
-   * ```
-   */
-  YulMcopyKeyword = "YulMcopyKeyword",
-  /**
-   * This kind represents a `YulMLoadKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_M_LOAD_KEYWORD = "mload";
-   * ```
-   */
-  YulMloadKeyword = "YulMloadKeyword",
-  /**
-   * This kind represents a `YulMSizeKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_M_SIZE_KEYWORD = "msize";
-   * ```
-   */
-  YulMsizeKeyword = "YulMsizeKeyword",
-  /**
-   * This kind represents a `YulMStore8Keyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_M_STORE_8_KEYWORD = "mstore8";
-   * ```
-   */
-  YulMstore8Keyword = "YulMstore8Keyword",
-  /**
-   * This kind represents a `YulMStoreKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_M_STORE_KEYWORD = "mstore";
-   * ```
-   */
-  YulMstoreKeyword = "YulMstoreKeyword",
   /**
    * This kind represents a `YulMacroKeyword` node, with the following structure:
    *
@@ -5109,14 +4626,6 @@ export declare enum TerminalKind {
    */
   YulMinutesKeyword = "YulMinutesKeyword",
   /**
-   * This kind represents a `YulModKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_MOD_KEYWORD = "mod";
-   * ```
-   */
-  YulModKeyword = "YulModKeyword",
-  /**
    * This kind represents a `YulModifierKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -5125,22 +4634,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulModifierKeyword = "YulModifierKeyword",
-  /**
-   * This kind represents a `YulMulKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_MUL_KEYWORD = "mul";
-   * ```
-   */
-  YulMulKeyword = "YulMulKeyword",
-  /**
-   * This kind represents a `YulMulModKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_MUL_MOD_KEYWORD = "mulmod";
-   * ```
-   */
-  YulMulModKeyword = "YulMulModKeyword",
   /**
    * This kind represents a `YulMutableKeyword` node, with the following structure:
    *
@@ -5160,14 +4653,6 @@ export declare enum TerminalKind {
    */
   YulNewKeyword = "YulNewKeyword",
   /**
-   * This kind represents a `YulNotKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_NOT_KEYWORD = "not";
-   * ```
-   */
-  YulNotKeyword = "YulNotKeyword",
-  /**
    * This kind represents a `YulNullKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -5177,14 +4662,6 @@ export declare enum TerminalKind {
    */
   YulNullKeyword = "YulNullKeyword",
   /**
-   * This kind represents a `YulNumberKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_NUMBER_KEYWORD = "number";
-   * ```
-   */
-  YulNumberKeyword = "YulNumberKeyword",
-  /**
    * This kind represents a `YulOfKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -5193,22 +4670,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulOfKeyword = "YulOfKeyword",
-  /**
-   * This kind represents a `YulOrKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_OR_KEYWORD = "or";
-   * ```
-   */
-  YulOrKeyword = "YulOrKeyword",
-  /**
-   * This kind represents a `YulOriginKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_ORIGIN_KEYWORD = "origin";
-   * ```
-   */
-  YulOriginKeyword = "YulOriginKeyword",
   /**
    * This kind represents a `YulOverrideKeyword` node, with the following structure:
    *
@@ -5237,14 +4698,6 @@ export declare enum TerminalKind {
    */
   YulPayableKeyword = "YulPayableKeyword",
   /**
-   * This kind represents a `YulPopKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_POP_KEYWORD = "pop";
-   * ```
-   */
-  YulPopKeyword = "YulPopKeyword",
-  /**
    * This kind represents a `YulPragmaKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -5253,16 +4706,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulPragmaKeyword = "YulPragmaKeyword",
-  /**
-   * This kind represents a `YulPrevRandaoKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.8.18 *)
-   * (* Reserved in 0.8.18 *)
-   * YUL_PREV_RANDAO_KEYWORD = "prevrandao";
-   * ```
-   */
-  YulPrevRandaoKeyword = "YulPrevRandaoKeyword",
   /**
    * This kind represents a `YulPrivateKeyword` node, with the following structure:
    *
@@ -5327,34 +4770,6 @@ export declare enum TerminalKind {
    */
   YulRelocatableKeyword = "YulRelocatableKeyword",
   /**
-   * This kind represents a `YulReturnDataCopyKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.4.12 *)
-   * (* Reserved in 0.4.12 *)
-   * YUL_RETURN_DATA_COPY_KEYWORD = "returndatacopy";
-   * ```
-   */
-  YulReturnDataCopyKeyword = "YulReturnDataCopyKeyword",
-  /**
-   * This kind represents a `YulReturnDataSizeKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.4.12 *)
-   * (* Reserved in 0.4.12 *)
-   * YUL_RETURN_DATA_SIZE_KEYWORD = "returndatasize";
-   * ```
-   */
-  YulReturnDataSizeKeyword = "YulReturnDataSizeKeyword",
-  /**
-   * This kind represents a `YulReturnKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_RETURN_KEYWORD = "return";
-   * ```
-   */
-  YulReturnKeyword = "YulReturnKeyword",
-  /**
    * This kind represents a `YulReturnsKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -5363,55 +4778,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulReturnsKeyword = "YulReturnsKeyword",
-  /**
-   * This kind represents a `YulRevertKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_REVERT_KEYWORD = "revert";
-   * ```
-   */
-  YulRevertKeyword = "YulRevertKeyword",
-  /**
-   * This kind represents a `YulSDivKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_S_DIV_KEYWORD = "sdiv";
-   * ```
-   */
-  YulSdivKeyword = "YulSdivKeyword",
-  /**
-   * This kind represents a `YulSLoadKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_S_LOAD_KEYWORD = "sload";
-   * ```
-   */
-  YulSloadKeyword = "YulSloadKeyword",
-  /**
-   * This kind represents a `YulSModKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_S_MOD_KEYWORD = "smod";
-   * ```
-   */
-  YulSmodKeyword = "YulSmodKeyword",
-  /**
-   * This kind represents a `YulSStoreKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_S_STORE_KEYWORD = "sstore";
-   * ```
-   */
-  YulSstoreKeyword = "YulSstoreKeyword",
-  /**
-   * This kind represents a `YulSarKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Reserved in 0.4.21 *)
-   * YUL_SAR_KEYWORD = "sar";
-   * ```
-   */
-  YulSarKeyword = "YulSarKeyword",
   /**
    * This kind represents a `YulSealedKeyword` node, with the following structure:
    *
@@ -5431,67 +4797,6 @@ export declare enum TerminalKind {
    */
   YulSecondsKeyword = "YulSecondsKeyword",
   /**
-   * This kind represents a `YulSelfBalanceKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Reserved in 0.5.12 *)
-   * YUL_SELF_BALANCE_KEYWORD = "selfbalance";
-   * ```
-   */
-  YulSelfBalanceKeyword = "YulSelfBalanceKeyword",
-  /**
-   * This kind represents a `YulSelfDestructKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_SELF_DESTRUCT_KEYWORD = "selfdestruct";
-   * ```
-   */
-  YulSelfDestructKeyword = "YulSelfDestructKeyword",
-  /**
-   * This kind represents a `YulSgtKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_SGT_KEYWORD = "sgt";
-   * ```
-   */
-  YulSgtKeyword = "YulSgtKeyword",
-  /**
-   * This kind represents a `YulSha3Keyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Deprecated in 0.5.0 *)
-   * (* Reserved until 0.5.0 *)
-   * YUL_SHA_3_KEYWORD = "sha3";
-   * ```
-   */
-  YulSha3Keyword = "YulSha3Keyword",
-  /**
-   * This kind represents a `YulShlKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Reserved in 0.4.21 *)
-   * YUL_SHL_KEYWORD = "shl";
-   * ```
-   */
-  YulShlKeyword = "YulShlKeyword",
-  /**
-   * This kind represents a `YulShrKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Reserved in 0.4.21 *)
-   * YUL_SHR_KEYWORD = "shr";
-   * ```
-   */
-  YulShrKeyword = "YulShrKeyword",
-  /**
-   * This kind represents a `YulSignExtendKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_SIGN_EXTEND_KEYWORD = "signextend";
-   * ```
-   */
-  YulSignExtendKeyword = "YulSignExtendKeyword",
-  /**
    * This kind represents a `YulSizeOfKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -5501,24 +4806,6 @@ export declare enum TerminalKind {
    */
   YulSizeOfKeyword = "YulSizeOfKeyword",
   /**
-   * This kind represents a `YulSltKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_SLT_KEYWORD = "slt";
-   * ```
-   */
-  YulSltKeyword = "YulSltKeyword",
-  /**
-   * This kind represents a `YulStaticCallKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.4.12 *)
-   * (* Reserved in 0.4.12 *)
-   * YUL_STATIC_CALL_KEYWORD = "staticcall";
-   * ```
-   */
-  YulStaticCallKeyword = "YulStaticCallKeyword",
-  /**
    * This kind represents a `YulStaticKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -5527,14 +4814,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulStaticKeyword = "YulStaticKeyword",
-  /**
-   * This kind represents a `YulStopKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_STOP_KEYWORD = "stop";
-   * ```
-   */
-  YulStopKeyword = "YulStopKeyword",
   /**
    * This kind represents a `YulStorageKeyword` node, with the following structure:
    *
@@ -5562,24 +4841,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulStructKeyword = "YulStructKeyword",
-  /**
-   * This kind represents a `YulSubKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_SUB_KEYWORD = "sub";
-   * ```
-   */
-  YulSubKeyword = "YulSubKeyword",
-  /**
-   * This kind represents a `YulSuicideKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Deprecated in 0.5.0 *)
-   * (* Reserved until 0.5.0 *)
-   * YUL_SUICIDE_KEYWORD = "suicide";
-   * ```
-   */
-  YulSuicideKeyword = "YulSuicideKeyword",
   /**
    * This kind represents a `YulSuperKeyword` node, with the following structure:
    *
@@ -5615,26 +4876,6 @@ export declare enum TerminalKind {
    */
   YulSzaboKeyword = "YulSzaboKeyword",
   /**
-   * This kind represents a `YulTLoadKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.8.24 *)
-   * (* Reserved in 0.8.25 *)
-   * YUL_T_LOAD_KEYWORD = "tload";
-   * ```
-   */
-  YulTloadKeyword = "YulTloadKeyword",
-  /**
-   * This kind represents a `YulTStoreKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.8.24 *)
-   * (* Reserved in 0.8.25 *)
-   * YUL_T_STORE_KEYWORD = "tstore";
-   * ```
-   */
-  YulTstoreKeyword = "YulTstoreKeyword",
-  /**
    * This kind represents a `YulThisKeyword` node, with the following structure:
    *
    * ```ebnf
@@ -5651,14 +4892,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulThrowKeyword = "YulThrowKeyword",
-  /**
-   * This kind represents a `YulTimestampKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_TIMESTAMP_KEYWORD = "timestamp";
-   * ```
-   */
-  YulTimestampKeyword = "YulTimestampKeyword",
   /**
    * This kind represents a `YulTrueKeyword` node, with the following structure:
    *
@@ -5805,14 +5038,6 @@ export declare enum TerminalKind {
    * ```
    */
   YulWhileKeyword = "YulWhileKeyword",
-  /**
-   * This kind represents a `YulXorKeyword` node, with the following structure:
-   *
-   * ```ebnf
-   * YUL_XOR_KEYWORD = "xor";
-   * ```
-   */
-  YulXorKeyword = "YulXorKeyword",
   /**
    * This kind represents a `YulYearsKeyword` node, with the following structure:
    *

@@ -7,7 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "log1()\n" (0..7)
-      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulLog1Keyword): "log1" # (0..4)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "log1" (0..4)
+          - (item꞉ YulIdentifier): "log1" # (0..4)
       - (open_paren꞉ OpenParen): "(" # (4..5)
       - (arguments꞉ YulArguments): [] # (5..5)
       - (close_paren꞉ CloseParen): ")" # (5..6)
