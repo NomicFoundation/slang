@@ -7,7 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "blockhash()\n" (0..12)
-      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulBlockHashKeyword): "blockhash" # (0..9)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "blockhash" (0..9)
+          - (item꞉ YulIdentifier): "blockhash" # (0..9)
       - (open_paren꞉ OpenParen): "(" # (9..10)
       - (arguments꞉ YulArguments): [] # (10..10)
       - (close_paren꞉ CloseParen): ")" # (10..11)

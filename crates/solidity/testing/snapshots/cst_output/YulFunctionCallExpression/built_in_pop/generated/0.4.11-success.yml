@@ -7,7 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "pop()\n" (0..6)
-      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulPopKeyword): "pop" # (0..3)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "pop" (0..3)
+          - (item꞉ YulIdentifier): "pop" # (0..3)
       - (open_paren꞉ OpenParen): "(" # (3..4)
       - (arguments꞉ YulArguments): [] # (4..4)
       - (close_paren꞉ CloseParen): ")" # (4..5)

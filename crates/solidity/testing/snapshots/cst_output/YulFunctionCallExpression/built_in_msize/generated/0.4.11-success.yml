@@ -7,7 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "msize()\n" (0..8)
-      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulMSizeKeyword): "msize" # (0..5)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "msize" (0..5)
+          - (item꞉ YulIdentifier): "msize" # (0..5)
       - (open_paren꞉ OpenParen): "(" # (5..6)
       - (arguments꞉ YulArguments): [] # (6..6)
       - (close_paren꞉ CloseParen): ")" # (6..7)
