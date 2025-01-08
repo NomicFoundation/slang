@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Expression) ► (UNRECOGNIZED): "payable(msg.sender)\n" # (0..20)
+  - (FunctionCallExpression) ► (UNRECOGNIZED): "payable(msg.sender)\n" # (0..20)
