@@ -40,6 +40,8 @@ enum LintCommand {
     Tsc,
     /// Check for violations issues in Yaml files.
     Yamllint,
+    /// Check for violations in TypeScript documentation files.
+    Typedoc,
 }
 
 impl OrderedCommand for LintCommand {
@@ -55,6 +57,7 @@ impl OrderedCommand for LintCommand {
             LintCommand::Shellcheck => run_shellcheck()?,
             LintCommand::Tsc => run_tsc(),
             LintCommand::Yamllint => run_yamllint()?,
+            LintCommand::Typedoc => run_typedoc()?,
         };
 
         Ok(())
@@ -149,6 +152,18 @@ fn run_yamllint() -> Result<()> {
         .flag("--strict")
         .property("--config-file", config_file.unwrap_str())
         .run_xargs(yaml_files);
+
+    Ok(())
+}
+
+fn run_typedoc() -> Result<()> {
+    let options_files = FileWalker::from_repo_root().find(["**/typedoc.mjs"])?;
+
+    for options_file in options_files {
+        Command::new("typedoc")
+            .property("--options", options_file.unwrap_string())
+            .run();
+    }
 
     Ok(())
 }
