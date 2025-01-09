@@ -40,7 +40,7 @@ impl<T: ValueEnum> ClapExtensions for T {
 
 #[derive(Clone, Copy, Debug, Parser)]
 pub struct DryRun {
-    /// Attempt a dry run, instead of actually executing the command.
+    /// Attempt a local run and report results, without publishing any user-facing artifacts.
     #[arg(long)]
     dry_run: bool,
 }
