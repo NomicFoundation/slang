@@ -46,7 +46,7 @@ pub enum TerminalKind {
     /// ```
     Identifier,
     /// ```ebnf
-    /// MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*/";
+    /// MULTI_LINE_COMMENT = "/*" (?!"*") (!"*" | ("*" (?!"/")))* "*/";
     /// ```
     MultiLineComment,
     /// ```ebnf
@@ -66,11 +66,11 @@ pub enum TerminalKind {
     /// ```
     Semicolon,
     /// ```ebnf
-    /// SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
+    /// SINGLE_LINE_COMMENT = "//" (?!"/") (!("\r" | "\n"))*;
     /// ```
     SingleLineComment,
     /// ```ebnf
-    /// STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+    /// STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' | "\\" | "\r" | "\n"))* '"';
     /// ```
     StringLiteral,
     /// ```ebnf

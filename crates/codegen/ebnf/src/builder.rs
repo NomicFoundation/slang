@@ -466,7 +466,7 @@ impl Builder {
                 let expression = if chars.len() == 1 {
                     Expression::new_atom(chars[0].to_string())
                 } else {
-                    Expression::new_sequence(
+                    Expression::new_choice(
                         chars
                             .iter()
                             .map(|ch| Expression::new_atom(ch.to_string()))
@@ -485,8 +485,11 @@ impl Builder {
             Scanner::Atom { atom } => Expression::new_atom(atom.clone()),
             Scanner::TrailingContext {
                 scanner,
-                not_followed_by: _,
-            } => Self::build_scanner(scanner),
+                not_followed_by,
+            } => Expression::new_sequence(vec![
+                Self::build_scanner(scanner),
+                Expression::new_negative_look_ahead(Self::build_scanner(not_followed_by).into()),
+            ]),
             Scanner::Fragment { reference } => Self::build_ref(None, reference),
         }
     }
