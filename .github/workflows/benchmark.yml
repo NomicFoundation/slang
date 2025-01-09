@@ -3,7 +3,13 @@ name: "benchmark"
 on:
   # Run using manual triggers from GitHub UI:
   # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      dryRun:
+        description: "Attempt a local run and report results here, without updating the bencher dashboard."
+        type: "boolean"
+        required: true
+        default: true
 
   # Run on pushes to 'main' branch:
   push:
@@ -19,8 +25,8 @@ jobs:
   benchmark:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
-    # Only run on the main repo (not forks):
-    if: "${{ github.repository == 'NomicFoundation/slang' }}"
+    # Only run on the main repo (not forks), unless it is a dry run:
+    if: "${{ github.repository == 'NomicFoundation/slang' || inputs.dryRun == true }}"
 
     steps:
       - name: "Checkout Repository"
@@ -48,7 +54,7 @@ jobs:
       - name: "infra perf benchmark"
         uses: "./.github/actions/devcontainer/run"
         with:
-          runCmd: "./scripts/bin/infra perf benchmark"
+          runCmd: "./scripts/bin/infra perf benchmark ${{ inputs.dryRun == true && '--dry-run' || '' }}"
           env: |
             BENCHER_API_TOKEN=${{ secrets.BENCHER_API_TOKEN }}
 
