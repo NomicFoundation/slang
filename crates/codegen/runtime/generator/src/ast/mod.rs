@@ -1,3 +1,4 @@
+use codegen_ebnf::{EbnfModel, PlainWriter};
 use codegen_language_definition::model::{self, PredefinedLabel};
 use indexmap::{IndexMap, IndexSet};
 use serde::Serialize;
@@ -6,6 +7,8 @@ use serde::Serialize;
 pub struct AstModel {
     #[serde(skip)]
     terminals: IndexSet<model::Identifier>,
+    #[serde(skip)]
+    ebnf: Option<EbnfModel>,
 
     pub sequences: Vec<Sequence>,
     pub choices: Vec<Choice>,
@@ -16,6 +19,7 @@ pub struct AstModel {
 #[derive(Serialize)]
 pub struct Sequence {
     pub parent_type: model::Identifier,
+    pub ebnf: String,
 
     pub fields: Vec<Field>,
 }
@@ -33,6 +37,7 @@ pub struct Field {
 #[derive(Serialize)]
 pub struct Choice {
     pub parent_type: model::Identifier,
+    pub ebnf: String,
 
     pub nonterminal_types: Vec<model::Identifier>,
     pub includes_terminals: bool,
@@ -41,6 +46,7 @@ pub struct Choice {
 #[derive(Serialize)]
 pub struct Repeated {
     pub parent_type: model::Identifier,
+    pub ebnf: String,
 
     /// AST Type of the field, [`None`] if the field is a terminal.
     pub item_type: Option<model::Identifier>,
@@ -49,6 +55,7 @@ pub struct Repeated {
 #[derive(Serialize)]
 pub struct Separated {
     pub parent_type: model::Identifier,
+    pub ebnf: String,
 
     /// AST Type of the field, [`None`] if the field is a terminal.
     pub item_type: Option<model::Identifier>,
@@ -56,7 +63,15 @@ pub struct Separated {
 
 impl AstModel {
     pub fn from_language(language: &model::Language) -> Self {
-        let mut model = Self::default();
+        let mut model = Self {
+            terminals: IndexSet::new(),
+            ebnf: Some(EbnfModel::build(language)),
+
+            sequences: Vec::new(),
+            choices: Vec::new(),
+            repeated: Vec::new(),
+            separated: Vec::new(),
+        };
 
         // First pass: collect all terminals:
         model.collect_terminals(language);
@@ -129,16 +144,19 @@ impl AstModel {
 
     fn add_struct_item(&mut self, item: &model::StructItem) {
         let parent_type = item.name.clone();
+        let ebnf = self.get_ebnf(&parent_type);
         let fields = self.convert_fields(&item.fields).collect();
 
         self.sequences.push(Sequence {
             parent_type,
+            ebnf,
             fields,
         });
     }
 
     fn add_enum_item(&mut self, item: &model::EnumItem) {
         let parent_type = item.name.clone();
+        let ebnf = self.get_ebnf(&parent_type);
 
         let (terminal_types, nonterminal_types) = item
             .variants
@@ -148,6 +166,7 @@ impl AstModel {
 
         self.choices.push(Choice {
             parent_type,
+            ebnf,
             nonterminal_types,
             includes_terminals: !terminal_types.is_empty(),
         });
@@ -155,9 +174,11 @@ impl AstModel {
 
     fn add_repeated_item(&mut self, item: &model::RepeatedItem) {
         let parent_type = item.name.clone();
+        let ebnf = self.get_ebnf(&parent_type);
 
         self.repeated.push(Repeated {
             parent_type,
+            ebnf,
             item_type: if self.terminals.contains(&item.reference) {
                 None
             } else {
@@ -168,9 +189,11 @@ impl AstModel {
 
     fn add_separated_item(&mut self, item: &model::SeparatedItem) {
         let parent_type = item.name.clone();
+        let ebnf = self.get_ebnf(&parent_type);
 
         self.separated.push(Separated {
             parent_type,
+            ebnf,
             item_type: if self.terminals.contains(&item.reference) {
                 None
             } else {
@@ -181,6 +204,7 @@ impl AstModel {
 
     fn add_precedence_item(&mut self, item: &model::PrecedenceItem) {
         let parent_type = item.name.clone();
+        let ebnf = self.get_ebnf(&parent_type);
 
         let precedence_expressions = item
             .precedence_expressions
@@ -198,6 +222,7 @@ impl AstModel {
 
         self.choices.push(Choice {
             parent_type,
+            ebnf,
             nonterminal_types,
             includes_terminals: !terminal_types.is_empty(),
         });
@@ -208,18 +233,19 @@ impl AstModel {
         base_name: &model::Identifier,
         expression: &model::PrecedenceExpression,
     ) {
-        let operand = |label: PredefinedLabel| Field {
-            label: label.as_ref().into(),
-            r#type: Some(base_name.clone()),
-            is_optional: false,
-        };
-
         let parent_type = expression.name.clone();
+        let ebnf = self.get_ebnf(&parent_type);
 
         // All operators should have the same structure (validated at compile-time),
         // So let's pick up the first one to generate the types:
         let operator = &expression.operators[0];
         let mut fields = vec![];
+
+        let operand = |label: PredefinedLabel| Field {
+            label: label.as_ref().into(),
+            r#type: Some(base_name.clone()),
+            is_optional: false,
+        };
 
         match operator.model {
             model::OperatorModel::Prefix => {
@@ -240,6 +266,7 @@ impl AstModel {
 
         self.sequences.push(Sequence {
             parent_type,
+            ebnf,
             fields,
         });
     }
@@ -267,5 +294,15 @@ impl AstModel {
                 is_optional,
             }
         })
+    }
+
+    fn get_ebnf(&self, base_name: &model::Identifier) -> String {
+        let Some(ebnf) = &self.ebnf else {
+            return String::new();
+        };
+
+        let mut writer = PlainWriter::default();
+        ebnf.serialize(base_name, &mut writer).unwrap();
+        writer.flush()
     }
 }

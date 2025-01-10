@@ -39,15 +39,25 @@ interface cst {
 
     /// Represents the different types of relationships between nodes in the syntax tree.
     enum edge-label {
+            /// Represents a child node with the label `root`.
             %root,
+            /// Represents a child node with the label `unrecognized`.
             %unrecognized,
+            /// Represents a child node with the label `item`.
             %item,
+            /// Represents a child node with the label `variant`.
             %variant,
+            /// Represents a child node with the label `separator`.
             %separator,
+            /// Represents a child node with the label `operand`.
             %operand,
+            /// Represents a child node with the label `left_operand`.
             %left-operand,
+            /// Represents a child node with the label `right_operand`.
             %right-operand,
+            /// Represents a child node with the label `leading_trivia`.
             %leading-trivia,
+            /// Represents a child node with the label `trailing_trivia`.
             %trailing-trivia,
             /// Generated stub.
             stub1,
