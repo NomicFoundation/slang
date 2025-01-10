@@ -3,7 +3,6 @@
 use std::collections::BTreeMap;
 use std::rc::Rc;
 
-use metaslang_cst::nodes::Node;
 use semver::Version;
 
 use crate::compilation::{CompilationUnit, File};
@@ -46,10 +45,7 @@ impl InternalCompilationBuilder {
 
         let import_paths = self.imports.extract(parse_output.create_tree_cursor());
 
-        let file = File::new(
-            id.clone(),
-            Node::Nonterminal(Rc::clone(parse_output.tree())),
-        );
+        let file = File::new(id.clone(), Rc::clone(parse_output.tree()));
         self.files.insert(id, file);
 
         AddFileResponse { import_paths }
