@@ -2068,44 +2068,40 @@ inherit .star_extension
 
   ; Path to link min and max to the enum's scope (#1158)
   ; It resolves paths of the form `type(<enum>).min.<something>`
-  node typeof
-  attr (typeof) pop_symbol = "@typeof"
+  if (version-matches ">= 0.6.8") {
+    node typeof
+    attr (typeof) pop_symbol = "@typeof"
 
-  node built_in_member
-  attr (built_in_member) pop_symbol = "."
-  node min_built_in
-  attr (min_built_in) pop_symbol = "min"
-  node max_built_in
-  attr (max_built_in) pop_symbol = "max"
-  node minmax_type_of
-  attr (minmax_type_of) push_symbol = "@typeof"
-  node minmax_replace
-  attr (minmax_replace) push_symbol = (source-text @name)
+    node built_in_member
+    attr (built_in_member) pop_symbol = "."
+    node min_built_in
+    attr (min_built_in) pop_symbol = "min"
+    node max_built_in
+    attr (max_built_in) pop_symbol = "max"
+    node @enum.value_ref_typeof
+    attr (@enum.value_ref_typeof) push_symbol = "@typeof"
+    node value_ref_type
+    attr (value_ref_type) push_symbol = (source-text @name)
 
-  edge type -> typeof
-  edge typeof -> built_in_member
-  edge built_in_member -> min_built_in
-  edge built_in_member -> max_built_in
-  edge min_built_in -> minmax_type_of
-  edge max_built_in -> minmax_type_of
-  edge minmax_type_of -> minmax_replace
-  edge minmax_replace -> @enum.lexical_scope
+    edge type -> typeof
+    edge typeof -> built_in_member
+    edge built_in_member -> min_built_in
+    edge built_in_member -> max_built_in
+    edge min_built_in -> @enum.value_ref_typeof
+    edge max_built_in -> @enum.value_ref_typeof
+    edge @enum.value_ref_typeof -> value_ref_type
+    edge value_ref_type -> @enum.lexical_scope
+  }
 }
 
-@enum [EnumDefinition @name name: [Identifier]
-    members: [EnumMembers @item [Identifier]]
-] {
+@enum [EnumDefinition  members: [EnumMembers @item [Identifier]]] {
   node def
   attr (def) node_definition = @item
   attr (def) definiens_node = @item
 
-  node type_of
-  attr (type_of) push_symbol = "@typeof"
-  node type_def
-  attr (type_def) push_symbol = (source-text @name)
-  edge def -> type_of
-  edge type_of -> type_def
-  edge type_def -> @enum.lexical_scope
+  if (version-matches ">= 0.6.8") {
+    edge def -> @enum.value_ref_typeof
+  }
 
   edge @enum.members -> def
 }

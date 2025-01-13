@@ -35,21 +35,16 @@ References and definitions:
     │                   │    
     │                   ╰──── ref: 1
     │ 
- 14 │   function testFunc() {
-    │            ────┬───  
-    │                ╰───── def: 7
- 15 │     type(Answer).min.id();
-    │          ───┬──  ─┬─ ─┬  
-    │             ╰──────────── ref: 1
-    │                   │   │  
-    │                   ╰────── unresolved
-    │                       │  
-    │                       ╰── unresolved
- 16 │     type(Answer).max.id();
-    │          ───┬──  ─┬─ ─┬  
-    │             ╰──────────── ref: 1
-    │                   │   │  
-    │                   ╰────── unresolved
-    │                       │  
-    │                       ╰── unresolved
+ 14 │   function testFunc() returns (Answer) {
+    │            ────┬───            ───┬──  
+    │                ╰─────────────────────── def: 7
+    │                                   │    
+    │                                   ╰──── ref: 1
+ 15 │     Answer.Yes.id();
+    │     ───┬── ─┬─ ─┬  
+    │        ╰─────────── ref: 1
+    │             │   │  
+    │             ╰────── ref: 2
+    │                 │  
+    │                 ╰── unresolved
 ────╯
