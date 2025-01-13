@@ -2094,7 +2094,9 @@ inherit .star_extension
   }
 }
 
-@enum [EnumDefinition  members: [EnumMembers @item [Identifier]]] {
+@enum [EnumDefinition
+    members: [EnumMembers @item [Identifier]]
+] {
   node def
   attr (def) node_definition = @item
   attr (def) definiens_node = @item
