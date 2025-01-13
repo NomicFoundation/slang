@@ -76,6 +76,7 @@ inherit .star_extension
   ; This is used to indicate the resolution algorithm that here's where it
   ; should inject any possible extension scopes
   attr (@source_unit.lexical_scope) extension_hook
+  attr (@source_unit.lexical_scope) is_endpoint
 
   ; Provide a default star extension sink node that gets inherited. This is
   ; connected to from expressions, and those can potentially happen anywhere.
@@ -98,6 +99,8 @@ inherit .star_extension
     )]
 ]] {
   edge @source_unit.lexical_scope -> @unit_member.def
+  attr (@source_unit.lexical_scope -> @unit_member.def) precedence = 1
+
   edge @source_unit.defs -> @unit_member.def
 
   ; In the general case, the lexical scope of the definition connects directly
@@ -244,7 +247,6 @@ inherit .star_extension
   node def
   attr (def) node_definition = @name
   attr (def) definiens_node = @symbol
-  attr (def) tag = "alias"  ; deprioritize this definition
   edge @symbol.def -> def
 
   node import
@@ -261,7 +263,6 @@ inherit .star_extension
   node def
   attr (def) node_definition = @alias
   attr (def) definiens_node = @symbol
-  attr (def) tag = "alias"  ; deprioritize this definition
   edge @symbol.def -> def
 
   node import
@@ -347,8 +348,10 @@ inherit .star_extension
   attr (@contract.def) definiens_node = @contract
   ; The .extensions node is where `using` directives will hook the definitions
   attr (@contract.def) extension_scope = @contract.extensions
+  attr (@contract.extensions) is_exported
 
   edge @contract.lexical_scope -> @contract.instance
+  attr (@contract.lexical_scope -> @contract.instance) precedence = 1
 
   ; Instance scope can also see members and our namespace definitions
   edge @contract.instance -> @contract.members
@@ -412,6 +415,7 @@ inherit .star_extension
   attr (push_name) push_symbol = (source-text @name)
   node hook
   attr (hook) extension_hook
+  attr (hook) is_endpoint
 
   edge call -> push_typeof
   edge push_typeof -> push_name
@@ -447,31 +451,6 @@ inherit .star_extension
   edge @contract.def -> type
   edge type -> type_contract_type
   edge type_contract_type -> @contract.parent_scope
-
-  ; The following defines the connection nodes the resolution algorithm uses
-  ; *only when setting a compilation context/target*.
-
-  ; This attribute defines the sink of edges added from base contracts when
-  ; setting this contract as the compilation context, and should provide access
-  ; to anything that can be reached through `super`. The instance scope is a bit
-  ; too broad, but `.members` is too narrow as it doesn't allow navigation to
-  ; parent contracts (and from the base we need to be able to reach all
-  ; contracts in the hierarchy).
-  attr (@contract.def) export_node = @contract.instance
-
-  ; This node will eventually connect to the contract's members being compiled
-  ; and grants access to definitions in that contract and all its parents
-  ; (recursively). It only makes sense if `super` is defined (ie. if we have
-  ; parents), but we define it here to be able to use it in the declaration of
-  ; import nodes. This is the dual of the export_node above.
-  node @contract.super_import
-  attr (@contract.super_import) pop_symbol = "."
-
-  ; This defines the source side of edges added to base contracts when setting
-  ; a contract as compilation context; this allows this contract (a base) to
-  ; access virtual methods in any sub-contract defined in the hierarchy (both
-  ; with and without `super`, hence the two connection points).
-  attr (@contract.def) import_nodes = [@contract.lexical_scope, @contract.super_import]
 }
 
 @contract [ContractDefinition @specifier [InheritanceSpecifier]] {
@@ -494,17 +473,16 @@ inherit .star_extension
   attr (@contract.super) pop_symbol = "super"
   edge @contract.lexical_scope -> @contract.super
 
-  ; This connects `super` to exported scopes from all contracts in the hierarchy
-  ; when setting a contract compilation target (see more detailed description
-  ; above on the definition of the `super_import` node).
-  edge @contract.super -> @contract.super_import
+  node @contract.super_dot
+  attr (@contract.super_dot) pop_symbol = "."
+  edge @contract.super -> @contract.super_dot
 
   ; Then connect it through an `@instance` guard to the parent contracts through
   ; `super_scope`. This allows "instance"-like access to members of parents
   ; through `super`.
   node super_instance
   attr (super_instance) push_symbol = "@instance"
-  edge @contract.super_import -> super_instance
+  edge @contract.super_dot -> super_instance
   edge super_instance -> @contract.super_scope
 }
 
@@ -594,7 +572,6 @@ inherit .star_extension
 
   ;; This may prioritize this definition (when there are multiple options)
   ;; according to the C3 linerisation ordering
-  attr (@function.def) tag = "c3"
   attr (@function.def) parents = [@contract.def]
 }
 
@@ -616,7 +593,6 @@ inherit .star_extension
 
   ;; This may prioritize this definition (when there are multiple options)
   ;; according to the C3 linerisation ordering
-  attr (@modifier.def) tag = "c3"
   attr (@modifier.def) parents = [@contract.def]
 }
 
@@ -686,6 +662,7 @@ inherit .star_extension
   edge push_typeof -> push_name
   node hook
   attr (hook) extension_hook
+  attr (hook) is_endpoint
   edge push_name -> hook
   ; edge push_name -> JUMP_TO_SCOPE_NODE
 
@@ -762,6 +739,7 @@ inherit .star_extension
   attr (@library.def) definiens_node = @library
   ; The .extensions node is where `using` directives will hook the definitions
   attr (@library.def) extension_scope = @library.extensions
+  attr (@library.extensions) is_exported
 
   edge @library.lexical_scope -> @library.ns
 
@@ -1611,11 +1589,14 @@ inherit .star_extension
 
 @modifier [ModifierDefinition
     @name name: [Identifier]
-    body: [FunctionBody @body [Block]]
 ] {
   attr (@modifier.def) node_definition = @name
   attr (@modifier.def) definiens_node = @modifier
+}
 
+@modifier [ModifierDefinition
+    body: [FunctionBody @body [Block]]
+] {
   edge @body.lexical_scope -> @modifier.lexical_scope
 
   ; Special case: bind the place holder statement `_` to the built-in
@@ -1942,6 +1923,15 @@ inherit .star_extension
   edge @body.lexical_scope -> @catch_params.defs
   ;; Similar to functions, catch params shadow other declarations
   attr (@body.lexical_scope -> @catch_params.defs) precedence = 1
+}
+
+@stmt [Statement [TryStatement [CatchClauses [CatchClause
+    [CatchClauseError @name [Identifier]]
+]]]] {
+  node ref
+  attr (ref) node_reference = @name
+
+  edge ref -> @stmt.lexical_scope
 }
 
 
@@ -2380,15 +2370,6 @@ inherit .star_extension
 
   ; Shortcut path for expressions inside contracts with using X for * directives
   edge member -> @expr.star_extension
-}
-
-;; Special case: member accesses to `super` are tagged with "super" to rank
-;; virtual methods correctly
-[MemberAccessExpression
-    operand: [Expression [SuperKeyword]]
-    @name member: [Identifier]
-] {
-  attr (@name.ref) tag = "super"
 }
 
 ;; Elementary types used as expressions (eg. for type casting, or for built-ins like `string.concat`)

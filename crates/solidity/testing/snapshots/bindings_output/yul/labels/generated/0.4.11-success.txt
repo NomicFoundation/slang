@@ -1,0 +1,76 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 2
+    │ 
+  4 │             let n := calldataload(4)
+    │                 ┬  
+    │                 ╰── name: 5
+  5 │             let a := 1
+    │                 ┬  
+    │                 ╰── name: 6
+  6 │             let b := a
+    │                 ┬    ┬  
+    │                 ╰─────── name: 7
+    │                      │  
+    │                      ╰── ref: 6
+  7 │         loop:
+    │         ──┬─  
+    │           ╰─── name: 3
+  8 │             jumpi(loopend, eq(n, 0))
+    │                   ───┬───     ┬  
+    │                      ╰─────────── ref: 4
+    │                               │  
+    │                               ╰── ref: 5
+  9 │             n := sub(n, 1)
+    │             ┬        ┬  
+    │             ╰─────────── ref: 5
+    │                      │  
+    │                      ╰── ref: 5
+ 10 │             jump(loop)
+    │                  ──┬─  
+    │                    ╰─── ref: 3
+ 11 │         loopend:
+    │         ───┬───  
+    │            ╰───── name: 4
+ 12 │             mstore(0, a)
+    │                       ┬  
+    │                       ╰── ref: 6
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─│ ▶ contract Test {
+  2 │ │ ╭─▶     function test() public {
+    ┆ ┆ ┆   
+  4 │ │ │               let n := calldataload(4)
+    │ │ │   ──────────────────┬──────────────────  
+    │ │ │                     ╰──────────────────── definiens: 5
+  5 │ │ │               let a := 1
+    │ │ │   ───────────┬───────────  
+    │ │ │              ╰───────────── definiens: 6
+  6 │ │ │               let b := a
+    │ │ │   ───────────┬───────────  
+    │ │ │              ╰───────────── definiens: 7
+  7 │ │ │           loop:
+    │ │ │   ───────┬──────  
+    │ │ │          ╰──────── definiens: 3
+    ┆ ┆ ┆   
+ 11 │ │ │           loopend:
+    │ │ │   ────────┬────────  
+    │ │ │           ╰────────── definiens: 4
+    ┆ ┆ ┆   
+ 15 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 2
+ 16 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯

@@ -2,8 +2,7 @@ use std::collections::BTreeMap;
 use std::fmt;
 use std::rc::Rc;
 
-use crate::kinds::{BaseKind, KindTypes};
-use crate::nodes::NodeKind;
+use crate::kinds::{BaseKind, KindTypes, NodeKind};
 use crate::query::{CaptureQuantifier, QueryError};
 
 #[derive(Clone, Debug)]

@@ -5,14 +5,14 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test(TokenState tokenState) public {
    │              ──┬─ ─────┬──── ─────┬────  
-   │                ╰───────────────────────── def: 2
+   │                ╰───────────────────────── name: 2
    │                        │          │      
    │                        ╰───────────────── ref: 4
    │                                   │      
-   │                                   ╰────── def: 3
+   │                                   ╰────── name: 3
  3 │         tokenState.owners(1).balance;
    │         ─────┬──── ───┬──    ───┬───  
    │              ╰──────────────────────── ref: 3
@@ -23,8 +23,30 @@ References and definitions:
    │ 
  6 │ contract TokenState {
    │          ─────┬────  
-   │               ╰────── def: 4
+   │               ╰────── name: 4
  7 │     address[] public owners;
    │                      ───┬──  
-   │                         ╰──── def: 5
+   │                         ╰──── name: 5
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ──▶ contract Test {
+ 2 │ │ ╭───▶     function test(TokenState tokenState) public {
+   │ │ │                       ──────────┬──────────  
+   │ │ │                                 ╰──────────── definiens: 3
+   ┆ ┆ ┆     
+ 4 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 2
+ 5 │ ├───│ ▶ }
+   │ │   │       
+   │ ╰─────────── definiens: 1
+ 6 │     ╭─▶ contract TokenState {
+ 7 │     │       address[] public owners;
+   │     │   ──────────────┬──────────────  
+   │     │                 ╰──────────────── definiens: 5
+ 8 │     ├─▶ }
+   │     │       
+   │     ╰─────── definiens: 4
 ───╯

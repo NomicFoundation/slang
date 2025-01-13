@@ -7,9 +7,8 @@ use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use metaslang_bindings::PathResolver;
 use semver::Version;
-use slang_solidity::bindings;
-use slang_solidity::bindings::BindingGraph;
-use slang_solidity::cst::{Cursor, KindTypes, NonterminalKind, TextRange};
+use slang_solidity::bindings::{self, BindingGraph};
+use slang_solidity::cst::{Cursor, KindTypes, NonterminalKind, TerminalKind, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::parser::{ParseOutput, Parser};
 use slang_solidity::utils::LanguageFacts;
@@ -122,11 +121,11 @@ pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool) -> Res
     }
 
     if check_bindings {
-        let unresolved_references = run_bindings_check(&version, source_id, &output)?;
-        if !unresolved_references.is_empty() {
-            for unresolved in &unresolved_references {
+        let binding_errors = run_bindings_check(&version, source_id, &output)?;
+        if !binding_errors.is_empty() {
+            for error in &binding_errors {
                 let report =
-                    slang_solidity::diagnostic::render(unresolved, source_id, &source, with_color);
+                    slang_solidity::diagnostic::render(error, source_id, &source, with_color);
                 events.bindings_error(format!("[{version}] {report}"));
             }
 
@@ -185,8 +184,8 @@ fn run_bindings_check(
     version: &Version,
     source_id: &str,
     output: &ParseOutput,
-) -> Result<Vec<UnresolvedReference>> {
-    let mut unresolved = Vec::new();
+) -> Result<Vec<BindingError>> {
+    let mut errors = Vec::new();
     let binding_graph = create_bindings(version, source_id, output)?;
 
     for reference in binding_graph.all_references() {
@@ -198,28 +197,53 @@ fn run_bindings_check(
         // to, so we lookup all of them and fail if we find none.
         if reference.definitions().is_empty() {
             let cursor = reference.get_cursor().to_owned();
-            unresolved.push(UnresolvedReference { cursor });
+            errors.push(BindingError::UnresolvedReference(cursor));
         }
     }
 
-    Ok(unresolved)
+    // Check that all `Identifier` and `YulIdentifier` nodes are bound to either a definition or a reference:
+
+    let mut cursor = output.create_tree_cursor();
+
+    while cursor
+        .go_to_next_terminal_with_kinds(&[TerminalKind::Identifier, TerminalKind::YulIdentifier])
+    {
+        if matches!(
+            cursor.ancestors().next(),
+            Some(ancestor)
+            // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
+            if ancestor.kind == NonterminalKind::ExperimentalFeature ||
+            // TODO(#1213): unbound named parameters in mapping types
+            ancestor.kind == NonterminalKind::MappingKey
+        ) {
+            continue;
+        }
+
+        if binding_graph.definition_at(&cursor).is_none()
+            && binding_graph.reference_at(&cursor).is_none()
+        {
+            errors.push(BindingError::UnboundIdentifier(cursor.clone()));
+        }
+    }
+
+    Ok(errors)
 }
 
 fn create_bindings(
     version: &Version,
     source_id: &str,
     output: &ParseOutput,
-) -> Result<BindingGraph> {
-    let mut binding_graph = bindings::create_with_resolver(
+) -> Result<Rc<BindingGraph>> {
+    let mut builder = bindings::create_with_resolver(
         version.clone(),
         Rc::new(SingleFileResolver {
             source_id: source_id.into(),
         }),
     )?;
 
-    binding_graph.add_user_file(source_id, output.create_tree_cursor());
+    builder.add_user_file(source_id, output.create_tree_cursor());
 
-    Ok(binding_graph)
+    Ok(builder.build())
 }
 
 /// The `PathResolver` that always resolves to the given `source_id`.
@@ -235,13 +259,18 @@ impl PathResolver<KindTypes> for SingleFileResolver {
     }
 }
 
-struct UnresolvedReference {
-    pub cursor: Cursor,
+enum BindingError {
+    UnresolvedReference(Cursor),
+    UnboundIdentifier(Cursor),
 }
 
-impl Diagnostic for UnresolvedReference {
+impl Diagnostic for BindingError {
     fn text_range(&self) -> TextRange {
-        self.cursor.text_range()
+        let cursor = match self {
+            Self::UnboundIdentifier(cursor) => cursor,
+            Self::UnresolvedReference(cursor) => cursor,
+        };
+        cursor.text_range()
     }
 
     fn severity(&self) -> Severity {
@@ -249,9 +278,19 @@ impl Diagnostic for UnresolvedReference {
     }
 
     fn message(&self) -> String {
-        format!(
-            "Unresolved reference to `{symbol}`",
-            symbol = self.cursor.node().unparse()
-        )
+        match self {
+            Self::UnresolvedReference(cursor) => {
+                format!(
+                    "Unresolved reference to `{symbol}`",
+                    symbol = cursor.node().unparse()
+                )
+            }
+            Self::UnboundIdentifier(cursor) => {
+                format!(
+                    "Missing identifier or definition for `{symbol}`",
+                    symbol = cursor.node().unparse()
+                )
+            }
+        }
     }
 }

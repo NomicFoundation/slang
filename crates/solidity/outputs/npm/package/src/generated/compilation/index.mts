@@ -1,16 +1,15 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-import * as generated from "../../../wasm/index.mjs";
-import * as builder from "./builder.mjs";
+import * as wasm from "../../../wasm/index.mjs";
 
-// This is a wrapper around 'generated.compilation.InternalCompilationBuilder':
-export const CompilationBuilder = builder.CompilationBuilder;
-export type CompilationBuilder = builder.CompilationBuilder;
+export { CompilationBuilder, CompilationBuilderConfig } from "./builder.mjs";
 
-export type CompilationBuilderConfig = builder.CompilationBuilderConfig;
+/** {@inheritDoc wasm.compilation.CompilationUnit} */
+export const CompilationUnit = wasm.compilation.CompilationUnit;
+/** {@inheritDoc wasm.compilation.CompilationUnit} */
+export type CompilationUnit = wasm.compilation.CompilationUnit;
 
-export const CompilationUnit = generated.compilation.CompilationUnit;
-export type CompilationUnit = generated.compilation.CompilationUnit;
-
-export const File = generated.compilation.File;
-export type File = generated.compilation.File;
+/** {@inheritDoc wasm.compilation.File} */
+export const File = wasm.compilation.File;
+/** {@inheritDoc wasm.compilation.File} */
+export type File = wasm.compilation.File;

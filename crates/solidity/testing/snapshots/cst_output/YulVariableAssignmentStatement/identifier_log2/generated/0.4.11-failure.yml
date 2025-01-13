@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "log2 := 0\n" # (0..10)
+  - (YulVariableAssignmentStatement) ► (UNRECOGNIZED): "log2 := 0\n" # (0..10)

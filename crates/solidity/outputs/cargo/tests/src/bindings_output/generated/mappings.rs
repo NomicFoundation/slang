@@ -10,6 +10,21 @@ fn custom_types() -> Result<()> {
 }
 
 #[test]
+fn elementary() -> Result<()> {
+    run("mappings", "elementary")
+}
+
+#[test]
 fn indexing() -> Result<()> {
     run("mappings", "indexing")
+}
+
+#[test]
+fn nested() -> Result<()> {
+    run("mappings", "nested")
+}
+
+#[test]
+fn nested_custom() -> Result<()> {
+    run("mappings", "nested_custom")
 }

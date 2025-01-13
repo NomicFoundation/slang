@@ -1,0 +1,61 @@
+use std::rc::Rc;
+
+use infra_utils::paths::PathExtensions;
+use slang_solidity::bindings::BindingGraph;
+use slang_solidity::cst::{NonterminalKind, TerminalKind};
+
+use crate::tests::parser::ParsedFile;
+
+pub struct BuiltBindingGraph {
+    files: Vec<ParsedFile>,
+    binding_graph: Rc<BindingGraph>,
+}
+
+pub fn setup() -> BuiltBindingGraph {
+    let files = super::parser::run(super::parser::setup());
+    let binding_graph = super::bindings_build::run(files.clone());
+
+    BuiltBindingGraph {
+        files,
+        binding_graph,
+    }
+}
+
+pub fn run(dependencies: BuiltBindingGraph) {
+    let BuiltBindingGraph {
+        files,
+        binding_graph,
+    } = dependencies;
+
+    for file in files {
+        let mut cursor = file.parse_output.create_tree_cursor();
+
+        while cursor.go_to_next_terminal_with_kinds(&[
+            TerminalKind::Identifier,
+            TerminalKind::YulIdentifier,
+        ]) {
+            if matches!(
+                cursor.ancestors().next(),
+                Some(ancestor)
+                // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
+                if ancestor.kind == NonterminalKind::ExperimentalFeature ||
+                // TODO(#1213): unbound named parameters in mapping types
+                ancestor.kind == NonterminalKind::MappingKey
+            ) {
+                continue;
+            }
+
+            if binding_graph.definition_at(&cursor).is_none()
+                && binding_graph.reference_at(&cursor).is_none()
+            {
+                panic!(
+                    "Unbound identifier: '{value}' in '{file_path}:{line}:{column}'.",
+                    value = cursor.node().unparse(),
+                    file_path = file.path.unwrap_str(),
+                    line = cursor.text_range().start.line + 1,
+                    column = cursor.text_range().start.column + 1,
+                );
+            }
+        }
+    }
+}

@@ -21,7 +21,7 @@ export namespace NomicFoundationSlangCst {
  */
 export declare enum NonterminalKind {
   /**
-   * This kind represents a `AbicoderPragma` node, with the following structure:
+   * Represents a node with kind `AbicoderPragma`, having the following structure:
    *
    * ```ebnf
    * AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
@@ -30,7 +30,7 @@ export declare enum NonterminalKind {
    */
   AbicoderPragma = "AbicoderPragma",
   /**
-   * This kind represents a `AdditiveExpression` node, with the following structure:
+   * Represents a node with kind `AdditiveExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -46,7 +46,7 @@ export declare enum NonterminalKind {
    */
   AdditiveExpression = "AdditiveExpression",
   /**
-   * This kind represents a `AddressType` node, with the following structure:
+   * Represents a node with kind `AddressType`, having the following structure:
    *
    * ```ebnf
    * AddressType = (* address_keyword: *) ADDRESS_KEYWORD
@@ -55,7 +55,7 @@ export declare enum NonterminalKind {
    */
   AddressType = "AddressType",
   /**
-   * This kind represents a `AndExpression` node, with the following structure:
+   * Represents a node with kind `AndExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -66,7 +66,7 @@ export declare enum NonterminalKind {
    */
   AndExpression = "AndExpression",
   /**
-   * This kind represents a `ArgumentsDeclaration` node, with the following structure:
+   * Represents a node with kind `ArgumentsDeclaration`, having the following structure:
    *
    * ```ebnf
    * ArgumentsDeclaration = (* variant: *) PositionalArgumentsDeclaration
@@ -75,7 +75,7 @@ export declare enum NonterminalKind {
    */
   ArgumentsDeclaration = "ArgumentsDeclaration",
   /**
-   * This kind represents a `ArrayExpression` node, with the following structure:
+   * Represents a node with kind `ArrayExpression`, having the following structure:
    *
    * ```ebnf
    * ArrayExpression = (* open_bracket: *) OPEN_BRACKET
@@ -85,7 +85,7 @@ export declare enum NonterminalKind {
    */
   ArrayExpression = "ArrayExpression",
   /**
-   * This kind represents a `ArrayTypeName` node, with the following structure:
+   * Represents a node with kind `ArrayTypeName`, having the following structure:
    *
    * ```ebnf
    * (* Postfix unary operator *)
@@ -97,7 +97,7 @@ export declare enum NonterminalKind {
    */
   ArrayTypeName = "ArrayTypeName",
   /**
-   * This kind represents a `ArrayValues` node, with the following structure:
+   * Represents a node with kind `ArrayValues`, having the following structure:
    *
    * ```ebnf
    * ArrayValues = (* item: *) Expression ((* separator: *) COMMA (* item: *) Expression)*;
@@ -105,7 +105,7 @@ export declare enum NonterminalKind {
    */
   ArrayValues = "ArrayValues",
   /**
-   * This kind represents a `AssemblyFlags` node, with the following structure:
+   * Represents a node with kind `AssemblyFlags`, having the following structure:
    *
    * ```ebnf
    * AssemblyFlags = (* item: *) StringLiteral ((* separator: *) COMMA (* item: *) StringLiteral)*;
@@ -113,7 +113,7 @@ export declare enum NonterminalKind {
    */
   AssemblyFlags = "AssemblyFlags",
   /**
-   * This kind represents a `AssemblyFlagsDeclaration` node, with the following structure:
+   * Represents a node with kind `AssemblyFlagsDeclaration`, having the following structure:
    *
    * ```ebnf
    * AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
@@ -123,7 +123,7 @@ export declare enum NonterminalKind {
    */
   AssemblyFlagsDeclaration = "AssemblyFlagsDeclaration",
   /**
-   * This kind represents a `AssemblyStatement` node, with the following structure:
+   * Represents a node with kind `AssemblyStatement`, having the following structure:
    *
    * ```ebnf
    * AssemblyStatement = (* assembly_keyword: *) ASSEMBLY_KEYWORD
@@ -134,7 +134,7 @@ export declare enum NonterminalKind {
    */
   AssemblyStatement = "AssemblyStatement",
   /**
-   * This kind represents a `AssignmentExpression` node, with the following structure:
+   * Represents a node with kind `AssignmentExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -200,7 +200,7 @@ export declare enum NonterminalKind {
    */
   AssignmentExpression = "AssignmentExpression",
   /**
-   * This kind represents a `BitwiseAndExpression` node, with the following structure:
+   * Represents a node with kind `BitwiseAndExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -211,7 +211,7 @@ export declare enum NonterminalKind {
    */
   BitwiseAndExpression = "BitwiseAndExpression",
   /**
-   * This kind represents a `BitwiseOrExpression` node, with the following structure:
+   * Represents a node with kind `BitwiseOrExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -222,7 +222,7 @@ export declare enum NonterminalKind {
    */
   BitwiseOrExpression = "BitwiseOrExpression",
   /**
-   * This kind represents a `BitwiseXorExpression` node, with the following structure:
+   * Represents a node with kind `BitwiseXorExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -233,7 +233,7 @@ export declare enum NonterminalKind {
    */
   BitwiseXorExpression = "BitwiseXorExpression",
   /**
-   * This kind represents a `Block` node, with the following structure:
+   * Represents a node with kind `Block`, having the following structure:
    *
    * ```ebnf
    * Block = (* open_brace: *) OPEN_BRACE
@@ -243,7 +243,7 @@ export declare enum NonterminalKind {
    */
   Block = "Block",
   /**
-   * This kind represents a `BreakStatement` node, with the following structure:
+   * Represents a node with kind `BreakStatement`, having the following structure:
    *
    * ```ebnf
    * BreakStatement = (* break_keyword: *) BREAK_KEYWORD
@@ -252,7 +252,7 @@ export declare enum NonterminalKind {
    */
   BreakStatement = "BreakStatement",
   /**
-   * This kind represents a `CallOptions` node, with the following structure:
+   * Represents a node with kind `CallOptions`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.2 *)
@@ -261,7 +261,7 @@ export declare enum NonterminalKind {
    */
   CallOptions = "CallOptions",
   /**
-   * This kind represents a `CallOptionsExpression` node, with the following structure:
+   * Represents a node with kind `CallOptionsExpression`, having the following structure:
    *
    * ```ebnf
    * (* Postfix unary operator *)
@@ -274,7 +274,7 @@ export declare enum NonterminalKind {
    */
   CallOptionsExpression = "CallOptionsExpression",
   /**
-   * This kind represents a `CatchClause` node, with the following structure:
+   * Represents a node with kind `CatchClause`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -285,7 +285,7 @@ export declare enum NonterminalKind {
    */
   CatchClause = "CatchClause",
   /**
-   * This kind represents a `CatchClauseError` node, with the following structure:
+   * Represents a node with kind `CatchClauseError`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -295,7 +295,7 @@ export declare enum NonterminalKind {
    */
   CatchClauseError = "CatchClauseError",
   /**
-   * This kind represents a `CatchClauses` node, with the following structure:
+   * Represents a node with kind `CatchClauses`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -304,7 +304,7 @@ export declare enum NonterminalKind {
    */
   CatchClauses = "CatchClauses",
   /**
-   * This kind represents a `ComparisonExpression` node, with the following structure:
+   * Represents a node with kind `ComparisonExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -330,7 +330,7 @@ export declare enum NonterminalKind {
    */
   ComparisonExpression = "ComparisonExpression",
   /**
-   * This kind represents a `ConditionalExpression` node, with the following structure:
+   * Represents a node with kind `ConditionalExpression`, having the following structure:
    *
    * ```ebnf
    * (* Postfix unary operator *)
@@ -343,7 +343,7 @@ export declare enum NonterminalKind {
    */
   ConditionalExpression = "ConditionalExpression",
   /**
-   * This kind represents a `ConstantDefinition` node, with the following structure:
+   * Represents a node with kind `ConstantDefinition`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.7.4 *)
@@ -357,7 +357,7 @@ export declare enum NonterminalKind {
    */
   ConstantDefinition = "ConstantDefinition",
   /**
-   * This kind represents a `ConstructorAttribute` node, with the following structure:
+   * Represents a node with kind `ConstructorAttribute`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.22 *)
@@ -371,7 +371,7 @@ export declare enum NonterminalKind {
    */
   ConstructorAttribute = "ConstructorAttribute",
   /**
-   * This kind represents a `ConstructorAttributes` node, with the following structure:
+   * Represents a node with kind `ConstructorAttributes`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.22 *)
@@ -380,7 +380,7 @@ export declare enum NonterminalKind {
    */
   ConstructorAttributes = "ConstructorAttributes",
   /**
-   * This kind represents a `ConstructorDefinition` node, with the following structure:
+   * Represents a node with kind `ConstructorDefinition`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.22 *)
@@ -392,7 +392,7 @@ export declare enum NonterminalKind {
    */
   ConstructorDefinition = "ConstructorDefinition",
   /**
-   * This kind represents a `ContinueStatement` node, with the following structure:
+   * Represents a node with kind `ContinueStatement`, having the following structure:
    *
    * ```ebnf
    * ContinueStatement = (* continue_keyword: *) CONTINUE_KEYWORD
@@ -401,7 +401,7 @@ export declare enum NonterminalKind {
    */
   ContinueStatement = "ContinueStatement",
   /**
-   * This kind represents a `ContractDefinition` node, with the following structure:
+   * Represents a node with kind `ContractDefinition`, having the following structure:
    *
    * ```ebnf
    * ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
@@ -415,7 +415,7 @@ export declare enum NonterminalKind {
    */
   ContractDefinition = "ContractDefinition",
   /**
-   * This kind represents a `ContractMember` node, with the following structure:
+   * Represents a node with kind `ContractMember`, having the following structure:
    *
    * ```ebnf
    * ContractMember = (* variant: *) UsingDirective
@@ -435,7 +435,7 @@ export declare enum NonterminalKind {
    */
   ContractMember = "ContractMember",
   /**
-   * This kind represents a `ContractMembers` node, with the following structure:
+   * Represents a node with kind `ContractMembers`, having the following structure:
    *
    * ```ebnf
    * ContractMembers = (* item: *) ContractMember*;
@@ -443,7 +443,7 @@ export declare enum NonterminalKind {
    */
   ContractMembers = "ContractMembers",
   /**
-   * This kind represents a `DecimalNumberExpression` node, with the following structure:
+   * Represents a node with kind `DecimalNumberExpression`, having the following structure:
    *
    * ```ebnf
    * DecimalNumberExpression = (* literal: *) DECIMAL_LITERAL
@@ -452,7 +452,7 @@ export declare enum NonterminalKind {
    */
   DecimalNumberExpression = "DecimalNumberExpression",
   /**
-   * This kind represents a `DoWhileStatement` node, with the following structure:
+   * Represents a node with kind `DoWhileStatement`, having the following structure:
    *
    * ```ebnf
    * DoWhileStatement = (* do_keyword: *) DO_KEYWORD
@@ -466,7 +466,7 @@ export declare enum NonterminalKind {
    */
   DoWhileStatement = "DoWhileStatement",
   /**
-   * This kind represents a `ElementaryType` node, with the following structure:
+   * Represents a node with kind `ElementaryType`, having the following structure:
    *
    * ```ebnf
    * ElementaryType = (* variant: *) BOOL_KEYWORD
@@ -482,7 +482,7 @@ export declare enum NonterminalKind {
    */
   ElementaryType = "ElementaryType",
   /**
-   * This kind represents a `ElseBranch` node, with the following structure:
+   * Represents a node with kind `ElseBranch`, having the following structure:
    *
    * ```ebnf
    * ElseBranch = (* else_keyword: *) ELSE_KEYWORD
@@ -491,7 +491,7 @@ export declare enum NonterminalKind {
    */
   ElseBranch = "ElseBranch",
   /**
-   * This kind represents a `EmitStatement` node, with the following structure:
+   * Represents a node with kind `EmitStatement`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.21 *)
@@ -503,7 +503,7 @@ export declare enum NonterminalKind {
    */
   EmitStatement = "EmitStatement",
   /**
-   * This kind represents a `EnumDefinition` node, with the following structure:
+   * Represents a node with kind `EnumDefinition`, having the following structure:
    *
    * ```ebnf
    * EnumDefinition = (* enum_keyword: *) ENUM_KEYWORD
@@ -515,7 +515,7 @@ export declare enum NonterminalKind {
    */
   EnumDefinition = "EnumDefinition",
   /**
-   * This kind represents a `EnumMembers` node, with the following structure:
+   * Represents a node with kind `EnumMembers`, having the following structure:
    *
    * ```ebnf
    * EnumMembers = ((* item: *) IDENTIFIER ((* separator: *) COMMA (* item: *) IDENTIFIER)*)?;
@@ -523,7 +523,7 @@ export declare enum NonterminalKind {
    */
   EnumMembers = "EnumMembers",
   /**
-   * This kind represents a `EqualityExpression` node, with the following structure:
+   * Represents a node with kind `EqualityExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -539,7 +539,7 @@ export declare enum NonterminalKind {
    */
   EqualityExpression = "EqualityExpression",
   /**
-   * This kind represents a `ErrorDefinition` node, with the following structure:
+   * Represents a node with kind `ErrorDefinition`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.4 *)
@@ -551,7 +551,7 @@ export declare enum NonterminalKind {
    */
   ErrorDefinition = "ErrorDefinition",
   /**
-   * This kind represents a `ErrorParameter` node, with the following structure:
+   * Represents a node with kind `ErrorParameter`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.4 *)
@@ -561,7 +561,7 @@ export declare enum NonterminalKind {
    */
   ErrorParameter = "ErrorParameter",
   /**
-   * This kind represents a `ErrorParameters` node, with the following structure:
+   * Represents a node with kind `ErrorParameters`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.4 *)
@@ -570,7 +570,7 @@ export declare enum NonterminalKind {
    */
   ErrorParameters = "ErrorParameters",
   /**
-   * This kind represents a `ErrorParametersDeclaration` node, with the following structure:
+   * Represents a node with kind `ErrorParametersDeclaration`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.4 *)
@@ -581,7 +581,7 @@ export declare enum NonterminalKind {
    */
   ErrorParametersDeclaration = "ErrorParametersDeclaration",
   /**
-   * This kind represents a `EventDefinition` node, with the following structure:
+   * Represents a node with kind `EventDefinition`, having the following structure:
    *
    * ```ebnf
    * EventDefinition = (* event_keyword: *) EVENT_KEYWORD
@@ -593,7 +593,7 @@ export declare enum NonterminalKind {
    */
   EventDefinition = "EventDefinition",
   /**
-   * This kind represents a `EventParameter` node, with the following structure:
+   * Represents a node with kind `EventParameter`, having the following structure:
    *
    * ```ebnf
    * EventParameter = (* type_name: *) TypeName
@@ -603,7 +603,7 @@ export declare enum NonterminalKind {
    */
   EventParameter = "EventParameter",
   /**
-   * This kind represents a `EventParameters` node, with the following structure:
+   * Represents a node with kind `EventParameters`, having the following structure:
    *
    * ```ebnf
    * EventParameters = ((* item: *) EventParameter ((* separator: *) COMMA (* item: *) EventParameter)*)?;
@@ -611,7 +611,7 @@ export declare enum NonterminalKind {
    */
   EventParameters = "EventParameters",
   /**
-   * This kind represents a `EventParametersDeclaration` node, with the following structure:
+   * Represents a node with kind `EventParametersDeclaration`, having the following structure:
    *
    * ```ebnf
    * EventParametersDeclaration = (* open_paren: *) OPEN_PAREN
@@ -621,7 +621,7 @@ export declare enum NonterminalKind {
    */
   EventParametersDeclaration = "EventParametersDeclaration",
   /**
-   * This kind represents a `ExperimentalFeature` node, with the following structure:
+   * Represents a node with kind `ExperimentalFeature`, having the following structure:
    *
    * ```ebnf
    * ExperimentalFeature = (* variant: *) IDENTIFIER
@@ -630,7 +630,7 @@ export declare enum NonterminalKind {
    */
   ExperimentalFeature = "ExperimentalFeature",
   /**
-   * This kind represents a `ExperimentalPragma` node, with the following structure:
+   * Represents a node with kind `ExperimentalPragma`, having the following structure:
    *
    * ```ebnf
    * ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
@@ -639,7 +639,7 @@ export declare enum NonterminalKind {
    */
   ExperimentalPragma = "ExperimentalPragma",
   /**
-   * This kind represents a `ExponentiationExpression` node, with the following structure:
+   * Represents a node with kind `ExponentiationExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -657,7 +657,7 @@ export declare enum NonterminalKind {
    */
   ExponentiationExpression = "ExponentiationExpression",
   /**
-   * This kind represents a `Expression` node, with the following structure:
+   * Represents a node with kind `Expression`, having the following structure:
    *
    * ```ebnf
    * Expression = (* variant: *) AssignmentExpression
@@ -697,7 +697,7 @@ export declare enum NonterminalKind {
    */
   Expression = "Expression",
   /**
-   * This kind represents a `ExpressionStatement` node, with the following structure:
+   * Represents a node with kind `ExpressionStatement`, having the following structure:
    *
    * ```ebnf
    * ExpressionStatement = (* expression: *) Expression
@@ -706,7 +706,7 @@ export declare enum NonterminalKind {
    */
   ExpressionStatement = "ExpressionStatement",
   /**
-   * This kind represents a `FallbackFunctionAttribute` node, with the following structure:
+   * Represents a node with kind `FallbackFunctionAttribute`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -721,7 +721,7 @@ export declare enum NonterminalKind {
    */
   FallbackFunctionAttribute = "FallbackFunctionAttribute",
   /**
-   * This kind represents a `FallbackFunctionAttributes` node, with the following structure:
+   * Represents a node with kind `FallbackFunctionAttributes`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -730,7 +730,7 @@ export declare enum NonterminalKind {
    */
   FallbackFunctionAttributes = "FallbackFunctionAttributes",
   /**
-   * This kind represents a `FallbackFunctionDefinition` node, with the following structure:
+   * Represents a node with kind `FallbackFunctionDefinition`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -743,7 +743,7 @@ export declare enum NonterminalKind {
    */
   FallbackFunctionDefinition = "FallbackFunctionDefinition",
   /**
-   * This kind represents a `ForStatement` node, with the following structure:
+   * Represents a node with kind `ForStatement`, having the following structure:
    *
    * ```ebnf
    * ForStatement = (* for_keyword: *) FOR_KEYWORD
@@ -757,7 +757,7 @@ export declare enum NonterminalKind {
    */
   ForStatement = "ForStatement",
   /**
-   * This kind represents a `ForStatementCondition` node, with the following structure:
+   * Represents a node with kind `ForStatementCondition`, having the following structure:
    *
    * ```ebnf
    * ForStatementCondition = (* variant: *) ExpressionStatement
@@ -766,7 +766,7 @@ export declare enum NonterminalKind {
    */
   ForStatementCondition = "ForStatementCondition",
   /**
-   * This kind represents a `ForStatementInitialization` node, with the following structure:
+   * Represents a node with kind `ForStatementInitialization`, having the following structure:
    *
    * ```ebnf
    * ForStatementInitialization = (* variant: *) TupleDeconstructionStatement
@@ -777,7 +777,7 @@ export declare enum NonterminalKind {
    */
   ForStatementInitialization = "ForStatementInitialization",
   /**
-   * This kind represents a `FunctionAttribute` node, with the following structure:
+   * Represents a node with kind `FunctionAttribute`, having the following structure:
    *
    * ```ebnf
    * FunctionAttribute = (* variant: *) ModifierInvocation
@@ -795,7 +795,7 @@ export declare enum NonterminalKind {
    */
   FunctionAttribute = "FunctionAttribute",
   /**
-   * This kind represents a `FunctionAttributes` node, with the following structure:
+   * Represents a node with kind `FunctionAttributes`, having the following structure:
    *
    * ```ebnf
    * FunctionAttributes = (* item: *) FunctionAttribute*;
@@ -803,7 +803,7 @@ export declare enum NonterminalKind {
    */
   FunctionAttributes = "FunctionAttributes",
   /**
-   * This kind represents a `FunctionBody` node, with the following structure:
+   * Represents a node with kind `FunctionBody`, having the following structure:
    *
    * ```ebnf
    * FunctionBody = (* variant: *) Block
@@ -812,7 +812,7 @@ export declare enum NonterminalKind {
    */
   FunctionBody = "FunctionBody",
   /**
-   * This kind represents a `FunctionCallExpression` node, with the following structure:
+   * Represents a node with kind `FunctionCallExpression`, having the following structure:
    *
    * ```ebnf
    * (* Postfix unary operator *)
@@ -822,7 +822,7 @@ export declare enum NonterminalKind {
    */
   FunctionCallExpression = "FunctionCallExpression",
   /**
-   * This kind represents a `FunctionDefinition` node, with the following structure:
+   * Represents a node with kind `FunctionDefinition`, having the following structure:
    *
    * ```ebnf
    * FunctionDefinition = (* function_keyword: *) FUNCTION_KEYWORD
@@ -835,7 +835,7 @@ export declare enum NonterminalKind {
    */
   FunctionDefinition = "FunctionDefinition",
   /**
-   * This kind represents a `FunctionName` node, with the following structure:
+   * Represents a node with kind `FunctionName`, having the following structure:
    *
    * ```ebnf
    * FunctionName = (* variant: *) IDENTIFIER
@@ -845,7 +845,7 @@ export declare enum NonterminalKind {
    */
   FunctionName = "FunctionName",
   /**
-   * This kind represents a `FunctionType` node, with the following structure:
+   * Represents a node with kind `FunctionType`, having the following structure:
    *
    * ```ebnf
    * FunctionType = (* function_keyword: *) FUNCTION_KEYWORD
@@ -856,7 +856,7 @@ export declare enum NonterminalKind {
    */
   FunctionType = "FunctionType",
   /**
-   * This kind represents a `FunctionTypeAttribute` node, with the following structure:
+   * Represents a node with kind `FunctionTypeAttribute`, having the following structure:
    *
    * ```ebnf
    * FunctionTypeAttribute = (* variant: *) INTERNAL_KEYWORD
@@ -871,7 +871,7 @@ export declare enum NonterminalKind {
    */
   FunctionTypeAttribute = "FunctionTypeAttribute",
   /**
-   * This kind represents a `FunctionTypeAttributes` node, with the following structure:
+   * Represents a node with kind `FunctionTypeAttributes`, having the following structure:
    *
    * ```ebnf
    * FunctionTypeAttributes = (* item: *) FunctionTypeAttribute*;
@@ -879,7 +879,7 @@ export declare enum NonterminalKind {
    */
   FunctionTypeAttributes = "FunctionTypeAttributes",
   /**
-   * This kind represents a `HexNumberExpression` node, with the following structure:
+   * Represents a node with kind `HexNumberExpression`, having the following structure:
    *
    * ```ebnf
    * HexNumberExpression = (* literal: *) HEX_LITERAL
@@ -888,7 +888,7 @@ export declare enum NonterminalKind {
    */
   HexNumberExpression = "HexNumberExpression",
   /**
-   * This kind represents a `HexStringLiteral` node, with the following structure:
+   * Represents a node with kind `HexStringLiteral`, having the following structure:
    *
    * ```ebnf
    * HexStringLiteral = (* variant: *) SINGLE_QUOTED_HEX_STRING_LITERAL
@@ -897,7 +897,7 @@ export declare enum NonterminalKind {
    */
   HexStringLiteral = "HexStringLiteral",
   /**
-   * This kind represents a `HexStringLiterals` node, with the following structure:
+   * Represents a node with kind `HexStringLiterals`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.5.14 *)
@@ -906,7 +906,7 @@ export declare enum NonterminalKind {
    */
   HexStringLiterals = "HexStringLiterals",
   /**
-   * This kind represents a `IdentifierPath` node, with the following structure:
+   * Represents a node with kind `IdentifierPath`, having the following structure:
    *
    * ```ebnf
    * IdentifierPath = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDENTIFIER)*;
@@ -914,7 +914,7 @@ export declare enum NonterminalKind {
    */
   IdentifierPath = "IdentifierPath",
   /**
-   * This kind represents a `IfStatement` node, with the following structure:
+   * Represents a node with kind `IfStatement`, having the following structure:
    *
    * ```ebnf
    * IfStatement = (* if_keyword: *) IF_KEYWORD
@@ -927,7 +927,7 @@ export declare enum NonterminalKind {
    */
   IfStatement = "IfStatement",
   /**
-   * This kind represents a `ImportAlias` node, with the following structure:
+   * Represents a node with kind `ImportAlias`, having the following structure:
    *
    * ```ebnf
    * ImportAlias = (* as_keyword: *) AS_KEYWORD
@@ -936,7 +936,7 @@ export declare enum NonterminalKind {
    */
   ImportAlias = "ImportAlias",
   /**
-   * This kind represents a `ImportClause` node, with the following structure:
+   * Represents a node with kind `ImportClause`, having the following structure:
    *
    * ```ebnf
    * ImportClause = (* variant: *) PathImport
@@ -946,7 +946,7 @@ export declare enum NonterminalKind {
    */
   ImportClause = "ImportClause",
   /**
-   * This kind represents a `ImportDeconstruction` node, with the following structure:
+   * Represents a node with kind `ImportDeconstruction`, having the following structure:
    *
    * ```ebnf
    * ImportDeconstruction = (* open_brace: *) OPEN_BRACE
@@ -958,7 +958,7 @@ export declare enum NonterminalKind {
    */
   ImportDeconstruction = "ImportDeconstruction",
   /**
-   * This kind represents a `ImportDeconstructionSymbol` node, with the following structure:
+   * Represents a node with kind `ImportDeconstructionSymbol`, having the following structure:
    *
    * ```ebnf
    * ImportDeconstructionSymbol = (* name: *) IDENTIFIER
@@ -967,7 +967,7 @@ export declare enum NonterminalKind {
    */
   ImportDeconstructionSymbol = "ImportDeconstructionSymbol",
   /**
-   * This kind represents a `ImportDeconstructionSymbols` node, with the following structure:
+   * Represents a node with kind `ImportDeconstructionSymbols`, having the following structure:
    *
    * ```ebnf
    * ImportDeconstructionSymbols = (* item: *) ImportDeconstructionSymbol ((* separator: *) COMMA (* item: *) ImportDeconstructionSymbol)*;
@@ -975,7 +975,7 @@ export declare enum NonterminalKind {
    */
   ImportDeconstructionSymbols = "ImportDeconstructionSymbols",
   /**
-   * This kind represents a `ImportDirective` node, with the following structure:
+   * Represents a node with kind `ImportDirective`, having the following structure:
    *
    * ```ebnf
    * ImportDirective = (* import_keyword: *) IMPORT_KEYWORD
@@ -985,7 +985,7 @@ export declare enum NonterminalKind {
    */
   ImportDirective = "ImportDirective",
   /**
-   * This kind represents a `IndexAccessEnd` node, with the following structure:
+   * Represents a node with kind `IndexAccessEnd`, having the following structure:
    *
    * ```ebnf
    * IndexAccessEnd = (* colon: *) COLON
@@ -994,7 +994,7 @@ export declare enum NonterminalKind {
    */
   IndexAccessEnd = "IndexAccessEnd",
   /**
-   * This kind represents a `IndexAccessExpression` node, with the following structure:
+   * Represents a node with kind `IndexAccessExpression`, having the following structure:
    *
    * ```ebnf
    * (* Postfix unary operator *)
@@ -1007,7 +1007,7 @@ export declare enum NonterminalKind {
    */
   IndexAccessExpression = "IndexAccessExpression",
   /**
-   * This kind represents a `InheritanceSpecifier` node, with the following structure:
+   * Represents a node with kind `InheritanceSpecifier`, having the following structure:
    *
    * ```ebnf
    * InheritanceSpecifier = (* is_keyword: *) IS_KEYWORD
@@ -1016,7 +1016,7 @@ export declare enum NonterminalKind {
    */
   InheritanceSpecifier = "InheritanceSpecifier",
   /**
-   * This kind represents a `InheritanceType` node, with the following structure:
+   * Represents a node with kind `InheritanceType`, having the following structure:
    *
    * ```ebnf
    * InheritanceType = (* type_name: *) IdentifierPath
@@ -1025,7 +1025,7 @@ export declare enum NonterminalKind {
    */
   InheritanceType = "InheritanceType",
   /**
-   * This kind represents a `InheritanceTypes` node, with the following structure:
+   * Represents a node with kind `InheritanceTypes`, having the following structure:
    *
    * ```ebnf
    * InheritanceTypes = (* item: *) InheritanceType ((* separator: *) COMMA (* item: *) InheritanceType)*;
@@ -1033,7 +1033,7 @@ export declare enum NonterminalKind {
    */
   InheritanceTypes = "InheritanceTypes",
   /**
-   * This kind represents a `InterfaceDefinition` node, with the following structure:
+   * Represents a node with kind `InterfaceDefinition`, having the following structure:
    *
    * ```ebnf
    * InterfaceDefinition = (* interface_keyword: *) INTERFACE_KEYWORD
@@ -1046,7 +1046,7 @@ export declare enum NonterminalKind {
    */
   InterfaceDefinition = "InterfaceDefinition",
   /**
-   * This kind represents a `InterfaceMembers` node, with the following structure:
+   * Represents a node with kind `InterfaceMembers`, having the following structure:
    *
    * ```ebnf
    * InterfaceMembers = (* item: *) ContractMember*;
@@ -1054,7 +1054,7 @@ export declare enum NonterminalKind {
    */
   InterfaceMembers = "InterfaceMembers",
   /**
-   * This kind represents a `LibraryDefinition` node, with the following structure:
+   * Represents a node with kind `LibraryDefinition`, having the following structure:
    *
    * ```ebnf
    * LibraryDefinition = (* library_keyword: *) LIBRARY_KEYWORD
@@ -1066,7 +1066,7 @@ export declare enum NonterminalKind {
    */
   LibraryDefinition = "LibraryDefinition",
   /**
-   * This kind represents a `LibraryMembers` node, with the following structure:
+   * Represents a node with kind `LibraryMembers`, having the following structure:
    *
    * ```ebnf
    * LibraryMembers = (* item: *) ContractMember*;
@@ -1074,7 +1074,7 @@ export declare enum NonterminalKind {
    */
   LibraryMembers = "LibraryMembers",
   /**
-   * This kind represents a `MappingKey` node, with the following structure:
+   * Represents a node with kind `MappingKey`, having the following structure:
    *
    * ```ebnf
    * MappingKey = (* key_type: *) MappingKeyType
@@ -1083,7 +1083,7 @@ export declare enum NonterminalKind {
    */
   MappingKey = "MappingKey",
   /**
-   * This kind represents a `MappingKeyType` node, with the following structure:
+   * Represents a node with kind `MappingKeyType`, having the following structure:
    *
    * ```ebnf
    * MappingKeyType = (* variant: *) ElementaryType
@@ -1092,7 +1092,7 @@ export declare enum NonterminalKind {
    */
   MappingKeyType = "MappingKeyType",
   /**
-   * This kind represents a `MappingType` node, with the following structure:
+   * Represents a node with kind `MappingType`, having the following structure:
    *
    * ```ebnf
    * MappingType = (* mapping_keyword: *) MAPPING_KEYWORD
@@ -1105,7 +1105,7 @@ export declare enum NonterminalKind {
    */
   MappingType = "MappingType",
   /**
-   * This kind represents a `MappingValue` node, with the following structure:
+   * Represents a node with kind `MappingValue`, having the following structure:
    *
    * ```ebnf
    * MappingValue = (* type_name: *) TypeName
@@ -1114,7 +1114,7 @@ export declare enum NonterminalKind {
    */
   MappingValue = "MappingValue",
   /**
-   * This kind represents a `MemberAccessExpression` node, with the following structure:
+   * Represents a node with kind `MemberAccessExpression`, having the following structure:
    *
    * ```ebnf
    * (* Postfix unary operator *)
@@ -1125,7 +1125,7 @@ export declare enum NonterminalKind {
    */
   MemberAccessExpression = "MemberAccessExpression",
   /**
-   * This kind represents a `ModifierAttribute` node, with the following structure:
+   * Represents a node with kind `ModifierAttribute`, having the following structure:
    *
    * ```ebnf
    * ModifierAttribute = (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
@@ -1134,7 +1134,7 @@ export declare enum NonterminalKind {
    */
   ModifierAttribute = "ModifierAttribute",
   /**
-   * This kind represents a `ModifierAttributes` node, with the following structure:
+   * Represents a node with kind `ModifierAttributes`, having the following structure:
    *
    * ```ebnf
    * ModifierAttributes = (* item: *) ModifierAttribute*;
@@ -1142,7 +1142,7 @@ export declare enum NonterminalKind {
    */
   ModifierAttributes = "ModifierAttributes",
   /**
-   * This kind represents a `ModifierDefinition` node, with the following structure:
+   * Represents a node with kind `ModifierDefinition`, having the following structure:
    *
    * ```ebnf
    * ModifierDefinition = (* modifier_keyword: *) MODIFIER_KEYWORD
@@ -1154,7 +1154,7 @@ export declare enum NonterminalKind {
    */
   ModifierDefinition = "ModifierDefinition",
   /**
-   * This kind represents a `ModifierInvocation` node, with the following structure:
+   * Represents a node with kind `ModifierInvocation`, having the following structure:
    *
    * ```ebnf
    * ModifierInvocation = (* name: *) IdentifierPath
@@ -1163,7 +1163,7 @@ export declare enum NonterminalKind {
    */
   ModifierInvocation = "ModifierInvocation",
   /**
-   * This kind represents a `MultiplicativeExpression` node, with the following structure:
+   * Represents a node with kind `MultiplicativeExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -1184,7 +1184,7 @@ export declare enum NonterminalKind {
    */
   MultiplicativeExpression = "MultiplicativeExpression",
   /**
-   * This kind represents a `NamedArgument` node, with the following structure:
+   * Represents a node with kind `NamedArgument`, having the following structure:
    *
    * ```ebnf
    * NamedArgument = (* name: *) IDENTIFIER
@@ -1194,7 +1194,7 @@ export declare enum NonterminalKind {
    */
   NamedArgument = "NamedArgument",
   /**
-   * This kind represents a `NamedArgumentGroup` node, with the following structure:
+   * Represents a node with kind `NamedArgumentGroup`, having the following structure:
    *
    * ```ebnf
    * NamedArgumentGroup = (* open_brace: *) OPEN_BRACE
@@ -1204,7 +1204,7 @@ export declare enum NonterminalKind {
    */
   NamedArgumentGroup = "NamedArgumentGroup",
   /**
-   * This kind represents a `NamedArguments` node, with the following structure:
+   * Represents a node with kind `NamedArguments`, having the following structure:
    *
    * ```ebnf
    * NamedArguments = ((* item: *) NamedArgument ((* separator: *) COMMA (* item: *) NamedArgument)*)?;
@@ -1212,7 +1212,7 @@ export declare enum NonterminalKind {
    */
   NamedArguments = "NamedArguments",
   /**
-   * This kind represents a `NamedArgumentsDeclaration` node, with the following structure:
+   * Represents a node with kind `NamedArgumentsDeclaration`, having the following structure:
    *
    * ```ebnf
    * NamedArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
@@ -1222,7 +1222,7 @@ export declare enum NonterminalKind {
    */
   NamedArgumentsDeclaration = "NamedArgumentsDeclaration",
   /**
-   * This kind represents a `NamedImport` node, with the following structure:
+   * Represents a node with kind `NamedImport`, having the following structure:
    *
    * ```ebnf
    * NamedImport = (* asterisk: *) ASTERISK
@@ -1233,7 +1233,7 @@ export declare enum NonterminalKind {
    */
   NamedImport = "NamedImport",
   /**
-   * This kind represents a `NewExpression` node, with the following structure:
+   * Represents a node with kind `NewExpression`, having the following structure:
    *
    * ```ebnf
    * NewExpression = (* new_keyword: *) NEW_KEYWORD
@@ -1242,7 +1242,7 @@ export declare enum NonterminalKind {
    */
   NewExpression = "NewExpression",
   /**
-   * This kind represents a `NumberUnit` node, with the following structure:
+   * Represents a node with kind `NumberUnit`, having the following structure:
    *
    * ```ebnf
    * NumberUnit = (* variant: *) WEI_KEYWORD
@@ -1260,7 +1260,7 @@ export declare enum NonterminalKind {
    */
   NumberUnit = "NumberUnit",
   /**
-   * This kind represents a `OrExpression` node, with the following structure:
+   * Represents a node with kind `OrExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -1271,7 +1271,7 @@ export declare enum NonterminalKind {
    */
   OrExpression = "OrExpression",
   /**
-   * This kind represents a `OverridePaths` node, with the following structure:
+   * Represents a node with kind `OverridePaths`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -1280,7 +1280,7 @@ export declare enum NonterminalKind {
    */
   OverridePaths = "OverridePaths",
   /**
-   * This kind represents a `OverridePathsDeclaration` node, with the following structure:
+   * Represents a node with kind `OverridePathsDeclaration`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -1291,7 +1291,7 @@ export declare enum NonterminalKind {
    */
   OverridePathsDeclaration = "OverridePathsDeclaration",
   /**
-   * This kind represents a `OverrideSpecifier` node, with the following structure:
+   * Represents a node with kind `OverrideSpecifier`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -1301,7 +1301,7 @@ export declare enum NonterminalKind {
    */
   OverrideSpecifier = "OverrideSpecifier",
   /**
-   * This kind represents a `Parameter` node, with the following structure:
+   * Represents a node with kind `Parameter`, having the following structure:
    *
    * ```ebnf
    * Parameter = (* type_name: *) TypeName
@@ -1311,7 +1311,7 @@ export declare enum NonterminalKind {
    */
   Parameter = "Parameter",
   /**
-   * This kind represents a `Parameters` node, with the following structure:
+   * Represents a node with kind `Parameters`, having the following structure:
    *
    * ```ebnf
    * Parameters = ((* item: *) Parameter ((* separator: *) COMMA (* item: *) Parameter)*)?;
@@ -1319,7 +1319,7 @@ export declare enum NonterminalKind {
    */
   Parameters = "Parameters",
   /**
-   * This kind represents a `ParametersDeclaration` node, with the following structure:
+   * Represents a node with kind `ParametersDeclaration`, having the following structure:
    *
    * ```ebnf
    * ParametersDeclaration = (* open_paren: *) OPEN_PAREN
@@ -1329,7 +1329,7 @@ export declare enum NonterminalKind {
    */
   ParametersDeclaration = "ParametersDeclaration",
   /**
-   * This kind represents a `PathImport` node, with the following structure:
+   * Represents a node with kind `PathImport`, having the following structure:
    *
    * ```ebnf
    * PathImport = (* path: *) StringLiteral
@@ -1338,7 +1338,7 @@ export declare enum NonterminalKind {
    */
   PathImport = "PathImport",
   /**
-   * This kind represents a `PositionalArguments` node, with the following structure:
+   * Represents a node with kind `PositionalArguments`, having the following structure:
    *
    * ```ebnf
    * PositionalArguments = ((* item: *) Expression ((* separator: *) COMMA (* item: *) Expression)*)?;
@@ -1346,7 +1346,7 @@ export declare enum NonterminalKind {
    */
   PositionalArguments = "PositionalArguments",
   /**
-   * This kind represents a `PositionalArgumentsDeclaration` node, with the following structure:
+   * Represents a node with kind `PositionalArgumentsDeclaration`, having the following structure:
    *
    * ```ebnf
    * PositionalArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
@@ -1356,7 +1356,7 @@ export declare enum NonterminalKind {
    */
   PositionalArgumentsDeclaration = "PositionalArgumentsDeclaration",
   /**
-   * This kind represents a `PostfixExpression` node, with the following structure:
+   * Represents a node with kind `PostfixExpression`, having the following structure:
    *
    * ```ebnf
    * (* Postfix unary operator *)
@@ -1370,7 +1370,7 @@ export declare enum NonterminalKind {
    */
   PostfixExpression = "PostfixExpression",
   /**
-   * This kind represents a `Pragma` node, with the following structure:
+   * Represents a node with kind `Pragma`, having the following structure:
    *
    * ```ebnf
    * Pragma = (* variant: *) AbicoderPragma
@@ -1380,7 +1380,7 @@ export declare enum NonterminalKind {
    */
   Pragma = "Pragma",
   /**
-   * This kind represents a `PragmaDirective` node, with the following structure:
+   * Represents a node with kind `PragmaDirective`, having the following structure:
    *
    * ```ebnf
    * PragmaDirective = (* pragma_keyword: *) PRAGMA_KEYWORD
@@ -1390,7 +1390,7 @@ export declare enum NonterminalKind {
    */
   PragmaDirective = "PragmaDirective",
   /**
-   * This kind represents a `PrefixExpression` node, with the following structure:
+   * Represents a node with kind `PrefixExpression`, having the following structure:
    *
    * ```ebnf
    * (* Prefix unary operator *)
@@ -1425,7 +1425,7 @@ export declare enum NonterminalKind {
    */
   PrefixExpression = "PrefixExpression",
   /**
-   * This kind represents a `ReceiveFunctionAttribute` node, with the following structure:
+   * Represents a node with kind `ReceiveFunctionAttribute`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -1438,7 +1438,7 @@ export declare enum NonterminalKind {
    */
   ReceiveFunctionAttribute = "ReceiveFunctionAttribute",
   /**
-   * This kind represents a `ReceiveFunctionAttributes` node, with the following structure:
+   * Represents a node with kind `ReceiveFunctionAttributes`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -1447,7 +1447,7 @@ export declare enum NonterminalKind {
    */
   ReceiveFunctionAttributes = "ReceiveFunctionAttributes",
   /**
-   * This kind represents a `ReceiveFunctionDefinition` node, with the following structure:
+   * Represents a node with kind `ReceiveFunctionDefinition`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -1459,7 +1459,7 @@ export declare enum NonterminalKind {
    */
   ReceiveFunctionDefinition = "ReceiveFunctionDefinition",
   /**
-   * This kind represents a `ReturnStatement` node, with the following structure:
+   * Represents a node with kind `ReturnStatement`, having the following structure:
    *
    * ```ebnf
    * ReturnStatement = (* return_keyword: *) RETURN_KEYWORD
@@ -1469,7 +1469,7 @@ export declare enum NonterminalKind {
    */
   ReturnStatement = "ReturnStatement",
   /**
-   * This kind represents a `ReturnsDeclaration` node, with the following structure:
+   * Represents a node with kind `ReturnsDeclaration`, having the following structure:
    *
    * ```ebnf
    * ReturnsDeclaration = (* returns_keyword: *) RETURNS_KEYWORD
@@ -1478,7 +1478,7 @@ export declare enum NonterminalKind {
    */
   ReturnsDeclaration = "ReturnsDeclaration",
   /**
-   * This kind represents a `RevertStatement` node, with the following structure:
+   * Represents a node with kind `RevertStatement`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.4 *)
@@ -1490,7 +1490,7 @@ export declare enum NonterminalKind {
    */
   RevertStatement = "RevertStatement",
   /**
-   * This kind represents a `ShiftExpression` node, with the following structure:
+   * Represents a node with kind `ShiftExpression`, having the following structure:
    *
    * ```ebnf
    * (* Left-associative binary operator *)
@@ -1511,7 +1511,7 @@ export declare enum NonterminalKind {
    */
   ShiftExpression = "ShiftExpression",
   /**
-   * This kind represents a `SimpleVersionLiteral` node, with the following structure:
+   * Represents a node with kind `SimpleVersionLiteral`, having the following structure:
    *
    * ```ebnf
    * SimpleVersionLiteral = (* item: *) VERSION_SPECIFIER ((* separator: *) PERIOD (* item: *) VERSION_SPECIFIER)*;
@@ -1519,7 +1519,7 @@ export declare enum NonterminalKind {
    */
   SimpleVersionLiteral = "SimpleVersionLiteral",
   /**
-   * This kind represents a `SourceUnit` node, with the following structure:
+   * Represents a node with kind `SourceUnit`, having the following structure:
    *
    * ```ebnf
    * SourceUnit = (* members: *) SourceUnitMembers;
@@ -1527,7 +1527,7 @@ export declare enum NonterminalKind {
    */
   SourceUnit = "SourceUnit",
   /**
-   * This kind represents a `SourceUnitMember` node, with the following structure:
+   * Represents a node with kind `SourceUnitMember`, having the following structure:
    *
    * ```ebnf
    * SourceUnitMember = (* variant: *) PragmaDirective
@@ -1547,7 +1547,7 @@ export declare enum NonterminalKind {
    */
   SourceUnitMember = "SourceUnitMember",
   /**
-   * This kind represents a `SourceUnitMembers` node, with the following structure:
+   * Represents a node with kind `SourceUnitMembers`, having the following structure:
    *
    * ```ebnf
    * SourceUnitMembers = (* item: *) SourceUnitMember*;
@@ -1555,7 +1555,7 @@ export declare enum NonterminalKind {
    */
   SourceUnitMembers = "SourceUnitMembers",
   /**
-   * This kind represents a `StateVariableAttribute` node, with the following structure:
+   * Represents a node with kind `StateVariableAttribute`, having the following structure:
    *
    * ```ebnf
    * StateVariableAttribute = (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
@@ -1569,7 +1569,7 @@ export declare enum NonterminalKind {
    */
   StateVariableAttribute = "StateVariableAttribute",
   /**
-   * This kind represents a `StateVariableAttributes` node, with the following structure:
+   * Represents a node with kind `StateVariableAttributes`, having the following structure:
    *
    * ```ebnf
    * StateVariableAttributes = (* item: *) StateVariableAttribute*;
@@ -1577,7 +1577,7 @@ export declare enum NonterminalKind {
    */
   StateVariableAttributes = "StateVariableAttributes",
   /**
-   * This kind represents a `StateVariableDefinition` node, with the following structure:
+   * Represents a node with kind `StateVariableDefinition`, having the following structure:
    *
    * ```ebnf
    * StateVariableDefinition = (* type_name: *) TypeName
@@ -1589,7 +1589,7 @@ export declare enum NonterminalKind {
    */
   StateVariableDefinition = "StateVariableDefinition",
   /**
-   * This kind represents a `StateVariableDefinitionValue` node, with the following structure:
+   * Represents a node with kind `StateVariableDefinitionValue`, having the following structure:
    *
    * ```ebnf
    * StateVariableDefinitionValue = (* equal: *) EQUAL
@@ -1598,7 +1598,7 @@ export declare enum NonterminalKind {
    */
   StateVariableDefinitionValue = "StateVariableDefinitionValue",
   /**
-   * This kind represents a `Statement` node, with the following structure:
+   * Represents a node with kind `Statement`, having the following structure:
    *
    * ```ebnf
    * Statement = (* variant: *) IfStatement
@@ -1622,7 +1622,7 @@ export declare enum NonterminalKind {
    */
   Statement = "Statement",
   /**
-   * This kind represents a `Statements` node, with the following structure:
+   * Represents a node with kind `Statements`, having the following structure:
    *
    * ```ebnf
    * Statements = (* item: *) Statement*;
@@ -1630,7 +1630,7 @@ export declare enum NonterminalKind {
    */
   Statements = "Statements",
   /**
-   * This kind represents a `StorageLocation` node, with the following structure:
+   * Represents a node with kind `StorageLocation`, having the following structure:
    *
    * ```ebnf
    * StorageLocation = (* variant: *) MEMORY_KEYWORD
@@ -1640,7 +1640,7 @@ export declare enum NonterminalKind {
    */
   StorageLocation = "StorageLocation",
   /**
-   * This kind represents a `StringExpression` node, with the following structure:
+   * Represents a node with kind `StringExpression`, having the following structure:
    *
    * ```ebnf
    * StringExpression = (* variant: *) StringLiteral (* Deprecated in 0.5.14 *)
@@ -1652,7 +1652,7 @@ export declare enum NonterminalKind {
    */
   StringExpression = "StringExpression",
   /**
-   * This kind represents a `StringLiteral` node, with the following structure:
+   * Represents a node with kind `StringLiteral`, having the following structure:
    *
    * ```ebnf
    * StringLiteral = (* variant: *) SINGLE_QUOTED_STRING_LITERAL
@@ -1661,7 +1661,7 @@ export declare enum NonterminalKind {
    */
   StringLiteral = "StringLiteral",
   /**
-   * This kind represents a `StringLiterals` node, with the following structure:
+   * Represents a node with kind `StringLiterals`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.5.14 *)
@@ -1670,7 +1670,7 @@ export declare enum NonterminalKind {
    */
   StringLiterals = "StringLiterals",
   /**
-   * This kind represents a `StructDefinition` node, with the following structure:
+   * Represents a node with kind `StructDefinition`, having the following structure:
    *
    * ```ebnf
    * StructDefinition = (* struct_keyword: *) STRUCT_KEYWORD
@@ -1682,7 +1682,7 @@ export declare enum NonterminalKind {
    */
   StructDefinition = "StructDefinition",
   /**
-   * This kind represents a `StructMember` node, with the following structure:
+   * Represents a node with kind `StructMember`, having the following structure:
    *
    * ```ebnf
    * StructMember = (* type_name: *) TypeName
@@ -1692,7 +1692,7 @@ export declare enum NonterminalKind {
    */
   StructMember = "StructMember",
   /**
-   * This kind represents a `StructMembers` node, with the following structure:
+   * Represents a node with kind `StructMembers`, having the following structure:
    *
    * ```ebnf
    * StructMembers = (* item: *) StructMember*;
@@ -1700,7 +1700,7 @@ export declare enum NonterminalKind {
    */
   StructMembers = "StructMembers",
   /**
-   * This kind represents a `ThrowStatement` node, with the following structure:
+   * Represents a node with kind `ThrowStatement`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -1710,7 +1710,7 @@ export declare enum NonterminalKind {
    */
   ThrowStatement = "ThrowStatement",
   /**
-   * This kind represents a `TryStatement` node, with the following structure:
+   * Represents a node with kind `TryStatement`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -1723,7 +1723,7 @@ export declare enum NonterminalKind {
    */
   TryStatement = "TryStatement",
   /**
-   * This kind represents a `TupleDeconstructionElement` node, with the following structure:
+   * Represents a node with kind `TupleDeconstructionElement`, having the following structure:
    *
    * ```ebnf
    * TupleDeconstructionElement = (* member: *) TupleMember?;
@@ -1731,7 +1731,7 @@ export declare enum NonterminalKind {
    */
   TupleDeconstructionElement = "TupleDeconstructionElement",
   /**
-   * This kind represents a `TupleDeconstructionElements` node, with the following structure:
+   * Represents a node with kind `TupleDeconstructionElements`, having the following structure:
    *
    * ```ebnf
    * TupleDeconstructionElements = (* item: *) TupleDeconstructionElement ((* separator: *) COMMA (* item: *) TupleDeconstructionElement)*;
@@ -1739,7 +1739,7 @@ export declare enum NonterminalKind {
    */
   TupleDeconstructionElements = "TupleDeconstructionElements",
   /**
-   * This kind represents a `TupleDeconstructionStatement` node, with the following structure:
+   * Represents a node with kind `TupleDeconstructionStatement`, having the following structure:
    *
    * ```ebnf
    * TupleDeconstructionStatement = (* var_keyword: *) VAR_KEYWORD? (* Deprecated in 0.5.0 *)
@@ -1753,7 +1753,7 @@ export declare enum NonterminalKind {
    */
   TupleDeconstructionStatement = "TupleDeconstructionStatement",
   /**
-   * This kind represents a `TupleExpression` node, with the following structure:
+   * Represents a node with kind `TupleExpression`, having the following structure:
    *
    * ```ebnf
    * TupleExpression = (* open_paren: *) OPEN_PAREN
@@ -1763,7 +1763,7 @@ export declare enum NonterminalKind {
    */
   TupleExpression = "TupleExpression",
   /**
-   * This kind represents a `TupleMember` node, with the following structure:
+   * Represents a node with kind `TupleMember`, having the following structure:
    *
    * ```ebnf
    * TupleMember = (* variant: *) TypedTupleMember
@@ -1772,7 +1772,7 @@ export declare enum NonterminalKind {
    */
   TupleMember = "TupleMember",
   /**
-   * This kind represents a `TupleValue` node, with the following structure:
+   * Represents a node with kind `TupleValue`, having the following structure:
    *
    * ```ebnf
    * TupleValue = (* expression: *) Expression?;
@@ -1780,7 +1780,7 @@ export declare enum NonterminalKind {
    */
   TupleValue = "TupleValue",
   /**
-   * This kind represents a `TupleValues` node, with the following structure:
+   * Represents a node with kind `TupleValues`, having the following structure:
    *
    * ```ebnf
    * TupleValues = (* item: *) TupleValue ((* separator: *) COMMA (* item: *) TupleValue)*;
@@ -1788,7 +1788,7 @@ export declare enum NonterminalKind {
    */
   TupleValues = "TupleValues",
   /**
-   * This kind represents a `TypeExpression` node, with the following structure:
+   * Represents a node with kind `TypeExpression`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.5.3 *)
@@ -1800,7 +1800,7 @@ export declare enum NonterminalKind {
    */
   TypeExpression = "TypeExpression",
   /**
-   * This kind represents a `TypeName` node, with the following structure:
+   * Represents a node with kind `TypeName`, having the following structure:
    *
    * ```ebnf
    * TypeName = (* variant: *) ArrayTypeName
@@ -1812,7 +1812,7 @@ export declare enum NonterminalKind {
    */
   TypeName = "TypeName",
   /**
-   * This kind represents a `TypedTupleMember` node, with the following structure:
+   * Represents a node with kind `TypedTupleMember`, having the following structure:
    *
    * ```ebnf
    * TypedTupleMember = (* type_name: *) TypeName
@@ -1822,7 +1822,7 @@ export declare enum NonterminalKind {
    */
   TypedTupleMember = "TypedTupleMember",
   /**
-   * This kind represents a `UncheckedBlock` node, with the following structure:
+   * Represents a node with kind `UncheckedBlock`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.0 *)
@@ -1832,7 +1832,7 @@ export declare enum NonterminalKind {
    */
   UncheckedBlock = "UncheckedBlock",
   /**
-   * This kind represents a `UnicodeStringLiteral` node, with the following structure:
+   * Represents a node with kind `UnicodeStringLiteral`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.7.0 *)
@@ -1842,7 +1842,7 @@ export declare enum NonterminalKind {
    */
   UnicodeStringLiteral = "UnicodeStringLiteral",
   /**
-   * This kind represents a `UnicodeStringLiterals` node, with the following structure:
+   * Represents a node with kind `UnicodeStringLiterals`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.7.0 *)
@@ -1851,7 +1851,7 @@ export declare enum NonterminalKind {
    */
   UnicodeStringLiterals = "UnicodeStringLiterals",
   /**
-   * This kind represents a `UnnamedFunctionAttribute` node, with the following structure:
+   * Represents a node with kind `UnnamedFunctionAttribute`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.6.0 *)
@@ -1868,7 +1868,7 @@ export declare enum NonterminalKind {
    */
   UnnamedFunctionAttribute = "UnnamedFunctionAttribute",
   /**
-   * This kind represents a `UnnamedFunctionAttributes` node, with the following structure:
+   * Represents a node with kind `UnnamedFunctionAttributes`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.6.0 *)
@@ -1877,7 +1877,7 @@ export declare enum NonterminalKind {
    */
   UnnamedFunctionAttributes = "UnnamedFunctionAttributes",
   /**
-   * This kind represents a `UnnamedFunctionDefinition` node, with the following structure:
+   * Represents a node with kind `UnnamedFunctionDefinition`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.6.0 *)
@@ -1889,7 +1889,7 @@ export declare enum NonterminalKind {
    */
   UnnamedFunctionDefinition = "UnnamedFunctionDefinition",
   /**
-   * This kind represents a `UntypedTupleMember` node, with the following structure:
+   * Represents a node with kind `UntypedTupleMember`, having the following structure:
    *
    * ```ebnf
    * UntypedTupleMember = (* storage_location: *) StorageLocation?
@@ -1898,7 +1898,7 @@ export declare enum NonterminalKind {
    */
   UntypedTupleMember = "UntypedTupleMember",
   /**
-   * This kind represents a `UserDefinedValueTypeDefinition` node, with the following structure:
+   * Represents a node with kind `UserDefinedValueTypeDefinition`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.8 *)
@@ -1911,7 +1911,7 @@ export declare enum NonterminalKind {
    */
   UserDefinedValueTypeDefinition = "UserDefinedValueTypeDefinition",
   /**
-   * This kind represents a `UsingAlias` node, with the following structure:
+   * Represents a node with kind `UsingAlias`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.19 *)
@@ -1921,7 +1921,7 @@ export declare enum NonterminalKind {
    */
   UsingAlias = "UsingAlias",
   /**
-   * This kind represents a `UsingClause` node, with the following structure:
+   * Represents a node with kind `UsingClause`, having the following structure:
    *
    * ```ebnf
    * UsingClause = (* variant: *) IdentifierPath
@@ -1930,7 +1930,7 @@ export declare enum NonterminalKind {
    */
   UsingClause = "UsingClause",
   /**
-   * This kind represents a `UsingDeconstruction` node, with the following structure:
+   * Represents a node with kind `UsingDeconstruction`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.13 *)
@@ -1941,7 +1941,7 @@ export declare enum NonterminalKind {
    */
   UsingDeconstruction = "UsingDeconstruction",
   /**
-   * This kind represents a `UsingDeconstructionSymbol` node, with the following structure:
+   * Represents a node with kind `UsingDeconstructionSymbol`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.13 *)
@@ -1951,7 +1951,7 @@ export declare enum NonterminalKind {
    */
   UsingDeconstructionSymbol = "UsingDeconstructionSymbol",
   /**
-   * This kind represents a `UsingDeconstructionSymbols` node, with the following structure:
+   * Represents a node with kind `UsingDeconstructionSymbols`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.13 *)
@@ -1960,7 +1960,7 @@ export declare enum NonterminalKind {
    */
   UsingDeconstructionSymbols = "UsingDeconstructionSymbols",
   /**
-   * This kind represents a `UsingDirective` node, with the following structure:
+   * Represents a node with kind `UsingDirective`, having the following structure:
    *
    * ```ebnf
    * UsingDirective = (* using_keyword: *) USING_KEYWORD
@@ -1973,7 +1973,7 @@ export declare enum NonterminalKind {
    */
   UsingDirective = "UsingDirective",
   /**
-   * This kind represents a `UsingOperator` node, with the following structure:
+   * Represents a node with kind `UsingOperator`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.19 *)
@@ -1996,7 +1996,7 @@ export declare enum NonterminalKind {
    */
   UsingOperator = "UsingOperator",
   /**
-   * This kind represents a `UsingTarget` node, with the following structure:
+   * Represents a node with kind `UsingTarget`, having the following structure:
    *
    * ```ebnf
    * UsingTarget = (* variant: *) TypeName
@@ -2005,7 +2005,7 @@ export declare enum NonterminalKind {
    */
   UsingTarget = "UsingTarget",
   /**
-   * This kind represents a `VariableDeclarationStatement` node, with the following structure:
+   * Represents a node with kind `VariableDeclarationStatement`, having the following structure:
    *
    * ```ebnf
    * VariableDeclarationStatement = (* variable_type: *) VariableDeclarationType
@@ -2017,7 +2017,7 @@ export declare enum NonterminalKind {
    */
   VariableDeclarationStatement = "VariableDeclarationStatement",
   /**
-   * This kind represents a `VariableDeclarationType` node, with the following structure:
+   * Represents a node with kind `VariableDeclarationType`, having the following structure:
    *
    * ```ebnf
    * VariableDeclarationType = (* variant: *) TypeName
@@ -2026,7 +2026,7 @@ export declare enum NonterminalKind {
    */
   VariableDeclarationType = "VariableDeclarationType",
   /**
-   * This kind represents a `VariableDeclarationValue` node, with the following structure:
+   * Represents a node with kind `VariableDeclarationValue`, having the following structure:
    *
    * ```ebnf
    * VariableDeclarationValue = (* equal: *) EQUAL
@@ -2035,7 +2035,7 @@ export declare enum NonterminalKind {
    */
   VariableDeclarationValue = "VariableDeclarationValue",
   /**
-   * This kind represents a `VersionExpression` node, with the following structure:
+   * Represents a node with kind `VersionExpression`, having the following structure:
    *
    * ```ebnf
    * VersionExpression = (* variant: *) VersionRange
@@ -2044,7 +2044,7 @@ export declare enum NonterminalKind {
    */
   VersionExpression = "VersionExpression",
   /**
-   * This kind represents a `VersionExpressionSet` node, with the following structure:
+   * Represents a node with kind `VersionExpressionSet`, having the following structure:
    *
    * ```ebnf
    * VersionExpressionSet = (* item: *) VersionExpression+;
@@ -2052,7 +2052,7 @@ export declare enum NonterminalKind {
    */
   VersionExpressionSet = "VersionExpressionSet",
   /**
-   * This kind represents a `VersionExpressionSets` node, with the following structure:
+   * Represents a node with kind `VersionExpressionSets`, having the following structure:
    *
    * ```ebnf
    * VersionExpressionSets = (* item: *) VersionExpressionSet ((* separator: *) BAR_BAR (* item: *) VersionExpressionSet)*;
@@ -2060,7 +2060,7 @@ export declare enum NonterminalKind {
    */
   VersionExpressionSets = "VersionExpressionSets",
   /**
-   * This kind represents a `VersionLiteral` node, with the following structure:
+   * Represents a node with kind `VersionLiteral`, having the following structure:
    *
    * ```ebnf
    * VersionLiteral = (* variant: *) SimpleVersionLiteral
@@ -2070,7 +2070,7 @@ export declare enum NonterminalKind {
    */
   VersionLiteral = "VersionLiteral",
   /**
-   * This kind represents a `VersionOperator` node, with the following structure:
+   * Represents a node with kind `VersionOperator`, having the following structure:
    *
    * ```ebnf
    * VersionOperator = (* variant: *) CARET
@@ -2084,7 +2084,7 @@ export declare enum NonterminalKind {
    */
   VersionOperator = "VersionOperator",
   /**
-   * This kind represents a `VersionPragma` node, with the following structure:
+   * Represents a node with kind `VersionPragma`, having the following structure:
    *
    * ```ebnf
    * VersionPragma = (* solidity_keyword: *) SOLIDITY_KEYWORD
@@ -2093,7 +2093,7 @@ export declare enum NonterminalKind {
    */
   VersionPragma = "VersionPragma",
   /**
-   * This kind represents a `VersionRange` node, with the following structure:
+   * Represents a node with kind `VersionRange`, having the following structure:
    *
    * ```ebnf
    * VersionRange = (* start: *) VersionLiteral
@@ -2103,7 +2103,7 @@ export declare enum NonterminalKind {
    */
   VersionRange = "VersionRange",
   /**
-   * This kind represents a `VersionTerm` node, with the following structure:
+   * Represents a node with kind `VersionTerm`, having the following structure:
    *
    * ```ebnf
    * VersionTerm = (* operator: *) VersionOperator?
@@ -2112,7 +2112,7 @@ export declare enum NonterminalKind {
    */
   VersionTerm = "VersionTerm",
   /**
-   * This kind represents a `WhileStatement` node, with the following structure:
+   * Represents a node with kind `WhileStatement`, having the following structure:
    *
    * ```ebnf
    * WhileStatement = (* while_keyword: *) WHILE_KEYWORD
@@ -2124,7 +2124,7 @@ export declare enum NonterminalKind {
    */
   WhileStatement = "WhileStatement",
   /**
-   * This kind represents a `YulArguments` node, with the following structure:
+   * Represents a node with kind `YulArguments`, having the following structure:
    *
    * ```ebnf
    * YulArguments = ((* item: *) YulExpression ((* separator: *) COMMA (* item: *) YulExpression)*)?;
@@ -2132,7 +2132,7 @@ export declare enum NonterminalKind {
    */
   YulArguments = "YulArguments",
   /**
-   * This kind represents a `YulAssignmentOperator` node, with the following structure:
+   * Represents a node with kind `YulAssignmentOperator`, having the following structure:
    *
    * ```ebnf
    * YulAssignmentOperator = (* variant: *) COLON_EQUAL
@@ -2141,7 +2141,7 @@ export declare enum NonterminalKind {
    */
   YulAssignmentOperator = "YulAssignmentOperator",
   /**
-   * This kind represents a `YulBlock` node, with the following structure:
+   * Represents a node with kind `YulBlock`, having the following structure:
    *
    * ```ebnf
    * YulBlock = (* open_brace: *) OPEN_BRACE
@@ -2151,7 +2151,7 @@ export declare enum NonterminalKind {
    */
   YulBlock = "YulBlock",
   /**
-   * This kind represents a `YulBreakStatement` node, with the following structure:
+   * Represents a node with kind `YulBreakStatement`, having the following structure:
    *
    * ```ebnf
    * YulBreakStatement = (* break_keyword: *) YUL_BREAK_KEYWORD;
@@ -2159,7 +2159,7 @@ export declare enum NonterminalKind {
    */
   YulBreakStatement = "YulBreakStatement",
   /**
-   * This kind represents a `YulBuiltInFunction` node, with the following structure:
+   * Represents a node with kind `YulBuiltInFunction`, having the following structure:
    *
    * ```ebnf
    * YulBuiltInFunction = (* variant: *) YUL_ADD_KEYWORD
@@ -2249,7 +2249,7 @@ export declare enum NonterminalKind {
    */
   YulBuiltInFunction = "YulBuiltInFunction",
   /**
-   * This kind represents a `YulColonAndEqual` node, with the following structure:
+   * Represents a node with kind `YulColonAndEqual`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.5 *)
@@ -2259,7 +2259,7 @@ export declare enum NonterminalKind {
    */
   YulColonAndEqual = "YulColonAndEqual",
   /**
-   * This kind represents a `YulContinueStatement` node, with the following structure:
+   * Represents a node with kind `YulContinueStatement`, having the following structure:
    *
    * ```ebnf
    * YulContinueStatement = (* continue_keyword: *) YUL_CONTINUE_KEYWORD;
@@ -2267,7 +2267,7 @@ export declare enum NonterminalKind {
    */
   YulContinueStatement = "YulContinueStatement",
   /**
-   * This kind represents a `YulDefaultCase` node, with the following structure:
+   * Represents a node with kind `YulDefaultCase`, having the following structure:
    *
    * ```ebnf
    * YulDefaultCase = (* default_keyword: *) YUL_DEFAULT_KEYWORD
@@ -2276,7 +2276,7 @@ export declare enum NonterminalKind {
    */
   YulDefaultCase = "YulDefaultCase",
   /**
-   * This kind represents a `YulEqualAndColon` node, with the following structure:
+   * Represents a node with kind `YulEqualAndColon`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -2286,7 +2286,7 @@ export declare enum NonterminalKind {
    */
   YulEqualAndColon = "YulEqualAndColon",
   /**
-   * This kind represents a `YulExpression` node, with the following structure:
+   * Represents a node with kind `YulExpression`, having the following structure:
    *
    * ```ebnf
    * YulExpression = (* variant: *) YulFunctionCallExpression
@@ -2297,7 +2297,7 @@ export declare enum NonterminalKind {
    */
   YulExpression = "YulExpression",
   /**
-   * This kind represents a `YulForStatement` node, with the following structure:
+   * Represents a node with kind `YulForStatement`, having the following structure:
    *
    * ```ebnf
    * YulForStatement = (* for_keyword: *) YUL_FOR_KEYWORD
@@ -2309,7 +2309,7 @@ export declare enum NonterminalKind {
    */
   YulForStatement = "YulForStatement",
   /**
-   * This kind represents a `YulFunctionCallExpression` node, with the following structure:
+   * Represents a node with kind `YulFunctionCallExpression`, having the following structure:
    *
    * ```ebnf
    * (* Postfix unary operator *)
@@ -2321,7 +2321,7 @@ export declare enum NonterminalKind {
    */
   YulFunctionCallExpression = "YulFunctionCallExpression",
   /**
-   * This kind represents a `YulFunctionDefinition` node, with the following structure:
+   * Represents a node with kind `YulFunctionDefinition`, having the following structure:
    *
    * ```ebnf
    * YulFunctionDefinition = (* function_keyword: *) YUL_FUNCTION_KEYWORD
@@ -2333,7 +2333,7 @@ export declare enum NonterminalKind {
    */
   YulFunctionDefinition = "YulFunctionDefinition",
   /**
-   * This kind represents a `YulIfStatement` node, with the following structure:
+   * Represents a node with kind `YulIfStatement`, having the following structure:
    *
    * ```ebnf
    * YulIfStatement = (* if_keyword: *) YUL_IF_KEYWORD
@@ -2343,7 +2343,7 @@ export declare enum NonterminalKind {
    */
   YulIfStatement = "YulIfStatement",
   /**
-   * This kind represents a `YulLabel` node, with the following structure:
+   * Represents a node with kind `YulLabel`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -2353,7 +2353,7 @@ export declare enum NonterminalKind {
    */
   YulLabel = "YulLabel",
   /**
-   * This kind represents a `YulLeaveStatement` node, with the following structure:
+   * Represents a node with kind `YulLeaveStatement`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -2362,7 +2362,7 @@ export declare enum NonterminalKind {
    */
   YulLeaveStatement = "YulLeaveStatement",
   /**
-   * This kind represents a `YulLiteral` node, with the following structure:
+   * Represents a node with kind `YulLiteral`, having the following structure:
    *
    * ```ebnf
    * YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
@@ -2375,7 +2375,7 @@ export declare enum NonterminalKind {
    */
   YulLiteral = "YulLiteral",
   /**
-   * This kind represents a `YulParameters` node, with the following structure:
+   * Represents a node with kind `YulParameters`, having the following structure:
    *
    * ```ebnf
    * YulParameters = ((* item: *) YUL_IDENTIFIER ((* separator: *) COMMA (* item: *) YUL_IDENTIFIER)*)?;
@@ -2383,7 +2383,7 @@ export declare enum NonterminalKind {
    */
   YulParameters = "YulParameters",
   /**
-   * This kind represents a `YulParametersDeclaration` node, with the following structure:
+   * Represents a node with kind `YulParametersDeclaration`, having the following structure:
    *
    * ```ebnf
    * YulParametersDeclaration = (* open_paren: *) OPEN_PAREN
@@ -2393,7 +2393,7 @@ export declare enum NonterminalKind {
    */
   YulParametersDeclaration = "YulParametersDeclaration",
   /**
-   * This kind represents a `YulPath` node, with the following structure:
+   * Represents a node with kind `YulPath`, having the following structure:
    *
    * ```ebnf
    * YulPath = (* item: *) YUL_IDENTIFIER ((* separator: *) PERIOD (* item: *) YUL_IDENTIFIER)*;
@@ -2401,7 +2401,7 @@ export declare enum NonterminalKind {
    */
   YulPath = "YulPath",
   /**
-   * This kind represents a `YulPaths` node, with the following structure:
+   * Represents a node with kind `YulPaths`, having the following structure:
    *
    * ```ebnf
    * YulPaths = (* item: *) YulPath ((* separator: *) COMMA (* item: *) YulPath)*;
@@ -2409,7 +2409,7 @@ export declare enum NonterminalKind {
    */
   YulPaths = "YulPaths",
   /**
-   * This kind represents a `YulReturnsDeclaration` node, with the following structure:
+   * Represents a node with kind `YulReturnsDeclaration`, having the following structure:
    *
    * ```ebnf
    * YulReturnsDeclaration = (* minus_greater_than: *) MINUS_GREATER_THAN
@@ -2418,7 +2418,7 @@ export declare enum NonterminalKind {
    */
   YulReturnsDeclaration = "YulReturnsDeclaration",
   /**
-   * This kind represents a `YulStackAssignmentOperator` node, with the following structure:
+   * Represents a node with kind `YulStackAssignmentOperator`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -2428,7 +2428,7 @@ export declare enum NonterminalKind {
    */
   YulStackAssignmentOperator = "YulStackAssignmentOperator",
   /**
-   * This kind represents a `YulStackAssignmentStatement` node, with the following structure:
+   * Represents a node with kind `YulStackAssignmentStatement`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -2438,7 +2438,7 @@ export declare enum NonterminalKind {
    */
   YulStackAssignmentStatement = "YulStackAssignmentStatement",
   /**
-   * This kind represents a `YulStatement` node, with the following structure:
+   * Represents a node with kind `YulStatement`, having the following structure:
    *
    * ```ebnf
    * YulStatement = (* variant: *) YulBlock
@@ -2458,7 +2458,7 @@ export declare enum NonterminalKind {
    */
   YulStatement = "YulStatement",
   /**
-   * This kind represents a `YulStatements` node, with the following structure:
+   * Represents a node with kind `YulStatements`, having the following structure:
    *
    * ```ebnf
    * YulStatements = (* item: *) YulStatement*;
@@ -2466,7 +2466,7 @@ export declare enum NonterminalKind {
    */
   YulStatements = "YulStatements",
   /**
-   * This kind represents a `YulSwitchCase` node, with the following structure:
+   * Represents a node with kind `YulSwitchCase`, having the following structure:
    *
    * ```ebnf
    * YulSwitchCase = (* variant: *) YulDefaultCase
@@ -2475,7 +2475,7 @@ export declare enum NonterminalKind {
    */
   YulSwitchCase = "YulSwitchCase",
   /**
-   * This kind represents a `YulSwitchCases` node, with the following structure:
+   * Represents a node with kind `YulSwitchCases`, having the following structure:
    *
    * ```ebnf
    * YulSwitchCases = (* item: *) YulSwitchCase+;
@@ -2483,7 +2483,7 @@ export declare enum NonterminalKind {
    */
   YulSwitchCases = "YulSwitchCases",
   /**
-   * This kind represents a `YulSwitchStatement` node, with the following structure:
+   * Represents a node with kind `YulSwitchStatement`, having the following structure:
    *
    * ```ebnf
    * YulSwitchStatement = (* switch_keyword: *) YUL_SWITCH_KEYWORD
@@ -2493,7 +2493,7 @@ export declare enum NonterminalKind {
    */
   YulSwitchStatement = "YulSwitchStatement",
   /**
-   * This kind represents a `YulValueCase` node, with the following structure:
+   * Represents a node with kind `YulValueCase`, having the following structure:
    *
    * ```ebnf
    * YulValueCase = (* case_keyword: *) YUL_CASE_KEYWORD
@@ -2503,7 +2503,7 @@ export declare enum NonterminalKind {
    */
   YulValueCase = "YulValueCase",
   /**
-   * This kind represents a `YulVariableAssignmentStatement` node, with the following structure:
+   * Represents a node with kind `YulVariableAssignmentStatement`, having the following structure:
    *
    * ```ebnf
    * YulVariableAssignmentStatement = (* variables: *) YulPaths
@@ -2513,7 +2513,7 @@ export declare enum NonterminalKind {
    */
   YulVariableAssignmentStatement = "YulVariableAssignmentStatement",
   /**
-   * This kind represents a `YulVariableDeclarationStatement` node, with the following structure:
+   * Represents a node with kind `YulVariableDeclarationStatement`, having the following structure:
    *
    * ```ebnf
    * YulVariableDeclarationStatement = (* let_keyword: *) YUL_LET_KEYWORD
@@ -2523,7 +2523,7 @@ export declare enum NonterminalKind {
    */
   YulVariableDeclarationStatement = "YulVariableDeclarationStatement",
   /**
-   * This kind represents a `YulVariableDeclarationValue` node, with the following structure:
+   * Represents a node with kind `YulVariableDeclarationValue`, having the following structure:
    *
    * ```ebnf
    * YulVariableDeclarationValue = (* assignment: *) YulAssignmentOperator
@@ -2532,7 +2532,7 @@ export declare enum NonterminalKind {
    */
   YulVariableDeclarationValue = "YulVariableDeclarationValue",
   /**
-   * This kind represents a `YulVariableNames` node, with the following structure:
+   * Represents a node with kind `YulVariableNames`, having the following structure:
    *
    * ```ebnf
    * YulVariableNames = (* item: *) YUL_IDENTIFIER ((* separator: *) COMMA (* item: *) YUL_IDENTIFIER)*;
@@ -2556,7 +2556,7 @@ export declare enum TerminalKind {
    */
   Missing = "Missing",
   /**
-   * This kind represents a `AbicoderKeyword` node, with the following structure:
+   * Represents a node with kind `AbicoderKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Never reserved *)
@@ -2565,7 +2565,7 @@ export declare enum TerminalKind {
    */
   AbicoderKeyword = "AbicoderKeyword",
   /**
-   * This kind represents a `AbstractKeyword` node, with the following structure:
+   * Represents a node with kind `AbstractKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -2574,7 +2574,7 @@ export declare enum TerminalKind {
    */
   AbstractKeyword = "AbstractKeyword",
   /**
-   * This kind represents a `AddressKeyword` node, with the following structure:
+   * Represents a node with kind `AddressKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Never reserved *)
@@ -2583,7 +2583,7 @@ export declare enum TerminalKind {
    */
   AddressKeyword = "AddressKeyword",
   /**
-   * This kind represents a `AfterKeyword` node, with the following structure:
+   * Represents a node with kind `AfterKeyword`, having the following structure:
    *
    * ```ebnf
    * AFTER_KEYWORD = "after";
@@ -2591,7 +2591,7 @@ export declare enum TerminalKind {
    */
   AfterKeyword = "AfterKeyword",
   /**
-   * This kind represents a `AliasKeyword` node, with the following structure:
+   * Represents a node with kind `AliasKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -2600,7 +2600,7 @@ export declare enum TerminalKind {
    */
   AliasKeyword = "AliasKeyword",
   /**
-   * This kind represents a `Ampersand` node, with the following structure:
+   * Represents a node with kind `Ampersand`, having the following structure:
    *
    * ```ebnf
    * AMPERSAND = "&";
@@ -2608,7 +2608,7 @@ export declare enum TerminalKind {
    */
   Ampersand = "Ampersand",
   /**
-   * This kind represents a `AmpersandAmpersand` node, with the following structure:
+   * Represents a node with kind `AmpersandAmpersand`, having the following structure:
    *
    * ```ebnf
    * AMPERSAND_AMPERSAND = "&&";
@@ -2616,7 +2616,7 @@ export declare enum TerminalKind {
    */
   AmpersandAmpersand = "AmpersandAmpersand",
   /**
-   * This kind represents a `AmpersandEqual` node, with the following structure:
+   * Represents a node with kind `AmpersandEqual`, having the following structure:
    *
    * ```ebnf
    * AMPERSAND_EQUAL = "&=";
@@ -2624,7 +2624,7 @@ export declare enum TerminalKind {
    */
   AmpersandEqual = "AmpersandEqual",
   /**
-   * This kind represents a `AnonymousKeyword` node, with the following structure:
+   * Represents a node with kind `AnonymousKeyword`, having the following structure:
    *
    * ```ebnf
    * ANONYMOUS_KEYWORD = "anonymous";
@@ -2632,7 +2632,7 @@ export declare enum TerminalKind {
    */
   AnonymousKeyword = "AnonymousKeyword",
   /**
-   * This kind represents a `ApplyKeyword` node, with the following structure:
+   * Represents a node with kind `ApplyKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -2641,7 +2641,7 @@ export declare enum TerminalKind {
    */
   ApplyKeyword = "ApplyKeyword",
   /**
-   * This kind represents a `AsKeyword` node, with the following structure:
+   * Represents a node with kind `AsKeyword`, having the following structure:
    *
    * ```ebnf
    * AS_KEYWORD = "as";
@@ -2649,7 +2649,7 @@ export declare enum TerminalKind {
    */
   AsKeyword = "AsKeyword",
   /**
-   * This kind represents a `AssemblyKeyword` node, with the following structure:
+   * Represents a node with kind `AssemblyKeyword`, having the following structure:
    *
    * ```ebnf
    * ASSEMBLY_KEYWORD = "assembly";
@@ -2657,7 +2657,7 @@ export declare enum TerminalKind {
    */
   AssemblyKeyword = "AssemblyKeyword",
   /**
-   * This kind represents a `Asterisk` node, with the following structure:
+   * Represents a node with kind `Asterisk`, having the following structure:
    *
    * ```ebnf
    * ASTERISK = "*";
@@ -2665,7 +2665,7 @@ export declare enum TerminalKind {
    */
   Asterisk = "Asterisk",
   /**
-   * This kind represents a `AsteriskAsterisk` node, with the following structure:
+   * Represents a node with kind `AsteriskAsterisk`, having the following structure:
    *
    * ```ebnf
    * ASTERISK_ASTERISK = "**";
@@ -2673,7 +2673,7 @@ export declare enum TerminalKind {
    */
   AsteriskAsterisk = "AsteriskAsterisk",
   /**
-   * This kind represents a `AsteriskEqual` node, with the following structure:
+   * Represents a node with kind `AsteriskEqual`, having the following structure:
    *
    * ```ebnf
    * ASTERISK_EQUAL = "*=";
@@ -2681,7 +2681,7 @@ export declare enum TerminalKind {
    */
   AsteriskEqual = "AsteriskEqual",
   /**
-   * This kind represents a `AutoKeyword` node, with the following structure:
+   * Represents a node with kind `AutoKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -2690,7 +2690,7 @@ export declare enum TerminalKind {
    */
   AutoKeyword = "AutoKeyword",
   /**
-   * This kind represents a `Bang` node, with the following structure:
+   * Represents a node with kind `Bang`, having the following structure:
    *
    * ```ebnf
    * BANG = "!";
@@ -2698,7 +2698,7 @@ export declare enum TerminalKind {
    */
   Bang = "Bang",
   /**
-   * This kind represents a `BangEqual` node, with the following structure:
+   * Represents a node with kind `BangEqual`, having the following structure:
    *
    * ```ebnf
    * BANG_EQUAL = "!=";
@@ -2706,7 +2706,7 @@ export declare enum TerminalKind {
    */
   BangEqual = "BangEqual",
   /**
-   * This kind represents a `Bar` node, with the following structure:
+   * Represents a node with kind `Bar`, having the following structure:
    *
    * ```ebnf
    * BAR = "|";
@@ -2714,7 +2714,7 @@ export declare enum TerminalKind {
    */
   Bar = "Bar",
   /**
-   * This kind represents a `BarBar` node, with the following structure:
+   * Represents a node with kind `BarBar`, having the following structure:
    *
    * ```ebnf
    * BAR_BAR = "||";
@@ -2722,7 +2722,7 @@ export declare enum TerminalKind {
    */
   BarBar = "BarBar",
   /**
-   * This kind represents a `BarEqual` node, with the following structure:
+   * Represents a node with kind `BarEqual`, having the following structure:
    *
    * ```ebnf
    * BAR_EQUAL = "|=";
@@ -2730,7 +2730,7 @@ export declare enum TerminalKind {
    */
   BarEqual = "BarEqual",
   /**
-   * This kind represents a `BoolKeyword` node, with the following structure:
+   * Represents a node with kind `BoolKeyword`, having the following structure:
    *
    * ```ebnf
    * BOOL_KEYWORD = "bool";
@@ -2738,7 +2738,7 @@ export declare enum TerminalKind {
    */
   BoolKeyword = "BoolKeyword",
   /**
-   * This kind represents a `BreakKeyword` node, with the following structure:
+   * Represents a node with kind `BreakKeyword`, having the following structure:
    *
    * ```ebnf
    * BREAK_KEYWORD = "break";
@@ -2746,7 +2746,7 @@ export declare enum TerminalKind {
    */
   BreakKeyword = "BreakKeyword",
   /**
-   * This kind represents a `ByteKeyword` node, with the following structure:
+   * Represents a node with kind `ByteKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.8.0 *)
@@ -2755,7 +2755,7 @@ export declare enum TerminalKind {
    */
   ByteKeyword = "ByteKeyword",
   /**
-   * This kind represents a `BytesKeyword` node, with the following structure:
+   * Represents a node with kind `BytesKeyword`, having the following structure:
    *
    * ```ebnf
    * BYTES_KEYWORD = "bytes" ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32")?;
@@ -2763,7 +2763,7 @@ export declare enum TerminalKind {
    */
   BytesKeyword = "BytesKeyword",
   /**
-   * This kind represents a `CallDataKeyword` node, with the following structure:
+   * Represents a node with kind `CallDataKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.5.0 *)
@@ -2773,7 +2773,7 @@ export declare enum TerminalKind {
    */
   CallDataKeyword = "CallDataKeyword",
   /**
-   * This kind represents a `Caret` node, with the following structure:
+   * Represents a node with kind `Caret`, having the following structure:
    *
    * ```ebnf
    * CARET = "^";
@@ -2781,7 +2781,7 @@ export declare enum TerminalKind {
    */
   Caret = "Caret",
   /**
-   * This kind represents a `CaretEqual` node, with the following structure:
+   * Represents a node with kind `CaretEqual`, having the following structure:
    *
    * ```ebnf
    * CARET_EQUAL = "^=";
@@ -2789,7 +2789,7 @@ export declare enum TerminalKind {
    */
   CaretEqual = "CaretEqual",
   /**
-   * This kind represents a `CaseKeyword` node, with the following structure:
+   * Represents a node with kind `CaseKeyword`, having the following structure:
    *
    * ```ebnf
    * CASE_KEYWORD = "case";
@@ -2797,7 +2797,7 @@ export declare enum TerminalKind {
    */
   CaseKeyword = "CaseKeyword",
   /**
-   * This kind represents a `CatchKeyword` node, with the following structure:
+   * Represents a node with kind `CatchKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -2806,7 +2806,7 @@ export declare enum TerminalKind {
    */
   CatchKeyword = "CatchKeyword",
   /**
-   * This kind represents a `CloseBrace` node, with the following structure:
+   * Represents a node with kind `CloseBrace`, having the following structure:
    *
    * ```ebnf
    * CLOSE_BRACE = "}";
@@ -2814,7 +2814,7 @@ export declare enum TerminalKind {
    */
   CloseBrace = "CloseBrace",
   /**
-   * This kind represents a `CloseBracket` node, with the following structure:
+   * Represents a node with kind `CloseBracket`, having the following structure:
    *
    * ```ebnf
    * CLOSE_BRACKET = "]";
@@ -2822,7 +2822,7 @@ export declare enum TerminalKind {
    */
   CloseBracket = "CloseBracket",
   /**
-   * This kind represents a `CloseParen` node, with the following structure:
+   * Represents a node with kind `CloseParen`, having the following structure:
    *
    * ```ebnf
    * CLOSE_PAREN = ")";
@@ -2830,7 +2830,7 @@ export declare enum TerminalKind {
    */
   CloseParen = "CloseParen",
   /**
-   * This kind represents a `Colon` node, with the following structure:
+   * Represents a node with kind `Colon`, having the following structure:
    *
    * ```ebnf
    * COLON = ":";
@@ -2838,7 +2838,7 @@ export declare enum TerminalKind {
    */
   Colon = "Colon",
   /**
-   * This kind represents a `ColonEqual` node, with the following structure:
+   * Represents a node with kind `ColonEqual`, having the following structure:
    *
    * ```ebnf
    * COLON_EQUAL = ":=";
@@ -2846,7 +2846,7 @@ export declare enum TerminalKind {
    */
   ColonEqual = "ColonEqual",
   /**
-   * This kind represents a `Comma` node, with the following structure:
+   * Represents a node with kind `Comma`, having the following structure:
    *
    * ```ebnf
    * COMMA = ",";
@@ -2854,7 +2854,7 @@ export declare enum TerminalKind {
    */
   Comma = "Comma",
   /**
-   * This kind represents a `ConstantKeyword` node, with the following structure:
+   * Represents a node with kind `ConstantKeyword`, having the following structure:
    *
    * ```ebnf
    * CONSTANT_KEYWORD = "constant";
@@ -2862,7 +2862,7 @@ export declare enum TerminalKind {
    */
   ConstantKeyword = "ConstantKeyword",
   /**
-   * This kind represents a `ConstructorKeyword` node, with the following structure:
+   * Represents a node with kind `ConstructorKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.22 *)
@@ -2872,7 +2872,7 @@ export declare enum TerminalKind {
    */
   ConstructorKeyword = "ConstructorKeyword",
   /**
-   * This kind represents a `ContinueKeyword` node, with the following structure:
+   * Represents a node with kind `ContinueKeyword`, having the following structure:
    *
    * ```ebnf
    * CONTINUE_KEYWORD = "continue";
@@ -2880,7 +2880,7 @@ export declare enum TerminalKind {
    */
   ContinueKeyword = "ContinueKeyword",
   /**
-   * This kind represents a `ContractKeyword` node, with the following structure:
+   * Represents a node with kind `ContractKeyword`, having the following structure:
    *
    * ```ebnf
    * CONTRACT_KEYWORD = "contract";
@@ -2888,7 +2888,7 @@ export declare enum TerminalKind {
    */
   ContractKeyword = "ContractKeyword",
   /**
-   * This kind represents a `CopyOfKeyword` node, with the following structure:
+   * Represents a node with kind `CopyOfKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -2897,7 +2897,7 @@ export declare enum TerminalKind {
    */
   CopyOfKeyword = "CopyOfKeyword",
   /**
-   * This kind represents a `DaysKeyword` node, with the following structure:
+   * Represents a node with kind `DaysKeyword`, having the following structure:
    *
    * ```ebnf
    * DAYS_KEYWORD = "days";
@@ -2905,26 +2905,26 @@ export declare enum TerminalKind {
    */
   DaysKeyword = "DaysKeyword",
   /**
-   * This kind represents a `DecimalLiteral` node, with the following structure:
+   * Represents a node with kind `DecimalLiteral`, having the following structure:
    *
    * ```ebnf
-   * DECIMAL_LITERAL = "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»?;
+   * DECIMAL_LITERAL = "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
    *
-   * DECIMAL_LITERAL = «DECIMAL_DIGITS» «DECIMAL_EXPONENT»?;
-   *
-   * (* Deprecated in 0.5.0 *)
-   * DECIMAL_LITERAL = «DECIMAL_DIGITS» "." «DECIMAL_EXPONENT»?;
+   * DECIMAL_LITERAL = «DECIMAL_DIGITS» (?!".") «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
    *
    * (* Deprecated in 0.5.0 *)
-   * DECIMAL_LITERAL = «DECIMAL_DIGITS» "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»?;
+   * DECIMAL_LITERAL = «DECIMAL_DIGITS» "." (?!«DECIMAL_DIGITS») «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
+   *
+   * (* Deprecated in 0.5.0 *)
+   * DECIMAL_LITERAL = «DECIMAL_DIGITS» "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
    *
    * (* Introduced in 0.5.0 *)
-   * DECIMAL_LITERAL = «DECIMAL_DIGITS» ("." «DECIMAL_DIGITS»)? «DECIMAL_EXPONENT»?;
+   * DECIMAL_LITERAL = «DECIMAL_DIGITS» ("." «DECIMAL_DIGITS»)? «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
    * ```
    */
   DecimalLiteral = "DecimalLiteral",
   /**
-   * This kind represents a `DefaultKeyword` node, with the following structure:
+   * Represents a node with kind `DefaultKeyword`, having the following structure:
    *
    * ```ebnf
    * DEFAULT_KEYWORD = "default";
@@ -2932,7 +2932,7 @@ export declare enum TerminalKind {
    */
   DefaultKeyword = "DefaultKeyword",
   /**
-   * This kind represents a `DefineKeyword` node, with the following structure:
+   * Represents a node with kind `DefineKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -2941,7 +2941,7 @@ export declare enum TerminalKind {
    */
   DefineKeyword = "DefineKeyword",
   /**
-   * This kind represents a `DeleteKeyword` node, with the following structure:
+   * Represents a node with kind `DeleteKeyword`, having the following structure:
    *
    * ```ebnf
    * DELETE_KEYWORD = "delete";
@@ -2949,7 +2949,7 @@ export declare enum TerminalKind {
    */
   DeleteKeyword = "DeleteKeyword",
   /**
-   * This kind represents a `DoKeyword` node, with the following structure:
+   * Represents a node with kind `DoKeyword`, having the following structure:
    *
    * ```ebnf
    * DO_KEYWORD = "do";
@@ -2957,7 +2957,7 @@ export declare enum TerminalKind {
    */
   DoKeyword = "DoKeyword",
   /**
-   * This kind represents a `DoubleQuotedHexStringLiteral` node, with the following structure:
+   * Represents a node with kind `DoubleQuotedHexStringLiteral`, having the following structure:
    *
    * ```ebnf
    * DOUBLE_QUOTED_HEX_STRING_LITERAL = 'hex"' «HEX_STRING_CONTENTS»? '"';
@@ -2965,30 +2965,30 @@ export declare enum TerminalKind {
    */
   DoubleQuotedHexStringLiteral = "DoubleQuotedHexStringLiteral",
   /**
-   * This kind represents a `DoubleQuotedStringLiteral` node, with the following structure:
+   * Represents a node with kind `DoubleQuotedStringLiteral`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.4.25 *)
-   * DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE_ARBITRARY» | !('"' "\\" "\r" "\n"))* '"';
+   * DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE_ARBITRARY» | !('"' | "\\" | "\r" | "\n"))* '"';
    *
    * (* Introduced in 0.4.25 and deprecated in 0.7.0. *)
-   * DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+   * DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' | "\\" | "\r" | "\n"))* '"';
    *
-   * DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | (" "…"!") | ("#"…"[") | ("]"…"~"))* '"';
+   * DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | " "…"!" | "#"…"[" | "]"…"~")* '"';
    * ```
    */
   DoubleQuotedStringLiteral = "DoubleQuotedStringLiteral",
   /**
-   * This kind represents a `DoubleQuotedUnicodeStringLiteral` node, with the following structure:
+   * Represents a node with kind `DoubleQuotedUnicodeStringLiteral`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.7.0 *)
-   * DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+   * DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' («ESCAPE_SEQUENCE» | !('"' | "\\" | "\r" | "\n"))* '"';
    * ```
    */
   DoubleQuotedUnicodeStringLiteral = "DoubleQuotedUnicodeStringLiteral",
   /**
-   * This kind represents a `DoubleQuotedVersionLiteral` node, with the following structure:
+   * Represents a node with kind `DoubleQuotedVersionLiteral`, having the following structure:
    *
    * ```ebnf
    * DOUBLE_QUOTED_VERSION_LITERAL = '"' «VERSION_SPECIFIER_FRAGMENT» ("." «VERSION_SPECIFIER_FRAGMENT»)* '"';
@@ -2996,7 +2996,7 @@ export declare enum TerminalKind {
    */
   DoubleQuotedVersionLiteral = "DoubleQuotedVersionLiteral",
   /**
-   * This kind represents a `ElseKeyword` node, with the following structure:
+   * Represents a node with kind `ElseKeyword`, having the following structure:
    *
    * ```ebnf
    * ELSE_KEYWORD = "else";
@@ -3004,7 +3004,7 @@ export declare enum TerminalKind {
    */
   ElseKeyword = "ElseKeyword",
   /**
-   * This kind represents a `EmitKeyword` node, with the following structure:
+   * Represents a node with kind `EmitKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.21 *)
@@ -3014,7 +3014,7 @@ export declare enum TerminalKind {
    */
   EmitKeyword = "EmitKeyword",
   /**
-   * This kind represents a `EndOfLine` node, with the following structure:
+   * Represents a node with kind `EndOfLine`, having the following structure:
    *
    * ```ebnf
    * END_OF_LINE = "\n" | ("\r" "\n"?);
@@ -3022,7 +3022,7 @@ export declare enum TerminalKind {
    */
   EndOfLine = "EndOfLine",
   /**
-   * This kind represents a `EnumKeyword` node, with the following structure:
+   * Represents a node with kind `EnumKeyword`, having the following structure:
    *
    * ```ebnf
    * ENUM_KEYWORD = "enum";
@@ -3030,7 +3030,7 @@ export declare enum TerminalKind {
    */
   EnumKeyword = "EnumKeyword",
   /**
-   * This kind represents a `Equal` node, with the following structure:
+   * Represents a node with kind `Equal`, having the following structure:
    *
    * ```ebnf
    * EQUAL = "=";
@@ -3038,7 +3038,7 @@ export declare enum TerminalKind {
    */
   Equal = "Equal",
   /**
-   * This kind represents a `EqualColon` node, with the following structure:
+   * Represents a node with kind `EqualColon`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -3047,7 +3047,7 @@ export declare enum TerminalKind {
    */
   EqualColon = "EqualColon",
   /**
-   * This kind represents a `EqualEqual` node, with the following structure:
+   * Represents a node with kind `EqualEqual`, having the following structure:
    *
    * ```ebnf
    * EQUAL_EQUAL = "==";
@@ -3055,7 +3055,7 @@ export declare enum TerminalKind {
    */
   EqualEqual = "EqualEqual",
   /**
-   * This kind represents a `EqualGreaterThan` node, with the following structure:
+   * Represents a node with kind `EqualGreaterThan`, having the following structure:
    *
    * ```ebnf
    * EQUAL_GREATER_THAN = "=>";
@@ -3063,7 +3063,7 @@ export declare enum TerminalKind {
    */
   EqualGreaterThan = "EqualGreaterThan",
   /**
-   * This kind represents a `ErrorKeyword` node, with the following structure:
+   * Represents a node with kind `ErrorKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.4 *)
@@ -3073,7 +3073,7 @@ export declare enum TerminalKind {
    */
   ErrorKeyword = "ErrorKeyword",
   /**
-   * This kind represents a `EtherKeyword` node, with the following structure:
+   * Represents a node with kind `EtherKeyword`, having the following structure:
    *
    * ```ebnf
    * ETHER_KEYWORD = "ether";
@@ -3081,7 +3081,7 @@ export declare enum TerminalKind {
    */
   EtherKeyword = "EtherKeyword",
   /**
-   * This kind represents a `EventKeyword` node, with the following structure:
+   * Represents a node with kind `EventKeyword`, having the following structure:
    *
    * ```ebnf
    * EVENT_KEYWORD = "event";
@@ -3089,7 +3089,7 @@ export declare enum TerminalKind {
    */
   EventKeyword = "EventKeyword",
   /**
-   * This kind represents a `ExperimentalKeyword` node, with the following structure:
+   * Represents a node with kind `ExperimentalKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Never reserved *)
@@ -3098,7 +3098,7 @@ export declare enum TerminalKind {
    */
   ExperimentalKeyword = "ExperimentalKeyword",
   /**
-   * This kind represents a `ExternalKeyword` node, with the following structure:
+   * Represents a node with kind `ExternalKeyword`, having the following structure:
    *
    * ```ebnf
    * EXTERNAL_KEYWORD = "external";
@@ -3106,7 +3106,7 @@ export declare enum TerminalKind {
    */
   ExternalKeyword = "ExternalKeyword",
   /**
-   * This kind represents a `FallbackKeyword` node, with the following structure:
+   * Represents a node with kind `FallbackKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.6.0 *)
@@ -3115,7 +3115,7 @@ export declare enum TerminalKind {
    */
   FallbackKeyword = "FallbackKeyword",
   /**
-   * This kind represents a `FalseKeyword` node, with the following structure:
+   * Represents a node with kind `FalseKeyword`, having the following structure:
    *
    * ```ebnf
    * FALSE_KEYWORD = "false";
@@ -3123,7 +3123,7 @@ export declare enum TerminalKind {
    */
   FalseKeyword = "FalseKeyword",
   /**
-   * This kind represents a `FinalKeyword` node, with the following structure:
+   * Represents a node with kind `FinalKeyword`, having the following structure:
    *
    * ```ebnf
    * FINAL_KEYWORD = "final";
@@ -3131,7 +3131,7 @@ export declare enum TerminalKind {
    */
   FinalKeyword = "FinalKeyword",
   /**
-   * This kind represents a `FinneyKeyword` node, with the following structure:
+   * Represents a node with kind `FinneyKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.7.0 *)
@@ -3141,7 +3141,7 @@ export declare enum TerminalKind {
    */
   FinneyKeyword = "FinneyKeyword",
   /**
-   * This kind represents a `FixedKeyword` node, with the following structure:
+   * Represents a node with kind `FixedKeyword`, having the following structure:
    *
    * ```ebnf
    * FIXED_KEYWORD = "fixed";
@@ -3159,7 +3159,7 @@ export declare enum TerminalKind {
    */
   FixedKeyword = "FixedKeyword",
   /**
-   * This kind represents a `ForKeyword` node, with the following structure:
+   * Represents a node with kind `ForKeyword`, having the following structure:
    *
    * ```ebnf
    * FOR_KEYWORD = "for";
@@ -3167,7 +3167,7 @@ export declare enum TerminalKind {
    */
   ForKeyword = "ForKeyword",
   /**
-   * This kind represents a `FromKeyword` node, with the following structure:
+   * Represents a node with kind `FromKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Never reserved *)
@@ -3176,7 +3176,7 @@ export declare enum TerminalKind {
    */
   FromKeyword = "FromKeyword",
   /**
-   * This kind represents a `FunctionKeyword` node, with the following structure:
+   * Represents a node with kind `FunctionKeyword`, having the following structure:
    *
    * ```ebnf
    * FUNCTION_KEYWORD = "function";
@@ -3184,7 +3184,7 @@ export declare enum TerminalKind {
    */
   FunctionKeyword = "FunctionKeyword",
   /**
-   * This kind represents a `GlobalKeyword` node, with the following structure:
+   * Represents a node with kind `GlobalKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.13 *)
@@ -3194,7 +3194,7 @@ export declare enum TerminalKind {
    */
   GlobalKeyword = "GlobalKeyword",
   /**
-   * This kind represents a `GreaterThan` node, with the following structure:
+   * Represents a node with kind `GreaterThan`, having the following structure:
    *
    * ```ebnf
    * GREATER_THAN = ">";
@@ -3202,7 +3202,7 @@ export declare enum TerminalKind {
    */
   GreaterThan = "GreaterThan",
   /**
-   * This kind represents a `GreaterThanEqual` node, with the following structure:
+   * Represents a node with kind `GreaterThanEqual`, having the following structure:
    *
    * ```ebnf
    * GREATER_THAN_EQUAL = ">=";
@@ -3210,7 +3210,7 @@ export declare enum TerminalKind {
    */
   GreaterThanEqual = "GreaterThanEqual",
   /**
-   * This kind represents a `GreaterThanGreaterThan` node, with the following structure:
+   * Represents a node with kind `GreaterThanGreaterThan`, having the following structure:
    *
    * ```ebnf
    * GREATER_THAN_GREATER_THAN = ">>";
@@ -3218,7 +3218,7 @@ export declare enum TerminalKind {
    */
   GreaterThanGreaterThan = "GreaterThanGreaterThan",
   /**
-   * This kind represents a `GreaterThanGreaterThanEqual` node, with the following structure:
+   * Represents a node with kind `GreaterThanGreaterThanEqual`, having the following structure:
    *
    * ```ebnf
    * GREATER_THAN_GREATER_THAN_EQUAL = ">>=";
@@ -3226,7 +3226,7 @@ export declare enum TerminalKind {
    */
   GreaterThanGreaterThanEqual = "GreaterThanGreaterThanEqual",
   /**
-   * This kind represents a `GreaterThanGreaterThanGreaterThan` node, with the following structure:
+   * Represents a node with kind `GreaterThanGreaterThanGreaterThan`, having the following structure:
    *
    * ```ebnf
    * GREATER_THAN_GREATER_THAN_GREATER_THAN = ">>>";
@@ -3234,7 +3234,7 @@ export declare enum TerminalKind {
    */
   GreaterThanGreaterThanGreaterThan = "GreaterThanGreaterThanGreaterThan",
   /**
-   * This kind represents a `GreaterThanGreaterThanGreaterThanEqual` node, with the following structure:
+   * Represents a node with kind `GreaterThanGreaterThanGreaterThanEqual`, having the following structure:
    *
    * ```ebnf
    * GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUAL = ">>>=";
@@ -3242,7 +3242,7 @@ export declare enum TerminalKind {
    */
   GreaterThanGreaterThanGreaterThanEqual = "GreaterThanGreaterThanGreaterThanEqual",
   /**
-   * This kind represents a `GweiKeyword` node, with the following structure:
+   * Represents a node with kind `GweiKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.11 *)
@@ -3252,7 +3252,7 @@ export declare enum TerminalKind {
    */
   GweiKeyword = "GweiKeyword",
   /**
-   * This kind represents a `HexKeyword` node, with the following structure:
+   * Represents a node with kind `HexKeyword`, having the following structure:
    *
    * ```ebnf
    * HEX_KEYWORD = "hex";
@@ -3260,18 +3260,18 @@ export declare enum TerminalKind {
    */
   HexKeyword = "HexKeyword",
   /**
-   * This kind represents a `HexLiteral` node, with the following structure:
+   * Represents a node with kind `HexLiteral`, having the following structure:
    *
    * ```ebnf
-   * HEX_LITERAL = "0x" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)*;
+   * HEX_LITERAL = "0x" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)* (?!«IDENTIFIER_START»);
    *
    * (* Deprecated in 0.5.0 *)
-   * HEX_LITERAL = "0X" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)*;
+   * HEX_LITERAL = "0X" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)* (?!«IDENTIFIER_START»);
    * ```
    */
   HexLiteral = "HexLiteral",
   /**
-   * This kind represents a `HoursKeyword` node, with the following structure:
+   * Represents a node with kind `HoursKeyword`, having the following structure:
    *
    * ```ebnf
    * HOURS_KEYWORD = "hours";
@@ -3279,7 +3279,7 @@ export declare enum TerminalKind {
    */
   HoursKeyword = "HoursKeyword",
   /**
-   * This kind represents a `Identifier` node, with the following structure:
+   * Represents a node with kind `Identifier`, having the following structure:
    *
    * ```ebnf
    * IDENTIFIER = «IDENTIFIER_START» «IDENTIFIER_PART»*;
@@ -3287,7 +3287,7 @@ export declare enum TerminalKind {
    */
   Identifier = "Identifier",
   /**
-   * This kind represents a `IfKeyword` node, with the following structure:
+   * Represents a node with kind `IfKeyword`, having the following structure:
    *
    * ```ebnf
    * IF_KEYWORD = "if";
@@ -3295,7 +3295,7 @@ export declare enum TerminalKind {
    */
   IfKeyword = "IfKeyword",
   /**
-   * This kind represents a `ImmutableKeyword` node, with the following structure:
+   * Represents a node with kind `ImmutableKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.5 *)
@@ -3305,7 +3305,7 @@ export declare enum TerminalKind {
    */
   ImmutableKeyword = "ImmutableKeyword",
   /**
-   * This kind represents a `ImplementsKeyword` node, with the following structure:
+   * Represents a node with kind `ImplementsKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -3314,7 +3314,7 @@ export declare enum TerminalKind {
    */
   ImplementsKeyword = "ImplementsKeyword",
   /**
-   * This kind represents a `ImportKeyword` node, with the following structure:
+   * Represents a node with kind `ImportKeyword`, having the following structure:
    *
    * ```ebnf
    * IMPORT_KEYWORD = "import";
@@ -3322,7 +3322,7 @@ export declare enum TerminalKind {
    */
   ImportKeyword = "ImportKeyword",
   /**
-   * This kind represents a `InKeyword` node, with the following structure:
+   * Represents a node with kind `InKeyword`, having the following structure:
    *
    * ```ebnf
    * IN_KEYWORD = "in";
@@ -3330,7 +3330,7 @@ export declare enum TerminalKind {
    */
   InKeyword = "InKeyword",
   /**
-   * This kind represents a `IndexedKeyword` node, with the following structure:
+   * Represents a node with kind `IndexedKeyword`, having the following structure:
    *
    * ```ebnf
    * INDEXED_KEYWORD = "indexed";
@@ -3338,7 +3338,7 @@ export declare enum TerminalKind {
    */
   IndexedKeyword = "IndexedKeyword",
   /**
-   * This kind represents a `InlineKeyword` node, with the following structure:
+   * Represents a node with kind `InlineKeyword`, having the following structure:
    *
    * ```ebnf
    * INLINE_KEYWORD = "inline";
@@ -3346,7 +3346,7 @@ export declare enum TerminalKind {
    */
   InlineKeyword = "InlineKeyword",
   /**
-   * This kind represents a `IntKeyword` node, with the following structure:
+   * Represents a node with kind `IntKeyword`, having the following structure:
    *
    * ```ebnf
    * INT_KEYWORD = "int" ("8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256")?;
@@ -3354,7 +3354,7 @@ export declare enum TerminalKind {
    */
   IntKeyword = "IntKeyword",
   /**
-   * This kind represents a `InterfaceKeyword` node, with the following structure:
+   * Represents a node with kind `InterfaceKeyword`, having the following structure:
    *
    * ```ebnf
    * INTERFACE_KEYWORD = "interface";
@@ -3362,7 +3362,7 @@ export declare enum TerminalKind {
    */
   InterfaceKeyword = "InterfaceKeyword",
   /**
-   * This kind represents a `InternalKeyword` node, with the following structure:
+   * Represents a node with kind `InternalKeyword`, having the following structure:
    *
    * ```ebnf
    * INTERNAL_KEYWORD = "internal";
@@ -3370,7 +3370,7 @@ export declare enum TerminalKind {
    */
   InternalKeyword = "InternalKeyword",
   /**
-   * This kind represents a `IsKeyword` node, with the following structure:
+   * Represents a node with kind `IsKeyword`, having the following structure:
    *
    * ```ebnf
    * IS_KEYWORD = "is";
@@ -3378,7 +3378,7 @@ export declare enum TerminalKind {
    */
   IsKeyword = "IsKeyword",
   /**
-   * This kind represents a `LessThan` node, with the following structure:
+   * Represents a node with kind `LessThan`, having the following structure:
    *
    * ```ebnf
    * LESS_THAN = "<";
@@ -3386,7 +3386,7 @@ export declare enum TerminalKind {
    */
   LessThan = "LessThan",
   /**
-   * This kind represents a `LessThanEqual` node, with the following structure:
+   * Represents a node with kind `LessThanEqual`, having the following structure:
    *
    * ```ebnf
    * LESS_THAN_EQUAL = "<=";
@@ -3394,7 +3394,7 @@ export declare enum TerminalKind {
    */
   LessThanEqual = "LessThanEqual",
   /**
-   * This kind represents a `LessThanLessThan` node, with the following structure:
+   * Represents a node with kind `LessThanLessThan`, having the following structure:
    *
    * ```ebnf
    * LESS_THAN_LESS_THAN = "<<";
@@ -3402,7 +3402,7 @@ export declare enum TerminalKind {
    */
   LessThanLessThan = "LessThanLessThan",
   /**
-   * This kind represents a `LessThanLessThanEqual` node, with the following structure:
+   * Represents a node with kind `LessThanLessThanEqual`, having the following structure:
    *
    * ```ebnf
    * LESS_THAN_LESS_THAN_EQUAL = "<<=";
@@ -3410,7 +3410,7 @@ export declare enum TerminalKind {
    */
   LessThanLessThanEqual = "LessThanLessThanEqual",
   /**
-   * This kind represents a `LetKeyword` node, with the following structure:
+   * Represents a node with kind `LetKeyword`, having the following structure:
    *
    * ```ebnf
    * LET_KEYWORD = "let";
@@ -3418,7 +3418,7 @@ export declare enum TerminalKind {
    */
   LetKeyword = "LetKeyword",
   /**
-   * This kind represents a `LibraryKeyword` node, with the following structure:
+   * Represents a node with kind `LibraryKeyword`, having the following structure:
    *
    * ```ebnf
    * LIBRARY_KEYWORD = "library";
@@ -3426,7 +3426,7 @@ export declare enum TerminalKind {
    */
   LibraryKeyword = "LibraryKeyword",
   /**
-   * This kind represents a `MacroKeyword` node, with the following structure:
+   * Represents a node with kind `MacroKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -3435,7 +3435,7 @@ export declare enum TerminalKind {
    */
   MacroKeyword = "MacroKeyword",
   /**
-   * This kind represents a `MappingKeyword` node, with the following structure:
+   * Represents a node with kind `MappingKeyword`, having the following structure:
    *
    * ```ebnf
    * MAPPING_KEYWORD = "mapping";
@@ -3443,7 +3443,7 @@ export declare enum TerminalKind {
    */
   MappingKeyword = "MappingKeyword",
   /**
-   * This kind represents a `MatchKeyword` node, with the following structure:
+   * Represents a node with kind `MatchKeyword`, having the following structure:
    *
    * ```ebnf
    * MATCH_KEYWORD = "match";
@@ -3451,7 +3451,7 @@ export declare enum TerminalKind {
    */
   MatchKeyword = "MatchKeyword",
   /**
-   * This kind represents a `MemoryKeyword` node, with the following structure:
+   * Represents a node with kind `MemoryKeyword`, having the following structure:
    *
    * ```ebnf
    * MEMORY_KEYWORD = "memory";
@@ -3459,7 +3459,7 @@ export declare enum TerminalKind {
    */
   MemoryKeyword = "MemoryKeyword",
   /**
-   * This kind represents a `Minus` node, with the following structure:
+   * Represents a node with kind `Minus`, having the following structure:
    *
    * ```ebnf
    * MINUS = "-";
@@ -3467,7 +3467,7 @@ export declare enum TerminalKind {
    */
   Minus = "Minus",
   /**
-   * This kind represents a `MinusEqual` node, with the following structure:
+   * Represents a node with kind `MinusEqual`, having the following structure:
    *
    * ```ebnf
    * MINUS_EQUAL = "-=";
@@ -3475,7 +3475,7 @@ export declare enum TerminalKind {
    */
   MinusEqual = "MinusEqual",
   /**
-   * This kind represents a `MinusGreaterThan` node, with the following structure:
+   * Represents a node with kind `MinusGreaterThan`, having the following structure:
    *
    * ```ebnf
    * MINUS_GREATER_THAN = "->";
@@ -3483,7 +3483,7 @@ export declare enum TerminalKind {
    */
   MinusGreaterThan = "MinusGreaterThan",
   /**
-   * This kind represents a `MinusMinus` node, with the following structure:
+   * Represents a node with kind `MinusMinus`, having the following structure:
    *
    * ```ebnf
    * MINUS_MINUS = "--";
@@ -3491,7 +3491,7 @@ export declare enum TerminalKind {
    */
   MinusMinus = "MinusMinus",
   /**
-   * This kind represents a `MinutesKeyword` node, with the following structure:
+   * Represents a node with kind `MinutesKeyword`, having the following structure:
    *
    * ```ebnf
    * MINUTES_KEYWORD = "minutes";
@@ -3499,7 +3499,7 @@ export declare enum TerminalKind {
    */
   MinutesKeyword = "MinutesKeyword",
   /**
-   * This kind represents a `ModifierKeyword` node, with the following structure:
+   * Represents a node with kind `ModifierKeyword`, having the following structure:
    *
    * ```ebnf
    * MODIFIER_KEYWORD = "modifier";
@@ -3507,23 +3507,23 @@ export declare enum TerminalKind {
    */
   ModifierKeyword = "ModifierKeyword",
   /**
-   * This kind represents a `MultiLineComment` node, with the following structure:
+   * Represents a node with kind `MultiLineComment`, having the following structure:
    *
    * ```ebnf
-   * MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*\/";
+   * MULTI_LINE_COMMENT = "/*" (?!"*" !"/") (!"*" | ("*" (?!"/")))* "*\/";
    * ```
    */
   MultiLineComment = "MultiLineComment",
   /**
-   * This kind represents a `MultiLineNatSpecComment` node, with the following structure:
+   * Represents a node with kind `MultiLineNatSpecComment`, having the following structure:
    *
    * ```ebnf
-   * MULTI_LINE_NAT_SPEC_COMMENT = "/**" (!"*" | "*")* "*\/";
+   * MULTI_LINE_NAT_SPEC_COMMENT = "/**" (?!"/") (!"*" | ("*" (?!"/")))* "*\/";
    * ```
    */
   MultiLineNatSpecComment = "MultiLineNatSpecComment",
   /**
-   * This kind represents a `MutableKeyword` node, with the following structure:
+   * Represents a node with kind `MutableKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -3532,7 +3532,7 @@ export declare enum TerminalKind {
    */
   MutableKeyword = "MutableKeyword",
   /**
-   * This kind represents a `NewKeyword` node, with the following structure:
+   * Represents a node with kind `NewKeyword`, having the following structure:
    *
    * ```ebnf
    * NEW_KEYWORD = "new";
@@ -3540,7 +3540,7 @@ export declare enum TerminalKind {
    */
   NewKeyword = "NewKeyword",
   /**
-   * This kind represents a `NullKeyword` node, with the following structure:
+   * Represents a node with kind `NullKeyword`, having the following structure:
    *
    * ```ebnf
    * NULL_KEYWORD = "null";
@@ -3548,7 +3548,7 @@ export declare enum TerminalKind {
    */
   NullKeyword = "NullKeyword",
   /**
-   * This kind represents a `OfKeyword` node, with the following structure:
+   * Represents a node with kind `OfKeyword`, having the following structure:
    *
    * ```ebnf
    * OF_KEYWORD = "of";
@@ -3556,7 +3556,7 @@ export declare enum TerminalKind {
    */
   OfKeyword = "OfKeyword",
   /**
-   * This kind represents a `OpenBrace` node, with the following structure:
+   * Represents a node with kind `OpenBrace`, having the following structure:
    *
    * ```ebnf
    * OPEN_BRACE = "{";
@@ -3564,7 +3564,7 @@ export declare enum TerminalKind {
    */
   OpenBrace = "OpenBrace",
   /**
-   * This kind represents a `OpenBracket` node, with the following structure:
+   * Represents a node with kind `OpenBracket`, having the following structure:
    *
    * ```ebnf
    * OPEN_BRACKET = "[";
@@ -3572,7 +3572,7 @@ export declare enum TerminalKind {
    */
   OpenBracket = "OpenBracket",
   /**
-   * This kind represents a `OpenParen` node, with the following structure:
+   * Represents a node with kind `OpenParen`, having the following structure:
    *
    * ```ebnf
    * OPEN_PAREN = "(";
@@ -3580,7 +3580,7 @@ export declare enum TerminalKind {
    */
   OpenParen = "OpenParen",
   /**
-   * This kind represents a `OverrideKeyword` node, with the following structure:
+   * Represents a node with kind `OverrideKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -3590,7 +3590,7 @@ export declare enum TerminalKind {
    */
   OverrideKeyword = "OverrideKeyword",
   /**
-   * This kind represents a `PartialKeyword` node, with the following structure:
+   * Represents a node with kind `PartialKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -3599,7 +3599,7 @@ export declare enum TerminalKind {
    */
   PartialKeyword = "PartialKeyword",
   /**
-   * This kind represents a `PayableKeyword` node, with the following structure:
+   * Represents a node with kind `PayableKeyword`, having the following structure:
    *
    * ```ebnf
    * PAYABLE_KEYWORD = "payable";
@@ -3607,7 +3607,7 @@ export declare enum TerminalKind {
    */
   PayableKeyword = "PayableKeyword",
   /**
-   * This kind represents a `Percent` node, with the following structure:
+   * Represents a node with kind `Percent`, having the following structure:
    *
    * ```ebnf
    * PERCENT = "%";
@@ -3615,7 +3615,7 @@ export declare enum TerminalKind {
    */
   Percent = "Percent",
   /**
-   * This kind represents a `PercentEqual` node, with the following structure:
+   * Represents a node with kind `PercentEqual`, having the following structure:
    *
    * ```ebnf
    * PERCENT_EQUAL = "%=";
@@ -3623,7 +3623,7 @@ export declare enum TerminalKind {
    */
   PercentEqual = "PercentEqual",
   /**
-   * This kind represents a `Period` node, with the following structure:
+   * Represents a node with kind `Period`, having the following structure:
    *
    * ```ebnf
    * PERIOD = ".";
@@ -3631,7 +3631,7 @@ export declare enum TerminalKind {
    */
   Period = "Period",
   /**
-   * This kind represents a `Plus` node, with the following structure:
+   * Represents a node with kind `Plus`, having the following structure:
    *
    * ```ebnf
    * PLUS = "+";
@@ -3639,7 +3639,7 @@ export declare enum TerminalKind {
    */
   Plus = "Plus",
   /**
-   * This kind represents a `PlusEqual` node, with the following structure:
+   * Represents a node with kind `PlusEqual`, having the following structure:
    *
    * ```ebnf
    * PLUS_EQUAL = "+=";
@@ -3647,7 +3647,7 @@ export declare enum TerminalKind {
    */
   PlusEqual = "PlusEqual",
   /**
-   * This kind represents a `PlusPlus` node, with the following structure:
+   * Represents a node with kind `PlusPlus`, having the following structure:
    *
    * ```ebnf
    * PLUS_PLUS = "++";
@@ -3655,7 +3655,7 @@ export declare enum TerminalKind {
    */
   PlusPlus = "PlusPlus",
   /**
-   * This kind represents a `PragmaKeyword` node, with the following structure:
+   * Represents a node with kind `PragmaKeyword`, having the following structure:
    *
    * ```ebnf
    * PRAGMA_KEYWORD = "pragma";
@@ -3663,7 +3663,7 @@ export declare enum TerminalKind {
    */
   PragmaKeyword = "PragmaKeyword",
   /**
-   * This kind represents a `PrivateKeyword` node, with the following structure:
+   * Represents a node with kind `PrivateKeyword`, having the following structure:
    *
    * ```ebnf
    * PRIVATE_KEYWORD = "private";
@@ -3671,7 +3671,7 @@ export declare enum TerminalKind {
    */
   PrivateKeyword = "PrivateKeyword",
   /**
-   * This kind represents a `PromiseKeyword` node, with the following structure:
+   * Represents a node with kind `PromiseKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -3680,7 +3680,7 @@ export declare enum TerminalKind {
    */
   PromiseKeyword = "PromiseKeyword",
   /**
-   * This kind represents a `PublicKeyword` node, with the following structure:
+   * Represents a node with kind `PublicKeyword`, having the following structure:
    *
    * ```ebnf
    * PUBLIC_KEYWORD = "public";
@@ -3688,7 +3688,7 @@ export declare enum TerminalKind {
    */
   PublicKeyword = "PublicKeyword",
   /**
-   * This kind represents a `PureKeyword` node, with the following structure:
+   * Represents a node with kind `PureKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.16 *)
@@ -3697,7 +3697,7 @@ export declare enum TerminalKind {
    */
   PureKeyword = "PureKeyword",
   /**
-   * This kind represents a `QuestionMark` node, with the following structure:
+   * Represents a node with kind `QuestionMark`, having the following structure:
    *
    * ```ebnf
    * QUESTION_MARK = "?";
@@ -3705,7 +3705,7 @@ export declare enum TerminalKind {
    */
   QuestionMark = "QuestionMark",
   /**
-   * This kind represents a `ReceiveKeyword` node, with the following structure:
+   * Represents a node with kind `ReceiveKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.6.0 *)
@@ -3714,7 +3714,7 @@ export declare enum TerminalKind {
    */
   ReceiveKeyword = "ReceiveKeyword",
   /**
-   * This kind represents a `ReferenceKeyword` node, with the following structure:
+   * Represents a node with kind `ReferenceKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -3723,7 +3723,7 @@ export declare enum TerminalKind {
    */
   ReferenceKeyword = "ReferenceKeyword",
   /**
-   * This kind represents a `RelocatableKeyword` node, with the following structure:
+   * Represents a node with kind `RelocatableKeyword`, having the following structure:
    *
    * ```ebnf
    * RELOCATABLE_KEYWORD = "relocatable";
@@ -3731,7 +3731,7 @@ export declare enum TerminalKind {
    */
   RelocatableKeyword = "RelocatableKeyword",
   /**
-   * This kind represents a `ReturnKeyword` node, with the following structure:
+   * Represents a node with kind `ReturnKeyword`, having the following structure:
    *
    * ```ebnf
    * RETURN_KEYWORD = "return";
@@ -3739,7 +3739,7 @@ export declare enum TerminalKind {
    */
   ReturnKeyword = "ReturnKeyword",
   /**
-   * This kind represents a `ReturnsKeyword` node, with the following structure:
+   * Represents a node with kind `ReturnsKeyword`, having the following structure:
    *
    * ```ebnf
    * RETURNS_KEYWORD = "returns";
@@ -3747,7 +3747,7 @@ export declare enum TerminalKind {
    */
   ReturnsKeyword = "ReturnsKeyword",
   /**
-   * This kind represents a `RevertKeyword` node, with the following structure:
+   * Represents a node with kind `RevertKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.4 *)
@@ -3757,7 +3757,7 @@ export declare enum TerminalKind {
    */
   RevertKeyword = "RevertKeyword",
   /**
-   * This kind represents a `SealedKeyword` node, with the following structure:
+   * Represents a node with kind `SealedKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -3766,7 +3766,7 @@ export declare enum TerminalKind {
    */
   SealedKeyword = "SealedKeyword",
   /**
-   * This kind represents a `SecondsKeyword` node, with the following structure:
+   * Represents a node with kind `SecondsKeyword`, having the following structure:
    *
    * ```ebnf
    * SECONDS_KEYWORD = "seconds";
@@ -3774,7 +3774,7 @@ export declare enum TerminalKind {
    */
   SecondsKeyword = "SecondsKeyword",
   /**
-   * This kind represents a `Semicolon` node, with the following structure:
+   * Represents a node with kind `Semicolon`, having the following structure:
    *
    * ```ebnf
    * SEMICOLON = ";";
@@ -3782,23 +3782,23 @@ export declare enum TerminalKind {
    */
   Semicolon = "Semicolon",
   /**
-   * This kind represents a `SingleLineComment` node, with the following structure:
+   * Represents a node with kind `SingleLineComment`, having the following structure:
    *
    * ```ebnf
-   * SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
+   * SINGLE_LINE_COMMENT = "//" (?!"/") (!("\r" | "\n"))*;
    * ```
    */
   SingleLineComment = "SingleLineComment",
   /**
-   * This kind represents a `SingleLineNatSpecComment` node, with the following structure:
+   * Represents a node with kind `SingleLineNatSpecComment`, having the following structure:
    *
    * ```ebnf
-   * SINGLE_LINE_NAT_SPEC_COMMENT = "///" (!("\r" "\n"))*;
+   * SINGLE_LINE_NAT_SPEC_COMMENT = "///" (!("\r" | "\n"))*;
    * ```
    */
   SingleLineNatSpecComment = "SingleLineNatSpecComment",
   /**
-   * This kind represents a `SingleQuotedHexStringLiteral` node, with the following structure:
+   * Represents a node with kind `SingleQuotedHexStringLiteral`, having the following structure:
    *
    * ```ebnf
    * SINGLE_QUOTED_HEX_STRING_LITERAL = "hex'" «HEX_STRING_CONTENTS»? "'";
@@ -3806,30 +3806,30 @@ export declare enum TerminalKind {
    */
   SingleQuotedHexStringLiteral = "SingleQuotedHexStringLiteral",
   /**
-   * This kind represents a `SingleQuotedStringLiteral` node, with the following structure:
+   * Represents a node with kind `SingleQuotedStringLiteral`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.4.25 *)
-   * SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE_ARBITRARY» | !("'" "\\" "\r" "\n"))* "'";
+   * SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE_ARBITRARY» | !("'" | "\\" | "\r" | "\n"))* "'";
    *
    * (* Introduced in 0.4.25 and deprecated in 0.7.0. *)
-   * SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
+   * SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | !("'" | "\\" | "\r" | "\n"))* "'";
    *
-   * SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | (" "…"&") | ("("…"[") | ("]"…"~"))* "'";
+   * SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | " "…"&" | "("…"[" | "]"…"~")* "'";
    * ```
    */
   SingleQuotedStringLiteral = "SingleQuotedStringLiteral",
   /**
-   * This kind represents a `SingleQuotedUnicodeStringLiteral` node, with the following structure:
+   * Represents a node with kind `SingleQuotedUnicodeStringLiteral`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.7.0 *)
-   * SINGLE_QUOTED_UNICODE_STRING_LITERAL = "unicode'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
+   * SINGLE_QUOTED_UNICODE_STRING_LITERAL = "unicode'" («ESCAPE_SEQUENCE» | !("'" | "\\" | "\r" | "\n"))* "'";
    * ```
    */
   SingleQuotedUnicodeStringLiteral = "SingleQuotedUnicodeStringLiteral",
   /**
-   * This kind represents a `SingleQuotedVersionLiteral` node, with the following structure:
+   * Represents a node with kind `SingleQuotedVersionLiteral`, having the following structure:
    *
    * ```ebnf
    * SINGLE_QUOTED_VERSION_LITERAL = "'" «VERSION_SPECIFIER_FRAGMENT» ("." «VERSION_SPECIFIER_FRAGMENT»)* "'";
@@ -3837,7 +3837,7 @@ export declare enum TerminalKind {
    */
   SingleQuotedVersionLiteral = "SingleQuotedVersionLiteral",
   /**
-   * This kind represents a `SizeOfKeyword` node, with the following structure:
+   * Represents a node with kind `SizeOfKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -3846,15 +3846,15 @@ export declare enum TerminalKind {
    */
   SizeOfKeyword = "SizeOfKeyword",
   /**
-   * This kind represents a `Slash` node, with the following structure:
+   * Represents a node with kind `Slash`, having the following structure:
    *
    * ```ebnf
-   * SLASH = "/";
+   * SLASH = "/" (?!"*" | "/" | "=");
    * ```
    */
   Slash = "Slash",
   /**
-   * This kind represents a `SlashEqual` node, with the following structure:
+   * Represents a node with kind `SlashEqual`, having the following structure:
    *
    * ```ebnf
    * SLASH_EQUAL = "/=";
@@ -3862,7 +3862,7 @@ export declare enum TerminalKind {
    */
   SlashEqual = "SlashEqual",
   /**
-   * This kind represents a `SolidityKeyword` node, with the following structure:
+   * Represents a node with kind `SolidityKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Never reserved *)
@@ -3871,7 +3871,7 @@ export declare enum TerminalKind {
    */
   SolidityKeyword = "SolidityKeyword",
   /**
-   * This kind represents a `StaticKeyword` node, with the following structure:
+   * Represents a node with kind `StaticKeyword`, having the following structure:
    *
    * ```ebnf
    * STATIC_KEYWORD = "static";
@@ -3879,7 +3879,7 @@ export declare enum TerminalKind {
    */
   StaticKeyword = "StaticKeyword",
   /**
-   * This kind represents a `StorageKeyword` node, with the following structure:
+   * Represents a node with kind `StorageKeyword`, having the following structure:
    *
    * ```ebnf
    * STORAGE_KEYWORD = "storage";
@@ -3887,7 +3887,7 @@ export declare enum TerminalKind {
    */
   StorageKeyword = "StorageKeyword",
   /**
-   * This kind represents a `StringKeyword` node, with the following structure:
+   * Represents a node with kind `StringKeyword`, having the following structure:
    *
    * ```ebnf
    * STRING_KEYWORD = "string";
@@ -3895,7 +3895,7 @@ export declare enum TerminalKind {
    */
   StringKeyword = "StringKeyword",
   /**
-   * This kind represents a `StructKeyword` node, with the following structure:
+   * Represents a node with kind `StructKeyword`, having the following structure:
    *
    * ```ebnf
    * STRUCT_KEYWORD = "struct";
@@ -3903,7 +3903,7 @@ export declare enum TerminalKind {
    */
   StructKeyword = "StructKeyword",
   /**
-   * This kind represents a `SuperKeyword` node, with the following structure:
+   * Represents a node with kind `SuperKeyword`, having the following structure:
    *
    * ```ebnf
    * SUPER_KEYWORD = "super";
@@ -3911,7 +3911,7 @@ export declare enum TerminalKind {
    */
   SuperKeyword = "SuperKeyword",
   /**
-   * This kind represents a `SupportsKeyword` node, with the following structure:
+   * Represents a node with kind `SupportsKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -3920,7 +3920,7 @@ export declare enum TerminalKind {
    */
   SupportsKeyword = "SupportsKeyword",
   /**
-   * This kind represents a `SwitchKeyword` node, with the following structure:
+   * Represents a node with kind `SwitchKeyword`, having the following structure:
    *
    * ```ebnf
    * SWITCH_KEYWORD = "switch";
@@ -3928,7 +3928,7 @@ export declare enum TerminalKind {
    */
   SwitchKeyword = "SwitchKeyword",
   /**
-   * This kind represents a `SzaboKeyword` node, with the following structure:
+   * Represents a node with kind `SzaboKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.7.0 *)
@@ -3938,7 +3938,7 @@ export declare enum TerminalKind {
    */
   SzaboKeyword = "SzaboKeyword",
   /**
-   * This kind represents a `ThisKeyword` node, with the following structure:
+   * Represents a node with kind `ThisKeyword`, having the following structure:
    *
    * ```ebnf
    * THIS_KEYWORD = "this";
@@ -3946,7 +3946,7 @@ export declare enum TerminalKind {
    */
   ThisKeyword = "ThisKeyword",
   /**
-   * This kind represents a `ThrowKeyword` node, with the following structure:
+   * Represents a node with kind `ThrowKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -3955,7 +3955,7 @@ export declare enum TerminalKind {
    */
   ThrowKeyword = "ThrowKeyword",
   /**
-   * This kind represents a `Tilde` node, with the following structure:
+   * Represents a node with kind `Tilde`, having the following structure:
    *
    * ```ebnf
    * TILDE = "~";
@@ -3963,7 +3963,7 @@ export declare enum TerminalKind {
    */
   Tilde = "Tilde",
   /**
-   * This kind represents a `TransientKeyword` node, with the following structure:
+   * Represents a node with kind `TransientKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.27 *)
@@ -3973,7 +3973,7 @@ export declare enum TerminalKind {
    */
   TransientKeyword = "TransientKeyword",
   /**
-   * This kind represents a `TrueKeyword` node, with the following structure:
+   * Represents a node with kind `TrueKeyword`, having the following structure:
    *
    * ```ebnf
    * TRUE_KEYWORD = "true";
@@ -3981,7 +3981,7 @@ export declare enum TerminalKind {
    */
   TrueKeyword = "TrueKeyword",
   /**
-   * This kind represents a `TryKeyword` node, with the following structure:
+   * Represents a node with kind `TryKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -3990,7 +3990,7 @@ export declare enum TerminalKind {
    */
   TryKeyword = "TryKeyword",
   /**
-   * This kind represents a `TypeDefKeyword` node, with the following structure:
+   * Represents a node with kind `TypeDefKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.0 *)
@@ -3999,7 +3999,7 @@ export declare enum TerminalKind {
    */
   TypeDefKeyword = "TypeDefKeyword",
   /**
-   * This kind represents a `TypeKeyword` node, with the following structure:
+   * Represents a node with kind `TypeKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.5.3 *)
@@ -4008,7 +4008,7 @@ export declare enum TerminalKind {
    */
   TypeKeyword = "TypeKeyword",
   /**
-   * This kind represents a `TypeOfKeyword` node, with the following structure:
+   * Represents a node with kind `TypeOfKeyword`, having the following structure:
    *
    * ```ebnf
    * TYPE_OF_KEYWORD = "typeof";
@@ -4016,7 +4016,7 @@ export declare enum TerminalKind {
    */
   TypeOfKeyword = "TypeOfKeyword",
   /**
-   * This kind represents a `UfixedKeyword` node, with the following structure:
+   * Represents a node with kind `UfixedKeyword`, having the following structure:
    *
    * ```ebnf
    * UFIXED_KEYWORD = "ufixed";
@@ -4034,7 +4034,7 @@ export declare enum TerminalKind {
    */
   UfixedKeyword = "UfixedKeyword",
   /**
-   * This kind represents a `UintKeyword` node, with the following structure:
+   * Represents a node with kind `UintKeyword`, having the following structure:
    *
    * ```ebnf
    * UINT_KEYWORD = "uint" ("8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256")?;
@@ -4042,7 +4042,7 @@ export declare enum TerminalKind {
    */
   UintKeyword = "UintKeyword",
   /**
-   * This kind represents a `UncheckedKeyword` node, with the following structure:
+   * Represents a node with kind `UncheckedKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.0 *)
@@ -4052,7 +4052,7 @@ export declare enum TerminalKind {
    */
   UncheckedKeyword = "UncheckedKeyword",
   /**
-   * This kind represents a `UsingKeyword` node, with the following structure:
+   * Represents a node with kind `UsingKeyword`, having the following structure:
    *
    * ```ebnf
    * USING_KEYWORD = "using";
@@ -4060,7 +4060,7 @@ export declare enum TerminalKind {
    */
   UsingKeyword = "UsingKeyword",
   /**
-   * This kind represents a `VarKeyword` node, with the following structure:
+   * Represents a node with kind `VarKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -4069,7 +4069,7 @@ export declare enum TerminalKind {
    */
   VarKeyword = "VarKeyword",
   /**
-   * This kind represents a `VersionSpecifier` node, with the following structure:
+   * Represents a node with kind `VersionSpecifier`, having the following structure:
    *
    * ```ebnf
    * VERSION_SPECIFIER = «VERSION_SPECIFIER_FRAGMENT»;
@@ -4077,7 +4077,7 @@ export declare enum TerminalKind {
    */
   VersionSpecifier = "VersionSpecifier",
   /**
-   * This kind represents a `ViewKeyword` node, with the following structure:
+   * Represents a node with kind `ViewKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.16 *)
@@ -4086,7 +4086,7 @@ export declare enum TerminalKind {
    */
   ViewKeyword = "ViewKeyword",
   /**
-   * This kind represents a `VirtualKeyword` node, with the following structure:
+   * Represents a node with kind `VirtualKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -4096,7 +4096,7 @@ export declare enum TerminalKind {
    */
   VirtualKeyword = "VirtualKeyword",
   /**
-   * This kind represents a `WeeksKeyword` node, with the following structure:
+   * Represents a node with kind `WeeksKeyword`, having the following structure:
    *
    * ```ebnf
    * WEEKS_KEYWORD = "weeks";
@@ -4104,7 +4104,7 @@ export declare enum TerminalKind {
    */
   WeeksKeyword = "WeeksKeyword",
   /**
-   * This kind represents a `WeiKeyword` node, with the following structure:
+   * Represents a node with kind `WeiKeyword`, having the following structure:
    *
    * ```ebnf
    * WEI_KEYWORD = "wei";
@@ -4112,7 +4112,7 @@ export declare enum TerminalKind {
    */
   WeiKeyword = "WeiKeyword",
   /**
-   * This kind represents a `WhileKeyword` node, with the following structure:
+   * Represents a node with kind `WhileKeyword`, having the following structure:
    *
    * ```ebnf
    * WHILE_KEYWORD = "while";
@@ -4120,7 +4120,7 @@ export declare enum TerminalKind {
    */
   WhileKeyword = "WhileKeyword",
   /**
-   * This kind represents a `Whitespace` node, with the following structure:
+   * Represents a node with kind `Whitespace`, having the following structure:
    *
    * ```ebnf
    * WHITESPACE = (" " | "\t")+;
@@ -4128,7 +4128,7 @@ export declare enum TerminalKind {
    */
   Whitespace = "Whitespace",
   /**
-   * This kind represents a `YearsKeyword` node, with the following structure:
+   * Represents a node with kind `YearsKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -4137,7 +4137,7 @@ export declare enum TerminalKind {
    */
   YearsKeyword = "YearsKeyword",
   /**
-   * This kind represents a `YulAbstractKeyword` node, with the following structure:
+   * Represents a node with kind `YulAbstractKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4146,7 +4146,7 @@ export declare enum TerminalKind {
    */
   YulAbstractKeyword = "YulAbstractKeyword",
   /**
-   * This kind represents a `YulAddKeyword` node, with the following structure:
+   * Represents a node with kind `YulAddKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_ADD_KEYWORD = "add";
@@ -4154,7 +4154,7 @@ export declare enum TerminalKind {
    */
   YulAddKeyword = "YulAddKeyword",
   /**
-   * This kind represents a `YulAddModKeyword` node, with the following structure:
+   * Represents a node with kind `YulAddModKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_ADD_MOD_KEYWORD = "addmod";
@@ -4162,7 +4162,7 @@ export declare enum TerminalKind {
    */
   YulAddModKeyword = "YulAddModKeyword",
   /**
-   * This kind represents a `YulAddressKeyword` node, with the following structure:
+   * Represents a node with kind `YulAddressKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Never reserved *)
@@ -4171,7 +4171,7 @@ export declare enum TerminalKind {
    */
   YulAddressKeyword = "YulAddressKeyword",
   /**
-   * This kind represents a `YulAfterKeyword` node, with the following structure:
+   * Represents a node with kind `YulAfterKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4180,7 +4180,7 @@ export declare enum TerminalKind {
    */
   YulAfterKeyword = "YulAfterKeyword",
   /**
-   * This kind represents a `YulAliasKeyword` node, with the following structure:
+   * Represents a node with kind `YulAliasKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -4189,7 +4189,7 @@ export declare enum TerminalKind {
    */
   YulAliasKeyword = "YulAliasKeyword",
   /**
-   * This kind represents a `YulAndKeyword` node, with the following structure:
+   * Represents a node with kind `YulAndKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_AND_KEYWORD = "and";
@@ -4197,7 +4197,7 @@ export declare enum TerminalKind {
    */
   YulAndKeyword = "YulAndKeyword",
   /**
-   * This kind represents a `YulAnonymousKeyword` node, with the following structure:
+   * Represents a node with kind `YulAnonymousKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4206,7 +4206,7 @@ export declare enum TerminalKind {
    */
   YulAnonymousKeyword = "YulAnonymousKeyword",
   /**
-   * This kind represents a `YulApplyKeyword` node, with the following structure:
+   * Represents a node with kind `YulApplyKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -4215,7 +4215,7 @@ export declare enum TerminalKind {
    */
   YulApplyKeyword = "YulApplyKeyword",
   /**
-   * This kind represents a `YulAsKeyword` node, with the following structure:
+   * Represents a node with kind `YulAsKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4224,7 +4224,7 @@ export declare enum TerminalKind {
    */
   YulAsKeyword = "YulAsKeyword",
   /**
-   * This kind represents a `YulAssemblyKeyword` node, with the following structure:
+   * Represents a node with kind `YulAssemblyKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4233,7 +4233,7 @@ export declare enum TerminalKind {
    */
   YulAssemblyKeyword = "YulAssemblyKeyword",
   /**
-   * This kind represents a `YulAutoKeyword` node, with the following structure:
+   * Represents a node with kind `YulAutoKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -4242,7 +4242,7 @@ export declare enum TerminalKind {
    */
   YulAutoKeyword = "YulAutoKeyword",
   /**
-   * This kind represents a `YulBalanceKeyword` node, with the following structure:
+   * Represents a node with kind `YulBalanceKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_BALANCE_KEYWORD = "balance";
@@ -4250,7 +4250,7 @@ export declare enum TerminalKind {
    */
   YulBalanceKeyword = "YulBalanceKeyword",
   /**
-   * This kind represents a `YulBaseFeeKeyword` node, with the following structure:
+   * Represents a node with kind `YulBaseFeeKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.7 *)
@@ -4260,7 +4260,7 @@ export declare enum TerminalKind {
    */
   YulBaseFeeKeyword = "YulBaseFeeKeyword",
   /**
-   * This kind represents a `YulBlobBaseFeeKeyword` node, with the following structure:
+   * Represents a node with kind `YulBlobBaseFeeKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.24 *)
@@ -4270,7 +4270,7 @@ export declare enum TerminalKind {
    */
   YulBlobBaseFeeKeyword = "YulBlobBaseFeeKeyword",
   /**
-   * This kind represents a `YulBlobHashKeyword` node, with the following structure:
+   * Represents a node with kind `YulBlobHashKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.24 *)
@@ -4280,7 +4280,7 @@ export declare enum TerminalKind {
    */
   YulBlobHashKeyword = "YulBlobHashKeyword",
   /**
-   * This kind represents a `YulBlockHashKeyword` node, with the following structure:
+   * Represents a node with kind `YulBlockHashKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_BLOCK_HASH_KEYWORD = "blockhash";
@@ -4288,7 +4288,7 @@ export declare enum TerminalKind {
    */
   YulBlockHashKeyword = "YulBlockHashKeyword",
   /**
-   * This kind represents a `YulBoolKeyword` node, with the following structure:
+   * Represents a node with kind `YulBoolKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.5.10 *)
@@ -4297,7 +4297,7 @@ export declare enum TerminalKind {
    */
   YulBoolKeyword = "YulBoolKeyword",
   /**
-   * This kind represents a `YulBreakKeyword` node, with the following structure:
+   * Represents a node with kind `YulBreakKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_BREAK_KEYWORD = "break";
@@ -4305,7 +4305,7 @@ export declare enum TerminalKind {
    */
   YulBreakKeyword = "YulBreakKeyword",
   /**
-   * This kind represents a `YulByteKeyword` node, with the following structure:
+   * Represents a node with kind `YulByteKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_BYTE_KEYWORD = "byte";
@@ -4313,7 +4313,7 @@ export declare enum TerminalKind {
    */
   YulByteKeyword = "YulByteKeyword",
   /**
-   * This kind represents a `YulBytesKeyword` node, with the following structure:
+   * Represents a node with kind `YulBytesKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4322,7 +4322,7 @@ export declare enum TerminalKind {
    */
   YulBytesKeyword = "YulBytesKeyword",
   /**
-   * This kind represents a `YulCallCodeKeyword` node, with the following structure:
+   * Represents a node with kind `YulCallCodeKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_CALL_CODE_KEYWORD = "callcode";
@@ -4330,7 +4330,7 @@ export declare enum TerminalKind {
    */
   YulCallCodeKeyword = "YulCallCodeKeyword",
   /**
-   * This kind represents a `YulCallDataCopyKeyword` node, with the following structure:
+   * Represents a node with kind `YulCallDataCopyKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_CALL_DATA_COPY_KEYWORD = "calldatacopy";
@@ -4338,7 +4338,7 @@ export declare enum TerminalKind {
    */
   YulCallDataCopyKeyword = "YulCallDataCopyKeyword",
   /**
-   * This kind represents a `YulCallDataKeyword` node, with the following structure:
+   * Represents a node with kind `YulCallDataKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -4347,7 +4347,7 @@ export declare enum TerminalKind {
    */
   YulCallDataKeyword = "YulCallDataKeyword",
   /**
-   * This kind represents a `YulCallDataLoadKeyword` node, with the following structure:
+   * Represents a node with kind `YulCallDataLoadKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_CALL_DATA_LOAD_KEYWORD = "calldataload";
@@ -4355,7 +4355,7 @@ export declare enum TerminalKind {
    */
   YulCallDataLoadKeyword = "YulCallDataLoadKeyword",
   /**
-   * This kind represents a `YulCallDataSizeKeyword` node, with the following structure:
+   * Represents a node with kind `YulCallDataSizeKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_CALL_DATA_SIZE_KEYWORD = "calldatasize";
@@ -4363,7 +4363,7 @@ export declare enum TerminalKind {
    */
   YulCallDataSizeKeyword = "YulCallDataSizeKeyword",
   /**
-   * This kind represents a `YulCallKeyword` node, with the following structure:
+   * Represents a node with kind `YulCallKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_CALL_KEYWORD = "call";
@@ -4371,7 +4371,7 @@ export declare enum TerminalKind {
    */
   YulCallKeyword = "YulCallKeyword",
   /**
-   * This kind represents a `YulCallValueKeyword` node, with the following structure:
+   * Represents a node with kind `YulCallValueKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_CALL_VALUE_KEYWORD = "callvalue";
@@ -4379,7 +4379,7 @@ export declare enum TerminalKind {
    */
   YulCallValueKeyword = "YulCallValueKeyword",
   /**
-   * This kind represents a `YulCallerKeyword` node, with the following structure:
+   * Represents a node with kind `YulCallerKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_CALLER_KEYWORD = "caller";
@@ -4387,7 +4387,7 @@ export declare enum TerminalKind {
    */
   YulCallerKeyword = "YulCallerKeyword",
   /**
-   * This kind represents a `YulCaseKeyword` node, with the following structure:
+   * Represents a node with kind `YulCaseKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_CASE_KEYWORD = "case";
@@ -4395,7 +4395,7 @@ export declare enum TerminalKind {
    */
   YulCaseKeyword = "YulCaseKeyword",
   /**
-   * This kind represents a `YulCatchKeyword` node, with the following structure:
+   * Represents a node with kind `YulCatchKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4404,7 +4404,7 @@ export declare enum TerminalKind {
    */
   YulCatchKeyword = "YulCatchKeyword",
   /**
-   * This kind represents a `YulChainIdKeyword` node, with the following structure:
+   * Represents a node with kind `YulChainIdKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.12 *)
@@ -4413,7 +4413,7 @@ export declare enum TerminalKind {
    */
   YulChainIdKeyword = "YulChainIdKeyword",
   /**
-   * This kind represents a `YulCoinBaseKeyword` node, with the following structure:
+   * Represents a node with kind `YulCoinBaseKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_COIN_BASE_KEYWORD = "coinbase";
@@ -4421,7 +4421,7 @@ export declare enum TerminalKind {
    */
   YulCoinBaseKeyword = "YulCoinBaseKeyword",
   /**
-   * This kind represents a `YulConstantKeyword` node, with the following structure:
+   * Represents a node with kind `YulConstantKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4430,7 +4430,7 @@ export declare enum TerminalKind {
    */
   YulConstantKeyword = "YulConstantKeyword",
   /**
-   * This kind represents a `YulConstructorKeyword` node, with the following structure:
+   * Represents a node with kind `YulConstructorKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -4439,7 +4439,7 @@ export declare enum TerminalKind {
    */
   YulConstructorKeyword = "YulConstructorKeyword",
   /**
-   * This kind represents a `YulContinueKeyword` node, with the following structure:
+   * Represents a node with kind `YulContinueKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_CONTINUE_KEYWORD = "continue";
@@ -4447,7 +4447,7 @@ export declare enum TerminalKind {
    */
   YulContinueKeyword = "YulContinueKeyword",
   /**
-   * This kind represents a `YulContractKeyword` node, with the following structure:
+   * Represents a node with kind `YulContractKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4456,7 +4456,7 @@ export declare enum TerminalKind {
    */
   YulContractKeyword = "YulContractKeyword",
   /**
-   * This kind represents a `YulCopyOfKeyword` node, with the following structure:
+   * Represents a node with kind `YulCopyOfKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -4465,7 +4465,7 @@ export declare enum TerminalKind {
    */
   YulCopyOfKeyword = "YulCopyOfKeyword",
   /**
-   * This kind represents a `YulCreate2Keyword` node, with the following structure:
+   * Represents a node with kind `YulCreate2Keyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.12 *)
@@ -4475,7 +4475,7 @@ export declare enum TerminalKind {
    */
   YulCreate2Keyword = "YulCreate2Keyword",
   /**
-   * This kind represents a `YulCreateKeyword` node, with the following structure:
+   * Represents a node with kind `YulCreateKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_CREATE_KEYWORD = "create";
@@ -4483,7 +4483,7 @@ export declare enum TerminalKind {
    */
   YulCreateKeyword = "YulCreateKeyword",
   /**
-   * This kind represents a `YulDaysKeyword` node, with the following structure:
+   * Represents a node with kind `YulDaysKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4492,15 +4492,15 @@ export declare enum TerminalKind {
    */
   YulDaysKeyword = "YulDaysKeyword",
   /**
-   * This kind represents a `YulDecimalLiteral` node, with the following structure:
+   * Represents a node with kind `YulDecimalLiteral`, having the following structure:
    *
    * ```ebnf
-   * YUL_DECIMAL_LITERAL = "0" | (("1"…"9") ("0"…"9")*);
+   * YUL_DECIMAL_LITERAL = ("0" | ("1"…"9" "0"…"9"*)) (?!«IDENTIFIER_START»);
    * ```
    */
   YulDecimalLiteral = "YulDecimalLiteral",
   /**
-   * This kind represents a `YulDefaultKeyword` node, with the following structure:
+   * Represents a node with kind `YulDefaultKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_DEFAULT_KEYWORD = "default";
@@ -4508,7 +4508,7 @@ export declare enum TerminalKind {
    */
   YulDefaultKeyword = "YulDefaultKeyword",
   /**
-   * This kind represents a `YulDefineKeyword` node, with the following structure:
+   * Represents a node with kind `YulDefineKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -4517,7 +4517,7 @@ export declare enum TerminalKind {
    */
   YulDefineKeyword = "YulDefineKeyword",
   /**
-   * This kind represents a `YulDelegateCallKeyword` node, with the following structure:
+   * Represents a node with kind `YulDelegateCallKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_DELEGATE_CALL_KEYWORD = "delegatecall";
@@ -4525,7 +4525,7 @@ export declare enum TerminalKind {
    */
   YulDelegateCallKeyword = "YulDelegateCallKeyword",
   /**
-   * This kind represents a `YulDeleteKeyword` node, with the following structure:
+   * Represents a node with kind `YulDeleteKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4534,7 +4534,7 @@ export declare enum TerminalKind {
    */
   YulDeleteKeyword = "YulDeleteKeyword",
   /**
-   * This kind represents a `YulDifficultyKeyword` node, with the following structure:
+   * Represents a node with kind `YulDifficultyKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.8.18 *)
@@ -4543,7 +4543,7 @@ export declare enum TerminalKind {
    */
   YulDifficultyKeyword = "YulDifficultyKeyword",
   /**
-   * This kind represents a `YulDivKeyword` node, with the following structure:
+   * Represents a node with kind `YulDivKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_DIV_KEYWORD = "div";
@@ -4551,7 +4551,7 @@ export declare enum TerminalKind {
    */
   YulDivKeyword = "YulDivKeyword",
   /**
-   * This kind represents a `YulDoKeyword` node, with the following structure:
+   * Represents a node with kind `YulDoKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4560,7 +4560,7 @@ export declare enum TerminalKind {
    */
   YulDoKeyword = "YulDoKeyword",
   /**
-   * This kind represents a `YulElseKeyword` node, with the following structure:
+   * Represents a node with kind `YulElseKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4569,7 +4569,7 @@ export declare enum TerminalKind {
    */
   YulElseKeyword = "YulElseKeyword",
   /**
-   * This kind represents a `YulEmitKeyword` node, with the following structure:
+   * Represents a node with kind `YulEmitKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -4578,7 +4578,7 @@ export declare enum TerminalKind {
    */
   YulEmitKeyword = "YulEmitKeyword",
   /**
-   * This kind represents a `YulEnumKeyword` node, with the following structure:
+   * Represents a node with kind `YulEnumKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4587,7 +4587,7 @@ export declare enum TerminalKind {
    */
   YulEnumKeyword = "YulEnumKeyword",
   /**
-   * This kind represents a `YulEqKeyword` node, with the following structure:
+   * Represents a node with kind `YulEqKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_EQ_KEYWORD = "eq";
@@ -4595,7 +4595,7 @@ export declare enum TerminalKind {
    */
   YulEqKeyword = "YulEqKeyword",
   /**
-   * This kind represents a `YulEtherKeyword` node, with the following structure:
+   * Represents a node with kind `YulEtherKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4604,7 +4604,7 @@ export declare enum TerminalKind {
    */
   YulEtherKeyword = "YulEtherKeyword",
   /**
-   * This kind represents a `YulEventKeyword` node, with the following structure:
+   * Represents a node with kind `YulEventKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4613,7 +4613,7 @@ export declare enum TerminalKind {
    */
   YulEventKeyword = "YulEventKeyword",
   /**
-   * This kind represents a `YulExpKeyword` node, with the following structure:
+   * Represents a node with kind `YulExpKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_EXP_KEYWORD = "exp";
@@ -4621,7 +4621,7 @@ export declare enum TerminalKind {
    */
   YulExpKeyword = "YulExpKeyword",
   /**
-   * This kind represents a `YulExtCodeCopyKeyword` node, with the following structure:
+   * Represents a node with kind `YulExtCodeCopyKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_EXT_CODE_COPY_KEYWORD = "extcodecopy";
@@ -4629,7 +4629,7 @@ export declare enum TerminalKind {
    */
   YulExtCodeCopyKeyword = "YulExtCodeCopyKeyword",
   /**
-   * This kind represents a `YulExtCodeHashKeyword` node, with the following structure:
+   * Represents a node with kind `YulExtCodeHashKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.5.0 *)
@@ -4639,7 +4639,7 @@ export declare enum TerminalKind {
    */
   YulExtCodeHashKeyword = "YulExtCodeHashKeyword",
   /**
-   * This kind represents a `YulExtCodeSizeKeyword` node, with the following structure:
+   * Represents a node with kind `YulExtCodeSizeKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_EXT_CODE_SIZE_KEYWORD = "extcodesize";
@@ -4647,7 +4647,7 @@ export declare enum TerminalKind {
    */
   YulExtCodeSizeKeyword = "YulExtCodeSizeKeyword",
   /**
-   * This kind represents a `YulExternalKeyword` node, with the following structure:
+   * Represents a node with kind `YulExternalKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4656,7 +4656,7 @@ export declare enum TerminalKind {
    */
   YulExternalKeyword = "YulExternalKeyword",
   /**
-   * This kind represents a `YulFallbackKeyword` node, with the following structure:
+   * Represents a node with kind `YulFallbackKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.6.0 until 0.7.1 *)
@@ -4665,7 +4665,7 @@ export declare enum TerminalKind {
    */
   YulFallbackKeyword = "YulFallbackKeyword",
   /**
-   * This kind represents a `YulFalseKeyword` node, with the following structure:
+   * Represents a node with kind `YulFalseKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_FALSE_KEYWORD = "false";
@@ -4673,7 +4673,7 @@ export declare enum TerminalKind {
    */
   YulFalseKeyword = "YulFalseKeyword",
   /**
-   * This kind represents a `YulFinalKeyword` node, with the following structure:
+   * Represents a node with kind `YulFinalKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4682,7 +4682,7 @@ export declare enum TerminalKind {
    */
   YulFinalKeyword = "YulFinalKeyword",
   /**
-   * This kind represents a `YulFinneyKeyword` node, with the following structure:
+   * Represents a node with kind `YulFinneyKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.0 *)
@@ -4691,7 +4691,7 @@ export declare enum TerminalKind {
    */
   YulFinneyKeyword = "YulFinneyKeyword",
   /**
-   * This kind represents a `YulFixedKeyword` node, with the following structure:
+   * Represents a node with kind `YulFixedKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4712,7 +4712,7 @@ export declare enum TerminalKind {
    */
   YulFixedKeyword = "YulFixedKeyword",
   /**
-   * This kind represents a `YulForKeyword` node, with the following structure:
+   * Represents a node with kind `YulForKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_FOR_KEYWORD = "for";
@@ -4720,7 +4720,7 @@ export declare enum TerminalKind {
    */
   YulForKeyword = "YulForKeyword",
   /**
-   * This kind represents a `YulFunctionKeyword` node, with the following structure:
+   * Represents a node with kind `YulFunctionKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_FUNCTION_KEYWORD = "function";
@@ -4728,7 +4728,7 @@ export declare enum TerminalKind {
    */
   YulFunctionKeyword = "YulFunctionKeyword",
   /**
-   * This kind represents a `YulGasKeyword` node, with the following structure:
+   * Represents a node with kind `YulGasKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_GAS_KEYWORD = "gas";
@@ -4736,7 +4736,7 @@ export declare enum TerminalKind {
    */
   YulGasKeyword = "YulGasKeyword",
   /**
-   * This kind represents a `YulGasLimitKeyword` node, with the following structure:
+   * Represents a node with kind `YulGasLimitKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_GAS_LIMIT_KEYWORD = "gaslimit";
@@ -4744,7 +4744,7 @@ export declare enum TerminalKind {
    */
   YulGasLimitKeyword = "YulGasLimitKeyword",
   /**
-   * This kind represents a `YulGasPriceKeyword` node, with the following structure:
+   * Represents a node with kind `YulGasPriceKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_GAS_PRICE_KEYWORD = "gasprice";
@@ -4752,7 +4752,7 @@ export declare enum TerminalKind {
    */
   YulGasPriceKeyword = "YulGasPriceKeyword",
   /**
-   * This kind represents a `YulGtKeyword` node, with the following structure:
+   * Represents a node with kind `YulGtKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_GT_KEYWORD = "gt";
@@ -4760,7 +4760,7 @@ export declare enum TerminalKind {
    */
   YulGtKeyword = "YulGtKeyword",
   /**
-   * This kind represents a `YulGweiKeyword` node, with the following structure:
+   * Represents a node with kind `YulGweiKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.7.0 until 0.7.1 *)
@@ -4769,7 +4769,7 @@ export declare enum TerminalKind {
    */
   YulGweiKeyword = "YulGweiKeyword",
   /**
-   * This kind represents a `YulHexKeyword` node, with the following structure:
+   * Represents a node with kind `YulHexKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_HEX_KEYWORD = "hex";
@@ -4777,15 +4777,15 @@ export declare enum TerminalKind {
    */
   YulHexKeyword = "YulHexKeyword",
   /**
-   * This kind represents a `YulHexLiteral` node, with the following structure:
+   * Represents a node with kind `YulHexLiteral`, having the following structure:
    *
    * ```ebnf
-   * YUL_HEX_LITERAL = "0x" «HEX_CHARACTER»+;
+   * YUL_HEX_LITERAL = "0x" «HEX_CHARACTER»+ (?!«IDENTIFIER_START»);
    * ```
    */
   YulHexLiteral = "YulHexLiteral",
   /**
-   * This kind represents a `YulHoursKeyword` node, with the following structure:
+   * Represents a node with kind `YulHoursKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4794,7 +4794,7 @@ export declare enum TerminalKind {
    */
   YulHoursKeyword = "YulHoursKeyword",
   /**
-   * This kind represents a `YulIdentifier` node, with the following structure:
+   * Represents a node with kind `YulIdentifier`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.5.8 and deprecated in 0.7.0. *)
@@ -4805,7 +4805,7 @@ export declare enum TerminalKind {
    */
   YulIdentifier = "YulIdentifier",
   /**
-   * This kind represents a `YulIfKeyword` node, with the following structure:
+   * Represents a node with kind `YulIfKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_IF_KEYWORD = "if";
@@ -4813,7 +4813,7 @@ export declare enum TerminalKind {
    */
   YulIfKeyword = "YulIfKeyword",
   /**
-   * This kind represents a `YulImmutableKeyword` node, with the following structure:
+   * Represents a node with kind `YulImmutableKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -4822,7 +4822,7 @@ export declare enum TerminalKind {
    */
   YulImmutableKeyword = "YulImmutableKeyword",
   /**
-   * This kind represents a `YulImplementsKeyword` node, with the following structure:
+   * Represents a node with kind `YulImplementsKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -4831,7 +4831,7 @@ export declare enum TerminalKind {
    */
   YulImplementsKeyword = "YulImplementsKeyword",
   /**
-   * This kind represents a `YulImportKeyword` node, with the following structure:
+   * Represents a node with kind `YulImportKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4840,7 +4840,7 @@ export declare enum TerminalKind {
    */
   YulImportKeyword = "YulImportKeyword",
   /**
-   * This kind represents a `YulInKeyword` node, with the following structure:
+   * Represents a node with kind `YulInKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.6.8 *)
@@ -4849,7 +4849,7 @@ export declare enum TerminalKind {
    */
   YulInKeyword = "YulInKeyword",
   /**
-   * This kind represents a `YulIndexedKeyword` node, with the following structure:
+   * Represents a node with kind `YulIndexedKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4858,7 +4858,7 @@ export declare enum TerminalKind {
    */
   YulIndexedKeyword = "YulIndexedKeyword",
   /**
-   * This kind represents a `YulInlineKeyword` node, with the following structure:
+   * Represents a node with kind `YulInlineKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4867,7 +4867,7 @@ export declare enum TerminalKind {
    */
   YulInlineKeyword = "YulInlineKeyword",
   /**
-   * This kind represents a `YulIntKeyword` node, with the following structure:
+   * Represents a node with kind `YulIntKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4876,7 +4876,7 @@ export declare enum TerminalKind {
    */
   YulIntKeyword = "YulIntKeyword",
   /**
-   * This kind represents a `YulInterfaceKeyword` node, with the following structure:
+   * Represents a node with kind `YulInterfaceKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4885,7 +4885,7 @@ export declare enum TerminalKind {
    */
   YulInterfaceKeyword = "YulInterfaceKeyword",
   /**
-   * This kind represents a `YulInternalKeyword` node, with the following structure:
+   * Represents a node with kind `YulInternalKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4894,7 +4894,7 @@ export declare enum TerminalKind {
    */
   YulInternalKeyword = "YulInternalKeyword",
   /**
-   * This kind represents a `YulInvalidKeyword` node, with the following structure:
+   * Represents a node with kind `YulInvalidKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_INVALID_KEYWORD = "invalid";
@@ -4902,7 +4902,7 @@ export declare enum TerminalKind {
    */
   YulInvalidKeyword = "YulInvalidKeyword",
   /**
-   * This kind represents a `YulIsKeyword` node, with the following structure:
+   * Represents a node with kind `YulIsKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4911,7 +4911,7 @@ export declare enum TerminalKind {
    */
   YulIsKeyword = "YulIsKeyword",
   /**
-   * This kind represents a `YulIsZeroKeyword` node, with the following structure:
+   * Represents a node with kind `YulIsZeroKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_IS_ZERO_KEYWORD = "iszero";
@@ -4919,7 +4919,7 @@ export declare enum TerminalKind {
    */
   YulIsZeroKeyword = "YulIsZeroKeyword",
   /**
-   * This kind represents a `YulJumpKeyword` node, with the following structure:
+   * Represents a node with kind `YulJumpKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -4928,7 +4928,7 @@ export declare enum TerminalKind {
    */
   YulJumpKeyword = "YulJumpKeyword",
   /**
-   * This kind represents a `YulJumpiKeyword` node, with the following structure:
+   * Represents a node with kind `YulJumpiKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -4937,7 +4937,7 @@ export declare enum TerminalKind {
    */
   YulJumpiKeyword = "YulJumpiKeyword",
   /**
-   * This kind represents a `YulKeccak256Keyword` node, with the following structure:
+   * Represents a node with kind `YulKeccak256Keyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.12 *)
@@ -4947,7 +4947,7 @@ export declare enum TerminalKind {
    */
   YulKeccak256Keyword = "YulKeccak256Keyword",
   /**
-   * This kind represents a `YulLeaveKeyword` node, with the following structure:
+   * Represents a node with kind `YulLeaveKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.6.0 *)
@@ -4957,7 +4957,7 @@ export declare enum TerminalKind {
    */
   YulLeaveKeyword = "YulLeaveKeyword",
   /**
-   * This kind represents a `YulLetKeyword` node, with the following structure:
+   * Represents a node with kind `YulLetKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_LET_KEYWORD = "let";
@@ -4965,7 +4965,7 @@ export declare enum TerminalKind {
    */
   YulLetKeyword = "YulLetKeyword",
   /**
-   * This kind represents a `YulLibraryKeyword` node, with the following structure:
+   * Represents a node with kind `YulLibraryKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -4974,7 +4974,7 @@ export declare enum TerminalKind {
    */
   YulLibraryKeyword = "YulLibraryKeyword",
   /**
-   * This kind represents a `YulLog0Keyword` node, with the following structure:
+   * Represents a node with kind `YulLog0Keyword`, having the following structure:
    *
    * ```ebnf
    * YUL_LOG_0_KEYWORD = "log0";
@@ -4982,7 +4982,7 @@ export declare enum TerminalKind {
    */
   YulLog0Keyword = "YulLog0Keyword",
   /**
-   * This kind represents a `YulLog1Keyword` node, with the following structure:
+   * Represents a node with kind `YulLog1Keyword`, having the following structure:
    *
    * ```ebnf
    * YUL_LOG_1_KEYWORD = "log1";
@@ -4990,7 +4990,7 @@ export declare enum TerminalKind {
    */
   YulLog1Keyword = "YulLog1Keyword",
   /**
-   * This kind represents a `YulLog2Keyword` node, with the following structure:
+   * Represents a node with kind `YulLog2Keyword`, having the following structure:
    *
    * ```ebnf
    * YUL_LOG_2_KEYWORD = "log2";
@@ -4998,7 +4998,7 @@ export declare enum TerminalKind {
    */
   YulLog2Keyword = "YulLog2Keyword",
   /**
-   * This kind represents a `YulLog3Keyword` node, with the following structure:
+   * Represents a node with kind `YulLog3Keyword`, having the following structure:
    *
    * ```ebnf
    * YUL_LOG_3_KEYWORD = "log3";
@@ -5006,7 +5006,7 @@ export declare enum TerminalKind {
    */
   YulLog3Keyword = "YulLog3Keyword",
   /**
-   * This kind represents a `YulLog4Keyword` node, with the following structure:
+   * Represents a node with kind `YulLog4Keyword`, having the following structure:
    *
    * ```ebnf
    * YUL_LOG_4_KEYWORD = "log4";
@@ -5014,7 +5014,7 @@ export declare enum TerminalKind {
    */
   YulLog4Keyword = "YulLog4Keyword",
   /**
-   * This kind represents a `YulLtKeyword` node, with the following structure:
+   * Represents a node with kind `YulLtKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_LT_KEYWORD = "lt";
@@ -5022,7 +5022,7 @@ export declare enum TerminalKind {
    */
   YulLtKeyword = "YulLtKeyword",
   /**
-   * This kind represents a `YulMCopyKeyword` node, with the following structure:
+   * Represents a node with kind `YulMCopyKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.24 *)
@@ -5032,7 +5032,7 @@ export declare enum TerminalKind {
    */
   YulMcopyKeyword = "YulMcopyKeyword",
   /**
-   * This kind represents a `YulMLoadKeyword` node, with the following structure:
+   * Represents a node with kind `YulMLoadKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_M_LOAD_KEYWORD = "mload";
@@ -5040,7 +5040,7 @@ export declare enum TerminalKind {
    */
   YulMloadKeyword = "YulMloadKeyword",
   /**
-   * This kind represents a `YulMSizeKeyword` node, with the following structure:
+   * Represents a node with kind `YulMSizeKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_M_SIZE_KEYWORD = "msize";
@@ -5048,7 +5048,7 @@ export declare enum TerminalKind {
    */
   YulMsizeKeyword = "YulMsizeKeyword",
   /**
-   * This kind represents a `YulMStore8Keyword` node, with the following structure:
+   * Represents a node with kind `YulMStore8Keyword`, having the following structure:
    *
    * ```ebnf
    * YUL_M_STORE_8_KEYWORD = "mstore8";
@@ -5056,7 +5056,7 @@ export declare enum TerminalKind {
    */
   YulMstore8Keyword = "YulMstore8Keyword",
   /**
-   * This kind represents a `YulMStoreKeyword` node, with the following structure:
+   * Represents a node with kind `YulMStoreKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_M_STORE_KEYWORD = "mstore";
@@ -5064,7 +5064,7 @@ export declare enum TerminalKind {
    */
   YulMstoreKeyword = "YulMstoreKeyword",
   /**
-   * This kind represents a `YulMacroKeyword` node, with the following structure:
+   * Represents a node with kind `YulMacroKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -5073,7 +5073,7 @@ export declare enum TerminalKind {
    */
   YulMacroKeyword = "YulMacroKeyword",
   /**
-   * This kind represents a `YulMappingKeyword` node, with the following structure:
+   * Represents a node with kind `YulMappingKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5082,7 +5082,7 @@ export declare enum TerminalKind {
    */
   YulMappingKeyword = "YulMappingKeyword",
   /**
-   * This kind represents a `YulMatchKeyword` node, with the following structure:
+   * Represents a node with kind `YulMatchKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5091,7 +5091,7 @@ export declare enum TerminalKind {
    */
   YulMatchKeyword = "YulMatchKeyword",
   /**
-   * This kind represents a `YulMemoryKeyword` node, with the following structure:
+   * Represents a node with kind `YulMemoryKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5100,7 +5100,7 @@ export declare enum TerminalKind {
    */
   YulMemoryKeyword = "YulMemoryKeyword",
   /**
-   * This kind represents a `YulMinutesKeyword` node, with the following structure:
+   * Represents a node with kind `YulMinutesKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5109,7 +5109,7 @@ export declare enum TerminalKind {
    */
   YulMinutesKeyword = "YulMinutesKeyword",
   /**
-   * This kind represents a `YulModKeyword` node, with the following structure:
+   * Represents a node with kind `YulModKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_MOD_KEYWORD = "mod";
@@ -5117,7 +5117,7 @@ export declare enum TerminalKind {
    */
   YulModKeyword = "YulModKeyword",
   /**
-   * This kind represents a `YulModifierKeyword` node, with the following structure:
+   * Represents a node with kind `YulModifierKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5126,7 +5126,7 @@ export declare enum TerminalKind {
    */
   YulModifierKeyword = "YulModifierKeyword",
   /**
-   * This kind represents a `YulMulKeyword` node, with the following structure:
+   * Represents a node with kind `YulMulKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_MUL_KEYWORD = "mul";
@@ -5134,7 +5134,7 @@ export declare enum TerminalKind {
    */
   YulMulKeyword = "YulMulKeyword",
   /**
-   * This kind represents a `YulMulModKeyword` node, with the following structure:
+   * Represents a node with kind `YulMulModKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_MUL_MOD_KEYWORD = "mulmod";
@@ -5142,7 +5142,7 @@ export declare enum TerminalKind {
    */
   YulMulModKeyword = "YulMulModKeyword",
   /**
-   * This kind represents a `YulMutableKeyword` node, with the following structure:
+   * Represents a node with kind `YulMutableKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -5151,7 +5151,7 @@ export declare enum TerminalKind {
    */
   YulMutableKeyword = "YulMutableKeyword",
   /**
-   * This kind represents a `YulNewKeyword` node, with the following structure:
+   * Represents a node with kind `YulNewKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5160,7 +5160,7 @@ export declare enum TerminalKind {
    */
   YulNewKeyword = "YulNewKeyword",
   /**
-   * This kind represents a `YulNotKeyword` node, with the following structure:
+   * Represents a node with kind `YulNotKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_NOT_KEYWORD = "not";
@@ -5168,7 +5168,7 @@ export declare enum TerminalKind {
    */
   YulNotKeyword = "YulNotKeyword",
   /**
-   * This kind represents a `YulNullKeyword` node, with the following structure:
+   * Represents a node with kind `YulNullKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5177,7 +5177,7 @@ export declare enum TerminalKind {
    */
   YulNullKeyword = "YulNullKeyword",
   /**
-   * This kind represents a `YulNumberKeyword` node, with the following structure:
+   * Represents a node with kind `YulNumberKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_NUMBER_KEYWORD = "number";
@@ -5185,7 +5185,7 @@ export declare enum TerminalKind {
    */
   YulNumberKeyword = "YulNumberKeyword",
   /**
-   * This kind represents a `YulOfKeyword` node, with the following structure:
+   * Represents a node with kind `YulOfKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5194,7 +5194,7 @@ export declare enum TerminalKind {
    */
   YulOfKeyword = "YulOfKeyword",
   /**
-   * This kind represents a `YulOrKeyword` node, with the following structure:
+   * Represents a node with kind `YulOrKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_OR_KEYWORD = "or";
@@ -5202,7 +5202,7 @@ export declare enum TerminalKind {
    */
   YulOrKeyword = "YulOrKeyword",
   /**
-   * This kind represents a `YulOriginKeyword` node, with the following structure:
+   * Represents a node with kind `YulOriginKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_ORIGIN_KEYWORD = "origin";
@@ -5210,7 +5210,7 @@ export declare enum TerminalKind {
    */
   YulOriginKeyword = "YulOriginKeyword",
   /**
-   * This kind represents a `YulOverrideKeyword` node, with the following structure:
+   * Represents a node with kind `YulOverrideKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -5219,7 +5219,7 @@ export declare enum TerminalKind {
    */
   YulOverrideKeyword = "YulOverrideKeyword",
   /**
-   * This kind represents a `YulPartialKeyword` node, with the following structure:
+   * Represents a node with kind `YulPartialKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -5228,7 +5228,7 @@ export declare enum TerminalKind {
    */
   YulPartialKeyword = "YulPartialKeyword",
   /**
-   * This kind represents a `YulPayableKeyword` node, with the following structure:
+   * Represents a node with kind `YulPayableKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5237,7 +5237,7 @@ export declare enum TerminalKind {
    */
   YulPayableKeyword = "YulPayableKeyword",
   /**
-   * This kind represents a `YulPopKeyword` node, with the following structure:
+   * Represents a node with kind `YulPopKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_POP_KEYWORD = "pop";
@@ -5245,7 +5245,7 @@ export declare enum TerminalKind {
    */
   YulPopKeyword = "YulPopKeyword",
   /**
-   * This kind represents a `YulPragmaKeyword` node, with the following structure:
+   * Represents a node with kind `YulPragmaKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5254,7 +5254,7 @@ export declare enum TerminalKind {
    */
   YulPragmaKeyword = "YulPragmaKeyword",
   /**
-   * This kind represents a `YulPrevRandaoKeyword` node, with the following structure:
+   * Represents a node with kind `YulPrevRandaoKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.18 *)
@@ -5264,7 +5264,7 @@ export declare enum TerminalKind {
    */
   YulPrevRandaoKeyword = "YulPrevRandaoKeyword",
   /**
-   * This kind represents a `YulPrivateKeyword` node, with the following structure:
+   * Represents a node with kind `YulPrivateKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5273,7 +5273,7 @@ export declare enum TerminalKind {
    */
   YulPrivateKeyword = "YulPrivateKeyword",
   /**
-   * This kind represents a `YulPromiseKeyword` node, with the following structure:
+   * Represents a node with kind `YulPromiseKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -5282,7 +5282,7 @@ export declare enum TerminalKind {
    */
   YulPromiseKeyword = "YulPromiseKeyword",
   /**
-   * This kind represents a `YulPublicKeyword` node, with the following structure:
+   * Represents a node with kind `YulPublicKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5291,7 +5291,7 @@ export declare enum TerminalKind {
    */
   YulPublicKeyword = "YulPublicKeyword",
   /**
-   * This kind represents a `YulPureKeyword` node, with the following structure:
+   * Represents a node with kind `YulPureKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5300,7 +5300,7 @@ export declare enum TerminalKind {
    */
   YulPureKeyword = "YulPureKeyword",
   /**
-   * This kind represents a `YulReceiveKeyword` node, with the following structure:
+   * Represents a node with kind `YulReceiveKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.6.0 until 0.7.1 *)
@@ -5309,7 +5309,7 @@ export declare enum TerminalKind {
    */
   YulReceiveKeyword = "YulReceiveKeyword",
   /**
-   * This kind represents a `YulReferenceKeyword` node, with the following structure:
+   * Represents a node with kind `YulReferenceKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -5318,7 +5318,7 @@ export declare enum TerminalKind {
    */
   YulReferenceKeyword = "YulReferenceKeyword",
   /**
-   * This kind represents a `YulRelocatableKeyword` node, with the following structure:
+   * Represents a node with kind `YulRelocatableKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5327,7 +5327,7 @@ export declare enum TerminalKind {
    */
   YulRelocatableKeyword = "YulRelocatableKeyword",
   /**
-   * This kind represents a `YulReturnDataCopyKeyword` node, with the following structure:
+   * Represents a node with kind `YulReturnDataCopyKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.12 *)
@@ -5337,7 +5337,7 @@ export declare enum TerminalKind {
    */
   YulReturnDataCopyKeyword = "YulReturnDataCopyKeyword",
   /**
-   * This kind represents a `YulReturnDataSizeKeyword` node, with the following structure:
+   * Represents a node with kind `YulReturnDataSizeKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.12 *)
@@ -5347,7 +5347,7 @@ export declare enum TerminalKind {
    */
   YulReturnDataSizeKeyword = "YulReturnDataSizeKeyword",
   /**
-   * This kind represents a `YulReturnKeyword` node, with the following structure:
+   * Represents a node with kind `YulReturnKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_RETURN_KEYWORD = "return";
@@ -5355,7 +5355,7 @@ export declare enum TerminalKind {
    */
   YulReturnKeyword = "YulReturnKeyword",
   /**
-   * This kind represents a `YulReturnsKeyword` node, with the following structure:
+   * Represents a node with kind `YulReturnsKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5364,7 +5364,7 @@ export declare enum TerminalKind {
    */
   YulReturnsKeyword = "YulReturnsKeyword",
   /**
-   * This kind represents a `YulRevertKeyword` node, with the following structure:
+   * Represents a node with kind `YulRevertKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_REVERT_KEYWORD = "revert";
@@ -5372,7 +5372,7 @@ export declare enum TerminalKind {
    */
   YulRevertKeyword = "YulRevertKeyword",
   /**
-   * This kind represents a `YulSDivKeyword` node, with the following structure:
+   * Represents a node with kind `YulSDivKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_S_DIV_KEYWORD = "sdiv";
@@ -5380,7 +5380,7 @@ export declare enum TerminalKind {
    */
   YulSdivKeyword = "YulSdivKeyword",
   /**
-   * This kind represents a `YulSLoadKeyword` node, with the following structure:
+   * Represents a node with kind `YulSLoadKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_S_LOAD_KEYWORD = "sload";
@@ -5388,7 +5388,7 @@ export declare enum TerminalKind {
    */
   YulSloadKeyword = "YulSloadKeyword",
   /**
-   * This kind represents a `YulSModKeyword` node, with the following structure:
+   * Represents a node with kind `YulSModKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_S_MOD_KEYWORD = "smod";
@@ -5396,7 +5396,7 @@ export declare enum TerminalKind {
    */
   YulSmodKeyword = "YulSmodKeyword",
   /**
-   * This kind represents a `YulSStoreKeyword` node, with the following structure:
+   * Represents a node with kind `YulSStoreKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_S_STORE_KEYWORD = "sstore";
@@ -5404,7 +5404,7 @@ export declare enum TerminalKind {
    */
   YulSstoreKeyword = "YulSstoreKeyword",
   /**
-   * This kind represents a `YulSarKeyword` node, with the following structure:
+   * Represents a node with kind `YulSarKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.4.21 *)
@@ -5413,7 +5413,7 @@ export declare enum TerminalKind {
    */
   YulSarKeyword = "YulSarKeyword",
   /**
-   * This kind represents a `YulSealedKeyword` node, with the following structure:
+   * Represents a node with kind `YulSealedKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -5422,7 +5422,7 @@ export declare enum TerminalKind {
    */
   YulSealedKeyword = "YulSealedKeyword",
   /**
-   * This kind represents a `YulSecondsKeyword` node, with the following structure:
+   * Represents a node with kind `YulSecondsKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5431,7 +5431,7 @@ export declare enum TerminalKind {
    */
   YulSecondsKeyword = "YulSecondsKeyword",
   /**
-   * This kind represents a `YulSelfBalanceKeyword` node, with the following structure:
+   * Represents a node with kind `YulSelfBalanceKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.5.12 *)
@@ -5440,7 +5440,7 @@ export declare enum TerminalKind {
    */
   YulSelfBalanceKeyword = "YulSelfBalanceKeyword",
   /**
-   * This kind represents a `YulSelfDestructKeyword` node, with the following structure:
+   * Represents a node with kind `YulSelfDestructKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_SELF_DESTRUCT_KEYWORD = "selfdestruct";
@@ -5448,7 +5448,7 @@ export declare enum TerminalKind {
    */
   YulSelfDestructKeyword = "YulSelfDestructKeyword",
   /**
-   * This kind represents a `YulSgtKeyword` node, with the following structure:
+   * Represents a node with kind `YulSgtKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_SGT_KEYWORD = "sgt";
@@ -5456,7 +5456,7 @@ export declare enum TerminalKind {
    */
   YulSgtKeyword = "YulSgtKeyword",
   /**
-   * This kind represents a `YulSha3Keyword` node, with the following structure:
+   * Represents a node with kind `YulSha3Keyword`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -5466,7 +5466,7 @@ export declare enum TerminalKind {
    */
   YulSha3Keyword = "YulSha3Keyword",
   /**
-   * This kind represents a `YulShlKeyword` node, with the following structure:
+   * Represents a node with kind `YulShlKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.4.21 *)
@@ -5475,7 +5475,7 @@ export declare enum TerminalKind {
    */
   YulShlKeyword = "YulShlKeyword",
   /**
-   * This kind represents a `YulShrKeyword` node, with the following structure:
+   * Represents a node with kind `YulShrKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved in 0.4.21 *)
@@ -5484,7 +5484,7 @@ export declare enum TerminalKind {
    */
   YulShrKeyword = "YulShrKeyword",
   /**
-   * This kind represents a `YulSignExtendKeyword` node, with the following structure:
+   * Represents a node with kind `YulSignExtendKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_SIGN_EXTEND_KEYWORD = "signextend";
@@ -5492,7 +5492,7 @@ export declare enum TerminalKind {
    */
   YulSignExtendKeyword = "YulSignExtendKeyword",
   /**
-   * This kind represents a `YulSizeOfKeyword` node, with the following structure:
+   * Represents a node with kind `YulSizeOfKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -5501,7 +5501,7 @@ export declare enum TerminalKind {
    */
   YulSizeOfKeyword = "YulSizeOfKeyword",
   /**
-   * This kind represents a `YulSltKeyword` node, with the following structure:
+   * Represents a node with kind `YulSltKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_SLT_KEYWORD = "slt";
@@ -5509,7 +5509,7 @@ export declare enum TerminalKind {
    */
   YulSltKeyword = "YulSltKeyword",
   /**
-   * This kind represents a `YulStaticCallKeyword` node, with the following structure:
+   * Represents a node with kind `YulStaticCallKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.4.12 *)
@@ -5519,7 +5519,7 @@ export declare enum TerminalKind {
    */
   YulStaticCallKeyword = "YulStaticCallKeyword",
   /**
-   * This kind represents a `YulStaticKeyword` node, with the following structure:
+   * Represents a node with kind `YulStaticKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5528,7 +5528,7 @@ export declare enum TerminalKind {
    */
   YulStaticKeyword = "YulStaticKeyword",
   /**
-   * This kind represents a `YulStopKeyword` node, with the following structure:
+   * Represents a node with kind `YulStopKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_STOP_KEYWORD = "stop";
@@ -5536,7 +5536,7 @@ export declare enum TerminalKind {
    */
   YulStopKeyword = "YulStopKeyword",
   /**
-   * This kind represents a `YulStorageKeyword` node, with the following structure:
+   * Represents a node with kind `YulStorageKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5545,7 +5545,7 @@ export declare enum TerminalKind {
    */
   YulStorageKeyword = "YulStorageKeyword",
   /**
-   * This kind represents a `YulStringKeyword` node, with the following structure:
+   * Represents a node with kind `YulStringKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5554,7 +5554,7 @@ export declare enum TerminalKind {
    */
   YulStringKeyword = "YulStringKeyword",
   /**
-   * This kind represents a `YulStructKeyword` node, with the following structure:
+   * Represents a node with kind `YulStructKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5563,7 +5563,7 @@ export declare enum TerminalKind {
    */
   YulStructKeyword = "YulStructKeyword",
   /**
-   * This kind represents a `YulSubKeyword` node, with the following structure:
+   * Represents a node with kind `YulSubKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_SUB_KEYWORD = "sub";
@@ -5571,7 +5571,7 @@ export declare enum TerminalKind {
    */
   YulSubKeyword = "YulSubKeyword",
   /**
-   * This kind represents a `YulSuicideKeyword` node, with the following structure:
+   * Represents a node with kind `YulSuicideKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
@@ -5581,7 +5581,7 @@ export declare enum TerminalKind {
    */
   YulSuicideKeyword = "YulSuicideKeyword",
   /**
-   * This kind represents a `YulSuperKeyword` node, with the following structure:
+   * Represents a node with kind `YulSuperKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_SUPER_KEYWORD = "super";
@@ -5589,7 +5589,7 @@ export declare enum TerminalKind {
    */
   YulSuperKeyword = "YulSuperKeyword",
   /**
-   * This kind represents a `YulSupportsKeyword` node, with the following structure:
+   * Represents a node with kind `YulSupportsKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -5598,7 +5598,7 @@ export declare enum TerminalKind {
    */
   YulSupportsKeyword = "YulSupportsKeyword",
   /**
-   * This kind represents a `YulSwitchKeyword` node, with the following structure:
+   * Represents a node with kind `YulSwitchKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_SWITCH_KEYWORD = "switch";
@@ -5606,7 +5606,7 @@ export declare enum TerminalKind {
    */
   YulSwitchKeyword = "YulSwitchKeyword",
   /**
-   * This kind represents a `YulSzaboKeyword` node, with the following structure:
+   * Represents a node with kind `YulSzaboKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.0 *)
@@ -5615,7 +5615,7 @@ export declare enum TerminalKind {
    */
   YulSzaboKeyword = "YulSzaboKeyword",
   /**
-   * This kind represents a `YulTLoadKeyword` node, with the following structure:
+   * Represents a node with kind `YulTLoadKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.24 *)
@@ -5625,7 +5625,7 @@ export declare enum TerminalKind {
    */
   YulTloadKeyword = "YulTloadKeyword",
   /**
-   * This kind represents a `YulTStoreKeyword` node, with the following structure:
+   * Represents a node with kind `YulTStoreKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.8.24 *)
@@ -5635,7 +5635,7 @@ export declare enum TerminalKind {
    */
   YulTstoreKeyword = "YulTstoreKeyword",
   /**
-   * This kind represents a `YulThisKeyword` node, with the following structure:
+   * Represents a node with kind `YulThisKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_THIS_KEYWORD = "this";
@@ -5643,7 +5643,7 @@ export declare enum TerminalKind {
    */
   YulThisKeyword = "YulThisKeyword",
   /**
-   * This kind represents a `YulThrowKeyword` node, with the following structure:
+   * Represents a node with kind `YulThrowKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5652,7 +5652,7 @@ export declare enum TerminalKind {
    */
   YulThrowKeyword = "YulThrowKeyword",
   /**
-   * This kind represents a `YulTimestampKeyword` node, with the following structure:
+   * Represents a node with kind `YulTimestampKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_TIMESTAMP_KEYWORD = "timestamp";
@@ -5660,7 +5660,7 @@ export declare enum TerminalKind {
    */
   YulTimestampKeyword = "YulTimestampKeyword",
   /**
-   * This kind represents a `YulTrueKeyword` node, with the following structure:
+   * Represents a node with kind `YulTrueKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_TRUE_KEYWORD = "true";
@@ -5668,7 +5668,7 @@ export declare enum TerminalKind {
    */
   YulTrueKeyword = "YulTrueKeyword",
   /**
-   * This kind represents a `YulTryKeyword` node, with the following structure:
+   * Represents a node with kind `YulTryKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5677,7 +5677,7 @@ export declare enum TerminalKind {
    */
   YulTryKeyword = "YulTryKeyword",
   /**
-   * This kind represents a `YulTypeDefKeyword` node, with the following structure:
+   * Represents a node with kind `YulTypeDefKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -5686,7 +5686,7 @@ export declare enum TerminalKind {
    */
   YulTypeDefKeyword = "YulTypeDefKeyword",
   /**
-   * This kind represents a `YulTypeKeyword` node, with the following structure:
+   * Represents a node with kind `YulTypeKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5695,7 +5695,7 @@ export declare enum TerminalKind {
    */
   YulTypeKeyword = "YulTypeKeyword",
   /**
-   * This kind represents a `YulTypeOfKeyword` node, with the following structure:
+   * Represents a node with kind `YulTypeOfKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5704,7 +5704,7 @@ export declare enum TerminalKind {
    */
   YulTypeOfKeyword = "YulTypeOfKeyword",
   /**
-   * This kind represents a `YulUfixedKeyword` node, with the following structure:
+   * Represents a node with kind `YulUfixedKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5725,7 +5725,7 @@ export declare enum TerminalKind {
    */
   YulUfixedKeyword = "YulUfixedKeyword",
   /**
-   * This kind represents a `YulUintKeyword` node, with the following structure:
+   * Represents a node with kind `YulUintKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5734,7 +5734,7 @@ export declare enum TerminalKind {
    */
   YulUintKeyword = "YulUintKeyword",
   /**
-   * This kind represents a `YulUncheckedKeyword` node, with the following structure:
+   * Represents a node with kind `YulUncheckedKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.5.0 until 0.7.1 *)
@@ -5743,7 +5743,7 @@ export declare enum TerminalKind {
    */
   YulUncheckedKeyword = "YulUncheckedKeyword",
   /**
-   * This kind represents a `YulUsingKeyword` node, with the following structure:
+   * Represents a node with kind `YulUsingKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5752,7 +5752,7 @@ export declare enum TerminalKind {
    */
   YulUsingKeyword = "YulUsingKeyword",
   /**
-   * This kind represents a `YulVarKeyword` node, with the following structure:
+   * Represents a node with kind `YulVarKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.6.5 *)
@@ -5761,7 +5761,7 @@ export declare enum TerminalKind {
    */
   YulVarKeyword = "YulVarKeyword",
   /**
-   * This kind represents a `YulViewKeyword` node, with the following structure:
+   * Represents a node with kind `YulViewKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5770,7 +5770,7 @@ export declare enum TerminalKind {
    */
   YulViewKeyword = "YulViewKeyword",
   /**
-   * This kind represents a `YulVirtualKeyword` node, with the following structure:
+   * Represents a node with kind `YulVirtualKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved from 0.6.0 until 0.7.1 *)
@@ -5779,7 +5779,7 @@ export declare enum TerminalKind {
    */
   YulVirtualKeyword = "YulVirtualKeyword",
   /**
-   * This kind represents a `YulWeeksKeyword` node, with the following structure:
+   * Represents a node with kind `YulWeeksKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5788,7 +5788,7 @@ export declare enum TerminalKind {
    */
   YulWeeksKeyword = "YulWeeksKeyword",
   /**
-   * This kind represents a `YulWeiKeyword` node, with the following structure:
+   * Represents a node with kind `YulWeiKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5797,7 +5797,7 @@ export declare enum TerminalKind {
    */
   YulWeiKeyword = "YulWeiKeyword",
   /**
-   * This kind represents a `YulWhileKeyword` node, with the following structure:
+   * Represents a node with kind `YulWhileKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5806,7 +5806,7 @@ export declare enum TerminalKind {
    */
   YulWhileKeyword = "YulWhileKeyword",
   /**
-   * This kind represents a `YulXorKeyword` node, with the following structure:
+   * Represents a node with kind `YulXorKeyword`, having the following structure:
    *
    * ```ebnf
    * YUL_XOR_KEYWORD = "xor";
@@ -5814,7 +5814,7 @@ export declare enum TerminalKind {
    */
   YulXorKeyword = "YulXorKeyword",
   /**
-   * This kind represents a `YulYearsKeyword` node, with the following structure:
+   * Represents a node with kind `YulYearsKeyword`, having the following structure:
    *
    * ```ebnf
    * (* Reserved until 0.7.1 *)
@@ -5827,145 +5827,552 @@ export declare enum TerminalKind {
  * Represents the different types of relationships between nodes in the syntax tree.
  */
 export declare enum EdgeLabel {
+  /**
+   * Represents a child node with the label `item`.
+   */
   Item = "Item",
+  /**
+   * Represents a child node with the label `variant`.
+   */
   Variant = "Variant",
+  /**
+   * Represents a child node with the label `separator`.
+   */
   Separator = "Separator",
+  /**
+   * Represents a child node with the label `operand`.
+   */
   Operand = "Operand",
+  /**
+   * Represents a child node with the label `left_operand`.
+   */
   LeftOperand = "LeftOperand",
+  /**
+   * Represents a child node with the label `right_operand`.
+   */
   RightOperand = "RightOperand",
+  /**
+   * Represents a child node with the label `leading_trivia`.
+   */
   LeadingTrivia = "LeadingTrivia",
+  /**
+   * Represents a child node with the label `trailing_trivia`.
+   */
   TrailingTrivia = "TrailingTrivia",
+  /**
+   * Represents a child node with the label `abicoder_keyword`.
+   */
   AbicoderKeyword = "AbicoderKeyword",
+  /**
+   * Represents a child node with the label `abstract_keyword`.
+   */
   AbstractKeyword = "AbstractKeyword",
+  /**
+   * Represents a child node with the label `address_keyword`.
+   */
   AddressKeyword = "AddressKeyword",
+  /**
+   * Represents a child node with the label `alias`.
+   */
   Alias = "Alias",
+  /**
+   * Represents a child node with the label `anonymous_keyword`.
+   */
   AnonymousKeyword = "AnonymousKeyword",
+  /**
+   * Represents a child node with the label `arguments`.
+   */
   Arguments = "Arguments",
+  /**
+   * Represents a child node with the label `as_keyword`.
+   */
   AsKeyword = "AsKeyword",
+  /**
+   * Represents a child node with the label `assembly_keyword`.
+   */
   AssemblyKeyword = "AssemblyKeyword",
+  /**
+   * Represents a child node with the label `assignment`.
+   */
   Assignment = "Assignment",
+  /**
+   * Represents a child node with the label `asterisk`.
+   */
   Asterisk = "Asterisk",
+  /**
+   * Represents a child node with the label `attributes`.
+   */
   Attributes = "Attributes",
+  /**
+   * Represents a child node with the label `block`.
+   */
   Block = "Block",
+  /**
+   * Represents a child node with the label `body`.
+   */
   Body = "Body",
+  /**
+   * Represents a child node with the label `break_keyword`.
+   */
   BreakKeyword = "BreakKeyword",
+  /**
+   * Represents a child node with the label `case_keyword`.
+   */
   CaseKeyword = "CaseKeyword",
+  /**
+   * Represents a child node with the label `cases`.
+   */
   Cases = "Cases",
+  /**
+   * Represents a child node with the label `catch_clauses`.
+   */
   CatchClauses = "CatchClauses",
+  /**
+   * Represents a child node with the label `catch_keyword`.
+   */
   CatchKeyword = "CatchKeyword",
+  /**
+   * Represents a child node with the label `clause`.
+   */
   Clause = "Clause",
+  /**
+   * Represents a child node with the label `close_brace`.
+   */
   CloseBrace = "CloseBrace",
+  /**
+   * Represents a child node with the label `close_bracket`.
+   */
   CloseBracket = "CloseBracket",
+  /**
+   * Represents a child node with the label `close_paren`.
+   */
   CloseParen = "CloseParen",
+  /**
+   * Represents a child node with the label `colon`.
+   */
   Colon = "Colon",
+  /**
+   * Represents a child node with the label `condition`.
+   */
   Condition = "Condition",
+  /**
+   * Represents a child node with the label `constant_keyword`.
+   */
   ConstantKeyword = "ConstantKeyword",
+  /**
+   * Represents a child node with the label `constructor_keyword`.
+   */
   ConstructorKeyword = "ConstructorKeyword",
+  /**
+   * Represents a child node with the label `continue_keyword`.
+   */
   ContinueKeyword = "ContinueKeyword",
+  /**
+   * Represents a child node with the label `contract_keyword`.
+   */
   ContractKeyword = "ContractKeyword",
+  /**
+   * Represents a child node with the label `default_keyword`.
+   */
   DefaultKeyword = "DefaultKeyword",
+  /**
+   * Represents a child node with the label `do_keyword`.
+   */
   DoKeyword = "DoKeyword",
+  /**
+   * Represents a child node with the label `elements`.
+   */
   Elements = "Elements",
+  /**
+   * Represents a child node with the label `else_branch`.
+   */
   ElseBranch = "ElseBranch",
+  /**
+   * Represents a child node with the label `else_keyword`.
+   */
   ElseKeyword = "ElseKeyword",
+  /**
+   * Represents a child node with the label `emit_keyword`.
+   */
   EmitKeyword = "EmitKeyword",
+  /**
+   * Represents a child node with the label `end`.
+   */
   End = "End",
+  /**
+   * Represents a child node with the label `enum_keyword`.
+   */
   EnumKeyword = "EnumKeyword",
+  /**
+   * Represents a child node with the label `equal`.
+   */
   Equal = "Equal",
+  /**
+   * Represents a child node with the label `equal_greater_than`.
+   */
   EqualGreaterThan = "EqualGreaterThan",
+  /**
+   * Represents a child node with the label `error`.
+   */
   Error = "Error",
+  /**
+   * Represents a child node with the label `error_keyword`.
+   */
   ErrorKeyword = "ErrorKeyword",
+  /**
+   * Represents a child node with the label `event`.
+   */
   Event = "Event",
+  /**
+   * Represents a child node with the label `event_keyword`.
+   */
   EventKeyword = "EventKeyword",
+  /**
+   * Represents a child node with the label `experimental_keyword`.
+   */
   ExperimentalKeyword = "ExperimentalKeyword",
+  /**
+   * Represents a child node with the label `expression`.
+   */
   Expression = "Expression",
+  /**
+   * Represents a child node with the label `fallback_keyword`.
+   */
   FallbackKeyword = "FallbackKeyword",
+  /**
+   * Represents a child node with the label `false_expression`.
+   */
   FalseExpression = "FalseExpression",
+  /**
+   * Represents a child node with the label `feature`.
+   */
   Feature = "Feature",
+  /**
+   * Represents a child node with the label `flags`.
+   */
   Flags = "Flags",
+  /**
+   * Represents a child node with the label `for_keyword`.
+   */
   ForKeyword = "ForKeyword",
+  /**
+   * Represents a child node with the label `from_keyword`.
+   */
   FromKeyword = "FromKeyword",
+  /**
+   * Represents a child node with the label `function_keyword`.
+   */
   FunctionKeyword = "FunctionKeyword",
+  /**
+   * Represents a child node with the label `global_keyword`.
+   */
   GlobalKeyword = "GlobalKeyword",
+  /**
+   * Represents a child node with the label `identifier`.
+   */
   Identifier = "Identifier",
+  /**
+   * Represents a child node with the label `if_keyword`.
+   */
   IfKeyword = "IfKeyword",
+  /**
+   * Represents a child node with the label `import_keyword`.
+   */
   ImportKeyword = "ImportKeyword",
+  /**
+   * Represents a child node with the label `index`.
+   */
   Index = "Index",
+  /**
+   * Represents a child node with the label `indexed_keyword`.
+   */
   IndexedKeyword = "IndexedKeyword",
+  /**
+   * Represents a child node with the label `inheritance`.
+   */
   Inheritance = "Inheritance",
+  /**
+   * Represents a child node with the label `initialization`.
+   */
   Initialization = "Initialization",
+  /**
+   * Represents a child node with the label `interface_keyword`.
+   */
   InterfaceKeyword = "InterfaceKeyword",
+  /**
+   * Represents a child node with the label `is_keyword`.
+   */
   IsKeyword = "IsKeyword",
+  /**
+   * Represents a child node with the label `items`.
+   */
   Items = "Items",
+  /**
+   * Represents a child node with the label `iterator`.
+   */
   Iterator = "Iterator",
+  /**
+   * Represents a child node with the label `key_type`.
+   */
   KeyType = "KeyType",
+  /**
+   * Represents a child node with the label `label`.
+   */
   Label = "Label",
+  /**
+   * Represents a child node with the label `leave_keyword`.
+   */
   LeaveKeyword = "LeaveKeyword",
+  /**
+   * Represents a child node with the label `let_keyword`.
+   */
   LetKeyword = "LetKeyword",
+  /**
+   * Represents a child node with the label `library_keyword`.
+   */
   LibraryKeyword = "LibraryKeyword",
+  /**
+   * Represents a child node with the label `literal`.
+   */
   Literal = "Literal",
+  /**
+   * Represents a child node with the label `mapping_keyword`.
+   */
   MappingKeyword = "MappingKeyword",
+  /**
+   * Represents a child node with the label `member`.
+   */
   Member = "Member",
+  /**
+   * Represents a child node with the label `members`.
+   */
   Members = "Members",
+  /**
+   * Represents a child node with the label `minus`.
+   */
   Minus = "Minus",
+  /**
+   * Represents a child node with the label `minus_greater_than`.
+   */
   MinusGreaterThan = "MinusGreaterThan",
+  /**
+   * Represents a child node with the label `modifier_keyword`.
+   */
   ModifierKeyword = "ModifierKeyword",
+  /**
+   * Represents a child node with the label `name`.
+   */
   Name = "Name",
+  /**
+   * Represents a child node with the label `new_keyword`.
+   */
   NewKeyword = "NewKeyword",
+  /**
+   * Represents a child node with the label `open_brace`.
+   */
   OpenBrace = "OpenBrace",
+  /**
+   * Represents a child node with the label `open_bracket`.
+   */
   OpenBracket = "OpenBracket",
+  /**
+   * Represents a child node with the label `open_paren`.
+   */
   OpenParen = "OpenParen",
+  /**
+   * Represents a child node with the label `operator`.
+   */
   Operator = "Operator",
+  /**
+   * Represents a child node with the label `options`.
+   */
   Options = "Options",
+  /**
+   * Represents a child node with the label `overridden`.
+   */
   Overridden = "Overridden",
+  /**
+   * Represents a child node with the label `override_keyword`.
+   */
   OverrideKeyword = "OverrideKeyword",
+  /**
+   * Represents a child node with the label `parameters`.
+   */
   Parameters = "Parameters",
+  /**
+   * Represents a child node with the label `path`.
+   */
   Path = "Path",
+  /**
+   * Represents a child node with the label `paths`.
+   */
   Paths = "Paths",
+  /**
+   * Represents a child node with the label `payable_keyword`.
+   */
   PayableKeyword = "PayableKeyword",
+  /**
+   * Represents a child node with the label `period`.
+   */
   Period = "Period",
+  /**
+   * Represents a child node with the label `pragma`.
+   */
   Pragma = "Pragma",
+  /**
+   * Represents a child node with the label `pragma_keyword`.
+   */
   PragmaKeyword = "PragmaKeyword",
+  /**
+   * Represents a child node with the label `question_mark`.
+   */
   QuestionMark = "QuestionMark",
+  /**
+   * Represents a child node with the label `receive_keyword`.
+   */
   ReceiveKeyword = "ReceiveKeyword",
+  /**
+   * Represents a child node with the label `return_keyword`.
+   */
   ReturnKeyword = "ReturnKeyword",
+  /**
+   * Represents a child node with the label `returns`.
+   */
   Returns = "Returns",
+  /**
+   * Represents a child node with the label `returns_keyword`.
+   */
   ReturnsKeyword = "ReturnsKeyword",
+  /**
+   * Represents a child node with the label `revert_keyword`.
+   */
   RevertKeyword = "RevertKeyword",
+  /**
+   * Represents a child node with the label `semicolon`.
+   */
   Semicolon = "Semicolon",
+  /**
+   * Represents a child node with the label `sets`.
+   */
   Sets = "Sets",
+  /**
+   * Represents a child node with the label `solidity_keyword`.
+   */
   SolidityKeyword = "SolidityKeyword",
+  /**
+   * Represents a child node with the label `start`.
+   */
   Start = "Start",
+  /**
+   * Represents a child node with the label `statements`.
+   */
   Statements = "Statements",
+  /**
+   * Represents a child node with the label `storage_location`.
+   */
   StorageLocation = "StorageLocation",
+  /**
+   * Represents a child node with the label `struct_keyword`.
+   */
   StructKeyword = "StructKeyword",
+  /**
+   * Represents a child node with the label `switch_keyword`.
+   */
   SwitchKeyword = "SwitchKeyword",
+  /**
+   * Represents a child node with the label `symbols`.
+   */
   Symbols = "Symbols",
+  /**
+   * Represents a child node with the label `target`.
+   */
   Target = "Target",
+  /**
+   * Represents a child node with the label `throw_keyword`.
+   */
   ThrowKeyword = "ThrowKeyword",
+  /**
+   * Represents a child node with the label `true_expression`.
+   */
   TrueExpression = "TrueExpression",
+  /**
+   * Represents a child node with the label `try_keyword`.
+   */
   TryKeyword = "TryKeyword",
+  /**
+   * Represents a child node with the label `type_keyword`.
+   */
   TypeKeyword = "TypeKeyword",
+  /**
+   * Represents a child node with the label `type_name`.
+   */
   TypeName = "TypeName",
+  /**
+   * Represents a child node with the label `types`.
+   */
   Types = "Types",
+  /**
+   * Represents a child node with the label `unchecked_keyword`.
+   */
   UncheckedKeyword = "UncheckedKeyword",
+  /**
+   * Represents a child node with the label `unit`.
+   */
   Unit = "Unit",
+  /**
+   * Represents a child node with the label `using_keyword`.
+   */
   UsingKeyword = "UsingKeyword",
+  /**
+   * Represents a child node with the label `value`.
+   */
   Value = "Value",
+  /**
+   * Represents a child node with the label `value_type`.
+   */
   ValueType = "ValueType",
+  /**
+   * Represents a child node with the label `var_keyword`.
+   */
   VarKeyword = "VarKeyword",
+  /**
+   * Represents a child node with the label `variable`.
+   */
   Variable = "Variable",
+  /**
+   * Represents a child node with the label `variable_type`.
+   */
   VariableType = "VariableType",
+  /**
+   * Represents a child node with the label `variables`.
+   */
   Variables = "Variables",
+  /**
+   * Represents a child node with the label `version`.
+   */
   Version = "Version",
+  /**
+   * Represents a child node with the label `while_keyword`.
+   */
   WhileKeyword = "WhileKeyword",
 }
 /**
  * The super type of all nodes in a tree.
  */
 export type Node = NonterminalNode | TerminalNode;
+
+/**
+ * Enumerates different variants of the `Node` type.
+ */
 export enum NodeType {
+  /**
+   * Represents a variant of type `NonterminalNode`.
+   */
   NonterminalNode = "NonterminalNode",
+
+  /**
+   * Represents a variant of type `TerminalNode`.
+   */
   TerminalNode = "TerminalNode",
 }
 /**
@@ -6059,6 +6466,9 @@ export interface TextRange {
  * Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
  */
 export class AncestorsIterator {
+  /**
+   * Returns an iterator over `NonterminalNode` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<NonterminalNode>;
   /**
    * Returns the next nonterminal node in the iteration, or `undefined` if there are no more nodes.
@@ -6200,6 +6610,9 @@ export class Cursor {
  * Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
  */
 export class CursorIterator {
+  /**
+   * Returns an iterator over `Edge` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<Edge>;
   /**
    * Returns the next edge in the iteration, or `undefined` if there are no more edges.
@@ -6288,6 +6701,9 @@ export class Query {
  * Iterator over query matches in the syntax tree.
  */
 export class QueryMatchIterator {
+  /**
+   * Returns an iterator over `QueryMatch` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<QueryMatch>;
   /**
    * Returns the next match or `undefined` if there are no more matches.

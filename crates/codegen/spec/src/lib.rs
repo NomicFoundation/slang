@@ -15,6 +15,7 @@ use std::rc::Rc;
 use anyhow::Result;
 use codegen_language_definition::model::Language;
 use infra_utils::codegen::CodegenFileSystem;
+use infra_utils::paths::PathExtensions;
 
 use crate::generators::grammar_ebnf::generate_grammar_ebnf;
 use crate::generators::navigation::{SpecDir, SpecPage};
@@ -26,7 +27,13 @@ pub struct Spec;
 
 impl Spec {
     pub fn generate(language: Rc<Language>, output_dir: &Path) -> Result<()> {
-        let mut fs = CodegenFileSystem::new(&language.documentation_dir)?;
+        let documentation_dir = Path::repo_path(&language.documentation_dir);
+        let mut fs = CodegenFileSystem::new(documentation_dir)?;
+
+        fs.write_file(
+            output_dir.join("language-definition.json"),
+            serde_json::to_string(&language)?,
+        )?;
 
         let model = SpecModel::build(language);
         let public_dir = Self::generate_public_dir(&model)?;

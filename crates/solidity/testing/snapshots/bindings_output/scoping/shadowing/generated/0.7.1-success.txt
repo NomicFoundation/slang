@@ -1,0 +1,85 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ function foo() {}
+    │          ─┬─  
+    │           ╰─── name: 1
+  2 │ function bar() {}
+    │          ─┬─  
+    │           ╰─── name: 2
+    │ 
+  4 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 3
+  5 │     function bar() public {}
+    │              ─┬─  
+    │               ╰─── name: 4
+    │ 
+  8 │ contract Test is Base {
+    │          ──┬─    ──┬─  
+    │            ╰─────────── name: 5
+    │                    │   
+    │                    ╰─── ref: 3
+  9 │     int x;
+    │         ┬  
+    │         ╰── name: 6
+    │ 
+ 11 │     function test(int x) public {
+    │              ──┬─     ┬  
+    │                ╰───────── name: 7
+    │                       │  
+    │                       ╰── name: 8
+ 12 │         foo();
+    │         ─┬─  
+    │          ╰─── ref: 9
+ 13 │         bar();
+    │         ─┬─  
+    │          ╰─── ref: 4
+ 14 │         x;
+    │         ┬  
+    │         ╰── ref: 8
+    │ 
+ 17 │     function foo() internal {}
+    │              ─┬─  
+    │               ╰─── name: 9
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │           function foo() {}
+    │           ─────────┬────────  
+    │                    ╰────────── definiens: 1
+  2 │     │     function bar() {}
+    │     │     ─────────┬────────  
+    │     │              ╰────────── definiens: 2
+  3 │     ╭───▶ 
+    ┆     ┆     
+  5 │     │         function bar() public {}
+    │     │     ──────────────┬──────────────  
+    │     │                   ╰──────────────── definiens: 4
+  6 │ │   ├───▶ }
+    │ │   │         
+    │ │   ╰───────── definiens: 3
+  7 │ ╭───────▶ 
+    ┆ ┆         
+  9 │ │ │           int x;
+    │ │ │       ─────┬─────  
+    │ │ │            ╰─────── definiens: 6
+ 10 │ │ ╭─────▶ 
+ 11 │ │ │           function test(int x) public {
+    │ │ │                         ──┬──  
+    │ │ │                           ╰──── definiens: 8
+    ┆ ┆ ┆       
+ 15 │ │ ├───│ ▶     }
+    │ │ │   │           
+    │ │ ╰─────────────── definiens: 7
+ 16 │ │     ╭─▶ 
+ 17 │ │     ├─▶     function foo() internal {}
+    │ │     │                                    
+    │ │     ╰──────────────────────────────────── definiens: 9
+ 18 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 5
+────╯

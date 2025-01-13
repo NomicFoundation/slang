@@ -5,17 +5,33 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     string public name;
    │                   ──┬─  
-   │                     ╰─── def: 2
+   │                     ╰─── name: 2
    │ 
  4 │     constructor(string memory _name) {
    │                               ──┬──  
-   │                                 ╰──── def: 3
+   │                                 ╰──── name: 3
  5 │         name = _name;
    │         ──┬─   ──┬──  
    │           ╰─────────── ref: 2
    │                  │    
    │                  ╰──── ref: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ contract Test {
+ 2 │ │       string public name;
+   │ │   ────────────┬───────────  
+   │ │               ╰───────────── definiens: 2
+   ┆ ┆   
+ 4 │ │       constructor(string memory _name) {
+   │ │                   ─────────┬─────────  
+   │ │                            ╰─────────── definiens: 3
+   ┆ ┆   
+ 7 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
 ───╯

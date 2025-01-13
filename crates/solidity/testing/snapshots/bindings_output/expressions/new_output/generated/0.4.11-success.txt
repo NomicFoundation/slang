@@ -5,10 +5,10 @@ References and definitions:
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     function test_new() public returns (uint) {
     │              ────┬───  
-    │                  ╰───── def: 2
+    │                  ╰───── name: 2
   3 │         return new Container().cell().value;
     │                    ────┬────   ──┬─   ──┬──  
     │                        ╰───────────────────── ref: 3
@@ -19,20 +19,50 @@ References and definitions:
     │ 
   7 │ contract Container {
     │          ────┬────  
-    │              ╰────── def: 3
+    │              ╰────── name: 3
   8 │     struct Resource {
     │            ────┬───  
-    │                ╰───── def: 4
+    │                ╰───── name: 4
   9 │         uint value;
     │              ──┬──  
-    │                ╰──── def: 5
+    │                ╰──── name: 5
     │ 
  12 │     function cell() public returns (Resource memory) {
     │              ──┬─                   ────┬───  
-    │                ╰────────────────────────────── def: 6
+    │                ╰────────────────────────────── name: 6
     │                                         │     
     │                                         ╰───── ref: 4
  13 │         return Resource(1);
     │                ────┬───  
     │                    ╰───── ref: 4
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭─│ ────▶ contract Test {
+  2 │   │ ╭─────▶     function test_new() public returns (uint) {
+    ┆   ┆ ┆       
+  4 │   │ ├─────▶     }
+    │   │ │               
+    │   │ ╰─────────────── definiens: 2
+  5 │ │ ├───────▶ }
+    │ │ │             
+    │ │ ╰───────────── definiens: 1
+  6 │ ╭─────────▶ 
+    ┆ ┆       ┆   
+  8 │ │       ╭─▶     struct Resource {
+  9 │ │       │           uint value;
+    │ │       │   ──────────┬─────────  
+    │ │       │             ╰─────────── definiens: 5
+ 10 │ │     │ ├─▶     }
+    │ │     │ │           
+    │ │     │ ╰─────────── definiens: 4
+ 11 │ │     ╭───▶ 
+    ┆ ┆     ┆     
+ 14 │ │     ├───▶     }
+    │ │     │             
+    │ │     ╰───────────── definiens: 6
+ 15 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 3
 ────╯

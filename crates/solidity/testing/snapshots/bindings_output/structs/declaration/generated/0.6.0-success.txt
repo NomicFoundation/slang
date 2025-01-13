@@ -5,40 +5,81 @@ References and definitions:
     │
   1 │ struct TopLevelStruct {
     │        ───────┬──────  
-    │               ╰──────── def: 1
+    │               ╰──────── name: 1
   2 │   int x;
     │       ┬  
-    │       ╰── def: 2
+    │       ╰── name: 2
     │ 
   5 │ library SomeLib {
     │         ───┬───  
-    │            ╰───── def: 3
+    │            ╰───── name: 3
   6 │   struct LibStruct {
     │          ────┬────  
-    │              ╰────── def: 4
+    │              ╰────── name: 4
   7 │     int y;
     │         ┬  
-    │         ╰── def: 5
+    │         ╰── name: 5
   8 │     TopLevelStruct top_level_struct;
     │     ───────┬────── ────────┬───────  
     │            ╰───────────────────────── ref: 1
     │                            │         
-    │                            ╰───────── def: 6
+    │                            ╰───────── name: 6
     │ 
  12 │ contract MyContract {
     │          ─────┬────  
-    │               ╰────── def: 7
+    │               ╰────── name: 7
  13 │   struct ContractStruct {
     │          ───────┬──────  
-    │                 ╰──────── def: 8
+    │                 ╰──────── name: 8
  14 │     int z;
     │         ┬  
-    │         ╰── def: 9
+    │         ╰── name: 9
  15 │     SomeLib.LibStruct lib_struct;
     │     ───┬─── ────┬──── ─────┬────  
     │        ╰────────────────────────── ref: 3
     │                 │          │      
     │                 ╰───────────────── ref: 4
     │                            │      
-    │                            ╰────── def: 10
+    │                            ╰────── name: 10
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │         ╭─▶ struct TopLevelStruct {
+  2 │         │     int x;
+    │         │   ────┬────  
+    │         │       ╰────── definiens: 2
+  3 │   │     ├─▶ }
+    │   │     │       
+    │   │     ╰─────── definiens: 1
+  4 │   ╭───────▶ 
+    ┆   ┆   ┆     
+  6 │   │   ╭───▶   struct LibStruct {
+  7 │   │   │         int y;
+    │   │   │     ─────┬─────  
+    │   │   │          ╰─────── definiens: 5
+  8 │   │   │         TopLevelStruct top_level_struct;
+    │   │   │     ──────────────────┬──────────────────  
+    │   │   │                       ╰──────────────────── definiens: 6
+  9 │   │   ├───▶   }
+    │   │   │           
+    │   │   ╰─────────── definiens: 4
+ 10 │ │ ├───────▶ }
+    │ │ │             
+    │ │ ╰───────────── definiens: 3
+ 11 │ ╭─────────▶ 
+    ┆ ┆   ┆       
+ 13 │ │   ╭─────▶   struct ContractStruct {
+ 14 │ │   │           int z;
+    │ │   │       ─────┬─────  
+    │ │   │            ╰─────── definiens: 9
+ 15 │ │   │           SomeLib.LibStruct lib_struct;
+    │ │   │       ─────────────────┬────────────────  
+    │ │   │                        ╰────────────────── definiens: 10
+ 16 │ │   ├─────▶   }
+    │ │   │             
+    │ │   ╰───────────── definiens: 8
+ 17 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 7
 ────╯

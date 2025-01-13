@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test() public returns (int32) {
+    │              ──┬─  
+    │                ╰─── name: 2
+  3 │         return MyLib.LibType.unwrap(MyLib.create());
+    │                ──┬── ───┬─── ───┬── ──┬── ───┬──  
+    │                  ╰──────────────────────────────── ref: 3
+    │                         │       │     │      │    
+    │                         ╰───────────────────────── ref: 4
+    │                                 │     │      │    
+    │                                 ╰───────────────── ref: built-in
+    │                                       │      │    
+    │                                       ╰─────────── ref: 3
+    │                                              │    
+    │                                              ╰──── ref: 5
+    │ 
+  7 │ library MyLib {
+    │         ──┬──  
+    │           ╰──── name: 3
+  8 │     type LibType is int32;
+    │          ───┬───  
+    │             ╰───── name: 4
+    │ 
+ 10 │     function create() public returns (LibType) {
+    │              ───┬──                   ───┬───  
+    │                 ╰────────────────────────────── name: 5
+    │                                          │     
+    │                                          ╰───── ref: 4
+ 11 │         return LibType.wrap(30);
+    │                ───┬─── ──┬─  
+    │                   ╰────────── ref: 4
+    │                          │   
+    │                          ╰─── ref: built-in
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │   ╭─│ ──▶ contract Test {
+  2 │   │ ╭───▶     function test() public returns (int32) {
+    ┆   ┆ ┆     
+  4 │   │ ├───▶     }
+    │   │ │             
+    │   │ ╰───────────── definiens: 2
+  5 │ │ ├─────▶ }
+    │ │ │           
+    │ │ ╰─────────── definiens: 1
+  6 │ ╭───────▶ 
+    ┆ ┆         
+  8 │ │     │       type LibType is int32;
+    │ │     │   ─────────────┬─────────────  
+    │ │     │                ╰─────────────── definiens: 4
+  9 │ │     ╭─▶ 
+    ┆ ┆     ┆   
+ 12 │ │     ├─▶     }
+    │ │     │           
+    │ │     ╰─────────── definiens: 5
+ 13 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 3
+────╯

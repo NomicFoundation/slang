@@ -15,19 +15,38 @@ References and definitions:
    │
  1 │ contract Fallback {
    │          ────┬───  
-   │              ╰───── def: 1
+   │              ╰───── name: 1
  2 │     event Log(string func, uint256 gas);
    │           ─┬─        ──┬─          ─┬─  
-   │            ╰──────────────────────────── def: 2
+   │            ╰──────────────────────────── name: 2
    │                        │            │   
-   │                        ╰──────────────── def: 3
+   │                        ╰──────────────── name: 3
    │                                     │   
-   │                                     ╰─── def: 4
+   │                                     ╰─── name: 4
  3 │     uint status;
    │          ───┬──  
-   │             ╰──── def: 5
+   │             ╰──── name: 5
    │ 
  5 │     fallback(bytes calldata input) external payable returns (bytes memory output) {
    │     ────┬───  
    │         ╰───── unresolved
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─▶ contract Fallback {
+  2 │ │       event Log(string func, uint256 gas);
+    │ │   ───────────────────┬┬───────────┬────────  
+    │ │                      ╰─────────────────────── definiens: 3
+    │ │                       │           │          
+    │ │                       ╰────────────────────── definiens: 2
+    │ │                                   │          
+    │ │                                   ╰────────── definiens: 4
+  3 │ │       uint status;
+    │ │   ────────┬────────  
+    │ │           ╰────────── definiens: 5
+    ┆ ┆   
+ 13 │ ├─▶ }
+    │ │       
+    │ ╰─────── definiens: 1
+────╯

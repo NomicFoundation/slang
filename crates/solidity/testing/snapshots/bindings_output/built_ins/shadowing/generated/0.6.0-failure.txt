@@ -4,26 +4,28 @@ Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
     ╭─[input.sol:14:1]
     │
- 14 │ function sha256() {}
-    │ ──────────┬──────────  
-    │           ╰──────────── Error occurred here.
+ 14 │ ╭─▶ function sha256() {}
+    ┆ ┆   
+ 18 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
 ────╯
 References and definitions: 
     ╭─[input.sol:1:1]
     │
   1 │ contract Test {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     int tx;
     │         ─┬  
-    │          ╰── def: 2
+    │          ╰── name: 2
     │ 
   4 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 3
+    │                ╰─── name: 3
   5 │         int block;
     │             ──┬──  
-    │               ╰──── def: 4
+    │               ╰──── name: 4
   6 │         block;
     │         ──┬──  
     │           ╰──── ref: 4
@@ -36,5 +38,29 @@ References and definitions:
     │ 
  11 │     function sha256() public {}
     │              ───┬──  
-    │                 ╰──── def: 5
+    │                 ╰──── name: 5
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ contract Test {
+  2 │ │ │         int tx;
+    │ │ │     ──────┬─────  
+    │ │ │           ╰─────── definiens: 2
+  3 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+  5 │ │ │             int block;
+    │ │ │     ─────────┬─────────  
+    │ │ │              ╰─────────── definiens: 4
+    ┆ ┆ ┆     
+  9 │ │ ├─│ ▶     }
+    │ │ │ │           
+    │ │ ╰───────────── definiens: 3
+ 10 │ │   ╭─▶ 
+ 11 │ │   ├─▶     function sha256() public {}
+    │ │   │                                     
+    │ │   ╰───────────────────────────────────── definiens: 5
+ 12 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
 ────╯

@@ -1,0 +1,76 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     enum Cause { InsuficientFunds, NotAuthorized, InvalidDate }
+   │          ──┬──   ────────┬───────  ──────┬──────  ─────┬─────  
+   │            ╰─────────────────────────────────────────────────── name: 2
+   │                          │               │             │       
+   │                          ╰───────────────────────────────────── name: 3
+   │                                          │             │       
+   │                                          ╰───────────────────── name: 4
+   │                                                        │       
+   │                                                        ╰─────── name: 5
+ 3 │     error Failure (
+   │           ───┬───  
+   │              ╰───── name: 6
+ 4 │         Cause cause,
+   │         ──┬── ──┬──  
+   │           ╰────────── ref: 2
+   │                 │    
+   │                 ╰──── name: 7
+ 5 │         string details
+   │                ───┬───  
+   │                   ╰───── name: 8
+   │ 
+ 7 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 9
+ 8 │         revert Failure({cause: Cause.NotAuthorized, details: "not owner"});
+   │                ───┬───  ──┬──  ──┬── ──────┬──────  ───┬───  
+   │                   ╰────────────────────────────────────────── ref: 6
+   │                           │      │         │           │     
+   │                           ╰────────────────────────────────── ref: 7
+   │                                  │         │           │     
+   │                                  ╰─────────────────────────── ref: 2
+   │                                            │           │     
+   │                                            ╰───────────────── ref: 4
+   │                                                        │     
+   │                                                        ╰───── ref: 8
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ contract Test {
+  2 │ │   │       enum Cause { InsuficientFunds, NotAuthorized, InvalidDate }
+    │ │   │   ─────────────────────────┬──────┬────────┬─────────────┬────────  
+    │ │   │                            ╰──────────────────────────────────────── definiens: 3
+    │ │   │                                   │        │             │          
+    │ │   │                                   ╰───────────────────────────────── definiens: 2
+    │ │   │                                            │             │          
+    │ │   │                                            ╰──────────────────────── definiens: 4
+    │ │   │                                                          │          
+    │ │   │                                                          ╰────────── definiens: 5
+  3 │ │   ╭─▶     error Failure (
+  4 │ │   │           Cause cause,
+    │ │   │   ─────────┬─────────  
+    │ │   │            ╰─────────── definiens: 7
+  5 │ │   │           string details
+    │ │   │   ───────────┬───────────  
+    │ │   │              ╰───────────── definiens: 8
+  6 │ │ │ ├─▶     );
+    │ │ │ │            
+    │ │ │ ╰──────────── definiens: 6
+  7 │ │ ╭───▶     function test() public {
+    ┆ ┆ ┆     
+  9 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 9
+ 10 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
+────╯

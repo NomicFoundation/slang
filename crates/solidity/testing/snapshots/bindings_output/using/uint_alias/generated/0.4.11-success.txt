@@ -5,16 +5,16 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     using Lib for uint256;
    │           ─┬─  
    │            ╰─── ref: 4
  3 │     function test() public {
    │              ──┬─  
-   │                ╰─── def: 2
+   │                ╰─── name: 2
  4 │         uint x;
    │              ┬  
-   │              ╰── def: 3
+   │              ╰── name: 3
  5 │         x.nop();
    │         ┬ ─┬─  
    │         ╰────── ref: 3
@@ -23,10 +23,36 @@ References and definitions:
    │ 
  8 │ library Lib {
    │         ─┬─  
-   │          ╰─── def: 4
+   │          ╰─── name: 4
  9 │     function nop(uint256 x) external {}
    │              ─┬─         ┬  
-   │               ╰───────────── def: 5
+   │               ╰───────────── name: 5
    │                          │  
-   │                          ╰── def: 6
+   │                          ╰── name: 6
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ contract Test {
+    ┆ ┆ ┆     
+  3 │ │ ╭───▶     function test() public {
+  4 │ │ │             uint x;
+    │ │ │     ────────┬───────  
+    │ │ │             ╰───────── definiens: 3
+    ┆ ┆ ┆     
+  6 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 2
+  7 │ ├───│ ▶ }
+    │ │   │       
+    │ ╰─────────── definiens: 1
+  8 │     ╭─▶ library Lib {
+  9 │     │       function nop(uint256 x) external {}
+    │     │   ────────────────────┬┬──────────────────  
+    │     │                       ╰───────────────────── definiens: 5
+    │     │                        │                    
+    │     │                        ╰──────────────────── definiens: 6
+ 10 │     ├─▶ }
+    │     │       
+    │     ╰─────── definiens: 4
+────╯

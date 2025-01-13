@@ -5,34 +5,34 @@ References and definitions:
     │
   1 │ contract First {
     │          ──┬──  
-    │            ╰──── def: 1
+    │            ╰──── name: 1
   2 │     enum Choice { One, Two }
     │          ───┬──   ─┬─  ─┬─  
-    │             ╰─────────────── def: 2
+    │             ╰─────────────── name: 2
     │                    │    │   
-    │                    ╰──────── def: 3
+    │                    ╰──────── name: 3
     │                         │   
-    │                         ╰─── def: 4
+    │                         ╰─── name: 4
     │ 
   4 │     int x;
     │         ┬  
-    │         ╰── def: 5
+    │         ╰── name: 5
   5 │     Choice choice;
     │     ───┬── ───┬──  
     │        ╰─────────── ref: 2
     │               │    
-    │               ╰──── def: 6
+    │               ╰──── name: 6
     │ 
   7 │     function get_x() public returns (int) {
     │              ──┬──  
-    │                ╰──── def: 7
+    │                ╰──── name: 7
   8 │         return x;
     │                ┬  
     │                ╰── ref: 5
     │ 
  11 │     function get_choice() public returns (Choice) {
     │              ─────┬────                   ───┬──  
-    │                   ╰─────────────────────────────── def: 8
+    │                   ╰─────────────────────────────── name: 8
     │                                              │    
     │                                              ╰──── ref: 2
  12 │         return choice;
@@ -41,18 +41,18 @@ References and definitions:
     │ 
  16 │ contract Second {
     │          ───┬──  
-    │             ╰──── def: 9
+    │             ╰──── name: 9
  17 │     First.Choice choice;
     │     ──┬── ───┬── ───┬──  
     │       ╰────────────────── ref: 1
     │              │      │    
     │              ╰─────────── ref: 2
     │                     │    
-    │                     ╰──── def: 10
+    │                     ╰──── name: 10
     │ 
  19 │     function get_choice() public returns (First.Choice) {
     │              ─────┬────                   ──┬── ───┬──  
-    │                   ╰───────────────────────────────────── def: 11
+    │                   ╰───────────────────────────────────── name: 11
     │                                             │      │    
     │                                             ╰─────────── ref: 1
     │                                                    │    
@@ -60,4 +60,49 @@ References and definitions:
  20 │         return choice;
     │                ───┬──  
     │                   ╰──── ref: 10
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────────▶ contract First {
+  2 │ │         │       enum Choice { One, Two }
+    │ │         │   ──────────────┬────┬────┬────  
+    │ │         │                 ╰──────────────── definiens: 2
+    │ │         │                      │    │      
+    │ │         │                      ╰─────────── definiens: 3
+    │ │         │                           │      
+    │ │         │                           ╰────── definiens: 4
+  3 │ │         ╭─▶ 
+  4 │ │         ├─▶     int x;
+    │ │         │                
+    │ │         ╰──────────────── definiens: 5
+  5 │ │       │         Choice choice;
+    │ │       │     ─────────┬─────────  
+    │ │       │              ╰─────────── definiens: 6
+  6 │ │       ╭───▶ 
+    ┆ ┆       ┆     
+  9 │ │     │ ├───▶     }
+    │ │     │ │             
+    │ │     │ ╰───────────── definiens: 7
+ 10 │ │     ╭─────▶ 
+    ┆ ┆     ┆       
+ 13 │ │     ├─────▶     }
+    │ │     │               
+    │ │     ╰─────────────── definiens: 8
+ 14 │ ├─│ ────────▶ }
+    │ │ │               
+    │ ╰───────────────── definiens: 1
+ 15 │   ╭─────────▶ 
+    ┆   ┆           
+ 17 │   │ │             First.Choice choice;
+    │   │ │         ────────────┬────────────  
+    │   │ │                     ╰────────────── definiens: 10
+ 18 │   │ ╭───────▶ 
+    ┆   ┆ ┆         
+ 21 │   │ ├───────▶     }
+    │   │ │                 
+    │   │ ╰───────────────── definiens: 11
+ 22 │   ├─────────▶ }
+    │   │               
+    │   ╰─────────────── definiens: 9
 ────╯

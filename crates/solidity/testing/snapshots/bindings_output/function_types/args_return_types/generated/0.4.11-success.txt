@@ -1,0 +1,107 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     struct Coords {
+    │            ───┬──  
+    │               ╰──── name: 2
+  3 │         int x;
+    │             ┬  
+    │             ╰── name: 3
+  4 │         int y;
+    │             ┬  
+    │             ╰── name: 4
+    │ 
+  6 │     enum HitTest {
+    │          ───┬───  
+    │             ╰───── name: 5
+  7 │         Inside,
+    │         ───┬──  
+    │            ╰──── name: 6
+  8 │         Outside
+    │         ───┬───  
+    │            ╰───── name: 7
+    │ 
+ 10 │     struct Box {
+    │            ─┬─  
+    │             ╰─── name: 8
+ 11 │         function (Coords memory) external returns (HitTest) hitTest;
+    │                   ───┬──                           ───┬───  ───┬───  
+    │                      ╰─────────────────────────────────────────────── ref: 2
+    │                                                       │        │     
+    │                                                       ╰────────────── ref: 5
+    │                                                                │     
+    │                                                                ╰───── name: 9
+    │ 
+ 14 │     function insideBox(Box memory b, Coords memory p) public returns (bool) {
+    │              ────┬──── ─┬─        ┬  ───┬──        ┬  
+    │                  ╰──────────────────────────────────── name: 10
+    │                         │         │     │          │  
+    │                         ╰───────────────────────────── ref: 8
+    │                                   │     │          │  
+    │                                   ╰─────────────────── name: 11
+    │                                         │          │  
+    │                                         ╰───────────── ref: 2
+    │                                                    │  
+    │                                                    ╰── name: 12
+ 15 │         return b.hitTest(p) == HitTest.Inside;
+    │                ┬ ───┬─── ┬     ───┬─── ───┬──  
+    │                ╰─────────────────────────────── ref: 11
+    │                     │    │        │       │    
+    │                     ╰────────────────────────── ref: 9
+    │                          │        │       │    
+    │                          ╰───────────────────── ref: 12
+    │                                   │       │    
+    │                                   ╰──────────── ref: 5
+    │                                           │    
+    │                                           ╰──── ref: 6
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────│ ▶ contract Test {
+  2 │ │       ╭─▶     struct Coords {
+  3 │ │       │           int x;
+    │ │       │   ───────┬───────  
+    │ │       │          ╰───────── definiens: 3
+  4 │ │       │           int y;
+    │ │       │   ───────┬───────  
+    │ │       │          ╰───────── definiens: 4
+  5 │ │     │ ├─▶     }
+    │ │     │ │           
+    │ │     │ ╰─────────── definiens: 2
+  6 │ │     ╭───▶     enum HitTest {
+  7 │ │     │             Inside,
+    │ │     │             ───┬──  
+    │ │     │                ╰──── definiens: 6
+  8 │ │     │             Outside
+    │ │     │             ───┬───  
+    │ │     │                ╰───── definiens: 7
+  9 │ │   │ ├───▶     }
+    │ │   │ │             
+    │ │   │ ╰───────────── definiens: 5
+ 10 │ │   ╭─────▶     struct Box {
+ 11 │ │   │               function (Coords memory) external returns (HitTest) hitTest;
+    │ │   │       ──────────────────────────────────┬──────────────────────────────────  
+    │ │   │                                         ╰──────────────────────────────────── definiens: 9
+ 12 │ │ │ ├─────▶     }
+    │ │ │ │               
+    │ │ │ ╰─────────────── definiens: 8
+ 13 │ │ ╭───────▶ 
+ 14 │ │ │             function insideBox(Box memory b, Coords memory p) public returns (bool) {
+    │ │ │                                ──────┬───── ────────┬───────  
+    │ │ │                                      ╰──────────────────────── definiens: 11
+    │ │ │                                                     │         
+    │ │ │                                                     ╰───────── definiens: 12
+    ┆ ┆ ┆         
+ 16 │ │ ├───────▶     }
+    │ │ │                 
+    │ │ ╰───────────────── definiens: 10
+ 17 │ ├─────────▶ }
+    │ │               
+    │ ╰─────────────── definiens: 1
+────╯

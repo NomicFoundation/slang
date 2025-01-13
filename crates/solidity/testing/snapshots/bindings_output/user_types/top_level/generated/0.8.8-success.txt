@@ -1,0 +1,52 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public pure returns (uint) {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         TopLevel tl = TopLevel.wrap(20);
+   │         ────┬─── ─┬   ────┬─── ──┬─  
+   │             ╰──────────────────────── ref: 4
+   │                   │       │      │   
+   │                   ╰────────────────── name: 3
+   │                           │      │   
+   │                           ╰────────── ref: 4
+   │                                  │   
+   │                                  ╰─── ref: built-in
+ 4 │         return TopLevel.unwrap(tl);
+   │                ────┬─── ───┬── ─┬  
+   │                    ╰─────────────── ref: 4
+   │                            │    │  
+   │                            ╰─────── ref: built-in
+   │                                 │  
+   │                                 ╰── ref: 3
+   │ 
+ 8 │ type TopLevel is uint256;
+   │      ────┬───  
+   │          ╰───── name: 4
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ──▶ contract Test {
+ 2 │ │ ╭───▶     function test() public pure returns (uint) {
+ 3 │ │ │             TopLevel tl = TopLevel.wrap(20);
+   │ │ │     ────────────────────┬────────────────────  
+   │ │ │                         ╰────────────────────── definiens: 3
+   ┆ ┆ ┆     
+ 5 │ │ ├───▶     }
+   │ │ │             
+   │ │ ╰───────────── definiens: 2
+ 6 │ ├───│ ▶ }
+   │ │   │       
+   │ ╰─────────── definiens: 1
+ 7 │     ╭─▶ 
+ 8 │     ├─▶ type TopLevel is uint256;
+   │     │                               
+   │     ╰─────────────────────────────── definiens: 4
+───╯

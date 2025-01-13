@@ -5,16 +5,16 @@ References and definitions:
    │
  1 │ contract Test {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function test_non_decl_init() public {
    │              ─────────┬────────  
-   │                       ╰────────── def: 2
+   │                       ╰────────── name: 2
  3 │         int z;
    │             ┬  
-   │             ╰── def: 3
+   │             ╰── name: 3
  4 │         int w = 0;
    │             ┬  
-   │             ╰── def: 4
+   │             ╰── name: 4
  5 │         for (z = 10; z > 0; w += z) {
    │              ┬       ┬      ┬    ┬  
    │              ╰────────────────────── ref: 3
@@ -27,4 +27,23 @@ References and definitions:
  6 │             z--;
    │             ┬  
    │             ╰── ref: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test_non_decl_init() public {
+ 3 │ │ │           int z;
+   │ │ │   ───────┬───────  
+   │ │ │          ╰───────── definiens: 3
+ 4 │ │ │           int w = 0;
+   │ │ │   ─────────┬─────────  
+   │ │ │            ╰─────────── definiens: 4
+   ┆ ┆ ┆   
+ 8 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
 ───╯

@@ -3,36 +3,8 @@ use std::rc::Rc;
 use serde::Serialize;
 
 use crate::cursor::{Cursor, CursorIterator};
-use crate::kinds::{BaseKind, KindTypes, TerminalKindExtensions};
+use crate::kinds::{KindTypes, NodeKind, TerminalKindExtensions};
 use crate::text_index::TextIndex;
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum NodeKind<T: KindTypes> {
-    Nonterminal(T::NonterminalKind),
-    Terminal(T::TerminalKind),
-}
-
-impl<T: KindTypes> From<NodeKind<T>> for &'static str {
-    fn from(val: NodeKind<T>) -> Self {
-        match val {
-            NodeKind::Nonterminal(t) => t.as_static_str(),
-            NodeKind::Terminal(t) => t.as_static_str(),
-        }
-    }
-}
-
-impl<T: KindTypes> std::fmt::Display for NodeKind<T> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            NodeKind::Nonterminal(t) => {
-                write!(f, "{}", t.as_static_str())
-            }
-            NodeKind::Terminal(t) => {
-                write!(f, "{}", t.as_static_str())
-            }
-        }
-    }
-}
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct TerminalNode<T: KindTypes> {
@@ -64,6 +36,18 @@ pub struct Edge<T: KindTypes> {
     pub node: Node<T>,
 }
 
+impl<T: KindTypes> NonterminalNode<T> {
+    pub fn new(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Self {
+        let text_len = children.iter().map(|edge| edge.text_len()).sum();
+
+        NonterminalNode {
+            kind,
+            text_len,
+            children,
+        }
+    }
+}
+
 impl<T: KindTypes> Edge<T> {
     /// Creates an anonymous node (without a label).
     pub fn anonymous(node: Node<T>) -> Self {
@@ -81,13 +65,7 @@ impl<T: KindTypes> std::ops::Deref for Edge<T> {
 
 impl<T: KindTypes> Node<T> {
     pub fn nonterminal(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Self {
-        let text_len = children.iter().map(|edge| edge.text_len()).sum();
-
-        Self::Nonterminal(Rc::new(NonterminalNode {
-            kind,
-            text_len,
-            children,
-        }))
+        Self::Nonterminal(Rc::new(NonterminalNode::new(kind, children)))
     }
 
     pub fn terminal(kind: T::TerminalKind, text: String) -> Self {

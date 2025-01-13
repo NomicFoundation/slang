@@ -5,23 +5,47 @@ References and definitions:
    │
  1 │ contract Base {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
  2 │     function foo() public {}
    │              ─┬─  
-   │               ╰─── def: 2
+   │               ╰─── name: 2
  3 │     function bar() public {
    │              ─┬─  
-   │               ╰─── def: 3
+   │               ╰─── name: 3
  4 │         foo();
    │         ─┬─  
-   │          ╰─── ref: 5
+   │          ╰─── ref: 2
    │ 
  8 │ contract Derived is Base {
    │          ───┬───    ──┬─  
-   │             ╰───────────── def: 4
+   │             ╰───────────── name: 4
    │                       │   
    │                       ╰─── ref: 1
  9 │     function foo() public {}
    │              ─┬─  
-   │               ╰─── def: 5
+   │               ╰─── name: 5
 ───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ contract Base {
+  2 │ │   │       function foo() public {}
+    │ │   │   ──────────────┬──────────────  
+    │ │   │                 ╰──────────────── definiens: 2
+  3 │ │   ╭─▶     function bar() public {
+    ┆ ┆   ┆   
+  5 │ │   ├─▶     }
+    │ │   │           
+    │ │   ╰─────────── definiens: 3
+  6 │ ├─│ ──▶ }
+    │ │ │         
+    │ ╰─────────── definiens: 1
+  7 │   ╭───▶ 
+    ┆   ┆     
+  9 │   │         function foo() public {}
+    │   │     ──────────────┬──────────────  
+    │   │                   ╰──────────────── definiens: 5
+ 10 │   ├───▶ }
+    │   │         
+    │   ╰───────── definiens: 4
+────╯

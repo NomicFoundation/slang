@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn blocks() -> Result<()> {
+    run("yul", "blocks")
+}
+
+#[test]
 fn conditionals() -> Result<()> {
     run("yul", "conditionals")
 }
@@ -25,6 +30,11 @@ fn identifiers_with_dots() -> Result<()> {
 }
 
 #[test]
+fn labels() -> Result<()> {
+    run("yul", "labels")
+}
+
+#[test]
 fn loops() -> Result<()> {
     run("yul", "loops")
 }
@@ -37,6 +47,11 @@ fn slot_offset_members() -> Result<()> {
 #[test]
 fn slot_suffix() -> Result<()> {
     run("yul", "slot_suffix")
+}
+
+#[test]
+fn stack_assign() -> Result<()> {
+    run("yul", "stack_assign")
 }
 
 #[test]

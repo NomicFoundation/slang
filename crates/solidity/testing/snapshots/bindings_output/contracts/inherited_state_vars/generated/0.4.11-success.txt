@@ -5,32 +5,59 @@ References and definitions:
     │
   1 │ contract Base {
     │          ──┬─  
-    │            ╰─── def: 1
+    │            ╰─── name: 1
   2 │     int in_base;
     │         ───┬───  
-    │            ╰───── def: 2
+    │            ╰───── name: 2
     │ 
   4 │ contract Middle is Base {
     │          ───┬──    ──┬─  
-    │             ╰──────────── def: 3
+    │             ╰──────────── name: 3
     │                      │   
     │                      ╰─── ref: 1
   5 │     int in_middle;
     │         ────┬────  
-    │             ╰────── def: 4
+    │             ╰────── name: 4
     │ 
   7 │ contract Test is Middle {
     │          ──┬─    ───┬──  
-    │            ╰───────────── def: 5
+    │            ╰───────────── name: 5
     │                     │    
     │                     ╰──── ref: 3
   8 │     function test() public {
     │              ──┬─  
-    │                ╰─── def: 6
+    │                ╰─── name: 6
   9 │         in_base;
     │         ───┬───  
     │            ╰───── ref: 2
  10 │         in_middle;
     │         ────┬────  
     │             ╰────── ref: 4
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │       ╭─▶ contract Base {
+  2 │       │       int in_base;
+    │       │   ────────┬────────  
+    │       │           ╰────────── definiens: 2
+  3 │     │ ├─▶ }
+    │     │ │       
+    │     │ ╰─────── definiens: 1
+  4 │     ╭───▶ contract Middle is Base {
+  5 │     │         int in_middle;
+    │     │     ─────────┬─────────  
+    │     │              ╰─────────── definiens: 4
+  6 │ │   ├───▶ }
+    │ │   │         
+    │ │   ╰───────── definiens: 3
+  7 │ ╭─│ ────▶ contract Test is Middle {
+  8 │ │ ╭─────▶     function test() public {
+    ┆ ┆ ┆       
+ 11 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 6
+ 12 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 5
 ────╯

@@ -4,21 +4,22 @@ use metaslang_cst::text_index::TextIndex;
 use semver::Version;
 
 use crate::bindings::built_ins::get_built_ins_contents;
-use crate::bindings::BindingGraph;
+use crate::bindings::BindingGraphBuilder;
 use crate::cst::{Edge, Node, NonterminalNode, TerminalKind, TerminalNode};
 use crate::parser::{Parser, ParserInitializationError};
 
 pub fn add_built_ins(
-    binding_graph: &mut BindingGraph,
+    builder: &mut BindingGraphBuilder,
     version: Version,
 ) -> Result<(), ParserInitializationError> {
     let source = get_built_ins_contents(&version);
     let parser = Parser::create(version)?;
     let parse_output = parser.parse(Parser::ROOT_KIND, source);
 
-    let built_ins_cursor = transform(parse_output.tree()).cursor_with_offset(TextIndex::ZERO);
+    let built_ins_cursor = transform(&Node::Nonterminal(Rc::clone(parse_output.tree())))
+        .cursor_with_offset(TextIndex::ZERO);
 
-    binding_graph.add_system_file("built_ins.sol", built_ins_cursor);
+    builder.add_system_file("built_ins.sol", built_ins_cursor);
     Ok(())
 }
 

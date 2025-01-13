@@ -1,10 +1,7 @@
-use std::path::Path;
-
 use codegen_language_definition::model::{
     Field, Item, Language, Scanner, Section, StructItem, TokenDefinition, TokenItem, Topic,
     TriviaParser,
 };
-use infra_utils::paths::PathExtensions;
 use semver::Version;
 
 codegen_language_macros::compile!(Language(
@@ -49,8 +46,8 @@ fn definition() {
         tiny::TinyDefinition::create(),
         Language {
             name: "Tiny".into(),
-            documentation_dir: Path::repo_path("tiny/docs"),
-            binding_rules_file: Path::repo_path("tiny/bindings/rules.msgb"),
+            documentation_dir: "tiny/docs".into(),
+            binding_rules_file: "tiny/bindings/rules.msgb".into(),
             file_extension: Some(".tiny".into()),
             root_item: "Foo".into(),
             leading_trivia: TriviaParser::Sequence { parsers: [].into() },
@@ -65,7 +62,6 @@ fn definition() {
                 title: "Section One".into(),
                 topics: vec![Topic {
                     title: "Topic One".into(),
-                    notes_file: None,
                     lexical_context: None,
                     items: [
                         Item::Struct {

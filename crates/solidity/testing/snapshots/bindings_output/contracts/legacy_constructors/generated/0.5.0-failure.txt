@@ -5,16 +5,31 @@ References and definitions:
    │
  1 │ contract Base {
    │          ──┬─  
-   │            ╰─── def: 1
+   │            ╰─── name: 1
    │ 
  3 │ contract Test is Base {
    │          ──┬─    ──┬─  
-   │            ╰─────────── def: 2
+   │            ╰─────────── name: 2
    │                    │   
    │                    ╰─── ref: 1
  4 │     function Test() public Base() {}
    │              ──┬─          ──┬─  
-   │                ╰───────────────── def: 3
+   │                ╰───────────────── name: 3
    │                              │   
    │                              ╰─── unresolved
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │   ╭─▶ contract Base {
+ 2 │ │ ├─▶ }
+   │ │ │       
+   │ │ ╰─────── definiens: 1
+ 3 │ ╭───▶ contract Test is Base {
+ 4 │ │         function Test() public Base() {}
+   │ │     ──────────────────┬──────────────────  
+   │ │                       ╰──────────────────── definiens: 3
+ 5 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 2
 ───╯
