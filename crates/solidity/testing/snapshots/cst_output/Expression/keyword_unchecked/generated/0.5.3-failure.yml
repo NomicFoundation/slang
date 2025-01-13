@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "unchecked" # (0..9)
+  - (Expression) ► (UNRECOGNIZED): "unchecked" # (0..9)

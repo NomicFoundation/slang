@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): '"\x1"\n' # (0..6)
+  - (StringLiteral) ► (UNRECOGNIZED): '"\x1"\n' # (0..6)

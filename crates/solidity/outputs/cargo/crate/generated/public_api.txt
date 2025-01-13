@@ -37,7 +37,7 @@ pub struct slang_solidity::compilation::File
 impl slang_solidity::compilation::File
 pub fn slang_solidity::compilation::File::create_tree_cursor(&self) -> slang_solidity::cst::Cursor
 pub fn slang_solidity::compilation::File::id(&self) -> &str
-pub fn slang_solidity::compilation::File::tree(&self) -> &slang_solidity::cst::Node
+pub fn slang_solidity::compilation::File::tree(&self) -> &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>
 impl core::clone::Clone for slang_solidity::compilation::File
 pub fn slang_solidity::compilation::File::clone(&self) -> slang_solidity::compilation::File
 pub struct slang_solidity::compilation::InternalCompilationBuilder
@@ -955,7 +955,7 @@ impl slang_solidity::parser::ParseOutput
 pub fn slang_solidity::parser::ParseOutput::create_tree_cursor(&self) -> slang_solidity::cst::Cursor
 pub fn slang_solidity::parser::ParseOutput::errors(&self) -> &alloc::vec::Vec<slang_solidity::parser::ParseError>
 pub fn slang_solidity::parser::ParseOutput::is_valid(&self) -> bool
-pub fn slang_solidity::parser::ParseOutput::tree(&self) -> &slang_solidity::cst::Node
+pub fn slang_solidity::parser::ParseOutput::tree(&self) -> &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>
 impl core::clone::Clone for slang_solidity::parser::ParseOutput
 pub fn slang_solidity::parser::ParseOutput::clone(&self) -> slang_solidity::parser::ParseOutput
 impl core::cmp::PartialEq for slang_solidity::parser::ParseOutput

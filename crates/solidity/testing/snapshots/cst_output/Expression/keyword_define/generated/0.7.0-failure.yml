@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "define" # (0..6)
+  - (Expression) ► (UNRECOGNIZED): "define" # (0..6)

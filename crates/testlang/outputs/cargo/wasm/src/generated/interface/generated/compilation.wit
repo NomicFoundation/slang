@@ -2,7 +2,7 @@
 
 interface compilation {
     use bindings.{binding-graph};
-    use cst.{node, cursor};
+    use cst.{nonterminal-node, cursor};
 
     /// A builder for creating compilation units.
     /// Allows incrementally building a transitive list of all files and their imports.
@@ -62,7 +62,7 @@ interface compilation {
         id: func() -> string;
 
         /// Returns the syntax tree of this file.
-        tree: func() -> node;
+        tree: func() -> nonterminal-node;
 
         /// Creates a cursor for traversing the syntax tree of this file.
         create-tree-cursor: func() -> cursor;

@@ -18,4 +18,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "try foo() {\n} catch {\n}\n" # (0..24)
+  - (TryStatement) ► (UNRECOGNIZED): "try foo() {\n} catch {\n}\n" # (0..24)

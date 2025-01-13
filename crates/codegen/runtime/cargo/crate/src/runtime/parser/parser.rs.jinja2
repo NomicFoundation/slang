@@ -108,7 +108,7 @@ impl Parser {
         {%- else -%}
             match kind {
                 {%- for parser_name, _ in model.parser.parser_functions -%}
-                    NonterminalKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input),
+                    NonterminalKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input, kind),
                 {%- endfor -%}
             }
         {%- endif -%}

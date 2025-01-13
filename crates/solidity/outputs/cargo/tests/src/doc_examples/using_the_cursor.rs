@@ -1,4 +1,5 @@
 use std::path::Path;
+use std::rc::Rc;
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
@@ -89,9 +90,7 @@ fn using_the_cursor() -> Result<()> {
     {
         // --8<-- [start:using-iterator-api]
 
-        let identifiers: Vec<_> = parse_output
-            .tree()
-            .clone()
+        let identifiers: Vec<_> = Rc::clone(parse_output.tree())
             .descendants()
             .filter(|edge| edge.is_terminal_with_kind(TerminalKind::Identifier))
             .map(|identifier| identifier.unparse())
@@ -104,9 +103,7 @@ fn using_the_cursor() -> Result<()> {
     {
         // --8<-- [start:using-cursors-with-labels]
 
-        let identifiers: Vec<_> = parse_output
-            .tree()
-            .clone()
+        let identifiers: Vec<_> = Rc::clone(parse_output.tree())
             .descendants()
             .filter(|edge| edge.label == Some(EdgeLabel::Name))
             .filter(|edge| edge.is_terminal_with_kind(TerminalKind::Identifier))
