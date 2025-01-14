@@ -270,7 +270,7 @@ Tree:
                           - (item꞉ IdentifierPath): # "some." (522..527)
                               - (item꞉ Identifier): "some" # (522..526)
                               - (separator꞉ Period): "." # (526..527)
-                          - (root꞉ MISSING): "" # (527..527)
+                          - (missing꞉ MISSING): "" # (527..527)
                           - (root꞉ Comma): "," # (527..528)
                           - (item꞉ IdentifierPath): # " next.arg" (528..537)
                               - (leading_trivia꞉ Whitespace): " " # (528..529)

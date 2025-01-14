@@ -181,6 +181,7 @@ pub struct Topic {
 pub enum PredefinedLabel {
     Root,
     Unrecognized,
+    Missing,
     Item,
     Variant,
     Separator,

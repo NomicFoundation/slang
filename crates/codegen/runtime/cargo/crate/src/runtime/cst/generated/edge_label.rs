@@ -22,6 +22,8 @@ pub enum EdgeLabel {
     Root,
     /// Represents a child node with the label `unrecognized`.
     Unrecognized,
+    /// Represents a child node with the label `missing`.
+    Missing,
     /// Represents a child node with the label `item`.
     Item,
     /// Represents a child node with the label `variant`.

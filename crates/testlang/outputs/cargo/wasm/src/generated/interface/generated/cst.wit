@@ -215,6 +215,8 @@ interface cst {
             %root,
             /// Represents a child node with the label `unrecognized`.
             %unrecognized,
+            /// Represents a child node with the label `missing`.
+            %missing,
             /// Represents a child node with the label `item`.
             %item,
             /// Represents a child node with the label `variant`.

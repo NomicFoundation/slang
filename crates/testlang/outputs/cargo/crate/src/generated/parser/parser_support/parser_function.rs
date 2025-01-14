@@ -81,16 +81,10 @@ where
                     }
                 }
                 let input = &input[start.utf8..];
-                let kind = if input.is_empty() {
-                    TerminalKind::MISSING
+                let (kind, label) = if input.is_empty() {
+                    (TerminalKind::MISSING, EdgeLabel::Missing)
                 } else {
-                    TerminalKind::UNRECOGNIZED
-                };
-
-                let label = if kind == TerminalKind::UNRECOGNIZED {
-                    EdgeLabel::Unrecognized
-                } else {
-                    EdgeLabel::default()
+                    (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                 };
 
                 let node = Node::terminal(kind, input.to_string());
@@ -148,16 +142,10 @@ where
                     } else {
                         start
                     };
-                    let kind = if input[start..].is_empty() {
-                        TerminalKind::MISSING
+                    let (kind, label) = if input[start..].is_empty() {
+                        (TerminalKind::MISSING, EdgeLabel::Missing)
                     } else {
-                        TerminalKind::UNRECOGNIZED
-                    };
-
-                    let label = if kind == TerminalKind::UNRECOGNIZED {
-                        EdgeLabel::Unrecognized
-                    } else {
-                        EdgeLabel::default()
+                        (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                     };
 
                     let skipped_node = Node::terminal(kind, input[start..].to_string());

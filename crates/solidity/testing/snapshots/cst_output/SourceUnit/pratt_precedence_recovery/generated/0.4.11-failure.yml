@@ -57,7 +57,7 @@ Tree:
                                   - (items꞉ TupleValues): # "" (37..37)
                                       - (item꞉ TupleValue): [] # (37..37)
                                   - (leading_trivia꞉ Whitespace): "\t" # (37..38)
-                      - (root꞉ MISSING): "" # (38..38)
+                      - (missing꞉ MISSING): "" # (38..38)
                       - (close_brace꞉ CloseBrace): "}" # (38..39)
                       - (trailing_trivia꞉ EndOfLine): "\n" # (39..40)
           - (close_brace꞉ CloseBrace): "}" # (40..41)

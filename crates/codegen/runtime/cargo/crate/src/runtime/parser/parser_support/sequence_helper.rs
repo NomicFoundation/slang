@@ -155,16 +155,10 @@ impl SequenceHelper {
                     });
                     debug_assert_eq!(next_terminal, Ok(Some(running.found)));
 
-                    let kind = if running.skipped.is_empty() {
-                        TerminalKind::MISSING
+                    let (kind, label) = if running.skipped.is_empty() {
+                        (TerminalKind::MISSING, EdgeLabel::Missing)
                     } else {
-                        TerminalKind::UNRECOGNIZED
-                    };
-
-                    let label = if kind == TerminalKind::UNRECOGNIZED {
-                        EdgeLabel::Unrecognized
-                    } else {
-                        EdgeLabel::default()
+                        (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                     };
 
                     running.nodes.push(Edge{label, node: Node::terminal(

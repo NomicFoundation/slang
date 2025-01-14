@@ -133,6 +133,7 @@ pub slang_solidity::cst::EdgeLabel::Member
 pub slang_solidity::cst::EdgeLabel::Members
 pub slang_solidity::cst::EdgeLabel::Minus
 pub slang_solidity::cst::EdgeLabel::MinusGreaterThan
+pub slang_solidity::cst::EdgeLabel::Missing
 pub slang_solidity::cst::EdgeLabel::ModifierKeyword
 pub slang_solidity::cst::EdgeLabel::Name
 pub slang_solidity::cst::EdgeLabel::NewKeyword

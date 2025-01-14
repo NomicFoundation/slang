@@ -28,4 +28,4 @@ Tree:
                   - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "  function" (18..28)
                       - (leading_trivia꞉ Whitespace): "  " # (18..20)
                       - (function_keyword꞉ FunctionKeyword): "function" # (20..28)
-      - (root꞉ MISSING): "" # (28..28)
+      - (missing꞉ MISSING): "" # (28..28)

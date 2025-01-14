@@ -51,16 +51,10 @@ impl SeparatedHelper {
                     match skip_until_with_nested_delims::<_, LexCtx>(input, lexer, separator) {
                         // A separator was found, so we can recover the incomplete match
                         Some((found, skipped_range)) if found == separator => {
-                            let kind = if skipped_range.is_empty() {
-                                TerminalKind::MISSING
+                            let (kind, label) = if skipped_range.is_empty() {
+                                (TerminalKind::MISSING, EdgeLabel::Missing)
                             } else {
-                                TerminalKind::UNRECOGNIZED
-                            };
-
-                            let label = if kind == TerminalKind::UNRECOGNIZED {
-                                EdgeLabel::Unrecognized
-                            } else {
-                                EdgeLabel::default()
+                                (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                             };
 
                             accum.push(Edge {

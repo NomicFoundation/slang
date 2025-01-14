@@ -288,6 +288,10 @@ export declare enum EdgeLabel {
    */
   Unrecognized = "Unrecognized",
   /**
+   * Represents a child node with the label `missing`.
+   */
+  Missing = "Missing",
+  /**
    * Represents a child node with the label `item`.
    */
   Item = "Item",

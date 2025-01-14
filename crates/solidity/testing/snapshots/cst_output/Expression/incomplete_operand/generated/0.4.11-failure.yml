@@ -23,4 +23,4 @@ Tree:
           - (leading_trivia꞉ Whitespace): " " # (3..4)
           - (new_keyword꞉ NewKeyword): "new" # (4..7)
           - (trailing_trivia꞉ EndOfLine): "\n" # (7..8)
-      - (root꞉ MISSING): "" # (8..8)
+      - (missing꞉ MISSING): "" # (8..8)
