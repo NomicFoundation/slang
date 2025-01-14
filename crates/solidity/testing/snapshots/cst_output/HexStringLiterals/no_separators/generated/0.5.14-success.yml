@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (HexStringLiterals): # 'hex"1234567890abcdef"' (0..21)
+  - (root꞉ HexStringLiterals): # 'hex"1234567890abcdef"' (0..21)
       - (item꞉ HexStringLiteral) ► (variant꞉ DoubleQuotedHexStringLiteral): 'hex"1234567890abcdef"' # (0..21)

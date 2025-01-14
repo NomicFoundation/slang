@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (FunctionDefinition): # "function transferFrom(address from, address to, ui..." (0..89)
+  - (root꞉ FunctionDefinition): # "function transferFrom(address from, address to, ui..." (0..89)
       - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
       - (name꞉ FunctionName): # " transferFrom" (8..21)
           - (leading_trivia꞉ Whitespace): " " # (8..9)

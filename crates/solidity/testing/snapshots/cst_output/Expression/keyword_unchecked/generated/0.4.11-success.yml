@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ Identifier): "unchecked" # (0..9)
+  - (root꞉ Expression) ► (variant꞉ Identifier): "unchecked" # (0..9)

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (UsingDeconstructionSymbol): # "foo.bar as /" (0..12)
+  - (root꞉ UsingDeconstructionSymbol): # "foo.bar as /" (0..12)
       - (name꞉ IdentifierPath): # "foo.bar" (0..7)
           - (item꞉ Identifier): "foo" # (0..3)
           - (separator꞉ Period): "." # (3..4)

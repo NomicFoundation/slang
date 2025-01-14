@@ -155,15 +155,16 @@ impl SequenceHelper {
                     });
                     debug_assert_eq!(next_terminal, Ok(Some(running.found)));
 
-                    let kind = if running.skipped.is_empty() {
-                        TerminalKind::MISSING
+                    let (kind, label) = if running.skipped.is_empty() {
+                        (TerminalKind::MISSING, EdgeLabel::Missing)
                     } else {
-                        TerminalKind::UNRECOGNIZED
+                        (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                     };
-                    running.nodes.push(Edge::anonymous(Node::terminal(
+
+                    running.nodes.push(Edge{label, node: Node::terminal(
                         kind,
                         std::mem::take(&mut running.skipped),
-                    )));
+                    )});
                     running.nodes.extend(next.nodes);
 
                     self.result = State::Running(ParserResult::Match(Match {

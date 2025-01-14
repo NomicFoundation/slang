@@ -12,7 +12,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (InterfaceDefinition): # "interface ICounter {\n    // returns the current co..." (0..172)
+  - (root꞉ InterfaceDefinition): # "interface ICounter {\n    // returns the current co..." (0..172)
       - (interface_keyword꞉ InterfaceKeyword): "interface" # (0..9)
       - (leading_trivia꞉ Whitespace): " " # (9..10)
       - (name꞉ Identifier): "ICounter" # (10..18)

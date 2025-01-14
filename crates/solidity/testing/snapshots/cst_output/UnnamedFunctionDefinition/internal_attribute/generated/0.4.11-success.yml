@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (UnnamedFunctionDefinition): # "function () internal {}\n" (0..24)
+  - (root꞉ UnnamedFunctionDefinition): # "function () internal {}\n" (0..24)
       - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
       - (parameters꞉ ParametersDeclaration): # " ()" (8..11)
           - (leading_trivia꞉ Whitespace): " " # (8..9)

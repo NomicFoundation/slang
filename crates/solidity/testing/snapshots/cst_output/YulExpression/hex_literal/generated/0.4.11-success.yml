@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulExpression) ► (variant꞉ YulLiteral) ► (variant꞉ YulHexLiteral): "0x123" # (0..5)
+  - (root꞉ YulExpression) ► (variant꞉ YulLiteral) ► (variant꞉ YulHexLiteral): "0x123" # (0..5)

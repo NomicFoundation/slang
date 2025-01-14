@@ -14,12 +14,12 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (StateVariableDefinition): # "uint transient foo;\n" (0..20)
+  - (root꞉ StateVariableDefinition): # "uint transient foo;\n" (0..20)
       - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint" # (0..4)
       - (attributes꞉ StateVariableAttributes): [] # (4..4)
       - (leading_trivia꞉ Whitespace): " " # (4..5)
       - (name꞉ Identifier): "transient" # (5..14)
       - (leading_trivia꞉ Whitespace): " " # (14..15)
-      - (UNRECOGNIZED): "foo" # (15..18)
+      - (unrecognized꞉ UNRECOGNIZED): "foo" # (15..18)
       - (semicolon꞉ Semicolon): ";" # (18..19)
       - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)

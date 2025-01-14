@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (UsingDeconstructionSymbol) ► (name꞉ IdentifierPath): # "foo" (0..3)
+  - (root꞉ UsingDeconstructionSymbol) ► (name꞉ IdentifierPath): # "foo" (0..3)
       - (item꞉ Identifier): "foo" # (0..3)

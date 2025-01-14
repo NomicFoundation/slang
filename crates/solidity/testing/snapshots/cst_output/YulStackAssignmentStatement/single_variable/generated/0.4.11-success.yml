@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulStackAssignmentStatement): # "=: success\n" (0..11)
+  - (root꞉ YulStackAssignmentStatement): # "=: success\n" (0..11)
       - (assignment꞉ YulStackAssignmentOperator) ► (variant꞉ EqualColon): "=:" # (0..2)
       - (leading_trivia꞉ Whitespace): " " # (2..3)
       - (variable꞉ YulIdentifier): "success" # (3..10)

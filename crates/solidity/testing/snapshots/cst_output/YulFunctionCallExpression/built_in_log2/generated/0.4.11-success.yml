@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "log2()\n" (0..7)
+  - (root꞉ YulFunctionCallExpression): # "log2()\n" (0..7)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulLog2Keyword): "log2" # (0..4)
       - (open_paren꞉ OpenParen): "(" # (4..5)
       - (arguments꞉ YulArguments): [] # (5..5)

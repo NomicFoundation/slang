@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ FunctionCallExpression): # "x(1, 2)" (0..7)
+  - (root꞉ Expression) ► (variant꞉ FunctionCallExpression): # "x(1, 2)" (0..7)
       - (operand꞉ Expression) ► (variant꞉ Identifier): "x" # (0..1)
       - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "(1, 2)" (1..7)
           - (open_paren꞉ OpenParen): "(" # (1..2)

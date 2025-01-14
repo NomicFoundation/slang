@@ -9,7 +9,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (StructDefinition): # "struct State {\n  bool accepts;\n  function (byte) i..." (0..86)
+  - (root꞉ StructDefinition): # "struct State {\n  bool accepts;\n  function (byte) i..." (0..86)
       - (struct_keyword꞉ StructKeyword): "struct" # (0..6)
       - (leading_trivia꞉ Whitespace): " " # (6..7)
       - (name꞉ Identifier): "State" # (7..12)

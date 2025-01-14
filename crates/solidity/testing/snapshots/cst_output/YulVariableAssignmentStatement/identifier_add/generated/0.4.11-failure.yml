@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulVariableAssignmentStatement) ► (UNRECOGNIZED): "add := 0\n" # (0..9)
+  - (root꞉ YulVariableAssignmentStatement) ► (unrecognized꞉ UNRECOGNIZED): "add := 0\n" # (0..9)

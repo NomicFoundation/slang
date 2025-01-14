@@ -23,7 +23,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "// Constructors introduced in 0.4.22 but `construc..." (0..191)
+  - (root꞉ ContractDefinition): # "// Constructors introduced in 0.4.22 but `construc..." (0..191)
       - (leading_trivia꞉ SingleLineComment): "// Constructors introduced in 0.4.22 but `construc..." # (0..91)
       - (leading_trivia꞉ EndOfLine): "\n" # (91..92)
       - (leading_trivia꞉ EndOfLine): "\n" # (92..93)
@@ -39,6 +39,6 @@ Tree:
                   - (leading_trivia꞉ Whitespace): "\t" # (113..114)
                   - (item꞉ Identifier): "constructor" # (114..125)
               - (attributes꞉ StateVariableAttributes): [] # (125..125)
-      - (UNRECOGNIZED): "() {}\n    function func() public {\n\t\tuint256 const..." # (125..189)
+      - (unrecognized꞉ UNRECOGNIZED): "() {}\n    function func() public {\n\t\tuint256 const..." # (125..189)
       - (close_brace꞉ CloseBrace): "}" # (189..190)
       - (trailing_trivia꞉ EndOfLine): "\n" # (190..191)

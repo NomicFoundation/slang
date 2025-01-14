@@ -7,7 +7,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (SourceUnit): # "/* multi-line\n   comment */\n" (0..28)
+  - (root꞉ SourceUnit): # "/* multi-line\n   comment */\n" (0..28)
       - (members꞉ SourceUnitMembers): [] # (0..0)
       - (leading_trivia꞉ MultiLineComment): "/* multi-line\n   comment */" # (0..27)
       - (leading_trivia꞉ EndOfLine): "\n" # (27..28)

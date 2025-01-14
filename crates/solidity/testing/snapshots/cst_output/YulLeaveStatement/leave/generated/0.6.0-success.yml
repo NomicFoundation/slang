@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulLeaveStatement) ► (leave_keyword꞉ YulLeaveKeyword): "leave" # (0..5)
+  - (root꞉ YulLeaveStatement) ► (leave_keyword꞉ YulLeaveKeyword): "leave" # (0..5)

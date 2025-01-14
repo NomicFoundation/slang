@@ -17,6 +17,7 @@ use {
     Clone,
     Copy,
     Debug,
+    Default,
     Eq,
     PartialEq,
     serde::Serialize,
@@ -24,6 +25,7 @@ use {
     strum_macros::EnumString,
 )]
 pub enum DummyKind {
+    #[default]
     Module,
 }
 impl metaslang_cst::kinds::TerminalKindExtensions for DummyKind {}

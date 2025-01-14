@@ -34,12 +34,12 @@ impl<T: KindTypes + 'static> Cursor<T> {
                     NodeKind::Nonterminal(nonterminal.kind) == *node_kind
                 }
                 NodeSelector::NodeText { .. } => false,
-                NodeSelector::EdgeLabel { edge_label } => Some(*edge_label) == self.label(),
+                NodeSelector::EdgeLabel { edge_label } => *edge_label == self.label(),
                 NodeSelector::EdgeLabelAndNodeKind {
                     edge_label,
                     node_kind,
                 } => {
-                    Some(*edge_label) == self.label()
+                    *edge_label == self.label()
                         && NodeKind::Nonterminal(nonterminal.kind) == *node_kind
                 }
                 NodeSelector::EdgeLabelAndNodeText { .. } => false,
@@ -53,18 +53,15 @@ impl<T: KindTypes + 'static> Cursor<T> {
                     NodeKind::Terminal(terminal.kind) == *node_kind
                 }
                 NodeSelector::NodeText { node_text } => terminal.text == *node_text,
-                NodeSelector::EdgeLabel { edge_label } => Some(*edge_label) == self.label(),
+                NodeSelector::EdgeLabel { edge_label } => *edge_label == self.label(),
                 NodeSelector::EdgeLabelAndNodeKind {
                     edge_label,
                     node_kind,
-                } => {
-                    Some(*edge_label) == self.label()
-                        && NodeKind::Terminal(terminal.kind) == *node_kind
-                }
+                } => *edge_label == self.label() && NodeKind::Terminal(terminal.kind) == *node_kind,
                 NodeSelector::EdgeLabelAndNodeText {
                     edge_label,
                     node_text,
-                } => Some(*edge_label) == self.label() && terminal.text == *node_text,
+                } => *edge_label == self.label() && terminal.text == *node_text,
             },
         }
     }

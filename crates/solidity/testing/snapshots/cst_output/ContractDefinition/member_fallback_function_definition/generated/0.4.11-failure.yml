@@ -18,7 +18,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "contract Sample {\n  fallback() {\n  }\n}" (0..38)
+  - (root꞉ ContractDefinition): # "contract Sample {\n  fallback() {\n  }\n}" (0..38)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Sample" # (9..15)
@@ -31,5 +31,5 @@ Tree:
                   - (leading_trivia꞉ Whitespace): "  " # (18..20)
                   - (item꞉ Identifier): "fallback" # (20..28)
               - (attributes꞉ StateVariableAttributes): [] # (28..28)
-      - (UNRECOGNIZED): "() {\n  }\n" # (28..37)
+      - (unrecognized꞉ UNRECOGNIZED): "() {\n  }\n" # (28..37)
       - (close_brace꞉ CloseBrace): "}" # (37..38)

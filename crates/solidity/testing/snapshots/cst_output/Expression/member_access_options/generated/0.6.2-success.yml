@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ CallOptionsExpression): # "foo.deposit{value: 100}\n" (0..24)
+  - (root꞉ Expression) ► (variant꞉ CallOptionsExpression): # "foo.deposit{value: 100}\n" (0..24)
       - (operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "foo.deposit" (0..11)
           - (operand꞉ Expression) ► (variant꞉ Identifier): "foo" # (0..3)
           - (period꞉ Period): "." # (3..4)

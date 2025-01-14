@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (FunctionType): # "function () constant internal returns (uint)\n" (0..45)
+  - (root꞉ FunctionType): # "function () constant internal returns (uint)\n" (0..45)
       - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
       - (parameters꞉ ParametersDeclaration): # " ()" (8..11)
           - (leading_trivia꞉ Whitespace): " " # (8..9)
@@ -23,4 +23,4 @@ Tree:
           - (close_paren꞉ CloseParen): ")" # (10..11)
       - (attributes꞉ FunctionTypeAttributes): [] # (11..11)
       - (leading_trivia꞉ Whitespace): " " # (11..12)
-      - (UNRECOGNIZED): "constant internal returns (uint)\n" # (12..45)
+      - (unrecognized꞉ UNRECOGNIZED): "constant internal returns (uint)\n" # (12..45)

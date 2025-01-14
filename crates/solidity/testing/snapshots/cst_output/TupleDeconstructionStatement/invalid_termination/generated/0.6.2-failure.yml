@@ -16,7 +16,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TupleDeconstructionStatement): # "(a, b) = (123, 135)\n/**/\n{ throw; \n" (0..35)
+  - (root꞉ TupleDeconstructionStatement): # "(a, b) = (123, 135)\n/**/\n{ throw; \n" (0..35)
       - (open_paren꞉ OpenParen): "(" # (0..1)
       - (elements꞉ TupleDeconstructionElements): # "a, b" (1..5)
           - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember) ► (name꞉ Identifier): "a" # (1..2)
@@ -43,7 +43,7 @@ Tree:
           - (leading_trivia꞉ EndOfLine): "\n" # (24..25)
           - (open_brace꞉ OpenBrace): "{" # (25..26)
       - (leading_trivia꞉ Whitespace): " " # (26..27)
-      - (UNRECOGNIZED): "throw" # (27..32)
+      - (unrecognized꞉ UNRECOGNIZED): "throw" # (27..32)
       - (semicolon꞉ Semicolon): ";" # (32..33)
       - (trailing_trivia꞉ Whitespace): " " # (33..34)
       - (trailing_trivia꞉ EndOfLine): "\n" # (34..35)

@@ -8,7 +8,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (TryStatement): # "try foo() {\n} catch {\n}\n" (0..24)
+  - (root꞉ TryStatement): # "try foo() {\n} catch {\n}\n" (0..24)
       - (try_keyword꞉ TryKeyword): "try" # (0..3)
       - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # " foo()" (3..9)
           - (operand꞉ Expression): # " foo" (3..7)

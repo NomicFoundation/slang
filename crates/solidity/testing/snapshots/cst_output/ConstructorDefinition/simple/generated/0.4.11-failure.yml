@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ConstructorDefinition) ► (UNRECOGNIZED): "constructor () {}" # (0..17)
+  - (root꞉ ConstructorDefinition) ► (unrecognized꞉ UNRECOGNIZED): "constructor () {}" # (0..17)

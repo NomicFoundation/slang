@@ -8,7 +8,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (SourceUnit): # "/**\n * @foo bar\n */\n" (0..20)
+  - (root꞉ SourceUnit): # "/**\n * @foo bar\n */\n" (0..20)
       - (members꞉ SourceUnitMembers): [] # (0..0)
       - (leading_trivia꞉ MultiLineNatSpecComment): "/**\n * @foo bar\n */" # (0..19)
       - (leading_trivia꞉ EndOfLine): "\n" # (19..20)

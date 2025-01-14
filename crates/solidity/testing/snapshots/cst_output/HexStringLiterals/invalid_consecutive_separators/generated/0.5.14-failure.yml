@@ -14,5 +14,5 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (HexStringLiterals): # 'hex"12__34"' (0..11)
-      - (UNRECOGNIZED): 'hex"12__34"' # (0..11)
+  - (root꞉ HexStringLiterals): # 'hex"12__34"' (0..11)
+      - (unrecognized꞉ UNRECOGNIZED): 'hex"12__34"' # (0..11)

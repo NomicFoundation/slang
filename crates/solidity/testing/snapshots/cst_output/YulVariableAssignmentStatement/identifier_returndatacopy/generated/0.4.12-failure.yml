@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulVariableAssignmentStatement) ► (UNRECOGNIZED): "returndatacopy := 0\n" # (0..20)
+  - (root꞉ YulVariableAssignmentStatement) ► (unrecognized꞉ UNRECOGNIZED): "returndatacopy := 0\n" # (0..20)

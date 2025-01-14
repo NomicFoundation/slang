@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (BreakStatement): # "break ;\n" (0..8)
+  - (root꞉ BreakStatement): # "break ;\n" (0..8)
       - (break_keyword꞉ BreakKeyword): "break" # (0..5)
       - (leading_trivia꞉ Whitespace): " " # (5..6)
       - (semicolon꞉ Semicolon): ";" # (6..7)

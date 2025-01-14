@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (FunctionType): # "function () internal pure returns (uint)\n" (0..41)
+  - (root꞉ FunctionType): # "function () internal pure returns (uint)\n" (0..41)
       - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
       - (parameters꞉ ParametersDeclaration): # " ()" (8..11)
           - (leading_trivia꞉ Whitespace): " " # (8..9)

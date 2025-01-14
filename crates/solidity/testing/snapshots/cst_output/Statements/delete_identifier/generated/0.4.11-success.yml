@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Statements): # "delete foo;" (0..11)
+  - (root꞉ Statements): # "delete foo;" (0..11)
       - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "delete foo;" (0..11)
           - (expression꞉ Expression) ► (variant꞉ PrefixExpression): # "delete foo" (0..10)
               - (operator꞉ DeleteKeyword): "delete" # (0..6)
