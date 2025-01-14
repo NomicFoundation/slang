@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): "'दिल'\n" # (0..12)
+  - (root꞉ StringLiteral) ► (unrecognized꞉ UNRECOGNIZED): "'दिल'\n" # (0..12)

@@ -14,4 +14,5 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): 'unicode"emoji 😃"' # (0..19)
+  - (root꞉ UnicodeStringLiterals): # 'unicode"emoji 😃"' (0..19)
+      - (unrecognized꞉ UNRECOGNIZED): 'unicode"emoji 😃"' # (0..19)

@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): "function () private {}\n" # (0..23)
+  - (root꞉ UnnamedFunctionDefinition) ► (unrecognized꞉ UNRECOGNIZED): "function () private {}\n" # (0..23)

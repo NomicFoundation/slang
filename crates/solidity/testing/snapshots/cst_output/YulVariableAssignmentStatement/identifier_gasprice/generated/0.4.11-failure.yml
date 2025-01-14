@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): "gasprice := 0\n" # (0..14)
+  - (root꞉ YulVariableAssignmentStatement) ► (unrecognized꞉ UNRECOGNIZED): "gasprice := 0\n" # (0..14)

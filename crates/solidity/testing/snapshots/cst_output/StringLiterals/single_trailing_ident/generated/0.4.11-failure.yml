@@ -14,4 +14,5 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): '"foo"bar\n' # (0..9)
+  - (root꞉ StringLiterals): # '"foo"bar\n' (0..9)
+      - (unrecognized꞉ UNRECOGNIZED): '"foo"bar\n' # (0..9)

@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): "constructor" # (0..11)
+  - (root꞉ Expression) ► (unrecognized꞉ UNRECOGNIZED): "constructor" # (0..11)

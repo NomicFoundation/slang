@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): "var z = 0;" # (0..10)
+  - (root꞉ VariableDeclarationStatement) ► (unrecognized꞉ UNRECOGNIZED): "var z = 0;" # (0..10)

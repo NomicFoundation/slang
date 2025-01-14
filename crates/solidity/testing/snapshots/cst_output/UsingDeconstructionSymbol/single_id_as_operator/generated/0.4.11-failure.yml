@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): "foo as /" # (0..8)
+  - (root꞉ UsingDeconstructionSymbol) ► (unrecognized꞉ UNRECOGNIZED): "foo as /" # (0..8)

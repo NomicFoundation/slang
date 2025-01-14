@@ -7,8 +7,8 @@ export namespace NomicFoundationSlangCompilation {
 }
 import type { BindingGraph } from "./nomic-foundation-slang-bindings.js";
 export { BindingGraph };
-import type { Node } from "./nomic-foundation-slang-cst.js";
-export { Node };
+import type { NonterminalNode } from "./nomic-foundation-slang-cst.js";
+export { NonterminalNode };
 import type { Cursor } from "./nomic-foundation-slang-cst.js";
 export { Cursor };
 /**
@@ -64,7 +64,7 @@ export class File {
   /**
    * Returns the syntax tree of this file.
    */
-  get tree(): Node;
+  get tree(): NonterminalNode;
   /**
    * Creates a cursor for traversing the syntax tree of this file.
    */

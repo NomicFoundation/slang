@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): "selfbalance := 0\n" # (0..17)
+  - (root꞉ YulVariableAssignmentStatement) ► (unrecognized꞉ UNRECOGNIZED): "selfbalance := 0\n" # (0..17)

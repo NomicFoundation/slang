@@ -13,7 +13,9 @@ mod ffi {
         Guest, GuestCompilationUnit, GuestFile, GuestInternalCompilationBuilder,
         InternalCompilationBuilder, InternalCompilationBuilderBorrow,
     };
-    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{Cursor, Node};
+    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{
+        Cursor, NonterminalNode,
+    };
 }
 
 mod rust {
@@ -112,7 +114,7 @@ define_rc_wrapper! { File {
         self._borrow_ffi().id().to_owned()
     }
 
-    fn tree(&self) -> ffi::Node {
+    fn tree(&self) -> ffi::NonterminalNode {
         self._borrow_ffi().tree().to_owned()._into_ffi()
     }
 

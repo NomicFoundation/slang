@@ -38,9 +38,8 @@ fn using_the_parser() -> Result<()> {
     // --8<-- [end:assert-is-valid]
 
     // --8<-- [start:inspect-tree]
-    let tree = parse_output.tree();
+    let contract = parse_output.tree();
 
-    let contract = tree.as_nonterminal().unwrap();
     assert_eq!(contract.kind, NonterminalKind::ContractDefinition);
     assert_eq!(contract.children.len(), 7);
 

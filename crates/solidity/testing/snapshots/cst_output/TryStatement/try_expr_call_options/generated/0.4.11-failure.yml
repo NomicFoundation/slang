@@ -19,4 +19,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" # (0..42)
+  - (root꞉ TryStatement) ► (unrecognized꞉ UNRECOGNIZED): "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" # (0..42)

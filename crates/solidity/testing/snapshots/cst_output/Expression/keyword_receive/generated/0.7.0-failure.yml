@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): "receive" # (0..7)
+  - (root꞉ Expression) ► (unrecognized꞉ UNRECOGNIZED): "receive" # (0..7)

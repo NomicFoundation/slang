@@ -36,6 +36,18 @@ pub struct Edge<T: KindTypes> {
     pub node: Node<T>,
 }
 
+impl<T: KindTypes> NonterminalNode<T> {
+    pub fn new(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Self {
+        let text_len = children.iter().map(|edge| edge.text_len()).sum();
+
+        NonterminalNode {
+            kind,
+            text_len,
+            children,
+        }
+    }
+}
+
 impl<T: KindTypes> Edge<T> {
     /// Creates an edge to a root node (using the default label).
     pub fn root(node: Node<T>) -> Self {
@@ -56,13 +68,7 @@ impl<T: KindTypes> std::ops::Deref for Edge<T> {
 
 impl<T: KindTypes> Node<T> {
     pub fn nonterminal(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Self {
-        let text_len = children.iter().map(|edge| edge.text_len()).sum();
-
-        Self::Nonterminal(Rc::new(NonterminalNode {
-            kind,
-            text_len,
-            children,
-        }))
+        Self::Nonterminal(Rc::new(NonterminalNode::new(kind, children)))
     }
 
     pub fn terminal(kind: T::TerminalKind, text: String) -> Self {

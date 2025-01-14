@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): "auto" # (0..4)
+  - (root꞉ Expression) ► (unrecognized꞉ UNRECOGNIZED): "auto" # (0..4)

@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (root꞉ UNRECOGNIZED): "fallback () {}" # (0..14)
+  - (root꞉ FallbackFunctionDefinition) ► (unrecognized꞉ UNRECOGNIZED): "fallback () {}" # (0..14)
