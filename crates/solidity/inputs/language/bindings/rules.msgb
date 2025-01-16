@@ -1033,14 +1033,19 @@ inherit .star_extension
 ;;; Mappings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; When there's a parsing error (like a name in parameters for versions below 0.8.18)
+;;; we still need the basics to get bindings working
+@mapping [MappingType] {
+  node @mapping.lexical_scope
+  node @mapping.output
+  node @mapping.pop_begin
+  node @mapping.pop_end
+}
+
 @mapping [MappingType
     [MappingKey [MappingKeyType @key_type ([IdentifierPath] | [ElementaryType])] [Identifier]?]
     [MappingValue @value_type [TypeName] [Identifier]?]
 ] {
-  print "MAPPING FULL"
-  node @mapping.lexical_scope
-  node @mapping.output
-
   ; Define the pushing path of the mapping type
   ;   ValueType <- top of the symbol stack
   ;   KeyType
@@ -1082,20 +1087,10 @@ inherit .star_extension
   node pop_mapping
   attr (pop_mapping) pop_symbol = "%Mapping"
 
-  let @mapping.pop_begin = @value_type.pop_begin
+  edge @mapping.pop_begin -> @value_type.pop_begin
   edge @value_type.pop_end -> @key_type.pop_begin
   edge @key_type.pop_end -> pop_mapping
-  let @mapping.pop_end = pop_mapping
-}
-
-;;; When there's a parsing error (like a name in parameters for versions below 0.8.18)
-;;; we still need the basics to get bindings working
-@mapping [MappingType [MappingKey] [UNRECOGNIZED]] {
-  print "MAPPING UNRECOGNIZED"
-  node @mapping.lexical_scope
-  node @mapping.output
-  node @mapping.pop_begin
-  node @mapping.pop_end
+  edge @mapping.pop_end -> pop_mapping
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
