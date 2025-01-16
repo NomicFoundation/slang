@@ -1039,11 +1039,12 @@ inherit .star_extension
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @mapping [MappingType
-    [MappingKey [MappingKeyType @key_type ([IdentifierPath] | [ElementaryType])]]
-    [MappingValue @value_type [TypeName]]
+    [MappingKey [MappingKeyType @key_type ([IdentifierPath] | [ElementaryType])] [Identifier]?]
+    [MappingValue @value_type [TypeName] [Identifier]?]
 ] {
-  node @mapping.lexical_scope
-  node @mapping.output
+  print "MAPPING FULL"
+  ;node @mapping.lexical_scope
+  ;node @mapping.output
 
   ; Define the pushing path of the mapping type
   ;   ValueType <- top of the symbol stack
@@ -1092,6 +1093,15 @@ inherit .star_extension
   let @mapping.pop_end = pop_mapping
 }
 
+;;; When there's a parsing error (like a name in parameters for versions below 0.8.18)
+;;; we still need the basics to get bindings working
+@mapping [MappingType [MappingKey] [UNRECOGNIZED]] {
+  print "MAPPING UNRECOGNIZED"
+  node @mapping.lexical_scope
+  node @mapping.output
+  node @mapping.pop_begin
+  node @mapping.pop_end
+}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Arrays types
