@@ -10,10 +10,8 @@ description = "A generic library for building, navigating and querying concrete 
 homepage = "https://nomicfoundation.github.io/slang/"
 repository = "https://github.com/NomicFoundation/slang/"
 authors = [
+    "Slang Team <slang@nomic.foundation>",
     "Nomic Foundation <packages@nomic.foundation>",
-    "Antony Blakey <antony@nomic.foundation>",
-    "Igor Matuszewski <igor@nomic.foundation>",
-    "Omar Tawfik <omar@nomic.foundation>",
 ]
 
 readme = "README.md"
