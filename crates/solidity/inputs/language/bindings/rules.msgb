@@ -1090,7 +1090,7 @@ inherit .star_extension
   edge @mapping.pop_begin -> @value_type.pop_begin
   edge @value_type.pop_end -> @key_type.pop_begin
   edge @key_type.pop_end -> pop_mapping
-  edge @mapping.pop_end -> pop_mapping
+  edge pop_mapping -> @mapping.pop_end
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
