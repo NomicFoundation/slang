@@ -128,6 +128,10 @@ impl<T: KindTypes> Cursor<T> {
         }
     }
 
+    pub fn has_default_label(&self) -> bool {
+        self.label() == T::EdgeLabel::default()
+    }
+
     /// Returns the text offset that corresponds to the beginning of the currently pointed to node.
     pub fn text_offset(&self) -> TextIndex {
         self.text_offset
@@ -422,6 +426,10 @@ impl<T: KindTypes> Cursor<T> {
         }
 
         false
+    }
+
+    pub fn is_true_root(&self) -> bool {
+        matches!(self.parent, Parent::None)
     }
 }
 

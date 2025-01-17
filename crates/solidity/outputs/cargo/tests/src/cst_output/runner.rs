@@ -57,7 +57,14 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             })
             .collect();
 
-        let cursor = output.create_tree_cursor();
+        let mut cursor = output.create_tree_cursor();
+        while cursor.go_to_next() {
+            if !cursor.is_true_root() {
+                assert!(!cursor.has_default_label());
+            }
+        }
+
+        cursor.reset();
 
         let status = if output.is_valid() {
             TestStatus::Success
