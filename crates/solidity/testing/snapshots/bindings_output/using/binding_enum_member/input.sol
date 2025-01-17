@@ -1,17 +1,17 @@
-enum Answer {
-  Yes
-}
-
 library Id {
+  enum Answer {
+    Yes
+  }
+
   function id(Answer ans) returns (Answer) {
     return ans;
   }
 }
 
 contract Test {
-  using Id for Answer;
+  using Id for Id.Answer;
 
-  function testFunc() returns (Answer) {
-    Answer.Yes.id();
+  function testFunc() returns (Id.Answer) {
+    Id.Answer.Yes.id();
   }
 }

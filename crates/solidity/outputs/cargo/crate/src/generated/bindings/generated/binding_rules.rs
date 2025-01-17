@@ -2056,6 +2056,15 @@ inherit .star_extension
   edge type -> type_enum_type
   edge type_enum_type -> @enum.lexical_scope
 
+  ; value_ref_typeof allows for an enum value to access the
+  ; functions associated to this type
+  node @enum.value_ref_typeof
+  attr (@enum.value_ref_typeof) push_symbol = "@typeof"
+  node value_ref_type
+  attr (value_ref_type) push_symbol = (source-text @name)
+  edge @enum.value_ref_typeof -> value_ref_type
+  edge value_ref_type -> @enum.lexical_scope
+
   ; Path to link min and max to the enum's scope (#1158)
   ; It resolves paths of the form `type(<enum>).min.<something>`
   if (version-matches ">= 0.6.8") {
@@ -2068,10 +2077,6 @@ inherit .star_extension
     attr (min_built_in) pop_symbol = "min"
     node max_built_in
     attr (max_built_in) pop_symbol = "max"
-    node @enum.value_ref_typeof
-    attr (@enum.value_ref_typeof) push_symbol = "@typeof"
-    node value_ref_type
-    attr (value_ref_type) push_symbol = (source-text @name)
 
     edge type -> typeof
     edge typeof -> built_in_member
@@ -2079,8 +2084,6 @@ inherit .star_extension
     edge built_in_member -> max_built_in
     edge min_built_in -> @enum.value_ref_typeof
     edge max_built_in -> @enum.value_ref_typeof
-    edge @enum.value_ref_typeof -> value_ref_type
-    edge value_ref_type -> @enum.lexical_scope
   }
 }
 
@@ -2091,10 +2094,7 @@ inherit .star_extension
   attr (def) node_definition = @item
   attr (def) definiens_node = @item
 
-  if (version-matches ">= 0.6.8") {
-    edge def -> @enum.value_ref_typeof
-  }
-
+  edge def -> @enum.value_ref_typeof
   edge @enum.members -> def
 }
 
