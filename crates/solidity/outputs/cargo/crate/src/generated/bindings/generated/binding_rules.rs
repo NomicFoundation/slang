@@ -1048,8 +1048,8 @@ inherit .star_extension
 }
 
 @mapping [MappingType
-    [MappingKey [MappingKeyType @key_type ([IdentifierPath] | [ElementaryType])] [Identifier]?]
-    [MappingValue @value_type [TypeName] [Identifier]?]
+    [MappingKey [MappingKeyType @key_type ([IdentifierPath] | [ElementaryType])]]
+    [MappingValue @value_type [TypeName]]
 ] {
   ; Define the pushing path of the mapping type
   ;   ValueType <- top of the symbol stack
@@ -1096,6 +1096,28 @@ inherit .star_extension
   edge @value_type.pop_end -> @key_type.pop_begin
   edge @key_type.pop_end -> pop_mapping
   edge pop_mapping -> @mapping.pop_end
+
+  node @mapping.defs
+}
+
+@mapping [MappingType
+    @key [MappingKey [MappingKeyType] @key_name [Identifier]]
+    [MappingValue]
+] {
+  node @key.def
+  attr (@key.def) node_definition = @key_name
+  attr (@key.def) definiens_node = @key
+  edge @key.def -> @mapping.defs
+}
+
+@mapping [MappingType
+    [MappingKey]
+    @value [MappingValue [TypeName] @value_name [Identifier]]
+] {
+  node @value.def
+  attr (@value.def) node_definition = @value_name
+  attr (@value.def) definiens_node = @value
+  edge @value.def -> @mapping.defs
 }
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,7 +1,7 @@
 contract NamedMapping {
-  mapping(address name => uint256) public myMap;
+  mapping(address name => uint256) public justNameInKey;
 
-  // function test(address _addr) public view returns (uint256) {
-  //   return this.myMap(_addr);
-  // }
+  mapping(address => uint256 amount) public justNameInValue;
+
+  mapping(address name => uint256 amount) public nameInBoth;
 }
