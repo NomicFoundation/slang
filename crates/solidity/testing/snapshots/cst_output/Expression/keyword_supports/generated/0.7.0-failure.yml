@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "supports" # (0..8)
+  - (Expression) ► (UNRECOGNIZED): "supports" # (0..8)

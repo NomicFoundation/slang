@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "delegatecall := 0\n" # (0..18)
+  - (YulVariableAssignmentStatement) ► (UNRECOGNIZED): "delegatecall := 0\n" # (0..18)

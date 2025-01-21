@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "promise" # (0..7)
+  - (Expression) ► (UNRECOGNIZED): "promise" # (0..7)

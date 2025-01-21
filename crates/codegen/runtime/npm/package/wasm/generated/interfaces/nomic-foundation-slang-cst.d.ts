@@ -65,13 +65,37 @@ export declare enum TerminalKind {
  * Represents the different types of relationships between nodes in the syntax tree.
  */
 export declare enum EdgeLabel {
+  /**
+   * Represents a child node with the label `item`.
+   */
   Item = "Item",
+  /**
+   * Represents a child node with the label `variant`.
+   */
   Variant = "Variant",
+  /**
+   * Represents a child node with the label `separator`.
+   */
   Separator = "Separator",
+  /**
+   * Represents a child node with the label `operand`.
+   */
   Operand = "Operand",
+  /**
+   * Represents a child node with the label `left_operand`.
+   */
   LeftOperand = "LeftOperand",
+  /**
+   * Represents a child node with the label `right_operand`.
+   */
   RightOperand = "RightOperand",
+  /**
+   * Represents a child node with the label `leading_trivia`.
+   */
   LeadingTrivia = "LeadingTrivia",
+  /**
+   * Represents a child node with the label `trailing_trivia`.
+   */
   TrailingTrivia = "TrailingTrivia",
   /**
    * Generated stub.

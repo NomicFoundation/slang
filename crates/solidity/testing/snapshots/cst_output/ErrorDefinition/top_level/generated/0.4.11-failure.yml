@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "error MyError();" # (0..16)
+  - (ErrorDefinition) ► (UNRECOGNIZED): "error MyError();" # (0..16)

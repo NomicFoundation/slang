@@ -89,6 +89,9 @@ pub enum Expression {
     Atom {
         atom: String,
     },
+    NegativeLookAhead {
+        expression: Box<Self>,
+    },
     Reference {
         leading_comment: Option<String>,
         reference: Identifier,
@@ -101,7 +104,7 @@ impl Expression {
         // This separates members of the same precedence, like both "a b (c | d)" and "a | b | (c d)".
         match self {
             // Binary
-            Self::Choice { .. } | Self::Range { .. } | Self::Sequence { .. } => 1,
+            Self::Choice { .. } | Self::Sequence { .. } => 1,
 
             // Prefix
             Self::Not { .. } => 2,
@@ -110,7 +113,10 @@ impl Expression {
             Self::OneOrMore { .. } | Self::Optional { .. } | Self::ZeroOrMore { .. } => 3,
 
             // Primary
-            Self::Atom { .. } | Self::Reference { .. } => 4,
+            Self::Range { .. }
+            | Self::Atom { .. }
+            | Self::NegativeLookAhead { .. }
+            | Self::Reference { .. } => 4,
         }
     }
 }

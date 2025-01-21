@@ -140,12 +140,17 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
                 inclusive_start,
                 inclusive_end,
             } => {
-                self.serialize_child_expr(parent, inclusive_start)?;
+                self.serialize_expr(inclusive_start)?;
                 self.serialize_punctuation("…")?;
-                self.serialize_child_expr(parent, inclusive_end)?;
+                self.serialize_expr(inclusive_end)?;
             }
             Expression::Atom { atom } => {
                 self.serialize_string_literal(atom)?;
+            }
+            Expression::NegativeLookAhead { expression } => {
+                self.serialize_punctuation("(?!")?;
+                self.serialize_expr(expression)?;
+                self.serialize_punctuation(")")?;
             }
             Expression::Reference {
                 leading_comment,

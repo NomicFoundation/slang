@@ -45,7 +45,7 @@ impl InternalCompilationBuilder {
 
         let import_paths = self.imports.extract(parse_output.create_tree_cursor());
 
-        let file = File::new(id.clone(), parse_output.tree().clone());
+        let file = File::new(id.clone(), Rc::clone(parse_output.tree()));
         self.files.insert(id, file);
 
         AddFileResponse { import_paths }

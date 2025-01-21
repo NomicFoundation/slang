@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "timestamp := 0\n" # (0..15)
+  - (YulVariableAssignmentStatement) ► (UNRECOGNIZED): "timestamp := 0\n" # (0..15)

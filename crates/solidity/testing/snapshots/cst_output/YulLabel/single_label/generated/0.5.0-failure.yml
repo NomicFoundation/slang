@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "foo:\n" # (0..5)
+  - (YulLabel) ► (UNRECOGNIZED): "foo:\n" # (0..5)

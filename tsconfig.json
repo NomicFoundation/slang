@@ -50,6 +50,9 @@
 
     /* Emit */
     "noEmit": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
 
     /* JavaScript Support */
     "allowJs": true,

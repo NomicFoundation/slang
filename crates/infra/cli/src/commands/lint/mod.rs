@@ -2,11 +2,13 @@ use std::path::Path;
 
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
+use infra_utils::cargo::CargoWorkspaceCommands;
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
 use infra_utils::terminal::Terminal;
 
+use crate::toolchains::mkdocs::Mkdocs;
 use crate::toolchains::pipenv::PipEnv;
 use crate::utils::{ClapExtensions, OrderedCommand};
 
@@ -24,6 +26,12 @@ impl LintController {
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum LintCommand {
+    /// Run `cargo clippy` to check for any Rust lints.
+    Clippy,
+    /// Run `cargo doc` to generate Rustdoc documentation and check for any broken links.
+    Rustdoc,
+    /// Check mkdocs documentation for any build issues or broken links.
+    Mkdocs,
     /// Check for spelling issues in Markdown files.
     Cspell,
     /// Format all non-Rust source files.
@@ -40,6 +48,8 @@ enum LintCommand {
     Tsc,
     /// Check for violations issues in Yaml files.
     Yamllint,
+    /// Check for violations in TypeScript documentation files.
+    Typedoc,
 }
 
 impl OrderedCommand for LintCommand {
@@ -47,6 +57,9 @@ impl OrderedCommand for LintCommand {
         Terminal::step(format!("lint {name}", name = self.clap_name()));
 
         match self {
+            LintCommand::Clippy => run_clippy(),
+            LintCommand::Rustdoc => run_rustdoc(),
+            LintCommand::Mkdocs => run_mkdocs(),
             LintCommand::Cspell => run_cspell(),
             LintCommand::Prettier => run_prettier(),
             LintCommand::MarkdownLinkCheck => run_markdown_link_check()?,
@@ -55,10 +68,37 @@ impl OrderedCommand for LintCommand {
             LintCommand::Shellcheck => run_shellcheck()?,
             LintCommand::Tsc => run_tsc(),
             LintCommand::Yamllint => run_yamllint()?,
+            LintCommand::Typedoc => run_typedoc()?,
         };
 
         Ok(())
     }
+}
+
+fn run_clippy() {
+    Command::new("cargo")
+        .arg("clippy")
+        .flag("--workspace")
+        .flag("--all-features")
+        .flag("--all-targets")
+        .flag("--no-deps")
+        .add_build_rustflags()
+        .run();
+}
+
+fn run_rustdoc() {
+    Command::new("cargo")
+        .arg("doc")
+        .flag("--workspace")
+        .flag("--all-features")
+        .flag("--no-deps")
+        .flag("--document-private-items")
+        .add_build_rustflags()
+        .run();
+}
+
+fn run_mkdocs() {
+    Mkdocs::check();
 }
 
 fn run_cspell() {
@@ -149,6 +189,18 @@ fn run_yamllint() -> Result<()> {
         .flag("--strict")
         .property("--config-file", config_file.unwrap_str())
         .run_xargs(yaml_files);
+
+    Ok(())
+}
+
+fn run_typedoc() -> Result<()> {
+    let options_files = FileWalker::from_repo_root().find(["**/typedoc.mjs"])?;
+
+    for options_file in options_files {
+        Command::new("typedoc")
+            .property("--options", options_file.unwrap_string())
+            .run();
+    }
 
     Ok(())
 }
