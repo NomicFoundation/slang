@@ -58,13 +58,6 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .collect();
 
         let mut cursor = output.create_tree_cursor();
-        while cursor.go_to_next() {
-            if !cursor.is_true_root() {
-                assert!(!cursor.has_default_label());
-            }
-        }
-
-        cursor.reset();
 
         let status = if output.is_valid() {
             TestStatus::Success
@@ -72,13 +65,32 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             TestStatus::Failure
         };
 
-        let snapshot = render(&source, &errors, cursor)?;
+        let snapshot = render(&source, &errors, &mut cursor)?;
 
-        let snapshot_path = test_dir
-            .join("generated")
-            .join(format!("{version}-{status}.yml"));
+        cursor.reset();
 
-        fs.write_file(snapshot_path, &snapshot)?;
+        let mut child_has_default_label = false;
+        while cursor.go_to_next() {
+            child_has_default_label = !cursor.is_true_root() && cursor.has_default_label();
+            if child_has_default_label {
+                break;
+            }
+        }
+
+        if child_has_default_label {
+            // Print out the generated snapshot and fail the test
+            eprintln!("{snapshot}");
+
+            // Always fails here, just gives a bit more context when reading the test output
+            assert!(!child_has_default_label);
+        } else {
+            // Test did not assign a bad edge label, so save the snapshot to the expected file
+            let snapshot_path = test_dir
+                .join("generated")
+                .join(format!("{version}-{status}.yml"));
+
+            fs.write_file(snapshot_path, &snapshot)?;
+        }
     }
 
     Ok(())
