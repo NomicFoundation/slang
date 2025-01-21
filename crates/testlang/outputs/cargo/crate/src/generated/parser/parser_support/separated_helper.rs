@@ -68,7 +68,10 @@ impl SeparatedHelper {
                                 incomplete.expected_terminals,
                             ));
 
-                            match lexer.parse_terminal_with_trivia::<LexCtx>(input, separator) {
+                            match lexer
+                                .parse_terminal_with_trivia::<LexCtx>(input, separator)
+                                .with_label(separator_label)
+                            {
                                 ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
                                     continue;
