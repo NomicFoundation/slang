@@ -44,10 +44,9 @@ fn test_cargo() -> Result<()> {
 
     Command::new("cargo")
         .args(["nextest", "run"])
-        .args(["--exclude", "solidity_testing_perf"]) // Requires callgrind, which may not be available
         .flag("--workspace")
         .flag("--all-features")
-        .flag("--all-targets")
+        .flag("--tests")
         .flag("--no-fail-fast")
         .add_build_rustflags()
         .run();
