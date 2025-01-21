@@ -18,7 +18,7 @@ export interface AddFileResponse {
   /**
    * List of cursors to any import paths found in the file.
    */
-  importPaths: Cursor[];
+  importPaths: Array<Cursor>;
 }
 
 /**
@@ -38,7 +38,7 @@ export class CompilationUnit {
   /**
    * Returns a list of all files in the compilation unit.
    */
-  files(): File[];
+  files(): Array<File>;
   /**
    * Returns the file with the specified ID, if it exists.
    */

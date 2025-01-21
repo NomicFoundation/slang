@@ -16,8 +16,19 @@ export { Cursor };
  * It can either be in a user file, or a built-in in the language.
  */
 export type BindingLocation = UserFileLocation | BuiltInLocation;
+
+/**
+ * Enumerates different variants of the `BindingLocation` type.
+ */
 export enum BindingLocationType {
+  /**
+   * Represents a variant of type `UserFileLocation`.
+   */
   UserFileLocation = "UserFileLocation",
+
+  /**
+   * Represents a variant of type `BuiltInLocation`.
+   */
   BuiltInLocation = "BuiltInLocation",
 }
 
@@ -110,7 +121,7 @@ export class Reference {
    * Most references have a single definition, but some have multiple, such as when a symbol
    * is imported from another file, and renamed (re-defined) in the current file.
    */
-  definitions(): Definition[];
+  definitions(): Array<Definition>;
 }
 
 /**

@@ -90,8 +90,19 @@ export declare enum EdgeLabel {
  * The super type of all nodes in a tree.
  */
 export type Node = NonterminalNode | TerminalNode;
+
+/**
+ * Enumerates different variants of the `Node` type.
+ */
 export enum NodeType {
+  /**
+   * Represents a variant of type `NonterminalNode`.
+   */
   NonterminalNode = "NonterminalNode",
+
+  /**
+   * Represents a variant of type `TerminalNode`.
+   */
   TerminalNode = "TerminalNode",
 }
 /**
@@ -135,7 +146,7 @@ export interface QueryMatch {
   /**
    * List of captured nodes and their names from the query.
    */
-  captures: { [key: string]: Cursor[] };
+  captures: { [key: string]: Array<Cursor> };
 }
 /**
  * Represents a position in the source text, with indices for different unicode encodings of the source.
@@ -185,6 +196,9 @@ export interface TextRange {
  * Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
  */
 export class AncestorsIterator {
+  /**
+   * Returns an iterator over `NonterminalNode` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<NonterminalNode>;
   /**
    * Returns the next nonterminal node in the iteration, or `undefined` if there are no more nodes.
@@ -242,7 +256,7 @@ export class Cursor {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of the current node in pre-order traversal.
    */
@@ -302,7 +316,7 @@ export class Cursor {
   /**
    * Moves to the next terminal node matching any of the given kinds.
    */
-  goToNextTerminalWithKinds(kinds: TerminalKind[]): boolean;
+  goToNextTerminalWithKinds(kinds: Array<TerminalKind>): boolean;
   /**
    * Nonterminal navigation methods
    * Moves to the next nonterminal node.
@@ -315,17 +329,20 @@ export class Cursor {
   /**
    * Moves to the next nonterminal node matching any of the given kinds.
    */
-  goToNextNonterminalWithKinds(kinds: NonterminalKind[]): boolean;
+  goToNextNonterminalWithKinds(kinds: Array<NonterminalKind>): boolean;
   /**
    * Executes the given queries and returns an iterator over the matches.
    */
-  query(queries: Query[]): QueryMatchIterator;
+  query(queries: Array<Query>): QueryMatchIterator;
 }
 
 /**
  * Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
  */
 export class CursorIterator {
+  /**
+   * Returns an iterator over `Edge` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<Edge>;
   /**
    * Returns the next edge in the iteration, or `undefined` if there are no more edges.
@@ -380,7 +397,7 @@ export class NonterminalNode {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of the current node in pre-order traversal.
    */
@@ -414,6 +431,9 @@ export class Query {
  * Iterator over query matches in the syntax tree.
  */
 export class QueryMatchIterator {
+  /**
+   * Returns an iterator over `QueryMatch` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<QueryMatch>;
   /**
    * Returns the next match or `undefined` if there are no more matches.
@@ -482,7 +502,7 @@ export class TerminalNode {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of this node in pre-order traversal.
    */

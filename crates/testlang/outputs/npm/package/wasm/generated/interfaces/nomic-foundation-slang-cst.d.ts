@@ -26,8 +26,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * AdditionExpression = (* left_operand: *) Expression
-   * (* operator: *) PLUS
-   * (* right_operand: *) Expression;
+   *                      (* operator: *) PLUS
+   *                      (* right_operand: *) Expression;
    * ```
    */
   AdditionExpression = "AdditionExpression",
@@ -36,10 +36,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * Expression = (* variant: *) AdditionExpression
-   * | (* variant: *) NegationExpression
-   * | (* variant: *) MemberAccessExpression
-   * | (* variant: *) STRING_LITERAL
-   * | (* variant: *) IDENTIFIER;
+   *            | (* variant: *) NegationExpression
+   *            | (* variant: *) MemberAccessExpression
+   *            | (* variant: *) STRING_LITERAL
+   *            | (* variant: *) IDENTIFIER;
    * ```
    */
   Expression = "Expression",
@@ -57,8 +57,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Postfix unary operator *)
    * MemberAccessExpression = (* operand: *) Expression
-   * (* period: *) PERIOD
-   * (* member: *) IDENTIFIER;
+   *                          (* period: *) PERIOD
+   *                          (* member: *) IDENTIFIER;
    * ```
    */
   MemberAccessExpression = "MemberAccessExpression",
@@ -68,7 +68,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Prefix unary operator *)
    * NegationExpression = (* operator: *) BANG
-   * (* operand: *) Expression;
+   *                      (* operand: *) Expression;
    * ```
    */
   NegationExpression = "NegationExpression",
@@ -94,9 +94,9 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * SourceUnitMember = (* variant: *) Tree
-   * | (* variant: *) Expression
-   * | (* variant: *) SeparatedIdentifiers
-   * | (* variant: *) Literal;
+   *                  | (* variant: *) Expression
+   *                  | (* variant: *) SeparatedIdentifiers
+   *                  | (* variant: *) Literal;
    * ```
    */
   SourceUnitMember = "SourceUnitMember",
@@ -113,9 +113,9 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * Tree = (* keyword: *) TREE_KEYWORD
-   * (* name: *) IDENTIFIER?
-   * (* node: *) TreeNode
-   * (* semicolon: *) SEMICOLON;
+   *        (* name: *) IDENTIFIER?
+   *        (* node: *) TreeNode
+   *        (* semicolon: *) SEMICOLON;
    * ```
    */
   Tree = "Tree",
@@ -124,8 +124,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * TreeNode = (* open_bracket: *) OPEN_BRACKET
-   * (* members: *) TreeNodeChildren
-   * (* close_bracket: *) CLOSE_BRACKET;
+   *            (* members: *) TreeNodeChildren
+   *            (* close_bracket: *) CLOSE_BRACKET;
    * ```
    */
   TreeNode = "TreeNode",
@@ -134,7 +134,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * TreeNodeChild = (* variant: *) TreeNode
-   * | (* variant: *) DELIMITED_IDENTIFIER;
+   *               | (* variant: *) DELIMITED_IDENTIFIER;
    * ```
    */
   TreeNodeChild = "TreeNodeChild",
@@ -302,8 +302,19 @@ export declare enum EdgeLabel {
  * The super type of all nodes in a tree.
  */
 export type Node = NonterminalNode | TerminalNode;
+
+/**
+ * Enumerates different variants of the `Node` type.
+ */
 export enum NodeType {
+  /**
+   * Represents a variant of type `NonterminalNode`.
+   */
   NonterminalNode = "NonterminalNode",
+
+  /**
+   * Represents a variant of type `TerminalNode`.
+   */
   TerminalNode = "TerminalNode",
 }
 /**
@@ -347,7 +358,7 @@ export interface QueryMatch {
   /**
    * List of captured nodes and their names from the query.
    */
-  captures: { [key: string]: Cursor[] };
+  captures: { [key: string]: Array<Cursor> };
 }
 /**
  * Represents a position in the source text, with indices for different unicode encodings of the source.
@@ -397,6 +408,9 @@ export interface TextRange {
  * Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
  */
 export class AncestorsIterator {
+  /**
+   * Returns an iterator over `NonterminalNode` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<NonterminalNode>;
   /**
    * Returns the next nonterminal node in the iteration, or `undefined` if there are no more nodes.
@@ -454,7 +468,7 @@ export class Cursor {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of the current node in pre-order traversal.
    */
@@ -514,7 +528,7 @@ export class Cursor {
   /**
    * Moves to the next terminal node matching any of the given kinds.
    */
-  goToNextTerminalWithKinds(kinds: TerminalKind[]): boolean;
+  goToNextTerminalWithKinds(kinds: Array<TerminalKind>): boolean;
   /**
    * Nonterminal navigation methods
    * Moves to the next nonterminal node.
@@ -527,17 +541,20 @@ export class Cursor {
   /**
    * Moves to the next nonterminal node matching any of the given kinds.
    */
-  goToNextNonterminalWithKinds(kinds: NonterminalKind[]): boolean;
+  goToNextNonterminalWithKinds(kinds: Array<NonterminalKind>): boolean;
   /**
    * Executes the given queries and returns an iterator over the matches.
    */
-  query(queries: Query[]): QueryMatchIterator;
+  query(queries: Array<Query>): QueryMatchIterator;
 }
 
 /**
  * Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
  */
 export class CursorIterator {
+  /**
+   * Returns an iterator over `Edge` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<Edge>;
   /**
    * Returns the next edge in the iteration, or `undefined` if there are no more edges.
@@ -592,7 +609,7 @@ export class NonterminalNode {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of the current node in pre-order traversal.
    */
@@ -626,6 +643,9 @@ export class Query {
  * Iterator over query matches in the syntax tree.
  */
 export class QueryMatchIterator {
+  /**
+   * Returns an iterator over `QueryMatch` objects. Called by the semantics of the for-of statement.
+   */
   [Symbol.iterator](): Iterator<QueryMatch>;
   /**
    * Returns the next match or `undefined` if there are no more matches.
@@ -694,7 +714,7 @@ export class TerminalNode {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of this node in pre-order traversal.
    */
