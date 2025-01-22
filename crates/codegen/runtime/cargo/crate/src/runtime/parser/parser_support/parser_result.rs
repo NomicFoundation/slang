@@ -168,12 +168,19 @@ pub enum PrattElement {
 
 impl PrattElement {
     pub fn into_nodes(self) -> Vec<Edge> {
+        self.into_nodes_with_label(EdgeLabel::Root)
+    }
+
+    pub fn into_nodes_with_label(self, label: EdgeLabel) -> Vec<Edge> {
         match self {
             Self::Expression { nodes } => nodes,
             Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {
-                vec![Edge::root(Node::nonterminal(kind, nodes))]
+                vec![Edge {
+                    label,
+                    node: Node::nonterminal(kind, nodes),
+                }]
             }
         }
     }

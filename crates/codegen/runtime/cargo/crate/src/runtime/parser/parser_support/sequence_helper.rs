@@ -89,7 +89,7 @@ impl SequenceHelper {
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut cur.elements)
                             .into_iter()
-                            .flat_map(PrattElement::into_nodes)
+                            .flat_map(|e| e.into_nodes_with_label(EdgeLabel::Unrecognized))
                             .chain(next.nodes)
                             .collect(),
                         next.expected_terminals,
@@ -99,7 +99,7 @@ impl SequenceHelper {
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut cur.elements)
                             .into_iter()
-                            .flat_map(PrattElement::into_nodes)
+                            .flat_map(|e| e.into_nodes_with_label(EdgeLabel::Unrecognized))
                             .collect(),
                         next.expected_terminals,
                     ));
@@ -116,7 +116,7 @@ impl SequenceHelper {
                 (ParserResult::PrattOperatorMatch(running), ParserResult::SkippedUntil(skipped)) => {
                     let nodes: Vec<_> = std::mem::take(&mut running.elements)
                             .into_iter()
-                            .flat_map(PrattElement::into_nodes)
+                            .flat_map(|e| e.into_nodes_with_label(EdgeLabel::Unrecognized))
                             .chain(skipped.nodes)
                             .collect();
 
