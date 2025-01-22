@@ -1,5 +1,4 @@
 mod loader;
-mod resolver;
 
 use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
@@ -10,7 +9,6 @@ use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
-use resolver::Resolver;
 use semver::Version;
 use stack_graphs::graph::StackGraph;
 
@@ -182,9 +180,7 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
     }
 
     pub fn build(self) -> Rc<BindingGraph<KT>> {
-        let resolver = Resolver::new(&self);
-        let resolved_references = resolver.resolve();
-        BindingGraph::build(self, resolved_references)
+        BindingGraph::build(self)
     }
 
     pub(crate) fn get_parents(&self, handle: GraphHandle) -> Vec<GraphHandle> {
@@ -201,27 +197,27 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         }
     }
 
-    fn is_definition(&self, handle: GraphHandle) -> bool {
+    pub(crate) fn is_definition(&self, handle: GraphHandle) -> bool {
         self.stack_graph[handle].is_definition()
     }
 
-    fn is_reference(&self, handle: GraphHandle) -> bool {
+    pub(crate) fn is_reference(&self, handle: GraphHandle) -> bool {
         self.stack_graph[handle].is_reference()
     }
 
-    fn get_extension_scope(&self, handle: GraphHandle) -> Option<GraphHandle> {
+    pub(crate) fn get_extension_scope(&self, handle: GraphHandle) -> Option<GraphHandle> {
         self.definitions_info
             .get(&handle)
             .and_then(|info| info.extension_scope)
     }
 
-    fn inherits_extensions(&self, handle: GraphHandle) -> bool {
+    pub(crate) fn inherits_extensions(&self, handle: GraphHandle) -> bool {
         self.definitions_info
             .get(&handle)
             .is_some_and(|info| info.inherit_extensions)
     }
 
-    fn get_file(&self, handle: GraphHandle) -> Option<FileDescriptor> {
+    pub(crate) fn get_file(&self, handle: GraphHandle) -> Option<FileDescriptor> {
         self.stack_graph[handle]
             .file()
             .map(|file| FileDescriptor::from(self.stack_graph[file].name()))

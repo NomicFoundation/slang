@@ -1,6 +1,7 @@
 mod definition;
 mod location;
 mod reference;
+mod resolver;
 
 use std::collections::{BTreeMap, HashMap};
 use std::fmt;
@@ -12,6 +13,7 @@ use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 pub use reference::Reference;
 
+use resolver::Resolver;
 use crate::builder::{CursorID, FileDescriptor, FileHandle, GraphHandle};
 use crate::BindingGraphBuilder;
 
@@ -38,8 +40,10 @@ pub struct BindingGraph<KT: KindTypes + 'static> {
 impl<KT: KindTypes + 'static> BindingGraph<KT> {
     pub(crate) fn build(
         builder: BindingGraphBuilder<KT>,
-        resolved_references: HashMap<GraphHandle, Vec<GraphHandle>>,
     ) -> Rc<Self> {
+        let resolver = Resolver::new(&builder);
+        let resolved_references = resolver.resolve(&builder);
+
         let mut files = HashMap::new();
         for handle in builder.stack_graph.iter_files() {
             files.insert(

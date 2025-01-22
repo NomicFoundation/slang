@@ -11,34 +11,32 @@ use stack_graphs::stitching::{
 };
 use stack_graphs::{CancellationError, NoCancellation};
 
-use super::{BindingGraphBuilder, GraphHandle};
+use crate::builder::{BindingGraphBuilder, GraphHandle};
 
-pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
-    owner: &'a BindingGraphBuilder<KT>,
+pub(crate) struct Resolver {
     partials: PartialPaths,
     database: Database,
     references: HashMap<GraphHandle, Vec<GraphHandle>>,
 }
 
-impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
-    pub fn new(owner: &'a BindingGraphBuilder<KT>) -> Self {
+impl Resolver {
+    pub fn new<KT: KindTypes + 'static>(owner: &BindingGraphBuilder<KT>) -> Self {
         let database = Database::new();
         let partials = PartialPaths::new();
 
         let mut resolver = Self {
-            owner,
             partials,
             database,
             references: HashMap::new(),
         };
-        resolver.build();
+        resolver.build(owner);
         resolver
     }
 
-    fn build(&mut self) {
-        for file in self.owner.stack_graph.iter_files() {
+    fn build<KT: KindTypes + 'static>(&mut self, owner: &BindingGraphBuilder<KT>) {
+        for file in owner.stack_graph.iter_files() {
             ForwardPartialPathStitcher::find_minimal_partial_path_set_in_file(
-                &self.owner.stack_graph,
+                &owner.stack_graph,
                 &mut self.partials,
                 file,
                 StitcherConfig::default(),
@@ -54,26 +52,34 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         }
     }
 
-    fn resolve_parents(&mut self, reference: GraphHandle) -> Vec<GraphHandle> {
-        self.owner
+    fn resolve_parents<KT: KindTypes + 'static>(
+        &mut self,
+        owner: &BindingGraphBuilder<KT>,
+        reference: GraphHandle,
+    ) -> Vec<GraphHandle> {
+        owner
             .get_parents(reference)
             .iter()
             .flat_map(|handle| {
-                if self.owner.is_definition(*handle) {
+                if owner.is_definition(*handle) {
                     vec![*handle]
                 } else {
-                    self.resolve_internal(*handle, false)
+                    self.resolve_internal(owner, *handle, false)
                 }
             })
             .collect()
     }
 
-    fn resolve_parents_recursively(&mut self, parent: GraphHandle) -> Vec<GraphHandle> {
+    fn resolve_parents_recursively<KT: KindTypes + 'static>(
+        &mut self,
+        owner: &BindingGraphBuilder<KT>,
+        parent: GraphHandle,
+    ) -> Vec<GraphHandle> {
         let mut results = HashMap::new();
         let mut resolve_queue = Vec::new();
         resolve_queue.push(parent);
         while let Some(current) = resolve_queue.pop() {
-            let current_parents = self.resolve_parents(current);
+            let current_parents = self.resolve_parents(owner, current);
             for current_parent in &current_parents {
                 if !results.contains_key(current_parent) {
                     resolve_queue.push(*current_parent);
@@ -84,8 +90,9 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         results.into_values().flatten().collect()
     }
 
-    fn resolve_internal(
+    fn resolve_internal<KT: KindTypes + 'static>(
         &mut self,
+        owner: &BindingGraphBuilder<KT>,
         reference: GraphHandle,
         allow_recursion: bool,
     ) -> Vec<GraphHandle> {
@@ -100,18 +107,17 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
         if allow_recursion {
             // look for extension scopes to apply to the reference
-            let ref_parents = self.resolve_parents(reference);
+            let ref_parents = self.resolve_parents(owner, reference);
             let mut extensions = HashSet::new();
             for parent in &ref_parents {
-                if let Some(extension_scope) = self.owner.get_extension_scope(*parent) {
+                if let Some(extension_scope) = owner.get_extension_scope(*parent) {
                     extensions.insert(extension_scope);
                 }
 
-                if self.owner.inherits_extensions(*parent) {
-                    let grand_parents = self.resolve_parents_recursively(*parent);
+                if owner.inherits_extensions(*parent) {
+                    let grand_parents = self.resolve_parents_recursively(owner, *parent);
                     for grand_parent in &grand_parents {
-                        if let Some(extension_scope) = self.owner.get_extension_scope(*grand_parent)
-                        {
+                        if let Some(extension_scope) = owner.get_extension_scope(*grand_parent) {
                             extensions.insert(extension_scope);
                         }
                     }
@@ -122,7 +128,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
 
             ForwardPartialPathStitcher::find_all_complete_partial_paths(
                 &mut DatabaseCandidatesExtended::new(
-                    self.owner,
+                    owner,
                     &mut self.partials,
                     &mut database,
                     extensions,
@@ -138,7 +144,7 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         } else {
             ForwardPartialPathStitcher::find_all_complete_partial_paths(
                 &mut DatabaseCandidates::new(
-                    &self.owner.stack_graph,
+                    &owner.stack_graph,
                     &mut self.partials,
                     &mut self.database,
                 ),
@@ -169,15 +175,17 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         results
     }
 
-    pub(crate) fn resolve(mut self) -> HashMap<GraphHandle, Vec<GraphHandle>> {
-        for handle in self.owner.stack_graph.iter_nodes() {
-            if self.owner.is_reference(handle)
-                && self
-                    .owner
+    pub(crate) fn resolve<KT: KindTypes + 'static>(
+        mut self,
+        owner: &BindingGraphBuilder<KT>,
+    ) -> HashMap<GraphHandle, Vec<GraphHandle>> {
+        for handle in owner.stack_graph.iter_nodes() {
+            if owner.is_reference(handle)
+                && owner
                     .get_file(handle)
                     .is_some_and(|file| file.is_user())
             {
-                let definition_handles = self.resolve_internal(handle, true);
+                let definition_handles = self.resolve_internal(owner, handle, true);
                 self.references.insert(handle, definition_handles);
             }
         }
