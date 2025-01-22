@@ -11,16 +11,16 @@ use stack_graphs::stitching::{
 };
 use stack_graphs::{CancellationError, NoCancellation};
 
-use crate::builder::{BindingGraphBuilder, GraphHandle};
+use crate::builder::{BindingInfo, GraphHandle};
 
 pub(crate) struct Resolver {
     partials: PartialPaths,
     database: Database,
-    references: HashMap<GraphHandle, Vec<GraphHandle>>,
+    pub(crate) references: HashMap<GraphHandle, Vec<GraphHandle>>,
 }
 
 impl Resolver {
-    pub fn new<KT: KindTypes + 'static>(owner: &BindingGraphBuilder<KT>) -> Self {
+    pub fn new<KT: KindTypes + 'static>(owner: &BindingInfo<KT>) -> Self {
         let database = Database::new();
         let partials = PartialPaths::new();
 
@@ -33,7 +33,7 @@ impl Resolver {
         resolver
     }
 
-    fn build<KT: KindTypes + 'static>(&mut self, owner: &BindingGraphBuilder<KT>) {
+    fn build<KT: KindTypes + 'static>(&mut self, owner: &BindingInfo<KT>) {
         for file in owner.stack_graph.iter_files() {
             ForwardPartialPathStitcher::find_minimal_partial_path_set_in_file(
                 &owner.stack_graph,
@@ -54,7 +54,7 @@ impl Resolver {
 
     fn resolve_parents<KT: KindTypes + 'static>(
         &mut self,
-        owner: &BindingGraphBuilder<KT>,
+        owner: &BindingInfo<KT>,
         reference: GraphHandle,
     ) -> Vec<GraphHandle> {
         owner
@@ -72,7 +72,7 @@ impl Resolver {
 
     fn resolve_parents_recursively<KT: KindTypes + 'static>(
         &mut self,
-        owner: &BindingGraphBuilder<KT>,
+        owner: &BindingInfo<KT>,
         parent: GraphHandle,
     ) -> Vec<GraphHandle> {
         let mut results = HashMap::new();
@@ -92,7 +92,7 @@ impl Resolver {
 
     fn resolve_internal<KT: KindTypes + 'static>(
         &mut self,
-        owner: &BindingGraphBuilder<KT>,
+        owner: &BindingInfo<KT>,
         reference: GraphHandle,
         allow_recursion: bool,
     ) -> Vec<GraphHandle> {
@@ -176,9 +176,9 @@ impl Resolver {
     }
 
     pub(crate) fn resolve<KT: KindTypes + 'static>(
-        mut self,
-        owner: &BindingGraphBuilder<KT>,
-    ) -> HashMap<GraphHandle, Vec<GraphHandle>> {
+        &mut self,
+        owner: &BindingInfo<KT>,
+    ) {
         for handle in owner.stack_graph.iter_nodes() {
             if owner.is_reference(handle)
                 && owner
@@ -189,7 +189,6 @@ impl Resolver {
                 self.references.insert(handle, definition_handles);
             }
         }
-        self.references
     }
 }
 
@@ -226,7 +225,7 @@ impl ToAppendable<ExtendedHandle, PartialPath> for ExtendedDatabase<'_> {
 }
 
 struct DatabaseCandidatesExtended<'a, KT: KindTypes + 'static> {
-    owner: &'a BindingGraphBuilder<KT>,
+    owner: &'a BindingInfo<KT>,
     partials: &'a mut PartialPaths,
     database: &'a mut ExtendedDatabase<'a>,
     extensions: Vec<GraphHandle>,
@@ -234,7 +233,7 @@ struct DatabaseCandidatesExtended<'a, KT: KindTypes + 'static> {
 
 impl<'a, KT: KindTypes + 'static> DatabaseCandidatesExtended<'a, KT> {
     fn new(
-        owner: &'a BindingGraphBuilder<KT>,
+        owner: &'a BindingInfo<KT>,
         partials: &'a mut PartialPaths,
         database: &'a mut ExtendedDatabase<'a>,
         extensions: Vec<GraphHandle>,

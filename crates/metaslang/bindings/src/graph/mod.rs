@@ -3,6 +3,7 @@ mod location;
 mod reference;
 mod resolver;
 
+use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap};
 use std::fmt;
 use std::rc::Rc;
@@ -13,9 +14,8 @@ use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 pub use reference::Reference;
 
+use crate::builder::{BindingInfo, FileDescriptor, FileHandle, GraphHandle};
 use resolver::Resolver;
-use crate::builder::{CursorID, FileDescriptor, FileHandle, GraphHandle};
-use crate::BindingGraphBuilder;
 
 struct DefinitionInfo<KT: KindTypes + 'static> {
     file: FileHandle,
@@ -32,17 +32,14 @@ pub struct BindingGraph<KT: KindTypes + 'static> {
     files: HashMap<FileHandle, FileDescriptor>,
     definitions: BTreeMap<GraphHandle, DefinitionInfo<KT>>,
     references: BTreeMap<GraphHandle, ReferenceInfo<KT>>,
-    cursor_to_definitions: HashMap<CursorID, GraphHandle>,
-    cursor_to_references: HashMap<CursorID, GraphHandle>,
-    resolved_references: HashMap<GraphHandle, Vec<GraphHandle>>,
+    info: BindingInfo<KT>,
+    resolver: Rc<RefCell<Resolver>>,
 }
 
 impl<KT: KindTypes + 'static> BindingGraph<KT> {
-    pub(crate) fn build(
-        builder: BindingGraphBuilder<KT>,
-    ) -> Rc<Self> {
-        let resolver = Resolver::new(&builder);
-        let resolved_references = resolver.resolve(&builder);
+    pub(crate) fn build(builder: BindingInfo<KT>) -> Rc<Self> {
+        let mut resolver = Resolver::new(&builder);
+        resolver.resolve(&builder);
 
         let mut files = HashMap::new();
         for handle in builder.stack_graph.iter_files() {
@@ -81,9 +78,8 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             files,
             definitions,
             references,
-            cursor_to_definitions: builder.cursor_to_definitions,
-            cursor_to_references: builder.cursor_to_references,
-            resolved_references,
+            info: builder,
+            resolver: Rc::new(RefCell::new(resolver)),
         })
     }
 
@@ -114,7 +110,8 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
 
     pub fn definition_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Definition<KT>> {
         let cursor_id = cursor.node().id();
-        self.cursor_to_definitions
+        self.info
+            .cursor_to_definitions
             .get(&cursor_id)
             .map(|handle| Definition {
                 owner: Rc::clone(self),
@@ -124,7 +121,8 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
 
     pub fn reference_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Reference<KT>> {
         let cursor_id = cursor.node().id();
-        self.cursor_to_references
+        self.info
+            .cursor_to_references
             .get(&cursor_id)
             .map(|handle| Reference {
                 owner: Rc::clone(self),

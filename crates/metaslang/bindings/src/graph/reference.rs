@@ -50,7 +50,8 @@ impl<KT: KindTypes + 'static> Reference<KT> {
     }
 
     pub fn definitions(&self) -> Vec<Definition<KT>> {
-        self.owner.resolved_references[&self.handle]
+        let resolver = self.owner.resolver.borrow();
+        resolver.references[&self.handle]
             .iter()
             .map(|handle| {
                 self.owner

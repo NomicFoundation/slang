@@ -34,6 +34,10 @@ pub(crate) struct ReferenceBindingInfo<KT: KindTypes + 'static> {
 pub struct BindingGraphBuilder<KT: KindTypes + 'static> {
     graph_builder_file: File<KT>,
     functions: Functions<KT>,
+    pub(crate) info: BindingInfo<KT>,
+}
+
+pub(crate) struct BindingInfo<KT: KindTypes + 'static> {
     pub(crate) stack_graph: StackGraph,
     pub(crate) definitions_info: HashMap<GraphHandle, DefinitionBindingInfo<KT>>,
     pub(crate) references_info: HashMap<GraphHandle, ReferenceBindingInfo<KT>>,
@@ -117,24 +121,26 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         Self {
             graph_builder_file,
             functions,
-            stack_graph,
-            definitions_info: HashMap::new(),
-            references_info: HashMap::new(),
-            cursor_to_definitions: HashMap::new(),
-            cursor_to_references: HashMap::new(),
-            extension_hooks: HashSet::new(),
+            info: BindingInfo {
+                stack_graph,
+                definitions_info: HashMap::new(),
+                references_info: HashMap::new(),
+                cursor_to_definitions: HashMap::new(),
+                cursor_to_references: HashMap::new(),
+                extension_hooks: HashSet::new(),
+            }
         }
     }
 
     pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let file_kind = FileDescriptor::System(file_path.into());
-        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        let file = self.info.stack_graph.get_or_create_file(&file_kind.as_string());
         _ = self.add_file_internal(file, tree_cursor);
     }
 
     pub fn add_user_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let file_kind = FileDescriptor::User(file_path.into());
-        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        let file = self.info.stack_graph.get_or_create_file(&file_kind.as_string());
         _ = self.add_file_internal(file, tree_cursor);
     }
 
@@ -145,7 +151,7 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         tree_cursor: Cursor<KT>,
     ) -> metaslang_graph_builder::graph::Graph<KT> {
         let file_kind = FileDescriptor::User(file_path.into());
-        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        let file = self.info.stack_graph.get_or_create_file(&file_kind.as_string());
         let result = self.add_file_internal(file, tree_cursor);
         result.graph
     }
@@ -154,7 +160,7 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         let loader = Loader::new(
             &self.graph_builder_file,
             &self.functions,
-            &mut self.stack_graph,
+            &mut self.info.stack_graph,
             file,
             tree_cursor,
         );
@@ -164,25 +170,27 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
 
         result.definitions_info.iter().for_each(|(handle, definition_info)| {
             let cursor_id = definition_info.cursor.node().id();
-            self.cursor_to_definitions.insert(cursor_id, *handle);
+            self.info.cursor_to_definitions.insert(cursor_id, *handle);
         });
         result.references_info.iter().for_each(|(handle, reference_info)| {
             let cursor_id = reference_info.cursor.node().id();
-            self.cursor_to_definitions.insert(cursor_id, *handle);
+            self.info.cursor_to_definitions.insert(cursor_id, *handle);
         });
 
-        self.definitions_info
+        self.info.definitions_info
             .extend(result.definitions_info.drain());
-        self.references_info.extend(result.references_info.drain());
-        self.extension_hooks.extend(result.extension_hooks.drain());
+        self.info.references_info.extend(result.references_info.drain());
+        self.info.extension_hooks.extend(result.extension_hooks.drain());
 
         result
     }
 
     pub fn build(self) -> Rc<BindingGraph<KT>> {
-        BindingGraph::build(self)
+        BindingGraph::build(self.info)
     }
+}
 
+impl<KT: KindTypes + 'static> BindingInfo<KT> {
     pub(crate) fn get_parents(&self, handle: GraphHandle) -> Vec<GraphHandle> {
         if self.is_definition(handle) {
             self.definitions_info
