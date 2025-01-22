@@ -128,19 +128,25 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
                 cursor_to_definitions: HashMap::new(),
                 cursor_to_references: HashMap::new(),
                 extension_hooks: HashSet::new(),
-            }
+            },
         }
     }
 
     pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let file_kind = FileDescriptor::System(file_path.into());
-        let file = self.info.stack_graph.get_or_create_file(&file_kind.as_string());
+        let file = self
+            .info
+            .stack_graph
+            .get_or_create_file(&file_kind.as_string());
         _ = self.add_file_internal(file, tree_cursor);
     }
 
     pub fn add_user_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let file_kind = FileDescriptor::User(file_path.into());
-        let file = self.info.stack_graph.get_or_create_file(&file_kind.as_string());
+        let file = self
+            .info
+            .stack_graph
+            .get_or_create_file(&file_kind.as_string());
         _ = self.add_file_internal(file, tree_cursor);
     }
 
@@ -151,7 +157,10 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         tree_cursor: Cursor<KT>,
     ) -> metaslang_graph_builder::graph::Graph<KT> {
         let file_kind = FileDescriptor::User(file_path.into());
-        let file = self.info.stack_graph.get_or_create_file(&file_kind.as_string());
+        let file = self
+            .info
+            .stack_graph
+            .get_or_create_file(&file_kind.as_string());
         let result = self.add_file_internal(file, tree_cursor);
         result.graph
     }
@@ -168,19 +177,30 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
             .execute(&loader::NoCancellation)
             .expect("Internal error while building bindings");
 
-        result.definitions_info.iter().for_each(|(handle, definition_info)| {
-            let cursor_id = definition_info.cursor.node().id();
-            self.info.cursor_to_definitions.insert(cursor_id, *handle);
-        });
-        result.references_info.iter().for_each(|(handle, reference_info)| {
-            let cursor_id = reference_info.cursor.node().id();
-            self.info.cursor_to_references.insert(cursor_id, *handle);
-        });
+        result
+            .definitions_info
+            .iter()
+            .for_each(|(handle, definition_info)| {
+                let cursor_id = definition_info.cursor.node().id();
+                self.info.cursor_to_definitions.insert(cursor_id, *handle);
+            });
+        result
+            .references_info
+            .iter()
+            .for_each(|(handle, reference_info)| {
+                let cursor_id = reference_info.cursor.node().id();
+                self.info.cursor_to_references.insert(cursor_id, *handle);
+            });
 
-        self.info.definitions_info
+        self.info
+            .definitions_info
             .extend(result.definitions_info.drain());
-        self.info.references_info.extend(result.references_info.drain());
-        self.info.extension_hooks.extend(result.extension_hooks.drain());
+        self.info
+            .references_info
+            .extend(result.references_info.drain());
+        self.info
+            .extension_hooks
+            .extend(result.extension_hooks.drain());
 
         result
     }

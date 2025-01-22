@@ -176,15 +176,10 @@ impl Resolver {
     }
 
     #[allow(dead_code)]
-    pub(crate) fn resolve_all<KT: KindTypes + 'static>(
-        &mut self,
-        owner: &BindingInfo<KT>,
-    ) {
+    pub(crate) fn resolve_all<KT: KindTypes + 'static>(&mut self, owner: &BindingInfo<KT>) {
         for handle in owner.stack_graph.iter_nodes() {
             if owner.is_reference(handle)
-                && owner
-                    .get_file(handle)
-                    .is_some_and(|file| file.is_user())
+                && owner.get_file(handle).is_some_and(|file| file.is_user())
             {
                 let definition_handles = self.resolve_internal(owner, handle, true);
                 self.references.insert(handle, definition_handles);
@@ -197,11 +192,7 @@ impl Resolver {
         owner: &BindingInfo<KT>,
         handle: GraphHandle,
     ) -> Vec<GraphHandle> {
-        if owner.is_reference(handle)
-            && owner
-            .get_file(handle)
-            .is_some_and(|file| file.is_user())
-        {
+        if owner.is_reference(handle) && owner.get_file(handle).is_some_and(|file| file.is_user()) {
             if let Some(definitions) = self.references.get(&handle) {
                 definitions.clone()
             } else {

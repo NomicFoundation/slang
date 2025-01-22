@@ -12,9 +12,9 @@ pub use location::{BindingLocation, BuiltInLocation, UserFileLocation};
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 pub use reference::Reference;
+use resolver::Resolver;
 
 use crate::builder::{BindingInfo, FileDescriptor, FileHandle, GraphHandle};
-use resolver::Resolver;
 
 pub struct BindingGraph<KT: KindTypes + 'static> {
     info: BindingInfo<KT>,
