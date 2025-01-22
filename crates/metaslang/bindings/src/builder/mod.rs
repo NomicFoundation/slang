@@ -174,7 +174,7 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         });
         result.references_info.iter().for_each(|(handle, reference_info)| {
             let cursor_id = reference_info.cursor.node().id();
-            self.info.cursor_to_definitions.insert(cursor_id, *handle);
+            self.info.cursor_to_references.insert(cursor_id, *handle);
         });
 
         self.info.definitions_info
