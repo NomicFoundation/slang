@@ -46,8 +46,9 @@ impl<KT: KindTypes + 'static> Reference<KT> {
     }
 
     pub fn definitions(&self) -> Vec<Definition<KT>> {
-        let resolver = self.owner.resolver.borrow();
-        resolver.references[&self.handle]
+        let mut resolver = self.owner.resolver.borrow_mut();
+        let definitions = resolver.resolve_single(&self.owner.info, self.handle);
+        definitions
             .iter()
             .map(|handle| {
                 self.owner

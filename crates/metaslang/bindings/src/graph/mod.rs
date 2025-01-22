@@ -23,8 +23,7 @@ pub struct BindingGraph<KT: KindTypes + 'static> {
 
 impl<KT: KindTypes + 'static> BindingGraph<KT> {
     pub(crate) fn build(builder: BindingInfo<KT>) -> Rc<Self> {
-        let mut resolver = Resolver::new(&builder);
-        resolver.resolve(&builder);
+        let resolver = Resolver::new(&builder);
 
         Rc::new(Self {
             info: builder,

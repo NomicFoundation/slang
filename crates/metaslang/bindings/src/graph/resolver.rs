@@ -175,7 +175,8 @@ impl Resolver {
         results
     }
 
-    pub(crate) fn resolve<KT: KindTypes + 'static>(
+    #[allow(dead_code)]
+    pub(crate) fn resolve_all<KT: KindTypes + 'static>(
         &mut self,
         owner: &BindingInfo<KT>,
     ) {
@@ -188,6 +189,28 @@ impl Resolver {
                 let definition_handles = self.resolve_internal(owner, handle, true);
                 self.references.insert(handle, definition_handles);
             }
+        }
+    }
+
+    pub(crate) fn resolve_single<KT: KindTypes + 'static>(
+        &mut self,
+        owner: &BindingInfo<KT>,
+        handle: GraphHandle,
+    ) -> Vec<GraphHandle> {
+        if owner.is_reference(handle)
+            && owner
+            .get_file(handle)
+            .is_some_and(|file| file.is_user())
+        {
+            if let Some(definitions) = self.references.get(&handle) {
+                definitions.clone()
+            } else {
+                let definition_handles = self.resolve_internal(owner, handle, true);
+                self.references.insert(handle, definition_handles.clone());
+                definition_handles
+            }
+        } else {
+            Vec::new()
         }
     }
 }
