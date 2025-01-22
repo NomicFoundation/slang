@@ -40,7 +40,8 @@ impl<KT: KindTypes + 'static> Definition<KT> {
     pub fn get_cursor(&self) -> &Cursor<KT> {
         &self
             .owner
-            .definitions
+            .info
+            .definitions_info
             .get(&self.handle)
             .expect("Definition handle is valid")
             .cursor
@@ -49,22 +50,18 @@ impl<KT: KindTypes + 'static> Definition<KT> {
     pub fn get_definiens_cursor(&self) -> &Cursor<KT> {
         &self
             .owner
-            .definitions
+            .info
+            .definitions_info
             .get(&self.handle)
             .expect("Definition handle is valid")
             .definiens
     }
 
     pub fn get_file(&self) -> FileDescriptor {
-        self.owner
-            .get_file(
-                self.owner
-                    .definitions
-                    .get(&self.handle)
-                    .expect("Definition handle is valid")
-                    .file,
-            )
-            .expect("Definition does not have a valid file descriptor")
+        self.owner.info.stack_graph[self.handle]
+            .file()
+            .map(|file_handle| self.owner.get_file(file_handle))
+            .expect("Definition to have a valid file descriptor")
     }
 }
 
