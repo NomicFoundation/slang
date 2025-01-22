@@ -1,0 +1,114 @@
+(
+  ;; This is a comprehensive S-expression sample to test the parser
+  ;; The entire content is wrapped in a single list
+
+  ;; Booleans
+  #t #f #T #F
+
+  ;; Numbers
+  42 +42 -42
+  #b1010 #b+1010 #b-1010
+  #xA5 #x+A5 #x-A5
+
+  ;; Strings
+  "Hello, World!"
+  "Escaped \"quotes\" and \\ backslashes"
+  "Hex escape: \x41"
+
+  ;; Symbols
+  symbol + - ...
+
+  ;; Characters (including all named characters)
+  #\a
+  #\alarm
+  #\backspace
+  #\delete
+  #\esc
+  #\linefeed
+  #\newline
+  #\page
+  #\return
+  #\space
+  #\tab
+  #\vtab
+  #\x41
+
+  ;; Empty structures
+  () #() #vu8() #s(empty-struct)
+
+  ;; Nested lists
+  (1 2 3)
+  (a (b (c)) d)
+  (a b . c)
+  [x [y] z]
+  {1 {2 3} 4}
+
+  ;; Vectors
+  #(1 2 3)
+  #(a #(b c) d)
+  #[x #[y] z]
+  #{1 #{2 3} 4}
+
+  ;; Byte vectors with numbers in different bases
+  #vu8(0 127 255 #b11111111 #xFF)
+  #vu8[10 #b1010 #xA]
+  #vu8{5 #b101 #x5}
+
+  ;; Structs
+  #s(point 3 4)
+  #s(rect #s(point 0 0) #s(point 10 20))
+  #s[color 255 0 0]
+  #s{person (name "John") (age 30)}
+
+  ;; Abbreviations
+  '(1 2 3)
+  `(1 ,(+ 1 1) 3)
+  ,variable
+  ,@list-of-elements
+
+  ;; Nested structures with abbreviations
+  '(a '(b '(c)))
+  `(1 `(2 ,(+ 1 1) ,@(list 3 4)))
+
+  ;; Comments
+  ; This is a line comment
+  #| This is a
+     multi-line
+     block comment |#
+  #; (This is a datum comment
+      (it comments out the entire expression))
+
+  ;; Whitespace handling
+  (  this   
+     is a list
+  with  irregular spacing   )
+
+  ;; Complex nested structure
+  (define (process-data data)
+    (let* ((numbers #(1 2 3 4 5))
+           (sum (apply + numbers))
+           (average (/ sum (vector-length numbers)))
+           (nested-data '((a 1) (b 2) (c 3)))
+           (processed (map (lambda (item)
+                             `(,(car item) ,(* 2 (cadr item))))
+                           nested-data)))
+      #s(result
+         sum ,sum
+         average ,average
+         data ,@data
+         processed ,processed
+         nested-vector #(#(1 2) #(3 4))
+         timestamp ,(current-time)
+         flags #(#t #f #t)
+         bytes #vu8(10 #b1010 #xA)
+         sub-struct #s(meta
+                       (created-at "2023-05-10")
+                       (version "1.0"))
+         )))
+
+  ;; Edge cases and combinations
+  ((()()) . #(#() #s()))
+  '#(1 2 3)
+  `#s(test ,@(list 1 2 3))
+  #; #; 1 2 3
+)

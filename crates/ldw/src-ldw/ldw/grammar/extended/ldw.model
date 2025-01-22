@@ -1,0 +1,18 @@
+model ldw::grammar::extended modifies ldw::grammar::parsed {
+
+    modify rule_body 
+        += enum_rule
+        += separated_by_rule
+    ;
+
+    enum_rule = {
+        members: seq<string>
+    };
+
+    separated_by_rule = {
+        element: rule_element,
+        separator: string,
+        min_count: u8
+    };
+
+}

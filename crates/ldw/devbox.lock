@@ -1,0 +1,203 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "corepack@latest": {
+      "last_modified": "2024-08-31T10:12:23Z",
+      "resolved": "github:NixOS/nixpkgs/5629520edecb69630a3f4d17d3d33fc96c13f6fe#corepack",
+      "source": "devbox-search",
+      "version": "20.16.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/74gqbpn29wxz19i0hcwlpy16hbpva7qn-corepack-nodejs-20.16.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/74gqbpn29wxz19i0hcwlpy16hbpva7qn-corepack-nodejs-20.16.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/n640kca81kavi88zg333dxg7vkf10lb7-corepack-nodejs-20.16.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/n640kca81kavi88zg333dxg7vkf10lb7-corepack-nodejs-20.16.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/85s20vksy9giivfkmjwyppap3izgm9gv-corepack-nodejs-20.16.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/85s20vksy9giivfkmjwyppap3izgm9gv-corepack-nodejs-20.16.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/gdzh23g2kh3gz92bwh9xk27hb7qcz6g8-corepack-nodejs-20.16.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/gdzh23g2kh3gz92bwh9xk27hb7qcz6g8-corepack-nodejs-20.16.0"
+        }
+      }
+    },
+    "libiconv@latest": {
+      "last_modified": "2024-09-10T15:01:03Z",
+      "resolved": "github:NixOS/nixpkgs/5ed627539ac84809c78b2dd6d26a5cebeb5ae269#libiconv",
+      "source": "devbox-search",
+      "version": "99",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/cjzmz9dskblgkbv4by2wnsyvdjw6jpcm-libiconv-99",
+              "default": true
+            },
+            {
+              "name": "dev",
+              "path": "/nix/store/r2jkk7lsmi17m5lp3r7aip9626n07qfz-libiconv-99-dev"
+            }
+          ],
+          "store_path": "/nix/store/cjzmz9dskblgkbv4by2wnsyvdjw6jpcm-libiconv-99"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/byx7hpi5hblzk8hpfd5pg2v7a63m5j15-libiconv-99",
+              "default": true
+            },
+            {
+              "name": "dev",
+              "path": "/nix/store/iqgcmki7xk4v9fzk67wm63fwjby97cln-libiconv-99-dev"
+            }
+          ],
+          "store_path": "/nix/store/byx7hpi5hblzk8hpfd5pg2v7a63m5j15-libiconv-99"
+        }
+      }
+    },
+    "nodejs@latest": {
+      "last_modified": "2024-08-31T10:12:23Z",
+      "plugin_version": "0.0.2",
+      "resolved": "github:NixOS/nixpkgs/5629520edecb69630a3f4d17d3d33fc96c13f6fe#nodejs_22",
+      "source": "devbox-search",
+      "version": "22.6.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/h0lgf92wq4ip40d15mdah4548s5ck3lm-nodejs-22.6.0",
+              "default": true
+            },
+            {
+              "name": "libv8",
+              "path": "/nix/store/cvyxkafalvlc8nymm9qghmd23lcsdq73-nodejs-22.6.0-libv8"
+            }
+          ],
+          "store_path": "/nix/store/h0lgf92wq4ip40d15mdah4548s5ck3lm-nodejs-22.6.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/i43skcppvpbprz429nlf6xh6x6gjk1w0-nodejs-22.6.0",
+              "default": true
+            },
+            {
+              "name": "libv8",
+              "path": "/nix/store/1k0qb1hlhxzd45yirswq9ryzi8h2lzj7-nodejs-22.6.0-libv8"
+            }
+          ],
+          "store_path": "/nix/store/i43skcppvpbprz429nlf6xh6x6gjk1w0-nodejs-22.6.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/vpz3z6kvx63xiwgippddkp62vi4h8g3z-nodejs-22.6.0",
+              "default": true
+            },
+            {
+              "name": "libv8",
+              "path": "/nix/store/k9gallbn1nij77ryg2dix2iwrrky8c4g-nodejs-22.6.0-libv8"
+            }
+          ],
+          "store_path": "/nix/store/vpz3z6kvx63xiwgippddkp62vi4h8g3z-nodejs-22.6.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/gb9rkc33y0qxk8ps1wyflry1gmz2q9w8-nodejs-22.6.0",
+              "default": true
+            },
+            {
+              "name": "libv8",
+              "path": "/nix/store/6v7dxcn0azh24swdv3745pfprhxcg4jr-nodejs-22.6.0-libv8"
+            }
+          ],
+          "store_path": "/nix/store/gb9rkc33y0qxk8ps1wyflry1gmz2q9w8-nodejs-22.6.0"
+        }
+      }
+    },
+    "rustup@latest": {
+      "last_modified": "2024-09-10T15:01:03Z",
+      "plugin_version": "0.0.1",
+      "resolved": "github:NixOS/nixpkgs/5ed627539ac84809c78b2dd6d26a5cebeb5ae269#rustup",
+      "source": "devbox-search",
+      "version": "1.27.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/prbpax89x3wad4f2ckjbxs5z9bh39yfj-rustup-1.27.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/prbpax89x3wad4f2ckjbxs5z9bh39yfj-rustup-1.27.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/cw6vj5y265hixh2l80rwv7pb9n39s80s-rustup-1.27.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/cw6vj5y265hixh2l80rwv7pb9n39s80s-rustup-1.27.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/hf2hwb243fwclc417mmacyyas2fnkqxg-rustup-1.27.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/hf2hwb243fwclc417mmacyyas2fnkqxg-rustup-1.27.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/a04bnqgj3mvg777a70jymwnxcgm7cdcv-rustup-1.27.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/a04bnqgj3mvg777a70jymwnxcgm7cdcv-rustup-1.27.1"
+        }
+      }
+    }
+  }
+}

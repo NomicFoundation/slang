@@ -1,0 +1,41 @@
+model ldw::grammar::typed modifies ldw::grammar::extended {
+
+    field = {
+        type: ldw::model::parsed::Type,
+        name: option<string>,
+        is_explicit: boolean
+    };
+
+    modify counted_rule_element
+        -= label
+    ;
+
+    modify grammar
+        += definitions: seq<ldw::model::parsed::Definition>
+    ;
+
+    modify rule
+        += type: ldw::model::parsed::Type
+    ;
+
+    modify enum_rule
+        += field: option<field>
+    ;
+
+    modify rule_reference
+        += field: option<field>
+    ;
+
+    modify string_element
+        += field: option<field>
+    ;
+
+    modify char_set
+        += field: option<field>
+    ;
+
+    modify any_element
+        += field: option<field>
+    ;
+
+}

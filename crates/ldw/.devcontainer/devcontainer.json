@@ -1,0 +1,18 @@
+{
+  "name": "Devbox Development Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {}
+  },
+  "postCreateCommand": "devbox global pull",
+  "remoteUser": "vscode",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "mkhl.direnv"
+      ]
+    }
+  }
+}

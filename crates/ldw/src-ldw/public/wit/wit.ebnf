@@ -1,0 +1,211 @@
+// From https://github.com/WebAssembly/component-model/blob/main/design/mvp/WIT.md
+// Grammer for valid-semver is at https://semver.org/
+
+token ::= whitespace
+        | operator
+        | keyword
+        | integer
+        | identifier
+
+whitespace ::= ' ' | '\n' | '\r' | '\t' | comment
+
+comment ::= '//' character-that-isnt-a-newline*
+          | '/*' any-unicode-character* '*/'
+
+operator ::= '=' | ',' | ':' | ';' | '(' | ')' | '{' | '}' | '<' | '>' | '*' | '->' | '/' | '.' | '@'
+
+keyword ::= 'as'
+          | 'bool'
+          | 'borrow'
+          | 'char'
+          | 'constructor'
+          | 'enum'
+          | 'export'
+          | 'f32'
+          | 'f64'
+          | 'flags'
+          | 'from'
+          | 'func'
+          | 'future'
+          | 'import'
+          | 'include'
+          | 'interface'
+          | 'list'
+          | 'option'
+          | 'own'
+          | 'package'
+          | 'record'
+          | 'resource'
+          | 'result'
+          | 's16'
+          | 's32'
+          | 's64'
+          | 's8'
+          | 'static'
+          | 'stream'
+          | 'string'
+          | 'tuple'
+          | 'type'
+          | 'u16'
+          | 'u32'
+          | 'u64'
+          | 'u8'
+          | 'use'
+          | 'variant'
+          | 'with'
+          | 'world'
+
+integer ::= [0-9]+
+
+wit-file ::= package-decl? (package-items | nested-package-definition)*
+
+nested-package-definition ::= package-decl '{' package-items* '}'
+
+package-items ::= toplevel-use-item | interface-item | world-item
+
+gate ::= gate-item*
+gate-item ::= unstable-gate
+            | since-gate
+            | deprecated-gate
+
+unstable-gate ::= '@unstable' '(' feature-field ')'
+since-gate ::= '@since' '(' version-field ')'
+deprecated-gate ::= '@deprecated' '(' version-field ')'
+
+feature-field ::= 'feature' '=' id
+version-field ::= 'version' '=' <valid-semver>
+
+package-decl ::= 'package' ( id ':' )+ id ( '/' id )* ('@' valid-semver)?  ';'
+
+toplevel-use-item ::= 'use' use-path ('as' id)? ';'
+
+use-path ::= id
+           | id ':' id '/' id ('@' valid-semver)?
+           | ( id ':' )+ id ( '/' id )+ ('@' valid-semver)?
+
+world-item ::= gate 'world' id '{' world-items* '}'
+
+world-items ::= gate world-definition
+
+world-definition ::= export-item
+                   | import-item
+                   | use-item
+                   | typedef-item
+                   | include-item
+
+export-item ::= 'export' id ':' extern-type
+              | 'export' use-path ';'
+import-item ::= 'import' id ':' extern-type
+              | 'import' use-path ';'
+
+extern-type ::= func-type ';' | 'interface' '{' interface-items* '}'
+
+include-item ::= 'include' use-path ';'
+               | 'include' use-path 'with' '{' include-names-list '}'
+
+include-names-list ::= include-names-item
+                     | include-names-list ',' include-names-item
+
+include-names-item ::= id 'as' id
+
+interface-item ::= gate 'interface' id '{' interface-items* '}'
+
+interface-items ::= gate interface-definition
+
+interface-definition ::= typedef-item
+                       | use-item
+                       | func-item
+
+typedef-item ::= resource-item
+               | variant-items
+               | record-item
+               | flags-items
+               | enum-items
+               | type-item
+
+func-item ::= id ':' func-type ';'
+
+func-type ::= 'func' param-list result-list
+
+param-list ::= '(' named-type-list ')'
+
+result-list ::= ϵ
+              | '->' ty
+
+named-type-list ::= ϵ
+                  | named-type ( ',' named-type )*
+
+named-type ::= id ':' ty
+
+use-item ::= 'use' use-path '.' '{' use-names-list '}' ';'
+
+use-names-list ::= use-names-item
+                 | use-names-item ',' use-names-list?
+
+use-names-item ::= id
+                 | id 'as' id
+
+type-item ::= 'type' id '=' ty ';'
+
+record-item ::= 'record' id '{' record-fields '}'
+
+record-fields ::= record-field
+                | record-field ',' record-fields?
+
+record-field ::= id ':' ty
+
+flags-items ::= 'flags' id '{' flags-fields '}'
+
+flags-fields ::= id
+               | id ',' flags-fields?
+
+variant-items ::= 'variant' id '{' variant-cases '}'
+
+variant-cases ::= variant-case
+                | variant-case ',' variant-cases?
+
+variant-case ::= id
+               | id '(' ty ')'
+
+enum-items ::= 'enum' id '{' enum-cases '}'
+
+enum-cases ::= id
+             | id ',' enum-cases?
+
+resource-item ::= 'resource' id ';'
+                | 'resource' id '{' resource-method* '}'
+resource-method ::= func-item
+                  | id ':' 'static' func-type ';'
+                  | 'constructor' param-list ';'
+
+ty ::= 'u8' | 'u16' | 'u32' | 'u64'
+     | 's8' | 's16' | 's32' | 's64'
+     | 'f32' | 'f64'
+     | 'char'
+     | 'bool'
+     | 'string'
+     | tuple
+     | list
+     | option
+     | result
+     | handle
+     | id
+
+tuple ::= 'tuple' '<' tuple-list '>'
+tuple-list ::= ty
+             | ty ',' tuple-list?
+
+list ::= 'list' '<' ty '>'
+       | 'list' '<' ty ',' uint '>'
+
+uint ::= [1-9][0-9]*
+
+option ::= 'option' '<' ty '>'
+
+result ::= 'result' '<' ty ',' ty '>'
+         | 'result' '<' '_' ',' ty '>'
+         | 'result' '<' ty '>'
+         | 'result'
+
+handle ::= id
+         | 'borrow' '<' id '>'

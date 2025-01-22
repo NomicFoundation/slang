@@ -1,0 +1,55 @@
+// Generated on 2025-01-17T15:12:29.806Z
+model public::json {
+
+    value = {
+        boolean: boolean,
+        number: number,
+        string: string,
+        null: null,
+        list: list,
+        map: map
+    };
+    
+    boolean = {
+          "true"
+        | "false"
+    };
+    
+    number = string;
+    
+    ureal = string;
+    
+    uinteger = string;
+    
+    digit = {  };
+    
+    sign = {  };
+    
+    string = string;
+    
+    string_character = string;
+    
+    null = {  };
+    
+    list = seq<value>;
+    
+    map = seq<map_entry>;
+    
+    map_entry = {
+        key: string,
+        value: value
+    };
+    
+    trivia = {
+        whitespace: whitespace,
+        line_comment: line_comment,
+        block_comment: block_comment
+    };
+    
+    line_comment = string;
+    
+    block_comment = string;
+    
+    whitespace = string;
+    
+}
