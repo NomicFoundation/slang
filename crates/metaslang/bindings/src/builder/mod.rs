@@ -21,13 +21,15 @@ pub(crate) type CursorID = usize;
 pub use crate::graph::BindingGraph;
 
 pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
+    pub(crate) cursor: Cursor<KT>,
     pub(crate) definiens: Cursor<KT>,
     parents: Vec<GraphHandle>,
     extension_scope: Option<GraphHandle>,
     inherit_extensions: bool,
 }
 
-pub(crate) struct ReferenceBindingInfo {
+pub(crate) struct ReferenceBindingInfo<KT: KindTypes + 'static> {
+    pub(crate) cursor: Cursor<KT>,
     parents: Vec<GraphHandle>,
 }
 
@@ -35,9 +37,8 @@ pub struct BindingGraphBuilder<KT: KindTypes + 'static> {
     graph_builder_file: File<KT>,
     functions: Functions<KT>,
     pub(crate) stack_graph: StackGraph,
-    pub(crate) cursors: HashMap<GraphHandle, Cursor<KT>>,
     pub(crate) definitions_info: HashMap<GraphHandle, DefinitionBindingInfo<KT>>,
-    pub(crate) references_info: HashMap<GraphHandle, ReferenceBindingInfo>,
+    pub(crate) references_info: HashMap<GraphHandle, ReferenceBindingInfo<KT>>,
     pub(crate) cursor_to_definitions: HashMap<CursorID, GraphHandle>,
     pub(crate) cursor_to_references: HashMap<CursorID, GraphHandle>,
     extension_hooks: HashSet<GraphHandle>,
@@ -119,7 +120,6 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
             graph_builder_file,
             functions,
             stack_graph,
-            cursors: HashMap::new(),
             definitions_info: HashMap::new(),
             references_info: HashMap::new(),
             cursor_to_definitions: HashMap::new(),
@@ -164,15 +164,15 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
             .execute(&loader::NoCancellation)
             .expect("Internal error while building bindings");
 
-        for (handle, cursor) in result.cursors.drain() {
-            let cursor_id = cursor.node().id();
-            if self.stack_graph[handle].is_definition() {
-                self.cursor_to_definitions.insert(cursor_id, handle);
-            } else {
-                self.cursor_to_references.insert(cursor_id, handle);
-            }
-            self.cursors.insert(handle, cursor);
-        }
+        result.definitions_info.iter().for_each(|(handle, definition_info)| {
+            let cursor_id = definition_info.cursor.node().id();
+            self.cursor_to_definitions.insert(cursor_id, *handle);
+        });
+        result.references_info.iter().for_each(|(handle, reference_info)| {
+            let cursor_id = reference_info.cursor.node().id();
+            self.cursor_to_definitions.insert(cursor_id, *handle);
+        });
+
         self.definitions_info
             .extend(result.definitions_info.drain());
         self.references_info.extend(result.references_info.drain());

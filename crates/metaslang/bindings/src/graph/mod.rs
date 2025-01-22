@@ -55,12 +55,9 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
                 continue;
             };
             if graph_node.is_definition() {
-                let cursor = builder
-                    .cursors
-                    .get(&handle)
-                    .expect("Definition to have a valid cursor")
-                    .clone();
-                let definiens = builder.definitions_info[&handle].definiens.clone();
+                let definition_info = &builder.definitions_info[&handle];
+                let cursor = definition_info.cursor.clone();
+                let definiens = definition_info.definiens.clone();
                 definitions.insert(
                     handle,
                     DefinitionInfo {
@@ -70,11 +67,8 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
                     },
                 );
             } else if graph_node.is_reference() {
-                let cursor = builder
-                    .cursors
-                    .get(&handle)
-                    .expect("Reference to have a valid cursor")
-                    .clone();
+                let reference_info = &builder.references_info[&handle];
+                let cursor = reference_info.cursor.clone();
                 references.insert(handle, ReferenceInfo { file, cursor });
             }
         }
