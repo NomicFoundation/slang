@@ -6,8 +6,7 @@ use stack_graphs::arena::Handle;
 use stack_graphs::graph::{Degree, Edge, StackGraph};
 use stack_graphs::partial::{PartialPath, PartialPaths};
 use stack_graphs::stitching::{
-    Database, DatabaseCandidates, ForwardCandidates, ForwardPartialPathStitcher, StitcherConfig,
-    ToAppendable,
+    Database, ForwardCandidates, ForwardPartialPathStitcher, StitcherConfig, ToAppendable,
 };
 use stack_graphs::{CancellationError, NoCancellation};
 
@@ -105,7 +104,7 @@ impl Resolver {
         let checkpoint = self.partials.save_checkpoint();
         let mut reference_paths = Vec::new();
 
-        if allow_recursion {
+        let extensions = if allow_recursion {
             // look for extension scopes to apply to the reference
             let ref_parents = self.resolve_parents(owner, reference);
             let mut extensions = HashSet::new();
@@ -123,40 +122,27 @@ impl Resolver {
                     }
                 }
             }
-            let extensions = extensions.drain().collect::<Vec<_>>();
-            let mut database = ExtendedDatabase::new(&mut self.database);
-
-            ForwardPartialPathStitcher::find_all_complete_partial_paths(
-                &mut DatabaseCandidatesExtended::new(
-                    owner,
-                    &mut self.partials,
-                    &mut database,
-                    extensions,
-                ),
-                once(reference),
-                StitcherConfig::default(),
-                &NoCancellation,
-                |_graph, _partials, path| {
-                    reference_paths.push(path.clone());
-                },
-            )
-            .expect("not cancelled");
+            extensions.drain().collect::<Vec<_>>()
         } else {
-            ForwardPartialPathStitcher::find_all_complete_partial_paths(
-                &mut DatabaseCandidates::new(
-                    &owner.stack_graph,
-                    &mut self.partials,
-                    &mut self.database,
-                ),
-                once(reference),
-                StitcherConfig::default(),
-                &NoCancellation,
-                |_graph, _partials, path| {
-                    reference_paths.push(path.clone());
-                },
-            )
-            .expect("not cancelled");
-        }
+            Vec::new()
+        };
+        let mut database = ExtendedDatabase::new(&mut self.database);
+
+        ForwardPartialPathStitcher::find_all_complete_partial_paths(
+            &mut DatabaseCandidatesExtended::new(
+                owner,
+                &mut self.partials,
+                &mut database,
+                extensions,
+            ),
+            once(reference),
+            StitcherConfig::default(),
+            &NoCancellation,
+            |_graph, _partials, path| {
+                reference_paths.push(path.clone());
+            },
+        )
+        .expect("not cancelled");
 
         let mut results = Vec::new();
         for reference_path in &reference_paths {
