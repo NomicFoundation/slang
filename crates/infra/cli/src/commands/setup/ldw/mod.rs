@@ -5,7 +5,7 @@ use std::path::Path;
 /// Install npm packages for ldw.
 pub fn setup_ldw() {
     Command::new("npm")
-        .current_dir(Path::repo_path("crates/ldw"))
+        .current_dir(Path::repo_path("crates/codegen/ldw"))
         .arg("install")
         .run();
 }

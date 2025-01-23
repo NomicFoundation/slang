@@ -76,7 +76,7 @@ fn check_ldw() {
     // 4. Questions about output file structure: We'll need to make sure that the generated passes are put somewhere where they
     //    can be used by the next stage in the build pipeline, but for now we'll just dump them somewhere convenient.
     Command::new("ts-node")
-        .current_dir(Path::repo_path("crates/ldw"))
+        .current_dir(Path::repo_path("crates/codegen/ldw"))
         .arg("src-ts/cli/ldw.ts")
         // .args(["--in-dir", "../../crates/testlang/outputs/ldw/"])
         // .args(["--out-dir", "../../crates/testlang/outputs/ldw/generated"])

@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "commonjs",
+        "exactOptionalPropertyTypes": false,
+        "noFallthroughCasesInSwitch": false,
+        "noImplicitAny": false,
+        "noImplicitOverride": false,
+        "noImplicitReturns": false,
+        "noImplicitThis": false,
+        "noPropertyAccessFromIndexSignature": false,
+        "noUncheckedIndexedAccess": false,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "strict": false,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "outDir": "./dist",
+        "rootDir": ".",
+        "resolveJsonModule": true,
+        "forceConsistentCasingInFileNames": true,
+        "types": ["jest", "node"]
+    },
+    "include": ["src-ts/**/*.ts", "tests-ts/**/*.ts"],
+    "exclude": ["node_modules"]
+}
