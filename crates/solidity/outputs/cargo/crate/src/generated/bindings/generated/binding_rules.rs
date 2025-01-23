@@ -1038,13 +1038,19 @@ inherit .star_extension
 ;;; Mappings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; When there's a parsing error (like a name in parameters for versions below 0.8.18)
+;;; we still need the basics to get bindings working
+@mapping [MappingType] {
+  node @mapping.lexical_scope
+  node @mapping.output
+  node @mapping.pop_begin
+  node @mapping.pop_end
+}
+
 @mapping [MappingType
     [MappingKey [MappingKeyType @key_type ([IdentifierPath] | [ElementaryType])]]
     [MappingValue @value_type [TypeName]]
 ] {
-  node @mapping.lexical_scope
-  node @mapping.output
-
   ; Define the pushing path of the mapping type
   ;   ValueType <- top of the symbol stack
   ;   KeyType
@@ -1086,12 +1092,33 @@ inherit .star_extension
   node pop_mapping
   attr (pop_mapping) pop_symbol = "%Mapping"
 
-  let @mapping.pop_begin = @value_type.pop_begin
+  edge @mapping.pop_begin -> @value_type.pop_begin
   edge @value_type.pop_end -> @key_type.pop_begin
   edge @key_type.pop_end -> pop_mapping
-  let @mapping.pop_end = pop_mapping
+  edge pop_mapping -> @mapping.pop_end
+
+  node @mapping.defs
 }
 
+@mapping [MappingType
+    @key [MappingKey [MappingKeyType] @key_name [Identifier]]
+    [MappingValue]
+] {
+  node @key.def
+  attr (@key.def) node_definition = @key_name
+  attr (@key.def) definiens_node = @key
+  edge @key.def -> @mapping.defs
+}
+
+@mapping [MappingType
+    [MappingKey]
+    @value [MappingValue [TypeName] @value_name [Identifier]]
+] {
+  node @value.def
+  attr (@value.def) node_definition = @value_name
+  attr (@value.def) definiens_node = @value
+  edge @value.def -> @mapping.defs
+}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Arrays types
