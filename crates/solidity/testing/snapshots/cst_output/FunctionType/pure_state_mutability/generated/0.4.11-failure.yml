@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (FunctionType): # "function () internal pure returns (uint)\n" (0..41)
+  - (root꞉ FunctionType): # "function () internal pure returns (uint)\n" (0..41)
       - (function_keyword꞉ FunctionKeyword): "function" # (0..8)
       - (parameters꞉ ParametersDeclaration): # " ()" (8..11)
           - (leading_trivia꞉ Whitespace): " " # (8..9)
@@ -26,4 +26,4 @@ Tree:
               - (leading_trivia꞉ Whitespace): " " # (11..12)
               - (variant꞉ InternalKeyword): "internal" # (12..20)
       - (leading_trivia꞉ Whitespace): " " # (20..21)
-      - (UNRECOGNIZED): "pure returns (uint)\n" # (21..41)
+      - (unrecognized꞉ UNRECOGNIZED): "pure returns (uint)\n" # (21..41)

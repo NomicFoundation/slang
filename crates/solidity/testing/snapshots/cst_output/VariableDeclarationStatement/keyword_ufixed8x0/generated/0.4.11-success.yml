@@ -7,7 +7,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (VariableDeclarationStatement): # "// This form is only reserved since 0.4.14:\nuint u..." (0..60)
+  - (root꞉ VariableDeclarationStatement): # "// This form is only reserved since 0.4.14:\nuint u..." (0..60)
       - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # "// This form is only reserved since 0.4.14:\nuint" (0..48)
           - (leading_trivia꞉ SingleLineComment): "// This form is only reserved since 0.4.14:" # (0..43)
           - (leading_trivia꞉ EndOfLine): "\n" # (43..44)

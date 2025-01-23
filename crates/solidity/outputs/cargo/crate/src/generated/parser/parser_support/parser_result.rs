@@ -49,18 +49,18 @@ impl ParserResult {
     pub fn with_kind(self, new_kind: NonterminalKind) -> ParserResult {
         match self {
             ParserResult::Match(r#match) => ParserResult::r#match(
-                vec![Edge::anonymous(Node::nonterminal(new_kind, r#match.nodes))],
+                vec![Edge::root(Node::nonterminal(new_kind, r#match.nodes))],
                 r#match.expected_terminals,
             ),
             ParserResult::IncompleteMatch(incomplete_match) => ParserResult::incomplete_match(
-                vec![Edge::anonymous(Node::nonterminal(
+                vec![Edge::root(Node::nonterminal(
                     new_kind,
                     incomplete_match.nodes,
                 ))],
                 incomplete_match.expected_terminals,
             ),
             ParserResult::SkippedUntil(skipped) => ParserResult::SkippedUntil(SkippedUntil {
-                nodes: vec![Edge::anonymous(Node::nonterminal(new_kind, skipped.nodes))],
+                nodes: vec![Edge::root(Node::nonterminal(new_kind, skipped.nodes))],
                 ..skipped
             }),
             ParserResult::NoMatch(no_match) => ParserResult::no_match(no_match.expected_terminals),
@@ -76,13 +76,13 @@ impl ParserResult {
             label: prev_label, ..
         }) = self.significant_node_mut()
         {
-            *prev_label = Some(label);
+            *prev_label = label;
         }
         // Also allow to name a single trivia terminal node
         else if let ParserResult::Match(Match { nodes, .. }) = &mut self {
             if let [node] = nodes.as_mut_slice() {
                 if node.as_terminal().is_some_and(|tok| tok.kind.is_trivia()) {
-                    node.label = Some(label);
+                    node.label = label;
                 }
             }
         }
@@ -170,12 +170,19 @@ pub enum PrattElement {
 
 impl PrattElement {
     pub fn into_nodes(self) -> Vec<Edge> {
+        self.into_nodes_with_label(EdgeLabel::Root)
+    }
+
+    pub fn into_nodes_with_label(self, label: EdgeLabel) -> Vec<Edge> {
         match self {
             Self::Expression { nodes } => nodes,
             Self::Binary { kind, nodes, .. }
             | Self::Prefix { kind, nodes, .. }
             | Self::Postfix { kind, nodes, .. } => {
-                vec![Edge::anonymous(Node::nonterminal(kind, nodes))]
+                vec![Edge {
+                    label,
+                    node: Node::nonterminal(kind, nodes),
+                }]
             }
         }
     }

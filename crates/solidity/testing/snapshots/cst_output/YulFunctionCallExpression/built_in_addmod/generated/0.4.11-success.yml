@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "addmod()\n" (0..9)
+  - (root꞉ YulFunctionCallExpression): # "addmod()\n" (0..9)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulAddModKeyword): "addmod" # (0..6)
       - (open_paren꞉ OpenParen): "(" # (6..7)
       - (arguments꞉ YulArguments): [] # (7..7)

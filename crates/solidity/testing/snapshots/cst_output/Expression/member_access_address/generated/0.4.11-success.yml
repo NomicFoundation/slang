@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ MemberAccessExpression): # "x.address\n" (0..10)
+  - (root꞉ Expression) ► (variant꞉ MemberAccessExpression): # "x.address\n" (0..10)
       - (operand꞉ Expression) ► (variant꞉ Identifier): "x" # (0..1)
       - (period꞉ Period): "." # (1..2)
       - (member꞉ Identifier): "address" # (2..9)

@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulFunctionCallExpression) ► (UNRECOGNIZED): "jump()\n" # (0..7)
+  - (root꞉ YulFunctionCallExpression) ► (unrecognized꞉ UNRECOGNIZED): "jump()\n" # (0..7)

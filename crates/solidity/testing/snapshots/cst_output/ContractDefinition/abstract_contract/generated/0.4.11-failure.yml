@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition) ► (UNRECOGNIZED): "abstract contract Sample {}\n" # (0..28)
+  - (root꞉ ContractDefinition) ► (unrecognized꞉ UNRECOGNIZED): "abstract contract Sample {}\n" # (0..28)

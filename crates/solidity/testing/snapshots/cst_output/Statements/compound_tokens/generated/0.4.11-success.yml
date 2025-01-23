@@ -18,7 +18,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Statements): # "a && b;\na &= b;\na || b;\na |= b;\na / b;\na /= b;\na >..." (0..106)
+  - (root꞉ Statements): # "a && b;\na &= b;\na || b;\na |= b;\na / b;\na /= b;\na >..." (0..106)
       - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # "a && b;\n" (0..8)
           - (expression꞉ Expression) ► (variant꞉ AndExpression): # "a && b" (0..6)
               - (left_operand꞉ Expression) ► (variant꞉ Identifier): "a" # (0..1)

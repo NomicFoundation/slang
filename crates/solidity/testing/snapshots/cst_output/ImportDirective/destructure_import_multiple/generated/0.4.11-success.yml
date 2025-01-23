@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ImportDirective): # 'import { A1 as A2, B1, C1 as C2 } from "foo";' (0..45)
+  - (root꞉ ImportDirective): # 'import { A1 as A2, B1, C1 as C2 } from "foo";' (0..45)
       - (import_keyword꞉ ImportKeyword): "import" # (0..6)
       - (clause꞉ ImportClause) ► (variant꞉ ImportDeconstruction): # ' { A1 as A2, B1, C1 as C2 } from "foo"' (6..44)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

@@ -8,7 +8,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # "contract Sample {\n  using x for *;\n}" (0..36)
+  - (root꞉ ContractDefinition): # "contract Sample {\n  using x for *;\n}" (0..36)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Sample" # (9..15)

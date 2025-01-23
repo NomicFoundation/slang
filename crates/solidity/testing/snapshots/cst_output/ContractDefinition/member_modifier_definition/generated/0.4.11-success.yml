@@ -10,7 +10,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # "contract Sample {\n  modifier foo() {\n    _;\n  }\n}" (0..49)
+  - (root꞉ ContractDefinition): # "contract Sample {\n  modifier foo() {\n    _;\n  }\n}" (0..49)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Sample" # (9..15)

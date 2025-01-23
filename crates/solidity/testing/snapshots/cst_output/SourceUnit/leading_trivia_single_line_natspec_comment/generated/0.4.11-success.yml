@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (SourceUnit): # "/// foo bar\n" (0..12)
+  - (root꞉ SourceUnit): # "/// foo bar\n" (0..12)
       - (members꞉ SourceUnitMembers): [] # (0..0)
       - (leading_trivia꞉ SingleLineNatSpecComment): "/// foo bar" # (0..11)
       - (leading_trivia꞉ EndOfLine): "\n" # (11..12)

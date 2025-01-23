@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (StringLiteral): # '"\n"\n' (0..5)
+  - (root꞉ StringLiteral): # '"\n"\n' (0..5)
       - (variant꞉ DoubleQuotedStringLiteral): '"\n"' # (0..4)
       - (trailing_trivia꞉ EndOfLine): "\n" # (4..5)

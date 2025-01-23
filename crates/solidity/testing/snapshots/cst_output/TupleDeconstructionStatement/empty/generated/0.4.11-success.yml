@@ -7,7 +7,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (TupleDeconstructionStatement): # "// TODO(#671): Tuple expressions can't be empty\n()..." (0..57)
+  - (root꞉ TupleDeconstructionStatement): # "// TODO(#671): Tuple expressions can't be empty\n()..." (0..57)
       - (leading_trivia꞉ SingleLineComment): "// TODO(#671): Tuple expressions can't be empty" # (0..47)
       - (leading_trivia꞉ EndOfLine): "\n" # (47..48)
       - (open_paren꞉ OpenParen): "(" # (48..49)

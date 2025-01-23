@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (PragmaDirective): # 'pragma experimental "ABIEncoderV2";\n' (0..36)
+  - (root꞉ PragmaDirective): # 'pragma experimental "ABIEncoderV2";\n' (0..36)
       - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
       - (pragma꞉ Pragma) ► (variant꞉ ExperimentalPragma): # ' experimental "ABIEncoderV2"' (6..34)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (UsingDirective): # "using foo for bar global;" (0..25)
+  - (root꞉ UsingDirective): # "using foo for bar global;" (0..25)
       - (using_keyword꞉ UsingKeyword): "using" # (0..5)
       - (clause꞉ UsingClause) ► (variant꞉ IdentifierPath): # " foo" (5..9)
           - (leading_trivia꞉ Whitespace): " " # (5..6)

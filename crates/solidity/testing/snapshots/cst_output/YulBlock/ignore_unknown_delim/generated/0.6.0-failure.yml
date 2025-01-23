@@ -20,7 +20,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulBlock): # "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..." (0..85)
+  - (root꞉ YulBlock): # "{\n\tfunction mult(a, b) -> result {\n\t\tresult := mul..." (0..85)
       - (open_brace꞉ OpenBrace): "{" # (0..1)
       - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)
       - (statements꞉ YulStatements): # "\tfunction mult(a, b) -> result {\n\t\tresult := mul(a..." (2..83)
@@ -74,7 +74,7 @@ Tree:
                           - (leading_trivia꞉ Whitespace): "\t\t" # (57..59)
                           - (item꞉ YulIdentifier): "result" # (59..65)
                   - (leading_trivia꞉ Whitespace): " " # (65..66)
-                  - (UNRECOGNIZED): ":= [mul(a, b)\n\t" # (66..81)
+                  - (unrecognized꞉ UNRECOGNIZED): ":= [mul(a, b)\n\t" # (66..81)
                   - (close_brace꞉ CloseBrace): "}" # (81..82)
                   - (trailing_trivia꞉ EndOfLine): "\n" # (82..83)
       - (close_brace꞉ CloseBrace): "}" # (83..84)

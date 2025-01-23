@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (HexNumberExpression) ► (literal꞉ HexLiteral): "0x12345" # (0..7)
+  - (root꞉ HexNumberExpression) ► (literal꞉ HexLiteral): "0x12345" # (0..7)

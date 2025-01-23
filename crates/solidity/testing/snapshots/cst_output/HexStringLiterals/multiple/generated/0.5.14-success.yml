@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (HexStringLiterals): # 'hex"ab" hex''cd''' (0..15)
+  - (root꞉ HexStringLiterals): # 'hex"ab" hex''cd''' (0..15)
       - (item꞉ HexStringLiteral) ► (variant꞉ DoubleQuotedHexStringLiteral): 'hex"ab"' # (0..7)
       - (item꞉ HexStringLiteral): # " hex'cd'" (7..15)
           - (leading_trivia꞉ Whitespace): " " # (7..8)

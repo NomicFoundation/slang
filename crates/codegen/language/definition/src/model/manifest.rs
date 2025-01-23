@@ -179,6 +179,9 @@ pub struct Topic {
 )]
 #[strum(serialize_all = "snake_case")]
 pub enum PredefinedLabel {
+    Root,
+    Unrecognized,
+    Missing,
     Item,
     Variant,
     Separator,

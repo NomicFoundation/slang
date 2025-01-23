@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "keccak256 := 0\n" (0..15)
+  - (root꞉ YulVariableAssignmentStatement): # "keccak256 := 0\n" (0..15)
       - (variables꞉ YulPaths): # "keccak256" (0..9)
           - (item꞉ YulPath): # "keccak256" (0..9)
               - (item꞉ YulIdentifier): "keccak256" # (0..9)

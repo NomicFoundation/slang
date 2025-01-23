@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (SourceUnit): # "   " (0..3)
+  - (root꞉ SourceUnit): # "   " (0..3)
       - (members꞉ SourceUnitMembers): [] # (0..0)
       - (leading_trivia꞉ Whitespace): "   " # (0..3)

@@ -15,12 +15,12 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (VariableDeclarationStatement): # "// This form is always reserved:\nuint ufixed8x8;\n" (0..49)
+  - (root꞉ VariableDeclarationStatement): # "// This form is always reserved:\nuint ufixed8x8;\n" (0..49)
       - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType): # "// This form is always reserved:\nuint" (0..37)
           - (leading_trivia꞉ SingleLineComment): "// This form is always reserved:" # (0..32)
           - (leading_trivia꞉ EndOfLine): "\n" # (32..33)
           - (variant꞉ UintKeyword): "uint" # (33..37)
       - (leading_trivia꞉ Whitespace): " " # (37..38)
-      - (UNRECOGNIZED): "ufixed8x8" # (38..47)
+      - (unrecognized꞉ UNRECOGNIZED): "ufixed8x8" # (38..47)
       - (semicolon꞉ Semicolon): ";" # (47..48)
       - (trailing_trivia꞉ EndOfLine): "\n" # (48..49)

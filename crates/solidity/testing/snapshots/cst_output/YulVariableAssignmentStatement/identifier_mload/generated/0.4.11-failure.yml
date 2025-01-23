@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulVariableAssignmentStatement) ► (UNRECOGNIZED): "mload := 0\n" # (0..11)
+  - (root꞉ YulVariableAssignmentStatement) ► (unrecognized꞉ UNRECOGNIZED): "mload := 0\n" # (0..11)

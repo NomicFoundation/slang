@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ConstantDefinition): # "int constant foo = 0;" (0..21)
+  - (root꞉ ConstantDefinition): # "int constant foo = 0;" (0..21)
       - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ IntKeyword): "int" # (0..3)
       - (leading_trivia꞉ Whitespace): " " # (3..4)
       - (constant_keyword꞉ ConstantKeyword): "constant" # (4..12)

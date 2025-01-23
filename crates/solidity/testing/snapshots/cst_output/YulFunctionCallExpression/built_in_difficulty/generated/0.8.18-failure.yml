@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulFunctionCallExpression) ► (UNRECOGNIZED): "difficulty()\n" # (0..13)
+  - (root꞉ YulFunctionCallExpression) ► (unrecognized꞉ UNRECOGNIZED): "difficulty()\n" # (0..13)

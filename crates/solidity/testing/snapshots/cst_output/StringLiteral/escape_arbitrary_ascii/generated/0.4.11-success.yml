@@ -7,7 +7,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (StringLiteral): # '// Disallowed post 0.4.25\n"\a"\n' (0..31)
+  - (root꞉ StringLiteral): # '// Disallowed post 0.4.25\n"\a"\n' (0..31)
       - (leading_trivia꞉ SingleLineComment): "// Disallowed post 0.4.25" # (0..25)
       - (leading_trivia꞉ EndOfLine): "\n" # (25..26)
       - (variant꞉ DoubleQuotedStringLiteral): '"\a"' # (26..30)

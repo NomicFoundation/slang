@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TypeName) ► (UNRECOGNIZED): "byte" # (0..4)
+  - (root꞉ TypeName) ► (unrecognized꞉ UNRECOGNIZED): "byte" # (0..4)

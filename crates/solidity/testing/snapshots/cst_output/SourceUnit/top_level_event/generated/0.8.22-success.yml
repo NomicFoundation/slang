@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (SourceUnit) ► (members꞉ SourceUnitMembers): # "event E1(uint256 value);\n" (0..25)
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "event E1(uint256 value);\n" (0..25)
       - (item꞉ SourceUnitMember) ► (variant꞉ EventDefinition): # "event E1(uint256 value);\n" (0..25)
           - (event_keyword꞉ EventKeyword): "event" # (0..5)
           - (leading_trivia꞉ Whitespace): " " # (5..6)

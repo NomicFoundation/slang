@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ExponentiationExpression): # "x ** y ** z\n" (0..12)
+  - (root꞉ ExponentiationExpression): # "x ** y ** z\n" (0..12)
       - (left_operand꞉ Expression) ► (variant꞉ ExponentiationExpression): # "x ** y" (0..6)
           - (left_operand꞉ Expression) ► (variant꞉ Identifier): "x" # (0..1)
           - (leading_trivia꞉ Whitespace): " " # (1..2)

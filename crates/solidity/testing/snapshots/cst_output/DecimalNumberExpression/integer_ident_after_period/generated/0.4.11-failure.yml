@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (DecimalNumberExpression) ► (UNRECOGNIZED): "1.a\n" # (0..4)
+  - (root꞉ DecimalNumberExpression) ► (unrecognized꞉ UNRECOGNIZED): "1.a\n" # (0..4)

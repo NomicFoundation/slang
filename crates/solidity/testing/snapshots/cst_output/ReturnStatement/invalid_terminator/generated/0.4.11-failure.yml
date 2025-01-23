@@ -17,7 +17,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ReturnStatement): # "return a + 2 * some invalid tokens\n\n;\n" (0..38)
+  - (root꞉ ReturnStatement): # "return a + 2 * some invalid tokens\n\n;\n" (0..38)
       - (return_keyword꞉ ReturnKeyword): "return" # (0..6)
       - (expression꞉ Expression) ► (variant꞉ AdditiveExpression): # " a + 2 * some" (6..19)
           - (left_operand꞉ Expression): # " a" (6..8)
@@ -35,6 +35,6 @@ Tree:
                   - (leading_trivia꞉ Whitespace): " " # (14..15)
                   - (variant꞉ Identifier): "some" # (15..19)
       - (leading_trivia꞉ Whitespace): " " # (19..20)
-      - (UNRECOGNIZED): "invalid tokens\n\n" # (20..36)
+      - (unrecognized꞉ UNRECOGNIZED): "invalid tokens\n\n" # (20..36)
       - (semicolon꞉ Semicolon): ";" # (36..37)
       - (trailing_trivia꞉ EndOfLine): "\n" # (37..38)

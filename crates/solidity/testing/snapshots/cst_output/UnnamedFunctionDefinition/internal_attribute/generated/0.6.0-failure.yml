@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UnnamedFunctionDefinition) ► (UNRECOGNIZED): "function () internal {}\n" # (0..24)
+  - (root꞉ UnnamedFunctionDefinition) ► (unrecognized꞉ UNRECOGNIZED): "function () internal {}\n" # (0..24)
