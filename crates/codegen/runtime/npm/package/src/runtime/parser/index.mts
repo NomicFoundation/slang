@@ -6,8 +6,6 @@ export const Parser = wasm.parser.Parser;
 export type Parser = wasm.parser.Parser;
 
 /** {@inheritDoc wasm.parser.ParseError} */
-export const ParseError = wasm.parser.ParseError;
-/** {@inheritDoc wasm.parser.ParseError} */
 export type ParseError = wasm.parser.ParseError;
 
 /** {@inheritDoc wasm.parser.ParseOutput} */

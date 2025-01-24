@@ -10,7 +10,7 @@ test("parse terminal", () => {
   const source = "About_time";
   const parser = Parser.create("1.0.0");
 
-  const tree = parser.parse(NonterminalKind.TreeNodeChild, source).tree;
+  const tree = parser.parseNonterminal(NonterminalKind.TreeNodeChild, source).tree;
   assertIsNonterminalNode(tree, NonterminalKind.TreeNodeChild);
 
   const children = tree.children();
@@ -23,7 +23,7 @@ test("parse nonterminal", () => {
   const source = `tree [A [B C] D];`;
   const parser = Parser.create("1.0.0");
 
-  const tree = parser.parse(NonterminalKind.SourceUnit, source).tree;
+  const tree = parser.parseFileContents(source).tree;
   assertIsNonterminalNode(tree, NonterminalKind.SourceUnit);
 
   const children = tree.children();
@@ -36,7 +36,7 @@ test("parse unicode characters", () => {
   const source = `"some 😁 emoji"`;
   const parser = Parser.create("1.0.0");
 
-  const nonTerminal = parser.parse(NonterminalKind.Literal, source).tree;
+  const nonTerminal = parser.parseNonterminal(NonterminalKind.Literal, source).tree;
   assertIsNonterminalNode(nonTerminal, NonterminalKind.Literal);
 
   expect(nonTerminal.textLength).toEqual({

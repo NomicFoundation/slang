@@ -9,7 +9,7 @@ import {
 
 describe("nodes", () => {
   const source = `"foo"`;
-  const parseOutput = Parser.create("1.0.0").parse(NonterminalKind.Literal, source);
+  const parseOutput = Parser.create("1.0.0").parseNonterminal(NonterminalKind.Literal, source);
 
   const nonTerminal = parseOutput.tree;
   assertIsNonterminalNode(nonTerminal, NonterminalKind.Literal);

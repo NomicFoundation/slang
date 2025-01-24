@@ -3,6 +3,7 @@
 interface compilation {
     use bindings.{binding-graph};
     use cst.{nonterminal-node, cursor};
+    use parser.{parse-error};
 
     /// A builder for creating compilation units.
     /// Allows incrementally building a transitive list of all files and their imports.
@@ -63,6 +64,9 @@ interface compilation {
 
         /// Returns the syntax tree of this file.
         tree: func() -> nonterminal-node;
+
+        /// Returns a list of all errors encountered during parsing this file.
+        errors: func() -> list<parse-error>;
 
         /// Creates a cursor for traversing the syntax tree of this file.
         create-tree-cursor: func() -> cursor;

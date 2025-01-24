@@ -83,8 +83,8 @@ macro_rules! query_matches {
 }
 
 fn run_query_test(tree: Edge, query: &str, matches: Vec<BTreeMap<String, Vec<String>>>) {
-    let cursor = tree.node.cursor_with_offset(TextIndex::ZERO);
-    let query = vec![Query::parse(query).unwrap()];
+    let cursor = tree.node.create_cursor(TextIndex::ZERO);
+    let query = vec![Query::create(query).unwrap()];
     let mut matches = matches.into_iter();
     for QueryMatch { captures, .. } in cursor.query(query) {
         let captures = capture_cursors_to_strings(captures);

@@ -91,8 +91,8 @@ where
                 let node = Node::terminal(kind, input.to_string());
                 children.push(Edge::anonymous(node));
                 ParseOutput {
-                    tree: Rc::new(NonterminalNode::new(topmost_kind, children)),
-                    errors: vec![ParseError::new(
+                    tree: NonterminalNode::create(topmost_kind, children),
+                    errors: vec![ParseError::create(
                         start..start + input.into(),
                         no_match.expected_terminals,
                     )],
@@ -149,13 +149,13 @@ where
 
                     let start_index = stream.text_index_at(start);
                     let mut errors = stream.into_errors();
-                    errors.push(ParseError::new(
+                    errors.push(ParseError::create(
                         start_index..input.into(),
                         expected_terminals,
                     ));
 
                     ParseOutput {
-                        tree: Rc::new(NonterminalNode::new(topmost_node.kind, new_children)),
+                        tree: NonterminalNode::create(topmost_node.kind, new_children),
                         errors,
                     }
                 } else {
@@ -166,7 +166,7 @@ where
                     debug_assert_eq!(
                         errors.is_empty(),
                         Rc::clone(&tree)
-                            .cursor_with_offset(TextIndex::ZERO)
+                            .create_cursor(TextIndex::ZERO)
                             .remaining_nodes()
                             .all(|edge| edge
                                 .as_terminal()

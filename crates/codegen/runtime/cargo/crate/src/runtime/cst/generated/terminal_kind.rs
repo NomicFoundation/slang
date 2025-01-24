@@ -28,12 +28,4 @@ pub enum TerminalKind {
     Stub3,
 }
 
-impl crate::cst::TerminalKindExtensions for TerminalKind {
-    fn is_trivia(&self) -> bool {
-        false
-    }
-
-    fn is_valid(&self) -> bool {
-        !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
-    }
-}
+impl crate::cst::TerminalKindExtensions for TerminalKind {}

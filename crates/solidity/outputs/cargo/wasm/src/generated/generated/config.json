@@ -170,16 +170,6 @@
         "as_getter": true
       }
     },
-    "nomic-foundation:slang:parser:parse-error.text-range()": {
-      "Function": {
-        "as_getter": true
-      }
-    },
-    "nomic-foundation:slang:parser:parse-error.message()": {
-      "Function": {
-        "as_getter": true
-      }
-    },
     "nomic-foundation:slang:parser:parse-output.tree()": {
       "Function": {
         "as_getter": true

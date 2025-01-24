@@ -76,12 +76,10 @@ pub enum ParserInitializationError {
 }
 
 impl Parser {
-    pub const ROOT_KIND: NonterminalKind = NonterminalKind::SourceUnit;
-
     pub fn create(
         language_version: Version,
     ) -> std::result::Result<Self, ParserInitializationError> {
-        if LanguageFacts::SUPPORTED_VERSIONS
+        if LanguageFacts::ALL_VERSIONS
             .binary_search(&language_version)
             .is_ok()
         {
@@ -131,9 +129,426 @@ impl Parser {
 
     pub fn language_version(&self) -> &Version {
         &self.language_version
-    } /********************************************
-       *         Parser Functions
-       ********************************************/
+    }
+
+    pub fn parse_file_contents(&self, input: &str) -> ParseOutput {
+        self.parse_nonterminal(NonterminalKind::SourceUnit, input)
+    }
+    pub fn parse_nonterminal(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
+        match kind {
+            NonterminalKind::AbicoderPragma => Self::abicoder_pragma.parse(self, input, kind),
+            NonterminalKind::AdditiveExpression => {
+                Self::additive_expression.parse(self, input, kind)
+            }
+            NonterminalKind::AddressType => Self::address_type.parse(self, input, kind),
+            NonterminalKind::AndExpression => Self::and_expression.parse(self, input, kind),
+            NonterminalKind::ArgumentsDeclaration => {
+                Self::arguments_declaration.parse(self, input, kind)
+            }
+            NonterminalKind::ArrayExpression => Self::array_expression.parse(self, input, kind),
+            NonterminalKind::ArrayTypeName => Self::array_type_name.parse(self, input, kind),
+            NonterminalKind::ArrayValues => Self::array_values.parse(self, input, kind),
+            NonterminalKind::AssemblyFlags => Self::assembly_flags.parse(self, input, kind),
+            NonterminalKind::AssemblyFlagsDeclaration => {
+                Self::assembly_flags_declaration.parse(self, input, kind)
+            }
+            NonterminalKind::AssemblyStatement => Self::assembly_statement.parse(self, input, kind),
+            NonterminalKind::AssignmentExpression => {
+                Self::assignment_expression.parse(self, input, kind)
+            }
+            NonterminalKind::BitwiseAndExpression => {
+                Self::bitwise_and_expression.parse(self, input, kind)
+            }
+            NonterminalKind::BitwiseOrExpression => {
+                Self::bitwise_or_expression.parse(self, input, kind)
+            }
+            NonterminalKind::BitwiseXorExpression => {
+                Self::bitwise_xor_expression.parse(self, input, kind)
+            }
+            NonterminalKind::Block => Self::block.parse(self, input, kind),
+            NonterminalKind::BreakStatement => Self::break_statement.parse(self, input, kind),
+            NonterminalKind::CallOptions => Self::call_options.parse(self, input, kind),
+            NonterminalKind::CallOptionsExpression => {
+                Self::call_options_expression.parse(self, input, kind)
+            }
+            NonterminalKind::CatchClause => Self::catch_clause.parse(self, input, kind),
+            NonterminalKind::CatchClauseError => Self::catch_clause_error.parse(self, input, kind),
+            NonterminalKind::CatchClauses => Self::catch_clauses.parse(self, input, kind),
+            NonterminalKind::ComparisonExpression => {
+                Self::comparison_expression.parse(self, input, kind)
+            }
+            NonterminalKind::ConditionalExpression => {
+                Self::conditional_expression.parse(self, input, kind)
+            }
+            NonterminalKind::ConstantDefinition => {
+                Self::constant_definition.parse(self, input, kind)
+            }
+            NonterminalKind::ConstructorAttribute => {
+                Self::constructor_attribute.parse(self, input, kind)
+            }
+            NonterminalKind::ConstructorAttributes => {
+                Self::constructor_attributes.parse(self, input, kind)
+            }
+            NonterminalKind::ConstructorDefinition => {
+                Self::constructor_definition.parse(self, input, kind)
+            }
+            NonterminalKind::ContinueStatement => Self::continue_statement.parse(self, input, kind),
+            NonterminalKind::ContractDefinition => {
+                Self::contract_definition.parse(self, input, kind)
+            }
+            NonterminalKind::ContractMember => Self::contract_member.parse(self, input, kind),
+            NonterminalKind::ContractMembers => Self::contract_members.parse(self, input, kind),
+            NonterminalKind::DecimalNumberExpression => {
+                Self::decimal_number_expression.parse(self, input, kind)
+            }
+            NonterminalKind::DoWhileStatement => Self::do_while_statement.parse(self, input, kind),
+            NonterminalKind::ElementaryType => Self::elementary_type.parse(self, input, kind),
+            NonterminalKind::ElseBranch => Self::else_branch.parse(self, input, kind),
+            NonterminalKind::EmitStatement => Self::emit_statement.parse(self, input, kind),
+            NonterminalKind::EnumDefinition => Self::enum_definition.parse(self, input, kind),
+            NonterminalKind::EnumMembers => Self::enum_members.parse(self, input, kind),
+            NonterminalKind::EqualityExpression => {
+                Self::equality_expression.parse(self, input, kind)
+            }
+            NonterminalKind::ErrorDefinition => Self::error_definition.parse(self, input, kind),
+            NonterminalKind::ErrorParameter => Self::error_parameter.parse(self, input, kind),
+            NonterminalKind::ErrorParameters => Self::error_parameters.parse(self, input, kind),
+            NonterminalKind::ErrorParametersDeclaration => {
+                Self::error_parameters_declaration.parse(self, input, kind)
+            }
+            NonterminalKind::EventDefinition => Self::event_definition.parse(self, input, kind),
+            NonterminalKind::EventParameter => Self::event_parameter.parse(self, input, kind),
+            NonterminalKind::EventParameters => Self::event_parameters.parse(self, input, kind),
+            NonterminalKind::EventParametersDeclaration => {
+                Self::event_parameters_declaration.parse(self, input, kind)
+            }
+            NonterminalKind::ExperimentalFeature => {
+                Self::experimental_feature.parse(self, input, kind)
+            }
+            NonterminalKind::ExperimentalPragma => {
+                Self::experimental_pragma.parse(self, input, kind)
+            }
+            NonterminalKind::ExponentiationExpression => {
+                Self::exponentiation_expression.parse(self, input, kind)
+            }
+            NonterminalKind::Expression => Self::expression.parse(self, input, kind),
+            NonterminalKind::ExpressionStatement => {
+                Self::expression_statement.parse(self, input, kind)
+            }
+            NonterminalKind::FallbackFunctionAttribute => {
+                Self::fallback_function_attribute.parse(self, input, kind)
+            }
+            NonterminalKind::FallbackFunctionAttributes => {
+                Self::fallback_function_attributes.parse(self, input, kind)
+            }
+            NonterminalKind::FallbackFunctionDefinition => {
+                Self::fallback_function_definition.parse(self, input, kind)
+            }
+            NonterminalKind::ForStatement => Self::for_statement.parse(self, input, kind),
+            NonterminalKind::ForStatementCondition => {
+                Self::for_statement_condition.parse(self, input, kind)
+            }
+            NonterminalKind::ForStatementInitialization => {
+                Self::for_statement_initialization.parse(self, input, kind)
+            }
+            NonterminalKind::FunctionAttribute => Self::function_attribute.parse(self, input, kind),
+            NonterminalKind::FunctionAttributes => {
+                Self::function_attributes.parse(self, input, kind)
+            }
+            NonterminalKind::FunctionBody => Self::function_body.parse(self, input, kind),
+            NonterminalKind::FunctionCallExpression => {
+                Self::function_call_expression.parse(self, input, kind)
+            }
+            NonterminalKind::FunctionDefinition => {
+                Self::function_definition.parse(self, input, kind)
+            }
+            NonterminalKind::FunctionName => Self::function_name.parse(self, input, kind),
+            NonterminalKind::FunctionType => Self::function_type.parse(self, input, kind),
+            NonterminalKind::FunctionTypeAttribute => {
+                Self::function_type_attribute.parse(self, input, kind)
+            }
+            NonterminalKind::FunctionTypeAttributes => {
+                Self::function_type_attributes.parse(self, input, kind)
+            }
+            NonterminalKind::HexNumberExpression => {
+                Self::hex_number_expression.parse(self, input, kind)
+            }
+            NonterminalKind::HexStringLiteral => Self::hex_string_literal.parse(self, input, kind),
+            NonterminalKind::HexStringLiterals => {
+                Self::hex_string_literals.parse(self, input, kind)
+            }
+            NonterminalKind::IdentifierPath => Self::identifier_path.parse(self, input, kind),
+            NonterminalKind::IfStatement => Self::if_statement.parse(self, input, kind),
+            NonterminalKind::ImportAlias => Self::import_alias.parse(self, input, kind),
+            NonterminalKind::ImportClause => Self::import_clause.parse(self, input, kind),
+            NonterminalKind::ImportDeconstruction => {
+                Self::import_deconstruction.parse(self, input, kind)
+            }
+            NonterminalKind::ImportDeconstructionSymbol => {
+                Self::import_deconstruction_symbol.parse(self, input, kind)
+            }
+            NonterminalKind::ImportDeconstructionSymbols => {
+                Self::import_deconstruction_symbols.parse(self, input, kind)
+            }
+            NonterminalKind::ImportDirective => Self::import_directive.parse(self, input, kind),
+            NonterminalKind::IndexAccessEnd => Self::index_access_end.parse(self, input, kind),
+            NonterminalKind::IndexAccessExpression => {
+                Self::index_access_expression.parse(self, input, kind)
+            }
+            NonterminalKind::InheritanceSpecifier => {
+                Self::inheritance_specifier.parse(self, input, kind)
+            }
+            NonterminalKind::InheritanceType => Self::inheritance_type.parse(self, input, kind),
+            NonterminalKind::InheritanceTypes => Self::inheritance_types.parse(self, input, kind),
+            NonterminalKind::InterfaceDefinition => {
+                Self::interface_definition.parse(self, input, kind)
+            }
+            NonterminalKind::InterfaceMembers => Self::interface_members.parse(self, input, kind),
+            NonterminalKind::LibraryDefinition => Self::library_definition.parse(self, input, kind),
+            NonterminalKind::LibraryMembers => Self::library_members.parse(self, input, kind),
+            NonterminalKind::MappingKey => Self::mapping_key.parse(self, input, kind),
+            NonterminalKind::MappingKeyType => Self::mapping_key_type.parse(self, input, kind),
+            NonterminalKind::MappingType => Self::mapping_type.parse(self, input, kind),
+            NonterminalKind::MappingValue => Self::mapping_value.parse(self, input, kind),
+            NonterminalKind::MemberAccessExpression => {
+                Self::member_access_expression.parse(self, input, kind)
+            }
+            NonterminalKind::ModifierAttribute => Self::modifier_attribute.parse(self, input, kind),
+            NonterminalKind::ModifierAttributes => {
+                Self::modifier_attributes.parse(self, input, kind)
+            }
+            NonterminalKind::ModifierDefinition => {
+                Self::modifier_definition.parse(self, input, kind)
+            }
+            NonterminalKind::ModifierInvocation => {
+                Self::modifier_invocation.parse(self, input, kind)
+            }
+            NonterminalKind::MultiplicativeExpression => {
+                Self::multiplicative_expression.parse(self, input, kind)
+            }
+            NonterminalKind::NamedArgument => Self::named_argument.parse(self, input, kind),
+            NonterminalKind::NamedArgumentGroup => {
+                Self::named_argument_group.parse(self, input, kind)
+            }
+            NonterminalKind::NamedArguments => Self::named_arguments.parse(self, input, kind),
+            NonterminalKind::NamedArgumentsDeclaration => {
+                Self::named_arguments_declaration.parse(self, input, kind)
+            }
+            NonterminalKind::NamedImport => Self::named_import.parse(self, input, kind),
+            NonterminalKind::NewExpression => Self::new_expression.parse(self, input, kind),
+            NonterminalKind::NumberUnit => Self::number_unit.parse(self, input, kind),
+            NonterminalKind::OrExpression => Self::or_expression.parse(self, input, kind),
+            NonterminalKind::OverridePaths => Self::override_paths.parse(self, input, kind),
+            NonterminalKind::OverridePathsDeclaration => {
+                Self::override_paths_declaration.parse(self, input, kind)
+            }
+            NonterminalKind::OverrideSpecifier => Self::override_specifier.parse(self, input, kind),
+            NonterminalKind::Parameter => Self::parameter.parse(self, input, kind),
+            NonterminalKind::Parameters => Self::parameters.parse(self, input, kind),
+            NonterminalKind::ParametersDeclaration => {
+                Self::parameters_declaration.parse(self, input, kind)
+            }
+            NonterminalKind::PathImport => Self::path_import.parse(self, input, kind),
+            NonterminalKind::PositionalArguments => {
+                Self::positional_arguments.parse(self, input, kind)
+            }
+            NonterminalKind::PositionalArgumentsDeclaration => {
+                Self::positional_arguments_declaration.parse(self, input, kind)
+            }
+            NonterminalKind::PostfixExpression => Self::postfix_expression.parse(self, input, kind),
+            NonterminalKind::Pragma => Self::pragma.parse(self, input, kind),
+            NonterminalKind::PragmaDirective => Self::pragma_directive.parse(self, input, kind),
+            NonterminalKind::PrefixExpression => Self::prefix_expression.parse(self, input, kind),
+            NonterminalKind::ReceiveFunctionAttribute => {
+                Self::receive_function_attribute.parse(self, input, kind)
+            }
+            NonterminalKind::ReceiveFunctionAttributes => {
+                Self::receive_function_attributes.parse(self, input, kind)
+            }
+            NonterminalKind::ReceiveFunctionDefinition => {
+                Self::receive_function_definition.parse(self, input, kind)
+            }
+            NonterminalKind::ReturnStatement => Self::return_statement.parse(self, input, kind),
+            NonterminalKind::ReturnsDeclaration => {
+                Self::returns_declaration.parse(self, input, kind)
+            }
+            NonterminalKind::RevertStatement => Self::revert_statement.parse(self, input, kind),
+            NonterminalKind::ShiftExpression => Self::shift_expression.parse(self, input, kind),
+            NonterminalKind::SimpleVersionLiteral => {
+                Self::simple_version_literal.parse(self, input, kind)
+            }
+            NonterminalKind::SourceUnit => Self::source_unit.parse(self, input, kind),
+            NonterminalKind::SourceUnitMember => Self::source_unit_member.parse(self, input, kind),
+            NonterminalKind::SourceUnitMembers => {
+                Self::source_unit_members.parse(self, input, kind)
+            }
+            NonterminalKind::StateVariableAttribute => {
+                Self::state_variable_attribute.parse(self, input, kind)
+            }
+            NonterminalKind::StateVariableAttributes => {
+                Self::state_variable_attributes.parse(self, input, kind)
+            }
+            NonterminalKind::StateVariableDefinition => {
+                Self::state_variable_definition.parse(self, input, kind)
+            }
+            NonterminalKind::StateVariableDefinitionValue => {
+                Self::state_variable_definition_value.parse(self, input, kind)
+            }
+            NonterminalKind::Statement => Self::statement.parse(self, input, kind),
+            NonterminalKind::Statements => Self::statements.parse(self, input, kind),
+            NonterminalKind::StorageLocation => Self::storage_location.parse(self, input, kind),
+            NonterminalKind::StringExpression => Self::string_expression.parse(self, input, kind),
+            NonterminalKind::StringLiteral => Self::string_literal.parse(self, input, kind),
+            NonterminalKind::StringLiterals => Self::string_literals.parse(self, input, kind),
+            NonterminalKind::StructDefinition => Self::struct_definition.parse(self, input, kind),
+            NonterminalKind::StructMember => Self::struct_member.parse(self, input, kind),
+            NonterminalKind::StructMembers => Self::struct_members.parse(self, input, kind),
+            NonterminalKind::ThrowStatement => Self::throw_statement.parse(self, input, kind),
+            NonterminalKind::TryStatement => Self::try_statement.parse(self, input, kind),
+            NonterminalKind::TupleDeconstructionElement => {
+                Self::tuple_deconstruction_element.parse(self, input, kind)
+            }
+            NonterminalKind::TupleDeconstructionElements => {
+                Self::tuple_deconstruction_elements.parse(self, input, kind)
+            }
+            NonterminalKind::TupleDeconstructionStatement => {
+                Self::tuple_deconstruction_statement.parse(self, input, kind)
+            }
+            NonterminalKind::TupleExpression => Self::tuple_expression.parse(self, input, kind),
+            NonterminalKind::TupleMember => Self::tuple_member.parse(self, input, kind),
+            NonterminalKind::TupleValue => Self::tuple_value.parse(self, input, kind),
+            NonterminalKind::TupleValues => Self::tuple_values.parse(self, input, kind),
+            NonterminalKind::TypeExpression => Self::type_expression.parse(self, input, kind),
+            NonterminalKind::TypeName => Self::type_name.parse(self, input, kind),
+            NonterminalKind::TypedTupleMember => Self::typed_tuple_member.parse(self, input, kind),
+            NonterminalKind::UncheckedBlock => Self::unchecked_block.parse(self, input, kind),
+            NonterminalKind::UnicodeStringLiteral => {
+                Self::unicode_string_literal.parse(self, input, kind)
+            }
+            NonterminalKind::UnicodeStringLiterals => {
+                Self::unicode_string_literals.parse(self, input, kind)
+            }
+            NonterminalKind::UnnamedFunctionAttribute => {
+                Self::unnamed_function_attribute.parse(self, input, kind)
+            }
+            NonterminalKind::UnnamedFunctionAttributes => {
+                Self::unnamed_function_attributes.parse(self, input, kind)
+            }
+            NonterminalKind::UnnamedFunctionDefinition => {
+                Self::unnamed_function_definition.parse(self, input, kind)
+            }
+            NonterminalKind::UntypedTupleMember => {
+                Self::untyped_tuple_member.parse(self, input, kind)
+            }
+            NonterminalKind::UserDefinedValueTypeDefinition => {
+                Self::user_defined_value_type_definition.parse(self, input, kind)
+            }
+            NonterminalKind::UsingAlias => Self::using_alias.parse(self, input, kind),
+            NonterminalKind::UsingClause => Self::using_clause.parse(self, input, kind),
+            NonterminalKind::UsingDeconstruction => {
+                Self::using_deconstruction.parse(self, input, kind)
+            }
+            NonterminalKind::UsingDeconstructionSymbol => {
+                Self::using_deconstruction_symbol.parse(self, input, kind)
+            }
+            NonterminalKind::UsingDeconstructionSymbols => {
+                Self::using_deconstruction_symbols.parse(self, input, kind)
+            }
+            NonterminalKind::UsingDirective => Self::using_directive.parse(self, input, kind),
+            NonterminalKind::UsingOperator => Self::using_operator.parse(self, input, kind),
+            NonterminalKind::UsingTarget => Self::using_target.parse(self, input, kind),
+            NonterminalKind::VariableDeclarationStatement => {
+                Self::variable_declaration_statement.parse(self, input, kind)
+            }
+            NonterminalKind::VariableDeclarationType => {
+                Self::variable_declaration_type.parse(self, input, kind)
+            }
+            NonterminalKind::VariableDeclarationValue => {
+                Self::variable_declaration_value.parse(self, input, kind)
+            }
+            NonterminalKind::VersionExpression => Self::version_expression.parse(self, input, kind),
+            NonterminalKind::VersionExpressionSet => {
+                Self::version_expression_set.parse(self, input, kind)
+            }
+            NonterminalKind::VersionExpressionSets => {
+                Self::version_expression_sets.parse(self, input, kind)
+            }
+            NonterminalKind::VersionLiteral => Self::version_literal.parse(self, input, kind),
+            NonterminalKind::VersionOperator => Self::version_operator.parse(self, input, kind),
+            NonterminalKind::VersionPragma => Self::version_pragma.parse(self, input, kind),
+            NonterminalKind::VersionRange => Self::version_range.parse(self, input, kind),
+            NonterminalKind::VersionTerm => Self::version_term.parse(self, input, kind),
+            NonterminalKind::WhileStatement => Self::while_statement.parse(self, input, kind),
+            NonterminalKind::YulArguments => Self::yul_arguments.parse(self, input, kind),
+            NonterminalKind::YulAssignmentOperator => {
+                Self::yul_assignment_operator.parse(self, input, kind)
+            }
+            NonterminalKind::YulBlock => Self::yul_block.parse(self, input, kind),
+            NonterminalKind::YulBreakStatement => {
+                Self::yul_break_statement.parse(self, input, kind)
+            }
+            NonterminalKind::YulBuiltInFunction => {
+                Self::yul_built_in_function.parse(self, input, kind)
+            }
+            NonterminalKind::YulColonAndEqual => Self::yul_colon_and_equal.parse(self, input, kind),
+            NonterminalKind::YulContinueStatement => {
+                Self::yul_continue_statement.parse(self, input, kind)
+            }
+            NonterminalKind::YulDefaultCase => Self::yul_default_case.parse(self, input, kind),
+            NonterminalKind::YulEqualAndColon => Self::yul_equal_and_colon.parse(self, input, kind),
+            NonterminalKind::YulExpression => Self::yul_expression.parse(self, input, kind),
+            NonterminalKind::YulForStatement => Self::yul_for_statement.parse(self, input, kind),
+            NonterminalKind::YulFunctionCallExpression => {
+                Self::yul_function_call_expression.parse(self, input, kind)
+            }
+            NonterminalKind::YulFunctionDefinition => {
+                Self::yul_function_definition.parse(self, input, kind)
+            }
+            NonterminalKind::YulIfStatement => Self::yul_if_statement.parse(self, input, kind),
+            NonterminalKind::YulLabel => Self::yul_label.parse(self, input, kind),
+            NonterminalKind::YulLeaveStatement => {
+                Self::yul_leave_statement.parse(self, input, kind)
+            }
+            NonterminalKind::YulLiteral => Self::yul_literal.parse(self, input, kind),
+            NonterminalKind::YulParameters => Self::yul_parameters.parse(self, input, kind),
+            NonterminalKind::YulParametersDeclaration => {
+                Self::yul_parameters_declaration.parse(self, input, kind)
+            }
+            NonterminalKind::YulPath => Self::yul_path.parse(self, input, kind),
+            NonterminalKind::YulPaths => Self::yul_paths.parse(self, input, kind),
+            NonterminalKind::YulReturnsDeclaration => {
+                Self::yul_returns_declaration.parse(self, input, kind)
+            }
+            NonterminalKind::YulStackAssignmentOperator => {
+                Self::yul_stack_assignment_operator.parse(self, input, kind)
+            }
+            NonterminalKind::YulStackAssignmentStatement => {
+                Self::yul_stack_assignment_statement.parse(self, input, kind)
+            }
+            NonterminalKind::YulStatement => Self::yul_statement.parse(self, input, kind),
+            NonterminalKind::YulStatements => Self::yul_statements.parse(self, input, kind),
+            NonterminalKind::YulSwitchCase => Self::yul_switch_case.parse(self, input, kind),
+            NonterminalKind::YulSwitchCases => Self::yul_switch_cases.parse(self, input, kind),
+            NonterminalKind::YulSwitchStatement => {
+                Self::yul_switch_statement.parse(self, input, kind)
+            }
+            NonterminalKind::YulValueCase => Self::yul_value_case.parse(self, input, kind),
+            NonterminalKind::YulVariableAssignmentStatement => {
+                Self::yul_variable_assignment_statement.parse(self, input, kind)
+            }
+            NonterminalKind::YulVariableDeclarationStatement => {
+                Self::yul_variable_declaration_statement.parse(self, input, kind)
+            }
+            NonterminalKind::YulVariableDeclarationValue => {
+                Self::yul_variable_declaration_value.parse(self, input, kind)
+            }
+            NonterminalKind::YulVariableNames => Self::yul_variable_names.parse(self, input, kind),
+        }
+    }
+
+    /********************************************
+     *         Parser Functions
+     ********************************************/
 
     #[allow(unused_assignments, unused_parens)]
     fn abicoder_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
@@ -9059,418 +9474,6 @@ impl Parser {
                 KeywordScan::Absent
             }
         )
-    }
-
-    pub fn parse(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
-        match kind {
-            NonterminalKind::AbicoderPragma => Self::abicoder_pragma.parse(self, input, kind),
-            NonterminalKind::AdditiveExpression => {
-                Self::additive_expression.parse(self, input, kind)
-            }
-            NonterminalKind::AddressType => Self::address_type.parse(self, input, kind),
-            NonterminalKind::AndExpression => Self::and_expression.parse(self, input, kind),
-            NonterminalKind::ArgumentsDeclaration => {
-                Self::arguments_declaration.parse(self, input, kind)
-            }
-            NonterminalKind::ArrayExpression => Self::array_expression.parse(self, input, kind),
-            NonterminalKind::ArrayTypeName => Self::array_type_name.parse(self, input, kind),
-            NonterminalKind::ArrayValues => Self::array_values.parse(self, input, kind),
-            NonterminalKind::AssemblyFlags => Self::assembly_flags.parse(self, input, kind),
-            NonterminalKind::AssemblyFlagsDeclaration => {
-                Self::assembly_flags_declaration.parse(self, input, kind)
-            }
-            NonterminalKind::AssemblyStatement => Self::assembly_statement.parse(self, input, kind),
-            NonterminalKind::AssignmentExpression => {
-                Self::assignment_expression.parse(self, input, kind)
-            }
-            NonterminalKind::BitwiseAndExpression => {
-                Self::bitwise_and_expression.parse(self, input, kind)
-            }
-            NonterminalKind::BitwiseOrExpression => {
-                Self::bitwise_or_expression.parse(self, input, kind)
-            }
-            NonterminalKind::BitwiseXorExpression => {
-                Self::bitwise_xor_expression.parse(self, input, kind)
-            }
-            NonterminalKind::Block => Self::block.parse(self, input, kind),
-            NonterminalKind::BreakStatement => Self::break_statement.parse(self, input, kind),
-            NonterminalKind::CallOptions => Self::call_options.parse(self, input, kind),
-            NonterminalKind::CallOptionsExpression => {
-                Self::call_options_expression.parse(self, input, kind)
-            }
-            NonterminalKind::CatchClause => Self::catch_clause.parse(self, input, kind),
-            NonterminalKind::CatchClauseError => Self::catch_clause_error.parse(self, input, kind),
-            NonterminalKind::CatchClauses => Self::catch_clauses.parse(self, input, kind),
-            NonterminalKind::ComparisonExpression => {
-                Self::comparison_expression.parse(self, input, kind)
-            }
-            NonterminalKind::ConditionalExpression => {
-                Self::conditional_expression.parse(self, input, kind)
-            }
-            NonterminalKind::ConstantDefinition => {
-                Self::constant_definition.parse(self, input, kind)
-            }
-            NonterminalKind::ConstructorAttribute => {
-                Self::constructor_attribute.parse(self, input, kind)
-            }
-            NonterminalKind::ConstructorAttributes => {
-                Self::constructor_attributes.parse(self, input, kind)
-            }
-            NonterminalKind::ConstructorDefinition => {
-                Self::constructor_definition.parse(self, input, kind)
-            }
-            NonterminalKind::ContinueStatement => Self::continue_statement.parse(self, input, kind),
-            NonterminalKind::ContractDefinition => {
-                Self::contract_definition.parse(self, input, kind)
-            }
-            NonterminalKind::ContractMember => Self::contract_member.parse(self, input, kind),
-            NonterminalKind::ContractMembers => Self::contract_members.parse(self, input, kind),
-            NonterminalKind::DecimalNumberExpression => {
-                Self::decimal_number_expression.parse(self, input, kind)
-            }
-            NonterminalKind::DoWhileStatement => Self::do_while_statement.parse(self, input, kind),
-            NonterminalKind::ElementaryType => Self::elementary_type.parse(self, input, kind),
-            NonterminalKind::ElseBranch => Self::else_branch.parse(self, input, kind),
-            NonterminalKind::EmitStatement => Self::emit_statement.parse(self, input, kind),
-            NonterminalKind::EnumDefinition => Self::enum_definition.parse(self, input, kind),
-            NonterminalKind::EnumMembers => Self::enum_members.parse(self, input, kind),
-            NonterminalKind::EqualityExpression => {
-                Self::equality_expression.parse(self, input, kind)
-            }
-            NonterminalKind::ErrorDefinition => Self::error_definition.parse(self, input, kind),
-            NonterminalKind::ErrorParameter => Self::error_parameter.parse(self, input, kind),
-            NonterminalKind::ErrorParameters => Self::error_parameters.parse(self, input, kind),
-            NonterminalKind::ErrorParametersDeclaration => {
-                Self::error_parameters_declaration.parse(self, input, kind)
-            }
-            NonterminalKind::EventDefinition => Self::event_definition.parse(self, input, kind),
-            NonterminalKind::EventParameter => Self::event_parameter.parse(self, input, kind),
-            NonterminalKind::EventParameters => Self::event_parameters.parse(self, input, kind),
-            NonterminalKind::EventParametersDeclaration => {
-                Self::event_parameters_declaration.parse(self, input, kind)
-            }
-            NonterminalKind::ExperimentalFeature => {
-                Self::experimental_feature.parse(self, input, kind)
-            }
-            NonterminalKind::ExperimentalPragma => {
-                Self::experimental_pragma.parse(self, input, kind)
-            }
-            NonterminalKind::ExponentiationExpression => {
-                Self::exponentiation_expression.parse(self, input, kind)
-            }
-            NonterminalKind::Expression => Self::expression.parse(self, input, kind),
-            NonterminalKind::ExpressionStatement => {
-                Self::expression_statement.parse(self, input, kind)
-            }
-            NonterminalKind::FallbackFunctionAttribute => {
-                Self::fallback_function_attribute.parse(self, input, kind)
-            }
-            NonterminalKind::FallbackFunctionAttributes => {
-                Self::fallback_function_attributes.parse(self, input, kind)
-            }
-            NonterminalKind::FallbackFunctionDefinition => {
-                Self::fallback_function_definition.parse(self, input, kind)
-            }
-            NonterminalKind::ForStatement => Self::for_statement.parse(self, input, kind),
-            NonterminalKind::ForStatementCondition => {
-                Self::for_statement_condition.parse(self, input, kind)
-            }
-            NonterminalKind::ForStatementInitialization => {
-                Self::for_statement_initialization.parse(self, input, kind)
-            }
-            NonterminalKind::FunctionAttribute => Self::function_attribute.parse(self, input, kind),
-            NonterminalKind::FunctionAttributes => {
-                Self::function_attributes.parse(self, input, kind)
-            }
-            NonterminalKind::FunctionBody => Self::function_body.parse(self, input, kind),
-            NonterminalKind::FunctionCallExpression => {
-                Self::function_call_expression.parse(self, input, kind)
-            }
-            NonterminalKind::FunctionDefinition => {
-                Self::function_definition.parse(self, input, kind)
-            }
-            NonterminalKind::FunctionName => Self::function_name.parse(self, input, kind),
-            NonterminalKind::FunctionType => Self::function_type.parse(self, input, kind),
-            NonterminalKind::FunctionTypeAttribute => {
-                Self::function_type_attribute.parse(self, input, kind)
-            }
-            NonterminalKind::FunctionTypeAttributes => {
-                Self::function_type_attributes.parse(self, input, kind)
-            }
-            NonterminalKind::HexNumberExpression => {
-                Self::hex_number_expression.parse(self, input, kind)
-            }
-            NonterminalKind::HexStringLiteral => Self::hex_string_literal.parse(self, input, kind),
-            NonterminalKind::HexStringLiterals => {
-                Self::hex_string_literals.parse(self, input, kind)
-            }
-            NonterminalKind::IdentifierPath => Self::identifier_path.parse(self, input, kind),
-            NonterminalKind::IfStatement => Self::if_statement.parse(self, input, kind),
-            NonterminalKind::ImportAlias => Self::import_alias.parse(self, input, kind),
-            NonterminalKind::ImportClause => Self::import_clause.parse(self, input, kind),
-            NonterminalKind::ImportDeconstruction => {
-                Self::import_deconstruction.parse(self, input, kind)
-            }
-            NonterminalKind::ImportDeconstructionSymbol => {
-                Self::import_deconstruction_symbol.parse(self, input, kind)
-            }
-            NonterminalKind::ImportDeconstructionSymbols => {
-                Self::import_deconstruction_symbols.parse(self, input, kind)
-            }
-            NonterminalKind::ImportDirective => Self::import_directive.parse(self, input, kind),
-            NonterminalKind::IndexAccessEnd => Self::index_access_end.parse(self, input, kind),
-            NonterminalKind::IndexAccessExpression => {
-                Self::index_access_expression.parse(self, input, kind)
-            }
-            NonterminalKind::InheritanceSpecifier => {
-                Self::inheritance_specifier.parse(self, input, kind)
-            }
-            NonterminalKind::InheritanceType => Self::inheritance_type.parse(self, input, kind),
-            NonterminalKind::InheritanceTypes => Self::inheritance_types.parse(self, input, kind),
-            NonterminalKind::InterfaceDefinition => {
-                Self::interface_definition.parse(self, input, kind)
-            }
-            NonterminalKind::InterfaceMembers => Self::interface_members.parse(self, input, kind),
-            NonterminalKind::LibraryDefinition => Self::library_definition.parse(self, input, kind),
-            NonterminalKind::LibraryMembers => Self::library_members.parse(self, input, kind),
-            NonterminalKind::MappingKey => Self::mapping_key.parse(self, input, kind),
-            NonterminalKind::MappingKeyType => Self::mapping_key_type.parse(self, input, kind),
-            NonterminalKind::MappingType => Self::mapping_type.parse(self, input, kind),
-            NonterminalKind::MappingValue => Self::mapping_value.parse(self, input, kind),
-            NonterminalKind::MemberAccessExpression => {
-                Self::member_access_expression.parse(self, input, kind)
-            }
-            NonterminalKind::ModifierAttribute => Self::modifier_attribute.parse(self, input, kind),
-            NonterminalKind::ModifierAttributes => {
-                Self::modifier_attributes.parse(self, input, kind)
-            }
-            NonterminalKind::ModifierDefinition => {
-                Self::modifier_definition.parse(self, input, kind)
-            }
-            NonterminalKind::ModifierInvocation => {
-                Self::modifier_invocation.parse(self, input, kind)
-            }
-            NonterminalKind::MultiplicativeExpression => {
-                Self::multiplicative_expression.parse(self, input, kind)
-            }
-            NonterminalKind::NamedArgument => Self::named_argument.parse(self, input, kind),
-            NonterminalKind::NamedArgumentGroup => {
-                Self::named_argument_group.parse(self, input, kind)
-            }
-            NonterminalKind::NamedArguments => Self::named_arguments.parse(self, input, kind),
-            NonterminalKind::NamedArgumentsDeclaration => {
-                Self::named_arguments_declaration.parse(self, input, kind)
-            }
-            NonterminalKind::NamedImport => Self::named_import.parse(self, input, kind),
-            NonterminalKind::NewExpression => Self::new_expression.parse(self, input, kind),
-            NonterminalKind::NumberUnit => Self::number_unit.parse(self, input, kind),
-            NonterminalKind::OrExpression => Self::or_expression.parse(self, input, kind),
-            NonterminalKind::OverridePaths => Self::override_paths.parse(self, input, kind),
-            NonterminalKind::OverridePathsDeclaration => {
-                Self::override_paths_declaration.parse(self, input, kind)
-            }
-            NonterminalKind::OverrideSpecifier => Self::override_specifier.parse(self, input, kind),
-            NonterminalKind::Parameter => Self::parameter.parse(self, input, kind),
-            NonterminalKind::Parameters => Self::parameters.parse(self, input, kind),
-            NonterminalKind::ParametersDeclaration => {
-                Self::parameters_declaration.parse(self, input, kind)
-            }
-            NonterminalKind::PathImport => Self::path_import.parse(self, input, kind),
-            NonterminalKind::PositionalArguments => {
-                Self::positional_arguments.parse(self, input, kind)
-            }
-            NonterminalKind::PositionalArgumentsDeclaration => {
-                Self::positional_arguments_declaration.parse(self, input, kind)
-            }
-            NonterminalKind::PostfixExpression => Self::postfix_expression.parse(self, input, kind),
-            NonterminalKind::Pragma => Self::pragma.parse(self, input, kind),
-            NonterminalKind::PragmaDirective => Self::pragma_directive.parse(self, input, kind),
-            NonterminalKind::PrefixExpression => Self::prefix_expression.parse(self, input, kind),
-            NonterminalKind::ReceiveFunctionAttribute => {
-                Self::receive_function_attribute.parse(self, input, kind)
-            }
-            NonterminalKind::ReceiveFunctionAttributes => {
-                Self::receive_function_attributes.parse(self, input, kind)
-            }
-            NonterminalKind::ReceiveFunctionDefinition => {
-                Self::receive_function_definition.parse(self, input, kind)
-            }
-            NonterminalKind::ReturnStatement => Self::return_statement.parse(self, input, kind),
-            NonterminalKind::ReturnsDeclaration => {
-                Self::returns_declaration.parse(self, input, kind)
-            }
-            NonterminalKind::RevertStatement => Self::revert_statement.parse(self, input, kind),
-            NonterminalKind::ShiftExpression => Self::shift_expression.parse(self, input, kind),
-            NonterminalKind::SimpleVersionLiteral => {
-                Self::simple_version_literal.parse(self, input, kind)
-            }
-            NonterminalKind::SourceUnit => Self::source_unit.parse(self, input, kind),
-            NonterminalKind::SourceUnitMember => Self::source_unit_member.parse(self, input, kind),
-            NonterminalKind::SourceUnitMembers => {
-                Self::source_unit_members.parse(self, input, kind)
-            }
-            NonterminalKind::StateVariableAttribute => {
-                Self::state_variable_attribute.parse(self, input, kind)
-            }
-            NonterminalKind::StateVariableAttributes => {
-                Self::state_variable_attributes.parse(self, input, kind)
-            }
-            NonterminalKind::StateVariableDefinition => {
-                Self::state_variable_definition.parse(self, input, kind)
-            }
-            NonterminalKind::StateVariableDefinitionValue => {
-                Self::state_variable_definition_value.parse(self, input, kind)
-            }
-            NonterminalKind::Statement => Self::statement.parse(self, input, kind),
-            NonterminalKind::Statements => Self::statements.parse(self, input, kind),
-            NonterminalKind::StorageLocation => Self::storage_location.parse(self, input, kind),
-            NonterminalKind::StringExpression => Self::string_expression.parse(self, input, kind),
-            NonterminalKind::StringLiteral => Self::string_literal.parse(self, input, kind),
-            NonterminalKind::StringLiterals => Self::string_literals.parse(self, input, kind),
-            NonterminalKind::StructDefinition => Self::struct_definition.parse(self, input, kind),
-            NonterminalKind::StructMember => Self::struct_member.parse(self, input, kind),
-            NonterminalKind::StructMembers => Self::struct_members.parse(self, input, kind),
-            NonterminalKind::ThrowStatement => Self::throw_statement.parse(self, input, kind),
-            NonterminalKind::TryStatement => Self::try_statement.parse(self, input, kind),
-            NonterminalKind::TupleDeconstructionElement => {
-                Self::tuple_deconstruction_element.parse(self, input, kind)
-            }
-            NonterminalKind::TupleDeconstructionElements => {
-                Self::tuple_deconstruction_elements.parse(self, input, kind)
-            }
-            NonterminalKind::TupleDeconstructionStatement => {
-                Self::tuple_deconstruction_statement.parse(self, input, kind)
-            }
-            NonterminalKind::TupleExpression => Self::tuple_expression.parse(self, input, kind),
-            NonterminalKind::TupleMember => Self::tuple_member.parse(self, input, kind),
-            NonterminalKind::TupleValue => Self::tuple_value.parse(self, input, kind),
-            NonterminalKind::TupleValues => Self::tuple_values.parse(self, input, kind),
-            NonterminalKind::TypeExpression => Self::type_expression.parse(self, input, kind),
-            NonterminalKind::TypeName => Self::type_name.parse(self, input, kind),
-            NonterminalKind::TypedTupleMember => Self::typed_tuple_member.parse(self, input, kind),
-            NonterminalKind::UncheckedBlock => Self::unchecked_block.parse(self, input, kind),
-            NonterminalKind::UnicodeStringLiteral => {
-                Self::unicode_string_literal.parse(self, input, kind)
-            }
-            NonterminalKind::UnicodeStringLiterals => {
-                Self::unicode_string_literals.parse(self, input, kind)
-            }
-            NonterminalKind::UnnamedFunctionAttribute => {
-                Self::unnamed_function_attribute.parse(self, input, kind)
-            }
-            NonterminalKind::UnnamedFunctionAttributes => {
-                Self::unnamed_function_attributes.parse(self, input, kind)
-            }
-            NonterminalKind::UnnamedFunctionDefinition => {
-                Self::unnamed_function_definition.parse(self, input, kind)
-            }
-            NonterminalKind::UntypedTupleMember => {
-                Self::untyped_tuple_member.parse(self, input, kind)
-            }
-            NonterminalKind::UserDefinedValueTypeDefinition => {
-                Self::user_defined_value_type_definition.parse(self, input, kind)
-            }
-            NonterminalKind::UsingAlias => Self::using_alias.parse(self, input, kind),
-            NonterminalKind::UsingClause => Self::using_clause.parse(self, input, kind),
-            NonterminalKind::UsingDeconstruction => {
-                Self::using_deconstruction.parse(self, input, kind)
-            }
-            NonterminalKind::UsingDeconstructionSymbol => {
-                Self::using_deconstruction_symbol.parse(self, input, kind)
-            }
-            NonterminalKind::UsingDeconstructionSymbols => {
-                Self::using_deconstruction_symbols.parse(self, input, kind)
-            }
-            NonterminalKind::UsingDirective => Self::using_directive.parse(self, input, kind),
-            NonterminalKind::UsingOperator => Self::using_operator.parse(self, input, kind),
-            NonterminalKind::UsingTarget => Self::using_target.parse(self, input, kind),
-            NonterminalKind::VariableDeclarationStatement => {
-                Self::variable_declaration_statement.parse(self, input, kind)
-            }
-            NonterminalKind::VariableDeclarationType => {
-                Self::variable_declaration_type.parse(self, input, kind)
-            }
-            NonterminalKind::VariableDeclarationValue => {
-                Self::variable_declaration_value.parse(self, input, kind)
-            }
-            NonterminalKind::VersionExpression => Self::version_expression.parse(self, input, kind),
-            NonterminalKind::VersionExpressionSet => {
-                Self::version_expression_set.parse(self, input, kind)
-            }
-            NonterminalKind::VersionExpressionSets => {
-                Self::version_expression_sets.parse(self, input, kind)
-            }
-            NonterminalKind::VersionLiteral => Self::version_literal.parse(self, input, kind),
-            NonterminalKind::VersionOperator => Self::version_operator.parse(self, input, kind),
-            NonterminalKind::VersionPragma => Self::version_pragma.parse(self, input, kind),
-            NonterminalKind::VersionRange => Self::version_range.parse(self, input, kind),
-            NonterminalKind::VersionTerm => Self::version_term.parse(self, input, kind),
-            NonterminalKind::WhileStatement => Self::while_statement.parse(self, input, kind),
-            NonterminalKind::YulArguments => Self::yul_arguments.parse(self, input, kind),
-            NonterminalKind::YulAssignmentOperator => {
-                Self::yul_assignment_operator.parse(self, input, kind)
-            }
-            NonterminalKind::YulBlock => Self::yul_block.parse(self, input, kind),
-            NonterminalKind::YulBreakStatement => {
-                Self::yul_break_statement.parse(self, input, kind)
-            }
-            NonterminalKind::YulBuiltInFunction => {
-                Self::yul_built_in_function.parse(self, input, kind)
-            }
-            NonterminalKind::YulColonAndEqual => Self::yul_colon_and_equal.parse(self, input, kind),
-            NonterminalKind::YulContinueStatement => {
-                Self::yul_continue_statement.parse(self, input, kind)
-            }
-            NonterminalKind::YulDefaultCase => Self::yul_default_case.parse(self, input, kind),
-            NonterminalKind::YulEqualAndColon => Self::yul_equal_and_colon.parse(self, input, kind),
-            NonterminalKind::YulExpression => Self::yul_expression.parse(self, input, kind),
-            NonterminalKind::YulForStatement => Self::yul_for_statement.parse(self, input, kind),
-            NonterminalKind::YulFunctionCallExpression => {
-                Self::yul_function_call_expression.parse(self, input, kind)
-            }
-            NonterminalKind::YulFunctionDefinition => {
-                Self::yul_function_definition.parse(self, input, kind)
-            }
-            NonterminalKind::YulIfStatement => Self::yul_if_statement.parse(self, input, kind),
-            NonterminalKind::YulLabel => Self::yul_label.parse(self, input, kind),
-            NonterminalKind::YulLeaveStatement => {
-                Self::yul_leave_statement.parse(self, input, kind)
-            }
-            NonterminalKind::YulLiteral => Self::yul_literal.parse(self, input, kind),
-            NonterminalKind::YulParameters => Self::yul_parameters.parse(self, input, kind),
-            NonterminalKind::YulParametersDeclaration => {
-                Self::yul_parameters_declaration.parse(self, input, kind)
-            }
-            NonterminalKind::YulPath => Self::yul_path.parse(self, input, kind),
-            NonterminalKind::YulPaths => Self::yul_paths.parse(self, input, kind),
-            NonterminalKind::YulReturnsDeclaration => {
-                Self::yul_returns_declaration.parse(self, input, kind)
-            }
-            NonterminalKind::YulStackAssignmentOperator => {
-                Self::yul_stack_assignment_operator.parse(self, input, kind)
-            }
-            NonterminalKind::YulStackAssignmentStatement => {
-                Self::yul_stack_assignment_statement.parse(self, input, kind)
-            }
-            NonterminalKind::YulStatement => Self::yul_statement.parse(self, input, kind),
-            NonterminalKind::YulStatements => Self::yul_statements.parse(self, input, kind),
-            NonterminalKind::YulSwitchCase => Self::yul_switch_case.parse(self, input, kind),
-            NonterminalKind::YulSwitchCases => Self::yul_switch_cases.parse(self, input, kind),
-            NonterminalKind::YulSwitchStatement => {
-                Self::yul_switch_statement.parse(self, input, kind)
-            }
-            NonterminalKind::YulValueCase => Self::yul_value_case.parse(self, input, kind),
-            NonterminalKind::YulVariableAssignmentStatement => {
-                Self::yul_variable_assignment_statement.parse(self, input, kind)
-            }
-            NonterminalKind::YulVariableDeclarationStatement => {
-                Self::yul_variable_declaration_statement.parse(self, input, kind)
-            }
-            NonterminalKind::YulVariableDeclarationValue => {
-                Self::yul_variable_declaration_value.parse(self, input, kind)
-            }
-            NonterminalKind::YulVariableNames => Self::yul_variable_names.parse(self, input, kind),
-        }
     }
 }
 

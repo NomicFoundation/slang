@@ -46,8 +46,10 @@ pub struct KindsModel {
     nonterminal_kinds: BTreeSet<Kind>,
     /// Defines the `TerminalKind` enum variants.
     terminal_kinds: BTreeSet<Kind>,
+    /// Defines `TerminalKind::is_identifier` method.
+    identifier_terminals: BTreeSet<Identifier>,
     /// Defines `TerminalKind::is_trivia` method.
-    trivia_scanner_names: BTreeSet<Identifier>,
+    trivia_terminals: BTreeSet<Identifier>,
     /// Defines `EdgeLabel` enum variants.
     labels: BTreeSet<Identifier>,
     /// Predefined labels for edges.
@@ -63,7 +65,8 @@ impl Default for KindsModel {
         Self {
             nonterminal_kinds: BTreeSet::default(),
             terminal_kinds: BTreeSet::default(),
-            trivia_scanner_names: BTreeSet::default(),
+            identifier_terminals: BTreeSet::default(),
+            trivia_terminals: BTreeSet::default(),
             labels: BTreeSet::default(),
             predefined_labels: PredefinedLabel::VARIANTS,
             lexical_contexts: BTreeSet::default(),
@@ -108,7 +111,15 @@ impl KindsModel {
             }
         }
 
-        let trivia_scanner_names = language
+        let identifier_terminals = language
+            .items()
+            .filter_map(|item| match item {
+                Item::Keyword { item } => Some(item.identifier.clone()),
+                _ => None,
+            })
+            .collect();
+
+        let trivia_terminals = language
             .items()
             .filter_map(|item| match item {
                 Item::Trivia { item } => Some(item.name.clone()),
@@ -149,7 +160,8 @@ impl KindsModel {
         KindsModel {
             nonterminal_kinds,
             terminal_kinds,
-            trivia_scanner_names,
+            identifier_terminals,
+            trivia_terminals,
             labels,
             lexical_contexts,
             root_kind,
