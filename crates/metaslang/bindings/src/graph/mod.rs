@@ -14,80 +14,61 @@ use metaslang_cst::kinds::KindTypes;
 pub use reference::Reference;
 use resolver::Resolver;
 
-use crate::builder::{BindingInfo, FileDescriptor, FileHandle, GraphHandle};
+use crate::builder::{ExtendedStackGraph, FileDescriptor, GraphHandle};
 
 pub struct BindingGraph<KT: KindTypes + 'static> {
-    info: BindingInfo<KT>,
+    graph: ExtendedStackGraph<KT>,
     resolver: Rc<RefCell<Resolver>>,
 }
 
 impl<KT: KindTypes + 'static> BindingGraph<KT> {
-    pub(crate) fn build(builder: BindingInfo<KT>) -> Rc<Self> {
-        let resolver = Resolver::new(&builder);
+    pub(crate) fn build(graph: ExtendedStackGraph<KT>) -> Rc<Self> {
+        let resolver = Resolver::new(&graph);
 
         Rc::new(Self {
-            info: builder,
+            graph,
             resolver: Rc::new(RefCell::new(resolver)),
         })
     }
 
     pub fn all_definitions(self: &Rc<Self>) -> impl Iterator<Item = Definition<KT>> + '_ {
-        self.info
-            .stack_graph
-            .iter_nodes()
-            .filter(|handle| self.info.stack_graph[*handle].is_definition())
-            .map(|handle| Definition {
-                owner: Rc::clone(self),
-                handle,
-            })
-    }
-
-    fn to_definition(self: &Rc<Self>, handle: GraphHandle) -> Option<Definition<KT>> {
-        if self.info.stack_graph[handle].is_definition() {
-            Some(Definition {
-                owner: Rc::clone(self),
-                handle,
-            })
-        } else {
-            None
-        }
+        self.graph.iter_definitions().map(|handle| Definition {
+            owner: Rc::clone(self),
+            handle,
+        })
     }
 
     pub fn all_references(self: &Rc<Self>) -> impl Iterator<Item = Reference<KT>> + '_ {
-        self.info
-            .stack_graph
-            .iter_nodes()
-            .filter(|handle| self.info.stack_graph[*handle].is_reference())
-            .map(|handle| Reference {
-                owner: Rc::clone(self),
-                handle,
-            })
+        self.graph.iter_references().map(|handle| Reference {
+            owner: Rc::clone(self),
+            handle,
+        })
     }
 
     pub fn definition_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Definition<KT>> {
-        let cursor_id = cursor.node().id();
-        self.info
-            .cursor_to_definitions
-            .get(&cursor_id)
+        self.graph.definition_at(cursor).map(|handle| Definition {
+            owner: Rc::clone(self),
+            handle,
+        })
+    }
+
+    pub fn reference_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Reference<KT>> {
+        self.graph.reference_at(cursor).map(|handle| Reference {
+            owner: Rc::clone(self),
+            handle,
+        })
+    }
+
+    fn resolve_reference(self: &Rc<Self>, handle: GraphHandle) -> Vec<Definition<KT>> {
+        let mut resolver = self.resolver.borrow_mut();
+        let definitions = resolver.resolve_single(&self.graph, handle);
+        definitions
+            .iter()
             .map(|handle| Definition {
                 owner: Rc::clone(self),
                 handle: *handle,
             })
-    }
-
-    pub fn reference_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Reference<KT>> {
-        let cursor_id = cursor.node().id();
-        self.info
-            .cursor_to_references
-            .get(&cursor_id)
-            .map(|handle| Reference {
-                owner: Rc::clone(self),
-                handle: *handle,
-            })
-    }
-
-    fn get_file(&self, handle: FileHandle) -> FileDescriptor {
-        FileDescriptor::from(self.info.stack_graph[handle].name())
+            .collect()
     }
 }
 

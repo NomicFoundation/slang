@@ -29,33 +29,21 @@ impl<KT: KindTypes + 'static> Reference<KT> {
     }
 
     pub fn get_cursor(&self) -> &Cursor<KT> {
-        &self
-            .owner
-            .info
-            .references_info
-            .get(&self.handle)
+        self.owner
+            .graph
+            .get_cursor(self.handle)
             .expect("Reference handle is valid")
-            .cursor
     }
 
     pub fn get_file(&self) -> FileDescriptor {
-        self.owner.info.stack_graph[self.handle]
-            .file()
-            .map(|file_handle| self.owner.get_file(file_handle))
+        self.owner
+            .graph
+            .get_file_descriptor(self.handle)
             .expect("Reference to have a valid file descriptor")
     }
 
     pub fn definitions(&self) -> Vec<Definition<KT>> {
-        let mut resolver = self.owner.resolver.borrow_mut();
-        let definitions = resolver.resolve_single(&self.owner.info, self.handle);
-        definitions
-            .iter()
-            .map(|handle| {
-                self.owner
-                    .to_definition(*handle)
-                    .expect("Resolved reference handle to be a definition")
-            })
-            .collect()
+        self.owner.resolve_reference(self.handle)
     }
 }
 

@@ -10,16 +10,16 @@ use stack_graphs::stitching::{
 };
 use stack_graphs::{CancellationError, NoCancellation};
 
-use crate::builder::{BindingInfo, GraphHandle};
+use crate::builder::{ExtendedStackGraph, GraphHandle};
 
 pub(crate) struct Resolver {
     partials: PartialPaths,
     database: Database,
-    pub(crate) references: HashMap<GraphHandle, Vec<GraphHandle>>,
+    references: HashMap<GraphHandle, Vec<GraphHandle>>,
 }
 
 impl Resolver {
-    pub fn new<KT: KindTypes + 'static>(owner: &BindingInfo<KT>) -> Self {
+    pub fn new<KT: KindTypes + 'static>(graph: &ExtendedStackGraph<KT>) -> Self {
         let database = Database::new();
         let partials = PartialPaths::new();
 
@@ -28,14 +28,14 @@ impl Resolver {
             database,
             references: HashMap::new(),
         };
-        resolver.build(owner);
+        resolver.build(graph);
         resolver
     }
 
-    fn build<KT: KindTypes + 'static>(&mut self, owner: &BindingInfo<KT>) {
-        for file in owner.stack_graph.iter_files() {
+    fn build<KT: KindTypes + 'static>(&mut self, graph: &ExtendedStackGraph<KT>) {
+        for file in graph.iter_files() {
             ForwardPartialPathStitcher::find_minimal_partial_path_set_in_file(
-                &owner.stack_graph,
+                &graph.stack_graph,
                 &mut self.partials,
                 file,
                 StitcherConfig::default(),
@@ -53,17 +53,17 @@ impl Resolver {
 
     fn resolve_parents<KT: KindTypes + 'static>(
         &mut self,
-        owner: &BindingInfo<KT>,
+        graph: &ExtendedStackGraph<KT>,
         reference: GraphHandle,
     ) -> Vec<GraphHandle> {
-        owner
+        graph
             .get_parents(reference)
             .iter()
             .flat_map(|handle| {
-                if owner.is_definition(*handle) {
+                if graph.is_definition(*handle) {
                     vec![*handle]
                 } else {
-                    self.resolve_internal(owner, *handle, false)
+                    self.resolve_internal(graph, *handle, false)
                 }
             })
             .collect()
@@ -71,14 +71,14 @@ impl Resolver {
 
     fn resolve_parents_recursively<KT: KindTypes + 'static>(
         &mut self,
-        owner: &BindingInfo<KT>,
+        graph: &ExtendedStackGraph<KT>,
         parent: GraphHandle,
     ) -> Vec<GraphHandle> {
         let mut results = HashMap::new();
         let mut resolve_queue = Vec::new();
         resolve_queue.push(parent);
         while let Some(current) = resolve_queue.pop() {
-            let current_parents = self.resolve_parents(owner, current);
+            let current_parents = self.resolve_parents(graph, current);
             for current_parent in &current_parents {
                 if !results.contains_key(current_parent) {
                     resolve_queue.push(*current_parent);
@@ -91,7 +91,7 @@ impl Resolver {
 
     fn resolve_internal<KT: KindTypes + 'static>(
         &mut self,
-        owner: &BindingInfo<KT>,
+        graph: &ExtendedStackGraph<KT>,
         reference: GraphHandle,
         allow_recursion: bool,
     ) -> Vec<GraphHandle> {
@@ -106,17 +106,17 @@ impl Resolver {
 
         let extensions = if allow_recursion {
             // look for extension scopes to apply to the reference
-            let ref_parents = self.resolve_parents(owner, reference);
+            let ref_parents = self.resolve_parents(graph, reference);
             let mut extensions = HashSet::new();
             for parent in &ref_parents {
-                if let Some(extension_scope) = owner.get_extension_scope(*parent) {
+                if let Some(extension_scope) = graph.get_extension_scope(*parent) {
                     extensions.insert(extension_scope);
                 }
 
-                if owner.inherits_extensions(*parent) {
-                    let grand_parents = self.resolve_parents_recursively(owner, *parent);
+                if graph.inherits_extensions(*parent) {
+                    let grand_parents = self.resolve_parents_recursively(graph, *parent);
                     for grand_parent in &grand_parents {
-                        if let Some(extension_scope) = owner.get_extension_scope(*grand_parent) {
+                        if let Some(extension_scope) = graph.get_extension_scope(*grand_parent) {
                             extensions.insert(extension_scope);
                         }
                     }
@@ -130,7 +130,7 @@ impl Resolver {
 
         ForwardPartialPathStitcher::find_all_complete_partial_paths(
             &mut DatabaseCandidatesExtended::new(
-                owner,
+                graph,
                 &mut self.partials,
                 &mut database,
                 extensions,
@@ -162,12 +162,13 @@ impl Resolver {
     }
 
     #[allow(dead_code)]
-    pub(crate) fn resolve_all<KT: KindTypes + 'static>(&mut self, owner: &BindingInfo<KT>) {
-        for handle in owner.stack_graph.iter_nodes() {
-            if owner.is_reference(handle)
-                && owner.get_file(handle).is_some_and(|file| file.is_user())
+    pub(crate) fn resolve_all<KT: KindTypes + 'static>(&mut self, graph: &ExtendedStackGraph<KT>) {
+        for handle in graph.iter_references() {
+            if graph
+                .get_file_descriptor(handle)
+                .is_some_and(|file| file.is_user())
             {
-                let definition_handles = self.resolve_internal(owner, handle, true);
+                let definition_handles = self.resolve_internal(graph, handle, true);
                 self.references.insert(handle, definition_handles);
             }
         }
@@ -175,16 +176,20 @@ impl Resolver {
 
     pub(crate) fn resolve_single<KT: KindTypes + 'static>(
         &mut self,
-        owner: &BindingInfo<KT>,
+        graph: &ExtendedStackGraph<KT>,
         handle: GraphHandle,
     ) -> Vec<GraphHandle> {
-        if owner.is_reference(handle) && owner.get_file(handle).is_some_and(|file| file.is_user()) {
+        if graph.is_reference(handle)
+            && graph
+                .get_file_descriptor(handle)
+                .is_some_and(|file| file.is_user())
+        {
             if let Some(definitions) = self.references.get(&handle) {
                 definitions.clone()
             } else {
-                let definition_handles = self.resolve_internal(owner, handle, true);
-                self.references.insert(handle, definition_handles.clone());
-                definition_handles
+                let definitions = self.resolve_internal(graph, handle, true);
+                self.references.insert(handle, definitions.clone());
+                definitions
             }
         } else {
             Vec::new()
@@ -225,7 +230,7 @@ impl ToAppendable<ExtendedHandle, PartialPath> for ExtendedDatabase<'_> {
 }
 
 struct DatabaseCandidatesExtended<'a, KT: KindTypes + 'static> {
-    owner: &'a BindingInfo<KT>,
+    graph: &'a ExtendedStackGraph<KT>,
     partials: &'a mut PartialPaths,
     database: &'a mut ExtendedDatabase<'a>,
     extensions: Vec<GraphHandle>,
@@ -233,13 +238,13 @@ struct DatabaseCandidatesExtended<'a, KT: KindTypes + 'static> {
 
 impl<'a, KT: KindTypes + 'static> DatabaseCandidatesExtended<'a, KT> {
     fn new(
-        owner: &'a BindingInfo<KT>,
+        graph: &'a ExtendedStackGraph<KT>,
         partials: &'a mut PartialPaths,
         database: &'a mut ExtendedDatabase<'a>,
         extensions: Vec<GraphHandle>,
     ) -> Self {
         Self {
-            owner,
+            graph,
             partials,
             database,
             extensions,
@@ -258,11 +263,11 @@ impl<'a, KT: KindTypes + 'static>
         R: std::iter::Extend<ExtendedHandle>,
     {
         let node = path.end_node;
-        let is_complete = path.is_complete(&self.owner.stack_graph);
+        let is_complete = path.is_complete(&self.graph.stack_graph);
 
         let mut db_candidates = Vec::new();
         self.database.database.find_candidate_partial_paths(
-            &self.owner.stack_graph,
+            &self.graph.stack_graph,
             self.partials,
             path,
             &mut db_candidates,
@@ -271,6 +276,9 @@ impl<'a, KT: KindTypes + 'static>
             db_candidates
                 .iter()
                 .filter(|candidate| {
+                    // Special case: when the current partial path is already
+                    // complete, don't extend through a @typeof symbol since
+                    // that will not resolve to anything
                     if is_complete {
                         let candidate = &self.database.database[**candidate];
                         if let Some(last_symbol) = candidate
@@ -278,10 +286,7 @@ impl<'a, KT: KindTypes + 'static>
                             .iter(self.partials)
                             .last()
                         {
-                            // Special case: when the current partial path is
-                            // already complete, don't extend through a @typeof
-                            // symbol since that will not resolve to anything
-                            if &self.owner.stack_graph[last_symbol.symbol] == "@typeof" {
+                            if &self.graph.stack_graph[last_symbol.symbol] == "@typeof" {
                                 return false;
                             }
                         }
@@ -291,7 +296,7 @@ impl<'a, KT: KindTypes + 'static>
                 .map(|candidate| ExtendedHandle::Handle(*candidate)),
         );
 
-        if self.owner.is_extension_hook(node) {
+        if self.graph.is_extension_hook(node) {
             for extension in &self.extensions {
                 let edge = Edge {
                     source: node,
@@ -299,9 +304,9 @@ impl<'a, KT: KindTypes + 'static>
                     precedence: 0,
                 };
                 let mut partial_path =
-                    PartialPath::from_node(&self.owner.stack_graph, self.partials, node);
+                    PartialPath::from_node(&self.graph.stack_graph, self.partials, node);
                 partial_path
-                    .append(&self.owner.stack_graph, self.partials, edge)
+                    .append(&self.graph.stack_graph, self.partials, edge)
                     .expect("path can be extended");
                 let edge_handle = self.database.edges.len();
                 self.database.edges.push(partial_path);
@@ -321,6 +326,6 @@ impl<'a, KT: KindTypes + 'static>
     fn get_graph_partials_and_db(
         &mut self,
     ) -> (&StackGraph, &mut PartialPaths, &ExtendedDatabase<'a>) {
-        (&self.owner.stack_graph, self.partials, self.database)
+        (&self.graph.stack_graph, self.partials, self.database)
     }
 }
