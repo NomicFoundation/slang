@@ -1,0 +1,271 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+model l0::generated {
+
+    //
+    // Terminals
+    //
+
+    TerminalKind = {
+    
+      
+      "Bang" |
+    
+      
+      "CloseBracket" |
+    
+      
+      "DelimitedIdentifier" |
+    
+      
+      "EndOfLine" |
+    
+      
+      "Identifier" |
+    
+      
+      "MultiLineComment" |
+    
+      
+      "OpenBracket" |
+    
+      
+      "Period" |
+    
+      
+      "Plus" |
+    
+      
+      "Semicolon" |
+    
+      
+      "SingleLineComment" |
+    
+      
+      "StringLiteral" |
+    
+      
+      "TreeKeyword" |
+    
+      
+      "Whitespace" 
+    
+    };
+
+    TerminalNode = {
+      kind: TerminalKind,
+      value: string
+    };
+
+    // 
+    // Sequences:
+    // 
+
+    
+      /**
+       * This node represents a `SourceUnit` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * SourceUnit = (* members: *) SourceUnitMembers;
+       * ```
+       */
+      SourceUnit = {
+          
+              members: SourceUnitMembers
+      };
+    
+      /**
+       * This node represents a `Tree` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * Tree = (* keyword: *) TREE_KEYWORD
+       *        (* name: *) IDENTIFIER?
+       *        (* node: *) TreeNode
+       *        (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      Tree = {
+          
+              keyword: TerminalNode,
+              name: option<TerminalNode>,
+              node: TreeNode,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `TreeNode` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TreeNode = (* open_bracket: *) OPEN_BRACKET
+       *            (* members: *) TreeNodeChildren
+       *            (* close_bracket: *) CLOSE_BRACKET;
+       * ```
+       */
+      TreeNode = {
+          
+              openBracket: TerminalNode,
+              members: TreeNodeChildren,
+              closeBracket: TerminalNode
+      };
+    
+      /**
+       * This node represents a `AdditionExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * AdditionExpression = (* left_operand: *) Expression
+       *                      (* operator: *) PLUS
+       *                      (* right_operand: *) Expression;
+       * ```
+       */
+      AdditionExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `NegationExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Prefix unary operator *)
+       * NegationExpression = (* operator: *) BANG
+       *                      (* operand: *) Expression;
+       * ```
+       */
+      NegationExpression = {
+          
+              operator: TerminalNode,
+              operand: Expression
+      };
+    
+      /**
+       * This node represents a `MemberAccessExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Postfix unary operator *)
+       * MemberAccessExpression = (* operand: *) Expression
+       *                          (* period: *) PERIOD
+       *                          (* member: *) IDENTIFIER;
+       * ```
+       */
+      MemberAccessExpression = {
+          
+              operand: Expression,
+              period: TerminalNode,
+              member: TerminalNode
+      };
+    
+
+    // 
+    // Choices:
+    // 
+
+    
+      /**
+       * This node represents a `SourceUnitMember` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * SourceUnitMember = (* variant: *) Tree
+       *                  | (* variant: *) Expression
+       *                  | (* variant: *) SeparatedIdentifiers
+       *                  | (* variant: *) Literal;
+       * ```
+       */
+      SourceUnitMember = {
+        
+          Tree |
+          Expression |
+          SeparatedIdentifiers |
+          Literal 
+      };
+    
+      /**
+       * This node represents a `TreeNodeChild` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TreeNodeChild = (* variant: *) TreeNode
+       *               | (* variant: *) DELIMITED_IDENTIFIER;
+       * ```
+       */
+      TreeNodeChild = {
+        
+          TreeNode |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `Expression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * Expression = (* variant: *) AdditionExpression
+       *            | (* variant: *) NegationExpression
+       *            | (* variant: *) MemberAccessExpression
+       *            | (* variant: *) STRING_LITERAL
+       *            | (* variant: *) IDENTIFIER;
+       * ```
+       */
+      Expression = {
+        
+          AdditionExpression |
+          NegationExpression |
+          MemberAccessExpression |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `Literal` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * Literal = (* variant: *) STRING_LITERAL;
+       * ```
+       */
+      Literal = {
+        
+          TerminalNode 
+      };
+    
+
+    // 
+    // Repeated:
+    // 
+
+    
+      /**
+       * This node represents a `SourceUnitMembers` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * SourceUnitMembers = (* item: *) SourceUnitMember+;
+       * ```
+       */
+      SourceUnitMembers = {item: set<SourceUnitMember>};
+    
+      /**
+       * This node represents a `TreeNodeChildren` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TreeNodeChildren = (* item: *) TreeNodeChild+;
+       * ```
+       */
+      TreeNodeChildren = {item: set<TreeNodeChild>};
+    
+
+    // 
+    // Separated:
+    // 
+
+    
+      /**
+       * This node represents a `SeparatedIdentifiers` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 1.0.0 *)
+       * SeparatedIdentifiers = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDENTIFIER)*;
+       * ```
+       */
+      SeparatedIdentifiers = {item: set<TerminalNode>};
+    
+
+    TerminalNode = string;
+}
