@@ -258,6 +258,7 @@ impl<'a, KT: KindTypes + 'static>
         R: std::iter::Extend<ExtendedHandle>,
     {
         let node = path.end_node;
+        let is_complete = path.is_complete(&self.owner.stack_graph);
 
         let mut db_candidates = Vec::new();
         self.database.database.find_candidate_partial_paths(
@@ -269,6 +270,24 @@ impl<'a, KT: KindTypes + 'static>
         result.extend(
             db_candidates
                 .iter()
+                .filter(|candidate| {
+                    if is_complete {
+                        let candidate = &self.database.database[**candidate];
+                        if let Some(last_symbol) = candidate
+                            .symbol_stack_postcondition
+                            .iter(self.partials)
+                            .last()
+                        {
+                            // Special case: when the current partial path is
+                            // already complete, don't extend through a @typeof
+                            // symbol since that will not resolve to anything
+                            if &self.owner.stack_graph[last_symbol.symbol] == "@typeof" {
+                                return false;
+                            }
+                        }
+                    }
+                    true
+                })
                 .map(|candidate| ExtendedHandle::Handle(*candidate)),
         );
 
