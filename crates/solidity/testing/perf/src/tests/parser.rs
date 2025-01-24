@@ -24,7 +24,7 @@ pub fn run(files: Vec<SourceFile>) -> Vec<ParsedFile> {
     let mut results = vec![];
 
     for SourceFile { path, contents } in files {
-        let parse_output = parser.parse(Parser::ROOT_KIND, &contents);
+        let parse_output = parser.parse_file(&contents);
 
         assert!(
             parse_output.is_valid(),

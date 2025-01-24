@@ -108,7 +108,7 @@ impl<KT: KindTypes + 'static> ast::File<KT> {
             .collect();
         let matches = tree.clone().query(queries);
         for mat in matches {
-            let stanza = &self.stanzas[mat.query_number];
+            let stanza = &self.stanzas[mat.query_index];
             visit(stanza, mat)?;
         }
         Ok(())

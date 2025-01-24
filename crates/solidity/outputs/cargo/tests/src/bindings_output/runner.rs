@@ -54,7 +54,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
             contents,
         } in &multi_part.parts
         {
-            let parse_output = parser.parse(Parser::ROOT_KIND, contents);
+            let parse_output = parser.parse_file(contents);
             let graph =
                 builder.add_user_file_returning_graph(path, parse_output.create_tree_cursor());
             parsed_parts.push(ParsedPart {

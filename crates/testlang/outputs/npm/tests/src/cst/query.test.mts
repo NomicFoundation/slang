@@ -10,10 +10,10 @@ import { Parser } from "@slang-private/testlang-npm-package/parser";
 test("simple query", () => {
   const parser = Parser.create("1.0.0");
   const treeSource = `tree [A [B C] D];`;
-  const parseOutput = parser.parse(NonterminalKind.Tree, treeSource);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.Tree, treeSource);
 
   const querySource = `[TreeNodeChild @id [DelimitedIdentifier]]`;
-  const query = Query.parse(querySource);
+  const query = Query.create(querySource);
 
   const matches = parseOutput.createTreeCursor().query([query]);
 
@@ -41,16 +41,28 @@ test("query syntax error", () => {
   const source = `[TreeNode @b [DelimitedIdentifier]`;
 
   try {
-    Query.parse(source);
-    throw new Error("Query.parse() should have thrown");
+    Query.create(source);
+    throw new Error("Query.create() should have thrown");
   } catch (error) {
     expect(error).toEqual({
       message: `Parse error:
 expected ']' at: 
 Alt at: [TreeNode @b [DelimitedIdentifier]
 `,
-      line: 0,
-      column: 34,
+      textRange: {
+        start: {
+          utf8: 34,
+          utf16: 34,
+          line: 0,
+          column: 34,
+        },
+        end: {
+          utf8: 34,
+          utf16: 34,
+          line: 0,
+          column: 34,
+        },
+      },
     } satisfies QueryError);
   }
 });

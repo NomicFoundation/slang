@@ -8,7 +8,9 @@ use itertools::Itertools;
 use metaslang_bindings::PathResolver;
 use semver::Version;
 use slang_solidity::bindings::{self, BindingGraph};
-use slang_solidity::cst::{Cursor, KindTypes, NonterminalKind, TerminalKind, TextRange};
+use slang_solidity::cst::{
+    Cursor, KindTypes, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange,
+};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::parser::{ParseOutput, Parser};
 use slang_solidity::utils::LanguageFacts;
@@ -104,7 +106,7 @@ pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool) -> Res
         .replace("&#39;", "\"");
 
     let parser = Parser::create(version.clone())?;
-    let output = parser.parse(NonterminalKind::SourceUnit, &source);
+    let output = parser.parse_file(&source);
     let source_id = file.path.strip_repo_root()?.unwrap_str();
 
     let with_color = true;
@@ -152,7 +154,7 @@ fn extract_compiler_version(compiler: &str) -> Option<Version> {
         panic!("Unrecognized compiler/version: '{compiler}'");
     };
 
-    if &version < LanguageFacts::SUPPORTED_VERSIONS.first().unwrap() {
+    if version < LanguageFacts::EARLIEST_VERSION {
         // Version is too early:
         return None;
     }
@@ -201,13 +203,15 @@ fn run_bindings_check(
         }
     }
 
-    // Check that all `Identifier` and `YulIdentifier` nodes are bound to either a definition or a reference:
+    // Check that all identifier nodes are bound to either a definition or a reference:
 
     let mut cursor = output.create_tree_cursor();
 
-    while cursor
-        .go_to_next_terminal_with_kinds(&[TerminalKind::Identifier, TerminalKind::YulIdentifier])
-    {
+    while cursor.go_to_next_terminal() {
+        if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
+            continue;
+        }
+
         if matches!(
             cursor.ancestors().next(),
             Some(ancestor)

@@ -3,11 +3,17 @@ use semver::Version;
 pub struct LanguageFacts;
 
 impl LanguageFacts {
-    pub const NAME: &'static str = "{{ model.language_name }}";
-
-    pub const SUPPORTED_VERSIONS: &'static [Version] = &[
+    pub const ALL_VERSIONS: &'static [Version] = &[
         {% for version in model.all_language_versions %}
             Version::new({{ version | split(pat=".") | join(sep=", ") }}),
         {% endfor %}
     ];
+
+    pub const EARLIEST_VERSION: Version = Version::new(
+        {{ model.all_language_versions | first() | split(pat=".") | join(sep=", ") }}
+    );
+
+    pub const LATEST_VERSION: Version = Version::new(
+        {{ model.all_language_versions | last() | split(pat=".") | join(sep=", ") }}
+    );
 }

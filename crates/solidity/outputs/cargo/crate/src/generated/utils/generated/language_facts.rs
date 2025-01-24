@@ -5,9 +5,7 @@ use semver::Version;
 pub struct LanguageFacts;
 
 impl LanguageFacts {
-    pub const NAME: &'static str = "Solidity";
-
-    pub const SUPPORTED_VERSIONS: &'static [Version] = &[
+    pub const ALL_VERSIONS: &'static [Version] = &[
         Version::new(0, 4, 11),
         Version::new(0, 4, 12),
         Version::new(0, 4, 13),
@@ -92,4 +90,8 @@ impl LanguageFacts {
         Version::new(0, 8, 27),
         Version::new(0, 8, 28),
     ];
+
+    pub const EARLIEST_VERSION: Version = Version::new(0, 4, 11);
+
+    pub const LATEST_VERSION: Version = Version::new(0, 8, 28);
 }

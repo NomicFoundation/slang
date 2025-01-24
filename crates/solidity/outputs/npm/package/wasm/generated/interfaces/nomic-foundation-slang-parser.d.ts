@@ -2,7 +2,6 @@
 
 export namespace NomicFoundationSlangParser {
   export { Parser };
-  export { ParseError };
   export { ParseOutput };
 }
 import type { Cursor } from "./nomic-foundation-slang-cst.js";
@@ -13,19 +12,18 @@ import type { NonterminalKind } from "./nomic-foundation-slang-cst.js";
 export { NonterminalKind };
 import type { TextRange } from "./nomic-foundation-slang-cst.js";
 export { TextRange };
-
 /**
- * Contains information about where the error occurred and what went wrong.
+ * Represents an error that occurred while parsing source code.
  */
-export class ParseError {
+export interface ParseError {
   /**
-   * Returns the text range where the error occurred in the source code.
+   * A human-readable message describing what went wrong.
    */
-  get textRange(): TextRange;
+  message: string;
   /**
-   * Returns a human-readable message describing the parsing error.
+   * The text range where the error occurred in the source code.
    */
-  get message(): string;
+  textRange: TextRange;
 }
 
 /**
@@ -40,7 +38,7 @@ export class ParseOutput {
   get tree(): NonterminalNode;
   /**
    * Returns a list of all parsing errors encountered.
-   * An empty list indicates successful parsing with no errors.
+   * An empty list indicates a successful parse with no errors.
    */
   errors(): ParseError[];
   /**
@@ -61,11 +59,6 @@ export class ParseOutput {
  */
 export class Parser {
   /**
-   * Returns the root nonterminal kind for this parser's grammar.
-   * This represents the starting point for parsing a complete source file.
-   */
-  static rootKind(): NonterminalKind;
-  /**
    * Creates a new parser instance for the specified language version.
    */
   static create(languageVersion: string): Parser;
@@ -74,7 +67,11 @@ export class Parser {
    */
   get languageVersion(): string;
   /**
-   * Parses the input string starting from the specified nonterminal kind.
+   * Parses the input string into a complete source file.
    */
-  parse(kind: NonterminalKind, input: string): ParseOutput;
+  parseFile(input: string): ParseOutput;
+  /**
+   * Parses the input string into a nonterminal with the specified kind.
+   */
+  parseNonterminal(kind: NonterminalKind, input: string): ParseOutput;
 }

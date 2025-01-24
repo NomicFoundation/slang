@@ -33,7 +33,7 @@ impl ParseCommand {
 
         let input = fs::read_to_string(&file_path).unwrap();
         let parser = Parser::create(version).unwrap();
-        let parse_output = parser.parse(Parser::ROOT_KIND, &input);
+        let parse_output = parser.parse_file(&input);
 
         if !parse_output.is_valid() {
             const COLOR: bool = true;

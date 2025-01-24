@@ -20,7 +20,7 @@ impl RemoveMkdocSnippetMarkers for &str {
 
 fn assert_matches(query: &Query, kind: NonterminalKind, source: &str) -> QueryMatchIterator {
     let parser = Parser::create(Version::new(0, 8, 12)).unwrap();
-    let cursor = parser.parse(kind, source).create_tree_cursor();
+    let cursor = parser.parse_nonterminal(kind, source).create_tree_cursor();
 
     let tree = cursor.node();
     assert!(
@@ -33,7 +33,7 @@ fn assert_matches(query: &Query, kind: NonterminalKind, source: &str) -> QueryMa
 
 #[test]
 fn query_syntax() {
-    let query = Query::parse(
+    let query = Query::create(
         &"
 	// --8<-- [start:query-syntax-1]
 	[MultiplicativeExpression [Expression] [Asterisk] [Expression]]
@@ -45,7 +45,7 @@ fn query_syntax() {
 
     assert_matches(&query, NonterminalKind::MultiplicativeExpression, "1*2");
 
-    let query = Query::parse(
+    let query = Query::create(
         &"
     // --8<-- [start:query-syntax-2]
 	[MultiplicativeExpression left_operand:[Expression] [Asterisk] right_operand:[Expression]]
@@ -57,7 +57,7 @@ fn query_syntax() {
 
     assert_matches(&query, NonterminalKind::MultiplicativeExpression, "1*2");
 
-    let query = Query::parse(
+    let query = Query::create(
         &r#"
     // --8<-- [start:query-syntax-3]
 	[MultiplicativeExpression left_operand:[_] operator:["*"] right_operand:[_]]
@@ -69,7 +69,7 @@ fn query_syntax() {
 
     assert_matches(&query, NonterminalKind::MultiplicativeExpression, "1*2");
 
-    let query = Query::parse(
+    let query = Query::create(
         &"
     // --8<-- [start:query-syntax-4]
     [MultiplicativeExpression left_operand:[_] [_]]
@@ -80,7 +80,7 @@ fn query_syntax() {
     .unwrap();
     assert_matches(&query, NonterminalKind::MultiplicativeExpression, "1*2");
 
-    let query = Query::parse(
+    let query = Query::create(
         &"
     // --8<-- [start:query-syntax-5]
     [MultiplicativeExpression [Expression [StringExpression]]]
@@ -103,7 +103,7 @@ fn query_syntax() {
 
 #[test]
 fn capturing_nodes() {
-    let query = Query::parse(
+    let query = Query::create(
         &"
     // --8<-- [start:capturing-nodes-1]
 	[StructDefinition @struct_name name:[Identifier]]
@@ -115,7 +115,7 @@ fn capturing_nodes() {
 
     assert_matches(&query, NonterminalKind::StructDefinition, "struct Abc {}");
 
-    let query = Query::parse(
+    let query = Query::create(
         &"
     // --8<-- [start:capturing-nodes-2]
 	[ContractDefinition
@@ -141,7 +141,7 @@ fn capturing_nodes() {
 
 #[test]
 fn quantification() {
-    let query = Query::parse(
+    let query = Query::create(
         &"
     // --8<-- [start:quantification-1]
 	[SourceUnit members:[_ ([_ @import [ImportDirective]])+]]
@@ -157,7 +157,7 @@ fn quantification() {
         "import 'test.sol';\nimport * as Utils from 'lib/utils.sol'\n\ncontract Test {}",
     );
 
-    let query = Query::parse(
+    let query = Query::create(
         &"
     // --8<-- [start:quantification-2]
 	[StructDefinition
@@ -181,7 +181,7 @@ fn quantification() {
 		",
     );
 
-    let query = Query::parse(
+    let query = Query::create(
         &"
     // --8<-- [start:quantification-3]
 	[FunctionCallExpression
@@ -214,7 +214,7 @@ fn quantification() {
 
 #[test]
 fn alternations() {
-    let query = Query::parse(
+    let query = Query::create(
         &"
     // --8<-- [start:alternations-1]
 	[FunctionCallExpression
@@ -236,7 +236,7 @@ fn alternations() {
         assert_matches(&query, NonterminalKind::FunctionCallExpression, "a.call(1)").collect();
     matches.first().unwrap().captures.get("method").unwrap();
 
-    let query = Query::parse(
+    let query = Query::create(
         &r#"
     // --8<-- [start:alternations-2]
 	@keyword (
@@ -276,7 +276,7 @@ fn alternations() {
 
 #[test]
 fn adjacency() {
-    let query = Query::parse(
+    let query = Query::create(
         &r#"
     // --8<-- [start:adjacency-1]
 	[FunctionDefinition
@@ -305,7 +305,7 @@ fn adjacency() {
         "int x"
     );
 
-    let query = Query::parse(
+    let query = Query::create(
         &r#"
     // --8<-- [start:adjacency-2]
 	[FunctionDefinition
@@ -334,7 +334,7 @@ fn adjacency() {
         " int y"
     );
 
-    let query = Query::parse(
+    let query = Query::create(
         &r#"
     // --8<-- [start:adjacency-3]
 	[Statements @stmt1 [Statement] . @stmt2 [Statement]]

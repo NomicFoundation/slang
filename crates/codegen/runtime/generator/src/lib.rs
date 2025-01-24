@@ -94,8 +94,8 @@ impl Default for RuntimeModel {
         Self {
             slang_version: Version::new(0, 0, 0),
             language_name: "CodegenRuntime".to_string(),
-            all_language_versions: BTreeSet::default(),
-            breaking_language_versions: BTreeSet::default(),
+            all_language_versions: BTreeSet::from([Version::new(0, 0, 0)]),
+            breaking_language_versions: BTreeSet::from([Version::new(0, 0, 0)]),
 
             ast: AstModel::default(),
             bindings: BindingsModel::default(),

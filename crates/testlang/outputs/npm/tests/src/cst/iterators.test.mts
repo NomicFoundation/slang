@@ -12,7 +12,7 @@ describe("iterators", () => {
   const source = "tree [A [B C] D];";
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parse(NonterminalKind.SourceUnit, source);
+  const parseOutput = parser.parseFile(source);
   const cursor: Cursor = parseOutput.createTreeCursor();
 
   assertIsNonterminalNode(cursor.node, NonterminalKind.SourceUnit);

@@ -2,7 +2,6 @@ use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
 use metaslang_graph_builder::{ExecutionConfig, NoCancellation, Variables};
 use semver::Version;
-use slang_testlang::cst::NonterminalKind;
 use slang_testlang::parser::Parser;
 
 #[test]
@@ -36,7 +35,7 @@ fn builds_a_graph() {
     assert!(msgb.check().is_ok());
 
     let source = "tree $t1 [A [B C]];";
-    let parse_output = parser.parse(NonterminalKind::SourceUnit, source);
+    let parse_output = parser.parse_file(source);
 
     assert!(parse_output.is_valid());
     let tree = parse_output.create_tree_cursor();

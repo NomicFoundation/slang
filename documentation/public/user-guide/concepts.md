@@ -10,12 +10,11 @@ The earliest Solidity version we support is `0.4.11`, and we plan on supporting 
 
 From a `Parser` object, you can analyze any source text according to the nonterminals of that specific version.
 Providing an accurate language version is important, as it affects the shape of the syntax tree, and possible errors produced.
-You can use the `LanguageFacts::supportedVersions()` API to get a list of all supported versions for the current Slang release.
+You can use the `LanguageFacts::allVersions()` API to get a list of all supported versions for the current Slang release.
 
-The `Parser::parse()` API is the main entry point for the parser, and to generate concrete syntax trees (CSTs) that can be used for further analysis.
-Each `parse()` operation accepts the input source code, and a `NonterminalKind` variant.
-This allows callers to parse entire source files (`NonterminalKind::SourceUnit`), individual contracts (`NonterminalKind::ContractDefinition`),
-methods (`NonterminalKind::FunctionDefinition`), or any other syntax nodes.
+The `Parser::parse_file(source)` API is the main entry point for the parser, and to generate concrete syntax trees (CSTs) that can be used for further analysis.
+Additionally, there is `Parser::parse_nonterminal(kind, source)` API that allows callers to parse specific nonterminal nodes, like individual contracts (`NonterminalKind::ContractDefinition`),
+methods (`NonterminalKind::FunctionDefinition`), or expressions (`NonterminalKind::Expression`).
 
 The resulting `ParseOutput` object will contain syntax errors (if any), and the syntax tree corresponding to the input source code.
 

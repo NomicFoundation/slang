@@ -20,7 +20,7 @@ fn using_the_parser() -> Result<()> {
     // --8<-- [start:parse-input]
     let parser = Parser::create(Version::parse("0.8.0")?)?;
 
-    let parse_output = parser.parse(NonterminalKind::ContractDefinition, source);
+    let parse_output = parser.parse_nonterminal(NonterminalKind::ContractDefinition, source);
     // --8<-- [end:parse-input]
 
     // --8<-- [start:print-errors]
