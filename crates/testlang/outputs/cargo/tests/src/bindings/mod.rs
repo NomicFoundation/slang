@@ -35,7 +35,7 @@ fn builds_a_graph() {
     assert!(msgb.check().is_ok());
 
     let source = "tree $t1 [A [B C]];";
-    let parse_output = parser.parse_file(source);
+    let parse_output = parser.parse_file_contents(source);
 
     assert!(parse_output.is_valid());
     let tree = parse_output.create_tree_cursor();

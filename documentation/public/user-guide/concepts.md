@@ -12,7 +12,7 @@ From a `Parser` object, you can analyze any source text according to the nonterm
 Providing an accurate language version is important, as it affects the shape of the syntax tree, and possible errors produced.
 You can use the `LanguageFacts::allVersions()` API to get a list of all supported versions for the current Slang release.
 
-The `Parser::parse_file(source)` API is the main entry point for the parser, and to generate concrete syntax trees (CSTs) that can be used for further analysis.
+The `Parser::parse_file_contents(source)` API is the main entry point for the parser, and to generate concrete syntax trees (CSTs) that can be used for further analysis.
 Additionally, there is `Parser::parse_nonterminal(kind, source)` API that allows callers to parse specific nonterminal nodes, like individual contracts (`NonterminalKind::ContractDefinition`),
 methods (`NonterminalKind::FunctionDefinition`), or expressions (`NonterminalKind::Expression`).
 

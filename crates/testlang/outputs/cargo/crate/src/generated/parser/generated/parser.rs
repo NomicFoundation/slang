@@ -65,7 +65,7 @@ impl Parser {
         &self.language_version
     }
 
-    pub fn parse_file(&self, input: &str) -> ParseOutput {
+    pub fn parse_file_contents(&self, input: &str) -> ParseOutput {
         self.parse_nonterminal(NonterminalKind::SourceUnit, input)
     }
     pub fn parse_nonterminal(&self, kind: NonterminalKind, input: &str) -> ParseOutput {

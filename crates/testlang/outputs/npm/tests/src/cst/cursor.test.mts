@@ -13,7 +13,7 @@ test("use cursor goToNext()", () => {
   const source = "tree [A [B C] D];";
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parseFile(source);
+  const parseOutput = parser.parseFileContents(source);
   const cursor: Cursor = parseOutput.createTreeCursor();
 
   assertIsNonterminalNode(cursor.node, NonterminalKind.SourceUnit);
@@ -101,7 +101,7 @@ test("use cursor goToNext()", () => {
 test("access the node using its name", () => {
   const source = "tree [A [B C] D];";
   const parser = Parser.create("1.0.0");
-  const parseOutput = parser.parseFile(source);
+  const parseOutput = parser.parseFileContents(source);
 
   const cursor = parseOutput.createTreeCursor();
   let names: string[] = [];

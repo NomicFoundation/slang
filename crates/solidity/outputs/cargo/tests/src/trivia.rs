@@ -26,7 +26,7 @@ fn compare_end_of_lines(input: &str, expected: &[&str]) -> Result<()> {
     let version = Version::parse("0.8.0")?;
     let parser = Parser::create(version)?;
 
-    let output = parser.parse_file(input);
+    let output = parser.parse_file_contents(input);
     assert!(output.is_valid());
 
     let actual = Rc::clone(output.tree())

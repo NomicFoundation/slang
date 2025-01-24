@@ -209,7 +209,7 @@ it("can reuse the same CST nodes after selectors", () => {
   const source = `foo + bar`;
 
   const parser = Parser.create("1.0.0");
-  const parseOutput = parser.parseFile(source);
+  const parseOutput = parser.parseFileContents(source);
   parseOutput.isValid(); // true
 
   const cst = parseOutput.tree.asNonterminalNode()!;

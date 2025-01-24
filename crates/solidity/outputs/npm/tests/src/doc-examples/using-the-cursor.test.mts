@@ -12,7 +12,7 @@ test("using the cursor", async () => {
   // --8<-- [start:parse-input]
   const parser = Parser.create("0.8.0");
 
-  const parseOutput = parser.parseFile(source);
+  const parseOutput = parser.parseFileContents(source);
   // --8<-- [end:parse-input]
 
   {

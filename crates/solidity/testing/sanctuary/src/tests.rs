@@ -106,7 +106,7 @@ pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool) -> Res
         .replace("&#39;", "\"");
 
     let parser = Parser::create(version.clone())?;
-    let output = parser.parse_file(&source);
+    let output = parser.parse_file_contents(&source);
     let source_id = file.path.strip_repo_root()?.unwrap_str();
 
     let with_color = true;

@@ -69,7 +69,7 @@ export class Parser {
   /**
    * Parses the input string into a complete source file.
    */
-  parseFile(input: string): ParseOutput;
+  parseFileContents(input: string): ParseOutput;
   /**
    * Parses the input string into a nonterminal with the specified kind.
    */

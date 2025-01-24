@@ -14,7 +14,7 @@ pub fn add_built_ins(
 ) -> Result<(), ParserInitializationError> {
     let source = get_built_ins_contents(&version);
     let parser = Parser::create(version)?;
-    let parse_output = parser.parse_file(source);
+    let parse_output = parser.parse_file_contents(source);
 
     let built_ins_cursor = transform(&Node::Nonterminal(Rc::clone(parse_output.tree())))
         .create_cursor(TextIndex::ZERO);

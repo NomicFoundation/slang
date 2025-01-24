@@ -94,7 +94,7 @@ mod tests {
 
     fn run(source: &str, expected: &[&str]) {
         let parser = Parser::create(Version::new(0, 8, 0)).unwrap();
-        let parse_output = parser.parse_file(source);
+        let parse_output = parser.parse_file_contents(source);
 
         let imports = super::ImportPathsExtractor::new();
 

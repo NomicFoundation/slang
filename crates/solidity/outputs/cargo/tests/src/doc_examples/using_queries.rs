@@ -13,7 +13,7 @@ fn parse_doc_input_file<T: AsRef<Path>>(path: T) -> Result<ParseOutput> {
 
     let parser = Parser::create(Version::new(0, 8, 0))?;
 
-    Ok(parser.parse_file(source.trim()))
+    Ok(parser.parse_file_contents(source.trim()))
 }
 
 #[test]

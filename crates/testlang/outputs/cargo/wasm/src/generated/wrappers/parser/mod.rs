@@ -41,8 +41,8 @@ define_wrapper! { Parser {
         self._borrow_ffi().language_version().to_string()
     }
 
-    fn parse_file(&self, input: String) -> ffi::ParseOutput {
-        self._borrow_ffi().parse_file(&input)._into_ffi()
+    fn parse_file_contents(&self, input: String) -> ffi::ParseOutput {
+        self._borrow_ffi().parse_file_contents(&input)._into_ffi()
     }
 
     fn parse_nonterminal(&self, kind: ffi::NonterminalKind, input: String) -> ffi::ParseOutput {

@@ -23,7 +23,7 @@ test("parse nonterminal", () => {
   const source = `tree [A [B C] D];`;
   const parser = Parser.create("1.0.0");
 
-  const tree = parser.parseFile(source).tree;
+  const tree = parser.parseFileContents(source).tree;
   assertIsNonterminalNode(tree, NonterminalKind.SourceUnit);
 
   const children = tree.children();

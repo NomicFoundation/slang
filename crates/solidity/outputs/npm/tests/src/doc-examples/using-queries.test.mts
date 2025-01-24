@@ -7,7 +7,7 @@ import { assertIsNonterminalNode, Query, QueryMatchIterator } from "@nomicfounda
 async function parseDocInputFile(relativePath: string) {
   const source = await readRepoFile("documentation/public/user-guide/inputs", relativePath);
   const parser = Parser.create("0.8.0");
-  return parser.parseFile(source);
+  return parser.parseFileContents(source);
 }
 
 test("using queries", async () => {

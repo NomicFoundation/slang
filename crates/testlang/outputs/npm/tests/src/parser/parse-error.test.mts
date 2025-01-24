@@ -4,7 +4,7 @@ test("render error reports", () => {
   const source = "tree [AB;";
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parseFile(source);
+  const parseOutput = parser.parseFileContents(source);
   expect(parseOutput.isValid()).toBeFalsy();
 
   const errors = parseOutput.errors();
