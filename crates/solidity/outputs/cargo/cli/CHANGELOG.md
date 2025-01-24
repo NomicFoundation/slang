@@ -26,6 +26,8 @@
 
 - [#1223](https://github.com/NomicFoundation/slang/pull/1223) [`3e85a14`](https://github.com/NomicFoundation/slang/commit/3e85a14e18a02dfc50fe3884bd1937192986850d) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add `TerminalKindExtensions.is_identifier()` API to distinguish terminals like Solidity's `Identifier` and Yul's `YulIdentifier`.
 
+- [#1187](https://github.com/NomicFoundation/slang/pull/1187) [`6389361`](https://github.com/NomicFoundation/slang/commit/63893616f7f7301d3540b46489affb4fd434c033) Thanks [@beta-ziliani](https://github.com/beta-ziliani)! - Change `ParseOutput` and `File.tree` to return a `NonTerminal` instead of a `Node`.
+
 ### Patch Changes
 
 - [#1134](https://github.com/NomicFoundation/slang/pull/1134) [`cfc62f2`](https://github.com/NomicFoundation/slang/commit/cfc62f29e2bd505f702544d98b68316b20bbe37e) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - remove `YulPathComponent` and just use `YulIdentifier` instead.
