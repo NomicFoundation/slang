@@ -77,6 +77,7 @@ fn check_ldw() {
     //    can be used by the next stage in the build pipeline, but for now we'll just dump them somewhere convenient.
     Command::new("ts-node")
         .current_dir(Path::repo_path("crates/codegen/ldw"))
+        .args(["-P", "./tsconfig.json"])
         .arg("src-ts/cli/ldw.ts")
         // .args(["--in-dir", "../../crates/testlang/outputs/ldw/"])
         // .args(["--out-dir", "../../crates/testlang/outputs/ldw/generated"])
