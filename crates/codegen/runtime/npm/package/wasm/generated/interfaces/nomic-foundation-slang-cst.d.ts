@@ -170,7 +170,7 @@ export interface QueryMatch {
   /**
    * List of captured nodes and their names from the query.
    */
-  captures: { [key: string]: Cursor[] };
+  captures: { [key: string]: Array<Cursor> };
 }
 /**
  * Represents a position in the source text, with indices for different unicode encodings of the source.
@@ -280,7 +280,7 @@ export class Cursor {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of the current node in pre-order traversal.
    */
@@ -340,7 +340,7 @@ export class Cursor {
   /**
    * Moves to the next terminal node matching any of the given kinds.
    */
-  goToNextTerminalWithKinds(kinds: TerminalKind[]): boolean;
+  goToNextTerminalWithKinds(kinds: Array<TerminalKind>): boolean;
   /**
    * Nonterminal navigation methods
    * Moves to the next nonterminal node.
@@ -353,11 +353,11 @@ export class Cursor {
   /**
    * Moves to the next nonterminal node matching any of the given kinds.
    */
-  goToNextNonterminalWithKinds(kinds: NonterminalKind[]): boolean;
+  goToNextNonterminalWithKinds(kinds: Array<NonterminalKind>): boolean;
   /**
    * Executes the given queries and returns an iterator over the matches.
    */
-  query(queries: Query[]): QueryMatchIterator;
+  query(queries: Array<Query>): QueryMatchIterator;
 }
 
 /**
@@ -421,7 +421,7 @@ export class NonterminalNode {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of the current node in pre-order traversal.
    */
@@ -526,7 +526,7 @@ export class TerminalNode {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of this node in pre-order traversal.
    */
