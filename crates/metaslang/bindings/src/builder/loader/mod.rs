@@ -386,18 +386,16 @@ pub(crate) struct Loader<'a, KT: KindTypes + 'static> {
     graph: Graph<KT>,
     remapped_nodes: HashMap<usize, NodeID>,
     injected_node_count: usize,
-    cursors: HashMap<Handle<Node>, Cursor<KT>>,
     definitions_info: HashMap<Handle<Node>, DefinitionBindingInfo<KT>>,
-    references_info: HashMap<Handle<Node>, ReferenceBindingInfo>,
+    references_info: HashMap<Handle<Node>, ReferenceBindingInfo<KT>>,
     extension_hooks: HashSet<Handle<Node>>,
 }
 
 pub(crate) struct LoadResult<KT: KindTypes + 'static> {
     #[cfg(feature = "__private_testing_utils")]
     pub graph: Graph<KT>,
-    pub cursors: HashMap<Handle<Node>, Cursor<KT>>,
     pub definitions_info: HashMap<Handle<Node>, DefinitionBindingInfo<KT>>,
-    pub references_info: HashMap<Handle<Node>, ReferenceBindingInfo>,
+    pub references_info: HashMap<Handle<Node>, ReferenceBindingInfo<KT>>,
     // Nodes where we want to inject extensions
     pub extension_hooks: HashSet<Handle<Node>>,
 }
@@ -419,7 +417,6 @@ impl<'a, KT: KindTypes + 'static> Loader<'a, KT> {
             graph: Graph::new(),
             remapped_nodes: HashMap::new(),
             injected_node_count: 0,
-            cursors: HashMap::new(),
             definitions_info: HashMap::new(),
             references_info: HashMap::new(),
             extension_hooks: HashSet::new(),
@@ -509,7 +506,6 @@ impl<'a, KT: KindTypes + 'static> Loader<'a, KT> {
         Ok(LoadResult {
             #[cfg(feature = "__private_testing_utils")]
             graph: self.graph,
-            cursors: self.cursors,
             definitions_info: self.definitions_info,
             references_info: self.references_info,
             extension_hooks: self.extension_hooks,
@@ -833,15 +829,6 @@ impl<'a, KT: KindTypes> Loader<'a, KT> {
     ) -> Result<(), BuildError> {
         let node = &self.graph[node_ref];
 
-        // For every added graph node which links to a corresponding source
-        // node, save the corresponding CST cursor so our caller can extract
-        // that info later.
-        if let Some(source_node) = node.attributes.get(SOURCE_NODE_ATTR) {
-            let syntax_node_ref = source_node.as_syntax_node_ref()?;
-            let source_node = &self.graph[syntax_node_ref];
-            self.cursors.insert(node_handle, source_node.clone());
-        }
-
         if let Some(syntax_type) = node.attributes.get(SYNTAX_TYPE_ATTR) {
             let syntax_type = syntax_type.as_str()?;
             let syntax_type = self.stack_graph.add_string(syntax_type);
@@ -864,6 +851,14 @@ impl<'a, KT: KindTypes> Loader<'a, KT> {
         let node = &self.graph[node_ref];
         let node_handle = self.node_handle_for_graph_node(node_ref);
         let stack_graph_node = &self.stack_graph[node_handle];
+
+        let cursor = if let Some(source_node) = node.attributes.get(SOURCE_NODE_ATTR) {
+            let syntax_node_ref = source_node.as_syntax_node_ref()?;
+            let source_node = &self.graph[syntax_node_ref];
+            Some(source_node.clone())
+        } else {
+            None
+        };
 
         let parents = match node.attributes.get(PARENTS_ATTR) {
             Some(parents) => {
@@ -911,6 +906,7 @@ impl<'a, KT: KindTypes> Loader<'a, KT> {
             self.definitions_info.insert(
                 node_handle,
                 DefinitionBindingInfo {
+                    cursor: cursor.expect("Definition to have a valid source node"),
                     definiens,
                     parents,
                     extension_scope,
@@ -918,8 +914,13 @@ impl<'a, KT: KindTypes> Loader<'a, KT> {
                 },
             );
         } else if stack_graph_node.is_reference() {
-            self.references_info
-                .insert(node_handle, ReferenceBindingInfo { parents });
+            self.references_info.insert(
+                node_handle,
+                ReferenceBindingInfo {
+                    cursor: cursor.expect("Reference to have a valid source node"),
+                    parents,
+                },
+            );
         }
 
         if Self::load_flag(node, EXTENSION_HOOK_ATTR)? {
