@@ -58,6 +58,12 @@
 
 <pre ebnf-snippet="YulBreakKeyword" style="display: none;"><a href="#YulBreakKeyword"><span class="k">YUL_BREAK_KEYWORD</span></a><span class="o"> = </span><span class="s2">"break"</span><span class="o">;</span></pre>
 
+```{ .ebnf #YulByteKeyword }
+
+```
+
+<pre ebnf-snippet="YulByteKeyword" style="display: none;"><a href="#YulByteKeyword"><span class="k">YUL_BYTE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"byte"</span><span class="o">;</span></pre>
+
 ```{ .ebnf #YulBytesKeyword }
 
 ```

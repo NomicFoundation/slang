@@ -6091,6 +6091,7 @@
                 "item": {
                   "name": "YulBuiltInFunction",
                   "variants": [
+                    { "reference": "YulByteKeyword" },
                     { "reference": "YulJumpKeyword", "enabled": { "Till": { "till": "0.5.0" } } },
                     { "reference": "YulJumpiKeyword", "enabled": { "Till": { "till": "0.5.0" } } }
                   ]
@@ -6303,6 +6304,15 @@
                   "name": "YulBreakKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [{ "value": { "Atom": { "atom": "break" } } }]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
+                  "name": "YulByteKeyword",
+                  "identifier": "YulIdentifier",
+                  "definitions": [{ "value": { "Atom": { "atom": "byte" } } }]
                 }
               }
             },
@@ -8977,18 +8987,13 @@
         },
         {
           "BuiltInFunction": {
-            "item": { "name": "byte", "parameters": ["uint256 n", "uint256 x"], "return_type": "uint256" }
-          }
-        },
-        {
-          "BuiltInFunction": {
             "item": {
               "name": "callcode",
               "parameters": [
                 "uint256 g",
                 "uint256 a",
                 "uint256 v",
-                "uint256 in",
+                "uint256 in_",
                 "uint256 insize",
                 "uint256 out",
                 "uint256 outsize"
@@ -9017,7 +9022,7 @@
                 "uint256 g",
                 "uint256 a",
                 "uint256 v",
-                "uint256 in",
+                "uint256 in_",
                 "uint256 insize",
                 "uint256 out",
                 "uint256 outsize"
@@ -9044,7 +9049,7 @@
               "parameters": [
                 "uint256 g",
                 "uint256 a",
-                "uint256 in",
+                "uint256 in_",
                 "uint256 insize",
                 "uint256 out",
                 "uint256 outsize"
@@ -9148,7 +9153,6 @@
           }
         },
         { "BuiltInFunction": { "item": { "name": "pop", "parameters": ["uint256 x"], "return_type": "uint256" } } },
-        { "BuiltInFunction": { "item": { "name": "return", "parameters": ["uint256 p", "uint256 s"] } } },
         { "BuiltInFunction": { "item": { "name": "revert", "parameters": ["uint256 p", "uint256 s"] } } },
         {
           "BuiltInFunction": {
@@ -9223,7 +9227,7 @@
               "parameters": [
                 "uint256 g",
                 "uint256 a",
-                "uint256 in",
+                "uint256 in_",
                 "uint256 insize",
                 "uint256 out",
                 "uint256 outsize"

@@ -44,7 +44,7 @@
 
 ```
 
-<pre ebnf-snippet="YulBuiltInFunction" style="display: none;"><a href="#YulBuiltInFunction"><span class="k">YulBuiltInFunction</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../03-yul-keywords#YulJumpKeyword"><span class="k">YUL_JUMP_KEYWORD</span></a><span class="o"> </span><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><span class="o">                   | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../03-yul-keywords#YulJumpiKeyword"><span class="k">YUL_JUMPI_KEYWORD</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Deprecated in 0.5.0 *)</span></pre>
+<pre ebnf-snippet="YulBuiltInFunction" style="display: none;"><a href="#YulBuiltInFunction"><span class="k">YulBuiltInFunction</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../03-yul-keywords#YulByteKeyword"><span class="k">YUL_BYTE_KEYWORD</span></a><br /><span class="o">                   | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../03-yul-keywords#YulJumpKeyword"><span class="k">YUL_JUMP_KEYWORD</span></a><span class="o"> </span><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><span class="o">                   | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../03-yul-keywords#YulJumpiKeyword"><span class="k">YUL_JUMPI_KEYWORD</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Deprecated in 0.5.0 *)</span></pre>
 
 ```{ .ebnf #YulLiteral }
 

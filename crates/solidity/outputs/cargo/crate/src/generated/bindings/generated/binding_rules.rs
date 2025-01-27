@@ -1191,6 +1191,11 @@ inherit .star_extension
 ;;; Function types
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+@ftype [FunctionType] {
+  node @ftype.lexical_scope
+  node @ftype.output
+}
+
 @ftype [FunctionType @attrs [FunctionTypeAttributes]] {
   ; Compute the built-in type of the function
   ; %functionExternal provides access to .selector and .address
@@ -1200,9 +1205,6 @@ inherit .star_extension
       set type_symbol = "%ExternalFunction"
     }
   }
-
-  node @ftype.lexical_scope
-  node @ftype.output
 
   ; This path pushes the function type to the symbol stack
   ; TODO: add parameter and return types to distinguish between different function types

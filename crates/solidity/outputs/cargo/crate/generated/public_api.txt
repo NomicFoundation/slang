@@ -681,6 +681,7 @@ pub slang_solidity::cst::TerminalKind::YulAssemblyKeyword
 pub slang_solidity::cst::TerminalKind::YulAutoKeyword
 pub slang_solidity::cst::TerminalKind::YulBoolKeyword
 pub slang_solidity::cst::TerminalKind::YulBreakKeyword
+pub slang_solidity::cst::TerminalKind::YulByteKeyword
 pub slang_solidity::cst::TerminalKind::YulBytesKeyword
 pub slang_solidity::cst::TerminalKind::YulCallDataKeyword
 pub slang_solidity::cst::TerminalKind::YulCaseKeyword

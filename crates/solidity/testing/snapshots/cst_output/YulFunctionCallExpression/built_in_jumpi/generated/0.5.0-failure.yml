@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulDecimalLiteral or YulFalseKeyword or YulHexLiteral or YulIdentifier or YulTrueKeyword.
+    Error: Expected DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulByteKeyword or YulDecimalLiteral or YulFalseKeyword or YulHexLiteral or YulIdentifier or YulTrueKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/YulFunctionCallExpression/built_in_jumpi/input.sol:1:1]
        │
      1 │ jumpi()

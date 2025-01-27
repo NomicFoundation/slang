@@ -5751,6 +5751,11 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn yul_built_in_function(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
+                input,
+                TerminalKind::YulByteKeyword,
+            );
+            choice.consider(input, result)?;
             if !self.version_is_at_least_0_5_0 {
                 let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
                     input,
@@ -10735,6 +10740,13 @@ impl Lexer for Parser {
                             Some('r') => {
                                 if scan_chars!(input, 'e', 'a', 'k') {
                                     KeywordScan::Reserved(TerminalKind::YulBreakKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('y') => {
+                                if scan_chars!(input, 't', 'e') {
+                                    KeywordScan::Reserved(TerminalKind::YulByteKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }

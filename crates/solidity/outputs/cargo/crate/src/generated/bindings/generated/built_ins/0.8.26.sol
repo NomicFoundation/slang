@@ -132,17 +132,16 @@ contract $YulBuiltIns$ {
   function and(uint256 x, uint256 y) public returns (uint256);
   function balance(uint256 a) public returns (uint256);
   function blockhash(uint256 b) public returns (uint256);
-  function byte(uint256 n, uint256 x) public returns (uint256);
-  function callcode(uint256 g, uint256 a, uint256 v, uint256 in, uint256 insize, uint256 out, uint256 outsize) public returns (uint256);
+  function callcode(uint256 g, uint256 a, uint256 v, uint256 in_, uint256 insize, uint256 out, uint256 outsize) public returns (uint256);
   function calldatacopy(uint256 t, uint256 f, uint256 s) public;
   function calldataload(uint256 p) public returns (uint256);
   function calldatasize() public returns (uint256);
   function caller() public returns (uint256);
-  function call(uint256 g, uint256 a, uint256 v, uint256 in, uint256 insize, uint256 out, uint256 outsize) public returns (uint256);
+  function call(uint256 g, uint256 a, uint256 v, uint256 in_, uint256 insize, uint256 out, uint256 outsize) public returns (uint256);
   function callvalue() public returns (uint256);
   function coinbase() public returns (uint256);
   function create(uint256 v, uint256 p, uint256 n) public returns (uint256);
-  function delegatecall(uint256 g, uint256 a, uint256 in, uint256 insize, uint256 out, uint256 outsize) public returns (uint256);
+  function delegatecall(uint256 g, uint256 a, uint256 in_, uint256 insize, uint256 out, uint256 outsize) public returns (uint256);
   function div(uint256 x, uint256 y) public returns (uint256);
   function eq(uint256 x, uint256 y) public returns (uint256);
   function exp(uint256 x, uint256 y) public returns (uint256);
@@ -172,7 +171,6 @@ contract $YulBuiltIns$ {
   function origin() public returns (uint256);
   function or(uint256 x, uint256 y) public returns (uint256);
   function pop(uint256 x) public returns (uint256);
-  function return(uint256 p, uint256 s) public;
   function revert(uint256 p, uint256 s) public;
   function sdiv(uint256 x, uint256 y) public returns (uint256);
   function selfdestruct(uint256 a) public;
@@ -189,7 +187,7 @@ contract $YulBuiltIns$ {
   function keccak256(uint256 p, uint256 n) public returns (uint256);
   function returndatacopy(uint256 t, uint256 f, uint256 s) public;
   function returndatasize() public returns (uint256);
-  function staticcall(uint256 g, uint256 a, uint256 in, uint256 insize, uint256 out, uint256 outsize) public returns (uint256);
+  function staticcall(uint256 g, uint256 a, uint256 in_, uint256 insize, uint256 out, uint256 outsize) public returns (uint256);
   function create2(uint256 v, uint256 p, uint256 n, uint256 s) public returns (uint256);
   function extcodehash(uint256 a) public returns (uint256);
   function sar(uint256 x, uint256 y) public returns (uint256);

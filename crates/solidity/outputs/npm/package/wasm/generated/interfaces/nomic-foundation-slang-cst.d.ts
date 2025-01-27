@@ -2162,7 +2162,8 @@ export declare enum NonterminalKind {
    * This kind represents a `YulBuiltInFunction` node, with the following structure:
    *
    * ```ebnf
-   * YulBuiltInFunction = (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
+   * YulBuiltInFunction = (* variant: *) YUL_BYTE_KEYWORD
+   * | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
    * | (* variant: *) YUL_JUMPI_KEYWORD; (* Deprecated in 0.5.0 *)
    * ```
    */
@@ -4135,6 +4136,14 @@ export declare enum TerminalKind {
    * ```
    */
   YulBreakKeyword = "YulBreakKeyword",
+  /**
+   * This kind represents a `YulByteKeyword` node, with the following structure:
+   *
+   * ```ebnf
+   * YUL_BYTE_KEYWORD = "byte";
+   * ```
+   */
+  YulByteKeyword = "YulByteKeyword",
   /**
    * This kind represents a `YulBytesKeyword` node, with the following structure:
    *

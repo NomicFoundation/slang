@@ -1410,7 +1410,8 @@ pub enum NonterminalKind {
     /// ```
     YulBreakStatement,
     /// ```ebnf
-    /// YulBuiltInFunction = (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
+    /// YulBuiltInFunction = (* variant: *) YUL_BYTE_KEYWORD
+    ///                    | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
     ///                    | (* variant: *) YUL_JUMPI_KEYWORD; (* Deprecated in 0.5.0 *)
     /// ```
     YulBuiltInFunction,

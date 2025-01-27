@@ -4417,7 +4417,7 @@ codegen_language_macros::compile!(Language(
                                 // EnumVariant(reference = YulAndKeyword),
                                 // EnumVariant(reference = YulBalanceKeyword),
                                 // EnumVariant(reference = YulBlockHashKeyword),
-                                // EnumVariant(reference = YulByteKeyword),
+                                EnumVariant(reference = YulByteKeyword),
                                 // EnumVariant(reference = YulCallCodeKeyword),
                                 // EnumVariant(reference = YulCallDataCopyKeyword),
                                 // EnumVariant(reference = YulCallDataLoadKeyword),
@@ -4719,11 +4719,11 @@ codegen_language_macros::compile!(Language(
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(value = Atom("break"))]
                         ),
-                        // Keyword(
-                        //     name = YulByteKeyword,
-                        //     identifier = YulIdentifier,
-                        //     definitions = [KeywordDefinition(value = Atom("byte"))]
-                        // ),
+                        Keyword(
+                            name = YulByteKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(value = Atom("byte"))]
+                        ),
                         Keyword(
                             name = YulBytesKeyword,
                             identifier = YulIdentifier,
@@ -7108,18 +7108,18 @@ codegen_language_macros::compile!(Language(
                     parameters = ["uint256 b"],
                     return_type = "uint256"
                 ),
-                BuiltInFunction(
-                    name = "byte",
-                    parameters = ["uint256 n", "uint256 x"],
-                    return_type = "uint256"
-                ),
+                // BuiltInFunction(
+                //     name = "byte",
+                //     parameters = ["uint256 n", "uint256 x"],
+                //     return_type = "uint256"
+                // ),
                 BuiltInFunction(
                     name = "callcode",
                     parameters = [
                         "uint256 g",
                         "uint256 a",
                         "uint256 v",
-                        "uint256 in",
+                        "uint256 in_",
                         "uint256 insize",
                         "uint256 out",
                         "uint256 outsize"
@@ -7147,7 +7147,7 @@ codegen_language_macros::compile!(Language(
                         "uint256 g",
                         "uint256 a",
                         "uint256 v",
-                        "uint256 in",
+                        "uint256 in_",
                         "uint256 insize",
                         "uint256 out",
                         "uint256 outsize"
@@ -7166,7 +7166,7 @@ codegen_language_macros::compile!(Language(
                     parameters = [
                         "uint256 g",
                         "uint256 a",
-                        "uint256 in",
+                        "uint256 in_",
                         "uint256 insize",
                         "uint256 out",
                         "uint256 outsize"
@@ -7294,7 +7294,7 @@ codegen_language_macros::compile!(Language(
                     parameters = ["uint256 x"],
                     return_type = "uint256"
                 ),
-                BuiltInFunction(name = "return", parameters = ["uint256 p", "uint256 s"]),
+                // BuiltInFunction(name = "return", parameters = ["uint256 p", "uint256 s"]),
                 BuiltInFunction(name = "revert", parameters = ["uint256 p", "uint256 s"]),
                 BuiltInFunction(
                     name = "sdiv",
@@ -7373,7 +7373,7 @@ codegen_language_macros::compile!(Language(
                     parameters = [
                         "uint256 g",
                         "uint256 a",
-                        "uint256 in",
+                        "uint256 in_",
                         "uint256 insize",
                         "uint256 out",
                         "uint256 outsize"
