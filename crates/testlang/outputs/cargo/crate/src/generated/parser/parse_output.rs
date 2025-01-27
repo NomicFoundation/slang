@@ -1,16 +1,18 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use crate::cst::{Cursor, Node, TextIndex};
+use std::rc::Rc;
+
+use crate::cst::{Cursor, NonterminalNode, TextIndex};
 use crate::parser::ParseError;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct ParseOutput {
-    pub(crate) tree: Node,
+    pub(crate) tree: Rc<NonterminalNode>,
     pub(crate) errors: Vec<ParseError>,
 }
 
 impl ParseOutput {
-    pub fn tree(&self) -> &Node {
+    pub fn tree(&self) -> &Rc<NonterminalNode> {
         &self.tree
     }
 
@@ -24,6 +26,6 @@ impl ParseOutput {
 
     /// Creates a cursor that starts at the root of the parse tree.
     pub fn create_tree_cursor(&self) -> Cursor {
-        self.tree.clone().cursor_with_offset(TextIndex::ZERO)
+        Rc::clone(&self.tree).create_cursor(TextIndex::ZERO)
     }
 }

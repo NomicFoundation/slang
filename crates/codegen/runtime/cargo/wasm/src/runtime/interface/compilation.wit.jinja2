@@ -1,12 +1,15 @@
 interface compilation {
     use bindings.{binding-graph};
-    use cst.{node, cursor};
+    use cst.{nonterminal-node, cursor};
+    use parser.{parse-error};
 
     /// A builder for creating compilation units.
     /// Allows incrementally building a transitive list of all files and their imports.
     ///
     /// This is an internal API, and exposed via a public `CompilationBuilder` wrapper class written in TypeScript.
     /// This allows storing/invoking user supplied callbacks in TypeScript, rather than Rust, which has its limitations.
+    ///
+    /// @internal
     resource internal-compilation-builder {
         /// Creates a new compilation builder for the specified language version.
         create: static func(language-version: string) -> result<internal-compilation-builder, string>;
@@ -58,7 +61,10 @@ interface compilation {
         id: func() -> string;
 
         /// Returns the syntax tree of this file.
-        tree: func() -> node;
+        tree: func() -> nonterminal-node;
+
+        /// Returns a list of all errors encountered during parsing this file.
+        errors: func() -> list<parse-error>;
 
         /// Creates a cursor for traversing the syntax tree of this file.
         create-tree-cursor: func() -> cursor;

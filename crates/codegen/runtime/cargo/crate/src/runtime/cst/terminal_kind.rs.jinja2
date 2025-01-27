@@ -18,40 +18,53 @@
 #[allow(clippy::doc_markdown)]
 #[allow(clippy::doc_link_with_quotes)]
 pub enum TerminalKind {
-    // Built-in:
+    {# Built-in: #}
+
     UNRECOGNIZED,
     MISSING,
 
-    // Generated:
+    {# Generated: #}
+
     {% if rendering_in_stubs -%}
         Stub1,
         Stub2,
         Stub3,
     {%- else -%}
         {%- for variant in model.kinds.terminal_kinds -%}
+            /// Represents a node with kind `{{ variant.id | pascal_case }}`, having the following structure:
+            ///
             /// ```ebnf
-            {{ variant.documentation | indent(prefix = "/// ", first = true, blank = true) }}
+            {%- for line in variant.documentation | split(pat="\n") %}
+            /// {{ line }}
+            {%- endfor %}
             /// ```
-            {{ variant.id }},
+            {{ variant.id | pascal_case }},
         {%- endfor -%}
     {%- endif -%}
 }
 
 impl crate::cst::TerminalKindExtensions for TerminalKind {
-    fn is_trivia(&self) -> bool {
-        {%- if rendering_in_stubs -%}
-            false
-        {%- else -%}
+    {%- if not rendering_in_stubs -%}
+        fn is_identifier(self) -> bool {
             matches!(
                 self,
-                {%- for variant in model.kinds.trivia_scanner_names -%}
+                {%- for variant in model.kinds.identifier_terminals -%}
                     | Self::{{ variant }}
                 {%- endfor -%}
             )
-        {%- endif -%}
-    }
+        }
 
-    fn is_valid(&self) -> bool {
-        !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
-    }
+        fn is_trivia(self) -> bool {
+            matches!(
+                self,
+                {%- for variant in model.kinds.trivia_terminals -%}
+                    | Self::{{ variant }}
+                {%- endfor -%}
+            )
+        }
+
+        fn is_valid(self) -> bool {
+            !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
+        }
+    {%- endif -%}
 }

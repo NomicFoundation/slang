@@ -27,7 +27,7 @@ impl ParseError {
 }
 
 impl ParseError {
-    pub(crate) fn new(
+    pub(crate) fn create(
         text_range: TextRange,
         mut terminals_that_would_have_allowed_more_progress: Vec<TerminalKind>,
     ) -> Self {

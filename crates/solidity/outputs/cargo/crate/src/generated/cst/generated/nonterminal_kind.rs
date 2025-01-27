@@ -19,11 +19,15 @@
     Copy,
 )]
 pub enum NonterminalKind {
+    /// Represents a node with kind `AbicoderPragma`, having the following structure:
+    ///
     /// ```ebnf
     /// AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
     ///                  (* version: *) IDENTIFIER;
     /// ```
     AbicoderPragma,
+    /// Represents a node with kind `AdditiveExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// AdditiveExpression = (* left_operand: *) Expression
@@ -36,11 +40,15 @@ pub enum NonterminalKind {
     ///                      (* right_operand: *) Expression;
     /// ```
     AdditiveExpression,
+    /// Represents a node with kind `AddressType`, having the following structure:
+    ///
     /// ```ebnf
     /// AddressType = (* address_keyword: *) ADDRESS_KEYWORD
     ///               (* payable_keyword: *) PAYABLE_KEYWORD?;
     /// ```
     AddressType,
+    /// Represents a node with kind `AndExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// AndExpression = (* left_operand: *) Expression
@@ -48,17 +56,23 @@ pub enum NonterminalKind {
     ///                 (* right_operand: *) Expression;
     /// ```
     AndExpression,
+    /// Represents a node with kind `ArgumentsDeclaration`, having the following structure:
+    ///
     /// ```ebnf
     /// ArgumentsDeclaration = (* variant: *) PositionalArgumentsDeclaration
     ///                      | (* variant: *) NamedArgumentsDeclaration;
     /// ```
     ArgumentsDeclaration,
+    /// Represents a node with kind `ArrayExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// ArrayExpression = (* open_bracket: *) OPEN_BRACKET
     ///                   (* items: *) ArrayValues
     ///                   (* close_bracket: *) CLOSE_BRACKET;
     /// ```
     ArrayExpression,
+    /// Represents a node with kind `ArrayTypeName`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Postfix unary operator *)
     /// ArrayTypeName = (* operand: *) TypeName
@@ -67,20 +81,28 @@ pub enum NonterminalKind {
     ///                 (* close_bracket: *) CLOSE_BRACKET;
     /// ```
     ArrayTypeName,
+    /// Represents a node with kind `ArrayValues`, having the following structure:
+    ///
     /// ```ebnf
     /// ArrayValues = (* item: *) Expression ((* separator: *) COMMA (* item: *) Expression)*;
     /// ```
     ArrayValues,
+    /// Represents a node with kind `AssemblyFlags`, having the following structure:
+    ///
     /// ```ebnf
     /// AssemblyFlags = (* item: *) StringLiteral ((* separator: *) COMMA (* item: *) StringLiteral)*;
     /// ```
     AssemblyFlags,
+    /// Represents a node with kind `AssemblyFlagsDeclaration`, having the following structure:
+    ///
     /// ```ebnf
     /// AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
     ///                            (* flags: *) AssemblyFlags
     ///                            (* close_paren: *) CLOSE_PAREN;
     /// ```
     AssemblyFlagsDeclaration,
+    /// Represents a node with kind `AssemblyStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// AssemblyStatement = (* assembly_keyword: *) ASSEMBLY_KEYWORD
     ///                     (* label: *) StringLiteral?
@@ -88,6 +110,8 @@ pub enum NonterminalKind {
     ///                     (* body: *) YulBlock;
     /// ```
     AssemblyStatement,
+    /// Represents a node with kind `AssignmentExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// AssignmentExpression = (* left_operand: *) Expression
@@ -150,6 +174,8 @@ pub enum NonterminalKind {
     ///                        (* right_operand: *) Expression;
     /// ```
     AssignmentExpression,
+    /// Represents a node with kind `BitwiseAndExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// BitwiseAndExpression = (* left_operand: *) Expression
@@ -157,6 +183,8 @@ pub enum NonterminalKind {
     ///                        (* right_operand: *) Expression;
     /// ```
     BitwiseAndExpression,
+    /// Represents a node with kind `BitwiseOrExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// BitwiseOrExpression = (* left_operand: *) Expression
@@ -164,6 +192,8 @@ pub enum NonterminalKind {
     ///                       (* right_operand: *) Expression;
     /// ```
     BitwiseOrExpression,
+    /// Represents a node with kind `BitwiseXorExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// BitwiseXorExpression = (* left_operand: *) Expression
@@ -171,22 +201,30 @@ pub enum NonterminalKind {
     ///                        (* right_operand: *) Expression;
     /// ```
     BitwiseXorExpression,
+    /// Represents a node with kind `Block`, having the following structure:
+    ///
     /// ```ebnf
     /// Block = (* open_brace: *) OPEN_BRACE
     ///         (* statements: *) Statements
     ///         (* close_brace: *) CLOSE_BRACE;
     /// ```
     Block,
+    /// Represents a node with kind `BreakStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// BreakStatement = (* break_keyword: *) BREAK_KEYWORD
     ///                  (* semicolon: *) SEMICOLON;
     /// ```
     BreakStatement,
+    /// Represents a node with kind `CallOptions`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.2 *)
     /// CallOptions = (* item: *) NamedArgument ((* separator: *) COMMA (* item: *) NamedArgument)*;
     /// ```
     CallOptions,
+    /// Represents a node with kind `CallOptionsExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Postfix unary operator *)
     /// (* Introduced in 0.6.2 *)
@@ -196,6 +234,8 @@ pub enum NonterminalKind {
     ///                         (* close_brace: *) CLOSE_BRACE;
     /// ```
     CallOptionsExpression,
+    /// Represents a node with kind `CatchClause`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// CatchClause = (* catch_keyword: *) CATCH_KEYWORD
@@ -203,17 +243,23 @@ pub enum NonterminalKind {
     ///               (* body: *) Block;
     /// ```
     CatchClause,
+    /// Represents a node with kind `CatchClauseError`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// CatchClauseError = (* name: *) IDENTIFIER?
     ///                    (* parameters: *) ParametersDeclaration;
     /// ```
     CatchClauseError,
+    /// Represents a node with kind `CatchClauses`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// CatchClauses = (* item: *) CatchClause+;
     /// ```
     CatchClauses,
+    /// Represents a node with kind `ComparisonExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// ComparisonExpression = (* left_operand: *) Expression
@@ -236,6 +282,8 @@ pub enum NonterminalKind {
     ///                        (* right_operand: *) Expression;
     /// ```
     ComparisonExpression,
+    /// Represents a node with kind `ConditionalExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Postfix unary operator *)
     /// ConditionalExpression = (* operand: *) Expression
@@ -245,6 +293,8 @@ pub enum NonterminalKind {
     ///                         (* false_expression: *) Expression;
     /// ```
     ConditionalExpression,
+    /// Represents a node with kind `ConstantDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.7.4 *)
     /// ConstantDefinition = (* type_name: *) TypeName
@@ -255,6 +305,8 @@ pub enum NonterminalKind {
     ///                      (* semicolon: *) SEMICOLON;
     /// ```
     ConstantDefinition,
+    /// Represents a node with kind `ConstructorAttribute`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.4.22 *)
     /// ConstructorAttribute = (* variant: *) ModifierInvocation
@@ -265,11 +317,15 @@ pub enum NonterminalKind {
     ///                      | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
     /// ```
     ConstructorAttribute,
+    /// Represents a node with kind `ConstructorAttributes`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.4.22 *)
     /// ConstructorAttributes = (* item: *) ConstructorAttribute*;
     /// ```
     ConstructorAttributes,
+    /// Represents a node with kind `ConstructorDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.4.22 *)
     /// ConstructorDefinition = (* constructor_keyword: *) CONSTRUCTOR_KEYWORD
@@ -278,11 +334,15 @@ pub enum NonterminalKind {
     ///                         (* body: *) Block;
     /// ```
     ConstructorDefinition,
+    /// Represents a node with kind `ContinueStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// ContinueStatement = (* continue_keyword: *) CONTINUE_KEYWORD
     ///                     (* semicolon: *) SEMICOLON;
     /// ```
     ContinueStatement,
+    /// Represents a node with kind `ContractDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
     ///                      (* contract_keyword: *) CONTRACT_KEYWORD
@@ -293,6 +353,8 @@ pub enum NonterminalKind {
     ///                      (* close_brace: *) CLOSE_BRACE;
     /// ```
     ContractDefinition,
+    /// Represents a node with kind `ContractMember`, having the following structure:
+    ///
     /// ```ebnf
     /// ContractMember = (* variant: *) UsingDirective
     ///                | (* variant: *) FunctionDefinition
@@ -309,15 +371,21 @@ pub enum NonterminalKind {
     ///                | (* variant: *) StateVariableDefinition;
     /// ```
     ContractMember,
+    /// Represents a node with kind `ContractMembers`, having the following structure:
+    ///
     /// ```ebnf
     /// ContractMembers = (* item: *) ContractMember*;
     /// ```
     ContractMembers,
+    /// Represents a node with kind `DecimalNumberExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// DecimalNumberExpression = (* literal: *) DECIMAL_LITERAL
     ///                           (* unit: *) NumberUnit?;
     /// ```
     DecimalNumberExpression,
+    /// Represents a node with kind `DoWhileStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// DoWhileStatement = (* do_keyword: *) DO_KEYWORD
     ///                    (* body: *) Statement
@@ -328,6 +396,8 @@ pub enum NonterminalKind {
     ///                    (* semicolon: *) SEMICOLON;
     /// ```
     DoWhileStatement,
+    /// Represents a node with kind `ElementaryType`, having the following structure:
+    ///
     /// ```ebnf
     /// ElementaryType = (* variant: *) BOOL_KEYWORD
     ///                | (* variant: *) BYTE_KEYWORD (* Deprecated in 0.8.0 *)
@@ -340,11 +410,15 @@ pub enum NonterminalKind {
     ///                | (* variant: *) UFIXED_KEYWORD;
     /// ```
     ElementaryType,
+    /// Represents a node with kind `ElseBranch`, having the following structure:
+    ///
     /// ```ebnf
     /// ElseBranch = (* else_keyword: *) ELSE_KEYWORD
     ///              (* body: *) Statement;
     /// ```
     ElseBranch,
+    /// Represents a node with kind `EmitStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.4.21 *)
     /// EmitStatement = (* emit_keyword: *) EMIT_KEYWORD
@@ -353,6 +427,8 @@ pub enum NonterminalKind {
     ///                 (* semicolon: *) SEMICOLON;
     /// ```
     EmitStatement,
+    /// Represents a node with kind `EnumDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// EnumDefinition = (* enum_keyword: *) ENUM_KEYWORD
     ///                  (* name: *) IDENTIFIER
@@ -361,10 +437,14 @@ pub enum NonterminalKind {
     ///                  (* close_brace: *) CLOSE_BRACE;
     /// ```
     EnumDefinition,
+    /// Represents a node with kind `EnumMembers`, having the following structure:
+    ///
     /// ```ebnf
     /// EnumMembers = ((* item: *) IDENTIFIER ((* separator: *) COMMA (* item: *) IDENTIFIER)*)?;
     /// ```
     EnumMembers,
+    /// Represents a node with kind `EqualityExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// EqualityExpression = (* left_operand: *) Expression
@@ -377,6 +457,8 @@ pub enum NonterminalKind {
     ///                      (* right_operand: *) Expression;
     /// ```
     EqualityExpression,
+    /// Represents a node with kind `ErrorDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.4 *)
     /// ErrorDefinition = (* error_keyword: *) ERROR_KEYWORD
@@ -385,17 +467,23 @@ pub enum NonterminalKind {
     ///                   (* semicolon: *) SEMICOLON;
     /// ```
     ErrorDefinition,
+    /// Represents a node with kind `ErrorParameter`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.4 *)
     /// ErrorParameter = (* type_name: *) TypeName
     ///                  (* name: *) IDENTIFIER?;
     /// ```
     ErrorParameter,
+    /// Represents a node with kind `ErrorParameters`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.4 *)
     /// ErrorParameters = ((* item: *) ErrorParameter ((* separator: *) COMMA (* item: *) ErrorParameter)*)?;
     /// ```
     ErrorParameters,
+    /// Represents a node with kind `ErrorParametersDeclaration`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.4 *)
     /// ErrorParametersDeclaration = (* open_paren: *) OPEN_PAREN
@@ -403,6 +491,8 @@ pub enum NonterminalKind {
     ///                              (* close_paren: *) CLOSE_PAREN;
     /// ```
     ErrorParametersDeclaration,
+    /// Represents a node with kind `EventDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// EventDefinition = (* event_keyword: *) EVENT_KEYWORD
     ///                   (* name: *) IDENTIFIER
@@ -411,32 +501,44 @@ pub enum NonterminalKind {
     ///                   (* semicolon: *) SEMICOLON;
     /// ```
     EventDefinition,
+    /// Represents a node with kind `EventParameter`, having the following structure:
+    ///
     /// ```ebnf
     /// EventParameter = (* type_name: *) TypeName
     ///                  (* indexed_keyword: *) INDEXED_KEYWORD?
     ///                  (* name: *) IDENTIFIER?;
     /// ```
     EventParameter,
+    /// Represents a node with kind `EventParameters`, having the following structure:
+    ///
     /// ```ebnf
     /// EventParameters = ((* item: *) EventParameter ((* separator: *) COMMA (* item: *) EventParameter)*)?;
     /// ```
     EventParameters,
+    /// Represents a node with kind `EventParametersDeclaration`, having the following structure:
+    ///
     /// ```ebnf
     /// EventParametersDeclaration = (* open_paren: *) OPEN_PAREN
     ///                              (* parameters: *) EventParameters
     ///                              (* close_paren: *) CLOSE_PAREN;
     /// ```
     EventParametersDeclaration,
+    /// Represents a node with kind `ExperimentalFeature`, having the following structure:
+    ///
     /// ```ebnf
     /// ExperimentalFeature = (* variant: *) IDENTIFIER
     ///                     | (* variant: *) StringLiteral;
     /// ```
     ExperimentalFeature,
+    /// Represents a node with kind `ExperimentalPragma`, having the following structure:
+    ///
     /// ```ebnf
     /// ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
     ///                      (* feature: *) ExperimentalFeature;
     /// ```
     ExperimentalPragma,
+    /// Represents a node with kind `ExponentiationExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// (* Deprecated in 0.8.0 *)
@@ -451,6 +553,8 @@ pub enum NonterminalKind {
     ///                            (* right_operand: *) Expression;
     /// ```
     ExponentiationExpression,
+    /// Represents a node with kind `Expression`, having the following structure:
+    ///
     /// ```ebnf
     /// Expression = (* variant: *) AssignmentExpression
     ///            | (* variant: *) ConditionalExpression
@@ -487,11 +591,15 @@ pub enum NonterminalKind {
     ///            | (* variant: *) IDENTIFIER;
     /// ```
     Expression,
+    /// Represents a node with kind `ExpressionStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// ExpressionStatement = (* expression: *) Expression
     ///                       (* semicolon: *) SEMICOLON;
     /// ```
     ExpressionStatement,
+    /// Represents a node with kind `FallbackFunctionAttribute`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// FallbackFunctionAttribute = (* variant: *) ModifierInvocation
@@ -503,11 +611,15 @@ pub enum NonterminalKind {
     ///                           | (* variant: *) VIRTUAL_KEYWORD;
     /// ```
     FallbackFunctionAttribute,
+    /// Represents a node with kind `FallbackFunctionAttributes`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// FallbackFunctionAttributes = (* item: *) FallbackFunctionAttribute*;
     /// ```
     FallbackFunctionAttributes,
+    /// Represents a node with kind `FallbackFunctionDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// FallbackFunctionDefinition = (* fallback_keyword: *) FALLBACK_KEYWORD
@@ -517,6 +629,8 @@ pub enum NonterminalKind {
     ///                              (* body: *) FunctionBody;
     /// ```
     FallbackFunctionDefinition,
+    /// Represents a node with kind `ForStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// ForStatement = (* for_keyword: *) FOR_KEYWORD
     ///                (* open_paren: *) OPEN_PAREN
@@ -527,11 +641,15 @@ pub enum NonterminalKind {
     ///                (* body: *) Statement;
     /// ```
     ForStatement,
+    /// Represents a node with kind `ForStatementCondition`, having the following structure:
+    ///
     /// ```ebnf
     /// ForStatementCondition = (* variant: *) ExpressionStatement
     ///                       | (* variant: *) SEMICOLON;
     /// ```
     ForStatementCondition,
+    /// Represents a node with kind `ForStatementInitialization`, having the following structure:
+    ///
     /// ```ebnf
     /// ForStatementInitialization = (* variant: *) TupleDeconstructionStatement
     ///                            | (* variant: *) VariableDeclarationStatement
@@ -539,6 +657,8 @@ pub enum NonterminalKind {
     ///                            | (* variant: *) SEMICOLON;
     /// ```
     ForStatementInitialization,
+    /// Represents a node with kind `FunctionAttribute`, having the following structure:
+    ///
     /// ```ebnf
     /// FunctionAttribute = (* variant: *) ModifierInvocation
     ///                   | (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
@@ -553,21 +673,29 @@ pub enum NonterminalKind {
     ///                   | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
     /// ```
     FunctionAttribute,
+    /// Represents a node with kind `FunctionAttributes`, having the following structure:
+    ///
     /// ```ebnf
     /// FunctionAttributes = (* item: *) FunctionAttribute*;
     /// ```
     FunctionAttributes,
+    /// Represents a node with kind `FunctionBody`, having the following structure:
+    ///
     /// ```ebnf
     /// FunctionBody = (* variant: *) Block
     ///              | (* variant: *) SEMICOLON;
     /// ```
     FunctionBody,
+    /// Represents a node with kind `FunctionCallExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Postfix unary operator *)
     /// FunctionCallExpression = (* operand: *) Expression
     ///                          (* arguments: *) ArgumentsDeclaration;
     /// ```
     FunctionCallExpression,
+    /// Represents a node with kind `FunctionDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// FunctionDefinition = (* function_keyword: *) FUNCTION_KEYWORD
     ///                      (* name: *) FunctionName
@@ -577,12 +705,16 @@ pub enum NonterminalKind {
     ///                      (* body: *) FunctionBody;
     /// ```
     FunctionDefinition,
+    /// Represents a node with kind `FunctionName`, having the following structure:
+    ///
     /// ```ebnf
     /// FunctionName = (* variant: *) IDENTIFIER
     ///              | (* variant: *) FALLBACK_KEYWORD
     ///              | (* variant: *) RECEIVE_KEYWORD;
     /// ```
     FunctionName,
+    /// Represents a node with kind `FunctionType`, having the following structure:
+    ///
     /// ```ebnf
     /// FunctionType = (* function_keyword: *) FUNCTION_KEYWORD
     ///                (* parameters: *) ParametersDeclaration
@@ -590,6 +722,8 @@ pub enum NonterminalKind {
     ///                (* returns: *) ReturnsDeclaration?;
     /// ```
     FunctionType,
+    /// Represents a node with kind `FunctionTypeAttribute`, having the following structure:
+    ///
     /// ```ebnf
     /// FunctionTypeAttribute = (* variant: *) INTERNAL_KEYWORD
     ///                       | (* variant: *) EXTERNAL_KEYWORD
@@ -601,29 +735,41 @@ pub enum NonterminalKind {
     ///                       | (* variant: *) PAYABLE_KEYWORD;
     /// ```
     FunctionTypeAttribute,
+    /// Represents a node with kind `FunctionTypeAttributes`, having the following structure:
+    ///
     /// ```ebnf
     /// FunctionTypeAttributes = (* item: *) FunctionTypeAttribute*;
     /// ```
     FunctionTypeAttributes,
+    /// Represents a node with kind `HexNumberExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// HexNumberExpression = (* literal: *) HEX_LITERAL
     ///                       (* unit: *) NumberUnit?; (* Deprecated in 0.5.0 *)
     /// ```
     HexNumberExpression,
+    /// Represents a node with kind `HexStringLiteral`, having the following structure:
+    ///
     /// ```ebnf
     /// HexStringLiteral = (* variant: *) SINGLE_QUOTED_HEX_STRING_LITERAL
     ///                  | (* variant: *) DOUBLE_QUOTED_HEX_STRING_LITERAL;
     /// ```
     HexStringLiteral,
+    /// Represents a node with kind `HexStringLiterals`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.5.14 *)
     /// HexStringLiterals = (* item: *) HexStringLiteral+;
     /// ```
     HexStringLiterals,
+    /// Represents a node with kind `IdentifierPath`, having the following structure:
+    ///
     /// ```ebnf
     /// IdentifierPath = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDENTIFIER)*;
     /// ```
     IdentifierPath,
+    /// Represents a node with kind `IfStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// IfStatement = (* if_keyword: *) IF_KEYWORD
     ///               (* open_paren: *) OPEN_PAREN
@@ -633,17 +779,23 @@ pub enum NonterminalKind {
     ///               (* else_branch: *) ElseBranch?;
     /// ```
     IfStatement,
+    /// Represents a node with kind `ImportAlias`, having the following structure:
+    ///
     /// ```ebnf
     /// ImportAlias = (* as_keyword: *) AS_KEYWORD
     ///               (* identifier: *) IDENTIFIER;
     /// ```
     ImportAlias,
+    /// Represents a node with kind `ImportClause`, having the following structure:
+    ///
     /// ```ebnf
     /// ImportClause = (* variant: *) PathImport
     ///              | (* variant: *) NamedImport
     ///              | (* variant: *) ImportDeconstruction;
     /// ```
     ImportClause,
+    /// Represents a node with kind `ImportDeconstruction`, having the following structure:
+    ///
     /// ```ebnf
     /// ImportDeconstruction = (* open_brace: *) OPEN_BRACE
     ///                        (* symbols: *) ImportDeconstructionSymbols
@@ -652,26 +804,36 @@ pub enum NonterminalKind {
     ///                        (* path: *) StringLiteral;
     /// ```
     ImportDeconstruction,
+    /// Represents a node with kind `ImportDeconstructionSymbol`, having the following structure:
+    ///
     /// ```ebnf
     /// ImportDeconstructionSymbol = (* name: *) IDENTIFIER
     ///                              (* alias: *) ImportAlias?;
     /// ```
     ImportDeconstructionSymbol,
+    /// Represents a node with kind `ImportDeconstructionSymbols`, having the following structure:
+    ///
     /// ```ebnf
     /// ImportDeconstructionSymbols = (* item: *) ImportDeconstructionSymbol ((* separator: *) COMMA (* item: *) ImportDeconstructionSymbol)*;
     /// ```
     ImportDeconstructionSymbols,
+    /// Represents a node with kind `ImportDirective`, having the following structure:
+    ///
     /// ```ebnf
     /// ImportDirective = (* import_keyword: *) IMPORT_KEYWORD
     ///                   (* clause: *) ImportClause
     ///                   (* semicolon: *) SEMICOLON;
     /// ```
     ImportDirective,
+    /// Represents a node with kind `IndexAccessEnd`, having the following structure:
+    ///
     /// ```ebnf
     /// IndexAccessEnd = (* colon: *) COLON
     ///                  (* end: *) Expression?;
     /// ```
     IndexAccessEnd,
+    /// Represents a node with kind `IndexAccessExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Postfix unary operator *)
     /// IndexAccessExpression = (* operand: *) Expression
@@ -681,20 +843,28 @@ pub enum NonterminalKind {
     ///                         (* close_bracket: *) CLOSE_BRACKET;
     /// ```
     IndexAccessExpression,
+    /// Represents a node with kind `InheritanceSpecifier`, having the following structure:
+    ///
     /// ```ebnf
     /// InheritanceSpecifier = (* is_keyword: *) IS_KEYWORD
     ///                        (* types: *) InheritanceTypes;
     /// ```
     InheritanceSpecifier,
+    /// Represents a node with kind `InheritanceType`, having the following structure:
+    ///
     /// ```ebnf
     /// InheritanceType = (* type_name: *) IdentifierPath
     ///                   (* arguments: *) ArgumentsDeclaration?;
     /// ```
     InheritanceType,
+    /// Represents a node with kind `InheritanceTypes`, having the following structure:
+    ///
     /// ```ebnf
     /// InheritanceTypes = (* item: *) InheritanceType ((* separator: *) COMMA (* item: *) InheritanceType)*;
     /// ```
     InheritanceTypes,
+    /// Represents a node with kind `InterfaceDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// InterfaceDefinition = (* interface_keyword: *) INTERFACE_KEYWORD
     ///                       (* name: *) IDENTIFIER
@@ -704,10 +874,14 @@ pub enum NonterminalKind {
     ///                       (* close_brace: *) CLOSE_BRACE;
     /// ```
     InterfaceDefinition,
+    /// Represents a node with kind `InterfaceMembers`, having the following structure:
+    ///
     /// ```ebnf
     /// InterfaceMembers = (* item: *) ContractMember*;
     /// ```
     InterfaceMembers,
+    /// Represents a node with kind `LibraryDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// LibraryDefinition = (* library_keyword: *) LIBRARY_KEYWORD
     ///                     (* name: *) IDENTIFIER
@@ -716,20 +890,28 @@ pub enum NonterminalKind {
     ///                     (* close_brace: *) CLOSE_BRACE;
     /// ```
     LibraryDefinition,
+    /// Represents a node with kind `LibraryMembers`, having the following structure:
+    ///
     /// ```ebnf
     /// LibraryMembers = (* item: *) ContractMember*;
     /// ```
     LibraryMembers,
+    /// Represents a node with kind `MappingKey`, having the following structure:
+    ///
     /// ```ebnf
     /// MappingKey = (* key_type: *) MappingKeyType
     ///              (* name: *) IDENTIFIER?; (* Introduced in 0.8.18 *)
     /// ```
     MappingKey,
+    /// Represents a node with kind `MappingKeyType`, having the following structure:
+    ///
     /// ```ebnf
     /// MappingKeyType = (* variant: *) ElementaryType
     ///                | (* variant: *) IdentifierPath;
     /// ```
     MappingKeyType,
+    /// Represents a node with kind `MappingType`, having the following structure:
+    ///
     /// ```ebnf
     /// MappingType = (* mapping_keyword: *) MAPPING_KEYWORD
     ///               (* open_paren: *) OPEN_PAREN
@@ -739,11 +921,15 @@ pub enum NonterminalKind {
     ///               (* close_paren: *) CLOSE_PAREN;
     /// ```
     MappingType,
+    /// Represents a node with kind `MappingValue`, having the following structure:
+    ///
     /// ```ebnf
     /// MappingValue = (* type_name: *) TypeName
     ///                (* name: *) IDENTIFIER?; (* Introduced in 0.8.18 *)
     /// ```
     MappingValue,
+    /// Represents a node with kind `MemberAccessExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Postfix unary operator *)
     /// MemberAccessExpression = (* operand: *) Expression
@@ -751,15 +937,21 @@ pub enum NonterminalKind {
     ///                          (* member: *) IDENTIFIER;
     /// ```
     MemberAccessExpression,
+    /// Represents a node with kind `ModifierAttribute`, having the following structure:
+    ///
     /// ```ebnf
     /// ModifierAttribute = (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
     ///                   | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
     /// ```
     ModifierAttribute,
+    /// Represents a node with kind `ModifierAttributes`, having the following structure:
+    ///
     /// ```ebnf
     /// ModifierAttributes = (* item: *) ModifierAttribute*;
     /// ```
     ModifierAttributes,
+    /// Represents a node with kind `ModifierDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// ModifierDefinition = (* modifier_keyword: *) MODIFIER_KEYWORD
     ///                      (* name: *) IDENTIFIER
@@ -768,11 +960,15 @@ pub enum NonterminalKind {
     ///                      (* body: *) FunctionBody;
     /// ```
     ModifierDefinition,
+    /// Represents a node with kind `ModifierInvocation`, having the following structure:
+    ///
     /// ```ebnf
     /// ModifierInvocation = (* name: *) IdentifierPath
     ///                      (* arguments: *) ArgumentsDeclaration?;
     /// ```
     ModifierInvocation,
+    /// Represents a node with kind `MultiplicativeExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// MultiplicativeExpression = (* left_operand: *) Expression
@@ -790,28 +986,38 @@ pub enum NonterminalKind {
     ///                            (* right_operand: *) Expression;
     /// ```
     MultiplicativeExpression,
+    /// Represents a node with kind `NamedArgument`, having the following structure:
+    ///
     /// ```ebnf
     /// NamedArgument = (* name: *) IDENTIFIER
     ///                 (* colon: *) COLON
     ///                 (* value: *) Expression;
     /// ```
     NamedArgument,
+    /// Represents a node with kind `NamedArgumentGroup`, having the following structure:
+    ///
     /// ```ebnf
     /// NamedArgumentGroup = (* open_brace: *) OPEN_BRACE
     ///                      (* arguments: *) NamedArguments
     ///                      (* close_brace: *) CLOSE_BRACE;
     /// ```
     NamedArgumentGroup,
+    /// Represents a node with kind `NamedArguments`, having the following structure:
+    ///
     /// ```ebnf
     /// NamedArguments = ((* item: *) NamedArgument ((* separator: *) COMMA (* item: *) NamedArgument)*)?;
     /// ```
     NamedArguments,
+    /// Represents a node with kind `NamedArgumentsDeclaration`, having the following structure:
+    ///
     /// ```ebnf
     /// NamedArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
     ///                             (* arguments: *) NamedArgumentGroup?
     ///                             (* close_paren: *) CLOSE_PAREN;
     /// ```
     NamedArgumentsDeclaration,
+    /// Represents a node with kind `NamedImport`, having the following structure:
+    ///
     /// ```ebnf
     /// NamedImport = (* asterisk: *) ASTERISK
     ///               (* alias: *) ImportAlias
@@ -819,11 +1025,15 @@ pub enum NonterminalKind {
     ///               (* path: *) StringLiteral;
     /// ```
     NamedImport,
+    /// Represents a node with kind `NewExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// NewExpression = (* new_keyword: *) NEW_KEYWORD
     ///                 (* type_name: *) TypeName;
     /// ```
     NewExpression,
+    /// Represents a node with kind `NumberUnit`, having the following structure:
+    ///
     /// ```ebnf
     /// NumberUnit = (* variant: *) WEI_KEYWORD
     ///            | (* variant: *) GWEI_KEYWORD (* Introduced in 0.6.11 *)
@@ -838,6 +1048,8 @@ pub enum NonterminalKind {
     ///            | (* variant: *) YEARS_KEYWORD; (* Deprecated in 0.5.0 *)
     /// ```
     NumberUnit,
+    /// Represents a node with kind `OrExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// OrExpression = (* left_operand: *) Expression
@@ -845,11 +1057,15 @@ pub enum NonterminalKind {
     ///                (* right_operand: *) Expression;
     /// ```
     OrExpression,
+    /// Represents a node with kind `OverridePaths`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// OverridePaths = (* item: *) IdentifierPath ((* separator: *) COMMA (* item: *) IdentifierPath)*;
     /// ```
     OverridePaths,
+    /// Represents a node with kind `OverridePathsDeclaration`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// OverridePathsDeclaration = (* open_paren: *) OPEN_PAREN
@@ -857,43 +1073,59 @@ pub enum NonterminalKind {
     ///                            (* close_paren: *) CLOSE_PAREN;
     /// ```
     OverridePathsDeclaration,
+    /// Represents a node with kind `OverrideSpecifier`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// OverrideSpecifier = (* override_keyword: *) OVERRIDE_KEYWORD
     ///                     (* overridden: *) OverridePathsDeclaration?;
     /// ```
     OverrideSpecifier,
+    /// Represents a node with kind `Parameter`, having the following structure:
+    ///
     /// ```ebnf
     /// Parameter = (* type_name: *) TypeName
     ///             (* storage_location: *) StorageLocation?
     ///             (* name: *) IDENTIFIER?;
     /// ```
     Parameter,
+    /// Represents a node with kind `Parameters`, having the following structure:
+    ///
     /// ```ebnf
     /// Parameters = ((* item: *) Parameter ((* separator: *) COMMA (* item: *) Parameter)*)?;
     /// ```
     Parameters,
+    /// Represents a node with kind `ParametersDeclaration`, having the following structure:
+    ///
     /// ```ebnf
     /// ParametersDeclaration = (* open_paren: *) OPEN_PAREN
     ///                         (* parameters: *) Parameters
     ///                         (* close_paren: *) CLOSE_PAREN;
     /// ```
     ParametersDeclaration,
+    /// Represents a node with kind `PathImport`, having the following structure:
+    ///
     /// ```ebnf
     /// PathImport = (* path: *) StringLiteral
     ///              (* alias: *) ImportAlias?;
     /// ```
     PathImport,
+    /// Represents a node with kind `PositionalArguments`, having the following structure:
+    ///
     /// ```ebnf
     /// PositionalArguments = ((* item: *) Expression ((* separator: *) COMMA (* item: *) Expression)*)?;
     /// ```
     PositionalArguments,
+    /// Represents a node with kind `PositionalArgumentsDeclaration`, having the following structure:
+    ///
     /// ```ebnf
     /// PositionalArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
     ///                                  (* arguments: *) PositionalArguments
     ///                                  (* close_paren: *) CLOSE_PAREN;
     /// ```
     PositionalArgumentsDeclaration,
+    /// Represents a node with kind `PostfixExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Postfix unary operator *)
     /// PostfixExpression = (* operand: *) Expression
@@ -904,18 +1136,24 @@ pub enum NonterminalKind {
     ///                     (* operator: *) MINUS_MINUS;
     /// ```
     PostfixExpression,
+    /// Represents a node with kind `Pragma`, having the following structure:
+    ///
     /// ```ebnf
     /// Pragma = (* variant: *) AbicoderPragma
     ///        | (* variant: *) ExperimentalPragma
     ///        | (* variant: *) VersionPragma;
     /// ```
     Pragma,
+    /// Represents a node with kind `PragmaDirective`, having the following structure:
+    ///
     /// ```ebnf
     /// PragmaDirective = (* pragma_keyword: *) PRAGMA_KEYWORD
     ///                   (* pragma: *) Pragma
     ///                   (* semicolon: *) SEMICOLON;
     /// ```
     PragmaDirective,
+    /// Represents a node with kind `PrefixExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Prefix unary operator *)
     /// PrefixExpression = (* operator: *) PLUS_PLUS
@@ -947,6 +1185,8 @@ pub enum NonterminalKind {
     ///                    (* operand: *) Expression;
     /// ```
     PrefixExpression,
+    /// Represents a node with kind `ReceiveFunctionAttribute`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// ReceiveFunctionAttribute = (* variant: *) ModifierInvocation
@@ -956,11 +1196,15 @@ pub enum NonterminalKind {
     ///                          | (* variant: *) VIRTUAL_KEYWORD;
     /// ```
     ReceiveFunctionAttribute,
+    /// Represents a node with kind `ReceiveFunctionAttributes`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// ReceiveFunctionAttributes = (* item: *) ReceiveFunctionAttribute*;
     /// ```
     ReceiveFunctionAttributes,
+    /// Represents a node with kind `ReceiveFunctionDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// ReceiveFunctionDefinition = (* receive_keyword: *) RECEIVE_KEYWORD
@@ -969,17 +1213,23 @@ pub enum NonterminalKind {
     ///                             (* body: *) FunctionBody;
     /// ```
     ReceiveFunctionDefinition,
+    /// Represents a node with kind `ReturnStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// ReturnStatement = (* return_keyword: *) RETURN_KEYWORD
     ///                   (* expression: *) Expression?
     ///                   (* semicolon: *) SEMICOLON;
     /// ```
     ReturnStatement,
+    /// Represents a node with kind `ReturnsDeclaration`, having the following structure:
+    ///
     /// ```ebnf
     /// ReturnsDeclaration = (* returns_keyword: *) RETURNS_KEYWORD
     ///                      (* variables: *) ParametersDeclaration;
     /// ```
     ReturnsDeclaration,
+    /// Represents a node with kind `RevertStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.4 *)
     /// RevertStatement = (* revert_keyword: *) REVERT_KEYWORD
@@ -988,6 +1238,8 @@ pub enum NonterminalKind {
     ///                   (* semicolon: *) SEMICOLON;
     /// ```
     RevertStatement,
+    /// Represents a node with kind `ShiftExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Left-associative binary operator *)
     /// ShiftExpression = (* left_operand: *) Expression
@@ -1005,14 +1257,20 @@ pub enum NonterminalKind {
     ///                   (* right_operand: *) Expression;
     /// ```
     ShiftExpression,
+    /// Represents a node with kind `SimpleVersionLiteral`, having the following structure:
+    ///
     /// ```ebnf
     /// SimpleVersionLiteral = (* item: *) VERSION_SPECIFIER ((* separator: *) PERIOD (* item: *) VERSION_SPECIFIER)*;
     /// ```
     SimpleVersionLiteral,
+    /// Represents a node with kind `SourceUnit`, having the following structure:
+    ///
     /// ```ebnf
     /// SourceUnit = (* members: *) SourceUnitMembers;
     /// ```
     SourceUnit,
+    /// Represents a node with kind `SourceUnitMember`, having the following structure:
+    ///
     /// ```ebnf
     /// SourceUnitMember = (* variant: *) PragmaDirective
     ///                  | (* variant: *) ImportDirective
@@ -1029,10 +1287,14 @@ pub enum NonterminalKind {
     ///                  | (* variant: *) ConstantDefinition; (* Introduced in 0.7.4 *)
     /// ```
     SourceUnitMember,
+    /// Represents a node with kind `SourceUnitMembers`, having the following structure:
+    ///
     /// ```ebnf
     /// SourceUnitMembers = (* item: *) SourceUnitMember*;
     /// ```
     SourceUnitMembers,
+    /// Represents a node with kind `StateVariableAttribute`, having the following structure:
+    ///
     /// ```ebnf
     /// StateVariableAttribute = (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
     ///                        | (* variant: *) CONSTANT_KEYWORD
@@ -1043,10 +1305,14 @@ pub enum NonterminalKind {
     ///                        | (* variant: *) TRANSIENT_KEYWORD; (* Introduced in 0.8.27 *)
     /// ```
     StateVariableAttribute,
+    /// Represents a node with kind `StateVariableAttributes`, having the following structure:
+    ///
     /// ```ebnf
     /// StateVariableAttributes = (* item: *) StateVariableAttribute*;
     /// ```
     StateVariableAttributes,
+    /// Represents a node with kind `StateVariableDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// StateVariableDefinition = (* type_name: *) TypeName
     ///                           (* attributes: *) StateVariableAttributes
@@ -1055,11 +1321,15 @@ pub enum NonterminalKind {
     ///                           (* semicolon: *) SEMICOLON;
     /// ```
     StateVariableDefinition,
+    /// Represents a node with kind `StateVariableDefinitionValue`, having the following structure:
+    ///
     /// ```ebnf
     /// StateVariableDefinitionValue = (* equal: *) EQUAL
     ///                                (* value: *) Expression;
     /// ```
     StateVariableDefinitionValue,
+    /// Represents a node with kind `Statement`, having the following structure:
+    ///
     /// ```ebnf
     /// Statement = (* variant: *) IfStatement
     ///           | (* variant: *) ForStatement
@@ -1080,16 +1350,22 @@ pub enum NonterminalKind {
     ///           | (* variant: *) ExpressionStatement;
     /// ```
     Statement,
+    /// Represents a node with kind `Statements`, having the following structure:
+    ///
     /// ```ebnf
     /// Statements = (* item: *) Statement*;
     /// ```
     Statements,
+    /// Represents a node with kind `StorageLocation`, having the following structure:
+    ///
     /// ```ebnf
     /// StorageLocation = (* variant: *) MEMORY_KEYWORD
     ///                 | (* variant: *) STORAGE_KEYWORD
     ///                 | (* variant: *) CALL_DATA_KEYWORD; (* Introduced in 0.5.0 *)
     /// ```
     StorageLocation,
+    /// Represents a node with kind `StringExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// StringExpression = (* variant: *) StringLiteral (* Deprecated in 0.5.14 *)
     ///                  | (* variant: *) StringLiterals (* Introduced in 0.5.14 *)
@@ -1098,16 +1374,22 @@ pub enum NonterminalKind {
     ///                  | (* variant: *) UnicodeStringLiterals; (* Introduced in 0.7.0 *)
     /// ```
     StringExpression,
+    /// Represents a node with kind `StringLiteral`, having the following structure:
+    ///
     /// ```ebnf
     /// StringLiteral = (* variant: *) SINGLE_QUOTED_STRING_LITERAL
     ///               | (* variant: *) DOUBLE_QUOTED_STRING_LITERAL;
     /// ```
     StringLiteral,
+    /// Represents a node with kind `StringLiterals`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.5.14 *)
     /// StringLiterals = (* item: *) StringLiteral+;
     /// ```
     StringLiterals,
+    /// Represents a node with kind `StructDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// StructDefinition = (* struct_keyword: *) STRUCT_KEYWORD
     ///                    (* name: *) IDENTIFIER
@@ -1116,22 +1398,30 @@ pub enum NonterminalKind {
     ///                    (* close_brace: *) CLOSE_BRACE;
     /// ```
     StructDefinition,
+    /// Represents a node with kind `StructMember`, having the following structure:
+    ///
     /// ```ebnf
     /// StructMember = (* type_name: *) TypeName
     ///                (* name: *) IDENTIFIER
     ///                (* semicolon: *) SEMICOLON;
     /// ```
     StructMember,
+    /// Represents a node with kind `StructMembers`, having the following structure:
+    ///
     /// ```ebnf
     /// StructMembers = (* item: *) StructMember*;
     /// ```
     StructMembers,
+    /// Represents a node with kind `ThrowStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Deprecated in 0.5.0 *)
     /// ThrowStatement = (* throw_keyword: *) THROW_KEYWORD
     ///                  (* semicolon: *) SEMICOLON;
     /// ```
     ThrowStatement,
+    /// Represents a node with kind `TryStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// TryStatement = (* try_keyword: *) TRY_KEYWORD
@@ -1141,14 +1431,20 @@ pub enum NonterminalKind {
     ///                (* catch_clauses: *) CatchClauses;
     /// ```
     TryStatement,
+    /// Represents a node with kind `TupleDeconstructionElement`, having the following structure:
+    ///
     /// ```ebnf
     /// TupleDeconstructionElement = (* member: *) TupleMember?;
     /// ```
     TupleDeconstructionElement,
+    /// Represents a node with kind `TupleDeconstructionElements`, having the following structure:
+    ///
     /// ```ebnf
     /// TupleDeconstructionElements = (* item: *) TupleDeconstructionElement ((* separator: *) COMMA (* item: *) TupleDeconstructionElement)*;
     /// ```
     TupleDeconstructionElements,
+    /// Represents a node with kind `TupleDeconstructionStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// TupleDeconstructionStatement = (* var_keyword: *) VAR_KEYWORD? (* Deprecated in 0.5.0 *)
     ///                                (* open_paren: *) OPEN_PAREN
@@ -1159,25 +1455,35 @@ pub enum NonterminalKind {
     ///                                (* semicolon: *) SEMICOLON;
     /// ```
     TupleDeconstructionStatement,
+    /// Represents a node with kind `TupleExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// TupleExpression = (* open_paren: *) OPEN_PAREN
     ///                   (* items: *) TupleValues
     ///                   (* close_paren: *) CLOSE_PAREN;
     /// ```
     TupleExpression,
+    /// Represents a node with kind `TupleMember`, having the following structure:
+    ///
     /// ```ebnf
     /// TupleMember = (* variant: *) TypedTupleMember
     ///             | (* variant: *) UntypedTupleMember;
     /// ```
     TupleMember,
+    /// Represents a node with kind `TupleValue`, having the following structure:
+    ///
     /// ```ebnf
     /// TupleValue = (* expression: *) Expression?;
     /// ```
     TupleValue,
+    /// Represents a node with kind `TupleValues`, having the following structure:
+    ///
     /// ```ebnf
     /// TupleValues = (* item: *) TupleValue ((* separator: *) COMMA (* item: *) TupleValue)*;
     /// ```
     TupleValues,
+    /// Represents a node with kind `TypeExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.5.3 *)
     /// TypeExpression = (* type_keyword: *) TYPE_KEYWORD
@@ -1186,6 +1492,8 @@ pub enum NonterminalKind {
     ///                  (* close_paren: *) CLOSE_PAREN;
     /// ```
     TypeExpression,
+    /// Represents a node with kind `TypeName`, having the following structure:
+    ///
     /// ```ebnf
     /// TypeName = (* variant: *) ArrayTypeName
     ///          | (* variant: *) FunctionType
@@ -1194,29 +1502,39 @@ pub enum NonterminalKind {
     ///          | (* variant: *) IdentifierPath;
     /// ```
     TypeName,
+    /// Represents a node with kind `TypedTupleMember`, having the following structure:
+    ///
     /// ```ebnf
     /// TypedTupleMember = (* type_name: *) TypeName
     ///                    (* storage_location: *) StorageLocation?
     ///                    (* name: *) IDENTIFIER;
     /// ```
     TypedTupleMember,
+    /// Represents a node with kind `UncheckedBlock`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.0 *)
     /// UncheckedBlock = (* unchecked_keyword: *) UNCHECKED_KEYWORD
     ///                  (* block: *) Block;
     /// ```
     UncheckedBlock,
+    /// Represents a node with kind `UnicodeStringLiteral`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.7.0 *)
     /// UnicodeStringLiteral = (* variant: *) SINGLE_QUOTED_UNICODE_STRING_LITERAL
     ///                      | (* variant: *) DOUBLE_QUOTED_UNICODE_STRING_LITERAL;
     /// ```
     UnicodeStringLiteral,
+    /// Represents a node with kind `UnicodeStringLiterals`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.7.0 *)
     /// UnicodeStringLiterals = (* item: *) UnicodeStringLiteral+;
     /// ```
     UnicodeStringLiterals,
+    /// Represents a node with kind `UnnamedFunctionAttribute`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Deprecated in 0.6.0 *)
     /// UnnamedFunctionAttribute = (* variant: *) ModifierInvocation
@@ -1230,11 +1548,15 @@ pub enum NonterminalKind {
     ///                          | (* variant: *) VIEW_KEYWORD; (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
     /// ```
     UnnamedFunctionAttribute,
+    /// Represents a node with kind `UnnamedFunctionAttributes`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Deprecated in 0.6.0 *)
     /// UnnamedFunctionAttributes = (* item: *) UnnamedFunctionAttribute*;
     /// ```
     UnnamedFunctionAttributes,
+    /// Represents a node with kind `UnnamedFunctionDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Deprecated in 0.6.0 *)
     /// UnnamedFunctionDefinition = (* function_keyword: *) FUNCTION_KEYWORD
@@ -1243,11 +1565,15 @@ pub enum NonterminalKind {
     ///                             (* body: *) FunctionBody;
     /// ```
     UnnamedFunctionDefinition,
+    /// Represents a node with kind `UntypedTupleMember`, having the following structure:
+    ///
     /// ```ebnf
     /// UntypedTupleMember = (* storage_location: *) StorageLocation?
     ///                      (* name: *) IDENTIFIER;
     /// ```
     UntypedTupleMember,
+    /// Represents a node with kind `UserDefinedValueTypeDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.8 *)
     /// UserDefinedValueTypeDefinition = (* type_keyword: *) TYPE_KEYWORD
@@ -1257,17 +1583,23 @@ pub enum NonterminalKind {
     ///                                  (* semicolon: *) SEMICOLON;
     /// ```
     UserDefinedValueTypeDefinition,
+    /// Represents a node with kind `UsingAlias`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.19 *)
     /// UsingAlias = (* as_keyword: *) AS_KEYWORD
     ///              (* operator: *) UsingOperator;
     /// ```
     UsingAlias,
+    /// Represents a node with kind `UsingClause`, having the following structure:
+    ///
     /// ```ebnf
     /// UsingClause = (* variant: *) IdentifierPath
     ///             | (* variant: *) UsingDeconstruction; (* Introduced in 0.8.13 *)
     /// ```
     UsingClause,
+    /// Represents a node with kind `UsingDeconstruction`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.13 *)
     /// UsingDeconstruction = (* open_brace: *) OPEN_BRACE
@@ -1275,17 +1607,23 @@ pub enum NonterminalKind {
     ///                       (* close_brace: *) CLOSE_BRACE;
     /// ```
     UsingDeconstruction,
+    /// Represents a node with kind `UsingDeconstructionSymbol`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.13 *)
     /// UsingDeconstructionSymbol = (* name: *) IdentifierPath
     ///                             (* alias: *) UsingAlias?; (* Introduced in 0.8.19 *)
     /// ```
     UsingDeconstructionSymbol,
+    /// Represents a node with kind `UsingDeconstructionSymbols`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.13 *)
     /// UsingDeconstructionSymbols = (* item: *) UsingDeconstructionSymbol ((* separator: *) COMMA (* item: *) UsingDeconstructionSymbol)*;
     /// ```
     UsingDeconstructionSymbols,
+    /// Represents a node with kind `UsingDirective`, having the following structure:
+    ///
     /// ```ebnf
     /// UsingDirective = (* using_keyword: *) USING_KEYWORD
     ///                  (* clause: *) UsingClause
@@ -1295,6 +1633,8 @@ pub enum NonterminalKind {
     ///                  (* semicolon: *) SEMICOLON;
     /// ```
     UsingDirective,
+    /// Represents a node with kind `UsingOperator`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.8.19 *)
     /// UsingOperator = (* variant: *) AMPERSAND
@@ -1314,11 +1654,15 @@ pub enum NonterminalKind {
     ///               | (* variant: *) TILDE;
     /// ```
     UsingOperator,
+    /// Represents a node with kind `UsingTarget`, having the following structure:
+    ///
     /// ```ebnf
     /// UsingTarget = (* variant: *) TypeName
     ///             | (* variant: *) ASTERISK;
     /// ```
     UsingTarget,
+    /// Represents a node with kind `VariableDeclarationStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// VariableDeclarationStatement = (* variable_type: *) VariableDeclarationType
     ///                                (* storage_location: *) StorageLocation?
@@ -1327,35 +1671,49 @@ pub enum NonterminalKind {
     ///                                (* semicolon: *) SEMICOLON;
     /// ```
     VariableDeclarationStatement,
+    /// Represents a node with kind `VariableDeclarationType`, having the following structure:
+    ///
     /// ```ebnf
     /// VariableDeclarationType = (* variant: *) TypeName
     ///                         | (* variant: *) VAR_KEYWORD; (* Deprecated in 0.5.0 *)
     /// ```
     VariableDeclarationType,
+    /// Represents a node with kind `VariableDeclarationValue`, having the following structure:
+    ///
     /// ```ebnf
     /// VariableDeclarationValue = (* equal: *) EQUAL
     ///                            (* expression: *) Expression;
     /// ```
     VariableDeclarationValue,
+    /// Represents a node with kind `VersionExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// VersionExpression = (* variant: *) VersionRange
     ///                   | (* variant: *) VersionTerm;
     /// ```
     VersionExpression,
+    /// Represents a node with kind `VersionExpressionSet`, having the following structure:
+    ///
     /// ```ebnf
     /// VersionExpressionSet = (* item: *) VersionExpression+;
     /// ```
     VersionExpressionSet,
+    /// Represents a node with kind `VersionExpressionSets`, having the following structure:
+    ///
     /// ```ebnf
     /// VersionExpressionSets = (* item: *) VersionExpressionSet ((* separator: *) BAR_BAR (* item: *) VersionExpressionSet)*;
     /// ```
     VersionExpressionSets,
+    /// Represents a node with kind `VersionLiteral`, having the following structure:
+    ///
     /// ```ebnf
     /// VersionLiteral = (* variant: *) SimpleVersionLiteral
     ///                | (* variant: *) SINGLE_QUOTED_VERSION_LITERAL
     ///                | (* variant: *) DOUBLE_QUOTED_VERSION_LITERAL;
     /// ```
     VersionLiteral,
+    /// Represents a node with kind `VersionOperator`, having the following structure:
+    ///
     /// ```ebnf
     /// VersionOperator = (* variant: *) CARET
     ///                 | (* variant: *) TILDE
@@ -1366,22 +1724,30 @@ pub enum NonterminalKind {
     ///                 | (* variant: *) GREATER_THAN_EQUAL;
     /// ```
     VersionOperator,
+    /// Represents a node with kind `VersionPragma`, having the following structure:
+    ///
     /// ```ebnf
     /// VersionPragma = (* solidity_keyword: *) SOLIDITY_KEYWORD
     ///                 (* sets: *) VersionExpressionSets;
     /// ```
     VersionPragma,
+    /// Represents a node with kind `VersionRange`, having the following structure:
+    ///
     /// ```ebnf
     /// VersionRange = (* start: *) VersionLiteral
     ///                (* minus: *) MINUS
     ///                (* end: *) VersionLiteral;
     /// ```
     VersionRange,
+    /// Represents a node with kind `VersionTerm`, having the following structure:
+    ///
     /// ```ebnf
     /// VersionTerm = (* operator: *) VersionOperator?
     ///               (* literal: *) VersionLiteral;
     /// ```
     VersionTerm,
+    /// Represents a node with kind `WhileStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// WhileStatement = (* while_keyword: *) WHILE_KEYWORD
     ///                  (* open_paren: *) OPEN_PAREN
@@ -1390,52 +1756,72 @@ pub enum NonterminalKind {
     ///                  (* body: *) Statement;
     /// ```
     WhileStatement,
+    /// Represents a node with kind `YulArguments`, having the following structure:
+    ///
     /// ```ebnf
     /// YulArguments = ((* item: *) YulExpression ((* separator: *) COMMA (* item: *) YulExpression)*)?;
     /// ```
     YulArguments,
+    /// Represents a node with kind `YulAssignmentOperator`, having the following structure:
+    ///
     /// ```ebnf
     /// YulAssignmentOperator = (* variant: *) COLON_EQUAL
     ///                       | (* variant: *) YulColonAndEqual; (* Deprecated in 0.5.5 *)
     /// ```
     YulAssignmentOperator,
+    /// Represents a node with kind `YulBlock`, having the following structure:
+    ///
     /// ```ebnf
     /// YulBlock = (* open_brace: *) OPEN_BRACE
     ///            (* statements: *) YulStatements
     ///            (* close_brace: *) CLOSE_BRACE;
     /// ```
     YulBlock,
+    /// Represents a node with kind `YulBreakStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// YulBreakStatement = (* break_keyword: *) YUL_BREAK_KEYWORD;
     /// ```
     YulBreakStatement,
+    /// Represents a node with kind `YulBuiltInFunction`, having the following structure:
+    ///
     /// ```ebnf
     /// YulBuiltInFunction = (* variant: *) YUL_BYTE_KEYWORD
     ///                    | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
     ///                    | (* variant: *) YUL_JUMPI_KEYWORD; (* Deprecated in 0.5.0 *)
     /// ```
     YulBuiltInFunction,
+    /// Represents a node with kind `YulColonAndEqual`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Deprecated in 0.5.5 *)
     /// YulColonAndEqual = (* colon: *) COLON
     ///                    (* equal: *) EQUAL;
     /// ```
     YulColonAndEqual,
+    /// Represents a node with kind `YulContinueStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// YulContinueStatement = (* continue_keyword: *) YUL_CONTINUE_KEYWORD;
     /// ```
     YulContinueStatement,
+    /// Represents a node with kind `YulDefaultCase`, having the following structure:
+    ///
     /// ```ebnf
     /// YulDefaultCase = (* default_keyword: *) YUL_DEFAULT_KEYWORD
     ///                  (* body: *) YulBlock;
     /// ```
     YulDefaultCase,
+    /// Represents a node with kind `YulEqualAndColon`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Deprecated in 0.5.0 *)
     /// YulEqualAndColon = (* equal: *) EQUAL
     ///                    (* colon: *) COLON;
     /// ```
     YulEqualAndColon,
+    /// Represents a node with kind `YulExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// YulExpression = (* variant: *) YulFunctionCallExpression
     ///               | (* variant: *) YulLiteral
@@ -1443,6 +1829,8 @@ pub enum NonterminalKind {
     ///               | (* variant: *) YulPath;
     /// ```
     YulExpression,
+    /// Represents a node with kind `YulForStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// YulForStatement = (* for_keyword: *) YUL_FOR_KEYWORD
     ///                   (* initialization: *) YulBlock
@@ -1451,6 +1839,8 @@ pub enum NonterminalKind {
     ///                   (* body: *) YulBlock;
     /// ```
     YulForStatement,
+    /// Represents a node with kind `YulFunctionCallExpression`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Postfix unary operator *)
     /// YulFunctionCallExpression = (* operand: *) YulExpression
@@ -1459,6 +1849,8 @@ pub enum NonterminalKind {
     ///                             (* close_paren: *) CLOSE_PAREN;
     /// ```
     YulFunctionCallExpression,
+    /// Represents a node with kind `YulFunctionDefinition`, having the following structure:
+    ///
     /// ```ebnf
     /// YulFunctionDefinition = (* function_keyword: *) YUL_FUNCTION_KEYWORD
     ///                         (* name: *) YUL_IDENTIFIER
@@ -1467,23 +1859,31 @@ pub enum NonterminalKind {
     ///                         (* body: *) YulBlock;
     /// ```
     YulFunctionDefinition,
+    /// Represents a node with kind `YulIfStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// YulIfStatement = (* if_keyword: *) YUL_IF_KEYWORD
     ///                  (* condition: *) YulExpression
     ///                  (* body: *) YulBlock;
     /// ```
     YulIfStatement,
+    /// Represents a node with kind `YulLabel`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Deprecated in 0.5.0 *)
     /// YulLabel = (* label: *) YUL_IDENTIFIER
     ///            (* colon: *) COLON;
     /// ```
     YulLabel,
+    /// Represents a node with kind `YulLeaveStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Introduced in 0.6.0 *)
     /// YulLeaveStatement = (* leave_keyword: *) YUL_LEAVE_KEYWORD;
     /// ```
     YulLeaveStatement,
+    /// Represents a node with kind `YulLiteral`, having the following structure:
+    ///
     /// ```ebnf
     /// YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
     ///            | (* variant: *) YUL_FALSE_KEYWORD
@@ -1493,41 +1893,57 @@ pub enum NonterminalKind {
     ///            | (* variant: *) StringLiteral;
     /// ```
     YulLiteral,
+    /// Represents a node with kind `YulParameters`, having the following structure:
+    ///
     /// ```ebnf
     /// YulParameters = ((* item: *) YUL_IDENTIFIER ((* separator: *) COMMA (* item: *) YUL_IDENTIFIER)*)?;
     /// ```
     YulParameters,
+    /// Represents a node with kind `YulParametersDeclaration`, having the following structure:
+    ///
     /// ```ebnf
     /// YulParametersDeclaration = (* open_paren: *) OPEN_PAREN
     ///                            (* parameters: *) YulParameters
     ///                            (* close_paren: *) CLOSE_PAREN;
     /// ```
     YulParametersDeclaration,
+    /// Represents a node with kind `YulPath`, having the following structure:
+    ///
     /// ```ebnf
     /// YulPath = (* item: *) YUL_IDENTIFIER ((* separator: *) PERIOD (* item: *) YUL_IDENTIFIER)*;
     /// ```
     YulPath,
+    /// Represents a node with kind `YulPaths`, having the following structure:
+    ///
     /// ```ebnf
     /// YulPaths = (* item: *) YulPath ((* separator: *) COMMA (* item: *) YulPath)*;
     /// ```
     YulPaths,
+    /// Represents a node with kind `YulReturnsDeclaration`, having the following structure:
+    ///
     /// ```ebnf
     /// YulReturnsDeclaration = (* minus_greater_than: *) MINUS_GREATER_THAN
     ///                         (* variables: *) YulVariableNames;
     /// ```
     YulReturnsDeclaration,
+    /// Represents a node with kind `YulStackAssignmentOperator`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Deprecated in 0.5.0 *)
     /// YulStackAssignmentOperator = (* variant: *) EQUAL_COLON
     ///                            | (* variant: *) YulEqualAndColon;
     /// ```
     YulStackAssignmentOperator,
+    /// Represents a node with kind `YulStackAssignmentStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// (* Deprecated in 0.5.0 *)
     /// YulStackAssignmentStatement = (* assignment: *) YulStackAssignmentOperator
     ///                               (* variable: *) YUL_IDENTIFIER;
     /// ```
     YulStackAssignmentStatement,
+    /// Represents a node with kind `YulStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// YulStatement = (* variant: *) YulBlock
     ///              | (* variant: *) YulFunctionDefinition
@@ -1544,48 +1960,66 @@ pub enum NonterminalKind {
     ///              | (* variant: *) YulExpression;
     /// ```
     YulStatement,
+    /// Represents a node with kind `YulStatements`, having the following structure:
+    ///
     /// ```ebnf
     /// YulStatements = (* item: *) YulStatement*;
     /// ```
     YulStatements,
+    /// Represents a node with kind `YulSwitchCase`, having the following structure:
+    ///
     /// ```ebnf
     /// YulSwitchCase = (* variant: *) YulDefaultCase
     ///               | (* variant: *) YulValueCase;
     /// ```
     YulSwitchCase,
+    /// Represents a node with kind `YulSwitchCases`, having the following structure:
+    ///
     /// ```ebnf
     /// YulSwitchCases = (* item: *) YulSwitchCase+;
     /// ```
     YulSwitchCases,
+    /// Represents a node with kind `YulSwitchStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// YulSwitchStatement = (* switch_keyword: *) YUL_SWITCH_KEYWORD
     ///                      (* expression: *) YulExpression
     ///                      (* cases: *) YulSwitchCases;
     /// ```
     YulSwitchStatement,
+    /// Represents a node with kind `YulValueCase`, having the following structure:
+    ///
     /// ```ebnf
     /// YulValueCase = (* case_keyword: *) YUL_CASE_KEYWORD
     ///                (* value: *) YulLiteral
     ///                (* body: *) YulBlock;
     /// ```
     YulValueCase,
+    /// Represents a node with kind `YulVariableAssignmentStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// YulVariableAssignmentStatement = (* variables: *) YulPaths
     ///                                  (* assignment: *) YulAssignmentOperator
     ///                                  (* expression: *) YulExpression;
     /// ```
     YulVariableAssignmentStatement,
+    /// Represents a node with kind `YulVariableDeclarationStatement`, having the following structure:
+    ///
     /// ```ebnf
     /// YulVariableDeclarationStatement = (* let_keyword: *) YUL_LET_KEYWORD
     ///                                   (* variables: *) YulVariableNames
     ///                                   (* value: *) YulVariableDeclarationValue?;
     /// ```
     YulVariableDeclarationStatement,
+    /// Represents a node with kind `YulVariableDeclarationValue`, having the following structure:
+    ///
     /// ```ebnf
     /// YulVariableDeclarationValue = (* assignment: *) YulAssignmentOperator
     ///                               (* expression: *) YulExpression;
     /// ```
     YulVariableDeclarationValue,
+    /// Represents a node with kind `YulVariableNames`, having the following structure:
+    ///
     /// ```ebnf
     /// YulVariableNames = (* item: *) YUL_IDENTIFIER ((* separator: *) COMMA (* item: *) YUL_IDENTIFIER)*;
     /// ```

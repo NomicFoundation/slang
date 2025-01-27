@@ -1,12 +1,14 @@
+use std::rc::Rc;
+
 use crate::wasm_crate::utils::{define_wrapper, FromFFI, IntoFFI};
 
 mod ffi {
     pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{
-        Cursor, Node, TextRange,
+        Cursor, NonterminalNode,
     };
     pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::parser::{
-        Guest, GuestParseError, GuestParseOutput, GuestParser, NonterminalKind, ParseError,
-        ParseErrorBorrow, ParseOutput, ParseOutputBorrow, Parser, ParserBorrow,
+        Guest, GuestParseOutput, GuestParser, NonterminalKind, ParseError, ParseOutput,
+        ParseOutputBorrow, Parser, ParserBorrow,
     };
 }
 
@@ -16,7 +18,6 @@ mod rust {
 
 impl ffi::Guest for crate::wasm_crate::World {
     type Parser = ParserWrapper;
-    type ParseError = ParseErrorWrapper;
     type ParseOutput = ParseOutputWrapper;
 }
 
@@ -27,10 +28,6 @@ impl ffi::Guest for crate::wasm_crate::World {
 //================================================
 
 define_wrapper! { Parser {
-    fn root_kind() -> ffi::NonterminalKind {
-        rust::Parser::ROOT_KIND._into_ffi()
-    }
-
     fn create(language_version: String) -> Result<ffi::Parser, String> {
         semver::Version::parse(&language_version)
             .map_err(|_| format!("Invalid semantic version: '{language_version}'"))
@@ -42,26 +39,30 @@ define_wrapper! { Parser {
         self._borrow_ffi().language_version().to_string()
     }
 
-    fn parse(&self, kind: ffi::NonterminalKind, input: String) -> ffi::ParseOutput {
-        self._borrow_ffi().parse(kind._from_ffi(), &input)._into_ffi()
+    fn parse_file_contents(&self, input: String) -> ffi::ParseOutput {
+        self._borrow_ffi().parse_file_contents(&input)._into_ffi()
+    }
+
+    fn parse_nonterminal(&self, kind: ffi::NonterminalKind, input: String) -> ffi::ParseOutput {
+        self._borrow_ffi().parse_nonterminal(kind._from_ffi(), &input)._into_ffi()
     }
 } }
 
 //================================================
 //
-// resource parse-error
+// record parse-error
 //
 //================================================
 
-define_wrapper! { ParseError {
-    fn text_range(&self) -> ffi::TextRange {
-        self._borrow_ffi().text_range()._into_ffi()
+impl IntoFFI<ffi::ParseError> for rust::ParseError {
+    #[inline]
+    fn _into_ffi(self) -> ffi::ParseError {
+        ffi::ParseError {
+            message: self.message(),
+            text_range: self.text_range()._into_ffi(),
+        }
     }
-
-    fn message(&self) -> String {
-        self._borrow_ffi().message()
-    }
-} }
+}
 
 //================================================
 //
@@ -70,8 +71,8 @@ define_wrapper! { ParseError {
 //================================================
 
 define_wrapper! { ParseOutput {
-    fn tree(&self) -> ffi::Node {
-        self._borrow_ffi().tree().clone()._into_ffi()
+    fn tree(&self) -> ffi::NonterminalNode {
+        Rc::clone(self._borrow_ffi().tree())._into_ffi()
     }
 
     fn errors(&self) -> Vec<ffi::ParseError> {

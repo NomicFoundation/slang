@@ -1047,13 +1047,19 @@ inherit .star_extension
 ;;; Mappings
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; When there's a parsing error (like a name in parameters for versions below 0.8.18)
+;;; we still need the basics to get bindings working
+@mapping [MappingType] {
+  node @mapping.lexical_scope
+  node @mapping.output
+  node @mapping.pop_begin
+  node @mapping.pop_end
+}
+
 @mapping [MappingType
     [MappingKey [MappingKeyType @key_type ([IdentifierPath] | [ElementaryType])]]
     [MappingValue @value_type [TypeName]]
 ] {
-  node @mapping.lexical_scope
-  node @mapping.output
-
   ; Define the pushing path of the mapping type
   ;   ValueType <- top of the symbol stack
   ;   KeyType
@@ -1095,12 +1101,33 @@ inherit .star_extension
   node pop_mapping
   attr (pop_mapping) pop_symbol = "%Mapping"
 
-  let @mapping.pop_begin = @value_type.pop_begin
+  edge @mapping.pop_begin -> @value_type.pop_begin
   edge @value_type.pop_end -> @key_type.pop_begin
   edge @key_type.pop_end -> pop_mapping
-  let @mapping.pop_end = pop_mapping
+  edge pop_mapping -> @mapping.pop_end
+
+  node @mapping.defs
 }
 
+@mapping [MappingType
+    @key [MappingKey [MappingKeyType] @key_name [Identifier]]
+    [MappingValue]
+] {
+  node @key.def
+  attr (@key.def) node_definition = @key_name
+  attr (@key.def) definiens_node = @key
+  edge @key.def -> @mapping.defs
+}
+
+@mapping [MappingType
+    [MappingKey]
+    @value [MappingValue [TypeName] @value_name [Identifier]]
+] {
+  node @value.def
+  attr (@value.def) node_definition = @value_name
+  attr (@value.def) definiens_node = @value
+  edge @value.def -> @mapping.defs
+}
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Arrays types
@@ -2071,6 +2098,36 @@ inherit .star_extension
   edge @enum.def -> type
   edge type -> type_enum_type
   edge type_enum_type -> @enum.lexical_scope
+
+  ; value_ref_typeof allows for an enum value to access the
+  ; functions associated to this type
+  node @enum.value_ref_typeof
+  attr (@enum.value_ref_typeof) push_symbol = "@typeof"
+  node value_ref_type
+  attr (value_ref_type) push_symbol = (source-text @name)
+  edge @enum.value_ref_typeof -> value_ref_type
+  edge value_ref_type -> @enum.lexical_scope
+
+  ; Path to link min and max to the enum's scope (#1158)
+  ; It resolves paths of the form `type(<enum>).min.<something>`
+  if (version-matches ">= 0.6.8") {
+    node typeof
+    attr (typeof) pop_symbol = "@typeof"
+
+    node built_in_member
+    attr (built_in_member) pop_symbol = "."
+    node min_built_in
+    attr (min_built_in) pop_symbol = "min"
+    node max_built_in
+    attr (max_built_in) pop_symbol = "max"
+
+    edge type -> typeof
+    edge typeof -> built_in_member
+    edge built_in_member -> min_built_in
+    edge built_in_member -> max_built_in
+    edge min_built_in -> @enum.value_ref_typeof
+    edge max_built_in -> @enum.value_ref_typeof
+  }
 }
 
 @enum [EnumDefinition
@@ -2080,6 +2137,7 @@ inherit .star_extension
   attr (def) node_definition = @item
   attr (def) definiens_node = @item
 
+  edge def -> @enum.value_ref_typeof
   edge @enum.members -> def
 }
 

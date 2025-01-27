@@ -16,8 +16,19 @@ export { Cursor };
  * It can either be in a user file, or a built-in in the language.
  */
 export type BindingLocation = UserFileLocation | BuiltInLocation;
+
+/**
+ * Enumerates different variants of the `BindingLocation` type.
+ */
 export enum BindingLocationType {
+  /**
+   * Represents a variant of type `UserFileLocation`.
+   */
   UserFileLocation = "UserFileLocation",
+
+  /**
+   * Represents a variant of type `BuiltInLocation`.
+   */
   BuiltInLocation = "BuiltInLocation",
 }
 
@@ -27,13 +38,17 @@ export enum BindingLocationType {
  */
 export class BindingGraph {
   /**
-   * If the provided cursor points at a definition `Identifier`, it will return the
-   * corresponding definition. Otherwise, it will return `undefined`.
+   * Tries to resolve the identifier terminal pointed at by the provided cursor to a definition.
+   * If successful, returns the definition. Otherwise, returns `undefined`.
+   *
+   * For more information on identifier terminals, see the `TerminalKindExtensions.isIdentifier()` API.
    */
   definitionAt(cursor: Cursor): Definition | undefined;
   /**
-   * If the provided cursor points at a reference `Identifier`, it will return the
-   * corresponding reference. Otherwise, it will return `undefined`.
+   * Tries to resolve the identifier terminal pointed at by the provided cursor to a reference.
+   * If successful, returns the reference. Otherwise, returns `undefined`.
+   *
+   * For more information on identifier terminals, see the `TerminalKindExtensions.isIdentifier()` API.
    */
   referenceAt(cursor: Cursor): Reference | undefined;
 }

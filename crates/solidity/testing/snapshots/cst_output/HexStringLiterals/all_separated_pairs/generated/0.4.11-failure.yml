@@ -14,4 +14,5 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): 'hex"12_34_56_78_90_ab_cd_ef"' # (0..28)
+  - (HexStringLiterals): # 'hex"12_34_56_78_90_ab_cd_ef"' (0..28)
+      - (UNRECOGNIZED): 'hex"12_34_56_78_90_ab_cd_ef"' # (0..28)

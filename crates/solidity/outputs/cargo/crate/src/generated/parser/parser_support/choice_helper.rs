@@ -140,7 +140,7 @@ pub fn total_not_skipped_span(result: &ParserResult) -> usize {
         .flat_map(|edge| {
             edge.node
                 .clone()
-                .cursor_with_offset(TextIndex::ZERO)
+                .create_cursor(TextIndex::ZERO)
                 .remaining_nodes()
         })
         .filter_map(|edge| match edge.node {

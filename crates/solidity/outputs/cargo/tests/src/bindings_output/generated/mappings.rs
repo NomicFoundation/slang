@@ -20,6 +20,11 @@ fn indexing() -> Result<()> {
 }
 
 #[test]
+fn named_parameters() -> Result<()> {
+    run("mappings", "named_parameters")
+}
+
+#[test]
 fn nested() -> Result<()> {
     run("mappings", "nested")
 }

@@ -1,5 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+use semver::Version;
+
 use crate::wasm_crate::utils::define_wrapper;
 
 mod ffi {
@@ -23,10 +25,18 @@ impl ffi::Guest for crate::wasm_crate::World {
 //================================================
 
 define_wrapper! { LanguageFacts {
-    fn supported_versions() -> Vec<String> {
-        rust::LanguageFacts::SUPPORTED_VERSIONS
+    fn all_versions() -> Vec<String> {
+        rust::LanguageFacts::ALL_VERSIONS
             .iter()
-            .map(|v| v.to_string())
+            .map(Version::to_string)
             .collect()
+    }
+
+    fn earliest_version() -> String {
+        rust::LanguageFacts::EARLIEST_VERSION.to_string()
+    }
+
+    fn latest_version() -> String {
+        rust::LanguageFacts::LATEST_VERSION.to_string()
     }
 } }

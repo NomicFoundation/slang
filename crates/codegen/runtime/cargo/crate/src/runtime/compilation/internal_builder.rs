@@ -39,11 +39,11 @@ impl InternalCompilationBuilder {
             };
         }
 
-        let parse_output = self.parser.parse(Parser::ROOT_KIND, contents);
+        let parse_output = self.parser.parse_file_contents(contents);
 
         let import_paths = self.imports.extract(parse_output.create_tree_cursor());
 
-        let file = File::new(id.clone(), parse_output.tree().clone());
+        let file = File::create(id.clone(), parse_output);
         self.files.insert(id, file);
 
         AddFileResponse { import_paths }
@@ -72,7 +72,7 @@ impl InternalCompilationBuilder {
             .map(|(id, file)| (id.to_owned(), Rc::new(file.to_owned())))
             .collect();
 
-        CompilationUnit::new(language_version, files)
+        CompilationUnit::create(language_version, files)
     }
 }
 

@@ -84,7 +84,7 @@ SINGLE_QUOTED_VERSION_LITERAL = "'" «VERSION_SPECIFIER_FRAGMENT» ("." «VERSIO
 
 DOUBLE_QUOTED_VERSION_LITERAL = '"' «VERSION_SPECIFIER_FRAGMENT» ("." «VERSION_SPECIFIER_FRAGMENT»)* '"';
 
-«VERSION_SPECIFIER_FRAGMENT» = (("0"…"9") | "x" | "X" | "*")+;
+«VERSION_SPECIFIER_FRAGMENT» = ("0"…"9" | "x" | "X" | "*")+;
 
 (* Never reserved *)
 ABICODER_KEYWORD = "abicoder";
@@ -181,13 +181,13 @@ WHITESPACE = (" " | "\t")+;
 
 END_OF_LINE = "\n" | ("\r" "\n"?);
 
-SINGLE_LINE_COMMENT = "//" (!("\r" "\n"))*;
+SINGLE_LINE_COMMENT = "//" (?!"/") (!("\r" | "\n"))*;
 
-MULTI_LINE_COMMENT = "/*" (!"*" | "*")* "*/";
+MULTI_LINE_COMMENT = "/*" (?!"*" !"/") (!"*" | ("*" (?!"/")))* "*/";
 
-SINGLE_LINE_NAT_SPEC_COMMENT = "///" (!("\r" "\n"))*;
+SINGLE_LINE_NAT_SPEC_COMMENT = "///" (!("\r" | "\n"))*;
 
-MULTI_LINE_NAT_SPEC_COMMENT = "/**" (!"*" | "*")* "*/";
+MULTI_LINE_NAT_SPEC_COMMENT = "/**" (?!"/") (!"*" | ("*" (?!"/")))* "*/";
 
 (* 1.7. Nat Spec Format: *)
 
@@ -583,7 +583,7 @@ MINUS_MINUS = "--";
 
 MINUS_GREATER_THAN = "->";
 
-SLASH = "/";
+SLASH = "/" (?!"*" | "/" | "=");
 
 SLASH_EQUAL = "/=";
 
@@ -1485,25 +1485,25 @@ HexNumberExpression = (* literal: *) HEX_LITERAL
 DecimalNumberExpression = (* literal: *) DECIMAL_LITERAL
                           (* unit: *) NumberUnit?;
 
-HEX_LITERAL = "0x" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)*;
+HEX_LITERAL = "0x" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)* (?!«IDENTIFIER_START»);
 
 (* Deprecated in 0.5.0 *)
-HEX_LITERAL = "0X" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)*;
+HEX_LITERAL = "0X" «HEX_CHARACTER»+ ("_" «HEX_CHARACTER»+)* (?!«IDENTIFIER_START»);
 
-DECIMAL_LITERAL = "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»?;
+DECIMAL_LITERAL = "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
 
-DECIMAL_LITERAL = «DECIMAL_DIGITS» «DECIMAL_EXPONENT»?;
-
-(* Deprecated in 0.5.0 *)
-DECIMAL_LITERAL = «DECIMAL_DIGITS» "." «DECIMAL_EXPONENT»?;
+DECIMAL_LITERAL = «DECIMAL_DIGITS» (?!".") «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
 
 (* Deprecated in 0.5.0 *)
-DECIMAL_LITERAL = «DECIMAL_DIGITS» "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»?;
+DECIMAL_LITERAL = «DECIMAL_DIGITS» "." (?!«DECIMAL_DIGITS») «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
+
+(* Deprecated in 0.5.0 *)
+DECIMAL_LITERAL = «DECIMAL_DIGITS» "." «DECIMAL_DIGITS» «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
 
 (* Introduced in 0.5.0 *)
-DECIMAL_LITERAL = «DECIMAL_DIGITS» ("." «DECIMAL_DIGITS»)? «DECIMAL_EXPONENT»?;
+DECIMAL_LITERAL = «DECIMAL_DIGITS» ("." «DECIMAL_DIGITS»)? «DECIMAL_EXPONENT»? (?!«IDENTIFIER_START»);
 
-«DECIMAL_DIGITS» = ("0"…"9")+ ("_" ("0"…"9")+)*;
+«DECIMAL_DIGITS» = "0"…"9"+ ("_" "0"…"9"+)*;
 
 «DECIMAL_EXPONENT» = ("e" | "E") "-"? «DECIMAL_DIGITS»;
 
@@ -1534,20 +1534,20 @@ StringLiteral = (* variant: *) SINGLE_QUOTED_STRING_LITERAL
               | (* variant: *) DOUBLE_QUOTED_STRING_LITERAL;
 
 (* Deprecated in 0.4.25 *)
-SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE_ARBITRARY» | !("'" "\\" "\r" "\n"))* "'";
+SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE_ARBITRARY» | !("'" | "\\" | "\r" | "\n"))* "'";
 
 (* Introduced in 0.4.25 and deprecated in 0.7.0. *)
-SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
+SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | !("'" | "\\" | "\r" | "\n"))* "'";
 
-SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | (" "…"&") | ("("…"[") | ("]"…"~"))* "'";
+SINGLE_QUOTED_STRING_LITERAL = "'" («ESCAPE_SEQUENCE» | " "…"&" | "("…"[" | "]"…"~")* "'";
 
 (* Deprecated in 0.4.25 *)
-DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE_ARBITRARY» | !('"' "\\" "\r" "\n"))* '"';
+DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE_ARBITRARY» | !('"' | "\\" | "\r" | "\n"))* '"';
 
 (* Introduced in 0.4.25 and deprecated in 0.7.0. *)
-DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | !('"' | "\\" | "\r" | "\n"))* '"';
 
-DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | (" "…"!") | ("#"…"[") | ("]"…"~"))* '"';
+DOUBLE_QUOTED_STRING_LITERAL = '"' («ESCAPE_SEQUENCE» | " "…"!" | "#"…"[" | "]"…"~")* '"';
 
 (* Introduced in 0.5.14 *)
 HexStringLiterals = (* item: *) HexStringLiteral+;
@@ -1561,7 +1561,7 @@ DOUBLE_QUOTED_HEX_STRING_LITERAL = 'hex"' «HEX_STRING_CONTENTS»? '"';
 
 «HEX_STRING_CONTENTS» = «HEX_CHARACTER» «HEX_CHARACTER» ("_"? «HEX_CHARACTER» «HEX_CHARACTER»)*;
 
-«HEX_CHARACTER» = ("0"…"9") | ("a"…"f") | ("A"…"F");
+«HEX_CHARACTER» = "0"…"9" | "a"…"f" | "A"…"F";
 
 (* Introduced in 0.7.0 *)
 UnicodeStringLiterals = (* item: *) UnicodeStringLiteral+;
@@ -1571,15 +1571,15 @@ UnicodeStringLiteral = (* variant: *) SINGLE_QUOTED_UNICODE_STRING_LITERAL
                      | (* variant: *) DOUBLE_QUOTED_UNICODE_STRING_LITERAL;
 
 (* Introduced in 0.7.0 *)
-SINGLE_QUOTED_UNICODE_STRING_LITERAL = "unicode'" («ESCAPE_SEQUENCE» | !("'" "\\" "\r" "\n"))* "'";
+SINGLE_QUOTED_UNICODE_STRING_LITERAL = "unicode'" («ESCAPE_SEQUENCE» | !("'" | "\\" | "\r" | "\n"))* "'";
 
 (* Introduced in 0.7.0 *)
-DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' («ESCAPE_SEQUENCE» | !('"' "\\" "\r" "\n"))* '"';
+DOUBLE_QUOTED_UNICODE_STRING_LITERAL = 'unicode"' («ESCAPE_SEQUENCE» | !('"' | "\\" | "\r" | "\n"))* '"';
 
 «ESCAPE_SEQUENCE» = "\\" («ASCII_ESCAPE» | «HEX_BYTE_ESCAPE» | «UNICODE_ESCAPE»);
 
 (* Deprecated in 0.4.25 *)
-«ESCAPE_SEQUENCE_ARBITRARY» = "\\" (!("x" "u") | «HEX_BYTE_ESCAPE» | «UNICODE_ESCAPE»);
+«ESCAPE_SEQUENCE_ARBITRARY» = "\\" (!("x" | "u") | «HEX_BYTE_ESCAPE» | «UNICODE_ESCAPE»);
 
 «ASCII_ESCAPE» = "n" | "r" | "t" | "'" | '"' | "\\" | "\r\n" | "\r" | "\n";
 
@@ -1593,9 +1593,9 @@ IdentifierPath = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDE
 
 IDENTIFIER = «IDENTIFIER_START» «IDENTIFIER_PART»*;
 
-«IDENTIFIER_START» = "_" | "$" | ("a"…"z") | ("A"…"Z");
+«IDENTIFIER_START» = "_" | "$" | "a"…"z" | "A"…"Z";
 
-«IDENTIFIER_PART» = «IDENTIFIER_START» | ("0"…"9");
+«IDENTIFIER_PART» = «IDENTIFIER_START» | "0"…"9";
 
 (*
  * 6. Yul:
@@ -1742,9 +1742,9 @@ YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
            | (* variant: *) HexStringLiteral
            | (* variant: *) StringLiteral;
 
-YUL_DECIMAL_LITERAL = "0" | (("1"…"9") ("0"…"9")*);
+YUL_DECIMAL_LITERAL = ("0" | ("1"…"9" "0"…"9"*)) (?!«IDENTIFIER_START»);
 
-YUL_HEX_LITERAL = "0x" «HEX_CHARACTER»+;
+YUL_HEX_LITERAL = "0x" «HEX_CHARACTER»+ (?!«IDENTIFIER_START»);
 
 (* 6.3. Yul Keywords: *)
 

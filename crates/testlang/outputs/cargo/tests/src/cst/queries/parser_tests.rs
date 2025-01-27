@@ -3,7 +3,7 @@
 use slang_testlang::cst::Query;
 
 fn run_parser_test(input: &str, result: &str) {
-    assert_eq!(Query::parse(input).unwrap().to_string(), result);
+    assert_eq!(Query::create(input).unwrap().to_string(), result);
 }
 
 #[test]
@@ -52,12 +52,15 @@ fn test_zero_or_more_canonicalisation() {
 // Test the error message on parse failure
 #[test]
 fn test_parsing_error() {
-    let result = Query::parse(r#"@root [_"#);
+    let result = Query::create(r#"@root [_"#);
     match result {
         Ok(_) => panic!("Expected error"),
         Err(e) => {
             assert_eq!(e.message, "Parse error:\nexpected ']' at: \nAlt at: [_\n");
-            assert_eq!((e.line, e.column), (0, 8));
+            assert_eq!(
+                format!("{:?}", e.text_range),
+                "TextIndex { utf8: 8, utf16: 8, line: 0, column: 8 }..TextIndex { utf8: 8, utf16: 8, line: 0, column: 8 }",
+            );
         }
     }
 }
@@ -65,7 +68,7 @@ fn test_parsing_error() {
 // See https://github.com/NomicFoundation/slang/issues/1042
 #[test]
 fn test_parsing_error_with_invalid_edge_label() {
-    let result = Query::parse(r#"[Tree @name Name: [_]]"#);
+    let result = Query::create(r#"[Tree @name Name: [_]]"#);
     match result {
         Ok(_) => panic!("Expected error"),
         Err(e) => {
@@ -73,14 +76,17 @@ fn test_parsing_error_with_invalid_edge_label() {
                 e.message,
                 "Parse error:\n'Name' is not a valid edge label at: Name: [_]]\n",
             );
-            assert_eq!((e.line, e.column), (0, 12));
+            assert_eq!(
+                format!("{:?}", e.text_range),
+                "TextIndex { utf8: 12, utf16: 12, line: 0, column: 12 }..TextIndex { utf8: 22, utf16: 22, line: 0, column: 22 }",
+            );
         }
     }
 }
 
 #[test]
 fn test_parsing_error_with_invalid_node_kind() {
-    let result = Query::parse(r#"[Tree [tree_node]]"#);
+    let result = Query::create(r#"[Tree [tree_node]]"#);
     match result {
         Ok(_) => panic!("Expected error"),
         Err(e) => {
@@ -88,14 +94,17 @@ fn test_parsing_error_with_invalid_node_kind() {
                 e.message,
                 "Parse error:\n'tree_node' is not a valid node kind at: tree_node]]\n",
             );
-            assert_eq!((e.line, e.column), (0, 7));
+            assert_eq!(
+                format!("{:?}", e.text_range),
+                "TextIndex { utf8: 7, utf16: 7, line: 0, column: 7 }..TextIndex { utf8: 18, utf16: 18, line: 0, column: 18 }",
+            );
         }
     }
 }
 
 #[test]
 fn test_parsing_error_with_kind_beginning_with_underscore() {
-    let result = Query::parse(r#"[Tree [_tree_node]]"#);
+    let result = Query::create(r#"[Tree [_tree_node]]"#);
     match result {
         Ok(_) => panic!("Expected error"),
         Err(e) => {
@@ -103,14 +112,17 @@ fn test_parsing_error_with_kind_beginning_with_underscore() {
                 e.message,
                 "Parse error:\n'_tree_node' is not a valid node kind at: _tree_node]]\n",
             );
-            assert_eq!((e.line, e.column), (0, 7));
+            assert_eq!(
+                format!("{:?}", e.text_range),
+                "TextIndex { utf8: 7, utf16: 7, line: 0, column: 7 }..TextIndex { utf8: 19, utf16: 19, line: 0, column: 19 }",
+            );
         }
     }
 }
 
 #[test]
 fn test_fails_parsing_ellipsis() {
-    let result = Query::parse(r#"[_ ...]"#);
+    let result = Query::create(r#"[_ ...]"#);
     match result {
         Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(
@@ -122,7 +134,7 @@ fn test_fails_parsing_ellipsis() {
 
 #[test]
 fn test_fails_consecutive_adjacency_operators() {
-    let result = Query::parse(r#"[_ [DelimitedIdentifier] . .]"#);
+    let result = Query::create(r#"[_ [DelimitedIdentifier] . .]"#);
     match result {
         Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(e.message, "Parse error:\nNoneOf at: .]\n"),
@@ -131,7 +143,7 @@ fn test_fails_consecutive_adjacency_operators() {
 
 #[test]
 fn test_fails_sole_adjacency() {
-    let result = Query::parse(r#"[_ .]"#);
+    let result = Query::create(r#"[_ .]"#);
     match result {
         Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(
@@ -143,13 +155,13 @@ fn test_fails_sole_adjacency() {
 
 #[test]
 fn test_fails_adjacency_at_edge_of_alt_option() {
-    let result = Query::parse(r#"([TreeNode] | . [DelimitedIdentifier])+"#);
+    let result = Query::create(r#"([TreeNode] | . [DelimitedIdentifier])+"#);
     assert!(result.is_err(), "Expected parse failure");
 }
 
 #[test]
 fn test_fails_parsing_trivia_node_selector() {
-    let result = Query::parse(r#"[EndOfLine]"#);
+    let result = Query::create(r#"[EndOfLine]"#);
     match result {
         Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(

@@ -88,7 +88,10 @@ impl ParserResult {
 
             let skipped = input.content(skipped_range.utf8());
 
-            input.emit(ParseError::new(skipped_range, expected_terminals.clone()));
+            input.emit(ParseError::create(
+                skipped_range,
+                expected_terminals.clone(),
+            ));
 
             ParserResult::SkippedUntil(SkippedUntil {
                 nodes,
@@ -105,7 +108,7 @@ impl ParserResult {
                 ParseResultKind::Incomplete => {
                     ParserResult::incomplete_match(nodes, expected_terminals)
                 }
-                ParseResultKind::NoMatch => ParserResult::no_match(None, expected_terminals),
+                ParseResultKind::NoMatch => ParserResult::no_match(expected_terminals),
             }
         }
     }

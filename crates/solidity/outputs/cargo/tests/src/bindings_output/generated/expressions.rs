@@ -73,3 +73,8 @@ fn revert_named_args() -> Result<()> {
 fn type_expr() -> Result<()> {
     run("expressions", "type_expr")
 }
+
+#[test]
+fn type_expr_minmax() -> Result<()> {
+    run("expressions", "type_expr_minmax")
+}

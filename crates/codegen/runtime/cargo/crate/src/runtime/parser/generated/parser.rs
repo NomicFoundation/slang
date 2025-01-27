@@ -41,12 +41,10 @@ pub enum ParserInitializationError {
 }
 
 impl Parser {
-    pub const ROOT_KIND: NonterminalKind = NonterminalKind::Stub1;
-
     pub fn create(
         language_version: Version,
     ) -> std::result::Result<Self, ParserInitializationError> {
-        if LanguageFacts::SUPPORTED_VERSIONS
+        if LanguageFacts::ALL_VERSIONS
             .binary_search(&language_version)
             .is_ok()
         {
@@ -62,7 +60,10 @@ impl Parser {
         &self.language_version
     }
 
-    pub fn parse(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
+    pub fn parse_file_contents(&self, input: &str) -> ParseOutput {
+        self.parse_nonterminal(NonterminalKind::Stub1, input)
+    }
+    pub fn parse_nonterminal(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
         unreachable!("Attempting to parse in stubs: {kind}: {input}")
     }
 }

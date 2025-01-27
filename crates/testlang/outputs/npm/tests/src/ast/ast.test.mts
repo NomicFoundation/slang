@@ -23,7 +23,7 @@ test("create and use sequence types", () => {
 
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parse(NonterminalKind.Tree, source);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.Tree, source);
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
@@ -41,7 +41,7 @@ test("create and use choice types", () => {
 
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parse(NonterminalKind.TreeNodeChild, source);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.TreeNodeChild, source);
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
@@ -63,7 +63,7 @@ test("create and use repeated types", () => {
 
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parse(NonterminalKind.Tree, source);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.Tree, source);
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
@@ -85,7 +85,7 @@ test("create and use separated types", () => {
 
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parse(NonterminalKind.SeparatedIdentifiers, source);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.SeparatedIdentifiers, source);
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
@@ -106,7 +106,7 @@ test("throws an exception on initializing the wrong type", () => {
 
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parse(NonterminalKind.Tree, source);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.Tree, source);
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
@@ -122,7 +122,7 @@ test("throws an exception on using an incorrect/incomplete CST node", () => {
 
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parse(NonterminalKind.Tree, source);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.Tree, source);
   expect(parseOutput.isValid()).toBeFalsy();
 
   const cst = parseOutput.tree;
@@ -149,7 +149,7 @@ test("create and use prefix expressions", () => {
 
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parse(NonterminalKind.Expression, source);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.Expression, source);
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
@@ -168,7 +168,7 @@ test("create and use postfix expressions", () => {
 
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parse(NonterminalKind.Expression, source);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.Expression, source);
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
@@ -188,7 +188,7 @@ test("create and use binary expressions", () => {
 
   const parser = Parser.create("1.0.0");
 
-  const parseOutput = parser.parse(NonterminalKind.Expression, source);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.Expression, source);
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
@@ -209,7 +209,7 @@ it("can reuse the same CST nodes after selectors", () => {
   const source = `foo + bar`;
 
   const parser = Parser.create("1.0.0");
-  const parseOutput = parser.parse(NonterminalKind.SourceUnit, source);
+  const parseOutput = parser.parseFileContents(source);
   parseOutput.isValid(); // true
 
   const cst = parseOutput.tree.asNonterminalNode()!;

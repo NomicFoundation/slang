@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UNRECOGNIZED): "0xabzz\n" # (0..7)
+  - (HexNumberExpression) ► (UNRECOGNIZED): "0xabzz\n" # (0..7)

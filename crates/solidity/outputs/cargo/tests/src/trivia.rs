@@ -1,6 +1,8 @@
+use std::rc::Rc;
+
 use anyhow::Result;
 use semver::Version;
-use slang_solidity::cst::{NonterminalKind, TerminalKind};
+use slang_solidity::cst::TerminalKind;
 use slang_solidity::parser::Parser;
 
 #[test]
@@ -24,12 +26,10 @@ fn compare_end_of_lines(input: &str, expected: &[&str]) -> Result<()> {
     let version = Version::parse("0.8.0")?;
     let parser = Parser::create(version)?;
 
-    let output = parser.parse(NonterminalKind::SourceUnit, input);
+    let output = parser.parse_file_contents(input);
     assert!(output.is_valid());
 
-    let actual = output
-        .tree()
-        .clone()
+    let actual = Rc::clone(output.tree())
         .descendants()
         .filter(|edge| edge.is_terminal_with_kind(TerminalKind::EndOfLine))
         .map(|eol| eol.unparse())

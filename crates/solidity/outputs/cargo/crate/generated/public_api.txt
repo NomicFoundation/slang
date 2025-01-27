@@ -36,8 +36,9 @@ pub fn slang_solidity::compilation::CompilationUnit::language_version(&self) -> 
 pub struct slang_solidity::compilation::File
 impl slang_solidity::compilation::File
 pub fn slang_solidity::compilation::File::create_tree_cursor(&self) -> slang_solidity::cst::Cursor
+pub fn slang_solidity::compilation::File::errors(&self) -> &alloc::vec::Vec<slang_solidity::parser::ParseError>
 pub fn slang_solidity::compilation::File::id(&self) -> &str
-pub fn slang_solidity::compilation::File::tree(&self) -> &slang_solidity::cst::Node
+pub fn slang_solidity::compilation::File::tree(&self) -> &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>
 impl core::clone::Clone for slang_solidity::compilation::File
 pub fn slang_solidity::compilation::File::clone(&self) -> slang_solidity::compilation::File
 pub struct slang_solidity::compilation::InternalCompilationBuilder
@@ -810,8 +811,9 @@ impl core::str::traits::FromStr for slang_solidity::cst::TerminalKind
 pub type slang_solidity::cst::TerminalKind::Err = strum::ParseError
 pub fn slang_solidity::cst::TerminalKind::from_str(s: &str) -> core::result::Result<slang_solidity::cst::TerminalKind, <Self as core::str::traits::FromStr>::Err>
 impl metaslang_cst::kinds::TerminalKindExtensions for slang_solidity::cst::TerminalKind
-pub fn slang_solidity::cst::TerminalKind::is_trivia(&self) -> bool
-pub fn slang_solidity::cst::TerminalKind::is_valid(&self) -> bool
+pub fn slang_solidity::cst::TerminalKind::is_identifier(self) -> bool
+pub fn slang_solidity::cst::TerminalKind::is_trivia(self) -> bool
+pub fn slang_solidity::cst::TerminalKind::is_valid(self) -> bool
 impl serde::ser::Serialize for slang_solidity::cst::TerminalKind
 pub fn slang_solidity::cst::TerminalKind::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::cst::TerminalKind> for &'static str
@@ -874,7 +876,7 @@ impl slang_solidity::parser::ParseOutput
 pub fn slang_solidity::parser::ParseOutput::create_tree_cursor(&self) -> slang_solidity::cst::Cursor
 pub fn slang_solidity::parser::ParseOutput::errors(&self) -> &alloc::vec::Vec<slang_solidity::parser::ParseError>
 pub fn slang_solidity::parser::ParseOutput::is_valid(&self) -> bool
-pub fn slang_solidity::parser::ParseOutput::tree(&self) -> &slang_solidity::cst::Node
+pub fn slang_solidity::parser::ParseOutput::tree(&self) -> &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>
 impl core::clone::Clone for slang_solidity::parser::ParseOutput
 pub fn slang_solidity::parser::ParseOutput::clone(&self) -> slang_solidity::parser::ParseOutput
 impl core::cmp::PartialEq for slang_solidity::parser::ParseOutput
@@ -884,14 +886,15 @@ pub fn slang_solidity::parser::ParseOutput::fmt(&self, f: &mut core::fmt::Format
 impl core::marker::StructuralPartialEq for slang_solidity::parser::ParseOutput
 pub struct slang_solidity::parser::Parser
 impl slang_solidity::parser::Parser
-pub const slang_solidity::parser::Parser::ROOT_KIND: slang_solidity::cst::NonterminalKind
 pub fn slang_solidity::parser::Parser::create(language_version: semver::Version) -> core::result::Result<Self, slang_solidity::parser::ParserInitializationError>
 pub fn slang_solidity::parser::Parser::language_version(&self) -> &semver::Version
-pub fn slang_solidity::parser::Parser::parse(&self, kind: slang_solidity::cst::NonterminalKind, input: &str) -> slang_solidity::parser::ParseOutput
+pub fn slang_solidity::parser::Parser::parse_file_contents(&self, input: &str) -> slang_solidity::parser::ParseOutput
+pub fn slang_solidity::parser::Parser::parse_nonterminal(&self, kind: slang_solidity::cst::NonterminalKind, input: &str) -> slang_solidity::parser::ParseOutput
 impl core::fmt::Debug for slang_solidity::parser::Parser
 pub fn slang_solidity::parser::Parser::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub mod slang_solidity::utils
 pub struct slang_solidity::utils::LanguageFacts
 impl slang_solidity::utils::LanguageFacts
-pub const slang_solidity::utils::LanguageFacts::NAME: &'static str
-pub const slang_solidity::utils::LanguageFacts::SUPPORTED_VERSIONS: &'static [semver::Version]
+pub const slang_solidity::utils::LanguageFacts::ALL_VERSIONS: &'static [semver::Version]
+pub const slang_solidity::utils::LanguageFacts::EARLIEST_VERSION: semver::Version
+pub const slang_solidity::utils::LanguageFacts::LATEST_VERSION: semver::Version

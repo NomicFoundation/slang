@@ -7,10 +7,12 @@ export namespace NomicFoundationSlangCompilation {
 }
 import type { BindingGraph } from "./nomic-foundation-slang-bindings.js";
 export { BindingGraph };
-import type { Node } from "./nomic-foundation-slang-cst.js";
-export { Node };
+import type { NonterminalNode } from "./nomic-foundation-slang-cst.js";
+export { NonterminalNode };
 import type { Cursor } from "./nomic-foundation-slang-cst.js";
 export { Cursor };
+import type { ParseError } from "./nomic-foundation-slang-parser.js";
+export { ParseError };
 /**
  * Contains information about imports found in an added source file.
  */
@@ -64,7 +66,11 @@ export class File {
   /**
    * Returns the syntax tree of this file.
    */
-  get tree(): Node;
+  get tree(): NonterminalNode;
+  /**
+   * Returns a list of all errors encountered during parsing this file.
+   */
+  errors(): ParseError[];
   /**
    * Creates a cursor for traversing the syntax tree of this file.
    */
@@ -77,6 +83,8 @@ export class File {
  *
  * This is an internal API, and exposed via a public `CompilationBuilder` wrapper class written in TypeScript.
  * This allows storing/invoking user supplied callbacks in TypeScript, rather than Rust, which has its limitations.
+ *
+ * @internal
  */
 export class InternalCompilationBuilder {
   /**

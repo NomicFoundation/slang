@@ -20,7 +20,7 @@ fn using_the_parser() -> Result<()> {
     // --8<-- [start:parse-input]
     let parser = Parser::create(Version::parse("0.8.0")?)?;
 
-    let parse_output = parser.parse(NonterminalKind::ContractDefinition, source);
+    let parse_output = parser.parse_nonterminal(NonterminalKind::ContractDefinition, source);
     // --8<-- [end:parse-input]
 
     // --8<-- [start:print-errors]
@@ -38,9 +38,8 @@ fn using_the_parser() -> Result<()> {
     // --8<-- [end:assert-is-valid]
 
     // --8<-- [start:inspect-tree]
-    let tree = parse_output.tree();
+    let contract = parse_output.tree();
 
-    let contract = tree.as_nonterminal().unwrap();
     assert_eq!(contract.kind, NonterminalKind::ContractDefinition);
     assert_eq!(contract.children.len(), 7);
 

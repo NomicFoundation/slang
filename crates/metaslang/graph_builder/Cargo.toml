@@ -10,10 +10,8 @@ description = "Construct graphs from parsed source code"
 homepage = "https://nomicfoundation.github.io/slang/"
 repository = "https://github.com/NomicFoundation/slang/"
 authors = [
+  "Slang Team <slang@nomic.foundation>",
   "Nomic Foundation <packages@nomic.foundation>",
-  "Antony Blakey <antony@nomic.foundation>",
-  "Igor Matuszewski <igor@nomic.foundation>",
-  "Omar Tawfik <omar@nomic.foundation>",
 ]
 
 readme = "README.md"

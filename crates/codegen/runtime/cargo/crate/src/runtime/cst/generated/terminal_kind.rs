@@ -20,22 +20,12 @@
 #[allow(clippy::doc_markdown)]
 #[allow(clippy::doc_link_with_quotes)]
 pub enum TerminalKind {
-    // Built-in:
     UNRECOGNIZED,
     MISSING,
 
-    // Generated:
     Stub1,
     Stub2,
     Stub3,
 }
 
-impl crate::cst::TerminalKindExtensions for TerminalKind {
-    fn is_trivia(&self) -> bool {
-        false
-    }
-
-    fn is_valid(&self) -> bool {
-        !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
-    }
-}
+impl crate::cst::TerminalKindExtensions for TerminalKind {}

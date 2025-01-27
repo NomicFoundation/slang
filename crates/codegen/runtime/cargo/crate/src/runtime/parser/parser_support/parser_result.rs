@@ -16,7 +16,6 @@ pub enum ParserResult {
 impl Default for ParserResult {
     fn default() -> Self {
         Self::NoMatch(NoMatch {
-            kind: None,
             expected_terminals: vec![],
         })
     }
@@ -35,13 +34,13 @@ impl ParserResult {
         ParserResult::IncompleteMatch(IncompleteMatch::new(nodes, expected_terminals))
     }
 
-    /// Whenever a parser didn't run because it's disabled due to versioning. Shorthand for `no_match(None, vec![])`.
+    /// Whenever a parser didn't run because it's disabled due to versioning. Shorthand for `no_match(vec![])`.
     pub fn disabled() -> Self {
-        Self::no_match(None, vec![])
+        Self::no_match(vec![])
     }
 
-    pub fn no_match(kind: Option<NonterminalKind>, expected_terminals: Vec<TerminalKind>) -> Self {
-        ParserResult::NoMatch(NoMatch::new(kind, expected_terminals))
+    pub fn no_match(expected_terminals: Vec<TerminalKind>) -> Self {
+        ParserResult::NoMatch(NoMatch::new(expected_terminals))
     }
 
     #[must_use]
@@ -62,9 +61,7 @@ impl ParserResult {
                 nodes: vec![Edge::anonymous(Node::nonterminal(new_kind, skipped.nodes))],
                 ..skipped
             }),
-            ParserResult::NoMatch(no_match) => {
-                ParserResult::no_match(Some(new_kind), no_match.expected_terminals)
-            }
+            ParserResult::NoMatch(no_match) => ParserResult::no_match(no_match.expected_terminals),
             ParserResult::PrattOperatorMatch(_) => {
                 unreachable!("PrattOperatorMatch cannot be converted to a nonterminal")
             }
@@ -135,7 +132,7 @@ impl Match {
             .flat_map(|edge| {
                 edge.node
                     .clone()
-                    .cursor_with_offset(TextIndex::ZERO)
+                    .create_cursor(TextIndex::ZERO)
                     .remaining_nodes()
             })
             .all(|edge| {
@@ -216,7 +213,7 @@ impl IncompleteMatch {
             .flat_map(|edge| {
                 edge.node
                     .clone()
-                    .cursor_with_offset(TextIndex::ZERO)
+                    .create_cursor(TextIndex::ZERO)
                     .remaining_nodes()
             })
             .try_fold(0u8, |mut acc, edge| {
@@ -243,18 +240,13 @@ impl IncompleteMatch {
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct NoMatch {
-    /// The nonterminal kind this match is coming from
-    pub kind: Option<NonterminalKind>,
     /// Terminals that would have allowed for more progress. Collected for the purposes of error reporting.
     pub expected_terminals: Vec<TerminalKind>,
 }
 
 impl NoMatch {
-    pub fn new(kind: Option<NonterminalKind>, expected_terminals: Vec<TerminalKind>) -> Self {
-        Self {
-            kind,
-            expected_terminals,
-        }
+    pub fn new(expected_terminals: Vec<TerminalKind>) -> Self {
+        Self { expected_terminals }
     }
 }
 

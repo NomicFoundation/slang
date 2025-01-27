@@ -1,24 +1,30 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use std::collections::BTreeMap;
+use std::rc::Rc;
 
 use metaslang_cst::text_index::TextIndex;
 
-use crate::cst::{Cursor, Node};
+use crate::cst::{Cursor, NonterminalNode};
+use crate::parser::{ParseError, ParseOutput};
 
 #[derive(Clone)]
 pub struct File {
     id: String,
-    tree: Node,
+    tree: Rc<NonterminalNode>,
+    errors: Vec<ParseError>,
 
     resolved_imports: BTreeMap<usize, String>,
 }
 
 impl File {
-    pub(super) fn new(id: String, tree: Node) -> Self {
+    pub(super) fn create(id: String, parse_output: ParseOutput) -> Self {
+        let ParseOutput { tree, errors } = parse_output;
+
         Self {
             id,
             tree,
+            errors,
 
             resolved_imports: BTreeMap::new(),
         }
@@ -28,12 +34,16 @@ impl File {
         &self.id
     }
 
-    pub fn tree(&self) -> &Node {
+    pub fn tree(&self) -> &Rc<NonterminalNode> {
         &self.tree
     }
 
+    pub fn errors(&self) -> &Vec<ParseError> {
+        &self.errors
+    }
+
     pub fn create_tree_cursor(&self) -> Cursor {
-        self.tree.clone().cursor_with_offset(TextIndex::ZERO)
+        Rc::clone(&self.tree).create_cursor(TextIndex::ZERO)
     }
 
     pub(super) fn resolve_import(&mut self, import_path: &Cursor, destination_file_id: String) {

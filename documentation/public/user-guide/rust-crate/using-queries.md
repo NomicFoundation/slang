@@ -8,7 +8,7 @@ If not specified otherwise, let's assume we already parsed a Solidity source and
 
 ## Creating and executing queries
 
-You can create a `Query` struct using `Query::parse`, which accepts a `&str`. These can be then used by `Cursor::query` to execute it.
+You can create a `Query` struct using `Query::create()`, which accepts a `&str`. These can be then used by `Cursor::query()` to execute it.
 
 You can pass multiple queries to a cursor to and efficiently traverse the tree looking for matches. They will be executed concurrently, returning matches in the order they appear in input.
 

@@ -2,7 +2,9 @@
 
 use std::rc::Rc;
 
-use crate::cst::{Edge, Node, TerminalKind, TerminalKindExtensions, TextIndex};
+use crate::cst::{
+    Edge, Node, NonterminalKind, NonterminalNode, TerminalKind, TerminalKindExtensions, TextIndex,
+};
 use crate::parser::lexer::Lexer;
 use crate::parser::parser_support::context::ParserContext;
 use crate::parser::parser_support::parser_result::{
@@ -14,7 +16,7 @@ pub trait ParserFunction<P>
 where
     Self: Fn(&P, &mut ParserContext<'_>) -> ParserResult,
 {
-    fn parse(&self, parser: &P, input: &str) -> ParseOutput;
+    fn parse(&self, parser: &P, input: &str, topmost_kind: NonterminalKind) -> ParseOutput;
 }
 
 impl<P, F> ParserFunction<P> for F
@@ -23,7 +25,7 @@ where
     F: Fn(&P, &mut ParserContext<'_>) -> ParserResult,
 {
     #[allow(clippy::too_many_lines)]
-    fn parse(&self, parser: &P, input: &str) -> ParseOutput {
+    fn parse(&self, parser: &P, input: &str, topmost_kind: NonterminalKind) -> ParseOutput {
         let mut stream = ParserContext::new(input);
         let mut result = self(parser, &mut stream);
 
@@ -48,7 +50,7 @@ where
                 let mut new_children = nonterminal.children.clone();
                 new_children.extend(eof_trivia);
 
-                topmost.node = Node::nonterminal(nonterminal.kind, new_children);
+                topmost.node = Node::nonterminal(topmost_kind, new_children);
             }
         }
 
@@ -64,7 +66,7 @@ where
                 // trivia is already parsed twice, one for each branch. And there's a good reason: each branch might
                 // accept different trivia, so it's not clear what the combination of the two rules should return in a
                 // NoMatch. Therefore, we just parse it again. Note that trivia is anyway cached by the parser (#1119).
-                let mut trivia_nodes = if let ParserResult::Match(matched) =
+                let mut children = if let ParserResult::Match(matched) =
                     Lexer::leading_trivia(parser, &mut stream)
                 {
                     matched.nodes
@@ -73,7 +75,7 @@ where
                 };
 
                 let mut start = TextIndex::ZERO;
-                for edge in &trivia_nodes {
+                for edge in &children {
                     if let Node::Terminal(terminal) = &edge.node {
                         if terminal.kind.is_valid() {
                             start.advance_str(terminal.text.as_str());
@@ -87,15 +89,10 @@ where
                     TerminalKind::UNRECOGNIZED
                 };
                 let node = Node::terminal(kind, input.to_string());
-                let tree = if no_match.kind.is_none() || start.utf8 == 0 {
-                    node
-                } else {
-                    trivia_nodes.push(Edge::anonymous(node));
-                    Node::nonterminal(no_match.kind.unwrap(), trivia_nodes)
-                };
+                children.push(Edge::anonymous(node));
                 ParseOutput {
-                    tree,
-                    errors: vec![ParseError::new(
+                    tree: NonterminalNode::create(topmost_kind, children),
+                    errors: vec![ParseError::create(
                         start..start + input.into(),
                         no_match.expected_terminals,
                     )],
@@ -152,24 +149,24 @@ where
 
                     let start_index = stream.text_index_at(start);
                     let mut errors = stream.into_errors();
-                    errors.push(ParseError::new(
+                    errors.push(ParseError::create(
                         start_index..input.into(),
                         expected_terminals,
                     ));
 
                     ParseOutput {
-                        tree: Node::nonterminal(topmost_node.kind, new_children),
+                        tree: NonterminalNode::create(topmost_node.kind, new_children),
                         errors,
                     }
                 } else {
-                    let tree = Node::Nonterminal(topmost_node);
+                    let tree = topmost_node;
                     let errors = stream.into_errors();
 
                     // Sanity check: Make sure that succesful parse is equivalent to not having any invalid nodes
                     debug_assert_eq!(
                         errors.is_empty(),
-                        tree.clone()
-                            .cursor_with_offset(TextIndex::ZERO)
+                        Rc::clone(&tree)
+                            .create_cursor(TextIndex::ZERO)
                             .remaining_nodes()
                             .all(|edge| edge
                                 .as_terminal()

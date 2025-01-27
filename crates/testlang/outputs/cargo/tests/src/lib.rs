@@ -1,6 +1,6 @@
 #![cfg(test)]
 
-mod errors;
-mod graph;
-mod query;
-mod versions;
+mod bindings;
+mod cst;
+mod parser;
+mod utils;

@@ -60,7 +60,7 @@ impl SeparatedHelper {
                                 kind,
                                 input.content(skipped_range.utf8()),
                             )));
-                            input.emit(ParseError::new(
+                            input.emit(ParseError::create(
                                 skipped_range,
                                 incomplete.expected_terminals,
                             ));
@@ -89,7 +89,7 @@ impl SeparatedHelper {
                 }
                 ParserResult::NoMatch(no_match) => {
                     return if accum.is_empty() {
-                        ParserResult::no_match(None, no_match.expected_terminals)
+                        ParserResult::no_match(no_match.expected_terminals)
                     } else {
                         ParserResult::incomplete_match(accum, no_match.expected_terminals)
                     };

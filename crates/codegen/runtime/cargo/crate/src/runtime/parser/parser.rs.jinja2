@@ -48,10 +48,8 @@ pub enum ParserInitializationError {
 }
 
 impl Parser {
-    pub const ROOT_KIND: NonterminalKind = NonterminalKind::{{ model.kinds.root_kind }};
-
     pub fn create(language_version: Version) -> std::result::Result<Self, ParserInitializationError> {
-        if LanguageFacts::SUPPORTED_VERSIONS.binary_search(&language_version).is_ok() {
+        if LanguageFacts::ALL_VERSIONS.binary_search(&language_version).is_ok() {
             Ok(Self {
                 {%- if not rendering_in_stubs -%}
                     {%- for version in model.breaking_language_versions %}
@@ -70,7 +68,25 @@ impl Parser {
         &self.language_version
     }
 
-    {%- if not rendering_in_stubs -%}
+    pub fn parse_file_contents(&self, input: &str) -> ParseOutput {
+        self.parse_nonterminal(NonterminalKind::{{ model.kinds.root_kind }}, input)
+    }
+
+    {%- if rendering_in_stubs -%}
+
+        pub fn parse_nonterminal(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
+            unreachable!("Attempting to parse in stubs: {kind}: {input}")
+        }
+
+    {%- else -%}
+
+        pub fn parse_nonterminal(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
+            match kind {
+                {%- for parser_name, _ in model.parser.parser_functions -%}
+                    NonterminalKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input, kind),
+                {%- endfor -%}
+            }
+        }
 
         /********************************************
         *         Parser Functions
@@ -101,18 +117,6 @@ impl Parser {
         {% endfor %}
 
     {% endif %}
-
-    pub fn parse(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
-        {%- if rendering_in_stubs -%}
-            unreachable!("Attempting to parse in stubs: {kind}: {input}")
-        {%- else -%}
-            match kind {
-                {%- for parser_name, _ in model.parser.parser_functions -%}
-                    NonterminalKind::{{ parser_name }} => Self::{{ parser_name | snake_case }}.parse(self, input),
-                {%- endfor -%}
-            }
-        {%- endif -%}
-    }
 }
 
 impl Lexer for Parser {
