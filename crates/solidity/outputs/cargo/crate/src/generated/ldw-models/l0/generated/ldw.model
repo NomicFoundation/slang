@@ -1,0 +1,4830 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+model l0::generated {
+
+    //
+    // Terminals
+    //
+
+    TerminalKind = {
+    
+      
+      "AbicoderKeyword" |
+    
+      
+      "AbstractKeyword" |
+    
+      
+      "AddressKeyword" |
+    
+      
+      "AfterKeyword" |
+    
+      
+      "AliasKeyword" |
+    
+      
+      "Ampersand" |
+    
+      
+      "AmpersandAmpersand" |
+    
+      
+      "AmpersandEqual" |
+    
+      
+      "AnonymousKeyword" |
+    
+      
+      "ApplyKeyword" |
+    
+      
+      "AsKeyword" |
+    
+      
+      "AssemblyKeyword" |
+    
+      
+      "Asterisk" |
+    
+      
+      "AsteriskAsterisk" |
+    
+      
+      "AsteriskEqual" |
+    
+      
+      "AutoKeyword" |
+    
+      
+      "Bang" |
+    
+      
+      "BangEqual" |
+    
+      
+      "Bar" |
+    
+      
+      "BarBar" |
+    
+      
+      "BarEqual" |
+    
+      
+      "BoolKeyword" |
+    
+      
+      "BreakKeyword" |
+    
+      
+      "ByteKeyword" |
+    
+      
+      "BytesKeyword" |
+    
+      
+      "CallDataKeyword" |
+    
+      
+      "Caret" |
+    
+      
+      "CaretEqual" |
+    
+      
+      "CaseKeyword" |
+    
+      
+      "CatchKeyword" |
+    
+      
+      "CloseBrace" |
+    
+      
+      "CloseBracket" |
+    
+      
+      "CloseParen" |
+    
+      
+      "Colon" |
+    
+      
+      "ColonEqual" |
+    
+      
+      "Comma" |
+    
+      
+      "ConstantKeyword" |
+    
+      
+      "ConstructorKeyword" |
+    
+      
+      "ContinueKeyword" |
+    
+      
+      "ContractKeyword" |
+    
+      
+      "CopyOfKeyword" |
+    
+      
+      "DaysKeyword" |
+    
+      
+      "DecimalLiteral" |
+    
+      
+      "DefaultKeyword" |
+    
+      
+      "DefineKeyword" |
+    
+      
+      "DeleteKeyword" |
+    
+      
+      "DoKeyword" |
+    
+      
+      "DoubleQuotedHexStringLiteral" |
+    
+      
+      "DoubleQuotedStringLiteral" |
+    
+      
+      "DoubleQuotedUnicodeStringLiteral" |
+    
+      
+      "DoubleQuotedVersionLiteral" |
+    
+      
+      "ElseKeyword" |
+    
+      
+      "EmitKeyword" |
+    
+      
+      "EndOfLine" |
+    
+      
+      "EnumKeyword" |
+    
+      
+      "Equal" |
+    
+      
+      "EqualColon" |
+    
+      
+      "EqualEqual" |
+    
+      
+      "EqualGreaterThan" |
+    
+      
+      "ErrorKeyword" |
+    
+      
+      "EtherKeyword" |
+    
+      
+      "EventKeyword" |
+    
+      
+      "ExperimentalKeyword" |
+    
+      
+      "ExternalKeyword" |
+    
+      
+      "FallbackKeyword" |
+    
+      
+      "FalseKeyword" |
+    
+      
+      "FinalKeyword" |
+    
+      
+      "FinneyKeyword" |
+    
+      
+      "FixedKeyword" |
+    
+      
+      "ForKeyword" |
+    
+      
+      "FromKeyword" |
+    
+      
+      "FunctionKeyword" |
+    
+      
+      "GlobalKeyword" |
+    
+      
+      "GreaterThan" |
+    
+      
+      "GreaterThanEqual" |
+    
+      
+      "GreaterThanGreaterThan" |
+    
+      
+      "GreaterThanGreaterThanEqual" |
+    
+      
+      "GreaterThanGreaterThanGreaterThan" |
+    
+      
+      "GreaterThanGreaterThanGreaterThanEqual" |
+    
+      
+      "GweiKeyword" |
+    
+      
+      "HexKeyword" |
+    
+      
+      "HexLiteral" |
+    
+      
+      "HoursKeyword" |
+    
+      
+      "Identifier" |
+    
+      
+      "IfKeyword" |
+    
+      
+      "ImmutableKeyword" |
+    
+      
+      "ImplementsKeyword" |
+    
+      
+      "ImportKeyword" |
+    
+      
+      "InKeyword" |
+    
+      
+      "IndexedKeyword" |
+    
+      
+      "InlineKeyword" |
+    
+      
+      "IntKeyword" |
+    
+      
+      "InterfaceKeyword" |
+    
+      
+      "InternalKeyword" |
+    
+      
+      "IsKeyword" |
+    
+      
+      "LessThan" |
+    
+      
+      "LessThanEqual" |
+    
+      
+      "LessThanLessThan" |
+    
+      
+      "LessThanLessThanEqual" |
+    
+      
+      "LetKeyword" |
+    
+      
+      "LibraryKeyword" |
+    
+      
+      "MacroKeyword" |
+    
+      
+      "MappingKeyword" |
+    
+      
+      "MatchKeyword" |
+    
+      
+      "MemoryKeyword" |
+    
+      
+      "Minus" |
+    
+      
+      "MinusEqual" |
+    
+      
+      "MinusGreaterThan" |
+    
+      
+      "MinusMinus" |
+    
+      
+      "MinutesKeyword" |
+    
+      
+      "ModifierKeyword" |
+    
+      
+      "MultiLineComment" |
+    
+      
+      "MultiLineNatSpecComment" |
+    
+      
+      "MutableKeyword" |
+    
+      
+      "NewKeyword" |
+    
+      
+      "NullKeyword" |
+    
+      
+      "OfKeyword" |
+    
+      
+      "OpenBrace" |
+    
+      
+      "OpenBracket" |
+    
+      
+      "OpenParen" |
+    
+      
+      "OverrideKeyword" |
+    
+      
+      "PartialKeyword" |
+    
+      
+      "PayableKeyword" |
+    
+      
+      "Percent" |
+    
+      
+      "PercentEqual" |
+    
+      
+      "Period" |
+    
+      
+      "Plus" |
+    
+      
+      "PlusEqual" |
+    
+      
+      "PlusPlus" |
+    
+      
+      "PragmaKeyword" |
+    
+      
+      "PrivateKeyword" |
+    
+      
+      "PromiseKeyword" |
+    
+      
+      "PublicKeyword" |
+    
+      
+      "PureKeyword" |
+    
+      
+      "QuestionMark" |
+    
+      
+      "ReceiveKeyword" |
+    
+      
+      "ReferenceKeyword" |
+    
+      
+      "RelocatableKeyword" |
+    
+      
+      "ReturnKeyword" |
+    
+      
+      "ReturnsKeyword" |
+    
+      
+      "RevertKeyword" |
+    
+      
+      "SealedKeyword" |
+    
+      
+      "SecondsKeyword" |
+    
+      
+      "Semicolon" |
+    
+      
+      "SingleLineComment" |
+    
+      
+      "SingleLineNatSpecComment" |
+    
+      
+      "SingleQuotedHexStringLiteral" |
+    
+      
+      "SingleQuotedStringLiteral" |
+    
+      
+      "SingleQuotedUnicodeStringLiteral" |
+    
+      
+      "SingleQuotedVersionLiteral" |
+    
+      
+      "SizeOfKeyword" |
+    
+      
+      "Slash" |
+    
+      
+      "SlashEqual" |
+    
+      
+      "SolidityKeyword" |
+    
+      
+      "StaticKeyword" |
+    
+      
+      "StorageKeyword" |
+    
+      
+      "StringKeyword" |
+    
+      
+      "StructKeyword" |
+    
+      
+      "SuperKeyword" |
+    
+      
+      "SupportsKeyword" |
+    
+      
+      "SwitchKeyword" |
+    
+      
+      "SzaboKeyword" |
+    
+      
+      "ThisKeyword" |
+    
+      
+      "ThrowKeyword" |
+    
+      
+      "Tilde" |
+    
+      
+      "TransientKeyword" |
+    
+      
+      "TrueKeyword" |
+    
+      
+      "TryKeyword" |
+    
+      
+      "TypeDefKeyword" |
+    
+      
+      "TypeKeyword" |
+    
+      
+      "TypeOfKeyword" |
+    
+      
+      "UfixedKeyword" |
+    
+      
+      "UintKeyword" |
+    
+      
+      "UncheckedKeyword" |
+    
+      
+      "UsingKeyword" |
+    
+      
+      "VarKeyword" |
+    
+      
+      "VersionSpecifier" |
+    
+      
+      "ViewKeyword" |
+    
+      
+      "VirtualKeyword" |
+    
+      
+      "WeeksKeyword" |
+    
+      
+      "WeiKeyword" |
+    
+      
+      "WhileKeyword" |
+    
+      
+      "Whitespace" |
+    
+      
+      "YearsKeyword" |
+    
+      
+      "YulAbstractKeyword" |
+    
+      
+      "YulAddKeyword" |
+    
+      
+      "YulAddModKeyword" |
+    
+      
+      "YulAddressKeyword" |
+    
+      
+      "YulAfterKeyword" |
+    
+      
+      "YulAliasKeyword" |
+    
+      
+      "YulAndKeyword" |
+    
+      
+      "YulAnonymousKeyword" |
+    
+      
+      "YulApplyKeyword" |
+    
+      
+      "YulAsKeyword" |
+    
+      
+      "YulAssemblyKeyword" |
+    
+      
+      "YulAutoKeyword" |
+    
+      
+      "YulBalanceKeyword" |
+    
+      
+      "YulBaseFeeKeyword" |
+    
+      
+      "YulBlobBaseFeeKeyword" |
+    
+      
+      "YulBlobHashKeyword" |
+    
+      
+      "YulBlockHashKeyword" |
+    
+      
+      "YulBoolKeyword" |
+    
+      
+      "YulBreakKeyword" |
+    
+      
+      "YulByteKeyword" |
+    
+      
+      "YulBytesKeyword" |
+    
+      
+      "YulCallCodeKeyword" |
+    
+      
+      "YulCallDataCopyKeyword" |
+    
+      
+      "YulCallDataKeyword" |
+    
+      
+      "YulCallDataLoadKeyword" |
+    
+      
+      "YulCallDataSizeKeyword" |
+    
+      
+      "YulCallKeyword" |
+    
+      
+      "YulCallValueKeyword" |
+    
+      
+      "YulCallerKeyword" |
+    
+      
+      "YulCaseKeyword" |
+    
+      
+      "YulCatchKeyword" |
+    
+      
+      "YulChainIdKeyword" |
+    
+      
+      "YulCoinBaseKeyword" |
+    
+      
+      "YulConstantKeyword" |
+    
+      
+      "YulConstructorKeyword" |
+    
+      
+      "YulContinueKeyword" |
+    
+      
+      "YulContractKeyword" |
+    
+      
+      "YulCopyOfKeyword" |
+    
+      
+      "YulCreate2Keyword" |
+    
+      
+      "YulCreateKeyword" |
+    
+      
+      "YulDaysKeyword" |
+    
+      
+      "YulDecimalLiteral" |
+    
+      
+      "YulDefaultKeyword" |
+    
+      
+      "YulDefineKeyword" |
+    
+      
+      "YulDelegateCallKeyword" |
+    
+      
+      "YulDeleteKeyword" |
+    
+      
+      "YulDifficultyKeyword" |
+    
+      
+      "YulDivKeyword" |
+    
+      
+      "YulDoKeyword" |
+    
+      
+      "YulElseKeyword" |
+    
+      
+      "YulEmitKeyword" |
+    
+      
+      "YulEnumKeyword" |
+    
+      
+      "YulEqKeyword" |
+    
+      
+      "YulEtherKeyword" |
+    
+      
+      "YulEventKeyword" |
+    
+      
+      "YulExpKeyword" |
+    
+      
+      "YulExtCodeCopyKeyword" |
+    
+      
+      "YulExtCodeHashKeyword" |
+    
+      
+      "YulExtCodeSizeKeyword" |
+    
+      
+      "YulExternalKeyword" |
+    
+      
+      "YulFallbackKeyword" |
+    
+      
+      "YulFalseKeyword" |
+    
+      
+      "YulFinalKeyword" |
+    
+      
+      "YulFinneyKeyword" |
+    
+      
+      "YulFixedKeyword" |
+    
+      
+      "YulForKeyword" |
+    
+      
+      "YulFunctionKeyword" |
+    
+      
+      "YulGasKeyword" |
+    
+      
+      "YulGasLimitKeyword" |
+    
+      
+      "YulGasPriceKeyword" |
+    
+      
+      "YulGtKeyword" |
+    
+      
+      "YulGweiKeyword" |
+    
+      
+      "YulHexKeyword" |
+    
+      
+      "YulHexLiteral" |
+    
+      
+      "YulHoursKeyword" |
+    
+      
+      "YulIdentifier" |
+    
+      
+      "YulIfKeyword" |
+    
+      
+      "YulImmutableKeyword" |
+    
+      
+      "YulImplementsKeyword" |
+    
+      
+      "YulImportKeyword" |
+    
+      
+      "YulInKeyword" |
+    
+      
+      "YulIndexedKeyword" |
+    
+      
+      "YulInlineKeyword" |
+    
+      
+      "YulIntKeyword" |
+    
+      
+      "YulInterfaceKeyword" |
+    
+      
+      "YulInternalKeyword" |
+    
+      
+      "YulInvalidKeyword" |
+    
+      
+      "YulIsKeyword" |
+    
+      
+      "YulIsZeroKeyword" |
+    
+      
+      "YulJumpKeyword" |
+    
+      
+      "YulJumpiKeyword" |
+    
+      
+      "YulKeccak256Keyword" |
+    
+      
+      "YulLeaveKeyword" |
+    
+      
+      "YulLetKeyword" |
+    
+      
+      "YulLibraryKeyword" |
+    
+      
+      "YulLog0Keyword" |
+    
+      
+      "YulLog1Keyword" |
+    
+      
+      "YulLog2Keyword" |
+    
+      
+      "YulLog3Keyword" |
+    
+      
+      "YulLog4Keyword" |
+    
+      
+      "YulLtKeyword" |
+    
+      
+      "YulMCopyKeyword" |
+    
+      
+      "YulMLoadKeyword" |
+    
+      
+      "YulMSizeKeyword" |
+    
+      
+      "YulMStore8Keyword" |
+    
+      
+      "YulMStoreKeyword" |
+    
+      
+      "YulMacroKeyword" |
+    
+      
+      "YulMappingKeyword" |
+    
+      
+      "YulMatchKeyword" |
+    
+      
+      "YulMemoryKeyword" |
+    
+      
+      "YulMinutesKeyword" |
+    
+      
+      "YulModKeyword" |
+    
+      
+      "YulModifierKeyword" |
+    
+      
+      "YulMulKeyword" |
+    
+      
+      "YulMulModKeyword" |
+    
+      
+      "YulMutableKeyword" |
+    
+      
+      "YulNewKeyword" |
+    
+      
+      "YulNotKeyword" |
+    
+      
+      "YulNullKeyword" |
+    
+      
+      "YulNumberKeyword" |
+    
+      
+      "YulOfKeyword" |
+    
+      
+      "YulOrKeyword" |
+    
+      
+      "YulOriginKeyword" |
+    
+      
+      "YulOverrideKeyword" |
+    
+      
+      "YulPartialKeyword" |
+    
+      
+      "YulPayableKeyword" |
+    
+      
+      "YulPopKeyword" |
+    
+      
+      "YulPragmaKeyword" |
+    
+      
+      "YulPrevRandaoKeyword" |
+    
+      
+      "YulPrivateKeyword" |
+    
+      
+      "YulPromiseKeyword" |
+    
+      
+      "YulPublicKeyword" |
+    
+      
+      "YulPureKeyword" |
+    
+      
+      "YulReceiveKeyword" |
+    
+      
+      "YulReferenceKeyword" |
+    
+      
+      "YulRelocatableKeyword" |
+    
+      
+      "YulReturnDataCopyKeyword" |
+    
+      
+      "YulReturnDataSizeKeyword" |
+    
+      
+      "YulReturnKeyword" |
+    
+      
+      "YulReturnsKeyword" |
+    
+      
+      "YulRevertKeyword" |
+    
+      
+      "YulSDivKeyword" |
+    
+      
+      "YulSLoadKeyword" |
+    
+      
+      "YulSModKeyword" |
+    
+      
+      "YulSStoreKeyword" |
+    
+      
+      "YulSarKeyword" |
+    
+      
+      "YulSealedKeyword" |
+    
+      
+      "YulSecondsKeyword" |
+    
+      
+      "YulSelfBalanceKeyword" |
+    
+      
+      "YulSelfDestructKeyword" |
+    
+      
+      "YulSgtKeyword" |
+    
+      
+      "YulSha3Keyword" |
+    
+      
+      "YulShlKeyword" |
+    
+      
+      "YulShrKeyword" |
+    
+      
+      "YulSignExtendKeyword" |
+    
+      
+      "YulSizeOfKeyword" |
+    
+      
+      "YulSltKeyword" |
+    
+      
+      "YulStaticCallKeyword" |
+    
+      
+      "YulStaticKeyword" |
+    
+      
+      "YulStopKeyword" |
+    
+      
+      "YulStorageKeyword" |
+    
+      
+      "YulStringKeyword" |
+    
+      
+      "YulStructKeyword" |
+    
+      
+      "YulSubKeyword" |
+    
+      
+      "YulSuicideKeyword" |
+    
+      
+      "YulSuperKeyword" |
+    
+      
+      "YulSupportsKeyword" |
+    
+      
+      "YulSwitchKeyword" |
+    
+      
+      "YulSzaboKeyword" |
+    
+      
+      "YulTLoadKeyword" |
+    
+      
+      "YulTStoreKeyword" |
+    
+      
+      "YulThisKeyword" |
+    
+      
+      "YulThrowKeyword" |
+    
+      
+      "YulTimestampKeyword" |
+    
+      
+      "YulTrueKeyword" |
+    
+      
+      "YulTryKeyword" |
+    
+      
+      "YulTypeDefKeyword" |
+    
+      
+      "YulTypeKeyword" |
+    
+      
+      "YulTypeOfKeyword" |
+    
+      
+      "YulUfixedKeyword" |
+    
+      
+      "YulUintKeyword" |
+    
+      
+      "YulUncheckedKeyword" |
+    
+      
+      "YulUsingKeyword" |
+    
+      
+      "YulVarKeyword" |
+    
+      
+      "YulViewKeyword" |
+    
+      
+      "YulVirtualKeyword" |
+    
+      
+      "YulWeeksKeyword" |
+    
+      
+      "YulWeiKeyword" |
+    
+      
+      "YulWhileKeyword" |
+    
+      
+      "YulXorKeyword" |
+    
+      
+      "YulYearsKeyword" 
+    
+    };
+
+    TerminalNode = {
+      kind: TerminalKind,
+      value: string
+    };
+
+    // 
+    // Sequences:
+    // 
+
+    
+      /**
+       * This node represents a `SourceUnit` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * SourceUnit = (* members: *) SourceUnitMembers;
+       * ```
+       */
+      SourceUnit = {
+          
+              members: SourceUnitMembers
+      };
+    
+      /**
+       * This node represents a `PragmaDirective` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * PragmaDirective = (* pragma_keyword: *) PRAGMA_KEYWORD
+       *                   (* pragma: *) Pragma
+       *                   (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      PragmaDirective = {
+          
+              pragmaKeyword: TerminalNode,
+              pragma: Pragma,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `AbicoderPragma` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
+       *                  (* version: *) IDENTIFIER;
+       * ```
+       */
+      AbicoderPragma = {
+          
+              abicoderKeyword: TerminalNode,
+              version: TerminalNode
+      };
+    
+      /**
+       * This node represents a `ExperimentalPragma` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
+       *                      (* feature: *) ExperimentalFeature;
+       * ```
+       */
+      ExperimentalPragma = {
+          
+              experimentalKeyword: TerminalNode,
+              feature: ExperimentalFeature
+      };
+    
+      /**
+       * This node represents a `VersionPragma` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * VersionPragma = (* solidity_keyword: *) SOLIDITY_KEYWORD
+       *                 (* sets: *) VersionExpressionSets;
+       * ```
+       */
+      VersionPragma = {
+          
+              solidityKeyword: TerminalNode,
+              sets: VersionExpressionSets
+      };
+    
+      /**
+       * This node represents a `VersionRange` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * VersionRange = (* start: *) VersionLiteral
+       *                (* minus: *) MINUS
+       *                (* end: *) VersionLiteral;
+       * ```
+       */
+      VersionRange = {
+          
+              start: VersionLiteral,
+              minus: TerminalNode,
+              end: VersionLiteral
+      };
+    
+      /**
+       * This node represents a `VersionTerm` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * VersionTerm = (* operator: *) VersionOperator?
+       *               (* literal: *) VersionLiteral;
+       * ```
+       */
+      VersionTerm = {
+          
+              operator: option<VersionOperator>,
+              literal: VersionLiteral
+      };
+    
+      /**
+       * This node represents a `ImportDirective` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ImportDirective = (* import_keyword: *) IMPORT_KEYWORD
+       *                   (* clause: *) ImportClause
+       *                   (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      ImportDirective = {
+          
+              importKeyword: TerminalNode,
+              clause: ImportClause,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `PathImport` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * PathImport = (* path: *) StringLiteral
+       *              (* alias: *) ImportAlias?;
+       * ```
+       */
+      PathImport = {
+          
+              path: StringLiteral,
+              alias: option<ImportAlias>
+      };
+    
+      /**
+       * This node represents a `NamedImport` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * NamedImport = (* asterisk: *) ASTERISK
+       *               (* alias: *) ImportAlias
+       *               (* from_keyword: *) FROM_KEYWORD
+       *               (* path: *) StringLiteral;
+       * ```
+       */
+      NamedImport = {
+          
+              asterisk: TerminalNode,
+              alias: ImportAlias,
+              fromKeyword: TerminalNode,
+              path: StringLiteral
+      };
+    
+      /**
+       * This node represents a `ImportDeconstruction` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ImportDeconstruction = (* open_brace: *) OPEN_BRACE
+       *                        (* symbols: *) ImportDeconstructionSymbols
+       *                        (* close_brace: *) CLOSE_BRACE
+       *                        (* from_keyword: *) FROM_KEYWORD
+       *                        (* path: *) StringLiteral;
+       * ```
+       */
+      ImportDeconstruction = {
+          
+              openBrace: TerminalNode,
+              symbols: ImportDeconstructionSymbols,
+              closeBrace: TerminalNode,
+              fromKeyword: TerminalNode,
+              path: StringLiteral
+      };
+    
+      /**
+       * This node represents a `ImportDeconstructionSymbol` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ImportDeconstructionSymbol = (* name: *) IDENTIFIER
+       *                              (* alias: *) ImportAlias?;
+       * ```
+       */
+      ImportDeconstructionSymbol = {
+          
+              name: TerminalNode,
+              alias: option<ImportAlias>
+      };
+    
+      /**
+       * This node represents a `ImportAlias` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ImportAlias = (* as_keyword: *) AS_KEYWORD
+       *               (* identifier: *) IDENTIFIER;
+       * ```
+       */
+      ImportAlias = {
+          
+              asKeyword: TerminalNode,
+              identifier: TerminalNode
+      };
+    
+      /**
+       * This node represents a `UsingDirective` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * UsingDirective = (* using_keyword: *) USING_KEYWORD
+       *                  (* clause: *) UsingClause
+       *                  (* for_keyword: *) FOR_KEYWORD
+       *                  (* target: *) UsingTarget
+       *                  (* global_keyword: *) GLOBAL_KEYWORD? (* Introduced in 0.8.13 *)
+       *                  (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      UsingDirective = {
+          
+              usingKeyword: TerminalNode,
+              clause: UsingClause,
+              forKeyword: TerminalNode,
+              target: UsingTarget,
+              globalKeyword: option<TerminalNode>,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `UsingDeconstruction` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.13 *)
+       * UsingDeconstruction = (* open_brace: *) OPEN_BRACE
+       *                       (* symbols: *) UsingDeconstructionSymbols
+       *                       (* close_brace: *) CLOSE_BRACE;
+       * ```
+       */
+      UsingDeconstruction = {
+          
+              openBrace: TerminalNode,
+              symbols: UsingDeconstructionSymbols,
+              closeBrace: TerminalNode
+      };
+    
+      /**
+       * This node represents a `UsingDeconstructionSymbol` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.13 *)
+       * UsingDeconstructionSymbol = (* name: *) IdentifierPath
+       *                             (* alias: *) UsingAlias?; (* Introduced in 0.8.19 *)
+       * ```
+       */
+      UsingDeconstructionSymbol = {
+          
+              name: IdentifierPath,
+              alias: option<UsingAlias>
+      };
+    
+      /**
+       * This node represents a `UsingAlias` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.19 *)
+       * UsingAlias = (* as_keyword: *) AS_KEYWORD
+       *              (* operator: *) UsingOperator;
+       * ```
+       */
+      UsingAlias = {
+          
+              asKeyword: TerminalNode,
+              operator: UsingOperator
+      };
+    
+      /**
+       * This node represents a `ContractDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
+       *                      (* contract_keyword: *) CONTRACT_KEYWORD
+       *                      (* name: *) IDENTIFIER
+       *                      (* inheritance: *) InheritanceSpecifier?
+       *                      (* open_brace: *) OPEN_BRACE
+       *                      (* members: *) ContractMembers
+       *                      (* close_brace: *) CLOSE_BRACE;
+       * ```
+       */
+      ContractDefinition = {
+          
+              abstractKeyword: option<TerminalNode>,
+              contractKeyword: TerminalNode,
+              name: TerminalNode,
+              inheritance: option<InheritanceSpecifier>,
+              openBrace: TerminalNode,
+              members: ContractMembers,
+              closeBrace: TerminalNode
+      };
+    
+      /**
+       * This node represents a `InheritanceSpecifier` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * InheritanceSpecifier = (* is_keyword: *) IS_KEYWORD
+       *                        (* types: *) InheritanceTypes;
+       * ```
+       */
+      InheritanceSpecifier = {
+          
+              isKeyword: TerminalNode,
+              types: InheritanceTypes
+      };
+    
+      /**
+       * This node represents a `InheritanceType` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * InheritanceType = (* type_name: *) IdentifierPath
+       *                   (* arguments: *) ArgumentsDeclaration?;
+       * ```
+       */
+      InheritanceType = {
+          
+              typeName: IdentifierPath,
+              arguments: option<ArgumentsDeclaration>
+      };
+    
+      /**
+       * This node represents a `InterfaceDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * InterfaceDefinition = (* interface_keyword: *) INTERFACE_KEYWORD
+       *                       (* name: *) IDENTIFIER
+       *                       (* inheritance: *) InheritanceSpecifier?
+       *                       (* open_brace: *) OPEN_BRACE
+       *                       (* members: *) InterfaceMembers
+       *                       (* close_brace: *) CLOSE_BRACE;
+       * ```
+       */
+      InterfaceDefinition = {
+          
+              interfaceKeyword: TerminalNode,
+              name: TerminalNode,
+              inheritance: option<InheritanceSpecifier>,
+              openBrace: TerminalNode,
+              members: InterfaceMembers,
+              closeBrace: TerminalNode
+      };
+    
+      /**
+       * This node represents a `LibraryDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * LibraryDefinition = (* library_keyword: *) LIBRARY_KEYWORD
+       *                     (* name: *) IDENTIFIER
+       *                     (* open_brace: *) OPEN_BRACE
+       *                     (* members: *) LibraryMembers
+       *                     (* close_brace: *) CLOSE_BRACE;
+       * ```
+       */
+      LibraryDefinition = {
+          
+              libraryKeyword: TerminalNode,
+              name: TerminalNode,
+              openBrace: TerminalNode,
+              members: LibraryMembers,
+              closeBrace: TerminalNode
+      };
+    
+      /**
+       * This node represents a `StructDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * StructDefinition = (* struct_keyword: *) STRUCT_KEYWORD
+       *                    (* name: *) IDENTIFIER
+       *                    (* open_brace: *) OPEN_BRACE
+       *                    (* members: *) StructMembers
+       *                    (* close_brace: *) CLOSE_BRACE;
+       * ```
+       */
+      StructDefinition = {
+          
+              structKeyword: TerminalNode,
+              name: TerminalNode,
+              openBrace: TerminalNode,
+              members: StructMembers,
+              closeBrace: TerminalNode
+      };
+    
+      /**
+       * This node represents a `StructMember` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * StructMember = (* type_name: *) TypeName
+       *                (* name: *) IDENTIFIER
+       *                (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      StructMember = {
+          
+              typeName: TypeName,
+              name: TerminalNode,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `EnumDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * EnumDefinition = (* enum_keyword: *) ENUM_KEYWORD
+       *                  (* name: *) IDENTIFIER
+       *                  (* open_brace: *) OPEN_BRACE
+       *                  (* members: *) EnumMembers
+       *                  (* close_brace: *) CLOSE_BRACE;
+       * ```
+       */
+      EnumDefinition = {
+          
+              enumKeyword: TerminalNode,
+              name: TerminalNode,
+              openBrace: TerminalNode,
+              members: EnumMembers,
+              closeBrace: TerminalNode
+      };
+    
+      /**
+       * This node represents a `ConstantDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.7.4 *)
+       * ConstantDefinition = (* type_name: *) TypeName
+       *                      (* constant_keyword: *) CONSTANT_KEYWORD
+       *                      (* name: *) IDENTIFIER
+       *                      (* equal: *) EQUAL
+       *                      (* value: *) Expression
+       *                      (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      ConstantDefinition = {
+          
+              typeName: TypeName,
+              constantKeyword: TerminalNode,
+              name: TerminalNode,
+              equal: TerminalNode,
+              value: Expression,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `StateVariableDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * StateVariableDefinition = (* type_name: *) TypeName
+       *                           (* attributes: *) StateVariableAttributes
+       *                           (* name: *) IDENTIFIER
+       *                           (* value: *) StateVariableDefinitionValue?
+       *                           (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      StateVariableDefinition = {
+          
+              typeName: TypeName,
+              attributes: StateVariableAttributes,
+              name: TerminalNode,
+              value: option<StateVariableDefinitionValue>,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `StateVariableDefinitionValue` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * StateVariableDefinitionValue = (* equal: *) EQUAL
+       *                                (* value: *) Expression;
+       * ```
+       */
+      StateVariableDefinitionValue = {
+          
+              equal: TerminalNode,
+              value: Expression
+      };
+    
+      /**
+       * This node represents a `FunctionDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * FunctionDefinition = (* function_keyword: *) FUNCTION_KEYWORD
+       *                      (* name: *) FunctionName
+       *                      (* parameters: *) ParametersDeclaration
+       *                      (* attributes: *) FunctionAttributes
+       *                      (* returns: *) ReturnsDeclaration?
+       *                      (* body: *) FunctionBody;
+       * ```
+       */
+      FunctionDefinition = {
+          
+              functionKeyword: TerminalNode,
+              name: FunctionName,
+              parameters: ParametersDeclaration,
+              attributes: FunctionAttributes,
+              returns: option<ReturnsDeclaration>,
+              body: FunctionBody
+      };
+    
+      /**
+       * This node represents a `ParametersDeclaration` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ParametersDeclaration = (* open_paren: *) OPEN_PAREN
+       *                         (* parameters: *) Parameters
+       *                         (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      ParametersDeclaration = {
+          
+              openParen: TerminalNode,
+              parameters: Parameters,
+              closeParen: TerminalNode
+      };
+    
+      /**
+       * This node represents a `Parameter` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * Parameter = (* type_name: *) TypeName
+       *             (* storage_location: *) StorageLocation?
+       *             (* name: *) IDENTIFIER?;
+       * ```
+       */
+      Parameter = {
+          
+              typeName: TypeName,
+              storageLocation: option<StorageLocation>,
+              name: option<TerminalNode>
+      };
+    
+      /**
+       * This node represents a `OverrideSpecifier` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * OverrideSpecifier = (* override_keyword: *) OVERRIDE_KEYWORD
+       *                     (* overridden: *) OverridePathsDeclaration?;
+       * ```
+       */
+      OverrideSpecifier = {
+          
+              overrideKeyword: TerminalNode,
+              overridden: option<OverridePathsDeclaration>
+      };
+    
+      /**
+       * This node represents a `OverridePathsDeclaration` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * OverridePathsDeclaration = (* open_paren: *) OPEN_PAREN
+       *                            (* paths: *) OverridePaths
+       *                            (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      OverridePathsDeclaration = {
+          
+              openParen: TerminalNode,
+              paths: OverridePaths,
+              closeParen: TerminalNode
+      };
+    
+      /**
+       * This node represents a `ReturnsDeclaration` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ReturnsDeclaration = (* returns_keyword: *) RETURNS_KEYWORD
+       *                      (* variables: *) ParametersDeclaration;
+       * ```
+       */
+      ReturnsDeclaration = {
+          
+              returnsKeyword: TerminalNode,
+              variables: ParametersDeclaration
+      };
+    
+      /**
+       * This node represents a `ConstructorDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.4.22 *)
+       * ConstructorDefinition = (* constructor_keyword: *) CONSTRUCTOR_KEYWORD
+       *                         (* parameters: *) ParametersDeclaration
+       *                         (* attributes: *) ConstructorAttributes
+       *                         (* body: *) Block;
+       * ```
+       */
+      ConstructorDefinition = {
+          
+              constructorKeyword: TerminalNode,
+              parameters: ParametersDeclaration,
+              attributes: ConstructorAttributes,
+              body: Block
+      };
+    
+      /**
+       * This node represents a `UnnamedFunctionDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Deprecated in 0.6.0 *)
+       * UnnamedFunctionDefinition = (* function_keyword: *) FUNCTION_KEYWORD
+       *                             (* parameters: *) ParametersDeclaration
+       *                             (* attributes: *) UnnamedFunctionAttributes
+       *                             (* body: *) FunctionBody;
+       * ```
+       */
+      UnnamedFunctionDefinition = {
+          
+              functionKeyword: TerminalNode,
+              parameters: ParametersDeclaration,
+              attributes: UnnamedFunctionAttributes,
+              body: FunctionBody
+      };
+    
+      /**
+       * This node represents a `FallbackFunctionDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * FallbackFunctionDefinition = (* fallback_keyword: *) FALLBACK_KEYWORD
+       *                              (* parameters: *) ParametersDeclaration
+       *                              (* attributes: *) FallbackFunctionAttributes
+       *                              (* returns: *) ReturnsDeclaration?
+       *                              (* body: *) FunctionBody;
+       * ```
+       */
+      FallbackFunctionDefinition = {
+          
+              fallbackKeyword: TerminalNode,
+              parameters: ParametersDeclaration,
+              attributes: FallbackFunctionAttributes,
+              returns: option<ReturnsDeclaration>,
+              body: FunctionBody
+      };
+    
+      /**
+       * This node represents a `ReceiveFunctionDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * ReceiveFunctionDefinition = (* receive_keyword: *) RECEIVE_KEYWORD
+       *                             (* parameters: *) ParametersDeclaration
+       *                             (* attributes: *) ReceiveFunctionAttributes
+       *                             (* body: *) FunctionBody;
+       * ```
+       */
+      ReceiveFunctionDefinition = {
+          
+              receiveKeyword: TerminalNode,
+              parameters: ParametersDeclaration,
+              attributes: ReceiveFunctionAttributes,
+              body: FunctionBody
+      };
+    
+      /**
+       * This node represents a `ModifierDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ModifierDefinition = (* modifier_keyword: *) MODIFIER_KEYWORD
+       *                      (* name: *) IDENTIFIER
+       *                      (* parameters: *) ParametersDeclaration?
+       *                      (* attributes: *) ModifierAttributes
+       *                      (* body: *) FunctionBody;
+       * ```
+       */
+      ModifierDefinition = {
+          
+              modifierKeyword: TerminalNode,
+              name: TerminalNode,
+              parameters: option<ParametersDeclaration>,
+              attributes: ModifierAttributes,
+              body: FunctionBody
+      };
+    
+      /**
+       * This node represents a `ModifierInvocation` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ModifierInvocation = (* name: *) IdentifierPath
+       *                      (* arguments: *) ArgumentsDeclaration?;
+       * ```
+       */
+      ModifierInvocation = {
+          
+              name: IdentifierPath,
+              arguments: option<ArgumentsDeclaration>
+      };
+    
+      /**
+       * This node represents a `EventDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * EventDefinition = (* event_keyword: *) EVENT_KEYWORD
+       *                   (* name: *) IDENTIFIER
+       *                   (* parameters: *) EventParametersDeclaration
+       *                   (* anonymous_keyword: *) ANONYMOUS_KEYWORD?
+       *                   (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      EventDefinition = {
+          
+              eventKeyword: TerminalNode,
+              name: TerminalNode,
+              parameters: EventParametersDeclaration,
+              anonymousKeyword: option<TerminalNode>,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `EventParametersDeclaration` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * EventParametersDeclaration = (* open_paren: *) OPEN_PAREN
+       *                              (* parameters: *) EventParameters
+       *                              (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      EventParametersDeclaration = {
+          
+              openParen: TerminalNode,
+              parameters: EventParameters,
+              closeParen: TerminalNode
+      };
+    
+      /**
+       * This node represents a `EventParameter` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * EventParameter = (* type_name: *) TypeName
+       *                  (* indexed_keyword: *) INDEXED_KEYWORD?
+       *                  (* name: *) IDENTIFIER?;
+       * ```
+       */
+      EventParameter = {
+          
+              typeName: TypeName,
+              indexedKeyword: option<TerminalNode>,
+              name: option<TerminalNode>
+      };
+    
+      /**
+       * This node represents a `UserDefinedValueTypeDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.8 *)
+       * UserDefinedValueTypeDefinition = (* type_keyword: *) TYPE_KEYWORD
+       *                                  (* name: *) IDENTIFIER
+       *                                  (* is_keyword: *) IS_KEYWORD
+       *                                  (* value_type: *) ElementaryType
+       *                                  (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      UserDefinedValueTypeDefinition = {
+          
+              typeKeyword: TerminalNode,
+              name: TerminalNode,
+              isKeyword: TerminalNode,
+              valueType: ElementaryType,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `ErrorDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.4 *)
+       * ErrorDefinition = (* error_keyword: *) ERROR_KEYWORD
+       *                   (* name: *) IDENTIFIER
+       *                   (* members: *) ErrorParametersDeclaration
+       *                   (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      ErrorDefinition = {
+          
+              errorKeyword: TerminalNode,
+              name: TerminalNode,
+              members: ErrorParametersDeclaration,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `ErrorParametersDeclaration` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.4 *)
+       * ErrorParametersDeclaration = (* open_paren: *) OPEN_PAREN
+       *                              (* parameters: *) ErrorParameters
+       *                              (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      ErrorParametersDeclaration = {
+          
+              openParen: TerminalNode,
+              parameters: ErrorParameters,
+              closeParen: TerminalNode
+      };
+    
+      /**
+       * This node represents a `ErrorParameter` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.4 *)
+       * ErrorParameter = (* type_name: *) TypeName
+       *                  (* name: *) IDENTIFIER?;
+       * ```
+       */
+      ErrorParameter = {
+          
+              typeName: TypeName,
+              name: option<TerminalNode>
+      };
+    
+      /**
+       * This node represents a `ArrayTypeName` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Postfix unary operator *)
+       * ArrayTypeName = (* operand: *) TypeName
+       *                 (* open_bracket: *) OPEN_BRACKET
+       *                 (* index: *) Expression?
+       *                 (* close_bracket: *) CLOSE_BRACKET;
+       * ```
+       */
+      ArrayTypeName = {
+          
+              operand: TypeName,
+              openBracket: TerminalNode,
+              index: option<Expression>,
+              closeBracket: TerminalNode
+      };
+    
+      /**
+       * This node represents a `FunctionType` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * FunctionType = (* function_keyword: *) FUNCTION_KEYWORD
+       *                (* parameters: *) ParametersDeclaration
+       *                (* attributes: *) FunctionTypeAttributes
+       *                (* returns: *) ReturnsDeclaration?;
+       * ```
+       */
+      FunctionType = {
+          
+              functionKeyword: TerminalNode,
+              parameters: ParametersDeclaration,
+              attributes: FunctionTypeAttributes,
+              returns: option<ReturnsDeclaration>
+      };
+    
+      /**
+       * This node represents a `MappingType` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * MappingType = (* mapping_keyword: *) MAPPING_KEYWORD
+       *               (* open_paren: *) OPEN_PAREN
+       *               (* key_type: *) MappingKey
+       *               (* equal_greater_than: *) EQUAL_GREATER_THAN
+       *               (* value_type: *) MappingValue
+       *               (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      MappingType = {
+          
+              mappingKeyword: TerminalNode,
+              openParen: TerminalNode,
+              keyType: MappingKey,
+              equalGreaterThan: TerminalNode,
+              valueType: MappingValue,
+              closeParen: TerminalNode
+      };
+    
+      /**
+       * This node represents a `MappingKey` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * MappingKey = (* key_type: *) MappingKeyType
+       *              (* name: *) IDENTIFIER?; (* Introduced in 0.8.18 *)
+       * ```
+       */
+      MappingKey = {
+          
+              keyType: MappingKeyType,
+              name: option<TerminalNode>
+      };
+    
+      /**
+       * This node represents a `MappingValue` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * MappingValue = (* type_name: *) TypeName
+       *                (* name: *) IDENTIFIER?; (* Introduced in 0.8.18 *)
+       * ```
+       */
+      MappingValue = {
+          
+              typeName: TypeName,
+              name: option<TerminalNode>
+      };
+    
+      /**
+       * This node represents a `AddressType` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * AddressType = (* address_keyword: *) ADDRESS_KEYWORD
+       *               (* payable_keyword: *) PAYABLE_KEYWORD?;
+       * ```
+       */
+      AddressType = {
+          
+              addressKeyword: TerminalNode,
+              payableKeyword: option<TerminalNode>
+      };
+    
+      /**
+       * This node represents a `Block` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * Block = (* open_brace: *) OPEN_BRACE
+       *         (* statements: *) Statements
+       *         (* close_brace: *) CLOSE_BRACE;
+       * ```
+       */
+      Block = {
+          
+              openBrace: TerminalNode,
+              statements: Statements,
+              closeBrace: TerminalNode
+      };
+    
+      /**
+       * This node represents a `UncheckedBlock` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.0 *)
+       * UncheckedBlock = (* unchecked_keyword: *) UNCHECKED_KEYWORD
+       *                  (* block: *) Block;
+       * ```
+       */
+      UncheckedBlock = {
+          
+              uncheckedKeyword: TerminalNode,
+              block: Block
+      };
+    
+      /**
+       * This node represents a `ExpressionStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ExpressionStatement = (* expression: *) Expression
+       *                       (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      ExpressionStatement = {
+          
+              expression: Expression,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `AssemblyStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * AssemblyStatement = (* assembly_keyword: *) ASSEMBLY_KEYWORD
+       *                     (* label: *) StringLiteral?
+       *                     (* flags: *) AssemblyFlagsDeclaration?
+       *                     (* body: *) YulBlock;
+       * ```
+       */
+      AssemblyStatement = {
+          
+              assemblyKeyword: TerminalNode,
+              label: option<StringLiteral>,
+              flags: option<AssemblyFlagsDeclaration>,
+              body: YulBlock
+      };
+    
+      /**
+       * This node represents a `AssemblyFlagsDeclaration` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
+       *                            (* flags: *) AssemblyFlags
+       *                            (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      AssemblyFlagsDeclaration = {
+          
+              openParen: TerminalNode,
+              flags: AssemblyFlags,
+              closeParen: TerminalNode
+      };
+    
+      /**
+       * This node represents a `TupleDeconstructionStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TupleDeconstructionStatement = (* var_keyword: *) VAR_KEYWORD? (* Deprecated in 0.5.0 *)
+       *                                (* open_paren: *) OPEN_PAREN
+       *                                (* elements: *) TupleDeconstructionElements
+       *                                (* close_paren: *) CLOSE_PAREN
+       *                                (* equal: *) EQUAL
+       *                                (* expression: *) Expression
+       *                                (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      TupleDeconstructionStatement = {
+          
+              varKeyword: option<TerminalNode>,
+              openParen: TerminalNode,
+              elements: TupleDeconstructionElements,
+              closeParen: TerminalNode,
+              equal: TerminalNode,
+              expression: Expression,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `TupleDeconstructionElement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TupleDeconstructionElement = (* member: *) TupleMember?;
+       * ```
+       */
+      TupleDeconstructionElement = {
+          
+              member: option<TupleMember>
+      };
+    
+      /**
+       * This node represents a `TypedTupleMember` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TypedTupleMember = (* type_name: *) TypeName
+       *                    (* storage_location: *) StorageLocation?
+       *                    (* name: *) IDENTIFIER;
+       * ```
+       */
+      TypedTupleMember = {
+          
+              typeName: TypeName,
+              storageLocation: option<StorageLocation>,
+              name: TerminalNode
+      };
+    
+      /**
+       * This node represents a `UntypedTupleMember` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * UntypedTupleMember = (* storage_location: *) StorageLocation?
+       *                      (* name: *) IDENTIFIER;
+       * ```
+       */
+      UntypedTupleMember = {
+          
+              storageLocation: option<StorageLocation>,
+              name: TerminalNode
+      };
+    
+      /**
+       * This node represents a `VariableDeclarationStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * VariableDeclarationStatement = (* variable_type: *) VariableDeclarationType
+       *                                (* storage_location: *) StorageLocation?
+       *                                (* name: *) IDENTIFIER
+       *                                (* value: *) VariableDeclarationValue?
+       *                                (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      VariableDeclarationStatement = {
+          
+              variableType: VariableDeclarationType,
+              storageLocation: option<StorageLocation>,
+              name: TerminalNode,
+              value: option<VariableDeclarationValue>,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `VariableDeclarationValue` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * VariableDeclarationValue = (* equal: *) EQUAL
+       *                            (* expression: *) Expression;
+       * ```
+       */
+      VariableDeclarationValue = {
+          
+              equal: TerminalNode,
+              expression: Expression
+      };
+    
+      /**
+       * This node represents a `IfStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * IfStatement = (* if_keyword: *) IF_KEYWORD
+       *               (* open_paren: *) OPEN_PAREN
+       *               (* condition: *) Expression
+       *               (* close_paren: *) CLOSE_PAREN
+       *               (* body: *) Statement
+       *               (* else_branch: *) ElseBranch?;
+       * ```
+       */
+      IfStatement = {
+          
+              ifKeyword: TerminalNode,
+              openParen: TerminalNode,
+              condition: Expression,
+              closeParen: TerminalNode,
+              body: Statement,
+              elseBranch: option<ElseBranch>
+      };
+    
+      /**
+       * This node represents a `ElseBranch` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ElseBranch = (* else_keyword: *) ELSE_KEYWORD
+       *              (* body: *) Statement;
+       * ```
+       */
+      ElseBranch = {
+          
+              elseKeyword: TerminalNode,
+              body: Statement
+      };
+    
+      /**
+       * This node represents a `ForStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ForStatement = (* for_keyword: *) FOR_KEYWORD
+       *                (* open_paren: *) OPEN_PAREN
+       *                (* initialization: *) ForStatementInitialization
+       *                (* condition: *) ForStatementCondition
+       *                (* iterator: *) Expression?
+       *                (* close_paren: *) CLOSE_PAREN
+       *                (* body: *) Statement;
+       * ```
+       */
+      ForStatement = {
+          
+              forKeyword: TerminalNode,
+              openParen: TerminalNode,
+              initialization: ForStatementInitialization,
+              condition: ForStatementCondition,
+              iterator: option<Expression>,
+              closeParen: TerminalNode,
+              body: Statement
+      };
+    
+      /**
+       * This node represents a `WhileStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * WhileStatement = (* while_keyword: *) WHILE_KEYWORD
+       *                  (* open_paren: *) OPEN_PAREN
+       *                  (* condition: *) Expression
+       *                  (* close_paren: *) CLOSE_PAREN
+       *                  (* body: *) Statement;
+       * ```
+       */
+      WhileStatement = {
+          
+              whileKeyword: TerminalNode,
+              openParen: TerminalNode,
+              condition: Expression,
+              closeParen: TerminalNode,
+              body: Statement
+      };
+    
+      /**
+       * This node represents a `DoWhileStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * DoWhileStatement = (* do_keyword: *) DO_KEYWORD
+       *                    (* body: *) Statement
+       *                    (* while_keyword: *) WHILE_KEYWORD
+       *                    (* open_paren: *) OPEN_PAREN
+       *                    (* condition: *) Expression
+       *                    (* close_paren: *) CLOSE_PAREN
+       *                    (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      DoWhileStatement = {
+          
+              doKeyword: TerminalNode,
+              body: Statement,
+              whileKeyword: TerminalNode,
+              openParen: TerminalNode,
+              condition: Expression,
+              closeParen: TerminalNode,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `ContinueStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ContinueStatement = (* continue_keyword: *) CONTINUE_KEYWORD
+       *                     (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      ContinueStatement = {
+          
+              continueKeyword: TerminalNode,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `BreakStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * BreakStatement = (* break_keyword: *) BREAK_KEYWORD
+       *                  (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      BreakStatement = {
+          
+              breakKeyword: TerminalNode,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `ReturnStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ReturnStatement = (* return_keyword: *) RETURN_KEYWORD
+       *                   (* expression: *) Expression?
+       *                   (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      ReturnStatement = {
+          
+              returnKeyword: TerminalNode,
+              expression: option<Expression>,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `EmitStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.4.21 *)
+       * EmitStatement = (* emit_keyword: *) EMIT_KEYWORD
+       *                 (* event: *) IdentifierPath
+       *                 (* arguments: *) ArgumentsDeclaration
+       *                 (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      EmitStatement = {
+          
+              emitKeyword: TerminalNode,
+              event: IdentifierPath,
+              arguments: ArgumentsDeclaration,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `TryStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * TryStatement = (* try_keyword: *) TRY_KEYWORD
+       *                (* expression: *) Expression
+       *                (* returns: *) ReturnsDeclaration?
+       *                (* body: *) Block
+       *                (* catch_clauses: *) CatchClauses;
+       * ```
+       */
+      TryStatement = {
+          
+              tryKeyword: TerminalNode,
+              expression: Expression,
+              returns: option<ReturnsDeclaration>,
+              body: Block,
+              catchClauses: CatchClauses
+      };
+    
+      /**
+       * This node represents a `CatchClause` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * CatchClause = (* catch_keyword: *) CATCH_KEYWORD
+       *               (* error: *) CatchClauseError?
+       *               (* body: *) Block;
+       * ```
+       */
+      CatchClause = {
+          
+              catchKeyword: TerminalNode,
+              error: option<CatchClauseError>,
+              body: Block
+      };
+    
+      /**
+       * This node represents a `CatchClauseError` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * CatchClauseError = (* name: *) IDENTIFIER?
+       *                    (* parameters: *) ParametersDeclaration;
+       * ```
+       */
+      CatchClauseError = {
+          
+              name: option<TerminalNode>,
+              parameters: ParametersDeclaration
+      };
+    
+      /**
+       * This node represents a `RevertStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.4 *)
+       * RevertStatement = (* revert_keyword: *) REVERT_KEYWORD
+       *                   (* error: *) IdentifierPath?
+       *                   (* arguments: *) ArgumentsDeclaration
+       *                   (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      RevertStatement = {
+          
+              revertKeyword: TerminalNode,
+              error: option<IdentifierPath>,
+              arguments: ArgumentsDeclaration,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `ThrowStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Deprecated in 0.5.0 *)
+       * ThrowStatement = (* throw_keyword: *) THROW_KEYWORD
+       *                  (* semicolon: *) SEMICOLON;
+       * ```
+       */
+      ThrowStatement = {
+          
+              throwKeyword: TerminalNode,
+              semicolon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `AssignmentExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) BAR_EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) PLUS_EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) MINUS_EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) CARET_EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) SLASH_EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) PERCENT_EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) ASTERISK_EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) AMPERSAND_EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) LESS_THAN_LESS_THAN_EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) GREATER_THAN_GREATER_THAN_EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AssignmentExpression = (* left_operand: *) Expression
+       *                        (* operator: *) GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUAL
+       *                        (* right_operand: *) Expression;
+       * ```
+       */
+      AssignmentExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `ConditionalExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Postfix unary operator *)
+       * ConditionalExpression = (* operand: *) Expression
+       *                         (* question_mark: *) QUESTION_MARK
+       *                         (* true_expression: *) Expression
+       *                         (* colon: *) COLON
+       *                         (* false_expression: *) Expression;
+       * ```
+       */
+      ConditionalExpression = {
+          
+              operand: Expression,
+              questionMark: TerminalNode,
+              trueExpression: Expression,
+              colon: TerminalNode,
+              falseExpression: Expression
+      };
+    
+      /**
+       * This node represents a `OrExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * OrExpression = (* left_operand: *) Expression
+       *                (* operator: *) BAR_BAR
+       *                (* right_operand: *) Expression;
+       * ```
+       */
+      OrExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `AndExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * AndExpression = (* left_operand: *) Expression
+       *                 (* operator: *) AMPERSAND_AMPERSAND
+       *                 (* right_operand: *) Expression;
+       * ```
+       */
+      AndExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `EqualityExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * EqualityExpression = (* left_operand: *) Expression
+       *                      (* operator: *) EQUAL_EQUAL
+       *                      (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * EqualityExpression = (* left_operand: *) Expression
+       *                      (* operator: *) BANG_EQUAL
+       *                      (* right_operand: *) Expression;
+       * ```
+       */
+      EqualityExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `ComparisonExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * ComparisonExpression = (* left_operand: *) Expression
+       *                        (* operator: *) LESS_THAN
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * ComparisonExpression = (* left_operand: *) Expression
+       *                        (* operator: *) GREATER_THAN
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * ComparisonExpression = (* left_operand: *) Expression
+       *                        (* operator: *) LESS_THAN_EQUAL
+       *                        (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * ComparisonExpression = (* left_operand: *) Expression
+       *                        (* operator: *) GREATER_THAN_EQUAL
+       *                        (* right_operand: *) Expression;
+       * ```
+       */
+      ComparisonExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `BitwiseOrExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * BitwiseOrExpression = (* left_operand: *) Expression
+       *                       (* operator: *) BAR
+       *                       (* right_operand: *) Expression;
+       * ```
+       */
+      BitwiseOrExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `BitwiseXorExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * BitwiseXorExpression = (* left_operand: *) Expression
+       *                        (* operator: *) CARET
+       *                        (* right_operand: *) Expression;
+       * ```
+       */
+      BitwiseXorExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `BitwiseAndExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * BitwiseAndExpression = (* left_operand: *) Expression
+       *                        (* operator: *) AMPERSAND
+       *                        (* right_operand: *) Expression;
+       * ```
+       */
+      BitwiseAndExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `ShiftExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * ShiftExpression = (* left_operand: *) Expression
+       *                   (* operator: *) LESS_THAN_LESS_THAN
+       *                   (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * ShiftExpression = (* left_operand: *) Expression
+       *                   (* operator: *) GREATER_THAN_GREATER_THAN
+       *                   (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * ShiftExpression = (* left_operand: *) Expression
+       *                   (* operator: *) GREATER_THAN_GREATER_THAN_GREATER_THAN
+       *                   (* right_operand: *) Expression;
+       * ```
+       */
+      ShiftExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `AdditiveExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * AdditiveExpression = (* left_operand: *) Expression
+       *                      (* operator: *) PLUS
+       *                      (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * AdditiveExpression = (* left_operand: *) Expression
+       *                      (* operator: *) MINUS
+       *                      (* right_operand: *) Expression;
+       * ```
+       */
+      AdditiveExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `MultiplicativeExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * MultiplicativeExpression = (* left_operand: *) Expression
+       *                            (* operator: *) ASTERISK
+       *                            (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * MultiplicativeExpression = (* left_operand: *) Expression
+       *                            (* operator: *) SLASH
+       *                            (* right_operand: *) Expression;
+       * 
+       * (* Left-associative binary operator *)
+       * MultiplicativeExpression = (* left_operand: *) Expression
+       *                            (* operator: *) PERCENT
+       *                            (* right_operand: *) Expression;
+       * ```
+       */
+      MultiplicativeExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `ExponentiationExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Left-associative binary operator *)
+       * (* Deprecated in 0.8.0 *)
+       * ExponentiationExpression = (* left_operand: *) Expression
+       *                            (* operator: *) ASTERISK_ASTERISK
+       *                            (* right_operand: *) Expression;
+       * 
+       * (* Right-associative binary operator *)
+       * (* Introduced in 0.8.0 *)
+       * ExponentiationExpression = (* left_operand: *) Expression
+       *                            (* operator: *) ASTERISK_ASTERISK
+       *                            (* right_operand: *) Expression;
+       * ```
+       */
+      ExponentiationExpression = {
+          
+              leftOperand: Expression,
+              operator: TerminalNode,
+              rightOperand: Expression
+      };
+    
+      /**
+       * This node represents a `PostfixExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Postfix unary operator *)
+       * PostfixExpression = (* operand: *) Expression
+       *                     (* operator: *) PLUS_PLUS;
+       * 
+       * (* Postfix unary operator *)
+       * PostfixExpression = (* operand: *) Expression
+       *                     (* operator: *) MINUS_MINUS;
+       * ```
+       */
+      PostfixExpression = {
+          
+              operand: Expression,
+              operator: TerminalNode
+      };
+    
+      /**
+       * This node represents a `PrefixExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Prefix unary operator *)
+       * PrefixExpression = (* operator: *) PLUS_PLUS
+       *                    (* operand: *) Expression;
+       * 
+       * (* Prefix unary operator *)
+       * PrefixExpression = (* operator: *) MINUS_MINUS
+       *                    (* operand: *) Expression;
+       * 
+       * (* Prefix unary operator *)
+       * PrefixExpression = (* operator: *) TILDE
+       *                    (* operand: *) Expression;
+       * 
+       * (* Prefix unary operator *)
+       * PrefixExpression = (* operator: *) BANG
+       *                    (* operand: *) Expression;
+       * 
+       * (* Prefix unary operator *)
+       * PrefixExpression = (* operator: *) MINUS
+       *                    (* operand: *) Expression;
+       * 
+       * (* Prefix unary operator *)
+       * (* Deprecated in 0.5.0 *)
+       * PrefixExpression = (* operator: *) PLUS
+       *                    (* operand: *) Expression;
+       * 
+       * (* Prefix unary operator *)
+       * PrefixExpression = (* operator: *) DELETE_KEYWORD
+       *                    (* operand: *) Expression;
+       * ```
+       */
+      PrefixExpression = {
+          
+              operator: TerminalNode,
+              operand: Expression
+      };
+    
+      /**
+       * This node represents a `FunctionCallExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Postfix unary operator *)
+       * FunctionCallExpression = (* operand: *) Expression
+       *                          (* arguments: *) ArgumentsDeclaration;
+       * ```
+       */
+      FunctionCallExpression = {
+          
+              operand: Expression,
+              arguments: ArgumentsDeclaration
+      };
+    
+      /**
+       * This node represents a `CallOptionsExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Postfix unary operator *)
+       * (* Introduced in 0.6.2 *)
+       * CallOptionsExpression = (* operand: *) Expression
+       *                         (* open_brace: *) OPEN_BRACE
+       *                         (* options: *) CallOptions
+       *                         (* close_brace: *) CLOSE_BRACE;
+       * ```
+       */
+      CallOptionsExpression = {
+          
+              operand: Expression,
+              openBrace: TerminalNode,
+              options: CallOptions,
+              closeBrace: TerminalNode
+      };
+    
+      /**
+       * This node represents a `MemberAccessExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Postfix unary operator *)
+       * MemberAccessExpression = (* operand: *) Expression
+       *                          (* period: *) PERIOD
+       *                          (* member: *) IDENTIFIER;
+       * ```
+       */
+      MemberAccessExpression = {
+          
+              operand: Expression,
+              period: TerminalNode,
+              member: TerminalNode
+      };
+    
+      /**
+       * This node represents a `IndexAccessExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Postfix unary operator *)
+       * IndexAccessExpression = (* operand: *) Expression
+       *                         (* open_bracket: *) OPEN_BRACKET
+       *                         (* start: *) Expression?
+       *                         (* end: *) IndexAccessEnd?
+       *                         (* close_bracket: *) CLOSE_BRACKET;
+       * ```
+       */
+      IndexAccessExpression = {
+          
+              operand: Expression,
+              openBracket: TerminalNode,
+              start: option<Expression>,
+              end: option<IndexAccessEnd>,
+              closeBracket: TerminalNode
+      };
+    
+      /**
+       * This node represents a `IndexAccessEnd` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * IndexAccessEnd = (* colon: *) COLON
+       *                  (* end: *) Expression?;
+       * ```
+       */
+      IndexAccessEnd = {
+          
+              colon: TerminalNode,
+              end: option<Expression>
+      };
+    
+      /**
+       * This node represents a `PositionalArgumentsDeclaration` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * PositionalArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
+       *                                  (* arguments: *) PositionalArguments
+       *                                  (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      PositionalArgumentsDeclaration = {
+          
+              openParen: TerminalNode,
+              arguments: PositionalArguments,
+              closeParen: TerminalNode
+      };
+    
+      /**
+       * This node represents a `NamedArgumentsDeclaration` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * NamedArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
+       *                             (* arguments: *) NamedArgumentGroup?
+       *                             (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      NamedArgumentsDeclaration = {
+          
+              openParen: TerminalNode,
+              arguments: option<NamedArgumentGroup>,
+              closeParen: TerminalNode
+      };
+    
+      /**
+       * This node represents a `NamedArgumentGroup` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * NamedArgumentGroup = (* open_brace: *) OPEN_BRACE
+       *                      (* arguments: *) NamedArguments
+       *                      (* close_brace: *) CLOSE_BRACE;
+       * ```
+       */
+      NamedArgumentGroup = {
+          
+              openBrace: TerminalNode,
+              arguments: NamedArguments,
+              closeBrace: TerminalNode
+      };
+    
+      /**
+       * This node represents a `NamedArgument` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * NamedArgument = (* name: *) IDENTIFIER
+       *                 (* colon: *) COLON
+       *                 (* value: *) Expression;
+       * ```
+       */
+      NamedArgument = {
+          
+              name: TerminalNode,
+              colon: TerminalNode,
+              value: Expression
+      };
+    
+      /**
+       * This node represents a `TypeExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.5.3 *)
+       * TypeExpression = (* type_keyword: *) TYPE_KEYWORD
+       *                  (* open_paren: *) OPEN_PAREN
+       *                  (* type_name: *) TypeName
+       *                  (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      TypeExpression = {
+          
+              typeKeyword: TerminalNode,
+              openParen: TerminalNode,
+              typeName: TypeName,
+              closeParen: TerminalNode
+      };
+    
+      /**
+       * This node represents a `NewExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * NewExpression = (* new_keyword: *) NEW_KEYWORD
+       *                 (* type_name: *) TypeName;
+       * ```
+       */
+      NewExpression = {
+          
+              newKeyword: TerminalNode,
+              typeName: TypeName
+      };
+    
+      /**
+       * This node represents a `TupleExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TupleExpression = (* open_paren: *) OPEN_PAREN
+       *                   (* items: *) TupleValues
+       *                   (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      TupleExpression = {
+          
+              openParen: TerminalNode,
+              items: TupleValues,
+              closeParen: TerminalNode
+      };
+    
+      /**
+       * This node represents a `TupleValue` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TupleValue = (* expression: *) Expression?;
+       * ```
+       */
+      TupleValue = {
+          
+              expression: option<Expression>
+      };
+    
+      /**
+       * This node represents a `ArrayExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ArrayExpression = (* open_bracket: *) OPEN_BRACKET
+       *                   (* items: *) ArrayValues
+       *                   (* close_bracket: *) CLOSE_BRACKET;
+       * ```
+       */
+      ArrayExpression = {
+          
+              openBracket: TerminalNode,
+              items: ArrayValues,
+              closeBracket: TerminalNode
+      };
+    
+      /**
+       * This node represents a `HexNumberExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * HexNumberExpression = (* literal: *) HEX_LITERAL
+       *                       (* unit: *) NumberUnit?; (* Deprecated in 0.5.0 *)
+       * ```
+       */
+      HexNumberExpression = {
+          
+              literal: TerminalNode,
+              unit: option<NumberUnit>
+      };
+    
+      /**
+       * This node represents a `DecimalNumberExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * DecimalNumberExpression = (* literal: *) DECIMAL_LITERAL
+       *                           (* unit: *) NumberUnit?;
+       * ```
+       */
+      DecimalNumberExpression = {
+          
+              literal: TerminalNode,
+              unit: option<NumberUnit>
+      };
+    
+      /**
+       * This node represents a `YulBlock` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulBlock = (* open_brace: *) OPEN_BRACE
+       *            (* statements: *) YulStatements
+       *            (* close_brace: *) CLOSE_BRACE;
+       * ```
+       */
+      YulBlock = {
+          
+              openBrace: TerminalNode,
+              statements: YulStatements,
+              closeBrace: TerminalNode
+      };
+    
+      /**
+       * This node represents a `YulFunctionDefinition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulFunctionDefinition = (* function_keyword: *) YUL_FUNCTION_KEYWORD
+       *                         (* name: *) YUL_IDENTIFIER
+       *                         (* parameters: *) YulParametersDeclaration
+       *                         (* returns: *) YulReturnsDeclaration?
+       *                         (* body: *) YulBlock;
+       * ```
+       */
+      YulFunctionDefinition = {
+          
+              functionKeyword: TerminalNode,
+              name: TerminalNode,
+              parameters: YulParametersDeclaration,
+              returns: option<YulReturnsDeclaration>,
+              body: YulBlock
+      };
+    
+      /**
+       * This node represents a `YulParametersDeclaration` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulParametersDeclaration = (* open_paren: *) OPEN_PAREN
+       *                            (* parameters: *) YulParameters
+       *                            (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      YulParametersDeclaration = {
+          
+              openParen: TerminalNode,
+              parameters: YulParameters,
+              closeParen: TerminalNode
+      };
+    
+      /**
+       * This node represents a `YulReturnsDeclaration` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulReturnsDeclaration = (* minus_greater_than: *) MINUS_GREATER_THAN
+       *                         (* variables: *) YulVariableNames;
+       * ```
+       */
+      YulReturnsDeclaration = {
+          
+              minusGreaterThan: TerminalNode,
+              variables: YulVariableNames
+      };
+    
+      /**
+       * This node represents a `YulVariableDeclarationStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulVariableDeclarationStatement = (* let_keyword: *) YUL_LET_KEYWORD
+       *                                   (* variables: *) YulVariableNames
+       *                                   (* value: *) YulVariableDeclarationValue?;
+       * ```
+       */
+      YulVariableDeclarationStatement = {
+          
+              letKeyword: TerminalNode,
+              variables: YulVariableNames,
+              value: option<YulVariableDeclarationValue>
+      };
+    
+      /**
+       * This node represents a `YulVariableDeclarationValue` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulVariableDeclarationValue = (* assignment: *) YulAssignmentOperator
+       *                               (* expression: *) YulExpression;
+       * ```
+       */
+      YulVariableDeclarationValue = {
+          
+              assignment: YulAssignmentOperator,
+              expression: YulExpression
+      };
+    
+      /**
+       * This node represents a `YulVariableAssignmentStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulVariableAssignmentStatement = (* variables: *) YulPaths
+       *                                  (* assignment: *) YulAssignmentOperator
+       *                                  (* expression: *) YulExpression;
+       * ```
+       */
+      YulVariableAssignmentStatement = {
+          
+              variables: YulPaths,
+              assignment: YulAssignmentOperator,
+              expression: YulExpression
+      };
+    
+      /**
+       * This node represents a `YulColonAndEqual` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Deprecated in 0.5.5 *)
+       * YulColonAndEqual = (* colon: *) COLON
+       *                    (* equal: *) EQUAL;
+       * ```
+       */
+      YulColonAndEqual = {
+          
+              colon: TerminalNode,
+              equal: TerminalNode
+      };
+    
+      /**
+       * This node represents a `YulStackAssignmentStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Deprecated in 0.5.0 *)
+       * YulStackAssignmentStatement = (* assignment: *) YulStackAssignmentOperator
+       *                               (* variable: *) YUL_IDENTIFIER;
+       * ```
+       */
+      YulStackAssignmentStatement = {
+          
+              assignment: YulStackAssignmentOperator,
+              variable: TerminalNode
+      };
+    
+      /**
+       * This node represents a `YulEqualAndColon` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Deprecated in 0.5.0 *)
+       * YulEqualAndColon = (* equal: *) EQUAL
+       *                    (* colon: *) COLON;
+       * ```
+       */
+      YulEqualAndColon = {
+          
+              equal: TerminalNode,
+              colon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `YulIfStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulIfStatement = (* if_keyword: *) YUL_IF_KEYWORD
+       *                  (* condition: *) YulExpression
+       *                  (* body: *) YulBlock;
+       * ```
+       */
+      YulIfStatement = {
+          
+              ifKeyword: TerminalNode,
+              condition: YulExpression,
+              body: YulBlock
+      };
+    
+      /**
+       * This node represents a `YulForStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulForStatement = (* for_keyword: *) YUL_FOR_KEYWORD
+       *                   (* initialization: *) YulBlock
+       *                   (* condition: *) YulExpression
+       *                   (* iterator: *) YulBlock
+       *                   (* body: *) YulBlock;
+       * ```
+       */
+      YulForStatement = {
+          
+              forKeyword: TerminalNode,
+              initialization: YulBlock,
+              condition: YulExpression,
+              iterator: YulBlock,
+              body: YulBlock
+      };
+    
+      /**
+       * This node represents a `YulSwitchStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulSwitchStatement = (* switch_keyword: *) YUL_SWITCH_KEYWORD
+       *                      (* expression: *) YulExpression
+       *                      (* cases: *) YulSwitchCases;
+       * ```
+       */
+      YulSwitchStatement = {
+          
+              switchKeyword: TerminalNode,
+              expression: YulExpression,
+              cases: YulSwitchCases
+      };
+    
+      /**
+       * This node represents a `YulDefaultCase` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulDefaultCase = (* default_keyword: *) YUL_DEFAULT_KEYWORD
+       *                  (* body: *) YulBlock;
+       * ```
+       */
+      YulDefaultCase = {
+          
+              defaultKeyword: TerminalNode,
+              body: YulBlock
+      };
+    
+      /**
+       * This node represents a `YulValueCase` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulValueCase = (* case_keyword: *) YUL_CASE_KEYWORD
+       *                (* value: *) YulLiteral
+       *                (* body: *) YulBlock;
+       * ```
+       */
+      YulValueCase = {
+          
+              caseKeyword: TerminalNode,
+              value: YulLiteral,
+              body: YulBlock
+      };
+    
+      /**
+       * This node represents a `YulLeaveStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * YulLeaveStatement = (* leave_keyword: *) YUL_LEAVE_KEYWORD;
+       * ```
+       */
+      YulLeaveStatement = {
+          
+              leaveKeyword: TerminalNode
+      };
+    
+      /**
+       * This node represents a `YulBreakStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulBreakStatement = (* break_keyword: *) YUL_BREAK_KEYWORD;
+       * ```
+       */
+      YulBreakStatement = {
+          
+              breakKeyword: TerminalNode
+      };
+    
+      /**
+       * This node represents a `YulContinueStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulContinueStatement = (* continue_keyword: *) YUL_CONTINUE_KEYWORD;
+       * ```
+       */
+      YulContinueStatement = {
+          
+              continueKeyword: TerminalNode
+      };
+    
+      /**
+       * This node represents a `YulLabel` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Deprecated in 0.5.0 *)
+       * YulLabel = (* label: *) YUL_IDENTIFIER
+       *            (* colon: *) COLON;
+       * ```
+       */
+      YulLabel = {
+          
+              label: TerminalNode,
+              colon: TerminalNode
+      };
+    
+      /**
+       * This node represents a `YulFunctionCallExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Postfix unary operator *)
+       * YulFunctionCallExpression = (* operand: *) YulExpression
+       *                             (* open_paren: *) OPEN_PAREN
+       *                             (* arguments: *) YulArguments
+       *                             (* close_paren: *) CLOSE_PAREN;
+       * ```
+       */
+      YulFunctionCallExpression = {
+          
+              operand: YulExpression,
+              openParen: TerminalNode,
+              arguments: YulArguments,
+              closeParen: TerminalNode
+      };
+    
+
+    // 
+    // Choices:
+    // 
+
+    
+      /**
+       * This node represents a `SourceUnitMember` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * SourceUnitMember = (* variant: *) PragmaDirective
+       *                  | (* variant: *) ImportDirective
+       *                  | (* variant: *) ContractDefinition
+       *                  | (* variant: *) InterfaceDefinition
+       *                  | (* variant: *) LibraryDefinition
+       *                  | (* variant: *) StructDefinition (* Introduced in 0.6.0 *)
+       *                  | (* variant: *) EnumDefinition (* Introduced in 0.6.0 *)
+       *                  | (* variant: *) FunctionDefinition (* Introduced in 0.7.1 *)
+       *                  | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
+       *                  | (* variant: *) UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
+       *                  | (* variant: *) UsingDirective (* Introduced in 0.8.13 *)
+       *                  | (* variant: *) EventDefinition (* Introduced in 0.8.22 *)
+       *                  | (* variant: *) ConstantDefinition; (* Introduced in 0.7.4 *)
+       * ```
+       */
+      SourceUnitMember = {
+        
+          PragmaDirective |
+          ImportDirective |
+          ContractDefinition |
+          InterfaceDefinition |
+          LibraryDefinition |
+          StructDefinition |
+          EnumDefinition |
+          FunctionDefinition |
+          ErrorDefinition |
+          UserDefinedValueTypeDefinition |
+          UsingDirective |
+          EventDefinition |
+          ConstantDefinition 
+      };
+    
+      /**
+       * This node represents a `Pragma` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * Pragma = (* variant: *) AbicoderPragma
+       *        | (* variant: *) ExperimentalPragma
+       *        | (* variant: *) VersionPragma;
+       * ```
+       */
+      Pragma = {
+        
+          AbicoderPragma |
+          ExperimentalPragma |
+          VersionPragma 
+      };
+    
+      /**
+       * This node represents a `ExperimentalFeature` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ExperimentalFeature = (* variant: *) IDENTIFIER
+       *                     | (* variant: *) StringLiteral;
+       * ```
+       */
+      ExperimentalFeature = {
+        
+          StringLiteral |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `VersionExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * VersionExpression = (* variant: *) VersionRange
+       *                   | (* variant: *) VersionTerm;
+       * ```
+       */
+      VersionExpression = {
+        
+          VersionRange |
+          VersionTerm 
+      };
+    
+      /**
+       * This node represents a `VersionOperator` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * VersionOperator = (* variant: *) CARET
+       *                 | (* variant: *) TILDE
+       *                 | (* variant: *) EQUAL
+       *                 | (* variant: *) LESS_THAN
+       *                 | (* variant: *) GREATER_THAN
+       *                 | (* variant: *) LESS_THAN_EQUAL
+       *                 | (* variant: *) GREATER_THAN_EQUAL;
+       * ```
+       */
+      VersionOperator = {
+        
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `VersionLiteral` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * VersionLiteral = (* variant: *) SimpleVersionLiteral
+       *                | (* variant: *) SINGLE_QUOTED_VERSION_LITERAL
+       *                | (* variant: *) DOUBLE_QUOTED_VERSION_LITERAL;
+       * ```
+       */
+      VersionLiteral = {
+        
+          SimpleVersionLiteral |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `ImportClause` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ImportClause = (* variant: *) PathImport
+       *              | (* variant: *) NamedImport
+       *              | (* variant: *) ImportDeconstruction;
+       * ```
+       */
+      ImportClause = {
+        
+          PathImport |
+          NamedImport |
+          ImportDeconstruction 
+      };
+    
+      /**
+       * This node represents a `UsingClause` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * UsingClause = (* variant: *) IdentifierPath
+       *             | (* variant: *) UsingDeconstruction; (* Introduced in 0.8.13 *)
+       * ```
+       */
+      UsingClause = {
+        
+          IdentifierPath |
+          UsingDeconstruction 
+      };
+    
+      /**
+       * This node represents a `UsingOperator` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.19 *)
+       * UsingOperator = (* variant: *) AMPERSAND
+       *               | (* variant: *) ASTERISK
+       *               | (* variant: *) BANG_EQUAL
+       *               | (* variant: *) BAR
+       *               | (* variant: *) CARET
+       *               | (* variant: *) EQUAL_EQUAL
+       *               | (* variant: *) GREATER_THAN
+       *               | (* variant: *) GREATER_THAN_EQUAL
+       *               | (* variant: *) LESS_THAN
+       *               | (* variant: *) LESS_THAN_EQUAL
+       *               | (* variant: *) MINUS
+       *               | (* variant: *) PERCENT
+       *               | (* variant: *) PLUS
+       *               | (* variant: *) SLASH
+       *               | (* variant: *) TILDE;
+       * ```
+       */
+      UsingOperator = {
+        
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `UsingTarget` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * UsingTarget = (* variant: *) TypeName
+       *             | (* variant: *) ASTERISK;
+       * ```
+       */
+      UsingTarget = {
+        
+          TypeName |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `ContractMember` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ContractMember = (* variant: *) UsingDirective
+       *                | (* variant: *) FunctionDefinition
+       *                | (* variant: *) ConstructorDefinition (* Introduced in 0.4.22 *)
+       *                | (* variant: *) ReceiveFunctionDefinition (* Introduced in 0.6.0 *)
+       *                | (* variant: *) FallbackFunctionDefinition (* Introduced in 0.6.0 *)
+       *                | (* variant: *) UnnamedFunctionDefinition (* Deprecated in 0.6.0 *)
+       *                | (* variant: *) ModifierDefinition
+       *                | (* variant: *) StructDefinition
+       *                | (* variant: *) EnumDefinition
+       *                | (* variant: *) EventDefinition
+       *                | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
+       *                | (* variant: *) UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
+       *                | (* variant: *) StateVariableDefinition;
+       * ```
+       */
+      ContractMember = {
+        
+          UsingDirective |
+          FunctionDefinition |
+          ConstructorDefinition |
+          ReceiveFunctionDefinition |
+          FallbackFunctionDefinition |
+          UnnamedFunctionDefinition |
+          ModifierDefinition |
+          StructDefinition |
+          EnumDefinition |
+          EventDefinition |
+          ErrorDefinition |
+          UserDefinedValueTypeDefinition |
+          StateVariableDefinition 
+      };
+    
+      /**
+       * This node represents a `StateVariableAttribute` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * StateVariableAttribute = (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
+       *                        | (* variant: *) CONSTANT_KEYWORD
+       *                        | (* variant: *) INTERNAL_KEYWORD
+       *                        | (* variant: *) PRIVATE_KEYWORD
+       *                        | (* variant: *) PUBLIC_KEYWORD
+       *                        | (* variant: *) IMMUTABLE_KEYWORD (* Introduced in 0.6.5 *)
+       *                        | (* variant: *) TRANSIENT_KEYWORD; (* Introduced in 0.8.27 *)
+       * ```
+       */
+      StateVariableAttribute = {
+        
+          OverrideSpecifier |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `FunctionName` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * FunctionName = (* variant: *) IDENTIFIER
+       *              | (* variant: *) FALLBACK_KEYWORD
+       *              | (* variant: *) RECEIVE_KEYWORD;
+       * ```
+       */
+      FunctionName = {
+        
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `FunctionAttribute` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * FunctionAttribute = (* variant: *) ModifierInvocation
+       *                   | (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
+       *                   | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
+       *                   | (* variant: *) EXTERNAL_KEYWORD
+       *                   | (* variant: *) INTERNAL_KEYWORD
+       *                   | (* variant: *) PAYABLE_KEYWORD
+       *                   | (* variant: *) PRIVATE_KEYWORD
+       *                   | (* variant: *) PUBLIC_KEYWORD
+       *                   | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 *)
+       *                   | (* variant: *) VIEW_KEYWORD (* Introduced in 0.4.16 *)
+       *                   | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
+       * ```
+       */
+      FunctionAttribute = {
+        
+          ModifierInvocation |
+          OverrideSpecifier |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `FunctionBody` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * FunctionBody = (* variant: *) Block
+       *              | (* variant: *) SEMICOLON;
+       * ```
+       */
+      FunctionBody = {
+        
+          Block |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `ConstructorAttribute` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.4.22 *)
+       * ConstructorAttribute = (* variant: *) ModifierInvocation
+       *                      | (* variant: *) INTERNAL_KEYWORD
+       *                      | (* variant: *) OVERRIDE_KEYWORD (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
+       *                      | (* variant: *) PAYABLE_KEYWORD
+       *                      | (* variant: *) PUBLIC_KEYWORD
+       *                      | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
+       * ```
+       */
+      ConstructorAttribute = {
+        
+          ModifierInvocation |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `UnnamedFunctionAttribute` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Deprecated in 0.6.0 *)
+       * UnnamedFunctionAttribute = (* variant: *) ModifierInvocation
+       *                          | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
+       *                          | (* variant: *) EXTERNAL_KEYWORD
+       *                          | (* variant: *) INTERNAL_KEYWORD (* Deprecated in 0.5.0 *)
+       *                          | (* variant: *) PAYABLE_KEYWORD
+       *                          | (* variant: *) PRIVATE_KEYWORD (* Deprecated in 0.5.0 *)
+       *                          | (* variant: *) PUBLIC_KEYWORD (* Deprecated in 0.5.0 *)
+       *                          | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
+       *                          | (* variant: *) VIEW_KEYWORD; (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
+       * ```
+       */
+      UnnamedFunctionAttribute = {
+        
+          ModifierInvocation |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `FallbackFunctionAttribute` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * FallbackFunctionAttribute = (* variant: *) ModifierInvocation
+       *                           | (* variant: *) OverrideSpecifier
+       *                           | (* variant: *) EXTERNAL_KEYWORD
+       *                           | (* variant: *) PAYABLE_KEYWORD
+       *                           | (* variant: *) PURE_KEYWORD
+       *                           | (* variant: *) VIEW_KEYWORD
+       *                           | (* variant: *) VIRTUAL_KEYWORD;
+       * ```
+       */
+      FallbackFunctionAttribute = {
+        
+          ModifierInvocation |
+          OverrideSpecifier |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `ReceiveFunctionAttribute` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * ReceiveFunctionAttribute = (* variant: *) ModifierInvocation
+       *                          | (* variant: *) OverrideSpecifier
+       *                          | (* variant: *) EXTERNAL_KEYWORD
+       *                          | (* variant: *) PAYABLE_KEYWORD
+       *                          | (* variant: *) VIRTUAL_KEYWORD;
+       * ```
+       */
+      ReceiveFunctionAttribute = {
+        
+          ModifierInvocation |
+          OverrideSpecifier |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `ModifierAttribute` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ModifierAttribute = (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
+       *                   | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
+       * ```
+       */
+      ModifierAttribute = {
+        
+          OverrideSpecifier |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `TypeName` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TypeName = (* variant: *) ArrayTypeName
+       *          | (* variant: *) FunctionType
+       *          | (* variant: *) MappingType
+       *          | (* variant: *) ElementaryType
+       *          | (* variant: *) IdentifierPath;
+       * ```
+       */
+      TypeName = {
+        
+          ArrayTypeName |
+          FunctionType |
+          MappingType |
+          ElementaryType |
+          IdentifierPath 
+      };
+    
+      /**
+       * This node represents a `FunctionTypeAttribute` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * FunctionTypeAttribute = (* variant: *) INTERNAL_KEYWORD
+       *                       | (* variant: *) EXTERNAL_KEYWORD
+       *                       | (* variant: *) PRIVATE_KEYWORD
+       *                       | (* variant: *) PUBLIC_KEYWORD
+       *                       | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
+       *                       | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 *)
+       *                       | (* variant: *) VIEW_KEYWORD (* Introduced in 0.4.16 *)
+       *                       | (* variant: *) PAYABLE_KEYWORD;
+       * ```
+       */
+      FunctionTypeAttribute = {
+        
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `MappingKeyType` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * MappingKeyType = (* variant: *) ElementaryType
+       *                | (* variant: *) IdentifierPath;
+       * ```
+       */
+      MappingKeyType = {
+        
+          ElementaryType |
+          IdentifierPath 
+      };
+    
+      /**
+       * This node represents a `ElementaryType` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ElementaryType = (* variant: *) BOOL_KEYWORD
+       *                | (* variant: *) BYTE_KEYWORD (* Deprecated in 0.8.0 *)
+       *                | (* variant: *) STRING_KEYWORD
+       *                | (* variant: *) AddressType
+       *                | (* variant: *) BYTES_KEYWORD
+       *                | (* variant: *) INT_KEYWORD
+       *                | (* variant: *) UINT_KEYWORD
+       *                | (* variant: *) FIXED_KEYWORD
+       *                | (* variant: *) UFIXED_KEYWORD;
+       * ```
+       */
+      ElementaryType = {
+        
+          AddressType |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `Statement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * Statement = (* variant: *) IfStatement
+       *           | (* variant: *) ForStatement
+       *           | (* variant: *) WhileStatement
+       *           | (* variant: *) DoWhileStatement
+       *           | (* variant: *) ContinueStatement
+       *           | (* variant: *) BreakStatement
+       *           | (* variant: *) ReturnStatement
+       *           | (* variant: *) ThrowStatement (* Deprecated in 0.5.0 *)
+       *           | (* variant: *) EmitStatement (* Introduced in 0.4.21 *)
+       *           | (* variant: *) TryStatement (* Introduced in 0.6.0 *)
+       *           | (* variant: *) RevertStatement (* Introduced in 0.8.4 *)
+       *           | (* variant: *) AssemblyStatement
+       *           | (* variant: *) Block
+       *           | (* variant: *) UncheckedBlock (* Introduced in 0.8.0 *)
+       *           | (* variant: *) TupleDeconstructionStatement
+       *           | (* variant: *) VariableDeclarationStatement
+       *           | (* variant: *) ExpressionStatement;
+       * ```
+       */
+      Statement = {
+        
+          IfStatement |
+          ForStatement |
+          WhileStatement |
+          DoWhileStatement |
+          ContinueStatement |
+          BreakStatement |
+          ReturnStatement |
+          ThrowStatement |
+          EmitStatement |
+          TryStatement |
+          RevertStatement |
+          AssemblyStatement |
+          Block |
+          UncheckedBlock |
+          TupleDeconstructionStatement |
+          VariableDeclarationStatement |
+          ExpressionStatement 
+      };
+    
+      /**
+       * This node represents a `TupleMember` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TupleMember = (* variant: *) TypedTupleMember
+       *             | (* variant: *) UntypedTupleMember;
+       * ```
+       */
+      TupleMember = {
+        
+          TypedTupleMember |
+          UntypedTupleMember 
+      };
+    
+      /**
+       * This node represents a `VariableDeclarationType` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * VariableDeclarationType = (* variant: *) TypeName
+       *                         | (* variant: *) VAR_KEYWORD; (* Deprecated in 0.5.0 *)
+       * ```
+       */
+      VariableDeclarationType = {
+        
+          TypeName |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `StorageLocation` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * StorageLocation = (* variant: *) MEMORY_KEYWORD
+       *                 | (* variant: *) STORAGE_KEYWORD
+       *                 | (* variant: *) CALL_DATA_KEYWORD; (* Introduced in 0.5.0 *)
+       * ```
+       */
+      StorageLocation = {
+        
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `ForStatementInitialization` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ForStatementInitialization = (* variant: *) TupleDeconstructionStatement
+       *                            | (* variant: *) VariableDeclarationStatement
+       *                            | (* variant: *) ExpressionStatement
+       *                            | (* variant: *) SEMICOLON;
+       * ```
+       */
+      ForStatementInitialization = {
+        
+          TupleDeconstructionStatement |
+          VariableDeclarationStatement |
+          ExpressionStatement |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `ForStatementCondition` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ForStatementCondition = (* variant: *) ExpressionStatement
+       *                       | (* variant: *) SEMICOLON;
+       * ```
+       */
+      ForStatementCondition = {
+        
+          ExpressionStatement |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `Expression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * Expression = (* variant: *) AssignmentExpression
+       *            | (* variant: *) ConditionalExpression
+       *            | (* variant: *) OrExpression
+       *            | (* variant: *) AndExpression
+       *            | (* variant: *) EqualityExpression
+       *            | (* variant: *) ComparisonExpression
+       *            | (* variant: *) BitwiseOrExpression
+       *            | (* variant: *) BitwiseXorExpression
+       *            | (* variant: *) BitwiseAndExpression
+       *            | (* variant: *) ShiftExpression
+       *            | (* variant: *) AdditiveExpression
+       *            | (* variant: *) MultiplicativeExpression
+       *            | (* variant: *) ExponentiationExpression
+       *            | (* variant: *) PostfixExpression
+       *            | (* variant: *) PrefixExpression
+       *            | (* variant: *) FunctionCallExpression
+       *            | (* variant: *) CallOptionsExpression
+       *            | (* variant: *) MemberAccessExpression
+       *            | (* variant: *) IndexAccessExpression
+       *            | (* variant: *) NewExpression
+       *            | (* variant: *) TupleExpression
+       *            | (* variant: *) TypeExpression (* Introduced in 0.5.3 *)
+       *            | (* variant: *) ArrayExpression
+       *            | (* variant: *) HexNumberExpression
+       *            | (* variant: *) DecimalNumberExpression
+       *            | (* variant: *) StringExpression
+       *            | (* variant: *) ElementaryType
+       *            | (* variant: *) PAYABLE_KEYWORD (* Introduced in 0.6.0 *)
+       *            | (* variant: *) THIS_KEYWORD
+       *            | (* variant: *) SUPER_KEYWORD
+       *            | (* variant: *) TRUE_KEYWORD
+       *            | (* variant: *) FALSE_KEYWORD
+       *            | (* variant: *) IDENTIFIER;
+       * ```
+       */
+      Expression = {
+        
+          AssignmentExpression |
+          ConditionalExpression |
+          OrExpression |
+          AndExpression |
+          EqualityExpression |
+          ComparisonExpression |
+          BitwiseOrExpression |
+          BitwiseXorExpression |
+          BitwiseAndExpression |
+          ShiftExpression |
+          AdditiveExpression |
+          MultiplicativeExpression |
+          ExponentiationExpression |
+          PostfixExpression |
+          PrefixExpression |
+          FunctionCallExpression |
+          CallOptionsExpression |
+          MemberAccessExpression |
+          IndexAccessExpression |
+          NewExpression |
+          TupleExpression |
+          TypeExpression |
+          ArrayExpression |
+          HexNumberExpression |
+          DecimalNumberExpression |
+          StringExpression |
+          ElementaryType |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `ArgumentsDeclaration` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ArgumentsDeclaration = (* variant: *) PositionalArgumentsDeclaration
+       *                      | (* variant: *) NamedArgumentsDeclaration;
+       * ```
+       */
+      ArgumentsDeclaration = {
+        
+          PositionalArgumentsDeclaration |
+          NamedArgumentsDeclaration 
+      };
+    
+      /**
+       * This node represents a `NumberUnit` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * NumberUnit = (* variant: *) WEI_KEYWORD
+       *            | (* variant: *) GWEI_KEYWORD (* Introduced in 0.6.11 *)
+       *            | (* variant: *) SZABO_KEYWORD (* Deprecated in 0.7.0 *)
+       *            | (* variant: *) FINNEY_KEYWORD (* Deprecated in 0.7.0 *)
+       *            | (* variant: *) ETHER_KEYWORD
+       *            | (* variant: *) SECONDS_KEYWORD
+       *            | (* variant: *) MINUTES_KEYWORD
+       *            | (* variant: *) HOURS_KEYWORD
+       *            | (* variant: *) DAYS_KEYWORD
+       *            | (* variant: *) WEEKS_KEYWORD
+       *            | (* variant: *) YEARS_KEYWORD; (* Deprecated in 0.5.0 *)
+       * ```
+       */
+      NumberUnit = {
+        
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `StringExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * StringExpression = (* variant: *) StringLiteral (* Deprecated in 0.5.14 *)
+       *                  | (* variant: *) StringLiterals (* Introduced in 0.5.14 *)
+       *                  | (* variant: *) HexStringLiteral (* Deprecated in 0.5.14 *)
+       *                  | (* variant: *) HexStringLiterals (* Introduced in 0.5.14 *)
+       *                  | (* variant: *) UnicodeStringLiterals; (* Introduced in 0.7.0 *)
+       * ```
+       */
+      StringExpression = {
+        
+          StringLiteral |
+          StringLiterals |
+          HexStringLiteral |
+          HexStringLiterals |
+          UnicodeStringLiterals 
+      };
+    
+      /**
+       * This node represents a `StringLiteral` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * StringLiteral = (* variant: *) SINGLE_QUOTED_STRING_LITERAL
+       *               | (* variant: *) DOUBLE_QUOTED_STRING_LITERAL;
+       * ```
+       */
+      StringLiteral = {
+        
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `HexStringLiteral` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * HexStringLiteral = (* variant: *) SINGLE_QUOTED_HEX_STRING_LITERAL
+       *                  | (* variant: *) DOUBLE_QUOTED_HEX_STRING_LITERAL;
+       * ```
+       */
+      HexStringLiteral = {
+        
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `UnicodeStringLiteral` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.7.0 *)
+       * UnicodeStringLiteral = (* variant: *) SINGLE_QUOTED_UNICODE_STRING_LITERAL
+       *                      | (* variant: *) DOUBLE_QUOTED_UNICODE_STRING_LITERAL;
+       * ```
+       */
+      UnicodeStringLiteral = {
+        
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `YulStatement` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulStatement = (* variant: *) YulBlock
+       *              | (* variant: *) YulFunctionDefinition
+       *              | (* variant: *) YulStackAssignmentStatement (* Deprecated in 0.5.0 *)
+       *              | (* variant: *) YulIfStatement
+       *              | (* variant: *) YulForStatement
+       *              | (* variant: *) YulSwitchStatement
+       *              | (* variant: *) YulLeaveStatement (* Introduced in 0.6.0 *)
+       *              | (* variant: *) YulBreakStatement
+       *              | (* variant: *) YulContinueStatement
+       *              | (* variant: *) YulVariableAssignmentStatement
+       *              | (* variant: *) YulLabel (* Deprecated in 0.5.0 *)
+       *              | (* variant: *) YulVariableDeclarationStatement
+       *              | (* variant: *) YulExpression;
+       * ```
+       */
+      YulStatement = {
+        
+          YulBlock |
+          YulFunctionDefinition |
+          YulStackAssignmentStatement |
+          YulIfStatement |
+          YulForStatement |
+          YulSwitchStatement |
+          YulLeaveStatement |
+          YulBreakStatement |
+          YulContinueStatement |
+          YulVariableAssignmentStatement |
+          YulLabel |
+          YulVariableDeclarationStatement |
+          YulExpression 
+      };
+    
+      /**
+       * This node represents a `YulAssignmentOperator` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulAssignmentOperator = (* variant: *) COLON_EQUAL
+       *                       | (* variant: *) YulColonAndEqual; (* Deprecated in 0.5.5 *)
+       * ```
+       */
+      YulAssignmentOperator = {
+        
+          YulColonAndEqual |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `YulStackAssignmentOperator` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Deprecated in 0.5.0 *)
+       * YulStackAssignmentOperator = (* variant: *) EQUAL_COLON
+       *                            | (* variant: *) YulEqualAndColon;
+       * ```
+       */
+      YulStackAssignmentOperator = {
+        
+          YulEqualAndColon |
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `YulSwitchCase` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulSwitchCase = (* variant: *) YulDefaultCase
+       *               | (* variant: *) YulValueCase;
+       * ```
+       */
+      YulSwitchCase = {
+        
+          YulDefaultCase |
+          YulValueCase 
+      };
+    
+      /**
+       * This node represents a `YulExpression` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulExpression = (* variant: *) YulFunctionCallExpression
+       *               | (* variant: *) YulLiteral
+       *               | (* variant: *) YulBuiltInFunction
+       *               | (* variant: *) YulPath;
+       * ```
+       */
+      YulExpression = {
+        
+          YulFunctionCallExpression |
+          YulLiteral |
+          YulBuiltInFunction |
+          YulPath 
+      };
+    
+      /**
+       * This node represents a `YulBuiltInFunction` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulBuiltInFunction = (* variant: *) YUL_ADD_KEYWORD
+       *                    | (* variant: *) YUL_ADD_MOD_KEYWORD
+       *                    | (* variant: *) YUL_ADDRESS_KEYWORD
+       *                    | (* variant: *) YUL_AND_KEYWORD
+       *                    | (* variant: *) YUL_BALANCE_KEYWORD
+       *                    | (* variant: *) YUL_BLOCK_HASH_KEYWORD
+       *                    | (* variant: *) YUL_BYTE_KEYWORD
+       *                    | (* variant: *) YUL_CALL_CODE_KEYWORD
+       *                    | (* variant: *) YUL_CALL_DATA_COPY_KEYWORD
+       *                    | (* variant: *) YUL_CALL_DATA_LOAD_KEYWORD
+       *                    | (* variant: *) YUL_CALL_DATA_SIZE_KEYWORD
+       *                    | (* variant: *) YUL_CALLER_KEYWORD
+       *                    | (* variant: *) YUL_CALL_KEYWORD
+       *                    | (* variant: *) YUL_CALL_VALUE_KEYWORD
+       *                    | (* variant: *) YUL_COIN_BASE_KEYWORD
+       *                    | (* variant: *) YUL_CREATE_KEYWORD
+       *                    | (* variant: *) YUL_DELEGATE_CALL_KEYWORD
+       *                    | (* variant: *) YUL_DIV_KEYWORD
+       *                    | (* variant: *) YUL_EQ_KEYWORD
+       *                    | (* variant: *) YUL_EXP_KEYWORD
+       *                    | (* variant: *) YUL_EXT_CODE_COPY_KEYWORD
+       *                    | (* variant: *) YUL_EXT_CODE_SIZE_KEYWORD
+       *                    | (* variant: *) YUL_GAS_KEYWORD
+       *                    | (* variant: *) YUL_GAS_LIMIT_KEYWORD
+       *                    | (* variant: *) YUL_GAS_PRICE_KEYWORD
+       *                    | (* variant: *) YUL_GT_KEYWORD
+       *                    | (* variant: *) YUL_INVALID_KEYWORD
+       *                    | (* variant: *) YUL_IS_ZERO_KEYWORD
+       *                    | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
+       *                    | (* variant: *) YUL_JUMPI_KEYWORD (* Deprecated in 0.5.0 *)
+       *                    | (* variant: *) YUL_LOG_0_KEYWORD
+       *                    | (* variant: *) YUL_LOG_1_KEYWORD
+       *                    | (* variant: *) YUL_LOG_2_KEYWORD
+       *                    | (* variant: *) YUL_LOG_3_KEYWORD
+       *                    | (* variant: *) YUL_LOG_4_KEYWORD
+       *                    | (* variant: *) YUL_LT_KEYWORD
+       *                    | (* variant: *) YUL_M_LOAD_KEYWORD
+       *                    | (* variant: *) YUL_MOD_KEYWORD
+       *                    | (* variant: *) YUL_M_SIZE_KEYWORD
+       *                    | (* variant: *) YUL_M_STORE_8_KEYWORD
+       *                    | (* variant: *) YUL_M_STORE_KEYWORD
+       *                    | (* variant: *) YUL_MUL_KEYWORD
+       *                    | (* variant: *) YUL_MUL_MOD_KEYWORD
+       *                    | (* variant: *) YUL_NOT_KEYWORD
+       *                    | (* variant: *) YUL_NUMBER_KEYWORD
+       *                    | (* variant: *) YUL_ORIGIN_KEYWORD
+       *                    | (* variant: *) YUL_OR_KEYWORD
+       *                    | (* variant: *) YUL_POP_KEYWORD
+       *                    | (* variant: *) YUL_RETURN_KEYWORD
+       *                    | (* variant: *) YUL_REVERT_KEYWORD
+       *                    | (* variant: *) YUL_S_DIV_KEYWORD
+       *                    | (* variant: *) YUL_SELF_DESTRUCT_KEYWORD
+       *                    | (* variant: *) YUL_SGT_KEYWORD
+       *                    | (* variant: *) YUL_SIGN_EXTEND_KEYWORD
+       *                    | (* variant: *) YUL_S_LOAD_KEYWORD
+       *                    | (* variant: *) YUL_SLT_KEYWORD
+       *                    | (* variant: *) YUL_S_MOD_KEYWORD
+       *                    | (* variant: *) YUL_S_STORE_KEYWORD
+       *                    | (* variant: *) YUL_STOP_KEYWORD
+       *                    | (* variant: *) YUL_SUB_KEYWORD
+       *                    | (* variant: *) YUL_TIMESTAMP_KEYWORD
+       *                    | (* variant: *) YUL_XOR_KEYWORD
+       *                    | (* variant: *) YUL_KECCAK_256_KEYWORD (* Introduced in 0.4.12 *)
+       *                    | (* variant: *) YUL_SHA_3_KEYWORD (* Deprecated in 0.5.0 *)
+       *                    | (* variant: *) YUL_SUICIDE_KEYWORD (* Deprecated in 0.5.0 *)
+       *                    | (* variant: *) YUL_RETURN_DATA_COPY_KEYWORD (* Introduced in 0.4.12 *)
+       *                    | (* variant: *) YUL_RETURN_DATA_SIZE_KEYWORD (* Introduced in 0.4.12 *)
+       *                    | (* variant: *) YUL_STATIC_CALL_KEYWORD (* Introduced in 0.4.12 *)
+       *                    | (* variant: *) YUL_CREATE_2_KEYWORD (* Introduced in 0.4.12 *)
+       *                    | (* variant: *) YUL_EXT_CODE_HASH_KEYWORD (* Introduced in 0.5.0 *)
+       *                    | (* variant: *) YUL_SAR_KEYWORD
+       *                    | (* variant: *) YUL_SHL_KEYWORD
+       *                    | (* variant: *) YUL_SHR_KEYWORD
+       *                    | (* variant: *) YUL_CHAIN_ID_KEYWORD
+       *                    | (* variant: *) YUL_SELF_BALANCE_KEYWORD
+       *                    | (* variant: *) YUL_BASE_FEE_KEYWORD (* Introduced in 0.8.7 *)
+       *                    | (* variant: *) YUL_DIFFICULTY_KEYWORD (* Deprecated in 0.8.18 *)
+       *                    | (* variant: *) YUL_PREV_RANDAO_KEYWORD (* Introduced in 0.8.18 *)
+       *                    | (* variant: *) YUL_BLOB_BASE_FEE_KEYWORD (* Introduced in 0.8.24 *)
+       *                    | (* variant: *) YUL_BLOB_HASH_KEYWORD (* Introduced in 0.8.24 *)
+       *                    | (* variant: *) YUL_T_LOAD_KEYWORD (* Introduced in 0.8.24 *)
+       *                    | (* variant: *) YUL_T_STORE_KEYWORD (* Introduced in 0.8.24 *)
+       *                    | (* variant: *) YUL_M_COPY_KEYWORD; (* Introduced in 0.8.24 *)
+       * ```
+       */
+      YulBuiltInFunction = {
+        
+          TerminalNode 
+      };
+    
+      /**
+       * This node represents a `YulLiteral` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
+       *            | (* variant: *) YUL_FALSE_KEYWORD
+       *            | (* variant: *) YUL_DECIMAL_LITERAL
+       *            | (* variant: *) YUL_HEX_LITERAL
+       *            | (* variant: *) HexStringLiteral
+       *            | (* variant: *) StringLiteral;
+       * ```
+       */
+      YulLiteral = {
+        
+          HexStringLiteral |
+          StringLiteral |
+          TerminalNode 
+      };
+    
+
+    // 
+    // Repeated:
+    // 
+
+    
+      /**
+       * This node represents a `SourceUnitMembers` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * SourceUnitMembers = (* item: *) SourceUnitMember*;
+       * ```
+       */
+      SourceUnitMembers = {item: set<SourceUnitMember>};
+    
+      /**
+       * This node represents a `VersionExpressionSet` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * VersionExpressionSet = (* item: *) VersionExpression+;
+       * ```
+       */
+      VersionExpressionSet = {item: set<VersionExpression>};
+    
+      /**
+       * This node represents a `ContractMembers` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ContractMembers = (* item: *) ContractMember*;
+       * ```
+       */
+      ContractMembers = {item: set<ContractMember>};
+    
+      /**
+       * This node represents a `InterfaceMembers` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * InterfaceMembers = (* item: *) ContractMember*;
+       * ```
+       */
+      InterfaceMembers = {item: set<ContractMember>};
+    
+      /**
+       * This node represents a `LibraryMembers` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * LibraryMembers = (* item: *) ContractMember*;
+       * ```
+       */
+      LibraryMembers = {item: set<ContractMember>};
+    
+      /**
+       * This node represents a `StructMembers` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * StructMembers = (* item: *) StructMember*;
+       * ```
+       */
+      StructMembers = {item: set<StructMember>};
+    
+      /**
+       * This node represents a `StateVariableAttributes` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * StateVariableAttributes = (* item: *) StateVariableAttribute*;
+       * ```
+       */
+      StateVariableAttributes = {item: set<StateVariableAttribute>};
+    
+      /**
+       * This node represents a `FunctionAttributes` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * FunctionAttributes = (* item: *) FunctionAttribute*;
+       * ```
+       */
+      FunctionAttributes = {item: set<FunctionAttribute>};
+    
+      /**
+       * This node represents a `ConstructorAttributes` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.4.22 *)
+       * ConstructorAttributes = (* item: *) ConstructorAttribute*;
+       * ```
+       */
+      ConstructorAttributes = {item: set<ConstructorAttribute>};
+    
+      /**
+       * This node represents a `UnnamedFunctionAttributes` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Deprecated in 0.6.0 *)
+       * UnnamedFunctionAttributes = (* item: *) UnnamedFunctionAttribute*;
+       * ```
+       */
+      UnnamedFunctionAttributes = {item: set<UnnamedFunctionAttribute>};
+    
+      /**
+       * This node represents a `FallbackFunctionAttributes` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * FallbackFunctionAttributes = (* item: *) FallbackFunctionAttribute*;
+       * ```
+       */
+      FallbackFunctionAttributes = {item: set<FallbackFunctionAttribute>};
+    
+      /**
+       * This node represents a `ReceiveFunctionAttributes` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * ReceiveFunctionAttributes = (* item: *) ReceiveFunctionAttribute*;
+       * ```
+       */
+      ReceiveFunctionAttributes = {item: set<ReceiveFunctionAttribute>};
+    
+      /**
+       * This node represents a `ModifierAttributes` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ModifierAttributes = (* item: *) ModifierAttribute*;
+       * ```
+       */
+      ModifierAttributes = {item: set<ModifierAttribute>};
+    
+      /**
+       * This node represents a `FunctionTypeAttributes` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * FunctionTypeAttributes = (* item: *) FunctionTypeAttribute*;
+       * ```
+       */
+      FunctionTypeAttributes = {item: set<FunctionTypeAttribute>};
+    
+      /**
+       * This node represents a `Statements` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * Statements = (* item: *) Statement*;
+       * ```
+       */
+      Statements = {item: set<Statement>};
+    
+      /**
+       * This node represents a `CatchClauses` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * CatchClauses = (* item: *) CatchClause+;
+       * ```
+       */
+      CatchClauses = {item: set<CatchClause>};
+    
+      /**
+       * This node represents a `StringLiterals` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.5.14 *)
+       * StringLiterals = (* item: *) StringLiteral+;
+       * ```
+       */
+      StringLiterals = {item: set<StringLiteral>};
+    
+      /**
+       * This node represents a `HexStringLiterals` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.5.14 *)
+       * HexStringLiterals = (* item: *) HexStringLiteral+;
+       * ```
+       */
+      HexStringLiterals = {item: set<HexStringLiteral>};
+    
+      /**
+       * This node represents a `UnicodeStringLiterals` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.7.0 *)
+       * UnicodeStringLiterals = (* item: *) UnicodeStringLiteral+;
+       * ```
+       */
+      UnicodeStringLiterals = {item: set<UnicodeStringLiteral>};
+    
+      /**
+       * This node represents a `YulStatements` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulStatements = (* item: *) YulStatement*;
+       * ```
+       */
+      YulStatements = {item: set<YulStatement>};
+    
+      /**
+       * This node represents a `YulSwitchCases` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulSwitchCases = (* item: *) YulSwitchCase+;
+       * ```
+       */
+      YulSwitchCases = {item: set<YulSwitchCase>};
+    
+
+    // 
+    // Separated:
+    // 
+
+    
+      /**
+       * This node represents a `VersionExpressionSets` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * VersionExpressionSets = (* item: *) VersionExpressionSet ((* separator: *) BAR_BAR (* item: *) VersionExpressionSet)*;
+       * ```
+       */
+      VersionExpressionSets = {item: set<VersionExpressionSet>};
+    
+      /**
+       * This node represents a `SimpleVersionLiteral` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * SimpleVersionLiteral = (* item: *) VERSION_SPECIFIER ((* separator: *) PERIOD (* item: *) VERSION_SPECIFIER)*;
+       * ```
+       */
+      SimpleVersionLiteral = {item: set<TerminalNode>};
+    
+      /**
+       * This node represents a `ImportDeconstructionSymbols` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ImportDeconstructionSymbols = (* item: *) ImportDeconstructionSymbol ((* separator: *) COMMA (* item: *) ImportDeconstructionSymbol)*;
+       * ```
+       */
+      ImportDeconstructionSymbols = {item: set<ImportDeconstructionSymbol>};
+    
+      /**
+       * This node represents a `UsingDeconstructionSymbols` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.13 *)
+       * UsingDeconstructionSymbols = (* item: *) UsingDeconstructionSymbol ((* separator: *) COMMA (* item: *) UsingDeconstructionSymbol)*;
+       * ```
+       */
+      UsingDeconstructionSymbols = {item: set<UsingDeconstructionSymbol>};
+    
+      /**
+       * This node represents a `InheritanceTypes` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * InheritanceTypes = (* item: *) InheritanceType ((* separator: *) COMMA (* item: *) InheritanceType)*;
+       * ```
+       */
+      InheritanceTypes = {item: set<InheritanceType>};
+    
+      /**
+       * This node represents a `EnumMembers` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * EnumMembers = ((* item: *) IDENTIFIER ((* separator: *) COMMA (* item: *) IDENTIFIER)*)?;
+       * ```
+       */
+      EnumMembers = {item: set<TerminalNode>};
+    
+      /**
+       * This node represents a `Parameters` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * Parameters = ((* item: *) Parameter ((* separator: *) COMMA (* item: *) Parameter)*)?;
+       * ```
+       */
+      Parameters = {item: set<Parameter>};
+    
+      /**
+       * This node represents a `OverridePaths` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.0 *)
+       * OverridePaths = (* item: *) IdentifierPath ((* separator: *) COMMA (* item: *) IdentifierPath)*;
+       * ```
+       */
+      OverridePaths = {item: set<IdentifierPath>};
+    
+      /**
+       * This node represents a `EventParameters` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * EventParameters = ((* item: *) EventParameter ((* separator: *) COMMA (* item: *) EventParameter)*)?;
+       * ```
+       */
+      EventParameters = {item: set<EventParameter>};
+    
+      /**
+       * This node represents a `ErrorParameters` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.8.4 *)
+       * ErrorParameters = ((* item: *) ErrorParameter ((* separator: *) COMMA (* item: *) ErrorParameter)*)?;
+       * ```
+       */
+      ErrorParameters = {item: set<ErrorParameter>};
+    
+      /**
+       * This node represents a `AssemblyFlags` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * AssemblyFlags = (* item: *) StringLiteral ((* separator: *) COMMA (* item: *) StringLiteral)*;
+       * ```
+       */
+      AssemblyFlags = {item: set<StringLiteral>};
+    
+      /**
+       * This node represents a `TupleDeconstructionElements` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TupleDeconstructionElements = (* item: *) TupleDeconstructionElement ((* separator: *) COMMA (* item: *) TupleDeconstructionElement)*;
+       * ```
+       */
+      TupleDeconstructionElements = {item: set<TupleDeconstructionElement>};
+    
+      /**
+       * This node represents a `PositionalArguments` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * PositionalArguments = ((* item: *) Expression ((* separator: *) COMMA (* item: *) Expression)*)?;
+       * ```
+       */
+      PositionalArguments = {item: set<Expression>};
+    
+      /**
+       * This node represents a `NamedArguments` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * NamedArguments = ((* item: *) NamedArgument ((* separator: *) COMMA (* item: *) NamedArgument)*)?;
+       * ```
+       */
+      NamedArguments = {item: set<NamedArgument>};
+    
+      /**
+       * This node represents a `CallOptions` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * (* Introduced in 0.6.2 *)
+       * CallOptions = (* item: *) NamedArgument ((* separator: *) COMMA (* item: *) NamedArgument)*;
+       * ```
+       */
+      CallOptions = {item: set<NamedArgument>};
+    
+      /**
+       * This node represents a `TupleValues` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * TupleValues = (* item: *) TupleValue ((* separator: *) COMMA (* item: *) TupleValue)*;
+       * ```
+       */
+      TupleValues = {item: set<TupleValue>};
+    
+      /**
+       * This node represents a `ArrayValues` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * ArrayValues = (* item: *) Expression ((* separator: *) COMMA (* item: *) Expression)*;
+       * ```
+       */
+      ArrayValues = {item: set<Expression>};
+    
+      /**
+       * This node represents a `IdentifierPath` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * IdentifierPath = (* item: *) IDENTIFIER ((* separator: *) PERIOD (* item: *) IDENTIFIER)*;
+       * ```
+       */
+      IdentifierPath = {item: set<TerminalNode>};
+    
+      /**
+       * This node represents a `YulParameters` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulParameters = ((* item: *) YUL_IDENTIFIER ((* separator: *) COMMA (* item: *) YUL_IDENTIFIER)*)?;
+       * ```
+       */
+      YulParameters = {item: set<TerminalNode>};
+    
+      /**
+       * This node represents a `YulVariableNames` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulVariableNames = (* item: *) YUL_IDENTIFIER ((* separator: *) COMMA (* item: *) YUL_IDENTIFIER)*;
+       * ```
+       */
+      YulVariableNames = {item: set<TerminalNode>};
+    
+      /**
+       * This node represents a `YulArguments` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulArguments = ((* item: *) YulExpression ((* separator: *) COMMA (* item: *) YulExpression)*)?;
+       * ```
+       */
+      YulArguments = {item: set<YulExpression>};
+    
+      /**
+       * This node represents a `YulPaths` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulPaths = (* item: *) YulPath ((* separator: *) COMMA (* item: *) YulPath)*;
+       * ```
+       */
+      YulPaths = {item: set<YulPath>};
+    
+      /**
+       * This node represents a `YulPath` nonterminal, with the following structure:
+       *
+       * ```ebnf
+       * YulPath = (* item: *) YUL_IDENTIFIER ((* separator: *) PERIOD (* item: *) YUL_IDENTIFIER)*;
+       * ```
+       */
+      YulPath = {item: set<TerminalNode>};
+    
+
+    TerminalNode = string;
+}

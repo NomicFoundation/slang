@@ -1,0 +1,8 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+model l0::generated {NonterminalKind = {
+      Stub1
+    | Stub2
+    | Stub3
+  };
+}
