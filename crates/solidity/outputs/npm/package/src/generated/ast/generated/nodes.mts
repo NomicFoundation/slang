@@ -9662,12 +9662,11 @@ export class YulSwitchCase {
  * ```ebnf
  * YulExpression = (* variant: *) YulFunctionCallExpression
  *               | (* variant: *) YulLiteral
- *               | (* variant: *) YulBuiltInFunction
  *               | (* variant: *) YulPath;
  * ```
  */
 export class YulExpression {
-  private readonly fetch: () => YulFunctionCallExpression | YulLiteral | YulBuiltInFunction | YulPath = once(() => {
+  private readonly fetch: () => YulFunctionCallExpression | YulLiteral | YulPath = once(() => {
     const variant = wasm.ast.Selectors.choice(this.cst);
 
     switch (variant.kind) {
@@ -9675,8 +9674,6 @@ export class YulExpression {
         return new YulFunctionCallExpression(variant as NonterminalNode);
       case NonterminalKind.YulLiteral:
         return new YulLiteral(variant as NonterminalNode);
-      case NonterminalKind.YulBuiltInFunction:
-        return new YulBuiltInFunction(variant as NonterminalNode);
       case NonterminalKind.YulPath:
         return new YulPath(variant as NonterminalNode);
 
@@ -9700,43 +9697,7 @@ export class YulExpression {
   /**
    * Returns the child node that has the label `variant`.
    */
-  public get variant(): YulFunctionCallExpression | YulLiteral | YulBuiltInFunction | YulPath {
-    return this.fetch();
-  }
-}
-
-/**
- * This node represents a `YulBuiltInFunction` nonterminal, with the following structure:
- *
- * ```ebnf
- * YulBuiltInFunction = (* variant: *) YUL_BYTE_KEYWORD
- *                    | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
- *                    | (* variant: *) YUL_JUMPI_KEYWORD; (* Deprecated in 0.5.0 *)
- * ```
- */
-export class YulBuiltInFunction {
-  private readonly fetch: () => TerminalNode = once(() => {
-    const variant = wasm.ast.Selectors.choice(this.cst);
-
-    return variant as TerminalNode;
-  });
-
-  /**
-   * Constructs a new AST node of type `YulBuiltInFunction`, given a nonterminal CST node of the same kind.
-   */
-  public constructor(
-    /**
-     * The underlying nonterminal CST node of kind `YulBuiltInFunction`.
-     */
-    public readonly cst: NonterminalNode,
-  ) {
-    assertKind(this.cst.kind, NonterminalKind.YulBuiltInFunction);
-  }
-
-  /**
-   * Returns the child node that has the label `variant`.
-   */
-  public get variant(): TerminalNode {
+  public get variant(): YulFunctionCallExpression | YulLiteral | YulPath {
     return this.fetch();
   }
 }

@@ -6025,11 +6025,7 @@
                       ]
                     }
                   ],
-                  "primary_expressions": [
-                    { "reference": "YulLiteral" },
-                    { "reference": "YulBuiltInFunction" },
-                    { "reference": "YulPath" }
-                  ]
+                  "primary_expressions": [{ "reference": "YulLiteral" }, { "reference": "YulPath" }]
                 }
               }
             },
@@ -6082,18 +6078,6 @@
                         }
                       }
                     }
-                  ]
-                }
-              }
-            },
-            {
-              "Enum": {
-                "item": {
-                  "name": "YulBuiltInFunction",
-                  "variants": [
-                    { "reference": "YulByteKeyword" },
-                    { "reference": "YulJumpKeyword", "enabled": { "Till": { "till": "0.5.0" } } },
-                    { "reference": "YulJumpiKeyword", "enabled": { "Till": { "till": "0.5.0" } } }
                   ]
                 }
               }
@@ -6304,15 +6288,6 @@
                   "name": "YulBreakKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [{ "value": { "Atom": { "atom": "break" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulByteKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "byte" } } }]
                 }
               }
             },
@@ -7292,28 +7267,6 @@
                       "reserved": { "Till": { "till": "0.7.1" } },
                       "value": { "Atom": { "atom": "is" } }
                     }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulJumpKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    { "enabled": { "Till": { "till": "0.5.0" } }, "value": { "Atom": { "atom": "jump" } } }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "YulJumpiKeyword",
-                  "identifier": "YulIdentifier",
-                  "definitions": [
-                    { "enabled": { "Till": { "till": "0.5.0" } }, "value": { "Atom": { "atom": "jumpi" } } }
                   ]
                 }
               }
@@ -8987,6 +8940,11 @@
         },
         {
           "BuiltInFunction": {
+            "item": { "name": "$byte", "parameters": ["uint256 n", "uint256 x"], "return_type": "uint256" }
+          }
+        },
+        {
+          "BuiltInFunction": {
             "item": {
               "name": "callcode",
               "parameters": [
@@ -9093,6 +9051,8 @@
         },
         { "BuiltInFunction": { "item": { "name": "invalid" } } },
         { "BuiltInFunction": { "item": { "name": "iszero", "parameters": ["uint256 x"], "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "jump", "enabled": { "Till": { "till": "0.5.0" } } } } },
+        { "BuiltInFunction": { "item": { "name": "jumpi", "enabled": { "Till": { "till": "0.5.0" } } } } },
         { "BuiltInFunction": { "item": { "name": "log0", "parameters": ["uint256 p", "uint256 s"] } } },
         { "BuiltInFunction": { "item": { "name": "log1", "parameters": ["uint256 p", "uint256 s", "uint256 t1"] } } },
         {
@@ -9153,6 +9113,7 @@
           }
         },
         { "BuiltInFunction": { "item": { "name": "pop", "parameters": ["uint256 x"], "return_type": "uint256" } } },
+        { "BuiltInFunction": { "item": { "name": "$return", "parameters": ["uint256 p", "uint256 s"] } } },
         { "BuiltInFunction": { "item": { "name": "revert", "parameters": ["uint256 p", "uint256 s"] } } },
         {
           "BuiltInFunction": {

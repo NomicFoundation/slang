@@ -1768,14 +1768,6 @@ interface cst {
                 /// YulBreakStatement = (* break_keyword: *) YUL_BREAK_KEYWORD;
                 /// ```
                 %yul-break-statement,
-                /// Represents a node with kind `YulBuiltInFunction`, having the following structure:
-                ///
-                /// ```ebnf
-                /// YulBuiltInFunction = (* variant: *) YUL_BYTE_KEYWORD
-                ///                    | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
-                ///                    | (* variant: *) YUL_JUMPI_KEYWORD; (* Deprecated in 0.5.0 *)
-                /// ```
-                %yul-built-in-function,
                 /// Represents a node with kind `YulColonAndEqual`, having the following structure:
                 ///
                 /// ```ebnf
@@ -1810,7 +1802,6 @@ interface cst {
                 /// ```ebnf
                 /// YulExpression = (* variant: *) YulFunctionCallExpression
                 ///               | (* variant: *) YulLiteral
-                ///               | (* variant: *) YulBuiltInFunction
                 ///               | (* variant: *) YulPath;
                 /// ```
                 %yul-expression,
@@ -3295,12 +3286,6 @@ interface cst {
                 /// YUL_BREAK_KEYWORD = "break";
                 /// ```
                 %yul-break-keyword,
-                /// Represents a node with kind `YulByteKeyword`, having the following structure:
-                ///
-                /// ```ebnf
-                /// YUL_BYTE_KEYWORD = "byte";
-                /// ```
-                %yul-byte-keyword,
                 /// Represents a node with kind `YulBytesKeyword`, having the following structure:
                 ///
                 /// ```ebnf
@@ -3613,20 +3598,6 @@ interface cst {
                 /// YUL_IS_KEYWORD = "is";
                 /// ```
                 %yul-is-keyword,
-                /// Represents a node with kind `YulJumpKeyword`, having the following structure:
-                ///
-                /// ```ebnf
-                /// (* Deprecated in 0.5.0 *)
-                /// YUL_JUMP_KEYWORD = "jump";
-                /// ```
-                %yul-jump-keyword,
-                /// Represents a node with kind `YulJumpiKeyword`, having the following structure:
-                ///
-                /// ```ebnf
-                /// (* Deprecated in 0.5.0 *)
-                /// YUL_JUMPI_KEYWORD = "jumpi";
-                /// ```
-                %yul-jumpi-keyword,
                 /// Represents a node with kind `YulLeaveKeyword`, having the following structure:
                 ///
                 /// ```ebnf

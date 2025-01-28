@@ -477,9 +477,6 @@ impl Parser {
             NonterminalKind::YulBreakStatement => {
                 Self::yul_break_statement.parse(self, input, kind)
             }
-            NonterminalKind::YulBuiltInFunction => {
-                Self::yul_built_in_function.parse(self, input, kind)
-            }
             NonterminalKind::YulColonAndEqual => Self::yul_colon_and_equal.parse(self, input, kind),
             NonterminalKind::YulContinueStatement => {
                 Self::yul_continue_statement.parse(self, input, kind)
@@ -6164,34 +6161,6 @@ impl Parser {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_built_in_function(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulByteKeyword,
-            );
-            choice.consider(input, result)?;
-            if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulJumpKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulJumpiKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            choice.finish(input)
-        })
-        .with_label(EdgeLabel::Variant)
-        .with_kind(NonterminalKind::YulBuiltInFunction)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn yul_colon_and_equal(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_5_5 {
             SequenceHelper::run(|mut seq| {
@@ -6309,8 +6278,6 @@ impl Parser {
         let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.yul_literal(input);
-                choice.consider(input, result)?;
-                let result = self.yul_built_in_function(input);
                 choice.consider(input, result)?;
                 let result = self.yul_path(input);
                 choice.consider(input, result)?;
@@ -10811,13 +10778,6 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('y') => {
-                                if scan_chars!(input, 't', 'e') {
-                                    KeywordScan::Reserved(TerminalKind::YulByteKeyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
@@ -11393,22 +11353,6 @@ impl Lexer for Parser {
                             }
                             None => KeywordScan::Absent,
                         },
-                        Some('j') => {
-                            if scan_chars!(input, 'u', 'm', 'p') {
-                                match input.next() {
-                                    Some('i') => {
-                                        KeywordScan::Reserved(TerminalKind::YulJumpiKeyword)
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        KeywordScan::Reserved(TerminalKind::YulJumpKeyword)
-                                    }
-                                    None => KeywordScan::Reserved(TerminalKind::YulJumpKeyword),
-                                }
-                            } else {
-                                KeywordScan::Absent
-                            }
-                        }
                         Some('l') => match input.next() {
                             Some('e') => match input.next() {
                                 Some('a') => {

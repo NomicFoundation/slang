@@ -8,7 +8,7 @@
 
 ```
 
-<pre ebnf-snippet="YulExpression" style="display: none;"><a href="#YulExpression"><span class="k">YulExpression</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#YulFunctionCallExpression"><span class="k">YulFunctionCallExpression</span></a><br /><span class="o">              | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#YulLiteral"><span class="k">YulLiteral</span></a><br /><span class="o">              | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#YulBuiltInFunction"><span class="k">YulBuiltInFunction</span></a><br /><span class="o">              | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#YulPath"><span class="k">YulPath</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="YulExpression" style="display: none;"><a href="#YulExpression"><span class="k">YulExpression</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#YulFunctionCallExpression"><span class="k">YulFunctionCallExpression</span></a><br /><span class="o">              | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#YulLiteral"><span class="k">YulLiteral</span></a><br /><span class="o">              | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#YulPath"><span class="k">YulPath</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #YulFunctionCallExpression }
 
@@ -39,12 +39,6 @@
 ```
 
 <pre ebnf-snippet="YulIdentifier" style="display: none;"><span class="cm">(* Introduced in 0.5.8 and deprecated in 0.7.0. *)</span><br /><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> = </span><a href="../../05-expressions/06-identifiers#IdentifierStart"><span class="k">«IDENTIFIER_START»</span></a><span class="o"> </span><span class="o">(</span><a href="../../05-expressions/06-identifiers#IdentifierPart"><span class="k">«IDENTIFIER_PART»</span></a><span class="o"> | </span><span class="s2">"."</span><span class="o">)</span><span class="o">*</span><span class="o">;</span><br /><br /><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> = </span><a href="../../05-expressions/06-identifiers#IdentifierStart"><span class="k">«IDENTIFIER_START»</span></a><span class="o"> </span><a href="../../05-expressions/06-identifiers#IdentifierPart"><span class="k">«IDENTIFIER_PART»</span></a><span class="o">*</span><span class="o">;</span></pre>
-
-```{ .ebnf #YulBuiltInFunction }
-
-```
-
-<pre ebnf-snippet="YulBuiltInFunction" style="display: none;"><a href="#YulBuiltInFunction"><span class="k">YulBuiltInFunction</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../03-yul-keywords#YulByteKeyword"><span class="k">YUL_BYTE_KEYWORD</span></a><br /><span class="o">                   | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../03-yul-keywords#YulJumpKeyword"><span class="k">YUL_JUMP_KEYWORD</span></a><span class="o"> </span><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><span class="o">                   | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../03-yul-keywords#YulJumpiKeyword"><span class="k">YUL_JUMPI_KEYWORD</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Deprecated in 0.5.0 *)</span></pre>
 
 ```{ .ebnf #YulLiteral }
 

@@ -1783,14 +1783,6 @@ pub enum NonterminalKind {
     /// YulBreakStatement = (* break_keyword: *) YUL_BREAK_KEYWORD;
     /// ```
     YulBreakStatement,
-    /// Represents a node with kind `YulBuiltInFunction`, having the following structure:
-    ///
-    /// ```ebnf
-    /// YulBuiltInFunction = (* variant: *) YUL_BYTE_KEYWORD
-    ///                    | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
-    ///                    | (* variant: *) YUL_JUMPI_KEYWORD; (* Deprecated in 0.5.0 *)
-    /// ```
-    YulBuiltInFunction,
     /// Represents a node with kind `YulColonAndEqual`, having the following structure:
     ///
     /// ```ebnf
@@ -1825,7 +1817,6 @@ pub enum NonterminalKind {
     /// ```ebnf
     /// YulExpression = (* variant: *) YulFunctionCallExpression
     ///               | (* variant: *) YulLiteral
-    ///               | (* variant: *) YulBuiltInFunction
     ///               | (* variant: *) YulPath;
     /// ```
     YulExpression,

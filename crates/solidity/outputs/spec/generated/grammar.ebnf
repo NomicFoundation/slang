@@ -1711,7 +1711,6 @@ YulLabel = (* label: *) YUL_IDENTIFIER
 
 YulExpression = (* variant: *) YulFunctionCallExpression
               | (* variant: *) YulLiteral
-              | (* variant: *) YulBuiltInFunction
               | (* variant: *) YulPath;
 
 (* Postfix unary operator *)
@@ -1730,10 +1729,6 @@ YulPath = (* item: *) YUL_IDENTIFIER ((* separator: *) PERIOD (* item: *) YUL_ID
 YUL_IDENTIFIER = «IDENTIFIER_START» («IDENTIFIER_PART» | ".")*;
 
 YUL_IDENTIFIER = «IDENTIFIER_START» «IDENTIFIER_PART»*;
-
-YulBuiltInFunction = (* variant: *) YUL_BYTE_KEYWORD
-                   | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
-                   | (* variant: *) YUL_JUMPI_KEYWORD; (* Deprecated in 0.5.0 *)
 
 YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
            | (* variant: *) YUL_FALSE_KEYWORD
@@ -1773,8 +1768,6 @@ YUL_AUTO_KEYWORD = "auto";
 YUL_BOOL_KEYWORD = "bool";
 
 YUL_BREAK_KEYWORD = "break";
-
-YUL_BYTE_KEYWORD = "byte";
 
 (* Reserved until 0.7.1 *)
 YUL_BYTES_KEYWORD = "bytes" ("1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32")?;
@@ -1902,12 +1895,6 @@ YUL_INT_KEYWORD = "int" ("8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" | 
 
 (* Reserved until 0.7.1 *)
 YUL_IS_KEYWORD = "is";
-
-(* Deprecated in 0.5.0 *)
-YUL_JUMP_KEYWORD = "jump";
-
-(* Deprecated in 0.5.0 *)
-YUL_JUMPI_KEYWORD = "jumpi";
 
 (* Introduced in 0.6.0 *)
 (* Reserved in 0.7.1 *)

@@ -27,7 +27,9 @@ References and definitions:
     │         ──┬─  
     │           ╰─── name: 3
   8 │             jumpi(loopend, eq(n, 0))
-    │                   ───┬───  ─┬ ┬  
+    │             ──┬── ───┬───  ─┬ ┬  
+    │               ╰────────────────── ref: built-in
+    │                      │      │ │  
     │                      ╰─────────── ref: 4
     │                             │ │  
     │                             ╰──── ref: built-in
@@ -41,7 +43,9 @@ References and definitions:
     │                      │  
     │                      ╰── ref: 5
  10 │             jump(loop)
-    │                  ──┬─  
+    │             ──┬─ ──┬─  
+    │               ╰──────── ref: built-in
+    │                    │   
     │                    ╰─── ref: 3
  11 │         loopend:
     │         ───┬───  

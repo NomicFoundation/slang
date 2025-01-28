@@ -101,6 +101,7 @@ contract $YulBuiltIns$ {
   function and(uint256 x, uint256 y) public returns (uint256);
   function balance(uint256 a) public returns (uint256);
   function blockhash(uint256 b) public returns (uint256);
+  function $byte(uint256 n, uint256 x) public returns (uint256);
   function callcode(uint256 g, uint256 a, uint256 v, uint256 in_, uint256 insize, uint256 out, uint256 outsize) public returns (uint256);
   function calldatacopy(uint256 t, uint256 f, uint256 s) public;
   function calldataload(uint256 p) public returns (uint256);
@@ -122,6 +123,8 @@ contract $YulBuiltIns$ {
   function gt(uint256 x, uint256 y) public returns (uint256);
   function invalid() public;
   function iszero(uint256 x) public returns (uint256);
+  function jump() public;
+  function jumpi() public;
   function log0(uint256 p, uint256 s) public;
   function log1(uint256 p, uint256 s, uint256 t1) public;
   function log2(uint256 p, uint256 s, uint256 t1, uint256 t2) public;
@@ -140,6 +143,7 @@ contract $YulBuiltIns$ {
   function origin() public returns (uint256);
   function or(uint256 x, uint256 y) public returns (uint256);
   function pop(uint256 x) public returns (uint256);
+  function $return(uint256 p, uint256 s) public;
   function revert(uint256 p, uint256 s) public;
   function sdiv(uint256 x, uint256 y) public returns (uint256);
   function selfdestruct(uint256 a) public;

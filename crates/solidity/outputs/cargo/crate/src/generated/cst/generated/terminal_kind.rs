@@ -1298,12 +1298,6 @@ pub enum TerminalKind {
     /// YUL_BREAK_KEYWORD = "break";
     /// ```
     YulBreakKeyword,
-    /// Represents a node with kind `YulByteKeyword`, having the following structure:
-    ///
-    /// ```ebnf
-    /// YUL_BYTE_KEYWORD = "byte";
-    /// ```
-    YulByteKeyword,
     /// Represents a node with kind `YulBytesKeyword`, having the following structure:
     ///
     /// ```ebnf
@@ -1616,20 +1610,6 @@ pub enum TerminalKind {
     /// YUL_IS_KEYWORD = "is";
     /// ```
     YulIsKeyword,
-    /// Represents a node with kind `YulJumpKeyword`, having the following structure:
-    ///
-    /// ```ebnf
-    /// (* Deprecated in 0.5.0 *)
-    /// YUL_JUMP_KEYWORD = "jump";
-    /// ```
-    YulJumpKeyword,
-    /// Represents a node with kind `YulJumpiKeyword`, having the following structure:
-    ///
-    /// ```ebnf
-    /// (* Deprecated in 0.5.0 *)
-    /// YUL_JUMPI_KEYWORD = "jumpi";
-    /// ```
-    YulJumpiKeyword,
     /// Represents a node with kind `YulLeaveKeyword`, having the following structure:
     ///
     /// ```ebnf

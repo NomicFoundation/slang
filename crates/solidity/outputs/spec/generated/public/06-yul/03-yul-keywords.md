@@ -58,12 +58,6 @@
 
 <pre ebnf-snippet="YulBreakKeyword" style="display: none;"><a href="#YulBreakKeyword"><span class="k">YUL_BREAK_KEYWORD</span></a><span class="o"> = </span><span class="s2">"break"</span><span class="o">;</span></pre>
 
-```{ .ebnf #YulByteKeyword }
-
-```
-
-<pre ebnf-snippet="YulByteKeyword" style="display: none;"><a href="#YulByteKeyword"><span class="k">YUL_BYTE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"byte"</span><span class="o">;</span></pre>
-
 ```{ .ebnf #YulBytesKeyword }
 
 ```
@@ -309,18 +303,6 @@
 ```
 
 <pre ebnf-snippet="YulIsKeyword" style="display: none;"><span class="cm">(* Reserved until 0.7.1 *)</span><br /><a href="#YulIsKeyword"><span class="k">YUL_IS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"is"</span><span class="o">;</span></pre>
-
-```{ .ebnf #YulJumpKeyword }
-
-```
-
-<pre ebnf-snippet="YulJumpKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><a href="#YulJumpKeyword"><span class="k">YUL_JUMP_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jump"</span><span class="o">;</span></pre>
-
-```{ .ebnf #YulJumpiKeyword }
-
-```
-
-<pre ebnf-snippet="YulJumpiKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><a href="#YulJumpiKeyword"><span class="k">YUL_JUMPI_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jumpi"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulLeaveKeyword }
 
