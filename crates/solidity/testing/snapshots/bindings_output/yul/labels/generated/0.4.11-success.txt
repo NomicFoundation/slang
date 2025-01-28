@@ -57,7 +57,7 @@ References and definitions:
     │                       ╰── ref: 6
  13 │             return(0, 0x20)
     │             ───┬──  
-    │                ╰──── unresolved
+    │                ╰──── ref: built-in
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

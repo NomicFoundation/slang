@@ -10,6 +10,11 @@ fn blocks() -> Result<()> {
 }
 
 #[test]
+fn built_ins() -> Result<()> {
+    run("yul", "built_ins")
+}
+
+#[test]
 fn conditionals() -> Result<()> {
     run("yul", "conditionals")
 }

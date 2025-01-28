@@ -2931,7 +2931,20 @@ inherit .star_extension
 
 @path [YulPath . @name [YulIdentifier]] {
   node ref
-  attr (ref) node_reference = @name
+
+  ; Handle `byte` and `return` as special cases, since we cannot define them
+  ; directly as regular built-ins
+  var yul_symbol = (source-text @name)
+  scan (source-text @name) {
+    "byte" {
+      set yul_symbol = "%byte"
+    }
+    "return" {
+      set yul_symbol = "%return"
+    }
+  }
+  attr (ref) symbol_reference = yul_symbol
+  attr (ref) source_node = @name
 
   edge ref -> @path.lexical_scope
 
