@@ -105,15 +105,29 @@ inherit .star_extension
 
 ;; Special case for built-ins: we want to export all symbols in the contract:
 ;; functions, types and state variables. All built-in symbols are defined in an
-;; internal contract named '%BuiltIns%' (renamed from '$BuiltIns$') so we need
-;; to export all its members and type members directly as a source unit
-;; definition.
-;; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with built-ins generation.
+;; internal contract named '%SolidityBuiltIns%' (renamed from
+;; '$SolidityBuiltIns$') so we need to export all its members and type members
+;; directly as a source unit definition.
+;; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with language definition.
 @source_unit [SourceUnit [SourceUnitMembers
-    [SourceUnitMember @contract [ContractDefinition name: ["%BuiltIns%"]]]
+    [SourceUnitMember @contract [ContractDefinition name: ["%SolidityBuiltIns%"]]]
 ]] {
   if (is-system-file FILE_PATH) {
     edge @source_unit.defs -> @contract.instance
+  }
+}
+
+;; Similarly for Yul built-ins, we export all the symbols in the `%YulBuiltIns%`
+;; contract guarded by a `@yul` symbol.
+;; __SLANG_YUL_BUILT_INS_CONTRACT_NAME__ keep in sync with language definition file.
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @contract [ContractDefinition name: ["%YulBuiltIns%"]]]
+]] {
+  if (is-system-file FILE_PATH) {
+    node yul
+    attr (yul) pop_symbol = "@yul"
+    edge @source_unit.defs -> yul
+    edge yul -> @contract.instance
   }
 }
 
@@ -1199,6 +1213,11 @@ inherit .star_extension
 ;;; Function types
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+@ftype [FunctionType] {
+  node @ftype.lexical_scope
+  node @ftype.output
+}
+
 @ftype [FunctionType @attrs [FunctionTypeAttributes]] {
   ; Compute the built-in type of the function
   ; %functionExternal provides access to .selector and .address
@@ -1208,9 +1227,6 @@ inherit .star_extension
       set type_symbol = "%ExternalFunction"
     }
   }
-
-  node @ftype.lexical_scope
-  node @ftype.output
 
   ; This path pushes the function type to the symbol stack
   ; TODO: add parameter and return types to distinguish between different function types
@@ -1997,6 +2013,11 @@ inherit .star_extension
 ;;; Assembly
 @stmt [Statement [AssemblyStatement @body body: [YulBlock]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
+
+  node yul
+  attr (yul) push_symbol = "@yul"
+  edge @body.lexical_scope -> yul
+  edge yul -> @stmt.lexical_scope
 }
 
 
@@ -2910,7 +2931,20 @@ inherit .star_extension
 
 @path [YulPath . @name [YulIdentifier]] {
   node ref
-  attr (ref) node_reference = @name
+
+  ; Handle `byte` and `return` as special cases, since we cannot define them
+  ; directly as regular built-ins
+  var yul_symbol = (source-text @name)
+  scan (source-text @name) {
+    "byte" {
+      set yul_symbol = "%byte"
+    }
+    "return" {
+      set yul_symbol = "%return"
+    }
+  }
+  attr (ref) symbol_reference = yul_symbol
+  attr (ref) source_node = @name
 
   edge ref -> @path.lexical_scope
 

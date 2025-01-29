@@ -7,7 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "jump()\n" (0..7)
-      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulJumpKeyword): "jump" # (0..4)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "jump" (0..4)
+          - (item꞉ YulIdentifier): "jump" # (0..4)
       - (open_paren꞉ OpenParen): "(" # (4..5)
       - (arguments꞉ YulArguments): [] # (5..5)
       - (close_paren꞉ CloseParen): ")" # (5..6)

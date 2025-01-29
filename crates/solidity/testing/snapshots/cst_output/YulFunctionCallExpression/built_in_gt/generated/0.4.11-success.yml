@@ -7,7 +7,8 @@ Errors: []
 
 Tree:
   - (YulFunctionCallExpression): # "gt()\n" (0..5)
-      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulGtKeyword): "gt" # (0..2)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "gt" (0..2)
+          - (item꞉ YulIdentifier): "gt" # (0..2)
       - (open_paren꞉ OpenParen): "(" # (2..3)
       - (arguments꞉ YulArguments): [] # (3..3)
       - (close_paren꞉ CloseParen): ")" # (3..4)

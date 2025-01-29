@@ -6,7 +6,8 @@ use indexmap::IndexSet;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use crate::model::{BuiltIn, Field, Identifier, Item, TriviaParser, VersionSpecifier};
+use super::BuiltIn;
+use crate::model::{BuiltInContext, Field, Identifier, Item, TriviaParser, VersionSpecifier};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
@@ -25,7 +26,7 @@ pub struct Language {
     pub versions: IndexSet<Version>,
 
     pub sections: Vec<Section>,
-    pub built_ins: Vec<BuiltIn>,
+    pub built_ins: Vec<BuiltInContext>,
 }
 
 impl Language {
@@ -125,22 +126,24 @@ impl Language {
             }
         };
 
-        for item in &self.built_ins {
-            match item {
-                BuiltIn::BuiltInFunction { item } => {
-                    add_spec(&item.enabled);
-                }
-                BuiltIn::BuiltInType { item } => {
-                    add_spec(&item.enabled);
-                    for field in &item.fields {
-                        add_spec(&field.enabled);
+        for context in &self.built_ins {
+            for item in &context.definitions {
+                match item {
+                    BuiltIn::BuiltInFunction { item } => {
+                        add_spec(&item.enabled);
                     }
-                    for function in &item.functions {
-                        add_spec(&function.enabled);
+                    BuiltIn::BuiltInType { item } => {
+                        add_spec(&item.enabled);
+                        for field in &item.fields {
+                            add_spec(&field.enabled);
+                        }
+                        for function in &item.functions {
+                            add_spec(&function.enabled);
+                        }
                     }
-                }
-                BuiltIn::BuiltInVariable { item } => {
-                    add_spec(&item.enabled);
+                    BuiltIn::BuiltInVariable { item } => {
+                        add_spec(&item.enabled);
+                    }
                 }
             }
         }
