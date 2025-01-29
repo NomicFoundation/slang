@@ -424,7 +424,6 @@ pub slang_solidity::cst::NonterminalKind::YulArguments
 pub slang_solidity::cst::NonterminalKind::YulAssignmentOperator
 pub slang_solidity::cst::NonterminalKind::YulBlock
 pub slang_solidity::cst::NonterminalKind::YulBreakStatement
-pub slang_solidity::cst::NonterminalKind::YulBuiltInFunction
 pub slang_solidity::cst::NonterminalKind::YulColonAndEqual
 pub slang_solidity::cst::NonterminalKind::YulContinueStatement
 pub slang_solidity::cst::NonterminalKind::YulDefaultCase
@@ -682,7 +681,6 @@ pub slang_solidity::cst::TerminalKind::YulAssemblyKeyword
 pub slang_solidity::cst::TerminalKind::YulAutoKeyword
 pub slang_solidity::cst::TerminalKind::YulBoolKeyword
 pub slang_solidity::cst::TerminalKind::YulBreakKeyword
-pub slang_solidity::cst::TerminalKind::YulByteKeyword
 pub slang_solidity::cst::TerminalKind::YulBytesKeyword
 pub slang_solidity::cst::TerminalKind::YulCallDataKeyword
 pub slang_solidity::cst::TerminalKind::YulCaseKeyword
@@ -727,8 +725,6 @@ pub slang_solidity::cst::TerminalKind::YulIntKeyword
 pub slang_solidity::cst::TerminalKind::YulInterfaceKeyword
 pub slang_solidity::cst::TerminalKind::YulInternalKeyword
 pub slang_solidity::cst::TerminalKind::YulIsKeyword
-pub slang_solidity::cst::TerminalKind::YulJumpKeyword
-pub slang_solidity::cst::TerminalKind::YulJumpiKeyword
 pub slang_solidity::cst::TerminalKind::YulLeaveKeyword
 pub slang_solidity::cst::TerminalKind::YulLetKeyword
 pub slang_solidity::cst::TerminalKind::YulLibraryKeyword
