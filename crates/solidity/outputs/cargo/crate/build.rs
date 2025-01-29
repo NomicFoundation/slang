@@ -26,6 +26,8 @@ fn main() -> Result<()> {
         render_built_ins,
     )?;
 
+    let ldw_output_dir = crate_path.join("src/generated/ldw/");
+
     Command::new("ts-node")
         .current_dir(Path::repo_path("crates/codegen/ldw"))
         .args(["-P", "./tsconfig.json"])
@@ -38,13 +40,12 @@ fn main() -> Result<()> {
                 .to_str()
                 .unwrap(),
         ])
-        .args([
-            "--out-dir",
-            crate_path.join("src/generated/ldw/").to_str().unwrap(),
-        ])
+        .args(["--out-dir", ldw_output_dir.to_str().unwrap()])
         .args(["--language", "rust"])
         .args(["--name", "l0::generated"])
         .run();
+
+    fs.mark_generated_dir(ldw_output_dir)?;
 
     Ok(())
 }

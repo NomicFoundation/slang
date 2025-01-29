@@ -86,8 +86,10 @@ class AnalyseSumTypes extends Visitor {
                         terminalDefinitions.add(name);
                     }
                     break;
+                case Out.Discriminator.PrimitiveType:
+                    break;
                 default:
-                    throw new Error('Not yet implemented: sum type discriminators on product/enum leaf types');
+                    throw new Error(`Not yet implemented: sum type discriminators on ${definition.type.discriminator}`);
             }
         });
     }

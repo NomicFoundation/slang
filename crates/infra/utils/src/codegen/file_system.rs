@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
@@ -60,6 +61,24 @@ impl CodegenFileSystem {
         };
     }
 
+    /// Mark all files in the specified directory as generated files.
+    pub fn mark_generated_dir(&mut self, dir_path: impl AsRef<Path>) -> Result<()> {
+        let dir_path = dir_path.as_ref();
+
+        if dir_path.strip_repo_root().is_err() {
+            bail!("Generated directory is outside repository: {dir_path:?}");
+        }
+
+        for file_path in FileWalker::from_directory(dir_path).find_all().unwrap() {
+            self.mark_generated_file(file_path)?;
+        }
+
+        Ok(())
+    }
+
+    /// Mark (register) a single file as a generated file. Any file not marked this way will be deleted by
+    /// `CodegenFileSystem` after codegen is completed. It is an error to mark the same file as generated
+    /// twice.
     pub fn mark_generated_file(&mut self, file_path: impl AsRef<Path>) -> Result<()> {
         let file_path = file_path.as_ref();
 
