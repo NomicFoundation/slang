@@ -1,0 +1,9 @@
+model ldw::model::analysed modifies ldw::model::resolved {
+
+    modify Definition
+        += discriminationPeers: option<set<string>>   // Types that need to be distinguished from me
+        += discriminationMembers: option<set<string>> // Types that are my children if I am a SumType
+        // += reachableDefinitions: set<string>
+    ;
+    
+}

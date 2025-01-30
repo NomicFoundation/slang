@@ -1,5 +1,6 @@
 mod cargo;
 mod git;
+mod ldw;
 mod npm;
 mod pipenv;
 mod shell_completions;
@@ -10,6 +11,7 @@ use infra_utils::terminal::Terminal;
 
 use crate::commands::setup::cargo::setup_cargo;
 use crate::commands::setup::git::setup_git;
+use crate::commands::setup::ldw::setup_ldw;
 use crate::commands::setup::npm::setup_npm;
 use crate::commands::setup::pipenv::setup_pipenv;
 use crate::commands::setup::shell_completions::setup_shell_completions;
@@ -33,6 +35,8 @@ enum SetupCommand {
     Git,
     /// Install Cargo dependencies.
     Cargo,
+    /// Install LDW dependencies.
+    Ldw,
     /// Install NPM dependencies.
     Npm,
     /// Install Pipenv dependencies.
@@ -48,6 +52,7 @@ impl OrderedCommand for SetupCommand {
         match self {
             SetupCommand::Git => setup_git(),
             SetupCommand::Cargo => setup_cargo(),
+            SetupCommand::Ldw => setup_ldw(),
             SetupCommand::Npm => setup_npm(),
             SetupCommand::Pipenv => setup_pipenv()?,
             SetupCommand::ShellCompletions => setup_shell_completions()?,

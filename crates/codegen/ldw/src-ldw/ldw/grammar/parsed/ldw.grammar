@@ -1,0 +1,93 @@
+grammar ldw::grammar::parsed {
+    
+    // This is a meta-circular grammar i.e. this definition encodes its own format
+
+    grammar = 'grammar' name ( '::' name )* '{' ( rule | pratt_rule )* '}' ;
+
+    /**************************************************************************
+
+        There are a number of rules with special names:
+
+        1. `trivia` - this should be a list of alternatives of all the trivia rules
+        2. `identifier` - this should be a rule that matches any identifier, that is
+           also used to avoid conflicts with keywords
+        3. `reserved_identifier` - this should be a list of identifiers that either
+           are or were reserved for use by the language.
+
+    **************************************************************************/
+
+    rule            = name annotation:rule_annotation? version_annotation* '=' body:rule_body ';' ;
+    rule_annotation = no_skip:'@noskip' | atomic:'@atomic' ;
+
+    /**************************************************************************
+
+        Pratt Parsing (Operator Precendence Grammar)
+
+    **************************************************************************/
+
+    pratt_rule          = 'pratt' name version_annotation* '{' operator:pratt_operator+ primary:pratt_primary '}' ;
+    pratt_operator      = type:pratt_operator_type name version_annotation* '=' body:rule_body ';' ;
+    pratt_primary       = 'primary' name '=' body:rule_body ';' ;
+    pratt_operator_type = 'prefix' | 'postfix' | 'left' | 'right' ;
+
+    /**************************************************************************
+
+        Versioning
+
+    **************************************************************************/
+
+    version_annotation @noskip = type:version_annotation_type '(' version:version_number ')' ;
+    version_annotation_type    = '@enabled' | '@disabled' ;
+    version_number             = segment:( version_segment ( '.' version_segment )* );
+    version_segment    @atomic = [0-9]+ ;
+
+    /**************************************************************************
+
+        Standard EBNF
+
+    **************************************************************************/
+
+    rule_body = _:( choice_rule | sequence_rule ) ;
+    
+    choice_rule            = choice:( sequence_rule ( '|' sequence_rule )+ ) ;
+    sequence_rule          = element:rule_element+ ;
+    rule_element           = _:( counted_rule_element | negative_lookahead ) ;
+    counted_rule_element   = label? countable_rule_element count? version_annotation* ;
+    countable_rule_element = _:( rule_reference | string_element | char_set | any_element | '(' rule_body ')' ) ;
+    count                  = one_or_more:'+' | zero_or_more:'*' | optional:'?' ;
+    label          @noskip = name ':' ;
+    name                   = identifier ;
+
+    rule_reference @noskip = name ( '::' name )* ;
+
+    string_element @atomic =
+          ( "'" ( [^'\\\n]* | "\\" ['\\] )* "'" )
+        | ( '"' ( [^"\\\n]* | '\\' ["\\] )* '"' ) ;
+
+    char_set      @noskip = '[' negated:'^'? ( start_char:char_set_char ( '-' end_char:char_set_char )? )+ ']' ;
+    char_set_char @atomic = [^\\\-\]] | '\\' [\^\\\-\]nt] ;
+    
+    any_element = '.' ;
+
+    negative_lookahead @noskip = '!' content:( char_set | string_element ) ;
+
+    /**************************************************************************
+
+        Identifiers
+
+    **************************************************************************/
+
+    identifier @atomic = [a-zA-Z_] [a-zA-Z0-9_]* ;
+
+    /**************************************************************************
+
+        Trivia
+
+    **************************************************************************/
+
+    trivia        @noskip = _:( line_comment | block_comment | whitespace ) ;
+    line_comment  @atomic = '//' [^\n]* '\n'? ;
+    block_comment @atomic = '/*' ( [^*]+ | '*' !'/' )* '/' ;
+    whitespace    @atomic = [\n\t ]+ ;
+
+}
