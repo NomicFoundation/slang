@@ -8,16 +8,21 @@ If you have [devbox](https://www.jetpack.io/devbox/), [Nix](https://nixos.org/),
 and [direnv](https://direnv.net/) installed on your system:
 
 1. Clone this repository:
-    ```
+
+    ```sh
     git clone <repository-url>
     cd language-design-workbench
     ```
+
 2. Allow direnv to load the environment:
-    ```
+
+    ```sh
     direnv allow
     ```
+
 3. Install dependencies:
-    ```
+
+    ```sh
     npm install
     ```
 
@@ -32,12 +37,15 @@ If you prefer to use your local Node.js and npm installation:
 
 1. Ensure you have [Node.js](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed on your system.
 2. Clone this repository:
-    ```
+
+    ```sh
     git clone <repository-url>
     cd language-design-workbench
     ```
+
 3. Install dependencies:
-    ```
+
+    ```sh
     npm install
     ```
 

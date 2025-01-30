@@ -2,7 +2,8 @@
 //! It is removed when publishing to crates.io.
 use anyhow::Result;
 use codegen_runtime_generator::RuntimeGenerator;
-use infra_utils::{cargo::CargoWorkspace, codegen::ldw};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::codegen::ldw;
 use solidity_language::{render_built_ins, SolidityDefinition};
 
 fn main() -> Result<()> {

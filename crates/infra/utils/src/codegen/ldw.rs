@@ -1,9 +1,10 @@
+use std::path::Path;
+
+use anyhow::Result;
+
 use crate::codegen::CodegenFileSystem;
 use crate::commands::Command;
 use crate::paths::{FileWalker, PathExtensions};
-
-use anyhow::Result;
-use std::path::Path;
 
 /// Invoke `ldw process-models` on `input_dir` to generate Rust code in
 /// `output_dir`.

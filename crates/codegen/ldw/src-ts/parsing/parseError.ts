@@ -3,12 +3,12 @@
  * @description Defines a custom error class for handling parsing errors with detailed position information.
  */
 
-import { InputStream } from "./inputStream";
+import { InputStream } from './inputStream';
 
 /**
  * Custom error class for parsing errors.
  * Provides detailed information about the error location in the input and supports a tree structure for nested errors.
- * 
+ *
  * @extends Error
  */
 export class ParseError extends Error {
@@ -19,7 +19,7 @@ export class ParseError extends Error {
 
     /**
      * Creates a new ParseError instance.
-     * 
+     *
      * @param message - The error message.
      * @param position - The position in the input where the error occurred.
      * @param input - The InputStream instance associated with this error.
@@ -36,7 +36,7 @@ export class ParseError extends Error {
     /**
      * Converts the ParseError tree to a string representation.
      * This method provides a human-readable representation of the entire error tree.
-     * 
+     *
      * @returns A string representation of the entire error tree.
      */
     toString(): string {
@@ -47,7 +47,7 @@ export class ParseError extends Error {
     /**
      * Recursively builds the indented string representation of the error tree.
      * This private method is used internally by {@link ParseError.toString}.
-     * 
+     *
      * @param prefix - The current indentation prefix for this node.
      * @param isLast - Whether this node is the last child of its parent.
      * @returns The indented string representation of this node and its children.
