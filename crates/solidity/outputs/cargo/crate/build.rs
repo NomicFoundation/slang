@@ -1,11 +1,8 @@
 //! This build script is only used for local development.
 //! It is removed when publishing to crates.io.
-
-use std::path::Path;
-
 use anyhow::Result;
 use codegen_runtime_generator::RuntimeGenerator;
-use infra_utils::{cargo::CargoWorkspace, commands::Command, paths::PathExtensions};
+use infra_utils::{cargo::CargoWorkspace, codegen::ldw};
 use solidity_language::{render_built_ins, SolidityDefinition};
 
 fn main() -> Result<()> {
@@ -26,26 +23,9 @@ fn main() -> Result<()> {
         render_built_ins,
     )?;
 
-    let ldw_output_dir = crate_path.join("src/generated/ldw/");
-
-    Command::new("ts-node")
-        .current_dir(Path::repo_path("crates/codegen/ldw"))
-        .args(["-P", "./tsconfig.json"])
-        .arg("src-ts/cli/ldw.ts")
-        .arg("process-model")
-        .args([
-            "--in-dir",
-            crate_path
-                .join("src/generated/ldw-models/")
-                .to_str()
-                .unwrap(),
-        ])
-        .args(["--out-dir", ldw_output_dir.to_str().unwrap()])
-        .args(["--language", "rust"])
-        .args(["--name", "l0::generated"])
-        .run();
-
-    fs.mark_generated_dir(ldw_output_dir)?;
-
-    Ok(())
+    ldw::process_models(
+        &mut fs,
+        crate_path.join("src/generated/ldw-models"),
+        crate_path.join("src/generated/ldw"),
+    )
 }
