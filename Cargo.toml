@@ -147,7 +147,7 @@ syn = { version = "2.0.93", features = [
 ] }
 tempfile = { version = "3.14.0" }
 tera = { version = "1.20.0" }
-thiserror = { version = "1.0.68" }
+thiserror = { version = "2.0.9" }
 toml = { version = "0.8.19" }
 trybuild = { version = "1.0.101" }
 url = { version = "2.5.4", features = ["serde"] }
