@@ -11,7 +11,7 @@ pub fn setup() -> Vec<ParsedFile> {
 pub fn run(files: Vec<ParsedFile>) {
     let mut functions_count = 0;
 
-    let queries = vec![Query::parse(
+    let queries = vec![Query::create(
         "[FunctionDefinition
             @name name: [_]
         ]",

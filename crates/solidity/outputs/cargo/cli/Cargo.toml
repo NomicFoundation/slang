@@ -10,10 +10,8 @@ description = "This crate contains the 'slang_solidity' CLI/cargo binary. Please
 homepage = "https://nomicfoundation.github.io/slang/"
 repository = "https://github.com/NomicFoundation/slang/"
 authors = [
+  "Slang Team <slang@nomic.foundation>",
   "Nomic Foundation <packages@nomic.foundation>",
-  "Antony Blakey <antony@nomic.foundation>",
-  "Igor Matuszewski <igor@nomic.foundation>",
-  "Omar Tawfik <omar@nomic.foundation>",
 ]
 
 readme = "README.md"

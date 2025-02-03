@@ -2,6 +2,8 @@ import path from "node:path";
 import assert from "node:assert";
 import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
 import { readRepoFile } from "../utils/files.mjs";
+import { BindingLocation } from "@nomicfoundation/slang/bindings";
+import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
 
 export async function createBuilder(): Promise<CompilationBuilder> {
   const builder = CompilationBuilder.create({
@@ -22,4 +24,17 @@ export async function createBuilder(): Promise<CompilationBuilder> {
   });
 
   return builder;
+}
+
+export function assertUserFileLocation(
+  location: BindingLocation,
+  fileId: string,
+  kind: TerminalKind | NonterminalKind,
+  line: number,
+) {
+  assert(location.isUserFileLocation());
+
+  assert.equal(location.fileId, fileId);
+  assert.equal(location.cursor.node.kind, kind);
+  assert.equal(location.cursor.textRange.start.line, line);
 }

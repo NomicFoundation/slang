@@ -19,7 +19,7 @@ pub struct CompilationUnit {
 }
 
 impl CompilationUnit {
-    pub(super) fn new(language_version: Version, files: BTreeMap<String, Rc<File>>) -> Self {
+    pub(super) fn create(language_version: Version, files: BTreeMap<String, Rc<File>>) -> Self {
         Self {
             language_version,
             files,

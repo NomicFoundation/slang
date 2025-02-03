@@ -13,6 +13,7 @@ use std::str::Chars;
 use metaslang_cst::kinds::KindTypes;
 use metaslang_cst::query::CaptureQuantifier::{self, One, OneOrMore, ZeroOrMore, ZeroOrOne};
 use metaslang_cst::query::{Query, QueryError};
+use metaslang_cst::text_index::TextIndex;
 use regex::Regex;
 use thiserror::Error;
 
@@ -93,8 +94,8 @@ impl std::fmt::Display for DisplayParseErrorPretty<'_> {
             ParseError::InvalidRegex(_, location) => *location,
             ParseError::InvalidRegexCapture(location) => *location,
             ParseError::QueryError(err) => Location {
-                row: err.line,
-                column: err.column,
+                row: err.text_range.start.line,
+                column: err.text_range.start.column,
             },
             ParseError::UnexpectedCharacter(_, _, location) => *location,
             ParseError::UnexpectedEOF(location) => *location,
@@ -364,23 +365,29 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_query<TK: KindTypes>(&mut self) -> Result<Query<TK>, ParseError> {
-        let location = self.location;
         let query_start = self.offset;
         self.skip_query()?;
         let query_end = self.offset;
+
         let query_source = &self.source[query_start..query_end];
-        let query = Query::parse(query_source).map_err(|mut e| {
-            // the column of the first row of a query pattern must be shifted by the whitespace
-            // that was already consumed
-            if e.line == 0 {
-                // must come before we update e.row!
-                e.column += location.column;
-            }
-            e.line += location.row;
-            // TODO: we should advance the other offsets, but this parser only tracks utf8
-            // e.offset += query_start;
+
+        let query = Query::create(query_source).map_err(|mut e| {
+            let start_offset = query_start + e.text_range.start.utf8;
+            let end_offset = query_start + e.text_range.end.utf8;
+
+            e.text_range.start = TextIndex::ZERO;
+            e.text_range
+                .start
+                .advance_str(&self.source[0..start_offset]);
+
+            e.text_range.end = e.text_range.start;
+            e.text_range
+                .end
+                .advance_str(&self.source[start_offset..end_offset]);
+
             e
         })?;
+
         Ok(query)
     }
 

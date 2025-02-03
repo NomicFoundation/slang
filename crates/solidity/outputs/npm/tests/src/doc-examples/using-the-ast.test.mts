@@ -13,7 +13,7 @@ test("using the ast", async () => {
   // --8<-- [start:parse-input]
   const parser = Parser.create("0.8.0");
 
-  const parseOutput = parser.parse(NonterminalKind.FunctionDefinition, source);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.FunctionDefinition, source);
   // --8<-- [end:parse-input]
 
   // --8<-- [start:create-node]

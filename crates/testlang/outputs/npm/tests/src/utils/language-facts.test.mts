@@ -1,10 +1,13 @@
 import { LanguageFacts } from "@slang-private/testlang-npm-package/utils";
 
-test("list supported versions", () => {
-  const versions = LanguageFacts.supportedVersions();
+test("allVersions()", () => {
+  expect(LanguageFacts.allVersions()).toStrictEqual(["1.0.0", "1.0.1", "1.1.0", "1.1.1"]);
+});
 
-  expect(versions.length).toBeGreaterThan(0);
+test("earliestVersion()", () => {
+  expect(LanguageFacts.earliestVersion()).toStrictEqual("1.0.0");
+});
 
-  expect(versions.includes("1.0.0")).toBeTruthy();
-  expect(versions.includes("0.0.0")).toBeFalsy();
+test("latestVersion()", () => {
+  expect(LanguageFacts.latestVersion()).toStrictEqual("1.1.1");
 });

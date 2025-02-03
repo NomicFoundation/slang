@@ -17,7 +17,7 @@ test("using the parser", async () => {
   // --8<-- [start:parse-input]
   const parser = Parser.create("0.8.0");
 
-  const parseOutput = parser.parse(NonterminalKind.ContractDefinition, source);
+  const parseOutput = parser.parseNonterminal(NonterminalKind.ContractDefinition, source);
   // --8<-- [end:parse-input]
 
   // --8<-- [start:print-errors]

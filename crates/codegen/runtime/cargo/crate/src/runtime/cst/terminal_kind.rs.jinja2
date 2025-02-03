@@ -44,20 +44,27 @@ pub enum TerminalKind {
 }
 
 impl crate::cst::TerminalKindExtensions for TerminalKind {
-    fn is_trivia(&self) -> bool {
-        {%- if rendering_in_stubs -%}
-            false
-        {%- else -%}
+    {%- if not rendering_in_stubs -%}
+        fn is_identifier(self) -> bool {
             matches!(
                 self,
-                {%- for variant in model.kinds.trivia_scanner_names -%}
+                {%- for variant in model.kinds.identifier_terminals -%}
                     | Self::{{ variant }}
                 {%- endfor -%}
             )
-        {%- endif -%}
-    }
+        }
 
-    fn is_valid(&self) -> bool {
-        !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
-    }
+        fn is_trivia(self) -> bool {
+            matches!(
+                self,
+                {%- for variant in model.kinds.trivia_terminals -%}
+                    | Self::{{ variant }}
+                {%- endfor -%}
+            )
+        }
+
+        fn is_valid(self) -> bool {
+            !matches!(self, Self::UNRECOGNIZED | Self::MISSING)
+        }
+    {%- endif -%}
 }

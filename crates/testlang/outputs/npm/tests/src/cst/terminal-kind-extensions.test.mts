@@ -1,5 +1,39 @@
 import { TerminalKindExtensions, TerminalKind } from "@slang-private/testlang-npm-package/cst";
 
+describe("is_identifier()", () => {
+  for (const kind in TerminalKind) {
+    it(`TerminalKind.${kind}`, () => {
+      switch (kind) {
+        case TerminalKind.Identifier: {
+          expect(TerminalKindExtensions.isIdentifier(kind)).toBeTruthy();
+          break;
+        }
+        case TerminalKind.Bang:
+        case TerminalKind.CloseBracket:
+        case TerminalKind.DelimitedIdentifier:
+        case TerminalKind.EndOfLine:
+        case TerminalKind.Missing:
+        case TerminalKind.MultiLineComment:
+        case TerminalKind.OpenBracket:
+        case TerminalKind.Period:
+        case TerminalKind.Plus:
+        case TerminalKind.Semicolon:
+        case TerminalKind.SingleLineComment:
+        case TerminalKind.StringLiteral:
+        case TerminalKind.TreeKeyword:
+        case TerminalKind.Unrecognized:
+        case TerminalKind.Whitespace: {
+          expect(TerminalKindExtensions.isIdentifier(kind)).toBeFalsy();
+          break;
+        }
+        default: {
+          throw new Error(`Unexpected terminal kind: ${kind}`);
+        }
+      }
+    });
+  }
+});
+
 describe("is_trivia()", () => {
   for (const kind in TerminalKind) {
     it(`TerminalKind.${kind}`, () => {
