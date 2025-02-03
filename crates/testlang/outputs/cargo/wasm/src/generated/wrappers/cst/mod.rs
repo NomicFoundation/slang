@@ -65,12 +65,16 @@ enum_to_enum!(TerminalKind);
 pub struct TerminalKindExtensionsWrapper;
 
 impl ffi::GuestTerminalKindExtensions for TerminalKindExtensionsWrapper {
+    fn is_identifier(kind: ffi::TerminalKind) -> bool {
+        crate::rust_crate::cst::TerminalKindExtensions::is_identifier(kind._from_ffi())
+    }
+
     fn is_trivia(kind: ffi::TerminalKind) -> bool {
-        crate::rust_crate::cst::TerminalKindExtensions::is_trivia(&kind._from_ffi())
+        crate::rust_crate::cst::TerminalKindExtensions::is_trivia(kind._from_ffi())
     }
 
     fn is_valid(kind: ffi::TerminalKind) -> bool {
-        crate::rust_crate::cst::TerminalKindExtensions::is_valid(&kind._from_ffi())
+        crate::rust_crate::cst::TerminalKindExtensions::is_valid(kind._from_ffi())
     }
 }
 
@@ -94,6 +98,16 @@ impl IntoFFI<ffi::Node> for rust::Node {
         match self {
             Self::Nonterminal(node) => ffi::Node::Nonterminal(node._into_ffi()),
             Self::Terminal(node) => ffi::Node::Terminal(node._into_ffi()),
+        }
+    }
+}
+
+impl FromFFI<rust::Node> for ffi::Node {
+    #[inline]
+    fn _from_ffi(self) -> rust::Node {
+        match self {
+            ffi::Node::Nonterminal(node) => rust::Node::Nonterminal(node._from_ffi()),
+            ffi::Node::Terminal(node) => rust::Node::Terminal(node._from_ffi()),
         }
     }
 }
@@ -134,7 +148,7 @@ define_rc_wrapper! { NonterminalNode {
     }
 
     fn create_cursor(&self, text_offset: ffi::TextIndex) -> ffi::Cursor {
-        std::rc::Rc::clone(self._borrow_ffi()).cursor_with_offset(text_offset._from_ffi())._into_ffi()
+        std::rc::Rc::clone(self._borrow_ffi()).create_cursor(text_offset._from_ffi())._into_ffi()
     }
 } }
 
@@ -186,6 +200,16 @@ impl IntoFFI<ffi::Edge> for rust::Edge {
         ffi::Edge {
             label: self.label._into_ffi(),
             node: self.node._into_ffi(),
+        }
+    }
+}
+
+impl FromFFI<rust::Edge> for ffi::Edge {
+    #[inline]
+    fn _from_ffi(self) -> rust::Edge {
+        rust::Edge {
+            label: self.label._from_ffi(),
+            node: self.node._from_ffi(),
         }
     }
 }
@@ -277,8 +301,8 @@ define_refcell_wrapper! { Cursor {
         self._borrow_mut_ffi().go_to_last_child()
     }
 
-    fn go_to_nth_child(&self, child_number: u32) -> bool {
-        self._borrow_mut_ffi().go_to_nth_child(child_number as usize)
+    fn go_to_nth_child(&self, child_index: u32) -> bool {
+        self._borrow_mut_ffi().go_to_nth_child(child_index as usize)
     }
 
     fn go_to_next_sibling(&self) -> bool {
@@ -355,8 +379,8 @@ define_refcell_wrapper! { AncestorsIterator {
 //================================================
 
 define_wrapper! { Query {
-    fn parse(text: String) -> Result<ffi::Query, ffi::QueryError> {
-        rust::Query::parse(&text).map_err(IntoFFI::_into_ffi).map(IntoFFI::_into_ffi)
+    fn create(text: String) -> Result<ffi::Query, ffi::QueryError> {
+        rust::Query::create(&text).map_err(IntoFFI::_into_ffi).map(IntoFFI::_into_ffi)
     }
 } }
 
@@ -371,8 +395,7 @@ impl IntoFFI<ffi::QueryError> for rust::QueryError {
     fn _into_ffi(self) -> ffi::QueryError {
         ffi::QueryError {
             message: self.message,
-            line: self.line.try_into().unwrap(),
-            column: self.column.try_into().unwrap(),
+            text_range: self.text_range._into_ffi(),
         }
     }
 }
@@ -399,7 +422,7 @@ impl IntoFFI<ffi::QueryMatch> for rust::QueryMatch {
     #[inline]
     fn _into_ffi(self) -> ffi::QueryMatch {
         ffi::QueryMatch {
-            query_number: self.query_number.try_into().unwrap(),
+            query_index: self.query_index.try_into().unwrap(),
             captures: self
                 .captures
                 .into_iter()

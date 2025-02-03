@@ -18,7 +18,7 @@ use super::model::{
     OptionalASTNode, SequenceASTNode,
 };
 use crate::kinds::{BaseKind, KindTypes, NodeKind, TerminalKindExtensions};
-use crate::text_index::TextIndex;
+use crate::text_index::{TextIndex, TextRange};
 
 // ----------------------------------------------------------------------------
 // Parse errors
@@ -26,8 +26,7 @@ use crate::text_index::TextIndex;
 #[derive(Clone, Debug, Error)]
 pub struct QueryError {
     pub message: String,
-    pub line: usize,
-    pub column: usize,
+    pub text_range: TextRange,
 }
 
 impl std::fmt::Display for QueryError {
@@ -128,36 +127,20 @@ pub(super) fn parse_query<T: KindTypes>(input: &str) -> Result<ASTNode<T>, Query
         .parse(input)
         .finish()
         .map(|(_, query)| query)
-        .map_err(|e| {
-            let text_index = compute_row_and_column(e.errors[0].0, input);
-            QueryError {
-                message: e.to_string(),
-                line: text_index.line,
-                column: text_index.column,
-            }
+        .map_err(|e| QueryError {
+            message: e.to_string(),
+            text_range: compute_error_location(input, e.errors[0].0),
         })
 }
 
-fn compute_row_and_column(target: &str, input: &str) -> TextIndex {
-    let target_offset = input.offset(target);
-    let mut text_index = TextIndex::ZERO;
-    let mut from_iter = input.chars();
-    let Some(mut c) = from_iter.next() else {
-        return text_index;
-    };
-    let mut next_c = from_iter.next();
-    loop {
-        if text_index.utf8 >= target_offset {
-            break;
-        }
-        text_index.advance(c, next_c.as_ref());
-        c = match next_c {
-            Some(ch) => ch,
-            None => break,
-        };
-        next_c = from_iter.next();
-    }
-    text_index
+fn compute_error_location(input: &str, target: &str) -> TextRange {
+    let mut start = TextIndex::ZERO;
+    start.advance_str(&input[..input.offset(target)]);
+
+    let mut end = start;
+    end.advance_str(target);
+
+    TextRange { start, end }
 }
 
 fn parse_matcher_alternatives<T: KindTypes>(

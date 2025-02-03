@@ -25,7 +25,7 @@ impl ImportPathsExtractor {
                 ]",
             ]
             .into_iter()
-            .map(|text| Query::parse(text).unwrap())
+            .map(|text| Query::create(text).unwrap())
             .collect(),
         }
     }
@@ -94,7 +94,7 @@ mod tests {
 
     fn run(source: &str, expected: &[&str]) {
         let parser = Parser::create(Version::new(0, 8, 0)).unwrap();
-        let parse_output = parser.parse(Parser::ROOT_KIND, source);
+        let parse_output = parser.parse_file_contents(source);
 
         let imports = super::ImportPathsExtractor::new();
 

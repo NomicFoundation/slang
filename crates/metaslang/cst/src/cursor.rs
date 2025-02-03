@@ -18,7 +18,7 @@ enum Parent<T: KindTypes> {
 struct PathAncestor<T: KindTypes> {
     parent: Parent<T>,
     nonterminal_node: Rc<NonterminalNode<T>>,
-    child_number: usize,
+    child_index: usize,
     text_offset: TextIndex,
 }
 
@@ -33,7 +33,7 @@ pub struct Cursor<T: KindTypes> {
     node: Node<T>,
     /// The index of the current child node in the parent's children.
     // Required to go to the next/previous sibling.
-    child_number: usize,
+    child_index: usize,
     /// Text offset that corresponds to the beginning of the currently pointed to node.
     text_offset: TextIndex,
     /// Whether the cursor is completed, i.e. at the root node as a result of traversal (or when `complete`d).
@@ -47,7 +47,7 @@ impl<T: KindTypes> Cursor<T> {
             Some(Rc::new(PathAncestor {
                 parent: self.parent.clone(),
                 nonterminal_node: Rc::clone(nonterminal_node),
-                child_number: self.child_number,
+                child_index: self.child_index,
                 text_offset: self.text_offset,
             }))
         } else {
@@ -58,17 +58,17 @@ impl<T: KindTypes> Cursor<T> {
     fn set_from_ancestor_node(&mut self, ancestor: &Rc<PathAncestor<T>>) {
         self.parent = ancestor.parent.clone();
         self.node = Node::<T>::Nonterminal(Rc::clone(&ancestor.nonterminal_node));
-        self.child_number = ancestor.child_number;
+        self.child_index = ancestor.child_index;
         self.text_offset = ancestor.text_offset;
     }
 }
 
 impl<T: KindTypes> Cursor<T> {
-    pub(crate) fn new(node: Node<T>, text_offset: TextIndex) -> Self {
+    pub(crate) fn create(node: Node<T>, text_offset: TextIndex) -> Self {
         Self {
             parent: Parent::None,
             node,
-            child_number: 0,
+            child_index: 0,
             text_offset,
             is_completed: false,
         }
@@ -102,7 +102,7 @@ impl<T: KindTypes> Cursor<T> {
             is_completed: false,
             parent: Parent::Disconnected(label),
             node: self.node.clone(),
-            child_number: 0,
+            child_index: 0,
             text_offset: self.text_offset,
         }
     }
@@ -120,7 +120,7 @@ impl<T: KindTypes> Cursor<T> {
     pub fn label(&self) -> T::EdgeLabel {
         match &self.parent {
             Parent::Connected(parent) => {
-                let this = &parent.nonterminal_node.children[self.child_number];
+                let this = &parent.nonterminal_node.children[self.child_index];
                 this.label
             }
             Parent::Disconnected(label) => *label,
@@ -263,7 +263,7 @@ impl<T: KindTypes> Cursor<T> {
             if let Some(new_child) = new_parent.nonterminal_node.children.first().cloned() {
                 self.parent = Parent::Connected(new_parent);
                 self.node = new_child.node;
-                self.child_number = 0;
+                self.child_index = 0;
 
                 return true;
             }
@@ -282,10 +282,10 @@ impl<T: KindTypes> Cursor<T> {
 
         if let Some(new_parent) = self.as_ancestor_node() {
             if let Some(new_child) = new_parent.nonterminal_node.children.last().cloned() {
-                self.child_number = new_parent.nonterminal_node.children.len() - 1;
+                self.child_index = new_parent.nonterminal_node.children.len() - 1;
                 self.node = new_child.node;
                 // Remember: range is not inclusive
-                for sibling in &new_parent.nonterminal_node.children[..self.child_number] {
+                for sibling in &new_parent.nonterminal_node.children[..self.child_index] {
                     self.text_offset += sibling.text_len();
                 }
                 self.parent = Parent::Connected(new_parent);
@@ -300,7 +300,7 @@ impl<T: KindTypes> Cursor<T> {
     /// Attempts to go to current node's nth child.
     ///
     /// Returns `false` if the cursor is finished or there's no child to go to.
-    pub fn go_to_nth_child(&mut self, child_number: usize) -> bool {
+    pub fn go_to_nth_child(&mut self, child_index: usize) -> bool {
         if self.is_completed {
             return false;
         }
@@ -309,13 +309,13 @@ impl<T: KindTypes> Cursor<T> {
             if let Some(new_child) = new_parent
                 .nonterminal_node
                 .children
-                .get(child_number)
+                .get(child_index)
                 .cloned()
             {
-                self.child_number = child_number;
+                self.child_index = child_index;
                 self.node = new_child.node;
                 // Remember: range is not inclusive
-                for sibling in &new_parent.nonterminal_node.children[..self.child_number] {
+                for sibling in &new_parent.nonterminal_node.children[..self.child_index] {
                     self.text_offset += sibling.text_len();
                 }
                 self.parent = Parent::Connected(new_parent);
@@ -336,10 +336,10 @@ impl<T: KindTypes> Cursor<T> {
         }
 
         if let Parent::Connected(parent) = &self.parent {
-            let new_child_number = self.child_number + 1;
+            let new_child_number = self.child_index + 1;
             if let Some(new_child) = parent.nonterminal_node.children.get(new_child_number) {
                 self.text_offset += self.node.text_len();
-                self.child_number = new_child_number;
+                self.child_index = new_child_number;
                 self.node = new_child.node.clone();
 
                 return true;
@@ -358,14 +358,14 @@ impl<T: KindTypes> Cursor<T> {
         }
 
         if let Parent::Connected(parent) = &self.parent {
-            if self.child_number > 0 {
-                let new_child_number = self.child_number - 1;
+            if self.child_index > 0 {
+                let new_child_number = self.child_index - 1;
                 let new_child = &parent.nonterminal_node.children[new_child_number];
-                self.child_number = new_child_number;
+                self.child_index = new_child_number;
                 self.node = new_child.node.clone();
                 // Remember: range is not inclusive
                 self.text_offset = parent.text_offset;
-                for sibling in &parent.nonterminal_node.children[..self.child_number] {
+                for sibling in &parent.nonterminal_node.children[..self.child_index] {
                     self.text_offset += sibling.text_len();
                 }
 

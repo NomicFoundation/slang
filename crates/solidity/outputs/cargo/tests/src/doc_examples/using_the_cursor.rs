@@ -21,7 +21,7 @@ fn using_the_cursor() -> Result<()> {
     // --8<-- [start:parse-input]
     let parser = Parser::create(Version::parse("0.8.0")?)?;
 
-    let parse_output = parser.parse(NonterminalKind::SourceUnit, source);
+    let parse_output = parser.parse_file_contents(source);
     // --8<-- [end:parse-input]
 
     {

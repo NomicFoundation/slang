@@ -2,12 +2,12 @@ import { readRepoFile } from "../utils/files.mjs";
 import assert from "node:assert";
 
 import { Parser } from "@nomicfoundation/slang/parser";
-import { assertIsNonterminalNode, NonterminalKind, Query, QueryMatchIterator } from "@nomicfoundation/slang/cst";
+import { assertIsNonterminalNode, Query, QueryMatchIterator } from "@nomicfoundation/slang/cst";
 
 async function parseDocInputFile(relativePath: string) {
   const source = await readRepoFile("documentation/public/user-guide/inputs", relativePath);
   const parser = Parser.create("0.8.0");
-  return parser.parse(NonterminalKind.SourceUnit, source);
+  return parser.parseFileContents(source);
 }
 
 test("using queries", async () => {
@@ -17,7 +17,7 @@ test("using queries", async () => {
     // Any `Cursor` can be used to create a query.
     const cursor = parseOutput.createTreeCursor();
 
-    const query = Query.parse("[ContractDefinition]");
+    const query = Query.create("[ContractDefinition]");
     const matches: QueryMatchIterator = cursor.query([query]);
     // --8<-- [end:creating-a-query]
 
@@ -31,7 +31,7 @@ test("using queries", async () => {
     // --8<-- [start:visiting-contracts]
     const found = [];
 
-    const query = Query.parse("@contract [ContractDefinition]");
+    const query = Query.create("@contract [ContractDefinition]");
     const matches = cursor.query([query]);
 
     for (const match of matches) {
@@ -52,12 +52,12 @@ test("using queries", async () => {
     // --8<-- [start:multiple-patterns]
     const names = [];
 
-    const structDefinition = Query.parse("[StructDefinition @name [Identifier]]");
-    const enumDefinition = Query.parse("[EnumDefinition @name [Identifier]]");
+    const structDefinition = Query.create("[StructDefinition @name [Identifier]]");
+    const enumDefinition = Query.create("[EnumDefinition @name [Identifier]]");
     const matches = cursor.query([structDefinition, enumDefinition]);
 
     for (const match of matches) {
-      const index = match.queryNumber;
+      const index = match.queryIndex;
       const cursor = match.captures["name"]![0]!;
 
       names.push([index, cursor.node.unparse()]);
@@ -79,7 +79,7 @@ test("using queries", async () => {
     // --8<-- [start:matching-on-label]
     const names = [];
 
-    const query = Query.parse("[TypedTupleMember @type type_name:[_]]");
+    const query = Query.create("[TypedTupleMember @type type_name:[_]]");
     const matches = cursor.query([query]);
 
     for (const match of matches) {
@@ -100,7 +100,7 @@ test("using queries", async () => {
     // --8<-- [start:matching-on-literal-value]
     const names = [];
 
-    const query = Query.parse(`[ElementaryType @uint_keyword variant:["uint"]]`);
+    const query = Query.create(`[ElementaryType @uint_keyword variant:["uint"]]`);
     const matches = cursor.query([query]);
 
     for (const match of matches) {
@@ -118,7 +118,7 @@ test("using queries", async () => {
     const cursor = parseOutput.createTreeCursor();
 
     // --8<-- [start:tx-origin]
-    const query = Query.parse(`
+    const query = Query.create(`
     @txorigin [MemberAccessExpression
       [Expression @start ["tx"]]
       ["origin"]

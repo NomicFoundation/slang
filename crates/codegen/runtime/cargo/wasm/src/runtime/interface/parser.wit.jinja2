@@ -4,27 +4,26 @@ interface parser {
     /// A parser instance that can parse source code into syntax trees.
     /// Each parser is configured for a specific language version and grammar.
     resource parser {
-        /// Returns the root nonterminal kind for this parser's grammar.
-        /// This represents the starting point for parsing a complete source file.
-        root-kind: static func() -> nonterminal-kind;
-
         /// Creates a new parser instance for the specified language version.
         create: static func(language-version: string) -> result<parser, string>;
 
         /// Returns the language version this parser instance is configured for.
         language-version: func() -> string;
 
-        /// Parses the input string starting from the specified nonterminal kind.
-        parse: func(kind: nonterminal-kind, input: string) -> parse-output;
+        /// Parses the input string into a complete source file.
+        parse-file-contents: func(input: string) -> parse-output;
+
+        /// Parses the input string into a nonterminal with the specified kind.
+        parse-nonterminal: func(kind: nonterminal-kind, input: string) -> parse-output;
     }
 
-    /// Contains information about where the error occurred and what went wrong.
-    resource parse-error {
-        /// Returns the text range where the error occurred in the source code.
-        text-range: func() -> text-range;
+    /// Represents an error that occurred while parsing source code.
+    record parse-error {
+        /// A human-readable message describing what went wrong.
+        message: string,
 
-        /// Returns a human-readable message describing the parsing error.
-        message: func() -> string;
+        /// The text range where the error occurred in the source code.
+        text-range: text-range,
     }
 
     /// The output of a parsing operation.
@@ -35,7 +34,7 @@ interface parser {
         tree: func() -> nonterminal-node;
 
         /// Returns a list of all parsing errors encountered.
-        /// An empty list indicates successful parsing with no errors.
+        /// An empty list indicates a successful parse with no errors.
         errors: func() -> list<parse-error>;
 
         /// Returns whether the parse was completely successful with no errors.

@@ -29,12 +29,16 @@ where
 }
 
 pub trait TerminalKindExtensions: BaseKind {
-    fn is_trivia(&self) -> bool {
+    fn is_identifier(self) -> bool {
+        false
+    }
+
+    fn is_trivia(self) -> bool {
         false
     }
 
     /// Returns whether the terminal is valid, i.e. does not represent missing or invalid syntax.
-    fn is_valid(&self) -> bool {
+    fn is_valid(self) -> bool {
         true
     }
 }

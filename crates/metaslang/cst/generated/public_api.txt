@@ -26,7 +26,7 @@ pub fn metaslang_cst::cursor::Cursor<T>::go_to_next_sibling(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_next_terminal(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_next_terminal_with_kind(&mut self, kind: <T as metaslang_cst::kinds::KindTypes>::TerminalKind) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_next_terminal_with_kinds(&mut self, kinds: &[<T as metaslang_cst::kinds::KindTypes>::TerminalKind]) -> bool
-pub fn metaslang_cst::cursor::Cursor<T>::go_to_nth_child(&mut self, child_number: usize) -> bool
+pub fn metaslang_cst::cursor::Cursor<T>::go_to_nth_child(&mut self, child_index: usize) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_parent(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_previous(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_previous_sibling(&mut self) -> bool
@@ -82,8 +82,9 @@ pub type metaslang_cst::kinds::KindTypes::NonterminalKind: metaslang_cst::kinds:
 pub type metaslang_cst::kinds::KindTypes::TerminalKind: metaslang_cst::kinds::TerminalKindExtensions
 pub trait metaslang_cst::kinds::NonterminalKindExtensions: metaslang_cst::kinds::BaseKind
 pub trait metaslang_cst::kinds::TerminalKindExtensions: metaslang_cst::kinds::BaseKind
-pub fn metaslang_cst::kinds::TerminalKindExtensions::is_trivia(&self) -> bool
-pub fn metaslang_cst::kinds::TerminalKindExtensions::is_valid(&self) -> bool
+pub fn metaslang_cst::kinds::TerminalKindExtensions::is_identifier(self) -> bool
+pub fn metaslang_cst::kinds::TerminalKindExtensions::is_trivia(self) -> bool
+pub fn metaslang_cst::kinds::TerminalKindExtensions::is_valid(self) -> bool
 pub mod metaslang_cst::nodes
 pub enum metaslang_cst::nodes::Node<T: metaslang_cst::kinds::KindTypes>
 pub metaslang_cst::nodes::Node::Nonterminal(alloc::rc::Rc<metaslang_cst::nodes::NonterminalNode<T>>)
@@ -96,7 +97,7 @@ pub fn metaslang_cst::nodes::Node<T>::as_terminal(&self) -> core::option::Option
 pub fn metaslang_cst::nodes::Node<T>::as_terminal_with_kind(&self, kind: <T as metaslang_cst::kinds::KindTypes>::TerminalKind) -> core::option::Option<&alloc::rc::Rc<metaslang_cst::nodes::TerminalNode<T>>>
 pub fn metaslang_cst::nodes::Node<T>::as_terminal_with_kinds(&self, kinds: &[<T as metaslang_cst::kinds::KindTypes>::TerminalKind]) -> core::option::Option<&alloc::rc::Rc<metaslang_cst::nodes::TerminalNode<T>>>
 pub fn metaslang_cst::nodes::Node<T>::children(&self) -> &[metaslang_cst::nodes::Edge<T>]
-pub fn metaslang_cst::nodes::Node<T>::cursor_with_offset(self, text_offset: metaslang_cst::text_index::TextIndex) -> metaslang_cst::cursor::Cursor<T>
+pub fn metaslang_cst::nodes::Node<T>::create_cursor(self, text_offset: metaslang_cst::text_index::TextIndex) -> metaslang_cst::cursor::Cursor<T>
 pub fn metaslang_cst::nodes::Node<T>::descendants(self) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::nodes::Node<T>::id(&self) -> usize
 pub fn metaslang_cst::nodes::Node<T>::into_nonterminal(self) -> core::option::Option<alloc::rc::Rc<metaslang_cst::nodes::NonterminalNode<T>>>
@@ -151,12 +152,11 @@ pub metaslang_cst::nodes::NonterminalNode::kind: <T as metaslang_cst::kinds::Kin
 pub metaslang_cst::nodes::NonterminalNode::text_len: metaslang_cst::text_index::TextIndex
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::nodes::NonterminalNode<T>
 pub fn metaslang_cst::nodes::NonterminalNode<T>::children(self: &alloc::rc::Rc<Self>) -> &[metaslang_cst::nodes::Edge<T>]
-pub fn metaslang_cst::nodes::NonterminalNode<T>::cursor_with_offset(self: alloc::rc::Rc<Self>, text_offset: metaslang_cst::text_index::TextIndex) -> metaslang_cst::cursor::Cursor<T>
+pub fn metaslang_cst::nodes::NonterminalNode<T>::create(kind: <T as metaslang_cst::kinds::KindTypes>::NonterminalKind, children: alloc::vec::Vec<metaslang_cst::nodes::Edge<T>>) -> alloc::rc::Rc<Self>
+pub fn metaslang_cst::nodes::NonterminalNode<T>::create_cursor(self: alloc::rc::Rc<Self>, text_offset: metaslang_cst::text_index::TextIndex) -> metaslang_cst::cursor::Cursor<T>
 pub fn metaslang_cst::nodes::NonterminalNode<T>::descendants(self: alloc::rc::Rc<Self>) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::nodes::NonterminalNode<T>::id(self: &alloc::rc::Rc<Self>) -> usize
 pub fn metaslang_cst::nodes::NonterminalNode<T>::unparse(&self) -> alloc::string::String
-impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::nodes::NonterminalNode<T>
-pub fn metaslang_cst::nodes::NonterminalNode<T>::new(kind: <T as metaslang_cst::kinds::KindTypes>::NonterminalKind, children: alloc::vec::Vec<metaslang_cst::nodes::Edge<T>>) -> Self
 impl<T: core::clone::Clone + metaslang_cst::kinds::KindTypes> core::clone::Clone for metaslang_cst::nodes::NonterminalNode<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::clone::Clone
 pub fn metaslang_cst::nodes::NonterminalNode<T>::clone(&self) -> metaslang_cst::nodes::NonterminalNode<T>
 impl<T: core::cmp::Eq + metaslang_cst::kinds::KindTypes> core::cmp::Eq for metaslang_cst::nodes::NonterminalNode<T> where <T as metaslang_cst::kinds::KindTypes>::NonterminalKind: core::cmp::Eq
@@ -172,7 +172,8 @@ pub metaslang_cst::nodes::TerminalNode::kind: <T as metaslang_cst::kinds::KindTy
 pub metaslang_cst::nodes::TerminalNode::text: alloc::string::String
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::nodes::TerminalNode<T>
 pub fn metaslang_cst::nodes::TerminalNode<T>::children(self: &alloc::rc::Rc<Self>) -> &[metaslang_cst::nodes::Edge<T>]
-pub fn metaslang_cst::nodes::TerminalNode<T>::cursor_with_offset(self: alloc::rc::Rc<Self>, text_offset: metaslang_cst::text_index::TextIndex) -> metaslang_cst::cursor::Cursor<T>
+pub fn metaslang_cst::nodes::TerminalNode<T>::create(kind: <T as metaslang_cst::kinds::KindTypes>::TerminalKind, text: alloc::string::String) -> alloc::rc::Rc<Self>
+pub fn metaslang_cst::nodes::TerminalNode<T>::create_cursor(self: alloc::rc::Rc<Self>, text_offset: metaslang_cst::text_index::TextIndex) -> metaslang_cst::cursor::Cursor<T>
 pub fn metaslang_cst::nodes::TerminalNode<T>::descendants(self: alloc::rc::Rc<Self>) -> metaslang_cst::cursor::CursorIterator<T>
 pub fn metaslang_cst::nodes::TerminalNode<T>::id(self: &alloc::rc::Rc<Self>) -> usize
 pub fn metaslang_cst::nodes::TerminalNode<T>::unparse(&self) -> alloc::string::String
@@ -205,7 +206,7 @@ pub struct metaslang_cst::query::Query<T: metaslang_cst::kinds::KindTypes>
 pub metaslang_cst::query::Query::ast_node: ASTNode<T>
 pub metaslang_cst::query::Query::capture_quantifiers: alloc::collections::btree::map::BTreeMap<alloc::string::String, metaslang_cst::query::CaptureQuantifier>
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::query::Query<T>
-pub fn metaslang_cst::query::Query<T>::parse(text: &str) -> core::result::Result<Self, metaslang_cst::query::QueryError>
+pub fn metaslang_cst::query::Query<T>::create(text: &str) -> core::result::Result<Self, metaslang_cst::query::QueryError>
 impl<T: core::clone::Clone + metaslang_cst::kinds::KindTypes> core::clone::Clone for metaslang_cst::query::Query<T>
 pub fn metaslang_cst::query::Query<T>::clone(&self) -> metaslang_cst::query::Query<T>
 impl<T: core::fmt::Debug + metaslang_cst::kinds::KindTypes> core::fmt::Debug for metaslang_cst::query::Query<T>
@@ -213,9 +214,8 @@ pub fn metaslang_cst::query::Query<T>::fmt(&self, f: &mut core::fmt::Formatter<'
 impl<T: metaslang_cst::kinds::KindTypes> core::fmt::Display for metaslang_cst::query::Query<T>
 pub fn metaslang_cst::query::Query<T>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct metaslang_cst::query::QueryError
-pub metaslang_cst::query::QueryError::column: usize
-pub metaslang_cst::query::QueryError::line: usize
 pub metaslang_cst::query::QueryError::message: alloc::string::String
+pub metaslang_cst::query::QueryError::text_range: metaslang_cst::text_index::TextRange
 impl core::clone::Clone for metaslang_cst::query::QueryError
 pub fn metaslang_cst::query::QueryError::clone(&self) -> metaslang_cst::query::QueryError
 impl core::error::Error for metaslang_cst::query::QueryError
@@ -226,7 +226,7 @@ pub fn metaslang_cst::query::QueryError::fmt(&self, f: &mut core::fmt::Formatter
 pub struct metaslang_cst::query::QueryMatch<T: metaslang_cst::kinds::KindTypes>
 pub metaslang_cst::query::QueryMatch::captures: alloc::collections::btree::map::BTreeMap<alloc::string::String, alloc::vec::Vec<metaslang_cst::cursor::Cursor<T>>>
 pub metaslang_cst::query::QueryMatch::queries: alloc::rc::Rc<alloc::vec::Vec<metaslang_cst::query::Query<T>>>
-pub metaslang_cst::query::QueryMatch::query_number: usize
+pub metaslang_cst::query::QueryMatch::query_index: usize
 pub metaslang_cst::query::QueryMatch::root_cursor: metaslang_cst::cursor::Cursor<T>
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::query::QueryMatch<T>
 pub fn metaslang_cst::query::QueryMatch<T>::capture(&self, name: &str) -> core::option::Option<(metaslang_cst::query::CaptureQuantifier, impl core::iter::traits::iterator::Iterator<Item = metaslang_cst::cursor::Cursor<T>>)>

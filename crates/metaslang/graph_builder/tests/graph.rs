@@ -79,7 +79,7 @@ fn can_iterate_graph_edges() {
 fn can_display_graph() {
     let tree =
         metaslang_cst::nodes::Node::<KindTypes>::terminal(DummyKind::Module, "pass".to_owned());
-    let cursor = tree.cursor_with_offset(metaslang_cst::text_index::TextIndex::ZERO);
+    let cursor = tree.create_cursor(metaslang_cst::text_index::TextIndex::ZERO);
 
     let mut graph = Graph::<KindTypes>::new();
     let root = graph.add_syntax_node(cursor);

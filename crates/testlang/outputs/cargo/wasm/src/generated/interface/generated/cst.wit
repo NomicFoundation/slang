@@ -203,9 +203,11 @@ interface cst {
 
     //// Useful extension methods for working with terminals and terminal kinds.
     resource terminal-kind-extensions {
-        /// Returns true if the terminal is a trivia token. i.e. whitespace, comments, etc... 
+        /// Returns `true` if the terminal is an identifier token.
+        is-identifier: static func(kind: terminal-kind) -> bool;
+        /// Returns `true` if the terminal is a trivia token. i.e. whitespace, comments, etc... 
         is-trivia: static func(kind: terminal-kind) -> bool;
-        /// Returns true if the terminal is a valid token in the language grammar.
+        /// Returns `true` if the terminal is a valid token in the language grammar.
         is-valid: static func(kind: terminal-kind) -> bool;
     }
 
@@ -374,7 +376,7 @@ interface cst {
         /// Moves to the last child of the current node.
         go-to-last-child: func() -> bool;
         /// Moves to the nth child of the current node.
-        go-to-nth-child: func(child-number: u32) -> bool;
+        go-to-nth-child: func(child-index: u32) -> bool;
 
         /// Moves to the next sibling node.
         go-to-next-sibling: func() -> bool;
@@ -416,23 +418,21 @@ interface cst {
     resource query {
         /// Parses a query string into a query object.
         /// Throws an error if the query syntax is invalid.
-        parse: static func(text: string) -> result<query, query-error>;
+        create: static func(text: string) -> result<query, query-error>;
     }
 
     /// Represents an error that occurred while parsing a query.
     record query-error {
-        /// The error message describing what went wrong.
+        /// A human-readable message describing what went wrong.
         message: string,
-        /// The line number where the error occurred.
-        line: u32,
-        /// The column number where the error occurred.
-        column: u32,
+        /// The text range where the error occurred in the query code.
+        text-range: text-range,
     }
 
-    /// Represents a match found by executing a query.
+    /// Represents a match found by executing queries on a cursor.
     record query-match {
         /// The index of the query that produced this match.
-        query-number: u32,
+        query-index: u32,
         /// List of captured nodes and their names from the query.
         captures: list<tuple<string, list<cursor>>>,
     }

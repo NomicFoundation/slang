@@ -132,7 +132,7 @@ impl Match {
             .flat_map(|edge| {
                 edge.node
                     .clone()
-                    .cursor_with_offset(TextIndex::ZERO)
+                    .create_cursor(TextIndex::ZERO)
                     .remaining_nodes()
             })
             .all(|edge| {
@@ -220,7 +220,7 @@ impl IncompleteMatch {
             .flat_map(|edge| {
                 edge.node
                     .clone()
-                    .cursor_with_offset(TextIndex::ZERO)
+                    .create_cursor(TextIndex::ZERO)
                     .remaining_nodes()
             })
             .try_fold(0u8, |mut acc, edge| {

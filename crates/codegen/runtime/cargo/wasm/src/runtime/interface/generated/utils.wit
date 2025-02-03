@@ -4,6 +4,12 @@ interface utils {
     /// Provides information about the supported language versions and the grammar.
     resource language-facts {
         /// Returns a list of language versions supported by Slang, sorted ascendingly.
-        supported-versions: static func() -> list<string>;
+        all-versions: static func() -> list<string>;
+
+        /// Returns the earliest language version supported by Slang.
+        earliest-version: static func() -> string;
+
+        /// Returns the latest language version supported by Slang.
+        latest-version: static func() -> string;
     }
 }
