@@ -12,9 +12,9 @@ use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
 use resolver::Resolver;
 use semver::Version;
-use stack_graphs::graph::StackGraph;
+use stack_graphs::graph::{NodeID, StackGraph};
 
-pub(crate) type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
+pub type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 pub(crate) type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
 pub(crate) type CursorID = usize;
 
@@ -140,6 +140,16 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         _ = self.add_file_internal(file, tree_cursor);
     }
 
+    pub fn build_system_file(
+        &mut self,
+        file_path: &str,
+        cursor: Cursor<KT>,
+    ) -> FileGraphBuilder<'_, KT> {
+        let file_kind = FileDescriptor::System(file_path.into());
+        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        FileGraphBuilder::new(self, file, cursor)
+    }
+
     #[cfg(feature = "__private_testing_utils")]
     pub fn add_user_file_returning_graph(
         &mut self,
@@ -229,5 +239,215 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
 
     pub(crate) fn is_extension_hook(&self, node_handle: GraphHandle) -> bool {
         self.extension_hooks.contains(&node_handle)
+    }
+}
+
+pub struct FileGraphBuilder<'a, KT: KindTypes + 'static> {
+    builder: &'a mut BindingGraphBuilder<KT>,
+    file: FileHandle,
+    cursor: Cursor<KT>,
+}
+
+impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
+    fn new(builder: &'a mut BindingGraphBuilder<KT>, file: FileHandle, cursor: Cursor<KT>) -> Self {
+        FileGraphBuilder {
+            builder,
+            file,
+            cursor,
+        }
+    }
+
+    pub fn root_node(&self) -> GraphHandle {
+        self.builder
+            .stack_graph
+            .node_for_id(NodeID::root())
+            .expect("Root node not found in stack graph")
+    }
+
+    pub fn new_scope_node(&mut self, extension_hook: bool) -> GraphHandle {
+        let id = self.builder.stack_graph.new_node_id(self.file);
+        let scope_node = self
+            .builder
+            .stack_graph
+            .add_scope_node(id, extension_hook)
+            .expect("Failed to add scope node");
+        if extension_hook {
+            self.builder.extension_hooks.insert(scope_node);
+        }
+        scope_node
+    }
+
+    pub fn new_pop_symbol_node<S: AsRef<str> + ?Sized>(
+        &mut self,
+        symbol: &S,
+        is_definition: bool,
+    ) -> GraphHandle {
+        let id = self.builder.stack_graph.new_node_id(self.file);
+        let symbol = self.builder.stack_graph.add_symbol(symbol);
+        let node = self
+            .builder
+            .stack_graph
+            .add_pop_symbol_node(id, symbol, is_definition)
+            .expect("Failed to add pop symbol node");
+        if is_definition {
+            self.builder.cursors.insert(node, self.cursor.clone());
+            self.builder.definitions_info.insert(
+                node,
+                DefinitionBindingInfo {
+                    definiens: self.cursor.clone(),
+                    parents: Vec::new(),
+                    extension_scope: None,
+                    inherit_extensions: false,
+                },
+            );
+        }
+        node
+    }
+
+    pub fn new_push_symbol_node<S: AsRef<str> + ?Sized>(
+        &mut self,
+        symbol: &S,
+        is_reference: bool,
+    ) -> GraphHandle {
+        let id = self.builder.stack_graph.new_node_id(self.file);
+        let symbol = self.builder.stack_graph.add_symbol(symbol);
+        let node = self
+            .builder
+            .stack_graph
+            .add_push_symbol_node(id, symbol, is_reference)
+            .expect("Failed to add push symbol node");
+        if is_reference {
+            self.builder.cursors.insert(node, self.cursor.clone());
+            self.builder.references_info.insert(
+                node,
+                ReferenceBindingInfo {
+                    parents: Vec::new(),
+                },
+            );
+        }
+        node
+    }
+
+    pub fn edge(&mut self, source: GraphHandle, sink: GraphHandle) {
+        self.builder.stack_graph.add_edge(source, sink, 0);
+    }
+}
+
+pub struct ScopeGraphBuilder {
+    resolution_scope: GraphHandle,
+    defs: GraphHandle,
+    typeof_refs: HashMap<String, GraphHandle>,
+}
+
+impl ScopeGraphBuilder {
+    pub fn new<KT: KindTypes + 'static>(
+        builder: &mut FileGraphBuilder<'_, KT>,
+        guard_symbol: &str,
+        root_node: GraphHandle,
+        parent_scope: Option<GraphHandle>,
+    ) -> Self {
+        let resolution_scope = builder.new_scope_node(true);
+
+        let guard = builder.new_pop_symbol_node(guard_symbol, false);
+        let defs = builder.new_scope_node(false);
+        builder.edge(root_node, guard);
+        builder.edge(guard, defs);
+        builder.edge(resolution_scope, defs);
+
+        if let Some(parent_scope) = parent_scope {
+            builder.edge(resolution_scope, parent_scope);
+        }
+
+        Self {
+            resolution_scope,
+            defs,
+            typeof_refs: HashMap::new(),
+        }
+    }
+
+    #[must_use]
+    pub fn new_context<KT: KindTypes + 'static>(
+        &self,
+        builder: &mut FileGraphBuilder<'_, KT>,
+        guard_symbol: &str,
+    ) -> Self {
+        Self::new(builder, guard_symbol, self.defs, None)
+    }
+
+    fn typeof_reference<KT: KindTypes + 'static>(
+        &mut self,
+        builder: &mut FileGraphBuilder<'_, KT>,
+        symbol: &str,
+    ) -> GraphHandle {
+        if let Some(handle) = self.typeof_refs.get(symbol) {
+            *handle
+        } else {
+            let r#typeof = builder.new_push_symbol_node("@typeof", false);
+            let r#type = builder.new_push_symbol_node(symbol, false);
+            builder.edge(r#typeof, r#type);
+            builder.edge(r#type, self.resolution_scope);
+            self.typeof_refs.insert(symbol.to_owned(), r#typeof);
+            r#typeof
+        }
+    }
+
+    pub fn define_function<KT: KindTypes + 'static>(
+        &mut self,
+        builder: &mut FileGraphBuilder<'_, KT>,
+        identifier: &str,
+        return_type: Option<&str>,
+    ) {
+        let function_def = builder.new_pop_symbol_node(identifier, true);
+        builder.edge(self.defs, function_def);
+
+        let function_typeof = self.typeof_reference(builder, "%Function");
+        builder.edge(function_def, function_typeof);
+
+        let call = builder.new_pop_symbol_node("()", false);
+        builder.edge(function_def, call);
+
+        if let Some(return_type) = return_type {
+            let return_typeof = self.typeof_reference(builder, return_type);
+            builder.edge(call, return_typeof);
+        }
+    }
+
+    pub fn define_field<KT: KindTypes + 'static>(
+        &mut self,
+        builder: &mut FileGraphBuilder<'_, KT>,
+        identifier: &str,
+        field_type: &str,
+    ) {
+        let field_def = builder.new_pop_symbol_node(identifier, true);
+        builder.edge(self.defs, field_def);
+
+        let field_typeof = self.typeof_reference(builder, field_type);
+        builder.edge(field_def, field_typeof);
+    }
+
+    #[must_use]
+    pub fn define_type<KT: KindTypes + 'static>(
+        &mut self,
+        builder: &mut FileGraphBuilder<'_, KT>,
+        identifier: &str,
+    ) -> Self {
+        let type_def = builder.new_pop_symbol_node(identifier, true);
+        builder.edge(self.defs, type_def);
+        let typeof_def = builder.new_pop_symbol_node("@typeof", false);
+        builder.edge(type_def, typeof_def);
+        let call_def = builder.new_pop_symbol_node("()", false);
+        builder.edge(type_def, call_def);
+        let dot = builder.new_pop_symbol_node(".", false);
+        builder.edge(typeof_def, dot);
+        builder.edge(call_def, dot);
+
+        let defs = builder.new_scope_node(false);
+        builder.edge(dot, defs);
+
+        Self {
+            resolution_scope: self.resolution_scope,
+            defs,
+            typeof_refs: HashMap::new(),
+        }
     }
 }
