@@ -25,7 +25,7 @@ References and definitions:
     │                 ┬    ─┬─ ┬  
     │                 ╰─────────── ref: 7
     │                       │  │  
-    │                       ╰───── unresolved
+    │                       ╰───── ref: built-in
     │                          │  
     │                          ╰── ref: 6
     │ 
@@ -53,7 +53,7 @@ References and definitions:
     │                     ┬   ─┬─ ┬  ───┬── ┬  
     │                     ╰──────────────────── ref: 10
     │                          │  │     │   │  
-    │                          ╰─────────────── unresolved
+    │                          ╰─────────────── ref: built-in
     │                             │     │   │  
     │                             ╰──────────── ref: 9
     │                                   │   │  
@@ -72,7 +72,7 @@ References and definitions:
     │                 ┬    ─┬─ ┬  ──────┬───── ┬  
     │                 ╰─────────────────────────── ref: 13
     │                       │  │        │      │  
-    │                       ╰───────────────────── unresolved
+    │                       ╰───────────────────── ref: built-in
     │                          │        │      │  
     │                          ╰────────────────── ref: 12
     │                                   │      │  

@@ -6006,7 +6006,6 @@ codegen_language_macros::compile!(Language(
     ],
     built_ins = [
         BuiltInContext(
-            // __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with rules file.
             name = "$SolidityBuiltIns$",
             definitions = [
                 BuiltInFunction(
@@ -6432,7 +6431,7 @@ codegen_language_macros::compile!(Language(
             ]
         ),
         BuiltInContext(
-            // __SLANG_YUL_BUILT_INS_CONTRACT_NAME__ keep in sync with binding rules file.
+            // __SLANG_YUL_BUILT_INS_CONTEXT_NAME__ keep in sync with built-ins code generation
             name = "$YulBuiltIns$",
             definitions = [
                 BuiltInType(

@@ -63,7 +63,9 @@ fn render_contexts_for_version(
     for context in built_in_contexts {
         writeln!(buffer, "    // {context}", context = context.name)?;
         writeln!(buffer, "    {{")?;
+        // __SLANG_YUL_BUILT_INS_CONTEXT_NAME__ keep in sync with language definition
         if context.name == "$YulBuiltIns$" {
+            // __SLANG_SOLIDITY_YUL_BUILT_INS_GUARD__ keep in sync with binding rules
             writeln!(
                 buffer,
                 "      let mut scope = scope.new_context(builder, \"@yul\");"

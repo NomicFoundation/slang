@@ -49,6 +49,12 @@ inherit .star_extension
     ; special symbol (which is automatically imported below)
     attr (export) pop_symbol = "@@built-ins@@"
 
+    ; NOTE: since we're no longer ingesting built-ins from an external Solidity
+    ; file and instead synthetically building the corresponding stack graph
+    ; directly from the language definition, this branch should never execute.
+    ; Regardless, it can help understand how to link to a fixed, built-in,
+    ; scope.
+
   } else {
     ; This is a user file, so we want to export under the file's path symbol
     attr (export) pop_symbol = FILE_PATH
@@ -101,34 +107,6 @@ inherit .star_extension
   ; In the general case, the lexical scope of the definition connects directly
   ; to the source unit's
   edge @unit_member.lexical_scope -> @source_unit.lexical_scope
-}
-
-;; Special case for built-ins: we want to export all symbols in the contract:
-;; functions, types and state variables. All built-in symbols are defined in an
-;; internal contract named '%SolidityBuiltIns%' (renamed from
-;; '$SolidityBuiltIns$') so we need to export all its members and type members
-;; directly as a source unit definition.
-;; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with language definition.
-@source_unit [SourceUnit [SourceUnitMembers
-    [SourceUnitMember @contract [ContractDefinition name: ["%SolidityBuiltIns%"]]]
-]] {
-  if (is-system-file FILE_PATH) {
-    edge @source_unit.defs -> @contract.instance
-  }
-}
-
-;; Similarly for Yul built-ins, we export all the symbols in the `%YulBuiltIns%`
-;; contract guarded by a `@yul` symbol.
-;; __SLANG_YUL_BUILT_INS_CONTRACT_NAME__ keep in sync with language definition file.
-@source_unit [SourceUnit [SourceUnitMembers
-    [SourceUnitMember @contract [ContractDefinition name: ["%YulBuiltIns%"]]]
-]] {
-  if (is-system-file FILE_PATH) {
-    node yul
-    attr (yul) pop_symbol = "@yul"
-    edge @source_unit.defs -> yul
-    edge yul -> @contract.instance
-  }
 }
 
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
@@ -2014,10 +1992,18 @@ inherit .star_extension
 @stmt [Statement [AssemblyStatement @body body: [YulBlock]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
 
+  ;; This provides a path to Yul built-ins
+  ;; __SLANG_SOLIDITY_YUL_BUILT_INS_GUARD__ keep in sync with built-ins code generation
   node yul
   attr (yul) push_symbol = "@yul"
   edge @body.lexical_scope -> yul
   edge yul -> @stmt.lexical_scope
+
+  ;; Provide alternative path to Yul built-ins from the context of a Yul function
+  node in_yul_function_pop
+  attr (in_yul_function_pop) pop_symbol = "@in_yul_function"
+  edge @body.lexical_scope -> in_yul_function_pop
+  edge in_yul_function_pop -> yul
 }
 
 

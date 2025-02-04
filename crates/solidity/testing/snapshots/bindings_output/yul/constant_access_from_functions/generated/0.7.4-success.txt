@@ -21,14 +21,14 @@ References and definitions:
     │                               ╰───── name: 5
   7 │                 mstore(emptyPtr, CONTRACT_CONST)
     │                 ───┬── ────┬───  ───────┬──────  
-    │                    ╰───────────────────────────── unresolved
+    │                    ╰───────────────────────────── ref: built-in
     │                            │            │        
     │                            ╰───────────────────── ref: 5
     │                                         │        
     │                                         ╰──────── ref: 2
   8 │                 mstore(emptyPtr, TOP_LEVEL_CONST)
     │                 ───┬── ────┬───  ───────┬───────  
-    │                    ╰────────────────────────────── unresolved
+    │                    ╰────────────────────────────── ref: built-in
     │                            │            │         
     │                            ╰────────────────────── ref: 5
     │                                         │         
@@ -52,14 +52,14 @@ References and definitions:
     │                               ╰───── name: 10
  20 │                 mstore(emptyPtr, LIB_CONST)
     │                 ───┬── ────┬───  ────┬────  
-    │                    ╰──────────────────────── unresolved
+    │                    ╰──────────────────────── ref: built-in
     │                            │         │      
     │                            ╰──────────────── ref: 10
     │                                      │      
     │                                      ╰────── ref: 7
  21 │                 mstore(emptyPtr, TOP_LEVEL_CONST)
     │                 ───┬── ────┬───  ───────┬───────  
-    │                    ╰────────────────────────────── unresolved
+    │                    ╰────────────────────────────── ref: built-in
     │                            │            │         
     │                            ╰────────────────────── ref: 10
     │                                         │         
