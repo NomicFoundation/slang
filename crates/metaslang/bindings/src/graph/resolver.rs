@@ -161,19 +161,6 @@ impl Resolver {
         results
     }
 
-    #[allow(dead_code)]
-    pub(crate) fn resolve_all<KT: KindTypes + 'static>(&mut self, graph: &ExtendedStackGraph<KT>) {
-        for handle in graph.iter_references() {
-            if graph
-                .get_file_descriptor(handle)
-                .is_some_and(|file| file.is_user())
-            {
-                let definition_handles = self.resolve_internal(graph, handle, true);
-                self.references.insert(handle, definition_handles);
-            }
-        }
-    }
-
     pub(crate) fn resolve_single<KT: KindTypes + 'static>(
         &mut self,
         graph: &ExtendedStackGraph<KT>,
