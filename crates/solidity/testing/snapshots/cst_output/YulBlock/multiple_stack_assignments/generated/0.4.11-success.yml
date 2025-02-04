@@ -13,7 +13,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulBlock): # "{\n  1\n  2\n  3\n  =: success\n  =: success\n  =: succe..." (0..55)
+  - (root꞉ YulBlock): # "{\n  1\n  2\n  3\n  =: success\n  =: success\n  =: succe..." (0..55)
       - (open_brace꞉ OpenBrace): "{" # (0..1)
       - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)
       - (statements꞉ YulStatements): # "  1\n  2\n  3\n  =: success\n  =: success\n  =: success..." (2..53)

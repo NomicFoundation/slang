@@ -7,7 +7,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (TupleDeconstructionStatement): # '// "var" should be disabled in "0.5.0":\nvar (foo, ...' (0..62)
+  - (root꞉ TupleDeconstructionStatement): # '// "var" should be disabled in "0.5.0":\nvar (foo, ...' (0..62)
       - (leading_trivia꞉ SingleLineComment): '// "var" should be disabled in "0.5.0":' # (0..39)
       - (leading_trivia꞉ EndOfLine): "\n" # (39..40)
       - (var_keyword꞉ VarKeyword): "var" # (40..43)

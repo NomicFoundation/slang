@@ -7,7 +7,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulExpression) ► (variant꞉ YulPath): # "// identifiers with dots were allowed specifically..." (0..90)
+  - (root꞉ YulExpression) ► (variant꞉ YulPath): # "// identifiers with dots were allowed specifically..." (0..90)
       - (leading_trivia꞉ SingleLineComment): "// identifiers with dots were allowed specifically..." # (0..81)
       - (leading_trivia꞉ EndOfLine): "\n" # (81..82)
       - (item꞉ YulIdentifier): "foo" # (82..85)

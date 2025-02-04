@@ -6,10 +6,17 @@ use crate::kinds::KindTypes;
 use crate::nodes::{Edge, Node, NonterminalNode};
 use crate::text_index::{TextIndex, TextRange};
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+enum Parent<T: KindTypes> {
+    None,
+    Disconnected(T::EdgeLabel),
+    Connected(Rc<PathAncestor<T>>),
+}
+
 /// A node in the ancestor path of a [`Cursor`].
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct PathAncestor<T: KindTypes> {
-    parent: Option<Rc<PathAncestor<T>>>,
+    parent: Parent<T>,
     nonterminal_node: Rc<NonterminalNode<T>>,
     child_index: usize,
     text_offset: TextIndex,
@@ -21,7 +28,7 @@ struct PathAncestor<T: KindTypes> {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Cursor<T: KindTypes> {
     /// The parent path of this cursor
-    parent: Option<Rc<PathAncestor<T>>>,
+    parent: Parent<T>,
     /// The node the cursor is currently pointing to.
     node: Node<T>,
     /// The index of the current child node in the parent's children.
@@ -59,7 +66,7 @@ impl<T: KindTypes> Cursor<T> {
 impl<T: KindTypes> Cursor<T> {
     pub(crate) fn create(node: Node<T>, text_offset: TextIndex) -> Self {
         Self {
-            parent: None,
+            parent: Parent::None,
             node,
             child_index: 0,
             text_offset,
@@ -75,9 +82,9 @@ impl<T: KindTypes> Cursor<T> {
 
     /// Completes the cursor, setting it to the root node.
     pub fn complete(&mut self) {
-        if let Some(parent) = &self.parent.clone() {
+        if let Parent::Connected(parent) = &self.parent.clone() {
             let mut parent = parent;
-            while let Some(grandparent) = &parent.parent {
+            while let Parent::Connected(grandparent) = &parent.parent {
                 parent = grandparent;
             }
             self.set_from_ancestor_node(parent);
@@ -90,9 +97,10 @@ impl<T: KindTypes> Cursor<T> {
     /// even though the path is reset.
     #[must_use]
     pub fn spawn(&self) -> Self {
+        let label = self.label();
         Self {
             is_completed: false,
-            parent: None,
+            parent: Parent::Disconnected(label),
             node: self.node.clone(),
             child_index: 0,
             text_offset: self.text_offset,
@@ -109,12 +117,19 @@ impl<T: KindTypes> Cursor<T> {
         self.node.clone()
     }
 
-    pub fn label(&self) -> Option<T::EdgeLabel> {
-        self.parent.as_ref().and_then(|parent| {
-            let this = &parent.nonterminal_node.children[self.child_index];
+    pub fn label(&self) -> T::EdgeLabel {
+        match &self.parent {
+            Parent::Connected(parent) => {
+                let this = &parent.nonterminal_node.children[self.child_index];
+                this.label
+            }
+            Parent::Disconnected(label) => *label,
+            Parent::None => T::EdgeLabel::default(),
+        }
+    }
 
-            this.label
-        })
+    pub fn has_default_label(&self) -> bool {
+        self.label() == T::EdgeLabel::default()
     }
 
     /// Returns the text offset that corresponds to the beginning of the currently pointed to node.
@@ -132,10 +147,10 @@ impl<T: KindTypes> Cursor<T> {
     /// Returns the depth of the current node in the CST, i.e. the number of ancestors.
     pub fn depth(&self) -> usize {
         let mut depth = 0;
-        if let Some(parent) = &self.parent {
+        if let Parent::Connected(parent) = &self.parent {
             let mut parent = parent;
             depth += 1;
-            while let Some(grandparent) = &parent.parent {
+            while let Parent::Connected(grandparent) = &parent.parent {
                 depth += 1;
                 parent = grandparent;
             }
@@ -224,7 +239,7 @@ impl<T: KindTypes> Cursor<T> {
     ///
     /// Returns `false` if the cursor is finished and at the root.
     pub fn go_to_parent(&mut self) -> bool {
-        if let Some(parent) = &self.parent.clone() {
+        if let Parent::Connected(parent) = &self.parent.clone() {
             self.set_from_ancestor_node(parent);
 
             true
@@ -246,7 +261,7 @@ impl<T: KindTypes> Cursor<T> {
         // If the current cursor is a node and it has children, go to first children
         if let Some(new_parent) = self.as_ancestor_node() {
             if let Some(new_child) = new_parent.nonterminal_node.children.first().cloned() {
-                self.parent = Some(new_parent);
+                self.parent = Parent::Connected(new_parent);
                 self.node = new_child.node;
                 self.child_index = 0;
 
@@ -273,7 +288,7 @@ impl<T: KindTypes> Cursor<T> {
                 for sibling in &new_parent.nonterminal_node.children[..self.child_index] {
                     self.text_offset += sibling.text_len();
                 }
-                self.parent = Some(new_parent);
+                self.parent = Parent::Connected(new_parent);
 
                 return true;
             }
@@ -303,7 +318,7 @@ impl<T: KindTypes> Cursor<T> {
                 for sibling in &new_parent.nonterminal_node.children[..self.child_index] {
                     self.text_offset += sibling.text_len();
                 }
-                self.parent = Some(new_parent);
+                self.parent = Parent::Connected(new_parent);
 
                 return true;
             }
@@ -320,7 +335,7 @@ impl<T: KindTypes> Cursor<T> {
             return false;
         }
 
-        if let Some(parent) = &self.parent {
+        if let Parent::Connected(parent) = &self.parent {
             let new_child_number = self.child_index + 1;
             if let Some(new_child) = parent.nonterminal_node.children.get(new_child_number) {
                 self.text_offset += self.node.text_len();
@@ -342,7 +357,7 @@ impl<T: KindTypes> Cursor<T> {
             return false;
         }
 
-        if let Some(parent) = &self.parent {
+        if let Parent::Connected(parent) = &self.parent {
             if self.child_index > 0 {
                 let new_child_number = self.child_index - 1;
                 let new_child = &parent.nonterminal_node.children[new_child_number];
@@ -438,14 +453,14 @@ impl<T: KindTypes> Iterator for CursorIterator<T> {
 }
 
 pub struct AncestorsIterator<T: KindTypes> {
-    current: Option<Rc<PathAncestor<T>>>,
+    current: Parent<T>,
 }
 
 impl<T: KindTypes> Iterator for AncestorsIterator<T> {
     type Item = Rc<NonterminalNode<T>>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if let Some(current) = self.current.take() {
+        if let Parent::Connected(current) = self.current.clone() {
             self.current = current.parent.clone();
             Some(Rc::clone(&current.nonterminal_node))
         } else {

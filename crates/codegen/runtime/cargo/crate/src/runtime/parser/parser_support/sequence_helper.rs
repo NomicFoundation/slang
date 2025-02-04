@@ -89,7 +89,7 @@ impl SequenceHelper {
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut cur.elements)
                             .into_iter()
-                            .flat_map(PrattElement::into_nodes)
+                            .flat_map(|e| e.into_nodes_with_label(EdgeLabel::Unrecognized))
                             .chain(next.nodes)
                             .collect(),
                         next.expected_terminals,
@@ -99,7 +99,7 @@ impl SequenceHelper {
                     self.result = State::Running(ParserResult::incomplete_match(
                         std::mem::take(&mut cur.elements)
                             .into_iter()
-                            .flat_map(PrattElement::into_nodes)
+                            .flat_map(|e| e.into_nodes_with_label(EdgeLabel::Unrecognized))
                             .collect(),
                         next.expected_terminals,
                     ));
@@ -116,7 +116,7 @@ impl SequenceHelper {
                 (ParserResult::PrattOperatorMatch(running), ParserResult::SkippedUntil(skipped)) => {
                     let nodes: Vec<_> = std::mem::take(&mut running.elements)
                             .into_iter()
-                            .flat_map(PrattElement::into_nodes)
+                            .flat_map(|e| e.into_nodes_with_label(EdgeLabel::Unrecognized))
                             .chain(skipped.nodes)
                             .collect();
 
@@ -155,15 +155,16 @@ impl SequenceHelper {
                     });
                     debug_assert_eq!(next_terminal, Ok(Some(running.found)));
 
-                    let kind = if running.skipped.is_empty() {
-                        TerminalKind::MISSING
+                    let (kind, label) = if running.skipped.is_empty() {
+                        (TerminalKind::MISSING, EdgeLabel::Missing)
                     } else {
-                        TerminalKind::UNRECOGNIZED
+                        (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                     };
-                    running.nodes.push(Edge::anonymous(Node::terminal(
+
+                    running.nodes.push(Edge{label, node: Node::terminal(
                         kind,
                         std::mem::take(&mut running.skipped),
-                    )));
+                    )});
                     running.nodes.extend(next.nodes);
 
                     self.result = State::Running(ParserResult::Match(Match {

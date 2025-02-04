@@ -20,7 +20,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Block): # "// Make sure we don't panic when encountering an u..." (0..122)
+  - (root꞉ Block): # "// Make sure we don't panic when encountering an u..." (0..122)
       - (leading_trivia꞉ SingleLineComment): "// Make sure we don't panic when encountering an u..." # (0..93)
       - (leading_trivia꞉ EndOfLine): "\n" # (93..94)
       - (leading_trivia꞉ EndOfLine): "\n" # (94..95)
@@ -33,7 +33,7 @@ Tree:
                   - (item꞉ Identifier): "a" # (101..102)
                   - (separator꞉ Period): "." # (102..103)
                   - (item꞉ Identifier): "b" # (103..104)
-              - (UNRECOGNIZED): "('\n        }')" # (104..118)
+              - (unrecognized꞉ UNRECOGNIZED): "('\n        }')" # (104..118)
               - (semicolon꞉ Semicolon): ";" # (118..119)
               - (trailing_trivia꞉ EndOfLine): "\n" # (119..120)
       - (close_brace꞉ CloseBrace): "}" # (120..121)

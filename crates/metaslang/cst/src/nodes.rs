@@ -32,14 +32,21 @@ pub enum Node<T: KindTypes> {
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct Edge<T: KindTypes> {
-    pub label: Option<T::EdgeLabel>,
+    pub label: T::EdgeLabel,
     pub node: Node<T>,
 }
 
 impl<T: KindTypes> Edge<T> {
-    /// Creates an anonymous node (without a label).
-    pub fn anonymous(node: Node<T>) -> Self {
-        Self { label: None, node }
+    /// Creates an edge to a root node (using the default label).
+    pub fn root(node: Node<T>) -> Self {
+        Self {
+            label: T::EdgeLabel::default(),
+            node,
+        }
+    }
+
+    pub fn has_default_label(&self) -> bool {
+        self.label == T::EdgeLabel::default()
     }
 }
 

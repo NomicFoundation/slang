@@ -16,7 +16,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "contract Sample {\n  function() external payable {}..." (0..53)
+  - (root꞉ ContractDefinition): # "contract Sample {\n  function() external payable {}..." (0..53)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Sample" # (9..15)
@@ -41,6 +41,6 @@ Tree:
                           - (variant꞉ PayableKeyword): "payable" # (40..47)
               - (attributes꞉ StateVariableAttributes): [] # (47..47)
               - (leading_trivia꞉ Whitespace): " " # (47..48)
-      - (UNRECOGNIZED): "{}\n" # (48..51)
+      - (unrecognized꞉ UNRECOGNIZED): "{}\n" # (48..51)
       - (close_brace꞉ CloseBrace): "}" # (51..52)
       - (trailing_trivia꞉ EndOfLine): "\n" # (52..53)

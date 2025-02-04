@@ -47,6 +47,7 @@ pub enum TerminalKind {
     Clone,
     Copy,
     Debug,
+    Default,
     Eq,
     PartialEq,
     serde::Serialize,
@@ -54,6 +55,7 @@ pub enum TerminalKind {
     strum_macros::EnumString,
 )]
 pub enum EdgeLabel {
+    #[default]
     Name,
 }
 impl metaslang_cst::kinds::TerminalKindExtensions for TerminalKind {}

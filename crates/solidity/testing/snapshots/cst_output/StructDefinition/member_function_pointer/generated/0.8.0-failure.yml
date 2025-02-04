@@ -17,7 +17,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (StructDefinition): # "struct State {\n  bool accepts;\n  function (byte) i..." (0..86)
+  - (root꞉ StructDefinition): # "struct State {\n  bool accepts;\n  function (byte) i..." (0..86)
       - (struct_keyword꞉ StructKeyword): "struct" # (0..6)
       - (leading_trivia꞉ Whitespace): " " # (6..7)
       - (name꞉ Identifier): "State" # (7..12)
@@ -41,7 +41,7 @@ Tree:
                       - (leading_trivia꞉ Whitespace): " " # (41..42)
                       - (open_paren꞉ OpenParen): "(" # (42..43)
                       - (parameters꞉ Parameters): [] # (43..43)
-                      - (UNRECOGNIZED): "byte" # (43..47)
+                      - (unrecognized꞉ UNRECOGNIZED): "byte" # (43..47)
                       - (close_paren꞉ CloseParen): ")" # (47..48)
                   - (attributes꞉ FunctionTypeAttributes): # " internal pure" (48..62)
                       - (item꞉ FunctionTypeAttribute): # " internal" (48..57)

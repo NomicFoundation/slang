@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ MemberAccessExpression): # "this.x\n" (0..7)
+  - (root꞉ Expression) ► (variant꞉ MemberAccessExpression): # "this.x\n" (0..7)
       - (operand꞉ Expression) ► (variant꞉ ThisKeyword): "this" # (0..4)
       - (period꞉ Period): "." # (4..5)
       - (member꞉ Identifier): "x" # (5..6)

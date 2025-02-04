@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (StringLiteral): # '"\x0a"\n' (0..7)
+  - (root꞉ StringLiteral): # '"\x0a"\n' (0..7)
       - (variant꞉ DoubleQuotedStringLiteral): '"\x0a"' # (0..6)
       - (trailing_trivia꞉ EndOfLine): "\n" # (6..7)

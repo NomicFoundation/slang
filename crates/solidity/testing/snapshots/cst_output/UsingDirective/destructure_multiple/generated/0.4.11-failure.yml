@@ -14,8 +14,8 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UsingDirective): # "using {add as +, sub, mul, div as /} for Int globa..." (0..52)
+  - (root꞉ UsingDirective): # "using {add as +, sub, mul, div as /} for Int globa..." (0..52)
       - (using_keyword꞉ UsingKeyword): "using" # (0..5)
       - (leading_trivia꞉ Whitespace): " " # (5..6)
-      - (UNRECOGNIZED): "{add as +, sub, mul, div as /} for Int global" # (6..51)
+      - (unrecognized꞉ UNRECOGNIZED): "{add as +, sub, mul, div as /} for Int global" # (6..51)
       - (semicolon꞉ Semicolon): ";" # (51..52)

@@ -57,7 +57,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             })
             .collect();
 
-        let cursor = output.create_tree_cursor();
+        let mut cursor = output.create_tree_cursor();
 
         let status = if output.is_valid() {
             TestStatus::Success
@@ -65,8 +65,16 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             TestStatus::Failure
         };
 
-        let snapshot = render(&source, &errors, cursor)?;
+        let snapshot = render(&source, &errors, &mut cursor.clone())?;
 
+        cursor.reset();
+
+        assert!(
+            cursor.descendants().all(|e| !e.has_default_label()),
+            "{snapshot}"
+        );
+
+        // Test did not assign a bad edge label, so save the snapshot to the expected file
         let snapshot_path = test_dir
             .join("generated")
             .join(format!("{version}-{status}.yml"));

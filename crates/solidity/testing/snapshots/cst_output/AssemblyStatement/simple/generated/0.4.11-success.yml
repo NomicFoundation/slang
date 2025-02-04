@@ -8,7 +8,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (AssemblyStatement): # 'assembly "evmasm" ("memory-safe") {\n\n}\n' (0..39)
+  - (root꞉ AssemblyStatement): # 'assembly "evmasm" ("memory-safe") {\n\n}\n' (0..39)
       - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (0..8)
       - (label꞉ StringLiteral): # ' "evmasm"' (8..17)
           - (leading_trivia꞉ Whitespace): " " # (8..9)

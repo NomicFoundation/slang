@@ -66,6 +66,18 @@ export declare enum TerminalKind {
  */
 export declare enum EdgeLabel {
   /**
+   * Represents a child node with the label `root`.
+   */
+  Root = "Root",
+  /**
+   * Represents a child node with the label `unrecognized`.
+   */
+  Unrecognized = "Unrecognized",
+  /**
+   * Represents a child node with the label `missing`.
+   */
+  Missing = "Missing",
+  /**
    * Represents a child node with the label `item`.
    */
   Item = "Item",
@@ -134,9 +146,9 @@ export enum NodeType {
  */
 export interface Edge {
   /**
-   * Optional label describing the relationship between nodes.
+   * Describes the relationship between this node and its parent.
    */
-  label?: EdgeLabel;
+  label: EdgeLabel;
   /**
    * The target node of this edge.
    */
@@ -258,9 +270,9 @@ export class Cursor {
    */
   get node(): Node;
   /**
-   * Returns the label of the edge from the parent to the current node, if any.
+   * Returns a label that describes the relationship between the current node and its parent.
    */
-  get label(): EdgeLabel | undefined;
+  get label(): EdgeLabel;
   /**
    * Returns the current text offset of the cursor.
    */

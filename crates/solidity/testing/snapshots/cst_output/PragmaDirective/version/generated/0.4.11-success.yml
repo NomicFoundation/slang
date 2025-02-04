@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (PragmaDirective): # "pragma solidity 1.0.0;" (0..22)
+  - (root꞉ PragmaDirective): # "pragma solidity 1.0.0;" (0..22)
       - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
       - (pragma꞉ Pragma) ► (variant꞉ VersionPragma): # " solidity 1.0.0" (6..21)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

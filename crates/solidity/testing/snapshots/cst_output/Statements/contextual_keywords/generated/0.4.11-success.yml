@@ -9,7 +9,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Statements): # "uint256 error;\nuint256 from;\nuint256 revert;\nuint2..." (0..61)
+  - (root꞉ Statements): # "uint256 error;\nuint256 from;\nuint256 revert;\nuint2..." (0..61)
       - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement): # "uint256 error;\n" (0..15)
           - (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ UintKeyword): "uint256" # (0..7)
           - (leading_trivia꞉ Whitespace): " " # (7..8)

@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (HexStringLiterals): # 'hex"12_34_56_78_90_ab_cd_ef"' (0..28)
+  - (root꞉ HexStringLiterals): # 'hex"12_34_56_78_90_ab_cd_ef"' (0..28)
       - (item꞉ HexStringLiteral) ► (variant꞉ DoubleQuotedHexStringLiteral): 'hex"12_34_56_78_90_ab_cd_ef"' # (0..28)

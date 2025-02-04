@@ -7,7 +7,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (FunctionCallExpression): # "// Named arguments can be empty\nsomeFunc({})\n" (0..45)
+  - (root꞉ FunctionCallExpression): # "// Named arguments can be empty\nsomeFunc({})\n" (0..45)
       - (operand꞉ Expression): # "// Named arguments can be empty\nsomeFunc" (0..40)
           - (leading_trivia꞉ SingleLineComment): "// Named arguments can be empty" # (0..31)
           - (leading_trivia꞉ EndOfLine): "\n" # (31..32)

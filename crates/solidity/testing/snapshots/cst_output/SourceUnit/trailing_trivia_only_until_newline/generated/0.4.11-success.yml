@@ -8,7 +8,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (SourceUnit) ► (members꞉ SourceUnitMembers): # "contract A {} // first\n              // second\ncon..." (0..61)
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "contract A {} // first\n              // second\ncon..." (0..61)
       - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract A {} // first\n" (0..23)
           - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
           - (leading_trivia꞉ Whitespace): " " # (8..9)

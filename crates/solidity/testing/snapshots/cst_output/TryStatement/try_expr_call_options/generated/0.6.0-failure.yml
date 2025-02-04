@@ -27,7 +27,7 @@ Errors: # 2 total
     ───╯
 
 Tree:
-  - (TryStatement): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" (0..42)
+  - (root꞉ TryStatement): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" (0..42)
       - (try_keyword꞉ TryKeyword): "try" # (0..3)
       - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # " foo()" (3..9)
           - (operand꞉ Expression): # " foo" (3..7)
@@ -44,6 +44,6 @@ Tree:
               - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement) ► (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ IdentifierPath): # " x" (11..13)
                   - (leading_trivia꞉ Whitespace): " " # (11..12)
                   - (item꞉ Identifier): "x" # (12..13)
-          - (UNRECOGNIZED): ": 1 " # (13..17)
+          - (unrecognized꞉ UNRECOGNIZED): ": 1 " # (13..17)
           - (close_brace꞉ CloseBrace): "}" # (17..18)
-      - (UNRECOGNIZED): " {\n  bar();\n} catch {\n}\n" # (18..42)
+      - (unrecognized꞉ UNRECOGNIZED): " {\n  bar();\n} catch {\n}\n" # (18..42)

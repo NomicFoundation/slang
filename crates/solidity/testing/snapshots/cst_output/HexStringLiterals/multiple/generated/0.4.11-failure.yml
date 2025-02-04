@@ -14,5 +14,5 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (HexStringLiterals): # 'hex"ab" hex''cd''' (0..15)
-      - (UNRECOGNIZED): 'hex"ab" hex''cd''' # (0..15)
+  - (root꞉ HexStringLiterals): # 'hex"ab" hex''cd''' (0..15)
+      - (unrecognized꞉ UNRECOGNIZED): 'hex"ab" hex''cd''' # (0..15)

@@ -18,7 +18,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "contract Sample {\n  function () {\n  }\n}" (0..39)
+  - (root꞉ ContractDefinition): # "contract Sample {\n  function () {\n  }\n}" (0..39)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Sample" # (9..15)
@@ -38,5 +38,5 @@ Tree:
                   - (attributes꞉ FunctionTypeAttributes): [] # (31..31)
               - (attributes꞉ StateVariableAttributes): [] # (31..31)
               - (leading_trivia꞉ Whitespace): " " # (31..32)
-      - (UNRECOGNIZED): "{\n  }\n" # (32..38)
+      - (unrecognized꞉ UNRECOGNIZED): "{\n  }\n" # (32..38)
       - (close_brace꞉ CloseBrace): "}" # (38..39)

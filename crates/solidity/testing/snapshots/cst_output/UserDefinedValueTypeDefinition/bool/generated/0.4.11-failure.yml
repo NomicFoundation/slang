@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UserDefinedValueTypeDefinition) ► (UNRECOGNIZED): "type Foo is bool;" # (0..17)
+  - (root꞉ UserDefinedValueTypeDefinition) ► (unrecognized꞉ UNRECOGNIZED): "type Foo is bool;" # (0..17)

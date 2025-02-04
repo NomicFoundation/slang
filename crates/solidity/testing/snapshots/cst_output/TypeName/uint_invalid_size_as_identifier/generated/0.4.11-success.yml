@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (TypeName) ► (variant꞉ IdentifierPath): # "uint320" (0..7)
+  - (root꞉ TypeName) ► (variant꞉ IdentifierPath): # "uint320" (0..7)
       - (item꞉ Identifier): "uint320" # (0..7)

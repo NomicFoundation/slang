@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "sar()\n" (0..6)
+  - (root꞉ YulFunctionCallExpression): # "sar()\n" (0..6)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulSarKeyword): "sar" # (0..3)
       - (open_paren꞉ OpenParen): "(" # (3..4)
       - (arguments꞉ YulArguments): [] # (4..4)

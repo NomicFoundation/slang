@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Expression) ► (UNRECOGNIZED): "5.fromUint()\n" # (0..13)
+  - (root꞉ Expression) ► (unrecognized꞉ UNRECOGNIZED): "5.fromUint()\n" # (0..13)

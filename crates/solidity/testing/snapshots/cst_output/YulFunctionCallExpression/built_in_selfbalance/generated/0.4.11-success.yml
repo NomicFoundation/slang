@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "selfbalance()\n" (0..14)
+  - (root꞉ YulFunctionCallExpression): # "selfbalance()\n" (0..14)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulSelfBalanceKeyword): "selfbalance" # (0..11)
       - (open_paren꞉ OpenParen): "(" # (11..12)
       - (arguments꞉ YulArguments): [] # (12..12)

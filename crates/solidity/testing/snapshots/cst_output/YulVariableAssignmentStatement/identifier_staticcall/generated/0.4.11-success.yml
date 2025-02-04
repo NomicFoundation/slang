@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "staticcall := 0\n" (0..16)
+  - (root꞉ YulVariableAssignmentStatement): # "staticcall := 0\n" (0..16)
       - (variables꞉ YulPaths): # "staticcall" (0..10)
           - (item꞉ YulPath): # "staticcall" (0..10)
               - (item꞉ YulIdentifier): "staticcall" # (0..10)

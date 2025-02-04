@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - (TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ IntKeyword): "int" # (0..3)
+  - (root꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ IntKeyword): "int" # (0..3)

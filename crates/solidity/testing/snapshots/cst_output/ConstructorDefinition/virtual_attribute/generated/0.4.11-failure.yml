@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ConstructorDefinition) ► (UNRECOGNIZED): "constructor () virtual {}\n" # (0..26)
+  - (root꞉ ConstructorDefinition) ► (unrecognized꞉ UNRECOGNIZED): "constructor () virtual {}\n" # (0..26)

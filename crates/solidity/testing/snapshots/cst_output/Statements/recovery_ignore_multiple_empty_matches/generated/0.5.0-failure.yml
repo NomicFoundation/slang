@@ -22,12 +22,12 @@ Errors: # 2 total
     ───╯
 
 Tree:
-  - (Statements): # "for(int)\n" (0..9)
+  - (root꞉ Statements): # "for(int)\n" (0..9)
       - (item꞉ Statement) ► (variant꞉ ForStatement): # "for(int)\n" (0..9)
           - (for_keyword꞉ ForKeyword): "for" # (0..3)
           - (open_paren꞉ OpenParen): "(" # (3..4)
           - (initialization꞉ ForStatementInitialization) ► (variant꞉ VariableDeclarationStatement) ► (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ IntKeyword): "int" # (4..7)
-          - (MISSING): "" # (7..7)
+          - (missing꞉ MISSING): "" # (7..7)
           - (close_paren꞉ CloseParen): ")" # (7..8)
           - (trailing_trivia꞉ EndOfLine): "\n" # (8..9)
-      - (MISSING): "" # (9..9)
+      - (missing꞉ MISSING): "" # (9..9)

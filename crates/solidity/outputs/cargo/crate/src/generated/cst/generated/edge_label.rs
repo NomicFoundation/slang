@@ -18,6 +18,12 @@
 #[derive(Clone, Copy)]
 /// Represents the different types of relationships between nodes in the syntax tree.
 pub enum EdgeLabel {
+    /// Represents a child node with the label `root`.
+    Root,
+    /// Represents a child node with the label `unrecognized`.
+    Unrecognized,
+    /// Represents a child node with the label `missing`.
+    Missing,
     /// Represents a child node with the label `item`.
     Item,
     /// Represents a child node with the label `variant`.
@@ -286,3 +292,9 @@ pub enum EdgeLabel {
 }
 
 impl crate::cst::EdgeLabelExtensions for EdgeLabel {}
+
+impl Default for EdgeLabel {
+    fn default() -> Self {
+        Self::Root
+    }
+}

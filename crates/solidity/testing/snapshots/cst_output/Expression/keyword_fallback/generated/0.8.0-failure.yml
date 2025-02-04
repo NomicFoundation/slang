@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (Expression) ► (UNRECOGNIZED): "fallback" # (0..8)
+  - (root꞉ Expression) ► (unrecognized꞉ UNRECOGNIZED): "fallback" # (0..8)

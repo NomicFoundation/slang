@@ -45,7 +45,7 @@ pub trait TerminalKindExtensions: BaseKind {
 
 pub trait NonterminalKindExtensions: BaseKind {}
 
-pub trait EdgeLabelExtensions: BaseKind {}
+pub trait EdgeLabelExtensions: BaseKind + Default {}
 
 pub trait KindTypes: std::fmt::Debug + Clone + PartialEq {
     type NonterminalKind: NonterminalKindExtensions;

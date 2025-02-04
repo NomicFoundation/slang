@@ -14,9 +14,9 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulVariableDeclarationStatement): # "let a.b.c := 1\n" (0..15)
+  - (root꞉ YulVariableDeclarationStatement): # "let a.b.c := 1\n" (0..15)
       - (let_keyword꞉ YulLetKeyword): "let" # (0..3)
       - (variables꞉ YulVariableNames): # " a" (3..5)
           - (leading_trivia꞉ Whitespace): " " # (3..4)
           - (item꞉ YulIdentifier): "a" # (4..5)
-      - (UNRECOGNIZED): ".b.c := 1\n" # (5..15)
+      - (unrecognized꞉ UNRECOGNIZED): ".b.c := 1\n" # (5..15)
