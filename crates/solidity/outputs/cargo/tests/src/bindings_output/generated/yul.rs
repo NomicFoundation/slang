@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn all_built_ins() -> Result<()> {
+    run("yul", "all_built_ins")
+}
+
+#[test]
 fn blocks() -> Result<()> {
     run("yul", "blocks")
 }
@@ -37,6 +42,11 @@ fn identifiers_with_dots() -> Result<()> {
 #[test]
 fn labels() -> Result<()> {
     run("yul", "labels")
+}
+
+#[test]
+fn legacy_built_ins() -> Result<()> {
+    run("yul", "legacy_built_ins")
 }
 
 #[test]
