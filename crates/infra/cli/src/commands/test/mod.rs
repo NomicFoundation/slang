@@ -47,6 +47,9 @@ fn test_cargo() -> Result<()> {
         .flag("--workspace")
         .flag("--all-features")
         .flag("--tests")
+        .flag("--lib")
+        .flag("--bins")
+        .flag("--examples")
         .flag("--no-fail-fast")
         .add_build_rustflags()
         .run();
