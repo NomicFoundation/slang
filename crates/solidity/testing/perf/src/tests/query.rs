@@ -29,7 +29,7 @@ pub fn run(files: Vec<ParsedFile>) {
     }
 
     assert_eq!(
-        functions_count, 232,
+        functions_count, 233,
         "Failed to fetch all function definitions"
     );
 }
