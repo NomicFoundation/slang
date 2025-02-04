@@ -16,7 +16,6 @@ pub struct Language {
 
     pub documentation_dir: PathBuf,
     pub binding_rules_file: PathBuf,
-    pub file_extension: Option<String>,
 
     pub root_item: Identifier,
 

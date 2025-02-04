@@ -2,7 +2,6 @@
   "name": "Solidity",
   "documentation_dir": "crates/solidity/inputs/language/docs",
   "binding_rules_file": "crates/solidity/inputs/language/bindings/rules.msgb",
-  "file_extension": ".sol",
   "root_item": "SourceUnit",
   "leading_trivia": {
     "OneOrMore": {
