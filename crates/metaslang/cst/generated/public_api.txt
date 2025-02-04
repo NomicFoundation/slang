@@ -32,7 +32,6 @@ pub fn metaslang_cst::cursor::Cursor<T>::go_to_previous(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::go_to_previous_sibling(&mut self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::has_default_label(&self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::is_completed(&self) -> bool
-pub fn metaslang_cst::cursor::Cursor<T>::is_true_root(&self) -> bool
 pub fn metaslang_cst::cursor::Cursor<T>::label(&self) -> <T as metaslang_cst::kinds::KindTypes>::EdgeLabel
 pub fn metaslang_cst::cursor::Cursor<T>::node(&self) -> metaslang_cst::nodes::Node<T>
 pub fn metaslang_cst::cursor::Cursor<T>::remaining_nodes(&self) -> metaslang_cst::cursor::CursorIterator<T>
@@ -132,6 +131,7 @@ pub struct metaslang_cst::nodes::Edge<T: metaslang_cst::kinds::KindTypes>
 pub metaslang_cst::nodes::Edge::label: <T as metaslang_cst::kinds::KindTypes>::EdgeLabel
 pub metaslang_cst::nodes::Edge::node: metaslang_cst::nodes::Node<T>
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::nodes::Edge<T>
+pub fn metaslang_cst::nodes::Edge<T>::has_default_label(&self) -> bool
 pub fn metaslang_cst::nodes::Edge<T>::root(node: metaslang_cst::nodes::Node<T>) -> Self
 impl<T: core::clone::Clone + metaslang_cst::kinds::KindTypes> core::clone::Clone for metaslang_cst::nodes::Edge<T> where <T as metaslang_cst::kinds::KindTypes>::EdgeLabel: core::clone::Clone
 pub fn metaslang_cst::nodes::Edge<T>::clone(&self) -> metaslang_cst::nodes::Edge<T>

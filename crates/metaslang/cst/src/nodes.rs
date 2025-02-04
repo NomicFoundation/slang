@@ -44,6 +44,10 @@ impl<T: KindTypes> Edge<T> {
             node,
         }
     }
+
+    pub fn has_default_label(&self) -> bool {
+        self.label == T::EdgeLabel::default()
+    }
 }
 
 impl<T: KindTypes> std::ops::Deref for Edge<T> {

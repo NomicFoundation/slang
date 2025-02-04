@@ -427,10 +427,6 @@ impl<T: KindTypes> Cursor<T> {
 
         false
     }
-
-    pub fn is_true_root(&self) -> bool {
-        matches!(self.parent, Parent::None)
-    }
 }
 
 pub struct CursorIterator<T: KindTypes> {
