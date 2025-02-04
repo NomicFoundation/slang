@@ -8617,7 +8617,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$address",
+              "name": "address",
               "fields": [
                 { "definition": "uint256 balance" },
                 { "definition": "bytes code", "enabled": { "From": { "from": "0.8.0" } } },
@@ -8712,7 +8712,7 @@
             }
           }
         },
-        { "BuiltInType": { "item": { "name": "$bytes", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes", "fields": [{ "definition": "uint length" }] } } },
         {
           "BuiltInType": {
             "item": {
@@ -8892,10 +8892,10 @@
         { "BuiltInVariable": { "item": { "definition": "$Function $placeholder" } } },
         { "BuiltInVariable": { "item": { "definition": "$AbiType abi" } } },
         { "BuiltInVariable": { "item": { "definition": "$BlockType block" } } },
-        { "BuiltInVariable": { "item": { "definition": "$BytesType $bytes" } } },
+        { "BuiltInVariable": { "item": { "definition": "$BytesType bytes" } } },
         { "BuiltInVariable": { "item": { "definition": "$MessageType msg" } } },
         { "BuiltInVariable": { "item": { "definition": "uint now", "enabled": { "Till": { "till": "0.7.0" } } } } },
-        { "BuiltInVariable": { "item": { "definition": "$StringType $string" } } },
+        { "BuiltInVariable": { "item": { "definition": "$StringType string" } } },
         { "BuiltInVariable": { "item": { "definition": "$TransactionType tx" } } }
       ]
     },
@@ -8940,7 +8940,7 @@
         },
         {
           "BuiltInFunction": {
-            "item": { "name": "$byte", "parameters": ["uint256 n", "uint256 x"], "return_type": "uint256" }
+            "item": { "name": "byte", "parameters": ["uint256 n", "uint256 x"], "return_type": "uint256" }
           }
         },
         {
@@ -9113,7 +9113,7 @@
           }
         },
         { "BuiltInFunction": { "item": { "name": "pop", "parameters": ["uint256 x"], "return_type": "uint256" } } },
-        { "BuiltInFunction": { "item": { "name": "$return", "parameters": ["uint256 p", "uint256 s"] } } },
+        { "BuiltInFunction": { "item": { "name": "return", "parameters": ["uint256 p", "uint256 s"] } } },
         { "BuiltInFunction": { "item": { "name": "revert", "parameters": ["uint256 p", "uint256 s"] } } },
         {
           "BuiltInFunction": {

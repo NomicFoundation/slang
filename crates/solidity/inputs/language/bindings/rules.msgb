@@ -433,7 +433,7 @@ inherit .star_extension
   if (version-matches "< 0.5.0") {
     ; For Solidity < 0.5.0 `this` also acts like an `address`
     node address_ref
-    attr (address_ref) push_symbol = "%address"
+    attr (address_ref) push_symbol = "address"
     node address_typeof
     attr (address_typeof) push_symbol = "@typeof"
     edge this -> address_typeof
@@ -987,58 +987,58 @@ inherit .star_extension
 }
 
 @elementary [ElementaryType [AddressType]] {
-  let @elementary.symbol = "%address"
+  let @elementary.symbol = "address"
 }
 
 @elementary [ElementaryType [BoolKeyword]] {
-  let @elementary.symbol = "%bool"
+  let @elementary.symbol = "bool"
 }
 
 @elementary [ElementaryType [ByteKeyword]] {
-  let @elementary.symbol = "%byte"
+  let @elementary.symbol = "byte"
 }
 
 @elementary [ElementaryType @keyword [BytesKeyword]] {
-  let @elementary.symbol = (format "%{}" (source-text @keyword))
+  let @elementary.symbol = (source-text @keyword)
 }
 
 @elementary [ElementaryType [StringKeyword]] {
-  let @elementary.symbol = "%string"
+  let @elementary.symbol = "string"
 }
 
 @elementary [ElementaryType @keyword [IntKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "int") {
-    let @elementary.symbol = "%int256"
+    let @elementary.symbol = "int256"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
 @elementary [ElementaryType @keyword [UintKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "uint") {
-    let @elementary.symbol = "%uint256"
+    let @elementary.symbol = "uint256"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
 @elementary [ElementaryType @keyword [FixedKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "fixed") {
-    let @elementary.symbol = "%fixed128x18"
+    let @elementary.symbol = "fixed128x18"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
 @elementary [ElementaryType @keyword [UfixedKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "ufixed") {
-    let @elementary.symbol = "%ufixed128x18"
+    let @elementary.symbol = "ufixed128x18"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
@@ -2525,12 +2525,16 @@ inherit .star_extension
   edge @expr.output -> @operand.output
 
   node @options.refs
-  attr (@options.refs) push_symbol = "@param_names"
+  attr (@options.refs) push_symbol = "."
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
 
   node call_options
   attr (call_options) push_symbol = "%CallOptions"
 
-  edge @options.refs -> call_options
+  edge @options.refs -> typeof
+  edge typeof -> call_options
   edge call_options -> @expr.lexical_scope
 }
 
@@ -2543,10 +2547,10 @@ inherit .star_extension
 
 
 ;;; Payable
-; These work like `address`, should they should bind to `%address`
+; These work like `address`, should they should bind to `address`
 @expr [Expression [PayableKeyword]] {
   node ref
-  attr (ref) push_symbol = "%address"
+  attr (ref) push_symbol = "address"
 
   edge ref -> @expr.lexical_scope
   edge @expr.output -> ref
@@ -2641,7 +2645,7 @@ inherit .star_extension
   node typeof
   attr (typeof) push_symbol = "@typeof"
   node bool
-  attr (bool) push_symbol = "%bool"
+  attr (bool) push_symbol = "bool"
   edge @expr.output -> typeof
   edge typeof -> bool
   edge bool -> @expr.lexical_scope
@@ -2665,7 +2669,7 @@ inherit .star_extension
       node typeof
       attr (typeof) push_symbol = "@typeof"
       node address
-      attr (address) push_symbol = "%address"
+      attr (address) push_symbol = "address"
       edge @expr.output -> typeof
       edge typeof -> address
       edge address -> @expr.lexical_scope
@@ -2935,14 +2939,6 @@ inherit .star_extension
   ; Handle `byte` and `return` as special cases, since we cannot define them
   ; directly as regular built-ins
   var yul_symbol = (source-text @name)
-  scan (source-text @name) {
-    "byte" {
-      set yul_symbol = "%byte"
-    }
-    "return" {
-      set yul_symbol = "%return"
-    }
-  }
   attr (ref) symbol_reference = yul_symbol
   attr (ref) source_node = @name
 

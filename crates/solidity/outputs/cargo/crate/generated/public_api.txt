@@ -4,8 +4,6 @@ pub mod slang_solidity
 pub mod slang_solidity::bindings
 pub use slang_solidity::bindings::BuiltInLocation
 pub use slang_solidity::bindings::PathResolver
-pub mod slang_solidity::bindings::built_ins
-pub fn slang_solidity::bindings::built_ins::get_built_ins_contents(version: &semver::Version) -> &'static str
 pub enum slang_solidity::bindings::BindingGraphInitializationError
 pub slang_solidity::bindings::BindingGraphInitializationError::ParserInitialization(slang_solidity::parser::ParserInitializationError)
 impl core::convert::From<slang_solidity::parser::ParserInitializationError> for slang_solidity::bindings::BindingGraphInitializationError

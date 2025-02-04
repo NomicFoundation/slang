@@ -6162,7 +6162,7 @@ codegen_language_macros::compile!(Language(
                     ]
                 ),
                 BuiltInType(
-                    name = "$address",
+                    name = "address",
                     fields = [
                         BuiltInField(definition = "uint256 balance"),
                         BuiltInField(definition = "bytes code", enabled = From("0.8.0")),
@@ -6263,7 +6263,7 @@ codegen_language_macros::compile!(Language(
                     )]
                 ),
                 BuiltInType(
-                    name = "$bytes",
+                    name = "bytes",
                     fields = [BuiltInField(definition = "uint length")],
                     functions = []
                 ),
@@ -6425,10 +6425,10 @@ codegen_language_macros::compile!(Language(
                 BuiltInVariable(definition = "$Function $placeholder"),
                 BuiltInVariable(definition = "$AbiType abi"),
                 BuiltInVariable(definition = "$BlockType block"),
-                BuiltInVariable(definition = "$BytesType $bytes"),
+                BuiltInVariable(definition = "$BytesType bytes"),
                 BuiltInVariable(definition = "$MessageType msg"),
                 BuiltInVariable(definition = "uint now", enabled = Till("0.7.0")),
-                BuiltInVariable(definition = "$StringType $string"),
+                BuiltInVariable(definition = "$StringType string"),
                 BuiltInVariable(definition = "$TransactionType tx")
             ]
         ),
@@ -6474,7 +6474,7 @@ codegen_language_macros::compile!(Language(
                     return_type = "uint256"
                 ),
                 BuiltInFunction(
-                    name = "$byte",
+                    name = "byte",
                     parameters = ["uint256 n", "uint256 x"],
                     return_type = "uint256"
                 ),
@@ -6656,7 +6656,7 @@ codegen_language_macros::compile!(Language(
                     parameters = ["uint256 x"],
                     return_type = "uint256"
                 ),
-                BuiltInFunction(name = "$return", parameters = ["uint256 p", "uint256 s"]),
+                BuiltInFunction(name = "return", parameters = ["uint256 p", "uint256 s"]),
                 BuiltInFunction(name = "revert", parameters = ["uint256 p", "uint256 s"]),
                 BuiltInFunction(
                     name = "sdiv",
