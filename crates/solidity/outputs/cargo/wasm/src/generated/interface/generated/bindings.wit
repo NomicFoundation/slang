@@ -33,6 +33,9 @@ interface bindings {
         /// Returns the location of the definition's definiens.
         /// For `contract X {}`, that is the location of the parent `ContractDefinition` node.
         definiens-location: func() -> binding-location;
+
+        /// Returns a list of all references this definition binds to.
+        references: func() -> list<reference>;
     }
 
     /// Represents a reference in the binding graph.
