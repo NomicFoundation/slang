@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "blockhash()\n" (0..12)
+  - (root꞉ YulFunctionCallExpression): # "blockhash()\n" (0..12)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulBlockHashKeyword): "blockhash" # (0..9)
       - (open_paren꞉ OpenParen): "(" # (9..10)
       - (arguments꞉ YulArguments): [] # (10..10)

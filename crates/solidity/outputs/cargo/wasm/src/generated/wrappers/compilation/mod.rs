@@ -16,6 +16,7 @@ mod ffi {
     pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{
         Cursor, NonterminalNode,
     };
+    pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::parser::ParseError;
 }
 
 mod rust {
@@ -116,6 +117,10 @@ define_rc_wrapper! { File {
 
     fn tree(&self) -> ffi::NonterminalNode {
         self._borrow_ffi().tree().to_owned()._into_ffi()
+    }
+
+    fn errors(&self) -> Vec<ffi::ParseError> {
+        self._borrow_ffi().errors().iter().map(|e| e.clone()._into_ffi()).collect()
     }
 
     fn create_tree_cursor(&self) -> ffi::Cursor {

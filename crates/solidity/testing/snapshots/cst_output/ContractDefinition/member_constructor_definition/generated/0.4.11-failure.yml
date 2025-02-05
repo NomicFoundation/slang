@@ -18,7 +18,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "contract Sample {\n  constructor() public {\n  }\n}" (0..48)
+  - (root꞉ ContractDefinition): # "contract Sample {\n  constructor() public {\n  }\n}" (0..48)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Sample" # (9..15)
@@ -31,5 +31,5 @@ Tree:
                   - (leading_trivia꞉ Whitespace): "  " # (18..20)
                   - (item꞉ Identifier): "constructor" # (20..31)
               - (attributes꞉ StateVariableAttributes): [] # (31..31)
-      - (UNRECOGNIZED): "() public {\n  }\n" # (31..47)
+      - (unrecognized꞉ UNRECOGNIZED): "() public {\n  }\n" # (31..47)
       - (close_brace꞉ CloseBrace): "}" # (47..48)

@@ -46,6 +46,7 @@ fn test_cargo() -> Result<()> {
         .args(["nextest", "run"])
         .flag("--workspace")
         .flag("--all-features")
+        .flag("--tests")
         .flag("--lib")
         .flag("--bins")
         .flag("--examples")

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ PrefixExpression): # "delete obj[slot]\n" (0..17)
+  - (root꞉ Expression) ► (variant꞉ PrefixExpression): # "delete obj[slot]\n" (0..17)
       - (operator꞉ DeleteKeyword): "delete" # (0..6)
       - (operand꞉ Expression) ► (variant꞉ IndexAccessExpression): # " obj[slot]\n" (6..17)
           - (operand꞉ Expression): # " obj" (6..10)

@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulVariableAssignmentStatement) ► (UNRECOGNIZED): "mstore := 0\n" # (0..12)
+  - (root꞉ YulVariableAssignmentStatement) ► (unrecognized꞉ UNRECOGNIZED): "mstore := 0\n" # (0..12)

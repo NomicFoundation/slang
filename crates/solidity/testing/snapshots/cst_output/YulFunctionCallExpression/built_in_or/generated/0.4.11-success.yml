@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "or()\n" (0..5)
+  - (root꞉ YulFunctionCallExpression): # "or()\n" (0..5)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulOrKeyword): "or" # (0..2)
       - (open_paren꞉ OpenParen): "(" # (2..3)
       - (arguments꞉ YulArguments): [] # (3..3)

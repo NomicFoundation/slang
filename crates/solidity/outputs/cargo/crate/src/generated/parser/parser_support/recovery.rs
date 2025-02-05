@@ -90,7 +90,10 @@ impl ParserResult {
 
             let skipped = input.content(skipped_range.utf8());
 
-            input.emit(ParseError::new(skipped_range, expected_terminals.clone()));
+            input.emit(ParseError::create(
+                skipped_range,
+                expected_terminals.clone(),
+            ));
 
             ParserResult::SkippedUntil(SkippedUntil {
                 nodes,

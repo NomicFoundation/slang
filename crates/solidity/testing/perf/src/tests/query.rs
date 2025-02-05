@@ -11,7 +11,7 @@ pub fn setup() -> Vec<ParsedFile> {
 pub fn run(files: Vec<ParsedFile>) {
     let mut functions_count = 0;
 
-    let queries = vec![Query::parse(
+    let queries = vec![Query::create(
         "[FunctionDefinition
             @name name: [_]
         ]",
@@ -29,7 +29,7 @@ pub fn run(files: Vec<ParsedFile>) {
     }
 
     assert_eq!(
-        functions_count, 232,
+        functions_count, 233,
         "Failed to fetch all function definitions"
     );
 }

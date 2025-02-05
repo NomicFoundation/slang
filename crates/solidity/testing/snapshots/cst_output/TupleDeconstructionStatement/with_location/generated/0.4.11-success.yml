@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (TupleDeconstructionStatement): # "(memory with_location, without_location) = rhs;" (0..47)
+  - (root꞉ TupleDeconstructionStatement): # "(memory with_location, without_location) = rhs;" (0..47)
       - (open_paren꞉ OpenParen): "(" # (0..1)
       - (elements꞉ TupleDeconstructionElements): # "memory with_location, without_location" (1..39)
           - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember): # "memory with_location" (1..21)

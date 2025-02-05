@@ -34,12 +34,12 @@ impl<T: KindTypes + 'static> Cursor<T> {
                     NodeKind::Nonterminal(nonterminal.kind) == *node_kind
                 }
                 NodeSelector::NodeText { .. } => false,
-                NodeSelector::EdgeLabel { edge_label } => Some(*edge_label) == self.label(),
+                NodeSelector::EdgeLabel { edge_label } => *edge_label == self.label(),
                 NodeSelector::EdgeLabelAndNodeKind {
                     edge_label,
                     node_kind,
                 } => {
-                    Some(*edge_label) == self.label()
+                    *edge_label == self.label()
                         && NodeKind::Nonterminal(nonterminal.kind) == *node_kind
                 }
                 NodeSelector::EdgeLabelAndNodeText { .. } => false,
@@ -53,18 +53,15 @@ impl<T: KindTypes + 'static> Cursor<T> {
                     NodeKind::Terminal(terminal.kind) == *node_kind
                 }
                 NodeSelector::NodeText { node_text } => terminal.text == *node_text,
-                NodeSelector::EdgeLabel { edge_label } => Some(*edge_label) == self.label(),
+                NodeSelector::EdgeLabel { edge_label } => *edge_label == self.label(),
                 NodeSelector::EdgeLabelAndNodeKind {
                     edge_label,
                     node_kind,
-                } => {
-                    Some(*edge_label) == self.label()
-                        && NodeKind::Terminal(terminal.kind) == *node_kind
-                }
+                } => *edge_label == self.label() && NodeKind::Terminal(terminal.kind) == *node_kind,
                 NodeSelector::EdgeLabelAndNodeText {
                     edge_label,
                     node_text,
-                } => Some(*edge_label) == self.label() && terminal.text == *node_text,
+                } => *edge_label == self.label() && terminal.text == *node_text,
             },
         }
     }
@@ -147,7 +144,7 @@ impl<T: KindTypes + 'static> ASTNode<T> {
 
 pub struct QueryMatch<T: KindTypes> {
     pub queries: Rc<Vec<Query<T>>>,
-    pub query_number: usize,
+    pub query_index: usize,
     pub root_cursor: Cursor<T>,
     // These correspond to the capture definitions in the query
     pub captures: BTreeMap<String, Vec<Cursor<T>>>,
@@ -155,7 +152,7 @@ pub struct QueryMatch<T: KindTypes> {
 
 impl<T: KindTypes> QueryMatch<T> {
     pub fn query(&self) -> &Query<T> {
-        &self.queries[self.query_number]
+        &self.queries[self.query_index]
     }
 
     pub fn capture_names(&self) -> impl Iterator<Item = &String> {
@@ -197,7 +194,7 @@ impl<T: KindTypes> QueryMatch<T> {
 pub struct QueryMatchIterator<T: KindTypes> {
     queries: Rc<Vec<Query<T>>>,
     cursor: Cursor<T>,
-    query_number: usize,
+    query_index: usize,
     matcher: Option<MatcherRef<T>>,
 }
 
@@ -206,24 +203,24 @@ impl<T: KindTypes + 'static> QueryMatchIterator<T> {
         Self {
             queries: Rc::new(queries),
             cursor,
-            query_number: 0,
+            query_index: 0,
             matcher: None,
         }
     }
 
     fn advance_to_next_possible_matching_query(&mut self) {
         while !self.cursor.is_completed() {
-            while self.query_number < self.queries.len() {
-                let ast_node = &self.queries[self.query_number].ast_node;
+            while self.query_index < self.queries.len() {
+                let ast_node = &self.queries[self.query_index].ast_node;
                 if ast_node.can_match(&self.cursor) {
                     // The first matcher in the query should allow implicit matches
                     self.matcher = Some(ast_node.create_matcher(self.cursor.clone(), false));
                     return;
                 };
-                self.query_number += 1;
+                self.query_index += 1;
             }
             self.cursor.go_to_next();
-            self.query_number = 0;
+            self.query_index = 0;
         }
     }
 }
@@ -240,11 +237,11 @@ impl<T: KindTypes + 'static> Iterator for QueryMatchIterator<T> {
                     return Some(QueryMatch {
                         queries: Rc::clone(&self.queries),
                         root_cursor: self.cursor.clone(),
-                        query_number: self.query_number,
+                        query_index: self.query_index,
                         captures,
                     });
                 }
-                self.query_number += 1;
+                self.query_index += 1;
             }
 
             self.advance_to_next_possible_matching_query();

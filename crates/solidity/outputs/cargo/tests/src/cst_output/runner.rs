@@ -37,7 +37,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         let tested_kind = NonterminalKind::from_str(parser_name)
             .unwrap_or_else(|_| panic!("No such parser: {parser_name}"));
 
-        let output = Parser::create(version.clone())?.parse(tested_kind, &source);
+        let output = Parser::create(version.clone())?.parse_nonterminal(tested_kind, &source);
 
         let output = match last_output {
             // Skip this version if it produces the same output.
@@ -57,7 +57,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             })
             .collect();
 
-        let cursor = output.create_tree_cursor();
+        let mut cursor = output.create_tree_cursor();
 
         let status = if output.is_valid() {
             TestStatus::Success
@@ -65,8 +65,16 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             TestStatus::Failure
         };
 
-        let snapshot = render(&source, &errors, cursor)?;
+        let snapshot = render(&source, &errors, &mut cursor.clone())?;
 
+        cursor.reset();
+
+        assert!(
+            cursor.descendants().all(|e| !e.has_default_label()),
+            "{snapshot}"
+        );
+
+        // Test did not assign a bad edge label, so save the snapshot to the expected file
         let snapshot_path = test_dir
             .join("generated")
             .join(format!("{version}-{status}.yml"));

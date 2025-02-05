@@ -17,6 +17,7 @@ use {log as _, regex as _, serde_json as _, smallvec as _, string_interner as _,
     Clone,
     Copy,
     Debug,
+    Default,
     Eq,
     PartialEq,
     serde::Serialize,
@@ -24,6 +25,7 @@ use {log as _, regex as _, serde_json as _, smallvec as _, string_interner as _,
     strum_macros::EnumString,
 )]
 pub enum DummyKind {
+    #[default]
     Module,
 }
 impl metaslang_cst::kinds::TerminalKindExtensions for DummyKind {}
@@ -57,7 +59,7 @@ fn execute(dsl_source: &str) -> Result<String, ExecutionError> {
     let config = ExecutionConfig::new(&functions, &globals);
     let tree =
         metaslang_cst::nodes::Node::<KindTypes>::terminal(DummyKind::Module, "pass".to_owned());
-    let cursor = tree.cursor_with_offset(metaslang_cst::text_index::TextIndex::ZERO);
+    let cursor = tree.create_cursor(metaslang_cst::text_index::TextIndex::ZERO);
     let graph = file.execute(&cursor, &config, &NoCancellation)?;
     let result = graph.pretty_print().to_string();
     Ok(result)

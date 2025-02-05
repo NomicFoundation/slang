@@ -14,7 +14,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UsingDirective): # "using {div as /} for Int global;" (0..32)
+  - (root꞉ UsingDirective): # "using {div as /} for Int global;" (0..32)
       - (using_keyword꞉ UsingKeyword): "using" # (0..5)
       - (clause꞉ UsingClause) ► (variant꞉ UsingDeconstruction): # " {div as /}" (5..16)
           - (leading_trivia꞉ Whitespace): " " # (5..6)
@@ -23,7 +23,7 @@ Tree:
               - (item꞉ UsingDeconstructionSymbol) ► (name꞉ IdentifierPath): # "div" (7..10)
                   - (item꞉ Identifier): "div" # (7..10)
           - (leading_trivia꞉ Whitespace): " " # (10..11)
-          - (UNRECOGNIZED): "as /" # (11..15)
+          - (unrecognized꞉ UNRECOGNIZED): "as /" # (11..15)
           - (close_brace꞉ CloseBrace): "}" # (15..16)
       - (leading_trivia꞉ Whitespace): " " # (16..17)
       - (for_keyword꞉ ForKeyword): "for" # (17..20)

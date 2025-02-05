@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (DecimalNumberExpression): # "10 years\n" (0..9)
+  - (root꞉ DecimalNumberExpression): # "10 years\n" (0..9)
       - (literal꞉ DecimalLiteral): "10" # (0..2)
       - (unit꞉ NumberUnit): # " years\n" (2..9)
           - (leading_trivia꞉ Whitespace): " " # (2..3)

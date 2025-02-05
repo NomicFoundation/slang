@@ -280,6 +280,18 @@ export declare enum TerminalKind {
  */
 export declare enum EdgeLabel {
   /**
+   * Represents a child node with the label `root`.
+   */
+  Root = "Root",
+  /**
+   * Represents a child node with the label `unrecognized`.
+   */
+  Unrecognized = "Unrecognized",
+  /**
+   * Represents a child node with the label `missing`.
+   */
+  Missing = "Missing",
+  /**
    * Represents a child node with the label `item`.
    */
   Item = "Item",
@@ -376,39 +388,22 @@ export enum NodeType {
  */
 export interface Edge {
   /**
-   * Optional label describing the relationship between nodes.
+   * Describes the relationship between this node and its parent.
    */
-  label?: EdgeLabel;
+  label: EdgeLabel;
   /**
    * The target node of this edge.
    */
   node: Node;
 }
 /**
- * Represents an error that occurred while parsing a query.
- */
-export interface QueryError {
-  /**
-   * The error message describing what went wrong.
-   */
-  message: string;
-  /**
-   * The line number where the error occurred.
-   */
-  line: number;
-  /**
-   * The column number where the error occurred.
-   */
-  column: number;
-}
-/**
- * Represents a match found by executing a query.
+ * Represents a match found by executing queries on a cursor.
  */
 export interface QueryMatch {
   /**
    * The index of the query that produced this match.
    */
-  queryNumber: number;
+  queryIndex: number;
   /**
    * List of captured nodes and their names from the query.
    */
@@ -457,6 +452,19 @@ export interface TextRange {
    */
   end: TextIndex;
 }
+/**
+ * Represents an error that occurred while parsing a query.
+ */
+export interface QueryError {
+  /**
+   * A human-readable message describing what went wrong.
+   */
+  message: string;
+  /**
+   * The text range where the error occurred in the query code.
+   */
+  textRange: TextRange;
+}
 
 /**
  * Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
@@ -504,9 +512,9 @@ export class Cursor {
    */
   get node(): Node;
   /**
-   * Returns the label of the edge from the parent to the current node, if any.
+   * Returns a label that describes the relationship between the current node and its parent.
    */
-  get label(): EdgeLabel | undefined;
+  get label(): EdgeLabel;
   /**
    * Returns the current text offset of the cursor.
    */
@@ -562,7 +570,7 @@ export class Cursor {
   /**
    * Moves to the nth child of the current node.
    */
-  goToNthChild(childNumber: number): boolean;
+  goToNthChild(childIndex: number): boolean;
   /**
    * Moves to the next sibling node.
    */
@@ -690,7 +698,7 @@ export class Query {
    * Parses a query string into a query object.
    * Throws an error if the query syntax is invalid.
    */
-  static parse(text: string): Query;
+  static create(text: string): Query;
 }
 
 /**
@@ -712,11 +720,15 @@ export class QueryMatchIterator {
  */
 export class TerminalKindExtensions {
   /**
-   * Returns true if the terminal is a trivia token. i.e. whitespace, comments, etc...
+   * Returns `true` if the terminal is an identifier token.
+   */
+  static isIdentifier(kind: TerminalKind): boolean;
+  /**
+   * Returns `true` if the terminal is a trivia token. i.e. whitespace, comments, etc...
    */
   static isTrivia(kind: TerminalKind): boolean;
   /**
-   * Returns true if the terminal is a valid token in the language grammar.
+   * Returns `true` if the terminal is a valid token in the language grammar.
    */
   static isValid(kind: TerminalKind): boolean;
 }

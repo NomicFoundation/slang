@@ -40,7 +40,7 @@ Errors: # 1 total
     ────╯
 
 Tree:
-  - (SourceUnit): # 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...' (0..243)
+  - (root꞉ SourceUnit): # 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n\nusing A...' (0..243)
       - (members꞉ SourceUnitMembers): # 'pragma solidity 0.0.0;\n\nimport "foo.sol";\n' (0..42)
           - (item꞉ SourceUnitMember) ► (variant꞉ PragmaDirective): # "pragma solidity 0.0.0;\n" (0..23)
               - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
@@ -67,4 +67,4 @@ Tree:
               - (semicolon꞉ Semicolon): ";" # (40..41)
               - (trailing_trivia꞉ EndOfLine): "\n" # (41..42)
       - (leading_trivia꞉ EndOfLine): "\n" # (42..43)
-      - (UNRECOGNIZED): "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # (43..243)
+      - (unrecognized꞉ UNRECOGNIZED): "using A for B;\n\ncontract C { }\n\ninterface I { }\n\nl..." # (43..243)

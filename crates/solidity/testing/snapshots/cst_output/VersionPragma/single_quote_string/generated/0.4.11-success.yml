@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (VersionPragma): # "solidity '1.2.3'\n" (0..17)
+  - (root꞉ VersionPragma): # "solidity '1.2.3'\n" (0..17)
       - (solidity_keyword꞉ SolidityKeyword): "solidity" # (0..8)
       - (sets꞉ VersionExpressionSets): # " '1.2.3'\n" (8..17)
           - (item꞉ VersionExpressionSet): # " '1.2.3'\n" (8..17)

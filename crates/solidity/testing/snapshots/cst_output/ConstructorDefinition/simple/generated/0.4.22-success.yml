@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ConstructorDefinition): # "constructor () {}" (0..17)
+  - (root꞉ ConstructorDefinition): # "constructor () {}" (0..17)
       - (constructor_keyword꞉ ConstructorKeyword): "constructor" # (0..11)
       - (parameters꞉ ParametersDeclaration): # " ()" (11..14)
           - (leading_trivia꞉ Whitespace): " " # (11..12)

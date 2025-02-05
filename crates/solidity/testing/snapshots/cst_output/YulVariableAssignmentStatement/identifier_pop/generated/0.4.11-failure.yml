@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (YulVariableAssignmentStatement) ► (UNRECOGNIZED): "pop := 0\n" # (0..9)
+  - (root꞉ YulVariableAssignmentStatement) ► (unrecognized꞉ UNRECOGNIZED): "pop := 0\n" # (0..9)

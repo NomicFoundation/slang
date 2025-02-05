@@ -3,7 +3,7 @@ use std::path::Path;
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
 use semver::Version;
-use slang_solidity::cst::{NonterminalKind, Query, QueryMatchIterator};
+use slang_solidity::cst::{Query, QueryMatchIterator};
 use slang_solidity::parser::{ParseOutput, Parser};
 
 fn parse_doc_input_file<T: AsRef<Path>>(path: T) -> Result<ParseOutput> {
@@ -13,7 +13,7 @@ fn parse_doc_input_file<T: AsRef<Path>>(path: T) -> Result<ParseOutput> {
 
     let parser = Parser::create(Version::new(0, 8, 0))?;
 
-    Ok(parser.parse(NonterminalKind::SourceUnit, source.trim()))
+    Ok(parser.parse_file_contents(source.trim()))
 }
 
 #[test]
@@ -27,7 +27,7 @@ fn using_queries() -> Result<()> {
         // Any `Cursor` can be used to create a query.
         let cursor = parse_output.create_tree_cursor();
 
-        let query = Query::parse("[ContractDefinition]").unwrap();
+        let query = Query::create("[ContractDefinition]").unwrap();
         let result: QueryMatchIterator = cursor.query(vec![query]);
         // --8<-- [end:creating-a-query]
     }
@@ -38,7 +38,7 @@ fn using_queries() -> Result<()> {
         // --8<-- [start:visiting-contracts]
         let mut found = vec![];
 
-        let query = Query::parse("@contract [ContractDefinition]").unwrap();
+        let query = Query::create("@contract [ContractDefinition]").unwrap();
 
         for r#match in cursor.query(vec![query]) {
             let captures = r#match.captures;
@@ -62,11 +62,11 @@ fn using_queries() -> Result<()> {
         // --8<-- [start:multiple-patterns]
         let mut names = vec![];
 
-        let struct_def = Query::parse("[StructDefinition @name [Identifier]]").unwrap();
-        let enum_def = Query::parse("[EnumDefinition @name [Identifier]]").unwrap();
+        let struct_def = Query::create("[StructDefinition @name [Identifier]]").unwrap();
+        let enum_def = Query::create("[EnumDefinition @name [Identifier]]").unwrap();
 
         for r#match in cursor.query(vec![struct_def, enum_def]) {
-            let index = r#match.query_number;
+            let index = r#match.query_index;
             let captures = r#match.captures;
             let cursors = captures.get("name").unwrap();
 
@@ -94,7 +94,7 @@ fn using_queries() -> Result<()> {
 
         let mut names = vec![];
 
-        let query = Query::parse("[TypedTupleMember @type type_name:[_]]").unwrap();
+        let query = Query::create("[TypedTupleMember @type type_name:[_]]").unwrap();
 
         for r#match in cursor.query(vec![query]) {
             let captures = r#match.captures;
@@ -117,7 +117,7 @@ fn using_queries() -> Result<()> {
 
         let mut names = vec![];
 
-        let query = Query::parse(r#"[ElementaryType @uint_keyword variant:["uint"]]"#).unwrap();
+        let query = Query::create(r#"[ElementaryType @uint_keyword variant:["uint"]]"#).unwrap();
 
         for r#match in cursor.query(vec![query]) {
             let captures = r#match.captures;
@@ -140,7 +140,7 @@ fn tx_origin_query() -> Result<()> {
     let parse_output = parse_doc_input_file("tx-origin.sol")?;
     let cursor = parse_output.create_tree_cursor();
     // --8<-- [start:tx-origin]
-    let query = Query::parse(
+    let query = Query::create(
         r#"@txorigin [MemberAccessExpression
                 [Expression @start ["tx"]]
                 ["origin"]

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ImportDirective): # 'import "foo";' (0..13)
+  - (root꞉ ImportDirective): # 'import "foo";' (0..13)
       - (import_keyword꞉ ImportKeyword): "import" # (0..6)
       - (clause꞉ ImportClause) ► (variant꞉ PathImport) ► (path꞉ StringLiteral): # ' "foo"' (6..12)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

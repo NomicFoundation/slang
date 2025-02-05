@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (StringLiterals): # "'foo'\n" (0..6)
+  - (root꞉ StringLiterals): # "'foo'\n" (0..6)
       - (item꞉ StringLiteral): # "'foo'\n" (0..6)
           - (variant꞉ SingleQuotedStringLiteral): "'foo'" # (0..5)
           - (trailing_trivia꞉ EndOfLine): "\n" # (5..6)

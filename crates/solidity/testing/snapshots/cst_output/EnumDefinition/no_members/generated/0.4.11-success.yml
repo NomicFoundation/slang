@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (EnumDefinition): # "enum Foo { }" (0..12)
+  - (root꞉ EnumDefinition): # "enum Foo { }" (0..12)
       - (enum_keyword꞉ EnumKeyword): "enum" # (0..4)
       - (leading_trivia꞉ Whitespace): " " # (4..5)
       - (name꞉ Identifier): "Foo" # (5..8)

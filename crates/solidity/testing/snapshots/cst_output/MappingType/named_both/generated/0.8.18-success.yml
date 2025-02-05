@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (MappingType): # "mapping(string Foo => bytes32 Bar)" (0..34)
+  - (root꞉ MappingType): # "mapping(string Foo => bytes32 Bar)" (0..34)
       - (mapping_keyword꞉ MappingKeyword): "mapping" # (0..7)
       - (open_paren꞉ OpenParen): "(" # (7..8)
       - (key_type꞉ MappingKey): # "string Foo" (8..18)

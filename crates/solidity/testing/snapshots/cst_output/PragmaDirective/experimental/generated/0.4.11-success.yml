@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (PragmaDirective): # "pragma experimental foo;" (0..24)
+  - (root꞉ PragmaDirective): # "pragma experimental foo;" (0..24)
       - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
       - (pragma꞉ Pragma) ► (variant꞉ ExperimentalPragma): # " experimental foo" (6..23)
           - (leading_trivia꞉ Whitespace): " " # (6..7)

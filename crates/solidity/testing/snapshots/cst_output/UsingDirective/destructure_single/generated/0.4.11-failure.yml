@@ -14,8 +14,8 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (UsingDirective): # "using {add} for Int global;" (0..27)
+  - (root꞉ UsingDirective): # "using {add} for Int global;" (0..27)
       - (using_keyword꞉ UsingKeyword): "using" # (0..5)
       - (leading_trivia꞉ Whitespace): " " # (5..6)
-      - (UNRECOGNIZED): "{add} for Int global" # (6..26)
+      - (unrecognized꞉ UNRECOGNIZED): "{add} for Int global" # (6..26)
       - (semicolon꞉ Semicolon): ";" # (26..27)

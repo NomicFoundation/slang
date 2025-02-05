@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ModifierDefinition): # "modifier mod(uint a) override { _; }\n" (0..37)
+  - (root꞉ ModifierDefinition): # "modifier mod(uint a) override { _; }\n" (0..37)
       - (modifier_keyword꞉ ModifierKeyword): "modifier" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "mod" # (9..12)

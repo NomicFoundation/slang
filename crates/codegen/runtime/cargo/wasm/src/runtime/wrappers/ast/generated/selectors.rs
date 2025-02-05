@@ -68,31 +68,29 @@ impl Helper {
     }
 
     fn try_select(&mut self, target_label: EdgeLabel) -> Option<Node> {
-        let (label, node) = self.current()?;
+        let edge = self.current()?;
 
-        if label == target_label {
+        if edge.label == target_label {
             self.index += 1;
-            Some(node.clone())
+            Some(edge.node)
         } else {
             None
         }
     }
 
-    fn current(&mut self) -> Option<(EdgeLabel, Node)> {
+    fn current(&mut self) -> Option<Edge> {
         loop {
-            let Edge { label, node } = self.node.children.get(self.index)?;
+            let edge = self.node.children.get(self.index)?;
 
-            match label {
-                // Skip unlabeled nodes:
-                | None
+            match edge.label {
                 // Skip trivia:
-                | Some(EdgeLabel::LeadingTrivia | EdgeLabel::TrailingTrivia) => {
+                EdgeLabel::LeadingTrivia | EdgeLabel::TrailingTrivia => {
                     self.index += 1;
                     continue;
                 }
                 // Otherwise, return the edge:
-                Some(other_label) => {
-                    return Some((*other_label, node.clone()));
+                _ => {
+                    return Some(edge.clone());
                 }
             }
         }
@@ -100,8 +98,8 @@ impl Helper {
 
     fn finalize(mut self) -> Result<()> {
         match self.current() {
-            Some((label, _)) => {
-                Err(format!("Unrecognized child with label '{label}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet."))
+            Some(edge) => {
+                Err(format!("Unrecognized child with label '{label}'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.", label = edge.label))
             }
             None => {
                 Ok(())

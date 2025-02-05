@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ AdditiveExpression): # "a * b + c * d" (0..13)
+  - (root꞉ Expression) ► (variant꞉ AdditiveExpression): # "a * b + c * d" (0..13)
       - (left_operand꞉ Expression) ► (variant꞉ MultiplicativeExpression): # "a * b" (0..5)
           - (left_operand꞉ Expression) ► (variant꞉ Identifier): "a" # (0..1)
           - (leading_trivia꞉ Whitespace): " " # (1..2)

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "sha3()\n" (0..7)
+  - (root꞉ YulFunctionCallExpression): # "sha3()\n" (0..7)
       - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "sha3" (0..4)
           - (item꞉ YulIdentifier): "sha3" # (0..4)
       - (open_paren꞉ OpenParen): "(" # (4..5)

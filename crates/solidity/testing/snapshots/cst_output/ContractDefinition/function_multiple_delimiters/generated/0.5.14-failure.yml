@@ -22,7 +22,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "// SPDX-License-Identifier: MIT\ncontract ABC {\n  f..." (0..352)
+  - (root꞉ ContractDefinition): # "// SPDX-License-Identifier: MIT\ncontract ABC {\n  f..." (0..352)
       - (leading_trivia꞉ SingleLineComment): "// SPDX-License-Identifier: MIT" # (0..31)
       - (leading_trivia꞉ EndOfLine): "\n" # (31..32)
       - (contract_keyword꞉ ContractKeyword): "contract" # (32..40)
@@ -118,7 +118,7 @@ Tree:
                                   - (variant꞉ Identifier): "recipient" # (225..234)
                               - (period꞉ Period): "." # (234..235)
                               - (member꞉ Identifier): "call" # (235..239)
-                          - (UNRECOGNIZED): '{ value: amount }("")' # (239..260)
+                          - (unrecognized꞉ UNRECOGNIZED): '{ value: amount }("")' # (239..260)
                           - (semicolon꞉ Semicolon): ";" # (260..261)
                           - (trailing_trivia꞉ EndOfLine): "\n" # (261..262)
                       - (item꞉ Statement) ► (variant꞉ ExpressionStatement): # '    require(success, "Address: unable to send valu...' (262..346)

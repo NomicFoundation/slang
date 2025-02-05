@@ -1,6 +1,6 @@
 {
   "name": "@nomicfoundation/slang",
-  "version": "0.18.3",
+  "version": "0.19.0",
   "type": "module",
   "description": "A modular set of compiler APIs empowering the next generation of Solidity code analysis and developer tooling. Written in Rust and distributed in multiple languages.",
   "homepage": "https://nomicfoundation.github.io/slang/",
@@ -12,20 +12,12 @@
   "bugs": "https://github.com/NomicFoundation/slang/issues/",
   "contributors": [
     {
+      "name": "Slang Team",
+      "email": "slang@nomic.foundation"
+    },
+    {
       "name": "Nomic Foundation",
       "email": "packages@nomic.foundation"
-    },
-    {
-      "name": "Antony Blakey",
-      "email": "antony@nomic.foundation"
-    },
-    {
-      "name": "Igor Matuszewski",
-      "email": "igor@nomic.foundation"
-    },
-    {
-      "name": "Omar Tawfik",
-      "email": "omar@nomic.foundation"
     }
   ],
   "publishConfig": {

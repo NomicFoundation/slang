@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ConditionalExpression): # "(foo == bar) ? true : false" (0..27)
+  - (root꞉ ConditionalExpression): # "(foo == bar) ? true : false" (0..27)
       - (operand꞉ Expression) ► (variant꞉ TupleExpression): # "(foo == bar)" (0..12)
           - (open_paren꞉ OpenParen): "(" # (0..1)
           - (items꞉ TupleValues): # "foo == bar" (1..11)

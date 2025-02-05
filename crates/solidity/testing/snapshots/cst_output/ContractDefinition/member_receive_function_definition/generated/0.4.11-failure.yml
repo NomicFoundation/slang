@@ -18,7 +18,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "contract Sample {\n  receive() {\n  }\n}" (0..37)
+  - (root꞉ ContractDefinition): # "contract Sample {\n  receive() {\n  }\n}" (0..37)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Sample" # (9..15)
@@ -31,5 +31,5 @@ Tree:
                   - (leading_trivia꞉ Whitespace): "  " # (18..20)
                   - (item꞉ Identifier): "receive" # (20..27)
               - (attributes꞉ StateVariableAttributes): [] # (27..27)
-      - (UNRECOGNIZED): "() {\n  }\n" # (27..36)
+      - (unrecognized꞉ UNRECOGNIZED): "() {\n  }\n" # (27..36)
       - (close_brace꞉ CloseBrace): "}" # (36..37)

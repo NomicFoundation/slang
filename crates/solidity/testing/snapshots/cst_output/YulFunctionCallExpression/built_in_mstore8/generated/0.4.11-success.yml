@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulFunctionCallExpression): # "mstore8()\n" (0..10)
+  - (root꞉ YulFunctionCallExpression): # "mstore8()\n" (0..10)
       - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulMStore8Keyword): "mstore8" # (0..7)
       - (open_paren꞉ OpenParen): "(" # (7..8)
       - (arguments꞉ YulArguments): [] # (8..8)

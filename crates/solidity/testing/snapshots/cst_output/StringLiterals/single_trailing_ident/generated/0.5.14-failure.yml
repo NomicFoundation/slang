@@ -14,6 +14,6 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (StringLiterals): # '"foo"bar\n' (0..9)
+  - (root꞉ StringLiterals): # '"foo"bar\n' (0..9)
       - (item꞉ StringLiteral) ► (variant꞉ DoubleQuotedStringLiteral): '"foo"' # (0..5)
-      - (UNRECOGNIZED): "bar\n" # (5..9)
+      - (unrecognized꞉ UNRECOGNIZED): "bar\n" # (5..9)

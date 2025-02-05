@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - (ThrowStatement): # "throw;" (0..6)
+  - (root꞉ ThrowStatement): # "throw;" (0..6)
       - (throw_keyword꞉ ThrowKeyword): "throw" # (0..5)
       - (semicolon꞉ Semicolon): ";" # (5..6)

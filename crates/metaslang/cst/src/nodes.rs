@@ -32,26 +32,21 @@ pub enum Node<T: KindTypes> {
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct Edge<T: KindTypes> {
-    pub label: Option<T::EdgeLabel>,
+    pub label: T::EdgeLabel,
     pub node: Node<T>,
 }
 
-impl<T: KindTypes> NonterminalNode<T> {
-    pub fn new(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Self {
-        let text_len = children.iter().map(|edge| edge.text_len()).sum();
-
-        NonterminalNode {
-            kind,
-            text_len,
-            children,
+impl<T: KindTypes> Edge<T> {
+    /// Creates an edge to a root node (using the default label).
+    pub fn root(node: Node<T>) -> Self {
+        Self {
+            label: T::EdgeLabel::default(),
+            node,
         }
     }
-}
 
-impl<T: KindTypes> Edge<T> {
-    /// Creates an anonymous node (without a label).
-    pub fn anonymous(node: Node<T>) -> Self {
-        Self { label: None, node }
+    pub fn has_default_label(&self) -> bool {
+        self.label == T::EdgeLabel::default()
     }
 }
 
@@ -65,11 +60,11 @@ impl<T: KindTypes> std::ops::Deref for Edge<T> {
 
 impl<T: KindTypes> Node<T> {
     pub fn nonterminal(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Self {
-        Self::Nonterminal(Rc::new(NonterminalNode::new(kind, children)))
+        Self::Nonterminal(NonterminalNode::create(kind, children))
     }
 
     pub fn terminal(kind: T::TerminalKind, text: String) -> Self {
-        Self::Terminal(Rc::new(TerminalNode { kind, text }))
+        Self::Terminal(TerminalNode::create(kind, text))
     }
 
     /// Returns a unique identifier of the node. It is not reproducable over parses
@@ -105,12 +100,12 @@ impl<T: KindTypes> Node<T> {
 
     /// Returns an iterator over all descendants of the current node in pre-order traversal.
     pub fn descendants(self) -> CursorIterator<T> {
-        Cursor::new(self, TextIndex::ZERO).descendants()
+        Cursor::create(self, TextIndex::ZERO).descendants()
     }
 
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
-    pub fn cursor_with_offset(self, text_offset: TextIndex) -> Cursor<T> {
-        Cursor::new(self, text_offset)
+    pub fn create_cursor(self, text_offset: TextIndex) -> Cursor<T> {
+        Cursor::create(self, text_offset)
     }
 
     /// Reconstructs the original source code from the node and its sub-tree.
@@ -221,6 +216,16 @@ impl<T: KindTypes> From<Rc<TerminalNode<T>>> for Node<T> {
 }
 
 impl<T: KindTypes> NonterminalNode<T> {
+    pub fn create(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Rc<Self> {
+        let text_len = children.iter().map(|edge| edge.text_len()).sum();
+
+        Rc::new(Self {
+            kind,
+            text_len,
+            children,
+        })
+    }
+
     /// Returns a unique identifier of the node. It is not reproducable over parses
     /// and cannot be used in a persistent/serialised sense.
     pub fn id(self: &Rc<Self>) -> usize {
@@ -238,8 +243,8 @@ impl<T: KindTypes> NonterminalNode<T> {
     }
 
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
-    pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
-        Node::Nonterminal(self).cursor_with_offset(text_offset)
+    pub fn create_cursor(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
+        Node::Nonterminal(self).create_cursor(text_offset)
     }
 
     /// Reconstructs the original source code from the node and its sub-tree.
@@ -260,6 +265,10 @@ impl<T: KindTypes> NonterminalNode<T> {
 }
 
 impl<T: KindTypes> TerminalNode<T> {
+    pub fn create(kind: T::TerminalKind, text: String) -> Rc<Self> {
+        Rc::new(Self { kind, text })
+    }
+
     /// Returns a unique identifier of the node. It is not reproducable over parses
     /// and cannot be used in a persistent/serialised sense.
     pub fn id(self: &Rc<Self>) -> usize {
@@ -277,8 +286,8 @@ impl<T: KindTypes> TerminalNode<T> {
     }
 
     /// Creates a [`Cursor`] that starts at the current node as the root and a given initial `text_offset`.
-    pub fn cursor_with_offset(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
-        Node::Terminal(self).cursor_with_offset(text_offset)
+    pub fn create_cursor(self: Rc<Self>, text_offset: TextIndex) -> Cursor<T> {
+        Node::Terminal(self).create_cursor(text_offset)
     }
 
     /// Reconstructs the original source code from the node and its sub-tree.

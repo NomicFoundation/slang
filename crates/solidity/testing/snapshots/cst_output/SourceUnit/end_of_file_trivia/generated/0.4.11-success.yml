@@ -11,7 +11,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (SourceUnit): # "contract X { }\n    \n// spaces before this\n\n/* new ..." (0..71)
+  - (root꞉ SourceUnit): # "contract X { }\n    \n// spaces before this\n\n/* new ..." (0..71)
       - (members꞉ SourceUnitMembers): # "contract X { }\n" (0..15)
           - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract X { }\n" (0..15)
               - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)

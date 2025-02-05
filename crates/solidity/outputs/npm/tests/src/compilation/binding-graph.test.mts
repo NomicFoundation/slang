@@ -1,7 +1,6 @@
 import assert from "node:assert";
 import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
-import { createBuilder } from "./common.mjs";
-import { BindingLocation } from "@nomicfoundation/slang/bindings";
+import { assertUserFileLocation, createBuilder } from "./common.mjs";
 
 test("binding graph", async () => {
   const builder = await createBuilder();
@@ -108,16 +107,3 @@ test("binding graph", async () => {
   // Done! No more identifiers in the file.
   assert(!cursor.goToNextTerminalWithKind(TerminalKind.Identifier));
 });
-
-function assertUserFileLocation(
-  location: BindingLocation,
-  fileId: string,
-  kind: TerminalKind | NonterminalKind,
-  line: number,
-) {
-  assert(location.isUserFileLocation());
-
-  assert.equal(location.fileId, fileId);
-  assert.equal(location.cursor.node.kind, kind);
-  assert.equal(location.cursor.textRange.start.line, line);
-}

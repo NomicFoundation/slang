@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # "contract Sample is Foo, Bar(1, 2), Baz {}" (0..41)
+  - (root꞉ ContractDefinition): # "contract Sample is Foo, Bar(1, 2), Baz {}" (0..41)
       - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
       - (leading_trivia꞉ Whitespace): " " # (8..9)
       - (name꞉ Identifier): "Sample" # (9..15)
