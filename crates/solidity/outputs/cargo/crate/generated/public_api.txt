@@ -132,6 +132,7 @@ pub slang_solidity::cst::EdgeLabel::Member
 pub slang_solidity::cst::EdgeLabel::Members
 pub slang_solidity::cst::EdgeLabel::Minus
 pub slang_solidity::cst::EdgeLabel::MinusGreaterThan
+pub slang_solidity::cst::EdgeLabel::Missing
 pub slang_solidity::cst::EdgeLabel::ModifierKeyword
 pub slang_solidity::cst::EdgeLabel::Name
 pub slang_solidity::cst::EdgeLabel::NewKeyword
@@ -157,6 +158,7 @@ pub slang_solidity::cst::EdgeLabel::Returns
 pub slang_solidity::cst::EdgeLabel::ReturnsKeyword
 pub slang_solidity::cst::EdgeLabel::RevertKeyword
 pub slang_solidity::cst::EdgeLabel::RightOperand
+pub slang_solidity::cst::EdgeLabel::Root
 pub slang_solidity::cst::EdgeLabel::Semicolon
 pub slang_solidity::cst::EdgeLabel::Separator
 pub slang_solidity::cst::EdgeLabel::Sets
@@ -177,6 +179,7 @@ pub slang_solidity::cst::EdgeLabel::TypeName
 pub slang_solidity::cst::EdgeLabel::Types
 pub slang_solidity::cst::EdgeLabel::UncheckedKeyword
 pub slang_solidity::cst::EdgeLabel::Unit
+pub slang_solidity::cst::EdgeLabel::Unrecognized
 pub slang_solidity::cst::EdgeLabel::UsingKeyword
 pub slang_solidity::cst::EdgeLabel::Value
 pub slang_solidity::cst::EdgeLabel::ValueType
@@ -203,6 +206,8 @@ pub fn &'static str::from(x: slang_solidity::cst::EdgeLabel) -> &'static str
 impl core::convert::TryFrom<&str> for slang_solidity::cst::EdgeLabel
 pub type slang_solidity::cst::EdgeLabel::Error = strum::ParseError
 pub fn slang_solidity::cst::EdgeLabel::try_from(s: &str) -> core::result::Result<slang_solidity::cst::EdgeLabel, <Self as core::convert::TryFrom<&str>>::Error>
+impl core::default::Default for slang_solidity::cst::EdgeLabel
+pub fn slang_solidity::cst::EdgeLabel::default() -> Self
 impl core::fmt::Debug for slang_solidity::cst::EdgeLabel
 pub fn slang_solidity::cst::EdgeLabel::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::fmt::Display for slang_solidity::cst::EdgeLabel

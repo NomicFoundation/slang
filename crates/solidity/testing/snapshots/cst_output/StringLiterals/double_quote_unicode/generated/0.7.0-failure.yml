@@ -14,5 +14,5 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (StringLiterals): # '"Fireworks 🎆"\n' (0..17)
-      - (UNRECOGNIZED): '"Fireworks 🎆"\n' # (0..17)
+  - (root꞉ StringLiterals): # '"Fireworks 🎆"\n' (0..17)
+      - (unrecognized꞉ UNRECOGNIZED): '"Fireworks 🎆"\n' # (0..17)

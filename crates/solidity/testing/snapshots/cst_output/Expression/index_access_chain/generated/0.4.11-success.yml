@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ IndexAccessExpression): # "arr[index1][index2]" (0..19)
+  - (root꞉ Expression) ► (variant꞉ IndexAccessExpression): # "arr[index1][index2]" (0..19)
       - (operand꞉ Expression) ► (variant꞉ IndexAccessExpression): # "arr[index1]" (0..11)
           - (operand꞉ Expression) ► (variant꞉ Identifier): "arr" # (0..3)
           - (open_bracket꞉ OpenBracket): "[" # (3..4)

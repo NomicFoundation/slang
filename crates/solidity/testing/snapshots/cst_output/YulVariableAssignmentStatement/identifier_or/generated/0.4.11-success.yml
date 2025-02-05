@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "or := 0\n" (0..8)
+  - (root꞉ YulVariableAssignmentStatement): # "or := 0\n" (0..8)
       - (variables꞉ YulPaths): # "or" (0..2)
           - (item꞉ YulPath): # "or" (0..2)
               - (item꞉ YulIdentifier): "or" # (0..2)

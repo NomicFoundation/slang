@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (TupleDeconstructionStatement): # "(bool with_type, without_type) = rhs;" (0..37)
+  - (root꞉ TupleDeconstructionStatement): # "(bool with_type, without_type) = rhs;" (0..37)
       - (open_paren꞉ OpenParen): "(" # (0..1)
       - (elements꞉ TupleDeconstructionElements): # "bool with_type, without_type" (1..29)
           - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ TypedTupleMember): # "bool with_type" (1..15)

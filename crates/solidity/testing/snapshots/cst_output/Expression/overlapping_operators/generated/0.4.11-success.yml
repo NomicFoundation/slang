@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ AndExpression): # "a & b && c" (0..10)
+  - (root꞉ Expression) ► (variant꞉ AndExpression): # "a & b && c" (0..10)
       - (left_operand꞉ Expression) ► (variant꞉ BitwiseAndExpression): # "a & b" (0..5)
           - (left_operand꞉ Expression) ► (variant꞉ Identifier): "a" # (0..1)
           - (leading_trivia꞉ Whitespace): " " # (1..2)

@@ -17,7 +17,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (TupleDeconstructionStatement): # "(a, b) = (123, 135)\n/**/\n{ throw; \n" (0..35)
+  - (root꞉ TupleDeconstructionStatement): # "(a, b) = (123, 135)\n/**/\n{ throw; \n" (0..35)
       - (open_paren꞉ OpenParen): "(" # (0..1)
       - (elements꞉ TupleDeconstructionElements): # "a, b" (1..5)
           - (item꞉ TupleDeconstructionElement) ► (member꞉ TupleMember) ► (variant꞉ UntypedTupleMember) ► (name꞉ Identifier): "a" # (1..2)
@@ -39,4 +39,4 @@ Tree:
                   - (literal꞉ DecimalLiteral): "135" # (15..18)
           - (close_paren꞉ CloseParen): ")" # (18..19)
           - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)
-      - (UNRECOGNIZED): "/**/\n{ throw; \n" # (20..35)
+      - (unrecognized꞉ UNRECOGNIZED): "/**/\n{ throw; \n" # (20..35)

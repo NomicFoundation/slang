@@ -14,4 +14,4 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ConstantDefinition) ► (UNRECOGNIZED): "int constant foo = 0;" # (0..21)
+  - (root꞉ ConstantDefinition) ► (unrecognized꞉ UNRECOGNIZED): "int constant foo = 0;" # (0..21)

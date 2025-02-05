@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "mulmod := 0\n" (0..12)
+  - (root꞉ YulVariableAssignmentStatement): # "mulmod := 0\n" (0..12)
       - (variables꞉ YulPaths): # "mulmod" (0..6)
           - (item꞉ YulPath): # "mulmod" (0..6)
               - (item꞉ YulIdentifier): "mulmod" # (0..6)

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (NewExpression): # "new Foo[][]" (0..11)
+  - (root꞉ NewExpression): # "new Foo[][]" (0..11)
       - (new_keyword꞉ NewKeyword): "new" # (0..3)
       - (type_name꞉ TypeName) ► (variant꞉ ArrayTypeName): # " Foo[][]" (3..11)
           - (operand꞉ TypeName) ► (variant꞉ ArrayTypeName): # " Foo[]" (3..9)

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "smod := 0\n" (0..10)
+  - (root꞉ YulVariableAssignmentStatement): # "smod := 0\n" (0..10)
       - (variables꞉ YulPaths): # "smod" (0..4)
           - (item꞉ YulPath): # "smod" (0..4)
               - (item꞉ YulIdentifier): "smod" # (0..4)

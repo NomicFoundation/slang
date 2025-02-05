@@ -9,7 +9,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (TryStatement): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" (0..42)
+  - (root꞉ TryStatement): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" (0..42)
       - (try_keyword꞉ TryKeyword): "try" # (0..3)
       - (expression꞉ Expression) ► (variant꞉ CallOptionsExpression): # " foo() { x: 1 }" (3..18)
           - (operand꞉ Expression) ► (variant꞉ FunctionCallExpression): # " foo()" (3..9)

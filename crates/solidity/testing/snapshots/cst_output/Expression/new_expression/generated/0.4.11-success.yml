@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Expression) ► (variant꞉ NewExpression): # "new Foo\n" (0..8)
+  - (root꞉ Expression) ► (variant꞉ NewExpression): # "new Foo\n" (0..8)
       - (new_keyword꞉ NewKeyword): "new" # (0..3)
       - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " Foo\n" (3..8)
           - (leading_trivia꞉ Whitespace): " " # (3..4)

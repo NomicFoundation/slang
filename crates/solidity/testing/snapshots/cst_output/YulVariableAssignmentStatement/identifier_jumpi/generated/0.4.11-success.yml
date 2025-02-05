@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "jumpi := 0\n" (0..11)
+  - (root꞉ YulVariableAssignmentStatement): # "jumpi := 0\n" (0..11)
       - (variables꞉ YulPaths): # "jumpi" (0..5)
           - (item꞉ YulPath): # "jumpi" (0..5)
               - (item꞉ YulIdentifier): "jumpi" # (0..5)

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "extcodesize := 0\n" (0..17)
+  - (root꞉ YulVariableAssignmentStatement): # "extcodesize := 0\n" (0..17)
       - (variables꞉ YulPaths): # "extcodesize" (0..11)
           - (item꞉ YulPath): # "extcodesize" (0..11)
               - (item꞉ YulIdentifier): "extcodesize" # (0..11)

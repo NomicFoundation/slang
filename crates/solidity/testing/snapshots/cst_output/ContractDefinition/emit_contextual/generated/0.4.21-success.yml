@@ -14,7 +14,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (ContractDefinition): # "// Emitting events introduced syntactically in 0.4..." (0..243)
+  - (root꞉ ContractDefinition): # "// Emitting events introduced syntactically in 0.4..." (0..243)
       - (leading_trivia꞉ SingleLineComment): "// Emitting events introduced syntactically in 0.4..." # (0..101)
       - (leading_trivia꞉ EndOfLine): "\n" # (101..102)
       - (leading_trivia꞉ EndOfLine): "\n" # (102..103)

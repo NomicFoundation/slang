@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (DecimalNumberExpression): # "10 ether" (0..8)
+  - (root꞉ DecimalNumberExpression): # "10 ether" (0..8)
       - (literal꞉ DecimalLiteral): "10" # (0..2)
       - (unit꞉ NumberUnit): # " ether" (2..8)
           - (leading_trivia꞉ Whitespace): " " # (2..3)

@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "extcodecopy := 0\n" (0..17)
+  - (root꞉ YulVariableAssignmentStatement): # "extcodecopy := 0\n" (0..17)
       - (variables꞉ YulPaths): # "extcodecopy" (0..11)
           - (item꞉ YulPath): # "extcodecopy" (0..11)
               - (item꞉ YulIdentifier): "extcodecopy" # (0..11)

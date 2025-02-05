@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "gasprice := 0\n" (0..14)
+  - (root꞉ YulVariableAssignmentStatement): # "gasprice := 0\n" (0..14)
       - (variables꞉ YulPaths): # "gasprice" (0..8)
           - (item꞉ YulPath): # "gasprice" (0..8)
               - (item꞉ YulIdentifier): "gasprice" # (0..8)

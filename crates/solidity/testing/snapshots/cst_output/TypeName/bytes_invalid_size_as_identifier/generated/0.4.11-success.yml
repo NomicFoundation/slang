@@ -6,5 +6,5 @@ Source: >
 Errors: []
 
 Tree:
-  - (TypeName) ► (variant꞉ IdentifierPath): # "bytes320" (0..8)
+  - (root꞉ TypeName) ► (variant꞉ IdentifierPath): # "bytes320" (0..8)
       - (item꞉ Identifier): "bytes320" # (0..8)

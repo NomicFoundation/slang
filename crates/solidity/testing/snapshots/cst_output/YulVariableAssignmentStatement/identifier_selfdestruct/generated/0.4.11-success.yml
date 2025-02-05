@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "selfdestruct := 0\n" (0..18)
+  - (root꞉ YulVariableAssignmentStatement): # "selfdestruct := 0\n" (0..18)
       - (variables꞉ YulPaths): # "selfdestruct" (0..12)
           - (item꞉ YulPath): # "selfdestruct" (0..12)
               - (item꞉ YulIdentifier): "selfdestruct" # (0..12)

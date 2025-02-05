@@ -15,14 +15,14 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ImportDirective): # '// Empty imports are not valid\nimport {} from "foo...' (0..53)
+  - (root꞉ ImportDirective): # '// Empty imports are not valid\nimport {} from "foo...' (0..53)
       - (leading_trivia꞉ SingleLineComment): "// Empty imports are not valid" # (0..30)
       - (leading_trivia꞉ EndOfLine): "\n" # (30..31)
       - (import_keyword꞉ ImportKeyword): "import" # (31..37)
       - (clause꞉ ImportClause) ► (variant꞉ ImportDeconstruction): # ' {} from "foo"' (37..51)
           - (leading_trivia꞉ Whitespace): " " # (37..38)
           - (open_brace꞉ OpenBrace): "{" # (38..39)
-          - (MISSING): "" # (39..39)
+          - (missing꞉ MISSING): "" # (39..39)
           - (close_brace꞉ CloseBrace): "}" # (39..40)
           - (leading_trivia꞉ Whitespace): " " # (40..41)
           - (from_keyword꞉ FromKeyword): "from" # (41..45)

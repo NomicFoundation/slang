@@ -1,5 +1,4 @@
 mod loader;
-mod resolver;
 
 use std::collections::{HashMap, HashSet};
 use std::fmt::Debug;
@@ -10,7 +9,6 @@ use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
-use resolver::Resolver;
 use semver::Version;
 use stack_graphs::graph::{NodeID, StackGraph};
 
@@ -21,25 +19,30 @@ pub(crate) type CursorID = usize;
 pub use crate::graph::BindingGraph;
 
 pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
-    pub(crate) definiens: Cursor<KT>,
+    cursor: Cursor<KT>,
+    definiens: Cursor<KT>,
     parents: Vec<GraphHandle>,
     extension_scope: Option<GraphHandle>,
     inherit_extensions: bool,
 }
 
-pub(crate) struct ReferenceBindingInfo {
+pub(crate) struct ReferenceBindingInfo<KT: KindTypes + 'static> {
+    cursor: Cursor<KT>,
     parents: Vec<GraphHandle>,
 }
 
 pub struct BindingGraphBuilder<KT: KindTypes + 'static> {
     graph_builder_file: File<KT>,
     functions: Functions<KT>,
+    graph: ExtendedStackGraph<KT>,
+}
+
+pub(crate) struct ExtendedStackGraph<KT: KindTypes + 'static> {
     pub(crate) stack_graph: StackGraph,
-    pub(crate) cursors: HashMap<GraphHandle, Cursor<KT>>,
-    pub(crate) definitions_info: HashMap<GraphHandle, DefinitionBindingInfo<KT>>,
-    pub(crate) references_info: HashMap<GraphHandle, ReferenceBindingInfo>,
-    pub(crate) cursor_to_definitions: HashMap<CursorID, GraphHandle>,
-    pub(crate) cursor_to_references: HashMap<CursorID, GraphHandle>,
+    definitions_info: HashMap<GraphHandle, DefinitionBindingInfo<KT>>,
+    references_info: HashMap<GraphHandle, ReferenceBindingInfo<KT>>,
+    cursor_to_definitions: HashMap<CursorID, GraphHandle>,
+    cursor_to_references: HashMap<CursorID, GraphHandle>,
     extension_hooks: HashSet<GraphHandle>,
 }
 
@@ -118,25 +121,26 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         Self {
             graph_builder_file,
             functions,
-            stack_graph,
-            cursors: HashMap::new(),
-            definitions_info: HashMap::new(),
-            references_info: HashMap::new(),
-            cursor_to_definitions: HashMap::new(),
-            cursor_to_references: HashMap::new(),
-            extension_hooks: HashSet::new(),
+            graph: ExtendedStackGraph {
+                stack_graph,
+                definitions_info: HashMap::new(),
+                references_info: HashMap::new(),
+                cursor_to_definitions: HashMap::new(),
+                cursor_to_references: HashMap::new(),
+                extension_hooks: HashSet::new(),
+            },
         }
     }
 
     pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let file_kind = FileDescriptor::System(file_path.into());
-        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        let file = self.graph.get_or_create_file(&file_kind);
         _ = self.add_file_internal(file, tree_cursor);
     }
 
     pub fn add_user_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let file_kind = FileDescriptor::User(file_path.into());
-        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        let file = self.graph.get_or_create_file(&file_kind);
         _ = self.add_file_internal(file, tree_cursor);
     }
 
@@ -146,8 +150,8 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         cursor: Cursor<KT>,
     ) -> FileGraphBuilder<'_, KT> {
         let file_kind = FileDescriptor::System(file_path.into());
-        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
-        FileGraphBuilder::new(self, file, cursor)
+        let file = self.graph.get_or_create_file(&file_kind);
+        FileGraphBuilder::new(&mut self.graph, file, cursor)
     }
 
     #[cfg(feature = "__private_testing_utils")]
@@ -157,7 +161,7 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         tree_cursor: Cursor<KT>,
     ) -> metaslang_graph_builder::graph::Graph<KT> {
         let file_kind = FileDescriptor::User(file_path.into());
-        let file = self.stack_graph.get_or_create_file(&file_kind.as_string());
+        let file = self.graph.get_or_create_file(&file_kind);
         let result = self.add_file_internal(file, tree_cursor);
         result.graph
     }
@@ -166,7 +170,7 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         let loader = Loader::new(
             &self.graph_builder_file,
             &self.functions,
-            &mut self.stack_graph,
+            &mut self.graph.stack_graph,
             file,
             tree_cursor,
         );
@@ -174,27 +178,68 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
             .execute(&loader::NoCancellation)
             .expect("Internal error while building bindings");
 
-        for (handle, cursor) in result.cursors.drain() {
-            let cursor_id = cursor.node().id();
-            if self.stack_graph[handle].is_definition() {
-                self.cursor_to_definitions.insert(cursor_id, handle);
-            } else {
-                self.cursor_to_references.insert(cursor_id, handle);
-            }
-            self.cursors.insert(handle, cursor);
-        }
-        self.definitions_info
+        result
+            .definitions_info
+            .iter()
+            .for_each(|(handle, definition_info)| {
+                let cursor_id = definition_info.cursor.node().id();
+                self.graph.cursor_to_definitions.insert(cursor_id, *handle);
+            });
+        result
+            .references_info
+            .iter()
+            .for_each(|(handle, reference_info)| {
+                let cursor_id = reference_info.cursor.node().id();
+                self.graph.cursor_to_references.insert(cursor_id, *handle);
+            });
+
+        self.graph
+            .definitions_info
             .extend(result.definitions_info.drain());
-        self.references_info.extend(result.references_info.drain());
-        self.extension_hooks.extend(result.extension_hooks.drain());
+        self.graph
+            .references_info
+            .extend(result.references_info.drain());
+        self.graph
+            .extension_hooks
+            .extend(result.extension_hooks.drain());
 
         result
     }
 
     pub fn build(self) -> Rc<BindingGraph<KT>> {
-        let resolver = Resolver::new(&self);
-        let resolved_references = resolver.resolve();
-        BindingGraph::build(self, resolved_references)
+        BindingGraph::build(self.graph)
+    }
+}
+
+impl<KT: KindTypes + 'static> ExtendedStackGraph<KT> {
+    fn get_or_create_file(&mut self, file_kind: &FileDescriptor) -> FileHandle {
+        self.stack_graph.get_or_create_file(&file_kind.as_string())
+    }
+
+    pub(crate) fn iter_definitions(&self) -> impl Iterator<Item = GraphHandle> + '_ {
+        self.stack_graph
+            .iter_nodes()
+            .filter(|handle| self.is_definition(*handle))
+    }
+
+    pub(crate) fn iter_references(&self) -> impl Iterator<Item = GraphHandle> + '_ {
+        self.stack_graph
+            .iter_nodes()
+            .filter(|handle| self.is_reference(*handle))
+    }
+
+    pub(crate) fn iter_files(&self) -> impl Iterator<Item = FileHandle> + '_ {
+        self.stack_graph.iter_files()
+    }
+
+    pub(crate) fn definition_at(&self, cursor: &Cursor<KT>) -> Option<GraphHandle> {
+        let cursor_id = cursor.node().id();
+        self.cursor_to_definitions.get(&cursor_id).copied()
+    }
+
+    pub(crate) fn reference_at(&self, cursor: &Cursor<KT>) -> Option<GraphHandle> {
+        let cursor_id = cursor.node().id();
+        self.cursor_to_references.get(&cursor_id).copied()
     }
 
     pub(crate) fn get_parents(&self, handle: GraphHandle) -> Vec<GraphHandle> {
@@ -211,27 +256,27 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         }
     }
 
-    fn is_definition(&self, handle: GraphHandle) -> bool {
+    pub(crate) fn is_definition(&self, handle: GraphHandle) -> bool {
         self.stack_graph[handle].is_definition()
     }
 
-    fn is_reference(&self, handle: GraphHandle) -> bool {
+    pub(crate) fn is_reference(&self, handle: GraphHandle) -> bool {
         self.stack_graph[handle].is_reference()
     }
 
-    fn get_extension_scope(&self, handle: GraphHandle) -> Option<GraphHandle> {
+    pub(crate) fn get_extension_scope(&self, handle: GraphHandle) -> Option<GraphHandle> {
         self.definitions_info
             .get(&handle)
             .and_then(|info| info.extension_scope)
     }
 
-    fn inherits_extensions(&self, handle: GraphHandle) -> bool {
+    pub(crate) fn inherits_extensions(&self, handle: GraphHandle) -> bool {
         self.definitions_info
             .get(&handle)
             .is_some_and(|info| info.inherit_extensions)
     }
 
-    fn get_file(&self, handle: GraphHandle) -> Option<FileDescriptor> {
+    pub(crate) fn get_file_descriptor(&self, handle: GraphHandle) -> Option<FileDescriptor> {
         self.stack_graph[handle]
             .file()
             .map(|file| FileDescriptor::from(self.stack_graph[file].name()))
@@ -240,39 +285,59 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
     pub(crate) fn is_extension_hook(&self, node_handle: GraphHandle) -> bool {
         self.extension_hooks.contains(&node_handle)
     }
+
+    pub(crate) fn get_cursor(&self, handle: GraphHandle) -> Option<&Cursor<KT>> {
+        if self.is_definition(handle) {
+            self.definitions_info.get(&handle).map(|info| &info.cursor)
+        } else if self.is_reference(handle) {
+            self.references_info.get(&handle).map(|info| &info.cursor)
+        } else {
+            None
+        }
+    }
+
+    pub(crate) fn get_definiens_cursor(&self, handle: GraphHandle) -> Option<&Cursor<KT>> {
+        if self.is_definition(handle) {
+            self.definitions_info
+                .get(&handle)
+                .map(|info| &info.definiens)
+        } else {
+            None
+        }
+    }
 }
 
 pub struct FileGraphBuilder<'a, KT: KindTypes + 'static> {
-    builder: &'a mut BindingGraphBuilder<KT>,
+    graph: &'a mut ExtendedStackGraph<KT>,
     file: FileHandle,
     cursor: Cursor<KT>,
 }
 
 impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
-    fn new(builder: &'a mut BindingGraphBuilder<KT>, file: FileHandle, cursor: Cursor<KT>) -> Self {
+    fn new(graph: &'a mut ExtendedStackGraph<KT>, file: FileHandle, cursor: Cursor<KT>) -> Self {
         FileGraphBuilder {
-            builder,
+            graph,
             file,
             cursor,
         }
     }
 
     pub fn root_node(&self) -> GraphHandle {
-        self.builder
+        self.graph
             .stack_graph
             .node_for_id(NodeID::root())
             .expect("Root node not found in stack graph")
     }
 
     pub fn new_scope_node(&mut self, extension_hook: bool) -> GraphHandle {
-        let id = self.builder.stack_graph.new_node_id(self.file);
+        let id = self.graph.stack_graph.new_node_id(self.file);
         let scope_node = self
-            .builder
+            .graph
             .stack_graph
             .add_scope_node(id, extension_hook)
             .expect("Failed to add scope node");
         if extension_hook {
-            self.builder.extension_hooks.insert(scope_node);
+            self.graph.extension_hooks.insert(scope_node);
         }
         scope_node
     }
@@ -282,18 +347,18 @@ impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
         symbol: &S,
         is_definition: bool,
     ) -> GraphHandle {
-        let id = self.builder.stack_graph.new_node_id(self.file);
-        let symbol = self.builder.stack_graph.add_symbol(symbol);
+        let id = self.graph.stack_graph.new_node_id(self.file);
+        let symbol = self.graph.stack_graph.add_symbol(symbol);
         let node = self
-            .builder
+            .graph
             .stack_graph
             .add_pop_symbol_node(id, symbol, is_definition)
             .expect("Failed to add pop symbol node");
         if is_definition {
-            self.builder.cursors.insert(node, self.cursor.clone());
-            self.builder.definitions_info.insert(
+            self.graph.definitions_info.insert(
                 node,
                 DefinitionBindingInfo {
+                    cursor: self.cursor.clone(),
                     definiens: self.cursor.clone(),
                     parents: Vec::new(),
                     extension_scope: None,
@@ -309,18 +374,18 @@ impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
         symbol: &S,
         is_reference: bool,
     ) -> GraphHandle {
-        let id = self.builder.stack_graph.new_node_id(self.file);
-        let symbol = self.builder.stack_graph.add_symbol(symbol);
+        let id = self.graph.stack_graph.new_node_id(self.file);
+        let symbol = self.graph.stack_graph.add_symbol(symbol);
         let node = self
-            .builder
+            .graph
             .stack_graph
             .add_push_symbol_node(id, symbol, is_reference)
             .expect("Failed to add push symbol node");
         if is_reference {
-            self.builder.cursors.insert(node, self.cursor.clone());
-            self.builder.references_info.insert(
+            self.graph.references_info.insert(
                 node,
                 ReferenceBindingInfo {
+                    cursor: self.cursor.clone(),
                     parents: Vec::new(),
                 },
             );
@@ -329,7 +394,7 @@ impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
     }
 
     pub fn edge(&mut self, source: GraphHandle, sink: GraphHandle) {
-        self.builder.stack_graph.add_edge(source, sink, 0);
+        self.graph.stack_graph.add_edge(source, sink, 0);
     }
 }
 

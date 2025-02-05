@@ -22,7 +22,7 @@ Errors: # 1 total
     ───╯
 
 Tree:
-  - (ContractDefinition): # "// Emitting events introduced syntactically in 0.4..." (0..243)
+  - (root꞉ ContractDefinition): # "// Emitting events introduced syntactically in 0.4..." (0..243)
       - (leading_trivia꞉ SingleLineComment): "// Emitting events introduced syntactically in 0.4..." # (0..101)
       - (leading_trivia꞉ EndOfLine): "\n" # (101..102)
       - (leading_trivia꞉ EndOfLine): "\n" # (102..103)
@@ -80,7 +80,7 @@ Tree:
                               - (item꞉ Identifier): "emit" # (219..223)
                           - (leading_trivia꞉ Whitespace): " " # (223..224)
                           - (name꞉ Identifier): "Deposit" # (224..231)
-                          - (UNRECOGNIZED): "()" # (231..233)
+                          - (unrecognized꞉ UNRECOGNIZED): "()" # (231..233)
                           - (semicolon꞉ Semicolon): ";" # (233..234)
                           - (trailing_trivia꞉ EndOfLine): "\n" # (234..235)
                   - (leading_trivia꞉ Whitespace): "    " # (235..239)

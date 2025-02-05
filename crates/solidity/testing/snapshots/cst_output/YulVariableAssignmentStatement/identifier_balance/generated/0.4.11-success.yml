@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "balance := 0\n" (0..13)
+  - (root꞉ YulVariableAssignmentStatement): # "balance := 0\n" (0..13)
       - (variables꞉ YulPaths): # "balance" (0..7)
           - (item꞉ YulPath): # "balance" (0..7)
               - (item꞉ YulIdentifier): "balance" # (0..7)

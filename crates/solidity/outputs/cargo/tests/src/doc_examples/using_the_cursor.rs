@@ -8,7 +8,7 @@ use infra_utils::paths::PathExtensions;
 fn using_the_cursor() -> Result<()> {
     // --8<-- [start:imports]
     use semver::Version;
-    use slang_solidity::cst::{EdgeLabel, NonterminalKind, TerminalKind, TextRangeExtensions};
+    use slang_solidity::cst::{NonterminalKind, TerminalKind, TextRangeExtensions};
     use slang_solidity::parser::Parser;
     // --8<-- [end:imports]
 
@@ -105,7 +105,6 @@ fn using_the_cursor() -> Result<()> {
 
         let identifiers: Vec<_> = Rc::clone(parse_output.tree())
             .descendants()
-            .filter(|edge| edge.label == Some(EdgeLabel::Name))
             .filter(|edge| edge.is_terminal_with_kind(TerminalKind::Identifier))
             .map(|identifier| identifier.unparse())
             .collect();

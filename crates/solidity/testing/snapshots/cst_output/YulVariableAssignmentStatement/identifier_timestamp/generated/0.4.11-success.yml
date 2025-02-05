@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "timestamp := 0\n" (0..15)
+  - (root꞉ YulVariableAssignmentStatement): # "timestamp := 0\n" (0..15)
       - (variables꞉ YulPaths): # "timestamp" (0..9)
           - (item꞉ YulPath): # "timestamp" (0..9)
               - (item꞉ YulIdentifier): "timestamp" # (0..9)

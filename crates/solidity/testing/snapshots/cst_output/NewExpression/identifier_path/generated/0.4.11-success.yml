@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (NewExpression): # "new Foo.Bar.Baz" (0..15)
+  - (root꞉ NewExpression): # "new Foo.Bar.Baz" (0..15)
       - (new_keyword꞉ NewKeyword): "new" # (0..3)
       - (type_name꞉ TypeName) ► (variant꞉ IdentifierPath): # " Foo.Bar.Baz" (3..15)
           - (leading_trivia꞉ Whitespace): " " # (3..4)

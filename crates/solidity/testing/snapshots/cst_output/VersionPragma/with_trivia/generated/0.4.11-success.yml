@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (VersionPragma): # "solidity /* comments */ 0 /* are */ . /* allowed *..." (0..68)
+  - (root꞉ VersionPragma): # "solidity /* comments */ 0 /* are */ . /* allowed *..." (0..68)
       - (solidity_keyword꞉ SolidityKeyword): "solidity" # (0..8)
       - (sets꞉ VersionExpressionSets): # " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..." (8..68)
           - (item꞉ VersionExpressionSet): # " /* comments */ 0 /* are */ . /* allowed */ 0 . /*..." (8..68)

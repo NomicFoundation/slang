@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "signextend := 0\n" (0..16)
+  - (root꞉ YulVariableAssignmentStatement): # "signextend := 0\n" (0..16)
       - (variables꞉ YulPaths): # "signextend" (0..10)
           - (item꞉ YulPath): # "signextend" (0..10)
               - (item꞉ YulIdentifier): "signextend" # (0..10)

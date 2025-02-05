@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "log4 := 0\n" (0..10)
+  - (root꞉ YulVariableAssignmentStatement): # "log4 := 0\n" (0..10)
       - (variables꞉ YulPaths): # "log4" (0..4)
           - (item꞉ YulPath): # "log4" (0..4)
               - (item꞉ YulIdentifier): "log4" # (0..4)

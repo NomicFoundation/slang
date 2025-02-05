@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "delegatecall := 0\n" (0..18)
+  - (root꞉ YulVariableAssignmentStatement): # "delegatecall := 0\n" (0..18)
       - (variables꞉ YulPaths): # "delegatecall" (0..12)
           - (item꞉ YulPath): # "delegatecall" (0..12)
               - (item꞉ YulIdentifier): "delegatecall" # (0..12)

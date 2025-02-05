@@ -1,7 +1,8 @@
 use std::rc::Rc;
 
 use crate::cst::{
-    Edge, Node, NonterminalKind, NonterminalNode, TerminalKind, TerminalKindExtensions, TextIndex,
+    Edge, EdgeLabel, Node, NonterminalKind, NonterminalNode, TerminalKind, TerminalKindExtensions,
+    TextIndex,
 };
 use crate::parser::lexer::Lexer;
 use crate::parser::parser_support::context::ParserContext;
@@ -81,13 +82,16 @@ where
                     }
                 }
                 let input = &input[start.utf8..];
-                let kind = if input.is_empty() {
-                    TerminalKind::MISSING
+                let (kind, label) = if input.is_empty() {
+                    (TerminalKind::MISSING, EdgeLabel::Missing)
                 } else {
-                    TerminalKind::UNRECOGNIZED
+                    (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                 };
+
                 let node = Node::terminal(kind, input.to_string());
-                children.push(Edge::anonymous(node));
+
+                children.push(Edge { label, node });
+
                 ParseOutput {
                     tree: NonterminalNode::create(topmost_kind, children),
                     errors: vec![ParseError::create(
@@ -136,14 +140,18 @@ where
                     } else {
                         start
                     };
-                    let kind = if input[start..].is_empty() {
-                        TerminalKind::MISSING
+                    let (kind, label) = if input[start..].is_empty() {
+                        (TerminalKind::MISSING, EdgeLabel::Missing)
                     } else {
-                        TerminalKind::UNRECOGNIZED
+                        (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                     };
+
                     let skipped_node = Node::terminal(kind, input[start..].to_string());
                     let mut new_children = topmost_node.children.clone();
-                    new_children.push(Edge::anonymous(skipped_node));
+                    new_children.push(Edge {
+                        label,
+                        node: skipped_node,
+                    });
 
                     let start_index = stream.text_index_at(start);
                     let mut errors = stream.into_errors();

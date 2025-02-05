@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "call := 0\n" (0..10)
+  - (root꞉ YulVariableAssignmentStatement): # "call := 0\n" (0..10)
       - (variables꞉ YulPaths): # "call" (0..4)
           - (item꞉ YulPath): # "call" (0..4)
               - (item꞉ YulIdentifier): "call" # (0..4)

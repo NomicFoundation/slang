@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "blockhash := 0\n" (0..15)
+  - (root꞉ YulVariableAssignmentStatement): # "blockhash := 0\n" (0..15)
       - (variables꞉ YulPaths): # "blockhash" (0..9)
           - (item꞉ YulPath): # "blockhash" (0..9)
               - (item꞉ YulIdentifier): "blockhash" # (0..9)

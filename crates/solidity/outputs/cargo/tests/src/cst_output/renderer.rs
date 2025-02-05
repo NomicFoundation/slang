@@ -10,7 +10,7 @@ use once_cell::sync::Lazy;
 use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRangeExtensions};
 use solidity_language::SolidityDefinition;
 
-pub fn render(source: &str, errors: &Vec<String>, cursor: Cursor) -> Result<String> {
+pub fn render(source: &str, errors: &Vec<String>, cursor: &mut Cursor) -> Result<String> {
     let mut w = String::new();
 
     write_source(&mut w, source)?;
@@ -85,9 +85,9 @@ fn write_errors(w: &mut String, errors: &Vec<String>) -> Result<()> {
     Ok(())
 }
 
-fn write_tree(w: &mut String, mut cursor: Cursor, source: &str) -> Result<()> {
+fn write_tree(w: &mut String, cursor: &mut Cursor, source: &str) -> Result<()> {
     writeln!(w, "Tree:")?;
-    write_node(w, &mut cursor, source, 0)?;
+    write_node(w, cursor, source, 0)?;
 
     assert!(!cursor.go_to_next());
     Ok(())
@@ -132,11 +132,10 @@ fn render_key(cursor: &mut Cursor) -> String {
         Node::Terminal(terminal) => terminal.kind.to_string(),
     };
 
-    if let Some(label) = cursor.label() {
-        format!("({label}꞉ {kind})", label = label.as_ref().to_snake_case())
-    } else {
-        format!("({kind})")
-    }
+    format!(
+        "({label}꞉ {kind})",
+        label = cursor.label().as_ref().to_snake_case()
+    )
 }
 
 fn render_value(cursor: &mut Cursor, source: &str) -> String {

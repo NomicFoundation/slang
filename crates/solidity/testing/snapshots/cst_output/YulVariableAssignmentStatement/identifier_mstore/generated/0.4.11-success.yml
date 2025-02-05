@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (YulVariableAssignmentStatement): # "mstore := 0\n" (0..12)
+  - (root꞉ YulVariableAssignmentStatement): # "mstore := 0\n" (0..12)
       - (variables꞉ YulPaths): # "mstore" (0..6)
           - (item꞉ YulPath): # "mstore" (0..6)
               - (item꞉ YulIdentifier): "mstore" # (0..6)

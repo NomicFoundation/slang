@@ -6,39 +6,36 @@ use stack_graphs::arena::Handle;
 use stack_graphs::graph::{Degree, Edge, StackGraph};
 use stack_graphs::partial::{PartialPath, PartialPaths};
 use stack_graphs::stitching::{
-    Database, DatabaseCandidates, ForwardCandidates, ForwardPartialPathStitcher, StitcherConfig,
-    ToAppendable,
+    Database, ForwardCandidates, ForwardPartialPathStitcher, StitcherConfig, ToAppendable,
 };
 use stack_graphs::{CancellationError, NoCancellation};
 
-use super::{BindingGraphBuilder, GraphHandle};
+use crate::builder::{ExtendedStackGraph, GraphHandle};
 
-pub(crate) struct Resolver<'a, KT: KindTypes + 'static> {
-    owner: &'a BindingGraphBuilder<KT>,
+pub(crate) struct Resolver {
     partials: PartialPaths,
     database: Database,
     references: HashMap<GraphHandle, Vec<GraphHandle>>,
 }
 
-impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
-    pub fn new(owner: &'a BindingGraphBuilder<KT>) -> Self {
+impl Resolver {
+    pub fn new<KT: KindTypes + 'static>(graph: &ExtendedStackGraph<KT>) -> Self {
         let database = Database::new();
         let partials = PartialPaths::new();
 
         let mut resolver = Self {
-            owner,
             partials,
             database,
             references: HashMap::new(),
         };
-        resolver.build();
+        resolver.build(graph);
         resolver
     }
 
-    fn build(&mut self) {
-        for file in self.owner.stack_graph.iter_files() {
+    fn build<KT: KindTypes + 'static>(&mut self, graph: &ExtendedStackGraph<KT>) {
+        for file in graph.iter_files() {
             ForwardPartialPathStitcher::find_minimal_partial_path_set_in_file(
-                &self.owner.stack_graph,
+                &graph.stack_graph,
                 &mut self.partials,
                 file,
                 StitcherConfig::default(),
@@ -54,26 +51,34 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         }
     }
 
-    fn resolve_parents(&mut self, reference: GraphHandle) -> Vec<GraphHandle> {
-        self.owner
+    fn resolve_parents<KT: KindTypes + 'static>(
+        &mut self,
+        graph: &ExtendedStackGraph<KT>,
+        reference: GraphHandle,
+    ) -> Vec<GraphHandle> {
+        graph
             .get_parents(reference)
             .iter()
             .flat_map(|handle| {
-                if self.owner.is_definition(*handle) {
+                if graph.is_definition(*handle) {
                     vec![*handle]
                 } else {
-                    self.resolve_internal(*handle, false)
+                    self.resolve_internal(graph, *handle, false)
                 }
             })
             .collect()
     }
 
-    fn resolve_parents_recursively(&mut self, parent: GraphHandle) -> Vec<GraphHandle> {
+    fn resolve_parents_recursively<KT: KindTypes + 'static>(
+        &mut self,
+        graph: &ExtendedStackGraph<KT>,
+        parent: GraphHandle,
+    ) -> Vec<GraphHandle> {
         let mut results = HashMap::new();
         let mut resolve_queue = Vec::new();
         resolve_queue.push(parent);
         while let Some(current) = resolve_queue.pop() {
-            let current_parents = self.resolve_parents(current);
+            let current_parents = self.resolve_parents(graph, current);
             for current_parent in &current_parents {
                 if !results.contains_key(current_parent) {
                     resolve_queue.push(*current_parent);
@@ -84,8 +89,9 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         results.into_values().flatten().collect()
     }
 
-    fn resolve_internal(
+    fn resolve_internal<KT: KindTypes + 'static>(
         &mut self,
+        graph: &ExtendedStackGraph<KT>,
         reference: GraphHandle,
         allow_recursion: bool,
     ) -> Vec<GraphHandle> {
@@ -98,59 +104,45 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         let checkpoint = self.partials.save_checkpoint();
         let mut reference_paths = Vec::new();
 
-        if allow_recursion {
+        let extensions = if allow_recursion {
             // look for extension scopes to apply to the reference
-            let ref_parents = self.resolve_parents(reference);
+            let ref_parents = self.resolve_parents(graph, reference);
             let mut extensions = HashSet::new();
             for parent in &ref_parents {
-                if let Some(extension_scope) = self.owner.get_extension_scope(*parent) {
+                if let Some(extension_scope) = graph.get_extension_scope(*parent) {
                     extensions.insert(extension_scope);
                 }
 
-                if self.owner.inherits_extensions(*parent) {
-                    let grand_parents = self.resolve_parents_recursively(*parent);
+                if graph.inherits_extensions(*parent) {
+                    let grand_parents = self.resolve_parents_recursively(graph, *parent);
                     for grand_parent in &grand_parents {
-                        if let Some(extension_scope) = self.owner.get_extension_scope(*grand_parent)
-                        {
+                        if let Some(extension_scope) = graph.get_extension_scope(*grand_parent) {
                             extensions.insert(extension_scope);
                         }
                     }
                 }
             }
-            let extensions = extensions.drain().collect::<Vec<_>>();
-            let mut database = ExtendedDatabase::new(&mut self.database);
-
-            ForwardPartialPathStitcher::find_all_complete_partial_paths(
-                &mut DatabaseCandidatesExtended::new(
-                    self.owner,
-                    &mut self.partials,
-                    &mut database,
-                    extensions,
-                ),
-                once(reference),
-                StitcherConfig::default(),
-                &NoCancellation,
-                |_graph, _partials, path| {
-                    reference_paths.push(path.clone());
-                },
-            )
-            .expect("not cancelled");
+            extensions.drain().collect::<Vec<_>>()
         } else {
-            ForwardPartialPathStitcher::find_all_complete_partial_paths(
-                &mut DatabaseCandidates::new(
-                    &self.owner.stack_graph,
-                    &mut self.partials,
-                    &mut self.database,
-                ),
-                once(reference),
-                StitcherConfig::default(),
-                &NoCancellation,
-                |_graph, _partials, path| {
-                    reference_paths.push(path.clone());
-                },
-            )
-            .expect("not cancelled");
-        }
+            Vec::new()
+        };
+        let mut database = ExtendedDatabase::new(&mut self.database);
+
+        ForwardPartialPathStitcher::find_all_complete_partial_paths(
+            &mut DatabaseCandidatesExtended::new(
+                graph,
+                &mut self.partials,
+                &mut database,
+                extensions,
+            ),
+            once(reference),
+            StitcherConfig::default(),
+            &NoCancellation,
+            |_graph, _partials, path| {
+                reference_paths.push(path.clone());
+            },
+        )
+        .expect("not cancelled");
 
         let mut results = Vec::new();
         for reference_path in &reference_paths {
@@ -169,19 +161,26 @@ impl<'a, KT: KindTypes + 'static> Resolver<'a, KT> {
         results
     }
 
-    pub(crate) fn resolve(mut self) -> HashMap<GraphHandle, Vec<GraphHandle>> {
-        for handle in self.owner.stack_graph.iter_nodes() {
-            if self.owner.is_reference(handle)
-                && self
-                    .owner
-                    .get_file(handle)
-                    .is_some_and(|file| file.is_user())
-            {
-                let definition_handles = self.resolve_internal(handle, true);
-                self.references.insert(handle, definition_handles);
+    pub(crate) fn resolve_single<KT: KindTypes + 'static>(
+        &mut self,
+        graph: &ExtendedStackGraph<KT>,
+        handle: GraphHandle,
+    ) -> Vec<GraphHandle> {
+        if graph.is_reference(handle)
+            && graph
+                .get_file_descriptor(handle)
+                .is_some_and(|file| file.is_user())
+        {
+            if let Some(definitions) = self.references.get(&handle) {
+                definitions.clone()
+            } else {
+                let definitions = self.resolve_internal(graph, handle, true);
+                self.references.insert(handle, definitions.clone());
+                definitions
             }
+        } else {
+            Vec::new()
         }
-        self.references
     }
 }
 
@@ -218,7 +217,7 @@ impl ToAppendable<ExtendedHandle, PartialPath> for ExtendedDatabase<'_> {
 }
 
 struct DatabaseCandidatesExtended<'a, KT: KindTypes + 'static> {
-    owner: &'a BindingGraphBuilder<KT>,
+    graph: &'a ExtendedStackGraph<KT>,
     partials: &'a mut PartialPaths,
     database: &'a mut ExtendedDatabase<'a>,
     extensions: Vec<GraphHandle>,
@@ -226,13 +225,13 @@ struct DatabaseCandidatesExtended<'a, KT: KindTypes + 'static> {
 
 impl<'a, KT: KindTypes + 'static> DatabaseCandidatesExtended<'a, KT> {
     fn new(
-        owner: &'a BindingGraphBuilder<KT>,
+        graph: &'a ExtendedStackGraph<KT>,
         partials: &'a mut PartialPaths,
         database: &'a mut ExtendedDatabase<'a>,
         extensions: Vec<GraphHandle>,
     ) -> Self {
         Self {
-            owner,
+            graph,
             partials,
             database,
             extensions,
@@ -251,10 +250,11 @@ impl<'a, KT: KindTypes + 'static>
         R: std::iter::Extend<ExtendedHandle>,
     {
         let node = path.end_node;
+        let is_complete = path.is_complete(&self.graph.stack_graph);
 
         let mut db_candidates = Vec::new();
         self.database.database.find_candidate_partial_paths(
-            &self.owner.stack_graph,
+            &self.graph.stack_graph,
             self.partials,
             path,
             &mut db_candidates,
@@ -262,10 +262,28 @@ impl<'a, KT: KindTypes + 'static>
         result.extend(
             db_candidates
                 .iter()
+                .filter(|candidate| {
+                    // Special case: when the current partial path is already
+                    // complete, don't extend through a @typeof symbol since
+                    // that will not resolve to anything
+                    if is_complete {
+                        let candidate = &self.database.database[**candidate];
+                        if let Some(last_symbol) = candidate
+                            .symbol_stack_postcondition
+                            .iter(self.partials)
+                            .last()
+                        {
+                            if &self.graph.stack_graph[last_symbol.symbol] == "@typeof" {
+                                return false;
+                            }
+                        }
+                    }
+                    true
+                })
                 .map(|candidate| ExtendedHandle::Handle(*candidate)),
         );
 
-        if self.owner.is_extension_hook(node) {
+        if self.graph.is_extension_hook(node) {
             for extension in &self.extensions {
                 let edge = Edge {
                     source: node,
@@ -273,9 +291,9 @@ impl<'a, KT: KindTypes + 'static>
                     precedence: 0,
                 };
                 let mut partial_path =
-                    PartialPath::from_node(&self.owner.stack_graph, self.partials, node);
+                    PartialPath::from_node(&self.graph.stack_graph, self.partials, node);
                 partial_path
-                    .append(&self.owner.stack_graph, self.partials, edge)
+                    .append(&self.graph.stack_graph, self.partials, edge)
                     .expect("path can be extended");
                 let edge_handle = self.database.edges.len();
                 self.database.edges.push(partial_path);
@@ -295,6 +313,6 @@ impl<'a, KT: KindTypes + 'static>
     fn get_graph_partials_and_db(
         &mut self,
     ) -> (&StackGraph, &mut PartialPaths, &ExtendedDatabase<'a>) {
-        (&self.owner.stack_graph, self.partials, self.database)
+        (&self.graph.stack_graph, self.partials, self.database)
     }
 }

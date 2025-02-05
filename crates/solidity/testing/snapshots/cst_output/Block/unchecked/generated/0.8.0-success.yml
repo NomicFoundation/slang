@@ -6,7 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - (Block): # "{ unchecked { x = 1; } }" (0..24)
+  - (root꞉ Block): # "{ unchecked { x = 1; } }" (0..24)
       - (open_brace꞉ OpenBrace): "{" # (0..1)
       - (statements꞉ Statements): # " unchecked { x = 1; }" (1..22)
           - (item꞉ Statement) ► (variant꞉ UncheckedBlock): # " unchecked { x = 1; }" (1..22)
