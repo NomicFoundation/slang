@@ -44,7 +44,7 @@ test("query syntax error", () => {
     Query.parse(source);
     throw new Error("Query.parse() should have thrown");
   } catch (error) {
-    expect((error as any).payload).toEqual({
+    expect(error).toEqual({
       message: `Parse error:
 expected ']' at: 
 Alt at: [TreeNode @b [DelimitedIdentifier]
