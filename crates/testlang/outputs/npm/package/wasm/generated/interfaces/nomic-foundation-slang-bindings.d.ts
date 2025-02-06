@@ -125,7 +125,7 @@ export class Reference {
    * Most references have a single definition, but some have multiple, such as when a symbol
    * is imported from another file, and renamed (re-defined) in the current file.
    */
-  definitions(): Definition[];
+  definitions(): Array<Definition>;
 }
 
 /**

@@ -11,7 +11,7 @@ export class LanguageFacts {
   /**
    * Returns a list of language versions supported by Slang, sorted ascendingly.
    */
-  static allVersions(): string[];
+  static allVersions(): Array<string>;
   /**
    * Returns the earliest language version supported by Slang.
    */
