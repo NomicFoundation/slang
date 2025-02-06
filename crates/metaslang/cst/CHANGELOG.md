@@ -1,5 +1,11 @@
 # changelog
 
+## 0.20.0
+
+### Minor Changes
+
+- [#1205](https://github.com/NomicFoundation/slang/pull/1205) [`103b331`](https://github.com/NomicFoundation/slang/commit/103b3313f813e425a2e572f0d9887411c80504fd) Thanks [@mjoerussell](https://github.com/mjoerussell)! - Make `Edge::label` a required field instead of being optional.
+
 ## 0.19.0
 
 ### Minor Changes
