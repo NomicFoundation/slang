@@ -1,0 +1,134 @@
+model l0::generated {
+{%- if rendering_in_stubs -%}
+  NonterminalKind = {
+      Stub1
+    | Stub2
+    | Stub3
+  };
+{%- else -%}
+    {% set terminal_node = "TerminalNode" %}
+
+    //
+    // Terminals
+    //
+
+    TerminalKind = {
+    {% for terminal in model.kinds.terminal_kinds %}
+      {# /**
+      {%- for line in terminal.documentation | split(pat="\n") %}
+       * {{ line }}
+      {%- endfor %}
+       */ #}
+      "{{ terminal.id }}" {% if not loop.last -%}|{%- endif%}
+    {% endfor %}
+    };
+
+    {{ terminal_node }} = {
+      kind: TerminalKind,
+      value: string
+    };
+
+    // 
+    // Sequences:
+    // 
+
+    {% for sequence in model.ast.sequences %}
+      /**
+       * This node represents a `{{ sequence.parent_type }}` nonterminal, with the following structure:
+       *
+       * ```ebnf
+         {%- for line in sequence.ebnf | split(pat="\n") %}
+       * {{ line }}
+         {%- endfor %}
+       * ```
+       */
+      {{ sequence.parent_type }} = {
+          {% for field in sequence.fields -%}
+            {%- if field.type -%}
+              {%- set field_type = field.type -%}
+            {%- else -%}
+              {%- set field_type = terminal_node -%}
+            {%- endif -%}
+            {%- if field.is_optional %}
+              {{ field.label | camel_case }}: option<{{field_type}}> {%- if not loop.last -%},{%- endif%}
+            {%- else %}
+              {{ field.label | camel_case }}: {{field_type}} {%- if not loop.last -%},{%- endif%}
+            {%- endif %}
+          {%- endfor %}
+      };
+    {% endfor %}
+
+    // 
+    // Choices:
+    // 
+
+    {% for choice in model.ast.choices %}
+      /**
+       * This node represents a `{{ choice.parent_type }}` nonterminal, with the following structure:
+       *
+       * ```ebnf
+         {%- for line in choice.ebnf | split(pat="\n") %}
+       * {{ line }}
+         {%- endfor %}
+       * ```
+       */
+      {{ choice.parent_type }} = {
+        {% set variant_types = choice.nonterminal_types -%}
+        {%- if choice.includes_terminals -%}
+          {%- set variant_types = variant_types | concat(with = terminal_node) -%}
+        {%- endif -%}
+        {%- for variant_type in variant_types %}
+          {{ variant_type }} {% if not loop.last -%}|{%- endif%}
+        {%- endfor %}
+      };
+    {% endfor %}
+
+    // 
+    // Repeated:
+    // 
+
+    {% for repeated in model.ast.repeated %}
+      /**
+       * This node represents a `{{ repeated.parent_type }}` nonterminal, with the following structure:
+       *
+       * ```ebnf
+         {%- for line in repeated.ebnf | split(pat="\n") %}
+       * {{ line }}
+         {%- endfor %}
+       * ```
+       */
+      {{ repeated.parent_type }} = {
+          {%- if repeated.item_type -%}
+            item: set<{{ repeated.item_type }}>
+          {%- else -%}
+            item: set<{{ terminal_node }}>
+          {%- endif -%}
+      };
+    {% endfor %}
+
+    // 
+    // Separated:
+    // 
+
+    {% for separated in model.ast.separated %}
+      /**
+       * This node represents a `{{ separated.parent_type }}` nonterminal, with the following structure:
+       *
+       * ```ebnf
+         {%- for line in separated.ebnf | split(pat="\n") %}
+       * {{ line }}
+         {%- endfor %}
+       * ```
+       */
+      {{ separated.parent_type }} = {
+          {%- if separated.item_type -%}
+            item: set<{{ separated.item_type }}>
+          {%- else -%}
+            item: set<{{ terminal_node }}>
+          {%- endif -%}
+        };
+    {% endfor %}
+
+    TerminalNode = string;
+{%- endif %}
+}

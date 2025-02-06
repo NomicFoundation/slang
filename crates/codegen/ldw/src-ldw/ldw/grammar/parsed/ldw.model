@@ -1,0 +1,135 @@
+// Generated on 2024-10-15T13:11:25.653Z by Bach.local at /Users/antony/Development/Linkuistics/language-design-workbench
+
+model ldw::grammar::parsed {
+
+    grammar = {
+        names: seq<name>,
+        rules: seq<rule>,
+        pratt_rules: seq<pratt_rule>
+    };
+    
+    rule = {
+        name: name,
+        annotation: option<rule_annotation>,
+        version_annotations: seq<version_annotation>,
+        body: rule_body
+    };
+    
+    rule_annotation = {
+          "no_skip"
+        | "atomic"
+    };
+    
+    pratt_rule = {
+        name: name,
+        version_annotations: seq<version_annotation>,
+        operators: seq<pratt_operator>,
+        primary: pratt_primary
+    };
+    
+    pratt_operator = {
+        type: pratt_operator_type,
+        name: name,
+        version_annotations: seq<version_annotation>,
+        body: rule_body
+    };
+    
+    pratt_primary = {
+        name: name,
+        body: rule_body
+    };
+    
+    pratt_operator_type = {
+          "prefix"
+        | "postfix"
+        | "left"
+        | "right"
+    };
+    
+    version_annotation = {
+        type: version_annotation_type,
+        version: version_number
+    };
+    
+    version_annotation_type = {
+          "enabled"
+        | "disabled"
+    };
+    
+    version_number = seq<version_segment>;
+    
+    version_segment = string;
+    
+    rule_body = {
+          choice_rule
+        | sequence_rule
+    };
+    
+    choice_rule = { choices: seq<sequence_rule> };
+    
+    sequence_rule = { elements: seq<rule_element> };
+    
+    rule_element = {
+          counted_rule_element
+        | negative_lookahead
+    };
+    
+    counted_rule_element = {
+        label: option<label>,
+        countable_rule_element: countable_rule_element,
+        count: option<count>,
+        version_annotations: seq<version_annotation>
+    };
+    
+    countable_rule_element = {
+          rule_reference
+        | string_element
+        | char_set
+        | any_element
+        | rule_body
+    };
+    
+    count = {
+          "one_or_more"
+        | "zero_or_more"
+        | "optional"
+    };
+    
+    label = name;
+    
+    name = identifier;
+    
+    rule_reference = { names: seq<name> };
+    
+    string_element = { value: string };
+    
+    char_set = {
+        negated: boolean,
+        start_chars: seq<char_set_char>,
+        end_chars: seq<option<char_set_char>>
+    };
+    
+    char_set_char = string;
+    
+    any_element = {  };
+    
+    negative_lookahead = { content: {
+          char_set
+        | string_element
+    } };
+    
+    identifier = string;
+    
+    trivia = {
+          line_comment
+        | block_comment
+        | whitespace
+    };
+    
+    line_comment = { value: string };
+    
+    block_comment = { value: string };
+    
+    whitespace = { value: string };
+    
+}
