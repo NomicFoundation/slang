@@ -18,6 +18,11 @@ test("binding graph", async () => {
     const definition = unit.bindingGraph.definitionAt(cursor)!;
     assertUserFileLocation(definition.nameLocation, "child.sol", TerminalKind.Identifier, 3);
     assertUserFileLocation(definition.definiensLocation, "child.sol", NonterminalKind.ImportDeconstructionSymbol, 3);
+
+    const refs = definition.references();
+    assert.equal(refs.length, 1);
+
+    assertUserFileLocation(refs[0]!.location, "child.sol", TerminalKind.Identifier, 5);
   }
 
   {
@@ -40,6 +45,8 @@ test("binding graph", async () => {
     const definition = unit.bindingGraph.definitionAt(cursor)!;
     assertUserFileLocation(definition.nameLocation, "child.sol", TerminalKind.Identifier, 5);
     assertUserFileLocation(definition.definiensLocation, "child.sol", NonterminalKind.ContractDefinition, 4);
+    const refs = definition.references();
+    assert.equal(refs.length, 0);
   }
 
   {
@@ -78,6 +85,9 @@ test("binding graph", async () => {
     const definition = unit.bindingGraph.definitionAt(cursor)!;
     assertUserFileLocation(definition.nameLocation, "child.sol", TerminalKind.Identifier, 6);
     assertUserFileLocation(definition.definiensLocation, "child.sol", NonterminalKind.FunctionDefinition, 6);
+
+    const refs = definition.references();
+    assert.equal(refs.length, 0);
   }
 
   {

@@ -103,6 +103,10 @@ export class Definition {
    * For `contract X {}`, that is the location of the parent `ContractDefinition` node.
    */
   get definiensLocation(): BindingLocation;
+  /**
+   * Returns a list of all references this definition binds to.
+   */
+  references(): Reference[];
 }
 
 /**
