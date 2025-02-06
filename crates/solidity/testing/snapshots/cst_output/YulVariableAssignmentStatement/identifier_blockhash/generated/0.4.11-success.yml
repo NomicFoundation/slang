@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ blockhash := 0                                                                   │ 0..14
+
+Errors: []
+
+Tree:
+  - (root꞉ YulVariableAssignmentStatement): # "blockhash := 0\n" (0..15)
+      - (variables꞉ YulPaths): # "blockhash" (0..9)
+          - (item꞉ YulPath): # "blockhash" (0..9)
+              - (item꞉ YulIdentifier): "blockhash" # (0..9)
+      - (assignment꞉ YulAssignmentOperator): # " :=" (9..12)
+          - (leading_trivia꞉ Whitespace): " " # (9..10)
+          - (variant꞉ ColonEqual): ":=" # (10..12)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (12..15)
+          - (leading_trivia꞉ Whitespace): " " # (12..13)
+          - (variant꞉ YulDecimalLiteral): "0" # (13..14)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (14..15)

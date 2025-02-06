@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ mul := 0                                                                         │ 0..8
+
+Errors: []
+
+Tree:
+  - (root꞉ YulVariableAssignmentStatement): # "mul := 0\n" (0..9)
+      - (variables꞉ YulPaths): # "mul" (0..3)
+          - (item꞉ YulPath): # "mul" (0..3)
+              - (item꞉ YulIdentifier): "mul" # (0..3)
+      - (assignment꞉ YulAssignmentOperator): # " :=" (3..6)
+          - (leading_trivia꞉ Whitespace): " " # (3..4)
+          - (variant꞉ ColonEqual): ":=" # (4..6)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (6..9)
+          - (leading_trivia꞉ Whitespace): " " # (6..7)
+          - (variant꞉ YulDecimalLiteral): "0" # (7..8)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (8..9)

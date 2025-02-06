@@ -1,9 +1,6 @@
 #[path = "generated/binding_rules.rs"]
 mod binding_rules;
 
-#[path = "generated/built_ins.rs"]
-pub mod built_ins;
-
 use std::rc::Rc;
 
 use semver::Version;

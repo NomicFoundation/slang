@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ gt := 0                                                                          │ 0..7
+
+Errors: []
+
+Tree:
+  - (root꞉ YulVariableAssignmentStatement): # "gt := 0\n" (0..8)
+      - (variables꞉ YulPaths): # "gt" (0..2)
+          - (item꞉ YulPath): # "gt" (0..2)
+              - (item꞉ YulIdentifier): "gt" # (0..2)
+      - (assignment꞉ YulAssignmentOperator): # " :=" (2..5)
+          - (leading_trivia꞉ Whitespace): " " # (2..3)
+          - (variant꞉ ColonEqual): ":=" # (3..5)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (5..8)
+          - (leading_trivia꞉ Whitespace): " " # (5..6)
+          - (variant꞉ YulDecimalLiteral): "0" # (6..7)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (7..8)

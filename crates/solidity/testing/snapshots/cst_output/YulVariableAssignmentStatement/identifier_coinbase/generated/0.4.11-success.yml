@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ coinbase := 0                                                                    │ 0..13
+
+Errors: []
+
+Tree:
+  - (root꞉ YulVariableAssignmentStatement): # "coinbase := 0\n" (0..14)
+      - (variables꞉ YulPaths): # "coinbase" (0..8)
+          - (item꞉ YulPath): # "coinbase" (0..8)
+              - (item꞉ YulIdentifier): "coinbase" # (0..8)
+      - (assignment꞉ YulAssignmentOperator): # " :=" (8..11)
+          - (leading_trivia꞉ Whitespace): " " # (8..9)
+          - (variant꞉ ColonEqual): ":=" # (9..11)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (11..14)
+          - (leading_trivia꞉ Whitespace): " " # (11..12)
+          - (variant꞉ YulDecimalLiteral): "0" # (12..13)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (13..14)

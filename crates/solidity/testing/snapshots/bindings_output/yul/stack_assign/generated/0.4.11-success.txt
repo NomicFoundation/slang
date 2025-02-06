@@ -13,7 +13,9 @@ References and definitions:
  4 │             let x := 0
    │                 ┬  
    │                 ╰── name: 3
-   │ 
+ 5 │             sload(10)
+   │             ──┬──  
+   │               ╰──── ref: built-in
  6 │             =: x
    │                ┬  
    │                ╰── ref: 3

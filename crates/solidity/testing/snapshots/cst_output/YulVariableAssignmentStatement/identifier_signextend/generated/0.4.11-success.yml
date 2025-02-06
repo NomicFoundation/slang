@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ signextend := 0                                                                  │ 0..15
+
+Errors: []
+
+Tree:
+  - (root꞉ YulVariableAssignmentStatement): # "signextend := 0\n" (0..16)
+      - (variables꞉ YulPaths): # "signextend" (0..10)
+          - (item꞉ YulPath): # "signextend" (0..10)
+              - (item꞉ YulIdentifier): "signextend" # (0..10)
+      - (assignment꞉ YulAssignmentOperator): # " :=" (10..13)
+          - (leading_trivia꞉ Whitespace): " " # (10..11)
+          - (variant꞉ ColonEqual): ":=" # (11..13)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (13..16)
+          - (leading_trivia꞉ Whitespace): " " # (13..14)
+          - (variant꞉ YulDecimalLiteral): "0" # (14..15)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (15..16)

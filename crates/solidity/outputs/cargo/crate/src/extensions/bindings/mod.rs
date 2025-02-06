@@ -1,60 +1,33 @@
 use std::rc::Rc;
 
+#[path = "../../generated/extensions/built_ins.rs"]
+mod built_ins;
+
+use built_ins::define_built_ins;
+use metaslang_bindings::ScopeGraphBuilder;
 use metaslang_cst::text_index::TextIndex;
 use semver::Version;
 
-use crate::bindings::built_ins::get_built_ins_contents;
-use crate::bindings::BindingGraphBuilder;
-use crate::cst::{Edge, Node, NonterminalNode, TerminalKind, TerminalNode};
-use crate::parser::{Parser, ParserInitializationError};
+use crate::bindings::{BindingGraphBuilder, BindingGraphInitializationError};
+use crate::cst::{Node, NonterminalKind};
 
+#[allow(clippy::needless_pass_by_value)]
+#[allow(clippy::unnecessary_wraps)]
 pub fn add_built_ins(
     builder: &mut BindingGraphBuilder,
     version: Version,
-) -> Result<(), ParserInitializationError> {
-    let source = get_built_ins_contents(&version);
-    let parser = Parser::create(version)?;
-    let parse_output = parser.parse_file_contents(source);
+) -> Result<(), BindingGraphInitializationError> {
+    let empty_node = Node::nonterminal(NonterminalKind::SourceUnit, Vec::new())
+        .into_nonterminal()
+        .unwrap();
+    let empty_cursor = Rc::clone(&empty_node).create_cursor(TextIndex::ZERO);
 
-    let built_ins_cursor = transform(&Node::Nonterminal(Rc::clone(parse_output.tree())))
-        .create_cursor(TextIndex::ZERO);
+    let mut file_builder = builder.build_system_file("built_ins.sol", empty_cursor);
 
-    builder.add_system_file("built_ins.sol", built_ins_cursor);
+    let root_node = file_builder.root_node();
+    let mut globals = ScopeGraphBuilder::new(&mut file_builder, "@@built-ins@@", root_node, None);
+
+    define_built_ins(&mut file_builder, &mut globals, &version);
+
     Ok(())
-}
-
-fn transform(node: &Node) -> Node {
-    match node {
-        Node::Nonterminal(nonterminal) => {
-            let NonterminalNode {
-                kind,
-                text_len,
-                children,
-            } = nonterminal.as_ref();
-            let children = children
-                .iter()
-                .map(|edge| Edge {
-                    label: edge.label,
-                    node: transform(&edge.node),
-                })
-                .collect();
-            let nonterminal = Rc::new(NonterminalNode {
-                kind: *kind,
-                text_len: *text_len,
-                children,
-            });
-            Node::Nonterminal(nonterminal)
-        }
-        Node::Terminal(terminal) => {
-            let TerminalNode { kind, text } = terminal.as_ref();
-            let terminal = match terminal.as_ref().kind {
-                TerminalKind::Identifier => Rc::new(TerminalNode {
-                    kind: *kind,
-                    text: text.replace('$', "%"),
-                }),
-                _ => Rc::clone(terminal),
-            };
-            Node::Terminal(terminal)
-        }
-    }
 }

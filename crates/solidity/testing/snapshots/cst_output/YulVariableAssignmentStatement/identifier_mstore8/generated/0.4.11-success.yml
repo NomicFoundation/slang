@@ -1,0 +1,19 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ mstore8 := 0                                                                     │ 0..12
+
+Errors: []
+
+Tree:
+  - (root꞉ YulVariableAssignmentStatement): # "mstore8 := 0\n" (0..13)
+      - (variables꞉ YulPaths): # "mstore8" (0..7)
+          - (item꞉ YulPath): # "mstore8" (0..7)
+              - (item꞉ YulIdentifier): "mstore8" # (0..7)
+      - (assignment꞉ YulAssignmentOperator): # " :=" (7..10)
+          - (leading_trivia꞉ Whitespace): " " # (7..8)
+          - (variant꞉ ColonEqual): ":=" # (8..10)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (10..13)
+          - (leading_trivia꞉ Whitespace): " " # (10..11)
+          - (variant꞉ YulDecimalLiteral): "0" # (11..12)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (12..13)
