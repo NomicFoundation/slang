@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ true                                                                             │ 0..4
+
+Errors: []
+
+Tree:
+  - (root꞉ YulExpression) ► (variant꞉ YulLiteral): # "true\n" (0..5)
+      - (variant꞉ YulTrueKeyword): "true" # (0..4)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (4..5)

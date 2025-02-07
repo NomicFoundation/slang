@@ -1,0 +1,60 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected CloseBrace or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or OpenBrace or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulAddKeyword or YulAddModKeyword or YulAddressKeyword or YulAndKeyword or YulBalanceKeyword or YulBlockHashKeyword or YulBreakKeyword or YulByteKeyword or YulCallCodeKeyword or YulCallDataCopyKeyword or YulCallDataLoadKeyword or YulCallDataSizeKeyword or YulCallKeyword or YulCallValueKeyword or YulCallerKeyword or YulChainIdKeyword or YulCoinBaseKeyword or YulContinueKeyword or YulCreate2Keyword or YulCreateKeyword or YulDecimalLiteral or YulDelegateCallKeyword or YulDifficultyKeyword or YulDivKeyword or YulEqKeyword or YulExpKeyword or YulExtCodeCopyKeyword or YulExtCodeHashKeyword or YulExtCodeSizeKeyword or YulFalseKeyword or YulForKeyword or YulFunctionKeyword or YulGasKeyword or YulGasLimitKeyword or YulGasPriceKeyword or YulGtKeyword or YulHexLiteral or YulIdentifier or YulIfKeyword or YulInvalidKeyword or YulIsZeroKeyword or YulKeccak256Keyword or YulLeaveKeyword or YulLetKeyword or YulLog0Keyword or YulLog1Keyword or YulLog2Keyword or YulLog3Keyword or YulLog4Keyword or YulLtKeyword or YulMLoadKeyword or YulMSizeKeyword or YulMStore8Keyword or YulMStoreKeyword or YulModKeyword or YulMulKeyword or YulMulModKeyword or YulNotKeyword or YulNumberKeyword or YulOrKeyword or YulOriginKeyword or YulPopKeyword or YulReturnDataCopyKeyword or YulReturnDataSizeKeyword or YulReturnKeyword or YulRevertKeyword or YulSDivKeyword or YulSLoadKeyword or YulSModKeyword or YulSStoreKeyword or YulSarKeyword or YulSelfBalanceKeyword or YulSelfDestructKeyword or YulSgtKeyword or YulShlKeyword or YulShrKeyword or YulSignExtendKeyword or YulSltKeyword or YulStaticCallKeyword or YulStopKeyword or YulSubKeyword or YulSwitchKeyword or YulTimestampKeyword or YulTrueKeyword or YulXorKeyword.
+    ╭─[input.sol:7:13]
+    │
+  7 │ ╭─▶         loop:
+    ┆ ┆   
+ 14 │ ├─▶         }
+    │ │               
+    │ ╰─────────────── Error occurred here.
+────╯
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+   │ 
+ 4 │             let n := calldataload(4)
+   │                 ┬  
+   │                 ╰── name: 3
+ 5 │             let a := 1
+   │                 ┬  
+   │                 ╰── name: 4
+ 6 │             let b := a
+   │                 ┬    ┬  
+   │                 ╰─────── name: 5
+   │                      │  
+   │                      ╰── ref: 4
+ 7 │         loop:
+   │         ──┬─  
+   │           ╰─── unresolved
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─│ ▶ contract Test {
+  2 │ │ ╭─▶     function test() public {
+    ┆ ┆ ┆   
+  4 │ │ │               let n := calldataload(4)
+    │ │ │   ──────────────────┬──────────────────  
+    │ │ │                     ╰──────────────────── definiens: 3
+  5 │ │ │               let a := 1
+    │ │ │   ───────────┬───────────  
+    │ │ │              ╰───────────── definiens: 4
+  6 │ │ │               let b := a
+    │ │ │   ───────────┬───────────  
+    │ │ │              ╰───────────── definiens: 5
+    ┆ ┆ ┆   
+ 15 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 2
+ 16 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯

@@ -1057,6 +1057,7 @@ pub enum TerminalKind {
     /// Represents a node with kind `SuperKeyword`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Reserved in 0.8.0 *)
     /// SUPER_KEYWORD = "super";
     /// ```
     SuperKeyword,
@@ -1084,6 +1085,7 @@ pub enum TerminalKind {
     /// Represents a node with kind `ThisKeyword`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Reserved in 0.8.0 *)
     /// THIS_KEYWORD = "this";
     /// ```
     ThisKeyword,
@@ -1645,6 +1647,7 @@ pub enum TerminalKind {
     /// Represents a node with kind `YulFalseKeyword`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.6.2 *)
     /// YUL_FALSE_KEYWORD = "false";
     /// ```
     YulFalseKeyword,
@@ -1844,6 +1847,10 @@ pub enum TerminalKind {
     ///
     /// ```ebnf
     /// (* Deprecated in 0.5.0 *)
+    /// (* Reserved until 0.6.0 *)
+    /// YUL_JUMP_KEYWORD = "jump";
+    ///
+    /// (* Reserved in 0.8.0 *)
     /// YUL_JUMP_KEYWORD = "jump";
     /// ```
     YulJumpKeyword,
@@ -1851,6 +1858,10 @@ pub enum TerminalKind {
     ///
     /// ```ebnf
     /// (* Deprecated in 0.5.0 *)
+    /// (* Reserved until 0.6.0 *)
+    /// YUL_JUMPI_KEYWORD = "jumpi";
+    ///
+    /// (* Reserved in 0.8.0 *)
     /// YUL_JUMPI_KEYWORD = "jumpi";
     /// ```
     YulJumpiKeyword,
@@ -2353,6 +2364,7 @@ pub enum TerminalKind {
     /// Represents a node with kind `YulSuperKeyword`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Reserved in 0.8.0 *)
     /// YUL_SUPER_KEYWORD = "super";
     /// ```
     YulSuperKeyword,
@@ -2395,6 +2407,7 @@ pub enum TerminalKind {
     /// Represents a node with kind `YulThisKeyword`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Reserved in 0.8.0 *)
     /// YUL_THIS_KEYWORD = "this";
     /// ```
     YulThisKeyword,
@@ -2414,6 +2427,7 @@ pub enum TerminalKind {
     /// Represents a node with kind `YulTrueKeyword`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.6.2 *)
     /// YUL_TRUE_KEYWORD = "true";
     /// ```
     YulTrueKeyword,
