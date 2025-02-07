@@ -220,10 +220,12 @@ impl Resolver {
     }
 
     pub(crate) fn definition_to_references(&self, handle: GraphHandle) -> Vec<GraphHandle> {
-        let Some(ref definitions) = self.definitions else {
-            unreachable!("All references have been resolved");
-        };
-        definitions.get(&handle).cloned().unwrap_or_default()
+        self.definitions
+            .as_ref()
+            .expect("All references should have been resolved")
+            .get(&handle)
+            .cloned()
+            .unwrap_or_default()
     }
 }
 
