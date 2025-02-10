@@ -47,12 +47,30 @@ pub fn render_built_ins(language: &Rc<Language>) -> Result<String, Error> {
     Ok(buffer)
 }
 
-fn tr(input: &str) -> String {
+fn canonicalize_type(input: &str) -> String {
     match input {
         "int" => "int256".into(),
         "uint" => "uint256".into(),
         _ => input.to_string(),
     }
+}
+
+fn split_type_and_name(input: &str) -> (&str, &str) {
+    let Some(last_space_index) = input.rfind(' ') else {
+        unreachable!("Invalid field/variable definition");
+    };
+    (&input[0..last_space_index], &input[last_space_index + 1..])
+}
+
+fn optional_type(type_name: &Option<String>) -> String {
+    type_name
+        .as_ref()
+        .map_or(String::from("None"), |return_type| {
+            format!(
+                "Some(\"{return_type}\")",
+                return_type = canonicalize_type(return_type)
+            )
+        })
 }
 
 fn render_contexts_for_version(
@@ -77,14 +95,8 @@ fn render_contexts_for_version(
                     writeln!(
                         buffer,
                         "      scope.define_function(builder, \"{name}\", {return_type});",
-                        name = tr(&item.name),
-                        return_type = item.return_type.as_ref().map_or(
-                            String::from("None"),
-                            |return_type| format!(
-                                "Some(\"{return_type}\")",
-                                return_type = tr(return_type)
-                            )
-                        ),
+                        name = item.name,
+                        return_type = optional_type(&item.return_type),
                     )?;
                 }
                 BuiltIn::BuiltInType { item } => {
@@ -92,45 +104,38 @@ fn render_contexts_for_version(
                         writeln!(
                             buffer,
                             "      _ = scope.define_type(builder, \"{name}\");",
-                            name = tr(&item.name),
+                            name = item.name,
                         )?;
                     } else {
                         writeln!(
                             buffer,
                             "      let mut type_scope = scope.define_type(builder, \"{name}\");",
-                            name = tr(&item.name),
+                            name = item.name,
                         )?;
                         for field in &item.fields {
-                            let parts = field.definition.split(' ').collect::<Vec<_>>();
+                            let (field_type, name) = split_type_and_name(&field.definition);
                             writeln!(
                                 buffer,
                                 "      type_scope.define_field(builder, \"{name}\", \"{field_type}\");",
-                                name = tr(parts.last().unwrap()),
-                                field_type = tr(parts.first().unwrap()),
+                                field_type = canonicalize_type(field_type),
                             )?;
                         }
                         for function in &item.functions {
                             writeln!(
                                 buffer,
                                 "      type_scope.define_function(builder, \"{name}\", {return_type});",
-                                name = tr(&function.name),
-                                return_type = function
-                                    .return_type
-                                    .as_ref()
-                                    .map_or(String::from("None"), |return_type| format!(
-                                        "Some(\"{return_type}\")", return_type = tr(return_type),
-                                    )),
+                                name = function.name,
+                                return_type = optional_type(&function.return_type),
                             )?;
                         }
                     }
                 }
                 BuiltIn::BuiltInVariable { item } => {
-                    let parts = item.definition.split(' ').collect::<Vec<_>>();
+                    let (field_type, name) = split_type_and_name(&item.definition);
                     writeln!(
                         buffer,
                         "      scope.define_field(builder, \"{name}\", \"{field_type}\");",
-                        name = tr(parts.last().unwrap()),
-                        field_type = tr(parts.first().unwrap()),
+                        field_type = canonicalize_type(field_type),
                     )?;
                 }
             }
