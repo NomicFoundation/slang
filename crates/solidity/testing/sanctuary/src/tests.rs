@@ -191,7 +191,7 @@ fn run_bindings_check(
     let binding_graph = create_bindings(version, source_id, output)?;
 
     for reference in binding_graph.all_references() {
-        if reference.get_file().is_system() {
+        if reference.get_file().is_built_ins() {
             // skip built-ins
             continue;
         }

@@ -49,7 +49,7 @@ pub(crate) struct ExtendedStackGraph<KT: KindTypes + 'static> {
 #[derive(Clone)]
 pub enum FileDescriptor {
     User(String),
-    System(String),
+    BuiltIns(String),
 }
 
 #[derive(Debug)]
@@ -62,7 +62,7 @@ impl FileDescriptor {
     pub(crate) fn as_string(&self) -> String {
         match self {
             Self::User(path) => format!("user:{path}"),
-            Self::System(path) => format!("system:{path}"),
+            Self::BuiltIns(path) => format!("built-ins:{path}"),
         }
     }
 
@@ -72,8 +72,8 @@ impl FileDescriptor {
             .map(|path| FileDescriptor::User(path.into()))
             .or_else(|| {
                 value
-                    .strip_prefix("system:")
-                    .map(|path| FileDescriptor::System(path.into()))
+                    .strip_prefix("built-ins:")
+                    .map(|path| FileDescriptor::BuiltIns(path.into()))
             })
             .ok_or(FileDescriptorError)
     }
@@ -86,12 +86,12 @@ impl FileDescriptor {
     pub fn get_path(&self) -> &str {
         match self {
             Self::User(path) => path,
-            Self::System(path) => path,
+            Self::BuiltIns(path) => path,
         }
     }
 
-    pub fn is_system(&self) -> bool {
-        matches!(self, Self::System(_))
+    pub fn is_built_ins(&self) -> bool {
+        matches!(self, Self::BuiltIns(_))
     }
 
     pub fn is_user(&self) -> bool {
@@ -138,12 +138,12 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         _ = self.add_file_internal(file, tree_cursor);
     }
 
-    pub fn build_system_file(
+    pub fn build_built_ins_file(
         &mut self,
         file_path: &str,
         cursor: Cursor<KT>,
     ) -> FileGraphBuilder<'_, KT> {
-        let file_kind = FileDescriptor::System(file_path.into());
+        let file_kind = FileDescriptor::BuiltIns(file_path.into());
         let file = self.graph.get_or_create_file(&file_kind);
         FileGraphBuilder::new(&mut self.graph, file, cursor)
     }
