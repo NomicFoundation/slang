@@ -8422,7 +8422,7 @@
   ],
   "built_ins": [
     {
-      "name": "$SolidityBuiltIns$",
+      "name": "SolidityBuiltIns",
       "definitions": [
         {
           "BuiltInFunction": {
@@ -8571,41 +8571,41 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$AbiType",
+              "name": "%AbiType",
               "functions": [
                 {
                   "name": "decode",
-                  "parameters": ["bytes memory encodedData", "$Type[] encodedTypesTuple"],
-                  "return_type": "$Any[]",
+                  "parameters": ["bytes memory encodedData", "%Type[] encodedTypesTuple"],
+                  "return_type": "%Any[]",
                   "enabled": { "From": { "from": "0.5.0" } }
                 },
                 {
                   "name": "encode",
-                  "parameters": ["$Any[] valuesToEncode"],
+                  "parameters": ["%Any[] valuesToEncode"],
                   "return_type": "bytes memory",
                   "enabled": { "From": { "from": "0.4.22" } }
                 },
                 {
                   "name": "encodeCall",
-                  "parameters": ["function() functionPointer", "$Any[] functionArgumentsTuple"],
+                  "parameters": ["function() functionPointer", "%Any[] functionArgumentsTuple"],
                   "return_type": "bytes memory",
                   "enabled": { "From": { "from": "0.8.11" } }
                 },
                 {
                   "name": "encodePacked",
-                  "parameters": ["$Any[] valuesToEncode"],
+                  "parameters": ["%Any[] valuesToEncode"],
                   "return_type": "bytes memory",
                   "enabled": { "From": { "from": "0.4.22" } }
                 },
                 {
                   "name": "encodeWithSelector",
-                  "parameters": ["bytes4 selector", "$Any[] functionArgumentsTuple"],
+                  "parameters": ["bytes4 selector", "%Any[] functionArgumentsTuple"],
                   "return_type": "bytes memory",
                   "enabled": { "From": { "from": "0.4.22" } }
                 },
                 {
                   "name": "encodeWithSignature",
-                  "parameters": ["string memory signature", "$Any[] valuesToEncode"],
+                  "parameters": ["string memory signature", "%Any[] valuesToEncode"],
                   "return_type": "bytes memory",
                   "enabled": { "From": { "from": "0.4.22" } }
                 }
@@ -8668,27 +8668,27 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$Array",
+              "name": "%Array",
               "fields": [{ "definition": "uint length" }],
               "functions": [
-                { "name": "push", "return_type": "$ValueType", "enabled": { "From": { "from": "0.6.0" } } },
+                { "name": "push", "return_type": "%ValueType", "enabled": { "From": { "from": "0.6.0" } } },
                 {
                   "name": "push",
-                  "parameters": ["$ValueType element"],
+                  "parameters": ["%ValueType element"],
                   "return_type": "uint",
                   "enabled": { "Till": { "till": "0.6.0" } }
                 },
-                { "name": "push", "parameters": ["$ValueType element"], "enabled": { "From": { "from": "0.6.0" } } },
+                { "name": "push", "parameters": ["%ValueType element"], "enabled": { "From": { "from": "0.6.0" } } },
                 { "name": "pop" }
               ]
             }
           }
         },
-        { "BuiltInType": { "item": { "name": "$FixedArray", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "%FixedArray", "fields": [{ "definition": "uint length" }] } } },
         {
           "BuiltInType": {
             "item": {
-              "name": "$BlockType",
+              "name": "%BlockType",
               "fields": [
                 { "definition": "uint basefee", "enabled": { "From": { "from": "0.8.7" } } },
                 { "definition": "uint blobbasefee", "enabled": { "From": { "from": "0.8.24" } } },
@@ -8715,7 +8715,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$BytesType",
+              "name": "%BytesType",
               "functions": [
                 { "name": "concat", "parameters": ["bytes[] bytesToConcatenate"], "return_type": "bytes memory" }
               ]
@@ -8725,7 +8725,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$CallOptions",
+              "name": "%CallOptions",
               "fields": [{ "definition": "uint gas" }, { "definition": "uint salt" }, { "definition": "uint value" }],
               "enabled": { "From": { "from": "0.6.2" } }
             }
@@ -8743,7 +8743,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$ErrorType",
+              "name": "%ErrorType",
               "fields": [{ "definition": "bytes4 selector" }],
               "enabled": { "From": { "from": "0.8.4" } }
             }
@@ -8752,7 +8752,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$Function",
+              "name": "%Function",
               "functions": [
                 {
                   "name": "gas",
@@ -8773,7 +8773,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$ExternalFunction",
+              "name": "%ExternalFunction",
               "fields": [
                 { "definition": "address address", "enabled": { "From": { "from": "0.8.2" } } },
                 { "definition": "bytes4 selector", "enabled": { "From": { "from": "0.4.17" } } }
@@ -8798,7 +8798,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$MessageType",
+              "name": "%MessageType",
               "fields": [
                 { "definition": "bytes data" },
                 { "definition": "uint256 gas", "enabled": { "Till": { "till": "0.5.0" } } },
@@ -8822,7 +8822,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$StringType",
+              "name": "%StringType",
               "functions": [
                 { "name": "concat", "parameters": ["string[] stringsToConcatenate"], "return_type": "string memory" }
               ]
@@ -8832,7 +8832,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$TransactionType",
+              "name": "%TransactionType",
               "fields": [
                 { "definition": "uint gasprice" },
                 { "definition": "address payable origin", "enabled": { "Till": { "till": "0.8.0" } } },
@@ -8844,7 +8844,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$ContractTypeType",
+              "name": "%ContractTypeType",
               "fields": [
                 { "definition": "string name" },
                 { "definition": "bytes creationCode", "enabled": { "From": { "from": "0.5.3" } } },
@@ -8857,7 +8857,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$InterfaceTypeType",
+              "name": "%InterfaceTypeType",
               "fields": [
                 { "definition": "string name" },
                 { "definition": "bytes4 interfaceId", "enabled": { "From": { "from": "0.6.7" } } }
@@ -8868,7 +8868,7 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$IntTypeType",
+              "name": "%IntTypeType",
               "fields": [
                 { "definition": "int min", "enabled": { "From": { "from": "0.6.8" } } },
                 { "definition": "int max", "enabled": { "From": { "from": "0.6.8" } } }
@@ -8879,32 +8879,32 @@
         {
           "BuiltInType": {
             "item": {
-              "name": "$UserDefinedValueType",
+              "name": "%UserDefinedValueType",
               "functions": [
-                { "name": "wrap", "parameters": ["$WrappedType elementaryType"], "return_type": "$UserType" },
-                { "name": "unwrap", "parameters": ["$UserType userType"], "return_type": "$WrappedType" }
+                { "name": "wrap", "parameters": ["%WrappedType elementaryType"], "return_type": "%UserType" },
+                { "name": "unwrap", "parameters": ["%UserType userType"], "return_type": "%WrappedType" }
               ],
               "enabled": { "From": { "from": "0.8.8" } }
             }
           }
         },
-        { "BuiltInVariable": { "item": { "definition": "$Function $placeholder" } } },
-        { "BuiltInVariable": { "item": { "definition": "$AbiType abi" } } },
-        { "BuiltInVariable": { "item": { "definition": "$BlockType block" } } },
-        { "BuiltInVariable": { "item": { "definition": "$BytesType bytes" } } },
-        { "BuiltInVariable": { "item": { "definition": "$MessageType msg" } } },
+        { "BuiltInVariable": { "item": { "definition": "%Function %placeholder" } } },
+        { "BuiltInVariable": { "item": { "definition": "%AbiType abi" } } },
+        { "BuiltInVariable": { "item": { "definition": "%BlockType block" } } },
+        { "BuiltInVariable": { "item": { "definition": "%BytesType bytes" } } },
+        { "BuiltInVariable": { "item": { "definition": "%MessageType msg" } } },
         { "BuiltInVariable": { "item": { "definition": "uint now", "enabled": { "Till": { "till": "0.7.0" } } } } },
-        { "BuiltInVariable": { "item": { "definition": "$StringType string" } } },
-        { "BuiltInVariable": { "item": { "definition": "$TransactionType tx" } } }
+        { "BuiltInVariable": { "item": { "definition": "%StringType string" } } },
+        { "BuiltInVariable": { "item": { "definition": "%TransactionType tx" } } }
       ]
     },
     {
-      "name": "$YulBuiltIns$",
+      "name": "YulBuiltIns",
       "definitions": [
         {
           "BuiltInType": {
             "item": {
-              "name": "$YulExternal",
+              "name": "%YulExternal",
               "fields": [
                 { "definition": "uint256 slot" },
                 { "definition": "uint256 offset" },

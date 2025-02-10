@@ -12,7 +12,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
 ) {
     if *version < Version::new(0, 4, 12) {
         // 0.4.11
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -87,7 +87,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -169,7 +169,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 4, 17) {
         // 0.4.12
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -244,7 +244,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -329,7 +329,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 4, 22) {
         // 0.4.17
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -405,7 +405,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -490,7 +490,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 5, 0) {
         // 0.4.22
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -574,7 +574,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -659,7 +659,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 5, 3) {
         // 0.5.0
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -740,7 +740,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -822,7 +822,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 6, 0) {
         // 0.5.3
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -905,7 +905,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -987,7 +987,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 6, 2) {
         // 0.6.0
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -1075,7 +1075,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -1157,7 +1157,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 6, 7) {
         // 0.6.2
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -1249,7 +1249,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -1331,7 +1331,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 6, 8) {
         // 0.6.7
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -1425,7 +1425,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -1507,7 +1507,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 7, 0) {
         // 0.6.8
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -1603,7 +1603,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -1685,7 +1685,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 8, 0) {
         // 0.7.0
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -1776,7 +1776,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -1858,7 +1858,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 8, 2) {
         // 0.8.0
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -1947,7 +1947,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -2029,7 +2029,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 8, 4) {
         // 0.8.2
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -2119,7 +2119,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -2201,7 +2201,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 8, 7) {
         // 0.8.4
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -2293,7 +2293,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -2375,7 +2375,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 8, 8) {
         // 0.8.7
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -2468,7 +2468,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -2551,7 +2551,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 8, 11) {
         // 0.8.8
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -2647,7 +2647,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -2730,7 +2730,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 8, 18) {
         // 0.8.11
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -2827,7 +2827,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -2910,7 +2910,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 8, 24) {
         // 0.8.18
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -3008,7 +3008,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -3091,7 +3091,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else if *version < Version::new(0, 8, 26) {
         // 0.8.24
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -3191,7 +3191,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
@@ -3279,7 +3279,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
         }
     } else {
         // 0.8.26
-        // $SolidityBuiltIns$
+        // SolidityBuiltIns
         {
             scope.define_function(builder, "addmod", Some("uint256"));
             scope.define_function(builder, "assert", None);
@@ -3380,7 +3380,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_field(builder, "string", "%StringType");
             scope.define_field(builder, "tx", "%TransactionType");
         }
-        // $YulBuiltIns$
+        // YulBuiltIns
         {
             let mut scope = scope.new_context(builder, "@yul");
             let mut type_scope = scope.define_type(builder, "%YulExternal");
