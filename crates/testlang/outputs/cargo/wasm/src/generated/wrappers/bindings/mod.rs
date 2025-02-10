@@ -68,6 +68,10 @@ define_wrapper! { Definition {
     fn definiens_location(&self) -> ffi::BindingLocation {
         self._borrow_ffi().definiens_location()._into_ffi()
     }
+
+    fn references(&self) -> Vec<ffi::Reference> {
+        self._borrow_ffi().references().iter().cloned().map(IntoFFI::_into_ffi).collect()
+    }
 } }
 
 //================================================
