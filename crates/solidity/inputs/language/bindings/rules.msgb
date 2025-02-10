@@ -1614,17 +1614,6 @@ inherit .star_extension
     body: [FunctionBody @body [Block]]
 ] {
   edge @body.lexical_scope -> @modifier.lexical_scope
-
-  ; Special case: bind the place holder statement `_` to the built-in
-  ; `%placeholder`. This only happens in the body of a modifier.
-  node placeholder_pop
-  attr (placeholder_pop) pop_symbol = "_"
-  node placeholder_ref
-  attr (placeholder_ref) push_symbol = "%placeholder"
-
-  edge @body.lexical_scope -> placeholder_pop
-  edge placeholder_pop -> placeholder_ref
-  edge placeholder_ref -> @modifier.lexical_scope
 }
 
 @modifier [ModifierDefinition @params [ParametersDeclaration]] {

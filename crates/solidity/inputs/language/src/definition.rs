@@ -6420,7 +6420,7 @@ codegen_language_macros::compile!(Language(
                     ],
                     enabled = From("0.8.8")
                 ),
-                BuiltInVariable(definition = "%Function %placeholder"),
+                BuiltInVariable(definition = "%Function _"),
                 BuiltInVariable(definition = "%AbiType abi"),
                 BuiltInVariable(definition = "%BlockType block"),
                 BuiltInVariable(definition = "%BytesType bytes"),

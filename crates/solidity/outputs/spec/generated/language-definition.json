@@ -8888,7 +8888,7 @@
             }
           }
         },
-        { "BuiltInVariable": { "item": { "definition": "%Function %placeholder" } } },
+        { "BuiltInVariable": { "item": { "definition": "%Function _" } } },
         { "BuiltInVariable": { "item": { "definition": "%AbiType abi" } } },
         { "BuiltInVariable": { "item": { "definition": "%BlockType block" } } },
         { "BuiltInVariable": { "item": { "definition": "%BytesType bytes" } } },
