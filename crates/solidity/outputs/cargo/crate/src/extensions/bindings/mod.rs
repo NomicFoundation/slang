@@ -25,6 +25,7 @@ pub fn add_built_ins(
     let mut file_builder = builder.build_system_file("built_ins.sol", empty_cursor);
 
     let root_node = file_builder.root_node();
+    // __SLANG_SOLIDITY_BUILT_INS_SCOPE_GUARD__ keep in sync with binding rules
     let mut globals = ScopeGraphBuilder::new(&mut file_builder, "@@built-ins@@", root_node, None);
 
     define_built_ins(&mut file_builder, &mut globals, &version);

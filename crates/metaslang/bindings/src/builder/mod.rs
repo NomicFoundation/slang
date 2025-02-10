@@ -132,12 +132,6 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
         }
     }
 
-    pub fn add_system_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
-        let file_kind = FileDescriptor::System(file_path.into());
-        let file = self.graph.get_or_create_file(&file_kind);
-        _ = self.add_file_internal(file, tree_cursor);
-    }
-
     pub fn add_user_file(&mut self, file_path: &str, tree_cursor: Cursor<KT>) {
         let file_kind = FileDescriptor::User(file_path.into());
         let file = self.graph.get_or_create_file(&file_kind);

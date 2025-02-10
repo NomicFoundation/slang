@@ -49,28 +49,16 @@ inherit .star_extension
   edge ROOT_NODE -> export
   edge export -> @source_unit.defs
 
-  if (is-system-file FILE_PATH) {
-    ; If this is a system file (aka. built-ins), export everything through this
-    ; special symbol (which is automatically imported below)
-    attr (export) pop_symbol = "@@built-ins@@"
+  ; This is a user file, so we want to export under the file's path symbol
+  attr (export) pop_symbol = FILE_PATH
 
-    ; NOTE: since we're no longer ingesting built-ins from an external Solidity
-    ; file and instead synthetically building the corresponding stack graph
-    ; directly from the language definition, this branch should never execute.
-    ; Regardless, it can help understand how to link to a fixed, built-in,
-    ; scope.
+  ; ... and also import the global built-ins
+  node built_ins
+  ; __SLANG_SOLIDITY_BUILT_INS_SCOPE_GUARD__ keep in sync with built-ins loading code
+  attr (built_ins) push_symbol = "@@built-ins@@"
 
-  } else {
-    ; This is a user file, so we want to export under the file's path symbol
-    attr (export) pop_symbol = FILE_PATH
-
-    ; ... and also import the global built-ins
-    node built_ins
-    attr (built_ins) push_symbol = "@@built-ins@@"
-
-    edge @source_unit.lexical_scope -> built_ins
-    edge built_ins -> ROOT_NODE
-  }
+  edge @source_unit.lexical_scope -> built_ins
+  edge built_ins -> ROOT_NODE
 
   let @source_unit.enclosing_def = #null
 
