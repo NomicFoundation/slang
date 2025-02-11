@@ -1,3 +1,3 @@
-assembly "evmasm" ("memory-safe") {
+assembly "evmasm" {
 
 }

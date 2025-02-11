@@ -90,12 +90,14 @@ pub enum NonterminalKind {
     /// Represents a node with kind `AssemblyFlags`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.8.13 *)
     /// AssemblyFlags = (* item: *) StringLiteral ((* separator: *) COMMA (* item: *) StringLiteral)*;
     /// ```
     AssemblyFlags,
     /// Represents a node with kind `AssemblyFlagsDeclaration`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.8.13 *)
     /// AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
     ///                            (* flags: *) AssemblyFlags
     ///                            (* close_paren: *) CLOSE_PAREN;
@@ -106,7 +108,7 @@ pub enum NonterminalKind {
     /// ```ebnf
     /// AssemblyStatement = (* assembly_keyword: *) ASSEMBLY_KEYWORD
     ///                     (* label: *) StringLiteral?
-    ///                     (* flags: *) AssemblyFlagsDeclaration?
+    ///                     (* flags: *) AssemblyFlagsDeclaration? (* Introduced in 0.8.13 *)
     ///                     (* body: *) YulBlock;
     /// ```
     AssemblyStatement,
@@ -1965,8 +1967,8 @@ pub enum NonterminalKind {
     /// Represents a node with kind `YulLiteral`, having the following structure:
     ///
     /// ```ebnf
-    /// YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
-    ///            | (* variant: *) YUL_FALSE_KEYWORD
+    /// YulLiteral = (* variant: *) YUL_TRUE_KEYWORD (* Introduced in 0.6.2 *)
+    ///            | (* variant: *) YUL_FALSE_KEYWORD (* Introduced in 0.6.2 *)
     ///            | (* variant: *) YUL_DECIMAL_LITERAL
     ///            | (* variant: *) YUL_HEX_LITERAL
     ///            | (* variant: *) HexStringLiteral

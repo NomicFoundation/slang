@@ -15,6 +15,7 @@ indicatif = { workspace = true }
 infra_utils = { workspace = true }
 itertools = { workspace = true }
 rayon = { workspace = true }
+regex = { workspace = true }
 reqwest = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }

@@ -12,12 +12,13 @@ console = { workspace = true }
 indicatif = { workspace = true }
 infra_utils = { workspace = true }
 itertools = { workspace = true }
+metaslang_bindings = { workspace = true }
 once_cell = { workspace = true }
 rayon = { workspace = true }
+regex = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-metaslang_bindings = { workspace = true }
 slang_solidity = { workspace = true, features = ["__private_ariadne_errors", "__experimental_bindings_api"] }
 strum_macros = { workspace = true }
 url = { workspace = true }

@@ -108,6 +108,7 @@ export declare enum NonterminalKind {
    * Represents a node with kind `AssemblyFlags`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.8.13 *)
    * AssemblyFlags = (* item: *) StringLiteral ((* separator: *) COMMA (* item: *) StringLiteral)*;
    * ```
    */
@@ -116,6 +117,7 @@ export declare enum NonterminalKind {
    * Represents a node with kind `AssemblyFlagsDeclaration`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.8.13 *)
    * AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
    *                            (* flags: *) AssemblyFlags
    *                            (* close_paren: *) CLOSE_PAREN;
@@ -128,7 +130,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * AssemblyStatement = (* assembly_keyword: *) ASSEMBLY_KEYWORD
    *                     (* label: *) StringLiteral?
-   *                     (* flags: *) AssemblyFlagsDeclaration?
+   *                     (* flags: *) AssemblyFlagsDeclaration? (* Introduced in 0.8.13 *)
    *                     (* body: *) YulBlock;
    * ```
    */
@@ -2365,8 +2367,8 @@ export declare enum NonterminalKind {
    * Represents a node with kind `YulLiteral`, having the following structure:
    *
    * ```ebnf
-   * YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
-   *            | (* variant: *) YUL_FALSE_KEYWORD
+   * YulLiteral = (* variant: *) YUL_TRUE_KEYWORD (* Introduced in 0.6.2 *)
+   *            | (* variant: *) YUL_FALSE_KEYWORD (* Introduced in 0.6.2 *)
    *            | (* variant: *) YUL_DECIMAL_LITERAL
    *            | (* variant: *) YUL_HEX_LITERAL
    *            | (* variant: *) HexStringLiteral
@@ -3906,6 +3908,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `SuperKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Reserved in 0.8.0 *)
    * SUPER_KEYWORD = "super";
    * ```
    */
@@ -3941,6 +3944,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `ThisKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Reserved in 0.8.0 *)
    * THIS_KEYWORD = "this";
    * ```
    */
@@ -4668,6 +4672,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `YulFalseKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.6.2 *)
    * YUL_FALSE_KEYWORD = "false";
    * ```
    */
@@ -4923,6 +4928,10 @@ export declare enum TerminalKind {
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
+   * (* Reserved until 0.6.0 *)
+   * YUL_JUMP_KEYWORD = "jump";
+   *
+   * (* Reserved in 0.8.0 *)
    * YUL_JUMP_KEYWORD = "jump";
    * ```
    */
@@ -4932,6 +4941,10 @@ export declare enum TerminalKind {
    *
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
+   * (* Reserved until 0.6.0 *)
+   * YUL_JUMPI_KEYWORD = "jumpi";
+   *
+   * (* Reserved in 0.8.0 *)
    * YUL_JUMPI_KEYWORD = "jumpi";
    * ```
    */
@@ -5584,6 +5597,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `YulSuperKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Reserved in 0.8.0 *)
    * YUL_SUPER_KEYWORD = "super";
    * ```
    */
@@ -5638,6 +5652,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `YulThisKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Reserved in 0.8.0 *)
    * YUL_THIS_KEYWORD = "this";
    * ```
    */
@@ -5663,6 +5678,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `YulTrueKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.6.2 *)
    * YUL_TRUE_KEYWORD = "true";
    * ```
    */

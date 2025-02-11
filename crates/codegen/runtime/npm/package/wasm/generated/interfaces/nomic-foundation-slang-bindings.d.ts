@@ -109,7 +109,7 @@ export class Definition {
   /**
    * Returns a list of all references that bind to this definition.
    */
-  references(): Reference[];
+  references(): Array<Reference>;
 }
 
 /**

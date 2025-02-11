@@ -6,6 +6,7 @@ use codegen_language_definition::model::{Item, KeywordDefinition, KeywordItem, L
 use indicatif::{ProgressBar, ProgressStyle};
 use infra_utils::terminal::NumbersDefaultDisplay;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
+use regex::Regex;
 use semver::Version;
 use solidity_language::SolidityDefinition;
 
@@ -103,6 +104,18 @@ impl KeywordVersioningCommand {
                 continue;
             };
 
+            // These are considered issues with earlier versions of 'solc', and we should skip from checking here:
+            match item.name.as_str() {
+                "AddressKeyword" | "YulAddressKeyword" => {
+                    // Solc doesn't consistently reserve 'address' in all identifier positions.
+                    // Sometimes it is reserved as a variable name, but allowed as a field name.
+                    // Slang considers it unreserved for correctness. Let's skip it from testing here.
+                    // https://github.com/NomicFoundation/slang/pull/1134
+                    continue;
+                }
+                _ => {}
+            };
+
             for definition in &item.definitions {
                 let mut variations = definition.value.collect_variations();
 
@@ -168,7 +181,7 @@ impl TestCase {
     ) -> Self {
         let source = match item.identifier.as_str() {
             "Identifier" => format!(
-                "// SPDX-License-Identifier: GPL-3.0
+                "// SPDX-License-Identifier: None
                 pragma solidity x.x.x;
                 
                 contract Foo {{
@@ -178,13 +191,13 @@ impl TestCase {
                 }}"
             ),
             "YulIdentifier" => format!(
-                "// SPDX-License-Identifier: GPL-3.0
+                "// SPDX-License-Identifier: None
                 pragma solidity x.x.x;
                 
                 contract Foo {{
                     function bar() public {{
                         assembly {{
-                            let {variation} := 1
+                            let {variation} := 0
                         }}
                     }}
                 }}"
@@ -218,7 +231,7 @@ impl TestCase {
         let mut should_be_unreserved_in = vec![];
 
         for binary in binaries {
-            let success = self.test_version(binary);
+            let success = self.test_version(binary).unwrap();
             let is_reserved = self.reserved_in.contains(&binary.version);
 
             if success != is_reserved {
@@ -239,7 +252,7 @@ impl TestCase {
         }
     }
 
-    fn test_version(&self, binary: &Binary) -> bool {
+    fn test_version(&self, binary: &Binary) -> Result<bool> {
         let input = CliInput {
             language: LanguageSelector::Solidity,
             sources: [(
@@ -257,41 +270,52 @@ impl TestCase {
                 println!();
                 println!(
                     "Invoking solc failed:\n{error:#?}\n\nInput:\n{input}",
-                    input = serde_json::to_string_pretty(&input).unwrap(),
+                    input = serde_json::to_string_pretty(&input)?,
                 );
                 std::process::exit(1);
             }
         };
 
+        let actual_errors = &[
+            // Identifier parsed as a keyword:
+            Regex::new(r#"^Cannot use builtin function name ".+" as identifier name\.$"#)?,
+            Regex::new(r#"^Cannot use instruction name ".+" as identifier name\.$"#)?,
+            Regex::new(r#"^Cannot use instruction names for identifier names\.$"#)?,
+            Regex::new(r#"^Expected '.+' but got '.+'$"#)?,
+            Regex::new(r#"^Expected '.+' but got reserved keyword '.+'$"#)?,
+            Regex::new(r#"^Expected \w+ but got '.+'$"#)?,
+            Regex::new(r#"^Expected \w+ but got reserved keyword '.+'$"#)?,
+            Regex::new(r#"^Expected \w+, got '.+'$"#)?,
+            Regex::new(r#"^Expected token \w+ got '.+'$"#)?,
+            Regex::new(r#"^Expected token \w+ got reserved keyword '.+'$"#)?,
+            Regex::new(r#"^The identifier ".+" is reserved and can not be used\.$"#)?,
+            Regex::new(r#"^The identifier name ".+" is reserved\.$"#)?,
+            Regex::new(r#"^The name ".+" is reserved\.$"#)?,
+        ];
+
+        let ignored_errors = &[
+            // Unrelated to keyword versioning:
+            Regex::new(r#"^Function state mutability can be restricted to pure$"#)?,
+            Regex::new(r#"^State mutability can only be specified for address types\.$"#)?,
+            Regex::new(r#"^This declaration shadows a builtin symbol\.$"#)?,
+            Regex::new(
+                r#"^This declaration shadows a declaration outside the inline assembly block\.$"#,
+            )?,
+            Regex::new(r#"^Unused local variable\.?$"#)?,
+        ];
+
         for error in output.errors.iter().flatten() {
-            if [
-                "Expected identifier, got",
-                "Expected identifier but got",
-                "Expected token Identifier got",
-                "Expected token Semicolon got",
-                "Expected ';' but got ",
-                "State mutability can only be specified for address types.",
-                "Cannot use builtin function name",
-                "Cannot use instruction name",
-                "is reserved and can not be used.",
-            ]
-            .iter()
-            .any(|part| error.message.contains(part))
+            if actual_errors
+                .iter()
+                .any(|pattern| pattern.is_match(&error.message))
             {
-                // Identifier parsed as a keyword.
-                return false;
+                return Ok(false);
             }
 
-            if [
-                "Unused local variable",
-                "Function state mutability can be restricted to pure",
-                "This declaration shadows a builtin symbol.",
-                "This declaration shadows a declaration outside",
-            ]
-            .iter()
-            .any(|part| error.message.contains(part))
+            if ignored_errors
+                .iter()
+                .any(|pattern| pattern.is_match(&error.message))
             {
-                // Unrelated
                 continue;
             }
 
@@ -299,6 +323,6 @@ impl TestCase {
             std::process::exit(1);
         }
 
-        true
+        Ok(true)
     }
 }

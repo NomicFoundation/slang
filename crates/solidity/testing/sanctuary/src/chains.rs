@@ -5,18 +5,17 @@ use url::Url;
 
 /// Full list defined here:
 /// <https://github.com/tintinweb/smart-contract-sanctuary>
+/// Note: 'Celo' and 'Tron' sanctuaries don't include the compiler version for each contract in their 'contracts.json' index.
 #[derive(Debug, Subcommand, AsRefStr)]
 #[strum(serialize_all = "lowercase")]
 pub enum Chain {
     Arbitrum { network: ArbitrumNetwork },
     Avalanche { network: AvalancheNetwork },
     Bsc { network: BscNetwork },
-    Celo { network: CeloNetwork },
     Ethereum { network: EthereumNetwork },
     Fantom { network: FantomNetwork },
     Optimism { network: OptimismNetwork },
     Polygon { network: PolygonNetwork },
-    Tron { network: TronNetwork },
 }
 
 impl Chain {
@@ -36,12 +35,10 @@ impl Chain {
             Chain::Arbitrum { network } => network.as_ref(),
             Chain::Avalanche { network } => network.as_ref(),
             Chain::Bsc { network } => network.as_ref(),
-            Chain::Celo { network } => network.as_ref(),
             Chain::Ethereum { network } => network.as_ref(),
             Chain::Fantom { network } => network.as_ref(),
             Chain::Optimism { network } => network.as_ref(),
             Chain::Polygon { network } => network.as_ref(),
-            Chain::Tron { network } => network.as_ref(),
         }
     }
 }
@@ -65,12 +62,6 @@ pub enum AvalancheNetwork {
 pub enum BscNetwork {
     Mainnet,
     Testnet,
-}
-
-#[derive(Clone, Debug, PartialEq, ValueEnum, AsRefStr)]
-#[strum(serialize_all = "lowercase")]
-pub enum CeloNetwork {
-    Mainnet,
 }
 
 #[derive(Clone, Debug, PartialEq, ValueEnum, AsRefStr)]
@@ -101,10 +92,4 @@ pub enum OptimismNetwork {
 pub enum PolygonNetwork {
     Mainnet,
     Mumbai,
-}
-
-#[derive(Clone, Debug, PartialEq, ValueEnum, AsRefStr)]
-#[strum(serialize_all = "lowercase")]
-pub enum TronNetwork {
-    Mainnet,
 }
