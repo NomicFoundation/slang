@@ -957,8 +957,12 @@ inherit .star_extension
   let @elementary.push_end = @elementary.ref
 }
 
-@elementary [ElementaryType [AddressType]] {
+@elementary [ElementaryType [AddressType . [AddressKeyword] .]] {
   let @elementary.symbol = "address"
+}
+
+@elementary [ElementaryType [AddressType . [AddressKeyword] [PayableKeyword] .]] {
+  let @elementary.symbol = "address payable"
 }
 
 @elementary [ElementaryType [BoolKeyword]] {
@@ -2144,10 +2148,14 @@ inherit .star_extension
   edge call -> member
 }
 
+@member [StructMember] {
+  node @member.def
+  node @member.typeof
+}
+
 @struct [StructDefinition [StructMembers
     @member item: [StructMember @type_name [TypeName] @name name: [Identifier]]
 ]] {
-  node @member.def
   attr (@member.def) node_definition = @name
   attr (@member.def) definiens_node = @member
 
@@ -2155,7 +2163,6 @@ inherit .star_extension
 
   edge @type_name.type_ref -> @struct.lexical_scope
 
-  node @member.typeof
   attr (@member.typeof) push_symbol = "@typeof"
 
   edge @member.def -> @member.typeof
@@ -2518,7 +2525,7 @@ inherit .star_extension
 ; These work like `address`, should they should bind to `address`
 @expr [Expression [PayableKeyword]] {
   node ref
-  attr (ref) push_symbol = "address"
+  attr (ref) push_symbol = "address payable"
 
   edge ref -> @expr.lexical_scope
   edge @expr.output -> ref

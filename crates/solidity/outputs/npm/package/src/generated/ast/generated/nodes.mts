@@ -3058,7 +3058,7 @@ export class MappingValue {
  *
  * ```ebnf
  * AddressType = (* address_keyword: *) ADDRESS_KEYWORD
- *               (* payable_keyword: *) PAYABLE_KEYWORD?;
+ *               (* payable_keyword: *) PAYABLE_KEYWORD?; (* Introduced in 0.5.0 *)
  * ```
  */
 export class AddressType {

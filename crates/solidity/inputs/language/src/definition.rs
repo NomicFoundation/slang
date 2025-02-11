@@ -2819,7 +2819,8 @@ codegen_language_macros::compile!(Language(
                             name = AddressType,
                             fields = (
                                 address_keyword = Required(AddressKeyword),
-                                payable_keyword = Optional(reference = PayableKeyword)
+                                payable_keyword =
+                                    Optional(reference = PayableKeyword, enabled = From("0.5.0"))
                             )
                         )
                     ]
@@ -6208,8 +6209,44 @@ codegen_language_macros::compile!(Language(
                             return_type = "bool, bytes memory",
                             enabled = From("0.5.0")
                         ),
-                        BuiltInFunction(name = "transfer", parameters = ["uint256 amount"])
+                        BuiltInFunction(
+                            name = "transfer",
+                            parameters = ["uint256 amount"],
+                            enabled = Till("0.5.0")
+                        )
                     ]
+                ),
+                BuiltInType(
+                    name = "address payable",
+                    fields = [
+                        BuiltInField(definition = "uint256 balance"),
+                        BuiltInField(definition = "bytes code", enabled = From("0.8.0")),
+                        BuiltInField(definition = "bytes32 codehash", enabled = From("0.8.0"))
+                    ],
+                    functions = [
+                        BuiltInFunction(
+                            name = "call",
+                            parameters = ["bytes memory"],
+                            return_type = "bool, bytes memory"
+                        ),
+                        BuiltInFunction(
+                            name = "delegatecall",
+                            parameters = ["bytes memory"],
+                            return_type = "bool, bytes memory"
+                        ),
+                        BuiltInFunction(
+                            name = "send",
+                            parameters = ["uint256 amount"],
+                            return_type = "bool"
+                        ),
+                        BuiltInFunction(
+                            name = "staticcall",
+                            parameters = ["bytes memory"],
+                            return_type = "bool, bytes memory"
+                        ),
+                        BuiltInFunction(name = "transfer", parameters = ["uint256 amount"])
+                    ],
+                    enabled = From("0.5.0")
                 ),
                 BuiltInType(
                     name = "%Array",

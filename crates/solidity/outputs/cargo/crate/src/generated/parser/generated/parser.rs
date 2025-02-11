@@ -592,15 +592,17 @@ impl Parser {
                     TerminalKind::AddressKeyword,
                 ),
             )?;
-            seq.elem_labeled(
-                EdgeLabel::PayableKeyword,
-                OptionalHelper::transform(
-                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TerminalKind::PayableKeyword,
+            if self.version_is_at_least_0_5_0 {
+                seq.elem_labeled(
+                    EdgeLabel::PayableKeyword,
+                    OptionalHelper::transform(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::PayableKeyword,
+                        ),
                     ),
-                ),
-            )?;
+                )?;
+            }
             seq.finish()
         })
         .with_kind(NonterminalKind::AddressType)

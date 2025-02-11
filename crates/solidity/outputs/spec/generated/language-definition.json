@@ -3901,7 +3901,9 @@
                   "name": "AddressType",
                   "fields": {
                     "address_keyword": { "Required": { "reference": "AddressKeyword" } },
-                    "payable_keyword": { "Optional": { "reference": "PayableKeyword" } }
+                    "payable_keyword": {
+                      "Optional": { "reference": "PayableKeyword", "enabled": { "From": { "from": "0.5.0" } } }
+                    }
                   }
                 }
               }
@@ -8660,8 +8662,28 @@
                   "return_type": "bool, bytes memory",
                   "enabled": { "From": { "from": "0.5.0" } }
                 },
-                { "name": "transfer", "parameters": ["uint256 amount"] }
+                { "name": "transfer", "parameters": ["uint256 amount"], "enabled": { "Till": { "till": "0.5.0" } } }
               ]
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "address payable",
+              "fields": [
+                { "definition": "uint256 balance" },
+                { "definition": "bytes code", "enabled": { "From": { "from": "0.8.0" } } },
+                { "definition": "bytes32 codehash", "enabled": { "From": { "from": "0.8.0" } } }
+              ],
+              "functions": [
+                { "name": "call", "parameters": ["bytes memory"], "return_type": "bool, bytes memory" },
+                { "name": "delegatecall", "parameters": ["bytes memory"], "return_type": "bool, bytes memory" },
+                { "name": "send", "parameters": ["uint256 amount"], "return_type": "bool" },
+                { "name": "staticcall", "parameters": ["bytes memory"], "return_type": "bool, bytes memory" },
+                { "name": "transfer", "parameters": ["uint256 amount"] }
+              ],
+              "enabled": { "From": { "from": "0.5.0" } }
             }
           }
         },
