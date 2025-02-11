@@ -8,3 +8,8 @@ use crate::cst_output::runner::run;
 fn simple() -> Result<()> {
     run("AssemblyStatement", "simple")
 }
+
+#[test]
+fn with_flags() -> Result<()> {
+    run("AssemblyStatement", "with_flags")
+}

@@ -75,12 +75,14 @@ interface cst {
                 /// Represents a node with kind `AssemblyFlags`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Introduced in 0.8.13 *)
                 /// AssemblyFlags = (* item: *) StringLiteral ((* separator: *) COMMA (* item: *) StringLiteral)*;
                 /// ```
                 %assembly-flags,
                 /// Represents a node with kind `AssemblyFlagsDeclaration`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Introduced in 0.8.13 *)
                 /// AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
                 ///                            (* flags: *) AssemblyFlags
                 ///                            (* close_paren: *) CLOSE_PAREN;
@@ -91,7 +93,7 @@ interface cst {
                 /// ```ebnf
                 /// AssemblyStatement = (* assembly_keyword: *) ASSEMBLY_KEYWORD
                 ///                     (* label: *) StringLiteral?
-                ///                     (* flags: *) AssemblyFlagsDeclaration?
+                ///                     (* flags: *) AssemblyFlagsDeclaration? (* Introduced in 0.8.13 *)
                 ///                     (* body: *) YulBlock;
                 /// ```
                 %assembly-statement,
@@ -1861,8 +1863,8 @@ interface cst {
                 /// Represents a node with kind `YulLiteral`, having the following structure:
                 ///
                 /// ```ebnf
-                /// YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
-                ///            | (* variant: *) YUL_FALSE_KEYWORD
+                /// YulLiteral = (* variant: *) YUL_TRUE_KEYWORD (* Introduced in 0.6.2 *)
+                ///            | (* variant: *) YUL_FALSE_KEYWORD (* Introduced in 0.6.2 *)
                 ///            | (* variant: *) YUL_DECIMAL_LITERAL
                 ///            | (* variant: *) YUL_HEX_LITERAL
                 ///            | (* variant: *) HexStringLiteral
@@ -3045,6 +3047,7 @@ interface cst {
                 /// Represents a node with kind `SuperKeyword`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Reserved in 0.8.0 *)
                 /// SUPER_KEYWORD = "super";
                 /// ```
                 %super-keyword,
@@ -3072,6 +3075,7 @@ interface cst {
                 /// Represents a node with kind `ThisKeyword`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Reserved in 0.8.0 *)
                 /// THIS_KEYWORD = "this";
                 /// ```
                 %this-keyword,
@@ -3439,6 +3443,7 @@ interface cst {
                 /// Represents a node with kind `YulFalseKeyword`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Introduced in 0.6.2 *)
                 /// YUL_FALSE_KEYWORD = "false";
                 /// ```
                 %yul-false-keyword,
@@ -3825,6 +3830,7 @@ interface cst {
                 /// Represents a node with kind `YulSuperKeyword`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Reserved in 0.8.0 *)
                 /// YUL_SUPER_KEYWORD = "super";
                 /// ```
                 %yul-super-keyword,
@@ -3851,6 +3857,7 @@ interface cst {
                 /// Represents a node with kind `YulThisKeyword`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Reserved in 0.8.0 *)
                 /// YUL_THIS_KEYWORD = "this";
                 /// ```
                 %yul-this-keyword,
@@ -3864,6 +3871,7 @@ interface cst {
                 /// Represents a node with kind `YulTrueKeyword`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Introduced in 0.6.2 *)
                 /// YUL_TRUE_KEYWORD = "true";
                 /// ```
                 %yul-true-keyword,

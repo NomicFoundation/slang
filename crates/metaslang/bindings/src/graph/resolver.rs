@@ -16,6 +16,7 @@ pub(crate) struct Resolver {
     partials: PartialPaths,
     database: Database,
     references: HashMap<GraphHandle, Vec<GraphHandle>>,
+    definitions: Option<HashMap<GraphHandle, Vec<GraphHandle>>>,
 }
 
 impl Resolver {
@@ -27,6 +28,7 @@ impl Resolver {
             partials,
             database,
             references: HashMap::new(),
+            definitions: None,
         };
         resolver.build(graph);
         resolver
@@ -181,6 +183,49 @@ impl Resolver {
         } else {
             Vec::new()
         }
+    }
+
+    pub(crate) fn ensure_all_references_resolved<KT: KindTypes + 'static>(
+        &mut self,
+        graph: &ExtendedStackGraph<KT>,
+    ) {
+        if self.definitions.is_some() {
+            return;
+        }
+
+        // Resolve all references
+        for handle in graph.iter_references() {
+            if !self.references.contains_key(&handle)
+                && graph
+                    .get_file_descriptor(handle)
+                    .is_some_and(|file| file.is_user())
+            {
+                let definition_handles = self.resolve_internal(graph, handle, true);
+                self.references.insert(handle, definition_handles);
+            }
+        }
+
+        // Build reverse mapping from definitions to reference handles
+        let mut definitions: HashMap<GraphHandle, Vec<GraphHandle>> = HashMap::new();
+        for (reference, resolved_definitions) in &self.references {
+            for definition in resolved_definitions {
+                if let Some(references) = definitions.get_mut(definition) {
+                    references.push(*reference);
+                } else {
+                    definitions.insert(*definition, vec![*reference]);
+                }
+            }
+        }
+        self.definitions = Some(definitions);
+    }
+
+    pub(crate) fn definition_to_references(&self, handle: GraphHandle) -> Vec<GraphHandle> {
+        self.definitions
+            .as_ref()
+            .expect("All references should have been resolved")
+            .get(&handle)
+            .cloned()
+            .unwrap_or_default()
     }
 }
 

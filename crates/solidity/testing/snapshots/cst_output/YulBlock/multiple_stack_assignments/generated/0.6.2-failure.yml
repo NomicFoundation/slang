@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ {                                                                                │ 0..1
+  2  │   1                                                                              │ 2..5
+  3  │   2                                                                              │ 6..9
+  4  │   3                                                                              │ 10..13
+  5  │   =: success                                                                     │ 14..26
+  6  │   =: success                                                                     │ 27..39
+  7  │   =: success                                                                     │ 40..52
+  8  │ }                                                                                │ 53..54
+
+Errors: # 1 total
+  - >
+    Error: Expected CloseBrace or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or OpenBrace or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulBreakKeyword or YulContinueKeyword or YulDecimalLiteral or YulFalseKeyword or YulForKeyword or YulFunctionKeyword or YulHexLiteral or YulIdentifier or YulIfKeyword or YulLeaveKeyword or YulLetKeyword or YulSwitchKeyword or YulTrueKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/YulBlock/multiple_stack_assignments/input.sol:5:3]
+       │
+     5 │ ╭─▶   =: success
+       ┆ ┆   
+     7 │ ├─▶   =: success
+       │ │                  
+       │ ╰────────────────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ YulBlock): # "{\n  1\n  2\n  3\n  =: success\n  =: success\n  =: succe..." (0..55)
+      - (open_brace꞉ OpenBrace): "{" # (0..1)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (1..2)
+      - (statements꞉ YulStatements): # "  1\n  2\n  3\n" (2..14)
+          - (item꞉ YulStatement) ► (variant꞉ YulExpression) ► (variant꞉ YulLiteral): # "  1\n" (2..6)
+              - (leading_trivia꞉ Whitespace): "  " # (2..4)
+              - (variant꞉ YulDecimalLiteral): "1" # (4..5)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (5..6)
+          - (item꞉ YulStatement) ► (variant꞉ YulExpression) ► (variant꞉ YulLiteral): # "  2\n" (6..10)
+              - (leading_trivia꞉ Whitespace): "  " # (6..8)
+              - (variant꞉ YulDecimalLiteral): "2" # (8..9)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (9..10)
+          - (item꞉ YulStatement) ► (variant꞉ YulExpression) ► (variant꞉ YulLiteral): # "  3\n" (10..14)
+              - (leading_trivia꞉ Whitespace): "  " # (10..12)
+              - (variant꞉ YulDecimalLiteral): "3" # (12..13)
+              - (trailing_trivia꞉ EndOfLine): "\n" # (13..14)
+      - (leading_trivia꞉ Whitespace): "  " # (14..16)
+      - (unrecognized꞉ UNRECOGNIZED): "=: success\n  =: success\n  =: success\n" # (16..53)
+      - (close_brace꞉ CloseBrace): "}" # (53..54)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (54..55)

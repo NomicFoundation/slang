@@ -12,7 +12,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected CloseBrace or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or OpenBrace or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulBreakKeyword or YulContinueKeyword or YulDecimalLiteral or YulFalseKeyword or YulForKeyword or YulFunctionKeyword or YulHexLiteral or YulIdentifier or YulIfKeyword or YulLetKeyword or YulSwitchKeyword or YulTrueKeyword.
+    Error: Expected CloseBrace or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or OpenBrace or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulBreakKeyword or YulContinueKeyword or YulDecimalLiteral or YulForKeyword or YulFunctionKeyword or YulHexLiteral or YulIdentifier or YulIfKeyword or YulLetKeyword or YulSwitchKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/YulBlock/multiple_stack_assignments/input.sol:5:3]
        │
      5 │ ╭─▶   =: success

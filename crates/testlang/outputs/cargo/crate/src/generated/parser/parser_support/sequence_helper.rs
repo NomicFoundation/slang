@@ -174,7 +174,7 @@ impl SequenceHelper {
                         expected_terminals: next.expected_terminals,
                     }));
                 }
-                // If the sequence is unwinding and and we didn't find a match, then it means
+                // If the sequence is unwinding and we didn't find a match, then it means
                 // that we recovered past it and we need to push the recovery up.
                 (ParserResult::SkippedUntil(_), ParserResult::NoMatch(_)) => {
                     // Skip any possible subsequent expected elements in this sequence until

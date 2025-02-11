@@ -1,11 +1,12 @@
 use std::collections::{BTreeMap, HashSet};
 use std::path::{Path, PathBuf};
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 use once_cell::sync::Lazy;
+use regex::Regex;
 use serde::Deserialize;
 
 use crate::chains::Chain;
@@ -126,20 +127,34 @@ fn list_contracts(repo_dir: &Path, network: &str) -> Result<BTreeMap<String, Vec
     // Unfortunately 'sparse-checkout' doesn't support single files, only folders.
     // So we cannot checkout 'contracts.json' without all sibling contract folders.
     // So let's just read it from git index instead.
+    let contracts_file_path = format!("contracts/{network}/contracts.json");
     let contracts_file = Command::new("git")
         .arg("show")
-        .arg(format!(":contracts/{network}/contracts.json"))
+        .arg(format!(":{contracts_file_path}"))
         .current_dir(repo_dir)
         .evaluate()?;
 
     let mut directories = BTreeMap::new();
 
+    let skip_lines = &[
+        // git conflict markers:
+        Regex::new(r#"^<<<<<<< HEAD$"#)?,
+        Regex::new(r#"^=======$"#)?,
+        Regex::new(r#"^>>>>>>> [0-9a-f]{40}$"#)?,
+    ];
+
     for line in contracts_file.lines() {
+        if skip_lines.iter().any(|pattern| pattern.is_match(line)) {
+            continue;
+        }
+
         let Contract {
             mut address,
             name,
             mut compiler,
-        } = serde_json::from_str(line)?;
+        } = serde_json::from_str(line).with_context(|| {
+            format!("Failed to parse contract JSON line from {contracts_file_path:?}: {line:?}")
+        })?;
 
         // Strip the inconsistent prefix if it exists:
         if address.starts_with("0x") || address.starts_with("0X") {

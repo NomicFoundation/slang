@@ -4,7 +4,7 @@ use std::rc::Rc;
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
 
-use super::{BindingGraph, BindingLocation};
+use super::{BindingGraph, BindingLocation, Reference};
 use crate::builder::{FileDescriptor, GraphHandle};
 use crate::graph::DisplayCursor;
 
@@ -56,6 +56,10 @@ impl<KT: KindTypes + 'static> Definition<KT> {
             .graph
             .get_file_descriptor(self.handle)
             .expect("Definition to have a valid file descriptor")
+    }
+
+    pub fn references(&self) -> Vec<Reference<KT>> {
+        self.owner.resolve_definition(self.handle)
     }
 }
 

@@ -70,6 +70,19 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             })
             .collect()
     }
+
+    fn resolve_definition(self: &Rc<Self>, handle: GraphHandle) -> Vec<Reference<KT>> {
+        let mut resolver = self.resolver.borrow_mut();
+        resolver.ensure_all_references_resolved(&self.graph);
+        let references = resolver.definition_to_references(handle);
+        references
+            .iter()
+            .map(|handle| Reference {
+                owner: Rc::clone(self),
+                handle: *handle,
+            })
+            .collect()
+    }
 }
 
 struct DisplayCursor<'a, KT: KindTypes + 'static> {

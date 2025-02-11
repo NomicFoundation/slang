@@ -188,7 +188,7 @@
 
 ```
 
-<pre ebnf-snippet="YulFalseKeyword" style="display: none;"><a href="#YulFalseKeyword"><span class="k">YUL_FALSE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"false"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulFalseKeyword" style="display: none;"><span class="cm">(* Introduced in 0.6.2 *)</span><br /><a href="#YulFalseKeyword"><span class="k">YUL_FALSE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"false"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulFinalKeyword }
 
@@ -500,7 +500,7 @@
 
 ```
 
-<pre ebnf-snippet="YulSuperKeyword" style="display: none;"><a href="#YulSuperKeyword"><span class="k">YUL_SUPER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"super"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulSuperKeyword" style="display: none;"><span class="cm">(* Reserved in 0.8.0 *)</span><br /><a href="#YulSuperKeyword"><span class="k">YUL_SUPER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"super"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulSupportsKeyword }
 
@@ -524,7 +524,7 @@
 
 ```
 
-<pre ebnf-snippet="YulThisKeyword" style="display: none;"><a href="#YulThisKeyword"><span class="k">YUL_THIS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"this"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulThisKeyword" style="display: none;"><span class="cm">(* Reserved in 0.8.0 *)</span><br /><a href="#YulThisKeyword"><span class="k">YUL_THIS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"this"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulThrowKeyword }
 
@@ -536,7 +536,7 @@
 
 ```
 
-<pre ebnf-snippet="YulTrueKeyword" style="display: none;"><a href="#YulTrueKeyword"><span class="k">YUL_TRUE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"true"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulTrueKeyword" style="display: none;"><span class="cm">(* Introduced in 0.6.2 *)</span><br /><a href="#YulTrueKeyword"><span class="k">YUL_TRUE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"true"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulTryKeyword }
 

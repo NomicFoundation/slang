@@ -424,6 +424,7 @@ STRING_KEYWORD = "string";
 
 STRUCT_KEYWORD = "struct";
 
+(* Reserved in 0.8.0 *)
 SUPER_KEYWORD = "super";
 
 (* Reserved in 0.5.0 *)
@@ -435,6 +436,7 @@ SWITCH_KEYWORD = "switch";
 (* Reserved until 0.7.0 *)
 SZABO_KEYWORD = "szabo";
 
+(* Reserved in 0.8.0 *)
 THIS_KEYWORD = "this";
 
 (* Deprecated in 0.5.0 *)
@@ -1009,13 +1011,15 @@ ExpressionStatement = (* expression: *) Expression
 
 AssemblyStatement = (* assembly_keyword: *) ASSEMBLY_KEYWORD
                     (* label: *) StringLiteral?
-                    (* flags: *) AssemblyFlagsDeclaration?
+                    (* flags: *) AssemblyFlagsDeclaration? (* Introduced in 0.8.13 *)
                     (* body: *) YulBlock;
 
+(* Introduced in 0.8.13 *)
 AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
                            (* flags: *) AssemblyFlags
                            (* close_paren: *) CLOSE_PAREN;
 
+(* Introduced in 0.8.13 *)
 AssemblyFlags = (* item: *) StringLiteral ((* separator: *) COMMA (* item: *) StringLiteral)*;
 
 (* 4.2. Declaration Statements: *)
@@ -1730,8 +1734,8 @@ YUL_IDENTIFIER = «IDENTIFIER_START» («IDENTIFIER_PART» | ".")*;
 
 YUL_IDENTIFIER = «IDENTIFIER_START» «IDENTIFIER_PART»*;
 
-YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
-           | (* variant: *) YUL_FALSE_KEYWORD
+YulLiteral = (* variant: *) YUL_TRUE_KEYWORD (* Introduced in 0.6.2 *)
+           | (* variant: *) YUL_FALSE_KEYWORD (* Introduced in 0.6.2 *)
            | (* variant: *) YUL_DECIMAL_LITERAL
            | (* variant: *) YUL_HEX_LITERAL
            | (* variant: *) HexStringLiteral
@@ -1829,6 +1833,7 @@ YUL_EXTERNAL_KEYWORD = "external";
 (* Reserved from 0.6.0 until 0.7.1 *)
 YUL_FALLBACK_KEYWORD = "fallback";
 
+(* Introduced in 0.6.2 *)
 YUL_FALSE_KEYWORD = "false";
 
 (* Reserved until 0.7.1 *)
@@ -1992,6 +1997,7 @@ YUL_STRING_KEYWORD = "string";
 (* Reserved until 0.7.1 *)
 YUL_STRUCT_KEYWORD = "struct";
 
+(* Reserved in 0.8.0 *)
 YUL_SUPER_KEYWORD = "super";
 
 (* Reserved from 0.5.0 until 0.7.1 *)
@@ -2002,11 +2008,13 @@ YUL_SWITCH_KEYWORD = "switch";
 (* Reserved until 0.7.0 *)
 YUL_SZABO_KEYWORD = "szabo";
 
+(* Reserved in 0.8.0 *)
 YUL_THIS_KEYWORD = "this";
 
 (* Reserved until 0.7.1 *)
 YUL_THROW_KEYWORD = "throw";
 
+(* Introduced in 0.6.2 *)
 YUL_TRUE_KEYWORD = "true";
 
 (* Reserved until 0.7.1 *)

@@ -1394,7 +1394,10 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = SuperKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(value = Atom("super"))]
+                            definitions = [KeywordDefinition(
+                                reserved = From("0.8.0"),
+                                value = Atom("super")
+                            )]
                         ),
                         Keyword(
                             name = SupportsKeyword,
@@ -1423,7 +1426,10 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = ThisKeyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(value = Atom("this"))]
+                            definitions = [KeywordDefinition(
+                                reserved = From("0.8.0"),
+                                value = Atom("this")
+                            )]
                         ),
                         Keyword(
                             name = ThrowKeyword,
@@ -2889,12 +2895,16 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 assembly_keyword = Required(AssemblyKeyword),
                                 label = Optional(reference = StringLiteral),
-                                flags = Optional(reference = AssemblyFlagsDeclaration),
+                                flags = Optional(
+                                    reference = AssemblyFlagsDeclaration,
+                                    enabled = From("0.8.13")
+                                ),
                                 body = Required(YulBlock)
                             )
                         ),
                         Struct(
                             name = AssemblyFlagsDeclaration,
+                            enabled = From("0.8.13"),
                             error_recovery = FieldsErrorRecovery(
                                 delimiters =
                                     FieldDelimiters(open = open_paren, close = close_paren)
@@ -2908,7 +2918,8 @@ codegen_language_macros::compile!(Language(
                         Separated(
                             name = AssemblyFlags,
                             reference = StringLiteral,
-                            separator = Comma
+                            separator = Comma,
+                            enabled = From("0.8.13")
                         )
                     ]
                 ),
@@ -4410,8 +4421,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = YulLiteral,
                             variants = [
-                                EnumVariant(reference = YulTrueKeyword),
-                                EnumVariant(reference = YulFalseKeyword),
+                                EnumVariant(reference = YulTrueKeyword, enabled = From("0.6.2")),
+                                EnumVariant(reference = YulFalseKeyword, enabled = From("0.6.2")),
                                 EnumVariant(reference = YulDecimalLiteral),
                                 EnumVariant(reference = YulHexLiteral),
                                 EnumVariant(reference = HexStringLiteral),
@@ -4745,7 +4756,10 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = YulFalseKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("false"))]
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.6.2"),
+                                value = Atom("false")
+                            )]
                         ),
                         Keyword(
                             name = YulFinalKeyword,
@@ -5504,8 +5518,11 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = YulSuperKeyword,
                             identifier = YulIdentifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("super"))]
+                            definitions = [KeywordDefinition(
+                                enabled = Never,
+                                reserved = From("0.8.0"),
+                                value = Atom("super")
+                            )]
                         ),
                         Keyword(
                             name = YulSupportsKeyword,
@@ -5533,8 +5550,11 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = YulThisKeyword,
                             identifier = YulIdentifier,
-                            definitions =
-                                [KeywordDefinition(enabled = Never, value = Atom("this"))]
+                            definitions = [KeywordDefinition(
+                                enabled = Never,
+                                reserved = From("0.8.0"),
+                                value = Atom("this")
+                            )]
                         ),
                         Keyword(
                             name = YulThrowKeyword,
@@ -5548,7 +5568,10 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = YulTrueKeyword,
                             identifier = YulIdentifier,
-                            definitions = [KeywordDefinition(value = Atom("true"))]
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.6.2"),
+                                value = Atom("true")
+                            )]
                         ),
                         Keyword(
                             name = YulTryKeyword,
