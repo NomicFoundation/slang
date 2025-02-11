@@ -1,29 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ assembly "evmasm" ("memory-safe") {                                              │ 0..35
-  2  │                                                                                  │ 36..36
-  3  │ }                                                                                │ 37..38
+  1  │ assembly "evmasm" {                                                              │ 0..19
+  2  │                                                                                  │ 20..20
+  3  │ }                                                                                │ 21..22
 
 Errors: []
 
 Tree:
-  - (root꞉ AssemblyStatement): # 'assembly "evmasm" ("memory-safe") {\n\n}\n' (0..39)
+  - (root꞉ AssemblyStatement): # 'assembly "evmasm" {\n\n}\n' (0..23)
       - (assembly_keyword꞉ AssemblyKeyword): "assembly" # (0..8)
       - (label꞉ StringLiteral): # ' "evmasm"' (8..17)
           - (leading_trivia꞉ Whitespace): " " # (8..9)
           - (variant꞉ DoubleQuotedStringLiteral): '"evmasm"' # (9..17)
-      - (flags꞉ AssemblyFlagsDeclaration): # ' ("memory-safe")' (17..33)
+      - (body꞉ YulBlock): # " {\n\n}\n" (17..23)
           - (leading_trivia꞉ Whitespace): " " # (17..18)
-          - (open_paren꞉ OpenParen): "(" # (18..19)
-          - (flags꞉ AssemblyFlags): # '"memory-safe"' (19..32)
-              - (item꞉ StringLiteral) ► (variant꞉ DoubleQuotedStringLiteral): '"memory-safe"' # (19..32)
-          - (close_paren꞉ CloseParen): ")" # (32..33)
-      - (body꞉ YulBlock): # " {\n\n}\n" (33..39)
-          - (leading_trivia꞉ Whitespace): " " # (33..34)
-          - (open_brace꞉ OpenBrace): "{" # (34..35)
-          - (trailing_trivia꞉ EndOfLine): "\n" # (35..36)
-          - (statements꞉ YulStatements): [] # (36..36)
-          - (leading_trivia꞉ EndOfLine): "\n" # (36..37)
-          - (close_brace꞉ CloseBrace): "}" # (37..38)
-          - (trailing_trivia꞉ EndOfLine): "\n" # (38..39)
+          - (open_brace꞉ OpenBrace): "{" # (18..19)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)
+          - (statements꞉ YulStatements): [] # (20..20)
+          - (leading_trivia꞉ EndOfLine): "\n" # (20..21)
+          - (close_brace꞉ CloseBrace): "}" # (21..22)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (22..23)

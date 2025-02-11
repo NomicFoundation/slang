@@ -368,7 +368,7 @@
 
 ```
 
-<pre ebnf-snippet="YulFalseKeyword" style="display: none;"><a href="#YulFalseKeyword"><span class="k">YUL_FALSE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"false"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulFalseKeyword" style="display: none;"><span class="cm">(* Introduced in 0.6.2 *)</span><br /><a href="#YulFalseKeyword"><span class="k">YUL_FALSE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"false"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulFinalKeyword }
 
@@ -524,13 +524,13 @@
 
 ```
 
-<pre ebnf-snippet="YulJumpKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><a href="#YulJumpKeyword"><span class="k">YUL_JUMP_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jump"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulJumpKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><span class="cm">(* Reserved until 0.6.0 *)</span><br /><a href="#YulJumpKeyword"><span class="k">YUL_JUMP_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jump"</span><span class="o">;</span><br /><br /><span class="cm">(* Reserved in 0.8.0 *)</span><br /><a href="#YulJumpKeyword"><span class="k">YUL_JUMP_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jump"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulJumpiKeyword }
 
 ```
 
-<pre ebnf-snippet="YulJumpiKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><a href="#YulJumpiKeyword"><span class="k">YUL_JUMPI_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jumpi"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulJumpiKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><span class="cm">(* Reserved until 0.6.0 *)</span><br /><a href="#YulJumpiKeyword"><span class="k">YUL_JUMPI_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jumpi"</span><span class="o">;</span><br /><br /><span class="cm">(* Reserved in 0.8.0 *)</span><br /><a href="#YulJumpiKeyword"><span class="k">YUL_JUMPI_KEYWORD</span></a><span class="o"> = </span><span class="s2">"jumpi"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulKeccak256Keyword }
 
@@ -980,7 +980,7 @@
 
 ```
 
-<pre ebnf-snippet="YulSuperKeyword" style="display: none;"><a href="#YulSuperKeyword"><span class="k">YUL_SUPER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"super"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulSuperKeyword" style="display: none;"><span class="cm">(* Reserved in 0.8.0 *)</span><br /><a href="#YulSuperKeyword"><span class="k">YUL_SUPER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"super"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulSupportsKeyword }
 
@@ -1010,7 +1010,7 @@
 
 ```
 
-<pre ebnf-snippet="YulThisKeyword" style="display: none;"><a href="#YulThisKeyword"><span class="k">YUL_THIS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"this"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulThisKeyword" style="display: none;"><span class="cm">(* Reserved in 0.8.0 *)</span><br /><a href="#YulThisKeyword"><span class="k">YUL_THIS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"this"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulThrowKeyword }
 
@@ -1028,7 +1028,7 @@
 
 ```
 
-<pre ebnf-snippet="YulTrueKeyword" style="display: none;"><a href="#YulTrueKeyword"><span class="k">YUL_TRUE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"true"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulTrueKeyword" style="display: none;"><span class="cm">(* Introduced in 0.6.2 *)</span><br /><a href="#YulTrueKeyword"><span class="k">YUL_TRUE_KEYWORD</span></a><span class="o"> = </span><span class="s2">"true"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulTStoreKeyword }
 

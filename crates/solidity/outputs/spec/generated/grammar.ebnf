@@ -424,6 +424,7 @@ STRING_KEYWORD = "string";
 
 STRUCT_KEYWORD = "struct";
 
+(* Reserved in 0.8.0 *)
 SUPER_KEYWORD = "super";
 
 (* Reserved in 0.5.0 *)
@@ -435,6 +436,7 @@ SWITCH_KEYWORD = "switch";
 (* Reserved until 0.7.0 *)
 SZABO_KEYWORD = "szabo";
 
+(* Reserved in 0.8.0 *)
 THIS_KEYWORD = "this";
 
 (* Deprecated in 0.5.0 *)
@@ -1009,13 +1011,15 @@ ExpressionStatement = (* expression: *) Expression
 
 AssemblyStatement = (* assembly_keyword: *) ASSEMBLY_KEYWORD
                     (* label: *) StringLiteral?
-                    (* flags: *) AssemblyFlagsDeclaration?
+                    (* flags: *) AssemblyFlagsDeclaration? (* Introduced in 0.8.13 *)
                     (* body: *) YulBlock;
 
+(* Introduced in 0.8.13 *)
 AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
                            (* flags: *) AssemblyFlags
                            (* close_paren: *) CLOSE_PAREN;
 
+(* Introduced in 0.8.13 *)
 AssemblyFlags = (* item: *) StringLiteral ((* separator: *) COMMA (* item: *) StringLiteral)*;
 
 (* 4.2. Declaration Statements: *)
@@ -1815,8 +1819,8 @@ YulBuiltInFunction = (* variant: *) YUL_ADD_KEYWORD
                    | (* variant: *) YUL_T_STORE_KEYWORD (* Introduced in 0.8.24 *)
                    | (* variant: *) YUL_M_COPY_KEYWORD; (* Introduced in 0.8.24 *)
 
-YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
-           | (* variant: *) YUL_FALSE_KEYWORD
+YulLiteral = (* variant: *) YUL_TRUE_KEYWORD (* Introduced in 0.6.2 *)
+           | (* variant: *) YUL_FALSE_KEYWORD (* Introduced in 0.6.2 *)
            | (* variant: *) YUL_DECIMAL_LITERAL
            | (* variant: *) YUL_HEX_LITERAL
            | (* variant: *) HexStringLiteral
@@ -1988,6 +1992,7 @@ YUL_EXTERNAL_KEYWORD = "external";
 (* Reserved from 0.6.0 until 0.7.1 *)
 YUL_FALLBACK_KEYWORD = "fallback";
 
+(* Introduced in 0.6.2 *)
 YUL_FALSE_KEYWORD = "false";
 
 (* Reserved until 0.7.1 *)
@@ -2068,9 +2073,17 @@ YUL_IS_KEYWORD = "is";
 YUL_IS_ZERO_KEYWORD = "iszero";
 
 (* Deprecated in 0.5.0 *)
+(* Reserved until 0.6.0 *)
+YUL_JUMP_KEYWORD = "jump";
+
+(* Reserved in 0.8.0 *)
 YUL_JUMP_KEYWORD = "jump";
 
 (* Deprecated in 0.5.0 *)
+(* Reserved until 0.6.0 *)
+YUL_JUMPI_KEYWORD = "jumpi";
+
+(* Reserved in 0.8.0 *)
 YUL_JUMPI_KEYWORD = "jumpi";
 
 (* Introduced in 0.4.12 *)
@@ -2273,6 +2286,7 @@ YUL_SUB_KEYWORD = "sub";
 (* Reserved until 0.5.0 *)
 YUL_SUICIDE_KEYWORD = "suicide";
 
+(* Reserved in 0.8.0 *)
 YUL_SUPER_KEYWORD = "super";
 
 (* Reserved from 0.5.0 until 0.7.1 *)
@@ -2285,6 +2299,7 @@ YUL_SZABO_KEYWORD = "szabo";
 
 YUL_TIMESTAMP_KEYWORD = "timestamp";
 
+(* Reserved in 0.8.0 *)
 YUL_THIS_KEYWORD = "this";
 
 (* Reserved until 0.7.1 *)
@@ -2294,6 +2309,7 @@ YUL_THROW_KEYWORD = "throw";
 (* Reserved in 0.8.25 *)
 YUL_T_LOAD_KEYWORD = "tload";
 
+(* Introduced in 0.6.2 *)
 YUL_TRUE_KEYWORD = "true";
 
 (* Introduced in 0.8.24 *)

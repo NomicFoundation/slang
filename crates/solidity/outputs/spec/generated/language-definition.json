@@ -2165,7 +2165,9 @@
                 "item": {
                   "name": "SuperKeyword",
                   "identifier": "Identifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "super" } } }]
+                  "definitions": [
+                    { "reserved": { "From": { "from": "0.8.0" } }, "value": { "Atom": { "atom": "super" } } }
+                  ]
                 }
               }
             },
@@ -2213,7 +2215,9 @@
                 "item": {
                   "name": "ThisKeyword",
                   "identifier": "Identifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "this" } } }]
+                  "definitions": [
+                    { "reserved": { "From": { "from": "0.8.0" } }, "value": { "Atom": { "atom": "this" } } }
+                  ]
                 }
               }
             },
@@ -3988,7 +3992,12 @@
                   "fields": {
                     "assembly_keyword": { "Required": { "reference": "AssemblyKeyword" } },
                     "label": { "Optional": { "reference": "StringLiteral" } },
-                    "flags": { "Optional": { "reference": "AssemblyFlagsDeclaration" } },
+                    "flags": {
+                      "Optional": {
+                        "reference": "AssemblyFlagsDeclaration",
+                        "enabled": { "From": { "from": "0.8.13" } }
+                      }
+                    },
                     "body": { "Required": { "reference": "YulBlock" } }
                   }
                 }
@@ -3998,6 +4007,7 @@
               "Struct": {
                 "item": {
                   "name": "AssemblyFlagsDeclaration",
+                  "enabled": { "From": { "from": "0.8.13" } },
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
                   "fields": {
                     "open_paren": { "Required": { "reference": "OpenParen" } },
@@ -4007,7 +4017,16 @@
                 }
               }
             },
-            { "Separated": { "item": { "name": "AssemblyFlags", "reference": "StringLiteral", "separator": "Comma" } } }
+            {
+              "Separated": {
+                "item": {
+                  "name": "AssemblyFlags",
+                  "reference": "StringLiteral",
+                  "separator": "Comma",
+                  "enabled": { "From": { "from": "0.8.13" } }
+                }
+              }
+            }
           ]
         },
         {
@@ -6183,8 +6202,8 @@
                 "item": {
                   "name": "YulLiteral",
                   "variants": [
-                    { "reference": "YulTrueKeyword" },
-                    { "reference": "YulFalseKeyword" },
+                    { "reference": "YulTrueKeyword", "enabled": { "From": { "from": "0.6.2" } } },
+                    { "reference": "YulFalseKeyword", "enabled": { "From": { "from": "0.6.2" } } },
                     { "reference": "YulDecimalLiteral" },
                     { "reference": "YulHexLiteral" },
                     { "reference": "HexStringLiteral" },
@@ -7047,7 +7066,9 @@
                 "item": {
                   "name": "YulFalseKeyword",
                   "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "false" } } }]
+                  "definitions": [
+                    { "enabled": { "From": { "from": "0.6.2" } }, "value": { "Atom": { "atom": "false" } } }
+                  ]
                 }
               }
             },
@@ -7737,7 +7758,16 @@
                   "name": "YulJumpKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
-                    { "enabled": { "Till": { "till": "0.5.0" } }, "value": { "Atom": { "atom": "jump" } } }
+                    {
+                      "enabled": { "Till": { "till": "0.5.0" } },
+                      "reserved": { "Till": { "till": "0.6.0" } },
+                      "value": { "Atom": { "atom": "jump" } }
+                    },
+                    {
+                      "enabled": "Never",
+                      "reserved": { "From": { "from": "0.8.0" } },
+                      "value": { "Atom": { "atom": "jump" } }
+                    }
                   ]
                 }
               }
@@ -7748,7 +7778,16 @@
                   "name": "YulJumpiKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [
-                    { "enabled": { "Till": { "till": "0.5.0" } }, "value": { "Atom": { "atom": "jumpi" } } }
+                    {
+                      "enabled": { "Till": { "till": "0.5.0" } },
+                      "reserved": { "Till": { "till": "0.6.0" } },
+                      "value": { "Atom": { "atom": "jumpi" } }
+                    },
+                    {
+                      "enabled": "Never",
+                      "reserved": { "From": { "from": "0.8.0" } },
+                      "value": { "Atom": { "atom": "jumpi" } }
+                    }
                   ]
                 }
               }
@@ -8666,7 +8705,13 @@
                 "item": {
                   "name": "YulSuperKeyword",
                   "identifier": "YulIdentifier",
-                  "definitions": [{ "enabled": "Never", "value": { "Atom": { "atom": "super" } } }]
+                  "definitions": [
+                    {
+                      "enabled": "Never",
+                      "reserved": { "From": { "from": "0.8.0" } },
+                      "value": { "Atom": { "atom": "super" } }
+                    }
+                  ]
                 }
               }
             },
@@ -8723,7 +8768,13 @@
                 "item": {
                   "name": "YulThisKeyword",
                   "identifier": "YulIdentifier",
-                  "definitions": [{ "enabled": "Never", "value": { "Atom": { "atom": "this" } } }]
+                  "definitions": [
+                    {
+                      "enabled": "Never",
+                      "reserved": { "From": { "from": "0.8.0" } },
+                      "value": { "Atom": { "atom": "this" } }
+                    }
+                  ]
                 }
               }
             },
@@ -8762,7 +8813,9 @@
                 "item": {
                   "name": "YulTrueKeyword",
                   "identifier": "YulIdentifier",
-                  "definitions": [{ "value": { "Atom": { "atom": "true" } } }]
+                  "definitions": [
+                    { "enabled": { "From": { "from": "0.6.2" } }, "value": { "Atom": { "atom": "true" } } }
+                  ]
                 }
               }
             },

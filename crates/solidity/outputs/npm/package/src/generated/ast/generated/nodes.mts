@@ -3249,7 +3249,7 @@ export class ExpressionStatement {
  * ```ebnf
  * AssemblyStatement = (* assembly_keyword: *) ASSEMBLY_KEYWORD
  *                     (* label: *) StringLiteral?
- *                     (* flags: *) AssemblyFlagsDeclaration?
+ *                     (* flags: *) AssemblyFlagsDeclaration? (* Introduced in 0.8.13 *)
  *                     (* body: *) YulBlock;
  * ```
  */
@@ -3310,6 +3310,7 @@ export class AssemblyStatement {
  * This node represents a `AssemblyFlagsDeclaration` nonterminal, with the following structure:
  *
  * ```ebnf
+ * (* Introduced in 0.8.13 *)
  * AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
  *                            (* flags: *) AssemblyFlags
  *                            (* close_paren: *) CLOSE_PAREN;
@@ -9825,8 +9826,8 @@ export class YulBuiltInFunction {
  * This node represents a `YulLiteral` nonterminal, with the following structure:
  *
  * ```ebnf
- * YulLiteral = (* variant: *) YUL_TRUE_KEYWORD
- *            | (* variant: *) YUL_FALSE_KEYWORD
+ * YulLiteral = (* variant: *) YUL_TRUE_KEYWORD (* Introduced in 0.6.2 *)
+ *            | (* variant: *) YUL_FALSE_KEYWORD (* Introduced in 0.6.2 *)
  *            | (* variant: *) YUL_DECIMAL_LITERAL
  *            | (* variant: *) YUL_HEX_LITERAL
  *            | (* variant: *) HexStringLiteral
@@ -11022,6 +11023,7 @@ export class ErrorParameters {
  * This node represents a `AssemblyFlags` nonterminal, with the following structure:
  *
  * ```ebnf
+ * (* Introduced in 0.8.13 *)
  * AssemblyFlags = (* item: *) StringLiteral ((* separator: *) COMMA (* item: *) StringLiteral)*;
  * ```
  */

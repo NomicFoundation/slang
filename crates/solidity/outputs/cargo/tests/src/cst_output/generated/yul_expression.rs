@@ -15,6 +15,11 @@ fn decimal_trailing_ident_start() -> Result<()> {
 }
 
 #[test]
+fn false_keyword() -> Result<()> {
+    run("YulExpression", "false_keyword")
+}
+
+#[test]
 fn function_call() -> Result<()> {
     run("YulExpression", "function_call")
 }
@@ -37,4 +42,9 @@ fn identifier_path() -> Result<()> {
 #[test]
 fn identifier_with_dot() -> Result<()> {
     run("YulExpression", "identifier_with_dot")
+}
+
+#[test]
+fn true_keyword() -> Result<()> {
+    run("YulExpression", "true_keyword")
 }

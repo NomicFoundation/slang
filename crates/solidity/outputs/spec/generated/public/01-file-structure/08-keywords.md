@@ -542,7 +542,7 @@
 
 ```
 
-<pre ebnf-snippet="SuperKeyword" style="display: none;"><a href="#SuperKeyword"><span class="k">SUPER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"super"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="SuperKeyword" style="display: none;"><span class="cm">(* Reserved in 0.8.0 *)</span><br /><a href="#SuperKeyword"><span class="k">SUPER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"super"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #SupportsKeyword }
 
@@ -566,7 +566,7 @@
 
 ```
 
-<pre ebnf-snippet="ThisKeyword" style="display: none;"><a href="#ThisKeyword"><span class="k">THIS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"this"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="ThisKeyword" style="display: none;"><span class="cm">(* Reserved in 0.8.0 *)</span><br /><a href="#ThisKeyword"><span class="k">THIS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"this"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ThrowKeyword }
 
