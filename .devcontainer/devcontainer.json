@@ -13,6 +13,7 @@
     }
   },
   "containerEnv": {
+    "IS_INSIDE_SLANG_DEVCONTAINER": "true",
     // A lot of dependencies/packages (specifically python) assume certain
     // environment variables are set, and will fail otherwise.
     // Here we set some defaults if the developer environment doesn't have them:
