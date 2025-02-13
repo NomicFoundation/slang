@@ -1,0 +1,15 @@
+model ldw::model::resolved modifies ldw::model::parsed {
+
+    modify Model
+        -= values
+        -= parent_name
+        += parent: option<Model>
+        += definitions: map<string, Definition>
+    ;
+    
+    delete MemberModification;
+    delete Deletion;
+    delete MemberDeletion;
+    delete MemberAddition;
+    
+}

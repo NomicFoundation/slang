@@ -1,0 +1,99 @@
+model ldw::model::parsed {
+
+    Model = {
+        name: FQN,
+        parent_name: option<FQN>,
+        values: seq<{
+              Deletion
+            | MemberModification
+            | Definition
+        }>
+    };
+    
+    FQN = seq<string>;
+    
+    Definition = {
+        name: string,
+        Type: Type
+    };
+    
+    Deletion = { name: string };
+    
+    MemberModification = {
+        name: string,
+        values: seq<{
+              MemberDeletion
+            | MemberAddition
+        }>
+    };
+    
+    MemberDeletion = { name: string };
+    
+    MemberAddition = { value: {
+          ProductMember
+        | Type
+    } };
+    
+    Type = {
+          VoidType
+        | PrimitiveType
+        | EnumType
+        | TypeWithStructure
+        | NamedTypeReference
+    };
+    
+    VoidType = {  };
+    
+    PrimitiveType = {
+          "boolean"
+        | "string"
+        | "i8"
+        | "i16"
+        | "i32"
+        | "i64"
+        | "u8"
+        | "u16"
+        | "u32"
+        | "u64"
+        | "f32"
+        | "f64"
+    };
+    
+    EnumType = { members: seq<string> };
+    
+    TypeWithStructure = {
+          SumType
+        | ProductType
+        | GenericType
+    };
+    
+    SumType = { members: seq<Type> };
+    
+    ProductType = { members: seq<ProductMember> };
+    
+    ProductMember = {
+        name: string,
+        type: Type
+    };
+    
+    GenericType = {
+          MapType
+        | SetType
+        | SequenceType
+        | OptionType
+    };
+    
+    MapType = {
+        key_type: Type,
+        value_type: Type
+    };
+    
+    SetType = { key_type: Type };
+    
+    SequenceType = { value_type: Type };
+    
+    OptionType = { value_type: Type };
+    
+    NamedTypeReference = { FQN: FQN };
+    
+}

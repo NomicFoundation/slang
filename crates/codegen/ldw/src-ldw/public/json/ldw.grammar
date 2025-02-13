@@ -1,0 +1,28 @@
+grammar public::json {
+     
+    value = boolean | number | string | null | list | map ;
+
+    boolean = 'true' | 'false' ;
+
+    number   @atomic = sign? ureal ;
+    ureal    @atomic = uinteger ;
+    uinteger @atomic = digit+ ;
+    digit            = [0-9] ;
+    sign             = [+-]? ;
+
+    string           @atomic = '"' string_character* '"' ;
+    string_character @atomic = [^"\\] | '\\' [\\"abfnrtv] | '\\x' uinteger16 ;
+
+    null = 'null' ;
+
+    list = '[' ( value ( ',' value )* )? ']' ;
+    
+    map       = '{' ( map_entry ( ',' map_entry )* )? '}' ;
+    map_entry = key:string ':' value ;
+    
+    trivia        @noskip = whitespace | line_comment | block_comment ;
+    line_comment  @atomic = '//' [^\n]* [\n]? ;
+    block_comment @atomic = '/*' ( [^*]+ | '*' !'/' )* '/' ;
+    whitespace    @atomic = [\n\t ]* ;
+
+}
