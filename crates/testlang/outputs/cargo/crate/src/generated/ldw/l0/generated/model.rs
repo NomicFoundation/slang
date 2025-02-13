@@ -1,4 +1,4 @@
-// Generated on 2025-01-30T14:52:17.619Z
+// Generated on 2025-02-13T18:37:18.865Z
 pub enum TerminalKind {
     Bang,
     CloseBracket,
@@ -16,7 +16,11 @@ pub enum TerminalKind {
     Whitespace,
 }
 
-pub type TerminalNode = String;
+pub type TerminalNodeRef = Box<TerminalNode>;
+pub struct TerminalNode {
+    pub kind: TerminalKind,
+    pub value: String,
+}
 
 pub type SourceUnitRef = Box<SourceUnit>;
 pub struct SourceUnit {
@@ -25,37 +29,37 @@ pub struct SourceUnit {
 
 pub type TreeRef = Box<Tree>;
 pub struct Tree {
-    pub keyword: TerminalNode,
-    pub name: Option<TerminalNode>,
+    pub keyword: TerminalNodeRef,
+    pub name: Option<TerminalNodeRef>,
     pub node: TreeNodeRef,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type TreeNodeRef = Box<TreeNode>;
 pub struct TreeNode {
-    pub open_bracket: TerminalNode,
+    pub open_bracket: TerminalNodeRef,
     pub members: TreeNodeChildrenRef,
-    pub close_bracket: TerminalNode,
+    pub close_bracket: TerminalNodeRef,
 }
 
 pub type AdditionExpressionRef = Box<AdditionExpression>;
 pub struct AdditionExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type NegationExpressionRef = Box<NegationExpression>;
 pub struct NegationExpression {
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub operand: Expression,
 }
 
 pub type MemberAccessExpressionRef = Box<MemberAccessExpression>;
 pub struct MemberAccessExpression {
     pub operand: Expression,
-    pub period: TerminalNode,
-    pub member: TerminalNode,
+    pub period: TerminalNodeRef,
+    pub member: TerminalNodeRef,
 }
 
 pub enum SourceUnitMember {
@@ -67,18 +71,18 @@ pub enum SourceUnitMember {
 
 pub enum TreeNodeChild {
     TreeNode(TreeNodeRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum Expression {
     AdditionExpression(AdditionExpressionRef),
     NegationExpression(NegationExpressionRef),
     MemberAccessExpression(MemberAccessExpressionRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum Literal {
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub type SourceUnitMembersRef = Box<SourceUnitMembers>;
@@ -93,5 +97,5 @@ pub struct TreeNodeChildren {
 
 pub type SeparatedIdentifiersRef = Box<SeparatedIdentifiers>;
 pub struct SeparatedIdentifiers {
-    pub item: std::collections::HashSet<TerminalNode>,
+    pub item: std::collections::HashSet<TerminalNodeRef>,
 }

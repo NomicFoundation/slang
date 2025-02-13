@@ -4825,6 +4825,4 @@ model l0::generated {
        */
       YulPath = {item: set<TerminalNode>};
     
-
-    TerminalNode = string;
 }

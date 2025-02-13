@@ -1,4 +1,4 @@
-// Generated on 2025-01-29T15:47:57.404Z
+// Generated on 2025-02-13T18:37:20.989Z
 use super::model::*;
 
 pub trait InPlaceTransformer {
@@ -8,7 +8,8 @@ pub trait InPlaceTransformer {
     }
 
     #[allow(unused_mut)]
-    fn transform_terminal_node(self: &mut Self, mut node: TerminalNode) -> TerminalNode {
+    fn transform_terminal_node(self: &mut Self, mut node: Box<TerminalNode>) -> Box<TerminalNode> {
+        node.kind = self.transform_terminal_kind(node.kind);
         node
     }
 

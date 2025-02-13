@@ -1,4 +1,4 @@
-// Generated on 2025-01-30T14:52:17.625Z
+// Generated on 2025-02-13T18:37:18.882Z
 use super::model::*;
 
 pub trait Visitor {
@@ -6,7 +6,9 @@ pub trait Visitor {
     fn handle_terminal_kind(self: &mut Self, node: &TerminalKind) {}
 
     #[allow(unused_variables)]
-    fn handle_terminal_node(self: &mut Self, node: &TerminalNode) {}
+    fn handle_terminal_node(self: &mut Self, node: &Box<TerminalNode>) {
+        self.handle_terminal_kind(&node.kind);
+    }
 
     #[allow(unused_variables)]
     fn handle_source_unit(self: &mut Self, node: &Box<SourceUnit>) {

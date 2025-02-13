@@ -266,6 +266,4 @@ model l0::generated {
        */
       SeparatedIdentifiers = {item: set<TerminalNode>};
     
-
-    TerminalNode = string;
 }

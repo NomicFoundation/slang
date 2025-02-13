@@ -1,4 +1,4 @@
-// Generated on 2025-01-29T15:47:57.390Z
+// Generated on 2025-02-13T18:37:20.955Z
 pub enum TerminalKind {
     AbicoderKeyword,
     AbstractKeyword,
@@ -377,7 +377,11 @@ pub enum TerminalKind {
     YulYearsKeyword,
 }
 
-pub type TerminalNode = String;
+pub type TerminalNodeRef = Box<TerminalNode>;
+pub struct TerminalNode {
+    pub kind: TerminalKind,
+    pub value: String,
+}
 
 pub type SourceUnitRef = Box<SourceUnit>;
 pub struct SourceUnit {
@@ -386,33 +390,33 @@ pub struct SourceUnit {
 
 pub type PragmaDirectiveRef = Box<PragmaDirective>;
 pub struct PragmaDirective {
-    pub pragma_keyword: TerminalNode,
+    pub pragma_keyword: TerminalNodeRef,
     pub pragma: Pragma,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type AbicoderPragmaRef = Box<AbicoderPragma>;
 pub struct AbicoderPragma {
-    pub abicoder_keyword: TerminalNode,
-    pub version: TerminalNode,
+    pub abicoder_keyword: TerminalNodeRef,
+    pub version: TerminalNodeRef,
 }
 
 pub type ExperimentalPragmaRef = Box<ExperimentalPragma>;
 pub struct ExperimentalPragma {
-    pub experimental_keyword: TerminalNode,
+    pub experimental_keyword: TerminalNodeRef,
     pub feature: ExperimentalFeature,
 }
 
 pub type VersionPragmaRef = Box<VersionPragma>;
 pub struct VersionPragma {
-    pub solidity_keyword: TerminalNode,
+    pub solidity_keyword: TerminalNodeRef,
     pub sets: VersionExpressionSetsRef,
 }
 
 pub type VersionRangeRef = Box<VersionRange>;
 pub struct VersionRange {
     pub start: VersionLiteral,
-    pub minus: TerminalNode,
+    pub minus: TerminalNodeRef,
     pub end: VersionLiteral,
 }
 
@@ -424,9 +428,9 @@ pub struct VersionTerm {
 
 pub type ImportDirectiveRef = Box<ImportDirective>;
 pub struct ImportDirective {
-    pub import_keyword: TerminalNode,
+    pub import_keyword: TerminalNodeRef,
     pub clause: ImportClause,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type PathImportRef = Box<PathImport>;
@@ -437,48 +441,48 @@ pub struct PathImport {
 
 pub type NamedImportRef = Box<NamedImport>;
 pub struct NamedImport {
-    pub asterisk: TerminalNode,
+    pub asterisk: TerminalNodeRef,
     pub alias: ImportAliasRef,
-    pub from_keyword: TerminalNode,
+    pub from_keyword: TerminalNodeRef,
     pub path: StringLiteral,
 }
 
 pub type ImportDeconstructionRef = Box<ImportDeconstruction>;
 pub struct ImportDeconstruction {
-    pub open_brace: TerminalNode,
+    pub open_brace: TerminalNodeRef,
     pub symbols: ImportDeconstructionSymbolsRef,
-    pub close_brace: TerminalNode,
-    pub from_keyword: TerminalNode,
+    pub close_brace: TerminalNodeRef,
+    pub from_keyword: TerminalNodeRef,
     pub path: StringLiteral,
 }
 
 pub type ImportDeconstructionSymbolRef = Box<ImportDeconstructionSymbol>;
 pub struct ImportDeconstructionSymbol {
-    pub name: TerminalNode,
+    pub name: TerminalNodeRef,
     pub alias: Option<ImportAliasRef>,
 }
 
 pub type ImportAliasRef = Box<ImportAlias>;
 pub struct ImportAlias {
-    pub as_keyword: TerminalNode,
-    pub identifier: TerminalNode,
+    pub as_keyword: TerminalNodeRef,
+    pub identifier: TerminalNodeRef,
 }
 
 pub type UsingDirectiveRef = Box<UsingDirective>;
 pub struct UsingDirective {
-    pub using_keyword: TerminalNode,
+    pub using_keyword: TerminalNodeRef,
     pub clause: UsingClause,
-    pub for_keyword: TerminalNode,
+    pub for_keyword: TerminalNodeRef,
     pub target: UsingTarget,
-    pub global_keyword: Option<TerminalNode>,
-    pub semicolon: TerminalNode,
+    pub global_keyword: Option<TerminalNodeRef>,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type UsingDeconstructionRef = Box<UsingDeconstruction>;
 pub struct UsingDeconstruction {
-    pub open_brace: TerminalNode,
+    pub open_brace: TerminalNodeRef,
     pub symbols: UsingDeconstructionSymbolsRef,
-    pub close_brace: TerminalNode,
+    pub close_brace: TerminalNodeRef,
 }
 
 pub type UsingDeconstructionSymbolRef = Box<UsingDeconstructionSymbol>;
@@ -489,24 +493,24 @@ pub struct UsingDeconstructionSymbol {
 
 pub type UsingAliasRef = Box<UsingAlias>;
 pub struct UsingAlias {
-    pub as_keyword: TerminalNode,
+    pub as_keyword: TerminalNodeRef,
     pub operator: UsingOperator,
 }
 
 pub type ContractDefinitionRef = Box<ContractDefinition>;
 pub struct ContractDefinition {
-    pub abstract_keyword: Option<TerminalNode>,
-    pub contract_keyword: TerminalNode,
-    pub name: TerminalNode,
+    pub abstract_keyword: Option<TerminalNodeRef>,
+    pub contract_keyword: TerminalNodeRef,
+    pub name: TerminalNodeRef,
     pub inheritance: Option<InheritanceSpecifierRef>,
-    pub open_brace: TerminalNode,
+    pub open_brace: TerminalNodeRef,
     pub members: ContractMembersRef,
-    pub close_brace: TerminalNode,
+    pub close_brace: TerminalNodeRef,
 }
 
 pub type InheritanceSpecifierRef = Box<InheritanceSpecifier>;
 pub struct InheritanceSpecifier {
-    pub is_keyword: TerminalNode,
+    pub is_keyword: TerminalNodeRef,
     pub types: InheritanceTypesRef,
 }
 
@@ -518,76 +522,76 @@ pub struct InheritanceType {
 
 pub type InterfaceDefinitionRef = Box<InterfaceDefinition>;
 pub struct InterfaceDefinition {
-    pub interface_keyword: TerminalNode,
-    pub name: TerminalNode,
+    pub interface_keyword: TerminalNodeRef,
+    pub name: TerminalNodeRef,
     pub inheritance: Option<InheritanceSpecifierRef>,
-    pub open_brace: TerminalNode,
+    pub open_brace: TerminalNodeRef,
     pub members: InterfaceMembersRef,
-    pub close_brace: TerminalNode,
+    pub close_brace: TerminalNodeRef,
 }
 
 pub type LibraryDefinitionRef = Box<LibraryDefinition>;
 pub struct LibraryDefinition {
-    pub library_keyword: TerminalNode,
-    pub name: TerminalNode,
-    pub open_brace: TerminalNode,
+    pub library_keyword: TerminalNodeRef,
+    pub name: TerminalNodeRef,
+    pub open_brace: TerminalNodeRef,
     pub members: LibraryMembersRef,
-    pub close_brace: TerminalNode,
+    pub close_brace: TerminalNodeRef,
 }
 
 pub type StructDefinitionRef = Box<StructDefinition>;
 pub struct StructDefinition {
-    pub struct_keyword: TerminalNode,
-    pub name: TerminalNode,
-    pub open_brace: TerminalNode,
+    pub struct_keyword: TerminalNodeRef,
+    pub name: TerminalNodeRef,
+    pub open_brace: TerminalNodeRef,
     pub members: StructMembersRef,
-    pub close_brace: TerminalNode,
+    pub close_brace: TerminalNodeRef,
 }
 
 pub type StructMemberRef = Box<StructMember>;
 pub struct StructMember {
     pub type_name: TypeName,
-    pub name: TerminalNode,
-    pub semicolon: TerminalNode,
+    pub name: TerminalNodeRef,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type EnumDefinitionRef = Box<EnumDefinition>;
 pub struct EnumDefinition {
-    pub enum_keyword: TerminalNode,
-    pub name: TerminalNode,
-    pub open_brace: TerminalNode,
+    pub enum_keyword: TerminalNodeRef,
+    pub name: TerminalNodeRef,
+    pub open_brace: TerminalNodeRef,
     pub members: EnumMembersRef,
-    pub close_brace: TerminalNode,
+    pub close_brace: TerminalNodeRef,
 }
 
 pub type ConstantDefinitionRef = Box<ConstantDefinition>;
 pub struct ConstantDefinition {
     pub type_name: TypeName,
-    pub constant_keyword: TerminalNode,
-    pub name: TerminalNode,
-    pub equal: TerminalNode,
+    pub constant_keyword: TerminalNodeRef,
+    pub name: TerminalNodeRef,
+    pub equal: TerminalNodeRef,
     pub value: Expression,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type StateVariableDefinitionRef = Box<StateVariableDefinition>;
 pub struct StateVariableDefinition {
     pub type_name: TypeName,
     pub attributes: StateVariableAttributesRef,
-    pub name: TerminalNode,
+    pub name: TerminalNodeRef,
     pub value: Option<StateVariableDefinitionValueRef>,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type StateVariableDefinitionValueRef = Box<StateVariableDefinitionValue>;
 pub struct StateVariableDefinitionValue {
-    pub equal: TerminalNode,
+    pub equal: TerminalNodeRef,
     pub value: Expression,
 }
 
 pub type FunctionDefinitionRef = Box<FunctionDefinition>;
 pub struct FunctionDefinition {
-    pub function_keyword: TerminalNode,
+    pub function_keyword: TerminalNodeRef,
     pub name: FunctionName,
     pub parameters: ParametersDeclarationRef,
     pub attributes: FunctionAttributesRef,
@@ -597,40 +601,40 @@ pub struct FunctionDefinition {
 
 pub type ParametersDeclarationRef = Box<ParametersDeclaration>;
 pub struct ParametersDeclaration {
-    pub open_paren: TerminalNode,
+    pub open_paren: TerminalNodeRef,
     pub parameters: ParametersRef,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub type ParameterRef = Box<Parameter>;
 pub struct Parameter {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
-    pub name: Option<TerminalNode>,
+    pub name: Option<TerminalNodeRef>,
 }
 
 pub type OverrideSpecifierRef = Box<OverrideSpecifier>;
 pub struct OverrideSpecifier {
-    pub override_keyword: TerminalNode,
+    pub override_keyword: TerminalNodeRef,
     pub overridden: Option<OverridePathsDeclarationRef>,
 }
 
 pub type OverridePathsDeclarationRef = Box<OverridePathsDeclaration>;
 pub struct OverridePathsDeclaration {
-    pub open_paren: TerminalNode,
+    pub open_paren: TerminalNodeRef,
     pub paths: OverridePathsRef,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub type ReturnsDeclarationRef = Box<ReturnsDeclaration>;
 pub struct ReturnsDeclaration {
-    pub returns_keyword: TerminalNode,
+    pub returns_keyword: TerminalNodeRef,
     pub variables: ParametersDeclarationRef,
 }
 
 pub type ConstructorDefinitionRef = Box<ConstructorDefinition>;
 pub struct ConstructorDefinition {
-    pub constructor_keyword: TerminalNode,
+    pub constructor_keyword: TerminalNodeRef,
     pub parameters: ParametersDeclarationRef,
     pub attributes: ConstructorAttributesRef,
     pub body: BlockRef,
@@ -638,7 +642,7 @@ pub struct ConstructorDefinition {
 
 pub type UnnamedFunctionDefinitionRef = Box<UnnamedFunctionDefinition>;
 pub struct UnnamedFunctionDefinition {
-    pub function_keyword: TerminalNode,
+    pub function_keyword: TerminalNodeRef,
     pub parameters: ParametersDeclarationRef,
     pub attributes: UnnamedFunctionAttributesRef,
     pub body: FunctionBody,
@@ -646,7 +650,7 @@ pub struct UnnamedFunctionDefinition {
 
 pub type FallbackFunctionDefinitionRef = Box<FallbackFunctionDefinition>;
 pub struct FallbackFunctionDefinition {
-    pub fallback_keyword: TerminalNode,
+    pub fallback_keyword: TerminalNodeRef,
     pub parameters: ParametersDeclarationRef,
     pub attributes: FallbackFunctionAttributesRef,
     pub returns: Option<ReturnsDeclarationRef>,
@@ -655,7 +659,7 @@ pub struct FallbackFunctionDefinition {
 
 pub type ReceiveFunctionDefinitionRef = Box<ReceiveFunctionDefinition>;
 pub struct ReceiveFunctionDefinition {
-    pub receive_keyword: TerminalNode,
+    pub receive_keyword: TerminalNodeRef,
     pub parameters: ParametersDeclarationRef,
     pub attributes: ReceiveFunctionAttributesRef,
     pub body: FunctionBody,
@@ -663,8 +667,8 @@ pub struct ReceiveFunctionDefinition {
 
 pub type ModifierDefinitionRef = Box<ModifierDefinition>;
 pub struct ModifierDefinition {
-    pub modifier_keyword: TerminalNode,
-    pub name: TerminalNode,
+    pub modifier_keyword: TerminalNodeRef,
+    pub name: TerminalNodeRef,
     pub parameters: Option<ParametersDeclarationRef>,
     pub attributes: ModifierAttributesRef,
     pub body: FunctionBody,
@@ -678,68 +682,68 @@ pub struct ModifierInvocation {
 
 pub type EventDefinitionRef = Box<EventDefinition>;
 pub struct EventDefinition {
-    pub event_keyword: TerminalNode,
-    pub name: TerminalNode,
+    pub event_keyword: TerminalNodeRef,
+    pub name: TerminalNodeRef,
     pub parameters: EventParametersDeclarationRef,
-    pub anonymous_keyword: Option<TerminalNode>,
-    pub semicolon: TerminalNode,
+    pub anonymous_keyword: Option<TerminalNodeRef>,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type EventParametersDeclarationRef = Box<EventParametersDeclaration>;
 pub struct EventParametersDeclaration {
-    pub open_paren: TerminalNode,
+    pub open_paren: TerminalNodeRef,
     pub parameters: EventParametersRef,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub type EventParameterRef = Box<EventParameter>;
 pub struct EventParameter {
     pub type_name: TypeName,
-    pub indexed_keyword: Option<TerminalNode>,
-    pub name: Option<TerminalNode>,
+    pub indexed_keyword: Option<TerminalNodeRef>,
+    pub name: Option<TerminalNodeRef>,
 }
 
 pub type UserDefinedValueTypeDefinitionRef = Box<UserDefinedValueTypeDefinition>;
 pub struct UserDefinedValueTypeDefinition {
-    pub type_keyword: TerminalNode,
-    pub name: TerminalNode,
-    pub is_keyword: TerminalNode,
+    pub type_keyword: TerminalNodeRef,
+    pub name: TerminalNodeRef,
+    pub is_keyword: TerminalNodeRef,
     pub value_type: ElementaryType,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type ErrorDefinitionRef = Box<ErrorDefinition>;
 pub struct ErrorDefinition {
-    pub error_keyword: TerminalNode,
-    pub name: TerminalNode,
+    pub error_keyword: TerminalNodeRef,
+    pub name: TerminalNodeRef,
     pub members: ErrorParametersDeclarationRef,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type ErrorParametersDeclarationRef = Box<ErrorParametersDeclaration>;
 pub struct ErrorParametersDeclaration {
-    pub open_paren: TerminalNode,
+    pub open_paren: TerminalNodeRef,
     pub parameters: ErrorParametersRef,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub type ErrorParameterRef = Box<ErrorParameter>;
 pub struct ErrorParameter {
     pub type_name: TypeName,
-    pub name: Option<TerminalNode>,
+    pub name: Option<TerminalNodeRef>,
 }
 
 pub type ArrayTypeNameRef = Box<ArrayTypeName>;
 pub struct ArrayTypeName {
     pub operand: TypeName,
-    pub open_bracket: TerminalNode,
+    pub open_bracket: TerminalNodeRef,
     pub index: Option<Expression>,
-    pub close_bracket: TerminalNode,
+    pub close_bracket: TerminalNodeRef,
 }
 
 pub type FunctionTypeRef = Box<FunctionType>;
 pub struct FunctionType {
-    pub function_keyword: TerminalNode,
+    pub function_keyword: TerminalNodeRef,
     pub parameters: ParametersDeclarationRef,
     pub attributes: FunctionTypeAttributesRef,
     pub returns: Option<ReturnsDeclarationRef>,
@@ -747,54 +751,54 @@ pub struct FunctionType {
 
 pub type MappingTypeRef = Box<MappingType>;
 pub struct MappingType {
-    pub mapping_keyword: TerminalNode,
-    pub open_paren: TerminalNode,
+    pub mapping_keyword: TerminalNodeRef,
+    pub open_paren: TerminalNodeRef,
     pub key_type: MappingKeyRef,
-    pub equal_greater_than: TerminalNode,
+    pub equal_greater_than: TerminalNodeRef,
     pub value_type: MappingValueRef,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub type MappingKeyRef = Box<MappingKey>;
 pub struct MappingKey {
     pub key_type: MappingKeyType,
-    pub name: Option<TerminalNode>,
+    pub name: Option<TerminalNodeRef>,
 }
 
 pub type MappingValueRef = Box<MappingValue>;
 pub struct MappingValue {
     pub type_name: TypeName,
-    pub name: Option<TerminalNode>,
+    pub name: Option<TerminalNodeRef>,
 }
 
 pub type AddressTypeRef = Box<AddressType>;
 pub struct AddressType {
-    pub address_keyword: TerminalNode,
-    pub payable_keyword: Option<TerminalNode>,
+    pub address_keyword: TerminalNodeRef,
+    pub payable_keyword: Option<TerminalNodeRef>,
 }
 
 pub type BlockRef = Box<Block>;
 pub struct Block {
-    pub open_brace: TerminalNode,
+    pub open_brace: TerminalNodeRef,
     pub statements: StatementsRef,
-    pub close_brace: TerminalNode,
+    pub close_brace: TerminalNodeRef,
 }
 
 pub type UncheckedBlockRef = Box<UncheckedBlock>;
 pub struct UncheckedBlock {
-    pub unchecked_keyword: TerminalNode,
+    pub unchecked_keyword: TerminalNodeRef,
     pub block: BlockRef,
 }
 
 pub type ExpressionStatementRef = Box<ExpressionStatement>;
 pub struct ExpressionStatement {
     pub expression: Expression,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type AssemblyStatementRef = Box<AssemblyStatement>;
 pub struct AssemblyStatement {
-    pub assembly_keyword: TerminalNode,
+    pub assembly_keyword: TerminalNodeRef,
     pub label: Option<StringLiteral>,
     pub flags: Option<AssemblyFlagsDeclarationRef>,
     pub body: YulBlockRef,
@@ -802,20 +806,20 @@ pub struct AssemblyStatement {
 
 pub type AssemblyFlagsDeclarationRef = Box<AssemblyFlagsDeclaration>;
 pub struct AssemblyFlagsDeclaration {
-    pub open_paren: TerminalNode,
+    pub open_paren: TerminalNodeRef,
     pub flags: AssemblyFlagsRef,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub type TupleDeconstructionStatementRef = Box<TupleDeconstructionStatement>;
 pub struct TupleDeconstructionStatement {
-    pub var_keyword: Option<TerminalNode>,
-    pub open_paren: TerminalNode,
+    pub var_keyword: Option<TerminalNodeRef>,
+    pub open_paren: TerminalNodeRef,
     pub elements: TupleDeconstructionElementsRef,
-    pub close_paren: TerminalNode,
-    pub equal: TerminalNode,
+    pub close_paren: TerminalNodeRef,
+    pub equal: TerminalNodeRef,
     pub expression: Expression,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type TupleDeconstructionElementRef = Box<TupleDeconstructionElement>;
@@ -827,107 +831,107 @@ pub type TypedTupleMemberRef = Box<TypedTupleMember>;
 pub struct TypedTupleMember {
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
-    pub name: TerminalNode,
+    pub name: TerminalNodeRef,
 }
 
 pub type UntypedTupleMemberRef = Box<UntypedTupleMember>;
 pub struct UntypedTupleMember {
     pub storage_location: Option<StorageLocation>,
-    pub name: TerminalNode,
+    pub name: TerminalNodeRef,
 }
 
 pub type VariableDeclarationStatementRef = Box<VariableDeclarationStatement>;
 pub struct VariableDeclarationStatement {
     pub variable_type: VariableDeclarationType,
     pub storage_location: Option<StorageLocation>,
-    pub name: TerminalNode,
+    pub name: TerminalNodeRef,
     pub value: Option<VariableDeclarationValueRef>,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type VariableDeclarationValueRef = Box<VariableDeclarationValue>;
 pub struct VariableDeclarationValue {
-    pub equal: TerminalNode,
+    pub equal: TerminalNodeRef,
     pub expression: Expression,
 }
 
 pub type IfStatementRef = Box<IfStatement>;
 pub struct IfStatement {
-    pub if_keyword: TerminalNode,
-    pub open_paren: TerminalNode,
+    pub if_keyword: TerminalNodeRef,
+    pub open_paren: TerminalNodeRef,
     pub condition: Expression,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
     pub body: Statement,
     pub else_branch: Option<ElseBranchRef>,
 }
 
 pub type ElseBranchRef = Box<ElseBranch>;
 pub struct ElseBranch {
-    pub else_keyword: TerminalNode,
+    pub else_keyword: TerminalNodeRef,
     pub body: Statement,
 }
 
 pub type ForStatementRef = Box<ForStatement>;
 pub struct ForStatement {
-    pub for_keyword: TerminalNode,
-    pub open_paren: TerminalNode,
+    pub for_keyword: TerminalNodeRef,
+    pub open_paren: TerminalNodeRef,
     pub initialization: ForStatementInitialization,
     pub condition: ForStatementCondition,
     pub iterator: Option<Expression>,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
     pub body: Statement,
 }
 
 pub type WhileStatementRef = Box<WhileStatement>;
 pub struct WhileStatement {
-    pub while_keyword: TerminalNode,
-    pub open_paren: TerminalNode,
+    pub while_keyword: TerminalNodeRef,
+    pub open_paren: TerminalNodeRef,
     pub condition: Expression,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
     pub body: Statement,
 }
 
 pub type DoWhileStatementRef = Box<DoWhileStatement>;
 pub struct DoWhileStatement {
-    pub do_keyword: TerminalNode,
+    pub do_keyword: TerminalNodeRef,
     pub body: Statement,
-    pub while_keyword: TerminalNode,
-    pub open_paren: TerminalNode,
+    pub while_keyword: TerminalNodeRef,
+    pub open_paren: TerminalNodeRef,
     pub condition: Expression,
-    pub close_paren: TerminalNode,
-    pub semicolon: TerminalNode,
+    pub close_paren: TerminalNodeRef,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type ContinueStatementRef = Box<ContinueStatement>;
 pub struct ContinueStatement {
-    pub continue_keyword: TerminalNode,
-    pub semicolon: TerminalNode,
+    pub continue_keyword: TerminalNodeRef,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type BreakStatementRef = Box<BreakStatement>;
 pub struct BreakStatement {
-    pub break_keyword: TerminalNode,
-    pub semicolon: TerminalNode,
+    pub break_keyword: TerminalNodeRef,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type ReturnStatementRef = Box<ReturnStatement>;
 pub struct ReturnStatement {
-    pub return_keyword: TerminalNode,
+    pub return_keyword: TerminalNodeRef,
     pub expression: Option<Expression>,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type EmitStatementRef = Box<EmitStatement>;
 pub struct EmitStatement {
-    pub emit_keyword: TerminalNode,
+    pub emit_keyword: TerminalNodeRef,
     pub event: IdentifierPathRef,
     pub arguments: ArgumentsDeclaration,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type TryStatementRef = Box<TryStatement>;
 pub struct TryStatement {
-    pub try_keyword: TerminalNode,
+    pub try_keyword: TerminalNodeRef,
     pub expression: Expression,
     pub returns: Option<ReturnsDeclarationRef>,
     pub body: BlockRef,
@@ -936,133 +940,133 @@ pub struct TryStatement {
 
 pub type CatchClauseRef = Box<CatchClause>;
 pub struct CatchClause {
-    pub catch_keyword: TerminalNode,
+    pub catch_keyword: TerminalNodeRef,
     pub error: Option<CatchClauseErrorRef>,
     pub body: BlockRef,
 }
 
 pub type CatchClauseErrorRef = Box<CatchClauseError>;
 pub struct CatchClauseError {
-    pub name: Option<TerminalNode>,
+    pub name: Option<TerminalNodeRef>,
     pub parameters: ParametersDeclarationRef,
 }
 
 pub type RevertStatementRef = Box<RevertStatement>;
 pub struct RevertStatement {
-    pub revert_keyword: TerminalNode,
+    pub revert_keyword: TerminalNodeRef,
     pub error: Option<IdentifierPathRef>,
     pub arguments: ArgumentsDeclaration,
-    pub semicolon: TerminalNode,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type ThrowStatementRef = Box<ThrowStatement>;
 pub struct ThrowStatement {
-    pub throw_keyword: TerminalNode,
-    pub semicolon: TerminalNode,
+    pub throw_keyword: TerminalNodeRef,
+    pub semicolon: TerminalNodeRef,
 }
 
 pub type AssignmentExpressionRef = Box<AssignmentExpression>;
 pub struct AssignmentExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type ConditionalExpressionRef = Box<ConditionalExpression>;
 pub struct ConditionalExpression {
     pub operand: Expression,
-    pub question_mark: TerminalNode,
+    pub question_mark: TerminalNodeRef,
     pub true_expression: Expression,
-    pub colon: TerminalNode,
+    pub colon: TerminalNodeRef,
     pub false_expression: Expression,
 }
 
 pub type OrExpressionRef = Box<OrExpression>;
 pub struct OrExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type AndExpressionRef = Box<AndExpression>;
 pub struct AndExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type EqualityExpressionRef = Box<EqualityExpression>;
 pub struct EqualityExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type ComparisonExpressionRef = Box<ComparisonExpression>;
 pub struct ComparisonExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type BitwiseOrExpressionRef = Box<BitwiseOrExpression>;
 pub struct BitwiseOrExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type BitwiseXorExpressionRef = Box<BitwiseXorExpression>;
 pub struct BitwiseXorExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type BitwiseAndExpressionRef = Box<BitwiseAndExpression>;
 pub struct BitwiseAndExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type ShiftExpressionRef = Box<ShiftExpression>;
 pub struct ShiftExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type AdditiveExpressionRef = Box<AdditiveExpression>;
 pub struct AdditiveExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type MultiplicativeExpressionRef = Box<MultiplicativeExpression>;
 pub struct MultiplicativeExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type ExponentiationExpressionRef = Box<ExponentiationExpression>;
 pub struct ExponentiationExpression {
     pub left_operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub right_operand: Expression,
 }
 
 pub type PostfixExpressionRef = Box<PostfixExpression>;
 pub struct PostfixExpression {
     pub operand: Expression,
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
 }
 
 pub type PrefixExpressionRef = Box<PrefixExpression>;
 pub struct PrefixExpression {
-    pub operator: TerminalNode,
+    pub operator: TerminalNodeRef,
     pub operand: Expression,
 }
 
@@ -1075,80 +1079,80 @@ pub struct FunctionCallExpression {
 pub type CallOptionsExpressionRef = Box<CallOptionsExpression>;
 pub struct CallOptionsExpression {
     pub operand: Expression,
-    pub open_brace: TerminalNode,
+    pub open_brace: TerminalNodeRef,
     pub options: CallOptionsRef,
-    pub close_brace: TerminalNode,
+    pub close_brace: TerminalNodeRef,
 }
 
 pub type MemberAccessExpressionRef = Box<MemberAccessExpression>;
 pub struct MemberAccessExpression {
     pub operand: Expression,
-    pub period: TerminalNode,
-    pub member: TerminalNode,
+    pub period: TerminalNodeRef,
+    pub member: TerminalNodeRef,
 }
 
 pub type IndexAccessExpressionRef = Box<IndexAccessExpression>;
 pub struct IndexAccessExpression {
     pub operand: Expression,
-    pub open_bracket: TerminalNode,
+    pub open_bracket: TerminalNodeRef,
     pub start: Option<Expression>,
     pub end: Option<IndexAccessEndRef>,
-    pub close_bracket: TerminalNode,
+    pub close_bracket: TerminalNodeRef,
 }
 
 pub type IndexAccessEndRef = Box<IndexAccessEnd>;
 pub struct IndexAccessEnd {
-    pub colon: TerminalNode,
+    pub colon: TerminalNodeRef,
     pub end: Option<Expression>,
 }
 
 pub type PositionalArgumentsDeclarationRef = Box<PositionalArgumentsDeclaration>;
 pub struct PositionalArgumentsDeclaration {
-    pub open_paren: TerminalNode,
+    pub open_paren: TerminalNodeRef,
     pub arguments: PositionalArgumentsRef,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub type NamedArgumentsDeclarationRef = Box<NamedArgumentsDeclaration>;
 pub struct NamedArgumentsDeclaration {
-    pub open_paren: TerminalNode,
+    pub open_paren: TerminalNodeRef,
     pub arguments: Option<NamedArgumentGroupRef>,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub type NamedArgumentGroupRef = Box<NamedArgumentGroup>;
 pub struct NamedArgumentGroup {
-    pub open_brace: TerminalNode,
+    pub open_brace: TerminalNodeRef,
     pub arguments: NamedArgumentsRef,
-    pub close_brace: TerminalNode,
+    pub close_brace: TerminalNodeRef,
 }
 
 pub type NamedArgumentRef = Box<NamedArgument>;
 pub struct NamedArgument {
-    pub name: TerminalNode,
-    pub colon: TerminalNode,
+    pub name: TerminalNodeRef,
+    pub colon: TerminalNodeRef,
     pub value: Expression,
 }
 
 pub type TypeExpressionRef = Box<TypeExpression>;
 pub struct TypeExpression {
-    pub type_keyword: TerminalNode,
-    pub open_paren: TerminalNode,
+    pub type_keyword: TerminalNodeRef,
+    pub open_paren: TerminalNodeRef,
     pub type_name: TypeName,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub type NewExpressionRef = Box<NewExpression>;
 pub struct NewExpression {
-    pub new_keyword: TerminalNode,
+    pub new_keyword: TerminalNodeRef,
     pub type_name: TypeName,
 }
 
 pub type TupleExpressionRef = Box<TupleExpression>;
 pub struct TupleExpression {
-    pub open_paren: TerminalNode,
+    pub open_paren: TerminalNodeRef,
     pub items: TupleValuesRef,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub type TupleValueRef = Box<TupleValue>;
@@ -1158,34 +1162,34 @@ pub struct TupleValue {
 
 pub type ArrayExpressionRef = Box<ArrayExpression>;
 pub struct ArrayExpression {
-    pub open_bracket: TerminalNode,
+    pub open_bracket: TerminalNodeRef,
     pub items: ArrayValuesRef,
-    pub close_bracket: TerminalNode,
+    pub close_bracket: TerminalNodeRef,
 }
 
 pub type HexNumberExpressionRef = Box<HexNumberExpression>;
 pub struct HexNumberExpression {
-    pub literal: TerminalNode,
+    pub literal: TerminalNodeRef,
     pub unit: Option<NumberUnit>,
 }
 
 pub type DecimalNumberExpressionRef = Box<DecimalNumberExpression>;
 pub struct DecimalNumberExpression {
-    pub literal: TerminalNode,
+    pub literal: TerminalNodeRef,
     pub unit: Option<NumberUnit>,
 }
 
 pub type YulBlockRef = Box<YulBlock>;
 pub struct YulBlock {
-    pub open_brace: TerminalNode,
+    pub open_brace: TerminalNodeRef,
     pub statements: YulStatementsRef,
-    pub close_brace: TerminalNode,
+    pub close_brace: TerminalNodeRef,
 }
 
 pub type YulFunctionDefinitionRef = Box<YulFunctionDefinition>;
 pub struct YulFunctionDefinition {
-    pub function_keyword: TerminalNode,
-    pub name: TerminalNode,
+    pub function_keyword: TerminalNodeRef,
+    pub name: TerminalNodeRef,
     pub parameters: YulParametersDeclarationRef,
     pub returns: Option<YulReturnsDeclarationRef>,
     pub body: YulBlockRef,
@@ -1193,20 +1197,20 @@ pub struct YulFunctionDefinition {
 
 pub type YulParametersDeclarationRef = Box<YulParametersDeclaration>;
 pub struct YulParametersDeclaration {
-    pub open_paren: TerminalNode,
+    pub open_paren: TerminalNodeRef,
     pub parameters: YulParametersRef,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub type YulReturnsDeclarationRef = Box<YulReturnsDeclaration>;
 pub struct YulReturnsDeclaration {
-    pub minus_greater_than: TerminalNode,
+    pub minus_greater_than: TerminalNodeRef,
     pub variables: YulVariableNamesRef,
 }
 
 pub type YulVariableDeclarationStatementRef = Box<YulVariableDeclarationStatement>;
 pub struct YulVariableDeclarationStatement {
-    pub let_keyword: TerminalNode,
+    pub let_keyword: TerminalNodeRef,
     pub variables: YulVariableNamesRef,
     pub value: Option<YulVariableDeclarationValueRef>,
 }
@@ -1226,32 +1230,32 @@ pub struct YulVariableAssignmentStatement {
 
 pub type YulColonAndEqualRef = Box<YulColonAndEqual>;
 pub struct YulColonAndEqual {
-    pub colon: TerminalNode,
-    pub equal: TerminalNode,
+    pub colon: TerminalNodeRef,
+    pub equal: TerminalNodeRef,
 }
 
 pub type YulStackAssignmentStatementRef = Box<YulStackAssignmentStatement>;
 pub struct YulStackAssignmentStatement {
     pub assignment: YulStackAssignmentOperator,
-    pub variable: TerminalNode,
+    pub variable: TerminalNodeRef,
 }
 
 pub type YulEqualAndColonRef = Box<YulEqualAndColon>;
 pub struct YulEqualAndColon {
-    pub equal: TerminalNode,
-    pub colon: TerminalNode,
+    pub equal: TerminalNodeRef,
+    pub colon: TerminalNodeRef,
 }
 
 pub type YulIfStatementRef = Box<YulIfStatement>;
 pub struct YulIfStatement {
-    pub if_keyword: TerminalNode,
+    pub if_keyword: TerminalNodeRef,
     pub condition: YulExpression,
     pub body: YulBlockRef,
 }
 
 pub type YulForStatementRef = Box<YulForStatement>;
 pub struct YulForStatement {
-    pub for_keyword: TerminalNode,
+    pub for_keyword: TerminalNodeRef,
     pub initialization: YulBlockRef,
     pub condition: YulExpression,
     pub iterator: YulBlockRef,
@@ -1260,51 +1264,51 @@ pub struct YulForStatement {
 
 pub type YulSwitchStatementRef = Box<YulSwitchStatement>;
 pub struct YulSwitchStatement {
-    pub switch_keyword: TerminalNode,
+    pub switch_keyword: TerminalNodeRef,
     pub expression: YulExpression,
     pub cases: YulSwitchCasesRef,
 }
 
 pub type YulDefaultCaseRef = Box<YulDefaultCase>;
 pub struct YulDefaultCase {
-    pub default_keyword: TerminalNode,
+    pub default_keyword: TerminalNodeRef,
     pub body: YulBlockRef,
 }
 
 pub type YulValueCaseRef = Box<YulValueCase>;
 pub struct YulValueCase {
-    pub case_keyword: TerminalNode,
+    pub case_keyword: TerminalNodeRef,
     pub value: YulLiteral,
     pub body: YulBlockRef,
 }
 
 pub type YulLeaveStatementRef = Box<YulLeaveStatement>;
 pub struct YulLeaveStatement {
-    pub leave_keyword: TerminalNode,
+    pub leave_keyword: TerminalNodeRef,
 }
 
 pub type YulBreakStatementRef = Box<YulBreakStatement>;
 pub struct YulBreakStatement {
-    pub break_keyword: TerminalNode,
+    pub break_keyword: TerminalNodeRef,
 }
 
 pub type YulContinueStatementRef = Box<YulContinueStatement>;
 pub struct YulContinueStatement {
-    pub continue_keyword: TerminalNode,
+    pub continue_keyword: TerminalNodeRef,
 }
 
 pub type YulLabelRef = Box<YulLabel>;
 pub struct YulLabel {
-    pub label: TerminalNode,
-    pub colon: TerminalNode,
+    pub label: TerminalNodeRef,
+    pub colon: TerminalNodeRef,
 }
 
 pub type YulFunctionCallExpressionRef = Box<YulFunctionCallExpression>;
 pub struct YulFunctionCallExpression {
     pub operand: YulExpression,
-    pub open_paren: TerminalNode,
+    pub open_paren: TerminalNodeRef,
     pub arguments: YulArgumentsRef,
-    pub close_paren: TerminalNode,
+    pub close_paren: TerminalNodeRef,
 }
 
 pub enum SourceUnitMember {
@@ -1331,7 +1335,7 @@ pub enum Pragma {
 
 pub enum ExperimentalFeature {
     StringLiteral(StringLiteral),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum VersionExpression {
@@ -1340,12 +1344,12 @@ pub enum VersionExpression {
 }
 
 pub enum VersionOperator {
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteralRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum ImportClause {
@@ -1360,12 +1364,12 @@ pub enum UsingClause {
 }
 
 pub enum UsingOperator {
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum UsingTarget {
     TypeName(TypeName),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum ContractMember {
@@ -1386,49 +1390,49 @@ pub enum ContractMember {
 
 pub enum StateVariableAttribute {
     OverrideSpecifier(OverrideSpecifierRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum FunctionName {
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum FunctionAttribute {
     ModifierInvocation(ModifierInvocationRef),
     OverrideSpecifier(OverrideSpecifierRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum FunctionBody {
     Block(BlockRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum ConstructorAttribute {
     ModifierInvocation(ModifierInvocationRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum UnnamedFunctionAttribute {
     ModifierInvocation(ModifierInvocationRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum FallbackFunctionAttribute {
     ModifierInvocation(ModifierInvocationRef),
     OverrideSpecifier(OverrideSpecifierRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum ReceiveFunctionAttribute {
     ModifierInvocation(ModifierInvocationRef),
     OverrideSpecifier(OverrideSpecifierRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum ModifierAttribute {
     OverrideSpecifier(OverrideSpecifierRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum TypeName {
@@ -1440,7 +1444,7 @@ pub enum TypeName {
 }
 
 pub enum FunctionTypeAttribute {
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum MappingKeyType {
@@ -1450,7 +1454,7 @@ pub enum MappingKeyType {
 
 pub enum ElementaryType {
     AddressType(AddressTypeRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum Statement {
@@ -1480,23 +1484,23 @@ pub enum TupleMember {
 
 pub enum VariableDeclarationType {
     TypeName(TypeName),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum StorageLocation {
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum ForStatementInitialization {
     TupleDeconstructionStatement(TupleDeconstructionStatementRef),
     VariableDeclarationStatement(VariableDeclarationStatementRef),
     ExpressionStatement(ExpressionStatementRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatementRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum Expression {
@@ -1527,7 +1531,7 @@ pub enum Expression {
     DecimalNumberExpression(DecimalNumberExpressionRef),
     StringExpression(StringExpression),
     ElementaryType(ElementaryType),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum ArgumentsDeclaration {
@@ -1536,7 +1540,7 @@ pub enum ArgumentsDeclaration {
 }
 
 pub enum NumberUnit {
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum StringExpression {
@@ -1548,15 +1552,15 @@ pub enum StringExpression {
 }
 
 pub enum StringLiteral {
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum HexStringLiteral {
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum UnicodeStringLiteral {
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum YulStatement {
@@ -1577,12 +1581,12 @@ pub enum YulStatement {
 
 pub enum YulAssignmentOperator {
     YulColonAndEqual(YulColonAndEqualRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum YulStackAssignmentOperator {
     YulEqualAndColon(YulEqualAndColonRef),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum YulSwitchCase {
@@ -1598,13 +1602,13 @@ pub enum YulExpression {
 }
 
 pub enum YulBuiltInFunction {
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub enum YulLiteral {
     HexStringLiteral(HexStringLiteral),
     StringLiteral(StringLiteral),
-    TerminalNode(TerminalNode),
+    TerminalNode(TerminalNodeRef),
 }
 
 pub type SourceUnitMembersRef = Box<SourceUnitMembers>;
@@ -1719,7 +1723,7 @@ pub struct VersionExpressionSets {
 
 pub type SimpleVersionLiteralRef = Box<SimpleVersionLiteral>;
 pub struct SimpleVersionLiteral {
-    pub item: std::collections::HashSet<TerminalNode>,
+    pub item: std::collections::HashSet<TerminalNodeRef>,
 }
 
 pub type ImportDeconstructionSymbolsRef = Box<ImportDeconstructionSymbols>;
@@ -1739,7 +1743,7 @@ pub struct InheritanceTypes {
 
 pub type EnumMembersRef = Box<EnumMembers>;
 pub struct EnumMembers {
-    pub item: std::collections::HashSet<TerminalNode>,
+    pub item: std::collections::HashSet<TerminalNodeRef>,
 }
 
 pub type ParametersRef = Box<Parameters>;
@@ -1799,17 +1803,17 @@ pub struct ArrayValues {
 
 pub type IdentifierPathRef = Box<IdentifierPath>;
 pub struct IdentifierPath {
-    pub item: std::collections::HashSet<TerminalNode>,
+    pub item: std::collections::HashSet<TerminalNodeRef>,
 }
 
 pub type YulParametersRef = Box<YulParameters>;
 pub struct YulParameters {
-    pub item: std::collections::HashSet<TerminalNode>,
+    pub item: std::collections::HashSet<TerminalNodeRef>,
 }
 
 pub type YulVariableNamesRef = Box<YulVariableNames>;
 pub struct YulVariableNames {
-    pub item: std::collections::HashSet<TerminalNode>,
+    pub item: std::collections::HashSet<TerminalNodeRef>,
 }
 
 pub type YulArgumentsRef = Box<YulArguments>;
@@ -1824,5 +1828,5 @@ pub struct YulPaths {
 
 pub type YulPathRef = Box<YulPath>;
 pub struct YulPath {
-    pub item: std::collections::HashSet<TerminalNode>,
+    pub item: std::collections::HashSet<TerminalNodeRef>,
 }
