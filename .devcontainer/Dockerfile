@@ -24,10 +24,12 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
 RUN sudo apt-get update \
-  && sudo apt-get install --yes "pkg-config" "valgrind" \
+  && sudo apt-get install --yes "pkg-config" \
   && rm -rf /var/lib/apt/lists/*
 
 # Setup default Bash and Zsh for local development inside the image:
 COPY ./scripts/ /home/vscode/
-# Users that mount their own .bashrc are responsible to source `.bashrc_devcontainer` themselves
+
+# Users that mount their own dot files are responsible for sourcing Slang's `.rc` files themselves:
 RUN echo "source /home/vscode/.bashrc_devcontainer" >> /home/vscode/.bashrc
+RUN echo "source /home/vscode/.zshrc_devcontainer" >> /home/vscode/.zshrc

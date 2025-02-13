@@ -35,28 +35,13 @@ jobs:
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
 
-        # Docker privileged mode is required for running Valgrind in CI:
-      - name: "Add 'privileged: true' to 'devcontainer.json'"
-        uses: "actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea"
-        with:
-          script: |
-            const assert = require("assert");
-            const fs = require("fs/promises");
-
-            const devcontainerPath = "./.devcontainer/devcontainer.json";
-
-            const input = await fs.readFile(devcontainerPath, "utf8");
-            assert.equal(input[0], "{", "devcontainer file must start with a '{' character.");
-
-            const output = input.replace("{", "{ \"privileged\": true,");
-            await fs.writeFile(devcontainerPath, output);
+      - name: "infra setup"
+        run: "./scripts/bin/infra setup"
 
       - name: "infra perf benchmark"
-        uses: "./.github/actions/devcontainer/run"
-        with:
-          runCmd: "./scripts/bin/infra perf benchmark ${{ inputs.dryRun == true && '--dry-run' || '' }}"
-          env: |
-            BENCHER_API_TOKEN=${{ secrets.BENCHER_API_TOKEN }}
+        run: "./scripts/bin/infra perf benchmark ${{ inputs.dryRun == true && '--dry-run' || '' }}"
+        env:
+          BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
 
       - name: "Upload Benchmarking Data"
         uses: "actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08"
