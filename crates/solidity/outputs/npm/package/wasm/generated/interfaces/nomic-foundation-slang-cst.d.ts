@@ -6489,7 +6489,13 @@ export interface QueryError {
 /**
  * Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
  */
+
 export class AncestorsIterator {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * Returns an iterator over `NonterminalNode` objects. Called by the semantics of the for-of statement.
    */
@@ -6503,7 +6509,12 @@ export class AncestorsIterator {
 /**
  * Provides navigation and traversal capabilities over the syntax tree.
  */
+
 export class Cursor {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Resets the cursor to its initial position.
    */
@@ -6633,7 +6644,13 @@ export class Cursor {
 /**
  * Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
  */
+
 export class CursorIterator {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * Returns an iterator over `Edge` objects. Called by the semantics of the for-of statement.
    */
@@ -6648,7 +6665,13 @@ export class CursorIterator {
  * Represents a non-terminal node in the syntax tree.
  * These nodes can have child nodes and represent language constructs.
  */
+
 export class NonterminalNode {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * The variant of `NodeType` that corresponds to this class.
    */
@@ -6713,7 +6736,12 @@ export class NonterminalNode {
 /**
  * Represents a tree query for pattern matching in the syntax tree.
  */
+
 export class Query {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Parses a query string into a query object.
    * Throws an error if the query syntax is invalid.
@@ -6724,7 +6752,13 @@ export class Query {
 /**
  * Iterator over query matches in the syntax tree.
  */
+
 export class QueryMatchIterator {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * Returns an iterator over `QueryMatch` objects. Called by the semantics of the for-of statement.
    */
@@ -6738,7 +6772,12 @@ export class QueryMatchIterator {
 /**
  * Useful extension methods for working with terminals and terminal kinds.
  */
+
 export class TerminalKindExtensions {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Returns `true` if the terminal is an identifier token.
    */
@@ -6757,7 +6796,13 @@ export class TerminalKindExtensions {
  * Represents a terminal node in the syntax tree.
  * These are leaf nodes that represent actual tokens from the source code.
  */
+
 export class TerminalNode {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * The variant of `NodeType` that corresponds to this class.
    */

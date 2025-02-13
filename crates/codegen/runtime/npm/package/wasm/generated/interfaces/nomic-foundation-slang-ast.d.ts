@@ -11,7 +11,12 @@ export { NonterminalNode };
 /**
  * @internal
  */
+
 export class Selectors {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   static sequence(node: NonterminalNode): Array<Node | undefined>;
   static choice(node: NonterminalNode): Node;
   static repeated(node: NonterminalNode): Array<Node>;

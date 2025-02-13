@@ -32,7 +32,12 @@ export interface AddFileResponse {
  *
  * It also exposes utilities to traverse the compilation unit and query it.
  */
+
 export class CompilationUnit {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Returns the language version this compilation unit is configured for.
    */
@@ -58,7 +63,12 @@ export class CompilationUnit {
 /**
  * A single source file in the compilation unit.
  */
+
 export class File {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Returns the unique identifier of this file.
    */
@@ -86,7 +96,12 @@ export class File {
  *
  * @internal
  */
+
 export class InternalCompilationBuilder {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Creates a new compilation builder for the specified language version.
    */

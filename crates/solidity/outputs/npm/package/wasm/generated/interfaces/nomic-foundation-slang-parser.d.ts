@@ -30,7 +30,12 @@ export interface ParseError {
  * The output of a parsing operation.
  * Contains the resulting syntax tree and any errors encountered during parsing.
  */
+
 export class ParseOutput {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Returns the root node of the parsed syntax tree.
    * Even if there are parsing errors, a partial tree will still be available.
@@ -57,7 +62,12 @@ export class ParseOutput {
  * A parser instance that can parse source code into syntax trees.
  * Each parser is configured for a specific language version and grammar.
  */
+
 export class Parser {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Creates a new parser instance for the specified language version.
    */
