@@ -2,3 +2,4 @@
 	path = "submodules/jco"
 	url = "https://github.com/NomicFoundation/jco"
 	branch = "nomic-enhancements-release"
+	shallow = true

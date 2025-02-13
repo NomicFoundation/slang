@@ -13,12 +13,15 @@ on:
 
 # In the event that there is a new push to the ref, cancel any running jobs because they are now obsolete, wasting resources.
 concurrency:
-  group: "${{ github.workflow }}-${{ github.ref_name }}-${{ github.event_name }}"
+  group: "${{ github.workflow }}-${{ github.ref_name }}"
   cancel-in-progress: true
 
 jobs:
   ci:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    # Skip 'pull_request' events from the main repository, as the workflow is already triggered by the 'push' event:
+    if: "${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != 'NomicFoundation/slang' }}"
 
     steps:
       - name: "Checkout Repository"
@@ -34,20 +37,37 @@ jobs:
       # Run all CI steps in order: _SLANG_INFRA_CI_STEPS_ORDERED_ (keep in sync)
       #
 
+      - name: "infra setup"
+        run: "./scripts/bin/infra setup"
+
       - name: "infra check"
-        uses: "./.github/actions/devcontainer/run"
-        with:
-          runCmd: "./scripts/bin/infra check"
+        run: "./scripts/bin/infra check"
 
       - name: "infra test"
-        uses: "./.github/actions/devcontainer/run"
-        with:
-          runCmd: "./scripts/bin/infra test"
+        run: "./scripts/bin/infra test"
 
       - name: "infra lint"
-        uses: "./.github/actions/devcontainer/run"
-        with:
-          runCmd: "./scripts/bin/infra lint"
+        run: "./scripts/bin/infra lint"
 
       - name: "Save Cache"
         uses: "./.github/actions/cache/save"
+
+  # We cannot run the full CI in devcontainers, as we will run out of disk space in GitHub Actions.
+  # Instead, we just validate the devcontainer is built correctly by running a minimal check below.
+  validate-devcontainer:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+
+    # Skip 'pull_request' events from the main repository, as the workflow is already triggered by the 'push' event:
+    if: "${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != 'NomicFoundation/slang' }}"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+
+      # NOTE:
+      # No need to run 'infra setup', as it runs automatically when the devcontainer is launched.
+
+      - name: "infra lint mkdocs"
+        uses: "./.github/actions/devcontainer/run"
+        with:
+          runCmd: "./scripts/bin/infra lint mkdocs"

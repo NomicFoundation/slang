@@ -15,6 +15,10 @@ impl GitHub {
         var("CI").is_ok()
     }
 
+    pub fn is_running_in_devcontainer() -> bool {
+        var("IS_INSIDE_SLANG_DEVCONTAINER").is_ok()
+    }
+
     /// Collapses the output of the given operation in the GitHub log viewer.
     /// They can be expanded individually when needed.
     /// This has no effect when running locally.

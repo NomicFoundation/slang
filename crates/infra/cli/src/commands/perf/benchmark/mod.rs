@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use anyhow::{bail, Result};
+use anyhow::Result;
 use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
@@ -20,7 +20,10 @@ pub struct BenchmarkController {
 
 impl BenchmarkController {
     pub fn execute(&self) -> Result<()> {
-        Self::install_perf_tools()?;
+        Self::install_valgrind();
+
+        CargoWorkspace::install_binary("iai-callgrind-runner")?;
+        CargoWorkspace::install_binary("bencher_cli")?;
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
         // We currently only have one benchmark suite (Rust/iai), but we can add more here in the future.
@@ -29,26 +32,41 @@ impl BenchmarkController {
         Ok(())
     }
 
-    fn install_perf_tools() -> Result<()> {
+    fn install_valgrind() {
+        if GitHub::is_running_in_ci() {
+            Command::new("sudo").args(["apt", "update"]).run();
+
+            Command::new("sudo")
+                .args(["apt", "install", "valgrind"])
+                .flag("--yes")
+                .run();
+
+            return;
+        }
+
+        if GitHub::is_running_in_devcontainer() {
+            Command::new("sudo").args(["apt-get", "update"]).run();
+
+            Command::new("sudo")
+                .args(["apt-get", "install", "valgrind"])
+                .flag("--yes")
+                .run();
+
+            return;
+        }
+
         match Command::new("valgrind").flag("--version").evaluate() {
             Ok(output) if output.starts_with("valgrind-") => {
                 // Valgrind is available
             }
             other => {
-                bail!(
-                    "valgrind needs to be installed to run perf tests.
-            It is installed by default inside our devcontainer.
-            Supported Platforms: https://valgrind.org/downloads/current.html
-            {other:?}"
+                panic!(
+                    "valgrind needs to be installed on this machine to run perf tests.
+                    Supported Platforms: https://valgrind.org/downloads/current.html
+                    {other:?}"
                 );
             }
         };
-
-        CargoWorkspace::install_binary("iai-callgrind-runner")?;
-
-        CargoWorkspace::install_binary("bencher_cli")?;
-
-        Ok(())
     }
 
     fn run_iai_bench(&self, package_name: &str, bench_name: &str) {

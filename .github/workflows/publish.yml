@@ -33,12 +33,14 @@ jobs:
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
 
+      - name: "infra setup"
+        run: "./scripts/bin/infra setup"
+
+      # Consume the changesets, and create a git stash, to be popped by the next step:
       - name: "infra publish changesets"
-        uses: "./.github/actions/devcontainer/run"
-        with:
-          runCmd: "./scripts/bin/infra publish changesets"
-          env: |
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+        run: "./scripts/bin/infra publish changesets"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "Create/Update Changesets Pull Request"
         id: "runChangesets"
@@ -52,42 +54,32 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "infra publish mkdocs --target main-branch"
-        uses: "./.github/actions/devcontainer/run"
-        with:
-          runCmd: "./scripts/bin/infra publish mkdocs --target main-branch"
-          env: |
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+        run: "./scripts/bin/infra publish mkdocs --target main-branch"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "infra publish mkdocs --target latest-release"
         if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
-        uses: "./.github/actions/devcontainer/run"
-        with:
-          runCmd: "./scripts/bin/infra publish mkdocs --target latest-release"
-          env: |
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+        run: "./scripts/bin/infra publish mkdocs --target latest-release"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: "infra publish npm"
         if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
-        uses: "./.github/actions/devcontainer/run"
-        with:
-          runCmd: "./scripts/bin/infra publish npm"
-          env: |
-            NPM_TOKEN=${{ secrets.NPM_TOKEN }}
+        run: "./scripts/bin/infra publish npm"
+        env:
+          NPM_TOKEN: "${{ secrets.NPM_TOKEN }}"
 
       # __SLANG_CARGO_PUBLISH_TEMPORARILY_DISABLED__ (keep in sync)
       #
       # - name: "infra publish cargo"
       #   if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
-      #   uses: "./.github/actions/devcontainer/run"
-      #   with:
-      #     runCmd: "./scripts/bin/infra publish cargo"
-      #     env: |
-      #       CARGO_REGISTRY_TOKEN=${{ secrets.CARGO_REGISTRY_TOKEN }}
+      #   run: "./scripts/bin/infra publish cargo"
+      #   env:
+      #     CARGO_REGISTRY_TOKEN: "${{ secrets.CARGO_REGISTRY_TOKEN }}"
 
       - name: "infra publish github-release"
         if: "${{ steps.runChangesets.outputs.hasChangesets == 'false' }}"
-        uses: "./.github/actions/devcontainer/run"
-        with:
-          runCmd: "./scripts/bin/infra publish github-release"
-          env: |
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+        run: "./scripts/bin/infra publish github-release"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
