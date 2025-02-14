@@ -488,6 +488,7 @@ dependencies = [
  "codegen_language_definition",
  "indexmap",
  "infra_utils",
+ "itertools 0.13.0",
  "once_cell",
  "proc-macro2",
  "quote",
