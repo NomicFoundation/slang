@@ -16,10 +16,12 @@ pub fn setup_npm() {
         .args(["install"])
         .run();
 
-    Command::new("npm")
-        .current_dir(Path::repo_path("submodules/jco"))
-        .args(["run", "build"])
-        .run();
+    if !GitHub::is_running_in_ci() {
+        Command::new("npm")
+            .current_dir(Path::repo_path("submodules/jco"))
+            .args(["run", "build"])
+            .run();
+    }
 
     Command::new("npm")
         .current_dir(Path::repo_path("submodules/jco"))

@@ -1,7 +1,8 @@
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
-use infra_utils::cargo::{CargoWorkspace, CargoWorkspaceCommands};
+use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
+use infra_utils::github::GitHub;
 use infra_utils::terminal::Terminal;
 
 use crate::utils::{ClapExtensions, OrderedCommand};
@@ -42,7 +43,7 @@ impl OrderedCommand for TestCommand {
 fn test_cargo() -> Result<()> {
     CargoWorkspace::install_binary("cargo-nextest")?;
 
-    Command::new("cargo")
+    let mut command = Command::new("cargo")
         .args(["nextest", "run"])
         .flag("--workspace")
         .flag("--all-features")
@@ -50,9 +51,13 @@ fn test_cargo() -> Result<()> {
         .flag("--lib")
         .flag("--bins")
         .flag("--examples")
-        .flag("--no-fail-fast")
-        .add_build_rustflags()
-        .run();
+        .flag("--no-fail-fast");
+
+    if GitHub::is_running_in_ci() {
+        command = command.flag("--release");
+    }
+
+    command.run();
 
     Ok(())
 }

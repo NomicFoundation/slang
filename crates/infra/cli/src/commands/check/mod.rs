@@ -1,6 +1,5 @@
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
-use infra_utils::cargo::CargoWorkspaceCommands;
 use infra_utils::commands::Command;
 use infra_utils::terminal::Terminal;
 use rayon::iter::{ParallelBridge, ParallelIterator};
@@ -43,12 +42,10 @@ impl OrderedCommand for CheckCommand {
 }
 
 fn check_cargo() {
-    Command::new("cargo")
-        .arg("check")
+    Command::cargo("check")
         .flag("--workspace")
         .flag("--all-features")
         .flag("--all-targets")
-        .add_build_rustflags()
         .run();
 }
 
