@@ -1,1 +1,0 @@
-difficulty()

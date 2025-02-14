@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+   │ 
+ 4 │             difficulty()
+   │             ─────┬────  
+   │                  ╰────── ref: built-in
+ 5 │             jump()
+   │             ──┬─  
+   │               ╰─── ref: built-in
+ 6 │             jumpi()
+   │             ──┬──  
+   │               ╰──── ref: built-in
+ 7 │             sha3()
+   │             ──┬─  
+   │               ╰─── refs: built-in, built-in
+ 8 │             suicide()
+   │             ───┬───  
+   │                ╰───── refs: built-in, built-in
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─│ ▶ contract Test {
+  2 │ │ ╭─▶     function test() public {
+    ┆ ┆ ┆   
+ 10 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 2
+ 11 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯

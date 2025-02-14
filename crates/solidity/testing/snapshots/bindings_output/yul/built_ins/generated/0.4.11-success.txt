@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract AssemblyBuiltIns {
+   │          ────────┬───────  
+   │                  ╰───────── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+   │ 
+ 4 │             mstore(0x80, byte(10, 31))
+   │             ───┬──       ──┬─  
+   │                ╰─────────────── ref: built-in
+   │                            │   
+   │                            ╰─── ref: built-in
+ 5 │             return (0x80,1)
+   │             ───┬──  
+   │                ╰──── ref: built-in
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract AssemblyBuiltIns {
+ 2 │ │ ╭─▶     function test() public {
+   ┆ ┆ ┆   
+ 7 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 8 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

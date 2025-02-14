@@ -11,8 +11,10 @@ References and definitions:
     │                ╰─── name: 2
     │ 
   4 │             let n := calldataload(4)
-    │                 ┬  
-    │                 ╰── name: 5
+    │                 ┬    ──────┬─────  
+    │                 ╰────────────────── name: 5
+    │                            │       
+    │                            ╰─────── ref: built-in
   5 │             let a := 1
     │                 ┬  
     │                 ╰── name: 6
@@ -25,24 +27,37 @@ References and definitions:
     │         ──┬─  
     │           ╰─── name: 3
   8 │             jumpi(loopend, eq(n, 0))
-    │                   ───┬───     ┬  
+    │             ──┬── ───┬───  ─┬ ┬  
+    │               ╰────────────────── ref: built-in
+    │                      │      │ │  
     │                      ╰─────────── ref: 4
+    │                             │ │  
+    │                             ╰──── ref: built-in
     │                               │  
     │                               ╰── ref: 5
   9 │             n := sub(n, 1)
-    │             ┬        ┬  
+    │             ┬    ─┬─ ┬  
     │             ╰─────────── ref: 5
+    │                   │  │  
+    │                   ╰───── ref: built-in
     │                      │  
     │                      ╰── ref: 5
  10 │             jump(loop)
-    │                  ──┬─  
+    │             ──┬─ ──┬─  
+    │               ╰──────── ref: built-in
+    │                    │   
     │                    ╰─── ref: 3
  11 │         loopend:
     │         ───┬───  
     │            ╰───── name: 4
  12 │             mstore(0, a)
-    │                       ┬  
+    │             ───┬──    ┬  
+    │                ╰───────── ref: built-in
+    │                       │  
     │                       ╰── ref: 6
+ 13 │             return(0, 0x20)
+    │             ───┬──  
+    │                ╰──── ref: built-in
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]

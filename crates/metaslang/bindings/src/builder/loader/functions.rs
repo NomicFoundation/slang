@@ -71,7 +71,6 @@ mod resolver {
         path_resolver: Rc<dyn PathResolver<KT>>,
     ) {
         functions.add("resolve-path".into(), ResolvePath { path_resolver });
-        functions.add("is-system-file".into(), IsSystemFile {});
     }
 
     struct ResolvePath<KT: KindTypes + 'static> {
@@ -115,27 +114,6 @@ mod resolver {
                 );
 
             Ok(resolved_path.into())
-        }
-    }
-
-    struct IsSystemFile {}
-
-    impl<KT: KindTypes> Function<KT> for IsSystemFile {
-        fn call(
-            &self,
-            _graph: &mut Graph<KT>,
-            parameters: &mut dyn Parameters,
-        ) -> Result<Value, ExecutionError> {
-            let file_path = parameters.param()?.into_string()?;
-            parameters.finish()?;
-
-            let Ok(file_descriptor) = FileDescriptor::try_from(&file_path) else {
-                return Err(ExecutionError::FunctionFailed(
-                    "is-system-file".into(),
-                    "Parameter is not a valid file path".into(),
-                ));
-            };
-            Ok(file_descriptor.is_system().into())
         }
     }
 }

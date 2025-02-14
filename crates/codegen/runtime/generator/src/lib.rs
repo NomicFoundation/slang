@@ -1,6 +1,5 @@
 mod ast;
 mod bindings;
-mod built_ins;
 mod kinds;
 mod parser;
 
@@ -9,7 +8,6 @@ use std::path::Path;
 use std::rc::Rc;
 
 use anyhow::Result;
-pub use built_ins::render_built_ins;
 use codegen_language_definition::model::Language;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};

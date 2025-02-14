@@ -5,6 +5,11 @@ use anyhow::Result;
 use crate::cst_output::runner::run;
 
 #[test]
+fn address_payable() -> Result<()> {
+    run("TypeName", "address_payable")
+}
+
+#[test]
 fn byte() -> Result<()> {
     run("TypeName", "byte")
 }

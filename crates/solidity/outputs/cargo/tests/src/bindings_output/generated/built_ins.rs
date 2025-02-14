@@ -10,6 +10,11 @@ fn address() -> Result<()> {
 }
 
 #[test]
+fn address_payable() -> Result<()> {
+    run("built_ins", "address_payable")
+}
+
+#[test]
 fn array_push() -> Result<()> {
     run("built_ins", "array_push")
 }

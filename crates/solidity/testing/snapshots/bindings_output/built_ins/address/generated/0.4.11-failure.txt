@@ -47,19 +47,14 @@ References and definitions:
    │                                                     ╰───────── unresolved
    │                                                            │  
    │                                                            ╰── ref: 4
- 7 │         recipient.transfer(1);
-   │         ────┬──── ────┬───  
-   │             ╰─────────────── ref: 3
-   │                       │     
-   │                       ╰───── ref: built-in
- 8 │         bool v9 = recipient.send(1);
+ 7 │         bool v9 = recipient.send(1);
    │              ─┬   ────┬──── ──┬─  
    │               ╰─────────────────── name: 11
    │                       │       │   
    │                       ╰─────────── ref: 3
    │                               │   
    │                               ╰─── ref: built-in
- 9 │         uint256 v10 = address(this).balance;
+ 8 │         uint256 v10 = address(this).balance;
    │                 ─┬─                 ───┬───  
    │                  ╰─────────────────────────── name: 12
    │                                        │     
@@ -90,17 +85,16 @@ Definiens:
     │ │ │               ╰────────────────────── definiens: 9
     │ │ │                            │         
     │ │ │                            ╰───────── definiens: 10
-    ┆ ┆ ┆   
-  8 │ │ │           bool v9 = recipient.send(1);
+  7 │ │ │           bool v9 = recipient.send(1);
     │ │ │   ──────────────────┬──────────────────  
     │ │ │                     ╰──────────────────── definiens: 11
-  9 │ │ │           uint256 v10 = address(this).balance;
+  8 │ │ │           uint256 v10 = address(this).balance;
     │ │ │   ──────────────────────┬──────────────────────  
     │ │ │                         ╰──────────────────────── definiens: 12
- 10 │ │ ├─▶     }
+  9 │ │ ├─▶     }
     │ │ │           
     │ │ ╰─────────── definiens: 2
- 11 │ ├───▶ }
+ 10 │ ├───▶ }
     │ │         
     │ ╰───────── definiens: 1
 ────╯

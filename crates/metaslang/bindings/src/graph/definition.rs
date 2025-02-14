@@ -21,7 +21,7 @@ impl<KT: KindTypes + 'static> Definition<KT> {
 
     pub fn name_location(&self) -> BindingLocation<KT> {
         match self.get_file() {
-            FileDescriptor::System(_) => BindingLocation::built_in(),
+            FileDescriptor::BuiltIns(_) => BindingLocation::built_in(),
             FileDescriptor::User(file_id) => {
                 BindingLocation::user_file(file_id, self.get_cursor().to_owned())
             }
@@ -30,7 +30,7 @@ impl<KT: KindTypes + 'static> Definition<KT> {
 
     pub fn definiens_location(&self) -> BindingLocation<KT> {
         match self.get_file() {
-            FileDescriptor::System(_) => BindingLocation::built_in(),
+            FileDescriptor::BuiltIns(_) => BindingLocation::built_in(),
             FileDescriptor::User(file_id) => {
                 BindingLocation::user_file(file_id, self.get_definiens_cursor().to_owned())
             }

@@ -15,11 +15,10 @@ fn main() -> Result<()> {
     let output_dir = CargoWorkspace::locate_source_crate("slang_solidity")?.join("src/generated");
 
     let mut fs = RuntimeGenerator::generate_product(&language, &input_dir, &output_dir)?;
-    let built_ins_output_dir = output_dir.join("bindings/generated/built_ins");
-    codegen_runtime_generator::render_built_ins(
-        &mut fs,
-        &language,
-        &built_ins_output_dir,
-        render_built_ins,
-    )
+
+    let built_ins_output_dir = output_dir.join("extensions");
+
+    let built_ins_path = built_ins_output_dir.join("built_ins.rs");
+    let contents = render_built_ins(&language)?;
+    fs.write_file(built_ins_path, contents)
 }

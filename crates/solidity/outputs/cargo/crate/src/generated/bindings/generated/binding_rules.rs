@@ -49,22 +49,16 @@ inherit .star_extension
   edge ROOT_NODE -> export
   edge export -> @source_unit.defs
 
-  if (is-system-file FILE_PATH) {
-    ; If this is a system file (aka. built-ins), export everything through this
-    ; special symbol (which is automatically imported below)
-    attr (export) pop_symbol = "@@built-ins@@"
+  ; This is a user file, so we want to export under the file's path symbol
+  attr (export) pop_symbol = FILE_PATH
 
-  } else {
-    ; This is a user file, so we want to export under the file's path symbol
-    attr (export) pop_symbol = FILE_PATH
+  ; ... and also import the global built-ins
+  node built_ins
+  ; __SLANG_SOLIDITY_BUILT_INS_SCOPE_GUARD__ keep in sync with built-ins loading code
+  attr (built_ins) push_symbol = "@@built-ins@@"
 
-    ; ... and also import the global built-ins
-    node built_ins
-    attr (built_ins) push_symbol = "@@built-ins@@"
-
-    edge @source_unit.lexical_scope -> built_ins
-    edge built_ins -> ROOT_NODE
-  }
+  edge @source_unit.lexical_scope -> built_ins
+  edge built_ins -> ROOT_NODE
 
   let @source_unit.enclosing_def = #null
 
@@ -106,20 +100,6 @@ inherit .star_extension
   ; In the general case, the lexical scope of the definition connects directly
   ; to the source unit's
   edge @unit_member.lexical_scope -> @source_unit.lexical_scope
-}
-
-;; Special case for built-ins: we want to export all symbols in the contract:
-;; functions, types and state variables. All built-in symbols are defined in an
-;; internal contract named '%BuiltIns%' (renamed from '$BuiltIns$') so we need
-;; to export all its members and type members directly as a source unit
-;; definition.
-;; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with built-ins generation.
-@source_unit [SourceUnit [SourceUnitMembers
-    [SourceUnitMember @contract [ContractDefinition name: ["%BuiltIns%"]]]
-]] {
-  if (is-system-file FILE_PATH) {
-    edge @source_unit.defs -> @contract.instance
-  }
 }
 
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
@@ -424,7 +404,7 @@ inherit .star_extension
   if (version-matches "< 0.5.0") {
     ; For Solidity < 0.5.0 `this` also acts like an `address`
     node address_ref
-    attr (address_ref) push_symbol = "%address"
+    attr (address_ref) push_symbol = "address"
     node address_typeof
     attr (address_typeof) push_symbol = "@typeof"
     edge this -> address_typeof
@@ -977,59 +957,63 @@ inherit .star_extension
   let @elementary.push_end = @elementary.ref
 }
 
-@elementary [ElementaryType [AddressType]] {
-  let @elementary.symbol = "%address"
+@elementary [ElementaryType [AddressType . [AddressKeyword] .]] {
+  let @elementary.symbol = "address"
+}
+
+@elementary [ElementaryType [AddressType . [AddressKeyword] [PayableKeyword] .]] {
+  let @elementary.symbol = "address payable"
 }
 
 @elementary [ElementaryType [BoolKeyword]] {
-  let @elementary.symbol = "%bool"
+  let @elementary.symbol = "bool"
 }
 
 @elementary [ElementaryType [ByteKeyword]] {
-  let @elementary.symbol = "%byte"
+  let @elementary.symbol = "byte"
 }
 
 @elementary [ElementaryType @keyword [BytesKeyword]] {
-  let @elementary.symbol = (format "%{}" (source-text @keyword))
+  let @elementary.symbol = (source-text @keyword)
 }
 
 @elementary [ElementaryType [StringKeyword]] {
-  let @elementary.symbol = "%string"
+  let @elementary.symbol = "string"
 }
 
 @elementary [ElementaryType @keyword [IntKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "int") {
-    let @elementary.symbol = "%int256"
+    let @elementary.symbol = "int256"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
 @elementary [ElementaryType @keyword [UintKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "uint") {
-    let @elementary.symbol = "%uint256"
+    let @elementary.symbol = "uint256"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
 @elementary [ElementaryType @keyword [FixedKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "fixed") {
-    let @elementary.symbol = "%fixed128x18"
+    let @elementary.symbol = "fixed128x18"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
 @elementary [ElementaryType @keyword [UfixedKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "ufixed") {
-    let @elementary.symbol = "%ufixed128x18"
+    let @elementary.symbol = "ufixed128x18"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
@@ -1204,6 +1188,11 @@ inherit .star_extension
 ;;; Function types
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+@ftype [FunctionType] {
+  node @ftype.lexical_scope
+  node @ftype.output
+}
+
 @ftype [FunctionType @attrs [FunctionTypeAttributes]] {
   ; Compute the built-in type of the function
   ; %functionExternal provides access to .selector and .address
@@ -1213,9 +1202,6 @@ inherit .star_extension
       set type_symbol = "%ExternalFunction"
     }
   }
-
-  node @ftype.lexical_scope
-  node @ftype.output
 
   ; This path pushes the function type to the symbol stack
   ; TODO: add parameter and return types to distinguish between different function types
@@ -1625,17 +1611,6 @@ inherit .star_extension
     body: [FunctionBody @body [Block]]
 ] {
   edge @body.lexical_scope -> @modifier.lexical_scope
-
-  ; Special case: bind the place holder statement `_` to the built-in
-  ; `%placeholder`. This only happens in the body of a modifier.
-  node placeholder_pop
-  attr (placeholder_pop) pop_symbol = "_"
-  node placeholder_ref
-  attr (placeholder_ref) push_symbol = "%placeholder"
-
-  edge @body.lexical_scope -> placeholder_pop
-  edge placeholder_pop -> placeholder_ref
-  edge placeholder_ref -> @modifier.lexical_scope
 }
 
 @modifier [ModifierDefinition @params [ParametersDeclaration]] {
@@ -2002,6 +1977,19 @@ inherit .star_extension
 ;;; Assembly
 @stmt [Statement [AssemblyStatement @body body: [YulBlock]]] {
   edge @body.lexical_scope -> @stmt.lexical_scope
+
+  ;; This provides a path to Yul built-ins
+  ;; __SLANG_SOLIDITY_YUL_BUILT_INS_GUARD__ keep in sync with built-ins code generation
+  node yul
+  attr (yul) push_symbol = "@yul"
+  edge @body.lexical_scope -> yul
+  edge yul -> @stmt.lexical_scope
+
+  ;; Provide alternative path to Yul built-ins from the context of a Yul function
+  node in_yul_function_pop
+  attr (in_yul_function_pop) pop_symbol = "@in_yul_function"
+  edge @body.lexical_scope -> in_yul_function_pop
+  edge in_yul_function_pop -> yul
 }
 
 
@@ -2160,10 +2148,14 @@ inherit .star_extension
   edge call -> member
 }
 
+@member [StructMember] {
+  node @member.def
+  node @member.typeof
+}
+
 @struct [StructDefinition [StructMembers
     @member item: [StructMember @type_name [TypeName] @name name: [Identifier]]
 ]] {
-  node @member.def
   attr (@member.def) node_definition = @name
   attr (@member.def) definiens_node = @member
 
@@ -2171,7 +2163,6 @@ inherit .star_extension
 
   edge @type_name.type_ref -> @struct.lexical_scope
 
-  node @member.typeof
   attr (@member.typeof) push_symbol = "@typeof"
 
   edge @member.def -> @member.typeof
@@ -2509,12 +2500,16 @@ inherit .star_extension
   edge @expr.output -> @operand.output
 
   node @options.refs
-  attr (@options.refs) push_symbol = "@param_names"
+  attr (@options.refs) push_symbol = "."
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
 
   node call_options
   attr (call_options) push_symbol = "%CallOptions"
 
-  edge @options.refs -> call_options
+  edge @options.refs -> typeof
+  edge typeof -> call_options
   edge call_options -> @expr.lexical_scope
 }
 
@@ -2527,10 +2522,10 @@ inherit .star_extension
 
 
 ;;; Payable
-; These work like `address`, should they should bind to `%address`
+; These work like `address`, should they should bind to `address`
 @expr [Expression [PayableKeyword]] {
   node ref
-  attr (ref) push_symbol = "%address"
+  attr (ref) push_symbol = "address payable"
 
   edge ref -> @expr.lexical_scope
   edge @expr.output -> ref
@@ -2625,7 +2620,7 @@ inherit .star_extension
   node typeof
   attr (typeof) push_symbol = "@typeof"
   node bool
-  attr (bool) push_symbol = "%bool"
+  attr (bool) push_symbol = "bool"
   edge @expr.output -> typeof
   edge typeof -> bool
   edge bool -> @expr.lexical_scope
@@ -2649,7 +2644,7 @@ inherit .star_extension
       node typeof
       attr (typeof) push_symbol = "@typeof"
       node address
-      attr (address) push_symbol = "%address"
+      attr (address) push_symbol = "address"
       edge @expr.output -> typeof
       edge typeof -> address
       edge address -> @expr.lexical_scope
@@ -2915,7 +2910,12 @@ inherit .star_extension
 
 @path [YulPath . @name [YulIdentifier]] {
   node ref
-  attr (ref) node_reference = @name
+
+  ; Handle `byte` and `return` as special cases, since we cannot define them
+  ; directly as regular built-ins
+  var yul_symbol = (source-text @name)
+  attr (ref) symbol_reference = yul_symbol
+  attr (ref) source_node = @name
 
   edge ref -> @path.lexical_scope
 
