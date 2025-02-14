@@ -86,7 +86,7 @@ impl ParserResult {
                 expected_terminals.push(expected);
             }
 
-            let skipped = input.content(skipped_range.utf8());
+            let skipped = input.content(skipped_range.utf8()).to_owned();
 
             input.emit(ParseError::create(
                 skipped_range,
