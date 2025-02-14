@@ -1,0 +1,30 @@
+{
+    "name": "language-design-workbench",
+    "version": "1.0.0",
+    "description": "Language Design Workbench",
+    "main": "src-ts/cli/ldw.ts",
+    "scripts": {
+        "ldw": "ts-node src-ts/cli/ldw.ts",
+        "ldw-gen1": "ts-node src-ts/gen1/cli/ldw.ts",
+        "test": "jest"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "ajv": "^8.17.1",
+        "commander": "12.1.0",
+        "literal-case": "1.0.0",
+        "pluralize": "8.0.0"
+    },
+    "devDependencies": {
+        "@types/jest": "29.5.13",
+        "@types/node": "22.7.5",
+        "@types/pluralize": "0.0.33",
+        "jest": "29.7.0",
+        "prettier": "3.3.3",
+        "ts-jest": "29.2.5",
+        "ts-node": "10.9.2",
+        "typescript": "5.6.3"
+    }
+}

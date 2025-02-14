@@ -1,12 +1,13 @@
 use codegen_ebnf::{EbnfModel, PlainWriter};
-use codegen_language_definition::model::{self, PredefinedLabel};
+use codegen_language_definition::model::{self, Identifier, KeywordValue, PredefinedLabel};
 use indexmap::{IndexMap, IndexSet};
+use itertools::Itertools;
 use serde::Serialize;
 
 #[derive(Default, Serialize)]
 pub struct AstModel {
     #[serde(skip)]
-    terminals: IndexSet<model::Identifier>,
+    terminals: IndexSet<Terminal>,
     #[serde(skip)]
     ebnf: Option<EbnfModel>,
 
@@ -14,6 +15,15 @@ pub struct AstModel {
     pub choices: Vec<Choice>,
     pub repeated: Vec<Repeated>,
     pub separated: Vec<Separated>,
+}
+
+#[derive(PartialEq, Eq, Hash)]
+pub struct Terminal {
+    pub identifier: model::Identifier,
+    pub is_trivia: bool,
+    pub is_keyword: bool,
+    // if it only contains one Atom
+    pub is_simple: bool,
 }
 
 #[derive(Serialize)]
@@ -40,6 +50,7 @@ pub struct Choice {
     pub ebnf: String,
 
     pub nonterminal_types: Vec<model::Identifier>,
+    pub terminal_types: Vec<model::Identifier>,
     pub includes_terminals: bool,
 }
 
@@ -93,13 +104,29 @@ impl AstModel {
                     // These items are nonterminals.
                 }
                 model::Item::Trivia { item } => {
-                    self.terminals.insert(item.name.clone());
+                    self.terminals.insert(Terminal {
+                        identifier: item.name.clone(),
+                        is_trivia: true,
+                        is_keyword: false,
+                        is_simple: false,
+                    });
                 }
                 model::Item::Keyword { item } => {
-                    self.terminals.insert(item.name.clone());
+                    self.terminals.insert(Terminal {
+                        identifier: item.name.clone(),
+                        is_trivia: false,
+                        is_keyword: true,
+                        is_simple: item.definitions.len() == 1
+                            && matches!(item.definitions[0].value, KeywordValue::Atom { .. }),
+                    });
                 }
                 model::Item::Token { item } => {
-                    self.terminals.insert(item.name.clone());
+                    self.terminals.insert(Terminal {
+                        identifier: item.name.clone(),
+                        is_trivia: false,
+                        is_keyword: false,
+                        is_simple: item.definitions.len() == 1,
+                    });
                 }
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
@@ -154,21 +181,31 @@ impl AstModel {
         });
     }
 
+    fn terminals_ids(&self) -> Vec<Identifier> {
+        self.terminals
+            .iter()
+            .map(|t| t.identifier.clone())
+            .collect_vec()
+    }
+
     fn add_enum_item(&mut self, item: &model::EnumItem) {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
-        let (terminal_types, nonterminal_types) = item
+        let terminals_ids = self.terminals_ids();
+        let (terminal_types, nonterminal_types): (Vec<_>, Vec<_>) = item
             .variants
             .iter()
             .map(|variant| variant.reference.clone())
-            .partition(|reference| self.terminals.contains(reference));
+            .partition(|reference| terminals_ids.contains(reference));
 
+        let includes_terminals = !terminal_types.is_empty();
         self.choices.push(Choice {
             parent_type,
             ebnf,
             nonterminal_types,
-            includes_terminals: !terminal_types.is_empty(),
+            terminal_types,
+            includes_terminals,
         });
     }
 
@@ -176,10 +213,11 @@ impl AstModel {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
+        let terminals_ids = self.terminals_ids();
         self.repeated.push(Repeated {
             parent_type,
             ebnf,
-            item_type: if self.terminals.contains(&item.reference) {
+            item_type: if terminals_ids.contains(&item.reference) {
                 None
             } else {
                 Some(item.reference.clone())
@@ -191,10 +229,12 @@ impl AstModel {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
+        let terminals_ids = self.terminals_ids();
+
         self.separated.push(Separated {
             parent_type,
             ebnf,
-            item_type: if self.terminals.contains(&item.reference) {
+            item_type: if terminals_ids.contains(&item.reference) {
                 None
             } else {
                 Some(item.reference.clone())
@@ -206,6 +246,8 @@ impl AstModel {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
+        let terminals_ids = self.terminals_ids();
+
         let precedence_expressions = item
             .precedence_expressions
             .iter()
@@ -216,15 +258,18 @@ impl AstModel {
             .iter()
             .map(|expression| expression.reference.clone());
 
-        let (terminal_types, nonterminal_types) = precedence_expressions
-            .chain(primary_expressions)
-            .partition(|reference| self.terminals.contains(reference));
+        let (terminal_types, nonterminal_types): (Vec<Identifier>, Vec<Identifier>) =
+            precedence_expressions
+                .chain(primary_expressions)
+                .partition(|reference| terminals_ids.contains(reference));
 
+        let includes_terminals = !terminal_types.is_empty();
         self.choices.push(Choice {
             parent_type,
             ebnf,
             nonterminal_types,
-            includes_terminals: !terminal_types.is_empty(),
+            terminal_types,
+            includes_terminals,
         });
     }
 
@@ -275,7 +320,9 @@ impl AstModel {
         &'a self,
         fields: &'a IndexMap<model::Identifier, model::Field>,
     ) -> impl Iterator<Item = Field> + 'a {
-        fields.iter().map(|(label, field)| {
+        let terminals_ids = self.terminals_ids();
+
+        fields.iter().map(move |(label, field)| {
             let (reference, is_optional) = match field {
                 model::Field::Required { reference } => (reference, false),
                 model::Field::Optional {
@@ -286,7 +333,7 @@ impl AstModel {
 
             Field {
                 label: label.clone(),
-                r#type: if self.terminals.contains(reference) {
+                r#type: if terminals_ids.contains(reference) {
                     None
                 } else {
                     Some(reference.clone())

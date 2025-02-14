@@ -1,0 +1,64 @@
+grammar ldw::model::parsed {
+    
+    Model =
+        'model' name:FQN
+        ( 'modifies' parent_name:FQN )? 
+        '{' ( values:( Deletion | MemberModification | Definition ) ';' )* '}'
+        ;
+
+    FQN @noskip = Id ('::' Id)* ;
+
+    Definition = name:Id '=' Type  ;
+
+    Deletion           = 'delete' name:Id  ;
+    MemberModification = 'modify' name:Id values:( MemberDeletion | MemberAddition )+ ;
+    MemberDeletion     = '-=' name:Id ; 
+    MemberAddition     = '+=' value:( ProductMember | Type ) ;
+
+
+    /************************************
+     * Types
+     ************************************/
+
+    Type = _:( VoidType | PrimitiveType | EnumType | TypeWithStructure | NamedTypeReference );
+
+    VoidType              = '()' ;
+    PrimitiveType         = 'boolean' | 'char' | 'string' | 'i8' | 'i16' | 'i32' | 'i64' | 'u8' | 'u16' | 'u32' | 'u64' | 'f32' | 'f64' ;
+    EnumType              = '{' member:( StringElement ( '|' StringElement )* ) '}' ;
+    StringElement @noskip = '"' Id '"' ;
+
+    TypeWithStructure = _:( SumType | ProductType | GenericType );
+    SumType           = '{' member:( Type ( '|' Type )+ ) '}' ;
+    ProductType       = '{' member:( ProductMember ( ',' ProductMember )* )? '}' ;
+    ProductMember     = name:Id ':' Type ;
+    GenericType       = _:( TupleType | MapType | SetType | SequenceType | OptionType );
+    TupleType         = 'tuple<' member:( Type ( ',' Type )* ) '>' ;
+    MapType           = 'map<' key_type:Type ',' value_type:Type '>' ;
+    SetType           = 'set<' key_type:Type '>' ;
+    SequenceType      = 'seq<' elementType:Type '>' ;
+    OptionType        = 'option<' Type '>' ;
+
+    NamedTypeReference = FQN ;
+
+
+    /************************************
+     * Identifiers
+     ************************************/
+    
+    Id = Identifier ;
+
+    Identifier            @atomic = InitialIdentifierChar ( IdentifierChar )* ;
+    InitialIdentifierChar @atomic = [a-zA-Z_] ;
+    IdentifierChar        @atomic = [a-zA-Z_0-9] ;
+
+
+    /************************************
+     * Trivia
+     ************************************/
+
+    Trivia        @noskip = _:( LineComment | BlockComment | Whitespace ) ;
+    Whitespace    @atomic = [\n\t ]+ ;
+    LineComment   @atomic = '//' [^\n]* '\n'? ;
+    BlockComment  @atomic = '/*' ( [^*]+ | '*' !'/' )* '/' ;
+
+}
