@@ -55,6 +55,7 @@ jobs:
   # We cannot run the full CI in devcontainers, as we will run out of disk space in GitHub Actions.
   # Instead, we just validate the devcontainer is built correctly by running a minimal check below.
   validate-devcontainer:
+    needs: "ci"
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     # Skip 'pull_request' events from the main repository, as the workflow is already triggered by the 'push' event:
