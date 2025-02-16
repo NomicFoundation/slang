@@ -6185,6 +6185,21 @@
             {
               "Keyword": {
                 "item": {
+                  "name": "YulAbstractKeyword",
+                  "identifier": "YulIdentifier",
+                  "definitions": [
+                    {
+                      "enabled": "Never",
+                      "reserved": { "Till": { "till": "0.7.1" } },
+                      "value": { "Atom": { "atom": "abstract" } }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
                   "name": "YulAfterKeyword",
                   "identifier": "YulIdentifier",
                   "definitions": [

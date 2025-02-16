@@ -4464,6 +4464,15 @@ codegen_language_macros::compile!(Language(
                     lexical_context = Yul,
                     items = [
                         Keyword(
+                            name = YulAbstractKeyword,
+                            identifier = YulIdentifier,
+                            definitions = [KeywordDefinition(
+                                enabled = Never,
+                                reserved = Till("0.7.1"),
+                                value = Atom("abstract")
+                            )]
+                        ),
+                        Keyword(
                             name = YulAfterKeyword,
                             identifier = YulIdentifier,
                             definitions = [KeywordDefinition(

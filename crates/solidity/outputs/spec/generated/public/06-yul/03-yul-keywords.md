@@ -4,6 +4,12 @@
 
 ## Syntax
 
+```{ .ebnf #YulAbstractKeyword }
+
+```
+
+<pre ebnf-snippet="YulAbstractKeyword" style="display: none;"><span class="cm">(* Reserved until 0.7.1 *)</span><br /><a href="#YulAbstractKeyword"><span class="k">YUL_ABSTRACT_KEYWORD</span></a><span class="o"> = </span><span class="s2">"abstract"</span><span class="o">;</span></pre>
+
 ```{ .ebnf #YulAfterKeyword }
 
 ```

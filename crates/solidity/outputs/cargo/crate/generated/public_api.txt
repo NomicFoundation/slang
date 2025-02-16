@@ -675,6 +675,7 @@ pub slang_solidity::cst::TerminalKind::WeiKeyword
 pub slang_solidity::cst::TerminalKind::WhileKeyword
 pub slang_solidity::cst::TerminalKind::Whitespace
 pub slang_solidity::cst::TerminalKind::YearsKeyword
+pub slang_solidity::cst::TerminalKind::YulAbstractKeyword
 pub slang_solidity::cst::TerminalKind::YulAfterKeyword
 pub slang_solidity::cst::TerminalKind::YulAliasKeyword
 pub slang_solidity::cst::TerminalKind::YulAnonymousKeyword

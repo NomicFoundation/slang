@@ -4050,6 +4050,15 @@ export declare enum TerminalKind {
    */
   YearsKeyword = "YearsKeyword",
   /**
+   * Represents a node with kind `YulAbstractKeyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Reserved until 0.7.1 *)
+   * YUL_ABSTRACT_KEYWORD = "abstract";
+   * ```
+   */
+  YulAbstractKeyword = "YulAbstractKeyword",
+  /**
    * Represents a node with kind `YulAfterKeyword`, having the following structure:
    *
    * ```ebnf

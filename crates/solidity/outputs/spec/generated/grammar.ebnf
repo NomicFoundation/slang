@@ -1748,6 +1748,9 @@ YUL_HEX_LITERAL = "0x" «HEX_CHARACTER»+ (?!«IDENTIFIER_START»);
 (* 6.3. Yul Keywords: *)
 
 (* Reserved until 0.7.1 *)
+YUL_ABSTRACT_KEYWORD = "abstract";
+
+(* Reserved until 0.7.1 *)
 YUL_AFTER_KEYWORD = "after";
 
 (* Reserved from 0.5.0 until 0.7.1 *)

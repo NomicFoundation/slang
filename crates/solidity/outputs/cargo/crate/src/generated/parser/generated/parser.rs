@@ -10690,6 +10690,17 @@ impl Lexer for Parser {
                 {
                     let kw_scan = match input.next() {
                         Some('a') => match input.next() {
+                            Some('b') => {
+                                if scan_chars!(input, 's', 't', 'r', 'a', 'c', 't') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TerminalKind::YulAbstractKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
                             Some('f') => {
                                 if scan_chars!(input, 't', 'e', 'r') {
                                     if !self.version_is_at_least_0_7_1 {
