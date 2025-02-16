@@ -63,3 +63,8 @@ fn this_as_address() -> Result<()> {
 fn type_expr() -> Result<()> {
     run("built_ins", "type_expr")
 }
+
+#[test]
+fn yul_built_in_doesn_t_bind() -> Result<()> {
+    run("built_ins", "yul_built_in_doesn_t_bind")
+}
