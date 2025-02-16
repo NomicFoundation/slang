@@ -8,3 +8,8 @@ use crate::cst_output::runner::run;
 fn colon_equal_separated() -> Result<()> {
     run("YulVariableAssignmentStatement", "colon_equal_separated")
 }
+
+#[test]
+fn identifier_and() -> Result<()> {
+    run("YulVariableAssignmentStatement", "identifier_and")
+}

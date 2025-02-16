@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ // this identifier is unreserved, and bound as a built-in function. See #1203:   │ 0..78
+  2  │ and := 0                                                                         │ 79..87
+
+Errors: []
+
+Tree:
+  - (root꞉ YulVariableAssignmentStatement): # "// this identifier is unreserved, and bound as a b..." (0..88)
+      - (variables꞉ YulPaths): # "// this identifier is unreserved, and bound as a b..." (0..82)
+          - (item꞉ YulPath): # "// this identifier is unreserved, and bound as a b..." (0..82)
+              - (leading_trivia꞉ SingleLineComment): "// this identifier is unreserved, and bound as a b..." # (0..78)
+              - (leading_trivia꞉ EndOfLine): "\n" # (78..79)
+              - (item꞉ YulIdentifier): "and" # (79..82)
+      - (assignment꞉ YulAssignmentOperator): # " :=" (82..85)
+          - (leading_trivia꞉ Whitespace): " " # (82..83)
+          - (variant꞉ ColonEqual): ":=" # (83..85)
+      - (expression꞉ YulExpression) ► (variant꞉ YulLiteral): # " 0\n" (85..88)
+          - (leading_trivia꞉ Whitespace): " " # (85..86)
+          - (variant꞉ YulDecimalLiteral): "0" # (86..87)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (87..88)
