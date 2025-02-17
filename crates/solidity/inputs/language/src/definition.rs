@@ -6489,7 +6489,8 @@ codegen_language_macros::compile!(Language(
                     ],
                     enabled = From("0.8.8")
                 ),
-                BuiltInVariable(definition = "%Function _"),
+                // Placeholder for modifiers, to be used to inject the modified function body (`_;`)
+                BuiltInVariable(definition = "%Function %_"),
                 BuiltInVariable(definition = "%AbiType abi"),
                 BuiltInVariable(definition = "%BlockType block"),
                 BuiltInVariable(definition = "%BytesType bytes"),

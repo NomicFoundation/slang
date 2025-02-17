@@ -78,7 +78,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%InterfaceTypeType");
             type_scope.define_field(builder, "name", "string");
             _ = scope.define_type(builder, "%IntTypeType");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -235,7 +235,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%InterfaceTypeType");
             type_scope.define_field(builder, "name", "string");
             _ = scope.define_type(builder, "%IntTypeType");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -396,7 +396,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%InterfaceTypeType");
             type_scope.define_field(builder, "name", "string");
             _ = scope.define_type(builder, "%IntTypeType");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -565,7 +565,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%InterfaceTypeType");
             type_scope.define_field(builder, "name", "string");
             _ = scope.define_type(builder, "%IntTypeType");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -737,7 +737,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%InterfaceTypeType");
             type_scope.define_field(builder, "name", "string");
             _ = scope.define_type(builder, "%IntTypeType");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -908,7 +908,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%InterfaceTypeType");
             type_scope.define_field(builder, "name", "string");
             _ = scope.define_type(builder, "%IntTypeType");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -1084,7 +1084,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%InterfaceTypeType");
             type_scope.define_field(builder, "name", "string");
             _ = scope.define_type(builder, "%IntTypeType");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -1264,7 +1264,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%InterfaceTypeType");
             type_scope.define_field(builder, "name", "string");
             _ = scope.define_type(builder, "%IntTypeType");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -1446,7 +1446,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "name", "string");
             type_scope.define_field(builder, "interfaceId", "bytes4");
             _ = scope.define_type(builder, "%IntTypeType");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -1630,7 +1630,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%IntTypeType");
             type_scope.define_field(builder, "min", "int256");
             type_scope.define_field(builder, "max", "int256");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -1810,7 +1810,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%IntTypeType");
             type_scope.define_field(builder, "min", "int256");
             type_scope.define_field(builder, "max", "int256");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -1989,7 +1989,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%IntTypeType");
             type_scope.define_field(builder, "min", "int256");
             type_scope.define_field(builder, "max", "int256");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -2169,7 +2169,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%IntTypeType");
             type_scope.define_field(builder, "min", "int256");
             type_scope.define_field(builder, "max", "int256");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -2351,7 +2351,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%IntTypeType");
             type_scope.define_field(builder, "min", "int256");
             type_scope.define_field(builder, "max", "int256");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -2534,7 +2534,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%IntTypeType");
             type_scope.define_field(builder, "min", "int256");
             type_scope.define_field(builder, "max", "int256");
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -2721,7 +2721,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%UserDefinedValueType");
             type_scope.define_function(builder, "wrap", Some("%UserType"));
             type_scope.define_function(builder, "unwrap", Some("%WrappedType"));
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -2909,7 +2909,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%UserDefinedValueType");
             type_scope.define_function(builder, "wrap", Some("%UserType"));
             type_scope.define_function(builder, "unwrap", Some("%WrappedType"));
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -3098,7 +3098,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%UserDefinedValueType");
             type_scope.define_function(builder, "wrap", Some("%UserType"));
             type_scope.define_function(builder, "unwrap", Some("%WrappedType"));
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -3289,7 +3289,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%UserDefinedValueType");
             type_scope.define_function(builder, "wrap", Some("%UserType"));
             type_scope.define_function(builder, "unwrap", Some("%WrappedType"));
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");
@@ -3486,7 +3486,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%UserDefinedValueType");
             type_scope.define_function(builder, "wrap", Some("%UserType"));
             type_scope.define_function(builder, "unwrap", Some("%WrappedType"));
-            scope.define_field(builder, "_", "%Function");
+            scope.define_field(builder, "%_", "%Function");
             scope.define_field(builder, "abi", "%AbiType");
             scope.define_field(builder, "block", "%BlockType");
             scope.define_field(builder, "bytes", "%BytesType");

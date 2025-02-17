@@ -10,6 +10,11 @@ fn diamond() -> Result<()> {
 }
 
 #[test]
+fn function_named_underscore() -> Result<()> {
+    run("modifiers", "function_named_underscore")
+}
+
+#[test]
 fn inherited() -> Result<()> {
     run("modifiers", "inherited")
 }
