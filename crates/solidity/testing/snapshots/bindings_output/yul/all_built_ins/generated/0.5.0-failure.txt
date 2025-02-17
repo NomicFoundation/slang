@@ -15,10 +15,10 @@ References and definitions:
     │              ╰─── ref: built-in
   5 │             addmod()
     │             ───┬──  
-    │                ╰──── refs: built-in, built-in
+    │                ╰──── ref: built-in
   6 │             address()
     │             ───┬───  
-    │                ╰───── refs: built-in, built-in
+    │                ╰───── ref: built-in
   7 │             and()
     │             ─┬─  
     │              ╰─── ref: built-in
@@ -36,7 +36,7 @@ References and definitions:
     │                 ╰───── unresolved
  12 │             blockhash()
     │             ────┬────  
-    │                 ╰────── refs: built-in, built-in
+    │                 ╰────── ref: built-in
  13 │             byte()
     │             ──┬─  
     │               ╰─── ref: built-in
@@ -114,22 +114,22 @@ References and definitions:
     │                ╰──── ref: built-in
  38 │             keccak256()
     │             ────┬────  
-    │                 ╰────── refs: built-in, built-in
+    │                 ╰────── ref: built-in
  39 │             log0()
     │             ──┬─  
-    │               ╰─── refs: built-in, built-in
+    │               ╰─── ref: built-in
  40 │             log1()
     │             ──┬─  
-    │               ╰─── refs: built-in, built-in
+    │               ╰─── ref: built-in
  41 │             log2()
     │             ──┬─  
-    │               ╰─── refs: built-in, built-in
+    │               ╰─── ref: built-in
  42 │             log3()
     │             ──┬─  
-    │               ╰─── refs: built-in, built-in
+    │               ╰─── ref: built-in
  43 │             log4()
     │             ──┬─  
-    │               ╰─── refs: built-in, built-in
+    │               ╰─── ref: built-in
  44 │             lt()
     │             ─┬  
     │              ╰── ref: built-in
@@ -156,7 +156,7 @@ References and definitions:
     │              ╰─── ref: built-in
  52 │             mulmod()
     │             ───┬──  
-    │                ╰──── refs: built-in, built-in
+    │                ╰──── ref: built-in
  53 │             not()
     │             ─┬─  
     │              ╰─── ref: built-in
@@ -186,7 +186,7 @@ References and definitions:
     │                    ╰──────── ref: built-in
  62 │             revert()
     │             ───┬──  
-    │                ╰──── refs: built-in, built-in, built-in
+    │                ╰──── ref: built-in
  63 │             sar()
     │             ─┬─  
     │              ╰─── ref: built-in
@@ -198,7 +198,7 @@ References and definitions:
     │                  ╰─────── ref: built-in
  66 │             selfdestruct()
     │             ──────┬─────  
-    │                   ╰─────── refs: built-in, built-in
+    │                   ╰─────── ref: built-in
  67 │             sgt()
     │             ─┬─  
     │              ╰─── ref: built-in

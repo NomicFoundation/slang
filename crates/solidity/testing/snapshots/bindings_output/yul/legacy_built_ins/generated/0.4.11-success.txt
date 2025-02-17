@@ -21,10 +21,10 @@ References and definitions:
    │               ╰──── ref: built-in
  7 │             sha3()
    │             ──┬─  
-   │               ╰─── refs: built-in, built-in
+   │               ╰─── ref: built-in
  8 │             suicide()
    │             ───┬───  
-   │                ╰───── refs: built-in, built-in
+   │                ╰───── ref: built-in
 ───╯
 Definiens: 
     ╭─[input.sol:1:1]

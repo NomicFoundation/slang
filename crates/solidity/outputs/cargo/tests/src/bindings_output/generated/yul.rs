@@ -30,6 +30,11 @@ fn constant_access_from_functions() -> Result<()> {
 }
 
 #[test]
+fn external_variables() -> Result<()> {
+    run("yul", "external_variables")
+}
+
+#[test]
 fn functions() -> Result<()> {
     run("yul", "functions")
 }
@@ -62,6 +67,11 @@ fn slot_offset_members() -> Result<()> {
 #[test]
 fn slot_suffix() -> Result<()> {
     run("yul", "slot_suffix")
+}
+
+#[test]
+fn solidity_built_in_doesn_t_bind() -> Result<()> {
+    run("yul", "solidity_built_in_doesn_t_bind")
 }
 
 #[test]

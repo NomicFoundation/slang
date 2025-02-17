@@ -426,6 +426,11 @@ inherit .star_extension
   edge @contract.def -> type
   edge type -> type_contract_type
   edge type_contract_type -> @contract.parent_scope
+
+  ;; This scope provides access to state variables from Yul assembly blocks
+  node @contract.yul_locals
+  attr (@contract.yul_locals) pop_symbol = "@yul_locals"
+  edge @contract.lexical_scope -> @contract.yul_locals
 }
 
 @contract [ContractDefinition @specifier [InheritanceSpecifier]] {
@@ -528,6 +533,9 @@ inherit .star_extension
   ; query language (we would need to modify this query for anything *not*
   ; containing a `PrivateKeyword` node)
   edge @contract.instance -> @state_var.def
+
+  ; State variables should also be available in Yul assembly blocks
+  edge @contract.yul_locals -> @state_var.def
 }
 
 ;; Public state variables are also exposed as external member functions
@@ -1366,6 +1374,11 @@ inherit .star_extension
   edge @function.def -> typeof
   edge typeof -> type_function
   edge type_function -> @function.lexical_scope
+
+  ;; This scope provides access to local variables from Yul assembly blocks
+  node @function.yul_locals
+  attr (@function.yul_locals) pop_symbol = "@yul_locals"
+  edge @function.lexical_scope -> @function.yul_locals
 }
 
 @function [FunctionDefinition name: [FunctionName @name [Identifier]]] {
@@ -1381,6 +1394,9 @@ inherit .star_extension
   ;; ... and shadow other declarations
   attr (@function.lexical_scope -> @params.defs) precedence = 1
 
+  ;; Function parameters should also be able inside Yul assembly blocks via a guarded path
+  edge @function.yul_locals -> @params.defs
+
   ;; Connect to paramaters for named argument resolution
   edge @function.def -> @params.names
 }
@@ -1394,6 +1410,9 @@ inherit .star_extension
   edge @function.lexical_scope -> @return_params.defs
   ;; ... and shadow other declarations
   attr (@function.lexical_scope -> @return_params.defs) precedence = 1
+
+  ;; Function return parameters should also be able inside Yul assembly blocks via a guarded path
+  edge @function.yul_locals -> @return_params.defs
 }
 
 ;; Only functions that return a single value have an actual return type
@@ -1646,6 +1665,12 @@ inherit .star_extension
     edge @block.lexical_scope -> @stmt.defs
     ;; ... shadowing declarations in enclosing scopes
     attr (@block.lexical_scope -> @stmt.defs) precedence = 1
+
+    ;; Block definitions are also available to Yul assembly blocks
+    node yul_locals
+    attr (yul_locals) pop_symbol = "@yul_locals"
+    edge @block.lexical_scope -> yul_locals
+    edge yul_locals -> @stmt.defs
   }
 }
 
@@ -1709,6 +1734,12 @@ inherit .star_extension
 @stmt [Statement @var_decl [VariableDeclarationStatement]] {
   edge @var_decl.lexical_scope -> @stmt.lexical_scope
   edge @stmt.defs -> @var_decl.def
+
+  ;; Make the variable available to Yul assembly blocks through a guarded path
+  node yul_locals
+  attr (yul_locals) pop_symbol = "@yul_locals"
+  edge @stmt.lexical_scope -> yul_locals
+  edge yul_locals -> @var_decl.def
 }
 
 @var_decl [VariableDeclarationStatement] {
@@ -1754,6 +1785,12 @@ inherit .star_extension
 @stmt [Statement @tuple_decon [TupleDeconstructionStatement]] {
   edge @tuple_decon.lexical_scope -> @stmt.lexical_scope
   edge @stmt.defs -> @tuple_decon.defs
+
+  ;; Make any variables available to Yul assembly blocks through a guarded path
+  node yul_locals
+  attr (yul_locals) pop_symbol = "@yul_locals"
+  edge @stmt.lexical_scope -> yul_locals
+  edge yul_locals -> @tuple_decon.defs
 }
 
 @tuple_decon [TupleDeconstructionStatement] {
@@ -1971,20 +2008,25 @@ inherit .star_extension
 
 ;;; Assembly
 @stmt [Statement [AssemblyStatement @body body: [YulBlock]]] {
-  edge @body.lexical_scope -> @stmt.lexical_scope
-
-  ;; This provides a path to Yul built-ins
+  ;; This provides a path to constants and Yul built-ins.
   ;; __SLANG_SOLIDITY_YUL_BUILT_INS_GUARD__ keep in sync with built-ins code generation
   node yul
   attr (yul) push_symbol = "@yul"
   edge @body.lexical_scope -> yul
   edge yul -> @stmt.lexical_scope
 
-  ;; Provide alternative path to Yul built-ins from the context of a Yul function
+  ;; Both should also be available inside Yul functions (which cannot see
+  ;; anything else from outer scopes)
   node in_yul_function_pop
   attr (in_yul_function_pop) pop_symbol = "@in_yul_function"
   edge @body.lexical_scope -> in_yul_function_pop
   edge in_yul_function_pop -> yul
+
+  ;; Also provide access to locals and state variables from Solidity
+  node yul_locals
+  attr (yul_locals) push_symbol = "@yul_locals"
+  edge @body.lexical_scope -> yul_locals
+  edge yul_locals -> @stmt.lexical_scope
 }
 
 
@@ -2756,29 +2798,30 @@ inherit .star_extension
   ;; parameters) are functions (ie. the body of the function doesn't have access
   ;; to any outside variables)
   edge @fundef.lexical_scope -> @block.function_defs
-  ; Exception: but outside constants *are* available, so we provide a guarded
-  ; access to the parent lexical scope. This guard will be popped to link to
-  ; available constants.
+  ; Exception: but constants and built-ins *are* available, so we provide a
+  ; guarded access to the parent lexical scope. This guard will be popped at the
+  ; assembly statement to link to constants and built-ins.
   node yul_function_guard
   attr (yul_function_guard) push_symbol = "@in_yul_function"
   edge @fundef.lexical_scope -> yul_function_guard
   edge yul_function_guard -> @block.lexical_scope
 }
 
-;; Constants need to be available inside Yul functions. This is an exception
-;; since no other external identifiers are, so the path is guarded. We create a
-;; scope in the source unit, contracts and libraries, and guard it from the
-;; lexical scope, so we can link constant definitions here. See the dual path in
-;; the rule above.
+;; Constants need to be available in Yul assembly blocks. We create a scope in
+;; the source unit, contracts and libraries, and guard it from the lexical
+;; scope, so we can link constant definitions here. This uses the same guard as
+;; Yul built-ins (see __SLANG_SOLIDITY_YUL_BUILT_INS_GUARD__) so constants are
+;; in an equivalent scope to predefined built-ins. See the dual path in the rule
+;; above.
 @constant_container ([SourceUnit] | [ContractDefinition] | [LibraryDefinition]) {
-  node @constant_container.yul_functions_guarded_scope
-  attr (@constant_container.yul_functions_guarded_scope) pop_symbol = "@in_yul_function"
-  edge @constant_container.lexical_scope -> @constant_container.yul_functions_guarded_scope
+  node @constant_container.yul_globals_guarded_scope
+  attr (@constant_container.yul_globals_guarded_scope) pop_symbol = "@yul"
+  edge @constant_container.lexical_scope -> @constant_container.yul_globals_guarded_scope
 }
 
 ;; Make top-level constants available inside Yul functions
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @constant [ConstantDefinition]]]] {
-  edge @source_unit.yul_functions_guarded_scope -> @constant.def
+  edge @source_unit.yul_globals_guarded_scope -> @constant.def
 }
 
 ;; Ditto for contracts, interfaces and libraries
@@ -2787,7 +2830,7 @@ inherit .star_extension
         [StateVariableAttributes [StateVariableAttribute [ConstantKeyword]]]
     ]
 ]]] {
-  edge @contract.yul_functions_guarded_scope -> @constant.def
+  edge @contract.yul_globals_guarded_scope -> @constant.def
 }
 
 @fundef [YulFunctionDefinition
