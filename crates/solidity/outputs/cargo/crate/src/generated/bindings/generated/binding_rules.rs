@@ -20,8 +20,8 @@ attribute scoped_node_reference  = node => type = "push_scoped_symbol", node_sym
 attribute pop_scoped_symbol = symbol    => type = "pop_scoped_symbol", symbol = symbol
 attribute push_scoped_symbol = symbol   => type = "push_scoped_symbol", symbol = symbol
 
-;; Keeps a link to the enclosing contract definition to provide a parent for
-;; method calls (to correctly resolve virtual methods)
+;; Keeps a link to the enclosing definition (eg. contract, library or global
+;; function) to provide extension scopes.
 inherit .enclosing_def
 
 inherit .parent_scope
@@ -81,6 +81,11 @@ inherit .star_extension
   ; Provide a default star extension sink node that gets inherited. This is
   ; connected to from expressions, and those can potentially happen anywhere.
   node @source_unit.star_extension
+
+  ; We'll collect global using extensions in this scope, which we can hook from
+  ; contracts and global functions
+  node @source_unit.extensions
+  attr (@source_unit.extensions) is_exported
 }
 
 ;; Top-level definitions...
@@ -123,10 +128,27 @@ inherit .star_extension
 }
 
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
-  ; TODO: this is the hook for top-level extensions, but this should connect to
-  ; an extensions scope that gets pushed to the scope stack, as in the case of
-  ; contracts/libraries (defined further down below).
-  edge @source_unit.lexical_scope -> @using.def
+  ; Link the using directive to the source unit extensions scope, which will
+  ; then be hooked to the lexical_scope via the enclosing def (contract,
+  ; library, etc.) extension_scope
+  edge @source_unit.extensions -> @using.def
+}
+
+@source_unit [SourceUnit [SourceUnitMembers
+    [SourceUnitMember @unit_member (
+          [ContractDefinition]
+        | [LibraryDefinition]
+    )]
+]] {
+  ;; Global using extensions also apply to contracts and libraries
+  edge @unit_member.extensions -> @source_unit.extensions
+}
+
+@source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @function [FunctionDefinition]]]] {
+  ;; Global functions act as enclosing definitions for expressions within and
+  ;; use the source unit's extension scope
+  attr (@function.def) extension_scope = @source_unit.extensions
+  let @function.enclosing_def = @function.def
 }
 
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember
@@ -664,7 +686,6 @@ inherit .star_extension
   attr (hook) extension_hook
   attr (hook) is_endpoint
   edge push_name -> hook
-  ; edge push_name -> JUMP_TO_SCOPE_NODE
 
   ;; "namespace" like access path
   node ns_member
