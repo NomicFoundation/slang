@@ -14,8 +14,10 @@ ignore = { workspace = true }
 Inflector = { workspace = true }
 itertools = { workspace = true }
 num-format = { workspace = true }
+public-api = { workspace = true }
 rayon = { workspace = true }
 regex = { workspace = true }
+rustdoc-json = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -25,12 +27,6 @@ strum_macros = { workspace = true }
 tera = { workspace = true }
 toml = { workspace = true }
 url = { workspace = true }
-
-[dev-dependencies]
-anyhow = { workspace = true }
-public-api = { workspace = true }
-rayon = { workspace = true }
-rustdoc-json = { workspace = true }
 
 [lints]
 workspace = true
