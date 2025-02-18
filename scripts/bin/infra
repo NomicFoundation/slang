@@ -1,4 +1,10 @@
 #!/bin/bash
+
+# Check for the flag SLANG_INFRA_RELEASE before calling `set -u`
+# Otherwise the script will fail if a value for the flag is not provided,
+# but we want to default to a debug build in that case
+is_release="${SLANG_INFRA_RELEASE:-}"
+
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
@@ -13,14 +19,27 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 # spawned by 'infra_cli'. We have to build and run the binary directly to ensure it has a clean env.
 # Otherwise, they leak into cross-platform or multi-target builds, and cause build failures.
 #
+crate_dir="${REPO_ROOT:?}/crates/infra/cli"
 
-(
-  crate_dir="${REPO_ROOT:?}/crates/infra/cli"
+if [[ -n ${is_release} ]]; then
+  (
 
-  cargo build \
-    --bin "infra_cli" \
-    --manifest-path "${crate_dir}/Cargo.toml" \
-    --target-dir "${crate_dir}/target"
+    cargo build \
+      --bin "infra_cli" \
+      --release \
+      --manifest-path "${crate_dir}/Cargo.toml" \
+      --target-dir "${crate_dir}/target"
 
-  "${crate_dir}/target/debug/infra_cli" "$@"
-)
+    "${crate_dir}/target/release/infra_cli" "$@"
+  )
+else
+  (
+    cargo build \
+      --bin "infra_cli" \
+      --manifest-path "${crate_dir}/Cargo.toml" \
+      --target-dir "${crate_dir}/target"
+
+    "${crate_dir}/target/debug/infra_cli" "$@"
+  )
+fi
+

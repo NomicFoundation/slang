@@ -23,6 +23,9 @@ jobs:
     # Skip 'pull_request' events from the main repository, as the workflow is already triggered by the 'push' event:
     if: "${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != 'NomicFoundation/slang' }}"
 
+    env:
+      SLANG_INFRA_RELEASE: "true"
+
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
