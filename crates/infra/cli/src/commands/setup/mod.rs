@@ -48,7 +48,7 @@ impl OrderedCommand for SetupCommand {
         match self {
             SetupCommand::Git => setup_git(),
             SetupCommand::Cargo => setup_cargo(),
-            SetupCommand::Npm => setup_npm(),
+            SetupCommand::Npm => setup_npm()?,
             SetupCommand::Pipenv => setup_pipenv()?,
             SetupCommand::ShellCompletions => setup_shell_completions()?,
         };
