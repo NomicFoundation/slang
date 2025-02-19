@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Check for the flag SLANG_INFRA_RELEASE before calling `set -u`
-# Otherwise the script will fail if a value for the flag is not provided,
-# but we want to default to a debug build in that case
-is_release="${SLANG_INFRA_RELEASE:-}"
-
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
@@ -21,7 +16,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 #
 crate_dir="${REPO_ROOT:?}/crates/infra/cli"
 
-if [[ -n ${is_release} ]]; then
+if [[ -n "${CI:-}" ]]; then
   (
 
     cargo build \
