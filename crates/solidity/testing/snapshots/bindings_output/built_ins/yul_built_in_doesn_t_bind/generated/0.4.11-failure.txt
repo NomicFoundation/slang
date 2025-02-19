@@ -9,9 +9,13 @@ References and definitions:
  2 │     function test() public {
    │              ──┬─  
    │                ╰─── name: 2
- 3 │         mstore();
+ 3 │         mstore(); // should not bind (Solidity context)
    │         ───┬──  
    │            ╰──── unresolved
+   │ 
+ 5 │             mstore() // should bind correctly (Yul context)
+   │             ───┬──  
+   │                ╰──── ref: built-in
 ───╯
 Definiens: 
    ╭─[input.sol:1:1]
@@ -19,10 +23,10 @@ Definiens:
  1 │ ╭─│ ▶ contract Test {
  2 │ │ ╭─▶     function test() public {
    ┆ ┆ ┆   
- 4 │ │ ├─▶     }
+ 7 │ │ ├─▶     }
    │ │ │           
    │ │ ╰─────────── definiens: 2
- 5 │ ├───▶ }
+ 8 │ ├───▶ }
    │ │         
    │ ╰───────── definiens: 1
 ───╯

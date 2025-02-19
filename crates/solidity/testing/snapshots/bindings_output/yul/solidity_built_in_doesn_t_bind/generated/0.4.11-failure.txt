@@ -9,8 +9,11 @@ References and definitions:
  2 │     function test() public {
    │              ──┬─  
    │                ╰─── name: 2
+ 3 │         ripemd160(); // should bind correctly (Solidity context)
+   │         ────┬────  
+   │             ╰────── ref: built-in
    │ 
- 4 │             ripemd160()
+ 5 │             ripemd160() // should not bind (Yul context)
    │             ────┬────  
    │                 ╰────── unresolved
 ───╯
@@ -20,10 +23,10 @@ Definiens:
  1 │ ╭─│ ▶ contract Test {
  2 │ │ ╭─▶     function test() public {
    ┆ ┆ ┆   
- 6 │ │ ├─▶     }
+ 7 │ │ ├─▶     }
    │ │ │           
    │ │ ╰─────────── definiens: 2
- 7 │ ├───▶ }
+ 8 │ ├───▶ }
    │ │         
    │ ╰───────── definiens: 1
 ───╯
