@@ -10,7 +10,6 @@ use anyhow::{bail, Context, Result};
 use itertools::Itertools;
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 
-use crate::cargo::CargoWorkspaceCommands;
 use crate::github::GitHub;
 use crate::paths::{PathExtensions, PrivatePathExtensions};
 
@@ -37,17 +36,6 @@ impl Command {
 
             current_dir: None,
         }
-    }
-
-    #[must_use]
-    pub fn cargo(arg: impl Into<String>) -> Self {
-        let mut command = Command::new("cargo").arg(arg).add_build_rustflags();
-
-        if GitHub::is_running_in_ci() {
-            command = command.flag("--release");
-        }
-
-        command
     }
 
     #[must_use]

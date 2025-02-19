@@ -2,6 +2,7 @@ use std::path::Path;
 
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
+use infra_utils::cargo::CargoWorkspaceCommands;
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
@@ -75,20 +76,24 @@ impl OrderedCommand for LintCommand {
 }
 
 fn run_clippy() {
-    Command::cargo("clippy")
+    Command::new("cargo")
+        .arg("clippy")
         .flag("--workspace")
         .flag("--all-features")
         .flag("--all-targets")
         .flag("--no-deps")
+        .add_build_rustflags()
         .run();
 }
 
 fn run_rustdoc() {
-    Command::cargo("doc")
+    Command::new("cargo")
+        .arg("doc")
         .flag("--workspace")
         .flag("--all-features")
         .flag("--no-deps")
         .flag("--document-private-items")
+        .add_build_rustflags()
         .run();
 }
 

@@ -4,6 +4,7 @@ use anyhow::Result;
 use infra_utils::cargo::{CargoWorkspace, CargoWorkspaceCommands};
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::commands::Command;
+use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
 use strum_macros::EnumIter;
 
@@ -30,14 +31,21 @@ impl WasmPackage {
     fn generate_component(self) -> Result<PathBuf> {
         let wasm_crate = self.wasm_crate();
 
-        Command::new("cargo")
+        let mut command = Command::new("cargo")
             .arg("build")
             .property("--target", WASM_TARGET)
             .property("--package", wasm_crate)
             .flag("--all-features")
-            .flag("--release")
-            .add_build_rustflags()
-            .run();
+            .add_build_rustflags();
+
+        // add_build_rustflags() will add the release flag when running in CI, but we want the release flag to
+        // always be present here. We must avoid adding the flag twice, so we can just check if we're not
+        // in CI and add it here.
+        if !GitHub::is_running_in_ci() {
+            command = command.flag("--release");
+        }
+
+        command.run();
 
         let wasm_binary =
             Path::repo_path(format!("target/{WASM_TARGET}/release/{wasm_crate}.wasm"));
