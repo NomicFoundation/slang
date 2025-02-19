@@ -26,6 +26,8 @@ enum CheckCommand {
     Cargo,
     /// Check NPM packages for any outdated codegen steps.
     Npm,
+    /// Use rustdoc to generate public api documentation.
+    PublicApi,
 }
 
 impl OrderedCommand for CheckCommand {
@@ -35,6 +37,7 @@ impl OrderedCommand for CheckCommand {
         match self {
             CheckCommand::Cargo => check_cargo(),
             CheckCommand::Npm => check_npm(),
+            CheckCommand::PublicApi => check_public_api(),
         };
 
         Ok(())
@@ -53,4 +56,8 @@ fn check_npm() {
     WasmPackage::iter()
         .par_bridge()
         .for_each(|package| package.build().unwrap());
+}
+
+fn check_public_api() {
+    crate::toolchains::public_api_snapshots();
 }

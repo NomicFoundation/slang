@@ -1,10 +1,9 @@
 use anyhow::{Context, Result};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::codegen::CodegenFileSystem;
 use rayon::iter::{ParallelBridge, ParallelIterator};
 use strum::IntoEnumIterator;
 use strum_macros::{Display, EnumIter};
-
-use crate::cargo::CargoWorkspace;
-use crate::codegen::CodegenFileSystem;
 
 #[derive(Clone, Copy, Debug, Display, EnumIter)]
 #[allow(non_camel_case_types)]

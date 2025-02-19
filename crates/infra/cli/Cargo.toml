@@ -14,7 +14,9 @@ clap_complete = { workspace = true }
 infra_utils = { workspace = true }
 itertools = { workspace = true }
 markdown = { workspace = true }
+public-api = { workspace = true }
 rayon = { workspace = true }
+rustdoc-json = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

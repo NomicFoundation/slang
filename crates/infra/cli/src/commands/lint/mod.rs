@@ -29,8 +29,6 @@ enum LintCommand {
     Clippy,
     /// Run `cargo doc` to generate Rustdoc documentation and check for any broken links.
     Rustdoc,
-    /// Use rustdoc to generate public api documentation.
-    PublicApi,
     /// Check mkdocs documentation for any build issues or broken links.
     Mkdocs,
     /// Check for spelling issues in Markdown files.
@@ -60,7 +58,6 @@ impl OrderedCommand for LintCommand {
         match self {
             LintCommand::Clippy => run_clippy(),
             LintCommand::Rustdoc => run_rustdoc(),
-            LintCommand::PublicApi => run_public_api(),
             LintCommand::Mkdocs => run_mkdocs(),
             LintCommand::Cspell => run_cspell(),
             LintCommand::Prettier => run_prettier(),
@@ -93,10 +90,6 @@ fn run_rustdoc() {
         .flag("--no-deps")
         .flag("--document-private-items")
         .run();
-}
-
-fn run_public_api() {
-    infra_utils::cargo::public_api_snapshots();
 }
 
 fn run_mkdocs() {
