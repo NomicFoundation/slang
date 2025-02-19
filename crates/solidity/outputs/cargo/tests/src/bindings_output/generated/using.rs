@@ -55,6 +55,11 @@ fn global() -> Result<()> {
 }
 
 #[test]
+fn global_multi_file() -> Result<()> {
+    run("using", "global_multi_file")
+}
+
+#[test]
 fn in_contract() -> Result<()> {
     run("using", "in_contract")
 }
