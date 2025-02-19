@@ -1,0 +1,70 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ContractKeyword or EnumKeyword or FunctionKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
+    ╭─[main.sol:7:1]
+    │
+  7 │ ╭─▶ using Lib for uint;
+    ┆ ┆   
+ 20 │ ├─▶ 
+    │ │      
+    │ ╰────── Error occurred here.
+────╯
+References and definitions: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import {foo} from "other.sol";
+   │         ─┬─  
+   │          ╰─── name: 1
+   │          │   
+   │          ╰─── ref: 5
+   │ 
+ 3 │ library Lib {
+   │         ─┬─  
+   │          ╰─── name: 2
+ 4 │     function nop(uint x) public {}
+   │              ─┬─      ┬  
+   │               ╰────────── name: 3
+   │                       │  
+   │                       ╰── name: 4
+───╯
+Definiens: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ │   import {foo} from "other.sol";
+   │ │           ─┬─  
+   │ │            ╰─── definiens: 1
+ 2 │ ╭─▶ 
+   ┆ ┆   
+ 4 │ │       function nop(uint x) public {}
+   │ │   ─────────────────┬──┬──────────────  
+   │ │                    ╰─────────────────── definiens: 3
+   │ │                       │                
+   │ │                       ╰──────────────── definiens: 4
+ 5 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 2
+───╯
+References and definitions: 
+   ╭─[other.sol:1:1]
+   │
+ 1 │ function foo(uint a) pure returns (uint) {
+   │          ─┬─      ┬  
+   │           ╰────────── name: 5
+   │                   │  
+   │                   ╰── name: 6
+ 2 │     return a;
+   │            ┬  
+   │            ╰── ref: 6
+───╯
+Definiens: 
+   ╭─[other.sol:1:1]
+   │
+ 1 │ ╭─▶ function foo(uint a) pure returns (uint) {
+   │ │                ───┬──  
+   │ │                   ╰──── definiens: 6
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 5
+───╯
