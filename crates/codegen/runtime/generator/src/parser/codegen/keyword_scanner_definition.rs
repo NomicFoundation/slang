@@ -75,7 +75,7 @@ impl KeywordScannerDefinitionCodegen for model::KeywordItem {
 
         match &kw_scanners[..] {
             [] => quote! { KeywordScan::Absent },
-            multiple => quote! { scan_keyword_choice!(input, ident, #(#multiple),*) },
+            multiple => quote! { scan_keyword_choice!(input, ident_len, #(#multiple),*) },
         }
     }
 }

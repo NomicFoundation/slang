@@ -149,8 +149,8 @@ impl<'s> ParserContext<'s> {
         self.position = position;
     }
 
-    pub fn content(&self, range: Range<usize>) -> String {
-        self.source[range].to_owned()
+    pub fn content(&self, range: Range<usize>) -> &str {
+        &self.source[range]
     }
 
     pub fn cached_leading_trivia_or(
