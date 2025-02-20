@@ -27,7 +27,7 @@ enum CheckCommand {
     Cargo,
     /// Check NPM packages for any outdated codegen steps.
     Npm,
-    /// Use rustdoc to generate public api documentation.
+    /// Use `rustdoc` JSON output to generate a snapshot of public api members.
     PublicApi,
 }
 
