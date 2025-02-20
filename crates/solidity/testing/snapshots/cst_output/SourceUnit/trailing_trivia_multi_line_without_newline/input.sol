@@ -1,2 +1,2 @@
-contract A {} /* TODO: we should support this */
+contract A {} /* some comment */
 contract B {}

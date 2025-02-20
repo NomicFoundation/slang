@@ -1,7 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 #[allow(clippy::needless_raw_string_hashes)]
-#[allow(dead_code)] // TODO(#982): use to create the graph
 pub const BINDING_RULES_SOURCE: &str = r#####"
     global ROOT_NODE
 global FILE_PATH
@@ -555,10 +554,6 @@ inherit .star_extension
     [ContractMember @state_var [StateVariableDefinition]]
 ]] {
   ; State variables are available to derived contracts.
-  ; TODO: this also exposes private state variables to derived contracts, but we
-  ; can't easily filter them because we don't have negative assertions in our
-  ; query language (we would need to modify this query for anything *not*
-  ; containing a `PrivateKeyword` node)
   edge @contract.instance -> @state_var.def
 
   ; State variables should also be available in Yul assembly blocks
@@ -1233,7 +1228,8 @@ inherit .star_extension
   }
 
   ; This path pushes the function type to the symbol stack
-  ; TODO: add parameter and return types to distinguish between different function types
+  ; Currently, these don't add parameter and return types to distinguish between different function types
+  ; https://github.com/NomicFoundation/slang/issues/1250
   node function_type
   attr (function_type) push_symbol = type_symbol
 

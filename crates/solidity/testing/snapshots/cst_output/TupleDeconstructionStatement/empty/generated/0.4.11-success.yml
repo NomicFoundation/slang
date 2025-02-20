@@ -1,26 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ // TODO(#671): Tuple expressions can't be empty                                  │ 0..47
-  2  │ () = ();                                                                         │ 48..56
+  1  │ () = ();                                                                         │ 0..8
 
 Errors: []
 
 Tree:
-  - (root꞉ TupleDeconstructionStatement): # "// TODO(#671): Tuple expressions can't be empty\n()..." (0..57)
-      - (leading_trivia꞉ SingleLineComment): "// TODO(#671): Tuple expressions can't be empty" # (0..47)
-      - (leading_trivia꞉ EndOfLine): "\n" # (47..48)
-      - (open_paren꞉ OpenParen): "(" # (48..49)
-      - (elements꞉ TupleDeconstructionElements): # "" (49..49)
-          - (item꞉ TupleDeconstructionElement): [] # (49..49)
-      - (close_paren꞉ CloseParen): ")" # (49..50)
-      - (leading_trivia꞉ Whitespace): " " # (50..51)
-      - (equal꞉ Equal): "=" # (51..52)
-      - (expression꞉ Expression) ► (variant꞉ TupleExpression): # " ()" (52..55)
-          - (leading_trivia꞉ Whitespace): " " # (52..53)
-          - (open_paren꞉ OpenParen): "(" # (53..54)
-          - (items꞉ TupleValues): # "" (54..54)
-              - (item꞉ TupleValue): [] # (54..54)
-          - (close_paren꞉ CloseParen): ")" # (54..55)
-      - (semicolon꞉ Semicolon): ";" # (55..56)
-      - (trailing_trivia꞉ EndOfLine): "\n" # (56..57)
+  - (root꞉ TupleDeconstructionStatement): # "() = ();\n" (0..9)
+      - (open_paren꞉ OpenParen): "(" # (0..1)
+      - (elements꞉ TupleDeconstructionElements): # "" (1..1)
+          - (item꞉ TupleDeconstructionElement): [] # (1..1)
+      - (close_paren꞉ CloseParen): ")" # (1..2)
+      - (leading_trivia꞉ Whitespace): " " # (2..3)
+      - (equal꞉ Equal): "=" # (3..4)
+      - (expression꞉ Expression) ► (variant꞉ TupleExpression): # " ()" (4..7)
+          - (leading_trivia꞉ Whitespace): " " # (4..5)
+          - (open_paren꞉ OpenParen): "(" # (5..6)
+          - (items꞉ TupleValues): # "" (6..6)
+              - (item꞉ TupleValue): [] # (6..6)
+          - (close_paren꞉ CloseParen): ")" # (6..7)
+      - (semicolon꞉ Semicolon): ";" # (7..8)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (8..9)
