@@ -1,0 +1,124 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[main.sol:1:1]
+    │
+  1 │ import {foo} from "other.sol";
+    │         ─┬─  
+    │          ╰─── name: 1
+    │          │   
+    │          ╰─── ref: 10
+    │ 
+  3 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 2
+  4 │     function nop(uint x) public {}
+    │              ─┬─      ┬  
+    │               ╰────────── name: 3
+    │                       │  
+    │                       ╰── name: 4
+    │ 
+  7 │ using Lib for uint;
+    │       ─┬─  
+    │        ╰─── ref: 2
+    │ 
+  9 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 5
+ 10 │     function test(uint a) public {
+    │              ──┬─      ┬  
+    │                ╰────────── name: 6
+    │                        │  
+    │                        ╰── name: 7
+ 11 │         a.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 7
+    │            │   
+    │            ╰─── ref: 3
+ 12 │         foo(a).nop();
+    │         ─┬─ ┬  ─┬─  
+    │          ╰────────── refs: 1, 10
+    │             │   │   
+    │             ╰─────── ref: 7
+    │                 │   
+    │                 ╰─── ref: 3
+    │ 
+ 16 │ function bar(uint a) {
+    │          ─┬─      ┬  
+    │           ╰────────── name: 8
+    │                   │  
+    │                   ╰── name: 9
+ 17 │     a.nop();
+    │     ┬ ─┬─  
+    │     ╰────── ref: 9
+    │        │   
+    │        ╰─── ref: 3
+ 18 │     foo(a).nop();
+    │     ─┬─ ┬  ─┬─  
+    │      ╰────────── refs: 1, 10
+    │         │   │   
+    │         ╰─────── ref: 9
+    │             │   
+    │             ╰─── ref: 3
+────╯
+Definiens: 
+    ╭─[main.sol:1:1]
+    │
+  1 │       │   import {foo} from "other.sol";
+    │       │           ─┬─  
+    │       │            ╰─── definiens: 1
+  2 │       ╭─▶ 
+    ┆       ┆   
+  4 │       │       function nop(uint x) public {}
+    │       │   ─────────────────┬──┬──────────────  
+    │       │                    ╰─────────────────── definiens: 3
+    │       │                       │                
+    │       │                       ╰──────────────── definiens: 4
+  5 │       ├─▶ }
+    │       │       
+    │       ╰─────── definiens: 2
+    │ 
+  8 │ ╭───────▶ 
+    ┆ ┆ ┆       
+ 10 │ │ ╭─────▶     function test(uint a) public {
+    │ │ │                         ───┬──  
+    │ │ │                            ╰──── definiens: 7
+    ┆ ┆ ┆       
+ 13 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 6
+ 14 │ ├───│ ──▶ }
+    │ │   │         
+    │ ╰───────────── definiens: 5
+ 15 │     ╭───▶ 
+ 16 │     │     function bar(uint a) {
+    │     │                  ───┬──  
+    │     │                     ╰──── definiens: 9
+    ┆     ┆     
+ 19 │     ├───▶ }
+    │     │         
+    │     ╰───────── definiens: 8
+────╯
+References and definitions: 
+   ╭─[other.sol:1:1]
+   │
+ 1 │ function foo(uint a) pure returns (uint) {
+   │          ─┬─      ┬  
+   │           ╰────────── name: 10
+   │                   │  
+   │                   ╰── name: 11
+ 2 │     return a;
+   │            ┬  
+   │            ╰── ref: 11
+───╯
+Definiens: 
+   ╭─[other.sol:1:1]
+   │
+ 1 │ ╭─▶ function foo(uint a) pure returns (uint) {
+   │ │                ───┬──  
+   │ │                   ╰──── definiens: 11
+   ┆ ┆   
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 10
+───╯

@@ -7474,10 +7474,10 @@ impl Parser {
     }
 
     #[inline]
-    fn bytes_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn bytes_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if scan_sequence!(
                 scan_chars!(input, 'b', 'y', 't', 'e', 's'),
                 scan_optional!(
@@ -7527,10 +7527,10 @@ impl Parser {
     }
 
     #[inline]
-    fn fixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn fixed_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
                 KeywordScan::Reserved(TerminalKind::FixedKeyword)
             } else {
@@ -7831,10 +7831,10 @@ impl Parser {
     }
 
     #[inline]
-    fn int_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn int_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if scan_sequence!(
                 scan_chars!(input, 'i', 'n', 't'),
                 scan_optional!(
@@ -7884,10 +7884,10 @@ impl Parser {
     }
 
     #[inline]
-    fn ufixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn ufixed_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
                 KeywordScan::Reserved(TerminalKind::UfixedKeyword)
             } else {
@@ -8188,10 +8188,10 @@ impl Parser {
     }
 
     #[inline]
-    fn uint_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn uint_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if scan_sequence!(
                 scan_chars!(input, 'u', 'i', 'n', 't'),
                 scan_optional!(
@@ -8241,10 +8241,10 @@ impl Parser {
     }
 
     #[inline]
-    fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'b', 'y', 't', 'e', 's'),
@@ -8296,10 +8296,10 @@ impl Parser {
     }
 
     #[inline]
-    fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
                 KeywordScan::Reserved(TerminalKind::YulFixedKeyword)
             } else {
@@ -8602,10 +8602,10 @@ impl Parser {
     }
 
     #[inline]
-    fn yul_int_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn yul_int_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'i', 'n', 't'),
@@ -8657,10 +8657,10 @@ impl Parser {
     }
 
     #[inline]
-    fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
                 KeywordScan::Reserved(TerminalKind::YulUfixedKeyword)
             } else {
@@ -8963,10 +8963,10 @@ impl Parser {
     }
 
     #[inline]
-    fn yul_uint_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn yul_uint_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'u', 'i', 'n', 't'),
@@ -10501,8 +10501,7 @@ impl Lexer for Parser {
                     if kw_scan == KeywordScan::Absent {
                         input.set_position(save);
 
-                        // TODO(#1001): Don't allocate a string here
-                        let ident_value = input.content(save..furthest_position);
+                        let ident_len = furthest_position - save;
 
                         for keyword_compound_scanner in [
                             Self::bytes_keyword,
@@ -10511,7 +10510,7 @@ impl Lexer for Parser {
                             Self::ufixed_keyword,
                             Self::uint_keyword,
                         ] {
-                            match keyword_compound_scanner(self, input, &ident_value) {
+                            match keyword_compound_scanner(self, input, ident_len) {
                                 _ if input.position() < furthest_position => { /* Strict prefix */ }
                                 KeywordScan::Absent => {}
                                 value => kw_scan = value,
@@ -12191,8 +12190,7 @@ impl Lexer for Parser {
                     if kw_scan == KeywordScan::Absent {
                         input.set_position(save);
 
-                        // TODO(#1001): Don't allocate a string here
-                        let ident_value = input.content(save..furthest_position);
+                        let ident_len = furthest_position - save;
 
                         for keyword_compound_scanner in [
                             Self::yul_bytes_keyword,
@@ -12201,7 +12199,7 @@ impl Lexer for Parser {
                             Self::yul_ufixed_keyword,
                             Self::yul_uint_keyword,
                         ] {
-                            match keyword_compound_scanner(self, input, &ident_value) {
+                            match keyword_compound_scanner(self, input, ident_len) {
                                 _ if input.position() < furthest_position => { /* Strict prefix */ }
                                 KeywordScan::Absent => {}
                                 value => kw_scan = value,

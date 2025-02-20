@@ -56,9 +56,10 @@ impl SeparatedHelper {
                             } else {
                                 (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                             };
+                            let skipped = input.content(skipped_range.utf8()).to_owned();
                             accum.push(Edge {
                                 label,
-                                node: Node::terminal(kind, input.content(skipped_range.utf8())),
+                                node: Node::terminal(kind, skipped),
                             });
                             input.emit(ParseError::create(
                                 skipped_range,

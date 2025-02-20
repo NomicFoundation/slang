@@ -5,8 +5,6 @@ inputs:
     type: "string"
     required: true
 
-  # TODO: this is a workaround for https://github.com/devcontainers/ci/pull/295
-  # Will remove and replace with 'inheritEnv' once the fix is released
   env:
     type: "string"
     default: ""
@@ -15,7 +13,7 @@ runs:
   using: "composite"
   steps:
     - name: "Run in devcontainer"
-      uses: "devcontainers/ci@a56d055efecd725e8cfe370543b6071b79989cc8"
+      uses: "devcontainers/ci@8bf61b26e9c3a98f69cb6ce2f88d24ff59b785c6"
       with:
         configFile: ".devcontainer/devcontainer.json"
         env: |

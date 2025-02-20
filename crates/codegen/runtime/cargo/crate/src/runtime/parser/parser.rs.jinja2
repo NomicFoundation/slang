@@ -113,7 +113,7 @@ impl Parser {
 
         {%- for keyword_name, keyword_code in model.parser.keyword_compound_scanners %}
             #[inline]
-            fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan { {{ keyword_code }} }
+            fn {{ keyword_name | snake_case }}(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan { {{ keyword_code }} }
         {% endfor %}
 
     {% endif %}
@@ -218,15 +218,14 @@ impl Lexer for Parser {
                             if kw_scan == KeywordScan::Absent {
                                 input.set_position(save);
 
-                                // TODO(#1001): Don't allocate a string here
-                                let ident_value = input.content(save..furthest_position);
+                                let ident_len = furthest_position - save;
 
                                 for keyword_compound_scanner in [
                                 {%- for keyword_name, _ in context.keyword_compound_scanners %}
                                     Self::{{ keyword_name | snake_case }},
                                 {%- endfor %}
                                 ] {
-                                    match keyword_compound_scanner(self, input, &ident_value) {
+                                    match keyword_compound_scanner(self, input, ident_len) {
                                         _ if input.position() < furthest_position => {/* Strict prefix */},
                                         KeywordScan::Absent => {},
                                         value => kw_scan = value,
