@@ -3,13 +3,14 @@ use std::path::Path;
 
 use anyhow::{ensure, Result};
 use clap::Parser;
-use infra_utils::cargo::{CargoWorkspace, UserFacingCrate};
+use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::git::TemporaryChangeset;
 use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use strum::IntoEnumIterator;
 
+use crate::toolchains::public_api::UserFacingCrate;
 use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]

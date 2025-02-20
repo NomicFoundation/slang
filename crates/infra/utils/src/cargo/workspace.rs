@@ -118,32 +118,33 @@ impl CargoWorkspaceCommands for Command {
 
         // Using `$RUSTFLAGS' or '--' overrides any rustflags from `.cargo/config.toml'.
         // Using this syntax instead, as it is concatenated with the existing flags:
-        self.property(
-            "--config",
-            format!(
-                "build.rustflags = {rustflags}",
-                rustflags = serde_json::to_string(&[
-                    // Deny any warnings in CI:
-                    "-Dwarnings",
-                    // Lint against leftover `dbg/todo!` macros in CI:
-                    "-Wclippy::dbg_macro",
-                    "-Wclippy::todo"
-                ])
-                .unwrap(),
-            ),
-        )
-        // Rustdoc requires specifying RUSTDOCFLAGS, instead:
-        // See <https://github.com/rust-lang/cargo/issues/8424#issuecomment-1070988443>.
-        .property(
-            "--config",
-            format!(
-                "build.rustdocflags = {rustdocflags}",
-                rustdocflags = serde_json::to_string(&[
-                    // Deny any warnings in CI:
-                    "-Dwarnings"
-                ])
-                .unwrap(),
-            ),
-        )
+        self.flag("--release")
+            .property(
+                "--config",
+                format!(
+                    "build.rustflags = {rustflags}",
+                    rustflags = serde_json::to_string(&[
+                        // Deny any warnings in CI:
+                        "-Dwarnings",
+                        // Lint against leftover `dbg/todo!` macros in CI:
+                        "-Wclippy::dbg_macro",
+                        "-Wclippy::todo"
+                    ])
+                    .unwrap(),
+                ),
+            )
+            // Rustdoc requires specifying RUSTDOCFLAGS, instead:
+            // See <https://github.com/rust-lang/cargo/issues/8424#issuecomment-1070988443>.
+            .property(
+                "--config",
+                format!(
+                    "build.rustdocflags = {rustdocflags}",
+                    rustdocflags = serde_json::to_string(&[
+                        // Deny any warnings in CI:
+                        "-Dwarnings"
+                    ])
+                    .unwrap(),
+                ),
+            )
     }
 }
