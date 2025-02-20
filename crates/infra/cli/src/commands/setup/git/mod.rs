@@ -12,11 +12,6 @@ pub fn setup_git() {
             .arg("config")
             .property("user.email", "github-actions@users.noreply.github.com")
             .run();
-
-        Command::new("git")
-            .arg("config")
-            .property("submodule.submodules/jco.shallow", "true")
-            .run();
     }
 
     Command::new("git")
