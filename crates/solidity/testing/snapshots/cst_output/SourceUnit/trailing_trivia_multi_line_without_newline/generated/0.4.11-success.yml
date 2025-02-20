@@ -1,13 +1,13 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ contract A {} /* TODO: we should support this */                                 │ 0..48
-  2  │ contract B {}                                                                    │ 49..62
+  1  │ contract A {} /* some comment */                                                 │ 0..32
+  2  │ contract B {}                                                                    │ 33..46
 
 Errors: []
 
 Tree:
-  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "contract A {} /* TODO: we should support this */\nc..." (0..63)
+  - (root꞉ SourceUnit) ► (members꞉ SourceUnitMembers): # "contract A {} /* some comment */\ncontract B {}\n" (0..47)
       - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # "contract A {}" (0..13)
           - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
           - (leading_trivia꞉ Whitespace): " " # (8..9)
@@ -16,15 +16,15 @@ Tree:
           - (open_brace꞉ OpenBrace): "{" # (11..12)
           - (members꞉ ContractMembers): [] # (12..12)
           - (close_brace꞉ CloseBrace): "}" # (12..13)
-      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # " /* TODO: we should support this */\ncontract B {}\n" (13..63)
+      - (item꞉ SourceUnitMember) ► (variant꞉ ContractDefinition): # " /* some comment */\ncontract B {}\n" (13..47)
           - (leading_trivia꞉ Whitespace): " " # (13..14)
-          - (leading_trivia꞉ MultiLineComment): "/* TODO: we should support this */" # (14..48)
-          - (leading_trivia꞉ EndOfLine): "\n" # (48..49)
-          - (contract_keyword꞉ ContractKeyword): "contract" # (49..57)
-          - (leading_trivia꞉ Whitespace): " " # (57..58)
-          - (name꞉ Identifier): "B" # (58..59)
-          - (leading_trivia꞉ Whitespace): " " # (59..60)
-          - (open_brace꞉ OpenBrace): "{" # (60..61)
-          - (members꞉ ContractMembers): [] # (61..61)
-          - (close_brace꞉ CloseBrace): "}" # (61..62)
-          - (trailing_trivia꞉ EndOfLine): "\n" # (62..63)
+          - (leading_trivia꞉ MultiLineComment): "/* some comment */" # (14..32)
+          - (leading_trivia꞉ EndOfLine): "\n" # (32..33)
+          - (contract_keyword꞉ ContractKeyword): "contract" # (33..41)
+          - (leading_trivia꞉ Whitespace): " " # (41..42)
+          - (name꞉ Identifier): "B" # (42..43)
+          - (leading_trivia꞉ Whitespace): " " # (43..44)
+          - (open_brace꞉ OpenBrace): "{" # (44..45)
+          - (members꞉ ContractMembers): [] # (45..45)
+          - (close_brace꞉ CloseBrace): "}" # (45..46)
+          - (trailing_trivia꞉ EndOfLine): "\n" # (46..47)

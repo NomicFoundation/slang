@@ -347,9 +347,16 @@ impl<'a, KT: KindTypes + 'static>
         }
     }
 
+    /// IMPORTANT:
+    /// This may not be correct for extension scopes, but it's only used for cycle detection.
+    ///
+    /// The incoming degree for extension nodes will always be zero, as those nodes don't have incoming edges in the stack graph.
+    /// But we will connect from all extension hooks into these extension scopes. So the reported incoming degree is not correct.
+    /// On the other hand:
+    ///
+    ///   1. I don't think we'll ever be calling that function on extension nodes because they should never be end nodes of computed minimal partial paths.
+    ///   2. the incoming degree is only used as one of the conditions to decide if we should look for cycles to stop a potential infinite loop (and that's not happening).
     fn get_joining_candidate_degree(&self, path: &PartialPath) -> Degree {
-        // TODO: this may not be correct for extension scopes, but it's only
-        // used for cycle detection
         self.database
             .database
             .get_incoming_path_degree(path.end_node)

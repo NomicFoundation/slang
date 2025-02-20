@@ -6,8 +6,6 @@ codegen_language_macros::compile!(Language(
     binding_rules_file = "crates/solidity/inputs/language/bindings/rules.msgb",
     file_extension = ".sol", // TODO: This should be moved to the Solidity-specific 'extensions' sub-module.
     root_item = SourceUnit,
-    // TODO(#1020): Define the end-of-file trivia explicitly rather than
-    // implicitly reusing the leading trivia in the generater parser code.
     leading_trivia = OneOrMore(Choice([
         Trivia(Whitespace),
         Trivia(EndOfLine),
