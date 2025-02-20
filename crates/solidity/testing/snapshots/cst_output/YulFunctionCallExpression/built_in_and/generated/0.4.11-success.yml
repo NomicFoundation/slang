@@ -1,14 +1,18 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ and()                                                                            │ 0..5
+  1  │ // this identifier is unreserved, and bound as a built-in function. See #1203:   │ 0..78
+  2  │ and()                                                                            │ 79..84
 
 Errors: []
 
 Tree:
-  - (root꞉ YulFunctionCallExpression): # "and()\n" (0..6)
-      - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction) ► (variant꞉ YulAndKeyword): "and" # (0..3)
-      - (open_paren꞉ OpenParen): "(" # (3..4)
-      - (arguments꞉ YulArguments): [] # (4..4)
-      - (close_paren꞉ CloseParen): ")" # (4..5)
-      - (trailing_trivia꞉ EndOfLine): "\n" # (5..6)
+  - (root꞉ YulFunctionCallExpression): # "// this identifier is unreserved, and bound as a b..." (0..85)
+      - (operand꞉ YulExpression) ► (variant꞉ YulPath): # "// this identifier is unreserved, and bound as a b..." (0..82)
+          - (leading_trivia꞉ SingleLineComment): "// this identifier is unreserved, and bound as a b..." # (0..78)
+          - (leading_trivia꞉ EndOfLine): "\n" # (78..79)
+          - (item꞉ YulIdentifier): "and" # (79..82)
+      - (open_paren꞉ OpenParen): "(" # (82..83)
+      - (arguments꞉ YulArguments): [] # (83..83)
+      - (close_paren꞉ CloseParen): ")" # (83..84)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (84..85)

@@ -3058,7 +3058,7 @@ export class MappingValue {
  *
  * ```ebnf
  * AddressType = (* address_keyword: *) ADDRESS_KEYWORD
- *               (* payable_keyword: *) PAYABLE_KEYWORD?;
+ *               (* payable_keyword: *) PAYABLE_KEYWORD?; (* Introduced in 0.5.0 *)
  * ```
  */
 export class AddressType {
@@ -9663,12 +9663,11 @@ export class YulSwitchCase {
  * ```ebnf
  * YulExpression = (* variant: *) YulFunctionCallExpression
  *               | (* variant: *) YulLiteral
- *               | (* variant: *) YulBuiltInFunction
  *               | (* variant: *) YulPath;
  * ```
  */
 export class YulExpression {
-  private readonly fetch: () => YulFunctionCallExpression | YulLiteral | YulBuiltInFunction | YulPath = once(() => {
+  private readonly fetch: () => YulFunctionCallExpression | YulLiteral | YulPath = once(() => {
     const variant = wasm.ast.Selectors.choice(this.cst);
 
     switch (variant.kind) {
@@ -9676,8 +9675,6 @@ export class YulExpression {
         return new YulFunctionCallExpression(variant as NonterminalNode);
       case NonterminalKind.YulLiteral:
         return new YulLiteral(variant as NonterminalNode);
-      case NonterminalKind.YulBuiltInFunction:
-        return new YulBuiltInFunction(variant as NonterminalNode);
       case NonterminalKind.YulPath:
         return new YulPath(variant as NonterminalNode);
 
@@ -9701,123 +9698,7 @@ export class YulExpression {
   /**
    * Returns the child node that has the label `variant`.
    */
-  public get variant(): YulFunctionCallExpression | YulLiteral | YulBuiltInFunction | YulPath {
-    return this.fetch();
-  }
-}
-
-/**
- * This node represents a `YulBuiltInFunction` nonterminal, with the following structure:
- *
- * ```ebnf
- * YulBuiltInFunction = (* variant: *) YUL_ADD_KEYWORD
- *                    | (* variant: *) YUL_ADD_MOD_KEYWORD
- *                    | (* variant: *) YUL_ADDRESS_KEYWORD
- *                    | (* variant: *) YUL_AND_KEYWORD
- *                    | (* variant: *) YUL_BALANCE_KEYWORD
- *                    | (* variant: *) YUL_BLOCK_HASH_KEYWORD
- *                    | (* variant: *) YUL_BYTE_KEYWORD
- *                    | (* variant: *) YUL_CALL_CODE_KEYWORD
- *                    | (* variant: *) YUL_CALL_DATA_COPY_KEYWORD
- *                    | (* variant: *) YUL_CALL_DATA_LOAD_KEYWORD
- *                    | (* variant: *) YUL_CALL_DATA_SIZE_KEYWORD
- *                    | (* variant: *) YUL_CALLER_KEYWORD
- *                    | (* variant: *) YUL_CALL_KEYWORD
- *                    | (* variant: *) YUL_CALL_VALUE_KEYWORD
- *                    | (* variant: *) YUL_COIN_BASE_KEYWORD
- *                    | (* variant: *) YUL_CREATE_KEYWORD
- *                    | (* variant: *) YUL_DELEGATE_CALL_KEYWORD
- *                    | (* variant: *) YUL_DIV_KEYWORD
- *                    | (* variant: *) YUL_EQ_KEYWORD
- *                    | (* variant: *) YUL_EXP_KEYWORD
- *                    | (* variant: *) YUL_EXT_CODE_COPY_KEYWORD
- *                    | (* variant: *) YUL_EXT_CODE_SIZE_KEYWORD
- *                    | (* variant: *) YUL_GAS_KEYWORD
- *                    | (* variant: *) YUL_GAS_LIMIT_KEYWORD
- *                    | (* variant: *) YUL_GAS_PRICE_KEYWORD
- *                    | (* variant: *) YUL_GT_KEYWORD
- *                    | (* variant: *) YUL_INVALID_KEYWORD
- *                    | (* variant: *) YUL_IS_ZERO_KEYWORD
- *                    | (* variant: *) YUL_JUMP_KEYWORD (* Deprecated in 0.5.0 *)
- *                    | (* variant: *) YUL_JUMPI_KEYWORD (* Deprecated in 0.5.0 *)
- *                    | (* variant: *) YUL_LOG_0_KEYWORD
- *                    | (* variant: *) YUL_LOG_1_KEYWORD
- *                    | (* variant: *) YUL_LOG_2_KEYWORD
- *                    | (* variant: *) YUL_LOG_3_KEYWORD
- *                    | (* variant: *) YUL_LOG_4_KEYWORD
- *                    | (* variant: *) YUL_LT_KEYWORD
- *                    | (* variant: *) YUL_M_LOAD_KEYWORD
- *                    | (* variant: *) YUL_MOD_KEYWORD
- *                    | (* variant: *) YUL_M_SIZE_KEYWORD
- *                    | (* variant: *) YUL_M_STORE_8_KEYWORD
- *                    | (* variant: *) YUL_M_STORE_KEYWORD
- *                    | (* variant: *) YUL_MUL_KEYWORD
- *                    | (* variant: *) YUL_MUL_MOD_KEYWORD
- *                    | (* variant: *) YUL_NOT_KEYWORD
- *                    | (* variant: *) YUL_NUMBER_KEYWORD
- *                    | (* variant: *) YUL_ORIGIN_KEYWORD
- *                    | (* variant: *) YUL_OR_KEYWORD
- *                    | (* variant: *) YUL_POP_KEYWORD
- *                    | (* variant: *) YUL_RETURN_KEYWORD
- *                    | (* variant: *) YUL_REVERT_KEYWORD
- *                    | (* variant: *) YUL_S_DIV_KEYWORD
- *                    | (* variant: *) YUL_SELF_DESTRUCT_KEYWORD
- *                    | (* variant: *) YUL_SGT_KEYWORD
- *                    | (* variant: *) YUL_SIGN_EXTEND_KEYWORD
- *                    | (* variant: *) YUL_S_LOAD_KEYWORD
- *                    | (* variant: *) YUL_SLT_KEYWORD
- *                    | (* variant: *) YUL_S_MOD_KEYWORD
- *                    | (* variant: *) YUL_S_STORE_KEYWORD
- *                    | (* variant: *) YUL_STOP_KEYWORD
- *                    | (* variant: *) YUL_SUB_KEYWORD
- *                    | (* variant: *) YUL_TIMESTAMP_KEYWORD
- *                    | (* variant: *) YUL_XOR_KEYWORD
- *                    | (* variant: *) YUL_KECCAK_256_KEYWORD (* Introduced in 0.4.12 *)
- *                    | (* variant: *) YUL_SHA_3_KEYWORD (* Deprecated in 0.5.0 *)
- *                    | (* variant: *) YUL_SUICIDE_KEYWORD (* Deprecated in 0.5.0 *)
- *                    | (* variant: *) YUL_RETURN_DATA_COPY_KEYWORD (* Introduced in 0.4.12 *)
- *                    | (* variant: *) YUL_RETURN_DATA_SIZE_KEYWORD (* Introduced in 0.4.12 *)
- *                    | (* variant: *) YUL_STATIC_CALL_KEYWORD (* Introduced in 0.4.12 *)
- *                    | (* variant: *) YUL_CREATE_2_KEYWORD (* Introduced in 0.4.12 *)
- *                    | (* variant: *) YUL_EXT_CODE_HASH_KEYWORD (* Introduced in 0.5.0 *)
- *                    | (* variant: *) YUL_SAR_KEYWORD
- *                    | (* variant: *) YUL_SHL_KEYWORD
- *                    | (* variant: *) YUL_SHR_KEYWORD
- *                    | (* variant: *) YUL_CHAIN_ID_KEYWORD
- *                    | (* variant: *) YUL_SELF_BALANCE_KEYWORD
- *                    | (* variant: *) YUL_BASE_FEE_KEYWORD (* Introduced in 0.8.7 *)
- *                    | (* variant: *) YUL_DIFFICULTY_KEYWORD (* Deprecated in 0.8.18 *)
- *                    | (* variant: *) YUL_PREV_RANDAO_KEYWORD (* Introduced in 0.8.18 *)
- *                    | (* variant: *) YUL_BLOB_BASE_FEE_KEYWORD (* Introduced in 0.8.24 *)
- *                    | (* variant: *) YUL_BLOB_HASH_KEYWORD (* Introduced in 0.8.24 *)
- *                    | (* variant: *) YUL_T_LOAD_KEYWORD (* Introduced in 0.8.24 *)
- *                    | (* variant: *) YUL_T_STORE_KEYWORD (* Introduced in 0.8.24 *)
- *                    | (* variant: *) YUL_M_COPY_KEYWORD; (* Introduced in 0.8.24 *)
- * ```
- */
-export class YulBuiltInFunction {
-  private readonly fetch: () => TerminalNode = once(() => {
-    const variant = wasm.ast.Selectors.choice(this.cst);
-
-    return variant as TerminalNode;
-  });
-
-  /**
-   * Constructs a new AST node of type `YulBuiltInFunction`, given a nonterminal CST node of the same kind.
-   */
-  public constructor(
-    /**
-     * The underlying nonterminal CST node of kind `YulBuiltInFunction`.
-     */
-    public readonly cst: NonterminalNode,
-  ) {
-    assertKind(this.cst.kind, NonterminalKind.YulBuiltInFunction);
-  }
-
-  /**
-   * Returns the child node that has the label `variant`.
-   */
-  public get variant(): TerminalNode {
+  public get variant(): YulFunctionCallExpression | YulLiteral | YulPath {
     return this.fetch();
   }
 }

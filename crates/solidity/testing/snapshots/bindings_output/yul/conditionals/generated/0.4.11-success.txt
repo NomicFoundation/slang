@@ -15,7 +15,9 @@ References and definitions:
     │                                                        ╰── name: 4
     │ 
   4 │             if lt(x, 10) { z := 99 }
-    │                   ┬        ┬  
+    │                ─┬ ┬        ┬  
+    │                 ╰───────────── ref: built-in
+    │                   │        │  
     │                   ╰─────────── ref: 3
     │                            │  
     │                            ╰── ref: 4

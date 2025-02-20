@@ -1,1 +1,0 @@
-coinbase := 0

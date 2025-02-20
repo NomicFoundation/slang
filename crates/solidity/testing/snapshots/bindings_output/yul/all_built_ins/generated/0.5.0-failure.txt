@@ -1,0 +1,260 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 2
+    │ 
+  4 │             add()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+  5 │             addmod()
+    │             ───┬──  
+    │                ╰──── ref: built-in
+  6 │             address()
+    │             ───┬───  
+    │                ╰───── ref: built-in
+  7 │             and()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+  8 │             balance()
+    │             ───┬───  
+    │                ╰───── ref: built-in
+  9 │             basefee()
+    │             ───┬───  
+    │                ╰───── unresolved
+ 10 │             blobbasefee()
+    │             ─────┬─────  
+    │                  ╰─────── unresolved
+ 11 │             blobhash()
+    │             ────┬───  
+    │                 ╰───── unresolved
+ 12 │             blockhash()
+    │             ────┬────  
+    │                 ╰────── ref: built-in
+ 13 │             byte()
+    │             ──┬─  
+    │               ╰─── ref: built-in
+ 14 │             call()
+    │             ──┬─  
+    │               ╰─── ref: built-in
+ 15 │             callcode()
+    │             ────┬───  
+    │                 ╰───── ref: built-in
+ 16 │             calldatacopy()
+    │             ──────┬─────  
+    │                   ╰─────── ref: built-in
+ 17 │             calldataload()
+    │             ──────┬─────  
+    │                   ╰─────── ref: built-in
+ 18 │             calldatasize()
+    │             ──────┬─────  
+    │                   ╰─────── ref: built-in
+ 19 │             caller()
+    │             ───┬──  
+    │                ╰──── ref: built-in
+ 20 │             callvalue()
+    │             ────┬────  
+    │                 ╰────── ref: built-in
+ 21 │             chainid()
+    │             ───┬───  
+    │                ╰───── ref: built-in
+ 22 │             coinbase()
+    │             ────┬───  
+    │                 ╰───── ref: built-in
+ 23 │             create()
+    │             ───┬──  
+    │                ╰──── ref: built-in
+ 24 │             create2()
+    │             ───┬───  
+    │                ╰───── ref: built-in
+ 25 │             delegatecall()
+    │             ──────┬─────  
+    │                   ╰─────── ref: built-in
+ 26 │             div()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 27 │             eq()
+    │             ─┬  
+    │              ╰── ref: built-in
+ 28 │             exp()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 29 │             extcodecopy()
+    │             ─────┬─────  
+    │                  ╰─────── ref: built-in
+ 30 │             extcodehash()
+    │             ─────┬─────  
+    │                  ╰─────── ref: built-in
+ 31 │             extcodesize()
+    │             ─────┬─────  
+    │                  ╰─────── ref: built-in
+ 32 │             gas()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 33 │             gaslimit()
+    │             ────┬───  
+    │                 ╰───── ref: built-in
+ 34 │             gasprice()
+    │             ────┬───  
+    │                 ╰───── ref: built-in
+ 35 │             gt()
+    │             ─┬  
+    │              ╰── ref: built-in
+ 36 │             invalid()
+    │             ───┬───  
+    │                ╰───── ref: built-in
+ 37 │             iszero()
+    │             ───┬──  
+    │                ╰──── ref: built-in
+ 38 │             keccak256()
+    │             ────┬────  
+    │                 ╰────── ref: built-in
+ 39 │             log0()
+    │             ──┬─  
+    │               ╰─── ref: built-in
+ 40 │             log1()
+    │             ──┬─  
+    │               ╰─── ref: built-in
+ 41 │             log2()
+    │             ──┬─  
+    │               ╰─── ref: built-in
+ 42 │             log3()
+    │             ──┬─  
+    │               ╰─── ref: built-in
+ 43 │             log4()
+    │             ──┬─  
+    │               ╰─── ref: built-in
+ 44 │             lt()
+    │             ─┬  
+    │              ╰── ref: built-in
+ 45 │             mcopy()
+    │             ──┬──  
+    │               ╰──── unresolved
+ 46 │             mload()
+    │             ──┬──  
+    │               ╰──── ref: built-in
+ 47 │             mod()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 48 │             msize()
+    │             ──┬──  
+    │               ╰──── ref: built-in
+ 49 │             mstore()
+    │             ───┬──  
+    │                ╰──── ref: built-in
+ 50 │             mstore8()
+    │             ───┬───  
+    │                ╰───── ref: built-in
+ 51 │             mul()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 52 │             mulmod()
+    │             ───┬──  
+    │                ╰──── ref: built-in
+ 53 │             not()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 54 │             number()
+    │             ───┬──  
+    │                ╰──── ref: built-in
+ 55 │             or()
+    │             ─┬  
+    │              ╰── ref: built-in
+ 56 │             origin()
+    │             ───┬──  
+    │                ╰──── ref: built-in
+ 57 │             pop()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 58 │             prevrandao()
+    │             ─────┬────  
+    │                  ╰────── unresolved
+ 59 │             return()
+    │             ───┬──  
+    │                ╰──── ref: built-in
+ 60 │             returndatacopy()
+    │             ───────┬──────  
+    │                    ╰──────── ref: built-in
+ 61 │             returndatasize()
+    │             ───────┬──────  
+    │                    ╰──────── ref: built-in
+ 62 │             revert()
+    │             ───┬──  
+    │                ╰──── ref: built-in
+ 63 │             sar()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 64 │             sdiv()
+    │             ──┬─  
+    │               ╰─── ref: built-in
+ 65 │             selfbalance()
+    │             ─────┬─────  
+    │                  ╰─────── ref: built-in
+ 66 │             selfdestruct()
+    │             ──────┬─────  
+    │                   ╰─────── ref: built-in
+ 67 │             sgt()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 68 │             shl()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 69 │             shr()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 70 │             signextend()
+    │             ─────┬────  
+    │                  ╰────── ref: built-in
+ 71 │             sload()
+    │             ──┬──  
+    │               ╰──── ref: built-in
+ 72 │             slt()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 73 │             smod()
+    │             ──┬─  
+    │               ╰─── ref: built-in
+ 74 │             sstore()
+    │             ───┬──  
+    │                ╰──── ref: built-in
+ 75 │             staticcall()
+    │             ─────┬────  
+    │                  ╰────── ref: built-in
+ 76 │             stop()
+    │             ──┬─  
+    │               ╰─── ref: built-in
+ 77 │             sub()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+ 78 │             timestamp()
+    │             ────┬────  
+    │                 ╰────── ref: built-in
+ 79 │             tload()
+    │             ──┬──  
+    │               ╰──── unresolved
+ 80 │             tstore()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 81 │             xor()
+    │             ─┬─  
+    │              ╰─── ref: built-in
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─│ ▶ contract Test {
+  2 │ │ ╭─▶     function test() public {
+    ┆ ┆ ┆   
+ 83 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 2
+ 84 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯

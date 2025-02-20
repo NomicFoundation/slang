@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         ripemd160(); // should bind correctly (Solidity context)
+   │         ────┬────  
+   │             ╰────── ref: built-in
+   │ 
+ 5 │             ripemd160() // should not bind (Yul context)
+   │             ────┬────  
+   │                 ╰────── unresolved
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public {
+   ┆ ┆ ┆   
+ 7 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 8 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

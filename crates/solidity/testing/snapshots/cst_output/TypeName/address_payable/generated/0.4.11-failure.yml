@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ address payable                                                                  │ 0..15
+
+Errors: # 1 total
+  - >
+    Error: Expected OpenBracket.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TypeName/address_payable/input.sol:1:9]
+       │
+     1 │ address payable
+       │         ────┬───  
+       │             ╰───── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ TypeName): # "address payable\n" (0..16)
+      - (variant꞉ ElementaryType) ► (variant꞉ AddressType) ► (address_keyword꞉ AddressKeyword): "address" # (0..7)
+      - (leading_trivia꞉ Whitespace): " " # (7..8)
+      - (unrecognized꞉ UNRECOGNIZED): "payable\n" # (8..16)
