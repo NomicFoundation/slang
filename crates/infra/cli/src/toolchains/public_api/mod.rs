@@ -16,7 +16,7 @@ pub enum UserFacingCrate {
     slang_solidity_cli,
 }
 
-pub fn public_api_snapshots() {
+pub fn generate_public_api_snapshots() {
     assert!(env!("RUST_NIGHTLY_VERSION").ge(public_api::MINIMUM_NIGHTLY_RUST_VERSION));
 
     UserFacingCrate::iter()

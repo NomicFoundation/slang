@@ -62,5 +62,5 @@ fn check_npm() {
 }
 
 fn check_public_api() {
-    crate::toolchains::public_api_snapshots();
+    crate::toolchains::public_api::generate_public_api_snapshots();
 }

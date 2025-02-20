@@ -10,7 +10,7 @@ use infra_utils::paths::PathExtensions;
 use itertools::Itertools;
 use strum::IntoEnumIterator;
 
-use crate::toolchains::UserFacingCrate;
+use crate::toolchains::public_api::UserFacingCrate;
 use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]
