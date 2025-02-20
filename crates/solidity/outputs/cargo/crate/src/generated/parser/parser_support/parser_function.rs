@@ -90,14 +90,14 @@ where
                     (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                 };
 
-                let node = Node::terminal(kind, input.to_string());
+                let node = Node::terminal(kind, input.to_owned());
 
                 children.push(Edge { label, node });
 
                 ParseOutput {
                     tree: NonterminalNode::create(topmost_kind, children),
                     errors: vec![ParseError::create(
-                        start..start + input.into(),
+                        start..(start + input.into()),
                         no_match.expected_terminals,
                     )],
                 }
@@ -148,7 +148,7 @@ where
                         (TerminalKind::UNRECOGNIZED, EdgeLabel::Unrecognized)
                     };
 
-                    let skipped_node = Node::terminal(kind, input[start..].to_string());
+                    let skipped_node = Node::terminal(kind, input[start..].to_owned());
                     let mut new_children = topmost_node.children.clone();
                     new_children.push(Edge {
                         label,

@@ -11,7 +11,15 @@ Source: >
   8  │   }                                                                                 │ 346..349
   9  │ }                                                                                   │ 350..351
 
-Errors: # 1 total
+Errors: # 2 total
+  - >
+    Error: Expected CloseParen or Comma.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/function_multiple_delimiters/input.sol:3:30]
+       │
+     3 │   function sendValue(address payable recipient, uint256 amount) internal {
+       │                              ────────────────┬────────────────  
+       │                                              ╰────────────────── Error occurred here.
+    ───╯
   - >
     Error: Expected Semicolon.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/function_multiple_delimiters/input.sol:6:38]
@@ -40,21 +48,10 @@ Tree:
                   - (variant꞉ Identifier): "sendValue" # (58..67)
               - (parameters꞉ ParametersDeclaration): # "(address payable recipient, uint256 amount)" (67..110)
                   - (open_paren꞉ OpenParen): "(" # (67..68)
-                  - (parameters꞉ Parameters): # "address payable recipient, uint256 amount" (68..109)
-                      - (item꞉ Parameter): # "address payable recipient" (68..93)
-                          - (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType): # "address payable" (68..83)
-                              - (address_keyword꞉ AddressKeyword): "address" # (68..75)
-                              - (leading_trivia꞉ Whitespace): " " # (75..76)
-                              - (payable_keyword꞉ PayableKeyword): "payable" # (76..83)
-                          - (leading_trivia꞉ Whitespace): " " # (83..84)
-                          - (name꞉ Identifier): "recipient" # (84..93)
-                      - (separator꞉ Comma): "," # (93..94)
-                      - (item꞉ Parameter): # " uint256 amount" (94..109)
-                          - (type_name꞉ TypeName) ► (variant꞉ ElementaryType): # " uint256" (94..102)
-                              - (leading_trivia꞉ Whitespace): " " # (94..95)
-                              - (variant꞉ UintKeyword): "uint256" # (95..102)
-                          - (leading_trivia꞉ Whitespace): " " # (102..103)
-                          - (name꞉ Identifier): "amount" # (103..109)
+                  - (parameters꞉ Parameters): # "address" (68..75)
+                      - (item꞉ Parameter) ► (type_name꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType) ► (address_keyword꞉ AddressKeyword): "address" # (68..75)
+                  - (leading_trivia꞉ Whitespace): " " # (75..76)
+                  - (unrecognized꞉ UNRECOGNIZED): "payable recipient, uint256 amount" # (76..109)
                   - (close_paren꞉ CloseParen): ")" # (109..110)
               - (attributes꞉ FunctionAttributes): # " internal" (110..119)
                   - (item꞉ FunctionAttribute): # " internal" (110..119)

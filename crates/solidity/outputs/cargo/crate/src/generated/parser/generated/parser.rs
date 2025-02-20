@@ -33,7 +33,6 @@ use crate::utils::LanguageFacts;
 pub struct Parser {
     #[allow(dead_code)]
     pub(crate) version_is_at_least_0_4_11: bool,
-    pub(crate) version_is_at_least_0_4_12: bool,
     pub(crate) version_is_at_least_0_4_14: bool,
     pub(crate) version_is_at_least_0_4_16: bool,
     pub(crate) version_is_at_least_0_4_21: bool,
@@ -44,7 +43,6 @@ pub struct Parser {
     pub(crate) version_is_at_least_0_5_5: bool,
     pub(crate) version_is_at_least_0_5_8: bool,
     pub(crate) version_is_at_least_0_5_10: bool,
-    pub(crate) version_is_at_least_0_5_12: bool,
     pub(crate) version_is_at_least_0_5_14: bool,
     pub(crate) version_is_at_least_0_6_0: bool,
     pub(crate) version_is_at_least_0_6_2: bool,
@@ -57,14 +55,11 @@ pub struct Parser {
     pub(crate) version_is_at_least_0_7_4: bool,
     pub(crate) version_is_at_least_0_8_0: bool,
     pub(crate) version_is_at_least_0_8_4: bool,
-    pub(crate) version_is_at_least_0_8_7: bool,
     pub(crate) version_is_at_least_0_8_8: bool,
     pub(crate) version_is_at_least_0_8_13: bool,
     pub(crate) version_is_at_least_0_8_18: bool,
     pub(crate) version_is_at_least_0_8_19: bool,
     pub(crate) version_is_at_least_0_8_22: bool,
-    pub(crate) version_is_at_least_0_8_24: bool,
-    pub(crate) version_is_at_least_0_8_25: bool,
     pub(crate) version_is_at_least_0_8_27: bool,
     language_version: Version,
 }
@@ -85,7 +80,6 @@ impl Parser {
         {
             Ok(Self {
                 version_is_at_least_0_4_11: Version::new(0, 4, 11) <= language_version,
-                version_is_at_least_0_4_12: Version::new(0, 4, 12) <= language_version,
                 version_is_at_least_0_4_14: Version::new(0, 4, 14) <= language_version,
                 version_is_at_least_0_4_16: Version::new(0, 4, 16) <= language_version,
                 version_is_at_least_0_4_21: Version::new(0, 4, 21) <= language_version,
@@ -96,7 +90,6 @@ impl Parser {
                 version_is_at_least_0_5_5: Version::new(0, 5, 5) <= language_version,
                 version_is_at_least_0_5_8: Version::new(0, 5, 8) <= language_version,
                 version_is_at_least_0_5_10: Version::new(0, 5, 10) <= language_version,
-                version_is_at_least_0_5_12: Version::new(0, 5, 12) <= language_version,
                 version_is_at_least_0_5_14: Version::new(0, 5, 14) <= language_version,
                 version_is_at_least_0_6_0: Version::new(0, 6, 0) <= language_version,
                 version_is_at_least_0_6_2: Version::new(0, 6, 2) <= language_version,
@@ -109,14 +102,11 @@ impl Parser {
                 version_is_at_least_0_7_4: Version::new(0, 7, 4) <= language_version,
                 version_is_at_least_0_8_0: Version::new(0, 8, 0) <= language_version,
                 version_is_at_least_0_8_4: Version::new(0, 8, 4) <= language_version,
-                version_is_at_least_0_8_7: Version::new(0, 8, 7) <= language_version,
                 version_is_at_least_0_8_8: Version::new(0, 8, 8) <= language_version,
                 version_is_at_least_0_8_13: Version::new(0, 8, 13) <= language_version,
                 version_is_at_least_0_8_18: Version::new(0, 8, 18) <= language_version,
                 version_is_at_least_0_8_19: Version::new(0, 8, 19) <= language_version,
                 version_is_at_least_0_8_22: Version::new(0, 8, 22) <= language_version,
-                version_is_at_least_0_8_24: Version::new(0, 8, 24) <= language_version,
-                version_is_at_least_0_8_25: Version::new(0, 8, 25) <= language_version,
                 version_is_at_least_0_8_27: Version::new(0, 8, 27) <= language_version,
                 language_version,
             })
@@ -487,9 +477,6 @@ impl Parser {
             NonterminalKind::YulBreakStatement => {
                 Self::yul_break_statement.parse(self, input, kind)
             }
-            NonterminalKind::YulBuiltInFunction => {
-                Self::yul_built_in_function.parse(self, input, kind)
-            }
             NonterminalKind::YulColonAndEqual => Self::yul_colon_and_equal.parse(self, input, kind),
             NonterminalKind::YulContinueStatement => {
                 Self::yul_continue_statement.parse(self, input, kind)
@@ -605,15 +592,17 @@ impl Parser {
                     TerminalKind::AddressKeyword,
                 ),
             )?;
-            seq.elem_labeled(
-                EdgeLabel::PayableKeyword,
-                OptionalHelper::transform(
-                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TerminalKind::PayableKeyword,
+            if self.version_is_at_least_0_5_0 {
+                seq.elem_labeled(
+                    EdgeLabel::PayableKeyword,
+                    OptionalHelper::transform(
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::PayableKeyword,
+                        ),
                     ),
-                ),
-            )?;
+                )?;
+            }
             seq.finish()
         })
         .with_kind(NonterminalKind::AddressType)
@@ -6184,466 +6173,6 @@ impl Parser {
     }
 
     #[allow(unused_assignments, unused_parens)]
-    fn yul_built_in_function(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulAddKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulAddModKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulAddressKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulAndKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulBalanceKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulBlockHashKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulByteKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulCallCodeKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulCallDataCopyKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulCallDataLoadKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulCallDataSizeKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulCallerKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulCallKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulCallValueKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulCoinBaseKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulCreateKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulDelegateCallKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulDivKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulEqKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulExpKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulExtCodeCopyKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulExtCodeSizeKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulGasKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulGasLimitKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulGasPriceKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulGtKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulInvalidKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulIsZeroKeyword,
-            );
-            choice.consider(input, result)?;
-            if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulJumpKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulJumpiKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulLog0Keyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulLog1Keyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulLog2Keyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulLog3Keyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulLog4Keyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulLtKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulMLoadKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulModKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulMSizeKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulMStore8Keyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulMStoreKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulMulKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulMulModKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulNotKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulNumberKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulOriginKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulOrKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulPopKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulReturnKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulRevertKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulSDivKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulSelfDestructKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulSgtKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulSignExtendKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulSLoadKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulSltKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulSModKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulSStoreKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulStopKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulSubKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulTimestampKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulXorKeyword,
-            );
-            choice.consider(input, result)?;
-            if self.version_is_at_least_0_4_12 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulKeccak256Keyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulSha3Keyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if !self.version_is_at_least_0_5_0 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulSuicideKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_4_12 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulReturnDataCopyKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_4_12 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulReturnDataSizeKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_4_12 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulStaticCallKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_4_12 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulCreate2Keyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_5_0 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulExtCodeHashKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulSarKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulShlKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulShrKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulChainIdKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                input,
-                TerminalKind::YulSelfBalanceKeyword,
-            );
-            choice.consider(input, result)?;
-            if self.version_is_at_least_0_8_7 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulBaseFeeKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if !self.version_is_at_least_0_8_18 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulDifficultyKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_8_18 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulPrevRandaoKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_8_24 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulBlobBaseFeeKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_8_24 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulBlobHashKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_8_24 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulTLoadKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_8_24 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulTStoreKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            if self.version_is_at_least_0_8_24 {
-                let result = self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
-                    input,
-                    TerminalKind::YulMCopyKeyword,
-                );
-                choice.consider(input, result)?;
-            }
-            choice.finish(input)
-        })
-        .with_label(EdgeLabel::Variant)
-        .with_kind(NonterminalKind::YulBuiltInFunction)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
     fn yul_colon_and_equal(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_5_5 {
             SequenceHelper::run(|mut seq| {
@@ -6761,8 +6290,6 @@ impl Parser {
         let primary_expression_parser = |input: &mut ParserContext<'_>| {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.yul_literal(input);
-                choice.consider(input, result)?;
-                let result = self.yul_built_in_function(input);
                 choice.consider(input, result)?;
                 let result = self.yul_path(input);
                 choice.consider(input, result)?;
@@ -7947,10 +7474,10 @@ impl Parser {
     }
 
     #[inline]
-    fn bytes_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn bytes_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if scan_sequence!(
                 scan_chars!(input, 'b', 'y', 't', 'e', 's'),
                 scan_optional!(
@@ -8000,10 +7527,10 @@ impl Parser {
     }
 
     #[inline]
-    fn fixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn fixed_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
                 KeywordScan::Reserved(TerminalKind::FixedKeyword)
             } else {
@@ -8304,10 +7831,10 @@ impl Parser {
     }
 
     #[inline]
-    fn int_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn int_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if scan_sequence!(
                 scan_chars!(input, 'i', 'n', 't'),
                 scan_optional!(
@@ -8357,10 +7884,10 @@ impl Parser {
     }
 
     #[inline]
-    fn ufixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn ufixed_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
                 KeywordScan::Reserved(TerminalKind::UfixedKeyword)
             } else {
@@ -8661,10 +8188,10 @@ impl Parser {
     }
 
     #[inline]
-    fn uint_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn uint_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if scan_sequence!(
                 scan_chars!(input, 'u', 'i', 'n', 't'),
                 scan_optional!(
@@ -8714,10 +8241,10 @@ impl Parser {
     }
 
     #[inline]
-    fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn yul_bytes_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'b', 'y', 't', 'e', 's'),
@@ -8769,10 +8296,10 @@ impl Parser {
     }
 
     #[inline]
-    fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn yul_fixed_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'f', 'i', 'x', 'e', 'd') {
                 KeywordScan::Reserved(TerminalKind::YulFixedKeyword)
             } else {
@@ -9075,10 +8602,10 @@ impl Parser {
     }
 
     #[inline]
-    fn yul_int_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn yul_int_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'i', 'n', 't'),
@@ -9130,58 +8657,10 @@ impl Parser {
     }
 
     #[inline]
-    fn yul_jump_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
-            if (!self.version_is_at_least_0_6_0 || !self.version_is_at_least_0_5_0)
-                && scan_chars!(input, 'j', 'u', 'm', 'p')
-            {
-                if !self.version_is_at_least_0_6_0 {
-                    KeywordScan::Reserved(TerminalKind::YulJumpKeyword)
-                } else {
-                    KeywordScan::Present(TerminalKind::YulJumpKeyword)
-                }
-            } else {
-                KeywordScan::Absent
-            },
-            if self.version_is_at_least_0_8_0 && scan_chars!(input, 'j', 'u', 'm', 'p') {
-                KeywordScan::Reserved(TerminalKind::YulJumpKeyword)
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-
-    #[inline]
-    fn yul_jumpi_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
-        scan_keyword_choice!(
-            input,
-            ident,
-            if (!self.version_is_at_least_0_6_0 || !self.version_is_at_least_0_5_0)
-                && scan_chars!(input, 'j', 'u', 'm', 'p', 'i')
-            {
-                if !self.version_is_at_least_0_6_0 {
-                    KeywordScan::Reserved(TerminalKind::YulJumpiKeyword)
-                } else {
-                    KeywordScan::Present(TerminalKind::YulJumpiKeyword)
-                }
-            } else {
-                KeywordScan::Absent
-            },
-            if self.version_is_at_least_0_8_0 && scan_chars!(input, 'j', 'u', 'm', 'p', 'i') {
-                KeywordScan::Reserved(TerminalKind::YulJumpiKeyword)
-            } else {
-                KeywordScan::Absent
-            }
-        )
-    }
-
-    #[inline]
-    fn yul_ufixed_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
-        scan_keyword_choice!(
-            input,
-            ident,
+            ident_len,
             if !self.version_is_at_least_0_7_1 && scan_chars!(input, 'u', 'f', 'i', 'x', 'e', 'd') {
                 KeywordScan::Reserved(TerminalKind::YulUfixedKeyword)
             } else {
@@ -9484,10 +8963,10 @@ impl Parser {
     }
 
     #[inline]
-    fn yul_uint_keyword(&self, input: &mut ParserContext<'_>, ident: &str) -> KeywordScan {
+    fn yul_uint_keyword(&self, input: &mut ParserContext<'_>, ident_len: usize) -> KeywordScan {
         scan_keyword_choice!(
             input,
-            ident,
+            ident_len,
             if !self.version_is_at_least_0_7_1
                 && scan_sequence!(
                     scan_chars!(input, 'u', 'i', 'n', 't'),
@@ -11022,8 +10501,7 @@ impl Lexer for Parser {
                     if kw_scan == KeywordScan::Absent {
                         input.set_position(save);
 
-                        // TODO(#1001): Don't allocate a string here
-                        let ident_value = input.content(save..furthest_position);
+                        let ident_len = furthest_position - save;
 
                         for keyword_compound_scanner in [
                             Self::bytes_keyword,
@@ -11032,7 +10510,7 @@ impl Lexer for Parser {
                             Self::ufixed_keyword,
                             Self::uint_keyword,
                         ] {
-                            match keyword_compound_scanner(self, input, &ident_value) {
+                            match keyword_compound_scanner(self, input, ident_len) {
                                 _ if input.position() < furthest_position => { /* Strict prefix */ }
                                 KeywordScan::Absent => {}
                                 value => kw_scan = value,
@@ -11222,37 +10700,6 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('d') => {
-                                if scan_chars!(input, 'd') {
-                                    match input.next() {
-                                        Some('m') => {
-                                            if scan_chars!(input, 'o', 'd') {
-                                                KeywordScan::Reserved(
-                                                    TerminalKind::YulAddModKeyword,
-                                                )
-                                            } else {
-                                                KeywordScan::Absent
-                                            }
-                                        }
-                                        Some('r') => {
-                                            if scan_chars!(input, 'e', 's', 's') {
-                                                KeywordScan::Present(
-                                                    TerminalKind::YulAddressKeyword,
-                                                )
-                                            } else {
-                                                KeywordScan::Absent
-                                            }
-                                        }
-                                        Some(_) => {
-                                            input.undo();
-                                            KeywordScan::Reserved(TerminalKind::YulAddKeyword)
-                                        }
-                                        None => KeywordScan::Reserved(TerminalKind::YulAddKeyword),
-                                    }
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some('f') => {
                                 if scan_chars!(input, 't', 'e', 'r') {
                                     if !self.version_is_at_least_0_7_1 {
@@ -11277,25 +10724,17 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('n') => match input.next() {
-                                Some('d') => KeywordScan::Reserved(TerminalKind::YulAndKeyword),
-                                Some('o') => {
-                                    if scan_chars!(input, 'n', 'y', 'm', 'o', 'u', 's') {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TerminalKind::YulAnonymousKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
+                            Some('n') => {
+                                if scan_chars!(input, 'o', 'n', 'y', 'm', 'o', 'u', 's') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TerminalKind::YulAnonymousKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
-                                }
-                                Some(_) => {
-                                    input.undo();
+                                } else {
                                     KeywordScan::Absent
                                 }
-                                None => KeywordScan::Absent,
-                            },
+                            }
                             Some('p') => {
                                 if scan_chars!(input, 'p', 'l', 'y') {
                                     if self.version_is_at_least_0_5_0
@@ -11357,95 +10796,6 @@ impl Lexer for Parser {
                             None => KeywordScan::Absent,
                         },
                         Some('b') => match input.next() {
-                            Some('a') => match input.next() {
-                                Some('l') => {
-                                    if scan_chars!(input, 'a', 'n', 'c', 'e') {
-                                        KeywordScan::Reserved(TerminalKind::YulBalanceKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some('s') => {
-                                    if scan_chars!(input, 'e', 'f', 'e', 'e') {
-                                        if self.version_is_at_least_0_8_7 {
-                                            KeywordScan::Reserved(TerminalKind::YulBaseFeeKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    KeywordScan::Absent
-                                }
-                                None => KeywordScan::Absent,
-                            },
-                            Some('l') => {
-                                if scan_chars!(input, 'o') {
-                                    match input.next() {
-                                        Some('b') => match input.next() {
-                                            Some('b') => {
-                                                if scan_chars!(input, 'a', 's', 'e', 'f', 'e', 'e')
-                                                {
-                                                    if self.version_is_at_least_0_8_25 {
-                                                        KeywordScan::Reserved(
-                                                            TerminalKind::YulBlobBaseFeeKeyword,
-                                                        )
-                                                    } else if self.version_is_at_least_0_8_24 {
-                                                        KeywordScan::Present(
-                                                            TerminalKind::YulBlobBaseFeeKeyword,
-                                                        )
-                                                    } else {
-                                                        KeywordScan::Absent
-                                                    }
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some('h') => {
-                                                if scan_chars!(input, 'a', 's', 'h') {
-                                                    if self.version_is_at_least_0_8_25 {
-                                                        KeywordScan::Reserved(
-                                                            TerminalKind::YulBlobHashKeyword,
-                                                        )
-                                                    } else if self.version_is_at_least_0_8_24 {
-                                                        KeywordScan::Present(
-                                                            TerminalKind::YulBlobHashKeyword,
-                                                        )
-                                                    } else {
-                                                        KeywordScan::Absent
-                                                    }
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                KeywordScan::Absent
-                                            }
-                                            None => KeywordScan::Absent,
-                                        },
-                                        Some('c') => {
-                                            if scan_chars!(input, 'k', 'h', 'a', 's', 'h') {
-                                                KeywordScan::Reserved(
-                                                    TerminalKind::YulBlockHashKeyword,
-                                                )
-                                            } else {
-                                                KeywordScan::Absent
-                                            }
-                                        }
-                                        Some(_) => {
-                                            input.undo();
-                                            KeywordScan::Absent
-                                        }
-                                        None => KeywordScan::Absent,
-                                    }
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some('o') => {
                                 if scan_chars!(input, 'o', 'l') {
                                     if !self.version_is_at_least_0_5_10 {
@@ -11464,13 +10814,6 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('y') => {
-                                if scan_chars!(input, 't', 'e') {
-                                    KeywordScan::Reserved(TerminalKind::YulByteKeyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
@@ -11480,90 +10823,13 @@ impl Lexer for Parser {
                         Some('c') => match input.next() {
                             Some('a') => match input.next() {
                                 Some('l') => {
-                                    if scan_chars!(input, 'l') {
-                                        match input.next() {
-                                            Some('c') => {
-                                                if scan_chars!(input, 'o', 'd', 'e') {
-                                                    KeywordScan::Reserved(
-                                                        TerminalKind::YulCallCodeKeyword,
-                                                    )
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some('d') => {
-                                                if scan_chars!(input, 'a', 't', 'a') {
-                                                    match input.next() {
-                                                        Some('c') => {
-                                                            if scan_chars!(input, 'o', 'p', 'y') {
-                                                                KeywordScan :: Reserved (TerminalKind :: YulCallDataCopyKeyword)
-                                                            } else {
-                                                                KeywordScan::Absent
-                                                            }
-                                                        }
-                                                        Some('l') => {
-                                                            if scan_chars!(input, 'o', 'a', 'd') {
-                                                                KeywordScan :: Reserved (TerminalKind :: YulCallDataLoadKeyword)
-                                                            } else {
-                                                                KeywordScan::Absent
-                                                            }
-                                                        }
-                                                        Some('s') => {
-                                                            if scan_chars!(input, 'i', 'z', 'e') {
-                                                                KeywordScan :: Reserved (TerminalKind :: YulCallDataSizeKeyword)
-                                                            } else {
-                                                                KeywordScan::Absent
-                                                            }
-                                                        }
-                                                        Some(_) => {
-                                                            input.undo();
-                                                            if self.version_is_at_least_0_5_0
-                                                                && !self.version_is_at_least_0_7_1
-                                                            {
-                                                                KeywordScan :: Reserved (TerminalKind :: YulCallDataKeyword)
-                                                            } else {
-                                                                KeywordScan::Absent
-                                                            }
-                                                        }
-                                                        None => {
-                                                            if self.version_is_at_least_0_5_0
-                                                                && !self.version_is_at_least_0_7_1
-                                                            {
-                                                                KeywordScan :: Reserved (TerminalKind :: YulCallDataKeyword)
-                                                            } else {
-                                                                KeywordScan::Absent
-                                                            }
-                                                        }
-                                                    }
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some('e') => {
-                                                if scan_chars!(input, 'r') {
-                                                    KeywordScan::Reserved(
-                                                        TerminalKind::YulCallerKeyword,
-                                                    )
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some('v') => {
-                                                if scan_chars!(input, 'a', 'l', 'u', 'e') {
-                                                    KeywordScan::Reserved(
-                                                        TerminalKind::YulCallValueKeyword,
-                                                    )
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                KeywordScan::Reserved(TerminalKind::YulCallKeyword)
-                                            }
-                                            None => {
-                                                KeywordScan::Reserved(TerminalKind::YulCallKeyword)
-                                            }
+                                    if scan_chars!(input, 'l', 'd', 'a', 't', 'a') {
+                                        if self.version_is_at_least_0_5_0
+                                            && !self.version_is_at_least_0_7_1
+                                        {
+                                            KeywordScan::Reserved(TerminalKind::YulCallDataKeyword)
+                                        } else {
+                                            KeywordScan::Absent
                                         }
                                     } else {
                                         KeywordScan::Absent
@@ -11593,25 +10859,7 @@ impl Lexer for Parser {
                                 }
                                 None => KeywordScan::Absent,
                             },
-                            Some('h') => {
-                                if scan_chars!(input, 'a', 'i', 'n', 'i', 'd') {
-                                    if self.version_is_at_least_0_5_12 {
-                                        KeywordScan::Reserved(TerminalKind::YulChainIdKeyword)
-                                    } else {
-                                        KeywordScan::Present(TerminalKind::YulChainIdKeyword)
-                                    }
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some('o') => match input.next() {
-                                Some('i') => {
-                                    if scan_chars!(input, 'n', 'b', 'a', 's', 'e') {
-                                        KeywordScan::Reserved(TerminalKind::YulCoinBaseKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
                                 Some('n') => {
                                     match input.next() {
                                         Some('s') => {
@@ -11708,30 +10956,6 @@ impl Lexer for Parser {
                                 }
                                 None => KeywordScan::Absent,
                             },
-                            Some('r') => {
-                                if scan_chars!(input, 'e', 'a', 't', 'e') {
-                                    match input.next() {
-                                        Some('2') => {
-                                            if self.version_is_at_least_0_4_12 {
-                                                KeywordScan::Reserved(
-                                                    TerminalKind::YulCreate2Keyword,
-                                                )
-                                            } else {
-                                                KeywordScan::Absent
-                                            }
-                                        }
-                                        Some(_) => {
-                                            input.undo();
-                                            KeywordScan::Reserved(TerminalKind::YulCreateKeyword)
-                                        }
-                                        None => {
-                                            KeywordScan::Reserved(TerminalKind::YulCreateKeyword)
-                                        }
-                                    }
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
@@ -11781,57 +11005,16 @@ impl Lexer for Parser {
                                     None => KeywordScan::Absent,
                                 },
                                 Some('l') => {
-                                    if scan_chars!(input, 'e') {
-                                        match input.next() {
-                                            Some('g') => {
-                                                if scan_chars!(
-                                                    input, 'a', 't', 'e', 'c', 'a', 'l', 'l'
-                                                ) {
-                                                    KeywordScan::Reserved(
-                                                        TerminalKind::YulDelegateCallKeyword,
-                                                    )
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some('t') => {
-                                                if scan_chars!(input, 'e') {
-                                                    if !self.version_is_at_least_0_7_1 {
-                                                        KeywordScan::Reserved(
-                                                            TerminalKind::YulDeleteKeyword,
-                                                        )
-                                                    } else {
-                                                        KeywordScan::Absent
-                                                    }
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                KeywordScan::Absent
-                                            }
-                                            None => KeywordScan::Absent,
+                                    if scan_chars!(input, 'e', 't', 'e') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TerminalKind::YulDeleteKeyword)
+                                        } else {
+                                            KeywordScan::Absent
                                         }
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some(_) => {
-                                    input.undo();
-                                    KeywordScan::Absent
-                                }
-                                None => KeywordScan::Absent,
-                            },
-                            Some('i') => match input.next() {
-                                Some('f') => {
-                                    if scan_chars!(input, 'f', 'i', 'c', 'u', 'l', 't', 'y') {
-                                        KeywordScan::Reserved(TerminalKind::YulDifficultyKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some('v') => KeywordScan::Reserved(TerminalKind::YulDivKeyword),
                                 Some(_) => {
                                     input.undo();
                                     KeywordScan::Absent
@@ -11851,141 +11034,81 @@ impl Lexer for Parser {
                             }
                             None => KeywordScan::Absent,
                         },
-                        Some('e') => {
-                            match input.next() {
-                                Some('l') => {
-                                    if scan_chars!(input, 's', 'e') {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TerminalKind::YulElseKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
+                        Some('e') => match input.next() {
+                            Some('l') => {
+                                if scan_chars!(input, 's', 'e') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TerminalKind::YulElseKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
-                                }
-                                Some('m') => {
-                                    if scan_chars!(input, 'i', 't') {
-                                        if self.version_is_at_least_0_5_0
-                                            && !self.version_is_at_least_0_7_1
-                                        {
-                                            KeywordScan::Reserved(TerminalKind::YulEmitKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some('n') => {
-                                    if scan_chars!(input, 'u', 'm') {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TerminalKind::YulEnumKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some('q') => KeywordScan::Reserved(TerminalKind::YulEqKeyword),
-                                Some('t') => {
-                                    if scan_chars!(input, 'h', 'e', 'r') {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TerminalKind::YulEtherKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some('v') => {
-                                    if scan_chars!(input, 'e', 'n', 't') {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TerminalKind::YulEventKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some('x') => match input.next() {
-                                    Some('p') => KeywordScan::Reserved(TerminalKind::YulExpKeyword),
-                                    Some('t') => {
-                                        match input.next() {
-                                            Some('c') => {
-                                                if scan_chars!(input, 'o', 'd', 'e') {
-                                                    match input.next() {
-                                                        Some('c') => {
-                                                            if scan_chars!(input, 'o', 'p', 'y') {
-                                                                KeywordScan :: Reserved (TerminalKind :: YulExtCodeCopyKeyword)
-                                                            } else {
-                                                                KeywordScan::Absent
-                                                            }
-                                                        }
-                                                        Some('h') => {
-                                                            if scan_chars!(input, 'a', 's', 'h') {
-                                                                if self.version_is_at_least_0_5_0 {
-                                                                    KeywordScan :: Reserved (TerminalKind :: YulExtCodeHashKeyword)
-                                                                } else {
-                                                                    KeywordScan::Absent
-                                                                }
-                                                            } else {
-                                                                KeywordScan::Absent
-                                                            }
-                                                        }
-                                                        Some('s') => {
-                                                            if scan_chars!(input, 'i', 'z', 'e') {
-                                                                KeywordScan :: Reserved (TerminalKind :: YulExtCodeSizeKeyword)
-                                                            } else {
-                                                                KeywordScan::Absent
-                                                            }
-                                                        }
-                                                        Some(_) => {
-                                                            input.undo();
-                                                            KeywordScan::Absent
-                                                        }
-                                                        None => KeywordScan::Absent,
-                                                    }
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some('e') => {
-                                                if scan_chars!(input, 'r', 'n', 'a', 'l') {
-                                                    if !self.version_is_at_least_0_7_1 {
-                                                        KeywordScan::Reserved(
-                                                            TerminalKind::YulExternalKeyword,
-                                                        )
-                                                    } else {
-                                                        KeywordScan::Absent
-                                                    }
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                KeywordScan::Absent
-                                            }
-                                            None => KeywordScan::Absent,
-                                        }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        KeywordScan::Absent
-                                    }
-                                    None => KeywordScan::Absent,
-                                },
-                                Some(_) => {
-                                    input.undo();
+                                } else {
                                     KeywordScan::Absent
                                 }
-                                None => KeywordScan::Absent,
                             }
-                        }
+                            Some('m') => {
+                                if scan_chars!(input, 'i', 't') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TerminalKind::YulEmitKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('n') => {
+                                if scan_chars!(input, 'u', 'm') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TerminalKind::YulEnumKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('t') => {
+                                if scan_chars!(input, 'h', 'e', 'r') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TerminalKind::YulEtherKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('v') => {
+                                if scan_chars!(input, 'e', 'n', 't') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TerminalKind::YulEventKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('x') => {
+                                if scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TerminalKind::YulExternalKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
                         Some('f') => match input.next() {
                             Some('a') => {
                                 if scan_chars!(input, 'l') {
@@ -12081,58 +11204,18 @@ impl Lexer for Parser {
                             }
                             None => KeywordScan::Absent,
                         },
-                        Some('g') => match input.next() {
-                            Some('a') => {
-                                if scan_chars!(input, 's') {
-                                    match input.next() {
-                                        Some('l') => {
-                                            if scan_chars!(input, 'i', 'm', 'i', 't') {
-                                                KeywordScan::Reserved(
-                                                    TerminalKind::YulGasLimitKeyword,
-                                                )
-                                            } else {
-                                                KeywordScan::Absent
-                                            }
-                                        }
-                                        Some('p') => {
-                                            if scan_chars!(input, 'r', 'i', 'c', 'e') {
-                                                KeywordScan::Reserved(
-                                                    TerminalKind::YulGasPriceKeyword,
-                                                )
-                                            } else {
-                                                KeywordScan::Absent
-                                            }
-                                        }
-                                        Some(_) => {
-                                            input.undo();
-                                            KeywordScan::Reserved(TerminalKind::YulGasKeyword)
-                                        }
-                                        None => KeywordScan::Reserved(TerminalKind::YulGasKeyword),
-                                    }
+                        Some('g') => {
+                            if scan_chars!(input, 'w', 'e', 'i') {
+                                if self.version_is_at_least_0_7_0 && !self.version_is_at_least_0_7_1
+                                {
+                                    KeywordScan::Reserved(TerminalKind::YulGweiKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
-                            }
-                            Some('t') => KeywordScan::Reserved(TerminalKind::YulGtKeyword),
-                            Some('w') => {
-                                if scan_chars!(input, 'e', 'i') {
-                                    if self.version_is_at_least_0_7_0
-                                        && !self.version_is_at_least_0_7_1
-                                    {
-                                        KeywordScan::Reserved(TerminalKind::YulGweiKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
-                            Some(_) => {
-                                input.undo();
+                            } else {
                                 KeywordScan::Absent
                             }
-                            None => KeywordScan::Absent,
-                        },
+                        }
                         Some('h') => match input.next() {
                             Some('e') => {
                                 if scan_chars!(input, 'x') {
@@ -12277,13 +11360,6 @@ impl Lexer for Parser {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some('v') => {
-                                    if scan_chars!(input, 'a', 'l', 'i', 'd') {
-                                        KeywordScan::Reserved(TerminalKind::YulInvalidKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
                                 Some(_) => {
                                     input.undo();
                                     if !self.version_is_at_least_0_6_8 {
@@ -12300,47 +11376,19 @@ impl Lexer for Parser {
                                     }
                                 }
                             },
-                            Some('s') => match input.next() {
-                                Some('z') => {
-                                    if scan_chars!(input, 'e', 'r', 'o') {
-                                        KeywordScan::Reserved(TerminalKind::YulIsZeroKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
+                            Some('s') => {
+                                if !self.version_is_at_least_0_7_1 {
+                                    KeywordScan::Reserved(TerminalKind::YulIsKeyword)
+                                } else {
+                                    KeywordScan::Absent
                                 }
-                                Some(_) => {
-                                    input.undo();
-                                    if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TerminalKind::YulIsKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                None => {
-                                    if !self.version_is_at_least_0_7_1 {
-                                        KeywordScan::Reserved(TerminalKind::YulIsKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                            },
+                            }
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
                             }
                             None => KeywordScan::Absent,
                         },
-                        Some('k') => {
-                            if scan_chars!(input, 'e', 'c', 'c', 'a', 'k', '2', '5', '6') {
-                                if self.version_is_at_least_0_4_12 {
-                                    KeywordScan::Reserved(TerminalKind::YulKeccak256Keyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            } else {
-                                KeywordScan::Absent
-                            }
-                        }
                         Some('l') => match input.next() {
                             Some('e') => match input.next() {
                                 Some('a') => {
@@ -12374,35 +11422,6 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('o') => {
-                                if scan_chars!(input, 'g') {
-                                    match input.next() {
-                                        Some('0') => {
-                                            KeywordScan::Reserved(TerminalKind::YulLog0Keyword)
-                                        }
-                                        Some('1') => {
-                                            KeywordScan::Reserved(TerminalKind::YulLog1Keyword)
-                                        }
-                                        Some('2') => {
-                                            KeywordScan::Reserved(TerminalKind::YulLog2Keyword)
-                                        }
-                                        Some('3') => {
-                                            KeywordScan::Reserved(TerminalKind::YulLog3Keyword)
-                                        }
-                                        Some('4') => {
-                                            KeywordScan::Reserved(TerminalKind::YulLog4Keyword)
-                                        }
-                                        Some(_) => {
-                                            input.undo();
-                                            KeywordScan::Absent
-                                        }
-                                        None => KeywordScan::Absent,
-                                    }
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
-                            Some('t') => KeywordScan::Reserved(TerminalKind::YulLtKeyword),
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
@@ -12452,19 +11471,6 @@ impl Lexer for Parser {
                                 }
                                 None => KeywordScan::Absent,
                             },
-                            Some('c') => {
-                                if scan_chars!(input, 'o', 'p', 'y') {
-                                    if self.version_is_at_least_0_8_25 {
-                                        KeywordScan::Reserved(TerminalKind::YulMCopyKeyword)
-                                    } else if self.version_is_at_least_0_8_24 {
-                                        KeywordScan::Present(TerminalKind::YulMCopyKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some('e') => {
                                 if scan_chars!(input, 'm', 'o', 'r', 'y') {
                                     if !self.version_is_at_least_0_7_1 {
@@ -12487,107 +11493,30 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('l') => {
-                                if scan_chars!(input, 'o', 'a', 'd') {
-                                    KeywordScan::Reserved(TerminalKind::YulMLoadKeyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some('o') => {
-                                if scan_chars!(input, 'd') {
-                                    match input.next() {
-                                        Some('i') => {
-                                            if scan_chars!(input, 'f', 'i', 'e', 'r') {
-                                                if !self.version_is_at_least_0_7_1 {
-                                                    KeywordScan::Reserved(
-                                                        TerminalKind::YulModifierKeyword,
-                                                    )
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            } else {
-                                                KeywordScan::Absent
-                                            }
-                                        }
-                                        Some(_) => {
-                                            input.undo();
-                                            KeywordScan::Reserved(TerminalKind::YulModKeyword)
-                                        }
-                                        None => KeywordScan::Reserved(TerminalKind::YulModKeyword),
+                                if scan_chars!(input, 'd', 'i', 'f', 'i', 'e', 'r') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TerminalKind::YulModifierKeyword)
+                                    } else {
+                                        KeywordScan::Absent
                                     }
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('s') => match input.next() {
-                                Some('i') => {
-                                    if scan_chars!(input, 'z', 'e') {
-                                        KeywordScan::Reserved(TerminalKind::YulMSizeKeyword)
+                            Some('u') => {
+                                if scan_chars!(input, 't', 'a', 'b', 'l', 'e') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TerminalKind::YulMutableKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
-                                }
-                                Some('t') => {
-                                    if scan_chars!(input, 'o', 'r', 'e') {
-                                        match input.next() {
-                                            Some('8') => KeywordScan::Reserved(
-                                                TerminalKind::YulMStore8Keyword,
-                                            ),
-                                            Some(_) => {
-                                                input.undo();
-                                                KeywordScan::Reserved(
-                                                    TerminalKind::YulMStoreKeyword,
-                                                )
-                                            }
-                                            None => KeywordScan::Reserved(
-                                                TerminalKind::YulMStoreKeyword,
-                                            ),
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
+                                } else {
                                     KeywordScan::Absent
                                 }
-                                None => KeywordScan::Absent,
-                            },
-                            Some('u') => match input.next() {
-                                Some('l') => match input.next() {
-                                    Some('m') => {
-                                        if scan_chars!(input, 'o', 'd') {
-                                            KeywordScan::Reserved(TerminalKind::YulMulModKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
-                                        KeywordScan::Reserved(TerminalKind::YulMulKeyword)
-                                    }
-                                    None => KeywordScan::Reserved(TerminalKind::YulMulKeyword),
-                                },
-                                Some('t') => {
-                                    if scan_chars!(input, 'a', 'b', 'l', 'e') {
-                                        if self.version_is_at_least_0_5_0
-                                            && !self.version_is_at_least_0_7_1
-                                        {
-                                            KeywordScan::Reserved(TerminalKind::YulMutableKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    KeywordScan::Absent
-                                }
-                                None => KeywordScan::Absent,
-                            },
+                            }
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
@@ -12606,38 +11535,17 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('o') => {
-                                if scan_chars!(input, 't') {
-                                    KeywordScan::Reserved(TerminalKind::YulNotKeyword)
+                            Some('u') => {
+                                if scan_chars!(input, 'l', 'l') {
+                                    if !self.version_is_at_least_0_7_1 {
+                                        KeywordScan::Reserved(TerminalKind::YulNullKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('u') => match input.next() {
-                                Some('l') => {
-                                    if scan_chars!(input, 'l') {
-                                        if !self.version_is_at_least_0_7_1 {
-                                            KeywordScan::Reserved(TerminalKind::YulNullKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some('m') => {
-                                    if scan_chars!(input, 'b', 'e', 'r') {
-                                        KeywordScan::Reserved(TerminalKind::YulNumberKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    KeywordScan::Absent
-                                }
-                                None => KeywordScan::Absent,
-                            },
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
@@ -12652,20 +11560,6 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('r') => match input.next() {
-                                Some('i') => {
-                                    if scan_chars!(input, 'g', 'i', 'n') {
-                                        KeywordScan::Reserved(TerminalKind::YulOriginKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    KeywordScan::Reserved(TerminalKind::YulOrKeyword)
-                                }
-                                None => KeywordScan::Reserved(TerminalKind::YulOrKeyword),
-                            },
                             Some('v') => {
                                 if scan_chars!(input, 'e', 'r', 'r', 'i', 'd', 'e') {
                                     if self.version_is_at_least_0_5_0
@@ -12717,31 +11611,11 @@ impl Lexer for Parser {
                                 }
                                 None => KeywordScan::Absent,
                             },
-                            Some('o') => {
-                                if scan_chars!(input, 'p') {
-                                    KeywordScan::Reserved(TerminalKind::YulPopKeyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some('r') => match input.next() {
                                 Some('a') => {
                                     if scan_chars!(input, 'g', 'm', 'a') {
                                         if !self.version_is_at_least_0_7_1 {
                                             KeywordScan::Reserved(TerminalKind::YulPragmaKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some('e') => {
-                                    if scan_chars!(input, 'v', 'r', 'a', 'n', 'd', 'a', 'o') {
-                                        if self.version_is_at_least_0_8_18 {
-                                            KeywordScan::Reserved(
-                                                TerminalKind::YulPrevRandaoKeyword,
-                                            )
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12863,75 +11737,14 @@ impl Lexer for Parser {
                                         }
                                     }
                                     Some('t') => {
-                                        if scan_chars!(input, 'u', 'r', 'n') {
-                                            match input.next() {
-                                                Some('d') => {
-                                                    if scan_chars!(input, 'a', 't', 'a') {
-                                                        match input.next() {
-                                                            Some('c') => {
-                                                                if scan_chars!(input, 'o', 'p', 'y')
-                                                                {
-                                                                    if self
-                                                                        .version_is_at_least_0_4_12
-                                                                    {
-                                                                        KeywordScan :: Reserved (TerminalKind :: YulReturnDataCopyKeyword)
-                                                                    } else {
-                                                                        KeywordScan::Absent
-                                                                    }
-                                                                } else {
-                                                                    KeywordScan::Absent
-                                                                }
-                                                            }
-                                                            Some('s') => {
-                                                                if scan_chars!(input, 'i', 'z', 'e')
-                                                                {
-                                                                    if self
-                                                                        .version_is_at_least_0_4_12
-                                                                    {
-                                                                        KeywordScan :: Reserved (TerminalKind :: YulReturnDataSizeKeyword)
-                                                                    } else {
-                                                                        KeywordScan::Absent
-                                                                    }
-                                                                } else {
-                                                                    KeywordScan::Absent
-                                                                }
-                                                            }
-                                                            Some(_) => {
-                                                                input.undo();
-                                                                KeywordScan::Absent
-                                                            }
-                                                            None => KeywordScan::Absent,
-                                                        }
-                                                    } else {
-                                                        KeywordScan::Absent
-                                                    }
-                                                }
-                                                Some('s') => {
-                                                    if !self.version_is_at_least_0_7_1 {
-                                                        KeywordScan::Reserved(
-                                                            TerminalKind::YulReturnsKeyword,
-                                                        )
-                                                    } else {
-                                                        KeywordScan::Absent
-                                                    }
-                                                }
-                                                Some(_) => {
-                                                    input.undo();
-                                                    KeywordScan::Reserved(
-                                                        TerminalKind::YulReturnKeyword,
-                                                    )
-                                                }
-                                                None => KeywordScan::Reserved(
-                                                    TerminalKind::YulReturnKeyword,
-                                                ),
+                                        if scan_chars!(input, 'u', 'r', 'n', 's') {
+                                            if !self.version_is_at_least_0_7_1 {
+                                                KeywordScan::Reserved(
+                                                    TerminalKind::YulReturnsKeyword,
+                                                )
+                                            } else {
+                                                KeywordScan::Absent
                                             }
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    }
-                                    Some('v') => {
-                                        if scan_chars!(input, 'e', 'r', 't') {
-                                            KeywordScan::Reserved(TerminalKind::YulRevertKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
@@ -12947,24 +11760,6 @@ impl Lexer for Parser {
                             }
                         }
                         Some('s') => match input.next() {
-                            Some('a') => {
-                                if scan_chars!(input, 'r') {
-                                    if self.version_is_at_least_0_4_21 {
-                                        KeywordScan::Reserved(TerminalKind::YulSarKeyword)
-                                    } else {
-                                        KeywordScan::Present(TerminalKind::YulSarKeyword)
-                                    }
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
-                            Some('d') => {
-                                if scan_chars!(input, 'i', 'v') {
-                                    KeywordScan::Reserved(TerminalKind::YulSDivKeyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some('e') => match input.next() {
                                 Some('a') => {
                                     if scan_chars!(input, 'l', 'e', 'd') {
@@ -12990,143 +11785,21 @@ impl Lexer for Parser {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some('l') => {
-                                    if scan_chars!(input, 'f') {
-                                        match input.next() {
-                                            Some('b') => {
-                                                if scan_chars!(input, 'a', 'l', 'a', 'n', 'c', 'e')
-                                                {
-                                                    if self.version_is_at_least_0_5_12 {
-                                                        KeywordScan::Reserved(
-                                                            TerminalKind::YulSelfBalanceKeyword,
-                                                        )
-                                                    } else {
-                                                        KeywordScan::Present(
-                                                            TerminalKind::YulSelfBalanceKeyword,
-                                                        )
-                                                    }
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some('d') => {
-                                                if scan_chars!(
-                                                    input, 'e', 's', 't', 'r', 'u', 'c', 't'
-                                                ) {
-                                                    KeywordScan::Reserved(
-                                                        TerminalKind::YulSelfDestructKeyword,
-                                                    )
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                KeywordScan::Absent
-                                            }
-                                            None => KeywordScan::Absent,
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
                                 Some(_) => {
                                     input.undo();
                                     KeywordScan::Absent
                                 }
                                 None => KeywordScan::Absent,
                             },
-                            Some('g') => {
-                                if scan_chars!(input, 't') {
-                                    KeywordScan::Reserved(TerminalKind::YulSgtKeyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
-                            Some('h') => match input.next() {
-                                Some('a') => {
-                                    if scan_chars!(input, '3') {
-                                        if !self.version_is_at_least_0_5_0 {
-                                            KeywordScan::Reserved(TerminalKind::YulSha3Keyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
+                            Some('i') => {
+                                if scan_chars!(input, 'z', 'e', 'o', 'f') {
+                                    if self.version_is_at_least_0_5_0
+                                        && !self.version_is_at_least_0_7_1
+                                    {
+                                        KeywordScan::Reserved(TerminalKind::YulSizeOfKeyword)
                                     } else {
                                         KeywordScan::Absent
                                     }
-                                }
-                                Some('l') => {
-                                    if self.version_is_at_least_0_4_21 {
-                                        KeywordScan::Reserved(TerminalKind::YulShlKeyword)
-                                    } else {
-                                        KeywordScan::Present(TerminalKind::YulShlKeyword)
-                                    }
-                                }
-                                Some('r') => {
-                                    if self.version_is_at_least_0_4_21 {
-                                        KeywordScan::Reserved(TerminalKind::YulShrKeyword)
-                                    } else {
-                                        KeywordScan::Present(TerminalKind::YulShrKeyword)
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    KeywordScan::Absent
-                                }
-                                None => KeywordScan::Absent,
-                            },
-                            Some('i') => match input.next() {
-                                Some('g') => {
-                                    if scan_chars!(input, 'n', 'e', 'x', 't', 'e', 'n', 'd') {
-                                        KeywordScan::Reserved(TerminalKind::YulSignExtendKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some('z') => {
-                                    if scan_chars!(input, 'e', 'o', 'f') {
-                                        if self.version_is_at_least_0_5_0
-                                            && !self.version_is_at_least_0_7_1
-                                        {
-                                            KeywordScan::Reserved(TerminalKind::YulSizeOfKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some(_) => {
-                                    input.undo();
-                                    KeywordScan::Absent
-                                }
-                                None => KeywordScan::Absent,
-                            },
-                            Some('l') => match input.next() {
-                                Some('o') => {
-                                    if scan_chars!(input, 'a', 'd') {
-                                        KeywordScan::Reserved(TerminalKind::YulSLoadKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some('t') => KeywordScan::Reserved(TerminalKind::YulSltKeyword),
-                                Some(_) => {
-                                    input.undo();
-                                    KeywordScan::Absent
-                                }
-                                None => KeywordScan::Absent,
-                            },
-                            Some('m') => {
-                                if scan_chars!(input, 'o', 'd') {
-                                    KeywordScan::Reserved(TerminalKind::YulSModKeyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
-                            Some('s') => {
-                                if scan_chars!(input, 't', 'o', 'r', 'e') {
-                                    KeywordScan::Reserved(TerminalKind::YulSStoreKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -13134,67 +11807,26 @@ impl Lexer for Parser {
                             Some('t') => match input.next() {
                                 Some('a') => {
                                     if scan_chars!(input, 't', 'i', 'c') {
-                                        match input.next() {
-                                            Some('c') => {
-                                                if scan_chars!(input, 'a', 'l', 'l') {
-                                                    if self.version_is_at_least_0_4_12 {
-                                                        KeywordScan::Reserved(
-                                                            TerminalKind::YulStaticCallKeyword,
-                                                        )
-                                                    } else {
-                                                        KeywordScan::Absent
-                                                    }
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            Some(_) => {
-                                                input.undo();
-                                                if !self.version_is_at_least_0_7_1 {
-                                                    KeywordScan::Reserved(
-                                                        TerminalKind::YulStaticKeyword,
-                                                    )
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
-                                            None => {
-                                                if !self.version_is_at_least_0_7_1 {
-                                                    KeywordScan::Reserved(
-                                                        TerminalKind::YulStaticKeyword,
-                                                    )
-                                                } else {
-                                                    KeywordScan::Absent
-                                                }
-                                            }
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TerminalKind::YulStaticKeyword)
+                                        } else {
+                                            KeywordScan::Absent
                                         }
                                     } else {
                                         KeywordScan::Absent
                                     }
                                 }
-                                Some('o') => match input.next() {
-                                    Some('p') => {
-                                        KeywordScan::Reserved(TerminalKind::YulStopKeyword)
-                                    }
-                                    Some('r') => {
-                                        if scan_chars!(input, 'a', 'g', 'e') {
-                                            if !self.version_is_at_least_0_7_1 {
-                                                KeywordScan::Reserved(
-                                                    TerminalKind::YulStorageKeyword,
-                                                )
-                                            } else {
-                                                KeywordScan::Absent
-                                            }
+                                Some('o') => {
+                                    if scan_chars!(input, 'r', 'a', 'g', 'e') {
+                                        if !self.version_is_at_least_0_7_1 {
+                                            KeywordScan::Reserved(TerminalKind::YulStorageKeyword)
                                         } else {
                                             KeywordScan::Absent
                                         }
-                                    }
-                                    Some(_) => {
-                                        input.undo();
+                                    } else {
                                         KeywordScan::Absent
                                     }
-                                    None => KeywordScan::Absent,
-                                },
+                                }
                                 Some('r') => match input.next() {
                                     Some('i') => {
                                         if scan_chars!(input, 'n', 'g') {
@@ -13234,58 +11866,47 @@ impl Lexer for Parser {
                                 }
                                 None => KeywordScan::Absent,
                             },
-                            Some('u') => match input.next() {
-                                Some('b') => KeywordScan::Reserved(TerminalKind::YulSubKeyword),
-                                Some('i') => {
-                                    if scan_chars!(input, 'c', 'i', 'd', 'e') {
-                                        if !self.version_is_at_least_0_5_0 {
-                                            KeywordScan::Reserved(TerminalKind::YulSuicideKeyword)
-                                        } else {
-                                            KeywordScan::Absent
-                                        }
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                }
-                                Some('p') => match input.next() {
-                                    Some('e') => {
-                                        if scan_chars!(input, 'r') {
-                                            if self.version_is_at_least_0_8_0 {
-                                                KeywordScan::Reserved(TerminalKind::YulSuperKeyword)
+                            Some('u') => {
+                                if scan_chars!(input, 'p') {
+                                    match input.next() {
+                                        Some('e') => {
+                                            if scan_chars!(input, 'r') {
+                                                if self.version_is_at_least_0_8_0 {
+                                                    KeywordScan::Reserved(
+                                                        TerminalKind::YulSuperKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
                                             } else {
                                                 KeywordScan::Absent
                                             }
-                                        } else {
-                                            KeywordScan::Absent
                                         }
-                                    }
-                                    Some('p') => {
-                                        if scan_chars!(input, 'o', 'r', 't', 's') {
-                                            if self.version_is_at_least_0_5_0
-                                                && !self.version_is_at_least_0_7_1
-                                            {
-                                                KeywordScan::Reserved(
-                                                    TerminalKind::YulSupportsKeyword,
-                                                )
+                                        Some('p') => {
+                                            if scan_chars!(input, 'o', 'r', 't', 's') {
+                                                if self.version_is_at_least_0_5_0
+                                                    && !self.version_is_at_least_0_7_1
+                                                {
+                                                    KeywordScan::Reserved(
+                                                        TerminalKind::YulSupportsKeyword,
+                                                    )
+                                                } else {
+                                                    KeywordScan::Absent
+                                                }
                                             } else {
                                                 KeywordScan::Absent
                                             }
-                                        } else {
+                                        }
+                                        Some(_) => {
+                                            input.undo();
                                             KeywordScan::Absent
                                         }
+                                        None => KeywordScan::Absent,
                                     }
-                                    Some(_) => {
-                                        input.undo();
-                                        KeywordScan::Absent
-                                    }
-                                    None => KeywordScan::Absent,
-                                },
-                                Some(_) => {
-                                    input.undo();
+                                } else {
                                     KeywordScan::Absent
                                 }
-                                None => KeywordScan::Absent,
-                            },
+                            }
                             Some('w') => {
                                 if scan_chars!(input, 'i', 't', 'c', 'h') {
                                     KeywordScan::Reserved(TerminalKind::YulSwitchKeyword)
@@ -13340,26 +11961,6 @@ impl Lexer for Parser {
                                 }
                                 None => KeywordScan::Absent,
                             },
-                            Some('i') => {
-                                if scan_chars!(input, 'm', 'e', 's', 't', 'a', 'm', 'p') {
-                                    KeywordScan::Reserved(TerminalKind::YulTimestampKeyword)
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
-                            Some('l') => {
-                                if scan_chars!(input, 'o', 'a', 'd') {
-                                    if self.version_is_at_least_0_8_25 {
-                                        KeywordScan::Reserved(TerminalKind::YulTLoadKeyword)
-                                    } else if self.version_is_at_least_0_8_24 {
-                                        KeywordScan::Present(TerminalKind::YulTLoadKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some('r') => match input.next() {
                                 Some('u') => {
                                     if scan_chars!(input, 'e') {
@@ -13381,19 +11982,6 @@ impl Lexer for Parser {
                                 }
                                 None => KeywordScan::Absent,
                             },
-                            Some('s') => {
-                                if scan_chars!(input, 't', 'o', 'r', 'e') {
-                                    if self.version_is_at_least_0_8_25 {
-                                        KeywordScan::Reserved(TerminalKind::YulTStoreKeyword)
-                                    } else if self.version_is_at_least_0_8_24 {
-                                        KeywordScan::Present(TerminalKind::YulTStoreKeyword)
-                                    } else {
-                                        KeywordScan::Absent
-                                    }
-                                } else {
-                                    KeywordScan::Absent
-                                }
-                            }
                             Some('y') => {
                                 if scan_chars!(input, 'p', 'e') {
                                     match input.next() {
@@ -13574,13 +12162,6 @@ impl Lexer for Parser {
                             }
                             None => KeywordScan::Absent,
                         },
-                        Some('x') => {
-                            if scan_chars!(input, 'o', 'r') {
-                                KeywordScan::Reserved(TerminalKind::YulXorKeyword)
-                            } else {
-                                KeywordScan::Absent
-                            }
-                        }
                         Some('y') => {
                             if scan_chars!(input, 'e', 'a', 'r', 's') {
                                 if !self.version_is_at_least_0_7_1 {
@@ -13609,19 +12190,16 @@ impl Lexer for Parser {
                     if kw_scan == KeywordScan::Absent {
                         input.set_position(save);
 
-                        // TODO(#1001): Don't allocate a string here
-                        let ident_value = input.content(save..furthest_position);
+                        let ident_len = furthest_position - save;
 
                         for keyword_compound_scanner in [
                             Self::yul_bytes_keyword,
                             Self::yul_fixed_keyword,
                             Self::yul_int_keyword,
-                            Self::yul_jump_keyword,
-                            Self::yul_jumpi_keyword,
                             Self::yul_ufixed_keyword,
                             Self::yul_uint_keyword,
                         ] {
-                            match keyword_compound_scanner(self, input, &ident_value) {
+                            match keyword_compound_scanner(self, input, ident_len) {
                                 _ if input.position() < furthest_position => { /* Strict prefix */ }
                                 KeywordScan::Absent => {}
                                 value => kw_scan = value,

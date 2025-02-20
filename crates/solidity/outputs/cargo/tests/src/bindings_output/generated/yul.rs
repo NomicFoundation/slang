@@ -5,8 +5,18 @@ use anyhow::Result;
 use crate::bindings_output::runner::run;
 
 #[test]
+fn all_built_ins() -> Result<()> {
+    run("yul", "all_built_ins")
+}
+
+#[test]
 fn blocks() -> Result<()> {
     run("yul", "blocks")
+}
+
+#[test]
+fn built_ins() -> Result<()> {
+    run("yul", "built_ins")
 }
 
 #[test]
@@ -17,6 +27,11 @@ fn conditionals() -> Result<()> {
 #[test]
 fn constant_access_from_functions() -> Result<()> {
     run("yul", "constant_access_from_functions")
+}
+
+#[test]
+fn external_variables() -> Result<()> {
+    run("yul", "external_variables")
 }
 
 #[test]
@@ -35,6 +50,11 @@ fn labels() -> Result<()> {
 }
 
 #[test]
+fn legacy_built_ins() -> Result<()> {
+    run("yul", "legacy_built_ins")
+}
+
+#[test]
 fn loops() -> Result<()> {
     run("yul", "loops")
 }
@@ -47,6 +67,11 @@ fn slot_offset_members() -> Result<()> {
 #[test]
 fn slot_suffix() -> Result<()> {
     run("yul", "slot_suffix")
+}
+
+#[test]
+fn solidity_built_in_doesn_t_bind() -> Result<()> {
+    run("yul", "solidity_built_in_doesn_t_bind")
 }
 
 #[test]

@@ -1,7 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 #[allow(clippy::needless_raw_string_hashes)]
-#[allow(dead_code)] // TODO(#982): use to create the graph
 pub const BINDING_RULES_SOURCE: &str = r#####"
     global ROOT_NODE
 global FILE_PATH
@@ -49,22 +48,16 @@ inherit .star_extension
   edge ROOT_NODE -> export
   edge export -> @source_unit.defs
 
-  if (is-system-file FILE_PATH) {
-    ; If this is a system file (aka. built-ins), export everything through this
-    ; special symbol (which is automatically imported below)
-    attr (export) pop_symbol = "@@built-ins@@"
+  ; This is a user file, so we want to export under the file's path symbol
+  attr (export) pop_symbol = FILE_PATH
 
-  } else {
-    ; This is a user file, so we want to export under the file's path symbol
-    attr (export) pop_symbol = FILE_PATH
+  ; ... and also import the global built-ins
+  node built_ins
+  ; __SLANG_SOLIDITY_BUILT_INS_SCOPE_GUARD__ keep in sync with built-ins loading code
+  attr (built_ins) push_symbol = "@@built-ins@@"
 
-    ; ... and also import the global built-ins
-    node built_ins
-    attr (built_ins) push_symbol = "@@built-ins@@"
-
-    edge @source_unit.lexical_scope -> built_ins
-    edge built_ins -> ROOT_NODE
-  }
+  edge @source_unit.lexical_scope -> built_ins
+  edge built_ins -> ROOT_NODE
 
   let @source_unit.enclosing_def = #null
 
@@ -111,20 +104,6 @@ inherit .star_extension
   ; In the general case, the lexical scope of the definition connects directly
   ; to the source unit's
   edge @unit_member.lexical_scope -> @source_unit.lexical_scope
-}
-
-;; Special case for built-ins: we want to export all symbols in the contract:
-;; functions, types and state variables. All built-in symbols are defined in an
-;; internal contract named '%BuiltIns%' (renamed from '$BuiltIns$') so we need
-;; to export all its members and type members directly as a source unit
-;; definition.
-;; __SLANG_SOLIDITY_BUILT_INS_CONTRACT_NAME__ keep in sync with built-ins generation.
-@source_unit [SourceUnit [SourceUnitMembers
-    [SourceUnitMember @contract [ContractDefinition name: ["%BuiltIns%"]]]
-]] {
-  if (is-system-file FILE_PATH) {
-    edge @source_unit.defs -> @contract.instance
-  }
 }
 
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @using [UsingDirective]]]] {
@@ -446,7 +425,7 @@ inherit .star_extension
   if (version-matches "< 0.5.0") {
     ; For Solidity < 0.5.0 `this` also acts like an `address`
     node address_ref
-    attr (address_ref) push_symbol = "%address"
+    attr (address_ref) push_symbol = "address"
     node address_typeof
     attr (address_typeof) push_symbol = "@typeof"
     edge this -> address_typeof
@@ -473,6 +452,11 @@ inherit .star_extension
   edge @contract.def -> type
   edge type -> type_contract_type
   edge type_contract_type -> @contract.parent_scope
+
+  ;; This scope provides access to state variables from Yul assembly blocks
+  node @contract.yul_locals
+  attr (@contract.yul_locals) pop_symbol = "@yul_locals"
+  edge @contract.lexical_scope -> @contract.yul_locals
 }
 
 @contract [ContractDefinition @specifier [InheritanceSpecifier]] {
@@ -570,11 +554,10 @@ inherit .star_extension
     [ContractMember @state_var [StateVariableDefinition]]
 ]] {
   ; State variables are available to derived contracts.
-  ; TODO: this also exposes private state variables to derived contracts, but we
-  ; can't easily filter them because we don't have negative assertions in our
-  ; query language (we would need to modify this query for anything *not*
-  ; containing a `PrivateKeyword` node)
   edge @contract.instance -> @state_var.def
+
+  ; State variables should also be available in Yul assembly blocks
+  edge @contract.yul_locals -> @state_var.def
 }
 
 ;; Public state variables are also exposed as external member functions
@@ -998,59 +981,63 @@ inherit .star_extension
   let @elementary.push_end = @elementary.ref
 }
 
-@elementary [ElementaryType [AddressType]] {
-  let @elementary.symbol = "%address"
+@elementary [ElementaryType [AddressType . [AddressKeyword] .]] {
+  let @elementary.symbol = "address"
+}
+
+@elementary [ElementaryType [AddressType . [AddressKeyword] [PayableKeyword] .]] {
+  let @elementary.symbol = "address payable"
 }
 
 @elementary [ElementaryType [BoolKeyword]] {
-  let @elementary.symbol = "%bool"
+  let @elementary.symbol = "bool"
 }
 
 @elementary [ElementaryType [ByteKeyword]] {
-  let @elementary.symbol = "%byte"
+  let @elementary.symbol = "byte"
 }
 
 @elementary [ElementaryType @keyword [BytesKeyword]] {
-  let @elementary.symbol = (format "%{}" (source-text @keyword))
+  let @elementary.symbol = (source-text @keyword)
 }
 
 @elementary [ElementaryType [StringKeyword]] {
-  let @elementary.symbol = "%string"
+  let @elementary.symbol = "string"
 }
 
 @elementary [ElementaryType @keyword [IntKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "int") {
-    let @elementary.symbol = "%int256"
+    let @elementary.symbol = "int256"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
 @elementary [ElementaryType @keyword [UintKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "uint") {
-    let @elementary.symbol = "%uint256"
+    let @elementary.symbol = "uint256"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
 @elementary [ElementaryType @keyword [FixedKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "fixed") {
-    let @elementary.symbol = "%fixed128x18"
+    let @elementary.symbol = "fixed128x18"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
 @elementary [ElementaryType @keyword [UfixedKeyword]] {
   let symbol = (source-text @keyword)
   if (eq symbol "ufixed") {
-    let @elementary.symbol = "%ufixed128x18"
+    let @elementary.symbol = "ufixed128x18"
   } else {
-    let @elementary.symbol = (format "%{}" symbol)
+    let @elementary.symbol = symbol
   }
 }
 
@@ -1225,6 +1212,11 @@ inherit .star_extension
 ;;; Function types
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+@ftype [FunctionType] {
+  node @ftype.lexical_scope
+  node @ftype.output
+}
+
 @ftype [FunctionType @attrs [FunctionTypeAttributes]] {
   ; Compute the built-in type of the function
   ; %functionExternal provides access to .selector and .address
@@ -1235,11 +1227,9 @@ inherit .star_extension
     }
   }
 
-  node @ftype.lexical_scope
-  node @ftype.output
-
   ; This path pushes the function type to the symbol stack
-  ; TODO: add parameter and return types to distinguish between different function types
+  ; Currently, these don't add parameter and return types to distinguish between different function types
+  ; https://github.com/NomicFoundation/slang/issues/1250
   node function_type
   attr (function_type) push_symbol = type_symbol
 
@@ -1406,6 +1396,11 @@ inherit .star_extension
   edge @function.def -> typeof
   edge typeof -> type_function
   edge type_function -> @function.lexical_scope
+
+  ;; This scope provides access to local variables from Yul assembly blocks
+  node @function.yul_locals
+  attr (@function.yul_locals) pop_symbol = "@yul_locals"
+  edge @function.lexical_scope -> @function.yul_locals
 }
 
 @function [FunctionDefinition name: [FunctionName @name [Identifier]]] {
@@ -1421,6 +1416,9 @@ inherit .star_extension
   ;; ... and shadow other declarations
   attr (@function.lexical_scope -> @params.defs) precedence = 1
 
+  ;; Function parameters should also be able inside Yul assembly blocks via a guarded path
+  edge @function.yul_locals -> @params.defs
+
   ;; Connect to paramaters for named argument resolution
   edge @function.def -> @params.names
 }
@@ -1434,6 +1432,9 @@ inherit .star_extension
   edge @function.lexical_scope -> @return_params.defs
   ;; ... and shadow other declarations
   attr (@function.lexical_scope -> @return_params.defs) precedence = 1
+
+  ;; Function return parameters should also be able inside Yul assembly blocks via a guarded path
+  edge @function.yul_locals -> @return_params.defs
 }
 
 ;; Only functions that return a single value have an actual return type
@@ -1647,16 +1648,18 @@ inherit .star_extension
 ] {
   edge @body.lexical_scope -> @modifier.lexical_scope
 
-  ; Special case: bind the place holder statement `_` to the built-in
-  ; `%placeholder`. This only happens in the body of a modifier.
+  ;; Special case: bind the place holder statement `_` to the built-in
+  ;; `%_`. This only happens in the body of a modifier.
   node placeholder_pop
   attr (placeholder_pop) pop_symbol = "_"
   node placeholder_ref
-  attr (placeholder_ref) push_symbol = "%placeholder"
+  attr (placeholder_ref) push_symbol = "%_"
 
   edge @body.lexical_scope -> placeholder_pop
   edge placeholder_pop -> placeholder_ref
   edge placeholder_ref -> @modifier.lexical_scope
+  ; Ensure we only bind to the built-in
+  attr (@body.lexical_scope -> placeholder_pop) precedence = 1
 }
 
 @modifier [ModifierDefinition @params [ParametersDeclaration]] {
@@ -1697,6 +1700,12 @@ inherit .star_extension
     edge @block.lexical_scope -> @stmt.defs
     ;; ... shadowing declarations in enclosing scopes
     attr (@block.lexical_scope -> @stmt.defs) precedence = 1
+
+    ;; Block definitions are also available to Yul assembly blocks
+    node yul_locals
+    attr (yul_locals) pop_symbol = "@yul_locals"
+    edge @block.lexical_scope -> yul_locals
+    edge yul_locals -> @stmt.defs
   }
 }
 
@@ -1760,6 +1769,12 @@ inherit .star_extension
 @stmt [Statement @var_decl [VariableDeclarationStatement]] {
   edge @var_decl.lexical_scope -> @stmt.lexical_scope
   edge @stmt.defs -> @var_decl.def
+
+  ;; Make the variable available to Yul assembly blocks through a guarded path
+  node yul_locals
+  attr (yul_locals) pop_symbol = "@yul_locals"
+  edge @stmt.lexical_scope -> yul_locals
+  edge yul_locals -> @var_decl.def
 }
 
 @var_decl [VariableDeclarationStatement] {
@@ -1805,6 +1820,12 @@ inherit .star_extension
 @stmt [Statement @tuple_decon [TupleDeconstructionStatement]] {
   edge @tuple_decon.lexical_scope -> @stmt.lexical_scope
   edge @stmt.defs -> @tuple_decon.defs
+
+  ;; Make any variables available to Yul assembly blocks through a guarded path
+  node yul_locals
+  attr (yul_locals) pop_symbol = "@yul_locals"
+  edge @stmt.lexical_scope -> yul_locals
+  edge yul_locals -> @tuple_decon.defs
 }
 
 @tuple_decon [TupleDeconstructionStatement] {
@@ -2022,7 +2043,25 @@ inherit .star_extension
 
 ;;; Assembly
 @stmt [Statement [AssemblyStatement @body body: [YulBlock]]] {
-  edge @body.lexical_scope -> @stmt.lexical_scope
+  ;; This provides a path to constants and Yul built-ins.
+  ;; __SLANG_SOLIDITY_YUL_BUILT_INS_GUARD__ keep in sync with built-ins code generation
+  node yul
+  attr (yul) push_symbol = "@yul"
+  edge @body.lexical_scope -> yul
+  edge yul -> @stmt.lexical_scope
+
+  ;; Both should also be available inside Yul functions (which cannot see
+  ;; anything else from outer scopes)
+  node in_yul_function_pop
+  attr (in_yul_function_pop) pop_symbol = "@in_yul_function"
+  edge @body.lexical_scope -> in_yul_function_pop
+  edge in_yul_function_pop -> yul
+
+  ;; Also provide access to locals and state variables from Solidity
+  node yul_locals
+  attr (yul_locals) push_symbol = "@yul_locals"
+  edge @body.lexical_scope -> yul_locals
+  edge yul_locals -> @stmt.lexical_scope
 }
 
 
@@ -2181,10 +2220,14 @@ inherit .star_extension
   edge call -> member
 }
 
+@member [StructMember] {
+  node @member.def
+  node @member.typeof
+}
+
 @struct [StructDefinition [StructMembers
     @member item: [StructMember @type_name [TypeName] @name name: [Identifier]]
 ]] {
-  node @member.def
   attr (@member.def) node_definition = @name
   attr (@member.def) definiens_node = @member
 
@@ -2192,7 +2235,6 @@ inherit .star_extension
 
   edge @type_name.type_ref -> @struct.lexical_scope
 
-  node @member.typeof
   attr (@member.typeof) push_symbol = "@typeof"
 
   edge @member.def -> @member.typeof
@@ -2530,12 +2572,16 @@ inherit .star_extension
   edge @expr.output -> @operand.output
 
   node @options.refs
-  attr (@options.refs) push_symbol = "@param_names"
+  attr (@options.refs) push_symbol = "."
+
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
 
   node call_options
   attr (call_options) push_symbol = "%CallOptions"
 
-  edge @options.refs -> call_options
+  edge @options.refs -> typeof
+  edge typeof -> call_options
   edge call_options -> @expr.lexical_scope
 }
 
@@ -2548,10 +2594,10 @@ inherit .star_extension
 
 
 ;;; Payable
-; These work like `address`, should they should bind to `%address`
+; These work like `address`, should they should bind to `address`
 @expr [Expression [PayableKeyword]] {
   node ref
-  attr (ref) push_symbol = "%address"
+  attr (ref) push_symbol = "address payable"
 
   edge ref -> @expr.lexical_scope
   edge @expr.output -> ref
@@ -2646,7 +2692,7 @@ inherit .star_extension
   node typeof
   attr (typeof) push_symbol = "@typeof"
   node bool
-  attr (bool) push_symbol = "%bool"
+  attr (bool) push_symbol = "bool"
   edge @expr.output -> typeof
   edge typeof -> bool
   edge bool -> @expr.lexical_scope
@@ -2670,7 +2716,7 @@ inherit .star_extension
       node typeof
       attr (typeof) push_symbol = "@typeof"
       node address
-      attr (address) push_symbol = "%address"
+      attr (address) push_symbol = "address"
       edge @expr.output -> typeof
       edge typeof -> address
       edge address -> @expr.lexical_scope
@@ -2787,29 +2833,30 @@ inherit .star_extension
   ;; parameters) are functions (ie. the body of the function doesn't have access
   ;; to any outside variables)
   edge @fundef.lexical_scope -> @block.function_defs
-  ; Exception: but outside constants *are* available, so we provide a guarded
-  ; access to the parent lexical scope. This guard will be popped to link to
-  ; available constants.
+  ; Exception: but constants and built-ins *are* available, so we provide a
+  ; guarded access to the parent lexical scope. This guard will be popped at the
+  ; assembly statement to link to constants and built-ins.
   node yul_function_guard
   attr (yul_function_guard) push_symbol = "@in_yul_function"
   edge @fundef.lexical_scope -> yul_function_guard
   edge yul_function_guard -> @block.lexical_scope
 }
 
-;; Constants need to be available inside Yul functions. This is an exception
-;; since no other external identifiers are, so the path is guarded. We create a
-;; scope in the source unit, contracts and libraries, and guard it from the
-;; lexical scope, so we can link constant definitions here. See the dual path in
-;; the rule above.
+;; Constants need to be available in Yul assembly blocks. We create a scope in
+;; the source unit, contracts and libraries, and guard it from the lexical
+;; scope, so we can link constant definitions here. This uses the same guard as
+;; Yul built-ins (see __SLANG_SOLIDITY_YUL_BUILT_INS_GUARD__) so constants are
+;; in an equivalent scope to predefined built-ins. See the dual path in the rule
+;; above.
 @constant_container ([SourceUnit] | [ContractDefinition] | [LibraryDefinition]) {
-  node @constant_container.yul_functions_guarded_scope
-  attr (@constant_container.yul_functions_guarded_scope) pop_symbol = "@in_yul_function"
-  edge @constant_container.lexical_scope -> @constant_container.yul_functions_guarded_scope
+  node @constant_container.yul_globals_guarded_scope
+  attr (@constant_container.yul_globals_guarded_scope) pop_symbol = "@yul"
+  edge @constant_container.lexical_scope -> @constant_container.yul_globals_guarded_scope
 }
 
 ;; Make top-level constants available inside Yul functions
 @source_unit [SourceUnit [SourceUnitMembers [SourceUnitMember @constant [ConstantDefinition]]]] {
-  edge @source_unit.yul_functions_guarded_scope -> @constant.def
+  edge @source_unit.yul_globals_guarded_scope -> @constant.def
 }
 
 ;; Ditto for contracts, interfaces and libraries
@@ -2818,7 +2865,7 @@ inherit .star_extension
         [StateVariableAttributes [StateVariableAttribute [ConstantKeyword]]]
     ]
 ]]] {
-  edge @contract.yul_functions_guarded_scope -> @constant.def
+  edge @contract.yul_globals_guarded_scope -> @constant.def
 }
 
 @fundef [YulFunctionDefinition
@@ -2936,7 +2983,12 @@ inherit .star_extension
 
 @path [YulPath . @name [YulIdentifier]] {
   node ref
-  attr (ref) node_reference = @name
+
+  ; Handle `byte` and `return` as special cases, since we cannot define them
+  ; directly as regular built-ins
+  var yul_symbol = (source-text @name)
+  attr (ref) symbol_reference = yul_symbol
+  attr (ref) source_node = @name
 
   edge ref -> @path.lexical_scope
 

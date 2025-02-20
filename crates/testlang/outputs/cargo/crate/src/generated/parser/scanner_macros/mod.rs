@@ -76,13 +76,13 @@ macro_rules! scan_choice {
 pub(crate) use scan_choice;
 
 macro_rules! scan_keyword_choice {
-    ($stream:ident, $ident:ident, $($scanner:expr),*) => {
+    ($stream:ident, $ident_len:expr, $($scanner:expr),*) => {
         loop {
             let save = $stream.position();
             $(
                 {
                     if let result @ (KeywordScan::Present(..) | KeywordScan::Reserved(..)) = ($scanner) {
-                        if $ident.len() == $stream.position() - save {
+                        if $ident_len == $stream.position() - save {
                             break result;
                         }
                     }

@@ -39,9 +39,7 @@ pub fn run(dependencies: BuiltBindingGraph) {
                 cursor.ancestors().next(),
                 Some(ancestor)
                 // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
-                if ancestor.kind == NonterminalKind::ExperimentalFeature ||
-                // TODO(#1213): unbound named parameters in mapping types
-                ancestor.kind == NonterminalKind::MappingKey
+                if ancestor.kind == NonterminalKind::ExperimentalFeature
             ) {
                 continue;
             }

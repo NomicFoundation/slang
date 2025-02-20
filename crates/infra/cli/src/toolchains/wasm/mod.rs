@@ -4,6 +4,7 @@ use anyhow::Result;
 use infra_utils::cargo::{CargoWorkspace, CargoWorkspaceCommands};
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::commands::Command;
+use infra_utils::github::GitHub;
 use infra_utils::paths::{FileWalker, PathExtensions};
 use strum_macros::EnumIter;
 
@@ -35,15 +36,20 @@ impl WasmPackage {
             .property("--target", WASM_TARGET)
             .property("--package", wasm_crate)
             .flag("--all-features")
-            .flag("--release")
             .add_build_rustflags()
             .run();
 
+        let profile = if GitHub::is_running_in_ci() {
+            "release"
+        } else {
+            "debug"
+        };
+
         let wasm_binary =
-            Path::repo_path(format!("target/{WASM_TARGET}/release/{wasm_crate}.wasm"));
+            Path::repo_path(format!("target/{WASM_TARGET}/{profile}/{wasm_crate}.wasm"));
 
         let wasm_opt_binary = Path::repo_path(format!(
-            "target/{WASM_TARGET}/release/{wasm_crate}.optimized.wasm"
+            "target/{WASM_TARGET}/{profile}/{wasm_crate}.optimized.wasm"
         ));
 
         Command::new("node")
@@ -60,7 +66,7 @@ impl WasmPackage {
             Path::repo_path("submodules/jco/lib/wasi_snapshot_preview1.reactor.wasm");
 
         let wasm_component = Path::repo_path(format!(
-            "target/{WASM_TARGET}/release/{wasm_crate}.component.wasm"
+            "target/{WASM_TARGET}/{profile}/{wasm_crate}.component.wasm"
         ));
 
         Command::new("wasm-tools")

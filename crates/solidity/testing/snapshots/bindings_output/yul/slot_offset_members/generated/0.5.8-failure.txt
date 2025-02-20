@@ -14,13 +14,17 @@ References and definitions:
    │                ╰─── name: 3
    │ 
  5 │             let s := sload(data.slot)
-   │                 ┬          ────┬────  
+   │                 ┬    ──┬── ────┬────  
    │                 ╰───────────────────── name: 4
+   │                        │       │      
+   │                        ╰────────────── ref: built-in
    │                                │      
    │                                ╰────── unresolved
  6 │             let o := sload(data.offset)
-   │                 ┬          ─────┬─────  
+   │                 ┬    ──┬── ─────┬─────  
    │                 ╰─────────────────────── name: 5
+   │                        │        │       
+   │                        ╰──────────────── ref: built-in
    │                                 │       
    │                                 ╰─────── unresolved
 ───╯

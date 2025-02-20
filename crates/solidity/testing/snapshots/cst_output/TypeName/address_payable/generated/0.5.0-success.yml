@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ address payable                                                                  │ 0..15
+
+Errors: []
+
+Tree:
+  - (root꞉ TypeName) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType): # "address payable\n" (0..16)
+      - (address_keyword꞉ AddressKeyword): "address" # (0..7)
+      - (leading_trivia꞉ Whitespace): " " # (7..8)
+      - (payable_keyword꞉ PayableKeyword): "payable" # (8..15)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (15..16)

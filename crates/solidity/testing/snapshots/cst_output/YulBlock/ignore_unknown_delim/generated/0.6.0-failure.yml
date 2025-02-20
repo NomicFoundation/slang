@@ -10,7 +10,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected CloseBrace or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or OpenBrace or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulAddKeyword or YulAddModKeyword or YulAddressKeyword or YulAndKeyword or YulBalanceKeyword or YulBlockHashKeyword or YulBreakKeyword or YulByteKeyword or YulCallCodeKeyword or YulCallDataCopyKeyword or YulCallDataLoadKeyword or YulCallDataSizeKeyword or YulCallKeyword or YulCallValueKeyword or YulCallerKeyword or YulChainIdKeyword or YulCoinBaseKeyword or YulContinueKeyword or YulCreate2Keyword or YulCreateKeyword or YulDecimalLiteral or YulDelegateCallKeyword or YulDifficultyKeyword or YulDivKeyword or YulEqKeyword or YulExpKeyword or YulExtCodeCopyKeyword or YulExtCodeHashKeyword or YulExtCodeSizeKeyword or YulForKeyword or YulFunctionKeyword or YulGasKeyword or YulGasLimitKeyword or YulGasPriceKeyword or YulGtKeyword or YulHexLiteral or YulIdentifier or YulIfKeyword or YulInvalidKeyword or YulIsZeroKeyword or YulKeccak256Keyword or YulLeaveKeyword or YulLetKeyword or YulLog0Keyword or YulLog1Keyword or YulLog2Keyword or YulLog3Keyword or YulLog4Keyword or YulLtKeyword or YulMLoadKeyword or YulMSizeKeyword or YulMStore8Keyword or YulMStoreKeyword or YulModKeyword or YulMulKeyword or YulMulModKeyword or YulNotKeyword or YulNumberKeyword or YulOrKeyword or YulOriginKeyword or YulPopKeyword or YulReturnDataCopyKeyword or YulReturnDataSizeKeyword or YulReturnKeyword or YulRevertKeyword or YulSDivKeyword or YulSLoadKeyword or YulSModKeyword or YulSStoreKeyword or YulSarKeyword or YulSelfBalanceKeyword or YulSelfDestructKeyword or YulSgtKeyword or YulShlKeyword or YulShrKeyword or YulSignExtendKeyword or YulSltKeyword or YulStaticCallKeyword or YulStopKeyword or YulSubKeyword or YulSwitchKeyword or YulTimestampKeyword or YulXorKeyword.
+    Error: Expected CloseBrace or DoubleQuotedHexStringLiteral or DoubleQuotedStringLiteral or OpenBrace or SingleQuotedHexStringLiteral or SingleQuotedStringLiteral or YulBreakKeyword or YulContinueKeyword or YulDecimalLiteral or YulForKeyword or YulFunctionKeyword or YulHexLiteral or YulIdentifier or YulIfKeyword or YulLeaveKeyword or YulLetKeyword or YulSwitchKeyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/YulBlock/ignore_unknown_delim/input.sol:4:10]
        │
      4 │ ╭─▶        result := [mul(a, b)
@@ -57,9 +57,9 @@ Tree:
                               - (leading_trivia꞉ Whitespace): " " # (43..44)
                               - (variant꞉ ColonEqual): ":=" # (44..46)
                           - (expression꞉ YulExpression) ► (variant꞉ YulFunctionCallExpression): # " mul(a, b)\n" (46..57)
-                              - (operand꞉ YulExpression) ► (variant꞉ YulBuiltInFunction): # " mul" (46..50)
+                              - (operand꞉ YulExpression) ► (variant꞉ YulPath): # " mul" (46..50)
                                   - (leading_trivia꞉ Whitespace): " " # (46..47)
-                                  - (variant꞉ YulMulKeyword): "mul" # (47..50)
+                                  - (item꞉ YulIdentifier): "mul" # (47..50)
                               - (open_paren꞉ OpenParen): "(" # (50..51)
                               - (arguments꞉ YulArguments): # "a, b" (51..55)
                                   - (item꞉ YulExpression) ► (variant꞉ YulPath): # "a" (51..52)

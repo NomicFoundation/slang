@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     uint d;
+   │          ┬  
+   │          ╰── name: 2
+ 3 │     function test(uint a) public returns (uint b) {
+   │              ──┬─      ┬                       ┬  
+   │                ╰────────────────────────────────── name: 3
+   │                        │                       │  
+   │                        ╰────────────────────────── name: 4
+   │                                                │  
+   │                                                ╰── name: 5
+ 4 │         uint c;
+   │              ┬  
+   │              ╰── name: 6
+   │ 
+ 6 │             c := a
+   │             ┬    ┬  
+   │             ╰─────── ref: 6
+   │                  │  
+   │                  ╰── ref: 4
+ 7 │             b := c
+   │             ┬    ┬  
+   │             ╰─────── ref: 5
+   │                  │  
+   │                  ╰── ref: 6
+ 8 │             c := d.slot
+   │             ┬    ┬ ──┬─  
+   │             ╰──────────── ref: 6
+   │                  │   │   
+   │                  ╰─────── ref: 2
+   │                      │   
+   │                      ╰─── ref: built-in
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───▶ contract Test {
+  2 │ │ │       uint d;
+    │ │ │   ──────┬─────  
+    │ │ │         ╰─────── definiens: 2
+  3 │ │ ╭─▶     function test(uint a) public returns (uint b) {
+    │ │ │                     ───┬──                  ───┬──  
+    │ │ │                        ╰──────────────────────────── definiens: 4
+    │ │ │                                                │    
+    │ │ │                                                ╰──── definiens: 5
+  4 │ │ │           uint c;
+    │ │ │   ────────┬───────  
+    │ │ │           ╰───────── definiens: 6
+    ┆ ┆ ┆   
+ 10 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 3
+ 11 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯

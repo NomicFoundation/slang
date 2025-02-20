@@ -10,6 +10,11 @@ fn address() -> Result<()> {
 }
 
 #[test]
+fn address_payable() -> Result<()> {
+    run("built_ins", "address_payable")
+}
+
+#[test]
 fn array_push() -> Result<()> {
     run("built_ins", "array_push")
 }
@@ -57,4 +62,9 @@ fn this_as_address() -> Result<()> {
 #[test]
 fn type_expr() -> Result<()> {
     run("built_ins", "type_expr")
+}
+
+#[test]
+fn yul_built_in_doesn_t_bind() -> Result<()> {
+    run("built_ins", "yul_built_in_doesn_t_bind")
 }

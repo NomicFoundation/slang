@@ -14,8 +14,10 @@ References and definitions:
    │                 ──┬──  
    │                   ╰──── name: 3
  5 │             let r := add(x.y.z, 20)
-   │                 ┬        ──┬──  
+   │                 ┬    ─┬─ ──┬──  
    │                 ╰─────────────── name: 4
+   │                       │    │    
+   │                       ╰───────── ref: built-in
    │                            │    
    │                            ╰──── ref: 3
 ───╯

@@ -1,5 +1,6 @@
 use clap::{Parser, ValueEnum};
 use infra_utils::commands::Command;
+use infra_utils::github::GitHub;
 use infra_utils::terminal::Terminal;
 
 use crate::utils::ClapExtensions;
@@ -39,7 +40,7 @@ impl RunController {
 
         let mut command = Command::new("cargo").arg("run");
 
-        if self.release {
+        if self.release || GitHub::is_running_in_ci() {
             command = command.flag("--release");
         }
 

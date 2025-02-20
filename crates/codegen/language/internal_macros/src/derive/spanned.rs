@@ -111,6 +111,7 @@ fn get_spanned_type(input: Type) -> Type {
         // These are model Types that have a derived 'SpannedXXX' type.
         // Let's use that instead:
         "BuiltIn"
+        | "BuiltInContext"
         | "BuiltInField"
         | "BuiltInFunction"
         | "BuiltInParameter"
