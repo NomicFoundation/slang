@@ -31,27 +31,25 @@ impl WasmPackage {
     fn generate_component(self) -> Result<PathBuf> {
         let wasm_crate = self.wasm_crate();
 
-        let mut command = Command::new("cargo")
+        Command::new("cargo")
             .arg("build")
             .property("--target", WASM_TARGET)
             .property("--package", wasm_crate)
             .flag("--all-features")
-            .add_build_rustflags();
+            .add_build_rustflags()
+            .run();
 
-        // add_build_rustflags() will add the release flag when running in CI, but we want the release flag to
-        // always be present here. We must avoid adding the flag twice, so we can just check if we're not
-        // in CI and add it here.
-        if !GitHub::is_running_in_ci() {
-            command = command.flag("--release");
-        }
-
-        command.run();
+        let profile = if GitHub::is_running_in_ci() {
+            "release"
+        } else {
+            "debug"
+        };
 
         let wasm_binary =
-            Path::repo_path(format!("target/{WASM_TARGET}/release/{wasm_crate}.wasm"));
+            Path::repo_path(format!("target/{WASM_TARGET}/{profile}/{wasm_crate}.wasm"));
 
         let wasm_opt_binary = Path::repo_path(format!(
-            "target/{WASM_TARGET}/release/{wasm_crate}.optimized.wasm"
+            "target/{WASM_TARGET}/{profile}/{wasm_crate}.optimized.wasm"
         ));
 
         Command::new("node")
@@ -68,7 +66,7 @@ impl WasmPackage {
             Path::repo_path("submodules/jco/lib/wasi_snapshot_preview1.reactor.wasm");
 
         let wasm_component = Path::repo_path(format!(
-            "target/{WASM_TARGET}/release/{wasm_crate}.component.wasm"
+            "target/{WASM_TARGET}/{profile}/{wasm_crate}.component.wasm"
         ));
 
         Command::new("wasm-tools")
