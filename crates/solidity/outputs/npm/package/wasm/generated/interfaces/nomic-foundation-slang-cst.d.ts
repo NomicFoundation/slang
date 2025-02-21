@@ -25,7 +25,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
-   * (* version: *) IDENTIFIER;
+   *                  (* version: *) IDENTIFIER;
    * ```
    */
   AbicoderPragma = "AbicoderPragma",
@@ -35,13 +35,13 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * AdditiveExpression = (* left_operand: *) Expression
-   * (* operator: *) PLUS
-   * (* right_operand: *) Expression;
+   *                      (* operator: *) PLUS
+   *                      (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AdditiveExpression = (* left_operand: *) Expression
-   * (* operator: *) MINUS
-   * (* right_operand: *) Expression;
+   *                      (* operator: *) MINUS
+   *                      (* right_operand: *) Expression;
    * ```
    */
   AdditiveExpression = "AdditiveExpression",
@@ -50,7 +50,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * AddressType = (* address_keyword: *) ADDRESS_KEYWORD
-   * (* payable_keyword: *) PAYABLE_KEYWORD?; (* Introduced in 0.5.0 *)
+   *               (* payable_keyword: *) PAYABLE_KEYWORD?; (* Introduced in 0.5.0 *)
    * ```
    */
   AddressType = "AddressType",
@@ -60,8 +60,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * AndExpression = (* left_operand: *) Expression
-   * (* operator: *) AMPERSAND_AMPERSAND
-   * (* right_operand: *) Expression;
+   *                 (* operator: *) AMPERSAND_AMPERSAND
+   *                 (* right_operand: *) Expression;
    * ```
    */
   AndExpression = "AndExpression",
@@ -70,7 +70,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ArgumentsDeclaration = (* variant: *) PositionalArgumentsDeclaration
-   * | (* variant: *) NamedArgumentsDeclaration;
+   *                      | (* variant: *) NamedArgumentsDeclaration;
    * ```
    */
   ArgumentsDeclaration = "ArgumentsDeclaration",
@@ -79,8 +79,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ArrayExpression = (* open_bracket: *) OPEN_BRACKET
-   * (* items: *) ArrayValues
-   * (* close_bracket: *) CLOSE_BRACKET;
+   *                   (* items: *) ArrayValues
+   *                   (* close_bracket: *) CLOSE_BRACKET;
    * ```
    */
   ArrayExpression = "ArrayExpression",
@@ -90,9 +90,9 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Postfix unary operator *)
    * ArrayTypeName = (* operand: *) TypeName
-   * (* open_bracket: *) OPEN_BRACKET
-   * (* index: *) Expression?
-   * (* close_bracket: *) CLOSE_BRACKET;
+   *                 (* open_bracket: *) OPEN_BRACKET
+   *                 (* index: *) Expression?
+   *                 (* close_bracket: *) CLOSE_BRACKET;
    * ```
    */
   ArrayTypeName = "ArrayTypeName",
@@ -119,8 +119,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.13 *)
    * AssemblyFlagsDeclaration = (* open_paren: *) OPEN_PAREN
-   * (* flags: *) AssemblyFlags
-   * (* close_paren: *) CLOSE_PAREN;
+   *                            (* flags: *) AssemblyFlags
+   *                            (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   AssemblyFlagsDeclaration = "AssemblyFlagsDeclaration",
@@ -129,9 +129,9 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * AssemblyStatement = (* assembly_keyword: *) ASSEMBLY_KEYWORD
-   * (* label: *) StringLiteral?
-   * (* flags: *) AssemblyFlagsDeclaration? (* Introduced in 0.8.13 *)
-   * (* body: *) YulBlock;
+   *                     (* label: *) StringLiteral?
+   *                     (* flags: *) AssemblyFlagsDeclaration? (* Introduced in 0.8.13 *)
+   *                     (* body: *) YulBlock;
    * ```
    */
   AssemblyStatement = "AssemblyStatement",
@@ -141,63 +141,63 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) BAR_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) BAR_EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) PLUS_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) PLUS_EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) MINUS_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) MINUS_EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) CARET_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) CARET_EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) SLASH_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) SLASH_EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) PERCENT_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) PERCENT_EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) ASTERISK_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) ASTERISK_EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) AMPERSAND_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) AMPERSAND_EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) LESS_THAN_LESS_THAN_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) LESS_THAN_LESS_THAN_EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) GREATER_THAN_GREATER_THAN_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) GREATER_THAN_GREATER_THAN_EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * AssignmentExpression = (* left_operand: *) Expression
-   * (* operator: *) GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) GREATER_THAN_GREATER_THAN_GREATER_THAN_EQUAL
+   *                        (* right_operand: *) Expression;
    * ```
    */
   AssignmentExpression = "AssignmentExpression",
@@ -207,8 +207,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * BitwiseAndExpression = (* left_operand: *) Expression
-   * (* operator: *) AMPERSAND
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) AMPERSAND
+   *                        (* right_operand: *) Expression;
    * ```
    */
   BitwiseAndExpression = "BitwiseAndExpression",
@@ -218,8 +218,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * BitwiseOrExpression = (* left_operand: *) Expression
-   * (* operator: *) BAR
-   * (* right_operand: *) Expression;
+   *                       (* operator: *) BAR
+   *                       (* right_operand: *) Expression;
    * ```
    */
   BitwiseOrExpression = "BitwiseOrExpression",
@@ -229,8 +229,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * BitwiseXorExpression = (* left_operand: *) Expression
-   * (* operator: *) CARET
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) CARET
+   *                        (* right_operand: *) Expression;
    * ```
    */
   BitwiseXorExpression = "BitwiseXorExpression",
@@ -239,8 +239,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * Block = (* open_brace: *) OPEN_BRACE
-   * (* statements: *) Statements
-   * (* close_brace: *) CLOSE_BRACE;
+   *         (* statements: *) Statements
+   *         (* close_brace: *) CLOSE_BRACE;
    * ```
    */
   Block = "Block",
@@ -249,7 +249,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * BreakStatement = (* break_keyword: *) BREAK_KEYWORD
-   * (* semicolon: *) SEMICOLON;
+   *                  (* semicolon: *) SEMICOLON;
    * ```
    */
   BreakStatement = "BreakStatement",
@@ -269,9 +269,9 @@ export declare enum NonterminalKind {
    * (* Postfix unary operator *)
    * (* Introduced in 0.6.2 *)
    * CallOptionsExpression = (* operand: *) Expression
-   * (* open_brace: *) OPEN_BRACE
-   * (* options: *) CallOptions
-   * (* close_brace: *) CLOSE_BRACE;
+   *                         (* open_brace: *) OPEN_BRACE
+   *                         (* options: *) CallOptions
+   *                         (* close_brace: *) CLOSE_BRACE;
    * ```
    */
   CallOptionsExpression = "CallOptionsExpression",
@@ -281,8 +281,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.6.0 *)
    * CatchClause = (* catch_keyword: *) CATCH_KEYWORD
-   * (* error: *) CatchClauseError?
-   * (* body: *) Block;
+   *               (* error: *) CatchClauseError?
+   *               (* body: *) Block;
    * ```
    */
   CatchClause = "CatchClause",
@@ -292,7 +292,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.6.0 *)
    * CatchClauseError = (* name: *) IDENTIFIER?
-   * (* parameters: *) ParametersDeclaration;
+   *                    (* parameters: *) ParametersDeclaration;
    * ```
    */
   CatchClauseError = "CatchClauseError",
@@ -311,23 +311,23 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * ComparisonExpression = (* left_operand: *) Expression
-   * (* operator: *) LESS_THAN
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) LESS_THAN
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * ComparisonExpression = (* left_operand: *) Expression
-   * (* operator: *) GREATER_THAN
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) GREATER_THAN
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * ComparisonExpression = (* left_operand: *) Expression
-   * (* operator: *) LESS_THAN_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) LESS_THAN_EQUAL
+   *                        (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * ComparisonExpression = (* left_operand: *) Expression
-   * (* operator: *) GREATER_THAN_EQUAL
-   * (* right_operand: *) Expression;
+   *                        (* operator: *) GREATER_THAN_EQUAL
+   *                        (* right_operand: *) Expression;
    * ```
    */
   ComparisonExpression = "ComparisonExpression",
@@ -337,10 +337,10 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Postfix unary operator *)
    * ConditionalExpression = (* operand: *) Expression
-   * (* question_mark: *) QUESTION_MARK
-   * (* true_expression: *) Expression
-   * (* colon: *) COLON
-   * (* false_expression: *) Expression;
+   *                         (* question_mark: *) QUESTION_MARK
+   *                         (* true_expression: *) Expression
+   *                         (* colon: *) COLON
+   *                         (* false_expression: *) Expression;
    * ```
    */
   ConditionalExpression = "ConditionalExpression",
@@ -350,11 +350,11 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.7.4 *)
    * ConstantDefinition = (* type_name: *) TypeName
-   * (* constant_keyword: *) CONSTANT_KEYWORD
-   * (* name: *) IDENTIFIER
-   * (* equal: *) EQUAL
-   * (* value: *) Expression
-   * (* semicolon: *) SEMICOLON;
+   *                      (* constant_keyword: *) CONSTANT_KEYWORD
+   *                      (* name: *) IDENTIFIER
+   *                      (* equal: *) EQUAL
+   *                      (* value: *) Expression
+   *                      (* semicolon: *) SEMICOLON;
    * ```
    */
   ConstantDefinition = "ConstantDefinition",
@@ -364,11 +364,11 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.4.22 *)
    * ConstructorAttribute = (* variant: *) ModifierInvocation
-   * | (* variant: *) INTERNAL_KEYWORD
-   * | (* variant: *) OVERRIDE_KEYWORD (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
-   * | (* variant: *) PAYABLE_KEYWORD
-   * | (* variant: *) PUBLIC_KEYWORD
-   * | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
+   *                      | (* variant: *) INTERNAL_KEYWORD
+   *                      | (* variant: *) OVERRIDE_KEYWORD (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
+   *                      | (* variant: *) PAYABLE_KEYWORD
+   *                      | (* variant: *) PUBLIC_KEYWORD
+   *                      | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
    * ```
    */
   ConstructorAttribute = "ConstructorAttribute",
@@ -387,9 +387,9 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.4.22 *)
    * ConstructorDefinition = (* constructor_keyword: *) CONSTRUCTOR_KEYWORD
-   * (* parameters: *) ParametersDeclaration
-   * (* attributes: *) ConstructorAttributes
-   * (* body: *) Block;
+   *                         (* parameters: *) ParametersDeclaration
+   *                         (* attributes: *) ConstructorAttributes
+   *                         (* body: *) Block;
    * ```
    */
   ConstructorDefinition = "ConstructorDefinition",
@@ -398,7 +398,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ContinueStatement = (* continue_keyword: *) CONTINUE_KEYWORD
-   * (* semicolon: *) SEMICOLON;
+   *                     (* semicolon: *) SEMICOLON;
    * ```
    */
   ContinueStatement = "ContinueStatement",
@@ -407,12 +407,12 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
-   * (* contract_keyword: *) CONTRACT_KEYWORD
-   * (* name: *) IDENTIFIER
-   * (* inheritance: *) InheritanceSpecifier?
-   * (* open_brace: *) OPEN_BRACE
-   * (* members: *) ContractMembers
-   * (* close_brace: *) CLOSE_BRACE;
+   *                      (* contract_keyword: *) CONTRACT_KEYWORD
+   *                      (* name: *) IDENTIFIER
+   *                      (* inheritance: *) InheritanceSpecifier?
+   *                      (* open_brace: *) OPEN_BRACE
+   *                      (* members: *) ContractMembers
+   *                      (* close_brace: *) CLOSE_BRACE;
    * ```
    */
   ContractDefinition = "ContractDefinition",
@@ -421,18 +421,18 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ContractMember = (* variant: *) UsingDirective
-   * | (* variant: *) FunctionDefinition
-   * | (* variant: *) ConstructorDefinition (* Introduced in 0.4.22 *)
-   * | (* variant: *) ReceiveFunctionDefinition (* Introduced in 0.6.0 *)
-   * | (* variant: *) FallbackFunctionDefinition (* Introduced in 0.6.0 *)
-   * | (* variant: *) UnnamedFunctionDefinition (* Deprecated in 0.6.0 *)
-   * | (* variant: *) ModifierDefinition
-   * | (* variant: *) StructDefinition
-   * | (* variant: *) EnumDefinition
-   * | (* variant: *) EventDefinition
-   * | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
-   * | (* variant: *) UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
-   * | (* variant: *) StateVariableDefinition;
+   *                | (* variant: *) FunctionDefinition
+   *                | (* variant: *) ConstructorDefinition (* Introduced in 0.4.22 *)
+   *                | (* variant: *) ReceiveFunctionDefinition (* Introduced in 0.6.0 *)
+   *                | (* variant: *) FallbackFunctionDefinition (* Introduced in 0.6.0 *)
+   *                | (* variant: *) UnnamedFunctionDefinition (* Deprecated in 0.6.0 *)
+   *                | (* variant: *) ModifierDefinition
+   *                | (* variant: *) StructDefinition
+   *                | (* variant: *) EnumDefinition
+   *                | (* variant: *) EventDefinition
+   *                | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
+   *                | (* variant: *) UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
+   *                | (* variant: *) StateVariableDefinition;
    * ```
    */
   ContractMember = "ContractMember",
@@ -449,7 +449,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * DecimalNumberExpression = (* literal: *) DECIMAL_LITERAL
-   * (* unit: *) NumberUnit?;
+   *                           (* unit: *) NumberUnit?;
    * ```
    */
   DecimalNumberExpression = "DecimalNumberExpression",
@@ -458,12 +458,12 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * DoWhileStatement = (* do_keyword: *) DO_KEYWORD
-   * (* body: *) Statement
-   * (* while_keyword: *) WHILE_KEYWORD
-   * (* open_paren: *) OPEN_PAREN
-   * (* condition: *) Expression
-   * (* close_paren: *) CLOSE_PAREN
-   * (* semicolon: *) SEMICOLON;
+   *                    (* body: *) Statement
+   *                    (* while_keyword: *) WHILE_KEYWORD
+   *                    (* open_paren: *) OPEN_PAREN
+   *                    (* condition: *) Expression
+   *                    (* close_paren: *) CLOSE_PAREN
+   *                    (* semicolon: *) SEMICOLON;
    * ```
    */
   DoWhileStatement = "DoWhileStatement",
@@ -472,14 +472,14 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ElementaryType = (* variant: *) BOOL_KEYWORD
-   * | (* variant: *) BYTE_KEYWORD (* Deprecated in 0.8.0 *)
-   * | (* variant: *) STRING_KEYWORD
-   * | (* variant: *) AddressType
-   * | (* variant: *) BYTES_KEYWORD
-   * | (* variant: *) INT_KEYWORD
-   * | (* variant: *) UINT_KEYWORD
-   * | (* variant: *) FIXED_KEYWORD
-   * | (* variant: *) UFIXED_KEYWORD;
+   *                | (* variant: *) BYTE_KEYWORD (* Deprecated in 0.8.0 *)
+   *                | (* variant: *) STRING_KEYWORD
+   *                | (* variant: *) AddressType
+   *                | (* variant: *) BYTES_KEYWORD
+   *                | (* variant: *) INT_KEYWORD
+   *                | (* variant: *) UINT_KEYWORD
+   *                | (* variant: *) FIXED_KEYWORD
+   *                | (* variant: *) UFIXED_KEYWORD;
    * ```
    */
   ElementaryType = "ElementaryType",
@@ -488,7 +488,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ElseBranch = (* else_keyword: *) ELSE_KEYWORD
-   * (* body: *) Statement;
+   *              (* body: *) Statement;
    * ```
    */
   ElseBranch = "ElseBranch",
@@ -498,9 +498,9 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.4.21 *)
    * EmitStatement = (* emit_keyword: *) EMIT_KEYWORD
-   * (* event: *) IdentifierPath
-   * (* arguments: *) ArgumentsDeclaration
-   * (* semicolon: *) SEMICOLON;
+   *                 (* event: *) IdentifierPath
+   *                 (* arguments: *) ArgumentsDeclaration
+   *                 (* semicolon: *) SEMICOLON;
    * ```
    */
   EmitStatement = "EmitStatement",
@@ -509,10 +509,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * EnumDefinition = (* enum_keyword: *) ENUM_KEYWORD
-   * (* name: *) IDENTIFIER
-   * (* open_brace: *) OPEN_BRACE
-   * (* members: *) EnumMembers
-   * (* close_brace: *) CLOSE_BRACE;
+   *                  (* name: *) IDENTIFIER
+   *                  (* open_brace: *) OPEN_BRACE
+   *                  (* members: *) EnumMembers
+   *                  (* close_brace: *) CLOSE_BRACE;
    * ```
    */
   EnumDefinition = "EnumDefinition",
@@ -530,13 +530,13 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * EqualityExpression = (* left_operand: *) Expression
-   * (* operator: *) EQUAL_EQUAL
-   * (* right_operand: *) Expression;
+   *                      (* operator: *) EQUAL_EQUAL
+   *                      (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * EqualityExpression = (* left_operand: *) Expression
-   * (* operator: *) BANG_EQUAL
-   * (* right_operand: *) Expression;
+   *                      (* operator: *) BANG_EQUAL
+   *                      (* right_operand: *) Expression;
    * ```
    */
   EqualityExpression = "EqualityExpression",
@@ -546,9 +546,9 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.4 *)
    * ErrorDefinition = (* error_keyword: *) ERROR_KEYWORD
-   * (* name: *) IDENTIFIER
-   * (* members: *) ErrorParametersDeclaration
-   * (* semicolon: *) SEMICOLON;
+   *                   (* name: *) IDENTIFIER
+   *                   (* members: *) ErrorParametersDeclaration
+   *                   (* semicolon: *) SEMICOLON;
    * ```
    */
   ErrorDefinition = "ErrorDefinition",
@@ -558,7 +558,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.4 *)
    * ErrorParameter = (* type_name: *) TypeName
-   * (* name: *) IDENTIFIER?;
+   *                  (* name: *) IDENTIFIER?;
    * ```
    */
   ErrorParameter = "ErrorParameter",
@@ -577,8 +577,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.4 *)
    * ErrorParametersDeclaration = (* open_paren: *) OPEN_PAREN
-   * (* parameters: *) ErrorParameters
-   * (* close_paren: *) CLOSE_PAREN;
+   *                              (* parameters: *) ErrorParameters
+   *                              (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   ErrorParametersDeclaration = "ErrorParametersDeclaration",
@@ -587,10 +587,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * EventDefinition = (* event_keyword: *) EVENT_KEYWORD
-   * (* name: *) IDENTIFIER
-   * (* parameters: *) EventParametersDeclaration
-   * (* anonymous_keyword: *) ANONYMOUS_KEYWORD?
-   * (* semicolon: *) SEMICOLON;
+   *                   (* name: *) IDENTIFIER
+   *                   (* parameters: *) EventParametersDeclaration
+   *                   (* anonymous_keyword: *) ANONYMOUS_KEYWORD?
+   *                   (* semicolon: *) SEMICOLON;
    * ```
    */
   EventDefinition = "EventDefinition",
@@ -599,8 +599,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * EventParameter = (* type_name: *) TypeName
-   * (* indexed_keyword: *) INDEXED_KEYWORD?
-   * (* name: *) IDENTIFIER?;
+   *                  (* indexed_keyword: *) INDEXED_KEYWORD?
+   *                  (* name: *) IDENTIFIER?;
    * ```
    */
   EventParameter = "EventParameter",
@@ -617,8 +617,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * EventParametersDeclaration = (* open_paren: *) OPEN_PAREN
-   * (* parameters: *) EventParameters
-   * (* close_paren: *) CLOSE_PAREN;
+   *                              (* parameters: *) EventParameters
+   *                              (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   EventParametersDeclaration = "EventParametersDeclaration",
@@ -627,7 +627,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ExperimentalFeature = (* variant: *) IDENTIFIER
-   * | (* variant: *) StringLiteral;
+   *                     | (* variant: *) StringLiteral;
    * ```
    */
   ExperimentalFeature = "ExperimentalFeature",
@@ -636,7 +636,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
-   * (* feature: *) ExperimentalFeature;
+   *                      (* feature: *) ExperimentalFeature;
    * ```
    */
   ExperimentalPragma = "ExperimentalPragma",
@@ -647,14 +647,14 @@ export declare enum NonterminalKind {
    * (* Left-associative binary operator *)
    * (* Deprecated in 0.8.0 *)
    * ExponentiationExpression = (* left_operand: *) Expression
-   * (* operator: *) ASTERISK_ASTERISK
-   * (* right_operand: *) Expression;
+   *                            (* operator: *) ASTERISK_ASTERISK
+   *                            (* right_operand: *) Expression;
    *
    * (* Right-associative binary operator *)
    * (* Introduced in 0.8.0 *)
    * ExponentiationExpression = (* left_operand: *) Expression
-   * (* operator: *) ASTERISK_ASTERISK
-   * (* right_operand: *) Expression;
+   *                            (* operator: *) ASTERISK_ASTERISK
+   *                            (* right_operand: *) Expression;
    * ```
    */
   ExponentiationExpression = "ExponentiationExpression",
@@ -663,38 +663,38 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * Expression = (* variant: *) AssignmentExpression
-   * | (* variant: *) ConditionalExpression
-   * | (* variant: *) OrExpression
-   * | (* variant: *) AndExpression
-   * | (* variant: *) EqualityExpression
-   * | (* variant: *) ComparisonExpression
-   * | (* variant: *) BitwiseOrExpression
-   * | (* variant: *) BitwiseXorExpression
-   * | (* variant: *) BitwiseAndExpression
-   * | (* variant: *) ShiftExpression
-   * | (* variant: *) AdditiveExpression
-   * | (* variant: *) MultiplicativeExpression
-   * | (* variant: *) ExponentiationExpression
-   * | (* variant: *) PostfixExpression
-   * | (* variant: *) PrefixExpression
-   * | (* variant: *) FunctionCallExpression
-   * | (* variant: *) CallOptionsExpression
-   * | (* variant: *) MemberAccessExpression
-   * | (* variant: *) IndexAccessExpression
-   * | (* variant: *) NewExpression
-   * | (* variant: *) TupleExpression
-   * | (* variant: *) TypeExpression (* Introduced in 0.5.3 *)
-   * | (* variant: *) ArrayExpression
-   * | (* variant: *) HexNumberExpression
-   * | (* variant: *) DecimalNumberExpression
-   * | (* variant: *) StringExpression
-   * | (* variant: *) ElementaryType
-   * | (* variant: *) PAYABLE_KEYWORD (* Introduced in 0.6.0 *)
-   * | (* variant: *) THIS_KEYWORD
-   * | (* variant: *) SUPER_KEYWORD
-   * | (* variant: *) TRUE_KEYWORD
-   * | (* variant: *) FALSE_KEYWORD
-   * | (* variant: *) IDENTIFIER;
+   *            | (* variant: *) ConditionalExpression
+   *            | (* variant: *) OrExpression
+   *            | (* variant: *) AndExpression
+   *            | (* variant: *) EqualityExpression
+   *            | (* variant: *) ComparisonExpression
+   *            | (* variant: *) BitwiseOrExpression
+   *            | (* variant: *) BitwiseXorExpression
+   *            | (* variant: *) BitwiseAndExpression
+   *            | (* variant: *) ShiftExpression
+   *            | (* variant: *) AdditiveExpression
+   *            | (* variant: *) MultiplicativeExpression
+   *            | (* variant: *) ExponentiationExpression
+   *            | (* variant: *) PostfixExpression
+   *            | (* variant: *) PrefixExpression
+   *            | (* variant: *) FunctionCallExpression
+   *            | (* variant: *) CallOptionsExpression
+   *            | (* variant: *) MemberAccessExpression
+   *            | (* variant: *) IndexAccessExpression
+   *            | (* variant: *) NewExpression
+   *            | (* variant: *) TupleExpression
+   *            | (* variant: *) TypeExpression (* Introduced in 0.5.3 *)
+   *            | (* variant: *) ArrayExpression
+   *            | (* variant: *) HexNumberExpression
+   *            | (* variant: *) DecimalNumberExpression
+   *            | (* variant: *) StringExpression
+   *            | (* variant: *) ElementaryType
+   *            | (* variant: *) PAYABLE_KEYWORD (* Introduced in 0.6.0 *)
+   *            | (* variant: *) THIS_KEYWORD
+   *            | (* variant: *) SUPER_KEYWORD
+   *            | (* variant: *) TRUE_KEYWORD
+   *            | (* variant: *) FALSE_KEYWORD
+   *            | (* variant: *) IDENTIFIER;
    * ```
    */
   Expression = "Expression",
@@ -703,7 +703,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ExpressionStatement = (* expression: *) Expression
-   * (* semicolon: *) SEMICOLON;
+   *                       (* semicolon: *) SEMICOLON;
    * ```
    */
   ExpressionStatement = "ExpressionStatement",
@@ -713,12 +713,12 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.6.0 *)
    * FallbackFunctionAttribute = (* variant: *) ModifierInvocation
-   * | (* variant: *) OverrideSpecifier
-   * | (* variant: *) EXTERNAL_KEYWORD
-   * | (* variant: *) PAYABLE_KEYWORD
-   * | (* variant: *) PURE_KEYWORD
-   * | (* variant: *) VIEW_KEYWORD
-   * | (* variant: *) VIRTUAL_KEYWORD;
+   *                           | (* variant: *) OverrideSpecifier
+   *                           | (* variant: *) EXTERNAL_KEYWORD
+   *                           | (* variant: *) PAYABLE_KEYWORD
+   *                           | (* variant: *) PURE_KEYWORD
+   *                           | (* variant: *) VIEW_KEYWORD
+   *                           | (* variant: *) VIRTUAL_KEYWORD;
    * ```
    */
   FallbackFunctionAttribute = "FallbackFunctionAttribute",
@@ -737,10 +737,10 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.6.0 *)
    * FallbackFunctionDefinition = (* fallback_keyword: *) FALLBACK_KEYWORD
-   * (* parameters: *) ParametersDeclaration
-   * (* attributes: *) FallbackFunctionAttributes
-   * (* returns: *) ReturnsDeclaration?
-   * (* body: *) FunctionBody;
+   *                              (* parameters: *) ParametersDeclaration
+   *                              (* attributes: *) FallbackFunctionAttributes
+   *                              (* returns: *) ReturnsDeclaration?
+   *                              (* body: *) FunctionBody;
    * ```
    */
   FallbackFunctionDefinition = "FallbackFunctionDefinition",
@@ -749,12 +749,12 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ForStatement = (* for_keyword: *) FOR_KEYWORD
-   * (* open_paren: *) OPEN_PAREN
-   * (* initialization: *) ForStatementInitialization
-   * (* condition: *) ForStatementCondition
-   * (* iterator: *) Expression?
-   * (* close_paren: *) CLOSE_PAREN
-   * (* body: *) Statement;
+   *                (* open_paren: *) OPEN_PAREN
+   *                (* initialization: *) ForStatementInitialization
+   *                (* condition: *) ForStatementCondition
+   *                (* iterator: *) Expression?
+   *                (* close_paren: *) CLOSE_PAREN
+   *                (* body: *) Statement;
    * ```
    */
   ForStatement = "ForStatement",
@@ -763,7 +763,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ForStatementCondition = (* variant: *) ExpressionStatement
-   * | (* variant: *) SEMICOLON;
+   *                       | (* variant: *) SEMICOLON;
    * ```
    */
   ForStatementCondition = "ForStatementCondition",
@@ -772,9 +772,9 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ForStatementInitialization = (* variant: *) TupleDeconstructionStatement
-   * | (* variant: *) VariableDeclarationStatement
-   * | (* variant: *) ExpressionStatement
-   * | (* variant: *) SEMICOLON;
+   *                            | (* variant: *) VariableDeclarationStatement
+   *                            | (* variant: *) ExpressionStatement
+   *                            | (* variant: *) SEMICOLON;
    * ```
    */
   ForStatementInitialization = "ForStatementInitialization",
@@ -783,16 +783,16 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * FunctionAttribute = (* variant: *) ModifierInvocation
-   * | (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
-   * | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
-   * | (* variant: *) EXTERNAL_KEYWORD
-   * | (* variant: *) INTERNAL_KEYWORD
-   * | (* variant: *) PAYABLE_KEYWORD
-   * | (* variant: *) PRIVATE_KEYWORD
-   * | (* variant: *) PUBLIC_KEYWORD
-   * | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 *)
-   * | (* variant: *) VIEW_KEYWORD (* Introduced in 0.4.16 *)
-   * | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
+   *                   | (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
+   *                   | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
+   *                   | (* variant: *) EXTERNAL_KEYWORD
+   *                   | (* variant: *) INTERNAL_KEYWORD
+   *                   | (* variant: *) PAYABLE_KEYWORD
+   *                   | (* variant: *) PRIVATE_KEYWORD
+   *                   | (* variant: *) PUBLIC_KEYWORD
+   *                   | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 *)
+   *                   | (* variant: *) VIEW_KEYWORD (* Introduced in 0.4.16 *)
+   *                   | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
    * ```
    */
   FunctionAttribute = "FunctionAttribute",
@@ -809,7 +809,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * FunctionBody = (* variant: *) Block
-   * | (* variant: *) SEMICOLON;
+   *              | (* variant: *) SEMICOLON;
    * ```
    */
   FunctionBody = "FunctionBody",
@@ -819,7 +819,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Postfix unary operator *)
    * FunctionCallExpression = (* operand: *) Expression
-   * (* arguments: *) ArgumentsDeclaration;
+   *                          (* arguments: *) ArgumentsDeclaration;
    * ```
    */
   FunctionCallExpression = "FunctionCallExpression",
@@ -828,11 +828,11 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * FunctionDefinition = (* function_keyword: *) FUNCTION_KEYWORD
-   * (* name: *) FunctionName
-   * (* parameters: *) ParametersDeclaration
-   * (* attributes: *) FunctionAttributes
-   * (* returns: *) ReturnsDeclaration?
-   * (* body: *) FunctionBody;
+   *                      (* name: *) FunctionName
+   *                      (* parameters: *) ParametersDeclaration
+   *                      (* attributes: *) FunctionAttributes
+   *                      (* returns: *) ReturnsDeclaration?
+   *                      (* body: *) FunctionBody;
    * ```
    */
   FunctionDefinition = "FunctionDefinition",
@@ -841,8 +841,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * FunctionName = (* variant: *) IDENTIFIER
-   * | (* variant: *) FALLBACK_KEYWORD
-   * | (* variant: *) RECEIVE_KEYWORD;
+   *              | (* variant: *) FALLBACK_KEYWORD
+   *              | (* variant: *) RECEIVE_KEYWORD;
    * ```
    */
   FunctionName = "FunctionName",
@@ -851,9 +851,9 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * FunctionType = (* function_keyword: *) FUNCTION_KEYWORD
-   * (* parameters: *) ParametersDeclaration
-   * (* attributes: *) FunctionTypeAttributes
-   * (* returns: *) ReturnsDeclaration?;
+   *                (* parameters: *) ParametersDeclaration
+   *                (* attributes: *) FunctionTypeAttributes
+   *                (* returns: *) ReturnsDeclaration?;
    * ```
    */
   FunctionType = "FunctionType",
@@ -862,13 +862,13 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * FunctionTypeAttribute = (* variant: *) INTERNAL_KEYWORD
-   * | (* variant: *) EXTERNAL_KEYWORD
-   * | (* variant: *) PRIVATE_KEYWORD
-   * | (* variant: *) PUBLIC_KEYWORD
-   * | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
-   * | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 *)
-   * | (* variant: *) VIEW_KEYWORD (* Introduced in 0.4.16 *)
-   * | (* variant: *) PAYABLE_KEYWORD;
+   *                       | (* variant: *) EXTERNAL_KEYWORD
+   *                       | (* variant: *) PRIVATE_KEYWORD
+   *                       | (* variant: *) PUBLIC_KEYWORD
+   *                       | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
+   *                       | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 *)
+   *                       | (* variant: *) VIEW_KEYWORD (* Introduced in 0.4.16 *)
+   *                       | (* variant: *) PAYABLE_KEYWORD;
    * ```
    */
   FunctionTypeAttribute = "FunctionTypeAttribute",
@@ -885,7 +885,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * HexNumberExpression = (* literal: *) HEX_LITERAL
-   * (* unit: *) NumberUnit?; (* Deprecated in 0.5.0 *)
+   *                       (* unit: *) NumberUnit?; (* Deprecated in 0.5.0 *)
    * ```
    */
   HexNumberExpression = "HexNumberExpression",
@@ -894,7 +894,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * HexStringLiteral = (* variant: *) SINGLE_QUOTED_HEX_STRING_LITERAL
-   * | (* variant: *) DOUBLE_QUOTED_HEX_STRING_LITERAL;
+   *                  | (* variant: *) DOUBLE_QUOTED_HEX_STRING_LITERAL;
    * ```
    */
   HexStringLiteral = "HexStringLiteral",
@@ -920,11 +920,11 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * IfStatement = (* if_keyword: *) IF_KEYWORD
-   * (* open_paren: *) OPEN_PAREN
-   * (* condition: *) Expression
-   * (* close_paren: *) CLOSE_PAREN
-   * (* body: *) Statement
-   * (* else_branch: *) ElseBranch?;
+   *               (* open_paren: *) OPEN_PAREN
+   *               (* condition: *) Expression
+   *               (* close_paren: *) CLOSE_PAREN
+   *               (* body: *) Statement
+   *               (* else_branch: *) ElseBranch?;
    * ```
    */
   IfStatement = "IfStatement",
@@ -933,7 +933,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ImportAlias = (* as_keyword: *) AS_KEYWORD
-   * (* identifier: *) IDENTIFIER;
+   *               (* identifier: *) IDENTIFIER;
    * ```
    */
   ImportAlias = "ImportAlias",
@@ -942,8 +942,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ImportClause = (* variant: *) PathImport
-   * | (* variant: *) NamedImport
-   * | (* variant: *) ImportDeconstruction;
+   *              | (* variant: *) NamedImport
+   *              | (* variant: *) ImportDeconstruction;
    * ```
    */
   ImportClause = "ImportClause",
@@ -952,10 +952,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ImportDeconstruction = (* open_brace: *) OPEN_BRACE
-   * (* symbols: *) ImportDeconstructionSymbols
-   * (* close_brace: *) CLOSE_BRACE
-   * (* from_keyword: *) FROM_KEYWORD
-   * (* path: *) StringLiteral;
+   *                        (* symbols: *) ImportDeconstructionSymbols
+   *                        (* close_brace: *) CLOSE_BRACE
+   *                        (* from_keyword: *) FROM_KEYWORD
+   *                        (* path: *) StringLiteral;
    * ```
    */
   ImportDeconstruction = "ImportDeconstruction",
@@ -964,7 +964,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ImportDeconstructionSymbol = (* name: *) IDENTIFIER
-   * (* alias: *) ImportAlias?;
+   *                              (* alias: *) ImportAlias?;
    * ```
    */
   ImportDeconstructionSymbol = "ImportDeconstructionSymbol",
@@ -981,8 +981,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ImportDirective = (* import_keyword: *) IMPORT_KEYWORD
-   * (* clause: *) ImportClause
-   * (* semicolon: *) SEMICOLON;
+   *                   (* clause: *) ImportClause
+   *                   (* semicolon: *) SEMICOLON;
    * ```
    */
   ImportDirective = "ImportDirective",
@@ -991,7 +991,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * IndexAccessEnd = (* colon: *) COLON
-   * (* end: *) Expression?;
+   *                  (* end: *) Expression?;
    * ```
    */
   IndexAccessEnd = "IndexAccessEnd",
@@ -1001,10 +1001,10 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Postfix unary operator *)
    * IndexAccessExpression = (* operand: *) Expression
-   * (* open_bracket: *) OPEN_BRACKET
-   * (* start: *) Expression?
-   * (* end: *) IndexAccessEnd?
-   * (* close_bracket: *) CLOSE_BRACKET;
+   *                         (* open_bracket: *) OPEN_BRACKET
+   *                         (* start: *) Expression?
+   *                         (* end: *) IndexAccessEnd?
+   *                         (* close_bracket: *) CLOSE_BRACKET;
    * ```
    */
   IndexAccessExpression = "IndexAccessExpression",
@@ -1013,7 +1013,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * InheritanceSpecifier = (* is_keyword: *) IS_KEYWORD
-   * (* types: *) InheritanceTypes;
+   *                        (* types: *) InheritanceTypes;
    * ```
    */
   InheritanceSpecifier = "InheritanceSpecifier",
@@ -1022,7 +1022,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * InheritanceType = (* type_name: *) IdentifierPath
-   * (* arguments: *) ArgumentsDeclaration?;
+   *                   (* arguments: *) ArgumentsDeclaration?;
    * ```
    */
   InheritanceType = "InheritanceType",
@@ -1039,11 +1039,11 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * InterfaceDefinition = (* interface_keyword: *) INTERFACE_KEYWORD
-   * (* name: *) IDENTIFIER
-   * (* inheritance: *) InheritanceSpecifier?
-   * (* open_brace: *) OPEN_BRACE
-   * (* members: *) InterfaceMembers
-   * (* close_brace: *) CLOSE_BRACE;
+   *                       (* name: *) IDENTIFIER
+   *                       (* inheritance: *) InheritanceSpecifier?
+   *                       (* open_brace: *) OPEN_BRACE
+   *                       (* members: *) InterfaceMembers
+   *                       (* close_brace: *) CLOSE_BRACE;
    * ```
    */
   InterfaceDefinition = "InterfaceDefinition",
@@ -1060,10 +1060,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * LibraryDefinition = (* library_keyword: *) LIBRARY_KEYWORD
-   * (* name: *) IDENTIFIER
-   * (* open_brace: *) OPEN_BRACE
-   * (* members: *) LibraryMembers
-   * (* close_brace: *) CLOSE_BRACE;
+   *                     (* name: *) IDENTIFIER
+   *                     (* open_brace: *) OPEN_BRACE
+   *                     (* members: *) LibraryMembers
+   *                     (* close_brace: *) CLOSE_BRACE;
    * ```
    */
   LibraryDefinition = "LibraryDefinition",
@@ -1080,7 +1080,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * MappingKey = (* key_type: *) MappingKeyType
-   * (* name: *) IDENTIFIER?; (* Introduced in 0.8.18 *)
+   *              (* name: *) IDENTIFIER?; (* Introduced in 0.8.18 *)
    * ```
    */
   MappingKey = "MappingKey",
@@ -1089,7 +1089,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * MappingKeyType = (* variant: *) ElementaryType
-   * | (* variant: *) IdentifierPath;
+   *                | (* variant: *) IdentifierPath;
    * ```
    */
   MappingKeyType = "MappingKeyType",
@@ -1098,11 +1098,11 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * MappingType = (* mapping_keyword: *) MAPPING_KEYWORD
-   * (* open_paren: *) OPEN_PAREN
-   * (* key_type: *) MappingKey
-   * (* equal_greater_than: *) EQUAL_GREATER_THAN
-   * (* value_type: *) MappingValue
-   * (* close_paren: *) CLOSE_PAREN;
+   *               (* open_paren: *) OPEN_PAREN
+   *               (* key_type: *) MappingKey
+   *               (* equal_greater_than: *) EQUAL_GREATER_THAN
+   *               (* value_type: *) MappingValue
+   *               (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   MappingType = "MappingType",
@@ -1111,7 +1111,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * MappingValue = (* type_name: *) TypeName
-   * (* name: *) IDENTIFIER?; (* Introduced in 0.8.18 *)
+   *                (* name: *) IDENTIFIER?; (* Introduced in 0.8.18 *)
    * ```
    */
   MappingValue = "MappingValue",
@@ -1121,8 +1121,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Postfix unary operator *)
    * MemberAccessExpression = (* operand: *) Expression
-   * (* period: *) PERIOD
-   * (* member: *) IDENTIFIER;
+   *                          (* period: *) PERIOD
+   *                          (* member: *) IDENTIFIER;
    * ```
    */
   MemberAccessExpression = "MemberAccessExpression",
@@ -1131,7 +1131,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ModifierAttribute = (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
-   * | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
+   *                   | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
    * ```
    */
   ModifierAttribute = "ModifierAttribute",
@@ -1148,10 +1148,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ModifierDefinition = (* modifier_keyword: *) MODIFIER_KEYWORD
-   * (* name: *) IDENTIFIER
-   * (* parameters: *) ParametersDeclaration?
-   * (* attributes: *) ModifierAttributes
-   * (* body: *) FunctionBody;
+   *                      (* name: *) IDENTIFIER
+   *                      (* parameters: *) ParametersDeclaration?
+   *                      (* attributes: *) ModifierAttributes
+   *                      (* body: *) FunctionBody;
    * ```
    */
   ModifierDefinition = "ModifierDefinition",
@@ -1160,7 +1160,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ModifierInvocation = (* name: *) IdentifierPath
-   * (* arguments: *) ArgumentsDeclaration?;
+   *                      (* arguments: *) ArgumentsDeclaration?;
    * ```
    */
   ModifierInvocation = "ModifierInvocation",
@@ -1170,18 +1170,18 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * MultiplicativeExpression = (* left_operand: *) Expression
-   * (* operator: *) ASTERISK
-   * (* right_operand: *) Expression;
+   *                            (* operator: *) ASTERISK
+   *                            (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * MultiplicativeExpression = (* left_operand: *) Expression
-   * (* operator: *) SLASH
-   * (* right_operand: *) Expression;
+   *                            (* operator: *) SLASH
+   *                            (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * MultiplicativeExpression = (* left_operand: *) Expression
-   * (* operator: *) PERCENT
-   * (* right_operand: *) Expression;
+   *                            (* operator: *) PERCENT
+   *                            (* right_operand: *) Expression;
    * ```
    */
   MultiplicativeExpression = "MultiplicativeExpression",
@@ -1190,8 +1190,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * NamedArgument = (* name: *) IDENTIFIER
-   * (* colon: *) COLON
-   * (* value: *) Expression;
+   *                 (* colon: *) COLON
+   *                 (* value: *) Expression;
    * ```
    */
   NamedArgument = "NamedArgument",
@@ -1200,8 +1200,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * NamedArgumentGroup = (* open_brace: *) OPEN_BRACE
-   * (* arguments: *) NamedArguments
-   * (* close_brace: *) CLOSE_BRACE;
+   *                      (* arguments: *) NamedArguments
+   *                      (* close_brace: *) CLOSE_BRACE;
    * ```
    */
   NamedArgumentGroup = "NamedArgumentGroup",
@@ -1218,8 +1218,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * NamedArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
-   * (* arguments: *) NamedArgumentGroup?
-   * (* close_paren: *) CLOSE_PAREN;
+   *                             (* arguments: *) NamedArgumentGroup?
+   *                             (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   NamedArgumentsDeclaration = "NamedArgumentsDeclaration",
@@ -1228,9 +1228,9 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * NamedImport = (* asterisk: *) ASTERISK
-   * (* alias: *) ImportAlias
-   * (* from_keyword: *) FROM_KEYWORD
-   * (* path: *) StringLiteral;
+   *               (* alias: *) ImportAlias
+   *               (* from_keyword: *) FROM_KEYWORD
+   *               (* path: *) StringLiteral;
    * ```
    */
   NamedImport = "NamedImport",
@@ -1239,7 +1239,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * NewExpression = (* new_keyword: *) NEW_KEYWORD
-   * (* type_name: *) TypeName;
+   *                 (* type_name: *) TypeName;
    * ```
    */
   NewExpression = "NewExpression",
@@ -1248,16 +1248,16 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * NumberUnit = (* variant: *) WEI_KEYWORD
-   * | (* variant: *) GWEI_KEYWORD (* Introduced in 0.6.11 *)
-   * | (* variant: *) SZABO_KEYWORD (* Deprecated in 0.7.0 *)
-   * | (* variant: *) FINNEY_KEYWORD (* Deprecated in 0.7.0 *)
-   * | (* variant: *) ETHER_KEYWORD
-   * | (* variant: *) SECONDS_KEYWORD
-   * | (* variant: *) MINUTES_KEYWORD
-   * | (* variant: *) HOURS_KEYWORD
-   * | (* variant: *) DAYS_KEYWORD
-   * | (* variant: *) WEEKS_KEYWORD
-   * | (* variant: *) YEARS_KEYWORD; (* Deprecated in 0.5.0 *)
+   *            | (* variant: *) GWEI_KEYWORD (* Introduced in 0.6.11 *)
+   *            | (* variant: *) SZABO_KEYWORD (* Deprecated in 0.7.0 *)
+   *            | (* variant: *) FINNEY_KEYWORD (* Deprecated in 0.7.0 *)
+   *            | (* variant: *) ETHER_KEYWORD
+   *            | (* variant: *) SECONDS_KEYWORD
+   *            | (* variant: *) MINUTES_KEYWORD
+   *            | (* variant: *) HOURS_KEYWORD
+   *            | (* variant: *) DAYS_KEYWORD
+   *            | (* variant: *) WEEKS_KEYWORD
+   *            | (* variant: *) YEARS_KEYWORD; (* Deprecated in 0.5.0 *)
    * ```
    */
   NumberUnit = "NumberUnit",
@@ -1267,8 +1267,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * OrExpression = (* left_operand: *) Expression
-   * (* operator: *) BAR_BAR
-   * (* right_operand: *) Expression;
+   *                (* operator: *) BAR_BAR
+   *                (* right_operand: *) Expression;
    * ```
    */
   OrExpression = "OrExpression",
@@ -1287,8 +1287,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.6.0 *)
    * OverridePathsDeclaration = (* open_paren: *) OPEN_PAREN
-   * (* paths: *) OverridePaths
-   * (* close_paren: *) CLOSE_PAREN;
+   *                            (* paths: *) OverridePaths
+   *                            (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   OverridePathsDeclaration = "OverridePathsDeclaration",
@@ -1298,7 +1298,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.6.0 *)
    * OverrideSpecifier = (* override_keyword: *) OVERRIDE_KEYWORD
-   * (* overridden: *) OverridePathsDeclaration?;
+   *                     (* overridden: *) OverridePathsDeclaration?;
    * ```
    */
   OverrideSpecifier = "OverrideSpecifier",
@@ -1307,8 +1307,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * Parameter = (* type_name: *) TypeName
-   * (* storage_location: *) StorageLocation?
-   * (* name: *) IDENTIFIER?;
+   *             (* storage_location: *) StorageLocation?
+   *             (* name: *) IDENTIFIER?;
    * ```
    */
   Parameter = "Parameter",
@@ -1325,8 +1325,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ParametersDeclaration = (* open_paren: *) OPEN_PAREN
-   * (* parameters: *) Parameters
-   * (* close_paren: *) CLOSE_PAREN;
+   *                         (* parameters: *) Parameters
+   *                         (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   ParametersDeclaration = "ParametersDeclaration",
@@ -1335,7 +1335,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * PathImport = (* path: *) StringLiteral
-   * (* alias: *) ImportAlias?;
+   *              (* alias: *) ImportAlias?;
    * ```
    */
   PathImport = "PathImport",
@@ -1352,8 +1352,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * PositionalArgumentsDeclaration = (* open_paren: *) OPEN_PAREN
-   * (* arguments: *) PositionalArguments
-   * (* close_paren: *) CLOSE_PAREN;
+   *                                  (* arguments: *) PositionalArguments
+   *                                  (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   PositionalArgumentsDeclaration = "PositionalArgumentsDeclaration",
@@ -1363,11 +1363,11 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Postfix unary operator *)
    * PostfixExpression = (* operand: *) Expression
-   * (* operator: *) PLUS_PLUS;
+   *                     (* operator: *) PLUS_PLUS;
    *
    * (* Postfix unary operator *)
    * PostfixExpression = (* operand: *) Expression
-   * (* operator: *) MINUS_MINUS;
+   *                     (* operator: *) MINUS_MINUS;
    * ```
    */
   PostfixExpression = "PostfixExpression",
@@ -1376,8 +1376,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * Pragma = (* variant: *) AbicoderPragma
-   * | (* variant: *) ExperimentalPragma
-   * | (* variant: *) VersionPragma;
+   *        | (* variant: *) ExperimentalPragma
+   *        | (* variant: *) VersionPragma;
    * ```
    */
   Pragma = "Pragma",
@@ -1386,8 +1386,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * PragmaDirective = (* pragma_keyword: *) PRAGMA_KEYWORD
-   * (* pragma: *) Pragma
-   * (* semicolon: *) SEMICOLON;
+   *                   (* pragma: *) Pragma
+   *                   (* semicolon: *) SEMICOLON;
    * ```
    */
   PragmaDirective = "PragmaDirective",
@@ -1397,32 +1397,32 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Prefix unary operator *)
    * PrefixExpression = (* operator: *) PLUS_PLUS
-   * (* operand: *) Expression;
+   *                    (* operand: *) Expression;
    *
    * (* Prefix unary operator *)
    * PrefixExpression = (* operator: *) MINUS_MINUS
-   * (* operand: *) Expression;
+   *                    (* operand: *) Expression;
    *
    * (* Prefix unary operator *)
    * PrefixExpression = (* operator: *) TILDE
-   * (* operand: *) Expression;
+   *                    (* operand: *) Expression;
    *
    * (* Prefix unary operator *)
    * PrefixExpression = (* operator: *) BANG
-   * (* operand: *) Expression;
+   *                    (* operand: *) Expression;
    *
    * (* Prefix unary operator *)
    * PrefixExpression = (* operator: *) MINUS
-   * (* operand: *) Expression;
+   *                    (* operand: *) Expression;
    *
    * (* Prefix unary operator *)
    * (* Deprecated in 0.5.0 *)
    * PrefixExpression = (* operator: *) PLUS
-   * (* operand: *) Expression;
+   *                    (* operand: *) Expression;
    *
    * (* Prefix unary operator *)
    * PrefixExpression = (* operator: *) DELETE_KEYWORD
-   * (* operand: *) Expression;
+   *                    (* operand: *) Expression;
    * ```
    */
   PrefixExpression = "PrefixExpression",
@@ -1432,10 +1432,10 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.6.0 *)
    * ReceiveFunctionAttribute = (* variant: *) ModifierInvocation
-   * | (* variant: *) OverrideSpecifier
-   * | (* variant: *) EXTERNAL_KEYWORD
-   * | (* variant: *) PAYABLE_KEYWORD
-   * | (* variant: *) VIRTUAL_KEYWORD;
+   *                          | (* variant: *) OverrideSpecifier
+   *                          | (* variant: *) EXTERNAL_KEYWORD
+   *                          | (* variant: *) PAYABLE_KEYWORD
+   *                          | (* variant: *) VIRTUAL_KEYWORD;
    * ```
    */
   ReceiveFunctionAttribute = "ReceiveFunctionAttribute",
@@ -1454,9 +1454,9 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.6.0 *)
    * ReceiveFunctionDefinition = (* receive_keyword: *) RECEIVE_KEYWORD
-   * (* parameters: *) ParametersDeclaration
-   * (* attributes: *) ReceiveFunctionAttributes
-   * (* body: *) FunctionBody;
+   *                             (* parameters: *) ParametersDeclaration
+   *                             (* attributes: *) ReceiveFunctionAttributes
+   *                             (* body: *) FunctionBody;
    * ```
    */
   ReceiveFunctionDefinition = "ReceiveFunctionDefinition",
@@ -1465,8 +1465,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ReturnStatement = (* return_keyword: *) RETURN_KEYWORD
-   * (* expression: *) Expression?
-   * (* semicolon: *) SEMICOLON;
+   *                   (* expression: *) Expression?
+   *                   (* semicolon: *) SEMICOLON;
    * ```
    */
   ReturnStatement = "ReturnStatement",
@@ -1475,7 +1475,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * ReturnsDeclaration = (* returns_keyword: *) RETURNS_KEYWORD
-   * (* variables: *) ParametersDeclaration;
+   *                      (* variables: *) ParametersDeclaration;
    * ```
    */
   ReturnsDeclaration = "ReturnsDeclaration",
@@ -1485,9 +1485,9 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.4 *)
    * RevertStatement = (* revert_keyword: *) REVERT_KEYWORD
-   * (* error: *) IdentifierPath?
-   * (* arguments: *) ArgumentsDeclaration
-   * (* semicolon: *) SEMICOLON;
+   *                   (* error: *) IdentifierPath?
+   *                   (* arguments: *) ArgumentsDeclaration
+   *                   (* semicolon: *) SEMICOLON;
    * ```
    */
   RevertStatement = "RevertStatement",
@@ -1497,18 +1497,18 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Left-associative binary operator *)
    * ShiftExpression = (* left_operand: *) Expression
-   * (* operator: *) LESS_THAN_LESS_THAN
-   * (* right_operand: *) Expression;
+   *                   (* operator: *) LESS_THAN_LESS_THAN
+   *                   (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * ShiftExpression = (* left_operand: *) Expression
-   * (* operator: *) GREATER_THAN_GREATER_THAN
-   * (* right_operand: *) Expression;
+   *                   (* operator: *) GREATER_THAN_GREATER_THAN
+   *                   (* right_operand: *) Expression;
    *
    * (* Left-associative binary operator *)
    * ShiftExpression = (* left_operand: *) Expression
-   * (* operator: *) GREATER_THAN_GREATER_THAN_GREATER_THAN
-   * (* right_operand: *) Expression;
+   *                   (* operator: *) GREATER_THAN_GREATER_THAN_GREATER_THAN
+   *                   (* right_operand: *) Expression;
    * ```
    */
   ShiftExpression = "ShiftExpression",
@@ -1533,18 +1533,18 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * SourceUnitMember = (* variant: *) PragmaDirective
-   * | (* variant: *) ImportDirective
-   * | (* variant: *) ContractDefinition
-   * | (* variant: *) InterfaceDefinition
-   * | (* variant: *) LibraryDefinition
-   * | (* variant: *) StructDefinition (* Introduced in 0.6.0 *)
-   * | (* variant: *) EnumDefinition (* Introduced in 0.6.0 *)
-   * | (* variant: *) FunctionDefinition (* Introduced in 0.7.1 *)
-   * | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
-   * | (* variant: *) UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
-   * | (* variant: *) UsingDirective (* Introduced in 0.8.13 *)
-   * | (* variant: *) EventDefinition (* Introduced in 0.8.22 *)
-   * | (* variant: *) ConstantDefinition; (* Introduced in 0.7.4 *)
+   *                  | (* variant: *) ImportDirective
+   *                  | (* variant: *) ContractDefinition
+   *                  | (* variant: *) InterfaceDefinition
+   *                  | (* variant: *) LibraryDefinition
+   *                  | (* variant: *) StructDefinition (* Introduced in 0.6.0 *)
+   *                  | (* variant: *) EnumDefinition (* Introduced in 0.6.0 *)
+   *                  | (* variant: *) FunctionDefinition (* Introduced in 0.7.1 *)
+   *                  | (* variant: *) ErrorDefinition (* Introduced in 0.8.4 *)
+   *                  | (* variant: *) UserDefinedValueTypeDefinition (* Introduced in 0.8.8 *)
+   *                  | (* variant: *) UsingDirective (* Introduced in 0.8.13 *)
+   *                  | (* variant: *) EventDefinition (* Introduced in 0.8.22 *)
+   *                  | (* variant: *) ConstantDefinition; (* Introduced in 0.7.4 *)
    * ```
    */
   SourceUnitMember = "SourceUnitMember",
@@ -1561,12 +1561,12 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * StateVariableAttribute = (* variant: *) OverrideSpecifier (* Introduced in 0.6.0 *)
-   * | (* variant: *) CONSTANT_KEYWORD
-   * | (* variant: *) INTERNAL_KEYWORD
-   * | (* variant: *) PRIVATE_KEYWORD
-   * | (* variant: *) PUBLIC_KEYWORD
-   * | (* variant: *) IMMUTABLE_KEYWORD (* Introduced in 0.6.5 *)
-   * | (* variant: *) TRANSIENT_KEYWORD; (* Introduced in 0.8.27 *)
+   *                        | (* variant: *) CONSTANT_KEYWORD
+   *                        | (* variant: *) INTERNAL_KEYWORD
+   *                        | (* variant: *) PRIVATE_KEYWORD
+   *                        | (* variant: *) PUBLIC_KEYWORD
+   *                        | (* variant: *) IMMUTABLE_KEYWORD (* Introduced in 0.6.5 *)
+   *                        | (* variant: *) TRANSIENT_KEYWORD; (* Introduced in 0.8.27 *)
    * ```
    */
   StateVariableAttribute = "StateVariableAttribute",
@@ -1583,10 +1583,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * StateVariableDefinition = (* type_name: *) TypeName
-   * (* attributes: *) StateVariableAttributes
-   * (* name: *) IDENTIFIER
-   * (* value: *) StateVariableDefinitionValue?
-   * (* semicolon: *) SEMICOLON;
+   *                           (* attributes: *) StateVariableAttributes
+   *                           (* name: *) IDENTIFIER
+   *                           (* value: *) StateVariableDefinitionValue?
+   *                           (* semicolon: *) SEMICOLON;
    * ```
    */
   StateVariableDefinition = "StateVariableDefinition",
@@ -1595,7 +1595,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * StateVariableDefinitionValue = (* equal: *) EQUAL
-   * (* value: *) Expression;
+   *                                (* value: *) Expression;
    * ```
    */
   StateVariableDefinitionValue = "StateVariableDefinitionValue",
@@ -1604,22 +1604,22 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * Statement = (* variant: *) IfStatement
-   * | (* variant: *) ForStatement
-   * | (* variant: *) WhileStatement
-   * | (* variant: *) DoWhileStatement
-   * | (* variant: *) ContinueStatement
-   * | (* variant: *) BreakStatement
-   * | (* variant: *) ReturnStatement
-   * | (* variant: *) ThrowStatement (* Deprecated in 0.5.0 *)
-   * | (* variant: *) EmitStatement (* Introduced in 0.4.21 *)
-   * | (* variant: *) TryStatement (* Introduced in 0.6.0 *)
-   * | (* variant: *) RevertStatement (* Introduced in 0.8.4 *)
-   * | (* variant: *) AssemblyStatement
-   * | (* variant: *) Block
-   * | (* variant: *) UncheckedBlock (* Introduced in 0.8.0 *)
-   * | (* variant: *) TupleDeconstructionStatement
-   * | (* variant: *) VariableDeclarationStatement
-   * | (* variant: *) ExpressionStatement;
+   *           | (* variant: *) ForStatement
+   *           | (* variant: *) WhileStatement
+   *           | (* variant: *) DoWhileStatement
+   *           | (* variant: *) ContinueStatement
+   *           | (* variant: *) BreakStatement
+   *           | (* variant: *) ReturnStatement
+   *           | (* variant: *) ThrowStatement (* Deprecated in 0.5.0 *)
+   *           | (* variant: *) EmitStatement (* Introduced in 0.4.21 *)
+   *           | (* variant: *) TryStatement (* Introduced in 0.6.0 *)
+   *           | (* variant: *) RevertStatement (* Introduced in 0.8.4 *)
+   *           | (* variant: *) AssemblyStatement
+   *           | (* variant: *) Block
+   *           | (* variant: *) UncheckedBlock (* Introduced in 0.8.0 *)
+   *           | (* variant: *) TupleDeconstructionStatement
+   *           | (* variant: *) VariableDeclarationStatement
+   *           | (* variant: *) ExpressionStatement;
    * ```
    */
   Statement = "Statement",
@@ -1636,8 +1636,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * StorageLocation = (* variant: *) MEMORY_KEYWORD
-   * | (* variant: *) STORAGE_KEYWORD
-   * | (* variant: *) CALL_DATA_KEYWORD; (* Introduced in 0.5.0 *)
+   *                 | (* variant: *) STORAGE_KEYWORD
+   *                 | (* variant: *) CALL_DATA_KEYWORD; (* Introduced in 0.5.0 *)
    * ```
    */
   StorageLocation = "StorageLocation",
@@ -1646,10 +1646,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * StringExpression = (* variant: *) StringLiteral (* Deprecated in 0.5.14 *)
-   * | (* variant: *) StringLiterals (* Introduced in 0.5.14 *)
-   * | (* variant: *) HexStringLiteral (* Deprecated in 0.5.14 *)
-   * | (* variant: *) HexStringLiterals (* Introduced in 0.5.14 *)
-   * | (* variant: *) UnicodeStringLiterals; (* Introduced in 0.7.0 *)
+   *                  | (* variant: *) StringLiterals (* Introduced in 0.5.14 *)
+   *                  | (* variant: *) HexStringLiteral (* Deprecated in 0.5.14 *)
+   *                  | (* variant: *) HexStringLiterals (* Introduced in 0.5.14 *)
+   *                  | (* variant: *) UnicodeStringLiterals; (* Introduced in 0.7.0 *)
    * ```
    */
   StringExpression = "StringExpression",
@@ -1658,7 +1658,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * StringLiteral = (* variant: *) SINGLE_QUOTED_STRING_LITERAL
-   * | (* variant: *) DOUBLE_QUOTED_STRING_LITERAL;
+   *               | (* variant: *) DOUBLE_QUOTED_STRING_LITERAL;
    * ```
    */
   StringLiteral = "StringLiteral",
@@ -1676,10 +1676,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * StructDefinition = (* struct_keyword: *) STRUCT_KEYWORD
-   * (* name: *) IDENTIFIER
-   * (* open_brace: *) OPEN_BRACE
-   * (* members: *) StructMembers
-   * (* close_brace: *) CLOSE_BRACE;
+   *                    (* name: *) IDENTIFIER
+   *                    (* open_brace: *) OPEN_BRACE
+   *                    (* members: *) StructMembers
+   *                    (* close_brace: *) CLOSE_BRACE;
    * ```
    */
   StructDefinition = "StructDefinition",
@@ -1688,8 +1688,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * StructMember = (* type_name: *) TypeName
-   * (* name: *) IDENTIFIER
-   * (* semicolon: *) SEMICOLON;
+   *                (* name: *) IDENTIFIER
+   *                (* semicolon: *) SEMICOLON;
    * ```
    */
   StructMember = "StructMember",
@@ -1707,7 +1707,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
    * ThrowStatement = (* throw_keyword: *) THROW_KEYWORD
-   * (* semicolon: *) SEMICOLON;
+   *                  (* semicolon: *) SEMICOLON;
    * ```
    */
   ThrowStatement = "ThrowStatement",
@@ -1717,10 +1717,10 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.6.0 *)
    * TryStatement = (* try_keyword: *) TRY_KEYWORD
-   * (* expression: *) Expression
-   * (* returns: *) ReturnsDeclaration?
-   * (* body: *) Block
-   * (* catch_clauses: *) CatchClauses;
+   *                (* expression: *) Expression
+   *                (* returns: *) ReturnsDeclaration?
+   *                (* body: *) Block
+   *                (* catch_clauses: *) CatchClauses;
    * ```
    */
   TryStatement = "TryStatement",
@@ -1745,12 +1745,12 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * TupleDeconstructionStatement = (* var_keyword: *) VAR_KEYWORD? (* Deprecated in 0.5.0 *)
-   * (* open_paren: *) OPEN_PAREN
-   * (* elements: *) TupleDeconstructionElements
-   * (* close_paren: *) CLOSE_PAREN
-   * (* equal: *) EQUAL
-   * (* expression: *) Expression
-   * (* semicolon: *) SEMICOLON;
+   *                                (* open_paren: *) OPEN_PAREN
+   *                                (* elements: *) TupleDeconstructionElements
+   *                                (* close_paren: *) CLOSE_PAREN
+   *                                (* equal: *) EQUAL
+   *                                (* expression: *) Expression
+   *                                (* semicolon: *) SEMICOLON;
    * ```
    */
   TupleDeconstructionStatement = "TupleDeconstructionStatement",
@@ -1759,8 +1759,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * TupleExpression = (* open_paren: *) OPEN_PAREN
-   * (* items: *) TupleValues
-   * (* close_paren: *) CLOSE_PAREN;
+   *                   (* items: *) TupleValues
+   *                   (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   TupleExpression = "TupleExpression",
@@ -1769,7 +1769,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * TupleMember = (* variant: *) TypedTupleMember
-   * | (* variant: *) UntypedTupleMember;
+   *             | (* variant: *) UntypedTupleMember;
    * ```
    */
   TupleMember = "TupleMember",
@@ -1795,9 +1795,9 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.5.3 *)
    * TypeExpression = (* type_keyword: *) TYPE_KEYWORD
-   * (* open_paren: *) OPEN_PAREN
-   * (* type_name: *) TypeName
-   * (* close_paren: *) CLOSE_PAREN;
+   *                  (* open_paren: *) OPEN_PAREN
+   *                  (* type_name: *) TypeName
+   *                  (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   TypeExpression = "TypeExpression",
@@ -1806,10 +1806,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * TypeName = (* variant: *) ArrayTypeName
-   * | (* variant: *) FunctionType
-   * | (* variant: *) MappingType
-   * | (* variant: *) ElementaryType
-   * | (* variant: *) IdentifierPath;
+   *          | (* variant: *) FunctionType
+   *          | (* variant: *) MappingType
+   *          | (* variant: *) ElementaryType
+   *          | (* variant: *) IdentifierPath;
    * ```
    */
   TypeName = "TypeName",
@@ -1818,8 +1818,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * TypedTupleMember = (* type_name: *) TypeName
-   * (* storage_location: *) StorageLocation?
-   * (* name: *) IDENTIFIER;
+   *                    (* storage_location: *) StorageLocation?
+   *                    (* name: *) IDENTIFIER;
    * ```
    */
   TypedTupleMember = "TypedTupleMember",
@@ -1829,7 +1829,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.0 *)
    * UncheckedBlock = (* unchecked_keyword: *) UNCHECKED_KEYWORD
-   * (* block: *) Block;
+   *                  (* block: *) Block;
    * ```
    */
   UncheckedBlock = "UncheckedBlock",
@@ -1839,7 +1839,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.7.0 *)
    * UnicodeStringLiteral = (* variant: *) SINGLE_QUOTED_UNICODE_STRING_LITERAL
-   * | (* variant: *) DOUBLE_QUOTED_UNICODE_STRING_LITERAL;
+   *                      | (* variant: *) DOUBLE_QUOTED_UNICODE_STRING_LITERAL;
    * ```
    */
   UnicodeStringLiteral = "UnicodeStringLiteral",
@@ -1858,14 +1858,14 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Deprecated in 0.6.0 *)
    * UnnamedFunctionAttribute = (* variant: *) ModifierInvocation
-   * | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
-   * | (* variant: *) EXTERNAL_KEYWORD
-   * | (* variant: *) INTERNAL_KEYWORD (* Deprecated in 0.5.0 *)
-   * | (* variant: *) PAYABLE_KEYWORD
-   * | (* variant: *) PRIVATE_KEYWORD (* Deprecated in 0.5.0 *)
-   * | (* variant: *) PUBLIC_KEYWORD (* Deprecated in 0.5.0 *)
-   * | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
-   * | (* variant: *) VIEW_KEYWORD; (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
+   *                          | (* variant: *) CONSTANT_KEYWORD (* Deprecated in 0.5.0 *)
+   *                          | (* variant: *) EXTERNAL_KEYWORD
+   *                          | (* variant: *) INTERNAL_KEYWORD (* Deprecated in 0.5.0 *)
+   *                          | (* variant: *) PAYABLE_KEYWORD
+   *                          | (* variant: *) PRIVATE_KEYWORD (* Deprecated in 0.5.0 *)
+   *                          | (* variant: *) PUBLIC_KEYWORD (* Deprecated in 0.5.0 *)
+   *                          | (* variant: *) PURE_KEYWORD (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
+   *                          | (* variant: *) VIEW_KEYWORD; (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
    * ```
    */
   UnnamedFunctionAttribute = "UnnamedFunctionAttribute",
@@ -1884,9 +1884,9 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Deprecated in 0.6.0 *)
    * UnnamedFunctionDefinition = (* function_keyword: *) FUNCTION_KEYWORD
-   * (* parameters: *) ParametersDeclaration
-   * (* attributes: *) UnnamedFunctionAttributes
-   * (* body: *) FunctionBody;
+   *                             (* parameters: *) ParametersDeclaration
+   *                             (* attributes: *) UnnamedFunctionAttributes
+   *                             (* body: *) FunctionBody;
    * ```
    */
   UnnamedFunctionDefinition = "UnnamedFunctionDefinition",
@@ -1895,7 +1895,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * UntypedTupleMember = (* storage_location: *) StorageLocation?
-   * (* name: *) IDENTIFIER;
+   *                      (* name: *) IDENTIFIER;
    * ```
    */
   UntypedTupleMember = "UntypedTupleMember",
@@ -1905,10 +1905,10 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.8 *)
    * UserDefinedValueTypeDefinition = (* type_keyword: *) TYPE_KEYWORD
-   * (* name: *) IDENTIFIER
-   * (* is_keyword: *) IS_KEYWORD
-   * (* value_type: *) ElementaryType
-   * (* semicolon: *) SEMICOLON;
+   *                                  (* name: *) IDENTIFIER
+   *                                  (* is_keyword: *) IS_KEYWORD
+   *                                  (* value_type: *) ElementaryType
+   *                                  (* semicolon: *) SEMICOLON;
    * ```
    */
   UserDefinedValueTypeDefinition = "UserDefinedValueTypeDefinition",
@@ -1918,7 +1918,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.19 *)
    * UsingAlias = (* as_keyword: *) AS_KEYWORD
-   * (* operator: *) UsingOperator;
+   *              (* operator: *) UsingOperator;
    * ```
    */
   UsingAlias = "UsingAlias",
@@ -1927,7 +1927,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * UsingClause = (* variant: *) IdentifierPath
-   * | (* variant: *) UsingDeconstruction; (* Introduced in 0.8.13 *)
+   *             | (* variant: *) UsingDeconstruction; (* Introduced in 0.8.13 *)
    * ```
    */
   UsingClause = "UsingClause",
@@ -1937,8 +1937,8 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.13 *)
    * UsingDeconstruction = (* open_brace: *) OPEN_BRACE
-   * (* symbols: *) UsingDeconstructionSymbols
-   * (* close_brace: *) CLOSE_BRACE;
+   *                       (* symbols: *) UsingDeconstructionSymbols
+   *                       (* close_brace: *) CLOSE_BRACE;
    * ```
    */
   UsingDeconstruction = "UsingDeconstruction",
@@ -1948,7 +1948,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.13 *)
    * UsingDeconstructionSymbol = (* name: *) IdentifierPath
-   * (* alias: *) UsingAlias?; (* Introduced in 0.8.19 *)
+   *                             (* alias: *) UsingAlias?; (* Introduced in 0.8.19 *)
    * ```
    */
   UsingDeconstructionSymbol = "UsingDeconstructionSymbol",
@@ -1966,11 +1966,11 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * UsingDirective = (* using_keyword: *) USING_KEYWORD
-   * (* clause: *) UsingClause
-   * (* for_keyword: *) FOR_KEYWORD
-   * (* target: *) UsingTarget
-   * (* global_keyword: *) GLOBAL_KEYWORD? (* Introduced in 0.8.13 *)
-   * (* semicolon: *) SEMICOLON;
+   *                  (* clause: *) UsingClause
+   *                  (* for_keyword: *) FOR_KEYWORD
+   *                  (* target: *) UsingTarget
+   *                  (* global_keyword: *) GLOBAL_KEYWORD? (* Introduced in 0.8.13 *)
+   *                  (* semicolon: *) SEMICOLON;
    * ```
    */
   UsingDirective = "UsingDirective",
@@ -1980,20 +1980,20 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Introduced in 0.8.19 *)
    * UsingOperator = (* variant: *) AMPERSAND
-   * | (* variant: *) ASTERISK
-   * | (* variant: *) BANG_EQUAL
-   * | (* variant: *) BAR
-   * | (* variant: *) CARET
-   * | (* variant: *) EQUAL_EQUAL
-   * | (* variant: *) GREATER_THAN
-   * | (* variant: *) GREATER_THAN_EQUAL
-   * | (* variant: *) LESS_THAN
-   * | (* variant: *) LESS_THAN_EQUAL
-   * | (* variant: *) MINUS
-   * | (* variant: *) PERCENT
-   * | (* variant: *) PLUS
-   * | (* variant: *) SLASH
-   * | (* variant: *) TILDE;
+   *               | (* variant: *) ASTERISK
+   *               | (* variant: *) BANG_EQUAL
+   *               | (* variant: *) BAR
+   *               | (* variant: *) CARET
+   *               | (* variant: *) EQUAL_EQUAL
+   *               | (* variant: *) GREATER_THAN
+   *               | (* variant: *) GREATER_THAN_EQUAL
+   *               | (* variant: *) LESS_THAN
+   *               | (* variant: *) LESS_THAN_EQUAL
+   *               | (* variant: *) MINUS
+   *               | (* variant: *) PERCENT
+   *               | (* variant: *) PLUS
+   *               | (* variant: *) SLASH
+   *               | (* variant: *) TILDE;
    * ```
    */
   UsingOperator = "UsingOperator",
@@ -2002,7 +2002,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * UsingTarget = (* variant: *) TypeName
-   * | (* variant: *) ASTERISK;
+   *             | (* variant: *) ASTERISK;
    * ```
    */
   UsingTarget = "UsingTarget",
@@ -2011,10 +2011,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * VariableDeclarationStatement = (* variable_type: *) VariableDeclarationType
-   * (* storage_location: *) StorageLocation?
-   * (* name: *) IDENTIFIER
-   * (* value: *) VariableDeclarationValue?
-   * (* semicolon: *) SEMICOLON;
+   *                                (* storage_location: *) StorageLocation?
+   *                                (* name: *) IDENTIFIER
+   *                                (* value: *) VariableDeclarationValue?
+   *                                (* semicolon: *) SEMICOLON;
    * ```
    */
   VariableDeclarationStatement = "VariableDeclarationStatement",
@@ -2023,7 +2023,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * VariableDeclarationType = (* variant: *) TypeName
-   * | (* variant: *) VAR_KEYWORD; (* Deprecated in 0.5.0 *)
+   *                         | (* variant: *) VAR_KEYWORD; (* Deprecated in 0.5.0 *)
    * ```
    */
   VariableDeclarationType = "VariableDeclarationType",
@@ -2032,7 +2032,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * VariableDeclarationValue = (* equal: *) EQUAL
-   * (* expression: *) Expression;
+   *                            (* expression: *) Expression;
    * ```
    */
   VariableDeclarationValue = "VariableDeclarationValue",
@@ -2041,7 +2041,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * VersionExpression = (* variant: *) VersionRange
-   * | (* variant: *) VersionTerm;
+   *                   | (* variant: *) VersionTerm;
    * ```
    */
   VersionExpression = "VersionExpression",
@@ -2066,8 +2066,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * VersionLiteral = (* variant: *) SimpleVersionLiteral
-   * | (* variant: *) SINGLE_QUOTED_VERSION_LITERAL
-   * | (* variant: *) DOUBLE_QUOTED_VERSION_LITERAL;
+   *                | (* variant: *) SINGLE_QUOTED_VERSION_LITERAL
+   *                | (* variant: *) DOUBLE_QUOTED_VERSION_LITERAL;
    * ```
    */
   VersionLiteral = "VersionLiteral",
@@ -2076,12 +2076,12 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * VersionOperator = (* variant: *) CARET
-   * | (* variant: *) TILDE
-   * | (* variant: *) EQUAL
-   * | (* variant: *) LESS_THAN
-   * | (* variant: *) GREATER_THAN
-   * | (* variant: *) LESS_THAN_EQUAL
-   * | (* variant: *) GREATER_THAN_EQUAL;
+   *                 | (* variant: *) TILDE
+   *                 | (* variant: *) EQUAL
+   *                 | (* variant: *) LESS_THAN
+   *                 | (* variant: *) GREATER_THAN
+   *                 | (* variant: *) LESS_THAN_EQUAL
+   *                 | (* variant: *) GREATER_THAN_EQUAL;
    * ```
    */
   VersionOperator = "VersionOperator",
@@ -2090,7 +2090,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * VersionPragma = (* solidity_keyword: *) SOLIDITY_KEYWORD
-   * (* sets: *) VersionExpressionSets;
+   *                 (* sets: *) VersionExpressionSets;
    * ```
    */
   VersionPragma = "VersionPragma",
@@ -2099,8 +2099,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * VersionRange = (* start: *) VersionLiteral
-   * (* minus: *) MINUS
-   * (* end: *) VersionLiteral;
+   *                (* minus: *) MINUS
+   *                (* end: *) VersionLiteral;
    * ```
    */
   VersionRange = "VersionRange",
@@ -2109,7 +2109,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * VersionTerm = (* operator: *) VersionOperator?
-   * (* literal: *) VersionLiteral;
+   *               (* literal: *) VersionLiteral;
    * ```
    */
   VersionTerm = "VersionTerm",
@@ -2118,10 +2118,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * WhileStatement = (* while_keyword: *) WHILE_KEYWORD
-   * (* open_paren: *) OPEN_PAREN
-   * (* condition: *) Expression
-   * (* close_paren: *) CLOSE_PAREN
-   * (* body: *) Statement;
+   *                  (* open_paren: *) OPEN_PAREN
+   *                  (* condition: *) Expression
+   *                  (* close_paren: *) CLOSE_PAREN
+   *                  (* body: *) Statement;
    * ```
    */
   WhileStatement = "WhileStatement",
@@ -2138,7 +2138,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulAssignmentOperator = (* variant: *) COLON_EQUAL
-   * | (* variant: *) YulColonAndEqual; (* Deprecated in 0.5.5 *)
+   *                       | (* variant: *) YulColonAndEqual; (* Deprecated in 0.5.5 *)
    * ```
    */
   YulAssignmentOperator = "YulAssignmentOperator",
@@ -2147,8 +2147,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulBlock = (* open_brace: *) OPEN_BRACE
-   * (* statements: *) YulStatements
-   * (* close_brace: *) CLOSE_BRACE;
+   *            (* statements: *) YulStatements
+   *            (* close_brace: *) CLOSE_BRACE;
    * ```
    */
   YulBlock = "YulBlock",
@@ -2166,7 +2166,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Deprecated in 0.5.5 *)
    * YulColonAndEqual = (* colon: *) COLON
-   * (* equal: *) EQUAL;
+   *                    (* equal: *) EQUAL;
    * ```
    */
   YulColonAndEqual = "YulColonAndEqual",
@@ -2183,7 +2183,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulDefaultCase = (* default_keyword: *) YUL_DEFAULT_KEYWORD
-   * (* body: *) YulBlock;
+   *                  (* body: *) YulBlock;
    * ```
    */
   YulDefaultCase = "YulDefaultCase",
@@ -2193,7 +2193,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
    * YulEqualAndColon = (* equal: *) EQUAL
-   * (* colon: *) COLON;
+   *                    (* colon: *) COLON;
    * ```
    */
   YulEqualAndColon = "YulEqualAndColon",
@@ -2202,8 +2202,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulExpression = (* variant: *) YulFunctionCallExpression
-   * | (* variant: *) YulLiteral
-   * | (* variant: *) YulPath;
+   *               | (* variant: *) YulLiteral
+   *               | (* variant: *) YulPath;
    * ```
    */
   YulExpression = "YulExpression",
@@ -2212,10 +2212,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulForStatement = (* for_keyword: *) YUL_FOR_KEYWORD
-   * (* initialization: *) YulBlock
-   * (* condition: *) YulExpression
-   * (* iterator: *) YulBlock
-   * (* body: *) YulBlock;
+   *                   (* initialization: *) YulBlock
+   *                   (* condition: *) YulExpression
+   *                   (* iterator: *) YulBlock
+   *                   (* body: *) YulBlock;
    * ```
    */
   YulForStatement = "YulForStatement",
@@ -2225,9 +2225,9 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Postfix unary operator *)
    * YulFunctionCallExpression = (* operand: *) YulExpression
-   * (* open_paren: *) OPEN_PAREN
-   * (* arguments: *) YulArguments
-   * (* close_paren: *) CLOSE_PAREN;
+   *                             (* open_paren: *) OPEN_PAREN
+   *                             (* arguments: *) YulArguments
+   *                             (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   YulFunctionCallExpression = "YulFunctionCallExpression",
@@ -2236,10 +2236,10 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulFunctionDefinition = (* function_keyword: *) YUL_FUNCTION_KEYWORD
-   * (* name: *) YUL_IDENTIFIER
-   * (* parameters: *) YulParametersDeclaration
-   * (* returns: *) YulReturnsDeclaration?
-   * (* body: *) YulBlock;
+   *                         (* name: *) YUL_IDENTIFIER
+   *                         (* parameters: *) YulParametersDeclaration
+   *                         (* returns: *) YulReturnsDeclaration?
+   *                         (* body: *) YulBlock;
    * ```
    */
   YulFunctionDefinition = "YulFunctionDefinition",
@@ -2248,8 +2248,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulIfStatement = (* if_keyword: *) YUL_IF_KEYWORD
-   * (* condition: *) YulExpression
-   * (* body: *) YulBlock;
+   *                  (* condition: *) YulExpression
+   *                  (* body: *) YulBlock;
    * ```
    */
   YulIfStatement = "YulIfStatement",
@@ -2259,7 +2259,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
    * YulLabel = (* label: *) YUL_IDENTIFIER
-   * (* colon: *) COLON;
+   *            (* colon: *) COLON;
    * ```
    */
   YulLabel = "YulLabel",
@@ -2277,11 +2277,11 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulLiteral = (* variant: *) YUL_TRUE_KEYWORD (* Introduced in 0.6.2 *)
-   * | (* variant: *) YUL_FALSE_KEYWORD (* Introduced in 0.6.2 *)
-   * | (* variant: *) YUL_DECIMAL_LITERAL
-   * | (* variant: *) YUL_HEX_LITERAL
-   * | (* variant: *) HexStringLiteral
-   * | (* variant: *) StringLiteral;
+   *            | (* variant: *) YUL_FALSE_KEYWORD (* Introduced in 0.6.2 *)
+   *            | (* variant: *) YUL_DECIMAL_LITERAL
+   *            | (* variant: *) YUL_HEX_LITERAL
+   *            | (* variant: *) HexStringLiteral
+   *            | (* variant: *) StringLiteral;
    * ```
    */
   YulLiteral = "YulLiteral",
@@ -2298,8 +2298,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulParametersDeclaration = (* open_paren: *) OPEN_PAREN
-   * (* parameters: *) YulParameters
-   * (* close_paren: *) CLOSE_PAREN;
+   *                            (* parameters: *) YulParameters
+   *                            (* close_paren: *) CLOSE_PAREN;
    * ```
    */
   YulParametersDeclaration = "YulParametersDeclaration",
@@ -2324,7 +2324,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulReturnsDeclaration = (* minus_greater_than: *) MINUS_GREATER_THAN
-   * (* variables: *) YulVariableNames;
+   *                         (* variables: *) YulVariableNames;
    * ```
    */
   YulReturnsDeclaration = "YulReturnsDeclaration",
@@ -2334,7 +2334,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
    * YulStackAssignmentOperator = (* variant: *) EQUAL_COLON
-   * | (* variant: *) YulEqualAndColon;
+   *                            | (* variant: *) YulEqualAndColon;
    * ```
    */
   YulStackAssignmentOperator = "YulStackAssignmentOperator",
@@ -2344,7 +2344,7 @@ export declare enum NonterminalKind {
    * ```ebnf
    * (* Deprecated in 0.5.0 *)
    * YulStackAssignmentStatement = (* assignment: *) YulStackAssignmentOperator
-   * (* variable: *) YUL_IDENTIFIER;
+   *                               (* variable: *) YUL_IDENTIFIER;
    * ```
    */
   YulStackAssignmentStatement = "YulStackAssignmentStatement",
@@ -2353,18 +2353,18 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulStatement = (* variant: *) YulBlock
-   * | (* variant: *) YulFunctionDefinition
-   * | (* variant: *) YulStackAssignmentStatement (* Deprecated in 0.5.0 *)
-   * | (* variant: *) YulIfStatement
-   * | (* variant: *) YulForStatement
-   * | (* variant: *) YulSwitchStatement
-   * | (* variant: *) YulLeaveStatement (* Introduced in 0.6.0 *)
-   * | (* variant: *) YulBreakStatement
-   * | (* variant: *) YulContinueStatement
-   * | (* variant: *) YulVariableAssignmentStatement
-   * | (* variant: *) YulLabel (* Deprecated in 0.5.0 *)
-   * | (* variant: *) YulVariableDeclarationStatement
-   * | (* variant: *) YulExpression;
+   *              | (* variant: *) YulFunctionDefinition
+   *              | (* variant: *) YulStackAssignmentStatement (* Deprecated in 0.5.0 *)
+   *              | (* variant: *) YulIfStatement
+   *              | (* variant: *) YulForStatement
+   *              | (* variant: *) YulSwitchStatement
+   *              | (* variant: *) YulLeaveStatement (* Introduced in 0.6.0 *)
+   *              | (* variant: *) YulBreakStatement
+   *              | (* variant: *) YulContinueStatement
+   *              | (* variant: *) YulVariableAssignmentStatement
+   *              | (* variant: *) YulLabel (* Deprecated in 0.5.0 *)
+   *              | (* variant: *) YulVariableDeclarationStatement
+   *              | (* variant: *) YulExpression;
    * ```
    */
   YulStatement = "YulStatement",
@@ -2381,7 +2381,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulSwitchCase = (* variant: *) YulDefaultCase
-   * | (* variant: *) YulValueCase;
+   *               | (* variant: *) YulValueCase;
    * ```
    */
   YulSwitchCase = "YulSwitchCase",
@@ -2398,8 +2398,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulSwitchStatement = (* switch_keyword: *) YUL_SWITCH_KEYWORD
-   * (* expression: *) YulExpression
-   * (* cases: *) YulSwitchCases;
+   *                      (* expression: *) YulExpression
+   *                      (* cases: *) YulSwitchCases;
    * ```
    */
   YulSwitchStatement = "YulSwitchStatement",
@@ -2408,8 +2408,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulValueCase = (* case_keyword: *) YUL_CASE_KEYWORD
-   * (* value: *) YulLiteral
-   * (* body: *) YulBlock;
+   *                (* value: *) YulLiteral
+   *                (* body: *) YulBlock;
    * ```
    */
   YulValueCase = "YulValueCase",
@@ -2418,8 +2418,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulVariableAssignmentStatement = (* variables: *) YulPaths
-   * (* assignment: *) YulAssignmentOperator
-   * (* expression: *) YulExpression;
+   *                                  (* assignment: *) YulAssignmentOperator
+   *                                  (* expression: *) YulExpression;
    * ```
    */
   YulVariableAssignmentStatement = "YulVariableAssignmentStatement",
@@ -2428,8 +2428,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulVariableDeclarationStatement = (* let_keyword: *) YUL_LET_KEYWORD
-   * (* variables: *) YulVariableNames
-   * (* value: *) YulVariableDeclarationValue?;
+   *                                   (* variables: *) YulVariableNames
+   *                                   (* value: *) YulVariableDeclarationValue?;
    * ```
    */
   YulVariableDeclarationStatement = "YulVariableDeclarationStatement",
@@ -2438,7 +2438,7 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * YulVariableDeclarationValue = (* assignment: *) YulAssignmentOperator
-   * (* expression: *) YulExpression;
+   *                               (* expression: *) YulExpression;
    * ```
    */
   YulVariableDeclarationValue = "YulVariableDeclarationValue",
@@ -5625,7 +5625,7 @@ export interface QueryMatch {
   /**
    * List of captured nodes and their names from the query.
    */
-  captures: { [key: string]: Cursor[] };
+  captures: { [key: string]: Array<Cursor> };
 }
 /**
  * Represents a position in the source text, with indices for different unicode encodings of the source.
@@ -5687,7 +5687,13 @@ export interface QueryError {
 /**
  * Iterator over all ancestors of the current node, starting with the immediate parent, and moving upwards, ending with the root node.
  */
+
 export class AncestorsIterator {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * Returns an iterator over `NonterminalNode` objects. Called by the semantics of the for-of statement.
    */
@@ -5701,7 +5707,12 @@ export class AncestorsIterator {
 /**
  * Provides navigation and traversal capabilities over the syntax tree.
  */
+
 export class Cursor {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Resets the cursor to its initial position.
    */
@@ -5748,7 +5759,7 @@ export class Cursor {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of the current node in pre-order traversal.
    */
@@ -5808,7 +5819,7 @@ export class Cursor {
   /**
    * Moves to the next terminal node matching any of the given kinds.
    */
-  goToNextTerminalWithKinds(kinds: TerminalKind[]): boolean;
+  goToNextTerminalWithKinds(kinds: Array<TerminalKind>): boolean;
   /**
    * Nonterminal navigation methods
    * Moves to the next nonterminal node.
@@ -5821,17 +5832,23 @@ export class Cursor {
   /**
    * Moves to the next nonterminal node matching any of the given kinds.
    */
-  goToNextNonterminalWithKinds(kinds: NonterminalKind[]): boolean;
+  goToNextNonterminalWithKinds(kinds: Array<NonterminalKind>): boolean;
   /**
    * Executes the given queries and returns an iterator over the matches.
    */
-  query(queries: Query[]): QueryMatchIterator;
+  query(queries: Array<Query>): QueryMatchIterator;
 }
 
 /**
  * Iterator over all the remaining nodes in the current tree, moving in pre-order traversal, until the tree is completed.
  */
+
 export class CursorIterator {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * Returns an iterator over `Edge` objects. Called by the semantics of the for-of statement.
    */
@@ -5846,7 +5863,13 @@ export class CursorIterator {
  * Represents a non-terminal node in the syntax tree.
  * These nodes can have child nodes and represent language constructs.
  */
+
 export class NonterminalNode {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * The variant of `NodeType` that corresponds to this class.
    */
@@ -5889,7 +5912,7 @@ export class NonterminalNode {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of the current node in pre-order traversal.
    */
@@ -5911,7 +5934,12 @@ export class NonterminalNode {
 /**
  * Represents a tree query for pattern matching in the syntax tree.
  */
+
 export class Query {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Parses a query string into a query object.
    * Throws an error if the query syntax is invalid.
@@ -5922,7 +5950,13 @@ export class Query {
 /**
  * Iterator over query matches in the syntax tree.
  */
+
 export class QueryMatchIterator {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * Returns an iterator over `QueryMatch` objects. Called by the semantics of the for-of statement.
    */
@@ -5936,7 +5970,12 @@ export class QueryMatchIterator {
 /**
  * Useful extension methods for working with terminals and terminal kinds.
  */
+
 export class TerminalKindExtensions {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Returns `true` if the terminal is an identifier token.
    */
@@ -5955,7 +5994,13 @@ export class TerminalKindExtensions {
  * Represents a terminal node in the syntax tree.
  * These are leaf nodes that represent actual tokens from the source code.
  */
+
 export class TerminalNode {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * The variant of `NodeType` that corresponds to this class.
    */
@@ -5998,7 +6043,7 @@ export class TerminalNode {
   /**
    * Returns the list of child edges directly connected to this node.
    */
-  children(): Edge[];
+  children(): Array<Edge>;
   /**
    * Returns an iterator over all descendants of this node in pre-order traversal.
    */

@@ -20,7 +20,7 @@ export interface AddFileResponse {
   /**
    * List of cursors to any import paths found in the file.
    */
-  importPaths: Cursor[];
+  importPaths: Array<Cursor>;
 }
 
 /**
@@ -32,7 +32,12 @@ export interface AddFileResponse {
  *
  * It also exposes utilities to traverse the compilation unit and query it.
  */
+
 export class CompilationUnit {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Returns the language version this compilation unit is configured for.
    */
@@ -40,7 +45,7 @@ export class CompilationUnit {
   /**
    * Returns a list of all files in the compilation unit.
    */
-  files(): File[];
+  files(): Array<File>;
   /**
    * Returns the file with the specified ID, if it exists.
    */
@@ -58,7 +63,12 @@ export class CompilationUnit {
 /**
  * A single source file in the compilation unit.
  */
+
 export class File {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Returns the unique identifier of this file.
    */
@@ -70,7 +80,7 @@ export class File {
   /**
    * Returns a list of all errors encountered during parsing this file.
    */
-  errors(): ParseError[];
+  errors(): Array<ParseError>;
   /**
    * Creates a cursor for traversing the syntax tree of this file.
    */
@@ -86,7 +96,12 @@ export class File {
  *
  * @internal
  */
+
 export class InternalCompilationBuilder {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Creates a new compilation builder for the specified language version.
    */

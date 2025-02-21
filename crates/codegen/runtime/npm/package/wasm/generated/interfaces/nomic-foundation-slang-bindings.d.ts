@@ -39,7 +39,12 @@ export enum BindingLocationType {
  * There is one specific case in which a cursor to an identifier resolves to both: a non-aliased symbol import `import {X} from "library"`, where the identifier `X` is both a definition and a reference (to the symbol exported from `"library"`).
  * Also, an identifier denoting a feature in a `pragma experimental` directive will not resolve to either.
  */
+
 export class BindingGraph {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Tries to resolve the identifier terminal pointed at by the provided cursor to a definition.
    * If successful, returns the definition. Otherwise, returns `undefined`.
@@ -59,7 +64,13 @@ export class BindingGraph {
 /**
  * Represents a location of a built-in symbol in the language.
  */
+
 export class BuiltInLocation {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * The variant of `BindingLocationType` that corresponds to this class.
    */
@@ -89,7 +100,12 @@ export class BuiltInLocation {
 /**
  * Represents a definition in the binding graph.
  */
+
 export class Definition {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Returns a unique numerical identifier of the definition.
    * It is only valid for the lifetime of the binding graph.
@@ -109,13 +125,18 @@ export class Definition {
   /**
    * Returns a list of all references that bind to this definition.
    */
-  references(): Reference[];
+  references(): Array<Reference>;
 }
 
 /**
  * Represents a reference in the binding graph.
  */
+
 export class Reference {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Returns a unique numerical identifier of the reference.
    * It is only valid for the lifetime of the binding graph.
@@ -132,13 +153,19 @@ export class Reference {
    * Most references have a single definition, but some have multiple, such as when a symbol
    * is imported from another file, and renamed (re-defined) in the current file.
    */
-  definitions(): Definition[];
+  definitions(): Array<Definition>;
 }
 
 /**
  * Represents a location of a user-defined symbol in a user file.
  */
+
 export class UserFileLocation {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+
   /**
    * The variant of `BindingLocationType` that corresponds to this class.
    */

@@ -7,11 +7,16 @@ export namespace NomicFoundationSlangUtils {
 /**
  * Provides information about the supported language versions and the grammar.
  */
+
 export class LanguageFacts {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
   /**
    * Returns a list of language versions supported by Slang, sorted ascendingly.
    */
-  static allVersions(): string[];
+  static allVersions(): Array<string>;
   /**
    * Returns the earliest language version supported by Slang.
    */
