@@ -5623,6 +5623,10 @@ export interface QueryMatch {
    */
   queryIndex: number;
   /**
+   * A cursor to the matched root node.
+   */
+  root: Cursor;
+  /**
    * List of captured nodes and their names from the query.
    */
   captures: { [key: string]: Array<Cursor> };

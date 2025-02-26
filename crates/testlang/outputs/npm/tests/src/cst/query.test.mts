@@ -21,10 +21,10 @@ test("simple query", () => {
     const match = matches.next()!;
     expect(Object.keys(match.captures)).toStrictEqual(["id"]);
 
-    const cursors = match.captures["id"]!;
+    const cursors = match.captures["id"];
     expect(cursors).toHaveLength(1);
 
-    const node = cursors[0]!.node;
+    const node = cursors[0].node;
     assertIsTerminalNode(node, TerminalKind.DelimitedIdentifier, name);
   };
 
