@@ -1,115 +1,6 @@
 use core::panic;
-use std::{cmp::{Ord, Ordering}, fmt::Display};
-
-struct Scanner {
-    data: String,
-    index: usize,
-}
-
-impl Scanner {
-    fn new(data: impl Into<String>) -> Scanner {
-        Scanner {
-            data: data.into(),
-            index: 0,
-        }
-    }
-
-    fn accept(&mut self, value: &str) -> bool {
-        if self.data[self.index..].starts_with(value) {
-            self.index += value.len();
-            true
-        } else {
-            false
-        }
-    }
-
-    fn expect(&mut self, value: &str) -> Result<(), ParseError> {
-        if self.accept(value) {
-            Ok(())
-        } else {
-            let err = if self.eof() {
-                self.error(format!("Expected {value}, found eof"))
-            } else {
-                self.error(format!("Expected {value}, found {}", self.data.chars().nth(self.index).unwrap()))
-            };
-
-            Err(err)
-        }
-    }
-
-    fn accept_int(&mut self) -> Option<u32> {
-        let start = self.index;
-
-        let digits: Vec<u32> = self.data
-            .chars()
-            .skip(start)
-            .map_while(|c| c.to_digit(10))
-            .collect();
-
-        if digits.is_empty() {
-            return None;
-        }
-
-        let num_digits = digits.len() as u32;
-        let mut result = 0;
-
-        for (i, d) in digits.iter().enumerate() {
-            result += d * 10_u32.pow(num_digits - (i as u32) - 1);
-        }
-
-        self.index += digits.len();
-
-        Some(result)
-    }
-
-    fn expect_int(&mut self) -> Result<u32, ParseError> {
-        if let Some(i) = self.accept_int() {
-            Ok(i)
-        } else {
-            let err = if self.eof() {
-                self.error("Expected int, found eof")
-            } else {
-                self.error(format!("Expected int, found {}", self.data.chars().nth(self.index).unwrap()))
-            };
-
-            Err(err)
-        }
-    }
-
-    fn skip_whitespace(&mut self) {
-        while let Some(c) = self.peek() {
-            if c.is_whitespace() {
-                self.index += 1;
-            } else {
-                break;
-            }
-        }
-    }
-
-    fn next(&mut self) -> Option<char> {
-        if let Some(c) = self.peek() {
-            self.index += 1;
-            Some(c)
-        } else {
-            None
-        }
-    }
-
-    fn peek(&self) -> Option<char> {
-        self.data.chars().nth(self.index)
-    }
-
-    fn eof(&self) -> bool {
-        self.index >= self.data.len()
-    }
-
-    fn error(&self, message: impl Into<String>) -> ParseError {
-        ParseError {
-            message: message.into(),
-            position: self.index,
-        }
-    }
-}
+use std::cmp::{Ord, Ordering};
+use std::fmt::Display;
 
 #[derive(Debug, Default, Eq, PartialEq, Copy, Clone)]
 struct Version {
@@ -134,6 +25,26 @@ impl Display for Version {
     }
 }
 
+impl PartialOrd for Version {
+    fn partial_cmp(&self, other: &Version) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Version {
+    fn cmp(&self, other: &Version) -> Ordering {
+        match self.major.cmp(&other.major) {
+            Ordering::Greater => Ordering::Greater,
+            Ordering::Less => Ordering::Less,
+            Ordering::Equal => match self.minor.cmp(&other.minor) {
+                Ordering::Greater => Ordering::Greater,
+                Ordering::Less => Ordering::Less,
+                Ordering::Equal => self.patch.cmp(&other.patch),
+            }
+        }
+    }
+}
+
 /// A version that may not have specified all values. In general unspecified values will
 /// convert to `0` when resolved, however it is often important to know which values were _unspecified_
 /// (as opposed to being _specified as `0`_) when resolving ranges.
@@ -145,14 +56,7 @@ struct PartialVersion {
 }
 
 impl PartialVersion {
-    fn parse_str(text: &str) -> Result<PartialVersion, ParseError> {
-        let text = text.trim();
-        let mut scanner = Scanner::new(text);
-
-        PartialVersion::parse(&mut scanner)
-    }
-
-    fn parse(scanner: &mut Scanner) -> Result<PartialVersion, ParseError> {
+    fn parse(scanner: &mut Scanner<'_>) -> Result<PartialVersion, ParseError> {
         let mut partial = PartialVersion::default();
 
         if scanner.eof() || scanner.accept("*") {
@@ -189,95 +93,12 @@ impl PartialVersion {
         Ok(partial)
     }
 
-    /// Resolve this partial version as the upper bound of a caret range. 
-    fn resolve_caret(&self) -> Comparator {
-        let version = match self.major {
-            Some(0) => match self.minor {
-                Some(0) => match self.patch {
-                    Some(patch) => Version::new(0, 0, patch + 1),
-                    None => Version::new(0, 1, 0),
-                },
-                Some(minor) => Version::new(0, minor + 1, 0),
-                None => Version::new(1, 0, 0),
-            },
-            Some(major) => Version::new(major + 1, 0, 0),
-            None => panic!("Major version must be specified when resolving a caret upper bound"),
-        };
-
-        Comparator{
-            version,
-            op: Operator::Lt,
-        }
-    }
-
-    fn resolve_tilde(&self) -> Comparator {
-        let major = self.major.unwrap();
-
-        let version = match self.minor {
-            Some(minor) => Version::new(major, minor + 1, 0),
-            None => Version::new(major + 1, 0, 0),
-        };
-
-        Comparator{
-            version,
-            op: Operator::Lt,
-        }
-    }
-
-    fn resolve_partial_range(&self) -> ComparatorSet {
-        if self.is_wild() {
-            return ComparatorSet{
-                comparators: vec![
-                    Comparator{
-                        version: Version::default(),
-                        op: Operator::GtEq,
-                    }
-                ],
-            };
-        }
-
-        if !self.is_incomplete() {
-            return ComparatorSet{
-                comparators: vec![
-                    Comparator{
-                        version: self.into(),
-                        op: Operator::Eq,
-                    }
-                ]
-            }
-        }
-
-        let lower = Comparator{
-            version: self.into(),
-            op: Operator::GtEq,
-        };
-
-        let upper = match self.major {
-            Some(major) => match self.minor {
-                Some(minor) => match self.patch {
-                    // Handled above by checking !self.is_incomplete()
-                    Some(_) => unreachable!(),
-                    None => Comparator{
-                        version: Version::new(major, minor + 1, 0),
-                        op: Operator::Lt,
-                    }
-                },
-                None => Comparator{
-                    version: Version::new(major + 1, 0, 0),
-                    op: Operator::Lt,
-                }
-            },
-            // Handled above by checking self.is_wild()
-            None => unreachable!(),
-        };
-
-        ComparatorSet::bounds(lower, upper)
-    }
-
+    /// Check if `PartialVersion` has no specified values.
     fn is_wild(&self) -> bool {
         self.major.is_none() && self.minor.is_none() && self.patch.is_none()   
     }
 
+    /// Check if `PartialVersion` has any unspecified values.
     fn is_incomplete(&self) -> bool {
         self.major.is_none() || self.minor.is_none() || self.patch.is_none()
     }
@@ -299,26 +120,6 @@ impl From<&PartialVersion> for Version {
             major: partial.major.unwrap_or(0),
             minor: partial.minor.unwrap_or(0),
             patch: partial.patch.unwrap_or(0),
-        }
-    }
-}
-
-impl PartialOrd for Version {
-    fn partial_cmp(&self, other: &Version) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for Version {
-    fn cmp(&self, other: &Version) -> Ordering {
-        match self.major.cmp(&other.major) {
-            Ordering::Greater => Ordering::Greater,
-            Ordering::Less => Ordering::Less,
-            Ordering::Equal => match self.minor.cmp(&other.minor) {
-                Ordering::Greater => Ordering::Greater,
-                Ordering::Less => Ordering::Less,
-                Ordering::Equal => self.patch.cmp(&other.patch),
-            }
         }
     }
 }
@@ -383,19 +184,134 @@ impl ComparatorSet {
         }
     }
 
+    /// Create a `ComparatorSet` which represents the range of versions described by `^[partial]`.
+    fn caret(partial: &PartialVersion) -> ComparatorSet {
+        let lower = Comparator{
+            version: partial.into(),
+            op: Operator::GtEq,
+        };
+
+        let upper_version = match partial.major {
+            Some(0) => match partial.minor {
+                Some(0) => match partial.patch {
+                    Some(patch) => Version::new(0, 0, patch + 1),
+                    None => Version::new(0, 1, 0),
+                },
+                Some(minor) => Version::new(0, minor + 1, 0),
+                None => Version::new(1, 0, 0),
+            },
+            Some(major) => Version::new(major + 1, 0, 0),
+            None => panic!("Major version must be specified when resolving a caret upper bound"),
+        };
+
+        let upper = Comparator {
+            version: upper_version,
+            op: Operator::Lt,
+        };
+
+        ComparatorSet::bounds(lower, upper)
+    }
+
+    /// Create a `ComparatorSet` which represents the range of versions described by `~[partial]`.
+    fn tilde(partial: &PartialVersion) -> ComparatorSet {
+        let major = partial.major.unwrap();
+
+        let lower = Comparator{
+            version: partial.into(),
+            op: Operator::GtEq,
+        };
+
+
+        let upper_version = match partial.minor {
+            Some(minor) => Version::new(major, minor + 1, 0),
+            None => Version::new(major + 1, 0, 0),
+        };
+
+        let upper = Comparator{
+            version: upper_version,
+            op: Operator::Lt,
+        };
+
+        ComparatorSet::bounds(lower, upper)
+    }
+
+    /// Create a `ComparatorSet` which represents the range of versions described by `[lower_version] - [upper_version]`.
+    fn hyphen_range(lower_version: &PartialVersion, upper_version: &PartialVersion) -> ComparatorSet {
+        let lower = Comparator{
+            version: lower_version.into(),
+            op: Operator::GtEq,
+        };
+
+        let upper = if upper_version.is_incomplete() {
+            let mut upper_resolved: Version = upper_version.into();
+            if upper_version.minor.is_none() {
+                upper_resolved.major += 1;
+            } else if upper_version.patch.is_none() {
+                upper_resolved.minor += 1;
+            }
+
+            Comparator{
+                version: upper_resolved,
+                op: Operator::Lt,
+            }
+        } else {
+            Comparator{
+                version: upper_version.into(),
+                op: Operator::LtEq,
+            }
+        };
+    
+        ComparatorSet::bounds(lower, upper)        
+    }
+
+    /// Create a `ComparatorSet` which represents the range of versions described by `[partial]`. If `partial` is completely specified
+    /// then this set will just contain a single comparator, however if `partial` is incomplete then it will describe a range of versions.
+    fn partial_range(partial: &PartialVersion) -> ComparatorSet {
+        if partial.is_wild() {
+            return ComparatorSet::single(Comparator::default());
+        }
+
+        if !partial.is_incomplete() {
+            return ComparatorSet::single(Comparator{
+                version: partial.into(),
+                op: Operator::Eq,
+            });
+        }
+
+        let lower = Comparator{
+            version: partial.into(),
+            op: Operator::GtEq,
+        };
+
+        let upper = match partial.major {
+            Some(major) => match partial.minor {
+                Some(minor) => match partial.patch {
+                    // Handled above by checking !partial.is_incomplete()
+                    Some(_) => unreachable!(),
+                    None => Comparator{
+                        version: Version::new(major, minor + 1, 0),
+                        op: Operator::Lt,
+                    }
+                },
+                None => Comparator{
+                    version: Version::new(major + 1, 0, 0),
+                    op: Operator::Lt,
+                }
+            },
+            // Handled above by checking partial.is_wild()
+            None => unreachable!(),
+        };
+
+        ComparatorSet::bounds(lower, upper)
+    }
+
     fn merge(&mut self, other: &ComparatorSet) {
         for &comp in &other.comparators {
             self.comparators.push(comp);
         }
     }
 
-    fn parse_str(text: &str) -> Result<ComparatorSet, ParseError> {
-        let text = text.trim();        
-        let mut scanner = Scanner::new(text);
-        ComparatorSet::parse(&mut scanner)
-    }
-
-    fn parse(scanner: &mut Scanner) -> Result<ComparatorSet, ParseError> {
+    fn parse(scanner: &mut Scanner<'_>) -> Result<ComparatorSet, ParseError> {
         if scanner.eof() {
             return Err(scanner.error("Tried to parse empty string"));
         }
@@ -405,12 +321,12 @@ impl ComparatorSet {
                 scanner.next();
                 scanner.accept("v");
                 let partial = PartialVersion::parse(scanner)?;
-                partial.resolve_partial_range()
+                ComparatorSet::partial_range(&partial)
             },
             Some('v') => {
                 scanner.next();
                 let partial = PartialVersion::parse(scanner)?;
-                partial.resolve_partial_range()
+                ComparatorSet::partial_range(&partial)
             },
             Some('>') => {
                 scanner.next();
@@ -443,7 +359,7 @@ impl ComparatorSet {
                 scanner.accept("v");
 
                 let partial = PartialVersion::parse(scanner)?;
-                partial.resolve_partial_range()
+                ComparatorSet::partial_range(&partial)
             },
             None => unreachable!(),
         };
@@ -456,8 +372,7 @@ impl ComparatorSet {
     }
 }
 
-#[derive(Clone)]
-struct Range {
+pub struct Range {
     comparator_sets: Vec<ComparatorSet>,
 }
 
@@ -471,16 +386,10 @@ impl Range {
     fn matches(&self, test_version: &Version) -> bool {
         self.comparator_sets.iter().any(|cmp_set| cmp_set.matches(test_version))
     }
-
-    fn append_range(&mut self, other: &Range) {
-        for set in &other.comparator_sets {
-            self.comparator_sets.push(set.clone());
-        }
-    }
 }
 
 #[derive(Debug)]
-struct ParseError {
+pub struct ParseError {
     message: String,
     position: usize,
 }
@@ -491,116 +400,155 @@ impl Display for ParseError {
     }
 }
 
+struct Scanner<'a> {
+    data: &'a str,
+    index: usize,
+}
+
+impl <'a> Scanner<'a> {
+    fn new(data: &'a str) -> Scanner<'a> {
+        Scanner {
+            data,
+            index: 0,
+        }
+    }
+
+    fn accept(&mut self, value: &str) -> bool {
+        if self.data[self.index..].starts_with(value) {
+            self.index += value.len();
+            true
+        } else {
+            false
+        }
+    }
+
+    fn expect(&mut self, value: &str) -> Result<(), ParseError> {
+        if self.accept(value) {
+            Ok(())
+        } else {
+            let err = if self.eof() {
+                self.error(format!("Expected {value}, found eof"))
+            } else {
+                self.error(format!("Expected {value}, found {}", self.data.chars().nth(self.index).unwrap()))
+            };
+
+            Err(err)
+        }
+    }
+
+    fn accept_int(&mut self) -> Option<u32> {
+        let start = self.index;
+
+        let num_digits = self.data
+            .chars()
+            .skip(start)
+            .take_while(|c| c.is_ascii_digit())
+            .count();
+
+        if num_digits == 0 {
+            return None;
+        }
+
+        let mut result = 0;
+
+        let digits = self.data.chars().skip(start).map_while(|c| c.to_digit(10));
+        for (i, d) in digits.enumerate() {
+            result += d * 10_u32.pow(u32::try_from(num_digits).unwrap() - u32::try_from(i).unwrap() - 1);
+        }
+
+        self.index += num_digits;
+
+        Some(result)
+    }
+
+    fn expect_int(&mut self) -> Result<u32, ParseError> {
+        if let Some(i) = self.accept_int() {
+            Ok(i)
+        } else {
+            let err = if self.eof() {
+                self.error("Expected int, found eof")
+            } else {
+                self.error(format!("Expected int, found {}", self.data.chars().nth(self.index).unwrap()))
+            };
+
+            Err(err)
+        }
+    }
+
+    fn skip_whitespace(&mut self) {
+        while let Some(c) = self.peek() {
+            if c.is_whitespace() {
+                self.index += 1;
+            } else {
+                break;
+            }
+        }
+    }
+
+    fn next(&mut self) -> Option<char> {
+        if let Some(c) = self.peek() {
+            self.index += 1;
+            Some(c)
+        } else {
+            None
+        }
+    }
+
+    fn peek(&self) -> Option<char> {
+        self.data.chars().nth(self.index)
+    }
+
+    fn eof(&self) -> bool {
+        self.index >= self.data.len()
+    }
+
+    fn error(&self, message: impl Into<String>) -> ParseError {
+        ParseError {
+            message: message.into(),
+            position: self.index,
+        }
+    }
+}
+
 pub fn parse(text: &str) -> Result<Range, ParseError> {
     let mut range = Range::new();
-    let sets: Vec<&str> = text.split("||").map(|set| set.trim()).collect();
 
-    for set in &sets {
-        let subrange = if set.starts_with('^') {
-            parse_caret_range(set)?
-        } else if set.starts_with('~') {
-            parse_tilde_range(set)?
-        } else if set.contains('-') {
-            parse_hyphen_range(set)?
+    for set_text in text.split("||") {
+        let mut scanner = Scanner::new(set_text);
+
+        scanner.skip_whitespace();
+
+        let subrange = if scanner.accept("^") {
+            let partial = PartialVersion::parse(&mut scanner)?;
+            ComparatorSet::caret(&partial)
+        } else if scanner.accept("~") {
+            let partial = PartialVersion::parse(&mut scanner)?;
+            ComparatorSet::tilde(&partial)
+        } else if set_text.contains('-') {
+            let lower_version = PartialVersion::parse(&mut scanner)?;
+
+            scanner.skip_whitespace();
+            scanner.expect("-")?;
+            scanner.skip_whitespace();
+
+            let upper_version = PartialVersion::parse(&mut scanner)?;
+
+            ComparatorSet::hyphen_range(&lower_version, &upper_version)
         } else {
-            parse_primitive_range(set)?
+            let mut set = ComparatorSet::new();
+
+            while let Ok(subset) = ComparatorSet::parse(&mut scanner) {
+                set.merge(&subset);
+                scanner.skip_whitespace();
+            }
+
+            set
         };
 
         range.comparator_sets.push(subrange);
     }
 
     Ok(range)
-}
-
-fn parse_primitive_range(text: &str) -> Result<ComparatorSet, ParseError> {
-    let mut set = ComparatorSet::new();
-
-    for comp in text.split_whitespace() {
-        let subset = ComparatorSet::parse_str(comp)?;
-        set.merge(&subset);
-    }
-
-    Ok(set)
-}
-
-fn parse_hyphen_range(text: &str) -> Result<ComparatorSet, ParseError> {
-    let parts: Vec<&str> = text.split('-').collect();
-
-    if parts.len() != 2 {
-        return Err(ParseError{
-            position: 0,
-            message: format!("Hyphen range requires exactly 2 parts, found {}", parts.len()),
-        });
-    }
-
-    let lower = Comparator{
-        version: PartialVersion::parse_str(parts[0])?.into(),
-        op: Operator::GtEq,
-    };
-
-    let upper_version = PartialVersion::parse_str(parts[1])?;
-    let upper = if upper_version.is_incomplete() {
-        let mut upper_resolved: Version = upper_version.into();
-        if upper_version.minor.is_none() {
-            upper_resolved.major += 1;
-        } else if upper_version.patch.is_none() {
-            upper_resolved.minor += 1;
-        }
-
-        Comparator{
-            version: upper_resolved,
-            op: Operator::Lt,
-        }
-    } else {
-        Comparator{
-            version: upper_version.into(),
-            op: Operator::LtEq,
-        }
-    };
-    
-    Ok(ComparatorSet::bounds(lower, upper))
-}
-
-fn parse_caret_range(text: &str) -> Result<ComparatorSet, ParseError> {
-    let mut scanner = Scanner::new(text);
-
-    scanner.expect("^")?;
-
-    let partial = PartialVersion::parse(&mut scanner)?;
-
-    let lower = Comparator{
-        version: partial.into(),
-        op: Operator::GtEq,
-    };
-
-    let upper = partial.resolve_caret();
-
-    let set = ComparatorSet{
-        comparators: vec![lower, upper],
-    };
-    
-    Ok(set)
-}
-
-fn parse_tilde_range(text: &str) -> Result<ComparatorSet, ParseError> {
-    let mut scanner = Scanner::new(text);
-
-    scanner.expect("~")?;
-
-    let partial = PartialVersion::parse(&mut scanner)?;
-
-    let lower = Comparator{
-        version: partial.into(),
-        op: Operator::GtEq,
-    };
-
-    let upper = partial.resolve_tilde();
-
-    let set = ComparatorSet{
-        comparators: vec![lower, upper],
-    };
-    
-    Ok(set)
 }
 
 #[test]
@@ -636,6 +584,21 @@ fn less_than_equal_version() {
 }
 
 #[test]
+fn empty_version() {
+    let range = parse("").unwrap();
+
+    test_range_match(&range, &vec!(Version::new(0, 0, 0), Version::new(1, 212, 1), Version::new(20, 1, 10)));
+}
+
+#[test]
+fn wildcard_version() {
+    let range = parse("*").unwrap();
+
+    test_range_match(&range, &vec!(Version::new(0, 0, 0), Version::new(1, 212, 1), Version::new(20, 1, 10)));
+}
+
+
+#[test]
 fn partial_version_with_operator() {
     let range = parse(">1.3").unwrap();
 
@@ -652,11 +615,19 @@ fn partial_version() {
 }
 
 #[test]
-fn x_partial_version() {
+fn x_patch_partial_version() {
     let range = parse("1.2.x").unwrap();
 
     test_range_match(&range, &vec![Version::new(1, 2, 0), Version::new(1, 2, 4), Version::new(1, 2, 9)]);
     test_range_match_fail(&range, &vec![Version::new(1, 3, 0), Version::new(2, 0, 0)]);
+}
+
+#[test]
+fn x_minor_partial_version() {
+    let range = parse("1.X").unwrap();
+
+    test_range_match(&range, &vec![Version::new(1, 0, 0), Version::new(1, 2, 0), Version::new(1, 4, 2), Version::new(1, 8, 0)]);
+    test_range_match_fail(&range, &vec![Version::new(2, 0, 0), Version::new(0, 7, 0)]);
 }
 
 #[test]
@@ -681,6 +652,22 @@ fn hyphen_range() {
 
     test_range_match(&range, &vec![Version::new(1, 2, 0), Version::new(1, 5, 1), Version::new(1, 3, 17)]);
     test_range_match_fail(&range, &vec![Version::new(1, 6, 0), Version::new(1, 0, 0), Version::new(2, 0, 0), Version::new(1, 5, 5)]);
+}
+
+#[test]
+fn concat_comparators() {
+    let range = parse(">1 <=2.5.1").unwrap();
+
+    test_range_match(&range, &vec![Version::new(1, 0, 1), Version::new(2, 0, 0), Version::new(2, 5, 1)]);
+    test_range_match_fail(&range, &vec![Version::new(1, 0, 0), Version::new(2, 5, 2), Version::new(0, 5, 0), Version::new(3, 0, 0)]);
+}
+
+#[test]
+fn comparator_union() {
+    let range = parse("<1.5 || ^2.1").unwrap();
+
+    test_range_match(&range, &vec![Version::new(1, 1, 0), Version::new(2, 2, 2), Version::new(0, 8, 1), Version::new(2, 9, 0)]);
+    test_range_match_fail(&range, &vec![Version::new(1, 5, 0), Version::new(1, 7, 0), Version::new(3, 0, 0)]);
 }
 
 fn test_range_match(range: &Range, tests: &Vec<Version>) {
