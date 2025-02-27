@@ -73,6 +73,10 @@ export class Parser {
    */
   static create(languageVersion: string): Parser;
   /**
+   * Parse a source file and return a list of likely valid language versions to use.
+   */
+  static inferLanguageVersion(input: string): Array<string>;
+  /**
    * Returns the language version this parser instance is configured for.
    */
   get languageVersion(): string;

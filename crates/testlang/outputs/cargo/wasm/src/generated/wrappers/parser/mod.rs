@@ -37,6 +37,10 @@ define_wrapper! { Parser {
             .map(IntoFFI::_into_ffi)
     }
 
+    fn infer_language_version(input: String) -> Vec<String> {
+        rust::Parser::infer_language_version(&input).iter().map(|v| v.to_string()).collect()
+    }
+
     fn language_version(&self) -> String {
         self._borrow_ffi().language_version().to_string()
     }

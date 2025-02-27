@@ -887,6 +887,7 @@ impl core::marker::StructuralPartialEq for slang_solidity::parser::ParseOutput
 pub struct slang_solidity::parser::Parser
 impl slang_solidity::parser::Parser
 pub fn slang_solidity::parser::Parser::create(language_version: semver::Version) -> core::result::Result<Self, slang_solidity::parser::ParserInitializationError>
+pub fn slang_solidity::parser::Parser::infer_language_version(input: &str) -> alloc::vec::Vec<semver::Version>
 pub fn slang_solidity::parser::Parser::language_version(&self) -> &semver::Version
 pub fn slang_solidity::parser::Parser::parse_file_contents(&self, input: &str) -> slang_solidity::parser::ParseOutput
 pub fn slang_solidity::parser::Parser::parse_nonterminal(&self, kind: slang_solidity::cst::NonterminalKind, input: &str) -> slang_solidity::parser::ParseOutput

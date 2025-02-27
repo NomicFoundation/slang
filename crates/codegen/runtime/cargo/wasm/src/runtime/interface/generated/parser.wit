@@ -9,6 +9,9 @@ interface parser {
         /// Creates a new parser instance for the specified language version.
         create: static func(language-version: string) -> result<parser, string>;
 
+        /// Parse a source file and return a list of likely valid language versions to use.
+        infer-language-version: static func(input: string) -> list<string>;
+
         /// Returns the language version this parser instance is configured for.
         language-version: func() -> string;
 

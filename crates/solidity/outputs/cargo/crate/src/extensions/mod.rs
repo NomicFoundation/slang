@@ -7,4 +7,4 @@ pub mod compilation;
 #[cfg(feature = "__experimental_bindings_api")]
 pub mod bindings;
 
-pub mod version;
+pub mod semver;
