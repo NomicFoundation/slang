@@ -17,7 +17,7 @@
     "streetsidesoftware.code-spell-checker",
     "timonwong.shellcheck",
     // GitHub
-    "GitHub.vscode-pull-request-github",
-    "GitHub.remotehub"
+    "GitHub.remotehub",
+    "GitHub.vscode-pull-request-github"
   ]
 }
