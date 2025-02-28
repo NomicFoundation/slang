@@ -15,6 +15,9 @@
     "esbenp.prettier-vscode",
     "Gruntfuggly.triggertaskonsave",
     "streetsidesoftware.code-spell-checker",
-    "timonwong.shellcheck"
+    "timonwong.shellcheck",
+    // GitHub
+    "GitHub.vscode-pull-request-github",
+    "GitHub.remotehub"
   ]
 }
