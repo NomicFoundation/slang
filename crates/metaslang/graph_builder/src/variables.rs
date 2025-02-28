@@ -67,7 +67,7 @@ impl<'a, V> VariableMap<'a, V> {
         }
     }
 
-    /// Clears this enviroment.
+    /// Clears this environment.
     pub(crate) fn clear(&mut self) {
         self.values.clear();
     }
@@ -161,7 +161,7 @@ impl<'a> Globals<'a> {
             .or_else(|| self.context.as_ref().map(|p| p.get(name)).flatten())
     }
 
-    /// Remove a variable from this enviroment, if it exists.
+    /// Remove a variable from this environment, if it exists.
     pub fn remove(&mut self, name: &Identifier) {
         self.values.remove(name);
     }
@@ -174,7 +174,7 @@ impl<'a> Globals<'a> {
         Iter(self.values.iter())
     }
 
-    /// Clears this enviroment.
+    /// Clears this environment.
     pub fn clear(&mut self) {
         self.values.clear();
     }
