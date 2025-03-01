@@ -419,10 +419,17 @@ define_refcell_wrapper! { QueryMatchIterator {
 impl IntoFFI<ffi::QueryMatch> for rust::QueryMatch {
     #[inline]
     fn _into_ffi(self) -> ffi::QueryMatch {
+        let rust::QueryMatch {
+            queries: _,
+            query_index,
+            root_cursor,
+            captures,
+        } = self;
+
         ffi::QueryMatch {
-            query_index: self.query_index.try_into().unwrap(),
-            captures: self
-                .captures
+            query_index: query_index.try_into().unwrap(),
+            root: root_cursor._into_ffi(),
+            captures: captures
                 .into_iter()
                 .map(|(k, v)| (k, v.into_iter().map(IntoFFI::_into_ffi).collect()))
                 .collect(),

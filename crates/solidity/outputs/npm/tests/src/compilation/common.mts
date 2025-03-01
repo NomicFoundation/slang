@@ -34,7 +34,7 @@ export function assertUserFileLocation(
 ) {
   assert(location.isUserFileLocation());
 
-  assert.equal(location.fileId, fileId);
-  assert.equal(location.cursor.node.kind, kind);
-  assert.equal(location.cursor.textRange.start.line, line);
+  assert.strictEqual(location.fileId, fileId);
+  assert.strictEqual(location.cursor.node.kind, kind);
+  assert.strictEqual(location.cursor.textRange.start.line, line);
 }

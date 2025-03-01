@@ -35,7 +35,7 @@ describe("nodes", () => {
     });
   });
 
-  const terminal = nonTerminal.children()[0]!.node;
+  const terminal = nonTerminal.children()[0].node;
   assertIsTerminalNode(terminal, TerminalKind.StringLiteral);
 
   describe("Terminal", () => {

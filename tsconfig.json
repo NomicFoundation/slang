@@ -10,7 +10,8 @@
     { "path": "./crates/solidity/outputs/npm/tests/tsconfig.json" },
     { "path": "./crates/testlang/outputs/npm/package/tsconfig.json" },
     { "path": "./crates/testlang/outputs/npm/tests/tsconfig.json" },
-    { "path": "./documentation/public/assets/javascripts/tsconfig.json" }
+    { "path": "./documentation/public/assets/javascripts/tsconfig.json" },
+    { "path": "./documentation/public/user-guide/tsconfig.json" }
   ],
 
   "exclude": [
@@ -34,7 +35,6 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noPropertyAccessFromIndexSignature": true,
-    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strict": true,
