@@ -48,6 +48,9 @@ struct TestCommand {
     /// Enables checking bindings for each contract, failing if any symbol cannot be resolved.
     #[arg(long, default_value_t = false)]
     check_bindings: bool,
+
+    #[arg(long, default_value_t = false)]
+    check_infer_version: bool
 }
 
 #[derive(Debug, Parser)]
@@ -83,6 +86,7 @@ fn run_test_command(command: TestCommand) -> Result<()> {
         sharding_options,
         trace,
         check_bindings,
+        check_infer_version,
     } = command;
 
     Terminal::step(format!(
@@ -118,9 +122,9 @@ fn run_test_command(command: TestCommand) -> Result<()> {
         events.start_directory(files.len());
 
         if trace {
-            run_with_traces(files, &events, check_bindings)?;
+            run_with_traces(files, &events, check_bindings, check_infer_version)?;
         } else {
-            run_in_parallel(files, &events, check_bindings)?;
+            run_in_parallel(files, &events, check_bindings, check_infer_version)?;
         }
 
         events.finish_directory();
@@ -152,14 +156,14 @@ fn run_test_command(command: TestCommand) -> Result<()> {
     Ok(())
 }
 
-fn run_with_traces(files: &Vec<SourceFile>, events: &Events, check_bindings: bool) -> Result<()> {
+fn run_with_traces(files: &Vec<SourceFile>, events: &Events, check_bindings: bool, check_infer_version: bool) -> Result<()> {
     for file in files {
         let compiler = &file.compiler;
         let path = file.path.strip_repo_root()?;
 
         events.trace(format!("[{compiler}] Starting: {path:?}"));
 
-        run_test(file, events, check_bindings)?;
+        run_test(file, events, check_bindings, check_infer_version)?;
 
         events.trace(format!("[{compiler}] Finished: {path:?}"));
     }
@@ -167,11 +171,11 @@ fn run_with_traces(files: &Vec<SourceFile>, events: &Events, check_bindings: boo
     Ok(())
 }
 
-fn run_in_parallel(files: &Vec<SourceFile>, events: &Events, check_bindings: bool) -> Result<()> {
+fn run_in_parallel(files: &Vec<SourceFile>, events: &Events, check_bindings: bool, check_infer_version: bool) -> Result<()> {
     files
     .par_iter()
     .panic_fuse(/* Halt as soon as possible if a child panics */)
-    .try_for_each(|file| run_test(file, events, check_bindings))
+    .try_for_each(|file| run_test(file, events, check_bindings, check_infer_version))
 }
 
 fn run_show_combined_results_command(command: ShowCombinedResultsCommand) -> Result<()> {

@@ -15,6 +15,8 @@ pub enum TestOutcome {
     Failed,
     Incompatible,
     NotFound,
+    NoVersion,
+    WrongVersion,
 }
 
 pub struct Events {
@@ -29,6 +31,8 @@ pub struct Events {
     failed: ProgressBar,
     incompatible: ProgressBar,
     not_found: ProgressBar,
+    no_version: ProgressBar,
+    wrong_version: ProgressBar,
 }
 
 impl Events {
@@ -50,6 +54,8 @@ impl Events {
         let failed = reporter.add_counter("❌ Failed", Color::Red, 0);
         let incompatible = reporter.add_counter("❕ Incompatible", Color::White, 0);
         let not_found = reporter.add_counter("❔ Missing", Color::White, 0);
+        let no_version = reporter.add_counter("❔ No Inferred Version", Color::White, 0);
+        let wrong_version = reporter.add_counter("❕ Wrong Inferred Version", Color::Red, 0);
 
         reporter.add_blank();
 
@@ -65,6 +71,8 @@ impl Events {
             failed,
             incompatible,
             not_found,
+            no_version,
+            wrong_version,
         }
     }
 
@@ -98,12 +106,16 @@ impl Events {
         self.failed.inc_length(1);
         self.incompatible.inc_length(1);
         self.not_found.inc_length(1);
+        self.no_version.inc_length(1);
+        self.wrong_version.inc_length(1);
 
         match outcome {
             TestOutcome::Passed => self.passed.inc(1),
             TestOutcome::Failed => self.failed.inc(1),
             TestOutcome::Incompatible => self.incompatible.inc(1),
             TestOutcome::NotFound => self.not_found.inc(1),
+            TestOutcome::NoVersion => self.no_version.inc(1),
+            TestOutcome::WrongVersion => self.wrong_version.inc(1), 
         };
     }
 
@@ -131,6 +143,10 @@ impl Events {
         self.test_error(message);
     }
 
+    pub fn version_inference_error(&self, message: impl AsRef<str>) {
+        self.test_error(message);
+    }
+
     pub fn trace(&self, message: impl AsRef<str>) {
         self.reporter.println(message);
     }
@@ -142,6 +158,8 @@ impl Events {
             failed: self.failed.position(),
             incompatible: self.incompatible.position(),
             not_found: self.not_found.position(),
+            no_version: self.no_version.position(),
+            wrong_version: self.wrong_version.position(),
             elapsed: self.all_directories.elapsed(),
         }
     }
