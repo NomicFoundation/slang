@@ -449,6 +449,16 @@ impl<'a> Scanner<'a> {
         }
     }
 
+    fn accept_any(&mut self, values: &[&str]) -> bool {
+        for v in values {
+            if self.accept(v) {
+                return true;
+            }
+        }
+
+        false
+    }
+
     fn expect(&mut self, value: &str) -> Result<(), ParseError> {
         if self.accept(value) {
             Ok(())
@@ -553,22 +563,28 @@ pub fn parse(text: &str) -> Result<Range, ParseError> {
 
         scanner.skip_whitespace();
 
-        let subrange = if scanner.accept("^") {
-            let partial = PartialVersion::parse(&mut scanner)?;
-            ComparatorSet::caret(&partial)
-        } else if scanner.accept("~") {
-            let partial = PartialVersion::parse(&mut scanner)?;
-            ComparatorSet::tilde(&partial)
-        } else if set_text.contains('-') {
+        let subrange = if set_text.contains('-') {
+            // Ignore all leading '^' and '~'
+            while scanner.accept_any(&["^", "~"]) {}
+
             let lower_version = PartialVersion::parse(&mut scanner)?;
 
             scanner.skip_whitespace();
             scanner.expect("-")?;
             scanner.skip_whitespace();
 
+            // Ignore all leading '^' and '~'
+            while scanner.accept_any(&["^", "~"]) {}
+
             let upper_version = PartialVersion::parse(&mut scanner)?;
 
             ComparatorSet::hyphen_range(&lower_version, &upper_version)
+        } else if scanner.accept("^") {
+            let partial = PartialVersion::parse(&mut scanner)?;
+            ComparatorSet::caret(&partial)
+        } else if scanner.accept("~") {
+            let partial = PartialVersion::parse(&mut scanner)?;
+            ComparatorSet::tilde(&partial)
         } else {
             let mut set = ComparatorSet::new();
 
@@ -779,6 +795,29 @@ fn tilde_range() {
 #[test]
 fn hyphen_range() {
     let range = parse("1.2 - 1.5.1").unwrap();
+
+    test_range_match(
+        &range,
+        &vec![
+            Version::new(1, 2, 0),
+            Version::new(1, 5, 1),
+            Version::new(1, 3, 17),
+        ],
+    );
+    test_range_match_fail(
+        &range,
+        &vec![
+            Version::new(1, 6, 0),
+            Version::new(1, 0, 0),
+            Version::new(2, 0, 0),
+            Version::new(1, 5, 5),
+        ],
+    );
+}
+
+#[test]
+fn ignore_operators_in_hyphen_ranges() {
+    let range = parse("^1.2 - ~1.5.1").unwrap();
 
     test_range_match(
         &range,
