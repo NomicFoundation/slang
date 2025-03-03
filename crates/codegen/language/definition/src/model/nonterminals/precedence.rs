@@ -37,6 +37,7 @@ pub struct PrecedenceOperator {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub error_recovery: Option<FieldsErrorRecovery>,
 
+    #[serde(with = "indexmap::map::serde_seq")]
     pub fields: IndexMap<Identifier, Field>,
 }
 
