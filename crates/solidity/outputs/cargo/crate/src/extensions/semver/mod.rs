@@ -25,9 +25,7 @@ pub fn infer_language_version(src: &str) -> Vec<semver::Version> {
             .unwrap_or(pragma_text)
             .trim();
 
-        if let Ok(r) = parser::parse(pragma_text) {
-            found_ranges.push(r);
-        }
+        found_ranges.push(parser::parse(pragma_text));
     }
 
     let mut matching_versions = vec![];
@@ -300,6 +298,10 @@ impl ComparatorSet {
         }
     }
 
+    fn wild() -> ComparatorSet {
+        ComparatorSet::single(Comparator::default())
+    }
+
     fn bounds(lower: Comparator, upper: Comparator) -> ComparatorSet {
         ComparatorSet {
             comparators: vec![lower, upper],
@@ -439,7 +441,11 @@ impl ComparatorSet {
     }
 
     fn matches(&self, test_version: &Version) -> bool {
-        self.comparators.iter().all(|cmp| cmp.matches(test_version))
+        if self.comparators.is_empty() {
+            false
+        } else {
+            self.comparators.iter().all(|cmp| cmp.matches(test_version))
+        }
     }
 }
 
@@ -481,10 +487,21 @@ impl Range {
         }
     }
 
+    // Create a version range representing a wildcard expression.
+    pub fn wild() -> Range {
+        Range {
+            comparator_sets: vec![ComparatorSet::wild()],
+        }
+    }
+
     pub fn matches(&self, test_version: &Version) -> bool {
-        self.comparator_sets
-            .iter()
-            .any(|cmp_set| cmp_set.matches(test_version))
+        if self.comparator_sets.is_empty() {
+            false
+        } else {
+            self.comparator_sets
+                .iter()
+                .any(|cmp_set| cmp_set.matches(test_version))
+        }
     }
 }
 
