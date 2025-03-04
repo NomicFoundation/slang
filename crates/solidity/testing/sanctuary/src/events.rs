@@ -115,7 +115,7 @@ impl Events {
             TestOutcome::Incompatible => self.incompatible.inc(1),
             TestOutcome::NotFound => self.not_found.inc(1),
             TestOutcome::NoVersion => self.no_version.inc(1),
-            TestOutcome::WrongVersion => self.wrong_version.inc(1), 
+            TestOutcome::WrongVersion => self.wrong_version.inc(1),
         };
     }
 

@@ -50,7 +50,7 @@ struct TestCommand {
     check_bindings: bool,
 
     #[arg(long, default_value_t = false)]
-    check_infer_version: bool
+    check_infer_version: bool,
 }
 
 #[derive(Debug, Parser)]
@@ -156,7 +156,12 @@ fn run_test_command(command: TestCommand) -> Result<()> {
     Ok(())
 }
 
-fn run_with_traces(files: &Vec<SourceFile>, events: &Events, check_bindings: bool, check_infer_version: bool) -> Result<()> {
+fn run_with_traces(
+    files: &Vec<SourceFile>,
+    events: &Events,
+    check_bindings: bool,
+    check_infer_version: bool,
+) -> Result<()> {
     for file in files {
         let compiler = &file.compiler;
         let path = file.path.strip_repo_root()?;
@@ -171,7 +176,12 @@ fn run_with_traces(files: &Vec<SourceFile>, events: &Events, check_bindings: boo
     Ok(())
 }
 
-fn run_in_parallel(files: &Vec<SourceFile>, events: &Events, check_bindings: bool, check_infer_version: bool) -> Result<()> {
+fn run_in_parallel(
+    files: &Vec<SourceFile>,
+    events: &Events,
+    check_bindings: bool,
+    check_infer_version: bool,
+) -> Result<()> {
     files
     .par_iter()
     .panic_fuse(/* Halt as soon as possible if a child panics */)

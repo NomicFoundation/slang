@@ -14,7 +14,7 @@ pub fn parse(text: &str) -> Result<Range, ParseError> {
             let partial_subset = if set_text.contains('-') {
                 // solc allows users to specify range operators ('^', '~') in hyphen ranges, but ignores them.
                 // We'll do the same here.
-            
+
                 // Ignore all leading '^' and '~'
                 while scanner.accept_any(&["^", "~"]) {}
 
@@ -41,7 +41,7 @@ pub fn parse(text: &str) -> Result<Range, ParseError> {
 
                 match ComparatorSet::parse(&mut scanner) {
                     Ok(comparator) => set.merge(&comparator),
-                    Err(_) => scanner.skip_non_whitespace(), 
+                    Err(_) => scanner.skip_non_whitespace(),
                 }
 
                 set
@@ -57,7 +57,10 @@ pub fn parse(text: &str) -> Result<Range, ParseError> {
     Ok(range)
 }
 
-trait Parse where Self: std::marker::Sized {
+trait Parse
+where
+    Self: std::marker::Sized,
+{
     fn parse(text: &mut Scanner<'_>) -> Result<Self, ParseError>;
 }
 
@@ -115,16 +118,18 @@ impl Parse for PartialVersion {
                 }
                 Some(_) => {
                     if has_seen_wildcard {
-                        return Err(scanner.error("Cannot specify concrete patch version after a wildcard minor version."));
+                        return Err(scanner.error(
+                            "Cannot specify concrete patch version after a wildcard minor version.",
+                        ));
                     }
                     partial.patch = VersionPart::Specified(scanner.expect_int()?);
-                },
+                }
                 None => return Err(scanner.error("Expected a digit or wildcard in patch position")),
             }
         }
 
         Ok(partial)
-    }    
+    }
 }
 
 impl Parse for Operator {
@@ -134,11 +139,11 @@ impl Parse for Operator {
                 scanner.expect("=")?;
                 scanner.accept("v");
                 Ok(Operator::Eq)
-            },
+            }
             Some('v') => {
                 scanner.expect("v")?;
                 Ok(Operator::Eq)
-            },
+            }
             Some('>') => {
                 scanner.expect(">")?;
                 let op = if scanner.accept("=") {
@@ -149,10 +154,10 @@ impl Parse for Operator {
                 scanner.accept("v");
 
                 Ok(op)
-            },
+            }
             Some('<') => {
                 scanner.expect("<")?;
-                
+
                 let op = if scanner.accept("=") {
                     Operator::LtEq
                 } else {
@@ -161,7 +166,7 @@ impl Parse for Operator {
                 scanner.accept("v");
 
                 Ok(op)
-            },
+            }
             x => Err(scanner.error(format!("Expected operator but found {x:?} instead"))),
         }
     }
@@ -185,7 +190,7 @@ impl Parse for ComparatorSet {
             ComparatorSet::single(Comparator::default())
         } else if partial.is_complete() {
             // Partial version is complete i.e. it represents a concrete version, not a range
-            ComparatorSet::single(Comparator{
+            ComparatorSet::single(Comparator {
                 version: partial.into(),
                 op: op.unwrap_or(Operator::Eq),
             })
@@ -195,52 +200,52 @@ impl Parse for ComparatorSet {
             match op {
                 Some(Operator::Lt) => {
                     // <0.7 == <0.7.x == <0.7.0
-                    ComparatorSet::single(Comparator{
+                    ComparatorSet::single(Comparator {
                         version: partial.into(),
-                        op: Operator::Lt,    
+                        op: Operator::Lt,
                     })
-                },
+                }
                 Some(Operator::LtEq) => {
                     let comparator = if partial.minor.is_wild() || partial.patch.is_wild() {
                         // <=0.7.x == <0.8.0
-                        Comparator{
+                        Comparator {
                             version: ComparatorSet::tilde(&partial).comparators[1].version,
                             op: Operator::Lt,
                         }
                     } else {
                         // <=0.7 == <=0.7.0
-                        Comparator{
+                        Comparator {
                             version: partial.into(),
                             op: Operator::LtEq,
                         }
                     };
 
                     ComparatorSet::single(comparator)
-                },
+                }
                 Some(Operator::Gt) => {
                     let comparator = if partial.minor.is_wild() || partial.patch.is_wild() {
                         // >0.7.x == >0.7.0
-                        Comparator{
+                        Comparator {
                             version: partial.into(),
                             op: Operator::Gt,
                         }
                     } else {
                         // >0.7 == >=0.8.0
-                        Comparator{
+                        Comparator {
                             version: ComparatorSet::tilde(&partial).comparators[1].version,
                             op: Operator::GtEq,
                         }
                     };
 
                     ComparatorSet::single(comparator)
-                },
+                }
                 Some(Operator::GtEq) => {
                     // >=0.7 == >=0.7.x >=0.7.0
-                    ComparatorSet::single(Comparator{
+                    ComparatorSet::single(Comparator {
                         version: partial.into(),
-                        op: Operator::GtEq,    
+                        op: Operator::GtEq,
                     })
-                },
+                }
                 Some(Operator::Eq) | None => {
                     // Treat '=[range]' as the same as '[range]'
                     ComparatorSet::partial_range(&partial)
@@ -299,7 +304,12 @@ impl<'a> Scanner<'a> {
     }
 
     fn expect_int(&mut self) -> Result<u32, ParseError> {
-        let digits: String = self.data.chars().skip(self.index).take_while(|c| c.is_ascii_digit()).collect();
+        let digits: String = self
+            .data
+            .chars()
+            .skip(self.index)
+            .take_while(|c| c.is_ascii_digit())
+            .collect();
         if digits.is_empty() {
             let err = if self.eof() {
                 self.error("Expected int, found eof")
@@ -470,20 +480,22 @@ fn gteq_partial_version() {
             Version::new(1, 4, 0),
         ],
     );
-    test_range_match_fail(
-        &range,
-        &vec![
-            Version::new(1, 2, 0),
-            Version::new(0, 8, 0),
-        ],
-    );
+    test_range_match_fail(&range, &vec![Version::new(1, 2, 0), Version::new(0, 8, 0)]);
 }
 
 #[test]
 fn gteq_wildcard_version() {
     let range = parse(">=1.3.x").unwrap();
 
-    test_range_match(&range, &vec![Version::new(1, 3, 0), Version::new(1, 3, 4), Version::new(1, 4, 0), Version::new(2, 3, 3)]);
+    test_range_match(
+        &range,
+        &vec![
+            Version::new(1, 3, 0),
+            Version::new(1, 3, 4),
+            Version::new(1, 4, 0),
+            Version::new(2, 3, 3),
+        ],
+    );
     test_range_match_fail(&range, &vec![Version::new(1, 2, 1), Version::new(0, 8, 0)]);
 }
 
@@ -491,13 +503,7 @@ fn gteq_wildcard_version() {
 fn gt_partial_version() {
     let range = parse(">1.3").unwrap();
 
-    test_range_match(
-        &range,
-        &vec![
-            Version::new(1, 4, 0),
-            Version::new(2, 5, 3),
-        ],
-    );
+    test_range_match(&range, &vec![Version::new(1, 4, 0), Version::new(2, 5, 3)]);
     test_range_match_fail(
         &range,
         &vec![
@@ -513,15 +519,36 @@ fn gt_partial_version() {
 fn gt_wildcard_version() {
     let range = parse(">1.3.x").unwrap();
 
-    test_range_match(&range, &vec![Version::new(1, 4, 0), Version::new(2, 1, 0), Version::new(1, 3, 5)]);
-    test_range_match_fail(&range, &vec![Version::new(1, 3, 0), Version::new(1, 2, 0), Version::new(0, 8, 0)]);
+    test_range_match(
+        &range,
+        &vec![
+            Version::new(1, 4, 0),
+            Version::new(2, 1, 0),
+            Version::new(1, 3, 5),
+        ],
+    );
+    test_range_match_fail(
+        &range,
+        &vec![
+            Version::new(1, 3, 0),
+            Version::new(1, 2, 0),
+            Version::new(0, 8, 0),
+        ],
+    );
 }
 
 #[test]
 fn lteq_partial_version() {
     let range = parse("<=0.8").unwrap();
 
-    test_range_match(&range, &vec![Version::new(0, 7, 8), Version::new(0, 0, 5), Version::new(0, 8, 0)]);
+    test_range_match(
+        &range,
+        &vec![
+            Version::new(0, 7, 8),
+            Version::new(0, 0, 5),
+            Version::new(0, 8, 0),
+        ],
+    );
     test_range_match_fail(&range, &vec![Version::new(0, 8, 5), Version::new(1, 2, 0)]);
 }
 
@@ -529,7 +556,15 @@ fn lteq_partial_version() {
 fn lteq_wildcard_version() {
     let range = parse("<=0.8.x").unwrap();
 
-    test_range_match(&range, &vec![Version::new(0, 7, 8), Version::new(0, 0, 5), Version::new(0, 8, 0), Version::new(0, 8, 5)]);
+    test_range_match(
+        &range,
+        &vec![
+            Version::new(0, 7, 8),
+            Version::new(0, 0, 5),
+            Version::new(0, 8, 0),
+            Version::new(0, 8, 5),
+        ],
+    );
     test_range_match_fail(&range, &vec![Version::new(1, 2, 0), Version::new(0, 9, 1)]);
 }
 
@@ -538,7 +573,14 @@ fn lt_partial_version() {
     let range = parse("<0.8").unwrap();
 
     test_range_match(&range, &vec![Version::new(0, 7, 8), Version::new(0, 0, 5)]);
-    test_range_match_fail(&range, &vec![Version::new(0, 8, 0), Version::new(0, 8, 5), Version::new(1, 2, 0)]);
+    test_range_match_fail(
+        &range,
+        &vec![
+            Version::new(0, 8, 0),
+            Version::new(0, 8, 5),
+            Version::new(1, 2, 0),
+        ],
+    );
 }
 
 #[test]
@@ -546,7 +588,14 @@ fn lt_wildcard_version() {
     let range = parse("<0.8.x").unwrap();
 
     test_range_match(&range, &vec![Version::new(0, 7, 8), Version::new(0, 0, 5)]);
-    test_range_match_fail(&range, &vec![Version::new(0, 8, 0), Version::new(0, 8, 5), Version::new(1, 2, 0)]);
+    test_range_match_fail(
+        &range,
+        &vec![
+            Version::new(0, 8, 0),
+            Version::new(0, 8, 5),
+            Version::new(1, 2, 0),
+        ],
+    );
 }
 
 #[test]
@@ -568,8 +617,22 @@ fn partial_version() {
 fn combo_partial_version() {
     let range = parse(">=1 <1.8").unwrap();
 
-    test_range_match(&range, &vec![Version::new(1, 0, 0), Version::new(1, 5, 0), Version::new(1, 7, 9)]);
-    test_range_match_fail(&range, &vec![Version::new(0, 9, 9), Version::new(3, 0, 0), Version::new(2, 8, 3)]);
+    test_range_match(
+        &range,
+        &vec![
+            Version::new(1, 0, 0),
+            Version::new(1, 5, 0),
+            Version::new(1, 7, 9),
+        ],
+    );
+    test_range_match_fail(
+        &range,
+        &vec![
+            Version::new(0, 9, 9),
+            Version::new(3, 0, 0),
+            Version::new(2, 8, 3),
+        ],
+    );
 }
 
 #[test]
@@ -746,136 +809,136 @@ fn allow_inner_quotes() {
         assert!(r.matches(&target_version));
     }
 }
-        
+
 #[test]
 fn solc_positive_tests() {
-    solc_test_case("*", Version::new(1,2,3), true);
-	solc_test_case("1.0.0 - 2.0.0", Version::new(1,2,3), true);
-	solc_test_case("1.0.0", Version::new(1,0,0), true);
-	solc_test_case("1.0", Version::new(1,0,0), true);
-	solc_test_case("1", Version::new(1,0,0), true);
-	solc_test_case(">=*", Version::new(0,2,4), true);
-	solc_test_case("*", Version::new(1,2,3), true);
-	solc_test_case(">=1.0.0", Version::new(1,0,0), true);
-	solc_test_case(">=1.0.0", Version::new(1,0,1), true);
-	solc_test_case(">=1.0.0", Version::new(1,1,0), true);
-	solc_test_case(">1.0.0", Version::new(1,0,1), true);
-	solc_test_case(">1.0.0", Version::new(1,1,0), true);
-	solc_test_case("<=2.0.0", Version::new(2,0,0), true);
-	solc_test_case("<=2.0.0", Version::new(1,9999,9999), true);
-	solc_test_case("<=2.0.0", Version::new(0,2,9), true);
-	solc_test_case("<2.0.0", Version::new(1,9999,9999), true);
-	solc_test_case("<2.0.0", Version::new(0,2,9), true);
-	solc_test_case(">= 1.0.0", Version::new(1,0,0), true);
-	solc_test_case(">=  1.0.0", Version::new(1,0,1), true);
-	solc_test_case(">=   1.0.0", Version::new(1,1,0), true);
-	solc_test_case("> 1.0.0", Version::new(1,0,1), true);
-	solc_test_case(">  1.0.0", Version::new(1,1,0), true);
-	solc_test_case("<=   2.0.0", Version::new(2,0,0), true);
-	solc_test_case("<= 2.0.0", Version::new(1,9999,9999), true);
-	solc_test_case("<=  2.0.0", Version::new(0,2,9), true);
-	solc_test_case("<    2.0.0", Version::new(1,9999,9999), true);
-	solc_test_case("<\t2.0.0", Version::new(0,2,9), true);
-	solc_test_case(">=0.1.97", Version::new(0,1,97), true);
-	solc_test_case("0.1.20 || 1.2.4", Version::new(1,2,4), true);
-	solc_test_case(">=0.2.3 || <0.0.1", Version::new(0,0,0), true);
-	solc_test_case(">=0.2.3 || <0.0.1", Version::new(0,2,3), true);
-	solc_test_case(">=0.2.3 || <0.0.1", Version::new(0,2,4), true);
-	solc_test_case("\"2.x.x\"", Version::new(2,1,3), true);
-	solc_test_case("1.2.x", Version::new(1,2,3), true);
-	solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(2,1,3), true);
-	solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(1,2,3), true);
-	solc_test_case("x", Version::new(1,2,3), true);
-	solc_test_case("2.*.*", Version::new(2,1,3), true);
-	solc_test_case("1.2.*", Version::new(1,2,3), true);
-	solc_test_case("1.2.* || 2.*", Version::new(2,1,3), true);
-	solc_test_case("1.2.* || 2.*", Version::new(1,2,3), true);
-	solc_test_case("*", Version::new(1,2,3), true);
-	solc_test_case("2", Version::new(2,1,2), true);
-	solc_test_case("2.3", Version::new(2,3,1), true);
-	solc_test_case("~2.4", Version::new(2,4,0), true);
-	solc_test_case("~2.4", Version::new(2,4,5), true);
-	solc_test_case("~1", Version::new(1,2,3), true);
-	solc_test_case("~1.0", Version::new(1,0,2), true);
-	solc_test_case("~ 1.0", Version::new(1,0,2), true);
-	solc_test_case("~ 1.0.3", Version::new(1,0,12), true);
-	solc_test_case(">=1", Version::new(1,0,0), true);
-	solc_test_case(">= 1", Version::new(1,0,0), true);
-	solc_test_case("<1.2", Version::new(1,1,1), true);
-	solc_test_case("< 1.2", Version::new(1,1,1), true);
-	solc_test_case("=0.7.x", Version::new(0,7,2), true);
-	solc_test_case("<=0.7.x", Version::new(0,7,2), true);
-	solc_test_case(">=0.7.x", Version::new(0,7,2), true);
-	solc_test_case("<=0.7.x", Version::new(0,6,2), true);
-	solc_test_case("~1.2.1 >=1.2.3", Version::new(1,2,3), true);
-	solc_test_case("~1.2.1 =1.2.3", Version::new(1,2,3), true);
-	solc_test_case("~1.2.1 1.2.3", Version::new(1,2,3), true);
-	solc_test_case("~1.2.1 >=1.2.3 1.2.3", Version::new(1,2,3), true);
-	solc_test_case("~1.2.1 1.2.3 >=1.2.3", Version::new(1,2,3), true);
-	solc_test_case(">=\"1.2.1\" 1.2.3", Version::new(1,2,3), true);
-	solc_test_case("1.2.3 >=1.2.1", Version::new(1,2,3), true);
-	solc_test_case(">=1.2.3 >=1.2.1", Version::new(1,2,3), true);
-	solc_test_case(">=1.2.1 >=1.2.3", Version::new(1,2,3), true);
-	solc_test_case(">=1.2", Version::new(1,2,8), true);
-	solc_test_case("^1.2.3", Version::new(1,8,1), true);
-	solc_test_case("^0.1.2", Version::new(0,1,2), true);
-	solc_test_case("^0.1", Version::new(0,1,2), true);
-	solc_test_case("^1.2", Version::new(1,4,2), true);
-	solc_test_case("^1.2", Version::new(1,2,0), true);
-	solc_test_case("^1", Version::new(1,2,0), true);
-	solc_test_case("<=1.2.3", Version::new(1,2,3), true);
-	solc_test_case(">1.2", Version::new(1,3,0), true);
-	solc_test_case("^1.2 ^1", Version::new(1,4,2), true);
-	solc_test_case("^0", Version::new(0,5,1), true);
-	solc_test_case("^0", Version::new(0,1,1), true);
+    solc_test_case("*", Version::new(1, 2, 3), true);
+    solc_test_case("1.0.0 - 2.0.0", Version::new(1, 2, 3), true);
+    solc_test_case("1.0.0", Version::new(1, 0, 0), true);
+    solc_test_case("1.0", Version::new(1, 0, 0), true);
+    solc_test_case("1", Version::new(1, 0, 0), true);
+    solc_test_case(">=*", Version::new(0, 2, 4), true);
+    solc_test_case("*", Version::new(1, 2, 3), true);
+    solc_test_case(">=1.0.0", Version::new(1, 0, 0), true);
+    solc_test_case(">=1.0.0", Version::new(1, 0, 1), true);
+    solc_test_case(">=1.0.0", Version::new(1, 1, 0), true);
+    solc_test_case(">1.0.0", Version::new(1, 0, 1), true);
+    solc_test_case(">1.0.0", Version::new(1, 1, 0), true);
+    solc_test_case("<=2.0.0", Version::new(2, 0, 0), true);
+    solc_test_case("<=2.0.0", Version::new(1, 9999, 9999), true);
+    solc_test_case("<=2.0.0", Version::new(0, 2, 9), true);
+    solc_test_case("<2.0.0", Version::new(1, 9999, 9999), true);
+    solc_test_case("<2.0.0", Version::new(0, 2, 9), true);
+    solc_test_case(">= 1.0.0", Version::new(1, 0, 0), true);
+    solc_test_case(">=  1.0.0", Version::new(1, 0, 1), true);
+    solc_test_case(">=   1.0.0", Version::new(1, 1, 0), true);
+    solc_test_case("> 1.0.0", Version::new(1, 0, 1), true);
+    solc_test_case(">  1.0.0", Version::new(1, 1, 0), true);
+    solc_test_case("<=   2.0.0", Version::new(2, 0, 0), true);
+    solc_test_case("<= 2.0.0", Version::new(1, 9999, 9999), true);
+    solc_test_case("<=  2.0.0", Version::new(0, 2, 9), true);
+    solc_test_case("<    2.0.0", Version::new(1, 9999, 9999), true);
+    solc_test_case("<\t2.0.0", Version::new(0, 2, 9), true);
+    solc_test_case(">=0.1.97", Version::new(0, 1, 97), true);
+    solc_test_case("0.1.20 || 1.2.4", Version::new(1, 2, 4), true);
+    solc_test_case(">=0.2.3 || <0.0.1", Version::new(0, 0, 0), true);
+    solc_test_case(">=0.2.3 || <0.0.1", Version::new(0, 2, 3), true);
+    solc_test_case(">=0.2.3 || <0.0.1", Version::new(0, 2, 4), true);
+    solc_test_case("\"2.x.x\"", Version::new(2, 1, 3), true);
+    solc_test_case("1.2.x", Version::new(1, 2, 3), true);
+    solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(2, 1, 3), true);
+    solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(1, 2, 3), true);
+    solc_test_case("x", Version::new(1, 2, 3), true);
+    solc_test_case("2.*.*", Version::new(2, 1, 3), true);
+    solc_test_case("1.2.*", Version::new(1, 2, 3), true);
+    solc_test_case("1.2.* || 2.*", Version::new(2, 1, 3), true);
+    solc_test_case("1.2.* || 2.*", Version::new(1, 2, 3), true);
+    solc_test_case("*", Version::new(1, 2, 3), true);
+    solc_test_case("2", Version::new(2, 1, 2), true);
+    solc_test_case("2.3", Version::new(2, 3, 1), true);
+    solc_test_case("~2.4", Version::new(2, 4, 0), true);
+    solc_test_case("~2.4", Version::new(2, 4, 5), true);
+    solc_test_case("~1", Version::new(1, 2, 3), true);
+    solc_test_case("~1.0", Version::new(1, 0, 2), true);
+    solc_test_case("~ 1.0", Version::new(1, 0, 2), true);
+    solc_test_case("~ 1.0.3", Version::new(1, 0, 12), true);
+    solc_test_case(">=1", Version::new(1, 0, 0), true);
+    solc_test_case(">= 1", Version::new(1, 0, 0), true);
+    solc_test_case("<1.2", Version::new(1, 1, 1), true);
+    solc_test_case("< 1.2", Version::new(1, 1, 1), true);
+    solc_test_case("=0.7.x", Version::new(0, 7, 2), true);
+    solc_test_case("<=0.7.x", Version::new(0, 7, 2), true);
+    solc_test_case(">=0.7.x", Version::new(0, 7, 2), true);
+    solc_test_case("<=0.7.x", Version::new(0, 6, 2), true);
+    solc_test_case("~1.2.1 >=1.2.3", Version::new(1, 2, 3), true);
+    solc_test_case("~1.2.1 =1.2.3", Version::new(1, 2, 3), true);
+    solc_test_case("~1.2.1 1.2.3", Version::new(1, 2, 3), true);
+    solc_test_case("~1.2.1 >=1.2.3 1.2.3", Version::new(1, 2, 3), true);
+    solc_test_case("~1.2.1 1.2.3 >=1.2.3", Version::new(1, 2, 3), true);
+    solc_test_case(">=\"1.2.1\" 1.2.3", Version::new(1, 2, 3), true);
+    solc_test_case("1.2.3 >=1.2.1", Version::new(1, 2, 3), true);
+    solc_test_case(">=1.2.3 >=1.2.1", Version::new(1, 2, 3), true);
+    solc_test_case(">=1.2.1 >=1.2.3", Version::new(1, 2, 3), true);
+    solc_test_case(">=1.2", Version::new(1, 2, 8), true);
+    solc_test_case("^1.2.3", Version::new(1, 8, 1), true);
+    solc_test_case("^0.1.2", Version::new(0, 1, 2), true);
+    solc_test_case("^0.1", Version::new(0, 1, 2), true);
+    solc_test_case("^1.2", Version::new(1, 4, 2), true);
+    solc_test_case("^1.2", Version::new(1, 2, 0), true);
+    solc_test_case("^1", Version::new(1, 2, 0), true);
+    solc_test_case("<=1.2.3", Version::new(1, 2, 3), true);
+    solc_test_case(">1.2", Version::new(1, 3, 0), true);
+    solc_test_case("^1.2 ^1", Version::new(1, 4, 2), true);
+    solc_test_case("^0", Version::new(0, 5, 1), true);
+    solc_test_case("^0", Version::new(0, 1, 1), true);
 }
 
 #[test]
 fn solc_negative_tests() {
-    solc_test_case("^0^1", Version::new(0,0,0), false);
-	solc_test_case("^0^1", Version::new(1,0,0), false);
-	solc_test_case("1.0.0 - 2.0.0", Version::new(2,2,3), false);
-	solc_test_case("1.0.0", Version::new(1,0,1), false);
-	solc_test_case(">=1.0.0", Version::new(0,0,0), false);
-	solc_test_case(">=1.0.0", Version::new(0,0,1), false);
-	solc_test_case(">=1.0.0", Version::new(0,1,0), false);
-	solc_test_case(">1.0.0", Version::new(0,0,1), false);
-	solc_test_case(">1.0.0", Version::new(0,1,0), false);
-	solc_test_case("<=2.0.0", Version::new(3,0,0), false);
-	solc_test_case("<=2.0.0", Version::new(2,9999,9999), false);
-	solc_test_case("<=2.0.0", Version::new(2,2,9), false);
-	solc_test_case("<2.0.0", Version::new(2,9999,9999), false);
-	solc_test_case("<2.0.0", Version::new(2,2,9), false);
-	solc_test_case(">=0.1.97", Version::new(0,1,93), false);
-	solc_test_case("0.1.20 || 1.2.4", Version::new(1,2,3), false);
-	solc_test_case(">=0.2.3 || <0.0.1", Version::new(0,0,3), false);
-	solc_test_case(">=0.2.3 || <0.0.1", Version::new(0,2,2), false);
-	solc_test_case("\"2.x.x\"", Version::new(1,1,3), false);
-	solc_test_case("\"2.x.x\"", Version::new(3,1,3), false);
-	solc_test_case("1.2.x", Version::new(1,3,3), false);
-	solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(3,1,3), false);
-	solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(1,1,3), false);
-	solc_test_case("2.*.*", Version::new(1,1,3), false);
-	solc_test_case("2.*.*", Version::new(3,1,3), false);
-	solc_test_case("1.2.*", Version::new(1,3,3), false);
-	solc_test_case("1.2.* || 2.*", Version::new(3,1,3), false);
-	solc_test_case("1.2.* || 2.*", Version::new(1,1,3), false);
-	solc_test_case("2", Version::new(1,1,2), false);
-	solc_test_case("2.3", Version::new(2,4,1), false);
-	solc_test_case("~2.4", Version::new(2,5,0), false);
-	solc_test_case("~2.4", Version::new(2,3,9), false);
-	solc_test_case("~1", Version::new(0,2,3), false);
-	solc_test_case("~1.0", Version::new(1,1,0), false);
-	solc_test_case("<1", Version::new(1,0,0), false);
-	solc_test_case(">=1.2", Version::new(1,1,1), false);
-	solc_test_case("=0.7.x", Version::new(0,8,2), false);
-	solc_test_case(">=0.7.x", Version::new(0,6,2), false);
-	solc_test_case("<0.7.x", Version::new(0,7,2), false);
-	solc_test_case(">1.2", Version::new(1,2,8), false);
-	solc_test_case("^1.2.3", Version::new(2,0,0), false);
-	solc_test_case("^1.2.3", Version::new(1,2,2), false);
-	solc_test_case("^1.2", Version::new(1,1,9), false);
-	solc_test_case("^0", Version::new(1,0,0), false);
+    solc_test_case("^0^1", Version::new(0, 0, 0), false);
+    solc_test_case("^0^1", Version::new(1, 0, 0), false);
+    solc_test_case("1.0.0 - 2.0.0", Version::new(2, 2, 3), false);
+    solc_test_case("1.0.0", Version::new(1, 0, 1), false);
+    solc_test_case(">=1.0.0", Version::new(0, 0, 0), false);
+    solc_test_case(">=1.0.0", Version::new(0, 0, 1), false);
+    solc_test_case(">=1.0.0", Version::new(0, 1, 0), false);
+    solc_test_case(">1.0.0", Version::new(0, 0, 1), false);
+    solc_test_case(">1.0.0", Version::new(0, 1, 0), false);
+    solc_test_case("<=2.0.0", Version::new(3, 0, 0), false);
+    solc_test_case("<=2.0.0", Version::new(2, 9999, 9999), false);
+    solc_test_case("<=2.0.0", Version::new(2, 2, 9), false);
+    solc_test_case("<2.0.0", Version::new(2, 9999, 9999), false);
+    solc_test_case("<2.0.0", Version::new(2, 2, 9), false);
+    solc_test_case(">=0.1.97", Version::new(0, 1, 93), false);
+    solc_test_case("0.1.20 || 1.2.4", Version::new(1, 2, 3), false);
+    solc_test_case(">=0.2.3 || <0.0.1", Version::new(0, 0, 3), false);
+    solc_test_case(">=0.2.3 || <0.0.1", Version::new(0, 2, 2), false);
+    solc_test_case("\"2.x.x\"", Version::new(1, 1, 3), false);
+    solc_test_case("\"2.x.x\"", Version::new(3, 1, 3), false);
+    solc_test_case("1.2.x", Version::new(1, 3, 3), false);
+    solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(3, 1, 3), false);
+    solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(1, 1, 3), false);
+    solc_test_case("2.*.*", Version::new(1, 1, 3), false);
+    solc_test_case("2.*.*", Version::new(3, 1, 3), false);
+    solc_test_case("1.2.*", Version::new(1, 3, 3), false);
+    solc_test_case("1.2.* || 2.*", Version::new(3, 1, 3), false);
+    solc_test_case("1.2.* || 2.*", Version::new(1, 1, 3), false);
+    solc_test_case("2", Version::new(1, 1, 2), false);
+    solc_test_case("2.3", Version::new(2, 4, 1), false);
+    solc_test_case("~2.4", Version::new(2, 5, 0), false);
+    solc_test_case("~2.4", Version::new(2, 3, 9), false);
+    solc_test_case("~1", Version::new(0, 2, 3), false);
+    solc_test_case("~1.0", Version::new(1, 1, 0), false);
+    solc_test_case("<1", Version::new(1, 0, 0), false);
+    solc_test_case(">=1.2", Version::new(1, 1, 1), false);
+    solc_test_case("=0.7.x", Version::new(0, 8, 2), false);
+    solc_test_case(">=0.7.x", Version::new(0, 6, 2), false);
+    solc_test_case("<0.7.x", Version::new(0, 7, 2), false);
+    solc_test_case(">1.2", Version::new(1, 2, 8), false);
+    solc_test_case("^1.2.3", Version::new(2, 0, 0), false);
+    solc_test_case("^1.2.3", Version::new(1, 2, 2), false);
+    solc_test_case("^1.2", Version::new(1, 1, 9), false);
+    solc_test_case("^0", Version::new(1, 0, 0), false);
 }
 
 #[allow(dead_code)]

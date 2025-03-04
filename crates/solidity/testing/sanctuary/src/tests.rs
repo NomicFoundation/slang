@@ -66,7 +66,12 @@ pub(crate) fn select_tests<'d>(
     }
 }
 
-pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool, check_infer_version: bool) -> Result<()> {
+pub fn run_test(
+    file: &SourceFile,
+    events: &Events,
+    check_bindings: bool,
+    check_infer_version: bool,
+) -> Result<()> {
     if !file.path.exists() {
         // Index can be out of date:
         events.test(TestOutcome::NotFound);
@@ -126,14 +131,18 @@ pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool, check_
         let inferred_versions = Parser::infer_language_version(&source);
 
         if inferred_versions.is_empty() {
-            events.version_inference_error(format!("[{version}] No version inferred for {path}", path = file.path.to_str().unwrap_or("[path not found]")));
+            events.version_inference_error(format!(
+                "[{version}] No version inferred for {path}",
+                path = file.path.to_str().unwrap_or("[path not found]")
+            ));
             events.test(TestOutcome::NoVersion);
 
-            return Ok(())
+            return Ok(());
         } else if !inferred_versions.contains(&version) {
-            events.version_inference_error(
-                format!("[{version}] Did not find correct version for {path}", path = file.path.to_str().unwrap_or("[path not found]"))
-            );
+            events.version_inference_error(format!(
+                "[{version}] Did not find correct version for {path}",
+                path = file.path.to_str().unwrap_or("[path not found]")
+            ));
             events.test(TestOutcome::WrongVersion);
 
             return Ok(());

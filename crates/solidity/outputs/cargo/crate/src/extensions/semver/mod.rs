@@ -20,7 +20,10 @@ pub fn infer_language_version(src: &str) -> Vec<semver::Version> {
     while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::VersionPragma) {
         let pragma_text = cursor.node().unparse();
         let pragma_text = pragma_text.trim();
-        let pragma_text = pragma_text.strip_prefix("solidity").unwrap_or(pragma_text).trim();
+        let pragma_text = pragma_text
+            .strip_prefix("solidity")
+            .unwrap_or(pragma_text)
+            .trim();
 
         if let Ok(r) = parser::parse(pragma_text) {
             found_ranges.push(r);
@@ -205,7 +208,7 @@ impl From<VersionPart> for u32 {
 impl Display for VersionPart {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::None => {},
+            Self::None => {}
             Self::Wildcard => write!(f, "*")?,
             Self::Specified(v) => write!(f, "{v}")?,
         }
@@ -284,7 +287,9 @@ struct ComparatorSet {
 
 impl ComparatorSet {
     fn new() -> ComparatorSet {
-        ComparatorSet{ comparators: vec![] }
+        ComparatorSet {
+            comparators: vec![],
+        }
     }
 
     fn single(comp: Comparator) -> ComparatorSet {
@@ -453,7 +458,7 @@ impl PartialEq for ComparatorSet {
     fn eq(&self, other: &Self) -> bool {
         for comp in &self.comparators {
             if !other.comparators.contains(comp) {
-                return false
+                return false;
             }
         }
         true
@@ -468,7 +473,9 @@ pub struct Range {
 
 impl Range {
     pub fn new() -> Range {
-        Range { comparator_sets: vec![] }
+        Range {
+            comparator_sets: vec![],
+        }
     }
 
     pub fn matches(&self, test_version: &Version) -> bool {
