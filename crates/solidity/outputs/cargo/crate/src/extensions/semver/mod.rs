@@ -38,6 +38,8 @@ pub fn infer_language_version(src: &str) -> Vec<semver::Version> {
         }
     }
 
+    matching_versions.sort();
+
     matching_versions
 }
 
