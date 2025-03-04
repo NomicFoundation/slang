@@ -65,71 +65,157 @@ impl From<semver::Version> for Version {
     }
 }
 
+#[derive(Copy, Clone)]
+enum VersionSegment {
+    None,
+    Wildcard,
+    Specified(u32),
+}
+
+impl VersionSegment {
+    fn is_wild(self) -> bool {
+        matches!(self, Self::Wildcard)
+    }
+
+    fn is_none(self) -> bool {
+        matches!(self, VersionSegment::None)
+    }
+
+    fn is_specified(self) -> bool {
+        matches!(self, VersionSegment::Specified(_))
+    }
+
+    fn unwrap(self) -> u32 {
+        match self {
+            VersionSegment::Specified(v) => v,
+            VersionSegment::Wildcard => panic!("Tried to unwrap a wildcard segment"),
+            VersionSegment::None => panic!("Tried to unwrap an unspecified segment"),
+        }
+    }
+    
+}
+
+impl Default for VersionSegment {
+    fn default() -> Self {
+        Self::None
+    }
+}
+
+impl From<VersionSegment> for u32 {
+    fn from(segment: VersionSegment) -> u32 {
+        match segment {
+            VersionSegment::Specified(v) => v,
+            _ => 0,
+        }
+    }
+}
+
+impl Display for VersionSegment {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::None => {},
+            Self::Wildcard => write!(f, "*")?,
+            Self::Specified(v) => write!(f, "{v}")?,
+        }
+
+        Ok(())
+    }
+}
+
 /// A version that may not have specified all values. In general unspecified values will
 /// convert to `0` when resolved, however it is often important to know which values were _unspecified_
 /// (as opposed to being _specified as `0`_) when resolving ranges.
 #[derive(Default, Copy, Clone)]
 struct PartialVersion {
-    major: Option<u32>,
-    minor: Option<u32>,
-    patch: Option<u32>,
+    major: VersionSegment,
+    minor: VersionSegment,
+    patch: VersionSegment,
 }
 
 impl PartialVersion {
-    fn parse(scanner: &mut Scanner<'_>) -> Result<PartialVersion, ParseError> {
-        let mut partial = PartialVersion::default();
+    fn wild() -> PartialVersion {
+        PartialVersion {
+            major: VersionSegment::Wildcard,
+            minor: VersionSegment::Wildcard,
+            patch: VersionSegment::Wildcard,
+        }
+    }
 
-        if scanner.eof() || scanner.accept("*") {
-            return Ok(partial);
+    fn parse(scanner: &mut Scanner<'_>) -> Result<PartialVersion, ParseError> {
+        if scanner.eof() || scanner.accept("*") || scanner.accept("x") || scanner.accept("X") {
+            return Ok(PartialVersion::wild());
         }
 
+        let mut partial = PartialVersion::default();
         // We've established that the string isn't empty or a wildcard, so at least the major version
         // must be specified.
-        partial.major = Some(scanner.expect_int()?);
+        scanner.skip_whitespace();
+
+        partial.major = VersionSegment::Specified(scanner.expect_int()?);
+
+        scanner.skip_whitespace();
 
         // The remaining versions are optional
         let mut has_seen_wildcard = false;
         if scanner.accept(".") {
+            scanner.skip_whitespace();
             match scanner.peek() {
                 Some('X' | 'x' | '*') => {
+                    partial.minor = VersionSegment::Wildcard;
                     has_seen_wildcard = true;
+                    scanner.next();
                 }
-                Some(_) => partial.minor = Some(scanner.expect_int()?),
+                Some(_) => partial.minor = VersionSegment::Specified(scanner.expect_int()?),
                 None => return Err(scanner.error("Expected digit or wildcard in minor position")),
             }
         }
 
+        scanner.skip_whitespace();
+
         if scanner.accept(".") {
-            if has_seen_wildcard {
-                return Err(scanner.error("Cannot specify patch version because a wildcard was set for the minor version."));
-            }
+            scanner.skip_whitespace();
+
             match scanner.peek() {
-                Some('X' | 'x' | '*') => {}
-                Some(_) => partial.patch = Some(scanner.expect_int()?),
+                Some('X' | 'x' | '*') => {
+                    partial.patch = VersionSegment::Wildcard;
+                    scanner.next();
+                }
+                Some(_) => {
+                    if has_seen_wildcard {
+                        return Err(scanner.error("Cannot specify concrete patch version after a wildcard minor version."));
+                    }
+                    partial.patch = VersionSegment::Specified(scanner.expect_int()?);
+                },
                 None => return Err(scanner.error("Expected a digit or wildcard in patch position")),
             }
         }
+            
 
         Ok(partial)
     }
 
     /// Check if `PartialVersion` has no specified values.
     fn is_wild(&self) -> bool {
-        self.major.is_none() && self.minor.is_none() && self.patch.is_none()
+        self.major.is_wild() && self.minor.is_wild() && self.patch.is_wild()
     }
 
     /// Check if `PartialVersion` has any unspecified values.
-    fn is_incomplete(&self) -> bool {
-        self.major.is_none() || self.minor.is_none() || self.patch.is_none()
+    // fn is_incomplete(&self) -> bool {
+    //     !(self.major.is_specified() && self.minor.is_specified() && self.patch.is_specified())
+    // }
+
+    fn is_complete(&self) -> bool {
+        self.major.is_specified() && self.minor.is_specified() && self.patch.is_specified()
     }
+
 }
 
 impl From<PartialVersion> for Version {
     fn from(partial: PartialVersion) -> Version {
         Version {
-            major: partial.major.unwrap_or(0),
-            minor: partial.minor.unwrap_or(0),
-            patch: partial.patch.unwrap_or(0),
+            major: u32::from(partial.major),
+            minor: u32::from(partial.minor),
+            patch: u32::from(partial.patch),
         }
     }
 }
@@ -137,14 +223,14 @@ impl From<PartialVersion> for Version {
 impl From<&PartialVersion> for Version {
     fn from(partial: &PartialVersion) -> Version {
         Version {
-            major: partial.major.unwrap_or(0),
-            minor: partial.minor.unwrap_or(0),
-            patch: partial.patch.unwrap_or(0),
+            major: u32::from(partial.major),
+            minor: u32::from(partial.minor),
+            patch: u32::from(partial.patch),
         }
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 enum Operator {
     Lt,
     LtEq,
@@ -153,7 +239,21 @@ enum Operator {
     Eq,
 }
 
-#[derive(Debug, Copy, Clone)]
+impl Display for Operator {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let repr = match self {
+            Operator::Lt => "<",
+            Operator::LtEq => "<=",
+            Operator::Gt => ">",
+            Operator::GtEq => ">=",
+            Operator::Eq => "==",
+        };
+
+        write!(f, "{repr}")
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 struct Comparator {
     version: Version,
     op: Operator,
@@ -165,6 +265,12 @@ impl Default for Comparator {
             version: Version::default(),
             op: Operator::GtEq,
         }
+    }
+}
+
+impl Display for Comparator {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}{}", self.op, self.version)
     }
 }
 
@@ -183,6 +289,33 @@ impl Comparator {
 #[derive(Clone)]
 struct ComparatorSet {
     comparators: Vec<Comparator>,
+}
+
+impl Display for ComparatorSet {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[")?;
+
+        for (i, c) in self.comparators.iter().enumerate() {
+            write!(f, "{c}")?;
+            if i < self.comparators.len() - 1 {
+                write!(f, ", ")?;
+            }
+        }
+
+        write!(f, "]")
+    }
+}
+
+impl PartialEq for ComparatorSet {
+    fn eq(&self, other: &Self) -> bool {
+        for comp in &self.comparators {
+            if !other.comparators.contains(comp) {
+                return false
+            }
+        }
+
+        true
+    }
 }
 
 impl ComparatorSet {
@@ -212,16 +345,16 @@ impl ComparatorSet {
         };
 
         let upper_version = match partial.major {
-            Some(0) => match partial.minor {
-                Some(0) => match partial.patch {
-                    Some(patch) => Version::new(0, 0, patch + 1),
-                    None => Version::new(0, 1, 0),
+            VersionSegment::Specified(0) => match partial.minor {
+                VersionSegment::Specified(0) => match partial.patch {
+                    VersionSegment::Specified(patch) => Version::new(0, 0, patch + 1),
+                    _ => Version::new(0, 1, 0),
                 },
-                Some(minor) => Version::new(0, minor + 1, 0),
-                None => Version::new(1, 0, 0),
+                VersionSegment::Specified(minor) => Version::new(0, minor + 1, 0),
+                _ => Version::new(1, 0, 0),
             },
-            Some(major) => Version::new(major + 1, 0, 0),
-            None => panic!("Major version must be specified when resolving a caret upper bound"),
+            VersionSegment::Specified(major) => Version::new(major + 1, 0, 0),
+            _ => panic!("Major version must be specified when resolving a caret upper bound"),
         };
 
         let upper = Comparator {
@@ -242,8 +375,8 @@ impl ComparatorSet {
         };
 
         let upper_version = match partial.minor {
-            Some(minor) => Version::new(major, minor + 1, 0),
-            None => Version::new(major + 1, 0, 0),
+            VersionSegment::Specified(minor) => Version::new(major, minor + 1, 0),
+            _ => Version::new(major + 1, 0, 0),
         };
 
         let upper = Comparator {
@@ -264,7 +397,12 @@ impl ComparatorSet {
             op: Operator::GtEq,
         };
 
-        let upper = if upper_version.is_incomplete() {
+        let upper = if upper_version.is_complete() {
+            Comparator {
+                version: upper_version.into(),
+                op: Operator::LtEq,
+            }
+        } else {
             let mut upper_resolved: Version = upper_version.into();
             if upper_version.minor.is_none() {
                 upper_resolved.major += 1;
@@ -275,11 +413,6 @@ impl ComparatorSet {
             Comparator {
                 version: upper_resolved,
                 op: Operator::Lt,
-            }
-        } else {
-            Comparator {
-                version: upper_version.into(),
-                op: Operator::LtEq,
             }
         };
 
@@ -293,7 +426,7 @@ impl ComparatorSet {
             return ComparatorSet::single(Comparator::default());
         }
 
-        if !partial.is_incomplete() {
+        if partial.is_complete() {
             return ComparatorSet::single(Comparator {
                 version: partial.into(),
                 op: Operator::Eq,
@@ -306,22 +439,22 @@ impl ComparatorSet {
         };
 
         let upper = match partial.major {
-            Some(major) => match partial.minor {
-                Some(minor) => match partial.patch {
+            VersionSegment::Specified(major) => match partial.minor {
+                VersionSegment::Specified(minor) => match partial.patch {
                     // Handled above by checking !partial.is_incomplete()
-                    Some(_) => unreachable!(),
-                    None => Comparator {
+                    VersionSegment::Specified(_) => unreachable!(),
+                    _ => Comparator {
                         version: Version::new(major, minor + 1, 0),
                         op: Operator::Lt,
                     },
                 },
-                None => Comparator {
+                _ => Comparator {
                     version: Version::new(major + 1, 0, 0),
                     op: Operator::Lt,
                 },
             },
             // Handled above by checking partial.is_wild()
-            None => unreachable!(),
+            _ => unreachable!(),
         };
 
         ComparatorSet::bounds(lower, upper)
@@ -338,58 +471,113 @@ impl ComparatorSet {
             return Err(scanner.error("Tried to parse empty string"));
         }
 
-        let set = match scanner.peek() {
+        // Parse the leading operator, if provided
+        let op = match scanner.peek() {
             Some('=') => {
-                scanner.next();
+                scanner.expect("=")?;
                 scanner.accept("v");
-                let partial = PartialVersion::parse(scanner)?;
-                ComparatorSet::partial_range(&partial)
-            }
+                Some(Operator::Eq)
+            },
             Some('v') => {
-                scanner.next();
-                let partial = PartialVersion::parse(scanner)?;
-                ComparatorSet::partial_range(&partial)
-            }
+                scanner.expect("v")?;
+                None
+            },
             Some('>') => {
-                scanner.next();
+                scanner.expect(">")?;
                 let op = if scanner.accept("=") {
-                    Operator::GtEq
+                    Some(Operator::GtEq)
                 } else {
-                    Operator::Gt
+                    Some(Operator::Gt)
                 };
-
                 scanner.accept("v");
 
-                let partial = PartialVersion::parse(scanner)?;
-
-                ComparatorSet::single(Comparator {
-                    op,
-                    version: partial.into(),
-                })
-            }
+                op
+            },
             Some('<') => {
-                scanner.next();
+                scanner.expect("<")?;
+                
                 let op = if scanner.accept("=") {
-                    Operator::LtEq
+                    Some(Operator::LtEq)
                 } else {
-                    Operator::Lt
+                    Some(Operator::Lt)
                 };
-
                 scanner.accept("v");
 
-                let partial = PartialVersion::parse(scanner)?;
-                ComparatorSet::single(Comparator {
-                    op,
-                    version: partial.into(),
-                })
-            }
-            Some(_) => {
-                scanner.accept("v");
+                op
+            },
+            _ => None
+        };
 
-                let partial = PartialVersion::parse(scanner)?;
-                ComparatorSet::partial_range(&partial)
+        // Parse the partial version string. This may be a concrete version, a wildcard version, or
+        // a partial version range.
+        let partial = PartialVersion::parse(scanner)?;
+
+        let set = if partial.is_wild() {
+            // * ~= >=0.0.0
+            ComparatorSet::single(Comparator::default())
+        } else if partial.is_complete() {
+            // Partial version is complete i.e. it represents a concrete version, not a range
+            ComparatorSet::single(Comparator{
+                version: partial.into(),
+                op: op.unwrap_or(Operator::Eq),
+            })
+        } else {
+            // Not all of the values for this version were provided, so this is a partial version range.
+            // How we handle this depends on whether or not the user put an operator in front of the range.
+            match op {
+                Some(Operator::Lt) => {
+                    // <0.7 ~= <0.7.x ~= <0.7.0
+                    ComparatorSet::single(Comparator{
+                        version: partial.into(),
+                        op: Operator::Lt,    
+                    })
+                },
+                Some(Operator::LtEq) => {
+                    let comparator = if partial.minor.is_wild() || partial.patch.is_wild() {
+                        // <=0.7.x ~= <0.8.0
+                        Comparator{
+                            version: ComparatorSet::tilde(&partial).comparators[1].version,
+                            op: Operator::Lt,
+                        }
+                    } else {
+                        // <=0.7 ~= <=0.7.0
+                        Comparator{
+                            version: partial.into(),
+                            op: Operator::LtEq,
+                        }
+                    };
+
+                    ComparatorSet::single(comparator)
+                },
+                Some(Operator::Gt) => {
+                    let comparator = if partial.minor.is_wild() || partial.patch.is_wild() {
+                        // >0.7.x ~= >0.7.0
+                        Comparator{
+                            version: partial.into(),
+                            op: Operator::Gt,
+                        }
+                    } else {
+                        // >0.7 ~= >=0.8.0
+                        Comparator{
+                            version: ComparatorSet::tilde(&partial).comparators[1].version,
+                            op: Operator::GtEq,
+                        }
+                    };
+
+                    ComparatorSet::single(comparator)
+                },
+                Some(Operator::GtEq) => {
+                    // >=0.7 ~= >=0.7.x >=0.7.0
+                    ComparatorSet::single(Comparator{
+                        version: partial.into(),
+                        op: Operator::GtEq,    
+                    })
+                },
+                Some(Operator::Eq) | None => {
+                    // Treat '=[range]' as the same as '[range]'
+                    ComparatorSet::partial_range(&partial)
+                }
             }
-            None => unreachable!(),
         };
 
         Ok(set)
@@ -402,6 +590,28 @@ impl ComparatorSet {
 
 pub struct Range {
     comparator_sets: Vec<ComparatorSet>,
+}
+
+impl PartialEq for Range {
+    fn eq(&self, other: &Range) -> bool {
+        for set in &self.comparator_sets {
+            if !other.comparator_sets.contains(set) {
+                return false;
+            }
+        }
+
+        true
+    }
+}
+
+impl Display for Range {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        for set in &self.comparator_sets {
+            writeln!(f, "{set}")?;
+        }
+
+        Ok(())
+    }
 }
 
 impl Range {
@@ -522,7 +732,7 @@ impl<'a> Scanner<'a> {
 
     fn skip_whitespace(&mut self) {
         while let Some(c) = self.peek() {
-            if c.is_whitespace() {
+            if c.is_whitespace() || c == '"' || c == '\'' {
                 self.index += 1;
             } else {
                 break;
@@ -560,43 +770,51 @@ pub fn parse(text: &str) -> Result<Range, ParseError> {
 
     for set_text in text.split("||") {
         let mut scanner = Scanner::new(set_text);
-
         scanner.skip_whitespace();
 
-        let subrange = if set_text.contains('-') {
-            // Ignore all leading '^' and '~'
-            while scanner.accept_any(&["^", "~"]) {}
+        let mut subset = ComparatorSet::new();
+        while !scanner.eof() {
+            let partial_subset = if set_text.contains('-') {
+                // solc allows users to specify range operators ('^', '~') in hyphen ranges, but ignores them.
+                // We'll do the same here.
+            
+                // Ignore all leading '^' and '~'
+                while scanner.accept_any(&["^", "~"]) {}
 
-            let lower_version = PartialVersion::parse(&mut scanner)?;
+                let lower_version = PartialVersion::parse(&mut scanner)?;
 
-            scanner.skip_whitespace();
-            scanner.expect("-")?;
-            scanner.skip_whitespace();
-
-            // Ignore all leading '^' and '~'
-            while scanner.accept_any(&["^", "~"]) {}
-
-            let upper_version = PartialVersion::parse(&mut scanner)?;
-
-            ComparatorSet::hyphen_range(&lower_version, &upper_version)
-        } else if scanner.accept("^") {
-            let partial = PartialVersion::parse(&mut scanner)?;
-            ComparatorSet::caret(&partial)
-        } else if scanner.accept("~") {
-            let partial = PartialVersion::parse(&mut scanner)?;
-            ComparatorSet::tilde(&partial)
-        } else {
-            let mut set = ComparatorSet::new();
-
-            while let Ok(subset) = ComparatorSet::parse(&mut scanner) {
-                set.merge(&subset);
                 scanner.skip_whitespace();
-            }
+                scanner.expect("-")?;
+                scanner.skip_whitespace();
 
-            set
-        };
+                // Ignore all leading '^' and '~'
+                while scanner.accept_any(&["^", "~"]) {}
 
-        range.comparator_sets.push(subrange);
+                let upper_version = PartialVersion::parse(&mut scanner)?;
+
+                ComparatorSet::hyphen_range(&lower_version, &upper_version)
+            } else if scanner.accept("^") {
+                let partial = PartialVersion::parse(&mut scanner)?;
+                ComparatorSet::caret(&partial)
+            } else if scanner.accept("~") {
+                let partial = PartialVersion::parse(&mut scanner)?;
+                ComparatorSet::tilde(&partial)
+            } else {
+                let mut set = ComparatorSet::new();
+
+                while let Ok(comparator) = ComparatorSet::parse(&mut scanner) {
+                    set.merge(&comparator);
+                    scanner.skip_whitespace();
+                }
+
+                set
+            };
+
+            subset.merge(&partial_subset);
+            scanner.skip_whitespace();
+        }
+
+        range.comparator_sets.push(subset);
     }
 
     Ok(range)
@@ -699,25 +917,94 @@ fn wildcard_version() {
 }
 
 #[test]
-fn partial_version_with_operator() {
+fn gteq_partial_version() {
+    let range = parse(">=1.3").unwrap();
+
+    test_range_match(
+        &range,
+        &vec![
+            Version::new(1, 3, 0),
+            Version::new(1, 3, 5),
+            Version::new(1, 4, 0),
+        ],
+    );
+    test_range_match_fail(
+        &range,
+        &vec![
+            Version::new(1, 2, 0),
+            Version::new(0, 8, 0),
+        ],
+    );
+}
+
+#[test]
+fn gteq_wildcard_version() {
+    let range = parse(">=1.3.x").unwrap();
+
+    test_range_match(&range, &vec![Version::new(1, 3, 0), Version::new(1, 3, 4), Version::new(1, 4, 0), Version::new(2, 3, 3)]);
+    test_range_match_fail(&range, &vec![Version::new(1, 2, 1), Version::new(0, 8, 0)]);
+}
+
+#[test]
+fn gt_partial_version() {
     let range = parse(">1.3").unwrap();
 
     test_range_match(
         &range,
         &vec![
-            Version::new(1, 3, 5),
             Version::new(1, 4, 0),
-            Version::new(2, 0, 0),
+            Version::new(2, 5, 3),
         ],
     );
     test_range_match_fail(
         &range,
         &vec![
             Version::new(1, 3, 0),
+            Version::new(1, 3, 5),
             Version::new(1, 2, 0),
             Version::new(0, 8, 0),
         ],
     );
+}
+
+#[test]
+fn gt_wildcard_version() {
+    let range = parse(">1.3.x").unwrap();
+
+    test_range_match(&range, &vec![Version::new(1, 4, 0), Version::new(2, 1, 0), Version::new(1, 3, 5)]);
+    test_range_match_fail(&range, &vec![Version::new(1, 3, 0), Version::new(1, 2, 0), Version::new(0, 8, 0)]);
+}
+
+#[test]
+fn lteq_partial_version() {
+    let range = parse("<=0.8").unwrap();
+
+    test_range_match(&range, &vec![Version::new(0, 7, 8), Version::new(0, 0, 5), Version::new(0, 8, 0)]);
+    test_range_match_fail(&range, &vec![Version::new(0, 8, 5), Version::new(1, 2, 0)]);
+}
+
+#[test]
+fn lteq_wildcard_version() {
+    let range = parse("<=0.8.x").unwrap();
+
+    test_range_match(&range, &vec![Version::new(0, 7, 8), Version::new(0, 0, 5), Version::new(0, 8, 0), Version::new(0, 8, 5)]);
+    test_range_match_fail(&range, &vec![Version::new(1, 2, 0), Version::new(0, 9, 1)]);
+}
+
+#[test]
+fn lt_partial_version() {
+    let range = parse("<0.8").unwrap();
+
+    test_range_match(&range, &vec![Version::new(0, 7, 8), Version::new(0, 0, 5)]);
+    test_range_match_fail(&range, &vec![Version::new(0, 8, 0), Version::new(0, 8, 5), Version::new(1, 2, 0)]);
+}
+
+#[test]
+fn lt_wildcard_version() {
+    let range = parse("<0.8.x").unwrap();
+
+    test_range_match(&range, &vec![Version::new(0, 7, 8), Version::new(0, 0, 5)]);
+    test_range_match_fail(&range, &vec![Version::new(0, 8, 0), Version::new(0, 8, 5), Version::new(1, 2, 0)]);
 }
 
 #[test]
@@ -733,6 +1020,14 @@ fn partial_version() {
             Version::new(1, 0, 0),
         ],
     );
+}
+
+#[test]
+fn combo_partial_version() {
+    let range = parse(">=1 <1.8").unwrap();
+
+    test_range_match(&range, &vec![Version::new(1, 0, 0), Version::new(1, 5, 0), Version::new(1, 7, 9)]);
+    test_range_match_fail(&range, &vec![Version::new(0, 9, 9), Version::new(3, 0, 0), Version::new(2, 8, 3)]);
 }
 
 #[test]
@@ -840,7 +1135,7 @@ fn ignore_operators_in_hyphen_ranges() {
 
 #[test]
 fn concat_comparators() {
-    let range = parse(">1 <=2.5.1").unwrap();
+    let range = parse(">1.0.0 <=2.5.1").unwrap();
 
     test_range_match(
         &range,
@@ -884,6 +1179,163 @@ fn comparator_union() {
     );
 }
 
+#[test]
+fn allow_inner_quotes() {
+    let target_range = parse("0.8").unwrap();
+    let target_version = Version::new(0, 8, 0);
+
+    // "0.8" but with different combinations of quotes embeded within
+    // solc currently ignores these by stringifying the whole version pragma tokens together before parsing.
+    // In practice we should also be doing this, but that happens higher up in the code.
+    // Down here in the parser, we're just going to ignore them when we see them.
+    let examples = [
+        "\"0.8\"",
+        "\"0.\" 8",
+        "\"0\" .8",
+        "0  . \"8\"",
+        "0 '.' 8",
+        "'0.8'",
+        "\"0\".\"8\"",
+    ];
+
+    let example_ranges: Vec<Range> = examples.iter().map(|e| parse(e).unwrap()).collect();
+    for r in &example_ranges {
+        assert!(r == &target_range);
+        assert!(r.matches(&target_version));
+    }
+}
+        
+#[test]
+fn solc_positive_tests() {
+    solc_test_case("*", Version::new(1,2,3), true);
+	solc_test_case("1.0.0 - 2.0.0", Version::new(1,2,3), true);
+	solc_test_case("1.0.0", Version::new(1,0,0), true);
+	solc_test_case("1.0", Version::new(1,0,0), true);
+	solc_test_case("1", Version::new(1,0,0), true);
+	solc_test_case(">=*", Version::new(0,2,4), true);
+	solc_test_case("*", Version::new(1,2,3), true);
+	solc_test_case(">=1.0.0", Version::new(1,0,0), true);
+	solc_test_case(">=1.0.0", Version::new(1,0,1), true);
+	solc_test_case(">=1.0.0", Version::new(1,1,0), true);
+	solc_test_case(">1.0.0", Version::new(1,0,1), true);
+	solc_test_case(">1.0.0", Version::new(1,1,0), true);
+	solc_test_case("<=2.0.0", Version::new(2,0,0), true);
+	solc_test_case("<=2.0.0", Version::new(1,9999,9999), true);
+	solc_test_case("<=2.0.0", Version::new(0,2,9), true);
+	solc_test_case("<2.0.0", Version::new(1,9999,9999), true);
+	solc_test_case("<2.0.0", Version::new(0,2,9), true);
+	solc_test_case(">= 1.0.0", Version::new(1,0,0), true);
+	solc_test_case(">=  1.0.0", Version::new(1,0,1), true);
+	solc_test_case(">=   1.0.0", Version::new(1,1,0), true);
+	solc_test_case("> 1.0.0", Version::new(1,0,1), true);
+	solc_test_case(">  1.0.0", Version::new(1,1,0), true);
+	solc_test_case("<=   2.0.0", Version::new(2,0,0), true);
+	solc_test_case("<= 2.0.0", Version::new(1,9999,9999), true);
+	solc_test_case("<=  2.0.0", Version::new(0,2,9), true);
+	solc_test_case("<    2.0.0", Version::new(1,9999,9999), true);
+	solc_test_case("<\t2.0.0", Version::new(0,2,9), true);
+	solc_test_case(">=0.1.97", Version::new(0,1,97), true);
+	solc_test_case("0.1.20 || 1.2.4", Version::new(1,2,4), true);
+	solc_test_case(">=0.2.3 || <0.0.1", Version::new(0,0,0), true);
+	solc_test_case(">=0.2.3 || <0.0.1", Version::new(0,2,3), true);
+	solc_test_case(">=0.2.3 || <0.0.1", Version::new(0,2,4), true);
+	solc_test_case("\"2.x.x\"", Version::new(2,1,3), true);
+	solc_test_case("1.2.x", Version::new(1,2,3), true);
+	solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(2,1,3), true);
+	solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(1,2,3), true);
+	solc_test_case("x", Version::new(1,2,3), true);
+	solc_test_case("2.*.*", Version::new(2,1,3), true);
+	solc_test_case("1.2.*", Version::new(1,2,3), true);
+	solc_test_case("1.2.* || 2.*", Version::new(2,1,3), true);
+	solc_test_case("1.2.* || 2.*", Version::new(1,2,3), true);
+	solc_test_case("*", Version::new(1,2,3), true);
+	solc_test_case("2", Version::new(2,1,2), true);
+	solc_test_case("2.3", Version::new(2,3,1), true);
+	solc_test_case("~2.4", Version::new(2,4,0), true);
+	solc_test_case("~2.4", Version::new(2,4,5), true);
+	solc_test_case("~1", Version::new(1,2,3), true);
+	solc_test_case("~1.0", Version::new(1,0,2), true);
+	solc_test_case("~ 1.0", Version::new(1,0,2), true);
+	solc_test_case("~ 1.0.3", Version::new(1,0,12), true);
+	solc_test_case(">=1", Version::new(1,0,0), true);
+	solc_test_case(">= 1", Version::new(1,0,0), true);
+	solc_test_case("<1.2", Version::new(1,1,1), true);
+	solc_test_case("< 1.2", Version::new(1,1,1), true);
+	solc_test_case("=0.7.x", Version::new(0,7,2), true);
+	solc_test_case("<=0.7.x", Version::new(0,7,2), true);
+	solc_test_case(">=0.7.x", Version::new(0,7,2), true);
+	solc_test_case("<=0.7.x", Version::new(0,6,2), true);
+	solc_test_case("~1.2.1 >=1.2.3", Version::new(1,2,3), true);
+	solc_test_case("~1.2.1 =1.2.3", Version::new(1,2,3), true);
+	solc_test_case("~1.2.1 1.2.3", Version::new(1,2,3), true);
+	solc_test_case("~1.2.1 >=1.2.3 1.2.3", Version::new(1,2,3), true);
+	solc_test_case("~1.2.1 1.2.3 >=1.2.3", Version::new(1,2,3), true);
+	solc_test_case(">=\"1.2.1\" 1.2.3", Version::new(1,2,3), true);
+	solc_test_case("1.2.3 >=1.2.1", Version::new(1,2,3), true);
+	solc_test_case(">=1.2.3 >=1.2.1", Version::new(1,2,3), true);
+	solc_test_case(">=1.2.1 >=1.2.3", Version::new(1,2,3), true);
+	solc_test_case(">=1.2", Version::new(1,2,8), true);
+	solc_test_case("^1.2.3", Version::new(1,8,1), true);
+	solc_test_case("^0.1.2", Version::new(0,1,2), true);
+	solc_test_case("^0.1", Version::new(0,1,2), true);
+	solc_test_case("^1.2", Version::new(1,4,2), true);
+	solc_test_case("^1.2", Version::new(1,2,0), true);
+	solc_test_case("^1", Version::new(1,2,0), true);
+	solc_test_case("<=1.2.3", Version::new(1,2,3), true);
+	solc_test_case(">1.2", Version::new(1,3,0), true);
+	solc_test_case("^1.2 ^1", Version::new(1,4,2), true);
+	solc_test_case("^0", Version::new(0,5,1), true);
+	solc_test_case("^0", Version::new(0,1,1), true);
+}
+
+#[test]
+fn solc_negative_tests() {
+    solc_test_case("^0^1", Version::new(0,0,0), false);
+	solc_test_case("^0^1", Version::new(1,0,0), false);
+	solc_test_case("1.0.0 - 2.0.0", Version::new(2,2,3), false);
+	solc_test_case("1.0.0", Version::new(1,0,1), false);
+	solc_test_case(">=1.0.0", Version::new(0,0,0), false);
+	solc_test_case(">=1.0.0", Version::new(0,0,1), false);
+	solc_test_case(">=1.0.0", Version::new(0,1,0), false);
+	solc_test_case(">1.0.0", Version::new(0,0,1), false);
+	solc_test_case(">1.0.0", Version::new(0,1,0), false);
+	solc_test_case("<=2.0.0", Version::new(3,0,0), false);
+	solc_test_case("<=2.0.0", Version::new(2,9999,9999), false);
+	solc_test_case("<=2.0.0", Version::new(2,2,9), false);
+	solc_test_case("<2.0.0", Version::new(2,9999,9999), false);
+	solc_test_case("<2.0.0", Version::new(2,2,9), false);
+	solc_test_case(">=0.1.97", Version::new(0,1,93), false);
+	solc_test_case("0.1.20 || 1.2.4", Version::new(1,2,3), false);
+	solc_test_case(">=0.2.3 || <0.0.1", Version::new(0,0,3), false);
+	solc_test_case(">=0.2.3 || <0.0.1", Version::new(0,2,2), false);
+	solc_test_case("\"2.x.x\"", Version::new(1,1,3), false);
+	solc_test_case("\"2.x.x\"", Version::new(3,1,3), false);
+	solc_test_case("1.2.x", Version::new(1,3,3), false);
+	solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(3,1,3), false);
+	solc_test_case("\"1.2.x\" || \"2.x\"", Version::new(1,1,3), false);
+	solc_test_case("2.*.*", Version::new(1,1,3), false);
+	solc_test_case("2.*.*", Version::new(3,1,3), false);
+	solc_test_case("1.2.*", Version::new(1,3,3), false);
+	solc_test_case("1.2.* || 2.*", Version::new(3,1,3), false);
+	solc_test_case("1.2.* || 2.*", Version::new(1,1,3), false);
+	solc_test_case("2", Version::new(1,1,2), false);
+	solc_test_case("2.3", Version::new(2,4,1), false);
+	solc_test_case("~2.4", Version::new(2,5,0), false);
+	solc_test_case("~2.4", Version::new(2,3,9), false);
+	solc_test_case("~1", Version::new(0,2,3), false);
+	solc_test_case("~1.0", Version::new(1,1,0), false);
+	solc_test_case("<1", Version::new(1,0,0), false);
+	solc_test_case(">=1.2", Version::new(1,1,1), false);
+	solc_test_case("=0.7.x", Version::new(0,8,2), false);
+	solc_test_case(">=0.7.x", Version::new(0,6,2), false);
+	solc_test_case("<0.7.x", Version::new(0,7,2), false);
+	solc_test_case(">1.2", Version::new(1,2,8), false);
+	solc_test_case("^1.2.3", Version::new(2,0,0), false);
+	solc_test_case("^1.2.3", Version::new(1,2,2), false);
+	solc_test_case("^1.2", Version::new(1,1,9), false);
+	solc_test_case("^0", Version::new(1,0,0), false);
+}
+
 #[allow(dead_code)]
 fn test_range_match(range: &Range, tests: &Vec<Version>) {
     for t in tests {
@@ -895,5 +1347,16 @@ fn test_range_match(range: &Range, tests: &Vec<Version>) {
 fn test_range_match_fail(range: &Range, tests: &Vec<Version>) {
     for t in tests {
         assert!(!range.matches(t));
+    }
+}
+
+#[allow(dead_code)]
+fn solc_test_case(range_str: &str, version: Version, positive: bool) {
+    let range = parse(range_str).unwrap();
+
+    if positive {
+        assert!(range.matches(&version));
+    } else {
+        assert!(!range.matches(&version));
     }
 }
