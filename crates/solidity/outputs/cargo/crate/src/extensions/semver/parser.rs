@@ -811,6 +811,53 @@ fn allow_inner_quotes() {
 }
 
 #[test]
+fn major_wildcard() {
+    let wild = parse("*").unwrap();
+    let range = parse("x.1.0").unwrap();
+
+    assert_eq!(wild, range);
+}
+
+#[test]
+fn major_wildcard_concat() {
+    let range = parse("x.1.0 >0.5.0").unwrap();
+
+    test_range_match(
+        &range,
+        &vec![
+            Version::new(0, 5, 5),
+            Version::new(1, 0, 0),
+            Version::new(0, 7, 0),
+        ],
+    );
+    test_range_match_fail(
+        &range,
+        &vec![
+            Version::new(0, 5, 0),
+            Version::new(0, 0, 0),
+            Version::new(0, 1, 0),
+        ],
+    );
+}
+
+#[test]
+fn missing_major_version() {
+    // Inspired by a contract that caused some problems
+    // ".0" is not a valid semver, but we have to be able to parse it (and discard it) without fail
+    let range = parse("0.8.0 .0").unwrap();
+
+    test_range_match(&range, &vec![Version::new(0, 8, 0)]);
+    test_range_match_fail(
+        &range,
+        &vec![
+            Version::new(0, 0, 0),
+            Version::new(0, 8, 1),
+            Version::new(1, 0, 0),
+        ],
+    );
+}
+
+#[test]
 fn solc_positive_tests() {
     solc_test_case("*", Version::new(1, 2, 3), true);
     solc_test_case("1.0.0 - 2.0.0", Version::new(1, 2, 3), true);

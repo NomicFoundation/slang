@@ -282,7 +282,7 @@ impl Display for Comparator {
 ///
 /// A basic comparator set is written with one or more comparators separated by whitespace.
 /// For example "`>=0.5.0 <1.5.0`" is a comparator set with 2 comparators.
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 struct ComparatorSet {
     comparators: Vec<Comparator>,
 }
@@ -469,6 +469,7 @@ impl PartialEq for ComparatorSet {
 
 /// A `Range` represents a complete version matcher. It is composed of multiple `ComparatorSet`s, separated by '||'.
 /// In order for a version to match a `Range`, it only has to match at least one of the comparator sets.
+#[derive(Debug)]
 pub struct Range {
     comparator_sets: Vec<ComparatorSet>,
 }
