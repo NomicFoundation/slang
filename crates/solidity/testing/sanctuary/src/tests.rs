@@ -127,7 +127,7 @@ pub fn run_test(
         return Ok(());
     }
 
-    if check_infer_version {
+    if check_infer_version && !has_known_version_mismatch(&file.path) {
         let inferred_versions = Parser::infer_language_version(&source);
 
         if inferred_versions.is_empty() {
@@ -205,6 +205,19 @@ fn uses_exotic_parser_bug(file: &Path) -> bool {
     ];
 
     CONTRACTS_WITH_EXOTIC_PARSER_BUGS
+        .iter()
+        .any(|path| file.ends_with(path))
+}
+
+fn has_known_version_mismatch(file: &Path) -> bool {
+    static CONTRACTS_WITH_KNOWN_VERSION_MISMATCH: &[&str] = &[
+        // Registered with compiler version 0.4.20 but version pragma is 0.4.19
+        "ethereum/contracts/mainnet/ba/bab03ba1ad80dca87d4527960ea453a9a88a4d2e_DeNetToken.sol",
+        // Registered with compiler version 0.4.16 but version pragma is ^0.4.18
+        "ethereum/contracts/mainnet/c0/c0c45cbb1dce225cf620c36807a1cdecb85feda5_ETHMONEY.sol",
+    ];
+
+    CONTRACTS_WITH_KNOWN_VERSION_MISMATCH
         .iter()
         .any(|path| file.ends_with(path))
 }

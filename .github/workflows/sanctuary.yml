@@ -20,6 +20,11 @@ on:
         type: "boolean"
         required: false
         default: false
+      check_infer_version:
+        description: "Check that we can infer the correct language version based on the available version pragmas."
+        type: "boolean"
+        required: false
+        default: false
 
 jobs:
   singleShard:
@@ -109,7 +114,7 @@ jobs:
         run: "./scripts/bin/infra setup"
 
       - name: "infra run solidity_testing_sanctuary"
-        run: "./scripts/bin/infra run --release --bin solidity_testing_sanctuary -- test --shards-count ${{ env.SHARDS_COUNT }} --shard-index ${{ matrix.shard_index }} ${{ inputs.check_bindings == true && '--check-bindings' || '' }} ${{ inputs.chain }} ${{ inputs.network }}"
+        run: "./scripts/bin/infra run --release --bin solidity_testing_sanctuary -- test --shards-count ${{ env.SHARDS_COUNT }} --shard-index ${{ matrix.shard_index }} ${{ inputs.check_bindings == true && '--check-bindings' || '' }} ${{ inputs.check_infer_version == true && '--check-infer-version' }} ${{ inputs.chain }} ${{ inputs.network }}"
 
       - name: "Write shard results to output"
         if: "!cancelled()"
