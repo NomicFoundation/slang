@@ -64,7 +64,7 @@ impl Parse for PartialVersion {
             return Ok(PartialVersion::wild());
         }
 
-        let mut partial = PartialVersion::default();
+        let mut partial = PartialVersion::new();
 
         scanner.skip_whitespace();
         partial.major = VersionPart::Specified(scanner.expect_int()?);
@@ -230,7 +230,9 @@ impl Parse for ComparatorSet {
                 if partial.minor.is_wild() || partial.patch.is_wild() {
                     // <=0.7.x == <0.8.0
                     Comparator {
-                        version: ComparatorSet::tilde(&partial).comparators[1].version,
+                        version: ComparatorSet::tilde(&partial).comparators[1]
+                            .version
+                            .clone(),
                         op: Operator::Lt,
                     }
                 } else {
@@ -251,7 +253,9 @@ impl Parse for ComparatorSet {
                 } else {
                     // >0.7 == >=0.8.0
                     Comparator {
-                        version: ComparatorSet::tilde(&partial).comparators[1].version,
+                        version: ComparatorSet::tilde(&partial).comparators[1]
+                            .version
+                            .clone(),
                         op: Operator::GtEq,
                     }
                 }
@@ -316,7 +320,7 @@ impl<'a> Scanner<'a> {
         }
     }
 
-    fn expect_int(&mut self) -> Result<u32, ParseError> {
+    fn expect_int(&mut self) -> Result<u64, ParseError> {
         let digits: String = self
             .data
             .chars()

@@ -1,5 +1,8 @@
 #[cfg(test)]
-use super::{parser::parse, Range, Version};
+use semver::Version;
+
+#[cfg(test)]
+use super::{parser::parse, Range};
 
 #[test]
 fn single_version_range() {

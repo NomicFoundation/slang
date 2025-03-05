@@ -1,15 +1,16 @@
 pub mod parser;
 pub mod tests;
 
-use std::cmp::Ordering;
 use std::fmt::Display;
+
+use semver::Version;
 
 use crate::cst::NonterminalKind;
 use crate::utils::LanguageFacts;
 
 /// Parse the version pragmas in the given Solidity source code and return a list of language
 /// versions that can fulfill those requirements.
-pub fn infer_language_version(src: &str) -> Vec<semver::Version> {
+pub fn infer_language_version(src: &str) -> Vec<Version> {
     let parser = crate::parser::Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
     let output = parser.parse_file_contents(src);
 
@@ -29,105 +30,19 @@ pub fn infer_language_version(src: &str) -> Vec<semver::Version> {
 
     let mut matching_versions = vec![];
     for lang_version in LanguageFacts::ALL_VERSIONS {
-        let v: Version = lang_version.into();
-        if found_ranges.iter().all(|r| r.matches(&v)) {
+        if found_ranges.iter().all(|r| r.matches(lang_version)) {
             matching_versions.push(lang_version.clone());
         }
     }
 
     matching_versions.sort();
-
     matching_versions
-}
-
-/// A concrete version, with specified values for the major, minor, and patch parts.
-#[derive(Debug, Default, Eq, PartialEq, Copy, Clone)]
-pub struct Version {
-    major: u32,
-    minor: u32,
-    patch: u32,
-}
-
-impl Version {
-    fn new(major: u32, minor: u32, patch: u32) -> Version {
-        Version {
-            major,
-            minor,
-            patch,
-        }
-    }
-}
-
-impl Display for Version {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Version({}, {}, {})", self.major, self.minor, self.patch)
-    }
-}
-
-impl PartialOrd for Version {
-    fn partial_cmp(&self, other: &Version) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for Version {
-    fn cmp(&self, other: &Version) -> Ordering {
-        match self.major.cmp(&other.major) {
-            Ordering::Greater => Ordering::Greater,
-            Ordering::Less => Ordering::Less,
-            Ordering::Equal => match self.minor.cmp(&other.minor) {
-                Ordering::Greater => Ordering::Greater,
-                Ordering::Less => Ordering::Less,
-                Ordering::Equal => self.patch.cmp(&other.patch),
-            },
-        }
-    }
-}
-
-impl From<&semver::Version> for Version {
-    fn from(v: &semver::Version) -> Version {
-        Version {
-            major: u32::try_from(v.major).unwrap(),
-            minor: u32::try_from(v.minor).unwrap(),
-            patch: u32::try_from(v.patch).unwrap(),
-        }
-    }
-}
-
-impl From<semver::Version> for Version {
-    fn from(v: semver::Version) -> Version {
-        Version {
-            major: u32::try_from(v.major).unwrap(),
-            minor: u32::try_from(v.minor).unwrap(),
-            patch: u32::try_from(v.patch).unwrap(),
-        }
-    }
-}
-
-impl From<PartialVersion> for Version {
-    fn from(partial: PartialVersion) -> Version {
-        Version {
-            major: u32::from(partial.major),
-            minor: u32::from(partial.minor),
-            patch: u32::from(partial.patch),
-        }
-    }
-}
-
-impl From<&PartialVersion> for Version {
-    fn from(partial: &PartialVersion) -> Version {
-        Version {
-            major: u32::from(partial.major),
-            minor: u32::from(partial.minor),
-            patch: u32::from(partial.patch),
-        }
-    }
 }
 
 /// A version that may not have specified all values. In general unspecified values will
 /// convert to `0` when resolved, however it is often important to know which values were _unspecified_
 /// (as opposed to being _specified as `0`_) when resolving ranges.
-#[derive(Default, Copy, Clone)]
+#[derive(Copy, Clone)]
 struct PartialVersion {
     major: VersionPart,
     minor: VersionPart,
@@ -135,6 +50,14 @@ struct PartialVersion {
 }
 
 impl PartialVersion {
+    fn new() -> PartialVersion {
+        PartialVersion {
+            major: VersionPart::None,
+            minor: VersionPart::None,
+            patch: VersionPart::None,
+        }
+    }
+
     fn wild() -> PartialVersion {
         PartialVersion {
             major: VersionPart::Wildcard,
@@ -153,6 +76,26 @@ impl PartialVersion {
     }
 }
 
+impl From<PartialVersion> for Version {
+    fn from(partial: PartialVersion) -> Version {
+        Version::new(
+            partial.major.into(),
+            partial.minor.into(),
+            partial.patch.into(),
+        )
+    }
+}
+
+impl From<&PartialVersion> for Version {
+    fn from(partial: &PartialVersion) -> Version {
+        Version::new(
+            partial.major.into(),
+            partial.minor.into(),
+            partial.patch.into(),
+        )
+    }
+}
+
 /// A single part (major, minor, or patch) of a `PartialVersion`.
 /// In a typical semver implementation, there's no difference between a wildcard part (using `*` or `x`) and
 /// a completely unspecified part. solc, however, distinguishes these two in certain cases, so we need to
@@ -164,7 +107,7 @@ enum VersionPart {
     /// This part was explicitly given a wildcard, i.e. the minor part in `1.x`.
     Wildcard,
     /// This part was given a concrete value.
-    Specified(u32),
+    Specified(u64),
 }
 
 impl VersionPart {
@@ -180,7 +123,7 @@ impl VersionPart {
         matches!(self, VersionPart::Specified(_))
     }
 
-    fn unwrap(self) -> u32 {
+    fn unwrap(self) -> u64 {
         match self {
             VersionPart::Specified(v) => v,
             VersionPart::Wildcard => panic!("Tried to unwrap a wildcard segment"),
@@ -189,14 +132,8 @@ impl VersionPart {
     }
 }
 
-impl Default for VersionPart {
-    fn default() -> Self {
-        Self::None
-    }
-}
-
-impl From<VersionPart> for u32 {
-    fn from(segment: VersionPart) -> u32 {
+impl From<VersionPart> for u64 {
+    fn from(segment: VersionPart) -> u64 {
         match segment {
             VersionPart::Specified(v) => v,
             _ => 0,
@@ -241,7 +178,7 @@ impl Display for Operator {
 
 /// A comparator is the basic unit of comparison in a version range. More complex
 /// ranges always boil down to these.
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 struct Comparator {
     version: Version,
     op: Operator,
@@ -262,7 +199,7 @@ impl Comparator {
 impl Default for Comparator {
     fn default() -> Comparator {
         Comparator {
-            version: Version::default(),
+            version: Version::new(0, 0, 0),
             op: Operator::GtEq,
         }
     }
@@ -434,8 +371,8 @@ impl ComparatorSet {
     }
 
     fn merge(&mut self, other: &ComparatorSet) {
-        for &comp in &other.comparators {
-            self.comparators.push(comp);
+        for comp in &other.comparators {
+            self.comparators.push(comp.clone());
         }
     }
 
