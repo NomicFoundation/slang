@@ -1,0 +1,121 @@
+{%- if rendering_in_stubs -%}
+  // Stubs
+{%- else -%}
+  use std::rc::Rc;
+  use std::vec::Vec;
+  use crate::cst::{ Cursor, TerminalNode };
+
+  //
+  // Sequences:
+  //
+
+  {% for sequence in model.ast.sequences %}
+    /**
+     * This node represents a `{{ sequence.parent_type }}` nonterminal, with the following structure:
+     *
+     * ```ebnf
+       {%- for line in sequence.ebnf | split(pat="\n") %}
+     * {{ line }}
+       {%- endfor %}
+     * ```
+     */
+    pub type {{ sequence.parent_type }} = Rc<{{ sequence.parent_type }}Struct>;
+
+    #[derive(Debug)]
+    pub struct {{ sequence.parent_type }}Struct {
+      pub cursor: Cursor,
+      {%- for field in sequence.fields %}
+        pub {{ field.label | snake_case }}:
+        {%- if field.type -%}
+          {%- if field.is_optional -%}
+            Option<{{ field.type | pascal_case }}>,
+          {%- else -%}
+            {{ field.type | pascal_case }},
+          {%- endif -%}
+        {%- else -%}
+          {%- if field.is_optional -%}
+            Option<Rc<TerminalNode>>,
+          {%- else -%}
+            Rc<TerminalNode>,
+          {%- endif -%}
+        {%- endif -%}
+      {% endfor -%}
+    }
+
+  {% endfor %}
+
+  //
+  // Choices:
+  //
+
+  {% for choice in model.ast.choices %}
+    /**
+     * This node represents a `{{ choice.parent_type }}` nonterminal, with the following structure:
+     *
+     * ```ebnf
+       {%- for line in choice.ebnf | split(pat="\n") %}
+     * {{ line }}
+       {%- endfor %}
+     * ```
+     */
+    {% if choice.nonterminal_types | length == 0 %}
+      pub type {{ choice.parent_type }} = Rc<TerminalNode>;
+    {% else %}
+      #[derive(Debug)]
+      pub enum {{ choice.parent_type }} {
+        {% for nonterminal in choice.nonterminal_types -%}
+          {{ nonterminal }}({{ nonterminal | pascal_case }}),
+        {%- endfor %}
+        {%- if choice.includes_terminals %}
+          TerminalNode(Rc<TerminalNode>),
+        {% endif -%}
+      }
+    {% endif %}
+  {% endfor %}
+
+  //
+  // Repeated:
+  //
+
+  {% for repeated in model.ast.repeated %}
+    /**
+     * This node represents a `{{ repeated.parent_type }}` nonterminal, with the following structure:
+     *
+     * ```ebnf
+       {%- for line in repeated.ebnf | split(pat="\n") %}
+     * {{ line }}
+       {%- endfor %}
+     * ```
+     */
+    pub type {{ repeated.parent_type }} = Vec<
+      {%- if repeated.item_type -%}
+        {{ repeated.item_type | pascal_case }}
+      {%- else -%}
+        Rc<TerminalNode>
+      {%- endif -%}
+    >;
+  {% endfor %}
+
+  //
+  // Separated:
+  //
+
+  {% for separated in model.ast.separated %}
+    /**
+     * This node represents a `{{ separated.parent_type }}` nonterminal, with the following structure:
+     *
+     * ```ebnf
+       {%- for line in separated.ebnf | split(pat="\n") %}
+     * {{ line }}
+       {%- endfor %}
+     * ```
+     */
+    pub type {{ separated.parent_type }} = Vec<
+      {%- if separated.item_type -%}
+        {{ separated.item_type | pascal_case }}
+      {%- else -%}
+        Rc<TerminalNode>
+      {%- endif -%}
+    >;
+  {% endfor %}
+{%- endif %}

@@ -1,0 +1,228 @@
+{%- if rendering_in_stubs -%}
+  // Stubs
+{%- else -%}
+  use std::rc::Rc;
+  use crate::cst::{ Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalNode };
+  #[allow(clippy::wildcard_imports)]
+  use super::nodes::*;
+
+  //
+  // Sequences:
+  //
+
+  {% for sequence in model.ast.sequences %}
+    pub fn build_{{ sequence.parent_type | snake_case }}(cursor: Cursor) -> Result<{{ sequence.parent_type }}>
+    {
+      expect_nonterminal_kind(&cursor, NonterminalKind::{{ sequence.parent_type }})?;
+      let mut fields_cursor = cursor.clone();
+      if !fields_cursor.go_to_first_child() {
+        return Err("Expected sequence node to have at least one children".into());
+      }
+      {% for field in sequence.fields %}
+        {%- if loop.first -%}
+          skip_trivia(&mut fields_cursor)?;
+        {%- else -%}
+          next_non_trivia_sibling(&mut fields_cursor)?;
+        {%- endif -%}
+
+        {%- if field.is_optional -%}
+          let {{ field.label }} = if fields_cursor.label() == EdgeLabel::{{ field.label | pascal_case }} {
+            {%- if field.type -%}
+              Some(build_{{ field.type | snake_case }}(fields_cursor.clone())?)
+            {%- else -%}
+              Some(fetch_terminal_node(&fields_cursor)?)
+            {%- endif -%}
+          } else {
+            None
+          };
+
+        {%- else -%}
+          expect_label(&fields_cursor, EdgeLabel::{{ field.label | pascal_case }})?;
+          {%- if field.type -%}
+            let {{ field.label }} = build_{{ field.type | snake_case }}(fields_cursor.clone())?;
+          {%- else -%}
+            let {{ field.label }} = fetch_terminal_node(&fields_cursor)?;
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor %}
+
+      consume_remaining_trivia(fields_cursor)?;
+
+      Ok(Rc::new({{ sequence.parent_type }}Struct {
+        cursor,
+        {%- for field in sequence.fields -%}
+          {{ field.label }},
+        {%- endfor %}
+      }))
+    }
+
+  {% endfor %}
+
+  //
+  // Choices:
+  //
+
+  {% for choice in model.ast.choices %}
+    pub fn build_{{ choice.parent_type | snake_case }}(mut cursor: Cursor) -> Result<
+    {%- if choice.nonterminal_types | length == 0 -%}
+      Rc<TerminalNode>
+    {%- else -%}
+      {{ choice.parent_type }}
+    {%- endif -%}
+    > {
+      expect_nonterminal_kind(&cursor, NonterminalKind::{{ choice.parent_type }})?;
+      if !cursor.go_to_first_child() {
+        return Err("Expected choice node to have at least one children".into());
+      }
+      skip_trivia(&mut cursor)?;
+      expect_label(&cursor, EdgeLabel::Variant)?;
+      {%- if choice.nonterminal_types | length == 0 -%}
+        let item = fetch_terminal_node(&cursor)?;
+      {%- else -%}
+        let item = match cursor.node().kind() {
+          {% for type in choice.nonterminal_types -%}
+            NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ choice.parent_type }}::{{ type | pascal_case }}(build_{{ type | snake_case }}(cursor.clone())?),
+          {%- endfor -%}
+          {%- if choice.includes_terminals -%}
+            NodeKind::Terminal(_) => {{ choice.parent_type }}::TerminalNode(fetch_terminal_node(&cursor)?),
+            NodeKind::Nonterminal(_) => {
+              return Err(format!("Unexpected variant node of kind {:?}", cursor.node().kind()));
+            }
+          {%- else -%}
+            NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+              return Err(format!("Unexpected variant node of kind {:?}", cursor.node().kind()));
+            }
+          {%- endif -%}
+        };
+      {%- endif -%}
+      consume_remaining_trivia(cursor)?;
+      Ok(item)
+    }
+
+  {% endfor %}
+
+  //
+  // Repeated:
+  //
+
+  {% for repeated in model.ast.repeated %}
+    pub fn build_{{ repeated.parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ repeated.parent_type }}> {
+      expect_nonterminal_kind(&cursor, NonterminalKind::{{ repeated.parent_type }})?;
+      let mut items = {{ repeated.parent_type }}::new();
+      if !cursor.go_to_first_child() {
+        return Ok(items);
+      }
+      loop {
+        if !cursor.node().is_trivia() {
+          expect_label(&cursor, EdgeLabel::Item)?;
+          {%- if repeated.item_type -%}
+            let item = build_{{ repeated.item_type | snake_case }}(cursor.clone())?;
+          {%- else -%}
+            let item = fetch_terminal_node(&cursor)?;
+          {%- endif -%}
+          items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+          break;
+        }
+      }
+      Ok(items)
+    }
+
+  {% endfor %}
+
+  //
+  // Separated:
+  //
+
+  {% for separated in model.ast.separated %}
+    pub fn build_{{ separated.parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ separated.parent_type }}> {
+      expect_nonterminal_kind(&cursor, NonterminalKind::{{ separated.parent_type }})?;
+      let mut items = {{ separated.parent_type }}::new();
+      if !cursor.go_to_first_child() {
+        return Ok(items);
+      }
+      loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+          expect_label(&cursor, EdgeLabel::Item)?;
+          {%- if separated.item_type -%}
+            let item = build_{{ separated.item_type | snake_case }}(cursor.clone())?;
+          {%- else -%}
+            let item = fetch_terminal_node(&cursor)?;
+          {%- endif -%}
+          items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+          break;
+        }
+      }
+      Ok(items)
+    }
+  {% endfor %}
+
+  //
+  // Common:
+  //
+
+  type Result<T> = std::result::Result<T, String>;
+
+  #[allow(dead_code)]
+  #[inline]
+  fn fetch_terminal_node(cursor: &Cursor) -> Result<Rc<TerminalNode>> {
+    cursor.node().into_terminal().ok_or(format!("Expected terminal node, got {:?} instead", cursor.node().kind()))
+  }
+
+  #[allow(dead_code)]
+  #[inline]
+  fn expect_label(cursor: &Cursor, label: EdgeLabel) -> Result<()> {
+    if cursor.label() == label {
+      Ok(())
+    } else {
+      Err(format!("Expected label {:?}, but got {:?} instead", label, cursor.label()))
+    }
+  }
+
+  #[allow(dead_code)]
+  #[inline]
+  fn expect_nonterminal_kind(cursor: &Cursor, kind: NonterminalKind) -> Result<()> {
+    if cursor.node().is_nonterminal_with_kind(kind) {
+      Ok(())
+    } else {
+      Err(format!("Expected {:?} node, but got {:?} instead", kind, cursor.node().kind()))
+    }
+  }
+
+  #[allow(dead_code)]
+  #[inline]
+  fn skip_trivia(cursor: &mut Cursor) -> Result<()> {
+    while cursor.node().is_trivia() {
+      if !cursor.go_to_next_sibling() {
+        return Err("Expected choice node to have at least non trivia child".into());
+      }
+    }
+    Ok(())
+  }
+
+  #[allow(dead_code)]
+  #[inline]
+  fn consume_remaining_trivia(mut cursor: Cursor) -> Result<()> {
+    while cursor.go_to_next_sibling() {
+      if !cursor.node().is_trivia() {
+        return Err("Unexpected non-trivia node".into());
+      }
+    }
+    Ok(())
+  }
+
+  #[allow(dead_code)]
+  #[inline]
+  fn next_non_trivia_sibling(cursor: &mut Cursor) -> Result<()> {
+    while cursor.go_to_next_sibling() {
+      if !cursor.node().is_trivia() {
+        return Ok(());
+      }
+    }
+    Err("Expected more non-trivia siblings".into())
+  }
+
+{%- endif %}

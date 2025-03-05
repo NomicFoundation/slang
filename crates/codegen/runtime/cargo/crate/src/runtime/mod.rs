@@ -1,3 +1,4 @@
+pub mod ast;
 #[cfg(feature = "__experimental_bindings_api")]
 pub mod bindings;
 #[cfg(all(
