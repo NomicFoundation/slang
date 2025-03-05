@@ -11,15 +11,9 @@ use crate::cst::{Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalNode};
 
 pub fn build_source_unit(cursor: Cursor) -> Result<SourceUnit> {
     expect_nonterminal_kind(&cursor, NonterminalKind::SourceUnit)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Members)?;
-    let members = build_source_unit_members(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let members = build_source_unit_members(helper.accept_label(EdgeLabel::Members)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(SourceUnitStruct {
         _cursor: cursor,
@@ -29,21 +23,11 @@ pub fn build_source_unit(cursor: Cursor) -> Result<SourceUnit> {
 
 pub fn build_pragma_directive(cursor: Cursor) -> Result<PragmaDirective> {
     expect_nonterminal_kind(&cursor, NonterminalKind::PragmaDirective)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::PragmaKeyword)?;
-    let pragma_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Pragma)?;
-    let pragma = build_pragma(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let pragma_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::PragmaKeyword)?)?;
+    let pragma = build_pragma(helper.accept_label(EdgeLabel::Pragma)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(PragmaDirectiveStruct {
         _cursor: cursor,
@@ -55,18 +39,10 @@ pub fn build_pragma_directive(cursor: Cursor) -> Result<PragmaDirective> {
 
 pub fn build_abicoder_pragma(cursor: Cursor) -> Result<AbicoderPragma> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AbicoderPragma)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::AbicoderKeyword)?;
-    let abicoder_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Version)?;
-    let version = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let abicoder_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::AbicoderKeyword)?)?;
+    let version = fetch_terminal_node(&helper.accept_label(EdgeLabel::Version)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(AbicoderPragmaStruct {
         _cursor: cursor,
@@ -77,18 +53,11 @@ pub fn build_abicoder_pragma(cursor: Cursor) -> Result<AbicoderPragma> {
 
 pub fn build_experimental_pragma(cursor: Cursor) -> Result<ExperimentalPragma> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ExperimentalPragma)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ExperimentalKeyword)?;
-    let experimental_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Feature)?;
-    let feature = build_experimental_feature(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let experimental_keyword =
+        fetch_terminal_node(&helper.accept_label(EdgeLabel::ExperimentalKeyword)?)?;
+    let feature = build_experimental_feature(helper.accept_label(EdgeLabel::Feature)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ExperimentalPragmaStruct {
         _cursor: cursor,
@@ -99,18 +68,10 @@ pub fn build_experimental_pragma(cursor: Cursor) -> Result<ExperimentalPragma> {
 
 pub fn build_version_pragma(cursor: Cursor) -> Result<VersionPragma> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VersionPragma)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::SolidityKeyword)?;
-    let solidity_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Sets)?;
-    let sets = build_version_expression_sets(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let solidity_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::SolidityKeyword)?)?;
+    let sets = build_version_expression_sets(helper.accept_label(EdgeLabel::Sets)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(VersionPragmaStruct {
         _cursor: cursor,
@@ -121,21 +82,11 @@ pub fn build_version_pragma(cursor: Cursor) -> Result<VersionPragma> {
 
 pub fn build_version_range(cursor: Cursor) -> Result<VersionRange> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VersionRange)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Start)?;
-    let start = build_version_literal(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Minus)?;
-    let minus = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::End)?;
-    let end = build_version_literal(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let start = build_version_literal(helper.accept_label(EdgeLabel::Start)?)?;
+    let minus = fetch_terminal_node(&helper.accept_label(EdgeLabel::Minus)?)?;
+    let end = build_version_literal(helper.accept_label(EdgeLabel::End)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(VersionRangeStruct {
         _cursor: cursor,
@@ -147,21 +98,16 @@ pub fn build_version_range(cursor: Cursor) -> Result<VersionRange> {
 
 pub fn build_version_term(cursor: Cursor) -> Result<VersionTerm> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VersionTerm)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    let operator = if fields_cursor.label() == EdgeLabel::Operator {
-        Some(build_version_operator(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let operator = if helper.at_label(EdgeLabel::Operator) {
+        Some(build_version_operator(
+            helper.accept_label(EdgeLabel::Operator)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Literal)?;
-    let literal = build_version_literal(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let literal = build_version_literal(helper.accept_label(EdgeLabel::Literal)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(VersionTermStruct {
         _cursor: cursor,
@@ -172,21 +118,11 @@ pub fn build_version_term(cursor: Cursor) -> Result<VersionTerm> {
 
 pub fn build_import_directive(cursor: Cursor) -> Result<ImportDirective> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ImportDirective)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ImportKeyword)?;
-    let import_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Clause)?;
-    let clause = build_import_clause(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let import_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ImportKeyword)?)?;
+    let clause = build_import_clause(helper.accept_label(EdgeLabel::Clause)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ImportDirectiveStruct {
         _cursor: cursor,
@@ -198,21 +134,14 @@ pub fn build_import_directive(cursor: Cursor) -> Result<ImportDirective> {
 
 pub fn build_path_import(cursor: Cursor) -> Result<PathImport> {
     expect_nonterminal_kind(&cursor, NonterminalKind::PathImport)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Path)?;
-    let path = build_string_literal(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let alias = if fields_cursor.label() == EdgeLabel::Alias {
-        Some(build_import_alias(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let path = build_string_literal(helper.accept_label(EdgeLabel::Path)?)?;
+    let alias = if helper.at_label(EdgeLabel::Alias) {
+        Some(build_import_alias(helper.accept_label(EdgeLabel::Alias)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(PathImportStruct {
         _cursor: cursor,
@@ -223,24 +152,12 @@ pub fn build_path_import(cursor: Cursor) -> Result<PathImport> {
 
 pub fn build_named_import(cursor: Cursor) -> Result<NamedImport> {
     expect_nonterminal_kind(&cursor, NonterminalKind::NamedImport)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Asterisk)?;
-    let asterisk = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Alias)?;
-    let alias = build_import_alias(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::FromKeyword)?;
-    let from_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Path)?;
-    let path = build_string_literal(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let asterisk = fetch_terminal_node(&helper.accept_label(EdgeLabel::Asterisk)?)?;
+    let alias = build_import_alias(helper.accept_label(EdgeLabel::Alias)?)?;
+    let from_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::FromKeyword)?)?;
+    let path = build_string_literal(helper.accept_label(EdgeLabel::Path)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(NamedImportStruct {
         _cursor: cursor,
@@ -253,27 +170,13 @@ pub fn build_named_import(cursor: Cursor) -> Result<NamedImport> {
 
 pub fn build_import_deconstruction(cursor: Cursor) -> Result<ImportDeconstruction> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ImportDeconstruction)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBrace)?;
-    let open_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Symbols)?;
-    let symbols = build_import_deconstruction_symbols(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBrace)?;
-    let close_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::FromKeyword)?;
-    let from_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Path)?;
-    let path = build_string_literal(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    let symbols = build_import_deconstruction_symbols(helper.accept_label(EdgeLabel::Symbols)?)?;
+    let close_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    let from_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::FromKeyword)?)?;
+    let path = build_string_literal(helper.accept_label(EdgeLabel::Path)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ImportDeconstructionStruct {
         _cursor: cursor,
@@ -287,21 +190,14 @@ pub fn build_import_deconstruction(cursor: Cursor) -> Result<ImportDeconstructio
 
 pub fn build_import_deconstruction_symbol(cursor: Cursor) -> Result<ImportDeconstructionSymbol> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ImportDeconstructionSymbol)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let alias = if fields_cursor.label() == EdgeLabel::Alias {
-        Some(build_import_alias(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let alias = if helper.at_label(EdgeLabel::Alias) {
+        Some(build_import_alias(helper.accept_label(EdgeLabel::Alias)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ImportDeconstructionSymbolStruct {
         _cursor: cursor,
@@ -312,18 +208,10 @@ pub fn build_import_deconstruction_symbol(cursor: Cursor) -> Result<ImportDecons
 
 pub fn build_import_alias(cursor: Cursor) -> Result<ImportAlias> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ImportAlias)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::AsKeyword)?;
-    let as_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Identifier)?;
-    let identifier = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let as_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::AsKeyword)?)?;
+    let identifier = fetch_terminal_node(&helper.accept_label(EdgeLabel::Identifier)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ImportAliasStruct {
         _cursor: cursor,
@@ -334,33 +222,20 @@ pub fn build_import_alias(cursor: Cursor) -> Result<ImportAlias> {
 
 pub fn build_using_directive(cursor: Cursor) -> Result<UsingDirective> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UsingDirective)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::UsingKeyword)?;
-    let using_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Clause)?;
-    let clause = build_using_clause(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ForKeyword)?;
-    let for_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Target)?;
-    let target = build_using_target(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let global_keyword = if fields_cursor.label() == EdgeLabel::GlobalKeyword {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let using_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::UsingKeyword)?)?;
+    let clause = build_using_clause(helper.accept_label(EdgeLabel::Clause)?)?;
+    let for_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ForKeyword)?)?;
+    let target = build_using_target(helper.accept_label(EdgeLabel::Target)?)?;
+    let global_keyword = if helper.at_label(EdgeLabel::GlobalKeyword) {
+        Some(fetch_terminal_node(
+            &helper.accept_label(EdgeLabel::GlobalKeyword)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(UsingDirectiveStruct {
         _cursor: cursor,
@@ -375,21 +250,11 @@ pub fn build_using_directive(cursor: Cursor) -> Result<UsingDirective> {
 
 pub fn build_using_deconstruction(cursor: Cursor) -> Result<UsingDeconstruction> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UsingDeconstruction)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBrace)?;
-    let open_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Symbols)?;
-    let symbols = build_using_deconstruction_symbols(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBrace)?;
-    let close_brace = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    let symbols = build_using_deconstruction_symbols(helper.accept_label(EdgeLabel::Symbols)?)?;
+    let close_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(UsingDeconstructionStruct {
         _cursor: cursor,
@@ -401,21 +266,14 @@ pub fn build_using_deconstruction(cursor: Cursor) -> Result<UsingDeconstruction>
 
 pub fn build_using_deconstruction_symbol(cursor: Cursor) -> Result<UsingDeconstructionSymbol> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UsingDeconstructionSymbol)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = build_identifier_path(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let alias = if fields_cursor.label() == EdgeLabel::Alias {
-        Some(build_using_alias(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let name = build_identifier_path(helper.accept_label(EdgeLabel::Name)?)?;
+    let alias = if helper.at_label(EdgeLabel::Alias) {
+        Some(build_using_alias(helper.accept_label(EdgeLabel::Alias)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(UsingDeconstructionSymbolStruct {
         _cursor: cursor,
@@ -426,18 +284,10 @@ pub fn build_using_deconstruction_symbol(cursor: Cursor) -> Result<UsingDeconstr
 
 pub fn build_using_alias(cursor: Cursor) -> Result<UsingAlias> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UsingAlias)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::AsKeyword)?;
-    let as_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = build_using_operator(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let as_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::AsKeyword)?)?;
+    let operator = build_using_operator(helper.accept_label(EdgeLabel::Operator)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(UsingAliasStruct {
         _cursor: cursor,
@@ -448,39 +298,27 @@ pub fn build_using_alias(cursor: Cursor) -> Result<UsingAlias> {
 
 pub fn build_contract_definition(cursor: Cursor) -> Result<ContractDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ContractDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    let abstract_keyword = if fields_cursor.label() == EdgeLabel::AbstractKeyword {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let abstract_keyword = if helper.at_label(EdgeLabel::AbstractKeyword) {
+        Some(fetch_terminal_node(
+            &helper.accept_label(EdgeLabel::AbstractKeyword)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ContractKeyword)?;
-    let contract_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let inheritance = if fields_cursor.label() == EdgeLabel::Inheritance {
-        Some(build_inheritance_specifier(fields_cursor.clone())?)
+    let contract_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ContractKeyword)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let inheritance = if helper.at_label(EdgeLabel::Inheritance) {
+        Some(build_inheritance_specifier(
+            helper.accept_label(EdgeLabel::Inheritance)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBrace)?;
-    let open_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Members)?;
-    let members = build_contract_members(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBrace)?;
-    let close_brace = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let open_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    let members = build_contract_members(helper.accept_label(EdgeLabel::Members)?)?;
+    let close_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ContractDefinitionStruct {
         _cursor: cursor,
@@ -496,18 +334,10 @@ pub fn build_contract_definition(cursor: Cursor) -> Result<ContractDefinition> {
 
 pub fn build_inheritance_specifier(cursor: Cursor) -> Result<InheritanceSpecifier> {
     expect_nonterminal_kind(&cursor, NonterminalKind::InheritanceSpecifier)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::IsKeyword)?;
-    let is_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Types)?;
-    let types = build_inheritance_types(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let is_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::IsKeyword)?)?;
+    let types = build_inheritance_types(helper.accept_label(EdgeLabel::Types)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(InheritanceSpecifierStruct {
         _cursor: cursor,
@@ -518,21 +348,16 @@ pub fn build_inheritance_specifier(cursor: Cursor) -> Result<InheritanceSpecifie
 
 pub fn build_inheritance_type(cursor: Cursor) -> Result<InheritanceType> {
     expect_nonterminal_kind(&cursor, NonterminalKind::InheritanceType)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeName)?;
-    let type_name = build_identifier_path(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let arguments = if fields_cursor.label() == EdgeLabel::Arguments {
-        Some(build_arguments_declaration(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let type_name = build_identifier_path(helper.accept_label(EdgeLabel::TypeName)?)?;
+    let arguments = if helper.at_label(EdgeLabel::Arguments) {
+        Some(build_arguments_declaration(
+            helper.accept_label(EdgeLabel::Arguments)?,
+        )?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(InheritanceTypeStruct {
         _cursor: cursor,
@@ -543,33 +368,21 @@ pub fn build_inheritance_type(cursor: Cursor) -> Result<InheritanceType> {
 
 pub fn build_interface_definition(cursor: Cursor) -> Result<InterfaceDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::InterfaceDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::InterfaceKeyword)?;
-    let interface_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let inheritance = if fields_cursor.label() == EdgeLabel::Inheritance {
-        Some(build_inheritance_specifier(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let interface_keyword =
+        fetch_terminal_node(&helper.accept_label(EdgeLabel::InterfaceKeyword)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let inheritance = if helper.at_label(EdgeLabel::Inheritance) {
+        Some(build_inheritance_specifier(
+            helper.accept_label(EdgeLabel::Inheritance)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBrace)?;
-    let open_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Members)?;
-    let members = build_interface_members(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBrace)?;
-    let close_brace = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let open_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    let members = build_interface_members(helper.accept_label(EdgeLabel::Members)?)?;
+    let close_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(InterfaceDefinitionStruct {
         _cursor: cursor,
@@ -584,27 +397,13 @@ pub fn build_interface_definition(cursor: Cursor) -> Result<InterfaceDefinition>
 
 pub fn build_library_definition(cursor: Cursor) -> Result<LibraryDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::LibraryDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LibraryKeyword)?;
-    let library_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBrace)?;
-    let open_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Members)?;
-    let members = build_library_members(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBrace)?;
-    let close_brace = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let library_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::LibraryKeyword)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let open_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    let members = build_library_members(helper.accept_label(EdgeLabel::Members)?)?;
+    let close_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(LibraryDefinitionStruct {
         _cursor: cursor,
@@ -618,27 +417,13 @@ pub fn build_library_definition(cursor: Cursor) -> Result<LibraryDefinition> {
 
 pub fn build_struct_definition(cursor: Cursor) -> Result<StructDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::StructDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::StructKeyword)?;
-    let struct_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBrace)?;
-    let open_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Members)?;
-    let members = build_struct_members(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBrace)?;
-    let close_brace = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let struct_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::StructKeyword)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let open_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    let members = build_struct_members(helper.accept_label(EdgeLabel::Members)?)?;
+    let close_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(StructDefinitionStruct {
         _cursor: cursor,
@@ -652,21 +437,11 @@ pub fn build_struct_definition(cursor: Cursor) -> Result<StructDefinition> {
 
 pub fn build_struct_member(cursor: Cursor) -> Result<StructMember> {
     expect_nonterminal_kind(&cursor, NonterminalKind::StructMember)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeName)?;
-    let type_name = build_type_name(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(StructMemberStruct {
         _cursor: cursor,
@@ -678,27 +453,13 @@ pub fn build_struct_member(cursor: Cursor) -> Result<StructMember> {
 
 pub fn build_enum_definition(cursor: Cursor) -> Result<EnumDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::EnumDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::EnumKeyword)?;
-    let enum_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBrace)?;
-    let open_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Members)?;
-    let members = build_enum_members(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBrace)?;
-    let close_brace = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let enum_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::EnumKeyword)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let open_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    let members = build_enum_members(helper.accept_label(EdgeLabel::Members)?)?;
+    let close_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(EnumDefinitionStruct {
         _cursor: cursor,
@@ -712,30 +473,14 @@ pub fn build_enum_definition(cursor: Cursor) -> Result<EnumDefinition> {
 
 pub fn build_constant_definition(cursor: Cursor) -> Result<ConstantDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ConstantDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeName)?;
-    let type_name = build_type_name(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ConstantKeyword)?;
-    let constant_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Equal)?;
-    let equal = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Value)?;
-    let value = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
+    let constant_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ConstantKeyword)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let equal = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
+    let value = build_expression(helper.accept_label(EdgeLabel::Value)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ConstantDefinitionStruct {
         _cursor: cursor,
@@ -750,32 +495,19 @@ pub fn build_constant_definition(cursor: Cursor) -> Result<ConstantDefinition> {
 
 pub fn build_state_variable_definition(cursor: Cursor) -> Result<StateVariableDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::StateVariableDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeName)?;
-    let type_name = build_type_name(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Attributes)?;
-    let attributes = build_state_variable_attributes(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let value = if fields_cursor.label() == EdgeLabel::Value {
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
+    let attributes = build_state_variable_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let value = if helper.at_label(EdgeLabel::Value) {
         Some(build_state_variable_definition_value(
-            fields_cursor.clone(),
+            helper.accept_label(EdgeLabel::Value)?,
         )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(StateVariableDefinitionStruct {
         _cursor: cursor,
@@ -791,18 +523,10 @@ pub fn build_state_variable_definition_value(
     cursor: Cursor,
 ) -> Result<StateVariableDefinitionValue> {
     expect_nonterminal_kind(&cursor, NonterminalKind::StateVariableDefinitionValue)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Equal)?;
-    let equal = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Value)?;
-    let value = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let equal = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
+    let value = build_expression(helper.accept_label(EdgeLabel::Value)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(StateVariableDefinitionValueStruct {
         _cursor: cursor,
@@ -813,33 +537,20 @@ pub fn build_state_variable_definition_value(
 
 pub fn build_function_definition(cursor: Cursor) -> Result<FunctionDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::FunctionDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::FunctionKeyword)?;
-    let function_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = build_function_name(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_parameters_declaration(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Attributes)?;
-    let attributes = build_function_attributes(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let returns = if fields_cursor.label() == EdgeLabel::Returns {
-        Some(build_returns_declaration(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let function_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::FunctionKeyword)?)?;
+    let name = build_function_name(helper.accept_label(EdgeLabel::Name)?)?;
+    let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let attributes = build_function_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
+    let returns = if helper.at_label(EdgeLabel::Returns) {
+        Some(build_returns_declaration(
+            helper.accept_label(EdgeLabel::Returns)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_function_body(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let body = build_function_body(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(FunctionDefinitionStruct {
         _cursor: cursor,
@@ -854,21 +565,11 @@ pub fn build_function_definition(cursor: Cursor) -> Result<FunctionDefinition> {
 
 pub fn build_parameters_declaration(cursor: Cursor) -> Result<ParametersDeclaration> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ParametersDeclaration)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_parameters(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let parameters = build_parameters(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ParametersDeclarationStruct {
         _cursor: cursor,
@@ -880,27 +581,21 @@ pub fn build_parameters_declaration(cursor: Cursor) -> Result<ParametersDeclarat
 
 pub fn build_parameter(cursor: Cursor) -> Result<Parameter> {
     expect_nonterminal_kind(&cursor, NonterminalKind::Parameter)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeName)?;
-    let type_name = build_type_name(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let storage_location = if fields_cursor.label() == EdgeLabel::StorageLocation {
-        Some(build_storage_location(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
+    let storage_location = if helper.at_label(EdgeLabel::StorageLocation) {
+        Some(build_storage_location(
+            helper.accept_label(EdgeLabel::StorageLocation)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let name = if fields_cursor.label() == EdgeLabel::Name {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let name = if helper.at_label(EdgeLabel::Name) {
+        Some(fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ParameterStruct {
         _cursor: cursor,
@@ -912,21 +607,16 @@ pub fn build_parameter(cursor: Cursor) -> Result<Parameter> {
 
 pub fn build_override_specifier(cursor: Cursor) -> Result<OverrideSpecifier> {
     expect_nonterminal_kind(&cursor, NonterminalKind::OverrideSpecifier)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OverrideKeyword)?;
-    let override_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let overridden = if fields_cursor.label() == EdgeLabel::Overridden {
-        Some(build_override_paths_declaration(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let override_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::OverrideKeyword)?)?;
+    let overridden = if helper.at_label(EdgeLabel::Overridden) {
+        Some(build_override_paths_declaration(
+            helper.accept_label(EdgeLabel::Overridden)?,
+        )?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(OverrideSpecifierStruct {
         _cursor: cursor,
@@ -937,21 +627,11 @@ pub fn build_override_specifier(cursor: Cursor) -> Result<OverrideSpecifier> {
 
 pub fn build_override_paths_declaration(cursor: Cursor) -> Result<OverridePathsDeclaration> {
     expect_nonterminal_kind(&cursor, NonterminalKind::OverridePathsDeclaration)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Paths)?;
-    let paths = build_override_paths(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let paths = build_override_paths(helper.accept_label(EdgeLabel::Paths)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(OverridePathsDeclarationStruct {
         _cursor: cursor,
@@ -963,18 +643,10 @@ pub fn build_override_paths_declaration(cursor: Cursor) -> Result<OverridePathsD
 
 pub fn build_returns_declaration(cursor: Cursor) -> Result<ReturnsDeclaration> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ReturnsDeclaration)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ReturnsKeyword)?;
-    let returns_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Variables)?;
-    let variables = build_parameters_declaration(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let returns_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ReturnsKeyword)?)?;
+    let variables = build_parameters_declaration(helper.accept_label(EdgeLabel::Variables)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ReturnsDeclarationStruct {
         _cursor: cursor,
@@ -985,24 +657,13 @@ pub fn build_returns_declaration(cursor: Cursor) -> Result<ReturnsDeclaration> {
 
 pub fn build_constructor_definition(cursor: Cursor) -> Result<ConstructorDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ConstructorDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ConstructorKeyword)?;
-    let constructor_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_parameters_declaration(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Attributes)?;
-    let attributes = build_constructor_attributes(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_block(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let constructor_keyword =
+        fetch_terminal_node(&helper.accept_label(EdgeLabel::ConstructorKeyword)?)?;
+    let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let attributes = build_constructor_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
+    let body = build_block(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ConstructorDefinitionStruct {
         _cursor: cursor,
@@ -1015,24 +676,13 @@ pub fn build_constructor_definition(cursor: Cursor) -> Result<ConstructorDefinit
 
 pub fn build_unnamed_function_definition(cursor: Cursor) -> Result<UnnamedFunctionDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UnnamedFunctionDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::FunctionKeyword)?;
-    let function_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_parameters_declaration(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Attributes)?;
-    let attributes = build_unnamed_function_attributes(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_function_body(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let function_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::FunctionKeyword)?)?;
+    let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let attributes =
+        build_unnamed_function_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
+    let body = build_function_body(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(UnnamedFunctionDefinitionStruct {
         _cursor: cursor,
@@ -1045,30 +695,20 @@ pub fn build_unnamed_function_definition(cursor: Cursor) -> Result<UnnamedFuncti
 
 pub fn build_fallback_function_definition(cursor: Cursor) -> Result<FallbackFunctionDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::FallbackFunctionDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::FallbackKeyword)?;
-    let fallback_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_parameters_declaration(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Attributes)?;
-    let attributes = build_fallback_function_attributes(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let returns = if fields_cursor.label() == EdgeLabel::Returns {
-        Some(build_returns_declaration(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let fallback_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::FallbackKeyword)?)?;
+    let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let attributes =
+        build_fallback_function_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
+    let returns = if helper.at_label(EdgeLabel::Returns) {
+        Some(build_returns_declaration(
+            helper.accept_label(EdgeLabel::Returns)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_function_body(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let body = build_function_body(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(FallbackFunctionDefinitionStruct {
         _cursor: cursor,
@@ -1082,24 +722,13 @@ pub fn build_fallback_function_definition(cursor: Cursor) -> Result<FallbackFunc
 
 pub fn build_receive_function_definition(cursor: Cursor) -> Result<ReceiveFunctionDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ReceiveFunctionDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ReceiveKeyword)?;
-    let receive_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_parameters_declaration(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Attributes)?;
-    let attributes = build_receive_function_attributes(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_function_body(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let receive_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ReceiveKeyword)?)?;
+    let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let attributes =
+        build_receive_function_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
+    let body = build_function_body(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ReceiveFunctionDefinitionStruct {
         _cursor: cursor,
@@ -1112,30 +741,19 @@ pub fn build_receive_function_definition(cursor: Cursor) -> Result<ReceiveFuncti
 
 pub fn build_modifier_definition(cursor: Cursor) -> Result<ModifierDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ModifierDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ModifierKeyword)?;
-    let modifier_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let parameters = if fields_cursor.label() == EdgeLabel::Parameters {
-        Some(build_parameters_declaration(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let modifier_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ModifierKeyword)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let parameters = if helper.at_label(EdgeLabel::Parameters) {
+        Some(build_parameters_declaration(
+            helper.accept_label(EdgeLabel::Parameters)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Attributes)?;
-    let attributes = build_modifier_attributes(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_function_body(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let attributes = build_modifier_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
+    let body = build_function_body(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ModifierDefinitionStruct {
         _cursor: cursor,
@@ -1149,21 +767,16 @@ pub fn build_modifier_definition(cursor: Cursor) -> Result<ModifierDefinition> {
 
 pub fn build_modifier_invocation(cursor: Cursor) -> Result<ModifierInvocation> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ModifierInvocation)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = build_identifier_path(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let arguments = if fields_cursor.label() == EdgeLabel::Arguments {
-        Some(build_arguments_declaration(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let name = build_identifier_path(helper.accept_label(EdgeLabel::Name)?)?;
+    let arguments = if helper.at_label(EdgeLabel::Arguments) {
+        Some(build_arguments_declaration(
+            helper.accept_label(EdgeLabel::Arguments)?,
+        )?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ModifierInvocationStruct {
         _cursor: cursor,
@@ -1174,30 +787,20 @@ pub fn build_modifier_invocation(cursor: Cursor) -> Result<ModifierInvocation> {
 
 pub fn build_event_definition(cursor: Cursor) -> Result<EventDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::EventDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::EventKeyword)?;
-    let event_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_event_parameters_declaration(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let anonymous_keyword = if fields_cursor.label() == EdgeLabel::AnonymousKeyword {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let event_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::EventKeyword)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let parameters =
+        build_event_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let anonymous_keyword = if helper.at_label(EdgeLabel::AnonymousKeyword) {
+        Some(fetch_terminal_node(
+            &helper.accept_label(EdgeLabel::AnonymousKeyword)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(EventDefinitionStruct {
         _cursor: cursor,
@@ -1211,21 +814,11 @@ pub fn build_event_definition(cursor: Cursor) -> Result<EventDefinition> {
 
 pub fn build_event_parameters_declaration(cursor: Cursor) -> Result<EventParametersDeclaration> {
     expect_nonterminal_kind(&cursor, NonterminalKind::EventParametersDeclaration)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_event_parameters(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let parameters = build_event_parameters(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(EventParametersDeclarationStruct {
         _cursor: cursor,
@@ -1237,27 +830,21 @@ pub fn build_event_parameters_declaration(cursor: Cursor) -> Result<EventParamet
 
 pub fn build_event_parameter(cursor: Cursor) -> Result<EventParameter> {
     expect_nonterminal_kind(&cursor, NonterminalKind::EventParameter)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeName)?;
-    let type_name = build_type_name(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let indexed_keyword = if fields_cursor.label() == EdgeLabel::IndexedKeyword {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
+    let indexed_keyword = if helper.at_label(EdgeLabel::IndexedKeyword) {
+        Some(fetch_terminal_node(
+            &helper.accept_label(EdgeLabel::IndexedKeyword)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let name = if fields_cursor.label() == EdgeLabel::Name {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let name = if helper.at_label(EdgeLabel::Name) {
+        Some(fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(EventParameterStruct {
         _cursor: cursor,
@@ -1271,27 +858,13 @@ pub fn build_user_defined_value_type_definition(
     cursor: Cursor,
 ) -> Result<UserDefinedValueTypeDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UserDefinedValueTypeDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeKeyword)?;
-    let type_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::IsKeyword)?;
-    let is_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ValueType)?;
-    let value_type = build_elementary_type(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let type_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::TypeKeyword)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let is_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::IsKeyword)?)?;
+    let value_type = build_elementary_type(helper.accept_label(EdgeLabel::ValueType)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(UserDefinedValueTypeDefinitionStruct {
         _cursor: cursor,
@@ -1305,24 +878,12 @@ pub fn build_user_defined_value_type_definition(
 
 pub fn build_error_definition(cursor: Cursor) -> Result<ErrorDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ErrorDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ErrorKeyword)?;
-    let error_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Members)?;
-    let members = build_error_parameters_declaration(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let error_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ErrorKeyword)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let members = build_error_parameters_declaration(helper.accept_label(EdgeLabel::Members)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ErrorDefinitionStruct {
         _cursor: cursor,
@@ -1335,21 +896,11 @@ pub fn build_error_definition(cursor: Cursor) -> Result<ErrorDefinition> {
 
 pub fn build_error_parameters_declaration(cursor: Cursor) -> Result<ErrorParametersDeclaration> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ErrorParametersDeclaration)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_error_parameters(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let parameters = build_error_parameters(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ErrorParametersDeclarationStruct {
         _cursor: cursor,
@@ -1361,21 +912,14 @@ pub fn build_error_parameters_declaration(cursor: Cursor) -> Result<ErrorParamet
 
 pub fn build_error_parameter(cursor: Cursor) -> Result<ErrorParameter> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ErrorParameter)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeName)?;
-    let type_name = build_type_name(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let name = if fields_cursor.label() == EdgeLabel::Name {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
+    let name = if helper.at_label(EdgeLabel::Name) {
+        Some(fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ErrorParameterStruct {
         _cursor: cursor,
@@ -1386,27 +930,16 @@ pub fn build_error_parameter(cursor: Cursor) -> Result<ErrorParameter> {
 
 pub fn build_array_type_name(cursor: Cursor) -> Result<ArrayTypeName> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ArrayTypeName)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operand)?;
-    let operand = build_type_name(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBracket)?;
-    let open_bracket = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let index = if fields_cursor.label() == EdgeLabel::Index {
-        Some(build_expression(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let operand = build_type_name(helper.accept_label(EdgeLabel::Operand)?)?;
+    let open_bracket = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBracket)?)?;
+    let index = if helper.at_label(EdgeLabel::Index) {
+        Some(build_expression(helper.accept_label(EdgeLabel::Index)?)?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBracket)?;
-    let close_bracket = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let close_bracket = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBracket)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ArrayTypeNameStruct {
         _cursor: cursor,
@@ -1419,27 +952,18 @@ pub fn build_array_type_name(cursor: Cursor) -> Result<ArrayTypeName> {
 
 pub fn build_function_type(cursor: Cursor) -> Result<FunctionType> {
     expect_nonterminal_kind(&cursor, NonterminalKind::FunctionType)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::FunctionKeyword)?;
-    let function_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_parameters_declaration(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Attributes)?;
-    let attributes = build_function_type_attributes(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let returns = if fields_cursor.label() == EdgeLabel::Returns {
-        Some(build_returns_declaration(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let function_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::FunctionKeyword)?)?;
+    let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let attributes = build_function_type_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
+    let returns = if helper.at_label(EdgeLabel::Returns) {
+        Some(build_returns_declaration(
+            helper.accept_label(EdgeLabel::Returns)?,
+        )?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(FunctionTypeStruct {
         _cursor: cursor,
@@ -1452,30 +976,15 @@ pub fn build_function_type(cursor: Cursor) -> Result<FunctionType> {
 
 pub fn build_mapping_type(cursor: Cursor) -> Result<MappingType> {
     expect_nonterminal_kind(&cursor, NonterminalKind::MappingType)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::MappingKeyword)?;
-    let mapping_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::KeyType)?;
-    let key_type = build_mapping_key(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::EqualGreaterThan)?;
-    let equal_greater_than = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ValueType)?;
-    let value_type = build_mapping_value(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let mapping_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::MappingKeyword)?)?;
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let key_type = build_mapping_key(helper.accept_label(EdgeLabel::KeyType)?)?;
+    let equal_greater_than =
+        fetch_terminal_node(&helper.accept_label(EdgeLabel::EqualGreaterThan)?)?;
+    let value_type = build_mapping_value(helper.accept_label(EdgeLabel::ValueType)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(MappingTypeStruct {
         _cursor: cursor,
@@ -1490,21 +999,14 @@ pub fn build_mapping_type(cursor: Cursor) -> Result<MappingType> {
 
 pub fn build_mapping_key(cursor: Cursor) -> Result<MappingKey> {
     expect_nonterminal_kind(&cursor, NonterminalKind::MappingKey)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::KeyType)?;
-    let key_type = build_mapping_key_type(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let name = if fields_cursor.label() == EdgeLabel::Name {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let key_type = build_mapping_key_type(helper.accept_label(EdgeLabel::KeyType)?)?;
+    let name = if helper.at_label(EdgeLabel::Name) {
+        Some(fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(MappingKeyStruct {
         _cursor: cursor,
@@ -1515,21 +1017,14 @@ pub fn build_mapping_key(cursor: Cursor) -> Result<MappingKey> {
 
 pub fn build_mapping_value(cursor: Cursor) -> Result<MappingValue> {
     expect_nonterminal_kind(&cursor, NonterminalKind::MappingValue)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeName)?;
-    let type_name = build_type_name(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let name = if fields_cursor.label() == EdgeLabel::Name {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
+    let name = if helper.at_label(EdgeLabel::Name) {
+        Some(fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(MappingValueStruct {
         _cursor: cursor,
@@ -1540,21 +1035,16 @@ pub fn build_mapping_value(cursor: Cursor) -> Result<MappingValue> {
 
 pub fn build_address_type(cursor: Cursor) -> Result<AddressType> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AddressType)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::AddressKeyword)?;
-    let address_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let payable_keyword = if fields_cursor.label() == EdgeLabel::PayableKeyword {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let address_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::AddressKeyword)?)?;
+    let payable_keyword = if helper.at_label(EdgeLabel::PayableKeyword) {
+        Some(fetch_terminal_node(
+            &helper.accept_label(EdgeLabel::PayableKeyword)?,
+        )?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(AddressTypeStruct {
         _cursor: cursor,
@@ -1565,21 +1055,11 @@ pub fn build_address_type(cursor: Cursor) -> Result<AddressType> {
 
 pub fn build_block(cursor: Cursor) -> Result<Block> {
     expect_nonterminal_kind(&cursor, NonterminalKind::Block)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBrace)?;
-    let open_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Statements)?;
-    let statements = build_statements(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBrace)?;
-    let close_brace = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    let statements = build_statements(helper.accept_label(EdgeLabel::Statements)?)?;
+    let close_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(BlockStruct {
         _cursor: cursor,
@@ -1591,18 +1071,11 @@ pub fn build_block(cursor: Cursor) -> Result<Block> {
 
 pub fn build_unchecked_block(cursor: Cursor) -> Result<UncheckedBlock> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UncheckedBlock)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::UncheckedKeyword)?;
-    let unchecked_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Block)?;
-    let block = build_block(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let unchecked_keyword =
+        fetch_terminal_node(&helper.accept_label(EdgeLabel::UncheckedKeyword)?)?;
+    let block = build_block(helper.accept_label(EdgeLabel::Block)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(UncheckedBlockStruct {
         _cursor: cursor,
@@ -1613,18 +1086,10 @@ pub fn build_unchecked_block(cursor: Cursor) -> Result<UncheckedBlock> {
 
 pub fn build_expression_statement(cursor: Cursor) -> Result<ExpressionStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ExpressionStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Expression)?;
-    let expression = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let expression = build_expression(helper.accept_label(EdgeLabel::Expression)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ExpressionStatementStruct {
         _cursor: cursor,
@@ -1635,30 +1100,24 @@ pub fn build_expression_statement(cursor: Cursor) -> Result<ExpressionStatement>
 
 pub fn build_assembly_statement(cursor: Cursor) -> Result<AssemblyStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AssemblyStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::AssemblyKeyword)?;
-    let assembly_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let label = if fields_cursor.label() == EdgeLabel::Label {
-        Some(build_string_literal(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let assembly_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::AssemblyKeyword)?)?;
+    let label = if helper.at_label(EdgeLabel::Label) {
+        Some(build_string_literal(
+            helper.accept_label(EdgeLabel::Label)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let flags = if fields_cursor.label() == EdgeLabel::Flags {
-        Some(build_assembly_flags_declaration(fields_cursor.clone())?)
+    let flags = if helper.at_label(EdgeLabel::Flags) {
+        Some(build_assembly_flags_declaration(
+            helper.accept_label(EdgeLabel::Flags)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_yul_block(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let body = build_yul_block(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(AssemblyStatementStruct {
         _cursor: cursor,
@@ -1671,21 +1130,11 @@ pub fn build_assembly_statement(cursor: Cursor) -> Result<AssemblyStatement> {
 
 pub fn build_assembly_flags_declaration(cursor: Cursor) -> Result<AssemblyFlagsDeclaration> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AssemblyFlagsDeclaration)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Flags)?;
-    let flags = build_assembly_flags(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let flags = build_assembly_flags(helper.accept_label(EdgeLabel::Flags)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(AssemblyFlagsDeclarationStruct {
         _cursor: cursor,
@@ -1699,36 +1148,21 @@ pub fn build_tuple_deconstruction_statement(
     cursor: Cursor,
 ) -> Result<TupleDeconstructionStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TupleDeconstructionStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    let var_keyword = if fields_cursor.label() == EdgeLabel::VarKeyword {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let var_keyword = if helper.at_label(EdgeLabel::VarKeyword) {
+        Some(fetch_terminal_node(
+            &helper.accept_label(EdgeLabel::VarKeyword)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Elements)?;
-    let elements = build_tuple_deconstruction_elements(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Equal)?;
-    let equal = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Expression)?;
-    let expression = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let elements = build_tuple_deconstruction_elements(helper.accept_label(EdgeLabel::Elements)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    let equal = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
+    let expression = build_expression(helper.accept_label(EdgeLabel::Expression)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(TupleDeconstructionStatementStruct {
         _cursor: cursor,
@@ -1744,18 +1178,13 @@ pub fn build_tuple_deconstruction_statement(
 
 pub fn build_tuple_deconstruction_element(cursor: Cursor) -> Result<TupleDeconstructionElement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TupleDeconstructionElement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    let member = if fields_cursor.label() == EdgeLabel::Member {
-        Some(build_tuple_member(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let member = if helper.at_label(EdgeLabel::Member) {
+        Some(build_tuple_member(helper.accept_label(EdgeLabel::Member)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(TupleDeconstructionElementStruct {
         _cursor: cursor,
@@ -1765,24 +1194,17 @@ pub fn build_tuple_deconstruction_element(cursor: Cursor) -> Result<TupleDeconst
 
 pub fn build_typed_tuple_member(cursor: Cursor) -> Result<TypedTupleMember> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TypedTupleMember)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeName)?;
-    let type_name = build_type_name(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let storage_location = if fields_cursor.label() == EdgeLabel::StorageLocation {
-        Some(build_storage_location(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
+    let storage_location = if helper.at_label(EdgeLabel::StorageLocation) {
+        Some(build_storage_location(
+            helper.accept_label(EdgeLabel::StorageLocation)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(TypedTupleMemberStruct {
         _cursor: cursor,
@@ -1794,21 +1216,16 @@ pub fn build_typed_tuple_member(cursor: Cursor) -> Result<TypedTupleMember> {
 
 pub fn build_untyped_tuple_member(cursor: Cursor) -> Result<UntypedTupleMember> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UntypedTupleMember)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    let storage_location = if fields_cursor.label() == EdgeLabel::StorageLocation {
-        Some(build_storage_location(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let storage_location = if helper.at_label(EdgeLabel::StorageLocation) {
+        Some(build_storage_location(
+            helper.accept_label(EdgeLabel::StorageLocation)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(UntypedTupleMemberStruct {
         _cursor: cursor,
@@ -1821,33 +1238,26 @@ pub fn build_variable_declaration_statement(
     cursor: Cursor,
 ) -> Result<VariableDeclarationStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VariableDeclarationStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::VariableType)?;
-    let variable_type = build_variable_declaration_type(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let storage_location = if fields_cursor.label() == EdgeLabel::StorageLocation {
-        Some(build_storage_location(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let variable_type =
+        build_variable_declaration_type(helper.accept_label(EdgeLabel::VariableType)?)?;
+    let storage_location = if helper.at_label(EdgeLabel::StorageLocation) {
+        Some(build_storage_location(
+            helper.accept_label(EdgeLabel::StorageLocation)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let value = if fields_cursor.label() == EdgeLabel::Value {
-        Some(build_variable_declaration_value(fields_cursor.clone())?)
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let value = if helper.at_label(EdgeLabel::Value) {
+        Some(build_variable_declaration_value(
+            helper.accept_label(EdgeLabel::Value)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(VariableDeclarationStatementStruct {
         _cursor: cursor,
@@ -1861,18 +1271,10 @@ pub fn build_variable_declaration_statement(
 
 pub fn build_variable_declaration_value(cursor: Cursor) -> Result<VariableDeclarationValue> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VariableDeclarationValue)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Equal)?;
-    let equal = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Expression)?;
-    let expression = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let equal = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
+    let expression = build_expression(helper.accept_label(EdgeLabel::Expression)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(VariableDeclarationValueStruct {
         _cursor: cursor,
@@ -1883,33 +1285,20 @@ pub fn build_variable_declaration_value(cursor: Cursor) -> Result<VariableDeclar
 
 pub fn build_if_statement(cursor: Cursor) -> Result<IfStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::IfStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::IfKeyword)?;
-    let if_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Condition)?;
-    let condition = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_statement(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let else_branch = if fields_cursor.label() == EdgeLabel::ElseBranch {
-        Some(build_else_branch(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let if_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::IfKeyword)?)?;
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let condition = build_expression(helper.accept_label(EdgeLabel::Condition)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    let body = build_statement(helper.accept_label(EdgeLabel::Body)?)?;
+    let else_branch = if helper.at_label(EdgeLabel::ElseBranch) {
+        Some(build_else_branch(
+            helper.accept_label(EdgeLabel::ElseBranch)?,
+        )?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(IfStatementStruct {
         _cursor: cursor,
@@ -1924,18 +1313,10 @@ pub fn build_if_statement(cursor: Cursor) -> Result<IfStatement> {
 
 pub fn build_else_branch(cursor: Cursor) -> Result<ElseBranch> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ElseBranch)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ElseKeyword)?;
-    let else_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_statement(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let else_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ElseKeyword)?)?;
+    let body = build_statement(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ElseBranchStruct {
         _cursor: cursor,
@@ -1946,36 +1327,20 @@ pub fn build_else_branch(cursor: Cursor) -> Result<ElseBranch> {
 
 pub fn build_for_statement(cursor: Cursor) -> Result<ForStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ForStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ForKeyword)?;
-    let for_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Initialization)?;
-    let initialization = build_for_statement_initialization(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Condition)?;
-    let condition = build_for_statement_condition(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let iterator = if fields_cursor.label() == EdgeLabel::Iterator {
-        Some(build_expression(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let for_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ForKeyword)?)?;
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let initialization =
+        build_for_statement_initialization(helper.accept_label(EdgeLabel::Initialization)?)?;
+    let condition = build_for_statement_condition(helper.accept_label(EdgeLabel::Condition)?)?;
+    let iterator = if helper.at_label(EdgeLabel::Iterator) {
+        Some(build_expression(helper.accept_label(EdgeLabel::Iterator)?)?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_statement(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    let body = build_statement(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ForStatementStruct {
         _cursor: cursor,
@@ -1991,27 +1356,13 @@ pub fn build_for_statement(cursor: Cursor) -> Result<ForStatement> {
 
 pub fn build_while_statement(cursor: Cursor) -> Result<WhileStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::WhileStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::WhileKeyword)?;
-    let while_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Condition)?;
-    let condition = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_statement(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let while_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::WhileKeyword)?)?;
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let condition = build_expression(helper.accept_label(EdgeLabel::Condition)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    let body = build_statement(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(WhileStatementStruct {
         _cursor: cursor,
@@ -2025,33 +1376,15 @@ pub fn build_while_statement(cursor: Cursor) -> Result<WhileStatement> {
 
 pub fn build_do_while_statement(cursor: Cursor) -> Result<DoWhileStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::DoWhileStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::DoKeyword)?;
-    let do_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_statement(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::WhileKeyword)?;
-    let while_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Condition)?;
-    let condition = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let do_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::DoKeyword)?)?;
+    let body = build_statement(helper.accept_label(EdgeLabel::Body)?)?;
+    let while_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::WhileKeyword)?)?;
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let condition = build_expression(helper.accept_label(EdgeLabel::Condition)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(DoWhileStatementStruct {
         _cursor: cursor,
@@ -2067,18 +1400,10 @@ pub fn build_do_while_statement(cursor: Cursor) -> Result<DoWhileStatement> {
 
 pub fn build_continue_statement(cursor: Cursor) -> Result<ContinueStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ContinueStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ContinueKeyword)?;
-    let continue_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let continue_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ContinueKeyword)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ContinueStatementStruct {
         _cursor: cursor,
@@ -2089,18 +1414,10 @@ pub fn build_continue_statement(cursor: Cursor) -> Result<ContinueStatement> {
 
 pub fn build_break_statement(cursor: Cursor) -> Result<BreakStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::BreakStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::BreakKeyword)?;
-    let break_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let break_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::BreakKeyword)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(BreakStatementStruct {
         _cursor: cursor,
@@ -2111,24 +1428,17 @@ pub fn build_break_statement(cursor: Cursor) -> Result<BreakStatement> {
 
 pub fn build_return_statement(cursor: Cursor) -> Result<ReturnStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ReturnStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ReturnKeyword)?;
-    let return_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let expression = if fields_cursor.label() == EdgeLabel::Expression {
-        Some(build_expression(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let return_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ReturnKeyword)?)?;
+    let expression = if helper.at_label(EdgeLabel::Expression) {
+        Some(build_expression(
+            helper.accept_label(EdgeLabel::Expression)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ReturnStatementStruct {
         _cursor: cursor,
@@ -2140,24 +1450,12 @@ pub fn build_return_statement(cursor: Cursor) -> Result<ReturnStatement> {
 
 pub fn build_emit_statement(cursor: Cursor) -> Result<EmitStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::EmitStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::EmitKeyword)?;
-    let emit_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Event)?;
-    let event = build_identifier_path(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Arguments)?;
-    let arguments = build_arguments_declaration(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let emit_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::EmitKeyword)?)?;
+    let event = build_identifier_path(helper.accept_label(EdgeLabel::Event)?)?;
+    let arguments = build_arguments_declaration(helper.accept_label(EdgeLabel::Arguments)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(EmitStatementStruct {
         _cursor: cursor,
@@ -2170,30 +1468,19 @@ pub fn build_emit_statement(cursor: Cursor) -> Result<EmitStatement> {
 
 pub fn build_try_statement(cursor: Cursor) -> Result<TryStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TryStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TryKeyword)?;
-    let try_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Expression)?;
-    let expression = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let returns = if fields_cursor.label() == EdgeLabel::Returns {
-        Some(build_returns_declaration(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let try_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::TryKeyword)?)?;
+    let expression = build_expression(helper.accept_label(EdgeLabel::Expression)?)?;
+    let returns = if helper.at_label(EdgeLabel::Returns) {
+        Some(build_returns_declaration(
+            helper.accept_label(EdgeLabel::Returns)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_block(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CatchClauses)?;
-    let catch_clauses = build_catch_clauses(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let body = build_block(helper.accept_label(EdgeLabel::Body)?)?;
+    let catch_clauses = build_catch_clauses(helper.accept_label(EdgeLabel::CatchClauses)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(TryStatementStruct {
         _cursor: cursor,
@@ -2207,24 +1494,17 @@ pub fn build_try_statement(cursor: Cursor) -> Result<TryStatement> {
 
 pub fn build_catch_clause(cursor: Cursor) -> Result<CatchClause> {
     expect_nonterminal_kind(&cursor, NonterminalKind::CatchClause)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CatchKeyword)?;
-    let catch_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let error = if fields_cursor.label() == EdgeLabel::Error {
-        Some(build_catch_clause_error(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let catch_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::CatchKeyword)?)?;
+    let error = if helper.at_label(EdgeLabel::Error) {
+        Some(build_catch_clause_error(
+            helper.accept_label(EdgeLabel::Error)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_block(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let body = build_block(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(CatchClauseStruct {
         _cursor: cursor,
@@ -2236,21 +1516,14 @@ pub fn build_catch_clause(cursor: Cursor) -> Result<CatchClause> {
 
 pub fn build_catch_clause_error(cursor: Cursor) -> Result<CatchClauseError> {
     expect_nonterminal_kind(&cursor, NonterminalKind::CatchClauseError)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    let name = if fields_cursor.label() == EdgeLabel::Name {
-        Some(fetch_terminal_node(&fields_cursor)?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let name = if helper.at_label(EdgeLabel::Name) {
+        Some(fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_parameters_declaration(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(CatchClauseErrorStruct {
         _cursor: cursor,
@@ -2261,27 +1534,18 @@ pub fn build_catch_clause_error(cursor: Cursor) -> Result<CatchClauseError> {
 
 pub fn build_revert_statement(cursor: Cursor) -> Result<RevertStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::RevertStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RevertKeyword)?;
-    let revert_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let error = if fields_cursor.label() == EdgeLabel::Error {
-        Some(build_identifier_path(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let revert_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::RevertKeyword)?)?;
+    let error = if helper.at_label(EdgeLabel::Error) {
+        Some(build_identifier_path(
+            helper.accept_label(EdgeLabel::Error)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Arguments)?;
-    let arguments = build_arguments_declaration(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let arguments = build_arguments_declaration(helper.accept_label(EdgeLabel::Arguments)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(RevertStatementStruct {
         _cursor: cursor,
@@ -2294,18 +1558,10 @@ pub fn build_revert_statement(cursor: Cursor) -> Result<RevertStatement> {
 
 pub fn build_throw_statement(cursor: Cursor) -> Result<ThrowStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ThrowStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ThrowKeyword)?;
-    let throw_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Semicolon)?;
-    let semicolon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let throw_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ThrowKeyword)?)?;
+    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ThrowStatementStruct {
         _cursor: cursor,
@@ -2316,21 +1572,11 @@ pub fn build_throw_statement(cursor: Cursor) -> Result<ThrowStatement> {
 
 pub fn build_assignment_expression(cursor: Cursor) -> Result<AssignmentExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AssignmentExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(AssignmentExpressionStruct {
         _cursor: cursor,
@@ -2342,27 +1588,13 @@ pub fn build_assignment_expression(cursor: Cursor) -> Result<AssignmentExpressio
 
 pub fn build_conditional_expression(cursor: Cursor) -> Result<ConditionalExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ConditionalExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operand)?;
-    let operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::QuestionMark)?;
-    let question_mark = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TrueExpression)?;
-    let true_expression = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Colon)?;
-    let colon = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::FalseExpression)?;
-    let false_expression = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
+    let question_mark = fetch_terminal_node(&helper.accept_label(EdgeLabel::QuestionMark)?)?;
+    let true_expression = build_expression(helper.accept_label(EdgeLabel::TrueExpression)?)?;
+    let colon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
+    let false_expression = build_expression(helper.accept_label(EdgeLabel::FalseExpression)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ConditionalExpressionStruct {
         _cursor: cursor,
@@ -2376,21 +1608,11 @@ pub fn build_conditional_expression(cursor: Cursor) -> Result<ConditionalExpress
 
 pub fn build_or_expression(cursor: Cursor) -> Result<OrExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::OrExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(OrExpressionStruct {
         _cursor: cursor,
@@ -2402,21 +1624,11 @@ pub fn build_or_expression(cursor: Cursor) -> Result<OrExpression> {
 
 pub fn build_and_expression(cursor: Cursor) -> Result<AndExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AndExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(AndExpressionStruct {
         _cursor: cursor,
@@ -2428,21 +1640,11 @@ pub fn build_and_expression(cursor: Cursor) -> Result<AndExpression> {
 
 pub fn build_equality_expression(cursor: Cursor) -> Result<EqualityExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::EqualityExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(EqualityExpressionStruct {
         _cursor: cursor,
@@ -2454,21 +1656,11 @@ pub fn build_equality_expression(cursor: Cursor) -> Result<EqualityExpression> {
 
 pub fn build_comparison_expression(cursor: Cursor) -> Result<ComparisonExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ComparisonExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ComparisonExpressionStruct {
         _cursor: cursor,
@@ -2480,21 +1672,11 @@ pub fn build_comparison_expression(cursor: Cursor) -> Result<ComparisonExpressio
 
 pub fn build_bitwise_or_expression(cursor: Cursor) -> Result<BitwiseOrExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::BitwiseOrExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(BitwiseOrExpressionStruct {
         _cursor: cursor,
@@ -2506,21 +1688,11 @@ pub fn build_bitwise_or_expression(cursor: Cursor) -> Result<BitwiseOrExpression
 
 pub fn build_bitwise_xor_expression(cursor: Cursor) -> Result<BitwiseXorExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::BitwiseXorExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(BitwiseXorExpressionStruct {
         _cursor: cursor,
@@ -2532,21 +1704,11 @@ pub fn build_bitwise_xor_expression(cursor: Cursor) -> Result<BitwiseXorExpressi
 
 pub fn build_bitwise_and_expression(cursor: Cursor) -> Result<BitwiseAndExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::BitwiseAndExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(BitwiseAndExpressionStruct {
         _cursor: cursor,
@@ -2558,21 +1720,11 @@ pub fn build_bitwise_and_expression(cursor: Cursor) -> Result<BitwiseAndExpressi
 
 pub fn build_shift_expression(cursor: Cursor) -> Result<ShiftExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ShiftExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ShiftExpressionStruct {
         _cursor: cursor,
@@ -2584,21 +1736,11 @@ pub fn build_shift_expression(cursor: Cursor) -> Result<ShiftExpression> {
 
 pub fn build_additive_expression(cursor: Cursor) -> Result<AdditiveExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AdditiveExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(AdditiveExpressionStruct {
         _cursor: cursor,
@@ -2610,21 +1752,11 @@ pub fn build_additive_expression(cursor: Cursor) -> Result<AdditiveExpression> {
 
 pub fn build_multiplicative_expression(cursor: Cursor) -> Result<MultiplicativeExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::MultiplicativeExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(MultiplicativeExpressionStruct {
         _cursor: cursor,
@@ -2636,21 +1768,11 @@ pub fn build_multiplicative_expression(cursor: Cursor) -> Result<MultiplicativeE
 
 pub fn build_exponentiation_expression(cursor: Cursor) -> Result<ExponentiationExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ExponentiationExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeftOperand)?;
-    let left_operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::RightOperand)?;
-    let right_operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ExponentiationExpressionStruct {
         _cursor: cursor,
@@ -2662,18 +1784,10 @@ pub fn build_exponentiation_expression(cursor: Cursor) -> Result<ExponentiationE
 
 pub fn build_postfix_expression(cursor: Cursor) -> Result<PostfixExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::PostfixExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operand)?;
-    let operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(PostfixExpressionStruct {
         _cursor: cursor,
@@ -2684,18 +1798,10 @@ pub fn build_postfix_expression(cursor: Cursor) -> Result<PostfixExpression> {
 
 pub fn build_prefix_expression(cursor: Cursor) -> Result<PrefixExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::PrefixExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operator)?;
-    let operator = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operand)?;
-    let operand = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(PrefixExpressionStruct {
         _cursor: cursor,
@@ -2706,18 +1812,10 @@ pub fn build_prefix_expression(cursor: Cursor) -> Result<PrefixExpression> {
 
 pub fn build_function_call_expression(cursor: Cursor) -> Result<FunctionCallExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::FunctionCallExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operand)?;
-    let operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Arguments)?;
-    let arguments = build_arguments_declaration(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
+    let arguments = build_arguments_declaration(helper.accept_label(EdgeLabel::Arguments)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(FunctionCallExpressionStruct {
         _cursor: cursor,
@@ -2728,24 +1826,12 @@ pub fn build_function_call_expression(cursor: Cursor) -> Result<FunctionCallExpr
 
 pub fn build_call_options_expression(cursor: Cursor) -> Result<CallOptionsExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::CallOptionsExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operand)?;
-    let operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBrace)?;
-    let open_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Options)?;
-    let options = build_call_options(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBrace)?;
-    let close_brace = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
+    let open_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    let options = build_call_options(helper.accept_label(EdgeLabel::Options)?)?;
+    let close_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(CallOptionsExpressionStruct {
         _cursor: cursor,
@@ -2758,21 +1844,11 @@ pub fn build_call_options_expression(cursor: Cursor) -> Result<CallOptionsExpres
 
 pub fn build_member_access_expression(cursor: Cursor) -> Result<MemberAccessExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::MemberAccessExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operand)?;
-    let operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Period)?;
-    let period = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Member)?;
-    let member = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
+    let period = fetch_terminal_node(&helper.accept_label(EdgeLabel::Period)?)?;
+    let member = fetch_terminal_node(&helper.accept_label(EdgeLabel::Member)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(MemberAccessExpressionStruct {
         _cursor: cursor,
@@ -2784,33 +1860,23 @@ pub fn build_member_access_expression(cursor: Cursor) -> Result<MemberAccessExpr
 
 pub fn build_index_access_expression(cursor: Cursor) -> Result<IndexAccessExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::IndexAccessExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operand)?;
-    let operand = build_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBracket)?;
-    let open_bracket = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let start = if fields_cursor.label() == EdgeLabel::Start {
-        Some(build_expression(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
+    let open_bracket = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBracket)?)?;
+    let start = if helper.at_label(EdgeLabel::Start) {
+        Some(build_expression(helper.accept_label(EdgeLabel::Start)?)?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let end = if fields_cursor.label() == EdgeLabel::End {
-        Some(build_index_access_end(fields_cursor.clone())?)
+    let end = if helper.at_label(EdgeLabel::End) {
+        Some(build_index_access_end(
+            helper.accept_label(EdgeLabel::End)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBracket)?;
-    let close_bracket = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let close_bracket = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBracket)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(IndexAccessExpressionStruct {
         _cursor: cursor,
@@ -2824,21 +1890,14 @@ pub fn build_index_access_expression(cursor: Cursor) -> Result<IndexAccessExpres
 
 pub fn build_index_access_end(cursor: Cursor) -> Result<IndexAccessEnd> {
     expect_nonterminal_kind(&cursor, NonterminalKind::IndexAccessEnd)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Colon)?;
-    let colon = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let end = if fields_cursor.label() == EdgeLabel::End {
-        Some(build_expression(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let colon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
+    let end = if helper.at_label(EdgeLabel::End) {
+        Some(build_expression(helper.accept_label(EdgeLabel::End)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(IndexAccessEndStruct {
         _cursor: cursor,
@@ -2851,21 +1910,11 @@ pub fn build_positional_arguments_declaration(
     cursor: Cursor,
 ) -> Result<PositionalArgumentsDeclaration> {
     expect_nonterminal_kind(&cursor, NonterminalKind::PositionalArgumentsDeclaration)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Arguments)?;
-    let arguments = build_positional_arguments(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let arguments = build_positional_arguments(helper.accept_label(EdgeLabel::Arguments)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(PositionalArgumentsDeclarationStruct {
         _cursor: cursor,
@@ -2877,24 +1926,17 @@ pub fn build_positional_arguments_declaration(
 
 pub fn build_named_arguments_declaration(cursor: Cursor) -> Result<NamedArgumentsDeclaration> {
     expect_nonterminal_kind(&cursor, NonterminalKind::NamedArgumentsDeclaration)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let arguments = if fields_cursor.label() == EdgeLabel::Arguments {
-        Some(build_named_argument_group(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let arguments = if helper.at_label(EdgeLabel::Arguments) {
+        Some(build_named_argument_group(
+            helper.accept_label(EdgeLabel::Arguments)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(NamedArgumentsDeclarationStruct {
         _cursor: cursor,
@@ -2906,21 +1948,11 @@ pub fn build_named_arguments_declaration(cursor: Cursor) -> Result<NamedArgument
 
 pub fn build_named_argument_group(cursor: Cursor) -> Result<NamedArgumentGroup> {
     expect_nonterminal_kind(&cursor, NonterminalKind::NamedArgumentGroup)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBrace)?;
-    let open_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Arguments)?;
-    let arguments = build_named_arguments(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBrace)?;
-    let close_brace = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    let arguments = build_named_arguments(helper.accept_label(EdgeLabel::Arguments)?)?;
+    let close_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(NamedArgumentGroupStruct {
         _cursor: cursor,
@@ -2932,21 +1964,11 @@ pub fn build_named_argument_group(cursor: Cursor) -> Result<NamedArgumentGroup> 
 
 pub fn build_named_argument(cursor: Cursor) -> Result<NamedArgument> {
     expect_nonterminal_kind(&cursor, NonterminalKind::NamedArgument)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Colon)?;
-    let colon = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Value)?;
-    let value = build_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let colon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
+    let value = build_expression(helper.accept_label(EdgeLabel::Value)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(NamedArgumentStruct {
         _cursor: cursor,
@@ -2958,24 +1980,12 @@ pub fn build_named_argument(cursor: Cursor) -> Result<NamedArgument> {
 
 pub fn build_type_expression(cursor: Cursor) -> Result<TypeExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TypeExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeKeyword)?;
-    let type_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeName)?;
-    let type_name = build_type_name(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let type_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::TypeKeyword)?)?;
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(TypeExpressionStruct {
         _cursor: cursor,
@@ -2988,18 +1998,10 @@ pub fn build_type_expression(cursor: Cursor) -> Result<TypeExpression> {
 
 pub fn build_new_expression(cursor: Cursor) -> Result<NewExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::NewExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::NewKeyword)?;
-    let new_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::TypeName)?;
-    let type_name = build_type_name(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let new_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::NewKeyword)?)?;
+    let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(NewExpressionStruct {
         _cursor: cursor,
@@ -3010,21 +2012,11 @@ pub fn build_new_expression(cursor: Cursor) -> Result<NewExpression> {
 
 pub fn build_tuple_expression(cursor: Cursor) -> Result<TupleExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TupleExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Items)?;
-    let items = build_tuple_values(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let items = build_tuple_values(helper.accept_label(EdgeLabel::Items)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(TupleExpressionStruct {
         _cursor: cursor,
@@ -3036,18 +2028,15 @@ pub fn build_tuple_expression(cursor: Cursor) -> Result<TupleExpression> {
 
 pub fn build_tuple_value(cursor: Cursor) -> Result<TupleValue> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TupleValue)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    let expression = if fields_cursor.label() == EdgeLabel::Expression {
-        Some(build_expression(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let expression = if helper.at_label(EdgeLabel::Expression) {
+        Some(build_expression(
+            helper.accept_label(EdgeLabel::Expression)?,
+        )?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(TupleValueStruct {
         _cursor: cursor,
@@ -3057,21 +2046,11 @@ pub fn build_tuple_value(cursor: Cursor) -> Result<TupleValue> {
 
 pub fn build_array_expression(cursor: Cursor) -> Result<ArrayExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ArrayExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBracket)?;
-    let open_bracket = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Items)?;
-    let items = build_array_values(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBracket)?;
-    let close_bracket = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_bracket = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBracket)?)?;
+    let items = build_array_values(helper.accept_label(EdgeLabel::Items)?)?;
+    let close_bracket = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBracket)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(ArrayExpressionStruct {
         _cursor: cursor,
@@ -3083,21 +2062,14 @@ pub fn build_array_expression(cursor: Cursor) -> Result<ArrayExpression> {
 
 pub fn build_hex_number_expression(cursor: Cursor) -> Result<HexNumberExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::HexNumberExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Literal)?;
-    let literal = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let unit = if fields_cursor.label() == EdgeLabel::Unit {
-        Some(build_number_unit(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let literal = fetch_terminal_node(&helper.accept_label(EdgeLabel::Literal)?)?;
+    let unit = if helper.at_label(EdgeLabel::Unit) {
+        Some(build_number_unit(helper.accept_label(EdgeLabel::Unit)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(HexNumberExpressionStruct {
         _cursor: cursor,
@@ -3108,21 +2080,14 @@ pub fn build_hex_number_expression(cursor: Cursor) -> Result<HexNumberExpression
 
 pub fn build_decimal_number_expression(cursor: Cursor) -> Result<DecimalNumberExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::DecimalNumberExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Literal)?;
-    let literal = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let unit = if fields_cursor.label() == EdgeLabel::Unit {
-        Some(build_number_unit(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let literal = fetch_terminal_node(&helper.accept_label(EdgeLabel::Literal)?)?;
+    let unit = if helper.at_label(EdgeLabel::Unit) {
+        Some(build_number_unit(helper.accept_label(EdgeLabel::Unit)?)?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(DecimalNumberExpressionStruct {
         _cursor: cursor,
@@ -3133,21 +2098,11 @@ pub fn build_decimal_number_expression(cursor: Cursor) -> Result<DecimalNumberEx
 
 pub fn build_yul_block(cursor: Cursor) -> Result<YulBlock> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulBlock)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenBrace)?;
-    let open_brace = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Statements)?;
-    let statements = build_yul_statements(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseBrace)?;
-    let close_brace = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    let statements = build_yul_statements(helper.accept_label(EdgeLabel::Statements)?)?;
+    let close_brace = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulBlockStruct {
         _cursor: cursor,
@@ -3159,30 +2114,19 @@ pub fn build_yul_block(cursor: Cursor) -> Result<YulBlock> {
 
 pub fn build_yul_function_definition(cursor: Cursor) -> Result<YulFunctionDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulFunctionDefinition)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::FunctionKeyword)?;
-    let function_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Name)?;
-    let name = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_yul_parameters_declaration(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let returns = if fields_cursor.label() == EdgeLabel::Returns {
-        Some(build_yul_returns_declaration(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let function_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::FunctionKeyword)?)?;
+    let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
+    let parameters = build_yul_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let returns = if helper.at_label(EdgeLabel::Returns) {
+        Some(build_yul_returns_declaration(
+            helper.accept_label(EdgeLabel::Returns)?,
+        )?)
     } else {
         None
     };
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_yul_block(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let body = build_yul_block(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulFunctionDefinitionStruct {
         _cursor: cursor,
@@ -3196,21 +2140,11 @@ pub fn build_yul_function_definition(cursor: Cursor) -> Result<YulFunctionDefini
 
 pub fn build_yul_parameters_declaration(cursor: Cursor) -> Result<YulParametersDeclaration> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulParametersDeclaration)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Parameters)?;
-    let parameters = build_yul_parameters(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let parameters = build_yul_parameters(helper.accept_label(EdgeLabel::Parameters)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulParametersDeclarationStruct {
         _cursor: cursor,
@@ -3222,18 +2156,11 @@ pub fn build_yul_parameters_declaration(cursor: Cursor) -> Result<YulParametersD
 
 pub fn build_yul_returns_declaration(cursor: Cursor) -> Result<YulReturnsDeclaration> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulReturnsDeclaration)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::MinusGreaterThan)?;
-    let minus_greater_than = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Variables)?;
-    let variables = build_yul_variable_names(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let minus_greater_than =
+        fetch_terminal_node(&helper.accept_label(EdgeLabel::MinusGreaterThan)?)?;
+    let variables = build_yul_variable_names(helper.accept_label(EdgeLabel::Variables)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulReturnsDeclarationStruct {
         _cursor: cursor,
@@ -3246,24 +2173,17 @@ pub fn build_yul_variable_declaration_statement(
     cursor: Cursor,
 ) -> Result<YulVariableDeclarationStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulVariableDeclarationStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LetKeyword)?;
-    let let_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Variables)?;
-    let variables = build_yul_variable_names(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    let value = if fields_cursor.label() == EdgeLabel::Value {
-        Some(build_yul_variable_declaration_value(fields_cursor.clone())?)
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let let_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::LetKeyword)?)?;
+    let variables = build_yul_variable_names(helper.accept_label(EdgeLabel::Variables)?)?;
+    let value = if helper.at_label(EdgeLabel::Value) {
+        Some(build_yul_variable_declaration_value(
+            helper.accept_label(EdgeLabel::Value)?,
+        )?)
     } else {
         None
     };
-
-    consume_remaining_trivia(fields_cursor)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulVariableDeclarationStatementStruct {
         _cursor: cursor,
@@ -3275,18 +2195,10 @@ pub fn build_yul_variable_declaration_statement(
 
 pub fn build_yul_variable_declaration_value(cursor: Cursor) -> Result<YulVariableDeclarationValue> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulVariableDeclarationValue)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Assignment)?;
-    let assignment = build_yul_assignment_operator(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Expression)?;
-    let expression = build_yul_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let assignment = build_yul_assignment_operator(helper.accept_label(EdgeLabel::Assignment)?)?;
+    let expression = build_yul_expression(helper.accept_label(EdgeLabel::Expression)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulVariableDeclarationValueStruct {
         _cursor: cursor,
@@ -3299,21 +2211,11 @@ pub fn build_yul_variable_assignment_statement(
     cursor: Cursor,
 ) -> Result<YulVariableAssignmentStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulVariableAssignmentStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Variables)?;
-    let variables = build_yul_paths(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Assignment)?;
-    let assignment = build_yul_assignment_operator(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Expression)?;
-    let expression = build_yul_expression(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let variables = build_yul_paths(helper.accept_label(EdgeLabel::Variables)?)?;
+    let assignment = build_yul_assignment_operator(helper.accept_label(EdgeLabel::Assignment)?)?;
+    let expression = build_yul_expression(helper.accept_label(EdgeLabel::Expression)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulVariableAssignmentStatementStruct {
         _cursor: cursor,
@@ -3325,18 +2227,10 @@ pub fn build_yul_variable_assignment_statement(
 
 pub fn build_yul_colon_and_equal(cursor: Cursor) -> Result<YulColonAndEqual> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulColonAndEqual)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Colon)?;
-    let colon = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Equal)?;
-    let equal = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let colon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
+    let equal = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulColonAndEqualStruct {
         _cursor: cursor,
@@ -3347,18 +2241,11 @@ pub fn build_yul_colon_and_equal(cursor: Cursor) -> Result<YulColonAndEqual> {
 
 pub fn build_yul_stack_assignment_statement(cursor: Cursor) -> Result<YulStackAssignmentStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulStackAssignmentStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Assignment)?;
-    let assignment = build_yul_stack_assignment_operator(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Variable)?;
-    let variable = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let assignment =
+        build_yul_stack_assignment_operator(helper.accept_label(EdgeLabel::Assignment)?)?;
+    let variable = fetch_terminal_node(&helper.accept_label(EdgeLabel::Variable)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulStackAssignmentStatementStruct {
         _cursor: cursor,
@@ -3369,18 +2256,10 @@ pub fn build_yul_stack_assignment_statement(cursor: Cursor) -> Result<YulStackAs
 
 pub fn build_yul_equal_and_colon(cursor: Cursor) -> Result<YulEqualAndColon> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulEqualAndColon)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Equal)?;
-    let equal = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Colon)?;
-    let colon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let equal = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
+    let colon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulEqualAndColonStruct {
         _cursor: cursor,
@@ -3391,21 +2270,11 @@ pub fn build_yul_equal_and_colon(cursor: Cursor) -> Result<YulEqualAndColon> {
 
 pub fn build_yul_if_statement(cursor: Cursor) -> Result<YulIfStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulIfStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::IfKeyword)?;
-    let if_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Condition)?;
-    let condition = build_yul_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_yul_block(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let if_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::IfKeyword)?)?;
+    let condition = build_yul_expression(helper.accept_label(EdgeLabel::Condition)?)?;
+    let body = build_yul_block(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulIfStatementStruct {
         _cursor: cursor,
@@ -3417,27 +2286,13 @@ pub fn build_yul_if_statement(cursor: Cursor) -> Result<YulIfStatement> {
 
 pub fn build_yul_for_statement(cursor: Cursor) -> Result<YulForStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulForStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ForKeyword)?;
-    let for_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Initialization)?;
-    let initialization = build_yul_block(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Condition)?;
-    let condition = build_yul_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Iterator)?;
-    let iterator = build_yul_block(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_yul_block(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let for_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ForKeyword)?)?;
+    let initialization = build_yul_block(helper.accept_label(EdgeLabel::Initialization)?)?;
+    let condition = build_yul_expression(helper.accept_label(EdgeLabel::Condition)?)?;
+    let iterator = build_yul_block(helper.accept_label(EdgeLabel::Iterator)?)?;
+    let body = build_yul_block(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulForStatementStruct {
         _cursor: cursor,
@@ -3451,21 +2306,11 @@ pub fn build_yul_for_statement(cursor: Cursor) -> Result<YulForStatement> {
 
 pub fn build_yul_switch_statement(cursor: Cursor) -> Result<YulSwitchStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulSwitchStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::SwitchKeyword)?;
-    let switch_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Expression)?;
-    let expression = build_yul_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Cases)?;
-    let cases = build_yul_switch_cases(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let switch_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::SwitchKeyword)?)?;
+    let expression = build_yul_expression(helper.accept_label(EdgeLabel::Expression)?)?;
+    let cases = build_yul_switch_cases(helper.accept_label(EdgeLabel::Cases)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulSwitchStatementStruct {
         _cursor: cursor,
@@ -3477,18 +2322,10 @@ pub fn build_yul_switch_statement(cursor: Cursor) -> Result<YulSwitchStatement> 
 
 pub fn build_yul_default_case(cursor: Cursor) -> Result<YulDefaultCase> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulDefaultCase)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::DefaultKeyword)?;
-    let default_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_yul_block(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let default_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::DefaultKeyword)?)?;
+    let body = build_yul_block(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulDefaultCaseStruct {
         _cursor: cursor,
@@ -3499,21 +2336,11 @@ pub fn build_yul_default_case(cursor: Cursor) -> Result<YulDefaultCase> {
 
 pub fn build_yul_value_case(cursor: Cursor) -> Result<YulValueCase> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulValueCase)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CaseKeyword)?;
-    let case_keyword = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Value)?;
-    let value = build_yul_literal(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Body)?;
-    let body = build_yul_block(fields_cursor.clone())?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let case_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::CaseKeyword)?)?;
+    let value = build_yul_literal(helper.accept_label(EdgeLabel::Value)?)?;
+    let body = build_yul_block(helper.accept_label(EdgeLabel::Body)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulValueCaseStruct {
         _cursor: cursor,
@@ -3525,15 +2352,9 @@ pub fn build_yul_value_case(cursor: Cursor) -> Result<YulValueCase> {
 
 pub fn build_yul_leave_statement(cursor: Cursor) -> Result<YulLeaveStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulLeaveStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::LeaveKeyword)?;
-    let leave_keyword = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let leave_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::LeaveKeyword)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulLeaveStatementStruct {
         _cursor: cursor,
@@ -3543,15 +2364,9 @@ pub fn build_yul_leave_statement(cursor: Cursor) -> Result<YulLeaveStatement> {
 
 pub fn build_yul_break_statement(cursor: Cursor) -> Result<YulBreakStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulBreakStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::BreakKeyword)?;
-    let break_keyword = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let break_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::BreakKeyword)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulBreakStatementStruct {
         _cursor: cursor,
@@ -3561,15 +2376,9 @@ pub fn build_yul_break_statement(cursor: Cursor) -> Result<YulBreakStatement> {
 
 pub fn build_yul_continue_statement(cursor: Cursor) -> Result<YulContinueStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulContinueStatement)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::ContinueKeyword)?;
-    let continue_keyword = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let continue_keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::ContinueKeyword)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulContinueStatementStruct {
         _cursor: cursor,
@@ -3579,18 +2388,10 @@ pub fn build_yul_continue_statement(cursor: Cursor) -> Result<YulContinueStateme
 
 pub fn build_yul_label(cursor: Cursor) -> Result<YulLabel> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulLabel)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Label)?;
-    let label = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Colon)?;
-    let colon = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let label = fetch_terminal_node(&helper.accept_label(EdgeLabel::Label)?)?;
+    let colon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulLabelStruct {
         _cursor: cursor,
@@ -3601,24 +2402,12 @@ pub fn build_yul_label(cursor: Cursor) -> Result<YulLabel> {
 
 pub fn build_yul_function_call_expression(cursor: Cursor) -> Result<YulFunctionCallExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulFunctionCallExpression)?;
-    let mut fields_cursor = cursor.clone();
-    if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-    }
-    skip_trivia(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Operand)?;
-    let operand = build_yul_expression(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::OpenParen)?;
-    let open_paren = fetch_terminal_node(&fields_cursor)?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::Arguments)?;
-    let arguments = build_yul_arguments(fields_cursor.clone())?;
-    next_non_trivia_sibling(&mut fields_cursor)?;
-    expect_label(&fields_cursor, EdgeLabel::CloseParen)?;
-    let close_paren = fetch_terminal_node(&fields_cursor)?;
-
-    consume_remaining_trivia(fields_cursor)?;
+    let mut helper = SequenceHelper::new(cursor.clone());
+    let operand = build_yul_expression(helper.accept_label(EdgeLabel::Operand)?)?;
+    let open_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    let arguments = build_yul_arguments(helper.accept_label(EdgeLabel::Arguments)?)?;
+    let close_paren = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    helper.finalize()?;
 
     Ok(Rc::new(YulFunctionCallExpressionStruct {
         _cursor: cursor,
@@ -5791,13 +4580,59 @@ fn consume_remaining_trivia(mut cursor: Cursor) -> Result<()> {
     Ok(())
 }
 
-#[allow(dead_code)]
-#[inline]
-fn next_non_trivia_sibling(cursor: &mut Cursor) -> Result<()> {
-    while cursor.go_to_next_sibling() {
-        if !cursor.node().is_trivia() {
-            return Ok(());
+struct SequenceHelper {
+    cursor: Cursor,
+    finished: bool,
+}
+
+impl SequenceHelper {
+    fn new(mut cursor: Cursor) -> Self {
+        let mut finished = false;
+        if cursor.go_to_first_child() {
+            // skip initial trivia
+            while cursor.node().is_trivia() {
+                if !cursor.go_to_next_sibling() {
+                    finished = true;
+                    break;
+                }
+            }
+        }
+        Self { cursor, finished }
+    }
+
+    fn at_label(&self, label: EdgeLabel) -> bool {
+        !self.finished && self.cursor.label() == label
+    }
+
+    fn accept_label(&mut self, label: EdgeLabel) -> Result<Cursor> {
+        if self.finished {
+            return Err(format!(
+                "Expected more sibling nodes, looking for label {:?}",
+                label
+            ));
+        }
+        if self.cursor.label() == label {
+            let cursor = self.cursor.clone();
+            loop {
+                if !self.cursor.go_to_next_sibling() {
+                    self.finished = true;
+                    break;
+                }
+                if !self.cursor.node().is_trivia() {
+                    break;
+                }
+            }
+            return Ok(cursor);
+        } else {
+            return Err(format!(
+                "Expected node with label {:?}, got {:?}",
+                label,
+                self.cursor.label()
+            ));
         }
     }
-    Err("Expected more non-trivia siblings".into())
+
+    fn finalize(self) -> Result<()> {
+        consume_remaining_trivia(self.cursor)
+    }
 }
