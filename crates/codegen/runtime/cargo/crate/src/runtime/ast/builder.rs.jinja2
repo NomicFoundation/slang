@@ -1,5 +1,5 @@
 {%- if rendering_in_stubs -%}
-  // Stubs
+  // No AST building functions in stubs...
 {%- else -%}
   use std::rc::Rc;
   use crate::cst::{ Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalNode };
@@ -14,39 +14,35 @@
     pub fn build_{{ sequence.parent_type | snake_case }}(cursor: Cursor) -> Result<{{ sequence.parent_type }}>
     {
       expect_nonterminal_kind(&cursor, NonterminalKind::{{ sequence.parent_type }})?;
-      let mut fields_cursor = cursor.clone();
-      if !fields_cursor.go_to_first_child() {
-        return Err("Expected sequence node to have at least one children".into());
-      }
+      let mut helper = SequenceHelper::new(cursor.clone());
       {% for field in sequence.fields %}
-        {%- if loop.first -%}
-          skip_trivia(&mut fields_cursor)?;
-        {%- else -%}
-          next_non_trivia_sibling(&mut fields_cursor)?;
-        {%- endif -%}
-
         {%- if field.is_optional -%}
-          let {{ field.label }} = if fields_cursor.label() == EdgeLabel::{{ field.label | pascal_case }} {
+          let {{ field.label }} = if helper.at_label(EdgeLabel::{{ field.label | pascal_case }}) {
             {%- if field.type -%}
-              Some(build_{{ field.type | snake_case }}(fields_cursor.clone())?)
+              Some(build_{{ field.type | snake_case }}(
+                helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
+              )?)
             {%- else -%}
-              Some(fetch_terminal_node(&fields_cursor)?)
+              Some(fetch_terminal_node(
+                &helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
+              )?)
             {%- endif -%}
           } else {
             None
           };
 
         {%- else -%}
-          expect_label(&fields_cursor, EdgeLabel::{{ field.label | pascal_case }})?;
+          let {{ field.label }} =
           {%- if field.type -%}
-            let {{ field.label }} = build_{{ field.type | snake_case }}(fields_cursor.clone())?;
+            build_{{ field.type | snake_case }}(
+              helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
+            )?;
           {%- else -%}
-            let {{ field.label }} = fetch_terminal_node(&fields_cursor)?;
+            fetch_terminal_node(&helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?)?;
           {%- endif -%}
         {%- endif -%}
       {%- endfor %}
-
-      consume_remaining_trivia(fields_cursor)?;
+      helper.finalize()?;
 
       Ok(Rc::new({{ sequence.parent_type }}Struct {
         cursor,
@@ -178,7 +174,7 @@
     if cursor.label() == label {
       Ok(())
     } else {
-      Err(format!("Expected label {:?}, but got {:?} instead", label, cursor.label()))
+      Err(format!("Expected label {label:?}, but got {:?} instead", cursor.label()))
     }
   }
 
@@ -188,7 +184,7 @@
     if cursor.node().is_nonterminal_with_kind(kind) {
       Ok(())
     } else {
-      Err(format!("Expected {:?} node, but got {:?} instead", kind, cursor.node().kind()))
+      Err(format!("Expected {kind:?} node, but got {:?} instead", cursor.node().kind()))
     }
   }
 
@@ -214,15 +210,54 @@
     Ok(())
   }
 
-  #[allow(dead_code)]
-  #[inline]
-  fn next_non_trivia_sibling(cursor: &mut Cursor) -> Result<()> {
-    while cursor.go_to_next_sibling() {
-      if !cursor.node().is_trivia() {
-        return Ok(());
+  struct SequenceHelper {
+    cursor: Cursor,
+    finished: bool,
+  }
+
+  impl SequenceHelper {
+    fn new(mut cursor: Cursor) -> Self {
+      let mut finished = false;
+      if cursor.go_to_first_child() {
+        // skip initial trivia
+        while cursor.node().is_trivia() {
+          if !cursor.go_to_next_sibling() {
+            finished = true;
+            break;
+          }
+        }
+      }
+      Self { cursor, finished }
+    }
+
+    fn at_label(&self, label: EdgeLabel) -> bool {
+      !self.finished && self.cursor.label() == label
+    }
+
+    fn accept_label(&mut self, label: EdgeLabel) -> Result<Cursor> {
+      if self.finished {
+        return Err(format!("Expected more sibling nodes, looking for label {label:?}"));
+      }
+      if self.cursor.label() == label {
+        let cursor = self.cursor.clone();
+        loop {
+          if !self.cursor.go_to_next_sibling() {
+            self.finished = true;
+            break;
+          }
+          if !self.cursor.node().is_trivia() {
+            break;
+          }
+        }
+        Ok(cursor)
+      } else {
+        Err(format!("Expected node with label {label:?}, got {:?}", self.cursor.label()))
       }
     }
-    Err("Expected more non-trivia siblings".into())
+
+    fn finalize(self) -> Result<()> {
+      consume_remaining_trivia(self.cursor)
+    }
   }
 
 {%- endif %}
