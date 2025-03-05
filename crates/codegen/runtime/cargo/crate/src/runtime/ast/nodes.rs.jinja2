@@ -23,7 +23,7 @@
 
     #[derive(Debug)]
     pub struct {{ sequence.parent_type }}Struct {
-      pub _cursor: Cursor,
+      pub cursor: Cursor,
       {%- for field in sequence.fields %}
         pub {{ field.label | snake_case }}:
         {%- if field.type -%}

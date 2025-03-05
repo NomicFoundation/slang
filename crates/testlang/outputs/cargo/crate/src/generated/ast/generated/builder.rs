@@ -2,6 +2,7 @@
 
 use std::rc::Rc;
 
+#[allow(clippy::wildcard_imports)]
 use super::nodes::*;
 use crate::cst::{Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalNode};
 
@@ -15,10 +16,7 @@ pub fn build_source_unit(cursor: Cursor) -> Result<SourceUnit> {
     let members = build_source_unit_members(helper.accept_label(EdgeLabel::Members)?)?;
     helper.finalize()?;
 
-    Ok(Rc::new(SourceUnitStruct {
-        _cursor: cursor,
-        members,
-    }))
+    Ok(Rc::new(SourceUnitStruct { cursor, members }))
 }
 
 pub fn build_tree(cursor: Cursor) -> Result<Tree> {
@@ -35,7 +33,7 @@ pub fn build_tree(cursor: Cursor) -> Result<Tree> {
     helper.finalize()?;
 
     Ok(Rc::new(TreeStruct {
-        _cursor: cursor,
+        cursor,
         keyword,
         name,
         node,
@@ -52,7 +50,7 @@ pub fn build_tree_node(cursor: Cursor) -> Result<TreeNode> {
     helper.finalize()?;
 
     Ok(Rc::new(TreeNodeStruct {
-        _cursor: cursor,
+        cursor,
         open_bracket,
         members,
         close_bracket,
@@ -68,7 +66,7 @@ pub fn build_addition_expression(cursor: Cursor) -> Result<AdditionExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(AdditionExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -83,7 +81,7 @@ pub fn build_negation_expression(cursor: Cursor) -> Result<NegationExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(NegationExpressionStruct {
-        _cursor: cursor,
+        cursor,
         operator,
         operand,
     }))
@@ -98,7 +96,7 @@ pub fn build_member_access_expression(cursor: Cursor) -> Result<MemberAccessExpr
     helper.finalize()?;
 
     Ok(Rc::new(MemberAccessExpressionStruct {
-        _cursor: cursor,
+        cursor,
         operand,
         period,
         member,
@@ -129,11 +127,11 @@ pub fn build_source_unit_member(mut cursor: Cursor) -> Result<SourceUnitMember> 
         NodeKind::Nonterminal(NonterminalKind::Literal) => {
             SourceUnitMember::Literal(build_literal(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -152,11 +150,11 @@ pub fn build_tree_node_child(mut cursor: Cursor) -> Result<TreeNodeChild> {
             TreeNodeChild::TreeNode(build_tree_node(cursor.clone())?)
         }
         NodeKind::Terminal(_) => TreeNodeChild::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -181,11 +179,11 @@ pub fn build_expression(mut cursor: Cursor) -> Result<Expression> {
             Expression::MemberAccessExpression(build_member_access_expression(cursor.clone())?)
         }
         NodeKind::Terminal(_) => Expression::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -287,28 +285,26 @@ fn fetch_terminal_node(cursor: &Cursor) -> Result<Rc<TerminalNode>> {
 #[allow(dead_code)]
 #[inline]
 fn expect_label(cursor: &Cursor, label: EdgeLabel) -> Result<()> {
-    if cursor.label() != label {
+    if cursor.label() == label {
+        Ok(())
+    } else {
         Err(format!(
-            "Expected label {:?}, but got {:?} instead",
-            label,
+            "Expected label {label:?}, but got {:?} instead",
             cursor.label()
         ))
-    } else {
-        Ok(())
     }
 }
 
 #[allow(dead_code)]
 #[inline]
 fn expect_nonterminal_kind(cursor: &Cursor, kind: NonterminalKind) -> Result<()> {
-    if !cursor.node().is_nonterminal_with_kind(kind) {
+    if cursor.node().is_nonterminal_with_kind(kind) {
+        Ok(())
+    } else {
         Err(format!(
-            "Expected {:?} node, but got {:?} instead",
-            kind,
+            "Expected {kind:?} node, but got {:?} instead",
             cursor.node().kind()
         ))
-    } else {
-        Ok(())
     }
 }
 
@@ -361,8 +357,7 @@ impl SequenceHelper {
     fn accept_label(&mut self, label: EdgeLabel) -> Result<Cursor> {
         if self.finished {
             return Err(format!(
-                "Expected more sibling nodes, looking for label {:?}",
-                label
+                "Expected more sibling nodes, looking for label {label:?}"
             ));
         }
         if self.cursor.label() == label {
@@ -376,13 +371,12 @@ impl SequenceHelper {
                     break;
                 }
             }
-            return Ok(cursor);
+            Ok(cursor)
         } else {
-            return Err(format!(
-                "Expected node with label {:?}, got {:?}",
-                label,
+            Err(format!(
+                "Expected node with label {label:?}, got {:?}",
                 self.cursor.label()
-            ));
+            ))
         }
     }
 

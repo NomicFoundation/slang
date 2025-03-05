@@ -3,6 +3,7 @@
 {%- else -%}
   use std::rc::Rc;
   use crate::cst::{ Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalNode };
+  #[allow(clippy::wildcard_imports)]
   use super::nodes::*;
 
   //
@@ -44,7 +45,7 @@
       helper.finalize()?;
 
       Ok(Rc::new({{ sequence.parent_type }}Struct {
-        _cursor: cursor,
+        cursor,
         {%- for field in sequence.fields -%}
           {{ field.label }},
         {%- endfor %}
@@ -80,8 +81,14 @@
           {%- endfor -%}
           {%- if choice.includes_terminals -%}
             NodeKind::Terminal(_) => {{ choice.parent_type }}::TerminalNode(fetch_terminal_node(&cursor)?),
+            NodeKind::Nonterminal(_) => {
+              return Err(format!("Unexpected variant node of kind {:?}", cursor.node().kind()));
+            }
+          {%- else -%}
+            NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+              return Err(format!("Unexpected variant node of kind {:?}", cursor.node().kind()));
+            }
           {%- endif -%}
-          _ => return Err(format!("Unexpected variant node of kind {:?}", cursor.node().kind())),
         };
       {%- endif -%}
       consume_remaining_trivia(cursor)?;
@@ -164,20 +171,20 @@
   #[allow(dead_code)]
   #[inline]
   fn expect_label(cursor: &Cursor, label: EdgeLabel) -> Result<()> {
-    if cursor.label() != label {
-      Err(format!("Expected label {:?}, but got {:?} instead", label, cursor.label()))
-    } else {
+    if cursor.label() == label {
       Ok(())
+    } else {
+      Err(format!("Expected label {label:?}, but got {:?} instead", cursor.label()))
     }
   }
 
   #[allow(dead_code)]
   #[inline]
   fn expect_nonterminal_kind(cursor: &Cursor, kind: NonterminalKind) -> Result<()> {
-    if !cursor.node().is_nonterminal_with_kind(kind) {
-      Err(format!("Expected {:?} node, but got {:?} instead", kind, cursor.node().kind()))
-    } else {
+    if cursor.node().is_nonterminal_with_kind(kind) {
       Ok(())
+    } else {
+      Err(format!("Expected {kind:?} node, but got {:?} instead", cursor.node().kind()))
     }
   }
 
@@ -229,7 +236,7 @@
 
     fn accept_label(&mut self, label: EdgeLabel) -> Result<Cursor> {
       if self.finished {
-        return Err(format!("Expected more sibling nodes, looking for label {:?}", label));
+        return Err(format!("Expected more sibling nodes, looking for label {label:?}"));
       }
       if self.cursor.label() == label {
         let cursor = self.cursor.clone();
@@ -242,9 +249,9 @@
             break;
           }
         }
-        return Ok(cursor);
+        Ok(cursor)
       } else {
-        return Err(format!("Expected node with label {:?}, got {:?}", label, self.cursor.label()));
+        Err(format!("Expected node with label {label:?}, got {:?}", self.cursor.label()))
       }
     }
 

@@ -20,7 +20,7 @@ pub type SourceUnit = Rc<SourceUnitStruct>;
 
 #[derive(Debug)]
 pub struct SourceUnitStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub members: SourceUnitMembers,
 }
 
@@ -37,7 +37,7 @@ pub type PragmaDirective = Rc<PragmaDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct PragmaDirectiveStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub pragma_keyword: Rc<TerminalNode>,
     pub pragma: Pragma,
     pub semicolon: Rc<TerminalNode>,
@@ -55,7 +55,7 @@ pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
 
 #[derive(Debug)]
 pub struct AbicoderPragmaStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub abicoder_keyword: Rc<TerminalNode>,
     pub version: Rc<TerminalNode>,
 }
@@ -72,7 +72,7 @@ pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
 
 #[derive(Debug)]
 pub struct ExperimentalPragmaStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub experimental_keyword: Rc<TerminalNode>,
     pub feature: ExperimentalFeature,
 }
@@ -89,7 +89,7 @@ pub type VersionPragma = Rc<VersionPragmaStruct>;
 
 #[derive(Debug)]
 pub struct VersionPragmaStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub solidity_keyword: Rc<TerminalNode>,
     pub sets: VersionExpressionSets,
 }
@@ -107,7 +107,7 @@ pub type VersionRange = Rc<VersionRangeStruct>;
 
 #[derive(Debug)]
 pub struct VersionRangeStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub start: VersionLiteral,
     pub minus: Rc<TerminalNode>,
     pub end: VersionLiteral,
@@ -125,7 +125,7 @@ pub type VersionTerm = Rc<VersionTermStruct>;
 
 #[derive(Debug)]
 pub struct VersionTermStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub operator: Option<VersionOperator>,
     pub literal: VersionLiteral,
 }
@@ -143,7 +143,7 @@ pub type ImportDirective = Rc<ImportDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct ImportDirectiveStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub import_keyword: Rc<TerminalNode>,
     pub clause: ImportClause,
     pub semicolon: Rc<TerminalNode>,
@@ -161,7 +161,7 @@ pub type PathImport = Rc<PathImportStruct>;
 
 #[derive(Debug)]
 pub struct PathImportStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub path: StringLiteral,
     pub alias: Option<ImportAlias>,
 }
@@ -180,7 +180,7 @@ pub type NamedImport = Rc<NamedImportStruct>;
 
 #[derive(Debug)]
 pub struct NamedImportStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub asterisk: Rc<TerminalNode>,
     pub alias: ImportAlias,
     pub from_keyword: Rc<TerminalNode>,
@@ -202,7 +202,7 @@ pub type ImportDeconstruction = Rc<ImportDeconstructionStruct>;
 
 #[derive(Debug)]
 pub struct ImportDeconstructionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_brace: Rc<TerminalNode>,
     pub symbols: ImportDeconstructionSymbols,
     pub close_brace: Rc<TerminalNode>,
@@ -222,7 +222,7 @@ pub type ImportDeconstructionSymbol = Rc<ImportDeconstructionSymbolStruct>;
 
 #[derive(Debug)]
 pub struct ImportDeconstructionSymbolStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub name: Rc<TerminalNode>,
     pub alias: Option<ImportAlias>,
 }
@@ -239,7 +239,7 @@ pub type ImportAlias = Rc<ImportAliasStruct>;
 
 #[derive(Debug)]
 pub struct ImportAliasStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub as_keyword: Rc<TerminalNode>,
     pub identifier: Rc<TerminalNode>,
 }
@@ -260,7 +260,7 @@ pub type UsingDirective = Rc<UsingDirectiveStruct>;
 
 #[derive(Debug)]
 pub struct UsingDirectiveStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub using_keyword: Rc<TerminalNode>,
     pub clause: UsingClause,
     pub for_keyword: Rc<TerminalNode>,
@@ -283,7 +283,7 @@ pub type UsingDeconstruction = Rc<UsingDeconstructionStruct>;
 
 #[derive(Debug)]
 pub struct UsingDeconstructionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_brace: Rc<TerminalNode>,
     pub symbols: UsingDeconstructionSymbols,
     pub close_brace: Rc<TerminalNode>,
@@ -302,7 +302,7 @@ pub type UsingDeconstructionSymbol = Rc<UsingDeconstructionSymbolStruct>;
 
 #[derive(Debug)]
 pub struct UsingDeconstructionSymbolStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub name: IdentifierPath,
     pub alias: Option<UsingAlias>,
 }
@@ -320,7 +320,7 @@ pub type UsingAlias = Rc<UsingAliasStruct>;
 
 #[derive(Debug)]
 pub struct UsingAliasStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub as_keyword: Rc<TerminalNode>,
     pub operator: UsingOperator,
 }
@@ -342,7 +342,7 @@ pub type ContractDefinition = Rc<ContractDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ContractDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub abstract_keyword: Option<Rc<TerminalNode>>,
     pub contract_keyword: Rc<TerminalNode>,
     pub name: Rc<TerminalNode>,
@@ -364,7 +364,7 @@ pub type InheritanceSpecifier = Rc<InheritanceSpecifierStruct>;
 
 #[derive(Debug)]
 pub struct InheritanceSpecifierStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub is_keyword: Rc<TerminalNode>,
     pub types: InheritanceTypes,
 }
@@ -381,7 +381,7 @@ pub type InheritanceType = Rc<InheritanceTypeStruct>;
 
 #[derive(Debug)]
 pub struct InheritanceTypeStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub type_name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
 }
@@ -402,7 +402,7 @@ pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct InterfaceDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub interface_keyword: Rc<TerminalNode>,
     pub name: Rc<TerminalNode>,
     pub inheritance: Option<InheritanceSpecifier>,
@@ -426,7 +426,7 @@ pub type LibraryDefinition = Rc<LibraryDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct LibraryDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub library_keyword: Rc<TerminalNode>,
     pub name: Rc<TerminalNode>,
     pub open_brace: Rc<TerminalNode>,
@@ -449,7 +449,7 @@ pub type StructDefinition = Rc<StructDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct StructDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub struct_keyword: Rc<TerminalNode>,
     pub name: Rc<TerminalNode>,
     pub open_brace: Rc<TerminalNode>,
@@ -470,7 +470,7 @@ pub type StructMember = Rc<StructMemberStruct>;
 
 #[derive(Debug)]
 pub struct StructMemberStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub type_name: TypeName,
     pub name: Rc<TerminalNode>,
     pub semicolon: Rc<TerminalNode>,
@@ -491,7 +491,7 @@ pub type EnumDefinition = Rc<EnumDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct EnumDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub enum_keyword: Rc<TerminalNode>,
     pub name: Rc<TerminalNode>,
     pub open_brace: Rc<TerminalNode>,
@@ -516,7 +516,7 @@ pub type ConstantDefinition = Rc<ConstantDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ConstantDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub type_name: TypeName,
     pub constant_keyword: Rc<TerminalNode>,
     pub name: Rc<TerminalNode>,
@@ -540,7 +540,7 @@ pub type StateVariableDefinition = Rc<StateVariableDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct StateVariableDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub type_name: TypeName,
     pub attributes: StateVariableAttributes,
     pub name: Rc<TerminalNode>,
@@ -560,7 +560,7 @@ pub type StateVariableDefinitionValue = Rc<StateVariableDefinitionValueStruct>;
 
 #[derive(Debug)]
 pub struct StateVariableDefinitionValueStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub equal: Rc<TerminalNode>,
     pub value: Expression,
 }
@@ -581,7 +581,7 @@ pub type FunctionDefinition = Rc<FunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct FunctionDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub function_keyword: Rc<TerminalNode>,
     pub name: FunctionName,
     pub parameters: ParametersDeclaration,
@@ -603,7 +603,7 @@ pub type ParametersDeclaration = Rc<ParametersDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct ParametersDeclarationStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_paren: Rc<TerminalNode>,
     pub parameters: Parameters,
     pub close_paren: Rc<TerminalNode>,
@@ -622,7 +622,7 @@ pub type Parameter = Rc<ParameterStruct>;
 
 #[derive(Debug)]
 pub struct ParameterStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Option<Rc<TerminalNode>>,
@@ -641,7 +641,7 @@ pub type OverrideSpecifier = Rc<OverrideSpecifierStruct>;
 
 #[derive(Debug)]
 pub struct OverrideSpecifierStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub override_keyword: Rc<TerminalNode>,
     pub overridden: Option<OverridePathsDeclaration>,
 }
@@ -660,7 +660,7 @@ pub type OverridePathsDeclaration = Rc<OverridePathsDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct OverridePathsDeclarationStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_paren: Rc<TerminalNode>,
     pub paths: OverridePaths,
     pub close_paren: Rc<TerminalNode>,
@@ -678,7 +678,7 @@ pub type ReturnsDeclaration = Rc<ReturnsDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct ReturnsDeclarationStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub returns_keyword: Rc<TerminalNode>,
     pub variables: ParametersDeclaration,
 }
@@ -698,7 +698,7 @@ pub type ConstructorDefinition = Rc<ConstructorDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ConstructorDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub constructor_keyword: Rc<TerminalNode>,
     pub parameters: ParametersDeclaration,
     pub attributes: ConstructorAttributes,
@@ -720,7 +720,7 @@ pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct UnnamedFunctionDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub function_keyword: Rc<TerminalNode>,
     pub parameters: ParametersDeclaration,
     pub attributes: UnnamedFunctionAttributes,
@@ -743,7 +743,7 @@ pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct FallbackFunctionDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub fallback_keyword: Rc<TerminalNode>,
     pub parameters: ParametersDeclaration,
     pub attributes: FallbackFunctionAttributes,
@@ -766,7 +766,7 @@ pub type ReceiveFunctionDefinition = Rc<ReceiveFunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ReceiveFunctionDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub receive_keyword: Rc<TerminalNode>,
     pub parameters: ParametersDeclaration,
     pub attributes: ReceiveFunctionAttributes,
@@ -788,7 +788,7 @@ pub type ModifierDefinition = Rc<ModifierDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ModifierDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub modifier_keyword: Rc<TerminalNode>,
     pub name: Rc<TerminalNode>,
     pub parameters: Option<ParametersDeclaration>,
@@ -808,7 +808,7 @@ pub type ModifierInvocation = Rc<ModifierInvocationStruct>;
 
 #[derive(Debug)]
 pub struct ModifierInvocationStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
 }
@@ -828,7 +828,7 @@ pub type EventDefinition = Rc<EventDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct EventDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub event_keyword: Rc<TerminalNode>,
     pub name: Rc<TerminalNode>,
     pub parameters: EventParametersDeclaration,
@@ -849,7 +849,7 @@ pub type EventParametersDeclaration = Rc<EventParametersDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct EventParametersDeclarationStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_paren: Rc<TerminalNode>,
     pub parameters: EventParameters,
     pub close_paren: Rc<TerminalNode>,
@@ -868,7 +868,7 @@ pub type EventParameter = Rc<EventParameterStruct>;
 
 #[derive(Debug)]
 pub struct EventParameterStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub type_name: TypeName,
     pub indexed_keyword: Option<Rc<TerminalNode>>,
     pub name: Option<Rc<TerminalNode>>,
@@ -890,7 +890,7 @@ pub type UserDefinedValueTypeDefinition = Rc<UserDefinedValueTypeDefinitionStruc
 
 #[derive(Debug)]
 pub struct UserDefinedValueTypeDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub type_keyword: Rc<TerminalNode>,
     pub name: Rc<TerminalNode>,
     pub is_keyword: Rc<TerminalNode>,
@@ -913,7 +913,7 @@ pub type ErrorDefinition = Rc<ErrorDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct ErrorDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub error_keyword: Rc<TerminalNode>,
     pub name: Rc<TerminalNode>,
     pub members: ErrorParametersDeclaration,
@@ -934,7 +934,7 @@ pub type ErrorParametersDeclaration = Rc<ErrorParametersDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct ErrorParametersDeclarationStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_paren: Rc<TerminalNode>,
     pub parameters: ErrorParameters,
     pub close_paren: Rc<TerminalNode>,
@@ -953,7 +953,7 @@ pub type ErrorParameter = Rc<ErrorParameterStruct>;
 
 #[derive(Debug)]
 pub struct ErrorParameterStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub type_name: TypeName,
     pub name: Option<Rc<TerminalNode>>,
 }
@@ -973,7 +973,7 @@ pub type ArrayTypeName = Rc<ArrayTypeNameStruct>;
 
 #[derive(Debug)]
 pub struct ArrayTypeNameStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub operand: TypeName,
     pub open_bracket: Rc<TerminalNode>,
     pub index: Option<Expression>,
@@ -994,7 +994,7 @@ pub type FunctionType = Rc<FunctionTypeStruct>;
 
 #[derive(Debug)]
 pub struct FunctionTypeStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub function_keyword: Rc<TerminalNode>,
     pub parameters: ParametersDeclaration,
     pub attributes: FunctionTypeAttributes,
@@ -1017,7 +1017,7 @@ pub type MappingType = Rc<MappingTypeStruct>;
 
 #[derive(Debug)]
 pub struct MappingTypeStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub mapping_keyword: Rc<TerminalNode>,
     pub open_paren: Rc<TerminalNode>,
     pub key_type: MappingKey,
@@ -1038,7 +1038,7 @@ pub type MappingKey = Rc<MappingKeyStruct>;
 
 #[derive(Debug)]
 pub struct MappingKeyStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub key_type: MappingKeyType,
     pub name: Option<Rc<TerminalNode>>,
 }
@@ -1055,7 +1055,7 @@ pub type MappingValue = Rc<MappingValueStruct>;
 
 #[derive(Debug)]
 pub struct MappingValueStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub type_name: TypeName,
     pub name: Option<Rc<TerminalNode>>,
 }
@@ -1072,7 +1072,7 @@ pub type AddressType = Rc<AddressTypeStruct>;
 
 #[derive(Debug)]
 pub struct AddressTypeStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub address_keyword: Rc<TerminalNode>,
     pub payable_keyword: Option<Rc<TerminalNode>>,
 }
@@ -1090,7 +1090,7 @@ pub type Block = Rc<BlockStruct>;
 
 #[derive(Debug)]
 pub struct BlockStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_brace: Rc<TerminalNode>,
     pub statements: Statements,
     pub close_brace: Rc<TerminalNode>,
@@ -1109,7 +1109,7 @@ pub type UncheckedBlock = Rc<UncheckedBlockStruct>;
 
 #[derive(Debug)]
 pub struct UncheckedBlockStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub unchecked_keyword: Rc<TerminalNode>,
     pub block: Block,
 }
@@ -1126,7 +1126,7 @@ pub type ExpressionStatement = Rc<ExpressionStatementStruct>;
 
 #[derive(Debug)]
 pub struct ExpressionStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub expression: Expression,
     pub semicolon: Rc<TerminalNode>,
 }
@@ -1145,7 +1145,7 @@ pub type AssemblyStatement = Rc<AssemblyStatementStruct>;
 
 #[derive(Debug)]
 pub struct AssemblyStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub assembly_keyword: Rc<TerminalNode>,
     pub label: Option<StringLiteral>,
     pub flags: Option<AssemblyFlagsDeclaration>,
@@ -1166,7 +1166,7 @@ pub type AssemblyFlagsDeclaration = Rc<AssemblyFlagsDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct AssemblyFlagsDeclarationStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_paren: Rc<TerminalNode>,
     pub flags: AssemblyFlags,
     pub close_paren: Rc<TerminalNode>,
@@ -1189,7 +1189,7 @@ pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 
 #[derive(Debug)]
 pub struct TupleDeconstructionStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub var_keyword: Option<Rc<TerminalNode>>,
     pub open_paren: Rc<TerminalNode>,
     pub elements: TupleDeconstructionElements,
@@ -1210,7 +1210,7 @@ pub type TupleDeconstructionElement = Rc<TupleDeconstructionElementStruct>;
 
 #[derive(Debug)]
 pub struct TupleDeconstructionElementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub member: Option<TupleMember>,
 }
 
@@ -1227,7 +1227,7 @@ pub type TypedTupleMember = Rc<TypedTupleMemberStruct>;
 
 #[derive(Debug)]
 pub struct TypedTupleMemberStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub type_name: TypeName,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
@@ -1245,7 +1245,7 @@ pub type UntypedTupleMember = Rc<UntypedTupleMemberStruct>;
 
 #[derive(Debug)]
 pub struct UntypedTupleMemberStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
 }
@@ -1265,7 +1265,7 @@ pub type VariableDeclarationStatement = Rc<VariableDeclarationStatementStruct>;
 
 #[derive(Debug)]
 pub struct VariableDeclarationStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub variable_type: VariableDeclarationType,
     pub storage_location: Option<StorageLocation>,
     pub name: Rc<TerminalNode>,
@@ -1285,7 +1285,7 @@ pub type VariableDeclarationValue = Rc<VariableDeclarationValueStruct>;
 
 #[derive(Debug)]
 pub struct VariableDeclarationValueStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub equal: Rc<TerminalNode>,
     pub expression: Expression,
 }
@@ -1306,7 +1306,7 @@ pub type IfStatement = Rc<IfStatementStruct>;
 
 #[derive(Debug)]
 pub struct IfStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub if_keyword: Rc<TerminalNode>,
     pub open_paren: Rc<TerminalNode>,
     pub condition: Expression,
@@ -1327,7 +1327,7 @@ pub type ElseBranch = Rc<ElseBranchStruct>;
 
 #[derive(Debug)]
 pub struct ElseBranchStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub else_keyword: Rc<TerminalNode>,
     pub body: Statement,
 }
@@ -1349,7 +1349,7 @@ pub type ForStatement = Rc<ForStatementStruct>;
 
 #[derive(Debug)]
 pub struct ForStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub for_keyword: Rc<TerminalNode>,
     pub open_paren: Rc<TerminalNode>,
     pub initialization: ForStatementInitialization,
@@ -1374,7 +1374,7 @@ pub type WhileStatement = Rc<WhileStatementStruct>;
 
 #[derive(Debug)]
 pub struct WhileStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub while_keyword: Rc<TerminalNode>,
     pub open_paren: Rc<TerminalNode>,
     pub condition: Expression,
@@ -1399,7 +1399,7 @@ pub type DoWhileStatement = Rc<DoWhileStatementStruct>;
 
 #[derive(Debug)]
 pub struct DoWhileStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub do_keyword: Rc<TerminalNode>,
     pub body: Statement,
     pub while_keyword: Rc<TerminalNode>,
@@ -1421,7 +1421,7 @@ pub type ContinueStatement = Rc<ContinueStatementStruct>;
 
 #[derive(Debug)]
 pub struct ContinueStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub continue_keyword: Rc<TerminalNode>,
     pub semicolon: Rc<TerminalNode>,
 }
@@ -1438,7 +1438,7 @@ pub type BreakStatement = Rc<BreakStatementStruct>;
 
 #[derive(Debug)]
 pub struct BreakStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub break_keyword: Rc<TerminalNode>,
     pub semicolon: Rc<TerminalNode>,
 }
@@ -1456,7 +1456,7 @@ pub type ReturnStatement = Rc<ReturnStatementStruct>;
 
 #[derive(Debug)]
 pub struct ReturnStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub return_keyword: Rc<TerminalNode>,
     pub expression: Option<Expression>,
     pub semicolon: Rc<TerminalNode>,
@@ -1477,7 +1477,7 @@ pub type EmitStatement = Rc<EmitStatementStruct>;
 
 #[derive(Debug)]
 pub struct EmitStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub emit_keyword: Rc<TerminalNode>,
     pub event: IdentifierPath,
     pub arguments: ArgumentsDeclaration,
@@ -1500,7 +1500,7 @@ pub type TryStatement = Rc<TryStatementStruct>;
 
 #[derive(Debug)]
 pub struct TryStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub try_keyword: Rc<TerminalNode>,
     pub expression: Expression,
     pub returns: Option<ReturnsDeclaration>,
@@ -1522,7 +1522,7 @@ pub type CatchClause = Rc<CatchClauseStruct>;
 
 #[derive(Debug)]
 pub struct CatchClauseStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub catch_keyword: Rc<TerminalNode>,
     pub error: Option<CatchClauseError>,
     pub body: Block,
@@ -1541,7 +1541,7 @@ pub type CatchClauseError = Rc<CatchClauseErrorStruct>;
 
 #[derive(Debug)]
 pub struct CatchClauseErrorStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub name: Option<Rc<TerminalNode>>,
     pub parameters: ParametersDeclaration,
 }
@@ -1561,7 +1561,7 @@ pub type RevertStatement = Rc<RevertStatementStruct>;
 
 #[derive(Debug)]
 pub struct RevertStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub revert_keyword: Rc<TerminalNode>,
     pub error: Option<IdentifierPath>,
     pub arguments: ArgumentsDeclaration,
@@ -1581,7 +1581,7 @@ pub type ThrowStatement = Rc<ThrowStatementStruct>;
 
 #[derive(Debug)]
 pub struct ThrowStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub throw_keyword: Rc<TerminalNode>,
     pub semicolon: Rc<TerminalNode>,
 }
@@ -1655,7 +1655,7 @@ pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AssignmentExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1677,7 +1677,7 @@ pub type ConditionalExpression = Rc<ConditionalExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ConditionalExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub operand: Expression,
     pub question_mark: Rc<TerminalNode>,
     pub true_expression: Expression,
@@ -1699,7 +1699,7 @@ pub type OrExpression = Rc<OrExpressionStruct>;
 
 #[derive(Debug)]
 pub struct OrExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1719,7 +1719,7 @@ pub type AndExpression = Rc<AndExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AndExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1744,7 +1744,7 @@ pub type EqualityExpression = Rc<EqualityExpressionStruct>;
 
 #[derive(Debug)]
 pub struct EqualityExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1779,7 +1779,7 @@ pub type ComparisonExpression = Rc<ComparisonExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ComparisonExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1799,7 +1799,7 @@ pub type BitwiseOrExpression = Rc<BitwiseOrExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseOrExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1819,7 +1819,7 @@ pub type BitwiseXorExpression = Rc<BitwiseXorExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseXorExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1839,7 +1839,7 @@ pub type BitwiseAndExpression = Rc<BitwiseAndExpressionStruct>;
 
 #[derive(Debug)]
 pub struct BitwiseAndExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1869,7 +1869,7 @@ pub type ShiftExpression = Rc<ShiftExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ShiftExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1894,7 +1894,7 @@ pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AdditiveExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1924,7 +1924,7 @@ pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
 
 #[derive(Debug)]
 pub struct MultiplicativeExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1951,7 +1951,7 @@ pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ExponentiationExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub left_operand: Expression,
     pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
@@ -1974,7 +1974,7 @@ pub type PostfixExpression = Rc<PostfixExpressionStruct>;
 
 #[derive(Debug)]
 pub struct PostfixExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub operand: Expression,
     pub operator: Rc<TerminalNode>,
 }
@@ -2017,7 +2017,7 @@ pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 
 #[derive(Debug)]
 pub struct PrefixExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub operator: Rc<TerminalNode>,
     pub operand: Expression,
 }
@@ -2035,7 +2035,7 @@ pub type FunctionCallExpression = Rc<FunctionCallExpressionStruct>;
 
 #[derive(Debug)]
 pub struct FunctionCallExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub operand: Expression,
     pub arguments: ArgumentsDeclaration,
 }
@@ -2056,7 +2056,7 @@ pub type CallOptionsExpression = Rc<CallOptionsExpressionStruct>;
 
 #[derive(Debug)]
 pub struct CallOptionsExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub operand: Expression,
     pub open_brace: Rc<TerminalNode>,
     pub options: CallOptions,
@@ -2077,7 +2077,7 @@ pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 
 #[derive(Debug)]
 pub struct MemberAccessExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub operand: Expression,
     pub period: Rc<TerminalNode>,
     pub member: Rc<TerminalNode>,
@@ -2099,7 +2099,7 @@ pub type IndexAccessExpression = Rc<IndexAccessExpressionStruct>;
 
 #[derive(Debug)]
 pub struct IndexAccessExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub operand: Expression,
     pub open_bracket: Rc<TerminalNode>,
     pub start: Option<Expression>,
@@ -2119,7 +2119,7 @@ pub type IndexAccessEnd = Rc<IndexAccessEndStruct>;
 
 #[derive(Debug)]
 pub struct IndexAccessEndStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub colon: Rc<TerminalNode>,
     pub end: Option<Expression>,
 }
@@ -2137,7 +2137,7 @@ pub type PositionalArgumentsDeclaration = Rc<PositionalArgumentsDeclarationStruc
 
 #[derive(Debug)]
 pub struct PositionalArgumentsDeclarationStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_paren: Rc<TerminalNode>,
     pub arguments: PositionalArguments,
     pub close_paren: Rc<TerminalNode>,
@@ -2156,7 +2156,7 @@ pub type NamedArgumentsDeclaration = Rc<NamedArgumentsDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct NamedArgumentsDeclarationStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_paren: Rc<TerminalNode>,
     pub arguments: Option<NamedArgumentGroup>,
     pub close_paren: Rc<TerminalNode>,
@@ -2175,7 +2175,7 @@ pub type NamedArgumentGroup = Rc<NamedArgumentGroupStruct>;
 
 #[derive(Debug)]
 pub struct NamedArgumentGroupStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_brace: Rc<TerminalNode>,
     pub arguments: NamedArguments,
     pub close_brace: Rc<TerminalNode>,
@@ -2194,7 +2194,7 @@ pub type NamedArgument = Rc<NamedArgumentStruct>;
 
 #[derive(Debug)]
 pub struct NamedArgumentStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub name: Rc<TerminalNode>,
     pub colon: Rc<TerminalNode>,
     pub value: Expression,
@@ -2215,7 +2215,7 @@ pub type TypeExpression = Rc<TypeExpressionStruct>;
 
 #[derive(Debug)]
 pub struct TypeExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub type_keyword: Rc<TerminalNode>,
     pub open_paren: Rc<TerminalNode>,
     pub type_name: TypeName,
@@ -2234,7 +2234,7 @@ pub type NewExpression = Rc<NewExpressionStruct>;
 
 #[derive(Debug)]
 pub struct NewExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub new_keyword: Rc<TerminalNode>,
     pub type_name: TypeName,
 }
@@ -2252,7 +2252,7 @@ pub type TupleExpression = Rc<TupleExpressionStruct>;
 
 #[derive(Debug)]
 pub struct TupleExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_paren: Rc<TerminalNode>,
     pub items: TupleValues,
     pub close_paren: Rc<TerminalNode>,
@@ -2269,7 +2269,7 @@ pub type TupleValue = Rc<TupleValueStruct>;
 
 #[derive(Debug)]
 pub struct TupleValueStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub expression: Option<Expression>,
 }
 
@@ -2286,7 +2286,7 @@ pub type ArrayExpression = Rc<ArrayExpressionStruct>;
 
 #[derive(Debug)]
 pub struct ArrayExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_bracket: Rc<TerminalNode>,
     pub items: ArrayValues,
     pub close_bracket: Rc<TerminalNode>,
@@ -2304,7 +2304,7 @@ pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 
 #[derive(Debug)]
 pub struct HexNumberExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub literal: Rc<TerminalNode>,
     pub unit: Option<NumberUnit>,
 }
@@ -2321,7 +2321,7 @@ pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
 
 #[derive(Debug)]
 pub struct DecimalNumberExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub literal: Rc<TerminalNode>,
     pub unit: Option<NumberUnit>,
 }
@@ -2339,7 +2339,7 @@ pub type YulBlock = Rc<YulBlockStruct>;
 
 #[derive(Debug)]
 pub struct YulBlockStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_brace: Rc<TerminalNode>,
     pub statements: YulStatements,
     pub close_brace: Rc<TerminalNode>,
@@ -2360,7 +2360,7 @@ pub type YulFunctionDefinition = Rc<YulFunctionDefinitionStruct>;
 
 #[derive(Debug)]
 pub struct YulFunctionDefinitionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub function_keyword: Rc<TerminalNode>,
     pub name: Rc<TerminalNode>,
     pub parameters: YulParametersDeclaration,
@@ -2381,7 +2381,7 @@ pub type YulParametersDeclaration = Rc<YulParametersDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct YulParametersDeclarationStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub open_paren: Rc<TerminalNode>,
     pub parameters: YulParameters,
     pub close_paren: Rc<TerminalNode>,
@@ -2399,7 +2399,7 @@ pub type YulReturnsDeclaration = Rc<YulReturnsDeclarationStruct>;
 
 #[derive(Debug)]
 pub struct YulReturnsDeclarationStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub minus_greater_than: Rc<TerminalNode>,
     pub variables: YulVariableNames,
 }
@@ -2417,7 +2417,7 @@ pub type YulVariableDeclarationStatement = Rc<YulVariableDeclarationStatementStr
 
 #[derive(Debug)]
 pub struct YulVariableDeclarationStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub let_keyword: Rc<TerminalNode>,
     pub variables: YulVariableNames,
     pub value: Option<YulVariableDeclarationValue>,
@@ -2435,7 +2435,7 @@ pub type YulVariableDeclarationValue = Rc<YulVariableDeclarationValueStruct>;
 
 #[derive(Debug)]
 pub struct YulVariableDeclarationValueStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub assignment: YulAssignmentOperator,
     pub expression: YulExpression,
 }
@@ -2453,7 +2453,7 @@ pub type YulVariableAssignmentStatement = Rc<YulVariableAssignmentStatementStruc
 
 #[derive(Debug)]
 pub struct YulVariableAssignmentStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub variables: YulPaths,
     pub assignment: YulAssignmentOperator,
     pub expression: YulExpression,
@@ -2472,7 +2472,7 @@ pub type YulColonAndEqual = Rc<YulColonAndEqualStruct>;
 
 #[derive(Debug)]
 pub struct YulColonAndEqualStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub colon: Rc<TerminalNode>,
     pub equal: Rc<TerminalNode>,
 }
@@ -2490,7 +2490,7 @@ pub type YulStackAssignmentStatement = Rc<YulStackAssignmentStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulStackAssignmentStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub assignment: YulStackAssignmentOperator,
     pub variable: Rc<TerminalNode>,
 }
@@ -2508,7 +2508,7 @@ pub type YulEqualAndColon = Rc<YulEqualAndColonStruct>;
 
 #[derive(Debug)]
 pub struct YulEqualAndColonStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub equal: Rc<TerminalNode>,
     pub colon: Rc<TerminalNode>,
 }
@@ -2526,7 +2526,7 @@ pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulIfStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub if_keyword: Rc<TerminalNode>,
     pub condition: YulExpression,
     pub body: YulBlock,
@@ -2547,7 +2547,7 @@ pub type YulForStatement = Rc<YulForStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulForStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub for_keyword: Rc<TerminalNode>,
     pub initialization: YulBlock,
     pub condition: YulExpression,
@@ -2568,7 +2568,7 @@ pub type YulSwitchStatement = Rc<YulSwitchStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulSwitchStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub switch_keyword: Rc<TerminalNode>,
     pub expression: YulExpression,
     pub cases: YulSwitchCases,
@@ -2586,7 +2586,7 @@ pub type YulDefaultCase = Rc<YulDefaultCaseStruct>;
 
 #[derive(Debug)]
 pub struct YulDefaultCaseStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub default_keyword: Rc<TerminalNode>,
     pub body: YulBlock,
 }
@@ -2604,7 +2604,7 @@ pub type YulValueCase = Rc<YulValueCaseStruct>;
 
 #[derive(Debug)]
 pub struct YulValueCaseStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub case_keyword: Rc<TerminalNode>,
     pub value: YulLiteral,
     pub body: YulBlock,
@@ -2622,7 +2622,7 @@ pub type YulLeaveStatement = Rc<YulLeaveStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulLeaveStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub leave_keyword: Rc<TerminalNode>,
 }
 
@@ -2637,7 +2637,7 @@ pub type YulBreakStatement = Rc<YulBreakStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulBreakStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub break_keyword: Rc<TerminalNode>,
 }
 
@@ -2652,7 +2652,7 @@ pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 
 #[derive(Debug)]
 pub struct YulContinueStatementStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub continue_keyword: Rc<TerminalNode>,
 }
 
@@ -2669,7 +2669,7 @@ pub type YulLabel = Rc<YulLabelStruct>;
 
 #[derive(Debug)]
 pub struct YulLabelStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub label: Rc<TerminalNode>,
     pub colon: Rc<TerminalNode>,
 }
@@ -2689,7 +2689,7 @@ pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
 
 #[derive(Debug)]
 pub struct YulFunctionCallExpressionStruct {
-    pub _cursor: Cursor,
+    pub cursor: Cursor,
     pub operand: YulExpression,
     pub open_paren: Rc<TerminalNode>,
     pub arguments: YulArguments,

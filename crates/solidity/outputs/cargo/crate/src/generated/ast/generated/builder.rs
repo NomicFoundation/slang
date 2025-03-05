@@ -2,6 +2,7 @@
 
 use std::rc::Rc;
 
+#[allow(clippy::wildcard_imports)]
 use super::nodes::*;
 use crate::cst::{Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalNode};
 
@@ -15,10 +16,7 @@ pub fn build_source_unit(cursor: Cursor) -> Result<SourceUnit> {
     let members = build_source_unit_members(helper.accept_label(EdgeLabel::Members)?)?;
     helper.finalize()?;
 
-    Ok(Rc::new(SourceUnitStruct {
-        _cursor: cursor,
-        members,
-    }))
+    Ok(Rc::new(SourceUnitStruct { cursor, members }))
 }
 
 pub fn build_pragma_directive(cursor: Cursor) -> Result<PragmaDirective> {
@@ -30,7 +28,7 @@ pub fn build_pragma_directive(cursor: Cursor) -> Result<PragmaDirective> {
     helper.finalize()?;
 
     Ok(Rc::new(PragmaDirectiveStruct {
-        _cursor: cursor,
+        cursor,
         pragma_keyword,
         pragma,
         semicolon,
@@ -45,7 +43,7 @@ pub fn build_abicoder_pragma(cursor: Cursor) -> Result<AbicoderPragma> {
     helper.finalize()?;
 
     Ok(Rc::new(AbicoderPragmaStruct {
-        _cursor: cursor,
+        cursor,
         abicoder_keyword,
         version,
     }))
@@ -60,7 +58,7 @@ pub fn build_experimental_pragma(cursor: Cursor) -> Result<ExperimentalPragma> {
     helper.finalize()?;
 
     Ok(Rc::new(ExperimentalPragmaStruct {
-        _cursor: cursor,
+        cursor,
         experimental_keyword,
         feature,
     }))
@@ -74,7 +72,7 @@ pub fn build_version_pragma(cursor: Cursor) -> Result<VersionPragma> {
     helper.finalize()?;
 
     Ok(Rc::new(VersionPragmaStruct {
-        _cursor: cursor,
+        cursor,
         solidity_keyword,
         sets,
     }))
@@ -89,7 +87,7 @@ pub fn build_version_range(cursor: Cursor) -> Result<VersionRange> {
     helper.finalize()?;
 
     Ok(Rc::new(VersionRangeStruct {
-        _cursor: cursor,
+        cursor,
         start,
         minus,
         end,
@@ -110,7 +108,7 @@ pub fn build_version_term(cursor: Cursor) -> Result<VersionTerm> {
     helper.finalize()?;
 
     Ok(Rc::new(VersionTermStruct {
-        _cursor: cursor,
+        cursor,
         operator,
         literal,
     }))
@@ -125,7 +123,7 @@ pub fn build_import_directive(cursor: Cursor) -> Result<ImportDirective> {
     helper.finalize()?;
 
     Ok(Rc::new(ImportDirectiveStruct {
-        _cursor: cursor,
+        cursor,
         import_keyword,
         clause,
         semicolon,
@@ -144,7 +142,7 @@ pub fn build_path_import(cursor: Cursor) -> Result<PathImport> {
     helper.finalize()?;
 
     Ok(Rc::new(PathImportStruct {
-        _cursor: cursor,
+        cursor,
         path,
         alias,
     }))
@@ -160,7 +158,7 @@ pub fn build_named_import(cursor: Cursor) -> Result<NamedImport> {
     helper.finalize()?;
 
     Ok(Rc::new(NamedImportStruct {
-        _cursor: cursor,
+        cursor,
         asterisk,
         alias,
         from_keyword,
@@ -179,7 +177,7 @@ pub fn build_import_deconstruction(cursor: Cursor) -> Result<ImportDeconstructio
     helper.finalize()?;
 
     Ok(Rc::new(ImportDeconstructionStruct {
-        _cursor: cursor,
+        cursor,
         open_brace,
         symbols,
         close_brace,
@@ -200,7 +198,7 @@ pub fn build_import_deconstruction_symbol(cursor: Cursor) -> Result<ImportDecons
     helper.finalize()?;
 
     Ok(Rc::new(ImportDeconstructionSymbolStruct {
-        _cursor: cursor,
+        cursor,
         name,
         alias,
     }))
@@ -214,7 +212,7 @@ pub fn build_import_alias(cursor: Cursor) -> Result<ImportAlias> {
     helper.finalize()?;
 
     Ok(Rc::new(ImportAliasStruct {
-        _cursor: cursor,
+        cursor,
         as_keyword,
         identifier,
     }))
@@ -238,7 +236,7 @@ pub fn build_using_directive(cursor: Cursor) -> Result<UsingDirective> {
     helper.finalize()?;
 
     Ok(Rc::new(UsingDirectiveStruct {
-        _cursor: cursor,
+        cursor,
         using_keyword,
         clause,
         for_keyword,
@@ -257,7 +255,7 @@ pub fn build_using_deconstruction(cursor: Cursor) -> Result<UsingDeconstruction>
     helper.finalize()?;
 
     Ok(Rc::new(UsingDeconstructionStruct {
-        _cursor: cursor,
+        cursor,
         open_brace,
         symbols,
         close_brace,
@@ -276,7 +274,7 @@ pub fn build_using_deconstruction_symbol(cursor: Cursor) -> Result<UsingDeconstr
     helper.finalize()?;
 
     Ok(Rc::new(UsingDeconstructionSymbolStruct {
-        _cursor: cursor,
+        cursor,
         name,
         alias,
     }))
@@ -290,7 +288,7 @@ pub fn build_using_alias(cursor: Cursor) -> Result<UsingAlias> {
     helper.finalize()?;
 
     Ok(Rc::new(UsingAliasStruct {
-        _cursor: cursor,
+        cursor,
         as_keyword,
         operator,
     }))
@@ -321,7 +319,7 @@ pub fn build_contract_definition(cursor: Cursor) -> Result<ContractDefinition> {
     helper.finalize()?;
 
     Ok(Rc::new(ContractDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         abstract_keyword,
         contract_keyword,
         name,
@@ -340,7 +338,7 @@ pub fn build_inheritance_specifier(cursor: Cursor) -> Result<InheritanceSpecifie
     helper.finalize()?;
 
     Ok(Rc::new(InheritanceSpecifierStruct {
-        _cursor: cursor,
+        cursor,
         is_keyword,
         types,
     }))
@@ -360,7 +358,7 @@ pub fn build_inheritance_type(cursor: Cursor) -> Result<InheritanceType> {
     helper.finalize()?;
 
     Ok(Rc::new(InheritanceTypeStruct {
-        _cursor: cursor,
+        cursor,
         type_name,
         arguments,
     }))
@@ -385,7 +383,7 @@ pub fn build_interface_definition(cursor: Cursor) -> Result<InterfaceDefinition>
     helper.finalize()?;
 
     Ok(Rc::new(InterfaceDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         interface_keyword,
         name,
         inheritance,
@@ -406,7 +404,7 @@ pub fn build_library_definition(cursor: Cursor) -> Result<LibraryDefinition> {
     helper.finalize()?;
 
     Ok(Rc::new(LibraryDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         library_keyword,
         name,
         open_brace,
@@ -426,7 +424,7 @@ pub fn build_struct_definition(cursor: Cursor) -> Result<StructDefinition> {
     helper.finalize()?;
 
     Ok(Rc::new(StructDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         struct_keyword,
         name,
         open_brace,
@@ -444,7 +442,7 @@ pub fn build_struct_member(cursor: Cursor) -> Result<StructMember> {
     helper.finalize()?;
 
     Ok(Rc::new(StructMemberStruct {
-        _cursor: cursor,
+        cursor,
         type_name,
         name,
         semicolon,
@@ -462,7 +460,7 @@ pub fn build_enum_definition(cursor: Cursor) -> Result<EnumDefinition> {
     helper.finalize()?;
 
     Ok(Rc::new(EnumDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         enum_keyword,
         name,
         open_brace,
@@ -483,7 +481,7 @@ pub fn build_constant_definition(cursor: Cursor) -> Result<ConstantDefinition> {
     helper.finalize()?;
 
     Ok(Rc::new(ConstantDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         type_name,
         constant_keyword,
         name,
@@ -510,7 +508,7 @@ pub fn build_state_variable_definition(cursor: Cursor) -> Result<StateVariableDe
     helper.finalize()?;
 
     Ok(Rc::new(StateVariableDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         type_name,
         attributes,
         name,
@@ -529,7 +527,7 @@ pub fn build_state_variable_definition_value(
     helper.finalize()?;
 
     Ok(Rc::new(StateVariableDefinitionValueStruct {
-        _cursor: cursor,
+        cursor,
         equal,
         value,
     }))
@@ -553,7 +551,7 @@ pub fn build_function_definition(cursor: Cursor) -> Result<FunctionDefinition> {
     helper.finalize()?;
 
     Ok(Rc::new(FunctionDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         function_keyword,
         name,
         parameters,
@@ -572,7 +570,7 @@ pub fn build_parameters_declaration(cursor: Cursor) -> Result<ParametersDeclarat
     helper.finalize()?;
 
     Ok(Rc::new(ParametersDeclarationStruct {
-        _cursor: cursor,
+        cursor,
         open_paren,
         parameters,
         close_paren,
@@ -598,7 +596,7 @@ pub fn build_parameter(cursor: Cursor) -> Result<Parameter> {
     helper.finalize()?;
 
     Ok(Rc::new(ParameterStruct {
-        _cursor: cursor,
+        cursor,
         type_name,
         storage_location,
         name,
@@ -619,7 +617,7 @@ pub fn build_override_specifier(cursor: Cursor) -> Result<OverrideSpecifier> {
     helper.finalize()?;
 
     Ok(Rc::new(OverrideSpecifierStruct {
-        _cursor: cursor,
+        cursor,
         override_keyword,
         overridden,
     }))
@@ -634,7 +632,7 @@ pub fn build_override_paths_declaration(cursor: Cursor) -> Result<OverridePathsD
     helper.finalize()?;
 
     Ok(Rc::new(OverridePathsDeclarationStruct {
-        _cursor: cursor,
+        cursor,
         open_paren,
         paths,
         close_paren,
@@ -649,7 +647,7 @@ pub fn build_returns_declaration(cursor: Cursor) -> Result<ReturnsDeclaration> {
     helper.finalize()?;
 
     Ok(Rc::new(ReturnsDeclarationStruct {
-        _cursor: cursor,
+        cursor,
         returns_keyword,
         variables,
     }))
@@ -666,7 +664,7 @@ pub fn build_constructor_definition(cursor: Cursor) -> Result<ConstructorDefinit
     helper.finalize()?;
 
     Ok(Rc::new(ConstructorDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         constructor_keyword,
         parameters,
         attributes,
@@ -685,7 +683,7 @@ pub fn build_unnamed_function_definition(cursor: Cursor) -> Result<UnnamedFuncti
     helper.finalize()?;
 
     Ok(Rc::new(UnnamedFunctionDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         function_keyword,
         parameters,
         attributes,
@@ -711,7 +709,7 @@ pub fn build_fallback_function_definition(cursor: Cursor) -> Result<FallbackFunc
     helper.finalize()?;
 
     Ok(Rc::new(FallbackFunctionDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         fallback_keyword,
         parameters,
         attributes,
@@ -731,7 +729,7 @@ pub fn build_receive_function_definition(cursor: Cursor) -> Result<ReceiveFuncti
     helper.finalize()?;
 
     Ok(Rc::new(ReceiveFunctionDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         receive_keyword,
         parameters,
         attributes,
@@ -756,7 +754,7 @@ pub fn build_modifier_definition(cursor: Cursor) -> Result<ModifierDefinition> {
     helper.finalize()?;
 
     Ok(Rc::new(ModifierDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         modifier_keyword,
         name,
         parameters,
@@ -779,7 +777,7 @@ pub fn build_modifier_invocation(cursor: Cursor) -> Result<ModifierInvocation> {
     helper.finalize()?;
 
     Ok(Rc::new(ModifierInvocationStruct {
-        _cursor: cursor,
+        cursor,
         name,
         arguments,
     }))
@@ -803,7 +801,7 @@ pub fn build_event_definition(cursor: Cursor) -> Result<EventDefinition> {
     helper.finalize()?;
 
     Ok(Rc::new(EventDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         event_keyword,
         name,
         parameters,
@@ -821,7 +819,7 @@ pub fn build_event_parameters_declaration(cursor: Cursor) -> Result<EventParamet
     helper.finalize()?;
 
     Ok(Rc::new(EventParametersDeclarationStruct {
-        _cursor: cursor,
+        cursor,
         open_paren,
         parameters,
         close_paren,
@@ -847,7 +845,7 @@ pub fn build_event_parameter(cursor: Cursor) -> Result<EventParameter> {
     helper.finalize()?;
 
     Ok(Rc::new(EventParameterStruct {
-        _cursor: cursor,
+        cursor,
         type_name,
         indexed_keyword,
         name,
@@ -867,7 +865,7 @@ pub fn build_user_defined_value_type_definition(
     helper.finalize()?;
 
     Ok(Rc::new(UserDefinedValueTypeDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         type_keyword,
         name,
         is_keyword,
@@ -886,7 +884,7 @@ pub fn build_error_definition(cursor: Cursor) -> Result<ErrorDefinition> {
     helper.finalize()?;
 
     Ok(Rc::new(ErrorDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         error_keyword,
         name,
         members,
@@ -903,7 +901,7 @@ pub fn build_error_parameters_declaration(cursor: Cursor) -> Result<ErrorParamet
     helper.finalize()?;
 
     Ok(Rc::new(ErrorParametersDeclarationStruct {
-        _cursor: cursor,
+        cursor,
         open_paren,
         parameters,
         close_paren,
@@ -922,7 +920,7 @@ pub fn build_error_parameter(cursor: Cursor) -> Result<ErrorParameter> {
     helper.finalize()?;
 
     Ok(Rc::new(ErrorParameterStruct {
-        _cursor: cursor,
+        cursor,
         type_name,
         name,
     }))
@@ -942,7 +940,7 @@ pub fn build_array_type_name(cursor: Cursor) -> Result<ArrayTypeName> {
     helper.finalize()?;
 
     Ok(Rc::new(ArrayTypeNameStruct {
-        _cursor: cursor,
+        cursor,
         operand,
         open_bracket,
         index,
@@ -966,7 +964,7 @@ pub fn build_function_type(cursor: Cursor) -> Result<FunctionType> {
     helper.finalize()?;
 
     Ok(Rc::new(FunctionTypeStruct {
-        _cursor: cursor,
+        cursor,
         function_keyword,
         parameters,
         attributes,
@@ -987,7 +985,7 @@ pub fn build_mapping_type(cursor: Cursor) -> Result<MappingType> {
     helper.finalize()?;
 
     Ok(Rc::new(MappingTypeStruct {
-        _cursor: cursor,
+        cursor,
         mapping_keyword,
         open_paren,
         key_type,
@@ -1009,7 +1007,7 @@ pub fn build_mapping_key(cursor: Cursor) -> Result<MappingKey> {
     helper.finalize()?;
 
     Ok(Rc::new(MappingKeyStruct {
-        _cursor: cursor,
+        cursor,
         key_type,
         name,
     }))
@@ -1027,7 +1025,7 @@ pub fn build_mapping_value(cursor: Cursor) -> Result<MappingValue> {
     helper.finalize()?;
 
     Ok(Rc::new(MappingValueStruct {
-        _cursor: cursor,
+        cursor,
         type_name,
         name,
     }))
@@ -1047,7 +1045,7 @@ pub fn build_address_type(cursor: Cursor) -> Result<AddressType> {
     helper.finalize()?;
 
     Ok(Rc::new(AddressTypeStruct {
-        _cursor: cursor,
+        cursor,
         address_keyword,
         payable_keyword,
     }))
@@ -1062,7 +1060,7 @@ pub fn build_block(cursor: Cursor) -> Result<Block> {
     helper.finalize()?;
 
     Ok(Rc::new(BlockStruct {
-        _cursor: cursor,
+        cursor,
         open_brace,
         statements,
         close_brace,
@@ -1078,7 +1076,7 @@ pub fn build_unchecked_block(cursor: Cursor) -> Result<UncheckedBlock> {
     helper.finalize()?;
 
     Ok(Rc::new(UncheckedBlockStruct {
-        _cursor: cursor,
+        cursor,
         unchecked_keyword,
         block,
     }))
@@ -1092,7 +1090,7 @@ pub fn build_expression_statement(cursor: Cursor) -> Result<ExpressionStatement>
     helper.finalize()?;
 
     Ok(Rc::new(ExpressionStatementStruct {
-        _cursor: cursor,
+        cursor,
         expression,
         semicolon,
     }))
@@ -1120,7 +1118,7 @@ pub fn build_assembly_statement(cursor: Cursor) -> Result<AssemblyStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(AssemblyStatementStruct {
-        _cursor: cursor,
+        cursor,
         assembly_keyword,
         label,
         flags,
@@ -1137,7 +1135,7 @@ pub fn build_assembly_flags_declaration(cursor: Cursor) -> Result<AssemblyFlagsD
     helper.finalize()?;
 
     Ok(Rc::new(AssemblyFlagsDeclarationStruct {
-        _cursor: cursor,
+        cursor,
         open_paren,
         flags,
         close_paren,
@@ -1165,7 +1163,7 @@ pub fn build_tuple_deconstruction_statement(
     helper.finalize()?;
 
     Ok(Rc::new(TupleDeconstructionStatementStruct {
-        _cursor: cursor,
+        cursor,
         var_keyword,
         open_paren,
         elements,
@@ -1186,10 +1184,7 @@ pub fn build_tuple_deconstruction_element(cursor: Cursor) -> Result<TupleDeconst
     };
     helper.finalize()?;
 
-    Ok(Rc::new(TupleDeconstructionElementStruct {
-        _cursor: cursor,
-        member,
-    }))
+    Ok(Rc::new(TupleDeconstructionElementStruct { cursor, member }))
 }
 
 pub fn build_typed_tuple_member(cursor: Cursor) -> Result<TypedTupleMember> {
@@ -1207,7 +1202,7 @@ pub fn build_typed_tuple_member(cursor: Cursor) -> Result<TypedTupleMember> {
     helper.finalize()?;
 
     Ok(Rc::new(TypedTupleMemberStruct {
-        _cursor: cursor,
+        cursor,
         type_name,
         storage_location,
         name,
@@ -1228,7 +1223,7 @@ pub fn build_untyped_tuple_member(cursor: Cursor) -> Result<UntypedTupleMember> 
     helper.finalize()?;
 
     Ok(Rc::new(UntypedTupleMemberStruct {
-        _cursor: cursor,
+        cursor,
         storage_location,
         name,
     }))
@@ -1260,7 +1255,7 @@ pub fn build_variable_declaration_statement(
     helper.finalize()?;
 
     Ok(Rc::new(VariableDeclarationStatementStruct {
-        _cursor: cursor,
+        cursor,
         variable_type,
         storage_location,
         name,
@@ -1277,7 +1272,7 @@ pub fn build_variable_declaration_value(cursor: Cursor) -> Result<VariableDeclar
     helper.finalize()?;
 
     Ok(Rc::new(VariableDeclarationValueStruct {
-        _cursor: cursor,
+        cursor,
         equal,
         expression,
     }))
@@ -1301,7 +1296,7 @@ pub fn build_if_statement(cursor: Cursor) -> Result<IfStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(IfStatementStruct {
-        _cursor: cursor,
+        cursor,
         if_keyword,
         open_paren,
         condition,
@@ -1319,7 +1314,7 @@ pub fn build_else_branch(cursor: Cursor) -> Result<ElseBranch> {
     helper.finalize()?;
 
     Ok(Rc::new(ElseBranchStruct {
-        _cursor: cursor,
+        cursor,
         else_keyword,
         body,
     }))
@@ -1343,7 +1338,7 @@ pub fn build_for_statement(cursor: Cursor) -> Result<ForStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(ForStatementStruct {
-        _cursor: cursor,
+        cursor,
         for_keyword,
         open_paren,
         initialization,
@@ -1365,7 +1360,7 @@ pub fn build_while_statement(cursor: Cursor) -> Result<WhileStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(WhileStatementStruct {
-        _cursor: cursor,
+        cursor,
         while_keyword,
         open_paren,
         condition,
@@ -1387,7 +1382,7 @@ pub fn build_do_while_statement(cursor: Cursor) -> Result<DoWhileStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(DoWhileStatementStruct {
-        _cursor: cursor,
+        cursor,
         do_keyword,
         body,
         while_keyword,
@@ -1406,7 +1401,7 @@ pub fn build_continue_statement(cursor: Cursor) -> Result<ContinueStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(ContinueStatementStruct {
-        _cursor: cursor,
+        cursor,
         continue_keyword,
         semicolon,
     }))
@@ -1420,7 +1415,7 @@ pub fn build_break_statement(cursor: Cursor) -> Result<BreakStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(BreakStatementStruct {
-        _cursor: cursor,
+        cursor,
         break_keyword,
         semicolon,
     }))
@@ -1441,7 +1436,7 @@ pub fn build_return_statement(cursor: Cursor) -> Result<ReturnStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(ReturnStatementStruct {
-        _cursor: cursor,
+        cursor,
         return_keyword,
         expression,
         semicolon,
@@ -1458,7 +1453,7 @@ pub fn build_emit_statement(cursor: Cursor) -> Result<EmitStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(EmitStatementStruct {
-        _cursor: cursor,
+        cursor,
         emit_keyword,
         event,
         arguments,
@@ -1483,7 +1478,7 @@ pub fn build_try_statement(cursor: Cursor) -> Result<TryStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(TryStatementStruct {
-        _cursor: cursor,
+        cursor,
         try_keyword,
         expression,
         returns,
@@ -1507,7 +1502,7 @@ pub fn build_catch_clause(cursor: Cursor) -> Result<CatchClause> {
     helper.finalize()?;
 
     Ok(Rc::new(CatchClauseStruct {
-        _cursor: cursor,
+        cursor,
         catch_keyword,
         error,
         body,
@@ -1526,7 +1521,7 @@ pub fn build_catch_clause_error(cursor: Cursor) -> Result<CatchClauseError> {
     helper.finalize()?;
 
     Ok(Rc::new(CatchClauseErrorStruct {
-        _cursor: cursor,
+        cursor,
         name,
         parameters,
     }))
@@ -1548,7 +1543,7 @@ pub fn build_revert_statement(cursor: Cursor) -> Result<RevertStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(RevertStatementStruct {
-        _cursor: cursor,
+        cursor,
         revert_keyword,
         error,
         arguments,
@@ -1564,7 +1559,7 @@ pub fn build_throw_statement(cursor: Cursor) -> Result<ThrowStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(ThrowStatementStruct {
-        _cursor: cursor,
+        cursor,
         throw_keyword,
         semicolon,
     }))
@@ -1579,7 +1574,7 @@ pub fn build_assignment_expression(cursor: Cursor) -> Result<AssignmentExpressio
     helper.finalize()?;
 
     Ok(Rc::new(AssignmentExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1597,7 +1592,7 @@ pub fn build_conditional_expression(cursor: Cursor) -> Result<ConditionalExpress
     helper.finalize()?;
 
     Ok(Rc::new(ConditionalExpressionStruct {
-        _cursor: cursor,
+        cursor,
         operand,
         question_mark,
         true_expression,
@@ -1615,7 +1610,7 @@ pub fn build_or_expression(cursor: Cursor) -> Result<OrExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(OrExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1631,7 +1626,7 @@ pub fn build_and_expression(cursor: Cursor) -> Result<AndExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(AndExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1647,7 +1642,7 @@ pub fn build_equality_expression(cursor: Cursor) -> Result<EqualityExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(EqualityExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1663,7 +1658,7 @@ pub fn build_comparison_expression(cursor: Cursor) -> Result<ComparisonExpressio
     helper.finalize()?;
 
     Ok(Rc::new(ComparisonExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1679,7 +1674,7 @@ pub fn build_bitwise_or_expression(cursor: Cursor) -> Result<BitwiseOrExpression
     helper.finalize()?;
 
     Ok(Rc::new(BitwiseOrExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1695,7 +1690,7 @@ pub fn build_bitwise_xor_expression(cursor: Cursor) -> Result<BitwiseXorExpressi
     helper.finalize()?;
 
     Ok(Rc::new(BitwiseXorExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1711,7 +1706,7 @@ pub fn build_bitwise_and_expression(cursor: Cursor) -> Result<BitwiseAndExpressi
     helper.finalize()?;
 
     Ok(Rc::new(BitwiseAndExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1727,7 +1722,7 @@ pub fn build_shift_expression(cursor: Cursor) -> Result<ShiftExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(ShiftExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1743,7 +1738,7 @@ pub fn build_additive_expression(cursor: Cursor) -> Result<AdditiveExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(AdditiveExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1759,7 +1754,7 @@ pub fn build_multiplicative_expression(cursor: Cursor) -> Result<MultiplicativeE
     helper.finalize()?;
 
     Ok(Rc::new(MultiplicativeExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1775,7 +1770,7 @@ pub fn build_exponentiation_expression(cursor: Cursor) -> Result<ExponentiationE
     helper.finalize()?;
 
     Ok(Rc::new(ExponentiationExpressionStruct {
-        _cursor: cursor,
+        cursor,
         left_operand,
         operator,
         right_operand,
@@ -1790,7 +1785,7 @@ pub fn build_postfix_expression(cursor: Cursor) -> Result<PostfixExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(PostfixExpressionStruct {
-        _cursor: cursor,
+        cursor,
         operand,
         operator,
     }))
@@ -1804,7 +1799,7 @@ pub fn build_prefix_expression(cursor: Cursor) -> Result<PrefixExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(PrefixExpressionStruct {
-        _cursor: cursor,
+        cursor,
         operator,
         operand,
     }))
@@ -1818,7 +1813,7 @@ pub fn build_function_call_expression(cursor: Cursor) -> Result<FunctionCallExpr
     helper.finalize()?;
 
     Ok(Rc::new(FunctionCallExpressionStruct {
-        _cursor: cursor,
+        cursor,
         operand,
         arguments,
     }))
@@ -1834,7 +1829,7 @@ pub fn build_call_options_expression(cursor: Cursor) -> Result<CallOptionsExpres
     helper.finalize()?;
 
     Ok(Rc::new(CallOptionsExpressionStruct {
-        _cursor: cursor,
+        cursor,
         operand,
         open_brace,
         options,
@@ -1851,7 +1846,7 @@ pub fn build_member_access_expression(cursor: Cursor) -> Result<MemberAccessExpr
     helper.finalize()?;
 
     Ok(Rc::new(MemberAccessExpressionStruct {
-        _cursor: cursor,
+        cursor,
         operand,
         period,
         member,
@@ -1879,7 +1874,7 @@ pub fn build_index_access_expression(cursor: Cursor) -> Result<IndexAccessExpres
     helper.finalize()?;
 
     Ok(Rc::new(IndexAccessExpressionStruct {
-        _cursor: cursor,
+        cursor,
         operand,
         open_bracket,
         start,
@@ -1899,11 +1894,7 @@ pub fn build_index_access_end(cursor: Cursor) -> Result<IndexAccessEnd> {
     };
     helper.finalize()?;
 
-    Ok(Rc::new(IndexAccessEndStruct {
-        _cursor: cursor,
-        colon,
-        end,
-    }))
+    Ok(Rc::new(IndexAccessEndStruct { cursor, colon, end }))
 }
 
 pub fn build_positional_arguments_declaration(
@@ -1917,7 +1908,7 @@ pub fn build_positional_arguments_declaration(
     helper.finalize()?;
 
     Ok(Rc::new(PositionalArgumentsDeclarationStruct {
-        _cursor: cursor,
+        cursor,
         open_paren,
         arguments,
         close_paren,
@@ -1939,7 +1930,7 @@ pub fn build_named_arguments_declaration(cursor: Cursor) -> Result<NamedArgument
     helper.finalize()?;
 
     Ok(Rc::new(NamedArgumentsDeclarationStruct {
-        _cursor: cursor,
+        cursor,
         open_paren,
         arguments,
         close_paren,
@@ -1955,7 +1946,7 @@ pub fn build_named_argument_group(cursor: Cursor) -> Result<NamedArgumentGroup> 
     helper.finalize()?;
 
     Ok(Rc::new(NamedArgumentGroupStruct {
-        _cursor: cursor,
+        cursor,
         open_brace,
         arguments,
         close_brace,
@@ -1971,7 +1962,7 @@ pub fn build_named_argument(cursor: Cursor) -> Result<NamedArgument> {
     helper.finalize()?;
 
     Ok(Rc::new(NamedArgumentStruct {
-        _cursor: cursor,
+        cursor,
         name,
         colon,
         value,
@@ -1988,7 +1979,7 @@ pub fn build_type_expression(cursor: Cursor) -> Result<TypeExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(TypeExpressionStruct {
-        _cursor: cursor,
+        cursor,
         type_keyword,
         open_paren,
         type_name,
@@ -2004,7 +1995,7 @@ pub fn build_new_expression(cursor: Cursor) -> Result<NewExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(NewExpressionStruct {
-        _cursor: cursor,
+        cursor,
         new_keyword,
         type_name,
     }))
@@ -2019,7 +2010,7 @@ pub fn build_tuple_expression(cursor: Cursor) -> Result<TupleExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(TupleExpressionStruct {
-        _cursor: cursor,
+        cursor,
         open_paren,
         items,
         close_paren,
@@ -2038,10 +2029,7 @@ pub fn build_tuple_value(cursor: Cursor) -> Result<TupleValue> {
     };
     helper.finalize()?;
 
-    Ok(Rc::new(TupleValueStruct {
-        _cursor: cursor,
-        expression,
-    }))
+    Ok(Rc::new(TupleValueStruct { cursor, expression }))
 }
 
 pub fn build_array_expression(cursor: Cursor) -> Result<ArrayExpression> {
@@ -2053,7 +2041,7 @@ pub fn build_array_expression(cursor: Cursor) -> Result<ArrayExpression> {
     helper.finalize()?;
 
     Ok(Rc::new(ArrayExpressionStruct {
-        _cursor: cursor,
+        cursor,
         open_bracket,
         items,
         close_bracket,
@@ -2072,7 +2060,7 @@ pub fn build_hex_number_expression(cursor: Cursor) -> Result<HexNumberExpression
     helper.finalize()?;
 
     Ok(Rc::new(HexNumberExpressionStruct {
-        _cursor: cursor,
+        cursor,
         literal,
         unit,
     }))
@@ -2090,7 +2078,7 @@ pub fn build_decimal_number_expression(cursor: Cursor) -> Result<DecimalNumberEx
     helper.finalize()?;
 
     Ok(Rc::new(DecimalNumberExpressionStruct {
-        _cursor: cursor,
+        cursor,
         literal,
         unit,
     }))
@@ -2105,7 +2093,7 @@ pub fn build_yul_block(cursor: Cursor) -> Result<YulBlock> {
     helper.finalize()?;
 
     Ok(Rc::new(YulBlockStruct {
-        _cursor: cursor,
+        cursor,
         open_brace,
         statements,
         close_brace,
@@ -2129,7 +2117,7 @@ pub fn build_yul_function_definition(cursor: Cursor) -> Result<YulFunctionDefini
     helper.finalize()?;
 
     Ok(Rc::new(YulFunctionDefinitionStruct {
-        _cursor: cursor,
+        cursor,
         function_keyword,
         name,
         parameters,
@@ -2147,7 +2135,7 @@ pub fn build_yul_parameters_declaration(cursor: Cursor) -> Result<YulParametersD
     helper.finalize()?;
 
     Ok(Rc::new(YulParametersDeclarationStruct {
-        _cursor: cursor,
+        cursor,
         open_paren,
         parameters,
         close_paren,
@@ -2163,7 +2151,7 @@ pub fn build_yul_returns_declaration(cursor: Cursor) -> Result<YulReturnsDeclara
     helper.finalize()?;
 
     Ok(Rc::new(YulReturnsDeclarationStruct {
-        _cursor: cursor,
+        cursor,
         minus_greater_than,
         variables,
     }))
@@ -2186,7 +2174,7 @@ pub fn build_yul_variable_declaration_statement(
     helper.finalize()?;
 
     Ok(Rc::new(YulVariableDeclarationStatementStruct {
-        _cursor: cursor,
+        cursor,
         let_keyword,
         variables,
         value,
@@ -2201,7 +2189,7 @@ pub fn build_yul_variable_declaration_value(cursor: Cursor) -> Result<YulVariabl
     helper.finalize()?;
 
     Ok(Rc::new(YulVariableDeclarationValueStruct {
-        _cursor: cursor,
+        cursor,
         assignment,
         expression,
     }))
@@ -2218,7 +2206,7 @@ pub fn build_yul_variable_assignment_statement(
     helper.finalize()?;
 
     Ok(Rc::new(YulVariableAssignmentStatementStruct {
-        _cursor: cursor,
+        cursor,
         variables,
         assignment,
         expression,
@@ -2233,7 +2221,7 @@ pub fn build_yul_colon_and_equal(cursor: Cursor) -> Result<YulColonAndEqual> {
     helper.finalize()?;
 
     Ok(Rc::new(YulColonAndEqualStruct {
-        _cursor: cursor,
+        cursor,
         colon,
         equal,
     }))
@@ -2248,7 +2236,7 @@ pub fn build_yul_stack_assignment_statement(cursor: Cursor) -> Result<YulStackAs
     helper.finalize()?;
 
     Ok(Rc::new(YulStackAssignmentStatementStruct {
-        _cursor: cursor,
+        cursor,
         assignment,
         variable,
     }))
@@ -2262,7 +2250,7 @@ pub fn build_yul_equal_and_colon(cursor: Cursor) -> Result<YulEqualAndColon> {
     helper.finalize()?;
 
     Ok(Rc::new(YulEqualAndColonStruct {
-        _cursor: cursor,
+        cursor,
         equal,
         colon,
     }))
@@ -2277,7 +2265,7 @@ pub fn build_yul_if_statement(cursor: Cursor) -> Result<YulIfStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(YulIfStatementStruct {
-        _cursor: cursor,
+        cursor,
         if_keyword,
         condition,
         body,
@@ -2295,7 +2283,7 @@ pub fn build_yul_for_statement(cursor: Cursor) -> Result<YulForStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(YulForStatementStruct {
-        _cursor: cursor,
+        cursor,
         for_keyword,
         initialization,
         condition,
@@ -2313,7 +2301,7 @@ pub fn build_yul_switch_statement(cursor: Cursor) -> Result<YulSwitchStatement> 
     helper.finalize()?;
 
     Ok(Rc::new(YulSwitchStatementStruct {
-        _cursor: cursor,
+        cursor,
         switch_keyword,
         expression,
         cases,
@@ -2328,7 +2316,7 @@ pub fn build_yul_default_case(cursor: Cursor) -> Result<YulDefaultCase> {
     helper.finalize()?;
 
     Ok(Rc::new(YulDefaultCaseStruct {
-        _cursor: cursor,
+        cursor,
         default_keyword,
         body,
     }))
@@ -2343,7 +2331,7 @@ pub fn build_yul_value_case(cursor: Cursor) -> Result<YulValueCase> {
     helper.finalize()?;
 
     Ok(Rc::new(YulValueCaseStruct {
-        _cursor: cursor,
+        cursor,
         case_keyword,
         value,
         body,
@@ -2357,7 +2345,7 @@ pub fn build_yul_leave_statement(cursor: Cursor) -> Result<YulLeaveStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(YulLeaveStatementStruct {
-        _cursor: cursor,
+        cursor,
         leave_keyword,
     }))
 }
@@ -2369,7 +2357,7 @@ pub fn build_yul_break_statement(cursor: Cursor) -> Result<YulBreakStatement> {
     helper.finalize()?;
 
     Ok(Rc::new(YulBreakStatementStruct {
-        _cursor: cursor,
+        cursor,
         break_keyword,
     }))
 }
@@ -2381,7 +2369,7 @@ pub fn build_yul_continue_statement(cursor: Cursor) -> Result<YulContinueStateme
     helper.finalize()?;
 
     Ok(Rc::new(YulContinueStatementStruct {
-        _cursor: cursor,
+        cursor,
         continue_keyword,
     }))
 }
@@ -2394,7 +2382,7 @@ pub fn build_yul_label(cursor: Cursor) -> Result<YulLabel> {
     helper.finalize()?;
 
     Ok(Rc::new(YulLabelStruct {
-        _cursor: cursor,
+        cursor,
         label,
         colon,
     }))
@@ -2410,7 +2398,7 @@ pub fn build_yul_function_call_expression(cursor: Cursor) -> Result<YulFunctionC
     helper.finalize()?;
 
     Ok(Rc::new(YulFunctionCallExpressionStruct {
-        _cursor: cursor,
+        cursor,
         operand,
         open_paren,
         arguments,
@@ -2471,11 +2459,11 @@ pub fn build_source_unit_member(mut cursor: Cursor) -> Result<SourceUnitMember> 
         NodeKind::Nonterminal(NonterminalKind::ConstantDefinition) => {
             SourceUnitMember::ConstantDefinition(build_constant_definition(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2499,11 +2487,11 @@ pub fn build_pragma(mut cursor: Cursor) -> Result<Pragma> {
         NodeKind::Nonterminal(NonterminalKind::VersionPragma) => {
             Pragma::VersionPragma(build_version_pragma(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2522,11 +2510,11 @@ pub fn build_experimental_feature(mut cursor: Cursor) -> Result<ExperimentalFeat
             ExperimentalFeature::StringLiteral(build_string_literal(cursor.clone())?)
         }
         NodeKind::Terminal(_) => ExperimentalFeature::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2547,11 +2535,11 @@ pub fn build_version_expression(mut cursor: Cursor) -> Result<VersionExpression>
         NodeKind::Nonterminal(NonterminalKind::VersionTerm) => {
             VersionExpression::VersionTerm(build_version_term(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2582,11 +2570,11 @@ pub fn build_version_literal(mut cursor: Cursor) -> Result<VersionLiteral> {
             VersionLiteral::SimpleVersionLiteral(build_simple_version_literal(cursor.clone())?)
         }
         NodeKind::Terminal(_) => VersionLiteral::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2610,11 +2598,11 @@ pub fn build_import_clause(mut cursor: Cursor) -> Result<ImportClause> {
         NodeKind::Nonterminal(NonterminalKind::ImportDeconstruction) => {
             ImportClause::ImportDeconstruction(build_import_deconstruction(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2635,11 +2623,11 @@ pub fn build_using_clause(mut cursor: Cursor) -> Result<UsingClause> {
         NodeKind::Nonterminal(NonterminalKind::UsingDeconstruction) => {
             UsingClause::UsingDeconstruction(build_using_deconstruction(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2670,11 +2658,11 @@ pub fn build_using_target(mut cursor: Cursor) -> Result<UsingTarget> {
             UsingTarget::TypeName(build_type_name(cursor.clone())?)
         }
         NodeKind::Terminal(_) => UsingTarget::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2738,11 +2726,11 @@ pub fn build_contract_member(mut cursor: Cursor) -> Result<ContractMember> {
                 cursor.clone(),
             )?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2763,11 +2751,11 @@ pub fn build_state_variable_attribute(mut cursor: Cursor) -> Result<StateVariabl
         NodeKind::Terminal(_) => {
             StateVariableAttribute::TerminalNode(fetch_terminal_node(&cursor)?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2801,11 +2789,11 @@ pub fn build_function_attribute(mut cursor: Cursor) -> Result<FunctionAttribute>
             FunctionAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
         NodeKind::Terminal(_) => FunctionAttribute::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2824,11 +2812,11 @@ pub fn build_function_body(mut cursor: Cursor) -> Result<FunctionBody> {
             FunctionBody::Block(build_block(cursor.clone())?)
         }
         NodeKind::Terminal(_) => FunctionBody::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2847,11 +2835,11 @@ pub fn build_constructor_attribute(mut cursor: Cursor) -> Result<ConstructorAttr
             ConstructorAttribute::ModifierInvocation(build_modifier_invocation(cursor.clone())?)
         }
         NodeKind::Terminal(_) => ConstructorAttribute::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2872,11 +2860,11 @@ pub fn build_unnamed_function_attribute(mut cursor: Cursor) -> Result<UnnamedFun
         NodeKind::Terminal(_) => {
             UnnamedFunctionAttribute::TerminalNode(fetch_terminal_node(&cursor)?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2902,11 +2890,11 @@ pub fn build_fallback_function_attribute(mut cursor: Cursor) -> Result<FallbackF
         NodeKind::Terminal(_) => {
             FallbackFunctionAttribute::TerminalNode(fetch_terminal_node(&cursor)?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2930,11 +2918,11 @@ pub fn build_receive_function_attribute(mut cursor: Cursor) -> Result<ReceiveFun
         NodeKind::Terminal(_) => {
             ReceiveFunctionAttribute::TerminalNode(fetch_terminal_node(&cursor)?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2953,11 +2941,11 @@ pub fn build_modifier_attribute(mut cursor: Cursor) -> Result<ModifierAttribute>
             ModifierAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
         NodeKind::Terminal(_) => ModifierAttribute::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -2987,11 +2975,11 @@ pub fn build_type_name(mut cursor: Cursor) -> Result<TypeName> {
         NodeKind::Nonterminal(NonterminalKind::IdentifierPath) => {
             TypeName::IdentifierPath(build_identifier_path(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3024,11 +3012,11 @@ pub fn build_mapping_key_type(mut cursor: Cursor) -> Result<MappingKeyType> {
         NodeKind::Nonterminal(NonterminalKind::IdentifierPath) => {
             MappingKeyType::IdentifierPath(build_identifier_path(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3047,11 +3035,11 @@ pub fn build_elementary_type(mut cursor: Cursor) -> Result<ElementaryType> {
             ElementaryType::AddressType(build_address_type(cursor.clone())?)
         }
         NodeKind::Terminal(_) => ElementaryType::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3121,11 +3109,11 @@ pub fn build_statement(mut cursor: Cursor) -> Result<Statement> {
         NodeKind::Nonterminal(NonterminalKind::ExpressionStatement) => {
             Statement::ExpressionStatement(build_expression_statement(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3146,11 +3134,11 @@ pub fn build_tuple_member(mut cursor: Cursor) -> Result<TupleMember> {
         NodeKind::Nonterminal(NonterminalKind::UntypedTupleMember) => {
             TupleMember::UntypedTupleMember(build_untyped_tuple_member(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3171,11 +3159,11 @@ pub fn build_variable_declaration_type(mut cursor: Cursor) -> Result<VariableDec
         NodeKind::Terminal(_) => {
             VariableDeclarationType::TerminalNode(fetch_terminal_node(&cursor)?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3222,11 +3210,11 @@ pub fn build_for_statement_initialization(
         NodeKind::Terminal(_) => {
             ForStatementInitialization::TerminalNode(fetch_terminal_node(&cursor)?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3245,11 +3233,11 @@ pub fn build_for_statement_condition(mut cursor: Cursor) -> Result<ForStatementC
             ForStatementCondition::ExpressionStatement(build_expression_statement(cursor.clone())?)
         }
         NodeKind::Terminal(_) => ForStatementCondition::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3346,11 +3334,11 @@ pub fn build_expression(mut cursor: Cursor) -> Result<Expression> {
             Expression::ElementaryType(build_elementary_type(cursor.clone())?)
         }
         NodeKind::Terminal(_) => Expression::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3375,11 +3363,11 @@ pub fn build_arguments_declaration(mut cursor: Cursor) -> Result<ArgumentsDeclar
                 cursor.clone(),
             )?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3421,11 +3409,11 @@ pub fn build_string_expression(mut cursor: Cursor) -> Result<StringExpression> {
         NodeKind::Nonterminal(NonterminalKind::UnicodeStringLiterals) => {
             StringExpression::UnicodeStringLiterals(build_unicode_string_literals(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3521,11 +3509,11 @@ pub fn build_yul_statement(mut cursor: Cursor) -> Result<YulStatement> {
         NodeKind::Nonterminal(NonterminalKind::YulExpression) => {
             YulStatement::YulExpression(build_yul_expression(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3544,11 +3532,11 @@ pub fn build_yul_assignment_operator(mut cursor: Cursor) -> Result<YulAssignment
             YulAssignmentOperator::YulColonAndEqual(build_yul_colon_and_equal(cursor.clone())?)
         }
         NodeKind::Terminal(_) => YulAssignmentOperator::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3571,11 +3559,11 @@ pub fn build_yul_stack_assignment_operator(
         NodeKind::Terminal(_) => {
             YulStackAssignmentOperator::TerminalNode(fetch_terminal_node(&cursor)?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3596,11 +3584,11 @@ pub fn build_yul_switch_case(mut cursor: Cursor) -> Result<YulSwitchCase> {
         NodeKind::Nonterminal(NonterminalKind::YulValueCase) => {
             YulSwitchCase::YulValueCase(build_yul_value_case(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3626,11 +3614,11 @@ pub fn build_yul_expression(mut cursor: Cursor) -> Result<YulExpression> {
         NodeKind::Nonterminal(NonterminalKind::YulPath) => {
             YulExpression::YulPath(build_yul_path(cursor.clone())?)
         }
-        _ => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -3652,11 +3640,11 @@ pub fn build_yul_literal(mut cursor: Cursor) -> Result<YulLiteral> {
             YulLiteral::StringLiteral(build_string_literal(cursor.clone())?)
         }
         NodeKind::Terminal(_) => YulLiteral::TerminalNode(fetch_terminal_node(&cursor)?),
-        _ => {
+        NodeKind::Nonterminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
-            ))
+            ));
         }
     };
     consume_remaining_trivia(cursor)?;
@@ -4533,28 +4521,26 @@ fn fetch_terminal_node(cursor: &Cursor) -> Result<Rc<TerminalNode>> {
 #[allow(dead_code)]
 #[inline]
 fn expect_label(cursor: &Cursor, label: EdgeLabel) -> Result<()> {
-    if cursor.label() != label {
+    if cursor.label() == label {
+        Ok(())
+    } else {
         Err(format!(
-            "Expected label {:?}, but got {:?} instead",
-            label,
+            "Expected label {label:?}, but got {:?} instead",
             cursor.label()
         ))
-    } else {
-        Ok(())
     }
 }
 
 #[allow(dead_code)]
 #[inline]
 fn expect_nonterminal_kind(cursor: &Cursor, kind: NonterminalKind) -> Result<()> {
-    if !cursor.node().is_nonterminal_with_kind(kind) {
+    if cursor.node().is_nonterminal_with_kind(kind) {
+        Ok(())
+    } else {
         Err(format!(
-            "Expected {:?} node, but got {:?} instead",
-            kind,
+            "Expected {kind:?} node, but got {:?} instead",
             cursor.node().kind()
         ))
-    } else {
-        Ok(())
     }
 }
 
@@ -4607,8 +4593,7 @@ impl SequenceHelper {
     fn accept_label(&mut self, label: EdgeLabel) -> Result<Cursor> {
         if self.finished {
             return Err(format!(
-                "Expected more sibling nodes, looking for label {:?}",
-                label
+                "Expected more sibling nodes, looking for label {label:?}"
             ));
         }
         if self.cursor.label() == label {
@@ -4622,13 +4607,12 @@ impl SequenceHelper {
                     break;
                 }
             }
-            return Ok(cursor);
+            Ok(cursor)
         } else {
-            return Err(format!(
-                "Expected node with label {:?}, got {:?}",
-                label,
+            Err(format!(
+                "Expected node with label {label:?}, got {:?}",
                 self.cursor.label()
-            ));
+            ))
         }
     }
 
