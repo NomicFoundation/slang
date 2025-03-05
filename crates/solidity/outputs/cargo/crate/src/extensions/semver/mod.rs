@@ -1,4 +1,5 @@
 pub mod parser;
+pub mod tests;
 
 use std::cmp::Ordering;
 use std::fmt::Display;
