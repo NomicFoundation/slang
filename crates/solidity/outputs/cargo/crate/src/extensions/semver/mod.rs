@@ -3,18 +3,16 @@ pub mod parser;
 use std::cmp::Ordering;
 use std::fmt::Display;
 
-use metaslang_cst::text_index::TextIndex;
-
 use crate::cst::NonterminalKind;
-use crate::generated::utils::LanguageFacts;
+use crate::utils::LanguageFacts;
 
 /// Parse the version pragmas in the given Solidity source code and return a list of language
 /// versions that can fulfill those requirements.
 pub fn infer_language_version(src: &str) -> Vec<semver::Version> {
     let parser = crate::parser::Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
-    let output = parser.parse_nonterminal(NonterminalKind::SourceUnit, src);
+    let output = parser.parse_file_contents(src);
 
-    let mut cursor = output.tree.create_cursor(TextIndex::ZERO);
+    let mut cursor = output.create_tree_cursor();
 
     let mut found_ranges = Vec::<Range>::new();
     while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::VersionPragma) {
