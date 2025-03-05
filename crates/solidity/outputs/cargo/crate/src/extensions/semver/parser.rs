@@ -341,22 +341,25 @@ impl<'a> Scanner<'a> {
     }
 
     fn skip_whitespace(&mut self) {
-        while let Some(c) = self.peek() {
-            if c.is_whitespace() || c == '"' || c == '\'' {
-                self.index += 1;
-            } else {
-                break;
-            }
+        while self.is_whitespace() {
+            self.index += 1;
         }
     }
 
     fn skip_non_whitespace(&mut self) {
-        while let Some(c) = self.peek() {
-            if c.is_whitespace() || c == '"' || c == '\'' {
-                break;
-            }
-
+        while !self.eof() && !self.is_whitespace() {
             self.index += 1;
+        }
+    }
+
+    /// Return true if the current character is whitespace. Returns false at eof.
+    /// For our purposes '"' and '\'' are treated as whitespace, since they can be
+    /// embeded within semvers and must be ignored.
+    fn is_whitespace(&self) -> bool {
+        if let Some(c) = self.peek() {
+            c.is_whitespace() || c == '"' || c == '\''
+        } else {
+            false
         }
     }
 
