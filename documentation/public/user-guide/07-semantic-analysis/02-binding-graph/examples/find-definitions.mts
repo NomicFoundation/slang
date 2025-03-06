@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import { Query } from "@nomicfoundation/slang/cst";
+import { TerminalKindExtensions } from "@nomicfoundation/slang/cst";
 import { CompilationUnit } from "@nomicfoundation/slang/compilation";
 import { assertUserFileLocation, Definition } from "@nomicfoundation/slang/bindings";
 
@@ -7,15 +7,16 @@ export function findDefinitionsInFile(unit: CompilationUnit, fileId: string): De
   const file = unit.file(fileId);
   assert(file);
 
-  // query the file's CST tree
-  const cursor = file.createTreeCursor();
-  const query = Query.create("[Identifier]");
-  const matches = cursor.query([query]);
-
   const definitions = [];
-  for (const match of matches) {
+
+  // traverse the file's CST tree looking for identifiers
+  const cursor = file.createTreeCursor();
+  while (cursor.goToNextTerminal()) {
+    assert(cursor.node.isTerminalNode());
+    if (!TerminalKindExtensions.isIdentifier(cursor.node.kind)) continue;
+
     // attempt to resolve a definition
-    const definition = unit.bindingGraph.definitionAt(match.root);
+    const definition = unit.bindingGraph.definitionAt(cursor);
 
     if (definition) {
       // name should be located in the file we queried
