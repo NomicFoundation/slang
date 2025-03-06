@@ -1,7 +1,8 @@
 # 6.2. Executing Queries
 
-If not specified otherwise, let's assume we already parsed a Solidity source and have a [Cursor](../../05-syntax-trees/02-navigating-with-cursors/index.md) pointing
-to the root node of the CST.
+Queries are executed starting from any cursor that you can create with the Parser and Cursor APIs.
+Usually you'll run a query from either the root of the parse result `parseOutput.createTreeCursor()` or from a cursor
+created with `cursor.spawn()` to restrict the search to a given sub-tree.
 
 ## Creating and executing queries
 
@@ -18,7 +19,8 @@ They will be executed simultaneously, returning matches in the order they appear
 ## Iterating over node patterns
 
 Queries allow you to iterate over all node patterns that match the query, which can replace your need for manual iteration via cursors or visitors.
-Each match has a cursor that points to the root matched node.
+Each match has a cursor that points to the node matched by the outermost pattern in the query.
+This is called the _match root_.
 
 Let's use this to list all the contract definitions in a source file:
 
@@ -39,7 +41,7 @@ Let's use this to list all the contract names:
 ## Detecting Query errors
 
 If there is a mistake in your query, for example, if you use an invalid node kind, you will get a `QueryError` exception.
-The error will contain a message to indicate what went wrong, and the text range of the error.
+The error will contain a message to indicate what went wrong, and the text range in the query where the error occurred.
 
 ```ts title="query-errors.mts"
 --8<-- "documentation/public/user-guide/06-query-language/02-executing-queries/examples/03-query-errors.test.mts"

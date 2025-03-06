@@ -1,6 +1,8 @@
 # 5.3. Using AST Types
 
-Let's try to analyze the following Solidity source file, containing a simple function:
+So far we've been using the CST of a Solidity file or fragment. However, the CST is too verbose, and not always
+convenient to use for extracting information of the program. In the following example, we are going to show how to
+obtain the parameters and attributes of a function using the AST, an abstract representation of the program tree.
 
 We start as usual by parsing the input, and then we can use the `ParseOutput` root
 to create the CST type. Since it is a node of kind `FunctionDefinition`, we are using

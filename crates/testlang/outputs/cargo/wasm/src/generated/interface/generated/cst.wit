@@ -417,7 +417,8 @@ interface cst {
     /// Represents a tree query for pattern matching in the syntax tree.
     resource query {
         /// Parses a query string into a query object.
-        /// Throws an error if the query syntax is invalid.
+        ///
+        /// It will throw a `QueryError` if the query syntax is invalid.
         create: static func(text: string) -> result<query, query-error>;
     }
 

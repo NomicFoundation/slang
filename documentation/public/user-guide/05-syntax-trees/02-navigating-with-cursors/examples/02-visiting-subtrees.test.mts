@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { createTree } from "./common.mjs";
-import { assertIsTerminalNode, NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
+import { assertTerminalNode, NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
 
 test("visiting subtrees", () => {
   const tree = createTree();
@@ -12,7 +12,7 @@ test("visiting subtrees", () => {
     const childCursor = cursor.spawn();
     assert(childCursor.goToNextTerminalWithKind(TerminalKind.Identifier));
 
-    assertIsTerminalNode(childCursor.node);
+    assertTerminalNode(childCursor.node);
     contracts.push(childCursor.node.unparse());
   }
 

@@ -486,7 +486,8 @@ export class Query {
   private constructor();
   /**
    * Parses a query string into a query object.
-   * Throws an error if the query syntax is invalid.
+   *
+   * It will throw a `QueryError` if the query syntax is invalid.
    */
   static create(text: string): Query;
 }

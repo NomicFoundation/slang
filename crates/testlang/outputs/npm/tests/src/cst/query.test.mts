@@ -2,7 +2,7 @@ import {
   NonterminalKind,
   TerminalKind,
   Query,
-  assertIsTerminalNode,
+  assertTerminalNode,
   QueryError,
 } from "@slang-private/testlang-npm-package/cst";
 import { Parser } from "@slang-private/testlang-npm-package/parser";
@@ -25,7 +25,7 @@ test("simple query", () => {
     expect(cursors).toHaveLength(1);
 
     const node = cursors[0].node;
-    assertIsTerminalNode(node, TerminalKind.DelimitedIdentifier, name);
+    assertTerminalNode(node, TerminalKind.DelimitedIdentifier, name);
   };
 
   expectNextMatch("A");

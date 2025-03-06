@@ -50,7 +50,7 @@ impl Spec {
 
     fn generate_public_dir(model: &SpecModel) -> Result<SpecDir> {
         let mut public_dir = SpecDir::new(
-            format!("{name} Specification", name = model.language.name),
+            format!("{name} Grammar", name = model.language.name),
             "public",
         );
 

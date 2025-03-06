@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { Parser } from "@nomicfoundation/slang/parser";
-import { assertIsNonterminalNode, NonterminalKind } from "@nomicfoundation/slang/cst";
+import { assertNonterminalNode, NonterminalKind } from "@nomicfoundation/slang/cst";
 
 test("parsing source files", () => {
   const source = `
@@ -11,5 +11,5 @@ test("parsing source files", () => {
   const parseOutput = parser.parseFileContents(source);
 
   assert(parseOutput.isValid());
-  assertIsNonterminalNode(parseOutput.tree, NonterminalKind.SourceUnit, source);
+  assertNonterminalNode(parseOutput.tree, NonterminalKind.SourceUnit, source);
 });

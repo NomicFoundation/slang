@@ -104,6 +104,8 @@ export class InternalCompilationBuilder {
   private constructor();
   /**
    * Creates a new compilation builder for the specified language version.
+   *
+   * It will throw an error if the language version is invalid or not supported.
    */
   static create(languageVersion: string): InternalCompilationBuilder;
   /**
@@ -112,6 +114,8 @@ export class InternalCompilationBuilder {
   addFile(id: string, contents: string): AddFileResponse;
   /**
    * Resolves an import in the source file to the destination file.
+   *
+   * It will throw an error if the source file ID does not exist.
    */
   resolveImport(sourceFileId: string, importPath: Cursor, destinationFileId: string): void;
   /**

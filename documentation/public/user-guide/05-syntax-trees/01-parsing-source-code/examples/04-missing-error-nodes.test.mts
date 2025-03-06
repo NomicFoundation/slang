@@ -1,8 +1,8 @@
 import assert from "node:assert";
 import { Parser } from "@nomicfoundation/slang/parser";
-import { assertIsTerminalNode, EdgeLabel, NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
+import { assertTerminalNode, NonterminalKind, TerminalKind, TerminalKindExtensions } from "@nomicfoundation/slang/cst";
 
-test("handling syntax errors", () => {
+test("missing error nodes", () => {
   const source = `contract`;
 
   const parser = Parser.create("0.8.0");
@@ -21,9 +21,8 @@ test("handling syntax errors", () => {
   const children = parseOutput.tree.children();
   assert.strictEqual(children.length, 2);
 
-  assert.strictEqual(children[0].label, EdgeLabel.ContractKeyword);
-  assertIsTerminalNode(children[0].node, TerminalKind.ContractKeyword, "contract");
+  assertTerminalNode(children[0].node, TerminalKind.ContractKeyword, "contract");
 
-  assert.strictEqual(children[1].label, EdgeLabel.Missing);
-  assertIsTerminalNode(children[1].node, TerminalKind.Missing, "");
+  assertTerminalNode(children[1].node, TerminalKind.Missing, "");
+  assert(!TerminalKindExtensions.isValid(children[1].node.kind));
 });

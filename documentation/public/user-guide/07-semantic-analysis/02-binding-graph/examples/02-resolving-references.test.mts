@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { buildCompilationUnit } from "../../common/compilation-builder.mjs";
 import { findReferencesInFile } from "./find-references.mjs";
+import { assertUserFileLocation } from "@nomicfoundation/slang/bindings";
 
 test("find references in file", async () => {
   const unit = await buildCompilationUnit();
@@ -8,9 +9,9 @@ test("find references in file", async () => {
 
   const found = [];
   for (const reference of references) {
-    const location = reference.location.asUserFileLocation()!;
-    const name = location.cursor.node.unparse();
-    const line = location.cursor.textRange.start.line;
+    assertUserFileLocation(reference.location);
+    const name = reference.location.cursor.node.unparse();
+    const line = reference.location.cursor.textRange.start.line;
 
     found.push({ name, line });
   }

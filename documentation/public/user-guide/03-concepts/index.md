@@ -5,13 +5,21 @@ starting with the source code itself and ending with a rich structure that can b
 This is a departure from the classic approach of "black-box" compilers,
 which are handed the input and only their output can be observed.
 
-## Parsers
+## Language Grammar
+
+The entire Solidity grammar (Across all supported versions) is defined in the [Solidity Grammar](../../solidity-grammar/index.md) section.
+You can use this as a guide when developing your own tools using Slang. The grammar is also included as documentation on top of the corresponding APIs
+(like `TerminalKind`, `NonterminalKind`, and `EdgeLabel` variants). It explains the structure of each node, and the relationships between each parent
+and its children.
+
+## Parser
 
 The `Parser` API is used to produce a Concrete Syntax Tree (CST) from Solidity source code.
 Each `Parser` object is initialized with a specific Solidity version.
 
 With a `Parser` object, you can analyze any source text according to the grammar of that specific version.
 Providing an accurate language version is important, as it affects the shape of the syntax tree, and possible errors produced.
+Check [the Solidity Grammar](../../solidity-grammar/supported-versions.md) for a list of supported versions.
 
 Each parse operation will produce a `ParseOutput` object, which contains the root of the CST corresponding to the input source code,
 and any syntax errors found during parsing.
@@ -24,9 +32,12 @@ This is sometimes called a "full-fidelity" CST, and it can be used to reconstruc
 
 The tree nodes are represented by the `Node` structure, which can be one of two kinds:
 
-- `NonterminalNode` represent sub-trees, containing a list of `Edge` objects.
-- `Edge` objects represent a single child `Node`, and an `EdgeLabel` that describes the relationship between the parent and child.
-- `TerminalNode` are leaves, and represent a terminal (i.e. an identifier, keyword, or punctuation) in the source.
+- `NonterminalNode` represents parent nodes, possibly containing children (sub-trees).
+- `TerminalNode` represents leaves (i.e. an identifier, keyword, or punctuation) in the tree.
+
+Nodes are connected through `Edge` objects, which contain a single child `Node`, and an `EdgeLabel` that describes the relationship between the parent and child.
+
+You can find a complete list of all grammar nodes and edges in the [Solidity Grammar](../../solidity-grammar/index.md) section.
 
 ## Cursors
 
@@ -80,7 +91,7 @@ Additionally, their fields are constructed lazily as they are accessed for the f
 AST nodes maintain a reference to the CST node they were constructed from,
 and can be used to navigate to the corresponding CST node.
 
-## Compilations
+## Compilation Unit
 
 A `CompilationUnit` is a collection of all source files that should be compiled together.
 This includes your main contract, and any imported files or dependencies that are used there.
@@ -90,11 +101,11 @@ then the list of source files are incrementally added to it in any order. With e
 the builder will analyze all import statements within, and ask the user to resolve them to the imported source files,
 and continue loading/analyzing them, until it is complete.
 
-## Binding Graphs
+## Binding Graph
 
 The `BindingGraph` is a graph structure that represents the relationships between identifiers across source files in a `CompilationUnit`.
-For each identifier, it will analyze if it was a `Definition` or a `Reference`, and provide an API for users to resolve them.
+For each identifier, it will analyze if it is acting as a `Definition` or a `Reference` (aliases for example), and provide an API for users to resolve them.
 
 It can also be used to query the relationships between them;
 finding all references to a specific definition,
-or all definitions that are referenced by a specific reference.
+or all definitions that are bound by a specific reference.

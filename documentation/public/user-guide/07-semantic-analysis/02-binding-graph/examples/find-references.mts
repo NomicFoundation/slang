@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { Query } from "@nomicfoundation/slang/cst";
 import { CompilationUnit } from "@nomicfoundation/slang/compilation";
-import { Reference } from "@nomicfoundation/slang/bindings";
+import { assertUserFileLocation, Reference } from "@nomicfoundation/slang/bindings";
 
 export function findReferencesInFile(unit: CompilationUnit, fileId: string): Reference[] {
   const file = unit.file(fileId);
@@ -19,12 +19,12 @@ export function findReferencesInFile(unit: CompilationUnit, fileId: string): Ref
 
     if (reference) {
       // should be located in the file we queried
-      const location = reference.location;
-      assert(location.isUserFileLocation());
-      assert.strictEqual(location.asUserFileLocation()!.fileId, fileId);
+      assertUserFileLocation(reference.location);
+      assert.strictEqual(reference.location.fileId, fileId);
 
       references.push(reference);
     }
   }
+
   return references;
 }

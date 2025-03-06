@@ -2,7 +2,33 @@ import assert from "node:assert";
 import { Cursor, NonterminalKind, Query } from "@nomicfoundation/slang/cst";
 import { CompilationBuilder, CompilationUnit } from "@nomicfoundation/slang/compilation";
 
-export async function buildCompilationUnit(): Promise<CompilationUnit> {
+test("solidity builtins", async () => {
+  const unit = await buildCompilationUnit();
+
+  const query = Query.create(`
+    [MemberAccessExpression [Expression @start ["tx"]] ["origin"]]
+  `);
+
+  const cursor = unit.file("contract.sol")!.createTreeCursor();
+  const matches = cursor.query([query]);
+  for (const match of matches) {
+    const txIdentifier = match.captures["start"][0];
+    const reference = unit.bindingGraph.referenceAt(txIdentifier)!;
+    const definitions = reference.definitions();
+
+    if (definitions[0].nameLocation.isBuiltInLocation()) {
+      // incorrect use of `tx.origin` detected!
+      assert.strictEqual(txIdentifier.textRange.start.line, 13);
+    } else {
+      // this is ok: the `tx` builtin is shadowed by a parameter
+      const definitionLocation = definitions[0].definiensLocation.asUserFileLocation()!;
+      assert.strictEqual(definitionLocation.fileId, "contract.sol");
+      assert.strictEqual(definitionLocation.cursor.node.kind, NonterminalKind.Parameter);
+    }
+  }
+});
+
+async function buildCompilationUnit(): Promise<CompilationUnit> {
   // we don't need to resolve imports for this example
   const resolveImport = async (_sourceId: string, _importPath: Cursor) => undefined;
   const readFile = async (fileId: string) => {
@@ -46,29 +72,3 @@ contract TxUserWallet {
 
   return builder.build();
 }
-
-test("solidity builtins", async () => {
-  const unit = await buildCompilationUnit();
-
-  const query = Query.create(`
-    [MemberAccessExpression [Expression @start ["tx"]] ["origin"]]
-  `);
-
-  const cursor = unit.file("contract.sol")!.createTreeCursor();
-  const matches = cursor.query([query]);
-  for (const match of matches) {
-    const txIdentifier = match.captures["start"][0];
-    const reference = unit.bindingGraph.referenceAt(txIdentifier)!;
-    const definitions = reference.definitions();
-
-    if (definitions[0].nameLocation.isBuiltInLocation()) {
-      // incorrect use of `tx.origin` detected!
-      assert.strictEqual(txIdentifier.textRange.start.line, 13);
-    } else {
-      // this is ok: the `tx` builtin is shadowed by a parameter
-      const definitionLocation = definitions[0].definiensLocation.asUserFileLocation()!;
-      assert.strictEqual(definitionLocation.fileId, "contract.sol");
-      assert.strictEqual(definitionLocation.cursor.node.kind, NonterminalKind.Parameter);
-    }
-  }
-});

@@ -1,7 +1,7 @@
 import assert from "node:assert";
 import { Query } from "@nomicfoundation/slang/cst";
 import { CompilationUnit } from "@nomicfoundation/slang/compilation";
-import { Definition } from "@nomicfoundation/slang/bindings";
+import { assertUserFileLocation, Definition } from "@nomicfoundation/slang/bindings";
 
 export function findDefinitionsInFile(unit: CompilationUnit, fileId: string): Definition[] {
   const file = unit.file(fileId);
@@ -19,17 +19,16 @@ export function findDefinitionsInFile(unit: CompilationUnit, fileId: string): De
 
     if (definition) {
       // name should be located in the file we queried
-      const nameLocation = definition.nameLocation;
-      assert(nameLocation.isUserFileLocation());
-      assert.strictEqual(nameLocation.asUserFileLocation()!.fileId, fileId);
+      assertUserFileLocation(definition.nameLocation);
+      assert.strictEqual(definition.nameLocation.fileId, fileId);
 
       // definiens should too be located in the file we queried
-      const definiensLocation = definition.definiensLocation;
-      assert(definiensLocation.isUserFileLocation());
-      assert.strictEqual(definiensLocation.asUserFileLocation()!.fileId, fileId);
+      assertUserFileLocation(definition.definiensLocation);
+      assert.strictEqual(definition.definiensLocation.fileId, fileId);
 
       definitions.push(definition);
     }
   }
+
   return definitions;
 }
