@@ -3,10 +3,7 @@ import { Query } from "@nomicfoundation/slang/cst";
 import { ContractDefinition, FunctionDefinition } from "@nomicfoundation/slang/ast";
 import { CompilationUnit } from "@nomicfoundation/slang/compilation";
 
-export function listFunctionsInContract(
-  unit: CompilationUnit,
-  contractName: string,
-): FunctionDefinition[] | undefined {
+export function listFunctionsInContract(unit: CompilationUnit, contractName: string): FunctionDefinition[] | undefined {
   for (const file of unit.files()) {
     const cursor = file.createTreeCursor();
     const query = Query.create(`[ContractDefinition @name name: [Identifier]]`);
