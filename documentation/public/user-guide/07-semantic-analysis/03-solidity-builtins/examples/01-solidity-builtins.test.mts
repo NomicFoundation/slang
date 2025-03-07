@@ -6,7 +6,10 @@ test("solidity builtins", async () => {
   const unit = await buildCompilationUnit();
 
   const query = Query.create(`
-    [MemberAccessExpression [Expression @start ["tx"]] ["origin"]]
+    [MemberAccessExpression
+      [Expression @start ["tx"]]
+      ["origin"]
+    ]
   `);
 
   const cursor = unit.file("contract.sol")!.createTreeCursor();

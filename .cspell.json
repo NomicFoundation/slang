@@ -15,6 +15,7 @@
     "instanceof",
     "ipfs",
     "jumpi",
+    "linenums",
     "metaslang",
     "mkdocs",
     "napi",
