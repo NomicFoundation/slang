@@ -7,6 +7,7 @@ import {
   NegationExpression,
   SeparatedIdentifiers,
   SourceUnit,
+  SourceUnitMembers,
   Tree,
   TreeNode,
   TreeNodeChild,
@@ -212,12 +213,9 @@ it("can reuse the same CST nodes after selectors", () => {
   const parseOutput = parser.parseFileContents(source);
   parseOutput.isValid(); // true
 
-  const cst = parseOutput.tree.asNonterminalNode()!;
-  const ast = new SourceUnit(cst);
+  const sourceUnit = new SourceUnit(parseOutput.tree);
+  assertIsNonterminalNode(sourceUnit.cst, NonterminalKind.SourceUnit);
 
-  expect(ast.cst.kind).toBe(NonterminalKind.SourceUnit);
-
-  expect(ast.members.cst.kind).toBe(NonterminalKind.SourceUnitMembers);
-
-  expect(ast.cst.kind).toBe(NonterminalKind.SourceUnit);
+  assert(sourceUnit.members instanceof SourceUnitMembers);
+  assertIsNonterminalNode(sourceUnit.members.cst, NonterminalKind.SourceUnitMembers);
 });

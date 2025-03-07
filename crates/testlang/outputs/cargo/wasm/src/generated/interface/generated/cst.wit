@@ -433,6 +433,8 @@ interface cst {
     record query-match {
         /// The index of the query that produced this match.
         query-index: u32,
+        /// A cursor to the matched root node.
+        root: cursor,
         /// List of captured nodes and their names from the query.
         captures: list<tuple<string, list<cursor>>>,
     }
