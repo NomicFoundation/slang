@@ -14,7 +14,7 @@ With a `Parser` object, you can analyze any source text according to the grammar
 Providing an accurate language version is important, as it affects the shape of the syntax tree, and possible errors produced.
 
 Each parse operation will produce a `ParseOutput` object, which contains the root of the CST corresponding to the input source code,
-any any syntax errors found during parsing.
+and any syntax errors found during parsing.
 
 ## Concrete Syntax Trees (CST)
 
