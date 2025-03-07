@@ -10,6 +10,8 @@ You can use cursors to query the graph for definitions or references.
 
 To resolve definitions we need to provide the binding graph with a cursor pointing to the identifier. Some identifiers in the code may not be acting as definitions. In those cases, `definitionAt()` will return `undefined`.
 
+Identifiers are terminal nodes whose `kind` test true for `TerminalKindExtensions.isIdentifier()`. In Solidity, there are two kinds: `Identifier` and `YulIdentifier`.
+
 `Definition` objects will contain two binding locations:
 
 - `nameLocation` referring to the identifier that resolved to the definition
