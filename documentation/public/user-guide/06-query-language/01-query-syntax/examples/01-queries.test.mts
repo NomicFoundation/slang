@@ -371,7 +371,7 @@ function extractMatches(queryString: string, kind: NonterminalKind, source: stri
     .filter((line) => !line.includes("--8<--"))
     .join("\n");
 
-  const parser = Parser.create("0.8.0");
+  const parser = Parser.create("0.8.28");
 
   const parseOutput = parser.parseNonterminal(kind, source);
   assert(parseOutput.isValid());

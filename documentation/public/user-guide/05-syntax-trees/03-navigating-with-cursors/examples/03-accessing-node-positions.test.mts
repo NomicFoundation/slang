@@ -6,18 +6,18 @@ test("accessing node positions", () => {
   const tree = createTree();
   const cursor = tree.createTreeCursor();
 
-  const contracts = [];
+  const functions = [];
 
-  while (cursor.goToNextNonterminalWithKind(NonterminalKind.ContractDefinition)) {
+  while (cursor.goToNextNonterminalWithKind(NonterminalKind.FunctionDefinition)) {
     const line = cursor.textRange.start.line;
     const text = cursor.node.unparse().trim();
 
-    contracts.push({ line, text });
+    functions.push({ line, text });
   }
 
-  assert.deepStrictEqual(contracts, [
-    { line: 0, text: "contract Foo {}" },
-    { line: 1, text: "contract Bar {}" },
-    { line: 2, text: "contract Baz {}" },
+  assert.deepStrictEqual(functions, [
+    { line: 1, text: "function foo_func() {}" },
+    { line: 4, text: "function bar_func() {}" },
+    { line: 7, text: "function baz_func() {}" },
   ]);
 });

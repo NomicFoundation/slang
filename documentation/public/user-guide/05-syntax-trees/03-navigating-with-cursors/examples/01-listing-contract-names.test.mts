@@ -1,6 +1,6 @@
 import assert from "node:assert";
 import { createTree } from "./common.mjs";
-import { assertTerminalNode, NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
+import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
 
 test("listing contract names", () => {
   const tree = createTree();
@@ -9,13 +9,9 @@ test("listing contract names", () => {
   const contracts = [];
 
   while (cursor.goToNextNonterminalWithKind(NonterminalKind.ContractDefinition)) {
-    assert(cursor.goToFirstChild());
     assert(cursor.goToNextTerminalWithKind(TerminalKind.Identifier));
 
-    assertTerminalNode(cursor.node);
     contracts.push(cursor.node.unparse());
-
-    assert(cursor.goToParent());
   }
 
   assert.deepStrictEqual(contracts, ["Foo", "Bar", "Baz"]);

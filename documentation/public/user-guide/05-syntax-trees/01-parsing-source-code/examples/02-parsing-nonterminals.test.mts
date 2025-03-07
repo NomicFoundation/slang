@@ -11,7 +11,7 @@ import {
 test("parsing nonterminals", () => {
   const source = `x+y`;
 
-  const parser = Parser.create("0.8.0");
+  const parser = Parser.create("0.8.28");
   const parseOutput = parser.parseNonterminal(NonterminalKind.AdditiveExpression, source);
 
   assert(parseOutput.isValid());

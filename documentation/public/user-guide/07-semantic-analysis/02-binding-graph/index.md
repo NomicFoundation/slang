@@ -6,11 +6,13 @@ It stores cursors to all definitions and references, and can resolve the edges b
 Building this graph can be an expensive operation. So, it is constructed lazily on the first access, and cached thereafter.
 You can use cursors to query the graph for definitions or references.
 
+Any identifier in the tree can be resolved to a definition or a reference. Note that there are multiple kinds of identifiers.
+For example, Solidity has `Identifier`, and Yul has `YulIdentifier`. To find/filter terminals that are identifiers,
+you can use the `TerminalKindExtensions.isIdentifier()` API to test for that.
+
 ## Resolving Definitions
 
 To resolve definitions we need to provide the binding graph with a cursor pointing to the identifier. Some identifiers in the code may not be acting as definitions. In those cases, `definitionAt()` will return `undefined`.
-
-Identifiers are terminal nodes whose `kind` test true for `TerminalKindExtensions.isIdentifier()`. In Solidity, there are two kinds: `Identifier` and `YulIdentifier`.
 
 `Definition` objects will contain two binding locations:
 

@@ -63,7 +63,7 @@ contract TxUserWallet {
   };
 
   const builder = CompilationBuilder.create({
-    languageVersion: "0.8.22",
+    languageVersion: "0.8.28",
     readFile,
     resolveImport,
   });

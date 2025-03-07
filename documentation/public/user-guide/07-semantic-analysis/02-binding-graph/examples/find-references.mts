@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import { TerminalKindExtensions } from "@nomicfoundation/slang/cst";
+import { assertTerminalNode, TerminalKindExtensions } from "@nomicfoundation/slang/cst";
 import { CompilationUnit } from "@nomicfoundation/slang/compilation";
 import { assertUserFileLocation, Reference } from "@nomicfoundation/slang/bindings";
 
@@ -12,8 +12,10 @@ export function findReferencesInFile(unit: CompilationUnit, fileId: string): Ref
   // traverse the file's CST tree looking for identifiers
   const cursor = file.createTreeCursor();
   while (cursor.goToNextTerminal()) {
-    assert(cursor.node.isTerminalNode());
-    if (!TerminalKindExtensions.isIdentifier(cursor.node.kind)) continue;
+    assertTerminalNode(cursor.node);
+    if (!TerminalKindExtensions.isIdentifier(cursor.node.kind)) {
+      continue;
+    }
 
     // attempt to resolve a reference
     const reference = unit.bindingGraph.referenceAt(cursor);

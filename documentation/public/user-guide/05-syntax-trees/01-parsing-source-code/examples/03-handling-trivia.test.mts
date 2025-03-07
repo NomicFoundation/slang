@@ -11,7 +11,7 @@ import {
 test("handling trivia", () => {
   const source = `  true\n`;
 
-  const parser = Parser.create("0.8.0");
+  const parser = Parser.create("0.8.28");
   const parseOutput = parser.parseNonterminal(NonterminalKind.Expression, source);
   assert(parseOutput.isValid());
 

@@ -5,7 +5,7 @@ import { assertTerminalNode, NonterminalKind, TerminalKind, TerminalKindExtensio
 test("missing error nodes", () => {
   const source = `contract`;
 
-  const parser = Parser.create("0.8.0");
+  const parser = Parser.create("0.8.28");
   const parseOutput = parser.parseNonterminal(NonterminalKind.ContractDefinition, source);
   assert(!parseOutput.isValid());
 

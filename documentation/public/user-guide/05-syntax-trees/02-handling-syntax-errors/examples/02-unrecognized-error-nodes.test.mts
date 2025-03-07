@@ -13,7 +13,7 @@ test("unrecognized error nodes", () => {
     foo();
     %`;
 
-  const parser = Parser.create("0.8.0");
+  const parser = Parser.create("0.8.28");
   const parseOutput = parser.parseNonterminal(NonterminalKind.Statements, source);
   assert(!parseOutput.isValid());
 

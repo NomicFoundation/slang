@@ -7,7 +7,7 @@ test("parsing source files", () => {
     contract Foo {}
   `;
 
-  const parser = Parser.create("0.8.0");
+  const parser = Parser.create("0.8.28");
   const parseOutput = parser.parseFileContents(source);
 
   assert(parseOutput.isValid());

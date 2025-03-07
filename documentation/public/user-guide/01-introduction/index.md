@@ -29,7 +29,7 @@ A core feature of Slang is that it is designed to be tolerant of errors. All of 
 For example, when users are actively editing code in an IDE, the code will often have syntax errors or incomplete constructs.
 In that case, the parser will detect syntax errors, and instead of just stopping at the first error, it will mark the erroneous
 part as either unrecognized or missing, creating an error node, and continue to parse the rest of the file
-([example](../05-syntax-trees/01-parsing-source-code/index.md#handling-syntax-errors)).
+([example](../05-syntax-trees/02-handling-syntax-errors/index.md)).
 
 Another example is the binding graph, which will work even when there are missing source files. The graph will mark
 any missing definitions as `undefined`, and still resolve all other symbols in files that do exist.
