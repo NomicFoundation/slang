@@ -7,7 +7,6 @@ test("jump to definition", async () => {
 
   // the reference to `delta` in the assignment addition
   const definition = jumpToDefinition(unit, "contract.sol", 11, 16);
-  assert(typeof definition !== "string");
 
   assert.deepEqual(definition, { file: "contract.sol", line: 9, column: 26 });
 });

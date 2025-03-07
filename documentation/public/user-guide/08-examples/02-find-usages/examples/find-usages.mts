@@ -1,5 +1,4 @@
-import assert from "node:assert";
-import { TerminalKindExtensions } from "@nomicfoundation/slang/cst";
+import { assertTerminalNode, TerminalKindExtensions } from "@nomicfoundation/slang/cst";
 import { CompilationUnit } from "@nomicfoundation/slang/compilation";
 import { assertUserFileLocation } from "@nomicfoundation/slang/bindings";
 import { findTerminalNodeAt } from "../../common/find-terminal-node-at.mjs";
@@ -10,26 +9,26 @@ type Usage = {
   column: number;
 };
 
-export function findUsages(unit: CompilationUnit, fileId: string, line: number, column: number): Usage[] | string {
+export function findUsages(unit: CompilationUnit, fileId: string, line: number, column: number): Usage[] {
   const file = unit.file(fileId);
   if (!file) {
-    return `${fileId} not found in compilation unit`;
+    throw new Error(`${fileId} not found in compilation unit`);
   }
 
   const cursor = findTerminalNodeAt(file.createTreeCursor(), line, column);
   if (!cursor) {
-    return `${fileId}:${line}:${column} is not a valid text location`;
+    throw new Error(`${fileId}:${line}:${column} is not a valid text location`);
   }
 
-  assert(cursor.node.isTerminalNode());
+  assertTerminalNode(cursor.node);
   if (!TerminalKindExtensions.isIdentifier(cursor.node.kind)) {
     // location is not a valid identifier
-    return `Could not find a valid identifier at ${fileId}:${line}:${column}`;
+    throw new Error(`Could not find a valid identifier at ${fileId}:${line}:${column}`);
   }
 
   const definition = unit.bindingGraph.definitionAt(cursor);
   if (!definition) {
-    return `Identifier ${cursor.node.unparse()} is not a definition at ${fileId}:${line}:${column}`;
+    throw new Error(`Identifier ${cursor.node.unparse()} is not a definition at ${fileId}:${line}:${column}`);
   }
 
   const references = definition.references();

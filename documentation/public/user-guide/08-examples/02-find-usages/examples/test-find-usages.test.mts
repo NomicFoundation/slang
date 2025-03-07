@@ -5,8 +5,8 @@ import buildSampleCompilationUnit from "../../common/sample-contract.mjs";
 test("find usages", async () => {
   const unit = await buildSampleCompilationUnit();
 
-  const usages = findUsages(unit, "contract.sol", 2, 10); // the _count state variable definition
-  assert(typeof usages !== "string");
+  // the _count state variable definition
+  const usages = findUsages(unit, "contract.sol", 2, 10);
 
   assert.deepEqual(usages, [
     { file: "contract.sol", line: 4, column: 4 },

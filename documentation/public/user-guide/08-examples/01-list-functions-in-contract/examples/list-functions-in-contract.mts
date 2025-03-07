@@ -1,17 +1,20 @@
-import assert from "node:assert";
-import { Query } from "@nomicfoundation/slang/cst";
+import { assertNonterminalNode, Query } from "@nomicfoundation/slang/cst";
 import { ContractDefinition, FunctionDefinition } from "@nomicfoundation/slang/ast";
 import { CompilationUnit } from "@nomicfoundation/slang/compilation";
 
-export function listFunctionsInContract(unit: CompilationUnit, contractName: string): FunctionDefinition[] | undefined {
+export function listFunctionsInContract(unit: CompilationUnit, contractName: string): FunctionDefinition[] {
   for (const file of unit.files()) {
     const cursor = file.createTreeCursor();
-    const query = Query.create(`[ContractDefinition @name name: [Identifier]]`);
+    const query = Query.create(`
+      [ContractDefinition
+        @name name: [Identifier]
+      ]
+    `);
     const matches = cursor.query([query]);
 
     for (const match of matches) {
       const contractNode = match.root.node;
-      assert(contractNode.isNonterminalNode());
+      assertNonterminalNode(contractNode);
       const name = match.captures["name"][0].node.unparse();
       if (name == contractName) {
         // found the contract
@@ -24,6 +27,5 @@ export function listFunctionsInContract(unit: CompilationUnit, contractName: str
     }
   }
 
-  // no contracts found
-  return undefined;
+  throw new Error(`Could not find contract named ${contractName}`);
 }
