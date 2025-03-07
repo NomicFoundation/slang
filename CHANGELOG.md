@@ -1,5 +1,33 @@
 # changelog
 
+## 0.20.0
+
+### Minor Changes
+
+- [#1203](https://github.com/NomicFoundation/slang/pull/1203) [`a5c3b1a`](https://github.com/NomicFoundation/slang/commit/a5c3b1a93d031851f0d489db500f9bb3fc46e027) Thanks [@ggiraldez](https://github.com/ggiraldez)! - add separate contexts (ie. binding scopes) for Solidity and Yul built-ins
+
+- [#1257](https://github.com/NomicFoundation/slang/pull/1257) [`9f5d8f0`](https://github.com/NomicFoundation/slang/commit/9f5d8f04cd465c600f4936b5b4b7ef29983cc1ae) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - export `assertUserFileLocation()` and `assertBuiltInLocation()` utilities from the `bindings` module
+
+- [#1243](https://github.com/NomicFoundation/slang/pull/1243) [`99d182f`](https://github.com/NomicFoundation/slang/commit/99d182fe2ff8222e6e8e5fb56347c5fff5027e38) Thanks [@ggiraldez](https://github.com/ggiraldez)! - add `definition.references()` API to find all references that resolve to a definition.
+
+- [#1205](https://github.com/NomicFoundation/slang/pull/1205) [`103b331`](https://github.com/NomicFoundation/slang/commit/103b3313f813e425a2e572f0d9887411c80504fd) Thanks [@mjoerussell](https://github.com/mjoerussell)! - Make `Edge::label` a required field instead of being optional.
+
+- [#1257](https://github.com/NomicFoundation/slang/pull/1257) [`9f5d8f0`](https://github.com/NomicFoundation/slang/commit/9f5d8f04cd465c600f4936b5b4b7ef29983cc1ae) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - update user guides with new binding graph and compilation APIs
+
+- [#1257](https://github.com/NomicFoundation/slang/pull/1257) [`9f5d8f0`](https://github.com/NomicFoundation/slang/commit/9f5d8f04cd465c600f4936b5b4b7ef29983cc1ae) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - export `assertNonterminalNode()` and `assertTerminalNode()` utilities from the `cst` module
+
+### Patch Changes
+
+- [#1246](https://github.com/NomicFoundation/slang/pull/1246) [`aea2dd0`](https://github.com/NomicFoundation/slang/commit/aea2dd0494dbbc620fdeea9b5bd610875fd935bc) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - unreserve `jump` and `jumpi` yul keywords between `0.6.0` and `0.8.0`
+
+- [#1203](https://github.com/NomicFoundation/slang/pull/1203) [`a5c3b1a`](https://github.com/NomicFoundation/slang/commit/a5c3b1a93d031851f0d489db500f9bb3fc46e027) Thanks [@ggiraldez](https://github.com/ggiraldez)! - enable `address payable` from 0.5.0 and remove `transfer` built-in from non-payable `address`es
+
+- [#1246](https://github.com/NomicFoundation/slang/pull/1246) [`aea2dd0`](https://github.com/NomicFoundation/slang/commit/aea2dd0494dbbc620fdeea9b5bd610875fd935bc) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - make sure assembly flags are only enabled starting from `0.8.13`
+
+- [#1246](https://github.com/NomicFoundation/slang/pull/1246) [`aea2dd0`](https://github.com/NomicFoundation/slang/commit/aea2dd0494dbbc620fdeea9b5bd610875fd935bc) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - enable yul's `true` and `false` keywords starting from `0.6.2`
+
+- [#1246](https://github.com/NomicFoundation/slang/pull/1246) [`aea2dd0`](https://github.com/NomicFoundation/slang/commit/aea2dd0494dbbc620fdeea9b5bd610875fd935bc) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - make sure `super` and `this` keywords are unreserved before `0.8.0`.
+
 ## 0.19.0
 
 ### Minor Changes
