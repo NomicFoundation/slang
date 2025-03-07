@@ -24,6 +24,8 @@ For simplicity, let's assume that we have the source files defined in code:
 --8<-- "documentation/public/user-guide/07-semantic-analysis/common/read-file.mts"
 ```
 
+The exact semantics of the `fileId` used throughout the Compilation API will depend on your implementation of the `readFile` callback. They could be paths, URLs, or opaque IDs.
+
 ## Resolving Imports
 
 The second callback is a function that will resolve an import statement to the imported source file.
@@ -41,6 +43,8 @@ For simplicity, let's just assume that dependencies will always be imported by t
 ```ts title="resolve-import.mts"
 --8<-- "documentation/public/user-guide/07-semantic-analysis/common/resolve-import.mts"
 ```
+
+The import resolution callback should return a `fileId`, and should be meaningful to the `readFile` callback. We use filenames here, but URLs or opaque unique IDs would work as well.
 
 ## Running the compilation builder
 

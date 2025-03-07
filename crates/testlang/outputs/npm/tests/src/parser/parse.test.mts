@@ -2,8 +2,8 @@ import { Parser } from "@slang-private/testlang-npm-package/parser";
 import {
   NonterminalKind,
   TerminalKind,
-  assertIsNonterminalNode,
-  assertIsTerminalNode,
+  assertNonterminalNode,
+  assertTerminalNode,
 } from "@slang-private/testlang-npm-package/cst";
 
 test("parse terminal", () => {
@@ -11,12 +11,12 @@ test("parse terminal", () => {
   const parser = Parser.create("1.0.0");
 
   const tree = parser.parseNonterminal(NonterminalKind.TreeNodeChild, source).tree;
-  assertIsNonterminalNode(tree, NonterminalKind.TreeNodeChild);
+  assertNonterminalNode(tree, NonterminalKind.TreeNodeChild);
 
   const children = tree.children();
   expect(children).toHaveLength(1);
 
-  assertIsTerminalNode(children[0].node, TerminalKind.DelimitedIdentifier, "About_time");
+  assertTerminalNode(children[0].node, TerminalKind.DelimitedIdentifier, "About_time");
 });
 
 test("parse nonterminal", () => {
@@ -24,12 +24,12 @@ test("parse nonterminal", () => {
   const parser = Parser.create("1.0.0");
 
   const tree = parser.parseFileContents(source).tree;
-  assertIsNonterminalNode(tree, NonterminalKind.SourceUnit);
+  assertNonterminalNode(tree, NonterminalKind.SourceUnit);
 
   const children = tree.children();
   expect(children).toHaveLength(1);
 
-  assertIsNonterminalNode(children[0].node, NonterminalKind.SourceUnitMembers);
+  assertNonterminalNode(children[0].node, NonterminalKind.SourceUnitMembers);
 });
 
 test("parse unicode characters", () => {
@@ -37,7 +37,7 @@ test("parse unicode characters", () => {
   const parser = Parser.create("1.0.0");
 
   const nonTerminal = parser.parseNonterminal(NonterminalKind.Literal, source).tree;
-  assertIsNonterminalNode(nonTerminal, NonterminalKind.Literal);
+  assertNonterminalNode(nonTerminal, NonterminalKind.Literal);
 
   expect(nonTerminal.textLength).toEqual({
     line: 0,
@@ -48,7 +48,7 @@ test("parse unicode characters", () => {
 
   const terminal = nonTerminal.children()[0].node;
 
-  assertIsTerminalNode(terminal, TerminalKind.StringLiteral, `"some 😁 emoji"`);
+  assertTerminalNode(terminal, TerminalKind.StringLiteral, `"some 😁 emoji"`);
 
   expect(terminal.textLength).toEqual({
     line: 0,

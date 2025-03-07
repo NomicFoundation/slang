@@ -2,6 +2,7 @@ import assert from "node:assert";
 import { buildCompilationUnit } from "../../common/compilation-builder.mjs";
 import { findReferencesInFile } from "./find-references.mjs";
 import { NonterminalKind } from "@nomicfoundation/slang/cst";
+import { assertUserFileLocation } from "@nomicfoundation/slang/bindings";
 
 test("navigate from references to definitions", async () => {
   const unit = await buildCompilationUnit();
@@ -9,18 +10,19 @@ test("navigate from references to definitions", async () => {
 
   const found = [];
   for (const reference of references) {
-    const location = reference.location.asUserFileLocation()!;
-    const name = location.cursor.node.unparse();
-    const line = location.cursor.textRange.start.line;
+    assertUserFileLocation(reference.location);
+    const name = reference.location.cursor.node.unparse();
+    const line = reference.location.cursor.textRange.start.line;
 
     // find definitions this reference binds to
     const definitions = [];
     for (const definition of reference.definitions()) {
-      if (definition.nameLocation.isUserFileLocation()) {
+      if (definition.nameLocation.isUserFileLocation() && definition.definiensLocation.isUserFileLocation()) {
         // it's a user provided definition
-        const nameLocation = definition.nameLocation.asUserFileLocation()!;
-        const definiensLocation = definition.definiensLocation.asUserFileLocation()!;
-        definitions.push({ file: nameLocation.fileId, kind: definiensLocation.cursor.node.kind });
+        definitions.push({
+          file: definition.nameLocation.fileId,
+          kind: definition.definiensLocation.cursor.node.kind,
+        });
       } else {
         // it's a built-in
         definitions.push({ file: "BUILT-IN" });

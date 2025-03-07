@@ -70,6 +70,8 @@ export class Parser {
   private constructor();
   /**
    * Creates a new parser instance for the specified language version.
+   *
+   * It will throw an error if the language version is invalid or not supported.
    */
   static create(languageVersion: string): Parser;
   /**

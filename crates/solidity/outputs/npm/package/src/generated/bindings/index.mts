@@ -2,6 +2,8 @@
 
 import * as wasm from "../../../wasm/index.mjs";
 
+export * from "./assertions.mjs";
+
 /** {@inheritDoc wasm.bindings.BindingGraph} */
 export const BindingGraph = wasm.bindings.BindingGraph;
 /** {@inheritDoc wasm.bindings.BindingGraph} */

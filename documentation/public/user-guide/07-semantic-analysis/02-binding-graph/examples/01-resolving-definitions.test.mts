@@ -2,6 +2,7 @@ import assert from "node:assert";
 import { buildCompilationUnit } from "../../common/compilation-builder.mjs";
 import { findDefinitionsInFile } from "./find-definitions.mjs";
 import { NonterminalKind } from "@nomicfoundation/slang/cst";
+import { assertUserFileLocation } from "@nomicfoundation/slang/bindings";
 
 test("find definitions in file", async () => {
   const unit = await buildCompilationUnit();
@@ -9,11 +10,11 @@ test("find definitions in file", async () => {
 
   const found = [];
   for (const definition of definitions) {
-    const nameLocation = definition.nameLocation.asUserFileLocation()!;
-    const name = nameLocation.cursor.node.unparse();
+    assertUserFileLocation(definition.nameLocation);
+    const name = definition.nameLocation.cursor.node.unparse();
 
-    const definiensLocation = definition.definiensLocation.asUserFileLocation()!;
-    const kind = definiensLocation.cursor.node.kind;
+    assertUserFileLocation(definition.definiensLocation);
+    const kind = definition.definiensLocation.cursor.node.kind;
 
     found.push({ name, kind });
   }

@@ -1,7 +1,7 @@
 import { Parser } from "@slang-private/testlang-npm-package/parser";
 import {
   Cursor,
-  assertIsNonterminalNode,
+  assertNonterminalNode,
   NonterminalKind,
   CursorIterator,
   AncestorsIterator,
@@ -15,7 +15,7 @@ describe("iterators", () => {
   const parseOutput = parser.parseFileContents(source);
   const cursor: Cursor = parseOutput.createTreeCursor();
 
-  assertIsNonterminalNode(cursor.node, NonterminalKind.SourceUnit);
+  assertNonterminalNode(cursor.node, NonterminalKind.SourceUnit);
 
   // Go deep to the second TreeNode (`[B C]`):
   expect(cursor.goToNextNonterminalWithKind(NonterminalKind.TreeNode)).toBe(true);

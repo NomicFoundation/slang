@@ -17,7 +17,7 @@ pub fn generate_supported_versions(model: &SpecModel) -> Result<String> {
 
     writeln!(
         buffer,
-        "This specification compiles information from {versions_count} publicly released versions of {language_name}:", 
+        "This grammar compiles information from {versions_count} publicly released versions of {language_name}:", 
         versions_count = versions.len(),
         language_name = model.language.name,
     )?;

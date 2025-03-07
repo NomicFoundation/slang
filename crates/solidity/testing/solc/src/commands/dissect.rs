@@ -1,7 +1,7 @@
 //! Dissection runs from first to last version. It records a snapshot of the output (errors) for each version.
 //! If the output changes, it prints the previous snapshot and its version range, then it starts a new one.
 //! This way, it can show which versions succeeded/failed and what the errors were.
-//! This is useful when working on the Solidity grammar/specification, to detect syntactic breaking changes.
+//! This is useful when working on the Solidity grammar, to detect syntactic breaking changes.
 
 use std::path::PathBuf;
 

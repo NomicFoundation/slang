@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import { assertIsNonterminalNode, NonterminalKind, Query } from "@nomicfoundation/slang/cst";
+import { assertNonterminalNode, NonterminalKind, Query } from "@nomicfoundation/slang/cst";
 import { Parser } from "@nomicfoundation/slang/parser";
 
 test("query-syntax-1", () => {
@@ -16,7 +16,7 @@ test("query-syntax-1", () => {
   const matches = extractMatches(query, NonterminalKind.MultiplicativeExpression, "1*2");
 
   assert.strictEqual(matches.length, 1);
-  assertIsNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "1*2");
+  assertNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "1*2");
 });
 
 test("query-syntax-2", () => {
@@ -33,7 +33,7 @@ test("query-syntax-2", () => {
   const matches = extractMatches(query, NonterminalKind.MultiplicativeExpression, "1*2");
 
   assert.strictEqual(matches.length, 1);
-  assertIsNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "1*2");
+  assertNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "1*2");
 });
 
 test("query-syntax-3", () => {
@@ -50,7 +50,7 @@ test("query-syntax-3", () => {
   const matches = extractMatches(query, NonterminalKind.MultiplicativeExpression, "1*2");
 
   assert.strictEqual(matches.length, 1);
-  assertIsNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "1*2");
+  assertNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "1*2");
 });
 
 test("query-syntax-4", () => {
@@ -66,8 +66,8 @@ test("query-syntax-4", () => {
   const matches = extractMatches(query, NonterminalKind.MultiplicativeExpression, "1*2");
 
   assert.strictEqual(matches.length, 2);
-  assertIsNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "1*2");
-  assertIsNonterminalNode(matches[1].root.node, NonterminalKind.MultiplicativeExpression, "1*2");
+  assertNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "1*2");
+  assertNonterminalNode(matches[1].root.node, NonterminalKind.MultiplicativeExpression, "1*2");
 });
 
 test("query-syntax-5", () => {
@@ -85,14 +85,14 @@ test("query-syntax-5", () => {
     const matches = extractMatches(query, NonterminalKind.MultiplicativeExpression, "1 * 'abc'");
 
     assert.strictEqual(matches.length, 1);
-    assertIsNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "1 * 'abc'");
+    assertNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "1 * 'abc'");
   }
 
   {
     const matches = extractMatches(query, NonterminalKind.MultiplicativeExpression, "'abc' * 1");
 
     assert.strictEqual(matches.length, 1);
-    assertIsNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "'abc' * 1");
+    assertNonterminalNode(matches[0].root.node, NonterminalKind.MultiplicativeExpression, "'abc' * 1");
   }
 });
 
@@ -108,7 +108,7 @@ test("capturing-nodes-1", () => {
   const matches = extractMatches(query, NonterminalKind.StructDefinition, "struct Foo {}");
 
   assert.strictEqual(matches.length, 1);
-  assertIsNonterminalNode(matches[0].root.node, NonterminalKind.StructDefinition, "struct Foo {}");
+  assertNonterminalNode(matches[0].root.node, NonterminalKind.StructDefinition, "struct Foo {}");
   assert.strictEqual(matches[0].captures["struct_name"].length, 1);
 });
 
@@ -131,7 +131,7 @@ test("capturing-nodes-2", () => {
   const matches = extractMatches(query, NonterminalKind.ContractDefinition, "contract A { event A(); }");
 
   assert.strictEqual(matches.length, 1);
-  assertIsNonterminalNode(matches[0].root.node, NonterminalKind.ContractDefinition, "contract A { event A(); }");
+  assertNonterminalNode(matches[0].root.node, NonterminalKind.ContractDefinition, "contract A { event A(); }");
   assert.strictEqual(matches[0].captures["contract_name"].length, 1);
   assert.strictEqual(matches[0].captures["event_name"].length, 1);
 });
