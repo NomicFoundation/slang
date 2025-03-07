@@ -2,7 +2,7 @@ import {
   NonterminalKind,
   TerminalKind,
   Query,
-  assertIsTerminalNode,
+  assertTerminalNode,
   QueryError,
 } from "@slang-private/testlang-npm-package/cst";
 import { Parser } from "@slang-private/testlang-npm-package/parser";
@@ -21,11 +21,11 @@ test("simple query", () => {
     const match = matches.next()!;
     expect(Object.keys(match.captures)).toStrictEqual(["id"]);
 
-    const cursors = match.captures["id"]!;
+    const cursors = match.captures["id"];
     expect(cursors).toHaveLength(1);
 
-    const node = cursors[0]!.node;
-    assertIsTerminalNode(node, TerminalKind.DelimitedIdentifier, name);
+    const node = cursors[0].node;
+    assertTerminalNode(node, TerminalKind.DelimitedIdentifier, name);
   };
 
   expectNextMatch("A");

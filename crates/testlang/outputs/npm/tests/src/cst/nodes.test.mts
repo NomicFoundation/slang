@@ -3,8 +3,8 @@ import {
   EdgeLabel,
   NonterminalKind,
   TerminalKind,
-  assertIsNonterminalNode,
-  assertIsTerminalNode,
+  assertNonterminalNode,
+  assertTerminalNode,
 } from "@slang-private/testlang-npm-package/cst";
 
 describe("nodes", () => {
@@ -12,7 +12,7 @@ describe("nodes", () => {
   const parseOutput = Parser.create("1.0.0").parseNonterminal(NonterminalKind.Literal, source);
 
   const nonTerminal = parseOutput.tree;
-  assertIsNonterminalNode(nonTerminal, NonterminalKind.Literal);
+  assertNonterminalNode(nonTerminal, NonterminalKind.Literal);
 
   describe("NonTerminal", () => {
     it("unparse()", () => {
@@ -35,8 +35,8 @@ describe("nodes", () => {
     });
   });
 
-  const terminal = nonTerminal.children()[0]!.node;
-  assertIsTerminalNode(terminal, TerminalKind.StringLiteral);
+  const terminal = nonTerminal.children()[0].node;
+  assertTerminalNode(terminal, TerminalKind.StringLiteral);
 
   describe("Terminal", () => {
     it("unparse()", () => {

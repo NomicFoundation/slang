@@ -21,7 +21,7 @@ Written in Rust and distributed in multiple languages.
 
 This repository maintains the source code and release process for these projects:
 
-- [Solidity Language Specification](https://nomicfoundation.github.io/slang/latest/solidity-specification/)
+- [Solidity Language Grammar](https://nomicfoundation.github.io/slang/latest/solidity-grammar/)
 - [Slang NPM Package](https://www.npmjs.com/package/@nomicfoundation/slang/)
 
 <!--

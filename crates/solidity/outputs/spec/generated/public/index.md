@@ -1,6 +1,6 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-# Solidity Specification
+# Solidity Grammar
 
 - [Supported Versions](./supported-versions.md)
 - [1. File Structure](./01-file-structure/index.md)

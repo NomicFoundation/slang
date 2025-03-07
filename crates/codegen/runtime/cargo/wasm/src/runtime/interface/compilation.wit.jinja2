@@ -12,12 +12,16 @@ interface compilation {
     /// @internal
     resource internal-compilation-builder {
         /// Creates a new compilation builder for the specified language version.
+        ///
+        /// It will throw an error if the language version is invalid or not supported.
         create: static func(language-version: string) -> result<internal-compilation-builder, string>;
 
         /// Adds a source file to the compilation unit.
         add-file: func(id: string, contents: string) -> add-file-response;
 
         /// Resolves an import in the source file to the destination file.
+        ///
+        /// It will throw an error if the source file ID does not exist.
         resolve-import: func(source-file-id: string, import-path: borrow<cursor>, destination-file-id: string) -> result<_, string>;
 
         /// Builds and returns the final compilation unit.
@@ -52,7 +56,7 @@ interface compilation {
         ///
         /// Note: building this graph is an expensive operation.
         /// It is done lazily on the first access, and cached thereafter.
-        binding-graph: func() -> result<binding-graph, string>;
+        binding-graph: func() -> binding-graph;
     }
 
     /// A single source file in the compilation unit.

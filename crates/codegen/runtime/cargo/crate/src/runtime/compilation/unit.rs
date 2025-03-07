@@ -4,16 +4,14 @@ use std::rc::Rc;
 
 use semver::Version;
 
-use crate::bindings::{
-    create_with_resolver, BindingGraph, BindingGraphInitializationError, PathResolver,
-};
+use crate::bindings::{create_with_resolver, BindingGraph, PathResolver};
 use crate::compilation::File;
 use crate::cst::{Cursor, KindTypes};
 
 pub struct CompilationUnit {
     language_version: Version,
     files: BTreeMap<String, Rc<File>>,
-    binding_graph: OnceCell<Result<Rc<BindingGraph>, BindingGraphInitializationError>>,
+    binding_graph: OnceCell<Rc<BindingGraph>>,
 }
 
 impl CompilationUnit {
@@ -37,20 +35,21 @@ impl CompilationUnit {
         self.files.get(id).cloned()
     }
 
-    pub fn binding_graph(&self) -> &Result<Rc<BindingGraph>, BindingGraphInitializationError> {
+    pub fn binding_graph(&self) -> &Rc<BindingGraph> {
         self.binding_graph.get_or_init(|| {
             let resolver = Resolver {
                 files: self.files.clone(),
             };
 
             let mut builder =
-                create_with_resolver(self.language_version.clone(), Rc::new(resolver))?;
+                create_with_resolver(self.language_version.clone(), Rc::new(resolver))
+                    .expect("Language version is already validated by the builder");
 
             for (id, file) in &self.files {
                 builder.add_user_file(id, file.create_tree_cursor());
             }
 
-            Ok(builder.build())
+            builder.build()
         })
     }
 }

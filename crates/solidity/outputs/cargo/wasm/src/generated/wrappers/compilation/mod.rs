@@ -99,8 +99,8 @@ define_rc_wrapper! { CompilationUnit {
         self._borrow_ffi().file(&id).map(IntoFFI::_into_ffi)
     }
 
-    fn binding_graph(&self) -> Result<ffi::BindingGraph, String> {
-        self._borrow_ffi().binding_graph().as_ref().map(Rc::clone).map(IntoFFI::_into_ffi).map_err(|e| e.to_string())
+    fn binding_graph(&self) -> ffi::BindingGraph {
+        Rc::clone(self._borrow_ffi().binding_graph())._into_ffi()
     }
 } }
 

@@ -163,6 +163,10 @@ export interface QueryMatch {
    */
   queryIndex: number;
   /**
+   * A cursor to the matched root node.
+   */
+  root: Cursor;
+  /**
    * List of captured nodes and their names from the query.
    */
   captures: { [key: string]: Array<Cursor> };
@@ -482,7 +486,8 @@ export class Query {
   private constructor();
   /**
    * Parses a query string into a query object.
-   * Throws an error if the query syntax is invalid.
+   *
+   * It will throw a `QueryError` if the query syntax is invalid.
    */
   static create(text: string): Query;
 }

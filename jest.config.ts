@@ -3,7 +3,7 @@ import type { Config } from "jest";
 export default {
   testMatch: ["<rootDir>/**/*.test.mts"],
 
-  testPathIgnorePatterns: [".*/\\.hermit/", ".*/node_modules/", ".*/submodules/", ".*/target/"],
+  testPathIgnorePatterns: [".*\/\\.hermit\/", ".*\/node_modules\/", ".*\/submodules\/", ".*\/target\/"],
 
   moduleFileExtensions: [
     /*  Plain: */ ["js", "ts"],
