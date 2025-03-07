@@ -276,4 +276,20 @@
          <loc>https://NomicFoundation.github.io/slang/latest/user-guide/07-semantic-analysis/03-solidity-builtins/</loc>
          <lastmod>2025-03-07</lastmod>
     </url>
+    <url>
+         <loc>https://NomicFoundation.github.io/slang/latest/user-guide/08-examples/</loc>
+         <lastmod>2025-03-07</lastmod>
+    </url>
+    <url>
+         <loc>https://NomicFoundation.github.io/slang/latest/user-guide/08-examples/01-list-functions-in-contract/</loc>
+         <lastmod>2025-03-07</lastmod>
+    </url>
+    <url>
+         <loc>https://NomicFoundation.github.io/slang/latest/user-guide/08-examples/02-find-usages/</loc>
+         <lastmod>2025-03-07</lastmod>
+    </url>
+    <url>
+         <loc>https://NomicFoundation.github.io/slang/latest/user-guide/08-examples/03-jump-to-definition/</loc>
+         <lastmod>2025-03-07</lastmod>
+    </url>
 </urlset>
