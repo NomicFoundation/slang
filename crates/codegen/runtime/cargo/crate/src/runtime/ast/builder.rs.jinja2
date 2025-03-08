@@ -10,10 +10,10 @@
   // Sequences:
   //
 
-  {% for sequence in model.ast.sequences %}
-    pub fn build_{{ sequence.parent_type | snake_case }}(cursor: Cursor) -> Result<{{ sequence.parent_type }}>
+  {% for parent_type, sequence in model.ast.sequences %}
+    pub fn build_{{ parent_type | snake_case }}(cursor: Cursor) -> Result<{{ parent_type }}>
     {
-      expect_nonterminal_kind(&cursor, NonterminalKind::{{ sequence.parent_type }})?;
+      expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
       let mut helper = SequenceHelper::new(cursor.clone());
       {% for field in sequence.fields %}
         {%- if field.is_optional -%}
@@ -44,7 +44,7 @@
       {%- endfor %}
       helper.finalize()?;
 
-      Ok(Rc::new({{ sequence.parent_type }}Struct {
+      Ok(Rc::new({{ parent_type }}Struct {
         cursor,
         {%- for field in sequence.fields -%}
           {{ field.label }},
@@ -58,29 +58,23 @@
   // Choices:
   //
 
-  {% for choice in model.ast.choices %}
-    pub fn build_{{ choice.parent_type | snake_case }}(mut cursor: Cursor) -> Result<
-    {%- if choice.nonterminal_types | length == 0 -%}
-      Rc<TerminalNode>
-    {%- else -%}
-      {{ choice.parent_type }}
-    {%- endif -%}
-    > {
-      expect_nonterminal_kind(&cursor, NonterminalKind::{{ choice.parent_type }})?;
+  {% for parent_type, choice in model.ast.choices %}
+    pub fn build_{{ parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ parent_type }}> {
+      expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
       if !cursor.go_to_first_child() {
         return Err("Expected choice node to have at least one children".into());
       }
       skip_trivia(&mut cursor)?;
       expect_label(&cursor, EdgeLabel::Variant)?;
       {%- if choice.nonterminal_types | length == 0 -%}
-        let item = fetch_terminal_node(&cursor)?;
+        let item = {{ parent_type }}(fetch_terminal_node(&cursor)?);
       {%- else -%}
         let item = match cursor.node().kind() {
           {% for type in choice.nonterminal_types -%}
-            NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ choice.parent_type }}::{{ type | pascal_case }}(build_{{ type | snake_case }}(cursor.clone())?),
+            NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ parent_type }}::{{ type | pascal_case }}(build_{{ type | snake_case }}(cursor.clone())?),
           {%- endfor -%}
           {%- if choice.includes_terminals -%}
-            NodeKind::Terminal(_) => {{ choice.parent_type }}::TerminalNode(fetch_terminal_node(&cursor)?),
+            NodeKind::Terminal(_) => {{ parent_type }}::TerminalNode(fetch_terminal_node(&cursor)?),
             NodeKind::Nonterminal(_) => {
               return Err(format!("Unexpected variant node of kind {:?}", cursor.node().kind()));
             }
@@ -101,10 +95,10 @@
   // Repeated:
   //
 
-  {% for repeated in model.ast.repeated %}
-    pub fn build_{{ repeated.parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ repeated.parent_type }}> {
-      expect_nonterminal_kind(&cursor, NonterminalKind::{{ repeated.parent_type }})?;
-      let mut items = {{ repeated.parent_type }}::new();
+  {% for parent_type, repeated in model.ast.repeated %}
+    pub fn build_{{ parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ parent_type }}> {
+      expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
+      let mut items = {{ parent_type }}::new();
       if !cursor.go_to_first_child() {
         return Ok(items);
       }
@@ -131,10 +125,10 @@
   // Separated:
   //
 
-  {% for separated in model.ast.separated %}
-    pub fn build_{{ separated.parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ separated.parent_type }}> {
-      expect_nonterminal_kind(&cursor, NonterminalKind::{{ separated.parent_type }})?;
-      let mut items = {{ separated.parent_type }}::new();
+  {% for parent_type, separated in model.ast.separated %}
+    pub fn build_{{ parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ parent_type }}> {
+      expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
+      let mut items = {{ parent_type }}::new();
       if !cursor.go_to_first_child() {
         return Ok(items);
       }

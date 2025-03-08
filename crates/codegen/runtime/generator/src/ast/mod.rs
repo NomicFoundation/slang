@@ -10,15 +10,14 @@ pub struct AstModel {
     #[serde(skip)]
     ebnf: Option<EbnfModel>,
 
-    pub sequences: Vec<Sequence>,
-    pub choices: Vec<Choice>,
-    pub repeated: Vec<Repeated>,
-    pub separated: Vec<Separated>,
+    pub sequences: IndexMap<model::Identifier, Sequence>,
+    pub choices: IndexMap<model::Identifier, Choice>,
+    pub repeated: IndexMap<model::Identifier, Repeated>,
+    pub separated: IndexMap<model::Identifier, Separated>,
 }
 
 #[derive(Serialize)]
 pub struct Sequence {
-    pub parent_type: model::Identifier,
     pub ebnf: String,
 
     pub fields: Vec<Field>,
@@ -36,7 +35,6 @@ pub struct Field {
 
 #[derive(Serialize)]
 pub struct Choice {
-    pub parent_type: model::Identifier,
     pub ebnf: String,
 
     pub nonterminal_types: Vec<model::Identifier>,
@@ -45,7 +43,6 @@ pub struct Choice {
 
 #[derive(Serialize)]
 pub struct Repeated {
-    pub parent_type: model::Identifier,
     pub ebnf: String,
 
     /// AST Type of the field, [`None`] if the field is a terminal.
@@ -54,7 +51,6 @@ pub struct Repeated {
 
 #[derive(Serialize)]
 pub struct Separated {
-    pub parent_type: model::Identifier,
     pub ebnf: String,
 
     /// AST Type of the field, [`None`] if the field is a terminal.
@@ -67,10 +63,10 @@ impl AstModel {
             terminals: IndexSet::new(),
             ebnf: Some(EbnfModel::build(language)),
 
-            sequences: Vec::new(),
-            choices: Vec::new(),
-            repeated: Vec::new(),
-            separated: Vec::new(),
+            sequences: IndexMap::new(),
+            choices: IndexMap::new(),
+            repeated: IndexMap::new(),
+            separated: IndexMap::new(),
         };
 
         // First pass: collect all terminals:
@@ -147,8 +143,7 @@ impl AstModel {
         let ebnf = self.get_ebnf(&parent_type);
         let fields = self.convert_fields(&item.fields).collect();
 
-        self.sequences.push(Sequence {
-            parent_type,
+        self.sequences.insert(parent_type, Sequence {
             ebnf,
             fields,
         });
@@ -164,8 +159,7 @@ impl AstModel {
             .map(|variant| variant.reference.clone())
             .partition(|reference| self.terminals.contains(reference));
 
-        self.choices.push(Choice {
-            parent_type,
+        self.choices.insert(parent_type, Choice {
             ebnf,
             nonterminal_types,
             includes_terminals: !terminal_types.is_empty(),
@@ -176,8 +170,7 @@ impl AstModel {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
-        self.repeated.push(Repeated {
-            parent_type,
+        self.repeated.insert(parent_type, Repeated {
             ebnf,
             item_type: if self.terminals.contains(&item.reference) {
                 None
@@ -191,8 +184,7 @@ impl AstModel {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
-        self.separated.push(Separated {
-            parent_type,
+        self.separated.insert(parent_type, Separated {
             ebnf,
             item_type: if self.terminals.contains(&item.reference) {
                 None
@@ -220,8 +212,7 @@ impl AstModel {
             .chain(primary_expressions)
             .partition(|reference| self.terminals.contains(reference));
 
-        self.choices.push(Choice {
-            parent_type,
+        self.choices.insert(parent_type, Choice {
             ebnf,
             nonterminal_types,
             includes_terminals: !terminal_types.is_empty(),
@@ -264,8 +255,7 @@ impl AstModel {
             }
         };
 
-        self.sequences.push(Sequence {
-            parent_type,
+        self.sequences.insert(parent_type, Sequence {
             ebnf,
             fields,
         });

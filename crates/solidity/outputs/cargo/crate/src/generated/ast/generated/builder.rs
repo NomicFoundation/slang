@@ -2546,14 +2546,14 @@ pub fn build_version_expression(mut cursor: Cursor) -> Result<VersionExpression>
     Ok(item)
 }
 
-pub fn build_version_operator(mut cursor: Cursor) -> Result<Rc<TerminalNode>> {
+pub fn build_version_operator(mut cursor: Cursor) -> Result<VersionOperator> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VersionOperator)?;
     if !cursor.go_to_first_child() {
         return Err("Expected choice node to have at least one children".into());
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = fetch_terminal_node(&cursor)?;
+    let item = VersionOperator(fetch_terminal_node(&cursor)?);
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -2634,14 +2634,14 @@ pub fn build_using_clause(mut cursor: Cursor) -> Result<UsingClause> {
     Ok(item)
 }
 
-pub fn build_using_operator(mut cursor: Cursor) -> Result<Rc<TerminalNode>> {
+pub fn build_using_operator(mut cursor: Cursor) -> Result<UsingOperator> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UsingOperator)?;
     if !cursor.go_to_first_child() {
         return Err("Expected choice node to have at least one children".into());
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = fetch_terminal_node(&cursor)?;
+    let item = UsingOperator(fetch_terminal_node(&cursor)?);
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -2762,14 +2762,14 @@ pub fn build_state_variable_attribute(mut cursor: Cursor) -> Result<StateVariabl
     Ok(item)
 }
 
-pub fn build_function_name(mut cursor: Cursor) -> Result<Rc<TerminalNode>> {
+pub fn build_function_name(mut cursor: Cursor) -> Result<FunctionName> {
     expect_nonterminal_kind(&cursor, NonterminalKind::FunctionName)?;
     if !cursor.go_to_first_child() {
         return Err("Expected choice node to have at least one children".into());
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = fetch_terminal_node(&cursor)?;
+    let item = FunctionName(fetch_terminal_node(&cursor)?);
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -2986,14 +2986,14 @@ pub fn build_type_name(mut cursor: Cursor) -> Result<TypeName> {
     Ok(item)
 }
 
-pub fn build_function_type_attribute(mut cursor: Cursor) -> Result<Rc<TerminalNode>> {
+pub fn build_function_type_attribute(mut cursor: Cursor) -> Result<FunctionTypeAttribute> {
     expect_nonterminal_kind(&cursor, NonterminalKind::FunctionTypeAttribute)?;
     if !cursor.go_to_first_child() {
         return Err("Expected choice node to have at least one children".into());
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = fetch_terminal_node(&cursor)?;
+    let item = FunctionTypeAttribute(fetch_terminal_node(&cursor)?);
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -3170,14 +3170,14 @@ pub fn build_variable_declaration_type(mut cursor: Cursor) -> Result<VariableDec
     Ok(item)
 }
 
-pub fn build_storage_location(mut cursor: Cursor) -> Result<Rc<TerminalNode>> {
+pub fn build_storage_location(mut cursor: Cursor) -> Result<StorageLocation> {
     expect_nonterminal_kind(&cursor, NonterminalKind::StorageLocation)?;
     if !cursor.go_to_first_child() {
         return Err("Expected choice node to have at least one children".into());
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = fetch_terminal_node(&cursor)?;
+    let item = StorageLocation(fetch_terminal_node(&cursor)?);
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -3374,14 +3374,14 @@ pub fn build_arguments_declaration(mut cursor: Cursor) -> Result<ArgumentsDeclar
     Ok(item)
 }
 
-pub fn build_number_unit(mut cursor: Cursor) -> Result<Rc<TerminalNode>> {
+pub fn build_number_unit(mut cursor: Cursor) -> Result<NumberUnit> {
     expect_nonterminal_kind(&cursor, NonterminalKind::NumberUnit)?;
     if !cursor.go_to_first_child() {
         return Err("Expected choice node to have at least one children".into());
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = fetch_terminal_node(&cursor)?;
+    let item = NumberUnit(fetch_terminal_node(&cursor)?);
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -3420,38 +3420,38 @@ pub fn build_string_expression(mut cursor: Cursor) -> Result<StringExpression> {
     Ok(item)
 }
 
-pub fn build_string_literal(mut cursor: Cursor) -> Result<Rc<TerminalNode>> {
+pub fn build_string_literal(mut cursor: Cursor) -> Result<StringLiteral> {
     expect_nonterminal_kind(&cursor, NonterminalKind::StringLiteral)?;
     if !cursor.go_to_first_child() {
         return Err("Expected choice node to have at least one children".into());
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = fetch_terminal_node(&cursor)?;
+    let item = StringLiteral(fetch_terminal_node(&cursor)?);
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
 
-pub fn build_hex_string_literal(mut cursor: Cursor) -> Result<Rc<TerminalNode>> {
+pub fn build_hex_string_literal(mut cursor: Cursor) -> Result<HexStringLiteral> {
     expect_nonterminal_kind(&cursor, NonterminalKind::HexStringLiteral)?;
     if !cursor.go_to_first_child() {
         return Err("Expected choice node to have at least one children".into());
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = fetch_terminal_node(&cursor)?;
+    let item = HexStringLiteral(fetch_terminal_node(&cursor)?);
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
 
-pub fn build_unicode_string_literal(mut cursor: Cursor) -> Result<Rc<TerminalNode>> {
+pub fn build_unicode_string_literal(mut cursor: Cursor) -> Result<UnicodeStringLiteral> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UnicodeStringLiteral)?;
     if !cursor.go_to_first_child() {
         return Err("Expected choice node to have at least one children".into());
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = fetch_terminal_node(&cursor)?;
+    let item = UnicodeStringLiteral(fetch_terminal_node(&cursor)?);
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }

@@ -190,14 +190,14 @@ pub fn build_expression(mut cursor: Cursor) -> Result<Expression> {
     Ok(item)
 }
 
-pub fn build_literal(mut cursor: Cursor) -> Result<Rc<TerminalNode>> {
+pub fn build_literal(mut cursor: Cursor) -> Result<Literal> {
     expect_nonterminal_kind(&cursor, NonterminalKind::Literal)?;
     if !cursor.go_to_first_child() {
         return Err("Expected choice node to have at least one children".into());
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = fetch_terminal_node(&cursor)?;
+    let item = Literal(fetch_terminal_node(&cursor)?);
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }

@@ -9,9 +9,9 @@
   // Sequences:
   //
 
-  {% for sequence in model.ast.sequences %}
+  {% for parent_type, sequence in model.ast.sequences %}
     /**
-     * This node represents a `{{ sequence.parent_type }}` nonterminal, with the following structure:
+     * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
      *
      * ```ebnf
        {%- for line in sequence.ebnf | split(pat="\n") %}
@@ -19,10 +19,10 @@
        {%- endfor %}
      * ```
      */
-    pub type {{ sequence.parent_type }} = Rc<{{ sequence.parent_type }}Struct>;
+    pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
 
     #[derive(Debug)]
-    pub struct {{ sequence.parent_type }}Struct {
+    pub struct {{ parent_type }}Struct {
       pub cursor: Cursor,
       {%- for field in sequence.fields %}
         pub {{ field.label | snake_case }}:
@@ -48,9 +48,9 @@
   // Choices:
   //
 
-  {% for choice in model.ast.choices %}
+  {% for parent_type, choice in model.ast.choices %}
     /**
-     * This node represents a `{{ choice.parent_type }}` nonterminal, with the following structure:
+     * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
      *
      * ```ebnf
        {%- for line in choice.ebnf | split(pat="\n") %}
@@ -59,10 +59,11 @@
      * ```
      */
     {% if choice.nonterminal_types | length == 0 %}
-      pub type {{ choice.parent_type }} = Rc<TerminalNode>;
+      #[derive(Debug)]
+      pub struct {{ parent_type }}(pub Rc<TerminalNode>);
     {% else %}
       #[derive(Debug)]
-      pub enum {{ choice.parent_type }} {
+      pub enum {{ parent_type }} {
         {% for nonterminal in choice.nonterminal_types -%}
           {{ nonterminal }}({{ nonterminal | pascal_case }}),
         {%- endfor %}
@@ -77,9 +78,9 @@
   // Repeated:
   //
 
-  {% for repeated in model.ast.repeated %}
+  {% for parent_type, repeated in model.ast.repeated %}
     /**
-     * This node represents a `{{ repeated.parent_type }}` nonterminal, with the following structure:
+     * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
      *
      * ```ebnf
        {%- for line in repeated.ebnf | split(pat="\n") %}
@@ -87,7 +88,7 @@
        {%- endfor %}
      * ```
      */
-    pub type {{ repeated.parent_type }} = Vec<
+    pub type {{ parent_type }} = Vec<
       {%- if repeated.item_type -%}
         {{ repeated.item_type | pascal_case }}
       {%- else -%}
@@ -100,9 +101,9 @@
   // Separated:
   //
 
-  {% for separated in model.ast.separated %}
+  {% for parent_type, separated in model.ast.separated %}
     /**
-     * This node represents a `{{ separated.parent_type }}` nonterminal, with the following structure:
+     * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
      *
      * ```ebnf
        {%- for line in separated.ebnf | split(pat="\n") %}
@@ -110,7 +111,7 @@
        {%- endfor %}
      * ```
      */
-    pub type {{ separated.parent_type }} = Vec<
+    pub type {{ parent_type }} = Vec<
       {%- if separated.item_type -%}
         {{ separated.item_type | pascal_case }}
       {%- else -%}

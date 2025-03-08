@@ -2798,7 +2798,8 @@ pub enum VersionExpression {
  * ```
  */
 
-pub type VersionOperator = Rc<TerminalNode>;
+#[derive(Debug)]
+pub struct VersionOperator(pub Rc<TerminalNode>);
 
 /**
  * This node represents a `VersionLiteral` nonterminal, with the following structure:
@@ -2871,7 +2872,8 @@ pub enum UsingClause {
  * ```
  */
 
-pub type UsingOperator = Rc<TerminalNode>;
+#[derive(Debug)]
+pub struct UsingOperator(pub Rc<TerminalNode>);
 
 /**
  * This node represents a `UsingTarget` nonterminal, with the following structure:
@@ -2955,7 +2957,8 @@ pub enum StateVariableAttribute {
  * ```
  */
 
-pub type FunctionName = Rc<TerminalNode>;
+#[derive(Debug)]
+pub struct FunctionName(pub Rc<TerminalNode>);
 
 /**
  * This node represents a `FunctionAttribute` nonterminal, with the following structure:
@@ -3133,7 +3136,8 @@ pub enum TypeName {
  * ```
  */
 
-pub type FunctionTypeAttribute = Rc<TerminalNode>;
+#[derive(Debug)]
+pub struct FunctionTypeAttribute(pub Rc<TerminalNode>);
 
 /**
  * This node represents a `MappingKeyType` nonterminal, with the following structure:
@@ -3257,7 +3261,8 @@ pub enum VariableDeclarationType {
  * ```
  */
 
-pub type StorageLocation = Rc<TerminalNode>;
+#[derive(Debug)]
+pub struct StorageLocation(pub Rc<TerminalNode>);
 
 /**
  * This node represents a `ForStatementInitialization` nonterminal, with the following structure:
@@ -3398,7 +3403,8 @@ pub enum ArgumentsDeclaration {
  * ```
  */
 
-pub type NumberUnit = Rc<TerminalNode>;
+#[derive(Debug)]
+pub struct NumberUnit(pub Rc<TerminalNode>);
 
 /**
  * This node represents a `StringExpression` nonterminal, with the following structure:
@@ -3430,7 +3436,8 @@ pub enum StringExpression {
  * ```
  */
 
-pub type StringLiteral = Rc<TerminalNode>;
+#[derive(Debug)]
+pub struct StringLiteral(pub Rc<TerminalNode>);
 
 /**
  * This node represents a `HexStringLiteral` nonterminal, with the following structure:
@@ -3441,7 +3448,8 @@ pub type StringLiteral = Rc<TerminalNode>;
  * ```
  */
 
-pub type HexStringLiteral = Rc<TerminalNode>;
+#[derive(Debug)]
+pub struct HexStringLiteral(pub Rc<TerminalNode>);
 
 /**
  * This node represents a `UnicodeStringLiteral` nonterminal, with the following structure:
@@ -3453,7 +3461,8 @@ pub type HexStringLiteral = Rc<TerminalNode>;
  * ```
  */
 
-pub type UnicodeStringLiteral = Rc<TerminalNode>;
+#[derive(Debug)]
+pub struct UnicodeStringLiteral(pub Rc<TerminalNode>);
 
 /**
  * This node represents a `YulStatement` nonterminal, with the following structure:
