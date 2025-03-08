@@ -188,7 +188,8 @@ pub enum Expression {
  * ```
  */
 
-pub type Literal = Rc<TerminalNode>;
+#[derive(Debug)]
+pub struct Literal(pub Rc<TerminalNode>);
 
 //
 // Repeated:

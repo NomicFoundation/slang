@@ -1,0 +1,124 @@
+{%- if rendering_in_stubs -%}
+  // No AST visitor in stubs...
+{%- else -%}
+  use std::rc::Rc;
+  use crate::cst::TerminalNode;
+  #[allow(clippy::wildcard_imports)]
+  use super::nodes::*;
+
+  pub trait Visitor {
+    {% for parent_type, sequence in model.ast.sequences %}
+      fn visit_{{ parent_type | snake_case }}(&self, _target: &{{ parent_type }}) {}
+    {%- endfor %}
+  }
+
+  //
+  // Sequences:
+  //
+
+  {% for parent_type, sequence in model.ast.sequences %}
+    impl {{ parent_type }}Struct {
+      pub fn accept(self: &Rc<Self>, visitor: &dyn Visitor) {
+        {% for field in sequence.fields -%}
+          {%- if field.type -%}
+            {%- if field.is_optional %}
+              if let Some(ref {{ field.label | snake_case }}) = self.{{ field.label | snake_case }} {
+                {%- if field.type in model.ast.repeated or field.type in model.ast.separated %}
+                  accept_{{ field.type | snake_case }}({{ field.label }}, visitor);
+                {% else %}
+                  {{ field.label }}.accept(visitor);
+                {% endif -%}
+              }
+            {% else -%}
+              {%- if field.type in model.ast.repeated or field.type in model.ast.separated %}
+                accept_{{ field.type | snake_case }}(&self.{{ field.label }}, visitor);
+              {% else %}
+                self.{{ field.label }}.accept(visitor);
+              {% endif -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+        visitor.visit_{{ parent_type | snake_case }}(self);
+      }
+    }
+
+  {% endfor %}
+
+  //
+  // Choices:
+  //
+
+  {% for parent_type, choice in model.ast.choices %}
+    {% if choice.nonterminal_types | length == 0 %}
+      impl {{ parent_type }} {
+        pub fn accept(&self, _visitor: &dyn Visitor) {}
+      }
+    {% else %}
+      impl {{ parent_type }} {
+        pub fn accept(&self, visitor: &dyn Visitor) {
+          match self {
+            {% for nonterminal in choice.nonterminal_types -%}
+              Self::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
+                {%- if nonterminal in model.ast.repeated or nonterminal in model.ast.separated %}
+                  accept_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}, visitor);
+                {% else %}
+                  {{ nonterminal | snake_case }}.accept(visitor);
+                {% endif -%}
+              }
+            {%- endfor %}
+            {%- if choice.includes_terminals %}
+              Self::TerminalNode(_) => {}
+            {% endif -%}
+          }
+        }
+      }
+    {% endif %}
+  {% endfor %}
+
+  //
+  // Repeated:
+  //
+
+  {% for parent_type, repeated in model.ast.repeated -%}
+    {%- if repeated.item_type %}
+      #[inline]
+      fn accept_{{ parent_type | snake_case }}(items: &[{{ repeated.item_type }}], visitor: &dyn Visitor) {
+        for item in items {
+          {%- if repeated.item_type in model.ast.repeated or
+                 repeated.item_type in model.ast.separated %}
+            accept_{{ repeated.item_type | snake_case }}(item, visitor);
+          {% else %}
+            item.accept(visitor);
+          {% endif -%}
+        }
+      }
+    {% else %}
+      #[inline]
+      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &dyn Visitor) {}
+    {% endif -%}
+  {% endfor %}
+
+  //
+  // Separated:
+  //
+
+  {% for parent_type, separated in model.ast.separated %}
+    {%- if separated.item_type %}
+      #[inline]
+      fn accept_{{ parent_type | snake_case }}(items: &[{{ separated.item_type }}], visitor: &dyn Visitor) {
+        for item in items {
+          {%- if separated.item_type in model.ast.repeated or
+                 separated.item_type in model.ast.separated %}
+            accept_{{ separated.item_type | snake_case }}(item, visitor);
+          {% else %}
+            item.accept(visitor);
+          {% endif -%}
+        }
+      }
+    {% else %}
+      #[inline]
+      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &dyn Visitor) {}
+    {% endif -%}
+  {% endfor %}
+
+{%- endif %}

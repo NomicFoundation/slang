@@ -16,9 +16,9 @@ pub fn select_sequence(node: &Rc<NonterminalNode>) -> Result<Vec<Option<Node>>> 
         let mut helper = Helper::new(node);
 
         let result = match node.kind {
-            {%- for sequence in model.ast.sequences -%}
-                NonterminalKind::{{ sequence.parent_type }} => {
-                    helper.{{ sequence.parent_type | snake_case }}_sequence()?
+            {%- for parent_type, sequence in model.ast.sequences -%}
+                NonterminalKind::{{ parent_type }} => {
+                    helper.{{ parent_type | snake_case }}_sequence()?
                 }
             {%- endfor -%}
             _ => {
@@ -33,9 +33,9 @@ pub fn select_sequence(node: &Rc<NonterminalNode>) -> Result<Vec<Option<Node>>> 
 }
 
 {%- if not rendering_in_stubs -%}
-    {% for sequence in model.ast.sequences %}
+    {% for parent_type, sequence in model.ast.sequences %}
         impl Helper {
-            fn {{ sequence.parent_type | snake_case }}_sequence(&mut self) -> Result<Vec<Option<Node>>> {
+            fn {{ parent_type | snake_case }}_sequence(&mut self) -> Result<Vec<Option<Node>>> {
                 Ok(vec![
                     {%- for field in sequence.fields -%}
                         {%- if field.is_optional -%}
