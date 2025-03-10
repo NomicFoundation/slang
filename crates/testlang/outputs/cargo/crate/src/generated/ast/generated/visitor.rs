@@ -7,12 +7,12 @@ use super::nodes::*;
 use crate::cst::TerminalNode;
 
 pub trait Visitor {
-    fn visit_source_unit(&self, _target: &SourceUnit) {}
-    fn visit_tree(&self, _target: &Tree) {}
-    fn visit_tree_node(&self, _target: &TreeNode) {}
-    fn visit_addition_expression(&self, _target: &AdditionExpression) {}
-    fn visit_negation_expression(&self, _target: &NegationExpression) {}
-    fn visit_member_access_expression(&self, _target: &MemberAccessExpression) {}
+    fn visit_source_unit(&mut self, _target: &SourceUnit) {}
+    fn visit_tree(&mut self, _target: &Tree) {}
+    fn visit_tree_node(&mut self, _target: &TreeNode) {}
+    fn visit_addition_expression(&mut self, _target: &AdditionExpression) {}
+    fn visit_negation_expression(&mut self, _target: &NegationExpression) {}
+    fn visit_member_access_expression(&mut self, _target: &MemberAccessExpression) {}
 }
 
 //
@@ -20,28 +20,28 @@ pub trait Visitor {
 //
 
 impl SourceUnitStruct {
-    pub fn accept(self: &Rc<Self>, visitor: &dyn Visitor) {
+    pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
         accept_source_unit_members(&self.members, visitor);
         visitor.visit_source_unit(self);
     }
 }
 
 impl TreeStruct {
-    pub fn accept(self: &Rc<Self>, visitor: &dyn Visitor) {
+    pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
         self.node.accept(visitor);
         visitor.visit_tree(self);
     }
 }
 
 impl TreeNodeStruct {
-    pub fn accept(self: &Rc<Self>, visitor: &dyn Visitor) {
+    pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
         accept_tree_node_children(&self.members, visitor);
         visitor.visit_tree_node(self);
     }
 }
 
 impl AdditionExpressionStruct {
-    pub fn accept(self: &Rc<Self>, visitor: &dyn Visitor) {
+    pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
         self.left_operand.accept(visitor);
 
         self.right_operand.accept(visitor);
@@ -50,14 +50,14 @@ impl AdditionExpressionStruct {
 }
 
 impl NegationExpressionStruct {
-    pub fn accept(self: &Rc<Self>, visitor: &dyn Visitor) {
+    pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
         self.operand.accept(visitor);
         visitor.visit_negation_expression(self);
     }
 }
 
 impl MemberAccessExpressionStruct {
-    pub fn accept(self: &Rc<Self>, visitor: &dyn Visitor) {
+    pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
         self.operand.accept(visitor);
         visitor.visit_member_access_expression(self);
     }
@@ -68,7 +68,7 @@ impl MemberAccessExpressionStruct {
 //
 
 impl SourceUnitMember {
-    pub fn accept(&self, visitor: &dyn Visitor) {
+    pub fn accept(&self, visitor: &mut dyn Visitor) {
         match self {
             Self::Tree(ref tree) => {
                 tree.accept(visitor);
@@ -87,7 +87,7 @@ impl SourceUnitMember {
 }
 
 impl TreeNodeChild {
-    pub fn accept(&self, visitor: &dyn Visitor) {
+    pub fn accept(&self, visitor: &mut dyn Visitor) {
         match self {
             Self::TreeNode(ref tree_node) => {
                 tree_node.accept(visitor);
@@ -98,7 +98,7 @@ impl TreeNodeChild {
 }
 
 impl Expression {
-    pub fn accept(&self, visitor: &dyn Visitor) {
+    pub fn accept(&self, visitor: &mut dyn Visitor) {
         match self {
             Self::AdditionExpression(ref addition_expression) => {
                 addition_expression.accept(visitor);
@@ -115,7 +115,7 @@ impl Expression {
 }
 
 impl Literal {
-    pub fn accept(&self, _visitor: &dyn Visitor) {}
+    pub fn accept(&self, _visitor: &mut dyn Visitor) {}
 }
 
 //
@@ -123,14 +123,14 @@ impl Literal {
 //
 
 #[inline]
-fn accept_source_unit_members(items: &[SourceUnitMember], visitor: &dyn Visitor) {
+fn accept_source_unit_members(items: &[SourceUnitMember], visitor: &mut dyn Visitor) {
     for item in items {
         item.accept(visitor);
     }
 }
 
 #[inline]
-fn accept_tree_node_children(items: &[TreeNodeChild], visitor: &dyn Visitor) {
+fn accept_tree_node_children(items: &[TreeNodeChild], visitor: &mut dyn Visitor) {
     for item in items {
         item.accept(visitor);
     }
@@ -141,4 +141,4 @@ fn accept_tree_node_children(items: &[TreeNodeChild], visitor: &dyn Visitor) {
 //
 
 #[inline]
-fn accept_separated_identifiers(_items: &[Rc<TerminalNode>], _visitor: &dyn Visitor) {}
+fn accept_separated_identifiers(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
