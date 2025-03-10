@@ -1,0 +1,15 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/governance/YaxisVotePower.sol": {
+      "urls": ["contracts/governance/YaxisVotePower.sol"]
+    }
+  },
+  "settings": {
+    "outputSelection": {
+      "*": {
+        "": ["ast"]
+      }
+    }
+  }
+}

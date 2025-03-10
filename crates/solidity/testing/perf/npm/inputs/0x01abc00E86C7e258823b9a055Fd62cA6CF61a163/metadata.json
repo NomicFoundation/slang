@@ -1,0 +1,700 @@
+{
+  "compiler": { "version": "0.7.1+commit.f4a555be" },
+  "language": "Solidity",
+  "output": {
+    "abi": [
+      {
+        "inputs": [
+          { "internalType": "contract IVault", "name": "vault", "type": "address" },
+          { "internalType": "string", "name": "name", "type": "string" },
+          { "internalType": "string", "name": "symbol", "type": "string" },
+          { "internalType": "contract IERC20[]", "name": "tokens", "type": "address[]" },
+          { "internalType": "uint256[]", "name": "normalizedWeights", "type": "uint256[]" },
+          { "internalType": "uint256", "name": "swapFeePercentage", "type": "uint256" },
+          { "internalType": "uint256", "name": "pauseWindowDuration", "type": "uint256" },
+          { "internalType": "uint256", "name": "bufferPeriodDuration", "type": "uint256" },
+          { "internalType": "address", "name": "owner", "type": "address" }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "owner", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "spender", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }
+        ],
+        "name": "Approval",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [{ "indexed": false, "internalType": "bool", "name": "paused", "type": "bool" }],
+        "name": "PausedStateChanged",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [{ "indexed": false, "internalType": "uint256", "name": "swapFeePercentage", "type": "uint256" }],
+        "name": "SwapFeePercentageChanged",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "from", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "to", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }
+        ],
+        "name": "Transfer",
+        "type": "event"
+      },
+      {
+        "inputs": [],
+        "name": "DOMAIN_SEPARATOR",
+        "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "owner", "type": "address" },
+          { "internalType": "address", "name": "spender", "type": "address" }
+        ],
+        "name": "allowance",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "spender", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "approve",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
+        "name": "balanceOf",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
+        "stateMutability": "pure",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "spender", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "decreaseApproval",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "bytes4", "name": "selector", "type": "bytes4" }],
+        "name": "getActionId",
+        "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getAuthorizer",
+        "outputs": [{ "internalType": "contract IAuthorizer", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getInvariant",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getLastInvariant",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getNormalizedWeights",
+        "outputs": [{ "internalType": "uint256[]", "name": "", "type": "uint256[]" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getOwner",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getPausedState",
+        "outputs": [
+          { "internalType": "bool", "name": "paused", "type": "bool" },
+          { "internalType": "uint256", "name": "pauseWindowEndTime", "type": "uint256" },
+          { "internalType": "uint256", "name": "bufferPeriodEndTime", "type": "uint256" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getPoolId",
+        "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getRate",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getSwapFeePercentage",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getVault",
+        "outputs": [{ "internalType": "contract IVault", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "spender", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "increaseApproval",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "name",
+        "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }],
+        "name": "nonces",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "bytes32", "name": "poolId", "type": "bytes32" },
+          { "internalType": "address", "name": "sender", "type": "address" },
+          { "internalType": "address", "name": "recipient", "type": "address" },
+          { "internalType": "uint256[]", "name": "balances", "type": "uint256[]" },
+          { "internalType": "uint256", "name": "lastChangeBlock", "type": "uint256" },
+          { "internalType": "uint256", "name": "protocolSwapFeePercentage", "type": "uint256" },
+          { "internalType": "bytes", "name": "userData", "type": "bytes" }
+        ],
+        "name": "onExitPool",
+        "outputs": [
+          { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+          { "internalType": "uint256[]", "name": "", "type": "uint256[]" }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "bytes32", "name": "poolId", "type": "bytes32" },
+          { "internalType": "address", "name": "sender", "type": "address" },
+          { "internalType": "address", "name": "recipient", "type": "address" },
+          { "internalType": "uint256[]", "name": "balances", "type": "uint256[]" },
+          { "internalType": "uint256", "name": "lastChangeBlock", "type": "uint256" },
+          { "internalType": "uint256", "name": "protocolSwapFeePercentage", "type": "uint256" },
+          { "internalType": "bytes", "name": "userData", "type": "bytes" }
+        ],
+        "name": "onJoinPool",
+        "outputs": [
+          { "internalType": "uint256[]", "name": "", "type": "uint256[]" },
+          { "internalType": "uint256[]", "name": "", "type": "uint256[]" }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "components": [
+              { "internalType": "enum IVault.SwapKind", "name": "kind", "type": "uint8" },
+              { "internalType": "contract IERC20", "name": "tokenIn", "type": "address" },
+              { "internalType": "contract IERC20", "name": "tokenOut", "type": "address" },
+              { "internalType": "uint256", "name": "amount", "type": "uint256" },
+              { "internalType": "bytes32", "name": "poolId", "type": "bytes32" },
+              { "internalType": "uint256", "name": "lastChangeBlock", "type": "uint256" },
+              { "internalType": "address", "name": "from", "type": "address" },
+              { "internalType": "address", "name": "to", "type": "address" },
+              { "internalType": "bytes", "name": "userData", "type": "bytes" }
+            ],
+            "internalType": "struct IPoolSwapStructs.SwapRequest",
+            "name": "request",
+            "type": "tuple"
+          },
+          { "internalType": "uint256", "name": "balanceTokenIn", "type": "uint256" },
+          { "internalType": "uint256", "name": "balanceTokenOut", "type": "uint256" }
+        ],
+        "name": "onSwap",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "owner", "type": "address" },
+          { "internalType": "address", "name": "spender", "type": "address" },
+          { "internalType": "uint256", "name": "value", "type": "uint256" },
+          { "internalType": "uint256", "name": "deadline", "type": "uint256" },
+          { "internalType": "uint8", "name": "v", "type": "uint8" },
+          { "internalType": "bytes32", "name": "r", "type": "bytes32" },
+          { "internalType": "bytes32", "name": "s", "type": "bytes32" }
+        ],
+        "name": "permit",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "bytes32", "name": "poolId", "type": "bytes32" },
+          { "internalType": "address", "name": "sender", "type": "address" },
+          { "internalType": "address", "name": "recipient", "type": "address" },
+          { "internalType": "uint256[]", "name": "balances", "type": "uint256[]" },
+          { "internalType": "uint256", "name": "lastChangeBlock", "type": "uint256" },
+          { "internalType": "uint256", "name": "protocolSwapFeePercentage", "type": "uint256" },
+          { "internalType": "bytes", "name": "userData", "type": "bytes" }
+        ],
+        "name": "queryExit",
+        "outputs": [
+          { "internalType": "uint256", "name": "bptIn", "type": "uint256" },
+          { "internalType": "uint256[]", "name": "amountsOut", "type": "uint256[]" }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "bytes32", "name": "poolId", "type": "bytes32" },
+          { "internalType": "address", "name": "sender", "type": "address" },
+          { "internalType": "address", "name": "recipient", "type": "address" },
+          { "internalType": "uint256[]", "name": "balances", "type": "uint256[]" },
+          { "internalType": "uint256", "name": "lastChangeBlock", "type": "uint256" },
+          { "internalType": "uint256", "name": "protocolSwapFeePercentage", "type": "uint256" },
+          { "internalType": "bytes", "name": "userData", "type": "bytes" }
+        ],
+        "name": "queryJoin",
+        "outputs": [
+          { "internalType": "uint256", "name": "bptOut", "type": "uint256" },
+          { "internalType": "uint256[]", "name": "amountsIn", "type": "uint256[]" }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "bool", "name": "paused", "type": "bool" }],
+        "name": "setPaused",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "uint256", "name": "swapFeePercentage", "type": "uint256" }],
+        "name": "setSwapFeePercentage",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "recipient", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "transfer",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "sender", "type": "address" },
+          { "internalType": "address", "name": "recipient", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "transferFrom",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ],
+    "devdoc": {
+      "kind": "dev",
+      "methods": {
+        "DOMAIN_SEPARATOR()": {
+          "details": "Returns the domain separator used in the encoding of the signature for `permit`, as defined by {EIP712}."
+        },
+        "allowance(address,address)": {
+          "details": "Returns the remaining number of tokens that `spender` will be allowed to spend on behalf of `owner` through {transferFrom}. This is zero by default. This value changes when {approve} or {transferFrom} are called."
+        },
+        "approve(address,uint256)": {
+          "details": "Sets `amount` as the allowance of `spender` over the caller's tokens. Returns a boolean value indicating whether the operation succeeded. IMPORTANT: Beware that changing an allowance with this method brings the risk that someone may use both the old and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards: https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729 Emits an {Approval} event."
+        },
+        "balanceOf(address)": { "details": "Returns the amount of tokens owned by `account`." },
+        "getActionId(bytes4)": {
+          "details": "Returns the action identifier associated with the external function described by `selector`."
+        },
+        "getInvariant()": { "details": "Returns the current value of the invariant." },
+        "getPausedState()": {
+          "details": "Returns the current contract pause status, as well as the end times of the Pause Window and Buffer Period."
+        },
+        "getRate()": {
+          "details": "This function returns the appreciation of one BPT relative to the underlying tokens. This starts at 1 when the pool is created and grows over time"
+        },
+        "nonces(address)": {
+          "details": "Returns the current nonce for `owner`. This value must be included whenever a signature is generated for {permit}. Every successful call to {permit} increases ``owner``'s nonce by one. This prevents a signature from being used multiple times."
+        },
+        "onExitPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": {
+          "details": "Called by the Vault when a user calls `IVault.exitPool` to remove liquidity from this Pool. Returns how many tokens the Vault should deduct from the Pool's balances, as well as the amount of protocol fees the Pool owes to the Vault. The Vault will then take tokens from the Pool's balances and send them to `recipient`, as well as collect the reported amount in protocol fees, which the Pool should calculate based on `protocolSwapFeePercentage`. Protocol fees are charged on exit events to guarantee that users exiting the Pool have paid their share. `sender` is the account performing the exit (typically the pool shareholder), and `recipient` is the account to which the Vault will send the proceeds. `currentBalances` contains the total token balances for each token the Pool registered in the Vault, in the same order that `IVault.getPoolTokens` would return. `lastChangeBlock` is the last block in which *any* of the Pool's registered tokens last changed its total balance. `userData` contains any pool-specific instructions needed to perform the calculations, such as the type of exit (e.g., proportional given an amount of pool shares, single-asset, multi-asset, etc.) Contracts implementing this function should check that the caller is indeed the Vault before performing any state-changing operations, such as burning pool shares."
+        },
+        "onJoinPool(bytes32,address,address,uint256[],uint256,uint256,bytes)": {
+          "details": "Called by the Vault when a user calls `IVault.joinPool` to add liquidity to this Pool. Returns how many of each registered token the user should provide, as well as the amount of protocol fees the Pool owes to the Vault. The Vault will then take tokens from `sender` and add them to the Pool's balances, as well as collect the reported amount in protocol fees, which the pool should calculate based on `protocolSwapFeePercentage`. Protocol fees are reported and charged on join events so that the Pool is free of debt whenever new users join. `sender` is the account performing the join (from which tokens will be withdrawn), and `recipient` is the account designated to receive any benefits (typically pool shares). `currentBalances` contains the total balances for each token the Pool registered in the Vault, in the same order that `IVault.getPoolTokens` would return. `lastChangeBlock` is the last block in which *any* of the Pool's registered tokens last changed its total balance. `userData` contains any pool-specific instructions needed to perform the calculations, such as the type of join (e.g., proportional given an amount of pool shares, single-asset, multi-asset, etc.) Contracts implementing this function should check that the caller is indeed the Vault before performing any state-changing operations, such as minting pool shares."
+        },
+        "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": {
+          "details": "Sets `value` as the allowance of `spender` over `owner`'s tokens, given `owner`'s signed approval. IMPORTANT: The same issues {IERC20-approve} has related to transaction ordering also apply here. Emits an {Approval} event. Requirements: - `spender` cannot be the zero address. - `deadline` must be a timestamp in the future. - `v`, `r` and `s` must be a valid `secp256k1` signature from `owner` over the EIP712-formatted function arguments. - the signature must use ``owner``'s current nonce (see {nonces}). For more information on the signature format, see the https://eips.ethereum.org/EIPS/eip-2612#specification[relevant EIP section]."
+        },
+        "queryExit(bytes32,address,address,uint256[],uint256,uint256,bytes)": {
+          "details": "Returns the amount of BPT that would be burned from `sender` if the `onExitPool` hook were called by the Vault with the same arguments, along with the number of tokens `recipient` would receive. This function is not meant to be called directly, but rather from a helper contract that fetches current Vault data, such as the protocol swap fee percentage and Pool balances. Like `IVault.queryBatchSwap`, this function is not view due to internal implementation details: the caller must explicitly use eth_call instead of eth_sendTransaction."
+        },
+        "queryJoin(bytes32,address,address,uint256[],uint256,uint256,bytes)": {
+          "details": "Returns the amount of BPT that would be granted to `recipient` if the `onJoinPool` hook were called by the Vault with the same arguments, along with the number of tokens `sender` would have to supply. This function is not meant to be called directly, but rather from a helper contract that fetches current Vault data, such as the protocol swap fee percentage and Pool balances. Like `IVault.queryBatchSwap`, this function is not view due to internal implementation details: the caller must explicitly use eth_call instead of eth_sendTransaction."
+        },
+        "totalSupply()": { "details": "Returns the amount of tokens in existence." },
+        "transfer(address,uint256)": {
+          "details": "Moves `amount` tokens from the caller's account to `recipient`. Returns a boolean value indicating whether the operation succeeded. Emits a {Transfer} event."
+        },
+        "transferFrom(address,address,uint256)": {
+          "details": "Moves `amount` tokens from `sender` to `recipient` using the allowance mechanism. `amount` is then deducted from the caller's allowance. Returns a boolean value indicating whether the operation succeeded. Emits a {Transfer} event."
+        }
+      },
+      "version": 1
+    },
+    "userdoc": { "kind": "user", "methods": {}, "version": 1 }
+  },
+  "settings": {
+    "compilationTarget": { "contracts/pools/weighted/WeightedPool.sol": "WeightedPool" },
+    "evmVersion": "istanbul",
+    "libraries": {},
+    "metadata": { "bytecodeHash": "ipfs" },
+    "optimizer": { "enabled": true, "runs": 800 },
+    "remappings": []
+  },
+  "sources": {
+    "contracts/lib/helpers/Authentication.sol": {
+      "keccak256": "0xea892213ec2967f53e26a0dd833bde01e4d9b6e49dd91e6c59ff00044f83c28d",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://0bc36f6335254bef8a4515e898a7ce5b3f36350e4d7d1dd45a0aa3d1356fdae5",
+        "dweb:/ipfs/QmRRatu77hTPReUnRidk3wjgEMyGYVgh9wDrkiMiKmtWtR"
+      ]
+    },
+    "contracts/lib/helpers/BalancerErrors.sol": {
+      "keccak256": "0xcf81c3938bee334cb8cb88603f59768754c297e2bce76ab8cc2a4b5877146219",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://49273bc36bde574f90c23d0bf033455f9f069e106e7fdb0d1040ec87f96dc19b",
+        "dweb:/ipfs/QmUQt4QisHsBdh7SELzkTcfw9okBuxFCHeipiEzYCq3Vnr"
+      ]
+    },
+    "contracts/lib/helpers/IAuthentication.sol": {
+      "keccak256": "0xfd687ced203d2c6da8189792e1719a5182faf45956129388b231ee76740b99a6",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://581aa664e84e950cd9bb747bf6022867db63c64f67d9556a86b5f04f871c2c5d",
+        "dweb:/ipfs/QmRa6EEV3LXJaHzymztiLqyeAzmE4jAgBEEi3mi8R5cfFa"
+      ]
+    },
+    "contracts/lib/helpers/ISignaturesValidator.sol": {
+      "keccak256": "0x2fe46b13b7c8bfc6f5c539c0b73d6325813f383f551b71fb6bca8dafd06964e1",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://8e651ae7a3a3652c8bb7aaa42c2cce5924310df62a923d9ec50ddb9c850d2995",
+        "dweb:/ipfs/QmTHz9y18L5FD7v9GcvxGWSLJuin2KCUEYoARTgz8njce8"
+      ]
+    },
+    "contracts/lib/helpers/ITemporarilyPausable.sol": {
+      "keccak256": "0xb3e5b7c63f80b80ef3f0138eac56c397a439bf6b667fc06d5061aa869828b562",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://978d66fba0721a1a67e29a32eaddab8d1f92ab2fb2d611724ea8d0d3c9b0e95b",
+        "dweb:/ipfs/QmfG4foZvx3NDZao7d4VvGzL4Uxtk8VWNJXvgo9fiAJxZv"
+      ]
+    },
+    "contracts/lib/helpers/InputHelpers.sol": {
+      "keccak256": "0xd58eb6851269729d3ea0d739f812c67c3e750b046ef1653ae12134e668925d28",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://9cb5db2184b915b6640593f2e0840de1c39144b1d692f5f1bb13958b28647d7c",
+        "dweb:/ipfs/QmbdfxJJo5hwJMG1Cvi2DoBthwENVkdAGJ6JDAWP8JLzW9"
+      ]
+    },
+    "contracts/lib/helpers/TemporarilyPausable.sol": {
+      "keccak256": "0xd20f7cbc60072fc73aa137ce644777195de3143bc6ce910c43501647f3ce6c60",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://b3c5a3589b0d85a051977e77e1fe1e9b41c4d005a8a4ac3156995e9fddd9d926",
+        "dweb:/ipfs/QmZwwhQQFL9tK1vNBTKB4E5ZGBdwfgGrgv2fjHgBaZTENi"
+      ]
+    },
+    "contracts/lib/math/FixedPoint.sol": {
+      "keccak256": "0x38720507bb6c838df83953d1ffa88b97d0e06baefa0e3e387303cb8a090a49f5",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://fd74d7d2f8881dcc5a3aa4ce732f84b2cbb15de117e1fc4735a3d58a4062524a",
+        "dweb:/ipfs/QmSYxuM8HhMn3oPxZ66PbukDikGPkHs3FLD7miFbky2EfW"
+      ]
+    },
+    "contracts/lib/math/LogExpMath.sol": {
+      "keccak256": "0x6ee640facad86b1cb4577f019dc06123bfb8259efde7a2b9be27aff4dab29c4a",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://c8a012aacc16d8ba9d0c0c0dfd2dcd17a86c676199ec2bb295c6c6487fe48114",
+        "dweb:/ipfs/QmbLK2o3nyn3Ub2SBEtiTMktnV62SA7uQ8PRjMPzSx4GwT"
+      ]
+    },
+    "contracts/lib/math/Math.sol": {
+      "keccak256": "0x98cf5d1e9b91be5a4315c1aa7bf6480e097113c5f9a9200c92d123bc4ece9ec4",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://9617a16524a7e9b82f6962f76ef2d8a47d14285c001d4bb5e88574cb33e0ebe3",
+        "dweb:/ipfs/QmRBvV1X5FEsyxDAfMPZ4GNp7HvfK5gaKaLpp6o1EYwfFF"
+      ]
+    },
+    "contracts/lib/openzeppelin/EIP712.sol": {
+      "keccak256": "0x0cf3ec5d6130aac057e69df14b1ff87baf9c6c2cb13bc545952def004e629ac0",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://446419367266d271bf6953e4ae0423356a5cc4717f7b9a5a0532436de4be2d70",
+        "dweb:/ipfs/QmPV56wHs1Mqif6et6TYrhZ2QYPNmiVTmXWvQMhqWfKLk9"
+      ]
+    },
+    "contracts/lib/openzeppelin/ERC20.sol": {
+      "keccak256": "0x10a0774f23f09b8617c9c62afe230829175c20be368ff327a7d529e4f7348bcb",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://d126631fd60ce377ae605e7c2aab275dc7b72aac074940f6e3b36206ed1955ce",
+        "dweb:/ipfs/QmP23AyhL4xzHSDikcgpAKuCHoiFKr5qQfCkDAdSsz4peU"
+      ]
+    },
+    "contracts/lib/openzeppelin/IERC20.sol": {
+      "keccak256": "0xd828a935a72a6d182912abba290e4debb8c684c36fd756088f7acb30e0b2bb76",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://1e6ac013b95e9622917c5ad388dc73f0a389a76341597731746e54547aa9de8a",
+        "dweb:/ipfs/QmPB8qWcRPZaDsASgQpf5a6i2YrZ4TDV3Ebi25Mn9EAdf4"
+      ]
+    },
+    "contracts/lib/openzeppelin/IERC20Permit.sol": {
+      "keccak256": "0xffe929ce55ef0cbdcc60eee8bc9375c295757ad13afe3d757646538aa0429ff5",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://90091ad3a860b0baa930d9b4083b503eb9ce2d222f738ce3b009d434271a27ae",
+        "dweb:/ipfs/QmeQxy2YHbeumMXxKqEnXF7pGw2Ke43cHzttG59WYHibVV"
+      ]
+    },
+    "contracts/lib/openzeppelin/ReentrancyGuard.sol": {
+      "keccak256": "0xe055f8c5d34af6e615892acf192c74d2d83784713bd98b2f8e44751f5ffe2bed",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://ac81cac0143f50682c322258a5d5a8ba125140571cbd08e68bd91137001a105d",
+        "dweb:/ipfs/QmXC7eHNwLdrnA74NjAAQcwPfDkkk63dkAYhKJ9QYENBNg"
+      ]
+    },
+    "contracts/lib/openzeppelin/SafeERC20.sol": {
+      "keccak256": "0x8db59e0924c72228865dddcadc07e25507809582c50679c8efec6fa737704aed",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://b48616e2731312a5b462cd2a82b57de7e01cc30bab5756fe732905de8693039f",
+        "dweb:/ipfs/QmTQovrnEYZBVLyUiFarhRDXj42Y1MhM7kW2tpNuaJ9uGK"
+      ]
+    },
+    "contracts/lib/openzeppelin/SafeMath.sol": {
+      "keccak256": "0xafe0542eb14932a66ce6280fbe9991130ead5bbcb7836d0a822fc4a59810c100",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://140c69f688c58bbf08f7b1b6f76dd89d72f9c84a3aab8ad1194679ee0acaa6e6",
+        "dweb:/ipfs/QmUCub3NpdGK1U4xjSwsCHNZnRokcM9NMhRtC2kLefYef8"
+      ]
+    },
+    "contracts/pools/BalancerPoolToken.sol": {
+      "keccak256": "0x98ba9ab8cbd475a64405d5eecedbed1bb68b4adca54493894747f8e9f61a9e42",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://b76d6c240ea5bc465a25ae03b498365a33ce2fcaf0d9aa9935f9ea721a2257de",
+        "dweb:/ipfs/Qmckfp5pP5c1eFst21NnJgnvyPz9iHGwpWHCXQfJv5HxkR"
+      ]
+    },
+    "contracts/pools/BaseMinimalSwapInfoPool.sol": {
+      "keccak256": "0x6a634f43159cd970522a2005d13934d1d56a85edaee4290ded729340761e19c3",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://7df58e880e130adcf476edcf89d32f923a4433bc7e77c208ace5b1fb07f4382e",
+        "dweb:/ipfs/QmPzv1PudDqkB9t6fXsQS8vA6kQL81kKdWUC4d5eiF6qDK"
+      ]
+    },
+    "contracts/pools/BasePool.sol": {
+      "keccak256": "0x235470c212f95f6ba5faa0bff48dfff5459a4f8e9d97f72169d24985acaff275",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://7dffdac4ab64c43899bf45b69d341cb2394f14dd26f85abab41b7fe632527eba",
+        "dweb:/ipfs/QmU4SzSagco6a8X6MuBmrwpjhkSiMf8LQCTr2WexV8tii5"
+      ]
+    },
+    "contracts/pools/BasePoolAuthorization.sol": {
+      "keccak256": "0x080dfa64851c8f2bc9e989d37154453cf154609a792f8ca554478450290be7db",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://6ee3e9fc531be5ae6976b4051318f5c9086e508e1cecdb5147dbd3d1c7efe4c0",
+        "dweb:/ipfs/QmQBUMC3aq2JY6PeS4baZydYADLgKm9eoHZ8LzsoENZBCd"
+      ]
+    },
+    "contracts/pools/weighted/WeightedMath.sol": {
+      "keccak256": "0xb7b712312afa0000d491862a7e50e1d6814a18e92ca16897baaa412ef5aff138",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://843715410a523e9a57cdf8cc25f5ba41de26aa61526b3d439531f99bf2fbc5d3",
+        "dweb:/ipfs/QmSyMpfDT78dc26tgkLRvy1noFAZGE9UFBPUn3cmkMpwy8"
+      ]
+    },
+    "contracts/pools/weighted/WeightedPool.sol": {
+      "keccak256": "0x4e73b22be8c4325be39cc05796926b173b867292d73fe051dcfa49aafd9fb9d7",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://d860d703d2cfa251103fc927f55e2003c8bf49d941d35e3fcfcc6d57d8351612",
+        "dweb:/ipfs/QmTgr3Mk2BRj5TJQpbbJiHCjQdugtj96rgd4g2TNictepQ"
+      ]
+    },
+    "contracts/pools/weighted/WeightedPoolUserDataHelpers.sol": {
+      "keccak256": "0x6a2f98e68608e65dd9c0de8c57c1fc2e1643789b18bcf75d7109d27cdf45d62f",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://d8cacf0d22464128acf40d1eb55f872592233e883b8cb36ab9fe1051257a52e6",
+        "dweb:/ipfs/QmekLKMSgmEfz4tKBnJF9kmPc6PYg2nAs72bwuLT5To3Gt"
+      ]
+    },
+    "contracts/vault/ProtocolFeesCollector.sol": {
+      "keccak256": "0x67a0898b29a356085f4d7a83c52d1c794ebf07b6522133c9b9c7f5faf10d2184",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://2bc6a0209840b9b6b695241122646ce9040716237e05b67cdb5445a961e8b374",
+        "dweb:/ipfs/QmfCtZLSbBXqMTZBFfzxx3VFquXbbaFD9tsRNc3y5jXozn"
+      ]
+    },
+    "contracts/vault/interfaces/IAsset.sol": {
+      "keccak256": "0x70ecf1d48c285d78718bd2e159345677038ed8a81c74444bedd6a5c61af9aff6",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://8c7c210e449ea5d284abeaaed82e3bb3c203b57d8b3e5dfb6daedf76eaae31d1",
+        "dweb:/ipfs/QmfJWLPhCG6PcHNJMLNDbAM6nd2ZVFCexCXvJ9qQmRaNbn"
+      ]
+    },
+    "contracts/vault/interfaces/IAuthorizer.sol": {
+      "keccak256": "0x792871e208bba1dad291f8d1cffad86f4afa5e2360816bd9c43481f7297155f5",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://af8ab65258e294c8ba0a5feee91208789f641181d225364b02123d38d9eec7d0",
+        "dweb:/ipfs/Qmb5HUXRaSrHJafwK1H8XRjcCTnAZMShTvBNhr1ovA1j2m"
+      ]
+    },
+    "contracts/vault/interfaces/IBasePool.sol": {
+      "keccak256": "0x1fdce4de26cad355f4ad93e4a5b66d5a5692c4cd2f0b6c2bb2c3aef3ee49422f",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://fde5dea4a8a65dd019813530ecb4cc857484ff104e80cf18c12d196b0ec74973",
+        "dweb:/ipfs/QmPyVrmus8pqbPKofTonEgtWCCsn3j4MXFPsy481f8jav8"
+      ]
+    },
+    "contracts/vault/interfaces/IFlashLoanRecipient.sol": {
+      "keccak256": "0x6886740dcaebfb24a25f914ce5b4299aeab3fe0cc135a1707c0fe4e3d6d02cb6",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://6a379297af3e38f7ba24c9c26285382bf5d7e36260590f9d06ce1b573cadd7d4",
+        "dweb:/ipfs/QmZWeYKn3UDBPJUrFCHty9g9fHWG46Q4BhhddmyfB1Ugj8"
+      ]
+    },
+    "contracts/vault/interfaces/IMinimalSwapInfoPool.sol": {
+      "keccak256": "0x7469919e147c0db8b4f290d310ca3816dec5d3c6cc6b258cf6e0df820a20a179",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://ad47775f388a985c265ef4ca1d1531e4bffa97ef51a03fea9273a2ce8f1ab667",
+        "dweb:/ipfs/QmZ4mMm2rPPZ4eLHHUY82vxLLRyKXb5ekchgGvDReryiTS"
+      ]
+    },
+    "contracts/vault/interfaces/IPoolSwapStructs.sol": {
+      "keccak256": "0xe32bcd1cce37949796369b0026cf5cf34eb7273fa50ac239186e8cd4b822e196",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://902110897e813cd71987854a651fe6386a9329dc22660bff8f55a4f95c0003d1",
+        "dweb:/ipfs/QmXt4MGtioai8goMrpawg8a88Qwdnk6P31kmPU1zMJmJ1d"
+      ]
+    },
+    "contracts/vault/interfaces/IVault.sol": {
+      "keccak256": "0xc1b1344fcb93f499269d9687514f0a72cc8164cfd3dd3da08a6af1f9e7c60168",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://b7bf8d441a1fdbb2c040c1ee781f0c55b7ba28c1c4f829b6876fc301566b83ba",
+        "dweb:/ipfs/QmU2C7d4SKT8nwyXr3MEo2FHPgLUNBVoE1ngcrNHTq3h8q"
+      ]
+    },
+    "contracts/vault/interfaces/IWETH.sol": {
+      "keccak256": "0x621a25d9e3f3a4cd9e4493ab330a50a4456b6ea8fc568911fdd5486f78a4d3ab",
+      "license": "GPL-3.0-or-later",
+      "urls": [
+        "bzz-raw://93a5ad052b725c300232952ba067abce53c0b167f0e55c44bfd5ba308d9d542b",
+        "dweb:/ipfs/QmdsRjQShAUbA1KGWhoKsvWTR2PffgfXNJBCU5hTmgLJVb"
+      ]
+    }
+  },
+  "version": 1
+}
