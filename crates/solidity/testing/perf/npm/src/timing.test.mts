@@ -5,6 +5,7 @@ import assert from "node:assert";
 import * as solc06 from "solc06";
 import * as solc07 from "solc07";
 import * as solc08 from "solc08";
+import * as solc089 from "solc089";
 import path from "node:path";
 import fs from "node:fs";
 
@@ -44,6 +45,26 @@ describe("Sourcify", () => {
   test("YaxisVotePower slang", async () => {
     await testFile("0.7.0", "0x01fef0d5d6fd6b5701ae913cafb11ddaee982c9a/YaxisVotePower/contracts/governance/YaxisVotePower.sol");
   });
+
+  test("0xProject slang", async () => {
+    await testFile("0.8.19", "0xProject/contracts/governance/src/ZeroExProtocolGovernor.sol");
+  });
+
+  test("Uniswap slang", async () => {
+    await testFile("0.7.6", "Uniswap/contracts/UniswapV3Factory.sol");
+  });
+
+  test("AAVE slang", async () => {
+    await testFile("0.8.10", "aave-v3-core-master/contracts/protocol/pool/Pool.sol");
+  });
+
+  test("GraphToken slang", async () => {
+    await testFile("0.7.6", "graph_protocol/contracts/token/GraphToken.sol");
+  });
+
+  test("lidofinance slang", async () => {
+    await testFile("0.8.9", "lidofinance/contracts/0.8.9/WithdrawalQueueERC721.sol");
+  });
 })
 
 
@@ -57,7 +78,7 @@ describe("solc", () => {
   });
 
   test("ERC721AContract solc", async () => {
-    await testFileSolC("0.8.9", ["0x01665987bC6725070e56d160d75AA19d8B73273e", "sources"]);
+    await testFileSolC("0.8.13", ["0x01665987bC6725070e56d160d75AA19d8B73273e", "sources"]);
   });
 
   test("SeniorBond solc", async () => {
@@ -78,6 +99,26 @@ describe("solc", () => {
 
   test("YaxisVotePower solc", async () => {
     await testFileSolC("0.6.12", ["0x01fef0d5d6fd6b5701ae913cafb11ddaee982c9a", "YaxisVotePower"]);
+  });
+
+  test("0xProject solc", async () => {
+    await testFileSolC("0.8.19", ["0xProject", "contracts", "governance"]);
+  });
+
+  test("Uniswap solc", async () => {
+    await testFileSolC("0.7.6", ["Uniswap", "contracts"]);
+  });
+
+  test("AAVE slang", async () => {
+    await testFileSolC("0.8.10", ["aave-v3-core-master", "contracts"]);
+  });
+
+  test("GraphToken solc", async () => {
+    await testFileSolC("0.7.6", ["graph_protocol", "contracts"]);
+  });
+
+  test("lidofinance solc", async () => {
+    await testFileSolC("0.8.9", ["lidofinance", "contracts", "0.8.9"]);
   });
 })
 
@@ -103,6 +144,9 @@ async function testFileSolC(languageVersion: string, folder: string[]) {
   }
   else if (languageVersion.startsWith("0.7")) {
     solc = solc07;
+  }
+  else if (languageVersion.startsWith("0.8.9")) {
+    solc = solc089;
   }
   else if (languageVersion.startsWith("0.8")) {
     solc = solc08;

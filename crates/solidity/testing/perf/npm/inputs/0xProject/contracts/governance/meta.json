@@ -1,0 +1,19 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "src/ZeroExProtocolGovernor.sol": {
+      "urls": [
+        "src/ZeroExProtocolGovernor.sol"
+      ]
+    }
+  },
+  "settings": {
+    "outputSelection": {
+      "*": {
+        "": [
+          "ast"
+        ]
+      }
+    }
+  }
+}

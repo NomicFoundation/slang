@@ -1,0 +1,19 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "WithdrawalQueueERC721.sol": {
+      "urls": [
+        "WithdrawalQueueERC721.sol"
+      ]
+    }
+  },
+  "settings": {
+    "outputSelection": {
+      "*": {
+        "": [
+          "ast"
+        ]
+      }
+    }
+  }
+}
