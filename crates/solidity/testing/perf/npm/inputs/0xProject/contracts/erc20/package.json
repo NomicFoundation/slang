@@ -1,0 +1,35 @@
+{
+    "name": "@0x/contracts-erc20",
+    "version": "4.0.14",
+    "engines": {
+        "node": ">=6.12"
+    },
+    "description": "Token contracts used by 0x protocol",
+    "main": "lib/src/index.js",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "test:ci": "forge test",
+        "docs:md": "ts-doc-gen --sourceDir='$PROJECT_FILES' --output=$MD_FILE_DIR --fileExtension=mdx --tsconfig=./typedoc-tsconfig.json",
+        "docs:json": "typedoc --excludePrivate --excludeExternals --excludeProtected --ignoreCompilerErrors --target ES5 --tsconfig typedoc-tsconfig.json --json $JSON_FILE_PATH $PROJECT_FILES"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/0xProject/protocol.git"
+    },
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/0xProject/protocol/issues"
+    },
+    "homepage": "https://github.com/0xProject/protocol",
+    "devDependencies": {
+        "@0x/contracts-utils": "^4.8.52",
+        "@0x/ts-doc-gen": "^0.0.28",
+        "typedoc": "~0.16.11"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "gitHead": "4f91bfd907996b2f4dd383778b50c479c2602b56"
+}

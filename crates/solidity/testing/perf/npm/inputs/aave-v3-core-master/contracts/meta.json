@@ -1,0 +1,19 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "protocol/pool/Pool.sol": {
+      "urls": [
+        "protocol/pool/Pool.sol"
+      ]
+    }
+  },
+  "settings": {
+    "outputSelection": {
+      "*": {
+        "": [
+          "ast"
+        ]
+      }
+    }
+  }
+}

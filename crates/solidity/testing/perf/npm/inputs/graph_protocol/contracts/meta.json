@@ -1,0 +1,19 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "token/GraphToken.sol": {
+      "urls": [
+        "token/GraphToken.sol"
+      ]
+    }
+  },
+  "settings": {
+    "outputSelection": {
+      "*": {
+        "": [
+          "ast"
+        ]
+      }
+    }
+  }
+}

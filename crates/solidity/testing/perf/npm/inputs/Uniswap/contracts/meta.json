@@ -1,0 +1,19 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "UniswapV3Factory.sol": {
+      "urls": [
+        "UniswapV3Factory.sol"
+      ]
+    }
+  },
+  "settings": {
+    "outputSelection": {
+      "*": {
+        "": [
+          "ast"
+        ]
+      }
+    }
+  }
+}
