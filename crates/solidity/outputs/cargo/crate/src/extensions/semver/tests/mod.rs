@@ -1,5 +1,7 @@
 use semver::Version;
-use super::{parser::parse, Range};
+
+use super::parser::parse;
+use super::Range;
 
 #[test]
 fn single_version_range() {
