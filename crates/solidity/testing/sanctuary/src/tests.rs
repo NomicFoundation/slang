@@ -128,7 +128,7 @@ pub fn run_test(
     }
 
     if check_infer_version && !has_known_version_mismatch(&file.path) {
-        let inferred_versions = Parser::infer_language_version(&source);
+        let inferred_versions = LanguageFacts::infer_language_versions(&source);
 
         if inferred_versions.is_empty() {
             events.version_inference_error(format!(

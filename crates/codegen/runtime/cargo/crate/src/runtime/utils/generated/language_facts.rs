@@ -10,4 +10,8 @@ impl LanguageFacts {
     pub const EARLIEST_VERSION: Version = Version::new(0, 0, 0);
 
     pub const LATEST_VERSION: Version = Version::new(0, 0, 0);
+
+    pub fn infer_language_versions(input: &str) -> Vec<Version> {
+        crate::extensions::semver::infer_language_versions(input)
+    }
 }

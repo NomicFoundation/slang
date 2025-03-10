@@ -56,10 +56,6 @@ impl Parser {
         }
     }
 
-    pub fn infer_language_version(input: &str) -> Vec<Version> {
-        crate::extensions::semver::infer_language_version(input)
-    }
-
     pub fn language_version(&self) -> &Version {
         &self.language_version
     }

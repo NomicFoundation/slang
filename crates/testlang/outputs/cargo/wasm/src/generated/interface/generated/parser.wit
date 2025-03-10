@@ -11,9 +11,6 @@ interface parser {
         /// It will throw an error if the language version is invalid or not supported.
         create: static func(language-version: string) -> result<parser, string>;
 
-        /// Parse a source file and return a list of likely valid language versions to use.
-        infer-language-version: static func(input: string) -> list<string>;
-
         /// Returns the language version this parser instance is configured for.
         language-version: func() -> string;
 

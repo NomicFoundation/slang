@@ -25,4 +25,5 @@ export class LanguageFacts {
    * Returns the latest language version supported by Slang.
    */
   static latestVersion(): string;
+  static inferLanguageVersions(src: string): Array<string>;
 }

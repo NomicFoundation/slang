@@ -39,4 +39,8 @@ define_wrapper! { LanguageFacts {
     fn latest_version() -> String {
         rust::LanguageFacts::LATEST_VERSION.to_string()
     }
+
+    fn infer_language_versions(src: String) -> Vec<String> {
+        rust::LanguageFacts::infer_language_versions(&src).iter().map(|v| v.to_string()).collect()
+    }
 } }

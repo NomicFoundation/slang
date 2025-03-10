@@ -9,5 +9,7 @@ interface utils {
 
         /// Returns the latest language version supported by Slang.
         latest-version: static func() -> string;
+
+        infer-language-versions: static func(src: string) -> list<string>;
     }
 }

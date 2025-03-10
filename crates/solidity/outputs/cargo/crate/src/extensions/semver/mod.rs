@@ -10,7 +10,7 @@ use crate::utils::LanguageFacts;
 
 /// Parse the version pragmas in the given Solidity source code and return a list of language
 /// versions that can fulfill those requirements.
-pub fn infer_language_version(src: &str) -> Vec<Version> {
+pub fn infer_language_versions(src: &str) -> Vec<Version> {
     let parser = crate::parser::Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
     let output = parser.parse_file_contents(src);
 
