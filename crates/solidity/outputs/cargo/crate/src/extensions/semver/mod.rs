@@ -19,15 +19,10 @@ pub fn infer_language_versions(src: &str) -> Vec<Version> {
     let mut cursor = output.create_tree_cursor();
 
     let mut found_ranges = Vec::<Range>::new();
-    while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::VersionPragma) {
+    while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::VersionExpressionSets) {
         let pragma_text = cursor.node().unparse();
-        let pragma_text = pragma_text.trim();
-        let pragma_text = pragma_text
-            .strip_prefix("solidity")
-            .unwrap_or(pragma_text)
-            .trim();
 
-        found_ranges.push(parser::parse(pragma_text));
+        found_ranges.push(parser::parse(&pragma_text));
     }
 
     if found_ranges.is_empty() {
