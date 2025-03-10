@@ -30,6 +30,10 @@ pub fn infer_language_versions(src: &str) -> Vec<Version> {
         found_ranges.push(parser::parse(pragma_text));
     }
 
+    if found_ranges.is_empty() {
+        return LanguageFacts::ALL_VERSIONS.into();
+    }
+
     let mut matching_versions = vec![];
     for lang_version in LanguageFacts::ALL_VERSIONS {
         if found_ranges.iter().all(|r| r.matches(lang_version)) {
@@ -37,7 +41,6 @@ pub fn infer_language_versions(src: &str) -> Vec<Version> {
         }
     }
 
-    matching_versions.sort();
     matching_versions
 }
 
