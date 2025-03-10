@@ -143,10 +143,8 @@ impl AstModel {
         let ebnf = self.get_ebnf(&parent_type);
         let fields = self.convert_fields(&item.fields).collect();
 
-        self.sequences.insert(parent_type, Sequence {
-            ebnf,
-            fields,
-        });
+        self.sequences
+            .insert(parent_type, Sequence { ebnf, fields });
     }
 
     fn add_enum_item(&mut self, item: &model::EnumItem) {
@@ -159,39 +157,48 @@ impl AstModel {
             .map(|variant| variant.reference.clone())
             .partition(|reference| self.terminals.contains(reference));
 
-        self.choices.insert(parent_type, Choice {
-            ebnf,
-            nonterminal_types,
-            includes_terminals: !terminal_types.is_empty(),
-        });
+        self.choices.insert(
+            parent_type,
+            Choice {
+                ebnf,
+                nonterminal_types,
+                includes_terminals: !terminal_types.is_empty(),
+            },
+        );
     }
 
     fn add_repeated_item(&mut self, item: &model::RepeatedItem) {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
-        self.repeated.insert(parent_type, Repeated {
-            ebnf,
-            item_type: if self.terminals.contains(&item.reference) {
-                None
-            } else {
-                Some(item.reference.clone())
+        self.repeated.insert(
+            parent_type,
+            Repeated {
+                ebnf,
+                item_type: if self.terminals.contains(&item.reference) {
+                    None
+                } else {
+                    Some(item.reference.clone())
+                },
             },
-        });
+        );
     }
 
     fn add_separated_item(&mut self, item: &model::SeparatedItem) {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
-        self.separated.insert(parent_type, Separated {
-            ebnf,
-            item_type: if self.terminals.contains(&item.reference) {
-                None
-            } else {
-                Some(item.reference.clone())
+        self.separated.insert(
+            parent_type,
+            Separated {
+                ebnf,
+                item_type: if self.terminals.contains(&item.reference) {
+                    None
+                } else {
+                    Some(item.reference.clone())
+                },
             },
-        });
+        );
     }
 
     fn add_precedence_item(&mut self, item: &model::PrecedenceItem) {
@@ -212,11 +219,14 @@ impl AstModel {
             .chain(primary_expressions)
             .partition(|reference| self.terminals.contains(reference));
 
-        self.choices.insert(parent_type, Choice {
-            ebnf,
-            nonterminal_types,
-            includes_terminals: !terminal_types.is_empty(),
-        });
+        self.choices.insert(
+            parent_type,
+            Choice {
+                ebnf,
+                nonterminal_types,
+                includes_terminals: !terminal_types.is_empty(),
+            },
+        );
     }
 
     fn add_precedence_expression(
@@ -255,10 +265,8 @@ impl AstModel {
             }
         };
 
-        self.sequences.insert(parent_type, Sequence {
-            ebnf,
-            fields,
-        });
+        self.sequences
+            .insert(parent_type, Sequence { ebnf, fields });
     }
 
     fn convert_fields<'a>(
