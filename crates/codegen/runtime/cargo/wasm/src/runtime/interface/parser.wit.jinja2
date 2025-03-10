@@ -5,6 +5,8 @@ interface parser {
     /// Each parser is configured for a specific language version and grammar.
     resource parser {
         /// Creates a new parser instance for the specified language version.
+        ///
+        /// It will throw an error if the language version is invalid or not supported.
         create: static func(language-version: string) -> result<parser, string>;
 
         /// Parse a source file and return a list of likely valid language versions to use.

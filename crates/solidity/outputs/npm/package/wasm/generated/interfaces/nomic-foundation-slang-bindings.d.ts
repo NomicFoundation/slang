@@ -33,11 +33,21 @@ export enum BindingLocationType {
 }
 
 /**
- * A giant graph that contains name binding information for all source files within the compilation unit.
+ * A graph that contains name binding information for all source files within the compilation unit.
  * It stores cursors to all definitions and references, and can resolve the edges between them.
- * Most cursors pointing to identifier terminals will resolve to either a definition or a reference. For example, in `contract A is B {}` the cursor to identifier `A` will resolve to a definition, and the cursor to identifier `B` will resolve to a reference.
- * There is one specific case in which a cursor to an identifier resolves to both: a non-aliased symbol import `import {X} from "library"`, where the identifier `X` is both a definition and a reference (to the symbol exported from `"library"`).
- * Also, an identifier denoting a feature in a `pragma experimental` directive will not resolve to either.
+ *
+ * Most cursors pointing to identifier terminals will resolve to either a definition or a reference.
+ * For example, in `contract A is B {}`, the cursor to identifier `A` will resolve to a definition,
+ * and the cursor to identifier `B` will resolve to a reference.
+ *
+ * However, in some cases, cursors to identifiers can resolve to both at the same time.
+ * For example, in `import {X} from "library"`, the cursor to identifier `X` will resolve to a
+ * definition (the local import), and also to a reference (to the symbol exported from `"library"`).
+ *
+ * This graph is error-tolerant, and will return `undefined` for any identifiers that cannot be resolved.
+ * For example, when there are syntactic/semantic errors, or missing source files.
+ *
+ * For more information on identifier terminals, see the `TerminalKindExtensions.isIdentifier()` API.
  */
 
 export class BindingGraph {

@@ -67,7 +67,7 @@ impl<T: KindTypes> Node<T> {
         Self::Terminal(TerminalNode::create(kind, text))
     }
 
-    /// Returns a unique identifier of the node. It is not reproducable over parses
+    /// Returns a unique identifier of the node. It is not reproducible over parses
     /// and cannot be used in a persistent/serialised sense.
     pub fn id(&self) -> usize {
         match self {
@@ -226,7 +226,7 @@ impl<T: KindTypes> NonterminalNode<T> {
         })
     }
 
-    /// Returns a unique identifier of the node. It is not reproducable over parses
+    /// Returns a unique identifier of the node. It is not reproducible over parses
     /// and cannot be used in a persistent/serialised sense.
     pub fn id(self: &Rc<Self>) -> usize {
         Rc::as_ptr(self) as usize
@@ -269,7 +269,7 @@ impl<T: KindTypes> TerminalNode<T> {
         Rc::new(Self { kind, text })
     }
 
-    /// Returns a unique identifier of the node. It is not reproducable over parses
+    /// Returns a unique identifier of the node. It is not reproducible over parses
     /// and cannot be used in a persistent/serialised sense.
     pub fn id(self: &Rc<Self>) -> usize {
         Rc::as_ptr(self) as usize

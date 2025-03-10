@@ -7,13 +7,14 @@ import {
   NegationExpression,
   SeparatedIdentifiers,
   SourceUnit,
+  SourceUnitMembers,
   Tree,
   TreeNode,
   TreeNodeChild,
 } from "@slang-private/testlang-npm-package/ast";
 import {
-  assertIsNonterminalNode,
-  assertIsTerminalNode,
+  assertNonterminalNode,
+  assertTerminalNode,
   NonterminalKind,
   TerminalKind,
 } from "@slang-private/testlang-npm-package/cst";
@@ -27,7 +28,7 @@ test("create and use sequence types", () => {
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
-  assertIsNonterminalNode(cst, NonterminalKind.Tree);
+  assertNonterminalNode(cst, NonterminalKind.Tree);
 
   const ast = new Tree(cst);
   expect(ast.keyword.unparse()).toEqual("tree");
@@ -45,17 +46,17 @@ test("create and use choice types", () => {
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
-  assertIsNonterminalNode(cst, NonterminalKind.TreeNodeChild);
+  assertNonterminalNode(cst, NonterminalKind.TreeNodeChild);
 
   const treeNodeChild = new TreeNodeChild(cst);
-  assertIsNonterminalNode(treeNodeChild.cst, NonterminalKind.TreeNodeChild);
+  assertNonterminalNode(treeNodeChild.cst, NonterminalKind.TreeNodeChild);
   expect(treeNodeChild.variant).toBeInstanceOf(TreeNode);
 
   const treeNode = treeNodeChild.variant as TreeNode;
-  assertIsNonterminalNode(treeNode.cst, NonterminalKind.TreeNode);
-  assertIsNonterminalNode(treeNode.members.cst, NonterminalKind.TreeNodeChildren);
-  assertIsTerminalNode(treeNode.openBracket, TerminalKind.OpenBracket, "[");
-  assertIsTerminalNode(treeNode.closeBracket, TerminalKind.CloseBracket, "]");
+  assertNonterminalNode(treeNode.cst, NonterminalKind.TreeNode);
+  assertNonterminalNode(treeNode.members.cst, NonterminalKind.TreeNodeChildren);
+  assertTerminalNode(treeNode.openBracket, TerminalKind.OpenBracket, "[");
+  assertTerminalNode(treeNode.closeBracket, TerminalKind.CloseBracket, "]");
 });
 
 test("create and use repeated types", () => {
@@ -67,13 +68,13 @@ test("create and use repeated types", () => {
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
-  assertIsNonterminalNode(cst, NonterminalKind.Tree);
+  assertNonterminalNode(cst, NonterminalKind.Tree);
 
   const tree = new Tree(cst);
-  assertIsNonterminalNode(tree.node.members.cst, NonterminalKind.TreeNodeChildren);
+  assertNonterminalNode(tree.node.members.cst, NonterminalKind.TreeNodeChildren);
 
   const names = tree.node.members.items.map((item) => {
-    assertIsTerminalNode(item.variant);
+    assertTerminalNode(item.variant);
     return item.variant.unparse();
   });
 
@@ -89,10 +90,10 @@ test("create and use separated types", () => {
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
-  assertIsNonterminalNode(cst, NonterminalKind.SeparatedIdentifiers);
+  assertNonterminalNode(cst, NonterminalKind.SeparatedIdentifiers);
 
   const separatedIdentifiers = new SeparatedIdentifiers(cst);
-  assertIsNonterminalNode(separatedIdentifiers.cst, NonterminalKind.SeparatedIdentifiers);
+  assertNonterminalNode(separatedIdentifiers.cst, NonterminalKind.SeparatedIdentifiers);
 
   const identifiers = separatedIdentifiers.items.map((identifier) => identifier.unparse());
   expect(identifiers).toStrictEqual(["Foo", "Bar", "Baz"]);
@@ -110,7 +111,7 @@ test("throws an exception on initializing the wrong type", () => {
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
-  assertIsNonterminalNode(cst, NonterminalKind.Tree);
+  assertNonterminalNode(cst, NonterminalKind.Tree);
 
   expect(() => new SourceUnit(cst)).toThrow(
     "AST node 'SourceUnit' can only be initialized with a CST node of the same kind. Received 'Tree' instead.",
@@ -126,18 +127,18 @@ test("throws an exception on using an incorrect/incomplete CST node", () => {
   expect(parseOutput.isValid()).toBeFalsy();
 
   const cst = parseOutput.tree;
-  assertIsNonterminalNode(cst, NonterminalKind.Tree);
+  assertNonterminalNode(cst, NonterminalKind.Tree);
 
   const children = cst.children();
   expect(children).toHaveLength(2);
 
   const [contractKeyword, skippedTerminal] = children;
-  assertIsTerminalNode(contractKeyword!.node, TerminalKind.TreeKeyword, "tree");
-  assertIsTerminalNode(skippedTerminal!.node, TerminalKind.Missing, "");
+  assertTerminalNode(contractKeyword!.node, TerminalKind.TreeKeyword, "tree");
+  assertTerminalNode(skippedTerminal!.node, TerminalKind.Missing, "");
 
   // Creating the tree should succeed, as the fields are lazily intialized.
   const tree = new Tree(cst);
-  assertIsNonterminalNode(tree.cst, NonterminalKind.Tree);
+  assertNonterminalNode(tree.cst, NonterminalKind.Tree);
 
   expect(() => tree.node).toThrow(
     "Missing child with label 'node'. Creating AST types from incorrect/incomplete CST nodes is not supported yet.",
@@ -153,14 +154,14 @@ test("create and use prefix expressions", () => {
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
-  assertIsNonterminalNode(cst, NonterminalKind.Expression);
+  assertNonterminalNode(cst, NonterminalKind.Expression);
 
   const expression = new Expression(cst);
   assert(expression.variant instanceof NegationExpression);
 
   const { operator, operand } = expression.variant;
-  assertIsTerminalNode(operator, TerminalKind.Bang, "!");
-  assertIsTerminalNode(operand.variant, TerminalKind.Identifier, "foo");
+  assertTerminalNode(operator, TerminalKind.Bang, "!");
+  assertTerminalNode(operand.variant, TerminalKind.Identifier, "foo");
 });
 
 test("create and use postfix expressions", () => {
@@ -172,15 +173,15 @@ test("create and use postfix expressions", () => {
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
-  assertIsNonterminalNode(cst, NonterminalKind.Expression);
+  assertNonterminalNode(cst, NonterminalKind.Expression);
 
   const expression = new Expression(cst);
   assert(expression.variant instanceof MemberAccessExpression);
 
   const { operand, period, member } = expression.variant;
-  assertIsTerminalNode(operand.variant, TerminalKind.Identifier, "foo");
-  assertIsTerminalNode(period, TerminalKind.Period, ".");
-  assertIsTerminalNode(member, TerminalKind.Identifier, "bar");
+  assertTerminalNode(operand.variant, TerminalKind.Identifier, "foo");
+  assertTerminalNode(period, TerminalKind.Period, ".");
+  assertTerminalNode(member, TerminalKind.Identifier, "bar");
 });
 
 test("create and use binary expressions", () => {
@@ -192,15 +193,15 @@ test("create and use binary expressions", () => {
   expect(parseOutput.isValid()).toBeTruthy();
 
   const cst = parseOutput.tree;
-  assertIsNonterminalNode(cst, NonterminalKind.Expression);
+  assertNonterminalNode(cst, NonterminalKind.Expression);
 
   const expression = new Expression(cst);
   assert(expression.variant instanceof AdditionExpression);
 
   const { leftOperand, operator, rightOperand } = expression.variant;
-  assertIsTerminalNode(leftOperand.variant, TerminalKind.Identifier, "foo");
-  assertIsTerminalNode(operator, TerminalKind.Plus, "+");
-  assertIsTerminalNode(rightOperand.variant, TerminalKind.Identifier, "bar");
+  assertTerminalNode(leftOperand.variant, TerminalKind.Identifier, "foo");
+  assertTerminalNode(operator, TerminalKind.Plus, "+");
+  assertTerminalNode(rightOperand.variant, TerminalKind.Identifier, "bar");
 });
 
 it("can reuse the same CST nodes after selectors", () => {
@@ -212,12 +213,9 @@ it("can reuse the same CST nodes after selectors", () => {
   const parseOutput = parser.parseFileContents(source);
   parseOutput.isValid(); // true
 
-  const cst = parseOutput.tree.asNonterminalNode()!;
-  const ast = new SourceUnit(cst);
+  const sourceUnit = new SourceUnit(parseOutput.tree);
+  assertNonterminalNode(sourceUnit.cst, NonterminalKind.SourceUnit);
 
-  expect(ast.cst.kind).toBe(NonterminalKind.SourceUnit);
-
-  expect(ast.members.cst.kind).toBe(NonterminalKind.SourceUnitMembers);
-
-  expect(ast.cst.kind).toBe(NonterminalKind.SourceUnit);
+  assert(sourceUnit.members instanceof SourceUnitMembers);
+  assertNonterminalNode(sourceUnit.members.cst, NonterminalKind.SourceUnitMembers);
 });

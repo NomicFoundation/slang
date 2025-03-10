@@ -225,6 +225,11 @@ impl Resolver {
             .expect("All references should have been resolved")
             .get(&handle)
             .cloned()
+            .map(|mut references| {
+                // ensure consistency in the order of returned references
+                references.sort();
+                references
+            })
             .unwrap_or_default()
     }
 }

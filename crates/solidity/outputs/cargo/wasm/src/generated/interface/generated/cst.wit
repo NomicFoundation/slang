@@ -4445,7 +4445,8 @@ interface cst {
     /// Represents a tree query for pattern matching in the syntax tree.
     resource query {
         /// Parses a query string into a query object.
-        /// Throws an error if the query syntax is invalid.
+        ///
+        /// It will throw a `QueryError` if the query syntax is invalid.
         create: static func(text: string) -> result<query, query-error>;
     }
 
@@ -4461,6 +4462,8 @@ interface cst {
     record query-match {
         /// The index of the query that produced this match.
         query-index: u32,
+        /// A cursor to the matched root node.
+        root: cursor,
         /// List of captured nodes and their names from the query.
         captures: list<tuple<string, list<cursor>>>,
     }

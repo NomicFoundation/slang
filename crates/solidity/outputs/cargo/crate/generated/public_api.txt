@@ -27,7 +27,7 @@ pub struct slang_solidity::compilation::AddFileResponse
 pub slang_solidity::compilation::AddFileResponse::import_paths: alloc::vec::Vec<slang_solidity::cst::Cursor>
 pub struct slang_solidity::compilation::CompilationUnit
 impl slang_solidity::compilation::CompilationUnit
-pub fn slang_solidity::compilation::CompilationUnit::binding_graph(&self) -> &core::result::Result<alloc::rc::Rc<slang_solidity::bindings::BindingGraph>, slang_solidity::bindings::BindingGraphInitializationError>
+pub fn slang_solidity::compilation::CompilationUnit::binding_graph(&self) -> &alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
 pub fn slang_solidity::compilation::CompilationUnit::file(&self, id: &str) -> core::option::Option<alloc::rc::Rc<slang_solidity::compilation::File>>
 pub fn slang_solidity::compilation::CompilationUnit::files(&self) -> alloc::vec::Vec<alloc::rc::Rc<slang_solidity::compilation::File>>
 pub fn slang_solidity::compilation::CompilationUnit::language_version(&self) -> &semver::Version
