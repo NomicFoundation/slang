@@ -1,0 +1,22 @@
+{
+  "105": [
+    { "length": 32, "start": 4225 },
+    { "length": 32, "start": 5120 },
+    { "length": 32, "start": 5751 },
+    { "length": 32, "start": 6518 },
+    { "length": 32, "start": 6647 },
+    { "length": 32, "start": 7479 },
+    { "length": 32, "start": 9248 },
+    { "length": 32, "start": 12611 }
+  ],
+  "107": [
+    { "length": 32, "start": 5157 },
+    { "length": 32, "start": 5799 },
+    { "length": 32, "start": 6573 },
+    { "length": 32, "start": 6782 },
+    { "length": 32, "start": 7516 },
+    { "length": 32, "start": 9326 },
+    { "length": 32, "start": 9903 },
+    { "length": 32, "start": 12672 }
+  ]
+}
