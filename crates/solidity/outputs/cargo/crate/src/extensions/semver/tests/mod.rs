@@ -1,7 +1,4 @@
-#[cfg(test)]
 use semver::Version;
-
-#[cfg(test)]
 use super::{parser::parse, Range};
 
 #[test]
@@ -620,21 +617,20 @@ fn solc_negative_tests() {
     solc_test_case("^0", Version::new(1, 0, 0), false);
 }
 
-#[cfg(test)]
 fn test_range_match(range: &Range, tests: &Vec<Version>) {
     for t in tests {
         assert!(range.matches(t));
     }
 }
 
-#[cfg(test)]
 fn test_range_match_fail(range: &Range, tests: &Vec<Version>) {
     for t in tests {
         assert!(!range.matches(t));
     }
 }
 
-#[cfg(test)]
+// Preferring to pass by value just to reduce noise in callers
+#[allow(clippy::needless_pass_by_value)]
 fn solc_test_case(range_str: &str, version: Version, positive: bool) {
     let range = parse(range_str);
 
