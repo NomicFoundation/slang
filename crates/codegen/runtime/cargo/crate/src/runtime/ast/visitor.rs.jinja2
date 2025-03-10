@@ -8,7 +8,7 @@
 
   pub trait Visitor {
     {% for parent_type, sequence in model.ast.sequences %}
-      fn visit_{{ parent_type | snake_case }}(&self, _target: &{{ parent_type }}) {}
+      fn visit_{{ parent_type | snake_case }}(&mut self, _target: &{{ parent_type }}) {}
     {%- endfor %}
   }
 
@@ -18,7 +18,7 @@
 
   {% for parent_type, sequence in model.ast.sequences %}
     impl {{ parent_type }}Struct {
-      pub fn accept(self: &Rc<Self>, visitor: &dyn Visitor) {
+      pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
         {% for field in sequence.fields -%}
           {%- if field.type -%}
             {%- if field.is_optional %}
@@ -51,11 +51,11 @@
   {% for parent_type, choice in model.ast.choices %}
     {% if choice.nonterminal_types | length == 0 %}
       impl {{ parent_type }} {
-        pub fn accept(&self, _visitor: &dyn Visitor) {}
+        pub fn accept(&self, _visitor: &mut dyn Visitor) {}
       }
     {% else %}
       impl {{ parent_type }} {
-        pub fn accept(&self, visitor: &dyn Visitor) {
+        pub fn accept(&self, visitor: &mut dyn Visitor) {
           match self {
             {% for nonterminal in choice.nonterminal_types -%}
               Self::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
@@ -82,7 +82,7 @@
   {% for parent_type, repeated in model.ast.repeated -%}
     {%- if repeated.item_type %}
       #[inline]
-      fn accept_{{ parent_type | snake_case }}(items: &[{{ repeated.item_type }}], visitor: &dyn Visitor) {
+      fn accept_{{ parent_type | snake_case }}(items: &[{{ repeated.item_type }}], visitor: &mut dyn Visitor) {
         for item in items {
           {%- if repeated.item_type in model.ast.repeated or
                  repeated.item_type in model.ast.separated %}
@@ -94,7 +94,7 @@
       }
     {% else %}
       #[inline]
-      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &dyn Visitor) {}
+      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
     {% endif -%}
   {% endfor %}
 
@@ -105,7 +105,7 @@
   {% for parent_type, separated in model.ast.separated %}
     {%- if separated.item_type %}
       #[inline]
-      fn accept_{{ parent_type | snake_case }}(items: &[{{ separated.item_type }}], visitor: &dyn Visitor) {
+      fn accept_{{ parent_type | snake_case }}(items: &[{{ separated.item_type }}], visitor: &mut dyn Visitor) {
         for item in items {
           {%- if separated.item_type in model.ast.repeated or
                  separated.item_type in model.ast.separated %}
@@ -117,7 +117,7 @@
       }
     {% else %}
       #[inline]
-      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &dyn Visitor) {}
+      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
     {% endif -%}
   {% endfor %}
 
