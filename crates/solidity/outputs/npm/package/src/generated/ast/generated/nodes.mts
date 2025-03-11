@@ -4933,31 +4933,31 @@ export class EqualityExpression {
 }
 
 /**
- * This node represents a `ComparisonExpression` nonterminal, with the following structure:
+ * This node represents a `InequalityExpression` nonterminal, with the following structure:
  *
  * ```ebnf
  * (* Left-associative binary operator *)
- * ComparisonExpression = (* left_operand: *) Expression
+ * InequalityExpression = (* left_operand: *) Expression
  *                        (* operator: *) LESS_THAN
  *                        (* right_operand: *) Expression;
  *
  * (* Left-associative binary operator *)
- * ComparisonExpression = (* left_operand: *) Expression
+ * InequalityExpression = (* left_operand: *) Expression
  *                        (* operator: *) GREATER_THAN
  *                        (* right_operand: *) Expression;
  *
  * (* Left-associative binary operator *)
- * ComparisonExpression = (* left_operand: *) Expression
+ * InequalityExpression = (* left_operand: *) Expression
  *                        (* operator: *) LESS_THAN_EQUAL
  *                        (* right_operand: *) Expression;
  *
  * (* Left-associative binary operator *)
- * ComparisonExpression = (* left_operand: *) Expression
+ * InequalityExpression = (* left_operand: *) Expression
  *                        (* operator: *) GREATER_THAN_EQUAL
  *                        (* right_operand: *) Expression;
  * ```
  */
-export class ComparisonExpression {
+export class InequalityExpression {
   private readonly fetch = once(() => {
     const [$leftOperand, $operator, $rightOperand] = wasm.ast.Selectors.sequence(this.cst);
 
@@ -4969,15 +4969,15 @@ export class ComparisonExpression {
   });
 
   /**
-   * Constructs a new AST node of type `ComparisonExpression`, given a nonterminal CST node of the same kind.
+   * Constructs a new AST node of type `InequalityExpression`, given a nonterminal CST node of the same kind.
    */
   public constructor(
     /**
-     * The underlying nonterminal CST node of kind `ComparisonExpression`.
+     * The underlying nonterminal CST node of kind `InequalityExpression`.
      */
     public readonly cst: NonterminalNode,
   ) {
-    assertKind(this.cst.kind, NonterminalKind.ComparisonExpression);
+    assertKind(this.cst.kind, NonterminalKind.InequalityExpression);
   }
 
   /**
@@ -8996,7 +8996,7 @@ export class ForStatementCondition {
  *            | (* variant: *) OrExpression
  *            | (* variant: *) AndExpression
  *            | (* variant: *) EqualityExpression
- *            | (* variant: *) ComparisonExpression
+ *            | (* variant: *) InequalityExpression
  *            | (* variant: *) BitwiseOrExpression
  *            | (* variant: *) BitwiseXorExpression
  *            | (* variant: *) BitwiseAndExpression
@@ -9033,7 +9033,7 @@ export class Expression {
     | OrExpression
     | AndExpression
     | EqualityExpression
-    | ComparisonExpression
+    | InequalityExpression
     | BitwiseOrExpression
     | BitwiseXorExpression
     | BitwiseAndExpression
@@ -9073,8 +9073,8 @@ export class Expression {
         return new AndExpression(variant as NonterminalNode);
       case NonterminalKind.EqualityExpression:
         return new EqualityExpression(variant as NonterminalNode);
-      case NonterminalKind.ComparisonExpression:
-        return new ComparisonExpression(variant as NonterminalNode);
+      case NonterminalKind.InequalityExpression:
+        return new InequalityExpression(variant as NonterminalNode);
       case NonterminalKind.BitwiseOrExpression:
         return new BitwiseOrExpression(variant as NonterminalNode);
       case NonterminalKind.BitwiseXorExpression:
@@ -9144,7 +9144,7 @@ export class Expression {
     | OrExpression
     | AndExpression
     | EqualityExpression
-    | ComparisonExpression
+    | InequalityExpression
     | BitwiseOrExpression
     | BitwiseXorExpression
     | BitwiseAndExpression

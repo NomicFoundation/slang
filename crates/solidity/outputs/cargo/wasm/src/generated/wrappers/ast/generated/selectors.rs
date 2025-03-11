@@ -128,7 +128,7 @@ pub fn select_sequence(node: &Rc<NonterminalNode>) -> Result<Vec<Option<Node>>> 
         NonterminalKind::OrExpression => helper.or_expression_sequence()?,
         NonterminalKind::AndExpression => helper.and_expression_sequence()?,
         NonterminalKind::EqualityExpression => helper.equality_expression_sequence()?,
-        NonterminalKind::ComparisonExpression => helper.comparison_expression_sequence()?,
+        NonterminalKind::InequalityExpression => helper.inequality_expression_sequence()?,
         NonterminalKind::BitwiseOrExpression => helper.bitwise_or_expression_sequence()?,
         NonterminalKind::BitwiseXorExpression => helper.bitwise_xor_expression_sequence()?,
         NonterminalKind::BitwiseAndExpression => helper.bitwise_and_expression_sequence()?,
@@ -1067,7 +1067,7 @@ impl Helper {
 }
 
 impl Helper {
-    fn comparison_expression_sequence(&mut self) -> Result<Vec<Option<Node>>> {
+    fn inequality_expression_sequence(&mut self) -> Result<Vec<Option<Node>>> {
         Ok(vec![
             Some(self.select(EdgeLabel::LeftOperand)?),
             Some(self.select(EdgeLabel::Operator)?),

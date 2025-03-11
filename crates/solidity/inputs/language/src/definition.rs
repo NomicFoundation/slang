@@ -3295,7 +3295,7 @@ codegen_language_macros::compile!(Language(
                                     ]
                                 ),
                                 PrecedenceExpression(
-                                    name = ComparisonExpression,
+                                    name = InequalityExpression,
                                     operators = [
                                         PrecedenceOperator(
                                             model = BinaryLeftAssociative,

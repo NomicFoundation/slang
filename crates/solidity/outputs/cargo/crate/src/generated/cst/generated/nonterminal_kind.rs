@@ -260,30 +260,6 @@ pub enum NonterminalKind {
     /// CatchClauses = (* item: *) CatchClause+;
     /// ```
     CatchClauses,
-    /// Represents a node with kind `ComparisonExpression`, having the following structure:
-    ///
-    /// ```ebnf
-    /// (* Left-associative binary operator *)
-    /// ComparisonExpression = (* left_operand: *) Expression
-    ///                        (* operator: *) LESS_THAN
-    ///                        (* right_operand: *) Expression;
-    ///
-    /// (* Left-associative binary operator *)
-    /// ComparisonExpression = (* left_operand: *) Expression
-    ///                        (* operator: *) GREATER_THAN
-    ///                        (* right_operand: *) Expression;
-    ///
-    /// (* Left-associative binary operator *)
-    /// ComparisonExpression = (* left_operand: *) Expression
-    ///                        (* operator: *) LESS_THAN_EQUAL
-    ///                        (* right_operand: *) Expression;
-    ///
-    /// (* Left-associative binary operator *)
-    /// ComparisonExpression = (* left_operand: *) Expression
-    ///                        (* operator: *) GREATER_THAN_EQUAL
-    ///                        (* right_operand: *) Expression;
-    /// ```
-    ComparisonExpression,
     /// Represents a node with kind `ConditionalExpression`, having the following structure:
     ///
     /// ```ebnf
@@ -563,7 +539,7 @@ pub enum NonterminalKind {
     ///            | (* variant: *) OrExpression
     ///            | (* variant: *) AndExpression
     ///            | (* variant: *) EqualityExpression
-    ///            | (* variant: *) ComparisonExpression
+    ///            | (* variant: *) InequalityExpression
     ///            | (* variant: *) BitwiseOrExpression
     ///            | (* variant: *) BitwiseXorExpression
     ///            | (* variant: *) BitwiseAndExpression
@@ -845,6 +821,30 @@ pub enum NonterminalKind {
     ///                         (* close_bracket: *) CLOSE_BRACKET;
     /// ```
     IndexAccessExpression,
+    /// Represents a node with kind `InequalityExpression`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Left-associative binary operator *)
+    /// InequalityExpression = (* left_operand: *) Expression
+    ///                        (* operator: *) LESS_THAN
+    ///                        (* right_operand: *) Expression;
+    ///
+    /// (* Left-associative binary operator *)
+    /// InequalityExpression = (* left_operand: *) Expression
+    ///                        (* operator: *) GREATER_THAN
+    ///                        (* right_operand: *) Expression;
+    ///
+    /// (* Left-associative binary operator *)
+    /// InequalityExpression = (* left_operand: *) Expression
+    ///                        (* operator: *) LESS_THAN_EQUAL
+    ///                        (* right_operand: *) Expression;
+    ///
+    /// (* Left-associative binary operator *)
+    /// InequalityExpression = (* left_operand: *) Expression
+    ///                        (* operator: *) GREATER_THAN_EQUAL
+    ///                        (* right_operand: *) Expression;
+    /// ```
+    InequalityExpression,
     /// Represents a node with kind `InheritanceSpecifier`, having the following structure:
     ///
     /// ```ebnf
