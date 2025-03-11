@@ -127,7 +127,7 @@ fn test_fails_parsing_ellipsis() {
         Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(
             e.message,
-            "Parse error:\nThe ellipsis `...` operator is deprecated, and replaced with a new adjacency `.` operator. For more information, check the Tree Query Language guide: https://nomicfoundation.github.io/slang/latest/user-guide/tree-query-language/ at: ...]\n",
+            "Parse error:\nThe ellipsis `...` operator is deprecated, and replaced with a new adjacency `.` operator. at: ...]\n",
         ),
     }
 }
@@ -166,7 +166,7 @@ fn test_fails_parsing_trivia_node_selector() {
         Ok(_) => panic!("Expected parse failure"),
         Err(e) => assert_eq!(
             e.message,
-            "Parse error:\nMatching trivia nodes directly is forbidden. For more information, check the Tree Query Language guide: https://nomicfoundation.github.io/slang/latest/user-guide/tree-query-language/ at: EndOfLine]\n"
+            "Parse error:\nMatching trivia nodes directly is forbidden. at: EndOfLine]\n"
         ),
     }
 }
