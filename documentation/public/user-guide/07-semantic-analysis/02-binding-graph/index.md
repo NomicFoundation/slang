@@ -7,7 +7,8 @@ Building this graph can be an expensive operation. So, it is constructed lazily 
 You can use cursors to query the graph for definitions or references.
 
 Any identifier in the tree can be resolved to a definition or a reference. Note that there are multiple kinds of identifiers.
-For example, Solidity has `Identifier`, and Yul has `YulIdentifier`. To find/filter terminals that are identifiers,
+For example, Solidity has [`Identifier`](../../../solidity-grammar/05-expressions/06-identifiers.md), and Yul has
+[`YulIdentifier`](../../../solidity-grammar/06-yul/02-yul-expressions.md). To find/filter terminals that are identifiers,
 you can use the `TerminalKindExtensions.isIdentifier()` API to test for that.
 
 ## Resolving Definitions
@@ -36,9 +37,9 @@ User file binding locations will also contain a `cursor` to the underlying ident
 
 We find 3 definitions:
 
-- the `Log` imported symbol
-- the `MyContract` contract
-- the `test` method
+- The `Log` imported symbol.
+- The `MyContract` contract.
+- The `test` method.
 
 The `Log` import symbol is a special case and also acts as a reference to the actual event type defined in `events.sol`. Let's find all references in the file next.
 

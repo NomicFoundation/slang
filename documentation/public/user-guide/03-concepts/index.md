@@ -7,7 +7,7 @@ which are handed the input and only their output can be observed.
 
 ## Language Grammar
 
-The entire Solidity grammar (Across all supported versions) is defined in the [Solidity Grammar](../../solidity-grammar/index.md) section.
+The entire Solidity grammar (across all supported versions) is defined in the [Solidity Grammar](../../solidity-grammar/index.md) section.
 You can use this as a guide when developing your own tools using Slang. The grammar is also included as documentation on top of the corresponding APIs
 (like `TerminalKind`, `NonterminalKind`, and `EdgeLabel` variants). It explains the structure of each node, and the relationships between each parent
 and its children.

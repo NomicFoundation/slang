@@ -6,7 +6,7 @@ It allows us to parse not just the input as a top-level source unit, but also in
 ## Parsing Source Files
 
 Let's start with this simple source file, that contains a single contract, and parse it into a concrete syntax tree.
-The parser will produce a `ParseOutput` object, which contains a `SourceUnit` root node:
+The parser will produce a `ParseOutput` object, which contains a [`SourceUnit`](../../../solidity-grammar/01-file-structure/02-source-unit.md) root node:
 
 ```ts title="parsing-source-files.mts"
 --8<-- "documentation/public/user-guide/05-syntax-trees/01-parsing-source-code/examples/01-parsing-source-files.test.mts"
@@ -15,7 +15,7 @@ The parser will produce a `ParseOutput` object, which contains a `SourceUnit` ro
 ## Parsing Nonterminals
 
 The parser API also allows you to parse specific nonterminal nodes, like statements or expressions.
-This is useful when you want to parse a snippet, and not an entire source file, like the `AdditiveExpression` node below:
+This is useful when you want to parse a snippet, and not an entire source file, like the [`AdditiveExpression`](../../../solidity-grammar/05-expressions/01-base-expressions.md) node below:
 
 ```ts title="parsing-nonterminals.mts"
 --8<-- "documentation/public/user-guide/05-syntax-trees/01-parsing-source-code/examples/02-parsing-nonterminals.test.mts"
