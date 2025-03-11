@@ -12,7 +12,7 @@ Currently, the repository has the following projects:
 - `.devcontainer/`: self-contained Docker image to develop, build, test, and publish.
 - `crates/`:
     - `infra/`: contains the CLI used for development, and utilities to build/test/run/debug all other projects.
-    - `codegen/`: language analysis APs that convert input crates to output crates below.
+    - `codegen/`: language analysis APIs that convert input crates to output crates below.
     - `solidity/`:
         - `inputs/`: Solidity language definition.
         - `outputs/`: different packages and artifacts produced from it.
