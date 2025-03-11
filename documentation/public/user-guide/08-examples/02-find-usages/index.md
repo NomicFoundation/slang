@@ -12,6 +12,6 @@ For example, we can look for usages of the `_count` state variable defined in li
 --8<-- "documentation/public/user-guide/08-examples/common/sample-contract.sol"
 ```
 
-```ts title="test-find-usages.test.mts"
+```ts title="test-find-usages.mts"
 --8<-- "documentation/public/user-guide/08-examples/02-find-usages/examples/test-find-usages.test.mts"
 ```
