@@ -2,4 +2,4 @@
 "@nomicfoundation/slang": major
 ---
 
-release Slang v1! 🚀🚀🚀
+release Slang v1 🚀🚀🚀
