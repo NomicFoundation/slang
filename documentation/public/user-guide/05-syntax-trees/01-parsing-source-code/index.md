@@ -6,7 +6,7 @@ It allows us to parse not just the input as a top-level source unit, but also in
 ## Parsing Source Files
 
 Let's start with this simple source file, that contains a single contract, and parse it into a concrete syntax tree.
-The parser will produce a `ParseOutput` object, which contains a [`SourceUnit`](../../../solidity-grammar/01-file-structure/02-source-unit.md) root node:
+The parser will produce a `ParseOutput` object, which contains a [`SourceUnit`](../../../solidity-grammar/01-file-structure/01-source-unit.md) root node:
 
 ```ts title="parsing-source-files.mts"
 --8<-- "documentation/public/user-guide/05-syntax-trees/01-parsing-source-code/examples/01-parsing-source-files.test.mts"

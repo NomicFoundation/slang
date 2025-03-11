@@ -3,7 +3,6 @@ use std::fmt::{Display, Write};
 use anyhow::Result;
 use codegen_ebnf::EbnfWriter;
 use codegen_language_definition::model::Identifier;
-use infra_utils::paths::PathExtensions;
 
 use crate::model::SpecModel;
 
@@ -14,55 +13,40 @@ pub fn generate_topic_page(
 ) -> Result<String> {
     let section = &model.sections[section_index];
     let topic = &section.topics[topic_index];
+    assert!(!topic.items.is_empty());
 
     let mut buffer = String::new();
 
     writeln!(buffer, "# {topic_title}", topic_title = topic.title)?;
 
-    if !topic.items.is_empty() {
+    for item in &topic.items {
         writeln!(buffer)?;
-        writeln!(buffer, "## Syntax")?;
+        writeln!(buffer, "```{{ .ebnf #{item} }}")?;
+        writeln!(buffer)?;
+        writeln!(buffer, "```")?;
 
-        for item in &topic.items {
-            writeln!(buffer)?;
-            writeln!(buffer, "```{{ .ebnf #{item} }}")?;
-            writeln!(buffer)?;
-            writeln!(buffer, "```")?;
+        // Markdown code blocks don't support links between identifiers.
+        // So in order to do that, we generate the links into a hidden element,
+        // then after page load, we inject this snippet's contents into the code block.
 
-            // Markdown code blocks don't support links between identifiers.
-            // So in order to do that, we generate the links into a hidden element,
-            // then after page load, we inject this snippet's contents into the code block.
+        writeln!(buffer)?;
+        write!(
+            buffer,
+            "<pre ebnf-snippet=\"{item}\" style=\"display: none;\">",
+        )?;
 
-            writeln!(buffer)?;
-            write!(
-                buffer,
-                "<pre ebnf-snippet=\"{item}\" style=\"display: none;\">",
-            )?;
+        model.ebnf.serialize(
+            item,
+            &mut HtmlWriter {
+                buffer: &mut buffer,
+                model,
+                section_index,
+                topic_index,
+            },
+        )?;
 
-            model.ebnf.serialize(
-                item,
-                &mut HtmlWriter {
-                    buffer: &mut buffer,
-                    model,
-                    section_index,
-                    topic_index,
-                },
-            )?;
-
-            writeln!(buffer, "</pre>")?;
-        }
+        writeln!(buffer, "</pre>")?;
     }
-
-    let documentation_dir = &model.language.documentation_dir;
-
-    writeln!(buffer)?;
-    writeln!(
-        buffer,
-        "--8<-- \"{documentation_dir}/{section_slug}/{topic_slug}.md\"",
-        documentation_dir = documentation_dir.unwrap_str(),
-        section_slug = section.slug,
-        topic_slug = topic.slug,
-    )?;
 
     Ok(buffer)
 }

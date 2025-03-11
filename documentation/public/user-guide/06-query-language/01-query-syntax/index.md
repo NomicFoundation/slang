@@ -13,7 +13,7 @@ certain set of nodes in a tree. The expression to match a given node
 consists of a pair of brackets (`[]`) containing two things: the node's kind, and
 optionally, a series of other patterns that match the node's children. For
 example, this pattern would match any [`MultiplicativeExpression`](../../../solidity-grammar/05-expressions/01-base-expressions.md) node that has
-two children [`Expression`](../../../solidity-grammar/05-expressions/01-base-expressions.md) nodes, with an [`Asterisk`](../../../solidity-grammar/01-file-structure/09-punctuation.md) node in between:
+two children [`Expression`](../../../solidity-grammar/05-expressions/01-base-expressions.md) nodes, with an [`Asterisk`](../../../solidity-grammar/01-file-structure/07-punctuation.md) node in between:
 
 ```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:query-syntax-1"

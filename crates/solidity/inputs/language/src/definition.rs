@@ -2,7 +2,6 @@ pub use solidity::SolidityDefinition;
 
 codegen_language_macros::compile!(Language(
     name = Solidity,
-    documentation_dir = "crates/solidity/inputs/language/docs",
     binding_rules_file = "crates/solidity/inputs/language/bindings/rules.msgb",
     root_item = SourceUnit,
     leading_trivia = OneOrMore(Choice([
@@ -33,7 +32,6 @@ codegen_language_macros::compile!(Language(
         Section(
             title = "File Structure",
             topics = [
-                Topic(title = "License Specifiers", items = []),
                 Topic(
                     title = "Source Unit",
                     items = [
@@ -468,7 +466,6 @@ codegen_language_macros::compile!(Language(
                         )
                     ]
                 ),
-                Topic(title = "Nat Spec Format", items = []),
                 Topic(
                     title = "Keywords",
                     items = [

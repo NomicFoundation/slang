@@ -1,5 +1,5 @@
 error: Expected a non-empty string.
-  --> src/fail/parsing/empty_string/test.rs:17:63
+  --> src/fail/parsing/empty_string/test.rs:16:63
    |
-17 |                 definitions = [TokenDefinition(scanner = Atom(""))]
+16 |                 definitions = [TokenDefinition(scanner = Atom(""))]
    |                                                               ^^

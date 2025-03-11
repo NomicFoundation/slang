@@ -1,14 +1,12 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-# 1.3. Pragma Directives
-
-## Syntax
+# 1.2. Pragma Directives
 
 ```{ .ebnf #PragmaDirective }
 
 ```
 
-<pre ebnf-snippet="PragmaDirective" style="display: none;"><a href="#PragmaDirective"><span class="k">PragmaDirective</span></a><span class="o"> = </span><span class="cm">(* pragma_keyword: *)</span><span class="o"> </span><a href="../08-keywords#PragmaKeyword"><span class="k">PRAGMA_KEYWORD</span></a><br /><span class="o">                  </span><span class="cm">(* pragma: *)</span><span class="o"> </span><a href="#Pragma"><span class="k">Pragma</span></a><br /><span class="o">                  </span><span class="cm">(* semicolon: *)</span><span class="o"> </span><a href="../09-punctuation#Semicolon"><span class="k">SEMICOLON</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="PragmaDirective" style="display: none;"><a href="#PragmaDirective"><span class="k">PragmaDirective</span></a><span class="o"> = </span><span class="cm">(* pragma_keyword: *)</span><span class="o"> </span><a href="../06-keywords#PragmaKeyword"><span class="k">PRAGMA_KEYWORD</span></a><br /><span class="o">                  </span><span class="cm">(* pragma: *)</span><span class="o"> </span><a href="#Pragma"><span class="k">Pragma</span></a><br /><span class="o">                  </span><span class="cm">(* semicolon: *)</span><span class="o"> </span><a href="../07-punctuation#Semicolon"><span class="k">SEMICOLON</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #Pragma }
 
@@ -44,7 +42,7 @@
 
 ```
 
-<pre ebnf-snippet="VersionExpressionSets" style="display: none;"><a href="#VersionExpressionSets"><span class="k">VersionExpressionSets</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../09-punctuation#BarBar"><span class="k">BAR_BAR</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionExpressionSets" style="display: none;"><a href="#VersionExpressionSets"><span class="k">VersionExpressionSets</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../07-punctuation#BarBar"><span class="k">BAR_BAR</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionExpressionSet"><span class="k">VersionExpressionSet</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionExpressionSet }
 
@@ -62,7 +60,7 @@
 
 ```
 
-<pre ebnf-snippet="VersionRange" style="display: none;"><a href="#VersionRange"><span class="k">VersionRange</span></a><span class="o"> = </span><span class="cm">(* start: *)</span><span class="o"> </span><a href="#VersionLiteral"><span class="k">VersionLiteral</span></a><br /><span class="o">               </span><span class="cm">(* minus: *)</span><span class="o"> </span><a href="../09-punctuation#Minus"><span class="k">MINUS</span></a><br /><span class="o">               </span><span class="cm">(* end: *)</span><span class="o"> </span><a href="#VersionLiteral"><span class="k">VersionLiteral</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionRange" style="display: none;"><a href="#VersionRange"><span class="k">VersionRange</span></a><span class="o"> = </span><span class="cm">(* start: *)</span><span class="o"> </span><a href="#VersionLiteral"><span class="k">VersionLiteral</span></a><br /><span class="o">               </span><span class="cm">(* minus: *)</span><span class="o"> </span><a href="../07-punctuation#Minus"><span class="k">MINUS</span></a><br /><span class="o">               </span><span class="cm">(* end: *)</span><span class="o"> </span><a href="#VersionLiteral"><span class="k">VersionLiteral</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionTerm }
 
@@ -74,7 +72,7 @@
 
 ```
 
-<pre ebnf-snippet="VersionOperator" style="display: none;"><a href="#VersionOperator"><span class="k">VersionOperator</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../09-punctuation#Caret"><span class="k">CARET</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../09-punctuation#Tilde"><span class="k">TILDE</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../09-punctuation#Equal"><span class="k">EQUAL</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../09-punctuation#LessThan"><span class="k">LESS_THAN</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../09-punctuation#GreaterThan"><span class="k">GREATER_THAN</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../09-punctuation#LessThanEqual"><span class="k">LESS_THAN_EQUAL</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../09-punctuation#GreaterThanEqual"><span class="k">GREATER_THAN_EQUAL</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="VersionOperator" style="display: none;"><a href="#VersionOperator"><span class="k">VersionOperator</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../07-punctuation#Caret"><span class="k">CARET</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../07-punctuation#Tilde"><span class="k">TILDE</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../07-punctuation#Equal"><span class="k">EQUAL</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../07-punctuation#LessThan"><span class="k">LESS_THAN</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../07-punctuation#GreaterThan"><span class="k">GREATER_THAN</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../07-punctuation#LessThanEqual"><span class="k">LESS_THAN_EQUAL</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../07-punctuation#GreaterThanEqual"><span class="k">GREATER_THAN_EQUAL</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionLiteral }
 
@@ -86,7 +84,7 @@
 
 ```
 
-<pre ebnf-snippet="SimpleVersionLiteral" style="display: none;"><a href="#SimpleVersionLiteral"><span class="k">SimpleVersionLiteral</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="SimpleVersionLiteral" style="display: none;"><a href="#SimpleVersionLiteral"><span class="k">SimpleVersionLiteral</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../07-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#VersionSpecifier"><span class="k">VERSION_SPECIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionSpecifier }
 
@@ -129,5 +127,3 @@
 ```
 
 <pre ebnf-snippet="SolidityKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#SolidityKeyword"><span class="k">SOLIDITY_KEYWORD</span></a><span class="o"> = </span><span class="s2">"solidity"</span><span class="o">;</span></pre>
-
---8<-- "crates/solidity/inputs/language/docs/01-file-structure/03-pragma-directives.md"

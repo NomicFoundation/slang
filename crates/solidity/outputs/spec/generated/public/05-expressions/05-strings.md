@@ -2,8 +2,6 @@
 
 # 5.5. Strings
 
-## Syntax
-
 ```{ .ebnf #StringExpression }
 
 ```
@@ -123,5 +121,3 @@
 ```
 
 <pre ebnf-snippet="UnicodeEscape" style="display: none;"><a href="#UnicodeEscape"><span class="k">«UNICODE_ESCAPE»</span></a><span class="o"> = </span><span class="s2">"u"</span><span class="o"> </span><a href="#HexCharacter"><span class="k">«HEX_CHARACTER»</span></a><span class="o"> </span><a href="#HexCharacter"><span class="k">«HEX_CHARACTER»</span></a><span class="o"> </span><a href="#HexCharacter"><span class="k">«HEX_CHARACTER»</span></a><span class="o"> </span><a href="#HexCharacter"><span class="k">«HEX_CHARACTER»</span></a><span class="o">;</span></pre>
-
---8<-- "crates/solidity/inputs/language/docs/05-expressions/05-strings.md"
