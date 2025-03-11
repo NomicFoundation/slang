@@ -96,10 +96,10 @@ impl fmt::Display for QuerySyntaxError {
                 write!(f, "Invalid escaped Unicode character")
             }
             QuerySyntaxError::DeprecatedEllipsis => {
-                write!(f, "The ellipsis `...` operator is deprecated, and replaced with a new adjacency `.` operator. For more information, check the Tree Query Language guide: https://nomicfoundation.github.io/slang/latest/user-guide/tree-query-language/")
+                write!(f, "The ellipsis `...` operator is deprecated, and replaced with a new adjacency `.` operator.")
             }
             QuerySyntaxError::ForbiddenTriviaKind => {
-                write!(f, "Matching trivia nodes directly is forbidden. For more information, check the Tree Query Language guide: https://nomicfoundation.github.io/slang/latest/user-guide/tree-query-language/")
+                write!(f, "Matching trivia nodes directly is forbidden.")
             }
         }
     }
