@@ -2,8 +2,6 @@
 
 # 6.2. Yul Expressions
 
-## Syntax
-
 ```{ .ebnf #YulExpression }
 
 ```
@@ -14,25 +12,25 @@
 
 ```
 
-<pre ebnf-snippet="YulFunctionCallExpression" style="display: none;"><span class="cm">(* Postfix unary operator *)</span><br /><a href="#YulFunctionCallExpression"><span class="k">YulFunctionCallExpression</span></a><span class="o"> = </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#YulExpression"><span class="k">YulExpression</span></a><br /><span class="o">                            </span><span class="cm">(* open_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                            </span><span class="cm">(* arguments: *)</span><span class="o"> </span><a href="#YulArguments"><span class="k">YulArguments</span></a><br /><span class="o">                            </span><span class="cm">(* close_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="YulFunctionCallExpression" style="display: none;"><span class="cm">(* Postfix unary operator *)</span><br /><a href="#YulFunctionCallExpression"><span class="k">YulFunctionCallExpression</span></a><span class="o"> = </span><span class="cm">(* operand: *)</span><span class="o"> </span><a href="#YulExpression"><span class="k">YulExpression</span></a><br /><span class="o">                            </span><span class="cm">(* open_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                            </span><span class="cm">(* arguments: *)</span><span class="o"> </span><a href="#YulArguments"><span class="k">YulArguments</span></a><br /><span class="o">                            </span><span class="cm">(* close_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #YulArguments }
 
 ```
 
-<pre ebnf-snippet="YulArguments" style="display: none;"><a href="#YulArguments"><span class="k">YulArguments</span></a><span class="o"> = </span><span class="o">(</span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulExpression"><span class="k">YulExpression</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulExpression"><span class="k">YulExpression</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulArguments" style="display: none;"><a href="#YulArguments"><span class="k">YulArguments</span></a><span class="o"> = </span><span class="o">(</span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulExpression"><span class="k">YulExpression</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulExpression"><span class="k">YulExpression</span></a><span class="o">)</span><span class="o">*</span><span class="o">)</span><span class="o">?</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulPaths }
 
 ```
 
-<pre ebnf-snippet="YulPaths" style="display: none;"><a href="#YulPaths"><span class="k">YulPaths</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulPath"><span class="k">YulPath</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulPath"><span class="k">YulPath</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulPaths" style="display: none;"><a href="#YulPaths"><span class="k">YulPaths</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulPath"><span class="k">YulPath</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulPath"><span class="k">YulPath</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulPath }
 
 ```
 
-<pre ebnf-snippet="YulPath" style="display: none;"><a href="#YulPath"><span class="k">YulPath</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
+<pre ebnf-snippet="YulPath" style="display: none;"><a href="#YulPath"><span class="k">YulPath</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#Period"><span class="k">PERIOD</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#YulIdentifier"><span class="k">YUL_IDENTIFIER</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
 
 ```{ .ebnf #YulIdentifier }
 
@@ -57,5 +55,3 @@
 ```
 
 <pre ebnf-snippet="YulHexLiteral" style="display: none;"><a href="#YulHexLiteral"><span class="k">YUL_HEX_LITERAL</span></a><span class="o"> = </span><span class="s2">"0x"</span><span class="o"> </span><a href="../../05-expressions/05-strings#HexCharacter"><span class="k">«HEX_CHARACTER»</span></a><span class="o">+</span><span class="o"> </span><span class="o">(?!</span><a href="../../05-expressions/06-identifiers#IdentifierStart"><span class="k">«IDENTIFIER_START»</span></a><span class="o">)</span><span class="o">;</span></pre>
-
---8<-- "crates/solidity/inputs/language/docs/06-yul/02-yul-expressions.md"

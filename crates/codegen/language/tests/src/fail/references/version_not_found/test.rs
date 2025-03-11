@@ -2,7 +2,6 @@
 
 codegen_language_macros::compile!(Language(
     name = Foo,
-    documentation_dir = "foo/bar",
     binding_rules_file = "bindings/rules.msgb",
     root_item = One,
     leading_trivia = Sequence([]),

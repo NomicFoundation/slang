@@ -1,8 +1,6 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-# 1.8. Keywords
-
-## Syntax
+# 1.6. Keywords
 
 ```{ .ebnf #AbstractKeyword }
 
@@ -675,5 +673,3 @@
 ```
 
 <pre ebnf-snippet="YearsKeyword" style="display: none;"><span class="cm">(* Deprecated in 0.5.0 *)</span><br /><a href="#YearsKeyword"><span class="k">YEARS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"years"</span><span class="o">;</span></pre>
-
---8<-- "crates/solidity/inputs/language/docs/01-file-structure/08-keywords.md"

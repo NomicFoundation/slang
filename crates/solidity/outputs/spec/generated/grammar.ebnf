@@ -4,11 +4,7 @@
  * 1. File Structure:
  *)
 
-(* 1.1. License Specifiers: *)
-
-(* No items *)
-
-(* 1.2. Source Unit: *)
+(* 1.1. Source Unit: *)
 
 SourceUnit = (* members: *) SourceUnitMembers;
 
@@ -28,7 +24,7 @@ SourceUnitMember = (* variant: *) PragmaDirective
                  | (* variant: *) EventDefinition (* Introduced in 0.8.22 *)
                  | (* variant: *) ConstantDefinition; (* Introduced in 0.7.4 *)
 
-(* 1.3. Pragma Directives: *)
+(* 1.2. Pragma Directives: *)
 
 PragmaDirective = (* pragma_keyword: *) PRAGMA_KEYWORD
                   (* pragma: *) Pragma
@@ -95,7 +91,7 @@ EXPERIMENTAL_KEYWORD = "experimental";
 (* Never reserved *)
 SOLIDITY_KEYWORD = "solidity";
 
-(* 1.4. Import Directives: *)
+(* 1.3. Import Directives: *)
 
 ImportDirective = (* import_keyword: *) IMPORT_KEYWORD
                   (* clause: *) ImportClause
@@ -127,7 +123,7 @@ ImportDeconstructionSymbol = (* name: *) IDENTIFIER
 ImportAlias = (* as_keyword: *) AS_KEYWORD
               (* identifier: *) IDENTIFIER;
 
-(* 1.5. Using Directives: *)
+(* 1.4. Using Directives: *)
 
 UsingDirective = (* using_keyword: *) USING_KEYWORD
                  (* clause: *) UsingClause
@@ -175,7 +171,7 @@ UsingOperator = (* variant: *) AMPERSAND
 UsingTarget = (* variant: *) TypeName
             | (* variant: *) ASTERISK;
 
-(* 1.6. Trivia: *)
+(* 1.5. Trivia: *)
 
 WHITESPACE = (" " | "\t")+;
 
@@ -189,11 +185,7 @@ SINGLE_LINE_NAT_SPEC_COMMENT = "///" (!("\r" | "\n"))*;
 
 MULTI_LINE_NAT_SPEC_COMMENT = "/**" (?!"/") (!"*" | ("*" (?!"/")))* "*/";
 
-(* 1.7. Nat Spec Format: *)
-
-(* No items *)
-
-(* 1.8. Keywords: *)
+(* 1.6. Keywords: *)
 
 (* Introduced in 0.6.0 *)
 ABSTRACT_KEYWORD = "abstract";
@@ -498,7 +490,7 @@ WHILE_KEYWORD = "while";
 (* Deprecated in 0.5.0 *)
 YEARS_KEYWORD = "years";
 
-(* 1.9. Punctuation: *)
+(* 1.7. Punctuation: *)
 
 OPEN_PAREN = "(";
 

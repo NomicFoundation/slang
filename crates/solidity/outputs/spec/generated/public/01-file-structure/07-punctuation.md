@@ -1,8 +1,6 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-# 1.9. Punctuation
-
-## Syntax
+# 1.7. Punctuation
 
 ```{ .ebnf #OpenParen }
 
@@ -309,5 +307,3 @@
 ```
 
 <pre ebnf-snippet="Tilde" style="display: none;"><a href="#Tilde"><span class="k">TILDE</span></a><span class="o"> = </span><span class="s2">"~"</span><span class="o">;</span></pre>
-
---8<-- "crates/solidity/inputs/language/docs/01-file-structure/09-punctuation.md"
