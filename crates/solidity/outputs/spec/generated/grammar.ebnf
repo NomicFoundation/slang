@@ -1162,7 +1162,7 @@ Expression = (* variant: *) AssignmentExpression
            | (* variant: *) OrExpression
            | (* variant: *) AndExpression
            | (* variant: *) EqualityExpression
-           | (* variant: *) ComparisonExpression
+           | (* variant: *) InequalityExpression
            | (* variant: *) BitwiseOrExpression
            | (* variant: *) BitwiseXorExpression
            | (* variant: *) BitwiseAndExpression
@@ -1279,22 +1279,22 @@ EqualityExpression = (* left_operand: *) Expression
                      (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-ComparisonExpression = (* left_operand: *) Expression
+InequalityExpression = (* left_operand: *) Expression
                        (* operator: *) LESS_THAN
                        (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-ComparisonExpression = (* left_operand: *) Expression
+InequalityExpression = (* left_operand: *) Expression
                        (* operator: *) GREATER_THAN
                        (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-ComparisonExpression = (* left_operand: *) Expression
+InequalityExpression = (* left_operand: *) Expression
                        (* operator: *) LESS_THAN_EQUAL
                        (* right_operand: *) Expression;
 
 (* Left-associative binary operator *)
-ComparisonExpression = (* left_operand: *) Expression
+InequalityExpression = (* left_operand: *) Expression
                        (* operator: *) GREATER_THAN_EQUAL
                        (* right_operand: *) Expression;
 
