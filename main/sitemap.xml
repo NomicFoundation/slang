@@ -17,39 +17,31 @@
          <lastmod>2025-03-11</lastmod>
     </url>
     <url>
-         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/01-license-specifiers/</loc>
+         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/01-source-unit/</loc>
          <lastmod>2025-03-11</lastmod>
     </url>
     <url>
-         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/02-source-unit/</loc>
+         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/02-pragma-directives/</loc>
          <lastmod>2025-03-11</lastmod>
     </url>
     <url>
-         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/03-pragma-directives/</loc>
+         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/03-import-directives/</loc>
          <lastmod>2025-03-11</lastmod>
     </url>
     <url>
-         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/04-import-directives/</loc>
+         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/04-using-directives/</loc>
          <lastmod>2025-03-11</lastmod>
     </url>
     <url>
-         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/05-using-directives/</loc>
+         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/05-trivia/</loc>
          <lastmod>2025-03-11</lastmod>
     </url>
     <url>
-         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/06-trivia/</loc>
+         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/06-keywords/</loc>
          <lastmod>2025-03-11</lastmod>
     </url>
     <url>
-         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/07-nat-spec-format/</loc>
-         <lastmod>2025-03-11</lastmod>
-    </url>
-    <url>
-         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/08-keywords/</loc>
-         <lastmod>2025-03-11</lastmod>
-    </url>
-    <url>
-         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/09-punctuation/</loc>
+         <loc>https://NomicFoundation.github.io/slang/latest/solidity-grammar/01-file-structure/07-punctuation/</loc>
          <lastmod>2025-03-11</lastmod>
     </url>
     <url>
