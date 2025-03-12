@@ -3,6 +3,7 @@
 - [8.1. List functions in a contract](./01-list-functions-in-contract/index.md)
 - [8.2. Find usages](./02-find-usages/index.md)
 - [8.3. Jump to definition](./03-jump-to-definition/index.md)
+- [8.4. Find unused definitions](./04-find-unused-definitions/index.md)
 
 Throughout the examples in this section we will use a sample contract. We need some setup code to [create a `CompilationUnit`](../07-semantic-analysis/01-compilation-units/index.md) with the contents of the contract:
 
