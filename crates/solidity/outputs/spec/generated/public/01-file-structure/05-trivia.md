@@ -1,8 +1,6 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-# 1.6. Trivia
-
-## Syntax
+# 1.5. Trivia
 
 ```{ .ebnf #Whitespace }
 
@@ -39,5 +37,3 @@
 ```
 
 <pre ebnf-snippet="MultiLineNatSpecComment" style="display: none;"><a href="#MultiLineNatSpecComment"><span class="k">MULTI_LINE_NAT_SPEC_COMMENT</span></a><span class="o"> = </span><span class="s2">"/**"</span><span class="o"> </span><span class="o">(?!</span><span class="s2">"/"</span><span class="o">)</span><span class="o"> </span><span class="o">(</span><span class="o">!</span><span class="s2">"*"</span><span class="o"> | </span><span class="o">(</span><span class="s2">"*"</span><span class="o"> </span><span class="o">(?!</span><span class="s2">"/"</span><span class="o">)</span><span class="o">)</span><span class="o">)</span><span class="o">*</span><span class="o"> </span><span class="s2">"*/"</span><span class="o">;</span></pre>
-
---8<-- "crates/solidity/inputs/language/docs/01-file-structure/06-trivia.md"

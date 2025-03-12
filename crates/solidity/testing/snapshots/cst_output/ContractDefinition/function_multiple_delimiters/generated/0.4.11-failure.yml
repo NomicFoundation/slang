@@ -70,7 +70,7 @@ Tree:
                               - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # '(address(this).balance >= amount, "Address: insuff...' (133..199)
                                   - (open_paren꞉ OpenParen): "(" # (133..134)
                                   - (arguments꞉ PositionalArguments): # 'address(this).balance >= amount, "Address: insuffi...' (134..198)
-                                      - (item꞉ Expression) ► (variant꞉ ComparisonExpression): # "address(this).balance >= amount" (134..165)
+                                      - (item꞉ Expression) ► (variant꞉ InequalityExpression): # "address(this).balance >= amount" (134..165)
                                           - (left_operand꞉ Expression) ► (variant꞉ MemberAccessExpression): # "address(this).balance" (134..155)
                                               - (operand꞉ Expression) ► (variant꞉ FunctionCallExpression): # "address(this)" (134..147)
                                                   - (operand꞉ Expression) ► (variant꞉ ElementaryType) ► (variant꞉ AddressType) ► (address_keyword꞉ AddressKeyword): "address" # (134..141)

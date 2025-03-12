@@ -102,7 +102,7 @@ Tree:
                                           - (if_keyword꞉ IfKeyword): "if" # (146..148)
                                           - (leading_trivia꞉ Whitespace): " " # (148..149)
                                           - (open_paren꞉ OpenParen): "(" # (149..150)
-                                          - (condition꞉ Expression) ► (variant꞉ ComparisonExpression): # "c < a" (150..155)
+                                          - (condition꞉ Expression) ► (variant꞉ InequalityExpression): # "c < a" (150..155)
                                               - (left_operand꞉ Expression) ► (variant꞉ Identifier): "c" # (150..151)
                                               - (leading_trivia꞉ Whitespace): " " # (151..152)
                                               - (operator꞉ LessThan): "<" # (152..153)

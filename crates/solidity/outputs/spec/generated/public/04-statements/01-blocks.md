@@ -2,13 +2,11 @@
 
 # 4.1. Blocks
 
-## Syntax
-
 ```{ .ebnf #Block }
 
 ```
 
-<pre ebnf-snippet="Block" style="display: none;"><a href="#Block"><span class="k">Block</span></a><span class="o"> = </span><span class="cm">(* open_brace: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">        </span><span class="cm">(* statements: *)</span><span class="o"> </span><a href="#Statements"><span class="k">Statements</span></a><br /><span class="o">        </span><span class="cm">(* close_brace: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="Block" style="display: none;"><a href="#Block"><span class="k">Block</span></a><span class="o"> = </span><span class="cm">(* open_brace: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">        </span><span class="cm">(* statements: *)</span><span class="o"> </span><a href="#Statements"><span class="k">Statements</span></a><br /><span class="o">        </span><span class="cm">(* close_brace: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #Statements }
 
@@ -26,30 +24,28 @@
 
 ```
 
-<pre ebnf-snippet="UncheckedBlock" style="display: none;"><span class="cm">(* Introduced in 0.8.0 *)</span><br /><a href="#UncheckedBlock"><span class="k">UncheckedBlock</span></a><span class="o"> = </span><span class="cm">(* unchecked_keyword: *)</span><span class="o"> </span><a href="../../01-file-structure/08-keywords#UncheckedKeyword"><span class="k">UNCHECKED_KEYWORD</span></a><br /><span class="o">                 </span><span class="cm">(* block: *)</span><span class="o"> </span><a href="#Block"><span class="k">Block</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="UncheckedBlock" style="display: none;"><span class="cm">(* Introduced in 0.8.0 *)</span><br /><a href="#UncheckedBlock"><span class="k">UncheckedBlock</span></a><span class="o"> = </span><span class="cm">(* unchecked_keyword: *)</span><span class="o"> </span><a href="../../01-file-structure/06-keywords#UncheckedKeyword"><span class="k">UNCHECKED_KEYWORD</span></a><br /><span class="o">                 </span><span class="cm">(* block: *)</span><span class="o"> </span><a href="#Block"><span class="k">Block</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ExpressionStatement }
 
 ```
 
-<pre ebnf-snippet="ExpressionStatement" style="display: none;"><a href="#ExpressionStatement"><span class="k">ExpressionStatement</span></a><span class="o"> = </span><span class="cm">(* expression: *)</span><span class="o"> </span><a href="../../05-expressions/01-base-expressions#Expression"><span class="k">Expression</span></a><br /><span class="o">                      </span><span class="cm">(* semicolon: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Semicolon"><span class="k">SEMICOLON</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ExpressionStatement" style="display: none;"><a href="#ExpressionStatement"><span class="k">ExpressionStatement</span></a><span class="o"> = </span><span class="cm">(* expression: *)</span><span class="o"> </span><a href="../../05-expressions/01-base-expressions#Expression"><span class="k">Expression</span></a><br /><span class="o">                      </span><span class="cm">(* semicolon: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#Semicolon"><span class="k">SEMICOLON</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #AssemblyStatement }
 
 ```
 
-<pre ebnf-snippet="AssemblyStatement" style="display: none;"><a href="#AssemblyStatement"><span class="k">AssemblyStatement</span></a><span class="o"> = </span><span class="cm">(* assembly_keyword: *)</span><span class="o"> </span><a href="../../01-file-structure/08-keywords#AssemblyKeyword"><span class="k">ASSEMBLY_KEYWORD</span></a><br /><span class="o">                    </span><span class="cm">(* label: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">?</span><br /><span class="o">                    </span><span class="cm">(* flags: *)</span><span class="o"> </span><a href="#AssemblyFlagsDeclaration"><span class="k">AssemblyFlagsDeclaration</span></a><span class="o">?</span><span class="o"> </span><span class="cm">(* Introduced in 0.8.13 *)</span><br /><span class="o">                    </span><span class="cm">(* body: *)</span><span class="o"> </span><a href="../../06-yul/01-yul-statements#YulBlock"><span class="k">YulBlock</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="AssemblyStatement" style="display: none;"><a href="#AssemblyStatement"><span class="k">AssemblyStatement</span></a><span class="o"> = </span><span class="cm">(* assembly_keyword: *)</span><span class="o"> </span><a href="../../01-file-structure/06-keywords#AssemblyKeyword"><span class="k">ASSEMBLY_KEYWORD</span></a><br /><span class="o">                    </span><span class="cm">(* label: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">?</span><br /><span class="o">                    </span><span class="cm">(* flags: *)</span><span class="o"> </span><a href="#AssemblyFlagsDeclaration"><span class="k">AssemblyFlagsDeclaration</span></a><span class="o">?</span><span class="o"> </span><span class="cm">(* Introduced in 0.8.13 *)</span><br /><span class="o">                    </span><span class="cm">(* body: *)</span><span class="o"> </span><a href="../../06-yul/01-yul-statements#YulBlock"><span class="k">YulBlock</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #AssemblyFlagsDeclaration }
 
 ```
 
-<pre ebnf-snippet="AssemblyFlagsDeclaration" style="display: none;"><span class="cm">(* Introduced in 0.8.13 *)</span><br /><a href="#AssemblyFlagsDeclaration"><span class="k">AssemblyFlagsDeclaration</span></a><span class="o"> = </span><span class="cm">(* open_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                           </span><span class="cm">(* flags: *)</span><span class="o"> </span><a href="#AssemblyFlags"><span class="k">AssemblyFlags</span></a><br /><span class="o">                           </span><span class="cm">(* close_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="AssemblyFlagsDeclaration" style="display: none;"><span class="cm">(* Introduced in 0.8.13 *)</span><br /><a href="#AssemblyFlagsDeclaration"><span class="k">AssemblyFlagsDeclaration</span></a><span class="o"> = </span><span class="cm">(* open_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#OpenParen"><span class="k">OPEN_PAREN</span></a><br /><span class="o">                           </span><span class="cm">(* flags: *)</span><span class="o"> </span><a href="#AssemblyFlags"><span class="k">AssemblyFlags</span></a><br /><span class="o">                           </span><span class="cm">(* close_paren: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#CloseParen"><span class="k">CLOSE_PAREN</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #AssemblyFlags }
 
 ```
 
-<pre ebnf-snippet="AssemblyFlags" style="display: none;"><span class="cm">(* Introduced in 0.8.13 *)</span><br /><a href="#AssemblyFlags"><span class="k">AssemblyFlags</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/09-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>
-
---8<-- "crates/solidity/inputs/language/docs/04-statements/01-blocks.md"
+<pre ebnf-snippet="AssemblyFlags" style="display: none;"><span class="cm">(* Introduced in 0.8.13 *)</span><br /><a href="#AssemblyFlags"><span class="k">AssemblyFlags</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o"> </span><span class="o">(</span><span class="cm">(* separator: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#Comma"><span class="k">COMMA</span></a><span class="o"> </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">)</span><span class="o">*</span><span class="o">;</span></pre>

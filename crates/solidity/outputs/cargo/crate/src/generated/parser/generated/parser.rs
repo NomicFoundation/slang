@@ -164,9 +164,6 @@ impl Parser {
             NonterminalKind::CatchClause => Self::catch_clause.parse(self, input, kind),
             NonterminalKind::CatchClauseError => Self::catch_clause_error.parse(self, input, kind),
             NonterminalKind::CatchClauses => Self::catch_clauses.parse(self, input, kind),
-            NonterminalKind::ComparisonExpression => {
-                Self::comparison_expression.parse(self, input, kind)
-            }
             NonterminalKind::ConditionalExpression => {
                 Self::conditional_expression.parse(self, input, kind)
             }
@@ -284,6 +281,9 @@ impl Parser {
             NonterminalKind::IndexAccessEnd => Self::index_access_end.parse(self, input, kind),
             NonterminalKind::IndexAccessExpression => {
                 Self::index_access_expression.parse(self, input, kind)
+            }
+            NonterminalKind::InequalityExpression => {
+                Self::inequality_expression.parse(self, input, kind)
             }
             NonterminalKind::InheritanceSpecifier => {
                 Self::inheritance_specifier.parse(self, input, kind)
@@ -1042,29 +1042,6 @@ impl Parser {
             ParserResult::disabled()
         }
         .with_kind(NonterminalKind::CatchClauses)
-    }
-
-    #[allow(unused_assignments, unused_parens)]
-    fn comparison_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        let result = self.expression(input);
-        let ParserResult::Match(r#match) = &result else {
-            return result;
-        };
-        match &r#match.nodes[..] {
-            [cst::Edge {
-                node: cst::Node::Nonterminal(node),
-                ..
-            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
-                [inner @ cst::Edge {
-                    node: cst::Node::Nonterminal(node),
-                    ..
-                }] if node.kind == NonterminalKind::ComparisonExpression => {
-                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
-                }
-                _ => ParserResult::default(),
-            },
-            _ => ParserResult::default(),
-        }
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -2134,9 +2111,9 @@ impl Parser {
                 }),
             )
         };
-        let parse_left_comparison_expression = |input: &mut ParserContext<'_>| {
+        let parse_left_inequality_expression = |input: &mut ParserContext<'_>| {
             PrecedenceHelper::to_binary_operator(
-                NonterminalKind::ComparisonExpression,
+                NonterminalKind::InequalityExpression,
                 11u8,
                 11u8 + 1,
                 ChoiceHelper::run(input, |mut choice, input| {
@@ -2620,7 +2597,7 @@ impl Parser {
                 choice.consider(input, result)?;
                 let result = parse_left_equality_expression(input);
                 choice.consider(input, result)?;
-                let result = parse_left_comparison_expression(input);
+                let result = parse_left_inequality_expression(input);
                 choice.consider(input, result)?;
                 let result = parse_left_bitwise_or_expression(input);
                 choice.consider(input, result)?;
@@ -3414,6 +3391,29 @@ impl Parser {
                     node: cst::Node::Nonterminal(node),
                     ..
                 }] if node.kind == NonterminalKind::IndexAccessExpression => {
+                    ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
+                }
+                _ => ParserResult::default(),
+            },
+            _ => ParserResult::default(),
+        }
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn inequality_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        let result = self.expression(input);
+        let ParserResult::Match(r#match) = &result else {
+            return result;
+        };
+        match &r#match.nodes[..] {
+            [cst::Edge {
+                node: cst::Node::Nonterminal(node),
+                ..
+            }] if node.kind == NonterminalKind::Expression => match &node.children[..] {
+                [inner @ cst::Edge {
+                    node: cst::Node::Nonterminal(node),
+                    ..
+                }] if node.kind == NonterminalKind::InequalityExpression => {
                     ParserResult::r#match(vec![inner.clone()], r#match.expected_terminals.clone())
                 }
                 _ => ParserResult::default(),

@@ -16,14 +16,10 @@ pub fn generate_grammar_ebnf(model: &SpecModel) -> Result<String> {
         writeln!(buffer)?;
 
         for topic in &section.topics {
+            assert!(!topic.items.is_empty());
+
             writeln!(buffer, "(* {title}: *)", title = topic.title)?;
             writeln!(buffer)?;
-
-            if topic.items.is_empty() {
-                writeln!(buffer, "(* No items *)")?;
-                writeln!(buffer)?;
-                continue;
-            }
 
             for item in &topic.items {
                 model.ebnf.serialize(item, &mut plain_writer)?;

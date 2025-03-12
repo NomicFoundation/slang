@@ -1,5 +1,11 @@
 # changelog
 
+## 0.20.1
+
+### Patch Changes
+
+- [#1275](https://github.com/NomicFoundation/slang/pull/1275) [`ed2cae9`](https://github.com/NomicFoundation/slang/commit/ed2cae973d8405f9e3410964f800f05ab46d460a) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - rename `ComparisonExpression` to `InequalityExpression`
+
 ## 0.20.0
 
 ### Minor Changes

@@ -262,7 +262,6 @@ pub slang_solidity::cst::NonterminalKind::CallOptionsExpression
 pub slang_solidity::cst::NonterminalKind::CatchClause
 pub slang_solidity::cst::NonterminalKind::CatchClauseError
 pub slang_solidity::cst::NonterminalKind::CatchClauses
-pub slang_solidity::cst::NonterminalKind::ComparisonExpression
 pub slang_solidity::cst::NonterminalKind::ConditionalExpression
 pub slang_solidity::cst::NonterminalKind::ConstantDefinition
 pub slang_solidity::cst::NonterminalKind::ConstructorAttribute
@@ -321,6 +320,7 @@ pub slang_solidity::cst::NonterminalKind::ImportDeconstructionSymbols
 pub slang_solidity::cst::NonterminalKind::ImportDirective
 pub slang_solidity::cst::NonterminalKind::IndexAccessEnd
 pub slang_solidity::cst::NonterminalKind::IndexAccessExpression
+pub slang_solidity::cst::NonterminalKind::InequalityExpression
 pub slang_solidity::cst::NonterminalKind::InheritanceSpecifier
 pub slang_solidity::cst::NonterminalKind::InheritanceType
 pub slang_solidity::cst::NonterminalKind::InheritanceTypes

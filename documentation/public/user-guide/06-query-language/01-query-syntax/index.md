@@ -12,41 +12,41 @@ A _query_ is a pattern that matches a
 certain set of nodes in a tree. The expression to match a given node
 consists of a pair of brackets (`[]`) containing two things: the node's kind, and
 optionally, a series of other patterns that match the node's children. For
-example, this pattern would match any `MultiplicativeExpression` node that has
-two children `Expression` nodes, with an `Asterisk` node in between:
+example, this pattern would match any [`MultiplicativeExpression`](../../../solidity-grammar/05-expressions/01-base-expressions.md) node that has
+two children [`Expression`](../../../solidity-grammar/05-expressions/01-base-expressions.md) nodes, with an [`Asterisk`](../../../solidity-grammar/01-file-structure/07-punctuation.md) node in between:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:query-syntax-1"
 ```
 
 The children of a node can optionally be labeled. The label is a property of the edge from
 the node to the child, and is not a property of the child. For example, this pattern will match
-a `MultiplicativeExpression` node with the two `Expression` children labeled `left_operand` and `right_operand`:
+a [`MultiplicativeExpression`](../../../solidity-grammar/05-expressions/01-base-expressions.md) node with the two [`Expression`](../../../solidity-grammar/05-expressions/01-base-expressions.md) children labeled `left_operand` and `right_operand`:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:query-syntax-2"
 ```
 
 You can also match a node's textual content using a string literal. For example, this pattern would match a
-`MultiplicativeExpression` with a `*` operator (for clarity):
+[`MultiplicativeExpression`](../../../solidity-grammar/05-expressions/01-base-expressions.md) with a `*` operator (for clarity):
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:query-syntax-3"
 ```
 
 If you don't care about the kind of a node, you can use an underscore `_`, which matches any kind.
-For example, this pattern will match a `MultiplicativeExpression`
+For example, this pattern will match a [`MultiplicativeExpression`](../../../solidity-grammar/05-expressions/01-base-expressions.md)
 node with any two children with any kind, as long as one of them is labeled `left_operand`:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:query-syntax-4"
 ```
 
 Children can be elided. For example, this would produce multiple matches for a
-`MultiplicativeExpression` where at least _one_ of the children is an expression of a `StringExpression` variant, where each match
-is associated with each of the `StringExpression` children:
+[`MultiplicativeExpression`](../../../solidity-grammar/05-expressions/01-base-expressions.md) where at least _one_ of the children is an expression of a [`StringExpression`](../../../solidity-grammar/05-expressions/05-strings.md) variant, where each match
+is associated with each of the [`StringExpression`](../../../solidity-grammar/05-expressions/05-strings.md) children:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:query-syntax-5"
 ```
 
@@ -64,14 +64,14 @@ written _before_ the nodes that they refer to, and start with an `@` character.
 For example, this pattern would match any struct definition and it would associate
 the name `struct_name` with the identifier:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:capturing-nodes-1"
 ```
 
 And this pattern would match all event definitions for a contract, associating the name
 `event_name` with the event name, `contract_name` with the containing contract name:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:capturing-nodes-2"
 ```
 
@@ -84,20 +84,20 @@ matches _one or more_.
 
 For example, this pattern would match a sequence of one or more import directives at the top of the file:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:quantification-1"
 ```
 
 This pattern would match a structure definition with one or more members, capturing their names:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:quantification-2"
 ```
 
 This pattern would match all function calls, capturing a string argument if one was
 present:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:quantification-3"
 ```
 
@@ -108,13 +108,13 @@ An alternation is written as a sequence of patterns separated by `|` and surroun
 For example, this pattern would match a call to either a variable or an object property.
 In the case of a variable, capture it as `@function`, and in the case of a property, capture it as `@method`:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:alternations-1"
 ```
 
 This pattern would match a set of possible keyword terminals, capturing them as `@keyword`:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:alternations-2"
 ```
 
@@ -126,13 +126,13 @@ the first or the last child nodes.
 For example, the following pattern would match only the first parameter
 declaration in a function definition:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:adjacency-1"
 ```
 
 And conversely the following will match only the last parameter:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:adjacency-2"
 ```
 
@@ -140,6 +140,6 @@ If the adjacency operator is used in between two patterns it constrains matches
 on both patterns to occur consecutively, ie. without any other sibling node in
 between. For example, this pattern matches pairs of consecutive statements:
 
-```.scheme
+```.smalltalk
 --8<-- "documentation/public/user-guide/06-query-language/01-query-syntax/examples/01-queries.test.mts:adjacency-3"
 ```

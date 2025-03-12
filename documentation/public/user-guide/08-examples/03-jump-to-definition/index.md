@@ -12,6 +12,6 @@ The following example shows jumping to the definition of the parameter `delta` i
 --8<-- "documentation/public/user-guide/08-examples/common/sample-contract.sol"
 ```
 
-```ts title="test-jump-to-definition.test.mts"
+```ts title="test-jump-to-definition.mts"
 --8<-- "documentation/public/user-guide/08-examples/03-jump-to-definition/examples/test-jump-to-definition.test.mts"
 ```
