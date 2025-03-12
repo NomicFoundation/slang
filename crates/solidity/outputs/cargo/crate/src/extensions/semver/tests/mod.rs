@@ -1,11 +1,23 @@
 use semver::Version;
 
-use super::parser::parse;
+use super::parser::parse_range;
 use super::Range;
+use crate::parser::Parser;
+use crate::utils::LanguageFacts;
+
+type Result<T> = std::result::Result<T, String>;
+
+fn parse_string(s: &str) -> Result<Range> {
+    let parser = Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
+
+    let output = parser.parse_nonterminal(crate::cst::NonterminalKind::VersionExpressionSets, s);
+
+    parse_range(output.create_tree_cursor())
+}
 
 #[test]
 fn single_version_range() {
-    let range = parse("1.2.3");
+    let range = parse_string("1.2.3").unwrap();
 
     test_range_match(&range, &vec![Version::new(1, 2, 3)]);
     test_range_match_fail(&range, &vec![Version::new(1, 2, 0), Version::new(1, 0, 0)]);
@@ -13,29 +25,7 @@ fn single_version_range() {
 
 #[test]
 fn less_than_version() {
-    let range = parse("<1.3.0");
-
-    test_range_match(
-        &range,
-        &vec![
-            Version::new(1, 2, 0),
-            Version::new(1, 2, 100),
-            Version::new(0, 8, 0),
-        ],
-    );
-    test_range_match_fail(
-        &range,
-        &vec![
-            Version::new(1, 3, 0),
-            Version::new(1, 3, 5),
-            Version::new(2, 0, 0),
-        ],
-    );
-}
-
-#[test]
-fn less_than_version_v() {
-    let range = parse("<v1.3.0");
+    let range = parse_string("<1.3.0").unwrap();
 
     test_range_match(
         &range,
@@ -57,7 +47,7 @@ fn less_than_version_v() {
 
 #[test]
 fn less_than_equal_version() {
-    let range = parse("<=1.3.0");
+    let range = parse_string("<=1.3.0").unwrap();
 
     test_range_match(
         &range,
@@ -72,22 +62,8 @@ fn less_than_equal_version() {
 }
 
 #[test]
-fn empty_version() {
-    let range = parse("");
-
-    test_range_match(
-        &range,
-        &vec![
-            Version::new(0, 0, 0),
-            Version::new(1, 212, 1),
-            Version::new(20, 1, 10),
-        ],
-    );
-}
-
-#[test]
 fn wildcard_version() {
-    let range = parse("*");
+    let range = parse_string("*").unwrap();
 
     test_range_match(
         &range,
@@ -101,7 +77,7 @@ fn wildcard_version() {
 
 #[test]
 fn gteq_partial_version() {
-    let range = parse(">=1.3");
+    let range = parse_string(">=1.3").unwrap();
 
     test_range_match(
         &range,
@@ -116,7 +92,7 @@ fn gteq_partial_version() {
 
 #[test]
 fn gteq_wildcard_version() {
-    let range = parse(">=1.3.x");
+    let range = parse_string(">=1.3.x").unwrap();
 
     test_range_match(
         &range,
@@ -132,7 +108,7 @@ fn gteq_wildcard_version() {
 
 #[test]
 fn gt_partial_version() {
-    let range = parse(">1.3");
+    let range = parse_string(">1.3").unwrap();
 
     test_range_match(&range, &vec![Version::new(1, 4, 0), Version::new(2, 5, 3)]);
     test_range_match_fail(
@@ -148,7 +124,7 @@ fn gt_partial_version() {
 
 #[test]
 fn gt_wildcard_version() {
-    let range = parse(">1.3.x");
+    let range = parse_string(">1.3.x").unwrap();
 
     test_range_match(
         &range,
@@ -170,7 +146,7 @@ fn gt_wildcard_version() {
 
 #[test]
 fn lteq_partial_version() {
-    let range = parse("<=0.8");
+    let range = parse_string("<=0.8").unwrap();
 
     test_range_match(
         &range,
@@ -185,7 +161,7 @@ fn lteq_partial_version() {
 
 #[test]
 fn lteq_wildcard_version() {
-    let range = parse("<=0.8.x");
+    let range = parse_string("<=0.8.x").unwrap();
 
     test_range_match(
         &range,
@@ -201,7 +177,7 @@ fn lteq_wildcard_version() {
 
 #[test]
 fn lt_partial_version() {
-    let range = parse("<0.8");
+    let range = parse_string("<0.8").unwrap();
 
     test_range_match(&range, &vec![Version::new(0, 7, 8), Version::new(0, 0, 5)]);
     test_range_match_fail(
@@ -216,7 +192,7 @@ fn lt_partial_version() {
 
 #[test]
 fn lt_wildcard_version() {
-    let range = parse("<0.8.x");
+    let range = parse_string("<0.8.x").unwrap();
 
     test_range_match(&range, &vec![Version::new(0, 7, 8), Version::new(0, 0, 5)]);
     test_range_match_fail(
@@ -231,7 +207,7 @@ fn lt_wildcard_version() {
 
 #[test]
 fn partial_version() {
-    let range = parse("1.2");
+    let range = parse_string("1.2").unwrap();
 
     test_range_match(&range, &vec![Version::new(1, 2, 0), Version::new(1, 2, 3)]);
     test_range_match_fail(
@@ -246,7 +222,7 @@ fn partial_version() {
 
 #[test]
 fn combo_partial_version() {
-    let range = parse(">=1 <1.8");
+    let range = parse_string(">=1 <1.8").unwrap();
 
     test_range_match(
         &range,
@@ -268,7 +244,7 @@ fn combo_partial_version() {
 
 #[test]
 fn x_patch_partial_version() {
-    let range = parse("1.2.x");
+    let range = parse_string("1.2.x").unwrap();
 
     test_range_match(
         &range,
@@ -283,7 +259,7 @@ fn x_patch_partial_version() {
 
 #[test]
 fn x_minor_partial_version() {
-    let range = parse("1.X");
+    let range = parse_string("1.X").unwrap();
 
     test_range_match(
         &range,
@@ -299,7 +275,7 @@ fn x_minor_partial_version() {
 
 #[test]
 fn caret_range() {
-    let range = parse("^1.2");
+    let range = parse_string("^1.2").unwrap();
 
     test_range_match(&range, &vec![Version::new(1, 9, 9), Version::new(1, 2, 0)]);
     test_range_match_fail(&range, &vec![Version::new(2, 0, 0), Version::new(1, 0, 0)]);
@@ -307,7 +283,7 @@ fn caret_range() {
 
 #[test]
 fn tilde_range() {
-    let range = parse("~1.10.1");
+    let range = parse_string("~1.10.1").unwrap();
 
     test_range_match(
         &range,
@@ -325,30 +301,7 @@ fn tilde_range() {
 
 #[test]
 fn hyphen_range() {
-    let range = parse("1.2 - 1.5.1");
-
-    test_range_match(
-        &range,
-        &vec![
-            Version::new(1, 2, 0),
-            Version::new(1, 5, 1),
-            Version::new(1, 3, 17),
-        ],
-    );
-    test_range_match_fail(
-        &range,
-        &vec![
-            Version::new(1, 6, 0),
-            Version::new(1, 0, 0),
-            Version::new(2, 0, 0),
-            Version::new(1, 5, 5),
-        ],
-    );
-}
-
-#[test]
-fn ignore_operators_in_hyphen_ranges() {
-    let range = parse("^1.2 - ~1.5.1");
+    let range = parse_string("1.2 - 1.5.1").unwrap();
 
     test_range_match(
         &range,
@@ -371,7 +324,7 @@ fn ignore_operators_in_hyphen_ranges() {
 
 #[test]
 fn concat_comparators() {
-    let range = parse(">1.0.0 <=2.5.1");
+    let range = parse_string(">1.0.0 <=2.5.1").unwrap();
 
     test_range_match(
         &range,
@@ -394,7 +347,7 @@ fn concat_comparators() {
 
 #[test]
 fn comparator_union() {
-    let range = parse("<1.5 || ^2.1");
+    let range = parse_string("<1.5 || ^2.1").unwrap();
 
     test_range_match(
         &range,
@@ -416,42 +369,16 @@ fn comparator_union() {
 }
 
 #[test]
-fn allow_inner_quotes() {
-    let target_range = parse("0.8");
-    let target_version = Version::new(0, 8, 0);
-
-    // "0.8" but with different combinations of quotes embeded within
-    // solc currently ignores these by stringifying the whole version pragma tokens together before parsing.
-    // In practice we should also be doing this, but that happens higher up in the code.
-    // Down here in the parser, we're just going to ignore them when we see them.
-    let examples = [
-        "\"0.8\"",
-        "\"0.\" 8",
-        "\"0\" .8",
-        "0  . \"8\"",
-        "0 '.' 8",
-        "'0.8'",
-        "\"0\".\"8\"",
-    ];
-
-    let example_ranges: Vec<Range> = examples.iter().map(|e| parse(e)).collect();
-    for r in &example_ranges {
-        assert!(r == &target_range);
-        assert!(r.matches(&target_version));
-    }
-}
-
-#[test]
 fn major_wildcard() {
-    let wild = parse("*");
-    let range = parse("x.1.0");
+    let wild = parse_string("*").unwrap();
+    let range = parse_string("x.1.0").unwrap();
 
     assert_eq!(wild, range);
 }
 
 #[test]
 fn major_wildcard_concat() {
-    let range = parse("x.1.0 >0.5.0");
+    let range = parse_string("x.1.0 >0.5.0").unwrap();
 
     test_range_match(
         &range,
@@ -475,7 +402,7 @@ fn major_wildcard_concat() {
 fn missing_major_version() {
     // Inspired by a contract that caused some problems
     // ".0" is not a valid semver, but we have to be able to parse it (and discard it) without fail
-    let range = parse("0.8.0 .0");
+    let range = parse_string("0.8.0 .0").unwrap();
 
     test_range_match(&range, &vec![Version::new(0, 8, 0)]);
     test_range_match_fail(
@@ -634,7 +561,7 @@ fn test_range_match_fail(range: &Range, tests: &Vec<Version>) {
 // Preferring to pass by value just to reduce noise in callers
 #[allow(clippy::needless_pass_by_value)]
 fn solc_test_case(range_str: &str, version: Version, positive: bool) {
-    let range = parse(range_str);
+    let range = parse_string(range_str).unwrap();
 
     if positive {
         assert!(range.matches(&version));

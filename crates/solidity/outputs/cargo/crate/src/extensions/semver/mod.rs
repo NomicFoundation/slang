@@ -3,7 +3,7 @@ pub mod parser;
 #[cfg(test)]
 pub mod tests;
 
-use std::fmt::Display;
+use std::fmt::{Debug, Display};
 
 use semver::Version;
 
@@ -20,9 +20,10 @@ pub fn infer_language_versions(src: &str) -> Vec<Version> {
 
     let mut found_ranges = Vec::<Range>::new();
     while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::VersionExpressionSets) {
-        let pragma_text = cursor.node().unparse();
-
-        found_ranges.push(parser::parse(&pragma_text));
+        match parser::parse_range(cursor.spawn()) {
+            Ok(range) => found_ranges.push(range),
+            Err(e) => println!("Error: {e}"),
+        }
     }
 
     if found_ranges.is_empty() {
@@ -58,21 +59,14 @@ impl PartialVersion {
         }
     }
 
-    fn wild() -> PartialVersion {
-        PartialVersion {
-            major: VersionPart::Wildcard,
-            minor: VersionPart::Wildcard,
-            patch: VersionPart::Wildcard,
-        }
-    }
-
-    /// Check if `PartialVersion` has no specified values.
-    fn is_wild(&self) -> bool {
-        self.major.is_wild() && self.minor.is_wild() && self.patch.is_wild()
-    }
-
     fn is_complete(&self) -> bool {
         self.major.is_specified() && self.minor.is_specified() && self.patch.is_specified()
+    }
+}
+
+impl Display for PartialVersion {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}.{}.{}", self.major, self.minor, self.patch)
     }
 }
 
@@ -108,6 +102,30 @@ enum VersionPart {
     Wildcard,
     /// This part was given a concrete value.
     Specified(u64),
+}
+
+impl TryFrom<&str> for VersionPart {
+    type Error = String;
+
+    fn try_from(s: &str) -> Result<Self, Self::Error> {
+        if s.is_empty() {
+            Ok(VersionPart::None)
+        } else if s == "x" || s == "X" || s == "*" {
+            Ok(VersionPart::Wildcard)
+        } else if let Ok(val) = s.parse() {
+            Ok(VersionPart::Specified(val))
+        } else {
+            Err(format!("Could not parse {s} into VersionPart"))
+        }
+    }
+}
+
+impl TryFrom<String> for VersionPart {
+    type Error = String;
+
+    fn try_from(s: String) -> Result<Self, Self::Error> {
+        VersionPart::try_from(s.as_str())
+    }
 }
 
 impl VersionPart {
@@ -234,10 +252,6 @@ impl ComparatorSet {
         }
     }
 
-    fn wild() -> ComparatorSet {
-        ComparatorSet::single(Comparator::default())
-    }
-
     fn bounds(lower: Comparator, upper: Comparator) -> ComparatorSet {
         ComparatorSet {
             comparators: vec![lower, upper],
@@ -332,7 +346,7 @@ impl ComparatorSet {
     /// `0.4.x == >=0.4.0 <0.5.0`
     /// `2.1 == >=2.1.0 < 2.2.0`
     fn partial_range(partial: &PartialVersion) -> ComparatorSet {
-        if partial.is_wild() {
+        if partial.major.is_wild() {
             return ComparatorSet::single(Comparator::default());
         }
 
@@ -351,7 +365,7 @@ impl ComparatorSet {
         let upper = match partial.major {
             VersionPart::Specified(major) => match partial.minor {
                 VersionPart::Specified(minor) => match partial.patch {
-                    // Handled above by checking !partial.is_incomplete()
+                    // Handled above by checking partial.is_complete()
                     VersionPart::Specified(_) => unreachable!(),
                     _ => Comparator {
                         version: Version::new(major, minor + 1, 0),
@@ -363,7 +377,7 @@ impl ComparatorSet {
                     op: Operator::Lt,
                 },
             },
-            // Handled above by checking partial.is_wild()
+            // Handled above by checking partial.major.is_wild()
             _ => unreachable!(),
         };
 
@@ -420,13 +434,6 @@ impl Range {
     pub fn new() -> Range {
         Range {
             comparator_sets: vec![],
-        }
-    }
-
-    // Create a version range representing a wildcard expression.
-    pub fn wild() -> Range {
-        Range {
-            comparator_sets: vec![ComparatorSet::wild()],
         }
     }
 
