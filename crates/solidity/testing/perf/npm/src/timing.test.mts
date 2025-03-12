@@ -181,6 +181,7 @@ class Record {
   maxGoto: number = 0;
   meanGoto: number = 0;
   stdGoto: MathNumericType = 0;
+  numberOfIdentifiers: number = 0;
 
   public constructor(file: string) {
     this.file = file
@@ -190,10 +191,10 @@ class Record {
 const records: Record[] = []
 
 afterAll(() => {
-  var timeTable = "| File |	Total (ms) |	Setup (ms) |	Build (ms) |	Resolution Total (ms) |	Resolution Max (ms) |	Resolution mean (ms) |	Resolution std (ms) |\n";
-  timeTable += "|:-----|------:|------:|------:|------:|------:|------:|------:|\n";
+  var timeTable = `| File |	Total (ms) |	Setup (ms) |	Build (ms) |	Resolution Total (ms) |	Resolution Max (ms) |	Resolution mean (ms) |	Resolution std (ms) | Number of Ids |
+|:-----|-----------:|------------:|------------:|-----------------------:|--------------------:|---------------------:|---------------------:|:-------------:|\n`;
   records.forEach((record) => {
-    timeTable += `| ${record.file.split("/").pop()} | ${record.totalTime} | ${record.setupTime} | ${record.buildGraphTime} | ${record.resolutionTime} | ${record.maxGoto} | ${record.meanGoto} | ${record.stdGoto} |\n`;
+    timeTable += `| ${record.file.split("/").pop()} | ${record.totalTime} | ${record.setupTime} | ${record.buildGraphTime} | ${record.resolutionTime} | ${record.maxGoto} | ${record.meanGoto} | ${record.stdGoto} | ${record.numberOfIdentifiers} |\n`;
   });
   console.log(timeTable);
 });
@@ -222,6 +223,7 @@ async function testFile(languageVersion: string, file: string) {
   record.buildGraphTime = round(performance.now() - startTime - record.setupTime);
 
   while (cursor.goToNextTerminalWithKind(TerminalKind.Identifier)) {
+    record.numberOfIdentifiers++;
     const startDefRef = performance.now();
     const definition = unit.bindingGraph.definitionAt(cursor);
     const reference = unit.bindingGraph.referenceAt(cursor);
