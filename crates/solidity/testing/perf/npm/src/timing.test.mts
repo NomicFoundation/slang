@@ -12,58 +12,64 @@ import fs from "node:fs";
 // keep in sync with the fs order of hashes
 describe("slang", () => {
   test("UiPoolDataProviderV2V3 slang", async () => {
-    await testFile("0.6.12", "0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A/contracts/misc/UiPoolDataProviderV2V3.sol");
+    const file = "0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A/contracts/misc/UiPoolDataProviderV2V3.sol";
+    await testFile("0.6.12", file, 418, 58);
   });
 
   test("DoodledBears slang", async () => {
     const file = `0x015E220901014BAE4f7e168925CD74e725e23692/sources/DoodledBears.sol`;
-    await testFile("0.8.11", file);
+    await testFile("0.8.11", file, 131, 57);
   });
 
   test("ERC721AContract slang", async () => {
-    await testFile("0.8.9", "0x01665987bC6725070e56d160d75AA19d8B73273e/sources/project:/contracts/ERC721AContract.sol");
+    const file = "0x01665987bC6725070e56d160d75AA19d8B73273e/sources/project:/contracts/ERC721AContract.sol"
+    await testFile("0.8.9", file, 365, 121);
   });
 
   test("SeniorBond slang", async () => {
-    await testFile("0.7.6", "0x0170f38fa8df1440521c8b8520BaAd0CdA132E82/sources/contracts/SeniorBond.sol");
+    const file = "0x0170f38fa8df1440521c8b8520BaAd0CdA132E82/sources/contracts/SeniorBond.sol";
+    await testFile("0.7.6", file, 20, 10);
   });
 
   test("Mooniswap slang", async () => {
-    await testFile("0.6.12",
-      "0x01a11a5A999E57E1B177AA2fF7fEA957605adA2b/sources/Users/k06a/Projects/mooniswap-v2/contracts/Mooniswap.sol",
-    );
+    const file = "0x01a11a5A999E57E1B177AA2fF7fEA957605adA2b/sources/Users/k06a/Projects/mooniswap-v2/contracts/Mooniswap.sol";
+    await testFile("0.6.12", file, 672, 176);
   });
 
   test("Darts slang", async () => {
-    await testFile("0.8.0", "0x01a5E3268E3987f0EE5e6Eb12fe63fa2AF992D83/sources/contracts/Darts.sol");
+    const file = "0x01a5E3268E3987f0EE5e6Eb12fe63fa2AF992D83/sources/contracts/Darts.sol";
+    await testFile("0.8.0", file, 51, 17);
   });
 
   test("WeightedPool slang", async () => {
-    await testFile("0.7.6", "0x01abc00E86C7e258823b9a055Fd62cA6CF61a163/sources/contracts/pools/weighted/WeightedPool.sol");
+    const file = "0x01abc00E86C7e258823b9a055Fd62cA6CF61a163/sources/contracts/pools/weighted/WeightedPool.sol";
+    await testFile("0.7.6", file, 472, 143);
   });
 
   test("YaxisVotePower slang", async () => {
-    await testFile("0.7.0", "0x01fef0d5d6fd6b5701ae913cafb11ddaee982c9a/YaxisVotePower/contracts/governance/YaxisVotePower.sol");
+    const file = "0x01fef0d5d6fd6b5701ae913cafb11ddaee982c9a/YaxisVotePower/contracts/governance/YaxisVotePower.sol";
+    await testFile("0.7.0", file, 99, 27);
   });
 
   test("0xProject slang", async () => {
-    await testFile("0.8.19", "0xProject/contracts/governance/src/ZeroExProtocolGovernor.sol");
+    const file = "0xProject/contracts/governance/src/ZeroExProtocolGovernor.sol";
+    await testFile("0.8.19", file, 88, 48);
   });
 
   test("Uniswap slang", async () => {
-    await testFile("0.7.6", "Uniswap/contracts/UniswapV3Factory.sol");
+    await testFile("0.7.6", "Uniswap/contracts/UniswapV3Factory.sol", 85, 17);
   });
 
   test("AAVE slang", async () => {
-    await testFile("0.8.10", "aave-v3-core-master/contracts/protocol/pool/Pool.sol");
+    await testFile("0.8.10", "aave-v3-core-master/contracts/protocol/pool/Pool.sol", 629, 191);
   });
 
   test("GraphToken slang", async () => {
-    await testFile("0.7.6", "graph_protocol/contracts/token/GraphToken.sol");
+    await testFile("0.7.6", "graph_protocol/contracts/token/GraphToken.sol", 97, 41);
   });
 
   test("lidofinance slang", async () => {
-    await testFile("0.8.9", "lidofinance/contracts/0.8.9/WithdrawalQueueERC721.sol");
+    await testFile("0.8.9", "lidofinance/contracts/0.8.9/WithdrawalQueueERC721.sol", 325, 142);
   });
 })
 
@@ -199,7 +205,7 @@ afterAll(() => {
   console.log(timeTable);
 });
 
-async function testFile(languageVersion: string, file: string) {
+async function testFile(languageVersion: string, file: string, expectedRefs: number, expectedDefs: number) {
   let gotoDefTimes: number[] = Array();
   const startTime = performance.now();
   const builder = await createBuilder(languageVersion);
@@ -268,8 +274,6 @@ async function testFile(languageVersion: string, file: string) {
   const neitherDefNorRefList = Array.from(neitherDefNorRefSet);
   assert.deepStrictEqual(neitherDefNorRefList.filter((e) => !allowed.includes(e)), []);
   assert.deepStrictEqual(emptyDefList, []);
-
-  console.log(
-    `file: ${file}\n\trefs: ${refs}\tdefs: ${defs}\t\n`,
-  );
+  assert.equal(refs, expectedRefs);
+  assert.equal(defs, expectedDefs);
 }
