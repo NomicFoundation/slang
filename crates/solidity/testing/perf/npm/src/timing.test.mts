@@ -10,7 +10,7 @@ import path from "node:path";
 import fs from "node:fs";
 
 // keep in sync with the fs order of hashes
-describe("Sourcify", () => {
+describe("slang", () => {
   test("UiPoolDataProviderV2V3 slang", async () => {
     await testFile("0.6.12", "0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A/contracts/misc/UiPoolDataProviderV2V3.sol");
   });
@@ -39,7 +39,7 @@ describe("Sourcify", () => {
   });
 
   test("WeightedPool slang", async () => {
-    await testFile("0.7.0", "0x01abc00E86C7e258823b9a055Fd62cA6CF61a163/sources/contracts/pools/weighted/WeightedPool.sol");
+    await testFile("0.7.6", "0x01abc00E86C7e258823b9a055Fd62cA6CF61a163/sources/contracts/pools/weighted/WeightedPool.sol");
   });
 
   test("YaxisVotePower slang", async () => {
@@ -94,7 +94,7 @@ describe("solc", () => {
   });
 
   test("WeightedPool solc", async () => {
-    await testFileSolC("0.7.0", ["0x01abc00E86C7e258823b9a055Fd62cA6CF61a163", "sources", "contracts"]);
+    await testFileSolC("0.7.6", ["0x01abc00E86C7e258823b9a055Fd62cA6CF61a163", "sources", "contracts"]);
   });
 
   test("YaxisVotePower solc", async () => {
@@ -212,13 +212,17 @@ async function testFile(languageVersion: string, file: string) {
   const cursor = unit.file(file)!.createTreeCursor();
   record.setupTime = round(performance.now() - startTime);
 
-  let neitherDefNorRef = 0;
+  // Validation: there shouldn't be any parsing errors, but if there are, let's print them nicely
+  const files_w_errors = unit.files().filter((f) => f.errors().length > 0);
+  const errors = files_w_errors.flatMap((f) => f.errors().map((e) => [f.id, e.message, e.textRange]));
+  assert.deepStrictEqual(errors, []);
+
   let defs = 0;
   let refs = 0;
-  let ambiguousRefs = 0;
-  let emptyRef = 0;
+  let emptyDefList = [];
+  let neitherDefNorRefSet = new Set<string>();
 
-  // first access
+  // first access constructs the graph
   assert(typeof unit.bindingGraph.definitionAt == "function");
   record.buildGraphTime = round(performance.now() - startTime - record.setupTime);
 
@@ -228,18 +232,16 @@ async function testFile(languageVersion: string, file: string) {
     const definition = unit.bindingGraph.definitionAt(cursor);
     const reference = unit.bindingGraph.referenceAt(cursor);
 
+    const gotoDefTime = performance.now() - startDefRef;
+
     if (reference) {
       const defs = reference.definitions().length;
-      if (defs > 1) {
-        ambiguousRefs++;
-      } else if (defs > 0) {
+      if (defs > 0) {
         refs++;
       } else {
-        emptyRef++;
+        emptyDefList.push(cursor.node.unparse());
       }
     }
-
-    const gotoDefTime = performance.now() - startDefRef;
 
     if (definition) {
       defs++;
@@ -247,8 +249,7 @@ async function testFile(languageVersion: string, file: string) {
 
     const value = definition || reference;
     if (!value) {
-      // console.log(`UNDEF: ${cursor.node}`);
-      neitherDefNorRef += 1;
+      neitherDefNorRefSet.add(cursor.node.unparse());
     }
 
     gotoDefTimes.push(gotoDefTime);
@@ -262,7 +263,13 @@ async function testFile(languageVersion: string, file: string) {
 
   records.push(record);
 
+  // We don't recognize `ABIEncoderV2` in `pragma experimental`, so let's ignore it
+  const allowed = ["ABIEncoderV2", "v2"];
+  const neitherDefNorRefList = Array.from(neitherDefNorRefSet);
+  assert.deepStrictEqual(neitherDefNorRefList.filter((e) => !allowed.includes(e)), []);
+  assert.deepStrictEqual(emptyDefList, []);
+
   console.log(
-    `file: ${file}\n\trefs: ${refs}\tdefs: ${defs}\tneither: ${neitherDefNorRef}\tambiguous: ${ambiguousRefs}\tempty refs: ${emptyRef}\n`,
+    `file: ${file}\n\trefs: ${refs}\tdefs: ${defs}\t\n`,
   );
 }
