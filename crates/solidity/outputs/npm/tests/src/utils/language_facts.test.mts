@@ -61,3 +61,18 @@ test("parses multiple version ranges", () => {
     excludes: ["0.6.5", "0.8.1", "0.7.0"],
   });
 });
+
+test("parses double-quoted version", () => {
+  testVersions({
+    pragma: "pragma solidity \"0.8.0\"",
+    includes: ["0.8.0"],
+  });
+})
+
+test("parses single-quoted version", () => {
+  testVersions({
+    pragma: "pragma solidity '0.8.0'",
+    includes: ["0.8.0"],
+  });
+})
+
