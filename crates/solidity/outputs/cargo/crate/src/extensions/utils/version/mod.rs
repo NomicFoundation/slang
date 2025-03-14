@@ -27,31 +27,40 @@ impl PartialVersion {
     fn is_complete(&self) -> bool {
         self.major.is_specified() && self.minor.is_specified() && self.patch.is_specified()
     }
+
+    fn lower_bound(&self) -> Version {
+        Version::new(self.major.into(), self.minor.into(), self.patch.into())
+    }
+
+    fn caret_upper_bound(&self) -> Option<Version> {
+        match self.major {
+            VersionPart::Specified(0) => match self.minor {
+                VersionPart::Specified(0) => match self.patch {
+                    VersionPart::Specified(patch) => Some(Version::new(0, 0, patch + 1)),
+                    _ => Some(Version::new(0, 1, 0)),
+                },
+                VersionPart::Specified(minor) => Some(Version::new(0, minor + 1, 0)),
+                _ => Some(Version::new(1, 0, 0)),
+            },
+            VersionPart::Specified(major) => Some(Version::new(major + 1, 0, 0)),
+            _ => None,
+        }
+    }
+
+    fn tilde_upper_bound(&self) -> Option<Version> {
+        match self.major {
+            VersionPart::Specified(major) => match self.minor {
+                VersionPart::Specified(minor) => Some(Version::new(major, minor + 1, 0)),
+                _ => Some(Version::new(major + 1, 0, 0)),
+            },
+            _ => None,
+        }
+    }
 }
 
 impl Display for PartialVersion {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}.{}.{}", self.major, self.minor, self.patch)
-    }
-}
-
-impl From<PartialVersion> for Version {
-    fn from(partial: PartialVersion) -> Version {
-        Version::new(
-            partial.major.into(),
-            partial.minor.into(),
-            partial.patch.into(),
-        )
-    }
-}
-
-impl From<&PartialVersion> for Version {
-    fn from(partial: &PartialVersion) -> Version {
-        Version::new(
-            partial.major.into(),
-            partial.minor.into(),
-            partial.patch.into(),
-        )
     }
 }
 
@@ -98,20 +107,8 @@ impl VersionPart {
         matches!(self, Self::Wildcard)
     }
 
-    fn is_none(self) -> bool {
-        matches!(self, VersionPart::None)
-    }
-
     fn is_specified(self) -> bool {
         matches!(self, VersionPart::Specified(_))
-    }
-
-    fn unwrap(self) -> u64 {
-        match self {
-            VersionPart::Specified(v) => v,
-            VersionPart::Wildcard => panic!("Tried to unwrap a wildcard segment"),
-            VersionPart::None => panic!("Tried to unwrap an unspecified segment"),
-        }
     }
 }
 
@@ -168,6 +165,19 @@ struct Comparator {
 }
 
 impl Comparator {
+    /// A comparator that will match any version.
+    fn wild() -> Comparator {
+        Comparator::default()
+    }
+
+    /// A comparator that will not match any version.
+    fn none() -> Comparator {
+        Comparator {
+            version: Version::new(0, 0, 0),
+            op: Operator::Lt,
+        }
+    }
+
     fn matches(&self, test_version: &Version) -> bool {
         match self.op {
             Operator::Lt => *test_version < self.version,
@@ -223,54 +233,52 @@ impl ComparatorSet {
         }
     }
 
+    fn wild() -> ComparatorSet {
+        ComparatorSet::single(Comparator::wild())
+    }
+
+    fn none() -> ComparatorSet {
+        ComparatorSet::single(Comparator::none())
+    }
+
     /// Create a `ComparatorSet` which represents the range of versions described by `^[partial]`.
     fn caret(partial: &PartialVersion) -> ComparatorSet {
-        let lower = Comparator {
-            version: partial.into(),
-            op: Operator::GtEq,
-        };
+        match partial.caret_upper_bound() {
+            Some(upper_version) => {
+                let upper = Comparator {
+                    version: upper_version,
+                    op: Operator::Lt,
+                };
 
-        let upper_version = match partial.major {
-            VersionPart::Specified(0) => match partial.minor {
-                VersionPart::Specified(0) => match partial.patch {
-                    VersionPart::Specified(patch) => Version::new(0, 0, patch + 1),
-                    _ => Version::new(0, 1, 0),
-                },
-                VersionPart::Specified(minor) => Version::new(0, minor + 1, 0),
-                _ => Version::new(1, 0, 0),
-            },
-            VersionPart::Specified(major) => Version::new(major + 1, 0, 0),
-            _ => panic!("Major version must be specified when resolving a caret upper bound"),
-        };
+                let lower = Comparator {
+                    version: partial.lower_bound(),
+                    op: Operator::GtEq,
+                };
 
-        let upper = Comparator {
-            version: upper_version,
-            op: Operator::Lt,
-        };
-
-        ComparatorSet::bounds(lower, upper)
+                ComparatorSet::bounds(lower, upper)
+            }
+            None => ComparatorSet::wild(),
+        }
     }
 
     /// Create a `ComparatorSet` which represents the range of versions described by `~[partial]`.
     fn tilde(partial: &PartialVersion) -> ComparatorSet {
-        let major = partial.major.unwrap();
+        match partial.tilde_upper_bound() {
+            Some(upper_version) => {
+                let upper = Comparator {
+                    version: upper_version,
+                    op: Operator::Lt,
+                };
 
-        let lower = Comparator {
-            version: partial.into(),
-            op: Operator::GtEq,
-        };
+                let lower = Comparator {
+                    version: partial.lower_bound(),
+                    op: Operator::GtEq,
+                };
 
-        let upper_version = match partial.minor {
-            VersionPart::Specified(minor) => Version::new(major, minor + 1, 0),
-            _ => Version::new(major + 1, 0, 0),
-        };
-
-        let upper = Comparator {
-            version: upper_version,
-            op: Operator::Lt,
-        };
-
-        ComparatorSet::bounds(lower, upper)
+                ComparatorSet::bounds(lower, upper)
+            }
+            None => ComparatorSet::wild(),
+        }
     }
 
     /// Create a `ComparatorSet` which represents the range of versions described by `[lower_version] - [upper_version]`.
@@ -279,27 +287,28 @@ impl ComparatorSet {
         upper_version: &PartialVersion,
     ) -> ComparatorSet {
         let lower = Comparator {
-            version: lower_version.into(),
+            version: lower_version.lower_bound(),
             op: Operator::GtEq,
         };
 
-        let upper = if upper_version.is_complete() {
-            Comparator {
-                version: upper_version.into(),
-                op: Operator::LtEq,
-            }
-        } else {
-            let mut upper_resolved: Version = upper_version.into();
-            if upper_version.minor.is_none() {
-                upper_resolved.major += 1;
-            } else if upper_version.patch.is_none() {
-                upper_resolved.minor += 1;
-            }
-
-            Comparator {
-                version: upper_resolved,
-                op: Operator::Lt,
-            }
+        let upper = match upper_version.major {
+            VersionPart::Specified(major) => match upper_version.minor {
+                VersionPart::Specified(minor) => match upper_version.patch {
+                    VersionPart::Specified(patch) => Comparator {
+                        version: Version::new(major, minor, patch),
+                        op: Operator::LtEq,
+                    },
+                    _ => Comparator {
+                        version: Version::new(major, minor + 1, 0),
+                        op: Operator::Lt,
+                    },
+                },
+                _ => Comparator {
+                    version: Version::new(major + 1, 0, 0),
+                    op: Operator::Lt,
+                },
+            },
+            _ => Comparator::wild(),
         };
 
         ComparatorSet::bounds(lower, upper)
@@ -317,13 +326,13 @@ impl ComparatorSet {
 
         if partial.is_complete() {
             return ComparatorSet::single(Comparator {
-                version: partial.into(),
+                version: partial.lower_bound(),
                 op: Operator::Eq,
             });
         }
 
         let lower = Comparator {
-            version: partial.into(),
+            version: partial.lower_bound(),
             op: Operator::GtEq,
         };
 

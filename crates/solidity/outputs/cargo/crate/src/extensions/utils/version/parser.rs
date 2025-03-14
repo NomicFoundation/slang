@@ -113,34 +113,33 @@ fn parse_version_term(mut cursor: Cursor<KindTypes>) -> Result<ComparatorSet> {
             _ => Operator::Eq,
         };
         return Ok(ComparatorSet::single(Comparator {
-            version: partial_version.into(),
+            version: partial_version.lower_bound(),
             op,
         }));
     }
 
     let comparator_set = match operator {
-        Some(TerminalKind::Caret) => ComparatorSet::caret(&partial_version),
-        Some(TerminalKind::Tilde) => ComparatorSet::tilde(&partial_version),
         Some(TerminalKind::LessThan) => {
             // <0.7 == <0.7.x == <0.7.0
             ComparatorSet::single(Comparator {
-                version: partial_version.into(),
+                version: partial_version.lower_bound(),
                 op: Operator::Lt,
             })
         }
         Some(TerminalKind::LessThanEqual) => {
             if partial_version.minor.is_wild() || partial_version.patch.is_wild() {
                 // <=0.7.x == <0.8.0
-                ComparatorSet::single(Comparator {
-                    version: ComparatorSet::tilde(&partial_version).comparators[1]
-                        .version
-                        .clone(),
-                    op: Operator::Lt,
-                })
+                match partial_version.tilde_upper_bound() {
+                    Some(upper_version) => ComparatorSet::single(Comparator {
+                        version: upper_version,
+                        op: Operator::Lt,
+                    }),
+                    None => ComparatorSet::wild(),
+                }
             } else {
                 // <=0.7 == <=0.7.0
                 ComparatorSet::single(Comparator {
-                    version: partial_version.into(),
+                    version: partial_version.lower_bound(),
                     op: Operator::LtEq,
                 })
             }
@@ -149,23 +148,24 @@ fn parse_version_term(mut cursor: Cursor<KindTypes>) -> Result<ComparatorSet> {
             if partial_version.minor.is_wild() || partial_version.patch.is_wild() {
                 // >0.7.x == >0.7.0
                 ComparatorSet::single(Comparator {
-                    version: partial_version.into(),
+                    version: partial_version.lower_bound(),
                     op: Operator::Gt,
                 })
             } else {
                 // >0.7 == >=0.8.0
-                ComparatorSet::single(Comparator {
-                    version: ComparatorSet::tilde(&partial_version).comparators[1]
-                        .version
-                        .clone(),
-                    op: Operator::GtEq,
-                })
+                match partial_version.tilde_upper_bound() {
+                    Some(upper_version) => ComparatorSet::single(Comparator {
+                        version: upper_version,
+                        op: Operator::GtEq,
+                    }),
+                    None => ComparatorSet::none(),
+                }
             }
         }
         Some(TerminalKind::GreaterThanEqual) => {
             // >=0.7 == >=0.7.x >=0.7.0
             ComparatorSet::single(Comparator {
-                version: partial_version.into(),
+                version: partial_version.lower_bound(),
                 op: Operator::GtEq,
             })
         }
