@@ -135,7 +135,7 @@ pub fn run_test(
                 "[{version}] No version inferred for {path}",
                 path = file.path.to_str().unwrap_or("[path not found]")
             ));
-            events.test(TestOutcome::NoVersion);
+            events.test(TestOutcome::Failed);
 
             return Ok(());
         } else if !inferred_versions.contains(&version) {
@@ -143,7 +143,7 @@ pub fn run_test(
                 "[{version}] Did not find correct version for {path}",
                 path = file.path.to_str().unwrap_or("[path not found]")
             ));
-            events.test(TestOutcome::WrongVersion);
+            events.test(TestOutcome::Failed);
 
             return Ok(());
         }

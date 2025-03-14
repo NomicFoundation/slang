@@ -12,8 +12,6 @@ pub struct ShardResults {
     pub failed: u64,
     pub incompatible: u64,
     pub not_found: u64,
-    pub no_version: u64,
-    pub wrong_version: u64,
     pub elapsed: Duration,
 }
 
