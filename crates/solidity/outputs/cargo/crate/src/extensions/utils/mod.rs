@@ -10,7 +10,7 @@ use crate::utils::LanguageFacts;
 
 /// Parse the version pragmas in the given Solidity source code and return a list of language
 /// versions that can fulfill those requirements.
-pub fn infer_language_versions(src: &str) -> Vec<Version> {
+pub fn infer_language_versions(src: &str) -> impl Iterator<Item = &'static Version> {
     let parser = crate::parser::Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
     let output = parser.parse_file_contents(src);
 
@@ -23,16 +23,53 @@ pub fn infer_language_versions(src: &str) -> Vec<Version> {
         }
     }
 
-    if found_ranges.is_empty() {
-        return LanguageFacts::ALL_VERSIONS.into();
-    }
+    VersionIterator::new(found_ranges)
+}
 
-    let mut matching_versions = vec![];
-    for lang_version in LanguageFacts::ALL_VERSIONS {
-        if found_ranges.iter().all(|r| r.matches(lang_version)) {
-            matching_versions.push(lang_version.clone());
+struct VersionIterator {
+    valid_ranges: Vec<version::Range>,
+    version_index: usize,
+}
+
+impl VersionIterator {
+    fn new(valid_ranges: Vec<version::Range>) -> VersionIterator {
+        VersionIterator {
+            valid_ranges,
+            version_index: 0,
         }
     }
 
-    matching_versions
+    fn next_version(&mut self) -> Option<&'static Version> {
+        let result = if self.version_index < LanguageFacts::ALL_VERSIONS.len() {
+            Some(&LanguageFacts::ALL_VERSIONS[self.version_index])
+        } else {
+            None
+        };
+
+        self.version_index += 1;
+
+        result
+    }
+
+    fn is_valid(&self, version: &Version) -> bool {
+        if self.valid_ranges.is_empty() {
+            true
+        } else {
+            self.valid_ranges.iter().all(|r| r.matches(version))
+        }
+    }
+}
+
+impl Iterator for VersionIterator {
+    type Item = &'static Version;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while let Some(version) = self.next_version() {
+            if self.is_valid(version) {
+                return Some(version);
+            }
+        }
+
+        None
+    }
 }

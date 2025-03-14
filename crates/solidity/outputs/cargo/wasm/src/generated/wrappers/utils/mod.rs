@@ -41,6 +41,6 @@ define_wrapper! { LanguageFacts {
     }
 
     fn infer_language_versions(src: String) -> Vec<String> {
-        rust::LanguageFacts::infer_language_versions(&src).iter().map(|v| v.to_string()).collect()
+        rust::LanguageFacts::infer_language_versions(&src).map(|v| v.to_string()).collect()
     }
 } }

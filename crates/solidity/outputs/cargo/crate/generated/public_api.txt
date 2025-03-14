@@ -898,4 +898,4 @@ impl slang_solidity::utils::LanguageFacts
 pub const slang_solidity::utils::LanguageFacts::ALL_VERSIONS: &'static [semver::Version]
 pub const slang_solidity::utils::LanguageFacts::EARLIEST_VERSION: semver::Version
 pub const slang_solidity::utils::LanguageFacts::LATEST_VERSION: semver::Version
-pub fn slang_solidity::utils::LanguageFacts::infer_language_versions(input: &str) -> alloc::vec::Vec<semver::Version>
+pub fn slang_solidity::utils::LanguageFacts::infer_language_versions(input: &str) -> impl core::iter::traits::iterator::Iterator<Item = &'static semver::Version>

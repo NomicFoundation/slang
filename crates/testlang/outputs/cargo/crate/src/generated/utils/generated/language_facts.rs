@@ -16,7 +16,7 @@ impl LanguageFacts {
 
     pub const LATEST_VERSION: Version = Version::new(1, 1, 1);
 
-    pub fn infer_language_versions(input: &str) -> Vec<Version> {
+    pub fn infer_language_versions(input: &str) -> impl Iterator<Item = &'static Version> {
         crate::extensions::utils::infer_language_versions(input)
     }
 }

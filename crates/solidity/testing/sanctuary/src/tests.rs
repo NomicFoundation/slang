@@ -128,17 +128,8 @@ pub fn run_test(
     }
 
     if check_infer_version && !has_known_version_mismatch(&file.path) {
-        let inferred_versions = LanguageFacts::infer_language_versions(&source);
-
-        if inferred_versions.is_empty() {
-            events.version_inference_error(format!(
-                "[{version}] No version inferred for {path}",
-                path = file.path.to_str().unwrap_or("[path not found]")
-            ));
-            events.test(TestOutcome::Failed);
-
-            return Ok(());
-        } else if !inferred_versions.contains(&version) {
+        let mut inferred_versions = LanguageFacts::infer_language_versions(&source);
+        if !inferred_versions.any(|v| *v == version) {
             events.version_inference_error(format!(
                 "[{version}] Did not find correct version for {path}",
                 path = file.path.to_str().unwrap_or("[path not found]")
