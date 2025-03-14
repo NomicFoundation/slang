@@ -17,6 +17,6 @@ impl LanguageFacts {
     pub const LATEST_VERSION: Version = Version::new(1, 1, 1);
 
     pub fn infer_language_versions(input: &str) -> Vec<Version> {
-        crate::extensions::semver::infer_language_versions(input)
+        crate::extensions::utils::infer_language_versions(input)
     }
 }

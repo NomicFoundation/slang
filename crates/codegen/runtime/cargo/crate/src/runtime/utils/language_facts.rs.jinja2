@@ -18,6 +18,6 @@ impl LanguageFacts {
     );
 
     pub fn infer_language_versions(input: &str) -> Vec<Version> {
-        crate::extensions::semver::infer_language_versions(input)
+        crate::extensions::utils::infer_language_versions(input)
     }
 }

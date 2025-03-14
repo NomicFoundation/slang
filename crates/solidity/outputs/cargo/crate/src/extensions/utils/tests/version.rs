@@ -1,7 +1,6 @@
 use semver::Version;
 
-use super::parser::parse_range;
-use super::Range;
+use crate::extensions::utils::version::{parse_range, Range};
 use crate::parser::Parser;
 use crate::utils::LanguageFacts;
 
