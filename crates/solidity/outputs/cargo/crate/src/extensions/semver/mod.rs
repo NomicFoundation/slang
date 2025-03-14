@@ -20,9 +20,8 @@ pub fn infer_language_versions(src: &str) -> Vec<Version> {
 
     let mut found_ranges = Vec::<Range>::new();
     while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::VersionExpressionSets) {
-        match parser::parse_range(cursor.spawn()) {
-            Ok(range) => found_ranges.push(range),
-            Err(e) => println!("Error: {e}"),
+        if let Ok(range) = parser::parse_range(cursor.spawn()) {
+            found_ranges.push(range);
         }
     }
 
