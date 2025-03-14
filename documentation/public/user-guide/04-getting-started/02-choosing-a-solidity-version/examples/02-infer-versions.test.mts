@@ -4,9 +4,7 @@ import { LanguageFacts } from "@nomicfoundation/slang/utils";
 const src = `
   pragma solidity ^0.8.0;
 
-  contract blank {
-    
-  }
+  contract Test {}
 `;
 
 test("infer versions", () => {
