@@ -3,7 +3,7 @@ import { CompilationUnit } from "@nomicfoundation/slang/compilation";
 import { Definition } from "@nomicfoundation/slang/bindings";
 
 export function followAllReferences(unit: CompilationUnit, root: Cursor): Definition[] {
-  const followedDefinitions = [];
+  const referencedDefinitions = [];
   const cursor = root.spawn();
   while (cursor.goToNextTerminal()) {
     assertTerminalNode(cursor.node);
@@ -14,9 +14,9 @@ export function followAllReferences(unit: CompilationUnit, root: Cursor): Defini
 
     for (const definition of reference.definitions()) {
       if (definition.nameLocation.isBuiltInLocation()) continue;
-      followedDefinitions.push(definition);
+      referencedDefinitions.push(definition);
     }
   }
 
-  return followedDefinitions;
+  return referencedDefinitions;
 }
