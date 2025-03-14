@@ -64,15 +64,14 @@ test("parses multiple version ranges", () => {
 
 test("parses double-quoted version", () => {
   testVersions({
-    pragma: "pragma solidity \"0.8.0\"",
+    pragma: 'pragma solidity "0.8.0"',
     includes: ["0.8.0"],
   });
-})
+});
 
 test("parses single-quoted version", () => {
   testVersions({
     pragma: "pragma solidity '0.8.0'",
     includes: ["0.8.0"],
   });
-})
-
+});
