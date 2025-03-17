@@ -291,24 +291,18 @@ impl ComparatorSet {
             op: Operator::GtEq,
         };
 
-        let upper = match upper_version.major {
-            VersionPart::Specified(major) => match upper_version.minor {
-                VersionPart::Specified(minor) => match upper_version.patch {
-                    VersionPart::Specified(patch) => Comparator {
-                        version: Version::new(major, minor, patch),
-                        op: Operator::LtEq,
-                    },
-                    _ => Comparator {
-                        version: Version::new(major, minor + 1, 0),
-                        op: Operator::Lt,
-                    },
-                },
-                _ => Comparator {
-                    version: Version::new(major + 1, 0, 0),
+        let upper = if upper_version.is_complete() {
+            Comparator {
+                version: upper_version.lower_bound(),
+                op: Operator::LtEq,
+            }
+        } else {
+            upper_version
+                .tilde_upper_bound()
+                .map_or(Comparator::wild(), |version| Comparator {
+                    version,
                     op: Operator::Lt,
-                },
-            },
-            _ => Comparator::wild(),
+                })
         };
 
         ComparatorSet::bounds(lower, upper)
@@ -336,23 +330,9 @@ impl ComparatorSet {
             op: Operator::GtEq,
         };
 
-        let upper = match partial.major {
-            VersionPart::Specified(major) => match partial.minor {
-                VersionPart::Specified(minor) => match partial.patch {
-                    // Handled above by checking partial.is_complete()
-                    VersionPart::Specified(_) => unreachable!(),
-                    _ => Comparator {
-                        version: Version::new(major, minor + 1, 0),
-                        op: Operator::Lt,
-                    },
-                },
-                _ => Comparator {
-                    version: Version::new(major + 1, 0, 0),
-                    op: Operator::Lt,
-                },
-            },
-            // Handled above by checking partial.major.is_wild()
-            _ => unreachable!(),
+        let upper = Comparator {
+            version: partial.tilde_upper_bound().unwrap(),
+            op: Operator::Lt,
         };
 
         ComparatorSet::bounds(lower, upper)
