@@ -2,4 +2,4 @@
 "@nomicfoundation/slang": minor
 ---
 
-Add `LanguageUtils::infer_language_version`
+Add `LanguageUtils::infer_language_versions`
