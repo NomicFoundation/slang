@@ -368,18 +368,15 @@ impl Display for ComparatorSet {
 
 impl PartialEq for ComparatorSet {
     fn eq(&self, other: &ComparatorSet) -> bool {
+        if self.comparators.len() != other.comparators.len() {
+            return false;
+        }
+
         for comparator in &self.comparators {
             if !other.comparators.contains(comparator) {
                 return false;
             }
         }
-
-        for comparator in &other.comparators {
-            if !self.comparators.contains(comparator) {
-                return false;
-            }
-        }
-
         true
     }
 }
@@ -411,14 +408,12 @@ impl Range {
 
 impl PartialEq for Range {
     fn eq(&self, other: &Range) -> bool {
-        for set in &self.comparator_sets {
-            if !other.comparator_sets.contains(set) {
-                return false;
-            }
+        if self.comparator_sets.len() != other.comparator_sets.len() {
+            return false;
         }
 
-        for set in &other.comparator_sets {
-            if !self.comparator_sets.contains(set) {
+        for set in &self.comparator_sets {
+            if !other.comparator_sets.contains(set) {
                 return false;
             }
         }
