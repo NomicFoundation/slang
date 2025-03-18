@@ -1,0 +1,101 @@
+{%- if rendering_in_stubs -%}
+  // No AST mutator in stubs...
+{%- else -%}
+  #![allow(clippy::too_many_lines)]
+
+  use std::rc::Rc;
+  #[allow(clippy::wildcard_imports)]
+  use super::nodes::*;
+
+  pub trait Mutator {
+    //
+    // Sequences:
+    //
+    {% for parent_type, sequence in model.ast.sequences %}
+      fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
+        {% for field in sequence.fields %}
+          {%- if field.is_optional -%}
+            let {{ field.label }} = source.{{ field.label }}.as_ref().map(
+              {%- if field.is_terminal -%}
+                Rc::clone
+              {%- else -%}
+                |value| self.mutate_{{ field.type | snake_case }}(value)
+              {%- endif -%}
+            );
+          {%- elif not field.is_terminal or not model.ast.unique_terminals is containing(field.type) -%}
+            let {{ field.label }} =
+            {%- if field.is_terminal -%}
+              Rc::clone(&source.{{ field.label }})
+            {%- else -%}
+              self.mutate_{{ field.type | snake_case }}(&source.{{ field.label }})
+            {%- endif -%}
+            ;
+          {%- endif -%}
+        {%- endfor %}
+
+        Rc::new({{ parent_type }}Struct {
+          cursor: source.cursor.clone(),
+          {%- for field in sequence.fields -%}
+            {%- if field.is_optional
+                   or not field.is_terminal
+                   or not model.ast.unique_terminals is containing(field.type) -%}
+              {{ field.label }},
+            {%- endif -%}
+          {%- endfor %}
+        })
+      }
+    {% endfor %}
+
+    //
+    // Choices:
+    //
+    {% for parent_type, choice in model.ast.choices %}
+      fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
+        match source {
+          {% for nonterminal in choice.nonterminal_types -%}
+            {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
+              {{ parent_type }}::{{ nonterminal }}(self.mutate_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}))
+            }
+          {%- endfor %}
+          {%- for terminal in choice.terminal_types -%}
+            {%- if model.ast.unique_terminals is containing(terminal) -%}
+              {{ parent_type }}::{{ terminal }} => {{ parent_type }}::{{ terminal }},
+            {%- else -%}
+              {{ parent_type }}::{{ terminal }}(node) => {{ parent_type }}::{{ terminal }}(Rc::clone(node)),
+            {%- endif -%}
+          {%- endfor -%}
+        }
+      }
+    {% endfor %}
+
+    //
+    // Repeated:
+    //
+    {% for parent_type, repeated in model.ast.repeated %}
+      fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
+        source.iter().map(
+          {%- if repeated.is_terminal -%}
+            Rc::clone
+          {%- else -%}
+            |item| self.mutate_{{ repeated.item_type | snake_case }}(item)
+          {%- endif -%}
+        ).collect()
+      }
+    {% endfor %}
+
+    //
+    // Separated:
+    //
+    {% for parent_type, separated in model.ast.separated %}
+      fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
+        source.iter().map(
+          {%- if separated.is_terminal -%}
+            Rc::clone
+          {%- else -%}
+            |item| self.mutate_{{ separated.item_type | snake_case }}(item)
+          {%- endif -%}
+        ).collect()
+      }
+    {% endfor %}
+  }
+{%- endif -%}

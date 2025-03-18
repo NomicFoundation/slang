@@ -7,4 +7,7 @@ pub mod builder;
 #[path = "generated/visitor.rs"]
 pub mod visitor;
 
+#[path = "generated/mutator.rs"]
+pub mod mutator;
+
 pub use nodes::*;
