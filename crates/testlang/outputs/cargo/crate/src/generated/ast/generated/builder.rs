@@ -22,53 +22,41 @@ pub fn build_source_unit(cursor: Cursor) -> Result<SourceUnit> {
 pub fn build_tree(cursor: Cursor) -> Result<Tree> {
     expect_nonterminal_kind(&cursor, NonterminalKind::Tree)?;
     let mut helper = SequenceHelper::new(cursor.clone());
-    let keyword = fetch_terminal_node(&helper.accept_label(EdgeLabel::Keyword)?)?;
+    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Keyword)?)?;
     let name = if helper.at_label(EdgeLabel::Name) {
         Some(fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?)
     } else {
         None
     };
     let node = build_tree_node(helper.accept_label(EdgeLabel::Node)?)?;
-    let semicolon = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
     helper.finalize()?;
 
-    Ok(Rc::new(TreeStruct {
-        cursor,
-        keyword,
-        name,
-        node,
-        semicolon,
-    }))
+    Ok(Rc::new(TreeStruct { cursor, name, node }))
 }
 
 pub fn build_tree_node(cursor: Cursor) -> Result<TreeNode> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TreeNode)?;
     let mut helper = SequenceHelper::new(cursor.clone());
-    let open_bracket = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBracket)?)?;
+    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBracket)?)?;
     let members = build_tree_node_children(helper.accept_label(EdgeLabel::Members)?)?;
-    let close_bracket = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBracket)?)?;
+    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBracket)?)?;
     helper.finalize()?;
 
-    Ok(Rc::new(TreeNodeStruct {
-        cursor,
-        open_bracket,
-        members,
-        close_bracket,
-    }))
+    Ok(Rc::new(TreeNodeStruct { cursor, members }))
 }
 
 pub fn build_addition_expression(cursor: Cursor) -> Result<AdditionExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AdditionExpression)?;
     let mut helper = SequenceHelper::new(cursor.clone());
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
     Ok(Rc::new(AdditionExpressionStruct {
         cursor,
         left_operand,
-        operator,
         right_operand,
     }))
 }
@@ -76,29 +64,24 @@ pub fn build_addition_expression(cursor: Cursor) -> Result<AdditionExpression> {
 pub fn build_negation_expression(cursor: Cursor) -> Result<NegationExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::NegationExpression)?;
     let mut helper = SequenceHelper::new(cursor.clone());
-    let operator = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
     let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
     helper.finalize()?;
 
-    Ok(Rc::new(NegationExpressionStruct {
-        cursor,
-        operator,
-        operand,
-    }))
+    Ok(Rc::new(NegationExpressionStruct { cursor, operand }))
 }
 
 pub fn build_member_access_expression(cursor: Cursor) -> Result<MemberAccessExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::MemberAccessExpression)?;
     let mut helper = SequenceHelper::new(cursor.clone());
     let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
-    let period = fetch_terminal_node(&helper.accept_label(EdgeLabel::Period)?)?;
+    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Period)?)?;
     let member = fetch_terminal_node(&helper.accept_label(EdgeLabel::Member)?)?;
     helper.finalize()?;
 
     Ok(Rc::new(MemberAccessExpressionStruct {
         cursor,
         operand,
-        period,
         member,
     }))
 }

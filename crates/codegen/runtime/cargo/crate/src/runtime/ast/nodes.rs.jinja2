@@ -25,18 +25,22 @@
     pub struct {{ parent_type }}Struct {
       pub cursor: Cursor,
       {%- for field in sequence.fields %}
-        pub {{ field.label | snake_case }}:
-        {%- if field.is_terminal -%}
-          {%- if field.is_optional -%}
-            Option<Rc<TerminalNode>>,
+        {%- if field.is_optional
+               or not field.is_terminal
+               or not model.ast.unique_terminals is containing(field.type) -%}
+          pub {{ field.label | snake_case }}:
+          {%- if field.is_terminal -%}
+            {%- if field.is_optional -%}
+              Option<Rc<TerminalNode>>,
+            {%- else -%}
+              Rc<TerminalNode>,
+            {%- endif -%}
           {%- else -%}
-            Rc<TerminalNode>,
-          {%- endif -%}
-        {%- else -%}
-          {%- if field.is_optional -%}
-            Option<{{ field.type | pascal_case }}>,
-          {%- else -%}
-            {{ field.type | pascal_case }},
+            {%- if field.is_optional -%}
+              Option<{{ field.type | pascal_case }}>,
+            {%- else -%}
+              {{ field.type | pascal_case }},
+            {%- endif -%}
           {%- endif -%}
         {%- endif -%}
       {% endfor -%}

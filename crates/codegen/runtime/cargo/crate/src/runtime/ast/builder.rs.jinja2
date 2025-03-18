@@ -32,7 +32,12 @@
           };
 
         {%- else -%}
-          let {{ field.label }} =
+          {%- if not field.is_terminal
+                 or not model.ast.unique_terminals is containing(field.type) -%}
+            let {{ field.label }} =
+          {%- else -%}
+            _ =
+          {%- endif -%}
           {%- if field.is_terminal -%}
             fetch_terminal_node(&helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?)?;
           {%- else -%}
@@ -47,7 +52,11 @@
       Ok(Rc::new({{ parent_type }}Struct {
         cursor,
         {%- for field in sequence.fields -%}
-          {{ field.label }},
+          {%- if field.is_optional
+                 or not field.is_terminal
+                 or not model.ast.unique_terminals is containing(field.type) -%}
+            {{ field.label }},
+          {%- endif -%}
         {%- endfor %}
       }))
     }

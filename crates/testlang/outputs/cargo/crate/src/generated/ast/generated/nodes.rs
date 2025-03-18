@@ -39,10 +39,8 @@ pub type Tree = Rc<TreeStruct>;
 #[derive(Debug)]
 pub struct TreeStruct {
     pub cursor: Cursor,
-    pub keyword: Rc<TerminalNode>,
     pub name: Option<Rc<TerminalNode>>,
     pub node: TreeNode,
-    pub semicolon: Rc<TerminalNode>,
 }
 
 /**
@@ -59,9 +57,7 @@ pub type TreeNode = Rc<TreeNodeStruct>;
 #[derive(Debug)]
 pub struct TreeNodeStruct {
     pub cursor: Cursor,
-    pub open_bracket: Rc<TerminalNode>,
     pub members: TreeNodeChildren,
-    pub close_bracket: Rc<TerminalNode>,
 }
 
 /**
@@ -80,7 +76,6 @@ pub type AdditionExpression = Rc<AdditionExpressionStruct>;
 pub struct AdditionExpressionStruct {
     pub cursor: Cursor,
     pub left_operand: Expression,
-    pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
 }
 
@@ -98,7 +93,6 @@ pub type NegationExpression = Rc<NegationExpressionStruct>;
 #[derive(Debug)]
 pub struct NegationExpressionStruct {
     pub cursor: Cursor,
-    pub operator: Rc<TerminalNode>,
     pub operand: Expression,
 }
 
@@ -118,7 +112,6 @@ pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 pub struct MemberAccessExpressionStruct {
     pub cursor: Cursor,
     pub operand: Expression,
-    pub period: Rc<TerminalNode>,
     pub member: Rc<TerminalNode>,
 }
 

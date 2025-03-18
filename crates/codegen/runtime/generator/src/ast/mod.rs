@@ -10,6 +10,8 @@ pub struct AstModel {
     #[serde(skip)]
     ebnf: Option<EbnfModel>,
 
+    pub unique_terminals: IndexSet<model::Identifier>,
+
     pub sequences: IndexMap<model::Identifier, Sequence>,
     pub choices: IndexMap<model::Identifier, Choice>,
     pub repeated: IndexMap<model::Identifier, Repeated>,
@@ -66,6 +68,8 @@ impl AstModel {
             terminals: IndexSet::new(),
             ebnf: Some(EbnfModel::build(language)),
 
+            unique_terminals: IndexSet::new(),
+
             sequences: IndexMap::new(),
             choices: IndexMap::new(),
             repeated: IndexMap::new(),
@@ -96,9 +100,15 @@ impl AstModel {
                 }
                 model::Item::Keyword { item } => {
                     self.terminals.insert(item.name.clone());
+                    if item.is_unique() {
+                        self.unique_terminals.insert(item.name.clone());
+                    }
                 }
                 model::Item::Token { item } => {
                     self.terminals.insert(item.name.clone());
+                    if item.is_unique() {
+                        self.unique_terminals.insert(item.name.clone());
+                    }
                 }
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
