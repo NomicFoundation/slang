@@ -27,9 +27,10 @@ pub struct Sequence {
 pub struct Field {
     pub label: model::Identifier,
 
-    /// AST Type of the field, [`None`] if the field is a terminal.
-    pub r#type: Option<model::Identifier>,
+    /// AST Type of the field
+    pub r#type: model::Identifier,
 
+    pub is_terminal: bool,
     pub is_optional: bool,
 }
 
@@ -38,23 +39,25 @@ pub struct Choice {
     pub ebnf: String,
 
     pub nonterminal_types: Vec<model::Identifier>,
-    pub includes_terminals: bool,
+    pub terminal_types: Vec<model::Identifier>,
 }
 
 #[derive(Serialize)]
 pub struct Repeated {
     pub ebnf: String,
 
-    /// AST Type of the field, [`None`] if the field is a terminal.
-    pub item_type: Option<model::Identifier>,
+    /// AST Type of the field
+    pub item_type: model::Identifier,
+    pub is_terminal: bool,
 }
 
 #[derive(Serialize)]
 pub struct Separated {
     pub ebnf: String,
 
-    /// AST Type of the field, [`None`] if the field is a terminal.
-    pub item_type: Option<model::Identifier>,
+    /// AST Type of the field
+    pub item_type: model::Identifier,
+    pub is_terminal: bool,
 }
 
 impl AstModel {
@@ -151,7 +154,7 @@ impl AstModel {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
-        let (terminal_types, nonterminal_types) = item
+        let (terminal_types, nonterminal_types): (Vec<_>, Vec<_>) = item
             .variants
             .iter()
             .map(|variant| variant.reference.clone())
@@ -162,7 +165,7 @@ impl AstModel {
             Choice {
                 ebnf,
                 nonterminal_types,
-                includes_terminals: !terminal_types.is_empty(),
+                terminal_types,
             },
         );
     }
@@ -175,11 +178,8 @@ impl AstModel {
             parent_type,
             Repeated {
                 ebnf,
-                item_type: if self.terminals.contains(&item.reference) {
-                    None
-                } else {
-                    Some(item.reference.clone())
-                },
+                item_type: item.reference.clone(),
+                is_terminal: self.terminals.contains(&item.reference),
             },
         );
     }
@@ -192,11 +192,8 @@ impl AstModel {
             parent_type,
             Separated {
                 ebnf,
-                item_type: if self.terminals.contains(&item.reference) {
-                    None
-                } else {
-                    Some(item.reference.clone())
-                },
+                item_type: item.reference.clone(),
+                is_terminal: self.terminals.contains(&item.reference),
             },
         );
     }
@@ -215,7 +212,7 @@ impl AstModel {
             .iter()
             .map(|expression| expression.reference.clone());
 
-        let (terminal_types, nonterminal_types) = precedence_expressions
+        let (terminal_types, nonterminal_types): (Vec<_>, Vec<_>) = precedence_expressions
             .chain(primary_expressions)
             .partition(|reference| self.terminals.contains(reference));
 
@@ -224,7 +221,7 @@ impl AstModel {
             Choice {
                 ebnf,
                 nonterminal_types,
-                includes_terminals: !terminal_types.is_empty(),
+                terminal_types,
             },
         );
     }
@@ -244,7 +241,8 @@ impl AstModel {
 
         let operand = |label: PredefinedLabel| Field {
             label: label.as_ref().into(),
-            r#type: Some(base_name.clone()),
+            r#type: base_name.clone(),
+            is_terminal: false,
             is_optional: false,
         };
 
@@ -284,11 +282,8 @@ impl AstModel {
 
             Field {
                 label: label.clone(),
-                r#type: if self.terminals.contains(reference) {
-                    None
-                } else {
-                    Some(reference.clone())
-                },
+                r#type: reference.clone(),
+                is_terminal: self.terminals.contains(reference),
                 is_optional,
             }
         })

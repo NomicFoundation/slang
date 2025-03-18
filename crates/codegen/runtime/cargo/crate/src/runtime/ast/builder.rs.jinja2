@@ -18,13 +18,13 @@
       {% for field in sequence.fields %}
         {%- if field.is_optional -%}
           let {{ field.label }} = if helper.at_label(EdgeLabel::{{ field.label | pascal_case }}) {
-            {%- if field.type -%}
-              Some(build_{{ field.type | snake_case }}(
-                helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
-              )?)
-            {%- else -%}
+            {%- if field.is_terminal -%}
               Some(fetch_terminal_node(
                 &helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
+              )?)
+            {%- else -%}
+              Some(build_{{ field.type | snake_case }}(
+                helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
               )?)
             {%- endif -%}
           } else {
@@ -33,12 +33,12 @@
 
         {%- else -%}
           let {{ field.label }} =
-          {%- if field.type -%}
+          {%- if field.is_terminal -%}
+            fetch_terminal_node(&helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?)?;
+          {%- else -%}
             build_{{ field.type | snake_case }}(
               helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
             )?;
-          {%- else -%}
-            fetch_terminal_node(&helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?)?;
           {%- endif -%}
         {%- endif -%}
       {%- endfor %}
@@ -73,7 +73,7 @@
           {% for type in choice.nonterminal_types -%}
             NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ parent_type }}::{{ type | pascal_case }}(build_{{ type | snake_case }}(cursor.clone())?),
           {%- endfor -%}
-          {%- if choice.includes_terminals -%}
+          {%- if choice.terminal_types | length > 0 -%}
             NodeKind::Terminal(_) => {{ parent_type }}::TerminalNode(fetch_terminal_node(&cursor)?),
             NodeKind::Nonterminal(_) => {
               return Err(format!("Unexpected variant node of kind {:?}", cursor.node().kind()));
@@ -105,10 +105,10 @@
       loop {
         if !cursor.node().is_trivia() {
           expect_label(&cursor, EdgeLabel::Item)?;
-          {%- if repeated.item_type -%}
-            let item = build_{{ repeated.item_type | snake_case }}(cursor.clone())?;
-          {%- else -%}
+          {%- if repeated.is_terminal -%}
             let item = fetch_terminal_node(&cursor)?;
+          {%- else -%}
+            let item = build_{{ repeated.item_type | snake_case }}(cursor.clone())?;
           {%- endif -%}
           items.push(item);
         }
@@ -135,10 +135,10 @@
       loop {
         if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
           expect_label(&cursor, EdgeLabel::Item)?;
-          {%- if separated.item_type -%}
-            let item = build_{{ separated.item_type | snake_case }}(cursor.clone())?;
-          {%- else -%}
+          {%- if separated.is_terminal -%}
             let item = fetch_terminal_node(&cursor)?;
+          {%- else -%}
+            let item = build_{{ separated.item_type | snake_case }}(cursor.clone())?;
           {%- endif -%}
           items.push(item);
         }

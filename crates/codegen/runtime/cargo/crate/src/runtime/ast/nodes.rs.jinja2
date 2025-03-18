@@ -26,17 +26,17 @@
       pub cursor: Cursor,
       {%- for field in sequence.fields %}
         pub {{ field.label | snake_case }}:
-        {%- if field.type -%}
-          {%- if field.is_optional -%}
-            Option<{{ field.type | pascal_case }}>,
-          {%- else -%}
-            {{ field.type | pascal_case }},
-          {%- endif -%}
-        {%- else -%}
+        {%- if field.is_terminal -%}
           {%- if field.is_optional -%}
             Option<Rc<TerminalNode>>,
           {%- else -%}
             Rc<TerminalNode>,
+          {%- endif -%}
+        {%- else -%}
+          {%- if field.is_optional -%}
+            Option<{{ field.type | pascal_case }}>,
+          {%- else -%}
+            {{ field.type | pascal_case }},
           {%- endif -%}
         {%- endif -%}
       {% endfor -%}
@@ -67,7 +67,7 @@
         {% for nonterminal in choice.nonterminal_types -%}
           {{ nonterminal }}({{ nonterminal | pascal_case }}),
         {%- endfor %}
-        {%- if choice.includes_terminals %}
+        {%- if choice.terminal_types | length > 0 %}
           TerminalNode(Rc<TerminalNode>),
         {% endif -%}
       }
@@ -89,10 +89,10 @@
      * ```
      */
     pub type {{ parent_type }} = Vec<
-      {%- if repeated.item_type -%}
-        {{ repeated.item_type | pascal_case }}
-      {%- else -%}
+      {%- if repeated.is_terminal -%}
         Rc<TerminalNode>
+      {%- else -%}
+        {{ repeated.item_type | pascal_case }}
       {%- endif -%}
     >;
   {% endfor %}
@@ -112,10 +112,10 @@
      * ```
      */
     pub type {{ parent_type }} = Vec<
-      {%- if separated.item_type -%}
-        {{ separated.item_type | pascal_case }}
-      {%- else -%}
+      {%- if separated.is_terminal -%}
         Rc<TerminalNode>
+      {%- else -%}
+        {{ separated.item_type | pascal_case }}
       {%- endif -%}
     >;
   {% endfor %}

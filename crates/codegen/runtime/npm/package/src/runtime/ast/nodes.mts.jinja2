@@ -32,10 +32,10 @@
               {%- if field.is_optional -%}
                 ${{ field.label | camel_case }} === undefined ? undefined :
               {%- endif -%}
-              {%- if field.type -%}
-                new {{ field.type }}(${{ field.label | camel_case }} as NonterminalNode),
-              {%- else -%}
+              {%- if field.is_terminal -%}
                 ${{ field.label | camel_case }} as TerminalNode,
+              {%- else -%}
+                new {{ field.type }}(${{ field.label | camel_case }} as NonterminalNode),
               {%- endif -%}
             {% endfor -%}
           };
@@ -58,10 +58,10 @@
            * Returns the child node that has the label `{{ field.label | snake_case }}`.
            */
           public get {{ field.label | camel_case }}() :
-            {%- if field.type -%}
-              {{ field.type }}
-            {%- else -%}
+            {%- if field.is_terminal -%}
               TerminalNode
+            {%- else -%}
+              {{ field.type }}
             {%- endif -%}
             {%- if field.is_optional -%}
               | undefined
@@ -89,7 +89,7 @@
        */
       export class {{ parent_type }} {
         {%- set variant_types = choice.nonterminal_types -%}
-        {%- if choice.includes_terminals -%}
+        {%- if choice.terminal_types | length > 0 -%}
           {%- set variant_types = variant_types | concat(with = "TerminalNode") -%}
         {%- endif -%}
         {%- set variant_types = variant_types | join(sep = " | ") -%}
@@ -100,7 +100,7 @@
           {% if choice.nonterminal_types | length == 0 -%}
             return variant as TerminalNode;
           {%- else -%}
-            {% if choice.includes_terminals -%}
+            {% if choice.terminal_types | length > 0 -%}
               if (variant.isTerminalNode()) {
                   return variant;
               }
@@ -157,10 +157,10 @@
         private readonly fetch = once(() => {
           const items = wasm.ast.Selectors.repeated(this.cst);
 
-          {%- if repeated.item_type -%}
-            return items.map((item) => new {{ repeated.item_type }}(item as NonterminalNode));
-          {%- else -%}
+          {%- if repeated.is_terminal -%}
             return items as TerminalNode[];
+          {%- else -%}
+            return items.map((item) => new {{ repeated.item_type }}(item as NonterminalNode));
           {%- endif -%}
         });
           
@@ -180,10 +180,10 @@
           * Returns an array of the child nodes that have the label `item`. 
           */
         public get items():
-          {%- if repeated.item_type -%}
-            readonly {{ repeated.item_type }}[]
-          {%- else -%}
+          {%- if repeated.is_terminal -%}
             readonly TerminalNode[]
+          {%- else -%}
+            readonly {{ repeated.item_type }}[]
           {%- endif -%}
         {
           return this.fetch();
@@ -210,10 +210,10 @@
           const [items, separators] = wasm.ast.Selectors.separated(this.cst);
 
           return {
-            {%- if separated.item_type -%}
-              items: items!.map((item) => new {{ separated.item_type }}(item as NonterminalNode)),
-            {%- else -%}
+            {%- if separated.is_terminal -%}
               items: items as TerminalNode[],
+            {%- else -%}
+              items: items!.map((item) => new {{ separated.item_type }}(item as NonterminalNode)),
             {%- endif -%}
             separators: separators as TerminalNode[],
           };
@@ -235,10 +235,10 @@
           * Returns an array of the child nodes that have the label `item`. 
           */
         public get items():
-          {%- if separated.item_type -%}
-            readonly {{ separated.item_type }}[]
-          {%- else -%}
+          {%- if separated.is_terminal -%}
             readonly TerminalNode[]
+          {%- else -%}
+            readonly {{ separated.item_type }}[]
           {%- endif -%}
         {
           return this.fetch().items;

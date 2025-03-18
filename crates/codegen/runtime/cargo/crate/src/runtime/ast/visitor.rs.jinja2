@@ -22,14 +22,14 @@
       pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
         {%- set_global has_fields = false -%}
         {%- for field in sequence.fields -%}
-           {%- if field.type -%}
+           {%- if not field.is_terminal -%}
               {%- set_global has_fields = true -%}
            {%- endif -%}
         {%- endfor -%}
         {%- if has_fields %}
           if visitor.enter_{{ parent_type | snake_case }}(self) {
             {% for field in sequence.fields -%}
-              {%- if field.type -%}
+              {%- if not field.is_terminal -%}
                 {%- if field.is_optional %}
                   if let Some(ref {{ field.label | snake_case }}) = self.{{ field.label | snake_case }} {
                     {%- if field.type in model.ast.repeated or field.type in model.ast.separated %}
@@ -79,7 +79,7 @@
                 {% endif -%}
               }
             {%- endfor %}
-            {%- if choice.includes_terminals %}
+            {%- if choice.terminal_types | length > 0 %}
               Self::TerminalNode(_) => {}
             {% endif -%}
           }
@@ -93,7 +93,10 @@
   //
 
   {% for parent_type, repeated in model.ast.repeated -%}
-    {%- if repeated.item_type %}
+    {%- if repeated.is_terminal %}
+      #[inline]
+      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+    {% else %}
       #[inline]
       fn accept_{{ parent_type | snake_case }}(items: &[{{ repeated.item_type }}], visitor: &mut dyn Visitor) {
         for item in items {
@@ -105,9 +108,6 @@
           {% endif -%}
         }
       }
-    {% else %}
-      #[inline]
-      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
     {% endif -%}
   {% endfor %}
 
@@ -116,7 +116,10 @@
   //
 
   {% for parent_type, separated in model.ast.separated %}
-    {%- if separated.item_type %}
+    {%- if separated.is_terminal %}
+      #[inline]
+      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+    {% else %}
       #[inline]
       fn accept_{{ parent_type | snake_case }}(items: &[{{ separated.item_type }}], visitor: &mut dyn Visitor) {
         for item in items {
@@ -128,9 +131,6 @@
           {% endif -%}
         }
       }
-    {% else %}
-      #[inline]
-      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
     {% endif -%}
   {% endfor %}
 
