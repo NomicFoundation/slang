@@ -1,10 +1,12 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+#![allow(clippy::too_many_lines)]
+
 use std::rc::Rc;
 
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;
-use crate::cst::{Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalNode};
+use crate::cst::{Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalKind, TerminalNode};
 
 //
 // Sequences:
@@ -132,8 +134,11 @@ pub fn build_tree_node_child(mut cursor: Cursor) -> Result<TreeNodeChild> {
         NodeKind::Nonterminal(NonterminalKind::TreeNode) => {
             TreeNodeChild::TreeNode(build_tree_node(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => TreeNodeChild::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::DelimitedIdentifier) => {
+            let node = fetch_terminal_node(&cursor)?;
+            TreeNodeChild::DelimitedIdentifier(node)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -161,8 +166,15 @@ pub fn build_expression(mut cursor: Cursor) -> Result<Expression> {
         NodeKind::Nonterminal(NonterminalKind::MemberAccessExpression) => {
             Expression::MemberAccessExpression(build_member_access_expression(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => Expression::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::StringLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            Expression::StringLiteral(node)
+        }
+        NodeKind::Terminal(TerminalKind::Identifier) => {
+            let node = fetch_terminal_node(&cursor)?;
+            Expression::Identifier(node)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -180,7 +192,18 @@ pub fn build_literal(mut cursor: Cursor) -> Result<Literal> {
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = Literal(fetch_terminal_node(&cursor)?);
+    let item = match cursor.node().kind() {
+        NodeKind::Terminal(TerminalKind::StringLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            Literal::StringLiteral(node)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                cursor.node().kind()
+            ));
+        }
+    };
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }

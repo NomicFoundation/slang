@@ -2545,7 +2545,6 @@ pub struct YulFunctionCallExpressionStruct {
  *                  | (* variant: *) ConstantDefinition; (* Introduced in 0.7.4 *)
  * ```
  */
-
 #[derive(Debug)]
 pub enum SourceUnitMember {
     PragmaDirective(PragmaDirective),
@@ -2572,7 +2571,6 @@ pub enum SourceUnitMember {
  *        | (* variant: *) VersionPragma;
  * ```
  */
-
 #[derive(Debug)]
 pub enum Pragma {
     AbicoderPragma(AbicoderPragma),
@@ -2588,11 +2586,10 @@ pub enum Pragma {
  *                     | (* variant: *) StringLiteral;
  * ```
  */
-
 #[derive(Debug)]
 pub enum ExperimentalFeature {
     StringLiteral(StringLiteral),
-    TerminalNode(Rc<TerminalNode>),
+    Identifier(Rc<TerminalNode>),
 }
 
 /**
@@ -2603,7 +2600,6 @@ pub enum ExperimentalFeature {
  *                   | (* variant: *) VersionTerm;
  * ```
  */
-
 #[derive(Debug)]
 pub enum VersionExpression {
     VersionRange(VersionRange),
@@ -2623,9 +2619,16 @@ pub enum VersionExpression {
  *                 | (* variant: *) GREATER_THAN_EQUAL;
  * ```
  */
-
 #[derive(Debug)]
-pub struct VersionOperator(pub Rc<TerminalNode>);
+pub enum VersionOperator {
+    Caret,
+    Tilde,
+    Equal,
+    LessThan,
+    GreaterThan,
+    LessThanEqual,
+    GreaterThanEqual,
+}
 
 /**
  * This node represents a `VersionLiteral` nonterminal, with the following structure:
@@ -2636,11 +2639,11 @@ pub struct VersionOperator(pub Rc<TerminalNode>);
  *                | (* variant: *) DOUBLE_QUOTED_VERSION_LITERAL;
  * ```
  */
-
 #[derive(Debug)]
 pub enum VersionLiteral {
     SimpleVersionLiteral(SimpleVersionLiteral),
-    TerminalNode(Rc<TerminalNode>),
+    SingleQuotedVersionLiteral(Rc<TerminalNode>),
+    DoubleQuotedVersionLiteral(Rc<TerminalNode>),
 }
 
 /**
@@ -2652,7 +2655,6 @@ pub enum VersionLiteral {
  *              | (* variant: *) ImportDeconstruction;
  * ```
  */
-
 #[derive(Debug)]
 pub enum ImportClause {
     PathImport(PathImport),
@@ -2668,7 +2670,6 @@ pub enum ImportClause {
  *             | (* variant: *) UsingDeconstruction; (* Introduced in 0.8.13 *)
  * ```
  */
-
 #[derive(Debug)]
 pub enum UsingClause {
     IdentifierPath(IdentifierPath),
@@ -2697,9 +2698,24 @@ pub enum UsingClause {
  *               | (* variant: *) TILDE;
  * ```
  */
-
 #[derive(Debug)]
-pub struct UsingOperator(pub Rc<TerminalNode>);
+pub enum UsingOperator {
+    Ampersand,
+    Asterisk,
+    BangEqual,
+    Bar,
+    Caret,
+    EqualEqual,
+    GreaterThan,
+    GreaterThanEqual,
+    LessThan,
+    LessThanEqual,
+    Minus,
+    Percent,
+    Plus,
+    Slash,
+    Tilde,
+}
 
 /**
  * This node represents a `UsingTarget` nonterminal, with the following structure:
@@ -2709,11 +2725,10 @@ pub struct UsingOperator(pub Rc<TerminalNode>);
  *             | (* variant: *) ASTERISK;
  * ```
  */
-
 #[derive(Debug)]
 pub enum UsingTarget {
     TypeName(TypeName),
-    TerminalNode(Rc<TerminalNode>),
+    Asterisk,
 }
 
 /**
@@ -2735,7 +2750,6 @@ pub enum UsingTarget {
  *                | (* variant: *) StateVariableDefinition;
  * ```
  */
-
 #[derive(Debug)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
@@ -2766,11 +2780,15 @@ pub enum ContractMember {
  *                        | (* variant: *) TRANSIENT_KEYWORD; (* Introduced in 0.8.27 *)
  * ```
  */
-
 #[derive(Debug)]
 pub enum StateVariableAttribute {
     OverrideSpecifier(OverrideSpecifier),
-    TerminalNode(Rc<TerminalNode>),
+    ConstantKeyword,
+    InternalKeyword,
+    PrivateKeyword,
+    PublicKeyword,
+    ImmutableKeyword,
+    TransientKeyword,
 }
 
 /**
@@ -2782,9 +2800,12 @@ pub enum StateVariableAttribute {
  *              | (* variant: *) RECEIVE_KEYWORD;
  * ```
  */
-
 #[derive(Debug)]
-pub struct FunctionName(pub Rc<TerminalNode>);
+pub enum FunctionName {
+    Identifier(Rc<TerminalNode>),
+    FallbackKeyword,
+    ReceiveKeyword,
+}
 
 /**
  * This node represents a `FunctionAttribute` nonterminal, with the following structure:
@@ -2803,12 +2824,19 @@ pub struct FunctionName(pub Rc<TerminalNode>);
  *                   | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
  * ```
  */
-
 #[derive(Debug)]
 pub enum FunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
-    TerminalNode(Rc<TerminalNode>),
+    ConstantKeyword,
+    ExternalKeyword,
+    InternalKeyword,
+    PayableKeyword,
+    PrivateKeyword,
+    PublicKeyword,
+    PureKeyword,
+    ViewKeyword,
+    VirtualKeyword,
 }
 
 /**
@@ -2819,11 +2847,10 @@ pub enum FunctionAttribute {
  *              | (* variant: *) SEMICOLON;
  * ```
  */
-
 #[derive(Debug)]
 pub enum FunctionBody {
     Block(Block),
-    TerminalNode(Rc<TerminalNode>),
+    Semicolon,
 }
 
 /**
@@ -2839,11 +2866,14 @@ pub enum FunctionBody {
  *                      | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 and deprecated in 0.6.7. *)
  * ```
  */
-
 #[derive(Debug)]
 pub enum ConstructorAttribute {
     ModifierInvocation(ModifierInvocation),
-    TerminalNode(Rc<TerminalNode>),
+    InternalKeyword,
+    OverrideKeyword,
+    PayableKeyword,
+    PublicKeyword,
+    VirtualKeyword,
 }
 
 /**
@@ -2862,11 +2892,17 @@ pub enum ConstructorAttribute {
  *                          | (* variant: *) VIEW_KEYWORD; (* Introduced in 0.4.16 and deprecated in 0.6.0. *)
  * ```
  */
-
 #[derive(Debug)]
 pub enum UnnamedFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
-    TerminalNode(Rc<TerminalNode>),
+    ConstantKeyword,
+    ExternalKeyword,
+    InternalKeyword,
+    PayableKeyword,
+    PrivateKeyword,
+    PublicKeyword,
+    PureKeyword,
+    ViewKeyword,
 }
 
 /**
@@ -2883,12 +2919,15 @@ pub enum UnnamedFunctionAttribute {
  *                           | (* variant: *) VIRTUAL_KEYWORD;
  * ```
  */
-
 #[derive(Debug)]
 pub enum FallbackFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
-    TerminalNode(Rc<TerminalNode>),
+    ExternalKeyword,
+    PayableKeyword,
+    PureKeyword,
+    ViewKeyword,
+    VirtualKeyword,
 }
 
 /**
@@ -2903,12 +2942,13 @@ pub enum FallbackFunctionAttribute {
  *                          | (* variant: *) VIRTUAL_KEYWORD;
  * ```
  */
-
 #[derive(Debug)]
 pub enum ReceiveFunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
-    TerminalNode(Rc<TerminalNode>),
+    ExternalKeyword,
+    PayableKeyword,
+    VirtualKeyword,
 }
 
 /**
@@ -2919,11 +2959,10 @@ pub enum ReceiveFunctionAttribute {
  *                   | (* variant: *) VIRTUAL_KEYWORD; (* Introduced in 0.6.0 *)
  * ```
  */
-
 #[derive(Debug)]
 pub enum ModifierAttribute {
     OverrideSpecifier(OverrideSpecifier),
-    TerminalNode(Rc<TerminalNode>),
+    VirtualKeyword,
 }
 
 /**
@@ -2937,7 +2976,6 @@ pub enum ModifierAttribute {
  *          | (* variant: *) IdentifierPath;
  * ```
  */
-
 #[derive(Debug)]
 pub enum TypeName {
     ArrayTypeName(ArrayTypeName),
@@ -2961,9 +2999,17 @@ pub enum TypeName {
  *                       | (* variant: *) PAYABLE_KEYWORD;
  * ```
  */
-
 #[derive(Debug)]
-pub struct FunctionTypeAttribute(pub Rc<TerminalNode>);
+pub enum FunctionTypeAttribute {
+    InternalKeyword,
+    ExternalKeyword,
+    PrivateKeyword,
+    PublicKeyword,
+    ConstantKeyword,
+    PureKeyword,
+    ViewKeyword,
+    PayableKeyword,
+}
 
 /**
  * This node represents a `MappingKeyType` nonterminal, with the following structure:
@@ -2973,7 +3019,6 @@ pub struct FunctionTypeAttribute(pub Rc<TerminalNode>);
  *                | (* variant: *) IdentifierPath;
  * ```
  */
-
 #[derive(Debug)]
 pub enum MappingKeyType {
     ElementaryType(ElementaryType),
@@ -2995,11 +3040,17 @@ pub enum MappingKeyType {
  *                | (* variant: *) UFIXED_KEYWORD;
  * ```
  */
-
 #[derive(Debug)]
 pub enum ElementaryType {
     AddressType(AddressType),
-    TerminalNode(Rc<TerminalNode>),
+    BoolKeyword,
+    ByteKeyword,
+    StringKeyword,
+    BytesKeyword(Rc<TerminalNode>),
+    IntKeyword(Rc<TerminalNode>),
+    UintKeyword(Rc<TerminalNode>),
+    FixedKeyword(Rc<TerminalNode>),
+    UfixedKeyword(Rc<TerminalNode>),
 }
 
 /**
@@ -3025,7 +3076,6 @@ pub enum ElementaryType {
  *           | (* variant: *) ExpressionStatement;
  * ```
  */
-
 #[derive(Debug)]
 pub enum Statement {
     IfStatement(IfStatement),
@@ -3055,7 +3105,6 @@ pub enum Statement {
  *             | (* variant: *) UntypedTupleMember;
  * ```
  */
-
 #[derive(Debug)]
 pub enum TupleMember {
     TypedTupleMember(TypedTupleMember),
@@ -3070,11 +3119,10 @@ pub enum TupleMember {
  *                         | (* variant: *) VAR_KEYWORD; (* Deprecated in 0.5.0 *)
  * ```
  */
-
 #[derive(Debug)]
 pub enum VariableDeclarationType {
     TypeName(TypeName),
-    TerminalNode(Rc<TerminalNode>),
+    VarKeyword,
 }
 
 /**
@@ -3086,9 +3134,12 @@ pub enum VariableDeclarationType {
  *                 | (* variant: *) CALL_DATA_KEYWORD; (* Introduced in 0.5.0 *)
  * ```
  */
-
 #[derive(Debug)]
-pub struct StorageLocation(pub Rc<TerminalNode>);
+pub enum StorageLocation {
+    MemoryKeyword,
+    StorageKeyword,
+    CallDataKeyword,
+}
 
 /**
  * This node represents a `ForStatementInitialization` nonterminal, with the following structure:
@@ -3100,13 +3151,12 @@ pub struct StorageLocation(pub Rc<TerminalNode>);
  *                            | (* variant: *) SEMICOLON;
  * ```
  */
-
 #[derive(Debug)]
 pub enum ForStatementInitialization {
     TupleDeconstructionStatement(TupleDeconstructionStatement),
     VariableDeclarationStatement(VariableDeclarationStatement),
     ExpressionStatement(ExpressionStatement),
-    TerminalNode(Rc<TerminalNode>),
+    Semicolon,
 }
 
 /**
@@ -3117,11 +3167,10 @@ pub enum ForStatementInitialization {
  *                       | (* variant: *) SEMICOLON;
  * ```
  */
-
 #[derive(Debug)]
 pub enum ForStatementCondition {
     ExpressionStatement(ExpressionStatement),
-    TerminalNode(Rc<TerminalNode>),
+    Semicolon,
 }
 
 /**
@@ -3163,7 +3212,6 @@ pub enum ForStatementCondition {
  *            | (* variant: *) IDENTIFIER;
  * ```
  */
-
 #[derive(Debug)]
 pub enum Expression {
     AssignmentExpression(AssignmentExpression),
@@ -3193,7 +3241,12 @@ pub enum Expression {
     DecimalNumberExpression(DecimalNumberExpression),
     StringExpression(StringExpression),
     ElementaryType(ElementaryType),
-    TerminalNode(Rc<TerminalNode>),
+    PayableKeyword,
+    ThisKeyword,
+    SuperKeyword,
+    TrueKeyword,
+    FalseKeyword,
+    Identifier(Rc<TerminalNode>),
 }
 
 /**
@@ -3204,7 +3257,6 @@ pub enum Expression {
  *                      | (* variant: *) NamedArgumentsDeclaration;
  * ```
  */
-
 #[derive(Debug)]
 pub enum ArgumentsDeclaration {
     PositionalArgumentsDeclaration(PositionalArgumentsDeclaration),
@@ -3228,9 +3280,20 @@ pub enum ArgumentsDeclaration {
  *            | (* variant: *) YEARS_KEYWORD; (* Deprecated in 0.5.0 *)
  * ```
  */
-
 #[derive(Debug)]
-pub struct NumberUnit(pub Rc<TerminalNode>);
+pub enum NumberUnit {
+    WeiKeyword,
+    GweiKeyword,
+    SzaboKeyword,
+    FinneyKeyword,
+    EtherKeyword,
+    SecondsKeyword,
+    MinutesKeyword,
+    HoursKeyword,
+    DaysKeyword,
+    WeeksKeyword,
+    YearsKeyword,
+}
 
 /**
  * This node represents a `StringExpression` nonterminal, with the following structure:
@@ -3243,7 +3306,6 @@ pub struct NumberUnit(pub Rc<TerminalNode>);
  *                  | (* variant: *) UnicodeStringLiterals; (* Introduced in 0.7.0 *)
  * ```
  */
-
 #[derive(Debug)]
 pub enum StringExpression {
     StringLiteral(StringLiteral),
@@ -3261,9 +3323,11 @@ pub enum StringExpression {
  *               | (* variant: *) DOUBLE_QUOTED_STRING_LITERAL;
  * ```
  */
-
 #[derive(Debug)]
-pub struct StringLiteral(pub Rc<TerminalNode>);
+pub enum StringLiteral {
+    SingleQuotedStringLiteral(Rc<TerminalNode>),
+    DoubleQuotedStringLiteral(Rc<TerminalNode>),
+}
 
 /**
  * This node represents a `HexStringLiteral` nonterminal, with the following structure:
@@ -3273,9 +3337,11 @@ pub struct StringLiteral(pub Rc<TerminalNode>);
  *                  | (* variant: *) DOUBLE_QUOTED_HEX_STRING_LITERAL;
  * ```
  */
-
 #[derive(Debug)]
-pub struct HexStringLiteral(pub Rc<TerminalNode>);
+pub enum HexStringLiteral {
+    SingleQuotedHexStringLiteral(Rc<TerminalNode>),
+    DoubleQuotedHexStringLiteral(Rc<TerminalNode>),
+}
 
 /**
  * This node represents a `UnicodeStringLiteral` nonterminal, with the following structure:
@@ -3286,9 +3352,11 @@ pub struct HexStringLiteral(pub Rc<TerminalNode>);
  *                      | (* variant: *) DOUBLE_QUOTED_UNICODE_STRING_LITERAL;
  * ```
  */
-
 #[derive(Debug)]
-pub struct UnicodeStringLiteral(pub Rc<TerminalNode>);
+pub enum UnicodeStringLiteral {
+    SingleQuotedUnicodeStringLiteral(Rc<TerminalNode>),
+    DoubleQuotedUnicodeStringLiteral(Rc<TerminalNode>),
+}
 
 /**
  * This node represents a `YulStatement` nonterminal, with the following structure:
@@ -3309,7 +3377,6 @@ pub struct UnicodeStringLiteral(pub Rc<TerminalNode>);
  *              | (* variant: *) YulExpression;
  * ```
  */
-
 #[derive(Debug)]
 pub enum YulStatement {
     YulBlock(YulBlock),
@@ -3335,11 +3402,10 @@ pub enum YulStatement {
  *                       | (* variant: *) YulColonAndEqual; (* Deprecated in 0.5.5 *)
  * ```
  */
-
 #[derive(Debug)]
 pub enum YulAssignmentOperator {
     YulColonAndEqual(YulColonAndEqual),
-    TerminalNode(Rc<TerminalNode>),
+    ColonEqual,
 }
 
 /**
@@ -3351,11 +3417,10 @@ pub enum YulAssignmentOperator {
  *                            | (* variant: *) YulEqualAndColon;
  * ```
  */
-
 #[derive(Debug)]
 pub enum YulStackAssignmentOperator {
     YulEqualAndColon(YulEqualAndColon),
-    TerminalNode(Rc<TerminalNode>),
+    EqualColon,
 }
 
 /**
@@ -3366,7 +3431,6 @@ pub enum YulStackAssignmentOperator {
  *               | (* variant: *) YulValueCase;
  * ```
  */
-
 #[derive(Debug)]
 pub enum YulSwitchCase {
     YulDefaultCase(YulDefaultCase),
@@ -3382,7 +3446,6 @@ pub enum YulSwitchCase {
  *               | (* variant: *) YulPath;
  * ```
  */
-
 #[derive(Debug)]
 pub enum YulExpression {
     YulFunctionCallExpression(YulFunctionCallExpression),
@@ -3402,12 +3465,14 @@ pub enum YulExpression {
  *            | (* variant: *) StringLiteral;
  * ```
  */
-
 #[derive(Debug)]
 pub enum YulLiteral {
     HexStringLiteral(HexStringLiteral),
     StringLiteral(StringLiteral),
-    TerminalNode(Rc<TerminalNode>),
+    YulTrueKeyword,
+    YulFalseKeyword,
+    YulDecimalLiteral(Rc<TerminalNode>),
+    YulHexLiteral(Rc<TerminalNode>),
 }
 
 //

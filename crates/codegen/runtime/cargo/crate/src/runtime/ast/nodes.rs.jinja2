@@ -62,20 +62,19 @@
        {%- endfor %}
      * ```
      */
-    {% if choice.nonterminal_types | length == 0 %}
-      #[derive(Debug)]
-      pub struct {{ parent_type }}(pub Rc<TerminalNode>);
-    {% else %}
-      #[derive(Debug)]
-      pub enum {{ parent_type }} {
-        {% for nonterminal in choice.nonterminal_types -%}
-          {{ nonterminal }}({{ nonterminal | pascal_case }}),
-        {%- endfor %}
-        {%- if choice.terminal_types | length > 0 %}
-          TerminalNode(Rc<TerminalNode>),
-        {% endif -%}
-      }
-    {% endif %}
+    #[derive(Debug)]
+    pub enum {{ parent_type }} {
+      {% for nonterminal in choice.nonterminal_types -%}
+        {{ nonterminal }}({{ nonterminal | pascal_case }}),
+      {%- endfor %}
+      {% for terminal in choice.terminal_types -%}
+        {{ terminal }}
+        {%- if not model.ast.unique_terminals is containing(terminal) -%}
+          (Rc<TerminalNode>)
+        {%- endif -%}
+        ,
+      {%- endfor %}
+    }
   {% endfor %}
 
   //

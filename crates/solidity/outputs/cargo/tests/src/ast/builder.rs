@@ -59,7 +59,10 @@ contract MyContract {
     let ast::ContractMember::FunctionDefinition(ref function) = contract.members[2] else {
         panic!("Expected FunctionDefinition");
     };
-    assert_eq!("test", function.name.0.unparse());
+    let ast::FunctionName::Identifier(ref name) = function.name else {
+        panic!("Expected identifier in FunctionName");
+    };
+    assert_eq!("test", name.unparse());
     assert_eq!(2, function.attributes.len());
     assert_eq!(0, function.parameters.parameters.len());
     assert!(function.returns.is_some());

@@ -129,7 +129,6 @@ pub struct MemberAccessExpressionStruct {
  *                  | (* variant: *) Literal;
  * ```
  */
-
 #[derive(Debug)]
 pub enum SourceUnitMember {
     Tree(Tree),
@@ -146,11 +145,10 @@ pub enum SourceUnitMember {
  *               | (* variant: *) DELIMITED_IDENTIFIER;
  * ```
  */
-
 #[derive(Debug)]
 pub enum TreeNodeChild {
     TreeNode(TreeNode),
-    TerminalNode(Rc<TerminalNode>),
+    DelimitedIdentifier(Rc<TerminalNode>),
 }
 
 /**
@@ -164,13 +162,13 @@ pub enum TreeNodeChild {
  *            | (* variant: *) IDENTIFIER;
  * ```
  */
-
 #[derive(Debug)]
 pub enum Expression {
     AdditionExpression(AdditionExpression),
     NegationExpression(NegationExpression),
     MemberAccessExpression(MemberAccessExpression),
-    TerminalNode(Rc<TerminalNode>),
+    StringLiteral(Rc<TerminalNode>),
+    Identifier(Rc<TerminalNode>),
 }
 
 /**
@@ -180,9 +178,10 @@ pub enum Expression {
  * Literal = (* variant: *) STRING_LITERAL;
  * ```
  */
-
 #[derive(Debug)]
-pub struct Literal(pub Rc<TerminalNode>);
+pub enum Literal {
+    StringLiteral(Rc<TerminalNode>),
+}
 
 //
 // Repeated:

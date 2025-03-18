@@ -2150,7 +2150,7 @@ impl ExperimentalFeature {
             Self::StringLiteral(ref string_literal) => {
                 string_literal.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::Identifier(_) => {}
         }
     }
 }
@@ -2178,7 +2178,7 @@ impl VersionLiteral {
             Self::SimpleVersionLiteral(ref simple_version_literal) => {
                 accept_simple_version_literal(simple_version_literal, visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::SingleQuotedVersionLiteral(_) | Self::DoubleQuotedVersionLiteral(_) => {}
         }
     }
 }
@@ -2222,7 +2222,7 @@ impl UsingTarget {
             Self::TypeName(ref type_name) => {
                 type_name.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::Asterisk => {}
         }
     }
 }
@@ -2279,7 +2279,12 @@ impl StateVariableAttribute {
             Self::OverrideSpecifier(ref override_specifier) => {
                 override_specifier.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::ConstantKeyword
+            | Self::InternalKeyword
+            | Self::PrivateKeyword
+            | Self::PublicKeyword
+            | Self::ImmutableKeyword
+            | Self::TransientKeyword => {}
         }
     }
 }
@@ -2297,7 +2302,15 @@ impl FunctionAttribute {
             Self::OverrideSpecifier(ref override_specifier) => {
                 override_specifier.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::ConstantKeyword
+            | Self::ExternalKeyword
+            | Self::InternalKeyword
+            | Self::PayableKeyword
+            | Self::PrivateKeyword
+            | Self::PublicKeyword
+            | Self::PureKeyword
+            | Self::ViewKeyword
+            | Self::VirtualKeyword => {}
         }
     }
 }
@@ -2308,7 +2321,7 @@ impl FunctionBody {
             Self::Block(ref block) => {
                 block.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::Semicolon => {}
         }
     }
 }
@@ -2319,7 +2332,11 @@ impl ConstructorAttribute {
             Self::ModifierInvocation(ref modifier_invocation) => {
                 modifier_invocation.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::InternalKeyword
+            | Self::OverrideKeyword
+            | Self::PayableKeyword
+            | Self::PublicKeyword
+            | Self::VirtualKeyword => {}
         }
     }
 }
@@ -2330,7 +2347,14 @@ impl UnnamedFunctionAttribute {
             Self::ModifierInvocation(ref modifier_invocation) => {
                 modifier_invocation.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::ConstantKeyword
+            | Self::ExternalKeyword
+            | Self::InternalKeyword
+            | Self::PayableKeyword
+            | Self::PrivateKeyword
+            | Self::PublicKeyword
+            | Self::PureKeyword
+            | Self::ViewKeyword => {}
         }
     }
 }
@@ -2344,7 +2368,11 @@ impl FallbackFunctionAttribute {
             Self::OverrideSpecifier(ref override_specifier) => {
                 override_specifier.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::ExternalKeyword
+            | Self::PayableKeyword
+            | Self::PureKeyword
+            | Self::ViewKeyword
+            | Self::VirtualKeyword => {}
         }
     }
 }
@@ -2358,7 +2386,7 @@ impl ReceiveFunctionAttribute {
             Self::OverrideSpecifier(ref override_specifier) => {
                 override_specifier.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::ExternalKeyword | Self::PayableKeyword | Self::VirtualKeyword => {}
         }
     }
 }
@@ -2369,7 +2397,7 @@ impl ModifierAttribute {
             Self::OverrideSpecifier(ref override_specifier) => {
                 override_specifier.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::VirtualKeyword => {}
         }
     }
 }
@@ -2419,7 +2447,14 @@ impl ElementaryType {
             Self::AddressType(ref address_type) => {
                 address_type.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::BoolKeyword
+            | Self::ByteKeyword
+            | Self::StringKeyword
+            | Self::BytesKeyword(_)
+            | Self::IntKeyword(_)
+            | Self::UintKeyword(_)
+            | Self::FixedKeyword(_)
+            | Self::UfixedKeyword(_) => {}
         }
     }
 }
@@ -2501,7 +2536,7 @@ impl VariableDeclarationType {
             Self::TypeName(ref type_name) => {
                 type_name.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::VarKeyword => {}
         }
     }
 }
@@ -2522,7 +2557,7 @@ impl ForStatementInitialization {
             Self::ExpressionStatement(ref expression_statement) => {
                 expression_statement.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::Semicolon => {}
         }
     }
 }
@@ -2533,7 +2568,7 @@ impl ForStatementCondition {
             Self::ExpressionStatement(ref expression_statement) => {
                 expression_statement.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::Semicolon => {}
         }
     }
 }
@@ -2622,7 +2657,12 @@ impl Expression {
             Self::ElementaryType(ref elementary_type) => {
                 elementary_type.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::PayableKeyword
+            | Self::ThisKeyword
+            | Self::SuperKeyword
+            | Self::TrueKeyword
+            | Self::FalseKeyword
+            | Self::Identifier(_) => {}
         }
     }
 }
@@ -2730,7 +2770,7 @@ impl YulAssignmentOperator {
             Self::YulColonAndEqual(ref yul_colon_and_equal) => {
                 yul_colon_and_equal.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::ColonEqual => {}
         }
     }
 }
@@ -2741,7 +2781,7 @@ impl YulStackAssignmentOperator {
             Self::YulEqualAndColon(ref yul_equal_and_colon) => {
                 yul_equal_and_colon.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::EqualColon => {}
         }
     }
 }
@@ -2784,7 +2824,10 @@ impl YulLiteral {
             Self::StringLiteral(ref string_literal) => {
                 string_literal.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::YulTrueKeyword
+            | Self::YulFalseKeyword
+            | Self::YulDecimalLiteral(_)
+            | Self::YulHexLiteral(_) => {}
         }
     }
 }

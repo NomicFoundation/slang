@@ -80,7 +80,14 @@
               }
             {%- endfor %}
             {%- if choice.terminal_types | length > 0 %}
-              Self::TerminalNode(_) => {}
+              {%- for terminal in choice.terminal_types -%}
+                {%- if not loop.first -%} | {%- endif -%}
+                Self::{{terminal}}
+                {%- if not model.ast.unique_terminals is containing(terminal) -%}
+                  (_)
+                {%- endif -%}
+              {%- endfor -%}
+              => {}
             {% endif -%}
           }
         }

@@ -127,7 +127,7 @@ impl TreeNodeChild {
             Self::TreeNode(ref tree_node) => {
                 tree_node.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::DelimitedIdentifier(_) => {}
         }
     }
 }
@@ -144,7 +144,7 @@ impl Expression {
             Self::MemberAccessExpression(ref member_access_expression) => {
                 member_access_expression.accept(visitor);
             }
-            Self::TerminalNode(_) => {}
+            Self::StringLiteral(_) | Self::Identifier(_) => {}
         }
     }
 }

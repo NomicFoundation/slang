@@ -487,8 +487,12 @@ pub fn slang_solidity::ast::ArgumentsDeclaration::accept(&self, visitor: &mut dy
 impl core::fmt::Debug for slang_solidity::ast::ArgumentsDeclaration
 pub fn slang_solidity::ast::ArgumentsDeclaration::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::ConstructorAttribute
+pub slang_solidity::ast::ConstructorAttribute::InternalKeyword
 pub slang_solidity::ast::ConstructorAttribute::ModifierInvocation(slang_solidity::ast::ModifierInvocation)
-pub slang_solidity::ast::ConstructorAttribute::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::ConstructorAttribute::OverrideKeyword
+pub slang_solidity::ast::ConstructorAttribute::PayableKeyword
+pub slang_solidity::ast::ConstructorAttribute::PublicKeyword
+pub slang_solidity::ast::ConstructorAttribute::VirtualKeyword
 impl slang_solidity::ast::ConstructorAttribute
 pub fn slang_solidity::ast::ConstructorAttribute::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ConstructorAttribute
@@ -513,14 +517,21 @@ impl core::fmt::Debug for slang_solidity::ast::ContractMember
 pub fn slang_solidity::ast::ContractMember::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::ElementaryType
 pub slang_solidity::ast::ElementaryType::AddressType(slang_solidity::ast::AddressType)
-pub slang_solidity::ast::ElementaryType::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::ElementaryType::BoolKeyword
+pub slang_solidity::ast::ElementaryType::ByteKeyword
+pub slang_solidity::ast::ElementaryType::BytesKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::ElementaryType::FixedKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::ElementaryType::IntKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::ElementaryType::StringKeyword
+pub slang_solidity::ast::ElementaryType::UfixedKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::ElementaryType::UintKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 impl slang_solidity::ast::ElementaryType
 pub fn slang_solidity::ast::ElementaryType::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ElementaryType
 pub fn slang_solidity::ast::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::ExperimentalFeature
+pub slang_solidity::ast::ExperimentalFeature::Identifier(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::ast::ExperimentalFeature::StringLiteral(slang_solidity::ast::StringLiteral)
-pub slang_solidity::ast::ExperimentalFeature::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 impl slang_solidity::ast::ExperimentalFeature
 pub fn slang_solidity::ast::ExperimentalFeature::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ExperimentalFeature
@@ -539,19 +550,24 @@ pub slang_solidity::ast::Expression::DecimalNumberExpression(slang_solidity::ast
 pub slang_solidity::ast::Expression::ElementaryType(slang_solidity::ast::ElementaryType)
 pub slang_solidity::ast::Expression::EqualityExpression(slang_solidity::ast::EqualityExpression)
 pub slang_solidity::ast::Expression::ExponentiationExpression(slang_solidity::ast::ExponentiationExpression)
+pub slang_solidity::ast::Expression::FalseKeyword
 pub slang_solidity::ast::Expression::FunctionCallExpression(slang_solidity::ast::FunctionCallExpression)
 pub slang_solidity::ast::Expression::HexNumberExpression(slang_solidity::ast::HexNumberExpression)
+pub slang_solidity::ast::Expression::Identifier(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::ast::Expression::IndexAccessExpression(slang_solidity::ast::IndexAccessExpression)
 pub slang_solidity::ast::Expression::InequalityExpression(slang_solidity::ast::InequalityExpression)
 pub slang_solidity::ast::Expression::MemberAccessExpression(slang_solidity::ast::MemberAccessExpression)
 pub slang_solidity::ast::Expression::MultiplicativeExpression(slang_solidity::ast::MultiplicativeExpression)
 pub slang_solidity::ast::Expression::NewExpression(slang_solidity::ast::NewExpression)
 pub slang_solidity::ast::Expression::OrExpression(slang_solidity::ast::OrExpression)
+pub slang_solidity::ast::Expression::PayableKeyword
 pub slang_solidity::ast::Expression::PostfixExpression(slang_solidity::ast::PostfixExpression)
 pub slang_solidity::ast::Expression::PrefixExpression(slang_solidity::ast::PrefixExpression)
 pub slang_solidity::ast::Expression::ShiftExpression(slang_solidity::ast::ShiftExpression)
 pub slang_solidity::ast::Expression::StringExpression(slang_solidity::ast::StringExpression)
-pub slang_solidity::ast::Expression::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::Expression::SuperKeyword
+pub slang_solidity::ast::Expression::ThisKeyword
+pub slang_solidity::ast::Expression::TrueKeyword
 pub slang_solidity::ast::Expression::TupleExpression(slang_solidity::ast::TupleExpression)
 pub slang_solidity::ast::Expression::TypeExpression(slang_solidity::ast::TypeExpression)
 impl slang_solidity::ast::Expression
@@ -559,23 +575,27 @@ pub fn slang_solidity::ast::Expression::accept(&self, visitor: &mut dyn slang_so
 impl core::fmt::Debug for slang_solidity::ast::Expression
 pub fn slang_solidity::ast::Expression::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::FallbackFunctionAttribute
+pub slang_solidity::ast::FallbackFunctionAttribute::ExternalKeyword
 pub slang_solidity::ast::FallbackFunctionAttribute::ModifierInvocation(slang_solidity::ast::ModifierInvocation)
 pub slang_solidity::ast::FallbackFunctionAttribute::OverrideSpecifier(slang_solidity::ast::OverrideSpecifier)
-pub slang_solidity::ast::FallbackFunctionAttribute::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::FallbackFunctionAttribute::PayableKeyword
+pub slang_solidity::ast::FallbackFunctionAttribute::PureKeyword
+pub slang_solidity::ast::FallbackFunctionAttribute::ViewKeyword
+pub slang_solidity::ast::FallbackFunctionAttribute::VirtualKeyword
 impl slang_solidity::ast::FallbackFunctionAttribute
 pub fn slang_solidity::ast::FallbackFunctionAttribute::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::FallbackFunctionAttribute
 pub fn slang_solidity::ast::FallbackFunctionAttribute::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::ForStatementCondition
 pub slang_solidity::ast::ForStatementCondition::ExpressionStatement(slang_solidity::ast::ExpressionStatement)
-pub slang_solidity::ast::ForStatementCondition::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::ForStatementCondition::Semicolon
 impl slang_solidity::ast::ForStatementCondition
 pub fn slang_solidity::ast::ForStatementCondition::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ForStatementCondition
 pub fn slang_solidity::ast::ForStatementCondition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::ForStatementInitialization
 pub slang_solidity::ast::ForStatementInitialization::ExpressionStatement(slang_solidity::ast::ExpressionStatement)
-pub slang_solidity::ast::ForStatementInitialization::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::ForStatementInitialization::Semicolon
 pub slang_solidity::ast::ForStatementInitialization::TupleDeconstructionStatement(slang_solidity::ast::TupleDeconstructionStatement)
 pub slang_solidity::ast::ForStatementInitialization::VariableDeclarationStatement(slang_solidity::ast::VariableDeclarationStatement)
 impl slang_solidity::ast::ForStatementInitialization
@@ -583,20 +603,56 @@ pub fn slang_solidity::ast::ForStatementInitialization::accept(&self, visitor: &
 impl core::fmt::Debug for slang_solidity::ast::ForStatementInitialization
 pub fn slang_solidity::ast::ForStatementInitialization::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::FunctionAttribute
+pub slang_solidity::ast::FunctionAttribute::ConstantKeyword
+pub slang_solidity::ast::FunctionAttribute::ExternalKeyword
+pub slang_solidity::ast::FunctionAttribute::InternalKeyword
 pub slang_solidity::ast::FunctionAttribute::ModifierInvocation(slang_solidity::ast::ModifierInvocation)
 pub slang_solidity::ast::FunctionAttribute::OverrideSpecifier(slang_solidity::ast::OverrideSpecifier)
-pub slang_solidity::ast::FunctionAttribute::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::FunctionAttribute::PayableKeyword
+pub slang_solidity::ast::FunctionAttribute::PrivateKeyword
+pub slang_solidity::ast::FunctionAttribute::PublicKeyword
+pub slang_solidity::ast::FunctionAttribute::PureKeyword
+pub slang_solidity::ast::FunctionAttribute::ViewKeyword
+pub slang_solidity::ast::FunctionAttribute::VirtualKeyword
 impl slang_solidity::ast::FunctionAttribute
 pub fn slang_solidity::ast::FunctionAttribute::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::FunctionAttribute
 pub fn slang_solidity::ast::FunctionAttribute::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::FunctionBody
 pub slang_solidity::ast::FunctionBody::Block(slang_solidity::ast::Block)
-pub slang_solidity::ast::FunctionBody::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::FunctionBody::Semicolon
 impl slang_solidity::ast::FunctionBody
 pub fn slang_solidity::ast::FunctionBody::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::FunctionBody
 pub fn slang_solidity::ast::FunctionBody::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::ast::FunctionName
+pub slang_solidity::ast::FunctionName::FallbackKeyword
+pub slang_solidity::ast::FunctionName::Identifier(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::FunctionName::ReceiveKeyword
+impl slang_solidity::ast::FunctionName
+pub fn slang_solidity::ast::FunctionName::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
+impl core::fmt::Debug for slang_solidity::ast::FunctionName
+pub fn slang_solidity::ast::FunctionName::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::ast::FunctionTypeAttribute
+pub slang_solidity::ast::FunctionTypeAttribute::ConstantKeyword
+pub slang_solidity::ast::FunctionTypeAttribute::ExternalKeyword
+pub slang_solidity::ast::FunctionTypeAttribute::InternalKeyword
+pub slang_solidity::ast::FunctionTypeAttribute::PayableKeyword
+pub slang_solidity::ast::FunctionTypeAttribute::PrivateKeyword
+pub slang_solidity::ast::FunctionTypeAttribute::PublicKeyword
+pub slang_solidity::ast::FunctionTypeAttribute::PureKeyword
+pub slang_solidity::ast::FunctionTypeAttribute::ViewKeyword
+impl slang_solidity::ast::FunctionTypeAttribute
+pub fn slang_solidity::ast::FunctionTypeAttribute::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
+impl core::fmt::Debug for slang_solidity::ast::FunctionTypeAttribute
+pub fn slang_solidity::ast::FunctionTypeAttribute::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::ast::HexStringLiteral
+pub slang_solidity::ast::HexStringLiteral::DoubleQuotedHexStringLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::HexStringLiteral::SingleQuotedHexStringLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+impl slang_solidity::ast::HexStringLiteral
+pub fn slang_solidity::ast::HexStringLiteral::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
+impl core::fmt::Debug for slang_solidity::ast::HexStringLiteral
+pub fn slang_solidity::ast::HexStringLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::ImportClause
 pub slang_solidity::ast::ImportClause::ImportDeconstruction(slang_solidity::ast::ImportDeconstruction)
 pub slang_solidity::ast::ImportClause::NamedImport(slang_solidity::ast::NamedImport)
@@ -614,11 +670,27 @@ impl core::fmt::Debug for slang_solidity::ast::MappingKeyType
 pub fn slang_solidity::ast::MappingKeyType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::ModifierAttribute
 pub slang_solidity::ast::ModifierAttribute::OverrideSpecifier(slang_solidity::ast::OverrideSpecifier)
-pub slang_solidity::ast::ModifierAttribute::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::ModifierAttribute::VirtualKeyword
 impl slang_solidity::ast::ModifierAttribute
 pub fn slang_solidity::ast::ModifierAttribute::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ModifierAttribute
 pub fn slang_solidity::ast::ModifierAttribute::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::ast::NumberUnit
+pub slang_solidity::ast::NumberUnit::DaysKeyword
+pub slang_solidity::ast::NumberUnit::EtherKeyword
+pub slang_solidity::ast::NumberUnit::FinneyKeyword
+pub slang_solidity::ast::NumberUnit::GweiKeyword
+pub slang_solidity::ast::NumberUnit::HoursKeyword
+pub slang_solidity::ast::NumberUnit::MinutesKeyword
+pub slang_solidity::ast::NumberUnit::SecondsKeyword
+pub slang_solidity::ast::NumberUnit::SzaboKeyword
+pub slang_solidity::ast::NumberUnit::WeeksKeyword
+pub slang_solidity::ast::NumberUnit::WeiKeyword
+pub slang_solidity::ast::NumberUnit::YearsKeyword
+impl slang_solidity::ast::NumberUnit
+pub fn slang_solidity::ast::NumberUnit::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
+impl core::fmt::Debug for slang_solidity::ast::NumberUnit
+pub fn slang_solidity::ast::NumberUnit::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::Pragma
 pub slang_solidity::ast::Pragma::AbicoderPragma(slang_solidity::ast::AbicoderPragma)
 pub slang_solidity::ast::Pragma::ExperimentalPragma(slang_solidity::ast::ExperimentalPragma)
@@ -628,9 +700,11 @@ pub fn slang_solidity::ast::Pragma::accept(&self, visitor: &mut dyn slang_solidi
 impl core::fmt::Debug for slang_solidity::ast::Pragma
 pub fn slang_solidity::ast::Pragma::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::ReceiveFunctionAttribute
+pub slang_solidity::ast::ReceiveFunctionAttribute::ExternalKeyword
 pub slang_solidity::ast::ReceiveFunctionAttribute::ModifierInvocation(slang_solidity::ast::ModifierInvocation)
 pub slang_solidity::ast::ReceiveFunctionAttribute::OverrideSpecifier(slang_solidity::ast::OverrideSpecifier)
-pub slang_solidity::ast::ReceiveFunctionAttribute::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::ReceiveFunctionAttribute::PayableKeyword
+pub slang_solidity::ast::ReceiveFunctionAttribute::VirtualKeyword
 impl slang_solidity::ast::ReceiveFunctionAttribute
 pub fn slang_solidity::ast::ReceiveFunctionAttribute::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ReceiveFunctionAttribute
@@ -654,8 +728,13 @@ pub fn slang_solidity::ast::SourceUnitMember::accept(&self, visitor: &mut dyn sl
 impl core::fmt::Debug for slang_solidity::ast::SourceUnitMember
 pub fn slang_solidity::ast::SourceUnitMember::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::StateVariableAttribute
+pub slang_solidity::ast::StateVariableAttribute::ConstantKeyword
+pub slang_solidity::ast::StateVariableAttribute::ImmutableKeyword
+pub slang_solidity::ast::StateVariableAttribute::InternalKeyword
 pub slang_solidity::ast::StateVariableAttribute::OverrideSpecifier(slang_solidity::ast::OverrideSpecifier)
-pub slang_solidity::ast::StateVariableAttribute::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::StateVariableAttribute::PrivateKeyword
+pub slang_solidity::ast::StateVariableAttribute::PublicKeyword
+pub slang_solidity::ast::StateVariableAttribute::TransientKeyword
 impl slang_solidity::ast::StateVariableAttribute
 pub fn slang_solidity::ast::StateVariableAttribute::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::StateVariableAttribute
@@ -682,6 +761,14 @@ impl slang_solidity::ast::Statement
 pub fn slang_solidity::ast::Statement::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::Statement
 pub fn slang_solidity::ast::Statement::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::ast::StorageLocation
+pub slang_solidity::ast::StorageLocation::CallDataKeyword
+pub slang_solidity::ast::StorageLocation::MemoryKeyword
+pub slang_solidity::ast::StorageLocation::StorageKeyword
+impl slang_solidity::ast::StorageLocation
+pub fn slang_solidity::ast::StorageLocation::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
+impl core::fmt::Debug for slang_solidity::ast::StorageLocation
+pub fn slang_solidity::ast::StorageLocation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::StringExpression
 pub slang_solidity::ast::StringExpression::HexStringLiteral(slang_solidity::ast::HexStringLiteral)
 pub slang_solidity::ast::StringExpression::HexStringLiterals(slang_solidity::ast::HexStringLiterals)
@@ -692,6 +779,13 @@ impl slang_solidity::ast::StringExpression
 pub fn slang_solidity::ast::StringExpression::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::StringExpression
 pub fn slang_solidity::ast::StringExpression::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::ast::StringLiteral
+pub slang_solidity::ast::StringLiteral::DoubleQuotedStringLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::StringLiteral::SingleQuotedStringLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+impl slang_solidity::ast::StringLiteral
+pub fn slang_solidity::ast::StringLiteral::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
+impl core::fmt::Debug for slang_solidity::ast::StringLiteral
+pub fn slang_solidity::ast::StringLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::TupleMember
 pub slang_solidity::ast::TupleMember::TypedTupleMember(slang_solidity::ast::TypedTupleMember)
 pub slang_solidity::ast::TupleMember::UntypedTupleMember(slang_solidity::ast::UntypedTupleMember)
@@ -709,9 +803,23 @@ impl slang_solidity::ast::TypeName
 pub fn slang_solidity::ast::TypeName::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::TypeName
 pub fn slang_solidity::ast::TypeName::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::ast::UnicodeStringLiteral
+pub slang_solidity::ast::UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+impl slang_solidity::ast::UnicodeStringLiteral
+pub fn slang_solidity::ast::UnicodeStringLiteral::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
+impl core::fmt::Debug for slang_solidity::ast::UnicodeStringLiteral
+pub fn slang_solidity::ast::UnicodeStringLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::UnnamedFunctionAttribute
+pub slang_solidity::ast::UnnamedFunctionAttribute::ConstantKeyword
+pub slang_solidity::ast::UnnamedFunctionAttribute::ExternalKeyword
+pub slang_solidity::ast::UnnamedFunctionAttribute::InternalKeyword
 pub slang_solidity::ast::UnnamedFunctionAttribute::ModifierInvocation(slang_solidity::ast::ModifierInvocation)
-pub slang_solidity::ast::UnnamedFunctionAttribute::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::UnnamedFunctionAttribute::PayableKeyword
+pub slang_solidity::ast::UnnamedFunctionAttribute::PrivateKeyword
+pub slang_solidity::ast::UnnamedFunctionAttribute::PublicKeyword
+pub slang_solidity::ast::UnnamedFunctionAttribute::PureKeyword
+pub slang_solidity::ast::UnnamedFunctionAttribute::ViewKeyword
 impl slang_solidity::ast::UnnamedFunctionAttribute
 pub fn slang_solidity::ast::UnnamedFunctionAttribute::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UnnamedFunctionAttribute
@@ -723,16 +831,36 @@ impl slang_solidity::ast::UsingClause
 pub fn slang_solidity::ast::UsingClause::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UsingClause
 pub fn slang_solidity::ast::UsingClause::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::ast::UsingOperator
+pub slang_solidity::ast::UsingOperator::Ampersand
+pub slang_solidity::ast::UsingOperator::Asterisk
+pub slang_solidity::ast::UsingOperator::BangEqual
+pub slang_solidity::ast::UsingOperator::Bar
+pub slang_solidity::ast::UsingOperator::Caret
+pub slang_solidity::ast::UsingOperator::EqualEqual
+pub slang_solidity::ast::UsingOperator::GreaterThan
+pub slang_solidity::ast::UsingOperator::GreaterThanEqual
+pub slang_solidity::ast::UsingOperator::LessThan
+pub slang_solidity::ast::UsingOperator::LessThanEqual
+pub slang_solidity::ast::UsingOperator::Minus
+pub slang_solidity::ast::UsingOperator::Percent
+pub slang_solidity::ast::UsingOperator::Plus
+pub slang_solidity::ast::UsingOperator::Slash
+pub slang_solidity::ast::UsingOperator::Tilde
+impl slang_solidity::ast::UsingOperator
+pub fn slang_solidity::ast::UsingOperator::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
+impl core::fmt::Debug for slang_solidity::ast::UsingOperator
+pub fn slang_solidity::ast::UsingOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::UsingTarget
-pub slang_solidity::ast::UsingTarget::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::UsingTarget::Asterisk
 pub slang_solidity::ast::UsingTarget::TypeName(slang_solidity::ast::TypeName)
 impl slang_solidity::ast::UsingTarget
 pub fn slang_solidity::ast::UsingTarget::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UsingTarget
 pub fn slang_solidity::ast::UsingTarget::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::VariableDeclarationType
-pub slang_solidity::ast::VariableDeclarationType::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::ast::VariableDeclarationType::TypeName(slang_solidity::ast::TypeName)
+pub slang_solidity::ast::VariableDeclarationType::VarKeyword
 impl slang_solidity::ast::VariableDeclarationType
 pub fn slang_solidity::ast::VariableDeclarationType::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::VariableDeclarationType
@@ -745,14 +873,27 @@ pub fn slang_solidity::ast::VersionExpression::accept(&self, visitor: &mut dyn s
 impl core::fmt::Debug for slang_solidity::ast::VersionExpression
 pub fn slang_solidity::ast::VersionExpression::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::VersionLiteral
+pub slang_solidity::ast::VersionLiteral::DoubleQuotedVersionLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::ast::VersionLiteral::SimpleVersionLiteral(slang_solidity::ast::SimpleVersionLiteral)
-pub slang_solidity::ast::VersionLiteral::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::VersionLiteral::SingleQuotedVersionLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 impl slang_solidity::ast::VersionLiteral
 pub fn slang_solidity::ast::VersionLiteral::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::VersionLiteral
 pub fn slang_solidity::ast::VersionLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::ast::VersionOperator
+pub slang_solidity::ast::VersionOperator::Caret
+pub slang_solidity::ast::VersionOperator::Equal
+pub slang_solidity::ast::VersionOperator::GreaterThan
+pub slang_solidity::ast::VersionOperator::GreaterThanEqual
+pub slang_solidity::ast::VersionOperator::LessThan
+pub slang_solidity::ast::VersionOperator::LessThanEqual
+pub slang_solidity::ast::VersionOperator::Tilde
+impl slang_solidity::ast::VersionOperator
+pub fn slang_solidity::ast::VersionOperator::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
+impl core::fmt::Debug for slang_solidity::ast::VersionOperator
+pub fn slang_solidity::ast::VersionOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::YulAssignmentOperator
-pub slang_solidity::ast::YulAssignmentOperator::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::YulAssignmentOperator::ColonEqual
 pub slang_solidity::ast::YulAssignmentOperator::YulColonAndEqual(slang_solidity::ast::YulColonAndEqual)
 impl slang_solidity::ast::YulAssignmentOperator
 pub fn slang_solidity::ast::YulAssignmentOperator::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -769,13 +910,16 @@ pub fn slang_solidity::ast::YulExpression::fmt(&self, f: &mut core::fmt::Formatt
 pub enum slang_solidity::ast::YulLiteral
 pub slang_solidity::ast::YulLiteral::HexStringLiteral(slang_solidity::ast::HexStringLiteral)
 pub slang_solidity::ast::YulLiteral::StringLiteral(slang_solidity::ast::StringLiteral)
-pub slang_solidity::ast::YulLiteral::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::YulLiteral::YulDecimalLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::YulLiteral::YulFalseKeyword
+pub slang_solidity::ast::YulLiteral::YulHexLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::YulLiteral::YulTrueKeyword
 impl slang_solidity::ast::YulLiteral
 pub fn slang_solidity::ast::YulLiteral::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulLiteral
 pub fn slang_solidity::ast::YulLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::ast::YulStackAssignmentOperator
-pub slang_solidity::ast::YulStackAssignmentOperator::TerminalNode(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::ast::YulStackAssignmentOperator::EqualColon
 pub slang_solidity::ast::YulStackAssignmentOperator::YulEqualAndColon(slang_solidity::ast::YulEqualAndColon)
 impl slang_solidity::ast::YulStackAssignmentOperator
 pub fn slang_solidity::ast::YulStackAssignmentOperator::accept(&self, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1135,16 +1279,6 @@ impl slang_solidity::ast::FunctionDefinitionStruct
 pub fn slang_solidity::ast::FunctionDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::FunctionDefinitionStruct
 pub fn slang_solidity::ast::FunctionDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::ast::FunctionName(pub alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
-impl slang_solidity::ast::FunctionName
-pub fn slang_solidity::ast::FunctionName::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
-impl core::fmt::Debug for slang_solidity::ast::FunctionName
-pub fn slang_solidity::ast::FunctionName::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::ast::FunctionTypeAttribute(pub alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
-impl slang_solidity::ast::FunctionTypeAttribute
-pub fn slang_solidity::ast::FunctionTypeAttribute::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
-impl core::fmt::Debug for slang_solidity::ast::FunctionTypeAttribute
-pub fn slang_solidity::ast::FunctionTypeAttribute::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::FunctionTypeStruct
 pub slang_solidity::ast::FunctionTypeStruct::attributes: slang_solidity::ast::FunctionTypeAttributes
 pub slang_solidity::ast::FunctionTypeStruct::cursor: slang_solidity::cst::Cursor
@@ -1162,11 +1296,6 @@ impl slang_solidity::ast::HexNumberExpressionStruct
 pub fn slang_solidity::ast::HexNumberExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::HexNumberExpressionStruct
 pub fn slang_solidity::ast::HexNumberExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::ast::HexStringLiteral(pub alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
-impl slang_solidity::ast::HexStringLiteral
-pub fn slang_solidity::ast::HexStringLiteral::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
-impl core::fmt::Debug for slang_solidity::ast::HexStringLiteral
-pub fn slang_solidity::ast::HexStringLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::IfStatementStruct
 pub slang_solidity::ast::IfStatementStruct::body: slang_solidity::ast::Statement
 pub slang_solidity::ast::IfStatementStruct::condition: slang_solidity::ast::Expression
@@ -1357,11 +1486,6 @@ impl slang_solidity::ast::NewExpressionStruct
 pub fn slang_solidity::ast::NewExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::NewExpressionStruct
 pub fn slang_solidity::ast::NewExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::ast::NumberUnit(pub alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
-impl slang_solidity::ast::NumberUnit
-pub fn slang_solidity::ast::NumberUnit::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
-impl core::fmt::Debug for slang_solidity::ast::NumberUnit
-pub fn slang_solidity::ast::NumberUnit::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::OrExpressionStruct
 pub slang_solidity::ast::OrExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::OrExpressionStruct::left_operand: slang_solidity::ast::Expression
@@ -1499,16 +1623,6 @@ impl slang_solidity::ast::StateVariableDefinitionValueStruct
 pub fn slang_solidity::ast::StateVariableDefinitionValueStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::StateVariableDefinitionValueStruct
 pub fn slang_solidity::ast::StateVariableDefinitionValueStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::ast::StorageLocation(pub alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
-impl slang_solidity::ast::StorageLocation
-pub fn slang_solidity::ast::StorageLocation::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
-impl core::fmt::Debug for slang_solidity::ast::StorageLocation
-pub fn slang_solidity::ast::StorageLocation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::ast::StringLiteral(pub alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
-impl slang_solidity::ast::StringLiteral
-pub fn slang_solidity::ast::StringLiteral::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
-impl core::fmt::Debug for slang_solidity::ast::StringLiteral
-pub fn slang_solidity::ast::StringLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::StructDefinitionStruct
 pub slang_solidity::ast::StructDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::StructDefinitionStruct::members: slang_solidity::ast::StructMembers
@@ -1594,11 +1708,6 @@ impl slang_solidity::ast::UncheckedBlockStruct
 pub fn slang_solidity::ast::UncheckedBlockStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UncheckedBlockStruct
 pub fn slang_solidity::ast::UncheckedBlockStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::ast::UnicodeStringLiteral(pub alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
-impl slang_solidity::ast::UnicodeStringLiteral
-pub fn slang_solidity::ast::UnicodeStringLiteral::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
-impl core::fmt::Debug for slang_solidity::ast::UnicodeStringLiteral
-pub fn slang_solidity::ast::UnicodeStringLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::UnnamedFunctionDefinitionStruct
 pub slang_solidity::ast::UnnamedFunctionDefinitionStruct::attributes: slang_solidity::ast::UnnamedFunctionAttributes
 pub slang_solidity::ast::UnnamedFunctionDefinitionStruct::body: slang_solidity::ast::FunctionBody
@@ -1655,11 +1764,6 @@ impl slang_solidity::ast::UsingDirectiveStruct
 pub fn slang_solidity::ast::UsingDirectiveStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UsingDirectiveStruct
 pub fn slang_solidity::ast::UsingDirectiveStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::ast::UsingOperator(pub alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
-impl slang_solidity::ast::UsingOperator
-pub fn slang_solidity::ast::UsingOperator::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
-impl core::fmt::Debug for slang_solidity::ast::UsingOperator
-pub fn slang_solidity::ast::UsingOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::VariableDeclarationStatementStruct
 pub slang_solidity::ast::VariableDeclarationStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::VariableDeclarationStatementStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
@@ -1677,11 +1781,6 @@ impl slang_solidity::ast::VariableDeclarationValueStruct
 pub fn slang_solidity::ast::VariableDeclarationValueStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::VariableDeclarationValueStruct
 pub fn slang_solidity::ast::VariableDeclarationValueStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::ast::VersionOperator(pub alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
-impl slang_solidity::ast::VersionOperator
-pub fn slang_solidity::ast::VersionOperator::accept(&self, _visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
-impl core::fmt::Debug for slang_solidity::ast::VersionOperator
-pub fn slang_solidity::ast::VersionOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::VersionPragmaStruct
 pub slang_solidity::ast::VersionPragmaStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::VersionPragmaStruct::sets: slang_solidity::ast::VersionExpressionSets

@@ -1,10 +1,12 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+#![allow(clippy::too_many_lines)]
+
 use std::rc::Rc;
 
 #[allow(clippy::wildcard_imports)]
 use super::nodes::*;
-use crate::cst::{Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalNode};
+use crate::cst::{Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalKind, TerminalNode};
 
 //
 // Sequences:
@@ -2220,8 +2222,11 @@ pub fn build_experimental_feature(mut cursor: Cursor) -> Result<ExperimentalFeat
         NodeKind::Nonterminal(NonterminalKind::StringLiteral) => {
             ExperimentalFeature::StringLiteral(build_string_literal(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => ExperimentalFeature::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::Identifier) => {
+            let node = fetch_terminal_node(&cursor)?;
+            ExperimentalFeature::Identifier(node)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2264,7 +2269,42 @@ pub fn build_version_operator(mut cursor: Cursor) -> Result<VersionOperator> {
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = VersionOperator(fetch_terminal_node(&cursor)?);
+    let item = match cursor.node().kind() {
+        NodeKind::Terminal(TerminalKind::Caret) => {
+            _ = fetch_terminal_node(&cursor)?;
+            VersionOperator::Caret
+        }
+        NodeKind::Terminal(TerminalKind::Tilde) => {
+            _ = fetch_terminal_node(&cursor)?;
+            VersionOperator::Tilde
+        }
+        NodeKind::Terminal(TerminalKind::Equal) => {
+            _ = fetch_terminal_node(&cursor)?;
+            VersionOperator::Equal
+        }
+        NodeKind::Terminal(TerminalKind::LessThan) => {
+            _ = fetch_terminal_node(&cursor)?;
+            VersionOperator::LessThan
+        }
+        NodeKind::Terminal(TerminalKind::GreaterThan) => {
+            _ = fetch_terminal_node(&cursor)?;
+            VersionOperator::GreaterThan
+        }
+        NodeKind::Terminal(TerminalKind::LessThanEqual) => {
+            _ = fetch_terminal_node(&cursor)?;
+            VersionOperator::LessThanEqual
+        }
+        NodeKind::Terminal(TerminalKind::GreaterThanEqual) => {
+            _ = fetch_terminal_node(&cursor)?;
+            VersionOperator::GreaterThanEqual
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                cursor.node().kind()
+            ));
+        }
+    };
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -2280,8 +2320,15 @@ pub fn build_version_literal(mut cursor: Cursor) -> Result<VersionLiteral> {
         NodeKind::Nonterminal(NonterminalKind::SimpleVersionLiteral) => {
             VersionLiteral::SimpleVersionLiteral(build_simple_version_literal(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => VersionLiteral::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::SingleQuotedVersionLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            VersionLiteral::SingleQuotedVersionLiteral(node)
+        }
+        NodeKind::Terminal(TerminalKind::DoubleQuotedVersionLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            VersionLiteral::DoubleQuotedVersionLiteral(node)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2352,7 +2399,74 @@ pub fn build_using_operator(mut cursor: Cursor) -> Result<UsingOperator> {
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = UsingOperator(fetch_terminal_node(&cursor)?);
+    let item = match cursor.node().kind() {
+        NodeKind::Terminal(TerminalKind::Ampersand) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::Ampersand
+        }
+        NodeKind::Terminal(TerminalKind::Asterisk) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::Asterisk
+        }
+        NodeKind::Terminal(TerminalKind::BangEqual) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::BangEqual
+        }
+        NodeKind::Terminal(TerminalKind::Bar) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::Bar
+        }
+        NodeKind::Terminal(TerminalKind::Caret) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::Caret
+        }
+        NodeKind::Terminal(TerminalKind::EqualEqual) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::EqualEqual
+        }
+        NodeKind::Terminal(TerminalKind::GreaterThan) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::GreaterThan
+        }
+        NodeKind::Terminal(TerminalKind::GreaterThanEqual) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::GreaterThanEqual
+        }
+        NodeKind::Terminal(TerminalKind::LessThan) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::LessThan
+        }
+        NodeKind::Terminal(TerminalKind::LessThanEqual) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::LessThanEqual
+        }
+        NodeKind::Terminal(TerminalKind::Minus) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::Minus
+        }
+        NodeKind::Terminal(TerminalKind::Percent) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::Percent
+        }
+        NodeKind::Terminal(TerminalKind::Plus) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::Plus
+        }
+        NodeKind::Terminal(TerminalKind::Slash) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::Slash
+        }
+        NodeKind::Terminal(TerminalKind::Tilde) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingOperator::Tilde
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                cursor.node().kind()
+            ));
+        }
+    };
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -2368,8 +2482,11 @@ pub fn build_using_target(mut cursor: Cursor) -> Result<UsingTarget> {
         NodeKind::Nonterminal(NonterminalKind::TypeName) => {
             UsingTarget::TypeName(build_type_name(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => UsingTarget::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::Asterisk) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UsingTarget::Asterisk
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2459,10 +2576,31 @@ pub fn build_state_variable_attribute(mut cursor: Cursor) -> Result<StateVariabl
         NodeKind::Nonterminal(NonterminalKind::OverrideSpecifier) => {
             StateVariableAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => {
-            StateVariableAttribute::TerminalNode(fetch_terminal_node(&cursor)?)
+        NodeKind::Terminal(TerminalKind::ConstantKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            StateVariableAttribute::ConstantKeyword
         }
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::InternalKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            StateVariableAttribute::InternalKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PrivateKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            StateVariableAttribute::PrivateKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PublicKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            StateVariableAttribute::PublicKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ImmutableKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            StateVariableAttribute::ImmutableKeyword
+        }
+        NodeKind::Terminal(TerminalKind::TransientKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            StateVariableAttribute::TransientKeyword
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2480,7 +2618,26 @@ pub fn build_function_name(mut cursor: Cursor) -> Result<FunctionName> {
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = FunctionName(fetch_terminal_node(&cursor)?);
+    let item = match cursor.node().kind() {
+        NodeKind::Terminal(TerminalKind::Identifier) => {
+            let node = fetch_terminal_node(&cursor)?;
+            FunctionName::Identifier(node)
+        }
+        NodeKind::Terminal(TerminalKind::FallbackKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionName::FallbackKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ReceiveKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionName::ReceiveKeyword
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                cursor.node().kind()
+            ));
+        }
+    };
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -2499,8 +2656,43 @@ pub fn build_function_attribute(mut cursor: Cursor) -> Result<FunctionAttribute>
         NodeKind::Nonterminal(NonterminalKind::OverrideSpecifier) => {
             FunctionAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => FunctionAttribute::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::ConstantKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionAttribute::ConstantKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionAttribute::ExternalKeyword
+        }
+        NodeKind::Terminal(TerminalKind::InternalKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionAttribute::InternalKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionAttribute::PayableKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PrivateKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionAttribute::PrivateKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PublicKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionAttribute::PublicKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PureKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionAttribute::PureKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ViewKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionAttribute::ViewKeyword
+        }
+        NodeKind::Terminal(TerminalKind::VirtualKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionAttribute::VirtualKeyword
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2522,8 +2714,11 @@ pub fn build_function_body(mut cursor: Cursor) -> Result<FunctionBody> {
         NodeKind::Nonterminal(NonterminalKind::Block) => {
             FunctionBody::Block(build_block(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => FunctionBody::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::Semicolon) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionBody::Semicolon
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2545,8 +2740,27 @@ pub fn build_constructor_attribute(mut cursor: Cursor) -> Result<ConstructorAttr
         NodeKind::Nonterminal(NonterminalKind::ModifierInvocation) => {
             ConstructorAttribute::ModifierInvocation(build_modifier_invocation(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => ConstructorAttribute::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::InternalKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ConstructorAttribute::InternalKeyword
+        }
+        NodeKind::Terminal(TerminalKind::OverrideKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ConstructorAttribute::OverrideKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ConstructorAttribute::PayableKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PublicKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ConstructorAttribute::PublicKeyword
+        }
+        NodeKind::Terminal(TerminalKind::VirtualKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ConstructorAttribute::VirtualKeyword
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2568,10 +2782,39 @@ pub fn build_unnamed_function_attribute(mut cursor: Cursor) -> Result<UnnamedFun
         NodeKind::Nonterminal(NonterminalKind::ModifierInvocation) => {
             UnnamedFunctionAttribute::ModifierInvocation(build_modifier_invocation(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => {
-            UnnamedFunctionAttribute::TerminalNode(fetch_terminal_node(&cursor)?)
+        NodeKind::Terminal(TerminalKind::ConstantKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UnnamedFunctionAttribute::ConstantKeyword
         }
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UnnamedFunctionAttribute::ExternalKeyword
+        }
+        NodeKind::Terminal(TerminalKind::InternalKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UnnamedFunctionAttribute::InternalKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UnnamedFunctionAttribute::PayableKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PrivateKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UnnamedFunctionAttribute::PrivateKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PublicKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UnnamedFunctionAttribute::PublicKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PureKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UnnamedFunctionAttribute::PureKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ViewKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            UnnamedFunctionAttribute::ViewKeyword
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2598,10 +2841,27 @@ pub fn build_fallback_function_attribute(mut cursor: Cursor) -> Result<FallbackF
         NodeKind::Nonterminal(NonterminalKind::OverrideSpecifier) => {
             FallbackFunctionAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => {
-            FallbackFunctionAttribute::TerminalNode(fetch_terminal_node(&cursor)?)
+        NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FallbackFunctionAttribute::ExternalKeyword
         }
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FallbackFunctionAttribute::PayableKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PureKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FallbackFunctionAttribute::PureKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ViewKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FallbackFunctionAttribute::ViewKeyword
+        }
+        NodeKind::Terminal(TerminalKind::VirtualKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FallbackFunctionAttribute::VirtualKeyword
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2626,10 +2886,19 @@ pub fn build_receive_function_attribute(mut cursor: Cursor) -> Result<ReceiveFun
         NodeKind::Nonterminal(NonterminalKind::OverrideSpecifier) => {
             ReceiveFunctionAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => {
-            ReceiveFunctionAttribute::TerminalNode(fetch_terminal_node(&cursor)?)
+        NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ReceiveFunctionAttribute::ExternalKeyword
         }
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ReceiveFunctionAttribute::PayableKeyword
+        }
+        NodeKind::Terminal(TerminalKind::VirtualKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ReceiveFunctionAttribute::VirtualKeyword
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2651,8 +2920,11 @@ pub fn build_modifier_attribute(mut cursor: Cursor) -> Result<ModifierAttribute>
         NodeKind::Nonterminal(NonterminalKind::OverrideSpecifier) => {
             ModifierAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => ModifierAttribute::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::VirtualKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ModifierAttribute::VirtualKeyword
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2704,7 +2976,46 @@ pub fn build_function_type_attribute(mut cursor: Cursor) -> Result<FunctionTypeA
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = FunctionTypeAttribute(fetch_terminal_node(&cursor)?);
+    let item = match cursor.node().kind() {
+        NodeKind::Terminal(TerminalKind::InternalKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionTypeAttribute::InternalKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionTypeAttribute::ExternalKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PrivateKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionTypeAttribute::PrivateKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PublicKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionTypeAttribute::PublicKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ConstantKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionTypeAttribute::ConstantKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PureKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionTypeAttribute::PureKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ViewKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionTypeAttribute::ViewKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            FunctionTypeAttribute::PayableKeyword
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                cursor.node().kind()
+            ));
+        }
+    };
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -2745,8 +3056,39 @@ pub fn build_elementary_type(mut cursor: Cursor) -> Result<ElementaryType> {
         NodeKind::Nonterminal(NonterminalKind::AddressType) => {
             ElementaryType::AddressType(build_address_type(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => ElementaryType::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::BoolKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ElementaryType::BoolKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ByteKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ElementaryType::ByteKeyword
+        }
+        NodeKind::Terminal(TerminalKind::StringKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ElementaryType::StringKeyword
+        }
+        NodeKind::Terminal(TerminalKind::BytesKeyword) => {
+            let node = fetch_terminal_node(&cursor)?;
+            ElementaryType::BytesKeyword(node)
+        }
+        NodeKind::Terminal(TerminalKind::IntKeyword) => {
+            let node = fetch_terminal_node(&cursor)?;
+            ElementaryType::IntKeyword(node)
+        }
+        NodeKind::Terminal(TerminalKind::UintKeyword) => {
+            let node = fetch_terminal_node(&cursor)?;
+            ElementaryType::UintKeyword(node)
+        }
+        NodeKind::Terminal(TerminalKind::FixedKeyword) => {
+            let node = fetch_terminal_node(&cursor)?;
+            ElementaryType::FixedKeyword(node)
+        }
+        NodeKind::Terminal(TerminalKind::UfixedKeyword) => {
+            let node = fetch_terminal_node(&cursor)?;
+            ElementaryType::UfixedKeyword(node)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2867,10 +3209,11 @@ pub fn build_variable_declaration_type(mut cursor: Cursor) -> Result<VariableDec
         NodeKind::Nonterminal(NonterminalKind::TypeName) => {
             VariableDeclarationType::TypeName(build_type_name(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => {
-            VariableDeclarationType::TerminalNode(fetch_terminal_node(&cursor)?)
+        NodeKind::Terminal(TerminalKind::VarKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            VariableDeclarationType::VarKeyword
         }
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2888,7 +3231,26 @@ pub fn build_storage_location(mut cursor: Cursor) -> Result<StorageLocation> {
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = StorageLocation(fetch_terminal_node(&cursor)?);
+    let item = match cursor.node().kind() {
+        NodeKind::Terminal(TerminalKind::MemoryKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            StorageLocation::MemoryKeyword
+        }
+        NodeKind::Terminal(TerminalKind::StorageKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            StorageLocation::StorageKeyword
+        }
+        NodeKind::Terminal(TerminalKind::CallDataKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            StorageLocation::CallDataKeyword
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                cursor.node().kind()
+            ));
+        }
+    };
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -2918,10 +3280,11 @@ pub fn build_for_statement_initialization(
                 cursor.clone(),
             )?)
         }
-        NodeKind::Terminal(_) => {
-            ForStatementInitialization::TerminalNode(fetch_terminal_node(&cursor)?)
+        NodeKind::Terminal(TerminalKind::Semicolon) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ForStatementInitialization::Semicolon
         }
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -2943,8 +3306,11 @@ pub fn build_for_statement_condition(mut cursor: Cursor) -> Result<ForStatementC
         NodeKind::Nonterminal(NonterminalKind::ExpressionStatement) => {
             ForStatementCondition::ExpressionStatement(build_expression_statement(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => ForStatementCondition::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::Semicolon) => {
+            _ = fetch_terminal_node(&cursor)?;
+            ForStatementCondition::Semicolon
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -3044,8 +3410,31 @@ pub fn build_expression(mut cursor: Cursor) -> Result<Expression> {
         NodeKind::Nonterminal(NonterminalKind::ElementaryType) => {
             Expression::ElementaryType(build_elementary_type(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => Expression::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            Expression::PayableKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ThisKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            Expression::ThisKeyword
+        }
+        NodeKind::Terminal(TerminalKind::SuperKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            Expression::SuperKeyword
+        }
+        NodeKind::Terminal(TerminalKind::TrueKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            Expression::TrueKeyword
+        }
+        NodeKind::Terminal(TerminalKind::FalseKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            Expression::FalseKeyword
+        }
+        NodeKind::Terminal(TerminalKind::Identifier) => {
+            let node = fetch_terminal_node(&cursor)?;
+            Expression::Identifier(node)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -3092,7 +3481,58 @@ pub fn build_number_unit(mut cursor: Cursor) -> Result<NumberUnit> {
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = NumberUnit(fetch_terminal_node(&cursor)?);
+    let item = match cursor.node().kind() {
+        NodeKind::Terminal(TerminalKind::WeiKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            NumberUnit::WeiKeyword
+        }
+        NodeKind::Terminal(TerminalKind::GweiKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            NumberUnit::GweiKeyword
+        }
+        NodeKind::Terminal(TerminalKind::SzaboKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            NumberUnit::SzaboKeyword
+        }
+        NodeKind::Terminal(TerminalKind::FinneyKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            NumberUnit::FinneyKeyword
+        }
+        NodeKind::Terminal(TerminalKind::EtherKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            NumberUnit::EtherKeyword
+        }
+        NodeKind::Terminal(TerminalKind::SecondsKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            NumberUnit::SecondsKeyword
+        }
+        NodeKind::Terminal(TerminalKind::MinutesKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            NumberUnit::MinutesKeyword
+        }
+        NodeKind::Terminal(TerminalKind::HoursKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            NumberUnit::HoursKeyword
+        }
+        NodeKind::Terminal(TerminalKind::DaysKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            NumberUnit::DaysKeyword
+        }
+        NodeKind::Terminal(TerminalKind::WeeksKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            NumberUnit::WeeksKeyword
+        }
+        NodeKind::Terminal(TerminalKind::YearsKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            NumberUnit::YearsKeyword
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                cursor.node().kind()
+            ));
+        }
+    };
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -3138,7 +3578,22 @@ pub fn build_string_literal(mut cursor: Cursor) -> Result<StringLiteral> {
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = StringLiteral(fetch_terminal_node(&cursor)?);
+    let item = match cursor.node().kind() {
+        NodeKind::Terminal(TerminalKind::SingleQuotedStringLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            StringLiteral::SingleQuotedStringLiteral(node)
+        }
+        NodeKind::Terminal(TerminalKind::DoubleQuotedStringLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            StringLiteral::DoubleQuotedStringLiteral(node)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                cursor.node().kind()
+            ));
+        }
+    };
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -3150,7 +3605,22 @@ pub fn build_hex_string_literal(mut cursor: Cursor) -> Result<HexStringLiteral> 
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = HexStringLiteral(fetch_terminal_node(&cursor)?);
+    let item = match cursor.node().kind() {
+        NodeKind::Terminal(TerminalKind::SingleQuotedHexStringLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            HexStringLiteral::SingleQuotedHexStringLiteral(node)
+        }
+        NodeKind::Terminal(TerminalKind::DoubleQuotedHexStringLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            HexStringLiteral::DoubleQuotedHexStringLiteral(node)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                cursor.node().kind()
+            ));
+        }
+    };
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -3162,7 +3632,22 @@ pub fn build_unicode_string_literal(mut cursor: Cursor) -> Result<UnicodeStringL
     }
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = UnicodeStringLiteral(fetch_terminal_node(&cursor)?);
+    let item = match cursor.node().kind() {
+        NodeKind::Terminal(TerminalKind::SingleQuotedUnicodeStringLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(node)
+        }
+        NodeKind::Terminal(TerminalKind::DoubleQuotedUnicodeStringLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            UnicodeStringLiteral::DoubleQuotedUnicodeStringLiteral(node)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                cursor.node().kind()
+            ));
+        }
+    };
     consume_remaining_trivia(cursor)?;
     Ok(item)
 }
@@ -3242,8 +3727,11 @@ pub fn build_yul_assignment_operator(mut cursor: Cursor) -> Result<YulAssignment
         NodeKind::Nonterminal(NonterminalKind::YulColonAndEqual) => {
             YulAssignmentOperator::YulColonAndEqual(build_yul_colon_and_equal(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => YulAssignmentOperator::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::ColonEqual) => {
+            _ = fetch_terminal_node(&cursor)?;
+            YulAssignmentOperator::ColonEqual
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -3267,10 +3755,11 @@ pub fn build_yul_stack_assignment_operator(
         NodeKind::Nonterminal(NonterminalKind::YulEqualAndColon) => {
             YulStackAssignmentOperator::YulEqualAndColon(build_yul_equal_and_colon(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => {
-            YulStackAssignmentOperator::TerminalNode(fetch_terminal_node(&cursor)?)
+        NodeKind::Terminal(TerminalKind::EqualColon) => {
+            _ = fetch_terminal_node(&cursor)?;
+            YulStackAssignmentOperator::EqualColon
         }
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()
@@ -3350,8 +3839,23 @@ pub fn build_yul_literal(mut cursor: Cursor) -> Result<YulLiteral> {
         NodeKind::Nonterminal(NonterminalKind::StringLiteral) => {
             YulLiteral::StringLiteral(build_string_literal(cursor.clone())?)
         }
-        NodeKind::Terminal(_) => YulLiteral::TerminalNode(fetch_terminal_node(&cursor)?),
-        NodeKind::Nonterminal(_) => {
+        NodeKind::Terminal(TerminalKind::YulTrueKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            YulLiteral::YulTrueKeyword
+        }
+        NodeKind::Terminal(TerminalKind::YulFalseKeyword) => {
+            _ = fetch_terminal_node(&cursor)?;
+            YulLiteral::YulFalseKeyword
+        }
+        NodeKind::Terminal(TerminalKind::YulDecimalLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            YulLiteral::YulDecimalLiteral(node)
+        }
+        NodeKind::Terminal(TerminalKind::YulHexLiteral) => {
+            let node = fetch_terminal_node(&cursor)?;
+            YulLiteral::YulHexLiteral(node)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
                 cursor.node().kind()

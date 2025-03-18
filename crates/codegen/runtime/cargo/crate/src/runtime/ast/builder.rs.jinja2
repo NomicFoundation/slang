@@ -1,8 +1,10 @@
 {%- if rendering_in_stubs -%}
   // No AST building functions in stubs...
 {%- else -%}
+  #![allow(clippy::too_many_lines)]
+
   use std::rc::Rc;
-  use crate::cst::{ Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalNode };
+  use crate::cst::{ Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalKind, TerminalNode };
   #[allow(clippy::wildcard_imports)]
   use super::nodes::*;
 
@@ -75,25 +77,29 @@
       }
       skip_trivia(&mut cursor)?;
       expect_label(&cursor, EdgeLabel::Variant)?;
-      {%- if choice.nonterminal_types | length == 0 -%}
-        let item = {{ parent_type }}(fetch_terminal_node(&cursor)?);
-      {%- else -%}
-        let item = match cursor.node().kind() {
-          {% for type in choice.nonterminal_types -%}
-            NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ parent_type }}::{{ type | pascal_case }}(build_{{ type | snake_case }}(cursor.clone())?),
-          {%- endfor -%}
-          {%- if choice.terminal_types | length > 0 -%}
-            NodeKind::Terminal(_) => {{ parent_type }}::TerminalNode(fetch_terminal_node(&cursor)?),
-            NodeKind::Nonterminal(_) => {
-              return Err(format!("Unexpected variant node of kind {:?}", cursor.node().kind()));
-            }
-          {%- else -%}
-            NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
-              return Err(format!("Unexpected variant node of kind {:?}", cursor.node().kind()));
-            }
-          {%- endif -%}
-        };
-      {%- endif -%}
+      let item = match cursor.node().kind() {
+        {% for type in choice.nonterminal_types -%}
+          NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ parent_type }}::{{ type | pascal_case }}(build_{{ type | snake_case }}(cursor.clone())?),
+        {%- endfor -%}
+
+        {% for type in choice.terminal_types -%}
+          NodeKind::Terminal(TerminalKind::{{ type }}) => {
+            {%- if not model.ast.unique_terminals is containing(type) -%}
+              let node =
+            {%- else -%}
+              _ =
+            {%- endif -%}
+            fetch_terminal_node(&cursor)?;
+            {{ parent_type }}::{{ type | pascal_case }}
+            {%- if not model.ast.unique_terminals is containing(type) -%}
+              (node)
+            {%- endif -%}
+          },
+        {%- endfor -%}
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+          return Err(format!("Unexpected variant node of kind {:?}", cursor.node().kind()));
+        }
+      };
       consume_remaining_trivia(cursor)?;
       Ok(item)
     }
