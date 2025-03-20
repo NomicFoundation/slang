@@ -1,7 +1,7 @@
 {
   "extends": "../../../../../tsconfig.json",
 
-  "include": ["./**/*"],
+  "include": ["./src/**.mts"],
 
   "noImplicitAny": false,
 
@@ -9,7 +9,6 @@
     /* Projects */
     "composite": true,
     "incremental": true,
-    "tsBuildInfoFile": "target/tsc/.tsbuildinfo",
-    "allowJs": true
-  }
+    "tsBuildInfoFile": "target/tsc/.tsbuildinfo"
+  },
 }
