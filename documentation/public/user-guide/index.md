@@ -7,3 +7,4 @@
 - [5. Syntax Trees](./05-syntax-trees/index.md)
 - [6. Query Language](./06-query-language/index.md)
 - [7. Semantic Analysis](./07-semantic-analysis/index.md)
+- [8. Examples](./08-examples/index.md)

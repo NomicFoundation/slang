@@ -2,8 +2,6 @@
 
 # 6.3. Yul Keywords
 
-## Syntax
-
 ```{ .ebnf #YulAbstractKeyword }
 
 ```
@@ -633,5 +631,3 @@
 ```
 
 <pre ebnf-snippet="YulYearsKeyword" style="display: none;"><span class="cm">(* Reserved until 0.7.1 *)</span><br /><a href="#YulYearsKeyword"><span class="k">YUL_YEARS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"years"</span><span class="o">;</span></pre>
-
---8<-- "crates/solidity/inputs/language/docs/06-yul/03-yul-keywords.md"

@@ -1,6 +1,5 @@
 {
   "name": "Solidity",
-  "documentation_dir": "crates/solidity/inputs/language/docs",
   "binding_rules_file": "crates/solidity/inputs/language/bindings/rules.msgb",
   "root_item": "SourceUnit",
   "leading_trivia": {
@@ -117,7 +116,6 @@
     {
       "title": "File Structure",
       "topics": [
-        { "title": "License Specifiers", "items": [] },
         {
           "title": "Source Unit",
           "items": [
@@ -125,7 +123,7 @@
               "Struct": {
                 "item": {
                   "name": "SourceUnit",
-                  "fields": { "members": { "Required": { "reference": "SourceUnitMembers" } } }
+                  "fields": [["members", { "Required": { "reference": "SourceUnitMembers" } }]]
                 }
               }
             },
@@ -167,11 +165,11 @@
                 "item": {
                   "name": "PragmaDirective",
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "pragma_keyword": { "Required": { "reference": "PragmaKeyword" } },
-                    "pragma": { "Required": { "reference": "Pragma" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["pragma_keyword", { "Required": { "reference": "PragmaKeyword" } }],
+                    ["pragma", { "Required": { "reference": "Pragma" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -191,10 +189,10 @@
               "Struct": {
                 "item": {
                   "name": "AbicoderPragma",
-                  "fields": {
-                    "abicoder_keyword": { "Required": { "reference": "AbicoderKeyword" } },
-                    "version": { "Required": { "reference": "Identifier" } }
-                  }
+                  "fields": [
+                    ["abicoder_keyword", { "Required": { "reference": "AbicoderKeyword" } }],
+                    ["version", { "Required": { "reference": "Identifier" } }]
+                  ]
                 }
               }
             },
@@ -202,10 +200,10 @@
               "Struct": {
                 "item": {
                   "name": "ExperimentalPragma",
-                  "fields": {
-                    "experimental_keyword": { "Required": { "reference": "ExperimentalKeyword" } },
-                    "feature": { "Required": { "reference": "ExperimentalFeature" } }
-                  }
+                  "fields": [
+                    ["experimental_keyword", { "Required": { "reference": "ExperimentalKeyword" } }],
+                    ["feature", { "Required": { "reference": "ExperimentalFeature" } }]
+                  ]
                 }
               }
             },
@@ -221,10 +219,10 @@
               "Struct": {
                 "item": {
                   "name": "VersionPragma",
-                  "fields": {
-                    "solidity_keyword": { "Required": { "reference": "SolidityKeyword" } },
-                    "sets": { "Required": { "reference": "VersionExpressionSets" } }
-                  }
+                  "fields": [
+                    ["solidity_keyword", { "Required": { "reference": "SolidityKeyword" } }],
+                    ["sets", { "Required": { "reference": "VersionExpressionSets" } }]
+                  ]
                 }
               }
             },
@@ -246,11 +244,11 @@
               "Struct": {
                 "item": {
                   "name": "VersionRange",
-                  "fields": {
-                    "start": { "Required": { "reference": "VersionLiteral" } },
-                    "minus": { "Required": { "reference": "Minus" } },
-                    "end": { "Required": { "reference": "VersionLiteral" } }
-                  }
+                  "fields": [
+                    ["start", { "Required": { "reference": "VersionLiteral" } }],
+                    ["minus", { "Required": { "reference": "Minus" } }],
+                    ["end", { "Required": { "reference": "VersionLiteral" } }]
+                  ]
                 }
               }
             },
@@ -258,10 +256,10 @@
               "Struct": {
                 "item": {
                   "name": "VersionTerm",
-                  "fields": {
-                    "operator": { "Optional": { "reference": "VersionOperator" } },
-                    "literal": { "Required": { "reference": "VersionLiteral" } }
-                  }
+                  "fields": [
+                    ["operator", { "Optional": { "reference": "VersionOperator" } }],
+                    ["literal", { "Required": { "reference": "VersionLiteral" } }]
+                  ]
                 }
               }
             },
@@ -428,11 +426,11 @@
                 "item": {
                   "name": "ImportDirective",
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "import_keyword": { "Required": { "reference": "ImportKeyword" } },
-                    "clause": { "Required": { "reference": "ImportClause" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["import_keyword", { "Required": { "reference": "ImportKeyword" } }],
+                    ["clause", { "Required": { "reference": "ImportClause" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -452,10 +450,10 @@
               "Struct": {
                 "item": {
                   "name": "PathImport",
-                  "fields": {
-                    "path": { "Required": { "reference": "StringLiteral" } },
-                    "alias": { "Optional": { "reference": "ImportAlias" } }
-                  }
+                  "fields": [
+                    ["path", { "Required": { "reference": "StringLiteral" } }],
+                    ["alias", { "Optional": { "reference": "ImportAlias" } }]
+                  ]
                 }
               }
             },
@@ -463,12 +461,12 @@
               "Struct": {
                 "item": {
                   "name": "NamedImport",
-                  "fields": {
-                    "asterisk": { "Required": { "reference": "Asterisk" } },
-                    "alias": { "Required": { "reference": "ImportAlias" } },
-                    "from_keyword": { "Required": { "reference": "FromKeyword" } },
-                    "path": { "Required": { "reference": "StringLiteral" } }
-                  }
+                  "fields": [
+                    ["asterisk", { "Required": { "reference": "Asterisk" } }],
+                    ["alias", { "Required": { "reference": "ImportAlias" } }],
+                    ["from_keyword", { "Required": { "reference": "FromKeyword" } }],
+                    ["path", { "Required": { "reference": "StringLiteral" } }]
+                  ]
                 }
               }
             },
@@ -477,13 +475,13 @@
                 "item": {
                   "name": "ImportDeconstruction",
                   "error_recovery": { "delimiters": { "open": "open_brace", "close": "close_brace" } },
-                  "fields": {
-                    "open_brace": { "Required": { "reference": "OpenBrace" } },
-                    "symbols": { "Required": { "reference": "ImportDeconstructionSymbols" } },
-                    "close_brace": { "Required": { "reference": "CloseBrace" } },
-                    "from_keyword": { "Required": { "reference": "FromKeyword" } },
-                    "path": { "Required": { "reference": "StringLiteral" } }
-                  }
+                  "fields": [
+                    ["open_brace", { "Required": { "reference": "OpenBrace" } }],
+                    ["symbols", { "Required": { "reference": "ImportDeconstructionSymbols" } }],
+                    ["close_brace", { "Required": { "reference": "CloseBrace" } }],
+                    ["from_keyword", { "Required": { "reference": "FromKeyword" } }],
+                    ["path", { "Required": { "reference": "StringLiteral" } }]
+                  ]
                 }
               }
             },
@@ -500,10 +498,10 @@
               "Struct": {
                 "item": {
                   "name": "ImportDeconstructionSymbol",
-                  "fields": {
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "alias": { "Optional": { "reference": "ImportAlias" } }
-                  }
+                  "fields": [
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["alias", { "Optional": { "reference": "ImportAlias" } }]
+                  ]
                 }
               }
             },
@@ -511,10 +509,10 @@
               "Struct": {
                 "item": {
                   "name": "ImportAlias",
-                  "fields": {
-                    "as_keyword": { "Required": { "reference": "AsKeyword" } },
-                    "identifier": { "Required": { "reference": "Identifier" } }
-                  }
+                  "fields": [
+                    ["as_keyword", { "Required": { "reference": "AsKeyword" } }],
+                    ["identifier", { "Required": { "reference": "Identifier" } }]
+                  ]
                 }
               }
             }
@@ -528,16 +526,17 @@
                 "item": {
                   "name": "UsingDirective",
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "using_keyword": { "Required": { "reference": "UsingKeyword" } },
-                    "clause": { "Required": { "reference": "UsingClause" } },
-                    "for_keyword": { "Required": { "reference": "ForKeyword" } },
-                    "target": { "Required": { "reference": "UsingTarget" } },
-                    "global_keyword": {
-                      "Optional": { "reference": "GlobalKeyword", "enabled": { "From": { "from": "0.8.13" } } }
-                    },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["using_keyword", { "Required": { "reference": "UsingKeyword" } }],
+                    ["clause", { "Required": { "reference": "UsingClause" } }],
+                    ["for_keyword", { "Required": { "reference": "ForKeyword" } }],
+                    ["target", { "Required": { "reference": "UsingTarget" } }],
+                    [
+                      "global_keyword",
+                      { "Optional": { "reference": "GlobalKeyword", "enabled": { "From": { "from": "0.8.13" } } } }
+                    ],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -558,11 +557,11 @@
                   "name": "UsingDeconstruction",
                   "enabled": { "From": { "from": "0.8.13" } },
                   "error_recovery": { "delimiters": { "open": "open_brace", "close": "close_brace" } },
-                  "fields": {
-                    "open_brace": { "Required": { "reference": "OpenBrace" } },
-                    "symbols": { "Required": { "reference": "UsingDeconstructionSymbols" } },
-                    "close_brace": { "Required": { "reference": "CloseBrace" } }
-                  }
+                  "fields": [
+                    ["open_brace", { "Required": { "reference": "OpenBrace" } }],
+                    ["symbols", { "Required": { "reference": "UsingDeconstructionSymbols" } }],
+                    ["close_brace", { "Required": { "reference": "CloseBrace" } }]
+                  ]
                 }
               }
             },
@@ -581,10 +580,13 @@
                 "item": {
                   "name": "UsingDeconstructionSymbol",
                   "enabled": { "From": { "from": "0.8.13" } },
-                  "fields": {
-                    "name": { "Required": { "reference": "IdentifierPath" } },
-                    "alias": { "Optional": { "reference": "UsingAlias", "enabled": { "From": { "from": "0.8.19" } } } }
-                  }
+                  "fields": [
+                    ["name", { "Required": { "reference": "IdentifierPath" } }],
+                    [
+                      "alias",
+                      { "Optional": { "reference": "UsingAlias", "enabled": { "From": { "from": "0.8.19" } } } }
+                    ]
+                  ]
                 }
               }
             },
@@ -593,10 +595,10 @@
                 "item": {
                   "name": "UsingAlias",
                   "enabled": { "From": { "from": "0.8.19" } },
-                  "fields": {
-                    "as_keyword": { "Required": { "reference": "AsKeyword" } },
-                    "operator": { "Required": { "reference": "UsingOperator" } }
-                  }
+                  "fields": [
+                    ["as_keyword", { "Required": { "reference": "AsKeyword" } }],
+                    ["operator", { "Required": { "reference": "UsingOperator" } }]
+                  ]
                 }
               }
             },
@@ -787,7 +789,6 @@
             }
           ]
         },
-        { "title": "Nat Spec Format", "items": [] },
         {
           "title": "Keywords",
           "items": [
@@ -3026,17 +3027,18 @@
                 "item": {
                   "name": "ContractDefinition",
                   "error_recovery": { "delimiters": { "open": "open_brace", "close": "close_brace" } },
-                  "fields": {
-                    "abstract_keyword": {
-                      "Optional": { "reference": "AbstractKeyword", "enabled": { "From": { "from": "0.6.0" } } }
-                    },
-                    "contract_keyword": { "Required": { "reference": "ContractKeyword" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "inheritance": { "Optional": { "reference": "InheritanceSpecifier" } },
-                    "open_brace": { "Required": { "reference": "OpenBrace" } },
-                    "members": { "Required": { "reference": "ContractMembers" } },
-                    "close_brace": { "Required": { "reference": "CloseBrace" } }
-                  }
+                  "fields": [
+                    [
+                      "abstract_keyword",
+                      { "Optional": { "reference": "AbstractKeyword", "enabled": { "From": { "from": "0.6.0" } } } }
+                    ],
+                    ["contract_keyword", { "Required": { "reference": "ContractKeyword" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["inheritance", { "Optional": { "reference": "InheritanceSpecifier" } }],
+                    ["open_brace", { "Required": { "reference": "OpenBrace" } }],
+                    ["members", { "Required": { "reference": "ContractMembers" } }],
+                    ["close_brace", { "Required": { "reference": "CloseBrace" } }]
+                  ]
                 }
               }
             },
@@ -3044,10 +3046,10 @@
               "Struct": {
                 "item": {
                   "name": "InheritanceSpecifier",
-                  "fields": {
-                    "is_keyword": { "Required": { "reference": "IsKeyword" } },
-                    "types": { "Required": { "reference": "InheritanceTypes" } }
-                  }
+                  "fields": [
+                    ["is_keyword", { "Required": { "reference": "IsKeyword" } }],
+                    ["types", { "Required": { "reference": "InheritanceTypes" } }]
+                  ]
                 }
               }
             },
@@ -3060,10 +3062,10 @@
               "Struct": {
                 "item": {
                   "name": "InheritanceType",
-                  "fields": {
-                    "type_name": { "Required": { "reference": "IdentifierPath" } },
-                    "arguments": { "Optional": { "reference": "ArgumentsDeclaration" } }
-                  }
+                  "fields": [
+                    ["type_name", { "Required": { "reference": "IdentifierPath" } }],
+                    ["arguments", { "Optional": { "reference": "ArgumentsDeclaration" } }]
+                  ]
                 }
               }
             },
@@ -3102,14 +3104,14 @@
                 "item": {
                   "name": "InterfaceDefinition",
                   "error_recovery": { "delimiters": { "open": "open_brace", "close": "close_brace" } },
-                  "fields": {
-                    "interface_keyword": { "Required": { "reference": "InterfaceKeyword" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "inheritance": { "Optional": { "reference": "InheritanceSpecifier" } },
-                    "open_brace": { "Required": { "reference": "OpenBrace" } },
-                    "members": { "Required": { "reference": "InterfaceMembers" } },
-                    "close_brace": { "Required": { "reference": "CloseBrace" } }
-                  }
+                  "fields": [
+                    ["interface_keyword", { "Required": { "reference": "InterfaceKeyword" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["inheritance", { "Optional": { "reference": "InheritanceSpecifier" } }],
+                    ["open_brace", { "Required": { "reference": "OpenBrace" } }],
+                    ["members", { "Required": { "reference": "InterfaceMembers" } }],
+                    ["close_brace", { "Required": { "reference": "CloseBrace" } }]
+                  ]
                 }
               }
             },
@@ -3126,13 +3128,13 @@
                 "item": {
                   "name": "LibraryDefinition",
                   "error_recovery": { "delimiters": { "open": "open_brace", "close": "close_brace" } },
-                  "fields": {
-                    "library_keyword": { "Required": { "reference": "LibraryKeyword" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "open_brace": { "Required": { "reference": "OpenBrace" } },
-                    "members": { "Required": { "reference": "LibraryMembers" } },
-                    "close_brace": { "Required": { "reference": "CloseBrace" } }
-                  }
+                  "fields": [
+                    ["library_keyword", { "Required": { "reference": "LibraryKeyword" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["open_brace", { "Required": { "reference": "OpenBrace" } }],
+                    ["members", { "Required": { "reference": "LibraryMembers" } }],
+                    ["close_brace", { "Required": { "reference": "CloseBrace" } }]
+                  ]
                 }
               }
             },
@@ -3147,13 +3149,13 @@
                 "item": {
                   "name": "StructDefinition",
                   "error_recovery": { "delimiters": { "open": "open_brace", "close": "close_brace" } },
-                  "fields": {
-                    "struct_keyword": { "Required": { "reference": "StructKeyword" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "open_brace": { "Required": { "reference": "OpenBrace" } },
-                    "members": { "Required": { "reference": "StructMembers" } },
-                    "close_brace": { "Required": { "reference": "CloseBrace" } }
-                  }
+                  "fields": [
+                    ["struct_keyword", { "Required": { "reference": "StructKeyword" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["open_brace", { "Required": { "reference": "OpenBrace" } }],
+                    ["members", { "Required": { "reference": "StructMembers" } }],
+                    ["close_brace", { "Required": { "reference": "CloseBrace" } }]
+                  ]
                 }
               }
             },
@@ -3163,11 +3165,11 @@
                 "item": {
                   "name": "StructMember",
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "type_name": { "Required": { "reference": "TypeName" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["type_name", { "Required": { "reference": "TypeName" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             }
@@ -3181,13 +3183,13 @@
                 "item": {
                   "name": "EnumDefinition",
                   "error_recovery": { "delimiters": { "open": "open_brace", "close": "close_brace" } },
-                  "fields": {
-                    "enum_keyword": { "Required": { "reference": "EnumKeyword" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "open_brace": { "Required": { "reference": "OpenBrace" } },
-                    "members": { "Required": { "reference": "EnumMembers" } },
-                    "close_brace": { "Required": { "reference": "CloseBrace" } }
-                  }
+                  "fields": [
+                    ["enum_keyword", { "Required": { "reference": "EnumKeyword" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["open_brace", { "Required": { "reference": "OpenBrace" } }],
+                    ["members", { "Required": { "reference": "EnumMembers" } }],
+                    ["close_brace", { "Required": { "reference": "CloseBrace" } }]
+                  ]
                 }
               }
             },
@@ -3207,14 +3209,14 @@
                   "name": "ConstantDefinition",
                   "enabled": { "From": { "from": "0.7.4" } },
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "type_name": { "Required": { "reference": "TypeName" } },
-                    "constant_keyword": { "Required": { "reference": "ConstantKeyword" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "equal": { "Required": { "reference": "Equal" } },
-                    "value": { "Required": { "reference": "Expression" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["type_name", { "Required": { "reference": "TypeName" } }],
+                    ["constant_keyword", { "Required": { "reference": "ConstantKeyword" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["equal", { "Required": { "reference": "Equal" } }],
+                    ["value", { "Required": { "reference": "Expression" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             }
@@ -3228,13 +3230,13 @@
                 "item": {
                   "name": "StateVariableDefinition",
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "type_name": { "Required": { "reference": "TypeName" } },
-                    "attributes": { "Required": { "reference": "StateVariableAttributes" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "value": { "Optional": { "reference": "StateVariableDefinitionValue" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["type_name", { "Required": { "reference": "TypeName" } }],
+                    ["attributes", { "Required": { "reference": "StateVariableAttributes" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["value", { "Optional": { "reference": "StateVariableDefinitionValue" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -3242,10 +3244,10 @@
               "Struct": {
                 "item": {
                   "name": "StateVariableDefinitionValue",
-                  "fields": {
-                    "equal": { "Required": { "reference": "Equal" } },
-                    "value": { "Required": { "reference": "Expression" } }
-                  }
+                  "fields": [
+                    ["equal", { "Required": { "reference": "Equal" } }],
+                    ["value", { "Required": { "reference": "Expression" } }]
+                  ]
                 }
               }
             },
@@ -3283,14 +3285,14 @@
               "Struct": {
                 "item": {
                   "name": "FunctionDefinition",
-                  "fields": {
-                    "function_keyword": { "Required": { "reference": "FunctionKeyword" } },
-                    "name": { "Required": { "reference": "FunctionName" } },
-                    "parameters": { "Required": { "reference": "ParametersDeclaration" } },
-                    "attributes": { "Required": { "reference": "FunctionAttributes" } },
-                    "returns": { "Optional": { "reference": "ReturnsDeclaration" } },
-                    "body": { "Required": { "reference": "FunctionBody" } }
-                  }
+                  "fields": [
+                    ["function_keyword", { "Required": { "reference": "FunctionKeyword" } }],
+                    ["name", { "Required": { "reference": "FunctionName" } }],
+                    ["parameters", { "Required": { "reference": "ParametersDeclaration" } }],
+                    ["attributes", { "Required": { "reference": "FunctionAttributes" } }],
+                    ["returns", { "Optional": { "reference": "ReturnsDeclaration" } }],
+                    ["body", { "Required": { "reference": "FunctionBody" } }]
+                  ]
                 }
               }
             },
@@ -3311,11 +3313,11 @@
                 "item": {
                   "name": "ParametersDeclaration",
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "parameters": { "Required": { "reference": "Parameters" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } }
-                  }
+                  "fields": [
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["parameters", { "Required": { "reference": "Parameters" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
                 }
               }
             },
@@ -3328,11 +3330,11 @@
               "Struct": {
                 "item": {
                   "name": "Parameter",
-                  "fields": {
-                    "type_name": { "Required": { "reference": "TypeName" } },
-                    "storage_location": { "Optional": { "reference": "StorageLocation" } },
-                    "name": { "Optional": { "reference": "Identifier" } }
-                  }
+                  "fields": [
+                    ["type_name", { "Required": { "reference": "TypeName" } }],
+                    ["storage_location", { "Optional": { "reference": "StorageLocation" } }],
+                    ["name", { "Optional": { "reference": "Identifier" } }]
+                  ]
                 }
               }
             },
@@ -3366,10 +3368,10 @@
                 "item": {
                   "name": "OverrideSpecifier",
                   "enabled": { "From": { "from": "0.6.0" } },
-                  "fields": {
-                    "override_keyword": { "Required": { "reference": "OverrideKeyword" } },
-                    "overridden": { "Optional": { "reference": "OverridePathsDeclaration" } }
-                  }
+                  "fields": [
+                    ["override_keyword", { "Required": { "reference": "OverrideKeyword" } }],
+                    ["overridden", { "Optional": { "reference": "OverridePathsDeclaration" } }]
+                  ]
                 }
               }
             },
@@ -3379,11 +3381,11 @@
                   "name": "OverridePathsDeclaration",
                   "enabled": { "From": { "from": "0.6.0" } },
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "paths": { "Required": { "reference": "OverridePaths" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } }
-                  }
+                  "fields": [
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["paths", { "Required": { "reference": "OverridePaths" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
                 }
               }
             },
@@ -3401,10 +3403,10 @@
               "Struct": {
                 "item": {
                   "name": "ReturnsDeclaration",
-                  "fields": {
-                    "returns_keyword": { "Required": { "reference": "ReturnsKeyword" } },
-                    "variables": { "Required": { "reference": "ParametersDeclaration" } }
-                  }
+                  "fields": [
+                    ["returns_keyword", { "Required": { "reference": "ReturnsKeyword" } }],
+                    ["variables", { "Required": { "reference": "ParametersDeclaration" } }]
+                  ]
                 }
               }
             },
@@ -3418,12 +3420,12 @@
                 "item": {
                   "name": "ConstructorDefinition",
                   "enabled": { "From": { "from": "0.4.22" } },
-                  "fields": {
-                    "constructor_keyword": { "Required": { "reference": "ConstructorKeyword" } },
-                    "parameters": { "Required": { "reference": "ParametersDeclaration" } },
-                    "attributes": { "Required": { "reference": "ConstructorAttributes" } },
-                    "body": { "Required": { "reference": "Block" } }
-                  }
+                  "fields": [
+                    ["constructor_keyword", { "Required": { "reference": "ConstructorKeyword" } }],
+                    ["parameters", { "Required": { "reference": "ParametersDeclaration" } }],
+                    ["attributes", { "Required": { "reference": "ConstructorAttributes" } }],
+                    ["body", { "Required": { "reference": "Block" } }]
+                  ]
                 }
               }
             },
@@ -3458,12 +3460,12 @@
                 "item": {
                   "name": "UnnamedFunctionDefinition",
                   "enabled": { "Till": { "till": "0.6.0" } },
-                  "fields": {
-                    "function_keyword": { "Required": { "reference": "FunctionKeyword" } },
-                    "parameters": { "Required": { "reference": "ParametersDeclaration" } },
-                    "attributes": { "Required": { "reference": "UnnamedFunctionAttributes" } },
-                    "body": { "Required": { "reference": "FunctionBody" } }
-                  }
+                  "fields": [
+                    ["function_keyword", { "Required": { "reference": "FunctionKeyword" } }],
+                    ["parameters", { "Required": { "reference": "ParametersDeclaration" } }],
+                    ["attributes", { "Required": { "reference": "UnnamedFunctionAttributes" } }],
+                    ["body", { "Required": { "reference": "FunctionBody" } }]
+                  ]
                 }
               }
             },
@@ -3501,13 +3503,13 @@
                 "item": {
                   "name": "FallbackFunctionDefinition",
                   "enabled": { "From": { "from": "0.6.0" } },
-                  "fields": {
-                    "fallback_keyword": { "Required": { "reference": "FallbackKeyword" } },
-                    "parameters": { "Required": { "reference": "ParametersDeclaration" } },
-                    "attributes": { "Required": { "reference": "FallbackFunctionAttributes" } },
-                    "returns": { "Optional": { "reference": "ReturnsDeclaration" } },
-                    "body": { "Required": { "reference": "FunctionBody" } }
-                  }
+                  "fields": [
+                    ["fallback_keyword", { "Required": { "reference": "FallbackKeyword" } }],
+                    ["parameters", { "Required": { "reference": "ParametersDeclaration" } }],
+                    ["attributes", { "Required": { "reference": "FallbackFunctionAttributes" } }],
+                    ["returns", { "Optional": { "reference": "ReturnsDeclaration" } }],
+                    ["body", { "Required": { "reference": "FunctionBody" } }]
+                  ]
                 }
               }
             },
@@ -3543,12 +3545,12 @@
                 "item": {
                   "name": "ReceiveFunctionDefinition",
                   "enabled": { "From": { "from": "0.6.0" } },
-                  "fields": {
-                    "receive_keyword": { "Required": { "reference": "ReceiveKeyword" } },
-                    "parameters": { "Required": { "reference": "ParametersDeclaration" } },
-                    "attributes": { "Required": { "reference": "ReceiveFunctionAttributes" } },
-                    "body": { "Required": { "reference": "FunctionBody" } }
-                  }
+                  "fields": [
+                    ["receive_keyword", { "Required": { "reference": "ReceiveKeyword" } }],
+                    ["parameters", { "Required": { "reference": "ParametersDeclaration" } }],
+                    ["attributes", { "Required": { "reference": "ReceiveFunctionAttributes" } }],
+                    ["body", { "Required": { "reference": "FunctionBody" } }]
+                  ]
                 }
               }
             },
@@ -3586,13 +3588,13 @@
               "Struct": {
                 "item": {
                   "name": "ModifierDefinition",
-                  "fields": {
-                    "modifier_keyword": { "Required": { "reference": "ModifierKeyword" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "parameters": { "Optional": { "reference": "ParametersDeclaration" } },
-                    "attributes": { "Required": { "reference": "ModifierAttributes" } },
-                    "body": { "Required": { "reference": "FunctionBody" } }
-                  }
+                  "fields": [
+                    ["modifier_keyword", { "Required": { "reference": "ModifierKeyword" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["parameters", { "Optional": { "reference": "ParametersDeclaration" } }],
+                    ["attributes", { "Required": { "reference": "ModifierAttributes" } }],
+                    ["body", { "Required": { "reference": "FunctionBody" } }]
+                  ]
                 }
               }
             },
@@ -3616,10 +3618,10 @@
               "Struct": {
                 "item": {
                   "name": "ModifierInvocation",
-                  "fields": {
-                    "name": { "Required": { "reference": "IdentifierPath" } },
-                    "arguments": { "Optional": { "reference": "ArgumentsDeclaration" } }
-                  }
+                  "fields": [
+                    ["name", { "Required": { "reference": "IdentifierPath" } }],
+                    ["arguments", { "Optional": { "reference": "ArgumentsDeclaration" } }]
+                  ]
                 }
               }
             }
@@ -3633,13 +3635,13 @@
                 "item": {
                   "name": "EventDefinition",
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "event_keyword": { "Required": { "reference": "EventKeyword" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "parameters": { "Required": { "reference": "EventParametersDeclaration" } },
-                    "anonymous_keyword": { "Optional": { "reference": "AnonymousKeyword" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["event_keyword", { "Required": { "reference": "EventKeyword" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["parameters", { "Required": { "reference": "EventParametersDeclaration" } }],
+                    ["anonymous_keyword", { "Optional": { "reference": "AnonymousKeyword" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -3648,11 +3650,11 @@
                 "item": {
                   "name": "EventParametersDeclaration",
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "parameters": { "Required": { "reference": "EventParameters" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } }
-                  }
+                  "fields": [
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["parameters", { "Required": { "reference": "EventParameters" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
                 }
               }
             },
@@ -3670,11 +3672,11 @@
               "Struct": {
                 "item": {
                   "name": "EventParameter",
-                  "fields": {
-                    "type_name": { "Required": { "reference": "TypeName" } },
-                    "indexed_keyword": { "Optional": { "reference": "IndexedKeyword" } },
-                    "name": { "Optional": { "reference": "Identifier" } }
-                  }
+                  "fields": [
+                    ["type_name", { "Required": { "reference": "TypeName" } }],
+                    ["indexed_keyword", { "Optional": { "reference": "IndexedKeyword" } }],
+                    ["name", { "Optional": { "reference": "Identifier" } }]
+                  ]
                 }
               }
             }
@@ -3689,13 +3691,13 @@
                   "name": "UserDefinedValueTypeDefinition",
                   "enabled": { "From": { "from": "0.8.8" } },
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "type_keyword": { "Required": { "reference": "TypeKeyword" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "is_keyword": { "Required": { "reference": "IsKeyword" } },
-                    "value_type": { "Required": { "reference": "ElementaryType" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["type_keyword", { "Required": { "reference": "TypeKeyword" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["is_keyword", { "Required": { "reference": "IsKeyword" } }],
+                    ["value_type", { "Required": { "reference": "ElementaryType" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             }
@@ -3710,12 +3712,12 @@
                   "name": "ErrorDefinition",
                   "enabled": { "From": { "from": "0.8.4" } },
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "error_keyword": { "Required": { "reference": "ErrorKeyword" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "members": { "Required": { "reference": "ErrorParametersDeclaration" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["error_keyword", { "Required": { "reference": "ErrorKeyword" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["members", { "Required": { "reference": "ErrorParametersDeclaration" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -3725,11 +3727,11 @@
                   "name": "ErrorParametersDeclaration",
                   "enabled": { "From": { "from": "0.8.4" } },
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "parameters": { "Required": { "reference": "ErrorParameters" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } }
-                  }
+                  "fields": [
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["parameters", { "Required": { "reference": "ErrorParameters" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
                 }
               }
             },
@@ -3749,10 +3751,10 @@
                 "item": {
                   "name": "ErrorParameter",
                   "enabled": { "From": { "from": "0.8.4" } },
-                  "fields": {
-                    "type_name": { "Required": { "reference": "TypeName" } },
-                    "name": { "Optional": { "reference": "Identifier" } }
-                  }
+                  "fields": [
+                    ["type_name", { "Required": { "reference": "TypeName" } }],
+                    ["name", { "Optional": { "reference": "Identifier" } }]
+                  ]
                 }
               }
             }
@@ -3777,11 +3779,11 @@
                         {
                           "model": "Postfix",
                           "error_recovery": { "delimiters": { "open": "open_bracket", "close": "close_bracket" } },
-                          "fields": {
-                            "open_bracket": { "Required": { "reference": "OpenBracket" } },
-                            "index": { "Optional": { "reference": "Expression" } },
-                            "close_bracket": { "Required": { "reference": "CloseBracket" } }
-                          }
+                          "fields": [
+                            ["open_bracket", { "Required": { "reference": "OpenBracket" } }],
+                            ["index", { "Optional": { "reference": "Expression" } }],
+                            ["close_bracket", { "Required": { "reference": "CloseBracket" } }]
+                          ]
                         }
                       ]
                     }
@@ -3799,12 +3801,12 @@
               "Struct": {
                 "item": {
                   "name": "FunctionType",
-                  "fields": {
-                    "function_keyword": { "Required": { "reference": "FunctionKeyword" } },
-                    "parameters": { "Required": { "reference": "ParametersDeclaration" } },
-                    "attributes": { "Required": { "reference": "FunctionTypeAttributes" } },
-                    "returns": { "Optional": { "reference": "ReturnsDeclaration" } }
-                  }
+                  "fields": [
+                    ["function_keyword", { "Required": { "reference": "FunctionKeyword" } }],
+                    ["parameters", { "Required": { "reference": "ParametersDeclaration" } }],
+                    ["attributes", { "Required": { "reference": "FunctionTypeAttributes" } }],
+                    ["returns", { "Optional": { "reference": "ReturnsDeclaration" } }]
+                  ]
                 }
               }
             },
@@ -3835,14 +3837,14 @@
                 "item": {
                   "name": "MappingType",
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "mapping_keyword": { "Required": { "reference": "MappingKeyword" } },
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "key_type": { "Required": { "reference": "MappingKey" } },
-                    "equal_greater_than": { "Required": { "reference": "EqualGreaterThan" } },
-                    "value_type": { "Required": { "reference": "MappingValue" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } }
-                  }
+                  "fields": [
+                    ["mapping_keyword", { "Required": { "reference": "MappingKeyword" } }],
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["key_type", { "Required": { "reference": "MappingKey" } }],
+                    ["equal_greater_than", { "Required": { "reference": "EqualGreaterThan" } }],
+                    ["value_type", { "Required": { "reference": "MappingValue" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
                 }
               }
             },
@@ -3850,10 +3852,10 @@
               "Struct": {
                 "item": {
                   "name": "MappingKey",
-                  "fields": {
-                    "key_type": { "Required": { "reference": "MappingKeyType" } },
-                    "name": { "Optional": { "reference": "Identifier", "enabled": { "From": { "from": "0.8.18" } } } }
-                  }
+                  "fields": [
+                    ["key_type", { "Required": { "reference": "MappingKeyType" } }],
+                    ["name", { "Optional": { "reference": "Identifier", "enabled": { "From": { "from": "0.8.18" } } } }]
+                  ]
                 }
               }
             },
@@ -3869,10 +3871,10 @@
               "Struct": {
                 "item": {
                   "name": "MappingValue",
-                  "fields": {
-                    "type_name": { "Required": { "reference": "TypeName" } },
-                    "name": { "Optional": { "reference": "Identifier", "enabled": { "From": { "from": "0.8.18" } } } }
-                  }
+                  "fields": [
+                    ["type_name", { "Required": { "reference": "TypeName" } }],
+                    ["name", { "Optional": { "reference": "Identifier", "enabled": { "From": { "from": "0.8.18" } } } }]
+                  ]
                 }
               }
             }
@@ -3903,12 +3905,13 @@
               "Struct": {
                 "item": {
                   "name": "AddressType",
-                  "fields": {
-                    "address_keyword": { "Required": { "reference": "AddressKeyword" } },
-                    "payable_keyword": {
-                      "Optional": { "reference": "PayableKeyword", "enabled": { "From": { "from": "0.5.0" } } }
-                    }
-                  }
+                  "fields": [
+                    ["address_keyword", { "Required": { "reference": "AddressKeyword" } }],
+                    [
+                      "payable_keyword",
+                      { "Optional": { "reference": "PayableKeyword", "enabled": { "From": { "from": "0.5.0" } } } }
+                    ]
+                  ]
                 }
               }
             }
@@ -3927,11 +3930,11 @@
                 "item": {
                   "name": "Block",
                   "error_recovery": { "delimiters": { "open": "open_brace", "close": "close_brace" } },
-                  "fields": {
-                    "open_brace": { "Required": { "reference": "OpenBrace" } },
-                    "statements": { "Required": { "reference": "Statements" } },
-                    "close_brace": { "Required": { "reference": "CloseBrace" } }
-                  }
+                  "fields": [
+                    ["open_brace", { "Required": { "reference": "OpenBrace" } }],
+                    ["statements", { "Required": { "reference": "Statements" } }],
+                    ["close_brace", { "Required": { "reference": "CloseBrace" } }]
+                  ]
                 }
               }
             },
@@ -3967,10 +3970,10 @@
                 "item": {
                   "name": "UncheckedBlock",
                   "enabled": { "From": { "from": "0.8.0" } },
-                  "fields": {
-                    "unchecked_keyword": { "Required": { "reference": "UncheckedKeyword" } },
-                    "block": { "Required": { "reference": "Block" } }
-                  }
+                  "fields": [
+                    ["unchecked_keyword", { "Required": { "reference": "UncheckedKeyword" } }],
+                    ["block", { "Required": { "reference": "Block" } }]
+                  ]
                 }
               }
             },
@@ -3979,10 +3982,10 @@
                 "item": {
                   "name": "ExpressionStatement",
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "expression": { "Required": { "reference": "Expression" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["expression", { "Required": { "reference": "Expression" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -3990,17 +3993,20 @@
               "Struct": {
                 "item": {
                   "name": "AssemblyStatement",
-                  "fields": {
-                    "assembly_keyword": { "Required": { "reference": "AssemblyKeyword" } },
-                    "label": { "Optional": { "reference": "StringLiteral" } },
-                    "flags": {
-                      "Optional": {
-                        "reference": "AssemblyFlagsDeclaration",
-                        "enabled": { "From": { "from": "0.8.13" } }
+                  "fields": [
+                    ["assembly_keyword", { "Required": { "reference": "AssemblyKeyword" } }],
+                    ["label", { "Optional": { "reference": "StringLiteral" } }],
+                    [
+                      "flags",
+                      {
+                        "Optional": {
+                          "reference": "AssemblyFlagsDeclaration",
+                          "enabled": { "From": { "from": "0.8.13" } }
+                        }
                       }
-                    },
-                    "body": { "Required": { "reference": "YulBlock" } }
-                  }
+                    ],
+                    ["body", { "Required": { "reference": "YulBlock" } }]
+                  ]
                 }
               }
             },
@@ -4010,11 +4016,11 @@
                   "name": "AssemblyFlagsDeclaration",
                   "enabled": { "From": { "from": "0.8.13" } },
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "flags": { "Required": { "reference": "AssemblyFlags" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } }
-                  }
+                  "fields": [
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["flags", { "Required": { "reference": "AssemblyFlags" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
                 }
               }
             },
@@ -4041,17 +4047,18 @@
                     "terminator": "semicolon",
                     "delimiters": { "open": "open_paren", "close": "close_paren" }
                   },
-                  "fields": {
-                    "var_keyword": {
-                      "Optional": { "reference": "VarKeyword", "enabled": { "Till": { "till": "0.5.0" } } }
-                    },
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "elements": { "Required": { "reference": "TupleDeconstructionElements" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } },
-                    "equal": { "Required": { "reference": "Equal" } },
-                    "expression": { "Required": { "reference": "Expression" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    [
+                      "var_keyword",
+                      { "Optional": { "reference": "VarKeyword", "enabled": { "Till": { "till": "0.5.0" } } } }
+                    ],
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["elements", { "Required": { "reference": "TupleDeconstructionElements" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }],
+                    ["equal", { "Required": { "reference": "Equal" } }],
+                    ["expression", { "Required": { "reference": "Expression" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -4068,7 +4075,7 @@
               "Struct": {
                 "item": {
                   "name": "TupleDeconstructionElement",
-                  "fields": { "member": { "Optional": { "reference": "TupleMember" } } }
+                  "fields": [["member", { "Optional": { "reference": "TupleMember" } }]]
                 }
               }
             },
@@ -4084,11 +4091,11 @@
               "Struct": {
                 "item": {
                   "name": "TypedTupleMember",
-                  "fields": {
-                    "type_name": { "Required": { "reference": "TypeName" } },
-                    "storage_location": { "Optional": { "reference": "StorageLocation" } },
-                    "name": { "Required": { "reference": "Identifier" } }
-                  }
+                  "fields": [
+                    ["type_name", { "Required": { "reference": "TypeName" } }],
+                    ["storage_location", { "Optional": { "reference": "StorageLocation" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }]
+                  ]
                 }
               }
             },
@@ -4096,10 +4103,10 @@
               "Struct": {
                 "item": {
                   "name": "UntypedTupleMember",
-                  "fields": {
-                    "storage_location": { "Optional": { "reference": "StorageLocation" } },
-                    "name": { "Required": { "reference": "Identifier" } }
-                  }
+                  "fields": [
+                    ["storage_location", { "Optional": { "reference": "StorageLocation" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }]
+                  ]
                 }
               }
             },
@@ -4108,13 +4115,13 @@
                 "item": {
                   "name": "VariableDeclarationStatement",
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "variable_type": { "Required": { "reference": "VariableDeclarationType" } },
-                    "storage_location": { "Optional": { "reference": "StorageLocation" } },
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "value": { "Optional": { "reference": "VariableDeclarationValue" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["variable_type", { "Required": { "reference": "VariableDeclarationType" } }],
+                    ["storage_location", { "Optional": { "reference": "StorageLocation" } }],
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["value", { "Optional": { "reference": "VariableDeclarationValue" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -4133,10 +4140,10 @@
               "Struct": {
                 "item": {
                   "name": "VariableDeclarationValue",
-                  "fields": {
-                    "equal": { "Required": { "reference": "Equal" } },
-                    "expression": { "Required": { "reference": "Expression" } }
-                  }
+                  "fields": [
+                    ["equal", { "Required": { "reference": "Equal" } }],
+                    ["expression", { "Required": { "reference": "Expression" } }]
+                  ]
                 }
               }
             },
@@ -4162,14 +4169,14 @@
                 "item": {
                   "name": "IfStatement",
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "if_keyword": { "Required": { "reference": "IfKeyword" } },
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "condition": { "Required": { "reference": "Expression" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } },
-                    "body": { "Required": { "reference": "Statement" } },
-                    "else_branch": { "Optional": { "reference": "ElseBranch" } }
-                  }
+                  "fields": [
+                    ["if_keyword", { "Required": { "reference": "IfKeyword" } }],
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["condition", { "Required": { "reference": "Expression" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }],
+                    ["body", { "Required": { "reference": "Statement" } }],
+                    ["else_branch", { "Optional": { "reference": "ElseBranch" } }]
+                  ]
                 }
               }
             },
@@ -4177,10 +4184,10 @@
               "Struct": {
                 "item": {
                   "name": "ElseBranch",
-                  "fields": {
-                    "else_keyword": { "Required": { "reference": "ElseKeyword" } },
-                    "body": { "Required": { "reference": "Statement" } }
-                  }
+                  "fields": [
+                    ["else_keyword", { "Required": { "reference": "ElseKeyword" } }],
+                    ["body", { "Required": { "reference": "Statement" } }]
+                  ]
                 }
               }
             },
@@ -4189,15 +4196,15 @@
                 "item": {
                   "name": "ForStatement",
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "for_keyword": { "Required": { "reference": "ForKeyword" } },
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "initialization": { "Required": { "reference": "ForStatementInitialization" } },
-                    "condition": { "Required": { "reference": "ForStatementCondition" } },
-                    "iterator": { "Optional": { "reference": "Expression" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } },
-                    "body": { "Required": { "reference": "Statement" } }
-                  }
+                  "fields": [
+                    ["for_keyword", { "Required": { "reference": "ForKeyword" } }],
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["initialization", { "Required": { "reference": "ForStatementInitialization" } }],
+                    ["condition", { "Required": { "reference": "ForStatementCondition" } }],
+                    ["iterator", { "Optional": { "reference": "Expression" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }],
+                    ["body", { "Required": { "reference": "Statement" } }]
+                  ]
                 }
               }
             },
@@ -4227,13 +4234,13 @@
                 "item": {
                   "name": "WhileStatement",
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "while_keyword": { "Required": { "reference": "WhileKeyword" } },
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "condition": { "Required": { "reference": "Expression" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } },
-                    "body": { "Required": { "reference": "Statement" } }
-                  }
+                  "fields": [
+                    ["while_keyword", { "Required": { "reference": "WhileKeyword" } }],
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["condition", { "Required": { "reference": "Expression" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }],
+                    ["body", { "Required": { "reference": "Statement" } }]
+                  ]
                 }
               }
             },
@@ -4245,15 +4252,15 @@
                     "terminator": "semicolon",
                     "delimiters": { "open": "open_paren", "close": "close_paren" }
                   },
-                  "fields": {
-                    "do_keyword": { "Required": { "reference": "DoKeyword" } },
-                    "body": { "Required": { "reference": "Statement" } },
-                    "while_keyword": { "Required": { "reference": "WhileKeyword" } },
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "condition": { "Required": { "reference": "Expression" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["do_keyword", { "Required": { "reference": "DoKeyword" } }],
+                    ["body", { "Required": { "reference": "Statement" } }],
+                    ["while_keyword", { "Required": { "reference": "WhileKeyword" } }],
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["condition", { "Required": { "reference": "Expression" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -4262,10 +4269,10 @@
                 "item": {
                   "name": "ContinueStatement",
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "continue_keyword": { "Required": { "reference": "ContinueKeyword" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["continue_keyword", { "Required": { "reference": "ContinueKeyword" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -4274,10 +4281,10 @@
                 "item": {
                   "name": "BreakStatement",
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "break_keyword": { "Required": { "reference": "BreakKeyword" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["break_keyword", { "Required": { "reference": "BreakKeyword" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -4286,11 +4293,11 @@
                 "item": {
                   "name": "ReturnStatement",
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "return_keyword": { "Required": { "reference": "ReturnKeyword" } },
-                    "expression": { "Optional": { "reference": "Expression" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["return_keyword", { "Required": { "reference": "ReturnKeyword" } }],
+                    ["expression", { "Optional": { "reference": "Expression" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -4300,12 +4307,12 @@
                   "name": "EmitStatement",
                   "enabled": { "From": { "from": "0.4.21" } },
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "emit_keyword": { "Required": { "reference": "EmitKeyword" } },
-                    "event": { "Required": { "reference": "IdentifierPath" } },
-                    "arguments": { "Required": { "reference": "ArgumentsDeclaration" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["emit_keyword", { "Required": { "reference": "EmitKeyword" } }],
+                    ["event", { "Required": { "reference": "IdentifierPath" } }],
+                    ["arguments", { "Required": { "reference": "ArgumentsDeclaration" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             }
@@ -4319,13 +4326,13 @@
                 "item": {
                   "name": "TryStatement",
                   "enabled": { "From": { "from": "0.6.0" } },
-                  "fields": {
-                    "try_keyword": { "Required": { "reference": "TryKeyword" } },
-                    "expression": { "Required": { "reference": "Expression" } },
-                    "returns": { "Optional": { "reference": "ReturnsDeclaration" } },
-                    "body": { "Required": { "reference": "Block" } },
-                    "catch_clauses": { "Required": { "reference": "CatchClauses" } }
-                  }
+                  "fields": [
+                    ["try_keyword", { "Required": { "reference": "TryKeyword" } }],
+                    ["expression", { "Required": { "reference": "Expression" } }],
+                    ["returns", { "Optional": { "reference": "ReturnsDeclaration" } }],
+                    ["body", { "Required": { "reference": "Block" } }],
+                    ["catch_clauses", { "Required": { "reference": "CatchClauses" } }]
+                  ]
                 }
               }
             },
@@ -4343,11 +4350,11 @@
                 "item": {
                   "name": "CatchClause",
                   "enabled": { "From": { "from": "0.6.0" } },
-                  "fields": {
-                    "catch_keyword": { "Required": { "reference": "CatchKeyword" } },
-                    "error": { "Optional": { "reference": "CatchClauseError" } },
-                    "body": { "Required": { "reference": "Block" } }
-                  }
+                  "fields": [
+                    ["catch_keyword", { "Required": { "reference": "CatchKeyword" } }],
+                    ["error", { "Optional": { "reference": "CatchClauseError" } }],
+                    ["body", { "Required": { "reference": "Block" } }]
+                  ]
                 }
               }
             },
@@ -4356,10 +4363,10 @@
                 "item": {
                   "name": "CatchClauseError",
                   "enabled": { "From": { "from": "0.6.0" } },
-                  "fields": {
-                    "name": { "Optional": { "reference": "Identifier" } },
-                    "parameters": { "Required": { "reference": "ParametersDeclaration" } }
-                  }
+                  "fields": [
+                    ["name", { "Optional": { "reference": "Identifier" } }],
+                    ["parameters", { "Required": { "reference": "ParametersDeclaration" } }]
+                  ]
                 }
               }
             },
@@ -4369,12 +4376,12 @@
                   "name": "RevertStatement",
                   "enabled": { "From": { "from": "0.8.4" } },
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "revert_keyword": { "Required": { "reference": "RevertKeyword" } },
-                    "error": { "Optional": { "reference": "IdentifierPath" } },
-                    "arguments": { "Required": { "reference": "ArgumentsDeclaration" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["revert_keyword", { "Required": { "reference": "RevertKeyword" } }],
+                    ["error", { "Optional": { "reference": "IdentifierPath" } }],
+                    ["arguments", { "Required": { "reference": "ArgumentsDeclaration" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             },
@@ -4384,10 +4391,10 @@
                   "name": "ThrowStatement",
                   "enabled": { "Till": { "till": "0.5.0" } },
                   "error_recovery": { "terminator": "semicolon" },
-                  "fields": {
-                    "throw_keyword": { "Required": { "reference": "ThrowKeyword" } },
-                    "semicolon": { "Required": { "reference": "Semicolon" } }
-                  }
+                  "fields": [
+                    ["throw_keyword", { "Required": { "reference": "ThrowKeyword" } }],
+                    ["semicolon", { "Required": { "reference": "Semicolon" } }]
+                  ]
                 }
               }
             }
@@ -4411,53 +4418,53 @@
                       "operators": [
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "Equal" } } }
+                          "fields": [["operator", { "Required": { "reference": "Equal" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "BarEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "BarEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "PlusEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "PlusEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "MinusEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "MinusEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "CaretEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "CaretEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "SlashEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "SlashEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "PercentEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "PercentEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "AsteriskEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "AsteriskEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "AmpersandEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "AmpersandEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "LessThanLessThanEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "LessThanLessThanEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "GreaterThanGreaterThanEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "GreaterThanGreaterThanEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": {
-                            "operator": { "Required": { "reference": "GreaterThanGreaterThanGreaterThanEqual" } }
-                          }
+                          "fields": [
+                            ["operator", { "Required": { "reference": "GreaterThanGreaterThanGreaterThanEqual" } }]
+                          ]
                         }
                       ]
                     },
@@ -4466,12 +4473,12 @@
                       "operators": [
                         {
                           "model": "Postfix",
-                          "fields": {
-                            "question_mark": { "Required": { "reference": "QuestionMark" } },
-                            "true_expression": { "Required": { "reference": "Expression" } },
-                            "colon": { "Required": { "reference": "Colon" } },
-                            "false_expression": { "Required": { "reference": "Expression" } }
-                          }
+                          "fields": [
+                            ["question_mark", { "Required": { "reference": "QuestionMark" } }],
+                            ["true_expression", { "Required": { "reference": "Expression" } }],
+                            ["colon", { "Required": { "reference": "Colon" } }],
+                            ["false_expression", { "Required": { "reference": "Expression" } }]
+                          ]
                         }
                       ]
                     },
@@ -4480,7 +4487,7 @@
                       "operators": [
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "BarBar" } } }
+                          "fields": [["operator", { "Required": { "reference": "BarBar" } }]]
                         }
                       ]
                     },
@@ -4489,7 +4496,7 @@
                       "operators": [
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "AmpersandAmpersand" } } }
+                          "fields": [["operator", { "Required": { "reference": "AmpersandAmpersand" } }]]
                         }
                       ]
                     },
@@ -4498,32 +4505,32 @@
                       "operators": [
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "EqualEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "EqualEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "BangEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "BangEqual" } }]]
                         }
                       ]
                     },
                     {
-                      "name": "ComparisonExpression",
+                      "name": "InequalityExpression",
                       "operators": [
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "LessThan" } } }
+                          "fields": [["operator", { "Required": { "reference": "LessThan" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "GreaterThan" } } }
+                          "fields": [["operator", { "Required": { "reference": "GreaterThan" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "LessThanEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "LessThanEqual" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "GreaterThanEqual" } } }
+                          "fields": [["operator", { "Required": { "reference": "GreaterThanEqual" } }]]
                         }
                       ]
                     },
@@ -4532,7 +4539,7 @@
                       "operators": [
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "Bar" } } }
+                          "fields": [["operator", { "Required": { "reference": "Bar" } }]]
                         }
                       ]
                     },
@@ -4541,7 +4548,7 @@
                       "operators": [
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "Caret" } } }
+                          "fields": [["operator", { "Required": { "reference": "Caret" } }]]
                         }
                       ]
                     },
@@ -4550,7 +4557,7 @@
                       "operators": [
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "Ampersand" } } }
+                          "fields": [["operator", { "Required": { "reference": "Ampersand" } }]]
                         }
                       ]
                     },
@@ -4559,15 +4566,15 @@
                       "operators": [
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "LessThanLessThan" } } }
+                          "fields": [["operator", { "Required": { "reference": "LessThanLessThan" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "GreaterThanGreaterThan" } } }
+                          "fields": [["operator", { "Required": { "reference": "GreaterThanGreaterThan" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "GreaterThanGreaterThanGreaterThan" } } }
+                          "fields": [["operator", { "Required": { "reference": "GreaterThanGreaterThanGreaterThan" } }]]
                         }
                       ]
                     },
@@ -4576,11 +4583,11 @@
                       "operators": [
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "Plus" } } }
+                          "fields": [["operator", { "Required": { "reference": "Plus" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "Minus" } } }
+                          "fields": [["operator", { "Required": { "reference": "Minus" } }]]
                         }
                       ]
                     },
@@ -4589,15 +4596,15 @@
                       "operators": [
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "Asterisk" } } }
+                          "fields": [["operator", { "Required": { "reference": "Asterisk" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "Slash" } } }
+                          "fields": [["operator", { "Required": { "reference": "Slash" } }]]
                         },
                         {
                           "model": "BinaryLeftAssociative",
-                          "fields": { "operator": { "Required": { "reference": "Percent" } } }
+                          "fields": [["operator", { "Required": { "reference": "Percent" } }]]
                         }
                       ]
                     },
@@ -4607,38 +4614,38 @@
                         {
                           "model": "BinaryLeftAssociative",
                           "enabled": { "Till": { "till": "0.8.0" } },
-                          "fields": { "operator": { "Required": { "reference": "AsteriskAsterisk" } } }
+                          "fields": [["operator", { "Required": { "reference": "AsteriskAsterisk" } }]]
                         },
                         {
                           "model": "BinaryRightAssociative",
                           "enabled": { "From": { "from": "0.8.0" } },
-                          "fields": { "operator": { "Required": { "reference": "AsteriskAsterisk" } } }
+                          "fields": [["operator", { "Required": { "reference": "AsteriskAsterisk" } }]]
                         }
                       ]
                     },
                     {
                       "name": "PostfixExpression",
                       "operators": [
-                        { "model": "Postfix", "fields": { "operator": { "Required": { "reference": "PlusPlus" } } } },
-                        { "model": "Postfix", "fields": { "operator": { "Required": { "reference": "MinusMinus" } } } }
+                        { "model": "Postfix", "fields": [["operator", { "Required": { "reference": "PlusPlus" } }]] },
+                        { "model": "Postfix", "fields": [["operator", { "Required": { "reference": "MinusMinus" } }]] }
                       ]
                     },
                     {
                       "name": "PrefixExpression",
                       "operators": [
-                        { "model": "Prefix", "fields": { "operator": { "Required": { "reference": "PlusPlus" } } } },
-                        { "model": "Prefix", "fields": { "operator": { "Required": { "reference": "MinusMinus" } } } },
-                        { "model": "Prefix", "fields": { "operator": { "Required": { "reference": "Tilde" } } } },
-                        { "model": "Prefix", "fields": { "operator": { "Required": { "reference": "Bang" } } } },
-                        { "model": "Prefix", "fields": { "operator": { "Required": { "reference": "Minus" } } } },
+                        { "model": "Prefix", "fields": [["operator", { "Required": { "reference": "PlusPlus" } }]] },
+                        { "model": "Prefix", "fields": [["operator", { "Required": { "reference": "MinusMinus" } }]] },
+                        { "model": "Prefix", "fields": [["operator", { "Required": { "reference": "Tilde" } }]] },
+                        { "model": "Prefix", "fields": [["operator", { "Required": { "reference": "Bang" } }]] },
+                        { "model": "Prefix", "fields": [["operator", { "Required": { "reference": "Minus" } }]] },
                         {
                           "model": "Prefix",
                           "enabled": { "Till": { "till": "0.5.0" } },
-                          "fields": { "operator": { "Required": { "reference": "Plus" } } }
+                          "fields": [["operator", { "Required": { "reference": "Plus" } }]]
                         },
                         {
                           "model": "Prefix",
-                          "fields": { "operator": { "Required": { "reference": "DeleteKeyword" } } }
+                          "fields": [["operator", { "Required": { "reference": "DeleteKeyword" } }]]
                         }
                       ]
                     },
@@ -4647,7 +4654,7 @@
                       "operators": [
                         {
                           "model": "Postfix",
-                          "fields": { "arguments": { "Required": { "reference": "ArgumentsDeclaration" } } }
+                          "fields": [["arguments", { "Required": { "reference": "ArgumentsDeclaration" } }]]
                         }
                       ]
                     },
@@ -4664,11 +4671,11 @@
                               "terminals_matched_acceptance_threshold": 2
                             }
                           },
-                          "fields": {
-                            "open_brace": { "Required": { "reference": "OpenBrace" } },
-                            "options": { "Required": { "reference": "CallOptions" } },
-                            "close_brace": { "Required": { "reference": "CloseBrace" } }
-                          }
+                          "fields": [
+                            ["open_brace", { "Required": { "reference": "OpenBrace" } }],
+                            ["options", { "Required": { "reference": "CallOptions" } }],
+                            ["close_brace", { "Required": { "reference": "CloseBrace" } }]
+                          ]
                         }
                       ]
                     },
@@ -4677,10 +4684,10 @@
                       "operators": [
                         {
                           "model": "Postfix",
-                          "fields": {
-                            "period": { "Required": { "reference": "Period" } },
-                            "member": { "Required": { "reference": "Identifier" } }
-                          }
+                          "fields": [
+                            ["period", { "Required": { "reference": "Period" } }],
+                            ["member", { "Required": { "reference": "Identifier" } }]
+                          ]
                         }
                       ]
                     },
@@ -4690,12 +4697,12 @@
                         {
                           "model": "Postfix",
                           "error_recovery": { "delimiters": { "open": "open_bracket", "close": "close_bracket" } },
-                          "fields": {
-                            "open_bracket": { "Required": { "reference": "OpenBracket" } },
-                            "start": { "Optional": { "reference": "Expression" } },
-                            "end": { "Optional": { "reference": "IndexAccessEnd" } },
-                            "close_bracket": { "Required": { "reference": "CloseBracket" } }
-                          }
+                          "fields": [
+                            ["open_bracket", { "Required": { "reference": "OpenBracket" } }],
+                            ["start", { "Optional": { "reference": "Expression" } }],
+                            ["end", { "Optional": { "reference": "IndexAccessEnd" } }],
+                            ["close_bracket", { "Required": { "reference": "CloseBracket" } }]
+                          ]
                         }
                       ]
                     }
@@ -4723,10 +4730,10 @@
               "Struct": {
                 "item": {
                   "name": "IndexAccessEnd",
-                  "fields": {
-                    "colon": { "Required": { "reference": "Colon" } },
-                    "end": { "Optional": { "reference": "Expression" } }
-                  }
+                  "fields": [
+                    ["colon", { "Required": { "reference": "Colon" } }],
+                    ["end", { "Optional": { "reference": "Expression" } }]
+                  ]
                 }
               }
             }
@@ -4751,11 +4758,11 @@
                 "item": {
                   "name": "PositionalArgumentsDeclaration",
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "arguments": { "Required": { "reference": "PositionalArguments" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } }
-                  }
+                  "fields": [
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["arguments", { "Required": { "reference": "PositionalArguments" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
                 }
               }
             },
@@ -4774,11 +4781,11 @@
                 "item": {
                   "name": "NamedArgumentsDeclaration",
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "arguments": { "Optional": { "reference": "NamedArgumentGroup" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } }
-                  }
+                  "fields": [
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["arguments", { "Optional": { "reference": "NamedArgumentGroup" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
                 }
               }
             },
@@ -4787,11 +4794,11 @@
                 "item": {
                   "name": "NamedArgumentGroup",
                   "error_recovery": { "delimiters": { "open": "open_brace", "close": "close_brace" } },
-                  "fields": {
-                    "open_brace": { "Required": { "reference": "OpenBrace" } },
-                    "arguments": { "Required": { "reference": "NamedArguments" } },
-                    "close_brace": { "Required": { "reference": "CloseBrace" } }
-                  }
+                  "fields": [
+                    ["open_brace", { "Required": { "reference": "OpenBrace" } }],
+                    ["arguments", { "Required": { "reference": "NamedArguments" } }],
+                    ["close_brace", { "Required": { "reference": "CloseBrace" } }]
+                  ]
                 }
               }
             },
@@ -4820,11 +4827,11 @@
               "Struct": {
                 "item": {
                   "name": "NamedArgument",
-                  "fields": {
-                    "name": { "Required": { "reference": "Identifier" } },
-                    "colon": { "Required": { "reference": "Colon" } },
-                    "value": { "Required": { "reference": "Expression" } }
-                  }
+                  "fields": [
+                    ["name", { "Required": { "reference": "Identifier" } }],
+                    ["colon", { "Required": { "reference": "Colon" } }],
+                    ["value", { "Required": { "reference": "Expression" } }]
+                  ]
                 }
               }
             }
@@ -4839,12 +4846,12 @@
                   "name": "TypeExpression",
                   "enabled": { "From": { "from": "0.5.3" } },
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "type_keyword": { "Required": { "reference": "TypeKeyword" } },
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "type_name": { "Required": { "reference": "TypeName" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } }
-                  }
+                  "fields": [
+                    ["type_keyword", { "Required": { "reference": "TypeKeyword" } }],
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["type_name", { "Required": { "reference": "TypeName" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
                 }
               }
             },
@@ -4852,10 +4859,10 @@
               "Struct": {
                 "item": {
                   "name": "NewExpression",
-                  "fields": {
-                    "new_keyword": { "Required": { "reference": "NewKeyword" } },
-                    "type_name": { "Required": { "reference": "TypeName" } }
-                  }
+                  "fields": [
+                    ["new_keyword", { "Required": { "reference": "NewKeyword" } }],
+                    ["type_name", { "Required": { "reference": "TypeName" } }]
+                  ]
                 }
               }
             },
@@ -4864,11 +4871,11 @@
                 "item": {
                   "name": "TupleExpression",
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "items": { "Required": { "reference": "TupleValues" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } }
-                  }
+                  "fields": [
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["items", { "Required": { "reference": "TupleValues" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
                 }
               }
             },
@@ -4877,7 +4884,7 @@
               "Struct": {
                 "item": {
                   "name": "TupleValue",
-                  "fields": { "expression": { "Optional": { "reference": "Expression" } } }
+                  "fields": [["expression", { "Optional": { "reference": "Expression" } }]]
                 }
               }
             },
@@ -4886,11 +4893,11 @@
                 "item": {
                   "name": "ArrayExpression",
                   "error_recovery": { "delimiters": { "open": "open_bracket", "close": "close_bracket" } },
-                  "fields": {
-                    "open_bracket": { "Required": { "reference": "OpenBracket" } },
-                    "items": { "Required": { "reference": "ArrayValues" } },
-                    "close_bracket": { "Required": { "reference": "CloseBracket" } }
-                  }
+                  "fields": [
+                    ["open_bracket", { "Required": { "reference": "OpenBracket" } }],
+                    ["items", { "Required": { "reference": "ArrayValues" } }],
+                    ["close_bracket", { "Required": { "reference": "CloseBracket" } }]
+                  ]
                 }
               }
             },
@@ -4904,10 +4911,10 @@
               "Struct": {
                 "item": {
                   "name": "HexNumberExpression",
-                  "fields": {
-                    "literal": { "Required": { "reference": "HexLiteral" } },
-                    "unit": { "Optional": { "reference": "NumberUnit", "enabled": { "Till": { "till": "0.5.0" } } } }
-                  }
+                  "fields": [
+                    ["literal", { "Required": { "reference": "HexLiteral" } }],
+                    ["unit", { "Optional": { "reference": "NumberUnit", "enabled": { "Till": { "till": "0.5.0" } } } }]
+                  ]
                 }
               }
             },
@@ -4915,10 +4922,10 @@
               "Struct": {
                 "item": {
                   "name": "DecimalNumberExpression",
-                  "fields": {
-                    "literal": { "Required": { "reference": "DecimalLiteral" } },
-                    "unit": { "Optional": { "reference": "NumberUnit" } }
-                  }
+                  "fields": [
+                    ["literal", { "Required": { "reference": "DecimalLiteral" } }],
+                    ["unit", { "Optional": { "reference": "NumberUnit" } }]
+                  ]
                 }
               }
             },
@@ -5737,11 +5744,11 @@
                 "item": {
                   "name": "YulBlock",
                   "error_recovery": { "delimiters": { "open": "open_brace", "close": "close_brace" } },
-                  "fields": {
-                    "open_brace": { "Required": { "reference": "OpenBrace" } },
-                    "statements": { "Required": { "reference": "YulStatements" } },
-                    "close_brace": { "Required": { "reference": "CloseBrace" } }
-                  }
+                  "fields": [
+                    ["open_brace", { "Required": { "reference": "OpenBrace" } }],
+                    ["statements", { "Required": { "reference": "YulStatements" } }],
+                    ["close_brace", { "Required": { "reference": "CloseBrace" } }]
+                  ]
                 }
               }
             },
@@ -5772,13 +5779,13 @@
               "Struct": {
                 "item": {
                   "name": "YulFunctionDefinition",
-                  "fields": {
-                    "function_keyword": { "Required": { "reference": "YulFunctionKeyword" } },
-                    "name": { "Required": { "reference": "YulIdentifier" } },
-                    "parameters": { "Required": { "reference": "YulParametersDeclaration" } },
-                    "returns": { "Optional": { "reference": "YulReturnsDeclaration" } },
-                    "body": { "Required": { "reference": "YulBlock" } }
-                  }
+                  "fields": [
+                    ["function_keyword", { "Required": { "reference": "YulFunctionKeyword" } }],
+                    ["name", { "Required": { "reference": "YulIdentifier" } }],
+                    ["parameters", { "Required": { "reference": "YulParametersDeclaration" } }],
+                    ["returns", { "Optional": { "reference": "YulReturnsDeclaration" } }],
+                    ["body", { "Required": { "reference": "YulBlock" } }]
+                  ]
                 }
               }
             },
@@ -5787,11 +5794,11 @@
                 "item": {
                   "name": "YulParametersDeclaration",
                   "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                  "fields": {
-                    "open_paren": { "Required": { "reference": "OpenParen" } },
-                    "parameters": { "Required": { "reference": "YulParameters" } },
-                    "close_paren": { "Required": { "reference": "CloseParen" } }
-                  }
+                  "fields": [
+                    ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                    ["parameters", { "Required": { "reference": "YulParameters" } }],
+                    ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                  ]
                 }
               }
             },
@@ -5809,10 +5816,10 @@
               "Struct": {
                 "item": {
                   "name": "YulReturnsDeclaration",
-                  "fields": {
-                    "minus_greater_than": { "Required": { "reference": "MinusGreaterThan" } },
-                    "variables": { "Required": { "reference": "YulVariableNames" } }
-                  }
+                  "fields": [
+                    ["minus_greater_than", { "Required": { "reference": "MinusGreaterThan" } }],
+                    ["variables", { "Required": { "reference": "YulVariableNames" } }]
+                  ]
                 }
               }
             },
@@ -5825,11 +5832,11 @@
               "Struct": {
                 "item": {
                   "name": "YulVariableDeclarationStatement",
-                  "fields": {
-                    "let_keyword": { "Required": { "reference": "YulLetKeyword" } },
-                    "variables": { "Required": { "reference": "YulVariableNames" } },
-                    "value": { "Optional": { "reference": "YulVariableDeclarationValue" } }
-                  }
+                  "fields": [
+                    ["let_keyword", { "Required": { "reference": "YulLetKeyword" } }],
+                    ["variables", { "Required": { "reference": "YulVariableNames" } }],
+                    ["value", { "Optional": { "reference": "YulVariableDeclarationValue" } }]
+                  ]
                 }
               }
             },
@@ -5837,10 +5844,10 @@
               "Struct": {
                 "item": {
                   "name": "YulVariableDeclarationValue",
-                  "fields": {
-                    "assignment": { "Required": { "reference": "YulAssignmentOperator" } },
-                    "expression": { "Required": { "reference": "YulExpression" } }
-                  }
+                  "fields": [
+                    ["assignment", { "Required": { "reference": "YulAssignmentOperator" } }],
+                    ["expression", { "Required": { "reference": "YulExpression" } }]
+                  ]
                 }
               }
             },
@@ -5848,11 +5855,11 @@
               "Struct": {
                 "item": {
                   "name": "YulVariableAssignmentStatement",
-                  "fields": {
-                    "variables": { "Required": { "reference": "YulPaths" } },
-                    "assignment": { "Required": { "reference": "YulAssignmentOperator" } },
-                    "expression": { "Required": { "reference": "YulExpression" } }
-                  }
+                  "fields": [
+                    ["variables", { "Required": { "reference": "YulPaths" } }],
+                    ["assignment", { "Required": { "reference": "YulAssignmentOperator" } }],
+                    ["expression", { "Required": { "reference": "YulExpression" } }]
+                  ]
                 }
               }
             },
@@ -5872,10 +5879,10 @@
                 "item": {
                   "name": "YulColonAndEqual",
                   "enabled": { "Till": { "till": "0.5.5" } },
-                  "fields": {
-                    "colon": { "Required": { "reference": "Colon" } },
-                    "equal": { "Required": { "reference": "Equal" } }
-                  }
+                  "fields": [
+                    ["colon", { "Required": { "reference": "Colon" } }],
+                    ["equal", { "Required": { "reference": "Equal" } }]
+                  ]
                 }
               }
             },
@@ -5884,10 +5891,10 @@
                 "item": {
                   "name": "YulStackAssignmentStatement",
                   "enabled": { "Till": { "till": "0.5.0" } },
-                  "fields": {
-                    "assignment": { "Required": { "reference": "YulStackAssignmentOperator" } },
-                    "variable": { "Required": { "reference": "YulIdentifier" } }
-                  }
+                  "fields": [
+                    ["assignment", { "Required": { "reference": "YulStackAssignmentOperator" } }],
+                    ["variable", { "Required": { "reference": "YulIdentifier" } }]
+                  ]
                 }
               }
             },
@@ -5905,10 +5912,10 @@
                 "item": {
                   "name": "YulEqualAndColon",
                   "enabled": { "Till": { "till": "0.5.0" } },
-                  "fields": {
-                    "equal": { "Required": { "reference": "Equal" } },
-                    "colon": { "Required": { "reference": "Colon" } }
-                  }
+                  "fields": [
+                    ["equal", { "Required": { "reference": "Equal" } }],
+                    ["colon", { "Required": { "reference": "Colon" } }]
+                  ]
                 }
               }
             },
@@ -5916,11 +5923,11 @@
               "Struct": {
                 "item": {
                   "name": "YulIfStatement",
-                  "fields": {
-                    "if_keyword": { "Required": { "reference": "YulIfKeyword" } },
-                    "condition": { "Required": { "reference": "YulExpression" } },
-                    "body": { "Required": { "reference": "YulBlock" } }
-                  }
+                  "fields": [
+                    ["if_keyword", { "Required": { "reference": "YulIfKeyword" } }],
+                    ["condition", { "Required": { "reference": "YulExpression" } }],
+                    ["body", { "Required": { "reference": "YulBlock" } }]
+                  ]
                 }
               }
             },
@@ -5928,13 +5935,13 @@
               "Struct": {
                 "item": {
                   "name": "YulForStatement",
-                  "fields": {
-                    "for_keyword": { "Required": { "reference": "YulForKeyword" } },
-                    "initialization": { "Required": { "reference": "YulBlock" } },
-                    "condition": { "Required": { "reference": "YulExpression" } },
-                    "iterator": { "Required": { "reference": "YulBlock" } },
-                    "body": { "Required": { "reference": "YulBlock" } }
-                  }
+                  "fields": [
+                    ["for_keyword", { "Required": { "reference": "YulForKeyword" } }],
+                    ["initialization", { "Required": { "reference": "YulBlock" } }],
+                    ["condition", { "Required": { "reference": "YulExpression" } }],
+                    ["iterator", { "Required": { "reference": "YulBlock" } }],
+                    ["body", { "Required": { "reference": "YulBlock" } }]
+                  ]
                 }
               }
             },
@@ -5942,11 +5949,11 @@
               "Struct": {
                 "item": {
                   "name": "YulSwitchStatement",
-                  "fields": {
-                    "switch_keyword": { "Required": { "reference": "YulSwitchKeyword" } },
-                    "expression": { "Required": { "reference": "YulExpression" } },
-                    "cases": { "Required": { "reference": "YulSwitchCases" } }
-                  }
+                  "fields": [
+                    ["switch_keyword", { "Required": { "reference": "YulSwitchKeyword" } }],
+                    ["expression", { "Required": { "reference": "YulExpression" } }],
+                    ["cases", { "Required": { "reference": "YulSwitchCases" } }]
+                  ]
                 }
               }
             },
@@ -5963,10 +5970,10 @@
               "Struct": {
                 "item": {
                   "name": "YulDefaultCase",
-                  "fields": {
-                    "default_keyword": { "Required": { "reference": "YulDefaultKeyword" } },
-                    "body": { "Required": { "reference": "YulBlock" } }
-                  }
+                  "fields": [
+                    ["default_keyword", { "Required": { "reference": "YulDefaultKeyword" } }],
+                    ["body", { "Required": { "reference": "YulBlock" } }]
+                  ]
                 }
               }
             },
@@ -5974,11 +5981,11 @@
               "Struct": {
                 "item": {
                   "name": "YulValueCase",
-                  "fields": {
-                    "case_keyword": { "Required": { "reference": "YulCaseKeyword" } },
-                    "value": { "Required": { "reference": "YulLiteral" } },
-                    "body": { "Required": { "reference": "YulBlock" } }
-                  }
+                  "fields": [
+                    ["case_keyword", { "Required": { "reference": "YulCaseKeyword" } }],
+                    ["value", { "Required": { "reference": "YulLiteral" } }],
+                    ["body", { "Required": { "reference": "YulBlock" } }]
+                  ]
                 }
               }
             },
@@ -5987,7 +5994,7 @@
                 "item": {
                   "name": "YulLeaveStatement",
                   "enabled": { "From": { "from": "0.6.0" } },
-                  "fields": { "leave_keyword": { "Required": { "reference": "YulLeaveKeyword" } } }
+                  "fields": [["leave_keyword", { "Required": { "reference": "YulLeaveKeyword" } }]]
                 }
               }
             },
@@ -5995,7 +6002,7 @@
               "Struct": {
                 "item": {
                   "name": "YulBreakStatement",
-                  "fields": { "break_keyword": { "Required": { "reference": "YulBreakKeyword" } } }
+                  "fields": [["break_keyword", { "Required": { "reference": "YulBreakKeyword" } }]]
                 }
               }
             },
@@ -6003,7 +6010,7 @@
               "Struct": {
                 "item": {
                   "name": "YulContinueStatement",
-                  "fields": { "continue_keyword": { "Required": { "reference": "YulContinueKeyword" } } }
+                  "fields": [["continue_keyword", { "Required": { "reference": "YulContinueKeyword" } }]]
                 }
               }
             },
@@ -6012,10 +6019,10 @@
                 "item": {
                   "name": "YulLabel",
                   "enabled": { "Till": { "till": "0.5.0" } },
-                  "fields": {
-                    "label": { "Required": { "reference": "YulIdentifier" } },
-                    "colon": { "Required": { "reference": "Colon" } }
-                  }
+                  "fields": [
+                    ["label", { "Required": { "reference": "YulIdentifier" } }],
+                    ["colon", { "Required": { "reference": "Colon" } }]
+                  ]
                 }
               }
             }
@@ -6036,11 +6043,11 @@
                         {
                           "model": "Postfix",
                           "error_recovery": { "delimiters": { "open": "open_paren", "close": "close_paren" } },
-                          "fields": {
-                            "open_paren": { "Required": { "reference": "OpenParen" } },
-                            "arguments": { "Required": { "reference": "YulArguments" } },
-                            "close_paren": { "Required": { "reference": "CloseParen" } }
-                          }
+                          "fields": [
+                            ["open_paren", { "Required": { "reference": "OpenParen" } }],
+                            ["arguments", { "Required": { "reference": "YulArguments" } }],
+                            ["close_paren", { "Required": { "reference": "CloseParen" } }]
+                          ]
                         }
                       ]
                     }

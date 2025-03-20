@@ -9,8 +9,8 @@ created with `cursor.spawn()` to restrict the search to a given sub-tree.
 You can create a `Query` object using `Query.create()`, which accepts a string value.
 These can be then used by `cursor.query()` to execute it.
 
-You can pass multiple queries to a cursor to and efficiently traverse the tree looking for matches.
-They will be executed simultaneously, returning matches in the order they appear in input.
+You can pass multiple queries to a cursor to efficiently traverse the tree looking for matches.
+They will be executed simultaneously, returning matches in the order they appear in the input.
 
 ```ts title="common.mts"
 --8<-- "documentation/public/user-guide/06-query-language/02-executing-queries/examples/common.mts"
@@ -49,7 +49,7 @@ The error will contain a message to indicate what went wrong, and the text range
 
 ## Multiple queries simultaneously
 
-We can also execute multiple queries simultaneously, which will return all the matches for as they are found in the tree.
+We can also execute multiple queries simultaneously, which will return all the matches as they are found in the tree.
 This can be useful when you want to match multiple types of nodes in a single pass.
 Results will be reported in order, and each will have an index that can be used to identify which query is matched.
 
