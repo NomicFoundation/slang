@@ -1,5 +1,5 @@
 import path from "node:path";
-import fs from "node:fs/promises";
+import fs from "node:fs";
 import assert from "node:assert";
 import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
 
@@ -12,9 +12,9 @@ function resolvePath(...relativePaths: string[]): string {
   return path.join(repoRoot, ...relativePaths);
 }
 
-export async function readRepoFile(...relativePaths: string[]): Promise<string> {
+export function readRepoFile(...relativePaths: string[]): string {
   const absolutePath = resolvePath(...relativePaths);
-  const source = await fs.readFile(absolutePath, "utf8");
+  const source = fs.readFileSync(absolutePath, "utf8");
 
   return source.trim();
 }
@@ -43,7 +43,7 @@ export async function createBuilder(languageVersion: string): Promise<Compilatio
         let file = path.join(sourceFileId, ...splat, importString);
         let realFile = resolvePath(INPUT_PATH, file);
         try {
-          if (await fs.stat(realFile)) {
+          if (fs.statSync(realFile)) {
             return file;
           }
         }
