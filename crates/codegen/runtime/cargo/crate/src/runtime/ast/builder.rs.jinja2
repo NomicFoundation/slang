@@ -16,7 +16,8 @@
     pub fn build_{{ parent_type | snake_case }}(cursor: Cursor) -> Result<{{ parent_type }}>
     {
       expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
-      let mut helper = SequenceHelper::new(cursor.clone());
+      let node_id = cursor.node().id();
+      let mut helper = SequenceHelper::new(cursor);
       {% for field in sequence.fields %}
         {%- if field.is_optional -%}
           let {{ field.label }} = if helper.at_label(EdgeLabel::{{ field.label | pascal_case }}) {
@@ -52,7 +53,7 @@
       helper.finalize()?;
 
       Ok(Rc::new({{ parent_type }}Struct {
-        cursor,
+        node_id,
         {%- for field in sequence.fields -%}
           {%- if field.is_optional
                  or not field.is_terminal

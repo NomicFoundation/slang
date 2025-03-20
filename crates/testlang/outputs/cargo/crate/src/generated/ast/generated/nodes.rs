@@ -3,7 +3,7 @@
 use std::rc::Rc;
 use std::vec::Vec;
 
-use crate::cst::{Cursor, TerminalNode};
+use crate::cst::TerminalNode;
 
 //
 // Sequences:
@@ -20,7 +20,7 @@ pub type SourceUnit = Rc<SourceUnitStruct>;
 
 #[derive(Debug)]
 pub struct SourceUnitStruct {
-    pub cursor: Cursor,
+    pub node_id: usize,
     pub members: SourceUnitMembers,
 }
 
@@ -38,7 +38,7 @@ pub type Tree = Rc<TreeStruct>;
 
 #[derive(Debug)]
 pub struct TreeStruct {
-    pub cursor: Cursor,
+    pub node_id: usize,
     pub name: Option<Rc<TerminalNode>>,
     pub node: TreeNode,
 }
@@ -56,7 +56,7 @@ pub type TreeNode = Rc<TreeNodeStruct>;
 
 #[derive(Debug)]
 pub struct TreeNodeStruct {
-    pub cursor: Cursor,
+    pub node_id: usize,
     pub members: TreeNodeChildren,
 }
 
@@ -74,7 +74,7 @@ pub type AdditionExpression = Rc<AdditionExpressionStruct>;
 
 #[derive(Debug)]
 pub struct AdditionExpressionStruct {
-    pub cursor: Cursor,
+    pub node_id: usize,
     pub left_operand: Expression,
     pub right_operand: Expression,
 }
@@ -92,7 +92,7 @@ pub type NegationExpression = Rc<NegationExpressionStruct>;
 
 #[derive(Debug)]
 pub struct NegationExpressionStruct {
-    pub cursor: Cursor,
+    pub node_id: usize,
     pub operand: Expression,
 }
 
@@ -110,7 +110,7 @@ pub type MemberAccessExpression = Rc<MemberAccessExpressionStruct>;
 
 #[derive(Debug)]
 pub struct MemberAccessExpressionStruct {
-    pub cursor: Cursor,
+    pub node_id: usize,
     pub operand: Expression,
     pub member: Rc<TerminalNode>,
 }

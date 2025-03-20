@@ -16,7 +16,7 @@ pub trait Mutator {
         let members = self.mutate_source_unit_members(&source.members);
 
         Rc::new(SourceUnitStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             members,
         })
     }
@@ -25,7 +25,7 @@ pub trait Mutator {
         let pragma = self.mutate_pragma(&source.pragma);
 
         Rc::new(PragmaDirectiveStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             pragma,
         })
     }
@@ -34,7 +34,7 @@ pub trait Mutator {
         let version = Rc::clone(&source.version);
 
         Rc::new(AbicoderPragmaStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             version,
         })
     }
@@ -43,7 +43,7 @@ pub trait Mutator {
         let feature = self.mutate_experimental_feature(&source.feature);
 
         Rc::new(ExperimentalPragmaStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             feature,
         })
     }
@@ -52,7 +52,7 @@ pub trait Mutator {
         let sets = self.mutate_version_expression_sets(&source.sets);
 
         Rc::new(VersionPragmaStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             sets,
         })
     }
@@ -62,7 +62,7 @@ pub trait Mutator {
         let end = self.mutate_version_literal(&source.end);
 
         Rc::new(VersionRangeStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             start,
             end,
         })
@@ -76,7 +76,7 @@ pub trait Mutator {
         let literal = self.mutate_version_literal(&source.literal);
 
         Rc::new(VersionTermStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operator,
             literal,
         })
@@ -86,7 +86,7 @@ pub trait Mutator {
         let clause = self.mutate_import_clause(&source.clause);
 
         Rc::new(ImportDirectiveStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             clause,
         })
     }
@@ -99,7 +99,7 @@ pub trait Mutator {
             .map(|value| self.mutate_import_alias(value));
 
         Rc::new(PathImportStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             path,
             alias,
         })
@@ -110,7 +110,7 @@ pub trait Mutator {
         let path = self.mutate_string_literal(&source.path);
 
         Rc::new(NamedImportStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             alias,
             path,
         })
@@ -124,7 +124,7 @@ pub trait Mutator {
         let path = self.mutate_string_literal(&source.path);
 
         Rc::new(ImportDeconstructionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             symbols,
             path,
         })
@@ -141,7 +141,7 @@ pub trait Mutator {
             .map(|value| self.mutate_import_alias(value));
 
         Rc::new(ImportDeconstructionSymbolStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             alias,
         })
@@ -151,7 +151,7 @@ pub trait Mutator {
         let identifier = Rc::clone(&source.identifier);
 
         Rc::new(ImportAliasStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             identifier,
         })
     }
@@ -162,7 +162,7 @@ pub trait Mutator {
         let global_keyword = source.global_keyword.as_ref().map(Rc::clone);
 
         Rc::new(UsingDirectiveStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             clause,
             target,
             global_keyword,
@@ -173,7 +173,7 @@ pub trait Mutator {
         let symbols = self.mutate_using_deconstruction_symbols(&source.symbols);
 
         Rc::new(UsingDeconstructionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             symbols,
         })
     }
@@ -189,7 +189,7 @@ pub trait Mutator {
             .map(|value| self.mutate_using_alias(value));
 
         Rc::new(UsingDeconstructionSymbolStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             alias,
         })
@@ -199,7 +199,7 @@ pub trait Mutator {
         let operator = self.mutate_using_operator(&source.operator);
 
         Rc::new(UsingAliasStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operator,
         })
     }
@@ -214,7 +214,7 @@ pub trait Mutator {
         let members = self.mutate_contract_members(&source.members);
 
         Rc::new(ContractDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             abstract_keyword,
             name,
             inheritance,
@@ -229,7 +229,7 @@ pub trait Mutator {
         let types = self.mutate_inheritance_types(&source.types);
 
         Rc::new(InheritanceSpecifierStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             types,
         })
     }
@@ -242,7 +242,7 @@ pub trait Mutator {
             .map(|value| self.mutate_arguments_declaration(value));
 
         Rc::new(InheritanceTypeStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             type_name,
             arguments,
         })
@@ -257,7 +257,7 @@ pub trait Mutator {
         let members = self.mutate_interface_members(&source.members);
 
         Rc::new(InterfaceDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             inheritance,
             members,
@@ -269,7 +269,7 @@ pub trait Mutator {
         let members = self.mutate_library_members(&source.members);
 
         Rc::new(LibraryDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             members,
         })
@@ -280,7 +280,7 @@ pub trait Mutator {
         let members = self.mutate_struct_members(&source.members);
 
         Rc::new(StructDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             members,
         })
@@ -291,7 +291,7 @@ pub trait Mutator {
         let name = Rc::clone(&source.name);
 
         Rc::new(StructMemberStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             type_name,
             name,
         })
@@ -302,7 +302,7 @@ pub trait Mutator {
         let members = self.mutate_enum_members(&source.members);
 
         Rc::new(EnumDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             members,
         })
@@ -314,7 +314,7 @@ pub trait Mutator {
         let value = self.mutate_expression(&source.value);
 
         Rc::new(ConstantDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             type_name,
             name,
             value,
@@ -334,7 +334,7 @@ pub trait Mutator {
             .map(|value| self.mutate_state_variable_definition_value(value));
 
         Rc::new(StateVariableDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             type_name,
             attributes,
             name,
@@ -349,7 +349,7 @@ pub trait Mutator {
         let value = self.mutate_expression(&source.value);
 
         Rc::new(StateVariableDefinitionValueStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             value,
         })
     }
@@ -365,7 +365,7 @@ pub trait Mutator {
         let body = self.mutate_function_body(&source.body);
 
         Rc::new(FunctionDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             parameters,
             attributes,
@@ -381,7 +381,7 @@ pub trait Mutator {
         let parameters = self.mutate_parameters(&source.parameters);
 
         Rc::new(ParametersDeclarationStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             parameters,
         })
     }
@@ -395,7 +395,7 @@ pub trait Mutator {
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(ParameterStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             type_name,
             storage_location,
             name,
@@ -409,7 +409,7 @@ pub trait Mutator {
             .map(|value| self.mutate_override_paths_declaration(value));
 
         Rc::new(OverrideSpecifierStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             overridden,
         })
     }
@@ -421,7 +421,7 @@ pub trait Mutator {
         let paths = self.mutate_override_paths(&source.paths);
 
         Rc::new(OverridePathsDeclarationStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             paths,
         })
     }
@@ -430,7 +430,7 @@ pub trait Mutator {
         let variables = self.mutate_parameters_declaration(&source.variables);
 
         Rc::new(ReturnsDeclarationStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             variables,
         })
     }
@@ -444,7 +444,7 @@ pub trait Mutator {
         let body = self.mutate_block(&source.body);
 
         Rc::new(ConstructorDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             parameters,
             attributes,
             body,
@@ -460,7 +460,7 @@ pub trait Mutator {
         let body = self.mutate_function_body(&source.body);
 
         Rc::new(UnnamedFunctionDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             parameters,
             attributes,
             body,
@@ -480,7 +480,7 @@ pub trait Mutator {
         let body = self.mutate_function_body(&source.body);
 
         Rc::new(FallbackFunctionDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             parameters,
             attributes,
             returns,
@@ -497,7 +497,7 @@ pub trait Mutator {
         let body = self.mutate_function_body(&source.body);
 
         Rc::new(ReceiveFunctionDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             parameters,
             attributes,
             body,
@@ -514,7 +514,7 @@ pub trait Mutator {
         let body = self.mutate_function_body(&source.body);
 
         Rc::new(ModifierDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             parameters,
             attributes,
@@ -530,7 +530,7 @@ pub trait Mutator {
             .map(|value| self.mutate_arguments_declaration(value));
 
         Rc::new(ModifierInvocationStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             arguments,
         })
@@ -542,7 +542,7 @@ pub trait Mutator {
         let anonymous_keyword = source.anonymous_keyword.as_ref().map(Rc::clone);
 
         Rc::new(EventDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             parameters,
             anonymous_keyword,
@@ -556,7 +556,7 @@ pub trait Mutator {
         let parameters = self.mutate_event_parameters(&source.parameters);
 
         Rc::new(EventParametersDeclarationStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             parameters,
         })
     }
@@ -567,7 +567,7 @@ pub trait Mutator {
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(EventParameterStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             type_name,
             indexed_keyword,
             name,
@@ -582,7 +582,7 @@ pub trait Mutator {
         let value_type = self.mutate_elementary_type(&source.value_type);
 
         Rc::new(UserDefinedValueTypeDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             value_type,
         })
@@ -593,7 +593,7 @@ pub trait Mutator {
         let members = self.mutate_error_parameters_declaration(&source.members);
 
         Rc::new(ErrorDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             members,
         })
@@ -606,7 +606,7 @@ pub trait Mutator {
         let parameters = self.mutate_error_parameters(&source.parameters);
 
         Rc::new(ErrorParametersDeclarationStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             parameters,
         })
     }
@@ -616,7 +616,7 @@ pub trait Mutator {
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(ErrorParameterStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             type_name,
             name,
         })
@@ -630,7 +630,7 @@ pub trait Mutator {
             .map(|value| self.mutate_expression(value));
 
         Rc::new(ArrayTypeNameStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operand,
             index,
         })
@@ -645,7 +645,7 @@ pub trait Mutator {
             .map(|value| self.mutate_returns_declaration(value));
 
         Rc::new(FunctionTypeStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             parameters,
             attributes,
             returns,
@@ -657,7 +657,7 @@ pub trait Mutator {
         let value_type = self.mutate_mapping_value(&source.value_type);
 
         Rc::new(MappingTypeStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             key_type,
             value_type,
         })
@@ -668,7 +668,7 @@ pub trait Mutator {
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(MappingKeyStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             key_type,
             name,
         })
@@ -679,7 +679,7 @@ pub trait Mutator {
         let name = source.name.as_ref().map(Rc::clone);
 
         Rc::new(MappingValueStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             type_name,
             name,
         })
@@ -689,7 +689,7 @@ pub trait Mutator {
         let payable_keyword = source.payable_keyword.as_ref().map(Rc::clone);
 
         Rc::new(AddressTypeStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             payable_keyword,
         })
     }
@@ -698,7 +698,7 @@ pub trait Mutator {
         let statements = self.mutate_statements(&source.statements);
 
         Rc::new(BlockStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             statements,
         })
     }
@@ -707,7 +707,7 @@ pub trait Mutator {
         let block = self.mutate_block(&source.block);
 
         Rc::new(UncheckedBlockStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             block,
         })
     }
@@ -716,7 +716,7 @@ pub trait Mutator {
         let expression = self.mutate_expression(&source.expression);
 
         Rc::new(ExpressionStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             expression,
         })
     }
@@ -733,7 +733,7 @@ pub trait Mutator {
         let body = self.mutate_yul_block(&source.body);
 
         Rc::new(AssemblyStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             label,
             flags,
             body,
@@ -747,7 +747,7 @@ pub trait Mutator {
         let flags = self.mutate_assembly_flags(&source.flags);
 
         Rc::new(AssemblyFlagsDeclarationStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             flags,
         })
     }
@@ -761,7 +761,7 @@ pub trait Mutator {
         let expression = self.mutate_expression(&source.expression);
 
         Rc::new(TupleDeconstructionStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             var_keyword,
             elements,
             expression,
@@ -778,7 +778,7 @@ pub trait Mutator {
             .map(|value| self.mutate_tuple_member(value));
 
         Rc::new(TupleDeconstructionElementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             member,
         })
     }
@@ -792,7 +792,7 @@ pub trait Mutator {
         let name = Rc::clone(&source.name);
 
         Rc::new(TypedTupleMemberStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             type_name,
             storage_location,
             name,
@@ -807,7 +807,7 @@ pub trait Mutator {
         let name = Rc::clone(&source.name);
 
         Rc::new(UntypedTupleMemberStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             storage_location,
             name,
         })
@@ -829,7 +829,7 @@ pub trait Mutator {
             .map(|value| self.mutate_variable_declaration_value(value));
 
         Rc::new(VariableDeclarationStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             variable_type,
             storage_location,
             name,
@@ -844,7 +844,7 @@ pub trait Mutator {
         let expression = self.mutate_expression(&source.expression);
 
         Rc::new(VariableDeclarationValueStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             expression,
         })
     }
@@ -858,7 +858,7 @@ pub trait Mutator {
             .map(|value| self.mutate_else_branch(value));
 
         Rc::new(IfStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             condition,
             body,
             else_branch,
@@ -869,7 +869,7 @@ pub trait Mutator {
         let body = self.mutate_statement(&source.body);
 
         Rc::new(ElseBranchStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             body,
         })
     }
@@ -884,7 +884,7 @@ pub trait Mutator {
         let body = self.mutate_statement(&source.body);
 
         Rc::new(ForStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             initialization,
             condition,
             iterator,
@@ -897,7 +897,7 @@ pub trait Mutator {
         let body = self.mutate_statement(&source.body);
 
         Rc::new(WhileStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             condition,
             body,
         })
@@ -908,7 +908,7 @@ pub trait Mutator {
         let condition = self.mutate_expression(&source.condition);
 
         Rc::new(DoWhileStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             body,
             condition,
         })
@@ -916,13 +916,13 @@ pub trait Mutator {
 
     fn mutate_continue_statement(&mut self, source: &ContinueStatement) -> ContinueStatement {
         Rc::new(ContinueStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
         })
     }
 
     fn mutate_break_statement(&mut self, source: &BreakStatement) -> BreakStatement {
         Rc::new(BreakStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
         })
     }
 
@@ -933,7 +933,7 @@ pub trait Mutator {
             .map(|value| self.mutate_expression(value));
 
         Rc::new(ReturnStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             expression,
         })
     }
@@ -943,7 +943,7 @@ pub trait Mutator {
         let arguments = self.mutate_arguments_declaration(&source.arguments);
 
         Rc::new(EmitStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             event,
             arguments,
         })
@@ -959,7 +959,7 @@ pub trait Mutator {
         let catch_clauses = self.mutate_catch_clauses(&source.catch_clauses);
 
         Rc::new(TryStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             expression,
             returns,
             body,
@@ -975,7 +975,7 @@ pub trait Mutator {
         let body = self.mutate_block(&source.body);
 
         Rc::new(CatchClauseStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             error,
             body,
         })
@@ -986,7 +986,7 @@ pub trait Mutator {
         let parameters = self.mutate_parameters_declaration(&source.parameters);
 
         Rc::new(CatchClauseErrorStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             parameters,
         })
@@ -1000,7 +1000,7 @@ pub trait Mutator {
         let arguments = self.mutate_arguments_declaration(&source.arguments);
 
         Rc::new(RevertStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             error,
             arguments,
         })
@@ -1008,7 +1008,7 @@ pub trait Mutator {
 
     fn mutate_throw_statement(&mut self, source: &ThrowStatement) -> ThrowStatement {
         Rc::new(ThrowStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
         })
     }
 
@@ -1020,7 +1020,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(AssignmentExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1035,7 +1035,7 @@ pub trait Mutator {
         let false_expression = self.mutate_expression(&source.false_expression);
 
         Rc::new(ConditionalExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operand,
             true_expression,
             false_expression,
@@ -1047,7 +1047,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(OrExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1058,7 +1058,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(AndExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1069,7 +1069,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(EqualityExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1083,7 +1083,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(InequalityExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1097,7 +1097,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(BitwiseOrExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1111,7 +1111,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(BitwiseXorExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1125,7 +1125,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(BitwiseAndExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1136,7 +1136,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(ShiftExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1147,7 +1147,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(AdditiveExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1161,7 +1161,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(MultiplicativeExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1175,7 +1175,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(ExponentiationExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -1185,7 +1185,7 @@ pub trait Mutator {
         let operand = self.mutate_expression(&source.operand);
 
         Rc::new(PostfixExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operand,
         })
     }
@@ -1194,7 +1194,7 @@ pub trait Mutator {
         let operand = self.mutate_expression(&source.operand);
 
         Rc::new(PrefixExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operand,
         })
     }
@@ -1207,7 +1207,7 @@ pub trait Mutator {
         let arguments = self.mutate_arguments_declaration(&source.arguments);
 
         Rc::new(FunctionCallExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operand,
             arguments,
         })
@@ -1221,7 +1221,7 @@ pub trait Mutator {
         let options = self.mutate_call_options(&source.options);
 
         Rc::new(CallOptionsExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operand,
             options,
         })
@@ -1235,7 +1235,7 @@ pub trait Mutator {
         let member = Rc::clone(&source.member);
 
         Rc::new(MemberAccessExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operand,
             member,
         })
@@ -1256,7 +1256,7 @@ pub trait Mutator {
             .map(|value| self.mutate_index_access_end(value));
 
         Rc::new(IndexAccessExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operand,
             start,
             end,
@@ -1270,7 +1270,7 @@ pub trait Mutator {
             .map(|value| self.mutate_expression(value));
 
         Rc::new(IndexAccessEndStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             end,
         })
     }
@@ -1282,7 +1282,7 @@ pub trait Mutator {
         let arguments = self.mutate_positional_arguments(&source.arguments);
 
         Rc::new(PositionalArgumentsDeclarationStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             arguments,
         })
     }
@@ -1297,7 +1297,7 @@ pub trait Mutator {
             .map(|value| self.mutate_named_argument_group(value));
 
         Rc::new(NamedArgumentsDeclarationStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             arguments,
         })
     }
@@ -1306,7 +1306,7 @@ pub trait Mutator {
         let arguments = self.mutate_named_arguments(&source.arguments);
 
         Rc::new(NamedArgumentGroupStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             arguments,
         })
     }
@@ -1316,7 +1316,7 @@ pub trait Mutator {
         let value = self.mutate_expression(&source.value);
 
         Rc::new(NamedArgumentStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             value,
         })
@@ -1326,7 +1326,7 @@ pub trait Mutator {
         let type_name = self.mutate_type_name(&source.type_name);
 
         Rc::new(TypeExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             type_name,
         })
     }
@@ -1335,7 +1335,7 @@ pub trait Mutator {
         let type_name = self.mutate_type_name(&source.type_name);
 
         Rc::new(NewExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             type_name,
         })
     }
@@ -1344,7 +1344,7 @@ pub trait Mutator {
         let items = self.mutate_tuple_values(&source.items);
 
         Rc::new(TupleExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             items,
         })
     }
@@ -1356,7 +1356,7 @@ pub trait Mutator {
             .map(|value| self.mutate_expression(value));
 
         Rc::new(TupleValueStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             expression,
         })
     }
@@ -1365,7 +1365,7 @@ pub trait Mutator {
         let items = self.mutate_array_values(&source.items);
 
         Rc::new(ArrayExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             items,
         })
     }
@@ -1381,7 +1381,7 @@ pub trait Mutator {
             .map(|value| self.mutate_number_unit(value));
 
         Rc::new(HexNumberExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             literal,
             unit,
         })
@@ -1398,7 +1398,7 @@ pub trait Mutator {
             .map(|value| self.mutate_number_unit(value));
 
         Rc::new(DecimalNumberExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             literal,
             unit,
         })
@@ -1408,7 +1408,7 @@ pub trait Mutator {
         let statements = self.mutate_yul_statements(&source.statements);
 
         Rc::new(YulBlockStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             statements,
         })
     }
@@ -1426,7 +1426,7 @@ pub trait Mutator {
         let body = self.mutate_yul_block(&source.body);
 
         Rc::new(YulFunctionDefinitionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             parameters,
             returns,
@@ -1441,7 +1441,7 @@ pub trait Mutator {
         let parameters = self.mutate_yul_parameters(&source.parameters);
 
         Rc::new(YulParametersDeclarationStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             parameters,
         })
     }
@@ -1453,7 +1453,7 @@ pub trait Mutator {
         let variables = self.mutate_yul_variable_names(&source.variables);
 
         Rc::new(YulReturnsDeclarationStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             variables,
         })
     }
@@ -1469,7 +1469,7 @@ pub trait Mutator {
             .map(|value| self.mutate_yul_variable_declaration_value(value));
 
         Rc::new(YulVariableDeclarationStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             variables,
             value,
         })
@@ -1483,7 +1483,7 @@ pub trait Mutator {
         let expression = self.mutate_yul_expression(&source.expression);
 
         Rc::new(YulVariableDeclarationValueStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             assignment,
             expression,
         })
@@ -1498,7 +1498,7 @@ pub trait Mutator {
         let expression = self.mutate_yul_expression(&source.expression);
 
         Rc::new(YulVariableAssignmentStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             variables,
             assignment,
             expression,
@@ -1507,7 +1507,7 @@ pub trait Mutator {
 
     fn mutate_yul_colon_and_equal(&mut self, source: &YulColonAndEqual) -> YulColonAndEqual {
         Rc::new(YulColonAndEqualStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
         })
     }
 
@@ -1519,7 +1519,7 @@ pub trait Mutator {
         let variable = Rc::clone(&source.variable);
 
         Rc::new(YulStackAssignmentStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             assignment,
             variable,
         })
@@ -1527,7 +1527,7 @@ pub trait Mutator {
 
     fn mutate_yul_equal_and_colon(&mut self, source: &YulEqualAndColon) -> YulEqualAndColon {
         Rc::new(YulEqualAndColonStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
         })
     }
 
@@ -1536,7 +1536,7 @@ pub trait Mutator {
         let body = self.mutate_yul_block(&source.body);
 
         Rc::new(YulIfStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             condition,
             body,
         })
@@ -1549,7 +1549,7 @@ pub trait Mutator {
         let body = self.mutate_yul_block(&source.body);
 
         Rc::new(YulForStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             initialization,
             condition,
             iterator,
@@ -1562,7 +1562,7 @@ pub trait Mutator {
         let cases = self.mutate_yul_switch_cases(&source.cases);
 
         Rc::new(YulSwitchStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             expression,
             cases,
         })
@@ -1572,7 +1572,7 @@ pub trait Mutator {
         let body = self.mutate_yul_block(&source.body);
 
         Rc::new(YulDefaultCaseStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             body,
         })
     }
@@ -1582,7 +1582,7 @@ pub trait Mutator {
         let body = self.mutate_yul_block(&source.body);
 
         Rc::new(YulValueCaseStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             value,
             body,
         })
@@ -1590,13 +1590,13 @@ pub trait Mutator {
 
     fn mutate_yul_leave_statement(&mut self, source: &YulLeaveStatement) -> YulLeaveStatement {
         Rc::new(YulLeaveStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
         })
     }
 
     fn mutate_yul_break_statement(&mut self, source: &YulBreakStatement) -> YulBreakStatement {
         Rc::new(YulBreakStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
         })
     }
 
@@ -1605,7 +1605,7 @@ pub trait Mutator {
         source: &YulContinueStatement,
     ) -> YulContinueStatement {
         Rc::new(YulContinueStatementStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
         })
     }
 
@@ -1613,7 +1613,7 @@ pub trait Mutator {
         let label = Rc::clone(&source.label);
 
         Rc::new(YulLabelStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             label,
         })
     }
@@ -1626,7 +1626,7 @@ pub trait Mutator {
         let arguments = self.mutate_yul_arguments(&source.arguments);
 
         Rc::new(YulFunctionCallExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operand,
             arguments,
         })

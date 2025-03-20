@@ -34,7 +34,7 @@
         {%- endfor %}
 
         Rc::new({{ parent_type }}Struct {
-          cursor: source.cursor.clone(),
+          node_id: source.node_id,
           {%- for field in sequence.fields -%}
             {%- if field.is_optional
                    or not field.is_terminal

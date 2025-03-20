@@ -3,7 +3,7 @@
 {%- else -%}
   use std::rc::Rc;
   use std::vec::Vec;
-  use crate::cst::{ Cursor, TerminalNode };
+  use crate::cst::TerminalNode;
 
   //
   // Sequences:
@@ -23,7 +23,7 @@
 
     #[derive(Debug)]
     pub struct {{ parent_type }}Struct {
-      pub cursor: Cursor,
+      pub node_id: usize,
       {%- for field in sequence.fields %}
         {%- if field.is_optional
                or not field.is_terminal

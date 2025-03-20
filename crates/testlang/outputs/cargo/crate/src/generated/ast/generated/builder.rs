@@ -14,16 +14,18 @@ use crate::cst::{Cursor, EdgeLabel, NodeKind, NonterminalKind, TerminalKind, Ter
 
 pub fn build_source_unit(cursor: Cursor) -> Result<SourceUnit> {
     expect_nonterminal_kind(&cursor, NonterminalKind::SourceUnit)?;
-    let mut helper = SequenceHelper::new(cursor.clone());
+    let node_id = cursor.node().id();
+    let mut helper = SequenceHelper::new(cursor);
     let members = build_source_unit_members(helper.accept_label(EdgeLabel::Members)?)?;
     helper.finalize()?;
 
-    Ok(Rc::new(SourceUnitStruct { cursor, members }))
+    Ok(Rc::new(SourceUnitStruct { node_id, members }))
 }
 
 pub fn build_tree(cursor: Cursor) -> Result<Tree> {
     expect_nonterminal_kind(&cursor, NonterminalKind::Tree)?;
-    let mut helper = SequenceHelper::new(cursor.clone());
+    let node_id = cursor.node().id();
+    let mut helper = SequenceHelper::new(cursor);
     _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Keyword)?)?;
     let name = if helper.at_label(EdgeLabel::Name) {
         Some(fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?)
@@ -34,30 +36,36 @@ pub fn build_tree(cursor: Cursor) -> Result<Tree> {
     _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
     helper.finalize()?;
 
-    Ok(Rc::new(TreeStruct { cursor, name, node }))
+    Ok(Rc::new(TreeStruct {
+        node_id,
+        name,
+        node,
+    }))
 }
 
 pub fn build_tree_node(cursor: Cursor) -> Result<TreeNode> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TreeNode)?;
-    let mut helper = SequenceHelper::new(cursor.clone());
+    let node_id = cursor.node().id();
+    let mut helper = SequenceHelper::new(cursor);
     _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBracket)?)?;
     let members = build_tree_node_children(helper.accept_label(EdgeLabel::Members)?)?;
     _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBracket)?)?;
     helper.finalize()?;
 
-    Ok(Rc::new(TreeNodeStruct { cursor, members }))
+    Ok(Rc::new(TreeNodeStruct { node_id, members }))
 }
 
 pub fn build_addition_expression(cursor: Cursor) -> Result<AdditionExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AdditionExpression)?;
-    let mut helper = SequenceHelper::new(cursor.clone());
+    let node_id = cursor.node().id();
+    let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
     _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
     Ok(Rc::new(AdditionExpressionStruct {
-        cursor,
+        node_id,
         left_operand,
         right_operand,
     }))
@@ -65,24 +73,26 @@ pub fn build_addition_expression(cursor: Cursor) -> Result<AdditionExpression> {
 
 pub fn build_negation_expression(cursor: Cursor) -> Result<NegationExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::NegationExpression)?;
-    let mut helper = SequenceHelper::new(cursor.clone());
+    let node_id = cursor.node().id();
+    let mut helper = SequenceHelper::new(cursor);
     _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
     let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
     helper.finalize()?;
 
-    Ok(Rc::new(NegationExpressionStruct { cursor, operand }))
+    Ok(Rc::new(NegationExpressionStruct { node_id, operand }))
 }
 
 pub fn build_member_access_expression(cursor: Cursor) -> Result<MemberAccessExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::MemberAccessExpression)?;
-    let mut helper = SequenceHelper::new(cursor.clone());
+    let node_id = cursor.node().id();
+    let mut helper = SequenceHelper::new(cursor);
     let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
     _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Period)?)?;
     let member = fetch_terminal_node(&helper.accept_label(EdgeLabel::Member)?)?;
     helper.finalize()?;
 
     Ok(Rc::new(MemberAccessExpressionStruct {
-        cursor,
+        node_id,
         operand,
         member,
     }))

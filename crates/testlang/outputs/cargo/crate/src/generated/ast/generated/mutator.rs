@@ -16,7 +16,7 @@ pub trait Mutator {
         let members = self.mutate_source_unit_members(&source.members);
 
         Rc::new(SourceUnitStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             members,
         })
     }
@@ -26,7 +26,7 @@ pub trait Mutator {
         let node = self.mutate_tree_node(&source.node);
 
         Rc::new(TreeStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             name,
             node,
         })
@@ -36,7 +36,7 @@ pub trait Mutator {
         let members = self.mutate_tree_node_children(&source.members);
 
         Rc::new(TreeNodeStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             members,
         })
     }
@@ -46,7 +46,7 @@ pub trait Mutator {
         let right_operand = self.mutate_expression(&source.right_operand);
 
         Rc::new(AdditionExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             left_operand,
             right_operand,
         })
@@ -56,7 +56,7 @@ pub trait Mutator {
         let operand = self.mutate_expression(&source.operand);
 
         Rc::new(NegationExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operand,
         })
     }
@@ -69,7 +69,7 @@ pub trait Mutator {
         let member = Rc::clone(&source.member);
 
         Rc::new(MemberAccessExpressionStruct {
-            cursor: source.cursor.clone(),
+            node_id: source.node_id,
             operand,
             member,
         })
