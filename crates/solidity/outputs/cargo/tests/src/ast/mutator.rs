@@ -1,6 +1,9 @@
+use std::rc::Rc;
+
 use anyhow::{anyhow, Result};
 use slang_solidity::ast;
 use slang_solidity::ast::mutator::Mutator;
+use slang_solidity::cst::{TerminalKind, TerminalNode};
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
 
@@ -90,6 +93,100 @@ contract MyContract {
         panic!("Expected Block");
     };
     assert_eq!(1, block.statements.len());
+
+    Ok(())
+}
+
+// A constant folding mutator that can only fold multiplication of unit-less
+// decimal numbers that use an underlying 64-bit floating point type
+struct ConstantFolder {}
+
+impl Mutator for ConstantFolder {
+    fn mutate_expression(&mut self, source: &ast::Expression) -> ast::Expression {
+        if let ast::Expression::MultiplicativeExpression(multiplicative_expression) = source {
+            if let (
+                ast::Expression::DecimalNumberExpression(left_operand),
+                ast::Expression::DecimalNumberExpression(right_operand),
+            ) = (
+                &multiplicative_expression.left_operand,
+                &multiplicative_expression.right_operand,
+            ) {
+                // we don't support units in this test
+                assert!(left_operand.unit.is_none());
+                assert!(right_operand.unit.is_none());
+                // also, any decimal number should be parseable as a 64-bit floating point
+                let result = left_operand.literal.unparse().parse::<f64>().unwrap()
+                    * right_operand.literal.unparse().parse::<f64>().unwrap();
+                let number = Rc::new(ast::DecimalNumberExpressionStruct {
+                    node_id: multiplicative_expression.node_id,
+                    literal: Rc::new(TerminalNode {
+                        kind: TerminalKind::DecimalLiteral,
+                        text: format!("{result}"),
+                    }),
+                    unit: None,
+                });
+                return ast::Expression::DecimalNumberExpression(number);
+            }
+        }
+        self.default_mutate_expression(source)
+    }
+}
+
+#[test]
+fn test_constant_folding() -> Result<()> {
+    let parser = Parser::create(LanguageFacts::LATEST_VERSION)?;
+    let output = parser.parse_file_contents(
+        r###"
+function weeksToSeconds(uint _weeks) returns (uint) {
+  uint secondsPerHour = 60 * 60;
+  return 24 * 7 * secondsPerHour * _weeks;
+}
+    "###,
+    );
+    assert!(output.is_valid());
+
+    let source =
+        ast::builder::build_source_unit(output.create_tree_cursor()).map_err(|s| anyhow!(s))?;
+
+    let mut constant_folder = ConstantFolder {};
+    let ast = constant_folder.mutate_source_unit(&source);
+
+    let ast::SourceUnitMember::FunctionDefinition(weeks_to_seconds) = &ast.members[0] else {
+        panic!("Expected FunctionDefinition")
+    };
+    let ast::FunctionBody::Block(body) = &weeks_to_seconds.body else {
+        panic!("Expected Block");
+    };
+    let ast::Statement::VariableDeclarationStatement(var_stmt) = &body.statements[0] else {
+        panic!("Expected VariableDeclarationStatement");
+    };
+    let ast::Expression::DecimalNumberExpression(seconds_per_hour) = &var_stmt
+        .value
+        .as_ref()
+        .expect("var declaration contains initialization value")
+        .expression
+    else {
+        panic!("Expected DecimalNumberExpression");
+    };
+    assert_eq!(seconds_per_hour.literal.unparse(), "3600");
+
+    let ast::Statement::ReturnStatement(return_stmt) = &body.statements[1] else {
+        panic!("Expected ReturnStatement");
+    };
+    let ast::Expression::MultiplicativeExpression(outer_mult) = &return_stmt
+        .expression
+        .as_ref()
+        .expect("should return an expression")
+    else {
+        panic!("Expected MultiplicativeExpression");
+    };
+    let ast::Expression::MultiplicativeExpression(inner_mult) = &outer_mult.left_operand else {
+        panic!("Expected MultiplicativeExpression");
+    };
+    let ast::Expression::DecimalNumberExpression(days_per_week) = &inner_mult.left_operand else {
+        panic!("Expected DecimalNumberExpression");
+    };
+    assert_eq!(days_per_week.literal.unparse(), "168");
 
     Ok(())
 }

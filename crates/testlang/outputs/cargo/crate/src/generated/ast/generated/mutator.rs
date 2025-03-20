@@ -79,7 +79,7 @@ pub trait Mutator {
     // Choices:
     //
 
-    fn mutate_source_unit_member(&mut self, source: &SourceUnitMember) -> SourceUnitMember {
+    fn default_mutate_source_unit_member(&mut self, source: &SourceUnitMember) -> SourceUnitMember {
         match source {
             SourceUnitMember::Tree(ref tree) => SourceUnitMember::Tree(self.mutate_tree(tree)),
             SourceUnitMember::Expression(ref expression) => {
@@ -95,8 +95,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_source_unit_member(&mut self, source: &SourceUnitMember) -> SourceUnitMember {
+        self.default_mutate_source_unit_member(source)
+    }
 
-    fn mutate_tree_node_child(&mut self, source: &TreeNodeChild) -> TreeNodeChild {
+    fn default_mutate_tree_node_child(&mut self, source: &TreeNodeChild) -> TreeNodeChild {
         match source {
             TreeNodeChild::TreeNode(ref tree_node) => {
                 TreeNodeChild::TreeNode(self.mutate_tree_node(tree_node))
@@ -106,8 +109,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_tree_node_child(&mut self, source: &TreeNodeChild) -> TreeNodeChild {
+        self.default_mutate_tree_node_child(source)
+    }
 
-    fn mutate_expression(&mut self, source: &Expression) -> Expression {
+    fn default_mutate_expression(&mut self, source: &Expression) -> Expression {
         match source {
             Expression::AdditionExpression(ref addition_expression) => {
                 Expression::AdditionExpression(self.mutate_addition_expression(addition_expression))
@@ -124,11 +130,17 @@ pub trait Mutator {
             Expression::Identifier(node) => Expression::Identifier(Rc::clone(node)),
         }
     }
+    fn mutate_expression(&mut self, source: &Expression) -> Expression {
+        self.default_mutate_expression(source)
+    }
 
-    fn mutate_literal(&mut self, source: &Literal) -> Literal {
+    fn default_mutate_literal(&mut self, source: &Literal) -> Literal {
         match source {
             Literal::StringLiteral(node) => Literal::StringLiteral(Rc::clone(node)),
         }
+    }
+    fn mutate_literal(&mut self, source: &Literal) -> Literal {
+        self.default_mutate_literal(source)
     }
 
     //

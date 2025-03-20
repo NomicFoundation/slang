@@ -1636,7 +1636,7 @@ pub trait Mutator {
     // Choices:
     //
 
-    fn mutate_source_unit_member(&mut self, source: &SourceUnitMember) -> SourceUnitMember {
+    fn default_mutate_source_unit_member(&mut self, source: &SourceUnitMember) -> SourceUnitMember {
         match source {
             SourceUnitMember::PragmaDirective(ref pragma_directive) => {
                 SourceUnitMember::PragmaDirective(self.mutate_pragma_directive(pragma_directive))
@@ -1691,8 +1691,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_source_unit_member(&mut self, source: &SourceUnitMember) -> SourceUnitMember {
+        self.default_mutate_source_unit_member(source)
+    }
 
-    fn mutate_pragma(&mut self, source: &Pragma) -> Pragma {
+    fn default_mutate_pragma(&mut self, source: &Pragma) -> Pragma {
         match source {
             Pragma::AbicoderPragma(ref abicoder_pragma) => {
                 Pragma::AbicoderPragma(self.mutate_abicoder_pragma(abicoder_pragma))
@@ -1705,8 +1708,14 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_pragma(&mut self, source: &Pragma) -> Pragma {
+        self.default_mutate_pragma(source)
+    }
 
-    fn mutate_experimental_feature(&mut self, source: &ExperimentalFeature) -> ExperimentalFeature {
+    fn default_mutate_experimental_feature(
+        &mut self,
+        source: &ExperimentalFeature,
+    ) -> ExperimentalFeature {
         match source {
             ExperimentalFeature::StringLiteral(ref string_literal) => {
                 ExperimentalFeature::StringLiteral(self.mutate_string_literal(string_literal))
@@ -1716,8 +1725,14 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_experimental_feature(&mut self, source: &ExperimentalFeature) -> ExperimentalFeature {
+        self.default_mutate_experimental_feature(source)
+    }
 
-    fn mutate_version_expression(&mut self, source: &VersionExpression) -> VersionExpression {
+    fn default_mutate_version_expression(
+        &mut self,
+        source: &VersionExpression,
+    ) -> VersionExpression {
         match source {
             VersionExpression::VersionRange(ref version_range) => {
                 VersionExpression::VersionRange(self.mutate_version_range(version_range))
@@ -1727,8 +1742,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_version_expression(&mut self, source: &VersionExpression) -> VersionExpression {
+        self.default_mutate_version_expression(source)
+    }
 
-    fn mutate_version_operator(&mut self, source: &VersionOperator) -> VersionOperator {
+    fn default_mutate_version_operator(&mut self, source: &VersionOperator) -> VersionOperator {
         match source {
             VersionOperator::Caret => VersionOperator::Caret,
             VersionOperator::Tilde => VersionOperator::Tilde,
@@ -1739,8 +1757,11 @@ pub trait Mutator {
             VersionOperator::GreaterThanEqual => VersionOperator::GreaterThanEqual,
         }
     }
+    fn mutate_version_operator(&mut self, source: &VersionOperator) -> VersionOperator {
+        self.default_mutate_version_operator(source)
+    }
 
-    fn mutate_version_literal(&mut self, source: &VersionLiteral) -> VersionLiteral {
+    fn default_mutate_version_literal(&mut self, source: &VersionLiteral) -> VersionLiteral {
         match source {
             VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
                 VersionLiteral::SimpleVersionLiteral(
@@ -1755,8 +1776,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_version_literal(&mut self, source: &VersionLiteral) -> VersionLiteral {
+        self.default_mutate_version_literal(source)
+    }
 
-    fn mutate_import_clause(&mut self, source: &ImportClause) -> ImportClause {
+    fn default_mutate_import_clause(&mut self, source: &ImportClause) -> ImportClause {
         match source {
             ImportClause::PathImport(ref path_import) => {
                 ImportClause::PathImport(self.mutate_path_import(path_import))
@@ -1771,8 +1795,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_import_clause(&mut self, source: &ImportClause) -> ImportClause {
+        self.default_mutate_import_clause(source)
+    }
 
-    fn mutate_using_clause(&mut self, source: &UsingClause) -> UsingClause {
+    fn default_mutate_using_clause(&mut self, source: &UsingClause) -> UsingClause {
         match source {
             UsingClause::IdentifierPath(ref identifier_path) => {
                 UsingClause::IdentifierPath(self.mutate_identifier_path(identifier_path))
@@ -1784,8 +1811,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_using_clause(&mut self, source: &UsingClause) -> UsingClause {
+        self.default_mutate_using_clause(source)
+    }
 
-    fn mutate_using_operator(&mut self, source: &UsingOperator) -> UsingOperator {
+    fn default_mutate_using_operator(&mut self, source: &UsingOperator) -> UsingOperator {
         match source {
             UsingOperator::Ampersand => UsingOperator::Ampersand,
             UsingOperator::Asterisk => UsingOperator::Asterisk,
@@ -1804,8 +1834,11 @@ pub trait Mutator {
             UsingOperator::Tilde => UsingOperator::Tilde,
         }
     }
+    fn mutate_using_operator(&mut self, source: &UsingOperator) -> UsingOperator {
+        self.default_mutate_using_operator(source)
+    }
 
-    fn mutate_using_target(&mut self, source: &UsingTarget) -> UsingTarget {
+    fn default_mutate_using_target(&mut self, source: &UsingTarget) -> UsingTarget {
         match source {
             UsingTarget::TypeName(ref type_name) => {
                 UsingTarget::TypeName(self.mutate_type_name(type_name))
@@ -1813,8 +1846,11 @@ pub trait Mutator {
             UsingTarget::Asterisk => UsingTarget::Asterisk,
         }
     }
+    fn mutate_using_target(&mut self, source: &UsingTarget) -> UsingTarget {
+        self.default_mutate_using_target(source)
+    }
 
-    fn mutate_contract_member(&mut self, source: &ContractMember) -> ContractMember {
+    fn default_mutate_contract_member(&mut self, source: &ContractMember) -> ContractMember {
         match source {
             ContractMember::UsingDirective(ref using_directive) => {
                 ContractMember::UsingDirective(self.mutate_using_directive(using_directive))
@@ -1873,8 +1909,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_contract_member(&mut self, source: &ContractMember) -> ContractMember {
+        self.default_mutate_contract_member(source)
+    }
 
-    fn mutate_state_variable_attribute(
+    fn default_mutate_state_variable_attribute(
         &mut self,
         source: &StateVariableAttribute,
     ) -> StateVariableAttribute {
@@ -1892,16 +1931,28 @@ pub trait Mutator {
             StateVariableAttribute::TransientKeyword => StateVariableAttribute::TransientKeyword,
         }
     }
+    fn mutate_state_variable_attribute(
+        &mut self,
+        source: &StateVariableAttribute,
+    ) -> StateVariableAttribute {
+        self.default_mutate_state_variable_attribute(source)
+    }
 
-    fn mutate_function_name(&mut self, source: &FunctionName) -> FunctionName {
+    fn default_mutate_function_name(&mut self, source: &FunctionName) -> FunctionName {
         match source {
             FunctionName::Identifier(node) => FunctionName::Identifier(Rc::clone(node)),
             FunctionName::FallbackKeyword => FunctionName::FallbackKeyword,
             FunctionName::ReceiveKeyword => FunctionName::ReceiveKeyword,
         }
     }
+    fn mutate_function_name(&mut self, source: &FunctionName) -> FunctionName {
+        self.default_mutate_function_name(source)
+    }
 
-    fn mutate_function_attribute(&mut self, source: &FunctionAttribute) -> FunctionAttribute {
+    fn default_mutate_function_attribute(
+        &mut self,
+        source: &FunctionAttribute,
+    ) -> FunctionAttribute {
         match source {
             FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
                 FunctionAttribute::ModifierInvocation(
@@ -1924,15 +1975,21 @@ pub trait Mutator {
             FunctionAttribute::VirtualKeyword => FunctionAttribute::VirtualKeyword,
         }
     }
+    fn mutate_function_attribute(&mut self, source: &FunctionAttribute) -> FunctionAttribute {
+        self.default_mutate_function_attribute(source)
+    }
 
-    fn mutate_function_body(&mut self, source: &FunctionBody) -> FunctionBody {
+    fn default_mutate_function_body(&mut self, source: &FunctionBody) -> FunctionBody {
         match source {
             FunctionBody::Block(ref block) => FunctionBody::Block(self.mutate_block(block)),
             FunctionBody::Semicolon => FunctionBody::Semicolon,
         }
     }
+    fn mutate_function_body(&mut self, source: &FunctionBody) -> FunctionBody {
+        self.default_mutate_function_body(source)
+    }
 
-    fn mutate_constructor_attribute(
+    fn default_mutate_constructor_attribute(
         &mut self,
         source: &ConstructorAttribute,
     ) -> ConstructorAttribute {
@@ -1949,8 +2006,14 @@ pub trait Mutator {
             ConstructorAttribute::VirtualKeyword => ConstructorAttribute::VirtualKeyword,
         }
     }
+    fn mutate_constructor_attribute(
+        &mut self,
+        source: &ConstructorAttribute,
+    ) -> ConstructorAttribute {
+        self.default_mutate_constructor_attribute(source)
+    }
 
-    fn mutate_unnamed_function_attribute(
+    fn default_mutate_unnamed_function_attribute(
         &mut self,
         source: &UnnamedFunctionAttribute,
     ) -> UnnamedFunctionAttribute {
@@ -1970,8 +2033,14 @@ pub trait Mutator {
             UnnamedFunctionAttribute::ViewKeyword => UnnamedFunctionAttribute::ViewKeyword,
         }
     }
+    fn mutate_unnamed_function_attribute(
+        &mut self,
+        source: &UnnamedFunctionAttribute,
+    ) -> UnnamedFunctionAttribute {
+        self.default_mutate_unnamed_function_attribute(source)
+    }
 
-    fn mutate_fallback_function_attribute(
+    fn default_mutate_fallback_function_attribute(
         &mut self,
         source: &FallbackFunctionAttribute,
     ) -> FallbackFunctionAttribute {
@@ -1995,8 +2064,14 @@ pub trait Mutator {
             FallbackFunctionAttribute::VirtualKeyword => FallbackFunctionAttribute::VirtualKeyword,
         }
     }
+    fn mutate_fallback_function_attribute(
+        &mut self,
+        source: &FallbackFunctionAttribute,
+    ) -> FallbackFunctionAttribute {
+        self.default_mutate_fallback_function_attribute(source)
+    }
 
-    fn mutate_receive_function_attribute(
+    fn default_mutate_receive_function_attribute(
         &mut self,
         source: &ReceiveFunctionAttribute,
     ) -> ReceiveFunctionAttribute {
@@ -2016,8 +2091,17 @@ pub trait Mutator {
             ReceiveFunctionAttribute::VirtualKeyword => ReceiveFunctionAttribute::VirtualKeyword,
         }
     }
+    fn mutate_receive_function_attribute(
+        &mut self,
+        source: &ReceiveFunctionAttribute,
+    ) -> ReceiveFunctionAttribute {
+        self.default_mutate_receive_function_attribute(source)
+    }
 
-    fn mutate_modifier_attribute(&mut self, source: &ModifierAttribute) -> ModifierAttribute {
+    fn default_mutate_modifier_attribute(
+        &mut self,
+        source: &ModifierAttribute,
+    ) -> ModifierAttribute {
         match source {
             ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
                 ModifierAttribute::OverrideSpecifier(
@@ -2027,8 +2111,11 @@ pub trait Mutator {
             ModifierAttribute::VirtualKeyword => ModifierAttribute::VirtualKeyword,
         }
     }
+    fn mutate_modifier_attribute(&mut self, source: &ModifierAttribute) -> ModifierAttribute {
+        self.default_mutate_modifier_attribute(source)
+    }
 
-    fn mutate_type_name(&mut self, source: &TypeName) -> TypeName {
+    fn default_mutate_type_name(&mut self, source: &TypeName) -> TypeName {
         match source {
             TypeName::ArrayTypeName(ref array_type_name) => {
                 TypeName::ArrayTypeName(self.mutate_array_type_name(array_type_name))
@@ -2047,8 +2134,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_type_name(&mut self, source: &TypeName) -> TypeName {
+        self.default_mutate_type_name(source)
+    }
 
-    fn mutate_function_type_attribute(
+    fn default_mutate_function_type_attribute(
         &mut self,
         source: &FunctionTypeAttribute,
     ) -> FunctionTypeAttribute {
@@ -2063,8 +2153,14 @@ pub trait Mutator {
             FunctionTypeAttribute::PayableKeyword => FunctionTypeAttribute::PayableKeyword,
         }
     }
+    fn mutate_function_type_attribute(
+        &mut self,
+        source: &FunctionTypeAttribute,
+    ) -> FunctionTypeAttribute {
+        self.default_mutate_function_type_attribute(source)
+    }
 
-    fn mutate_mapping_key_type(&mut self, source: &MappingKeyType) -> MappingKeyType {
+    fn default_mutate_mapping_key_type(&mut self, source: &MappingKeyType) -> MappingKeyType {
         match source {
             MappingKeyType::ElementaryType(ref elementary_type) => {
                 MappingKeyType::ElementaryType(self.mutate_elementary_type(elementary_type))
@@ -2074,8 +2170,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_mapping_key_type(&mut self, source: &MappingKeyType) -> MappingKeyType {
+        self.default_mutate_mapping_key_type(source)
+    }
 
-    fn mutate_elementary_type(&mut self, source: &ElementaryType) -> ElementaryType {
+    fn default_mutate_elementary_type(&mut self, source: &ElementaryType) -> ElementaryType {
         match source {
             ElementaryType::AddressType(ref address_type) => {
                 ElementaryType::AddressType(self.mutate_address_type(address_type))
@@ -2090,8 +2189,11 @@ pub trait Mutator {
             ElementaryType::UfixedKeyword(node) => ElementaryType::UfixedKeyword(Rc::clone(node)),
         }
     }
+    fn mutate_elementary_type(&mut self, source: &ElementaryType) -> ElementaryType {
+        self.default_mutate_elementary_type(source)
+    }
 
-    fn mutate_statement(&mut self, source: &Statement) -> Statement {
+    fn default_mutate_statement(&mut self, source: &Statement) -> Statement {
         match source {
             Statement::IfStatement(ref if_statement) => {
                 Statement::IfStatement(self.mutate_if_statement(if_statement))
@@ -2150,8 +2252,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_statement(&mut self, source: &Statement) -> Statement {
+        self.default_mutate_statement(source)
+    }
 
-    fn mutate_tuple_member(&mut self, source: &TupleMember) -> TupleMember {
+    fn default_mutate_tuple_member(&mut self, source: &TupleMember) -> TupleMember {
         match source {
             TupleMember::TypedTupleMember(ref typed_tuple_member) => {
                 TupleMember::TypedTupleMember(self.mutate_typed_tuple_member(typed_tuple_member))
@@ -2163,8 +2268,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_tuple_member(&mut self, source: &TupleMember) -> TupleMember {
+        self.default_mutate_tuple_member(source)
+    }
 
-    fn mutate_variable_declaration_type(
+    fn default_mutate_variable_declaration_type(
         &mut self,
         source: &VariableDeclarationType,
     ) -> VariableDeclarationType {
@@ -2175,16 +2283,25 @@ pub trait Mutator {
             VariableDeclarationType::VarKeyword => VariableDeclarationType::VarKeyword,
         }
     }
+    fn mutate_variable_declaration_type(
+        &mut self,
+        source: &VariableDeclarationType,
+    ) -> VariableDeclarationType {
+        self.default_mutate_variable_declaration_type(source)
+    }
 
-    fn mutate_storage_location(&mut self, source: &StorageLocation) -> StorageLocation {
+    fn default_mutate_storage_location(&mut self, source: &StorageLocation) -> StorageLocation {
         match source {
             StorageLocation::MemoryKeyword => StorageLocation::MemoryKeyword,
             StorageLocation::StorageKeyword => StorageLocation::StorageKeyword,
             StorageLocation::CallDataKeyword => StorageLocation::CallDataKeyword,
         }
     }
+    fn mutate_storage_location(&mut self, source: &StorageLocation) -> StorageLocation {
+        self.default_mutate_storage_location(source)
+    }
 
-    fn mutate_for_statement_initialization(
+    fn default_mutate_for_statement_initialization(
         &mut self,
         source: &ForStatementInitialization,
     ) -> ForStatementInitialization {
@@ -2207,8 +2324,14 @@ pub trait Mutator {
             ForStatementInitialization::Semicolon => ForStatementInitialization::Semicolon,
         }
     }
+    fn mutate_for_statement_initialization(
+        &mut self,
+        source: &ForStatementInitialization,
+    ) -> ForStatementInitialization {
+        self.default_mutate_for_statement_initialization(source)
+    }
 
-    fn mutate_for_statement_condition(
+    fn default_mutate_for_statement_condition(
         &mut self,
         source: &ForStatementCondition,
     ) -> ForStatementCondition {
@@ -2221,8 +2344,14 @@ pub trait Mutator {
             ForStatementCondition::Semicolon => ForStatementCondition::Semicolon,
         }
     }
+    fn mutate_for_statement_condition(
+        &mut self,
+        source: &ForStatementCondition,
+    ) -> ForStatementCondition {
+        self.default_mutate_for_statement_condition(source)
+    }
 
-    fn mutate_expression(&mut self, source: &Expression) -> Expression {
+    fn default_mutate_expression(&mut self, source: &Expression) -> Expression {
         match source {
             Expression::AssignmentExpression(ref assignment_expression) => {
                 Expression::AssignmentExpression(
@@ -2341,8 +2470,11 @@ pub trait Mutator {
             Expression::Identifier(node) => Expression::Identifier(Rc::clone(node)),
         }
     }
+    fn mutate_expression(&mut self, source: &Expression) -> Expression {
+        self.default_mutate_expression(source)
+    }
 
-    fn mutate_arguments_declaration(
+    fn default_mutate_arguments_declaration(
         &mut self,
         source: &ArgumentsDeclaration,
     ) -> ArgumentsDeclaration {
@@ -2359,8 +2491,14 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_arguments_declaration(
+        &mut self,
+        source: &ArgumentsDeclaration,
+    ) -> ArgumentsDeclaration {
+        self.default_mutate_arguments_declaration(source)
+    }
 
-    fn mutate_number_unit(&mut self, source: &NumberUnit) -> NumberUnit {
+    fn default_mutate_number_unit(&mut self, source: &NumberUnit) -> NumberUnit {
         match source {
             NumberUnit::WeiKeyword => NumberUnit::WeiKeyword,
             NumberUnit::GweiKeyword => NumberUnit::GweiKeyword,
@@ -2375,8 +2513,11 @@ pub trait Mutator {
             NumberUnit::YearsKeyword => NumberUnit::YearsKeyword,
         }
     }
+    fn mutate_number_unit(&mut self, source: &NumberUnit) -> NumberUnit {
+        self.default_mutate_number_unit(source)
+    }
 
-    fn mutate_string_expression(&mut self, source: &StringExpression) -> StringExpression {
+    fn default_mutate_string_expression(&mut self, source: &StringExpression) -> StringExpression {
         match source {
             StringExpression::StringLiteral(ref string_literal) => {
                 StringExpression::StringLiteral(self.mutate_string_literal(string_literal))
@@ -2401,8 +2542,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_string_expression(&mut self, source: &StringExpression) -> StringExpression {
+        self.default_mutate_string_expression(source)
+    }
 
-    fn mutate_string_literal(&mut self, source: &StringLiteral) -> StringLiteral {
+    fn default_mutate_string_literal(&mut self, source: &StringLiteral) -> StringLiteral {
         match source {
             StringLiteral::SingleQuotedStringLiteral(node) => {
                 StringLiteral::SingleQuotedStringLiteral(Rc::clone(node))
@@ -2412,8 +2556,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_string_literal(&mut self, source: &StringLiteral) -> StringLiteral {
+        self.default_mutate_string_literal(source)
+    }
 
-    fn mutate_hex_string_literal(&mut self, source: &HexStringLiteral) -> HexStringLiteral {
+    fn default_mutate_hex_string_literal(&mut self, source: &HexStringLiteral) -> HexStringLiteral {
         match source {
             HexStringLiteral::SingleQuotedHexStringLiteral(node) => {
                 HexStringLiteral::SingleQuotedHexStringLiteral(Rc::clone(node))
@@ -2423,8 +2570,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_hex_string_literal(&mut self, source: &HexStringLiteral) -> HexStringLiteral {
+        self.default_mutate_hex_string_literal(source)
+    }
 
-    fn mutate_unicode_string_literal(
+    fn default_mutate_unicode_string_literal(
         &mut self,
         source: &UnicodeStringLiteral,
     ) -> UnicodeStringLiteral {
@@ -2437,8 +2587,14 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_unicode_string_literal(
+        &mut self,
+        source: &UnicodeStringLiteral,
+    ) -> UnicodeStringLiteral {
+        self.default_mutate_unicode_string_literal(source)
+    }
 
-    fn mutate_yul_statement(&mut self, source: &YulStatement) -> YulStatement {
+    fn default_mutate_yul_statement(&mut self, source: &YulStatement) -> YulStatement {
         match source {
             YulStatement::YulBlock(ref yul_block) => {
                 YulStatement::YulBlock(self.mutate_yul_block(yul_block))
@@ -2499,8 +2655,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_yul_statement(&mut self, source: &YulStatement) -> YulStatement {
+        self.default_mutate_yul_statement(source)
+    }
 
-    fn mutate_yul_assignment_operator(
+    fn default_mutate_yul_assignment_operator(
         &mut self,
         source: &YulAssignmentOperator,
     ) -> YulAssignmentOperator {
@@ -2513,8 +2672,14 @@ pub trait Mutator {
             YulAssignmentOperator::ColonEqual => YulAssignmentOperator::ColonEqual,
         }
     }
+    fn mutate_yul_assignment_operator(
+        &mut self,
+        source: &YulAssignmentOperator,
+    ) -> YulAssignmentOperator {
+        self.default_mutate_yul_assignment_operator(source)
+    }
 
-    fn mutate_yul_stack_assignment_operator(
+    fn default_mutate_yul_stack_assignment_operator(
         &mut self,
         source: &YulStackAssignmentOperator,
     ) -> YulStackAssignmentOperator {
@@ -2527,8 +2692,14 @@ pub trait Mutator {
             YulStackAssignmentOperator::EqualColon => YulStackAssignmentOperator::EqualColon,
         }
     }
+    fn mutate_yul_stack_assignment_operator(
+        &mut self,
+        source: &YulStackAssignmentOperator,
+    ) -> YulStackAssignmentOperator {
+        self.default_mutate_yul_stack_assignment_operator(source)
+    }
 
-    fn mutate_yul_switch_case(&mut self, source: &YulSwitchCase) -> YulSwitchCase {
+    fn default_mutate_yul_switch_case(&mut self, source: &YulSwitchCase) -> YulSwitchCase {
         match source {
             YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
                 YulSwitchCase::YulDefaultCase(self.mutate_yul_default_case(yul_default_case))
@@ -2538,8 +2709,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_yul_switch_case(&mut self, source: &YulSwitchCase) -> YulSwitchCase {
+        self.default_mutate_yul_switch_case(source)
+    }
 
-    fn mutate_yul_expression(&mut self, source: &YulExpression) -> YulExpression {
+    fn default_mutate_yul_expression(&mut self, source: &YulExpression) -> YulExpression {
         match source {
             YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
                 YulExpression::YulFunctionCallExpression(
@@ -2554,8 +2728,11 @@ pub trait Mutator {
             }
         }
     }
+    fn mutate_yul_expression(&mut self, source: &YulExpression) -> YulExpression {
+        self.default_mutate_yul_expression(source)
+    }
 
-    fn mutate_yul_literal(&mut self, source: &YulLiteral) -> YulLiteral {
+    fn default_mutate_yul_literal(&mut self, source: &YulLiteral) -> YulLiteral {
         match source {
             YulLiteral::HexStringLiteral(ref hex_string_literal) => {
                 YulLiteral::HexStringLiteral(self.mutate_hex_string_literal(hex_string_literal))
@@ -2568,6 +2745,9 @@ pub trait Mutator {
             YulLiteral::YulDecimalLiteral(node) => YulLiteral::YulDecimalLiteral(Rc::clone(node)),
             YulLiteral::YulHexLiteral(node) => YulLiteral::YulHexLiteral(Rc::clone(node)),
         }
+    }
+    fn mutate_yul_literal(&mut self, source: &YulLiteral) -> YulLiteral {
+        self.default_mutate_yul_literal(source)
     }
 
     //

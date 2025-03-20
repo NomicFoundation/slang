@@ -50,7 +50,7 @@
     // Choices:
     //
     {% for parent_type, choice in model.ast.choices %}
-      fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
+      fn default_mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         match source {
           {% for nonterminal in choice.nonterminal_types -%}
             {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
@@ -65,6 +65,9 @@
             {%- endif -%}
           {%- endfor -%}
         }
+      }
+      fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
+        self.default_mutate_{{ parent_type | snake_case }}(source)
       }
     {% endfor %}
 
