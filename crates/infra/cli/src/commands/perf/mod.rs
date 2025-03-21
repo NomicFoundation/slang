@@ -1,9 +1,9 @@
-mod benchmark;
+mod cargo;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 
-use crate::commands::perf::benchmark::CargoController;
+use crate::commands::perf::cargo::CargoController;
 
 #[derive(Clone, Debug, Parser)]
 pub struct PerfController {
