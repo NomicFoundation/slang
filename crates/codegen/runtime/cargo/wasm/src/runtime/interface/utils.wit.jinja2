@@ -12,6 +12,6 @@ interface utils {
 
         /// Analyze the version pragmas within a source file, and return a list of supported language versions that match these pragmas.
         /// If the source file contains no pragmas, all versions supported by Slang are returned.
-        infer-language-versions: static func(src: string) -> list<string>;
+        infer-language-versions: static func(input: string) -> list<string>;
     }
 }
