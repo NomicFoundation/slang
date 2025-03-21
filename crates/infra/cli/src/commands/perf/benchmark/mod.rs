@@ -13,12 +13,12 @@ use crate::utils::DryRun;
 const BENCHER_TEST_TOKEN: &str = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhcGlfa2V5IiwiZXhwIjo1OTkzNjQyMTU2LCJpYXQiOjE2OTg2NzQ4NjEsImlzcyI6Imh0dHBzOi8vZGV2ZWwtLWJlbmNoZXIubmV0bGlmeS5hcHAvIiwic3ViIjoibXVyaWVsLmJhZ2dlQG5vd2hlcmUuY29tIiwib3JnIjpudWxsfQ.9z7jmM53TcVzc1inDxTeX9_OR0PQPpZAsKsCE7lWHfo";
 
 #[derive(Clone, Debug, Parser)]
-pub struct BenchmarkController {
+pub struct CargoController {
     #[command(flatten)]
     dry_run: DryRun,
 }
 
-impl BenchmarkController {
+impl CargoController {
     pub fn execute(&self) -> Result<()> {
         Self::install_valgrind();
 
