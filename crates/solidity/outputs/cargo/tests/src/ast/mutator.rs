@@ -104,19 +104,19 @@ struct ConstantFolder {}
 impl Mutator for ConstantFolder {
     fn mutate_expression(&mut self, source: &ast::Expression) -> ast::Expression {
         if let ast::Expression::MultiplicativeExpression(multiplicative_expression) = source {
-            if let (
-                ast::Expression::DecimalNumberExpression(left_operand),
-                ast::Expression::DecimalNumberExpression(right_operand),
-            ) = (
-                &multiplicative_expression.left_operand,
-                &multiplicative_expression.right_operand,
-            ) {
+            let left_operand = self.mutate_expression(&multiplicative_expression.left_operand);
+            let right_operand = self.mutate_expression(&multiplicative_expression.right_operand);
+            return if let (
+                ast::Expression::DecimalNumberExpression(left_decimal),
+                ast::Expression::DecimalNumberExpression(right_decimal),
+            ) = (&left_operand, &right_operand)
+            {
                 // we don't support units in this test
-                assert!(left_operand.unit.is_none());
-                assert!(right_operand.unit.is_none());
+                assert!(left_decimal.unit.is_none());
+                assert!(right_decimal.unit.is_none());
                 // also, any decimal number should be parseable as a 64-bit floating point
-                let result = left_operand.literal.unparse().parse::<f64>().unwrap()
-                    * right_operand.literal.unparse().parse::<f64>().unwrap();
+                let result = left_decimal.literal.unparse().parse::<f64>().unwrap()
+                    * right_decimal.literal.unparse().parse::<f64>().unwrap();
                 let number = Rc::new(ast::DecimalNumberExpressionStruct {
                     node_id: multiplicative_expression.node_id,
                     literal: Rc::new(TerminalNode {
@@ -125,8 +125,16 @@ impl Mutator for ConstantFolder {
                     }),
                     unit: None,
                 });
-                return ast::Expression::DecimalNumberExpression(number);
-            }
+                ast::Expression::DecimalNumberExpression(number)
+            } else {
+                ast::Expression::MultiplicativeExpression(Rc::new(
+                    ast::MultiplicativeExpressionStruct {
+                        node_id: multiplicative_expression.node_id,
+                        left_operand,
+                        right_operand,
+                    },
+                ))
+            };
         }
         self.default_mutate_expression(source)
     }
@@ -138,7 +146,7 @@ fn test_constant_folding() -> Result<()> {
     let output = parser.parse_file_contents(
         r###"
 function weeksToSeconds(uint _weeks) returns (uint) {
-  uint secondsPerHour = 60 * 60;
+  uint secondsPerHour = 60 * 6 * 10;
   return 24 * 7 * secondsPerHour * _weeks;
 }
     "###,
