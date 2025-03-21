@@ -10,15 +10,6 @@
   //
 
   {% for parent_type, sequence in target.sequences %}
-    /**
-     * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
-     *
-     * ```ebnf
-       {%- for line in sequence.ebnf | split(pat="\n") %}
-     * {{ line }}
-       {%- endfor %}
-     * ```
-     */
     pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
 
     #[derive(Debug)]
@@ -53,15 +44,6 @@
   //
 
   {% for parent_type, choice in target.choices %}
-    /**
-     * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
-     *
-     * ```ebnf
-       {%- for line in choice.ebnf | split(pat="\n") %}
-     * {{ line }}
-       {%- endfor %}
-     * ```
-     */
     #[derive(Debug)]
     pub enum {{ parent_type }} {
       {% for nonterminal in choice.nonterminal_types -%}
@@ -82,15 +64,6 @@
   //
 
   {% for parent_type, repeated in target.repeated %}
-    /**
-     * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
-     *
-     * ```ebnf
-       {%- for line in repeated.ebnf | split(pat="\n") %}
-     * {{ line }}
-       {%- endfor %}
-     * ```
-     */
     pub type {{ parent_type }} = Vec<
       {%- if repeated.is_terminal -%}
         Rc<TerminalNode>
@@ -105,15 +78,6 @@
   //
 
   {% for parent_type, separated in target.separated %}
-    /**
-     * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
-     *
-     * ```ebnf
-       {%- for line in separated.ebnf | split(pat="\n") %}
-     * {{ line }}
-       {%- endfor %}
-     * ```
-     */
     pub type {{ parent_type }} = Vec<
       {%- if separated.is_terminal -%}
         Rc<TerminalNode>

@@ -3,6 +3,8 @@ mod bindings;
 mod kinds;
 mod parser;
 
+pub mod ir;
+
 use std::collections::BTreeSet;
 use std::path::Path;
 use std::rc::Rc;
@@ -14,7 +16,7 @@ use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 use semver::Version;
 use serde::Serialize;
 
-pub use crate::ast::AstModel;
+use crate::ast::AstModel;
 use crate::bindings::BindingsModel;
 use crate::kinds::KindsModel;
 use crate::parser::ParserModel;
