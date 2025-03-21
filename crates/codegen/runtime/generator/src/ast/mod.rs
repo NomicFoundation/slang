@@ -10,16 +10,15 @@ pub struct AstModel {
     #[serde(skip)]
     ebnf: Option<EbnfModel>,
 
-    pub unique_terminals: IndexSet<model::Identifier>,
-
-    pub sequences: IndexMap<model::Identifier, Sequence>,
-    pub choices: IndexMap<model::Identifier, Choice>,
-    pub repeated: IndexMap<model::Identifier, Repeated>,
-    pub separated: IndexMap<model::Identifier, Separated>,
+    pub sequences: Vec<Sequence>,
+    pub choices: Vec<Choice>,
+    pub repeated: Vec<Repeated>,
+    pub separated: Vec<Separated>,
 }
 
 #[derive(Serialize)]
 pub struct Sequence {
+    pub parent_type: model::Identifier,
     pub ebnf: String,
 
     pub fields: Vec<Field>,
@@ -29,37 +28,37 @@ pub struct Sequence {
 pub struct Field {
     pub label: model::Identifier,
 
-    /// AST Type of the field
-    pub r#type: model::Identifier,
+    /// AST Type of the field, [`None`] if the field is a terminal.
+    pub r#type: Option<model::Identifier>,
 
-    pub is_terminal: bool,
     pub is_optional: bool,
 }
 
 #[derive(Serialize)]
 pub struct Choice {
+    pub parent_type: model::Identifier,
     pub ebnf: String,
 
     pub nonterminal_types: Vec<model::Identifier>,
-    pub terminal_types: Vec<model::Identifier>,
+    pub includes_terminals: bool,
 }
 
 #[derive(Serialize)]
 pub struct Repeated {
+    pub parent_type: model::Identifier,
     pub ebnf: String,
 
-    /// AST Type of the field
-    pub item_type: model::Identifier,
-    pub is_terminal: bool,
+    /// AST Type of the field, [`None`] if the field is a terminal.
+    pub item_type: Option<model::Identifier>,
 }
 
 #[derive(Serialize)]
 pub struct Separated {
+    pub parent_type: model::Identifier,
     pub ebnf: String,
 
-    /// AST Type of the field
-    pub item_type: model::Identifier,
-    pub is_terminal: bool,
+    /// AST Type of the field, [`None`] if the field is a terminal.
+    pub item_type: Option<model::Identifier>,
 }
 
 impl AstModel {
@@ -68,12 +67,10 @@ impl AstModel {
             terminals: IndexSet::new(),
             ebnf: Some(EbnfModel::build(language)),
 
-            unique_terminals: IndexSet::new(),
-
-            sequences: IndexMap::new(),
-            choices: IndexMap::new(),
-            repeated: IndexMap::new(),
-            separated: IndexMap::new(),
+            sequences: Vec::new(),
+            choices: Vec::new(),
+            repeated: Vec::new(),
+            separated: Vec::new(),
         };
 
         // First pass: collect all terminals:
@@ -100,15 +97,9 @@ impl AstModel {
                 }
                 model::Item::Keyword { item } => {
                     self.terminals.insert(item.name.clone());
-                    if item.is_unique() {
-                        self.unique_terminals.insert(item.name.clone());
-                    }
                 }
                 model::Item::Token { item } => {
                     self.terminals.insert(item.name.clone());
-                    if item.is_unique() {
-                        self.unique_terminals.insert(item.name.clone());
-                    }
                 }
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
@@ -156,56 +147,59 @@ impl AstModel {
         let ebnf = self.get_ebnf(&parent_type);
         let fields = self.convert_fields(&item.fields).collect();
 
-        self.sequences
-            .insert(parent_type, Sequence { ebnf, fields });
+        self.sequences.push(Sequence {
+            parent_type,
+            ebnf,
+            fields,
+        });
     }
 
     fn add_enum_item(&mut self, item: &model::EnumItem) {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
-        let (terminal_types, nonterminal_types): (Vec<_>, Vec<_>) = item
+        let (terminal_types, nonterminal_types) = item
             .variants
             .iter()
             .map(|variant| variant.reference.clone())
             .partition(|reference| self.terminals.contains(reference));
 
-        self.choices.insert(
+        self.choices.push(Choice {
             parent_type,
-            Choice {
-                ebnf,
-                nonterminal_types,
-                terminal_types,
-            },
-        );
+            ebnf,
+            nonterminal_types,
+            includes_terminals: !terminal_types.is_empty(),
+        });
     }
 
     fn add_repeated_item(&mut self, item: &model::RepeatedItem) {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
-        self.repeated.insert(
+        self.repeated.push(Repeated {
             parent_type,
-            Repeated {
-                ebnf,
-                item_type: item.reference.clone(),
-                is_terminal: self.terminals.contains(&item.reference),
+            ebnf,
+            item_type: if self.terminals.contains(&item.reference) {
+                None
+            } else {
+                Some(item.reference.clone())
             },
-        );
+        });
     }
 
     fn add_separated_item(&mut self, item: &model::SeparatedItem) {
         let parent_type = item.name.clone();
         let ebnf = self.get_ebnf(&parent_type);
 
-        self.separated.insert(
+        self.separated.push(Separated {
             parent_type,
-            Separated {
-                ebnf,
-                item_type: item.reference.clone(),
-                is_terminal: self.terminals.contains(&item.reference),
+            ebnf,
+            item_type: if self.terminals.contains(&item.reference) {
+                None
+            } else {
+                Some(item.reference.clone())
             },
-        );
+        });
     }
 
     fn add_precedence_item(&mut self, item: &model::PrecedenceItem) {
@@ -222,18 +216,16 @@ impl AstModel {
             .iter()
             .map(|expression| expression.reference.clone());
 
-        let (terminal_types, nonterminal_types): (Vec<_>, Vec<_>) = precedence_expressions
+        let (terminal_types, nonterminal_types) = precedence_expressions
             .chain(primary_expressions)
             .partition(|reference| self.terminals.contains(reference));
 
-        self.choices.insert(
+        self.choices.push(Choice {
             parent_type,
-            Choice {
-                ebnf,
-                nonterminal_types,
-                terminal_types,
-            },
-        );
+            ebnf,
+            nonterminal_types,
+            includes_terminals: !terminal_types.is_empty(),
+        });
     }
 
     fn add_precedence_expression(
@@ -251,8 +243,7 @@ impl AstModel {
 
         let operand = |label: PredefinedLabel| Field {
             label: label.as_ref().into(),
-            r#type: base_name.clone(),
-            is_terminal: false,
+            r#type: Some(base_name.clone()),
             is_optional: false,
         };
 
@@ -273,8 +264,11 @@ impl AstModel {
             }
         };
 
-        self.sequences
-            .insert(parent_type, Sequence { ebnf, fields });
+        self.sequences.push(Sequence {
+            parent_type,
+            ebnf,
+            fields,
+        });
     }
 
     fn convert_fields<'a>(
@@ -292,8 +286,11 @@ impl AstModel {
 
             Field {
                 label: label.clone(),
-                r#type: reference.clone(),
-                is_terminal: self.terminals.contains(reference),
+                r#type: if self.terminals.contains(reference) {
+                    None
+                } else {
+                    Some(reference.clone())
+                },
                 is_optional,
             }
         })
