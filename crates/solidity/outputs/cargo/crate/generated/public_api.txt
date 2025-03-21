@@ -221,6 +221,49 @@ pub fn slang_solidity::ast::builder::build_yul_variable_declaration_value(cursor
 pub fn slang_solidity::ast::builder::build_yul_variable_names(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::ast::YulVariableNames, alloc::string::String>
 pub mod slang_solidity::ast::mutator
 pub trait slang_solidity::ast::mutator::Mutator
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_arguments_declaration(&mut self, source: &slang_solidity::ast::ArgumentsDeclaration) -> slang_solidity::ast::ArgumentsDeclaration
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_constructor_attribute(&mut self, source: &slang_solidity::ast::ConstructorAttribute) -> slang_solidity::ast::ConstructorAttribute
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_contract_member(&mut self, source: &slang_solidity::ast::ContractMember) -> slang_solidity::ast::ContractMember
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_elementary_type(&mut self, source: &slang_solidity::ast::ElementaryType) -> slang_solidity::ast::ElementaryType
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_experimental_feature(&mut self, source: &slang_solidity::ast::ExperimentalFeature) -> slang_solidity::ast::ExperimentalFeature
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_expression(&mut self, source: &slang_solidity::ast::Expression) -> slang_solidity::ast::Expression
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_fallback_function_attribute(&mut self, source: &slang_solidity::ast::FallbackFunctionAttribute) -> slang_solidity::ast::FallbackFunctionAttribute
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_for_statement_condition(&mut self, source: &slang_solidity::ast::ForStatementCondition) -> slang_solidity::ast::ForStatementCondition
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_for_statement_initialization(&mut self, source: &slang_solidity::ast::ForStatementInitialization) -> slang_solidity::ast::ForStatementInitialization
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_function_attribute(&mut self, source: &slang_solidity::ast::FunctionAttribute) -> slang_solidity::ast::FunctionAttribute
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_function_body(&mut self, source: &slang_solidity::ast::FunctionBody) -> slang_solidity::ast::FunctionBody
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_function_name(&mut self, source: &slang_solidity::ast::FunctionName) -> slang_solidity::ast::FunctionName
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_function_type_attribute(&mut self, source: &slang_solidity::ast::FunctionTypeAttribute) -> slang_solidity::ast::FunctionTypeAttribute
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_hex_string_literal(&mut self, source: &slang_solidity::ast::HexStringLiteral) -> slang_solidity::ast::HexStringLiteral
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_import_clause(&mut self, source: &slang_solidity::ast::ImportClause) -> slang_solidity::ast::ImportClause
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_mapping_key_type(&mut self, source: &slang_solidity::ast::MappingKeyType) -> slang_solidity::ast::MappingKeyType
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_modifier_attribute(&mut self, source: &slang_solidity::ast::ModifierAttribute) -> slang_solidity::ast::ModifierAttribute
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_number_unit(&mut self, source: &slang_solidity::ast::NumberUnit) -> slang_solidity::ast::NumberUnit
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_pragma(&mut self, source: &slang_solidity::ast::Pragma) -> slang_solidity::ast::Pragma
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_receive_function_attribute(&mut self, source: &slang_solidity::ast::ReceiveFunctionAttribute) -> slang_solidity::ast::ReceiveFunctionAttribute
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_source_unit_member(&mut self, source: &slang_solidity::ast::SourceUnitMember) -> slang_solidity::ast::SourceUnitMember
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_state_variable_attribute(&mut self, source: &slang_solidity::ast::StateVariableAttribute) -> slang_solidity::ast::StateVariableAttribute
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_statement(&mut self, source: &slang_solidity::ast::Statement) -> slang_solidity::ast::Statement
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_storage_location(&mut self, source: &slang_solidity::ast::StorageLocation) -> slang_solidity::ast::StorageLocation
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_string_expression(&mut self, source: &slang_solidity::ast::StringExpression) -> slang_solidity::ast::StringExpression
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_string_literal(&mut self, source: &slang_solidity::ast::StringLiteral) -> slang_solidity::ast::StringLiteral
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_tuple_member(&mut self, source: &slang_solidity::ast::TupleMember) -> slang_solidity::ast::TupleMember
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_type_name(&mut self, source: &slang_solidity::ast::TypeName) -> slang_solidity::ast::TypeName
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_unicode_string_literal(&mut self, source: &slang_solidity::ast::UnicodeStringLiteral) -> slang_solidity::ast::UnicodeStringLiteral
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_unnamed_function_attribute(&mut self, source: &slang_solidity::ast::UnnamedFunctionAttribute) -> slang_solidity::ast::UnnamedFunctionAttribute
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_using_clause(&mut self, source: &slang_solidity::ast::UsingClause) -> slang_solidity::ast::UsingClause
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_using_operator(&mut self, source: &slang_solidity::ast::UsingOperator) -> slang_solidity::ast::UsingOperator
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_using_target(&mut self, source: &slang_solidity::ast::UsingTarget) -> slang_solidity::ast::UsingTarget
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_variable_declaration_type(&mut self, source: &slang_solidity::ast::VariableDeclarationType) -> slang_solidity::ast::VariableDeclarationType
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_version_expression(&mut self, source: &slang_solidity::ast::VersionExpression) -> slang_solidity::ast::VersionExpression
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_version_literal(&mut self, source: &slang_solidity::ast::VersionLiteral) -> slang_solidity::ast::VersionLiteral
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_version_operator(&mut self, source: &slang_solidity::ast::VersionOperator) -> slang_solidity::ast::VersionOperator
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_yul_assignment_operator(&mut self, source: &slang_solidity::ast::YulAssignmentOperator) -> slang_solidity::ast::YulAssignmentOperator
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_yul_expression(&mut self, source: &slang_solidity::ast::YulExpression) -> slang_solidity::ast::YulExpression
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_yul_literal(&mut self, source: &slang_solidity::ast::YulLiteral) -> slang_solidity::ast::YulLiteral
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_yul_stack_assignment_operator(&mut self, source: &slang_solidity::ast::YulStackAssignmentOperator) -> slang_solidity::ast::YulStackAssignmentOperator
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_yul_statement(&mut self, source: &slang_solidity::ast::YulStatement) -> slang_solidity::ast::YulStatement
+pub fn slang_solidity::ast::mutator::Mutator::default_mutate_yul_switch_case(&mut self, source: &slang_solidity::ast::YulSwitchCase) -> slang_solidity::ast::YulSwitchCase
 pub fn slang_solidity::ast::mutator::Mutator::mutate_abicoder_pragma(&mut self, source: &slang_solidity::ast::AbicoderPragma) -> slang_solidity::ast::AbicoderPragma
 pub fn slang_solidity::ast::mutator::Mutator::mutate_additive_expression(&mut self, source: &slang_solidity::ast::AdditiveExpression) -> slang_solidity::ast::AdditiveExpression
 pub fn slang_solidity::ast::mutator::Mutator::mutate_address_type(&mut self, source: &slang_solidity::ast::AddressType) -> slang_solidity::ast::AddressType
@@ -1169,113 +1212,113 @@ pub fn slang_solidity::ast::YulSwitchCase::accept(&self, visitor: &mut dyn slang
 impl core::fmt::Debug for slang_solidity::ast::YulSwitchCase
 pub fn slang_solidity::ast::YulSwitchCase::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::AbicoderPragmaStruct
-pub slang_solidity::ast::AbicoderPragmaStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::AbicoderPragmaStruct::node_id: usize
 pub slang_solidity::ast::AbicoderPragmaStruct::version: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 impl slang_solidity::ast::AbicoderPragmaStruct
 pub fn slang_solidity::ast::AbicoderPragmaStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::AbicoderPragmaStruct
 pub fn slang_solidity::ast::AbicoderPragmaStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::AdditiveExpressionStruct
-pub slang_solidity::ast::AdditiveExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::AdditiveExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::AdditiveExpressionStruct::node_id: usize
 pub slang_solidity::ast::AdditiveExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::AdditiveExpressionStruct
 pub fn slang_solidity::ast::AdditiveExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::AdditiveExpressionStruct
 pub fn slang_solidity::ast::AdditiveExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::AddressTypeStruct
-pub slang_solidity::ast::AddressTypeStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::AddressTypeStruct::node_id: usize
 pub slang_solidity::ast::AddressTypeStruct::payable_keyword: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 impl slang_solidity::ast::AddressTypeStruct
 pub fn slang_solidity::ast::AddressTypeStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::AddressTypeStruct
 pub fn slang_solidity::ast::AddressTypeStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::AndExpressionStruct
-pub slang_solidity::ast::AndExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::AndExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::AndExpressionStruct::node_id: usize
 pub slang_solidity::ast::AndExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::AndExpressionStruct
 pub fn slang_solidity::ast::AndExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::AndExpressionStruct
 pub fn slang_solidity::ast::AndExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ArrayExpressionStruct
-pub slang_solidity::ast::ArrayExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ArrayExpressionStruct::items: slang_solidity::ast::ArrayValues
+pub slang_solidity::ast::ArrayExpressionStruct::node_id: usize
 impl slang_solidity::ast::ArrayExpressionStruct
 pub fn slang_solidity::ast::ArrayExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ArrayExpressionStruct
 pub fn slang_solidity::ast::ArrayExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ArrayTypeNameStruct
-pub slang_solidity::ast::ArrayTypeNameStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ArrayTypeNameStruct::index: core::option::Option<slang_solidity::ast::Expression>
+pub slang_solidity::ast::ArrayTypeNameStruct::node_id: usize
 pub slang_solidity::ast::ArrayTypeNameStruct::operand: slang_solidity::ast::TypeName
 impl slang_solidity::ast::ArrayTypeNameStruct
 pub fn slang_solidity::ast::ArrayTypeNameStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ArrayTypeNameStruct
 pub fn slang_solidity::ast::ArrayTypeNameStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::AssemblyFlagsDeclarationStruct
-pub slang_solidity::ast::AssemblyFlagsDeclarationStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::AssemblyFlagsDeclarationStruct::flags: slang_solidity::ast::AssemblyFlags
+pub slang_solidity::ast::AssemblyFlagsDeclarationStruct::node_id: usize
 impl slang_solidity::ast::AssemblyFlagsDeclarationStruct
 pub fn slang_solidity::ast::AssemblyFlagsDeclarationStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::AssemblyFlagsDeclarationStruct
 pub fn slang_solidity::ast::AssemblyFlagsDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::AssemblyStatementStruct
 pub slang_solidity::ast::AssemblyStatementStruct::body: slang_solidity::ast::YulBlock
-pub slang_solidity::ast::AssemblyStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::AssemblyStatementStruct::flags: core::option::Option<slang_solidity::ast::AssemblyFlagsDeclaration>
 pub slang_solidity::ast::AssemblyStatementStruct::label: core::option::Option<slang_solidity::ast::StringLiteral>
+pub slang_solidity::ast::AssemblyStatementStruct::node_id: usize
 impl slang_solidity::ast::AssemblyStatementStruct
 pub fn slang_solidity::ast::AssemblyStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::AssemblyStatementStruct
 pub fn slang_solidity::ast::AssemblyStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::AssignmentExpressionStruct
-pub slang_solidity::ast::AssignmentExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::AssignmentExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::AssignmentExpressionStruct::node_id: usize
 pub slang_solidity::ast::AssignmentExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::AssignmentExpressionStruct
 pub fn slang_solidity::ast::AssignmentExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::AssignmentExpressionStruct
 pub fn slang_solidity::ast::AssignmentExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::BitwiseAndExpressionStruct
-pub slang_solidity::ast::BitwiseAndExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::BitwiseAndExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::BitwiseAndExpressionStruct::node_id: usize
 pub slang_solidity::ast::BitwiseAndExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::BitwiseAndExpressionStruct
 pub fn slang_solidity::ast::BitwiseAndExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::BitwiseAndExpressionStruct
 pub fn slang_solidity::ast::BitwiseAndExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::BitwiseOrExpressionStruct
-pub slang_solidity::ast::BitwiseOrExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::BitwiseOrExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::BitwiseOrExpressionStruct::node_id: usize
 pub slang_solidity::ast::BitwiseOrExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::BitwiseOrExpressionStruct
 pub fn slang_solidity::ast::BitwiseOrExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::BitwiseOrExpressionStruct
 pub fn slang_solidity::ast::BitwiseOrExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::BitwiseXorExpressionStruct
-pub slang_solidity::ast::BitwiseXorExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::BitwiseXorExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::BitwiseXorExpressionStruct::node_id: usize
 pub slang_solidity::ast::BitwiseXorExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::BitwiseXorExpressionStruct
 pub fn slang_solidity::ast::BitwiseXorExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::BitwiseXorExpressionStruct
 pub fn slang_solidity::ast::BitwiseXorExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::BlockStruct
-pub slang_solidity::ast::BlockStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::BlockStruct::node_id: usize
 pub slang_solidity::ast::BlockStruct::statements: slang_solidity::ast::Statements
 impl slang_solidity::ast::BlockStruct
 pub fn slang_solidity::ast::BlockStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::BlockStruct
 pub fn slang_solidity::ast::BlockStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::BreakStatementStruct
-pub slang_solidity::ast::BreakStatementStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::BreakStatementStruct::node_id: usize
 impl slang_solidity::ast::BreakStatementStruct
 pub fn slang_solidity::ast::BreakStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::BreakStatementStruct
 pub fn slang_solidity::ast::BreakStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::CallOptionsExpressionStruct
-pub slang_solidity::ast::CallOptionsExpressionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::CallOptionsExpressionStruct::node_id: usize
 pub slang_solidity::ast::CallOptionsExpressionStruct::operand: slang_solidity::ast::Expression
 pub slang_solidity::ast::CallOptionsExpressionStruct::options: slang_solidity::ast::CallOptions
 impl slang_solidity::ast::CallOptionsExpressionStruct
@@ -1283,8 +1326,8 @@ pub fn slang_solidity::ast::CallOptionsExpressionStruct::accept(self: &alloc::rc
 impl core::fmt::Debug for slang_solidity::ast::CallOptionsExpressionStruct
 pub fn slang_solidity::ast::CallOptionsExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::CatchClauseErrorStruct
-pub slang_solidity::ast::CatchClauseErrorStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::CatchClauseErrorStruct::name: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
+pub slang_solidity::ast::CatchClauseErrorStruct::node_id: usize
 pub slang_solidity::ast::CatchClauseErrorStruct::parameters: slang_solidity::ast::ParametersDeclaration
 impl slang_solidity::ast::CatchClauseErrorStruct
 pub fn slang_solidity::ast::CatchClauseErrorStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1292,15 +1335,15 @@ impl core::fmt::Debug for slang_solidity::ast::CatchClauseErrorStruct
 pub fn slang_solidity::ast::CatchClauseErrorStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::CatchClauseStruct
 pub slang_solidity::ast::CatchClauseStruct::body: slang_solidity::ast::Block
-pub slang_solidity::ast::CatchClauseStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::CatchClauseStruct::error: core::option::Option<slang_solidity::ast::CatchClauseError>
+pub slang_solidity::ast::CatchClauseStruct::node_id: usize
 impl slang_solidity::ast::CatchClauseStruct
 pub fn slang_solidity::ast::CatchClauseStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::CatchClauseStruct
 pub fn slang_solidity::ast::CatchClauseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ConditionalExpressionStruct
-pub slang_solidity::ast::ConditionalExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ConditionalExpressionStruct::false_expression: slang_solidity::ast::Expression
+pub slang_solidity::ast::ConditionalExpressionStruct::node_id: usize
 pub slang_solidity::ast::ConditionalExpressionStruct::operand: slang_solidity::ast::Expression
 pub slang_solidity::ast::ConditionalExpressionStruct::true_expression: slang_solidity::ast::Expression
 impl slang_solidity::ast::ConditionalExpressionStruct
@@ -1308,8 +1351,8 @@ pub fn slang_solidity::ast::ConditionalExpressionStruct::accept(self: &alloc::rc
 impl core::fmt::Debug for slang_solidity::ast::ConditionalExpressionStruct
 pub fn slang_solidity::ast::ConditionalExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ConstantDefinitionStruct
-pub slang_solidity::ast::ConstantDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ConstantDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::ConstantDefinitionStruct::node_id: usize
 pub slang_solidity::ast::ConstantDefinitionStruct::type_name: slang_solidity::ast::TypeName
 pub slang_solidity::ast::ConstantDefinitionStruct::value: slang_solidity::ast::Expression
 impl slang_solidity::ast::ConstantDefinitionStruct
@@ -1319,31 +1362,31 @@ pub fn slang_solidity::ast::ConstantDefinitionStruct::fmt(&self, f: &mut core::f
 pub struct slang_solidity::ast::ConstructorDefinitionStruct
 pub slang_solidity::ast::ConstructorDefinitionStruct::attributes: slang_solidity::ast::ConstructorAttributes
 pub slang_solidity::ast::ConstructorDefinitionStruct::body: slang_solidity::ast::Block
-pub slang_solidity::ast::ConstructorDefinitionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::ConstructorDefinitionStruct::node_id: usize
 pub slang_solidity::ast::ConstructorDefinitionStruct::parameters: slang_solidity::ast::ParametersDeclaration
 impl slang_solidity::ast::ConstructorDefinitionStruct
 pub fn slang_solidity::ast::ConstructorDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ConstructorDefinitionStruct
 pub fn slang_solidity::ast::ConstructorDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ContinueStatementStruct
-pub slang_solidity::ast::ContinueStatementStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::ContinueStatementStruct::node_id: usize
 impl slang_solidity::ast::ContinueStatementStruct
 pub fn slang_solidity::ast::ContinueStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ContinueStatementStruct
 pub fn slang_solidity::ast::ContinueStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ContractDefinitionStruct
 pub slang_solidity::ast::ContractDefinitionStruct::abstract_keyword: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
-pub slang_solidity::ast::ContractDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ContractDefinitionStruct::inheritance: core::option::Option<slang_solidity::ast::InheritanceSpecifier>
 pub slang_solidity::ast::ContractDefinitionStruct::members: slang_solidity::ast::ContractMembers
 pub slang_solidity::ast::ContractDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::ContractDefinitionStruct::node_id: usize
 impl slang_solidity::ast::ContractDefinitionStruct
 pub fn slang_solidity::ast::ContractDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ContractDefinitionStruct
 pub fn slang_solidity::ast::ContractDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::DecimalNumberExpressionStruct
-pub slang_solidity::ast::DecimalNumberExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::DecimalNumberExpressionStruct::literal: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::DecimalNumberExpressionStruct::node_id: usize
 pub slang_solidity::ast::DecimalNumberExpressionStruct::unit: core::option::Option<slang_solidity::ast::NumberUnit>
 impl slang_solidity::ast::DecimalNumberExpressionStruct
 pub fn slang_solidity::ast::DecimalNumberExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1352,60 +1395,60 @@ pub fn slang_solidity::ast::DecimalNumberExpressionStruct::fmt(&self, f: &mut co
 pub struct slang_solidity::ast::DoWhileStatementStruct
 pub slang_solidity::ast::DoWhileStatementStruct::body: slang_solidity::ast::Statement
 pub slang_solidity::ast::DoWhileStatementStruct::condition: slang_solidity::ast::Expression
-pub slang_solidity::ast::DoWhileStatementStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::DoWhileStatementStruct::node_id: usize
 impl slang_solidity::ast::DoWhileStatementStruct
 pub fn slang_solidity::ast::DoWhileStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::DoWhileStatementStruct
 pub fn slang_solidity::ast::DoWhileStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ElseBranchStruct
 pub slang_solidity::ast::ElseBranchStruct::body: slang_solidity::ast::Statement
-pub slang_solidity::ast::ElseBranchStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::ElseBranchStruct::node_id: usize
 impl slang_solidity::ast::ElseBranchStruct
 pub fn slang_solidity::ast::ElseBranchStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ElseBranchStruct
 pub fn slang_solidity::ast::ElseBranchStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::EmitStatementStruct
 pub slang_solidity::ast::EmitStatementStruct::arguments: slang_solidity::ast::ArgumentsDeclaration
-pub slang_solidity::ast::EmitStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::EmitStatementStruct::event: slang_solidity::ast::IdentifierPath
+pub slang_solidity::ast::EmitStatementStruct::node_id: usize
 impl slang_solidity::ast::EmitStatementStruct
 pub fn slang_solidity::ast::EmitStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::EmitStatementStruct
 pub fn slang_solidity::ast::EmitStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::EnumDefinitionStruct
-pub slang_solidity::ast::EnumDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::EnumDefinitionStruct::members: slang_solidity::ast::EnumMembers
 pub slang_solidity::ast::EnumDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::EnumDefinitionStruct::node_id: usize
 impl slang_solidity::ast::EnumDefinitionStruct
 pub fn slang_solidity::ast::EnumDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::EnumDefinitionStruct
 pub fn slang_solidity::ast::EnumDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::EqualityExpressionStruct
-pub slang_solidity::ast::EqualityExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::EqualityExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::EqualityExpressionStruct::node_id: usize
 pub slang_solidity::ast::EqualityExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::EqualityExpressionStruct
 pub fn slang_solidity::ast::EqualityExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::EqualityExpressionStruct
 pub fn slang_solidity::ast::EqualityExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ErrorDefinitionStruct
-pub slang_solidity::ast::ErrorDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ErrorDefinitionStruct::members: slang_solidity::ast::ErrorParametersDeclaration
 pub slang_solidity::ast::ErrorDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::ErrorDefinitionStruct::node_id: usize
 impl slang_solidity::ast::ErrorDefinitionStruct
 pub fn slang_solidity::ast::ErrorDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ErrorDefinitionStruct
 pub fn slang_solidity::ast::ErrorDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ErrorParameterStruct
-pub slang_solidity::ast::ErrorParameterStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ErrorParameterStruct::name: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
+pub slang_solidity::ast::ErrorParameterStruct::node_id: usize
 pub slang_solidity::ast::ErrorParameterStruct::type_name: slang_solidity::ast::TypeName
 impl slang_solidity::ast::ErrorParameterStruct
 pub fn slang_solidity::ast::ErrorParameterStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ErrorParameterStruct
 pub fn slang_solidity::ast::ErrorParameterStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ErrorParametersDeclarationStruct
-pub slang_solidity::ast::ErrorParametersDeclarationStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::ErrorParametersDeclarationStruct::node_id: usize
 pub slang_solidity::ast::ErrorParametersDeclarationStruct::parameters: slang_solidity::ast::ErrorParameters
 impl slang_solidity::ast::ErrorParametersDeclarationStruct
 pub fn slang_solidity::ast::ErrorParametersDeclarationStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1413,47 +1456,47 @@ impl core::fmt::Debug for slang_solidity::ast::ErrorParametersDeclarationStruct
 pub fn slang_solidity::ast::ErrorParametersDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::EventDefinitionStruct
 pub slang_solidity::ast::EventDefinitionStruct::anonymous_keyword: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
-pub slang_solidity::ast::EventDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::EventDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::EventDefinitionStruct::node_id: usize
 pub slang_solidity::ast::EventDefinitionStruct::parameters: slang_solidity::ast::EventParametersDeclaration
 impl slang_solidity::ast::EventDefinitionStruct
 pub fn slang_solidity::ast::EventDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::EventDefinitionStruct
 pub fn slang_solidity::ast::EventDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::EventParameterStruct
-pub slang_solidity::ast::EventParameterStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::EventParameterStruct::indexed_keyword: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 pub slang_solidity::ast::EventParameterStruct::name: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
+pub slang_solidity::ast::EventParameterStruct::node_id: usize
 pub slang_solidity::ast::EventParameterStruct::type_name: slang_solidity::ast::TypeName
 impl slang_solidity::ast::EventParameterStruct
 pub fn slang_solidity::ast::EventParameterStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::EventParameterStruct
 pub fn slang_solidity::ast::EventParameterStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::EventParametersDeclarationStruct
-pub slang_solidity::ast::EventParametersDeclarationStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::EventParametersDeclarationStruct::node_id: usize
 pub slang_solidity::ast::EventParametersDeclarationStruct::parameters: slang_solidity::ast::EventParameters
 impl slang_solidity::ast::EventParametersDeclarationStruct
 pub fn slang_solidity::ast::EventParametersDeclarationStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::EventParametersDeclarationStruct
 pub fn slang_solidity::ast::EventParametersDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ExperimentalPragmaStruct
-pub slang_solidity::ast::ExperimentalPragmaStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ExperimentalPragmaStruct::feature: slang_solidity::ast::ExperimentalFeature
+pub slang_solidity::ast::ExperimentalPragmaStruct::node_id: usize
 impl slang_solidity::ast::ExperimentalPragmaStruct
 pub fn slang_solidity::ast::ExperimentalPragmaStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ExperimentalPragmaStruct
 pub fn slang_solidity::ast::ExperimentalPragmaStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ExponentiationExpressionStruct
-pub slang_solidity::ast::ExponentiationExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ExponentiationExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::ExponentiationExpressionStruct::node_id: usize
 pub slang_solidity::ast::ExponentiationExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::ExponentiationExpressionStruct
 pub fn slang_solidity::ast::ExponentiationExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ExponentiationExpressionStruct
 pub fn slang_solidity::ast::ExponentiationExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ExpressionStatementStruct
-pub slang_solidity::ast::ExpressionStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ExpressionStatementStruct::expression: slang_solidity::ast::Expression
+pub slang_solidity::ast::ExpressionStatementStruct::node_id: usize
 impl slang_solidity::ast::ExpressionStatementStruct
 pub fn slang_solidity::ast::ExpressionStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ExpressionStatementStruct
@@ -1461,7 +1504,7 @@ pub fn slang_solidity::ast::ExpressionStatementStruct::fmt(&self, f: &mut core::
 pub struct slang_solidity::ast::FallbackFunctionDefinitionStruct
 pub slang_solidity::ast::FallbackFunctionDefinitionStruct::attributes: slang_solidity::ast::FallbackFunctionAttributes
 pub slang_solidity::ast::FallbackFunctionDefinitionStruct::body: slang_solidity::ast::FunctionBody
-pub slang_solidity::ast::FallbackFunctionDefinitionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::FallbackFunctionDefinitionStruct::node_id: usize
 pub slang_solidity::ast::FallbackFunctionDefinitionStruct::parameters: slang_solidity::ast::ParametersDeclaration
 pub slang_solidity::ast::FallbackFunctionDefinitionStruct::returns: core::option::Option<slang_solidity::ast::ReturnsDeclaration>
 impl slang_solidity::ast::FallbackFunctionDefinitionStruct
@@ -1471,16 +1514,16 @@ pub fn slang_solidity::ast::FallbackFunctionDefinitionStruct::fmt(&self, f: &mut
 pub struct slang_solidity::ast::ForStatementStruct
 pub slang_solidity::ast::ForStatementStruct::body: slang_solidity::ast::Statement
 pub slang_solidity::ast::ForStatementStruct::condition: slang_solidity::ast::ForStatementCondition
-pub slang_solidity::ast::ForStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ForStatementStruct::initialization: slang_solidity::ast::ForStatementInitialization
 pub slang_solidity::ast::ForStatementStruct::iterator: core::option::Option<slang_solidity::ast::Expression>
+pub slang_solidity::ast::ForStatementStruct::node_id: usize
 impl slang_solidity::ast::ForStatementStruct
 pub fn slang_solidity::ast::ForStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ForStatementStruct
 pub fn slang_solidity::ast::ForStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::FunctionCallExpressionStruct
 pub slang_solidity::ast::FunctionCallExpressionStruct::arguments: slang_solidity::ast::ArgumentsDeclaration
-pub slang_solidity::ast::FunctionCallExpressionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::FunctionCallExpressionStruct::node_id: usize
 pub slang_solidity::ast::FunctionCallExpressionStruct::operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::FunctionCallExpressionStruct
 pub fn slang_solidity::ast::FunctionCallExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1489,8 +1532,8 @@ pub fn slang_solidity::ast::FunctionCallExpressionStruct::fmt(&self, f: &mut cor
 pub struct slang_solidity::ast::FunctionDefinitionStruct
 pub slang_solidity::ast::FunctionDefinitionStruct::attributes: slang_solidity::ast::FunctionAttributes
 pub slang_solidity::ast::FunctionDefinitionStruct::body: slang_solidity::ast::FunctionBody
-pub slang_solidity::ast::FunctionDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::FunctionDefinitionStruct::name: slang_solidity::ast::FunctionName
+pub slang_solidity::ast::FunctionDefinitionStruct::node_id: usize
 pub slang_solidity::ast::FunctionDefinitionStruct::parameters: slang_solidity::ast::ParametersDeclaration
 pub slang_solidity::ast::FunctionDefinitionStruct::returns: core::option::Option<slang_solidity::ast::ReturnsDeclaration>
 impl slang_solidity::ast::FunctionDefinitionStruct
@@ -1499,7 +1542,7 @@ impl core::fmt::Debug for slang_solidity::ast::FunctionDefinitionStruct
 pub fn slang_solidity::ast::FunctionDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::FunctionTypeStruct
 pub slang_solidity::ast::FunctionTypeStruct::attributes: slang_solidity::ast::FunctionTypeAttributes
-pub slang_solidity::ast::FunctionTypeStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::FunctionTypeStruct::node_id: usize
 pub slang_solidity::ast::FunctionTypeStruct::parameters: slang_solidity::ast::ParametersDeclaration
 pub slang_solidity::ast::FunctionTypeStruct::returns: core::option::Option<slang_solidity::ast::ReturnsDeclaration>
 impl slang_solidity::ast::FunctionTypeStruct
@@ -1507,8 +1550,8 @@ pub fn slang_solidity::ast::FunctionTypeStruct::accept(self: &alloc::rc::Rc<Self
 impl core::fmt::Debug for slang_solidity::ast::FunctionTypeStruct
 pub fn slang_solidity::ast::FunctionTypeStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::HexNumberExpressionStruct
-pub slang_solidity::ast::HexNumberExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::HexNumberExpressionStruct::literal: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::HexNumberExpressionStruct::node_id: usize
 pub slang_solidity::ast::HexNumberExpressionStruct::unit: core::option::Option<slang_solidity::ast::NumberUnit>
 impl slang_solidity::ast::HexNumberExpressionStruct
 pub fn slang_solidity::ast::HexNumberExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1517,21 +1560,21 @@ pub fn slang_solidity::ast::HexNumberExpressionStruct::fmt(&self, f: &mut core::
 pub struct slang_solidity::ast::IfStatementStruct
 pub slang_solidity::ast::IfStatementStruct::body: slang_solidity::ast::Statement
 pub slang_solidity::ast::IfStatementStruct::condition: slang_solidity::ast::Expression
-pub slang_solidity::ast::IfStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::IfStatementStruct::else_branch: core::option::Option<slang_solidity::ast::ElseBranch>
+pub slang_solidity::ast::IfStatementStruct::node_id: usize
 impl slang_solidity::ast::IfStatementStruct
 pub fn slang_solidity::ast::IfStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::IfStatementStruct
 pub fn slang_solidity::ast::IfStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ImportAliasStruct
-pub slang_solidity::ast::ImportAliasStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ImportAliasStruct::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::ImportAliasStruct::node_id: usize
 impl slang_solidity::ast::ImportAliasStruct
 pub fn slang_solidity::ast::ImportAliasStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ImportAliasStruct
 pub fn slang_solidity::ast::ImportAliasStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ImportDeconstructionStruct
-pub slang_solidity::ast::ImportDeconstructionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::ImportDeconstructionStruct::node_id: usize
 pub slang_solidity::ast::ImportDeconstructionStruct::path: slang_solidity::ast::StringLiteral
 pub slang_solidity::ast::ImportDeconstructionStruct::symbols: slang_solidity::ast::ImportDeconstructionSymbols
 impl slang_solidity::ast::ImportDeconstructionStruct
@@ -1540,29 +1583,29 @@ impl core::fmt::Debug for slang_solidity::ast::ImportDeconstructionStruct
 pub fn slang_solidity::ast::ImportDeconstructionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ImportDeconstructionSymbolStruct
 pub slang_solidity::ast::ImportDeconstructionSymbolStruct::alias: core::option::Option<slang_solidity::ast::ImportAlias>
-pub slang_solidity::ast::ImportDeconstructionSymbolStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ImportDeconstructionSymbolStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::ImportDeconstructionSymbolStruct::node_id: usize
 impl slang_solidity::ast::ImportDeconstructionSymbolStruct
 pub fn slang_solidity::ast::ImportDeconstructionSymbolStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ImportDeconstructionSymbolStruct
 pub fn slang_solidity::ast::ImportDeconstructionSymbolStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ImportDirectiveStruct
 pub slang_solidity::ast::ImportDirectiveStruct::clause: slang_solidity::ast::ImportClause
-pub slang_solidity::ast::ImportDirectiveStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::ImportDirectiveStruct::node_id: usize
 impl slang_solidity::ast::ImportDirectiveStruct
 pub fn slang_solidity::ast::ImportDirectiveStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ImportDirectiveStruct
 pub fn slang_solidity::ast::ImportDirectiveStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::IndexAccessEndStruct
-pub slang_solidity::ast::IndexAccessEndStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::IndexAccessEndStruct::end: core::option::Option<slang_solidity::ast::Expression>
+pub slang_solidity::ast::IndexAccessEndStruct::node_id: usize
 impl slang_solidity::ast::IndexAccessEndStruct
 pub fn slang_solidity::ast::IndexAccessEndStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::IndexAccessEndStruct
 pub fn slang_solidity::ast::IndexAccessEndStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::IndexAccessExpressionStruct
-pub slang_solidity::ast::IndexAccessExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::IndexAccessExpressionStruct::end: core::option::Option<slang_solidity::ast::IndexAccessEnd>
+pub slang_solidity::ast::IndexAccessExpressionStruct::node_id: usize
 pub slang_solidity::ast::IndexAccessExpressionStruct::operand: slang_solidity::ast::Expression
 pub slang_solidity::ast::IndexAccessExpressionStruct::start: core::option::Option<slang_solidity::ast::Expression>
 impl slang_solidity::ast::IndexAccessExpressionStruct
@@ -1570,15 +1613,15 @@ pub fn slang_solidity::ast::IndexAccessExpressionStruct::accept(self: &alloc::rc
 impl core::fmt::Debug for slang_solidity::ast::IndexAccessExpressionStruct
 pub fn slang_solidity::ast::IndexAccessExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::InequalityExpressionStruct
-pub slang_solidity::ast::InequalityExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::InequalityExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::InequalityExpressionStruct::node_id: usize
 pub slang_solidity::ast::InequalityExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::InequalityExpressionStruct
 pub fn slang_solidity::ast::InequalityExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::InequalityExpressionStruct
 pub fn slang_solidity::ast::InequalityExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::InheritanceSpecifierStruct
-pub slang_solidity::ast::InheritanceSpecifierStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::InheritanceSpecifierStruct::node_id: usize
 pub slang_solidity::ast::InheritanceSpecifierStruct::types: slang_solidity::ast::InheritanceTypes
 impl slang_solidity::ast::InheritanceSpecifierStruct
 pub fn slang_solidity::ast::InheritanceSpecifierStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1586,56 +1629,56 @@ impl core::fmt::Debug for slang_solidity::ast::InheritanceSpecifierStruct
 pub fn slang_solidity::ast::InheritanceSpecifierStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::InheritanceTypeStruct
 pub slang_solidity::ast::InheritanceTypeStruct::arguments: core::option::Option<slang_solidity::ast::ArgumentsDeclaration>
-pub slang_solidity::ast::InheritanceTypeStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::InheritanceTypeStruct::node_id: usize
 pub slang_solidity::ast::InheritanceTypeStruct::type_name: slang_solidity::ast::IdentifierPath
 impl slang_solidity::ast::InheritanceTypeStruct
 pub fn slang_solidity::ast::InheritanceTypeStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::InheritanceTypeStruct
 pub fn slang_solidity::ast::InheritanceTypeStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::InterfaceDefinitionStruct
-pub slang_solidity::ast::InterfaceDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::InterfaceDefinitionStruct::inheritance: core::option::Option<slang_solidity::ast::InheritanceSpecifier>
 pub slang_solidity::ast::InterfaceDefinitionStruct::members: slang_solidity::ast::InterfaceMembers
 pub slang_solidity::ast::InterfaceDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::InterfaceDefinitionStruct::node_id: usize
 impl slang_solidity::ast::InterfaceDefinitionStruct
 pub fn slang_solidity::ast::InterfaceDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::InterfaceDefinitionStruct
 pub fn slang_solidity::ast::InterfaceDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::LibraryDefinitionStruct
-pub slang_solidity::ast::LibraryDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::LibraryDefinitionStruct::members: slang_solidity::ast::LibraryMembers
 pub slang_solidity::ast::LibraryDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::LibraryDefinitionStruct::node_id: usize
 impl slang_solidity::ast::LibraryDefinitionStruct
 pub fn slang_solidity::ast::LibraryDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::LibraryDefinitionStruct
 pub fn slang_solidity::ast::LibraryDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::MappingKeyStruct
-pub slang_solidity::ast::MappingKeyStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::MappingKeyStruct::key_type: slang_solidity::ast::MappingKeyType
 pub slang_solidity::ast::MappingKeyStruct::name: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
+pub slang_solidity::ast::MappingKeyStruct::node_id: usize
 impl slang_solidity::ast::MappingKeyStruct
 pub fn slang_solidity::ast::MappingKeyStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::MappingKeyStruct
 pub fn slang_solidity::ast::MappingKeyStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::MappingTypeStruct
-pub slang_solidity::ast::MappingTypeStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::MappingTypeStruct::key_type: slang_solidity::ast::MappingKey
+pub slang_solidity::ast::MappingTypeStruct::node_id: usize
 pub slang_solidity::ast::MappingTypeStruct::value_type: slang_solidity::ast::MappingValue
 impl slang_solidity::ast::MappingTypeStruct
 pub fn slang_solidity::ast::MappingTypeStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::MappingTypeStruct
 pub fn slang_solidity::ast::MappingTypeStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::MappingValueStruct
-pub slang_solidity::ast::MappingValueStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::MappingValueStruct::name: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
+pub slang_solidity::ast::MappingValueStruct::node_id: usize
 pub slang_solidity::ast::MappingValueStruct::type_name: slang_solidity::ast::TypeName
 impl slang_solidity::ast::MappingValueStruct
 pub fn slang_solidity::ast::MappingValueStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::MappingValueStruct
 pub fn slang_solidity::ast::MappingValueStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::MemberAccessExpressionStruct
-pub slang_solidity::ast::MemberAccessExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::MemberAccessExpressionStruct::member: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::MemberAccessExpressionStruct::node_id: usize
 pub slang_solidity::ast::MemberAccessExpressionStruct::operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::MemberAccessExpressionStruct
 pub fn slang_solidity::ast::MemberAccessExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1644,8 +1687,8 @@ pub fn slang_solidity::ast::MemberAccessExpressionStruct::fmt(&self, f: &mut cor
 pub struct slang_solidity::ast::ModifierDefinitionStruct
 pub slang_solidity::ast::ModifierDefinitionStruct::attributes: slang_solidity::ast::ModifierAttributes
 pub slang_solidity::ast::ModifierDefinitionStruct::body: slang_solidity::ast::FunctionBody
-pub slang_solidity::ast::ModifierDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ModifierDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::ModifierDefinitionStruct::node_id: usize
 pub slang_solidity::ast::ModifierDefinitionStruct::parameters: core::option::Option<slang_solidity::ast::ParametersDeclaration>
 impl slang_solidity::ast::ModifierDefinitionStruct
 pub fn slang_solidity::ast::ModifierDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1653,15 +1696,15 @@ impl core::fmt::Debug for slang_solidity::ast::ModifierDefinitionStruct
 pub fn slang_solidity::ast::ModifierDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ModifierInvocationStruct
 pub slang_solidity::ast::ModifierInvocationStruct::arguments: core::option::Option<slang_solidity::ast::ArgumentsDeclaration>
-pub slang_solidity::ast::ModifierInvocationStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ModifierInvocationStruct::name: slang_solidity::ast::IdentifierPath
+pub slang_solidity::ast::ModifierInvocationStruct::node_id: usize
 impl slang_solidity::ast::ModifierInvocationStruct
 pub fn slang_solidity::ast::ModifierInvocationStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ModifierInvocationStruct
 pub fn slang_solidity::ast::ModifierInvocationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::MultiplicativeExpressionStruct
-pub slang_solidity::ast::MultiplicativeExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::MultiplicativeExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::MultiplicativeExpressionStruct::node_id: usize
 pub slang_solidity::ast::MultiplicativeExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::MultiplicativeExpressionStruct
 pub fn slang_solidity::ast::MultiplicativeExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1669,14 +1712,14 @@ impl core::fmt::Debug for slang_solidity::ast::MultiplicativeExpressionStruct
 pub fn slang_solidity::ast::MultiplicativeExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::NamedArgumentGroupStruct
 pub slang_solidity::ast::NamedArgumentGroupStruct::arguments: slang_solidity::ast::NamedArguments
-pub slang_solidity::ast::NamedArgumentGroupStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::NamedArgumentGroupStruct::node_id: usize
 impl slang_solidity::ast::NamedArgumentGroupStruct
 pub fn slang_solidity::ast::NamedArgumentGroupStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::NamedArgumentGroupStruct
 pub fn slang_solidity::ast::NamedArgumentGroupStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::NamedArgumentStruct
-pub slang_solidity::ast::NamedArgumentStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::NamedArgumentStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::NamedArgumentStruct::node_id: usize
 pub slang_solidity::ast::NamedArgumentStruct::value: slang_solidity::ast::Expression
 impl slang_solidity::ast::NamedArgumentStruct
 pub fn slang_solidity::ast::NamedArgumentStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1684,51 +1727,51 @@ impl core::fmt::Debug for slang_solidity::ast::NamedArgumentStruct
 pub fn slang_solidity::ast::NamedArgumentStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::NamedArgumentsDeclarationStruct
 pub slang_solidity::ast::NamedArgumentsDeclarationStruct::arguments: core::option::Option<slang_solidity::ast::NamedArgumentGroup>
-pub slang_solidity::ast::NamedArgumentsDeclarationStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::NamedArgumentsDeclarationStruct::node_id: usize
 impl slang_solidity::ast::NamedArgumentsDeclarationStruct
 pub fn slang_solidity::ast::NamedArgumentsDeclarationStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::NamedArgumentsDeclarationStruct
 pub fn slang_solidity::ast::NamedArgumentsDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::NamedImportStruct
 pub slang_solidity::ast::NamedImportStruct::alias: slang_solidity::ast::ImportAlias
-pub slang_solidity::ast::NamedImportStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::NamedImportStruct::node_id: usize
 pub slang_solidity::ast::NamedImportStruct::path: slang_solidity::ast::StringLiteral
 impl slang_solidity::ast::NamedImportStruct
 pub fn slang_solidity::ast::NamedImportStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::NamedImportStruct
 pub fn slang_solidity::ast::NamedImportStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::NewExpressionStruct
-pub slang_solidity::ast::NewExpressionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::NewExpressionStruct::node_id: usize
 pub slang_solidity::ast::NewExpressionStruct::type_name: slang_solidity::ast::TypeName
 impl slang_solidity::ast::NewExpressionStruct
 pub fn slang_solidity::ast::NewExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::NewExpressionStruct
 pub fn slang_solidity::ast::NewExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::OrExpressionStruct
-pub slang_solidity::ast::OrExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::OrExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::OrExpressionStruct::node_id: usize
 pub slang_solidity::ast::OrExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::OrExpressionStruct
 pub fn slang_solidity::ast::OrExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::OrExpressionStruct
 pub fn slang_solidity::ast::OrExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::OverridePathsDeclarationStruct
-pub slang_solidity::ast::OverridePathsDeclarationStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::OverridePathsDeclarationStruct::node_id: usize
 pub slang_solidity::ast::OverridePathsDeclarationStruct::paths: slang_solidity::ast::OverridePaths
 impl slang_solidity::ast::OverridePathsDeclarationStruct
 pub fn slang_solidity::ast::OverridePathsDeclarationStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::OverridePathsDeclarationStruct
 pub fn slang_solidity::ast::OverridePathsDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::OverrideSpecifierStruct
-pub slang_solidity::ast::OverrideSpecifierStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::OverrideSpecifierStruct::node_id: usize
 pub slang_solidity::ast::OverrideSpecifierStruct::overridden: core::option::Option<slang_solidity::ast::OverridePathsDeclaration>
 impl slang_solidity::ast::OverrideSpecifierStruct
 pub fn slang_solidity::ast::OverrideSpecifierStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::OverrideSpecifierStruct
 pub fn slang_solidity::ast::OverrideSpecifierStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ParameterStruct
-pub slang_solidity::ast::ParameterStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ParameterStruct::name: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
+pub slang_solidity::ast::ParameterStruct::node_id: usize
 pub slang_solidity::ast::ParameterStruct::storage_location: core::option::Option<slang_solidity::ast::StorageLocation>
 pub slang_solidity::ast::ParameterStruct::type_name: slang_solidity::ast::TypeName
 impl slang_solidity::ast::ParameterStruct
@@ -1736,7 +1779,7 @@ pub fn slang_solidity::ast::ParameterStruct::accept(self: &alloc::rc::Rc<Self>, 
 impl core::fmt::Debug for slang_solidity::ast::ParameterStruct
 pub fn slang_solidity::ast::ParameterStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ParametersDeclarationStruct
-pub slang_solidity::ast::ParametersDeclarationStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::ParametersDeclarationStruct::node_id: usize
 pub slang_solidity::ast::ParametersDeclarationStruct::parameters: slang_solidity::ast::Parameters
 impl slang_solidity::ast::ParametersDeclarationStruct
 pub fn slang_solidity::ast::ParametersDeclarationStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1744,7 +1787,7 @@ impl core::fmt::Debug for slang_solidity::ast::ParametersDeclarationStruct
 pub fn slang_solidity::ast::ParametersDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::PathImportStruct
 pub slang_solidity::ast::PathImportStruct::alias: core::option::Option<slang_solidity::ast::ImportAlias>
-pub slang_solidity::ast::PathImportStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::PathImportStruct::node_id: usize
 pub slang_solidity::ast::PathImportStruct::path: slang_solidity::ast::StringLiteral
 impl slang_solidity::ast::PathImportStruct
 pub fn slang_solidity::ast::PathImportStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1752,27 +1795,27 @@ impl core::fmt::Debug for slang_solidity::ast::PathImportStruct
 pub fn slang_solidity::ast::PathImportStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::PositionalArgumentsDeclarationStruct
 pub slang_solidity::ast::PositionalArgumentsDeclarationStruct::arguments: slang_solidity::ast::PositionalArguments
-pub slang_solidity::ast::PositionalArgumentsDeclarationStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::PositionalArgumentsDeclarationStruct::node_id: usize
 impl slang_solidity::ast::PositionalArgumentsDeclarationStruct
 pub fn slang_solidity::ast::PositionalArgumentsDeclarationStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::PositionalArgumentsDeclarationStruct
 pub fn slang_solidity::ast::PositionalArgumentsDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::PostfixExpressionStruct
-pub slang_solidity::ast::PostfixExpressionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::PostfixExpressionStruct::node_id: usize
 pub slang_solidity::ast::PostfixExpressionStruct::operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::PostfixExpressionStruct
 pub fn slang_solidity::ast::PostfixExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::PostfixExpressionStruct
 pub fn slang_solidity::ast::PostfixExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::PragmaDirectiveStruct
-pub slang_solidity::ast::PragmaDirectiveStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::PragmaDirectiveStruct::node_id: usize
 pub slang_solidity::ast::PragmaDirectiveStruct::pragma: slang_solidity::ast::Pragma
 impl slang_solidity::ast::PragmaDirectiveStruct
 pub fn slang_solidity::ast::PragmaDirectiveStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::PragmaDirectiveStruct
 pub fn slang_solidity::ast::PragmaDirectiveStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::PrefixExpressionStruct
-pub slang_solidity::ast::PrefixExpressionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::PrefixExpressionStruct::node_id: usize
 pub slang_solidity::ast::PrefixExpressionStruct::operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::PrefixExpressionStruct
 pub fn slang_solidity::ast::PrefixExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1781,21 +1824,21 @@ pub fn slang_solidity::ast::PrefixExpressionStruct::fmt(&self, f: &mut core::fmt
 pub struct slang_solidity::ast::ReceiveFunctionDefinitionStruct
 pub slang_solidity::ast::ReceiveFunctionDefinitionStruct::attributes: slang_solidity::ast::ReceiveFunctionAttributes
 pub slang_solidity::ast::ReceiveFunctionDefinitionStruct::body: slang_solidity::ast::FunctionBody
-pub slang_solidity::ast::ReceiveFunctionDefinitionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::ReceiveFunctionDefinitionStruct::node_id: usize
 pub slang_solidity::ast::ReceiveFunctionDefinitionStruct::parameters: slang_solidity::ast::ParametersDeclaration
 impl slang_solidity::ast::ReceiveFunctionDefinitionStruct
 pub fn slang_solidity::ast::ReceiveFunctionDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ReceiveFunctionDefinitionStruct
 pub fn slang_solidity::ast::ReceiveFunctionDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ReturnStatementStruct
-pub slang_solidity::ast::ReturnStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ReturnStatementStruct::expression: core::option::Option<slang_solidity::ast::Expression>
+pub slang_solidity::ast::ReturnStatementStruct::node_id: usize
 impl slang_solidity::ast::ReturnStatementStruct
 pub fn slang_solidity::ast::ReturnStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ReturnStatementStruct
 pub fn slang_solidity::ast::ReturnStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ReturnsDeclarationStruct
-pub slang_solidity::ast::ReturnsDeclarationStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::ReturnsDeclarationStruct::node_id: usize
 pub slang_solidity::ast::ReturnsDeclarationStruct::variables: slang_solidity::ast::ParametersDeclaration
 impl slang_solidity::ast::ReturnsDeclarationStruct
 pub fn slang_solidity::ast::ReturnsDeclarationStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1803,31 +1846,31 @@ impl core::fmt::Debug for slang_solidity::ast::ReturnsDeclarationStruct
 pub fn slang_solidity::ast::ReturnsDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::RevertStatementStruct
 pub slang_solidity::ast::RevertStatementStruct::arguments: slang_solidity::ast::ArgumentsDeclaration
-pub slang_solidity::ast::RevertStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::RevertStatementStruct::error: core::option::Option<slang_solidity::ast::IdentifierPath>
+pub slang_solidity::ast::RevertStatementStruct::node_id: usize
 impl slang_solidity::ast::RevertStatementStruct
 pub fn slang_solidity::ast::RevertStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::RevertStatementStruct
 pub fn slang_solidity::ast::RevertStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ShiftExpressionStruct
-pub slang_solidity::ast::ShiftExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::ShiftExpressionStruct::left_operand: slang_solidity::ast::Expression
+pub slang_solidity::ast::ShiftExpressionStruct::node_id: usize
 pub slang_solidity::ast::ShiftExpressionStruct::right_operand: slang_solidity::ast::Expression
 impl slang_solidity::ast::ShiftExpressionStruct
 pub fn slang_solidity::ast::ShiftExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ShiftExpressionStruct
 pub fn slang_solidity::ast::ShiftExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::SourceUnitStruct
-pub slang_solidity::ast::SourceUnitStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::SourceUnitStruct::members: slang_solidity::ast::SourceUnitMembers
+pub slang_solidity::ast::SourceUnitStruct::node_id: usize
 impl slang_solidity::ast::SourceUnitStruct
 pub fn slang_solidity::ast::SourceUnitStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::SourceUnitStruct
 pub fn slang_solidity::ast::SourceUnitStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::StateVariableDefinitionStruct
 pub slang_solidity::ast::StateVariableDefinitionStruct::attributes: slang_solidity::ast::StateVariableAttributes
-pub slang_solidity::ast::StateVariableDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::StateVariableDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::StateVariableDefinitionStruct::node_id: usize
 pub slang_solidity::ast::StateVariableDefinitionStruct::type_name: slang_solidity::ast::TypeName
 pub slang_solidity::ast::StateVariableDefinitionStruct::value: core::option::Option<slang_solidity::ast::StateVariableDefinitionValue>
 impl slang_solidity::ast::StateVariableDefinitionStruct
@@ -1835,30 +1878,30 @@ pub fn slang_solidity::ast::StateVariableDefinitionStruct::accept(self: &alloc::
 impl core::fmt::Debug for slang_solidity::ast::StateVariableDefinitionStruct
 pub fn slang_solidity::ast::StateVariableDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::StateVariableDefinitionValueStruct
-pub slang_solidity::ast::StateVariableDefinitionValueStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::StateVariableDefinitionValueStruct::node_id: usize
 pub slang_solidity::ast::StateVariableDefinitionValueStruct::value: slang_solidity::ast::Expression
 impl slang_solidity::ast::StateVariableDefinitionValueStruct
 pub fn slang_solidity::ast::StateVariableDefinitionValueStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::StateVariableDefinitionValueStruct
 pub fn slang_solidity::ast::StateVariableDefinitionValueStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::StructDefinitionStruct
-pub slang_solidity::ast::StructDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::StructDefinitionStruct::members: slang_solidity::ast::StructMembers
 pub slang_solidity::ast::StructDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::StructDefinitionStruct::node_id: usize
 impl slang_solidity::ast::StructDefinitionStruct
 pub fn slang_solidity::ast::StructDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::StructDefinitionStruct
 pub fn slang_solidity::ast::StructDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::StructMemberStruct
-pub slang_solidity::ast::StructMemberStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::StructMemberStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::StructMemberStruct::node_id: usize
 pub slang_solidity::ast::StructMemberStruct::type_name: slang_solidity::ast::TypeName
 impl slang_solidity::ast::StructMemberStruct
 pub fn slang_solidity::ast::StructMemberStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::StructMemberStruct
 pub fn slang_solidity::ast::StructMemberStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::ThrowStatementStruct
-pub slang_solidity::ast::ThrowStatementStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::ThrowStatementStruct::node_id: usize
 impl slang_solidity::ast::ThrowStatementStruct
 pub fn slang_solidity::ast::ThrowStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::ThrowStatementStruct
@@ -1866,53 +1909,53 @@ pub fn slang_solidity::ast::ThrowStatementStruct::fmt(&self, f: &mut core::fmt::
 pub struct slang_solidity::ast::TryStatementStruct
 pub slang_solidity::ast::TryStatementStruct::body: slang_solidity::ast::Block
 pub slang_solidity::ast::TryStatementStruct::catch_clauses: slang_solidity::ast::CatchClauses
-pub slang_solidity::ast::TryStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::TryStatementStruct::expression: slang_solidity::ast::Expression
+pub slang_solidity::ast::TryStatementStruct::node_id: usize
 pub slang_solidity::ast::TryStatementStruct::returns: core::option::Option<slang_solidity::ast::ReturnsDeclaration>
 impl slang_solidity::ast::TryStatementStruct
 pub fn slang_solidity::ast::TryStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::TryStatementStruct
 pub fn slang_solidity::ast::TryStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::TupleDeconstructionElementStruct
-pub slang_solidity::ast::TupleDeconstructionElementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::TupleDeconstructionElementStruct::member: core::option::Option<slang_solidity::ast::TupleMember>
+pub slang_solidity::ast::TupleDeconstructionElementStruct::node_id: usize
 impl slang_solidity::ast::TupleDeconstructionElementStruct
 pub fn slang_solidity::ast::TupleDeconstructionElementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::TupleDeconstructionElementStruct
 pub fn slang_solidity::ast::TupleDeconstructionElementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::TupleDeconstructionStatementStruct
-pub slang_solidity::ast::TupleDeconstructionStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::TupleDeconstructionStatementStruct::elements: slang_solidity::ast::TupleDeconstructionElements
 pub slang_solidity::ast::TupleDeconstructionStatementStruct::expression: slang_solidity::ast::Expression
+pub slang_solidity::ast::TupleDeconstructionStatementStruct::node_id: usize
 pub slang_solidity::ast::TupleDeconstructionStatementStruct::var_keyword: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 impl slang_solidity::ast::TupleDeconstructionStatementStruct
 pub fn slang_solidity::ast::TupleDeconstructionStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::TupleDeconstructionStatementStruct
 pub fn slang_solidity::ast::TupleDeconstructionStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::TupleExpressionStruct
-pub slang_solidity::ast::TupleExpressionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::TupleExpressionStruct::items: slang_solidity::ast::TupleValues
+pub slang_solidity::ast::TupleExpressionStruct::node_id: usize
 impl slang_solidity::ast::TupleExpressionStruct
 pub fn slang_solidity::ast::TupleExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::TupleExpressionStruct
 pub fn slang_solidity::ast::TupleExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::TupleValueStruct
-pub slang_solidity::ast::TupleValueStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::TupleValueStruct::expression: core::option::Option<slang_solidity::ast::Expression>
+pub slang_solidity::ast::TupleValueStruct::node_id: usize
 impl slang_solidity::ast::TupleValueStruct
 pub fn slang_solidity::ast::TupleValueStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::TupleValueStruct
 pub fn slang_solidity::ast::TupleValueStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::TypeExpressionStruct
-pub slang_solidity::ast::TypeExpressionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::TypeExpressionStruct::node_id: usize
 pub slang_solidity::ast::TypeExpressionStruct::type_name: slang_solidity::ast::TypeName
 impl slang_solidity::ast::TypeExpressionStruct
 pub fn slang_solidity::ast::TypeExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::TypeExpressionStruct
 pub fn slang_solidity::ast::TypeExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::TypedTupleMemberStruct
-pub slang_solidity::ast::TypedTupleMemberStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::TypedTupleMemberStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::TypedTupleMemberStruct::node_id: usize
 pub slang_solidity::ast::TypedTupleMemberStruct::storage_location: core::option::Option<slang_solidity::ast::StorageLocation>
 pub slang_solidity::ast::TypedTupleMemberStruct::type_name: slang_solidity::ast::TypeName
 impl slang_solidity::ast::TypedTupleMemberStruct
@@ -1921,7 +1964,7 @@ impl core::fmt::Debug for slang_solidity::ast::TypedTupleMemberStruct
 pub fn slang_solidity::ast::TypedTupleMemberStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::UncheckedBlockStruct
 pub slang_solidity::ast::UncheckedBlockStruct::block: slang_solidity::ast::Block
-pub slang_solidity::ast::UncheckedBlockStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::UncheckedBlockStruct::node_id: usize
 impl slang_solidity::ast::UncheckedBlockStruct
 pub fn slang_solidity::ast::UncheckedBlockStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UncheckedBlockStruct
@@ -1929,37 +1972,37 @@ pub fn slang_solidity::ast::UncheckedBlockStruct::fmt(&self, f: &mut core::fmt::
 pub struct slang_solidity::ast::UnnamedFunctionDefinitionStruct
 pub slang_solidity::ast::UnnamedFunctionDefinitionStruct::attributes: slang_solidity::ast::UnnamedFunctionAttributes
 pub slang_solidity::ast::UnnamedFunctionDefinitionStruct::body: slang_solidity::ast::FunctionBody
-pub slang_solidity::ast::UnnamedFunctionDefinitionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::UnnamedFunctionDefinitionStruct::node_id: usize
 pub slang_solidity::ast::UnnamedFunctionDefinitionStruct::parameters: slang_solidity::ast::ParametersDeclaration
 impl slang_solidity::ast::UnnamedFunctionDefinitionStruct
 pub fn slang_solidity::ast::UnnamedFunctionDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UnnamedFunctionDefinitionStruct
 pub fn slang_solidity::ast::UnnamedFunctionDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::UntypedTupleMemberStruct
-pub slang_solidity::ast::UntypedTupleMemberStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::UntypedTupleMemberStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::UntypedTupleMemberStruct::node_id: usize
 pub slang_solidity::ast::UntypedTupleMemberStruct::storage_location: core::option::Option<slang_solidity::ast::StorageLocation>
 impl slang_solidity::ast::UntypedTupleMemberStruct
 pub fn slang_solidity::ast::UntypedTupleMemberStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UntypedTupleMemberStruct
 pub fn slang_solidity::ast::UntypedTupleMemberStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::UserDefinedValueTypeDefinitionStruct
-pub slang_solidity::ast::UserDefinedValueTypeDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::UserDefinedValueTypeDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::UserDefinedValueTypeDefinitionStruct::node_id: usize
 pub slang_solidity::ast::UserDefinedValueTypeDefinitionStruct::value_type: slang_solidity::ast::ElementaryType
 impl slang_solidity::ast::UserDefinedValueTypeDefinitionStruct
 pub fn slang_solidity::ast::UserDefinedValueTypeDefinitionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UserDefinedValueTypeDefinitionStruct
 pub fn slang_solidity::ast::UserDefinedValueTypeDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::UsingAliasStruct
-pub slang_solidity::ast::UsingAliasStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::UsingAliasStruct::node_id: usize
 pub slang_solidity::ast::UsingAliasStruct::operator: slang_solidity::ast::UsingOperator
 impl slang_solidity::ast::UsingAliasStruct
 pub fn slang_solidity::ast::UsingAliasStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UsingAliasStruct
 pub fn slang_solidity::ast::UsingAliasStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::UsingDeconstructionStruct
-pub slang_solidity::ast::UsingDeconstructionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::UsingDeconstructionStruct::node_id: usize
 pub slang_solidity::ast::UsingDeconstructionStruct::symbols: slang_solidity::ast::UsingDeconstructionSymbols
 impl slang_solidity::ast::UsingDeconstructionStruct
 pub fn slang_solidity::ast::UsingDeconstructionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -1967,24 +2010,24 @@ impl core::fmt::Debug for slang_solidity::ast::UsingDeconstructionStruct
 pub fn slang_solidity::ast::UsingDeconstructionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::UsingDeconstructionSymbolStruct
 pub slang_solidity::ast::UsingDeconstructionSymbolStruct::alias: core::option::Option<slang_solidity::ast::UsingAlias>
-pub slang_solidity::ast::UsingDeconstructionSymbolStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::UsingDeconstructionSymbolStruct::name: slang_solidity::ast::IdentifierPath
+pub slang_solidity::ast::UsingDeconstructionSymbolStruct::node_id: usize
 impl slang_solidity::ast::UsingDeconstructionSymbolStruct
 pub fn slang_solidity::ast::UsingDeconstructionSymbolStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UsingDeconstructionSymbolStruct
 pub fn slang_solidity::ast::UsingDeconstructionSymbolStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::UsingDirectiveStruct
 pub slang_solidity::ast::UsingDirectiveStruct::clause: slang_solidity::ast::UsingClause
-pub slang_solidity::ast::UsingDirectiveStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::UsingDirectiveStruct::global_keyword: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
+pub slang_solidity::ast::UsingDirectiveStruct::node_id: usize
 pub slang_solidity::ast::UsingDirectiveStruct::target: slang_solidity::ast::UsingTarget
 impl slang_solidity::ast::UsingDirectiveStruct
 pub fn slang_solidity::ast::UsingDirectiveStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::UsingDirectiveStruct
 pub fn slang_solidity::ast::UsingDirectiveStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::VariableDeclarationStatementStruct
-pub slang_solidity::ast::VariableDeclarationStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::VariableDeclarationStatementStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::VariableDeclarationStatementStruct::node_id: usize
 pub slang_solidity::ast::VariableDeclarationStatementStruct::storage_location: core::option::Option<slang_solidity::ast::StorageLocation>
 pub slang_solidity::ast::VariableDeclarationStatementStruct::value: core::option::Option<slang_solidity::ast::VariableDeclarationValue>
 pub slang_solidity::ast::VariableDeclarationStatementStruct::variable_type: slang_solidity::ast::VariableDeclarationType
@@ -1993,30 +2036,30 @@ pub fn slang_solidity::ast::VariableDeclarationStatementStruct::accept(self: &al
 impl core::fmt::Debug for slang_solidity::ast::VariableDeclarationStatementStruct
 pub fn slang_solidity::ast::VariableDeclarationStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::VariableDeclarationValueStruct
-pub slang_solidity::ast::VariableDeclarationValueStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::VariableDeclarationValueStruct::expression: slang_solidity::ast::Expression
+pub slang_solidity::ast::VariableDeclarationValueStruct::node_id: usize
 impl slang_solidity::ast::VariableDeclarationValueStruct
 pub fn slang_solidity::ast::VariableDeclarationValueStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::VariableDeclarationValueStruct
 pub fn slang_solidity::ast::VariableDeclarationValueStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::VersionPragmaStruct
-pub slang_solidity::ast::VersionPragmaStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::VersionPragmaStruct::node_id: usize
 pub slang_solidity::ast::VersionPragmaStruct::sets: slang_solidity::ast::VersionExpressionSets
 impl slang_solidity::ast::VersionPragmaStruct
 pub fn slang_solidity::ast::VersionPragmaStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::VersionPragmaStruct
 pub fn slang_solidity::ast::VersionPragmaStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::VersionRangeStruct
-pub slang_solidity::ast::VersionRangeStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::VersionRangeStruct::end: slang_solidity::ast::VersionLiteral
+pub slang_solidity::ast::VersionRangeStruct::node_id: usize
 pub slang_solidity::ast::VersionRangeStruct::start: slang_solidity::ast::VersionLiteral
 impl slang_solidity::ast::VersionRangeStruct
 pub fn slang_solidity::ast::VersionRangeStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::VersionRangeStruct
 pub fn slang_solidity::ast::VersionRangeStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::VersionTermStruct
-pub slang_solidity::ast::VersionTermStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::VersionTermStruct::literal: slang_solidity::ast::VersionLiteral
+pub slang_solidity::ast::VersionTermStruct::node_id: usize
 pub slang_solidity::ast::VersionTermStruct::operator: core::option::Option<slang_solidity::ast::VersionOperator>
 impl slang_solidity::ast::VersionTermStruct
 pub fn slang_solidity::ast::VersionTermStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -2025,45 +2068,45 @@ pub fn slang_solidity::ast::VersionTermStruct::fmt(&self, f: &mut core::fmt::For
 pub struct slang_solidity::ast::WhileStatementStruct
 pub slang_solidity::ast::WhileStatementStruct::body: slang_solidity::ast::Statement
 pub slang_solidity::ast::WhileStatementStruct::condition: slang_solidity::ast::Expression
-pub slang_solidity::ast::WhileStatementStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::WhileStatementStruct::node_id: usize
 impl slang_solidity::ast::WhileStatementStruct
 pub fn slang_solidity::ast::WhileStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::WhileStatementStruct
 pub fn slang_solidity::ast::WhileStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulBlockStruct
-pub slang_solidity::ast::YulBlockStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulBlockStruct::node_id: usize
 pub slang_solidity::ast::YulBlockStruct::statements: slang_solidity::ast::YulStatements
 impl slang_solidity::ast::YulBlockStruct
 pub fn slang_solidity::ast::YulBlockStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulBlockStruct
 pub fn slang_solidity::ast::YulBlockStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulBreakStatementStruct
-pub slang_solidity::ast::YulBreakStatementStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulBreakStatementStruct::node_id: usize
 impl slang_solidity::ast::YulBreakStatementStruct
 pub fn slang_solidity::ast::YulBreakStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulBreakStatementStruct
 pub fn slang_solidity::ast::YulBreakStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulColonAndEqualStruct
-pub slang_solidity::ast::YulColonAndEqualStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulColonAndEqualStruct::node_id: usize
 impl slang_solidity::ast::YulColonAndEqualStruct
 pub fn slang_solidity::ast::YulColonAndEqualStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulColonAndEqualStruct
 pub fn slang_solidity::ast::YulColonAndEqualStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulContinueStatementStruct
-pub slang_solidity::ast::YulContinueStatementStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulContinueStatementStruct::node_id: usize
 impl slang_solidity::ast::YulContinueStatementStruct
 pub fn slang_solidity::ast::YulContinueStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulContinueStatementStruct
 pub fn slang_solidity::ast::YulContinueStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulDefaultCaseStruct
 pub slang_solidity::ast::YulDefaultCaseStruct::body: slang_solidity::ast::YulBlock
-pub slang_solidity::ast::YulDefaultCaseStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulDefaultCaseStruct::node_id: usize
 impl slang_solidity::ast::YulDefaultCaseStruct
 pub fn slang_solidity::ast::YulDefaultCaseStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulDefaultCaseStruct
 pub fn slang_solidity::ast::YulDefaultCaseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulEqualAndColonStruct
-pub slang_solidity::ast::YulEqualAndColonStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulEqualAndColonStruct::node_id: usize
 impl slang_solidity::ast::YulEqualAndColonStruct
 pub fn slang_solidity::ast::YulEqualAndColonStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulEqualAndColonStruct
@@ -2071,16 +2114,16 @@ pub fn slang_solidity::ast::YulEqualAndColonStruct::fmt(&self, f: &mut core::fmt
 pub struct slang_solidity::ast::YulForStatementStruct
 pub slang_solidity::ast::YulForStatementStruct::body: slang_solidity::ast::YulBlock
 pub slang_solidity::ast::YulForStatementStruct::condition: slang_solidity::ast::YulExpression
-pub slang_solidity::ast::YulForStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::YulForStatementStruct::initialization: slang_solidity::ast::YulBlock
 pub slang_solidity::ast::YulForStatementStruct::iterator: slang_solidity::ast::YulBlock
+pub slang_solidity::ast::YulForStatementStruct::node_id: usize
 impl slang_solidity::ast::YulForStatementStruct
 pub fn slang_solidity::ast::YulForStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulForStatementStruct
 pub fn slang_solidity::ast::YulForStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulFunctionCallExpressionStruct
 pub slang_solidity::ast::YulFunctionCallExpressionStruct::arguments: slang_solidity::ast::YulArguments
-pub slang_solidity::ast::YulFunctionCallExpressionStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulFunctionCallExpressionStruct::node_id: usize
 pub slang_solidity::ast::YulFunctionCallExpressionStruct::operand: slang_solidity::ast::YulExpression
 impl slang_solidity::ast::YulFunctionCallExpressionStruct
 pub fn slang_solidity::ast::YulFunctionCallExpressionStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -2088,8 +2131,8 @@ impl core::fmt::Debug for slang_solidity::ast::YulFunctionCallExpressionStruct
 pub fn slang_solidity::ast::YulFunctionCallExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulFunctionDefinitionStruct
 pub slang_solidity::ast::YulFunctionDefinitionStruct::body: slang_solidity::ast::YulBlock
-pub slang_solidity::ast::YulFunctionDefinitionStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::YulFunctionDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::YulFunctionDefinitionStruct::node_id: usize
 pub slang_solidity::ast::YulFunctionDefinitionStruct::parameters: slang_solidity::ast::YulParametersDeclaration
 pub slang_solidity::ast::YulFunctionDefinitionStruct::returns: core::option::Option<slang_solidity::ast::YulReturnsDeclaration>
 impl slang_solidity::ast::YulFunctionDefinitionStruct
@@ -2099,33 +2142,33 @@ pub fn slang_solidity::ast::YulFunctionDefinitionStruct::fmt(&self, f: &mut core
 pub struct slang_solidity::ast::YulIfStatementStruct
 pub slang_solidity::ast::YulIfStatementStruct::body: slang_solidity::ast::YulBlock
 pub slang_solidity::ast::YulIfStatementStruct::condition: slang_solidity::ast::YulExpression
-pub slang_solidity::ast::YulIfStatementStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulIfStatementStruct::node_id: usize
 impl slang_solidity::ast::YulIfStatementStruct
 pub fn slang_solidity::ast::YulIfStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulIfStatementStruct
 pub fn slang_solidity::ast::YulIfStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulLabelStruct
-pub slang_solidity::ast::YulLabelStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::YulLabelStruct::label: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::ast::YulLabelStruct::node_id: usize
 impl slang_solidity::ast::YulLabelStruct
 pub fn slang_solidity::ast::YulLabelStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulLabelStruct
 pub fn slang_solidity::ast::YulLabelStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulLeaveStatementStruct
-pub slang_solidity::ast::YulLeaveStatementStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulLeaveStatementStruct::node_id: usize
 impl slang_solidity::ast::YulLeaveStatementStruct
 pub fn slang_solidity::ast::YulLeaveStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulLeaveStatementStruct
 pub fn slang_solidity::ast::YulLeaveStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulParametersDeclarationStruct
-pub slang_solidity::ast::YulParametersDeclarationStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulParametersDeclarationStruct::node_id: usize
 pub slang_solidity::ast::YulParametersDeclarationStruct::parameters: slang_solidity::ast::YulParameters
 impl slang_solidity::ast::YulParametersDeclarationStruct
 pub fn slang_solidity::ast::YulParametersDeclarationStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulParametersDeclarationStruct
 pub fn slang_solidity::ast::YulParametersDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulReturnsDeclarationStruct
-pub slang_solidity::ast::YulReturnsDeclarationStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulReturnsDeclarationStruct::node_id: usize
 pub slang_solidity::ast::YulReturnsDeclarationStruct::variables: slang_solidity::ast::YulVariableNames
 impl slang_solidity::ast::YulReturnsDeclarationStruct
 pub fn slang_solidity::ast::YulReturnsDeclarationStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -2133,7 +2176,7 @@ impl core::fmt::Debug for slang_solidity::ast::YulReturnsDeclarationStruct
 pub fn slang_solidity::ast::YulReturnsDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulStackAssignmentStatementStruct
 pub slang_solidity::ast::YulStackAssignmentStatementStruct::assignment: slang_solidity::ast::YulStackAssignmentOperator
-pub slang_solidity::ast::YulStackAssignmentStatementStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulStackAssignmentStatementStruct::node_id: usize
 pub slang_solidity::ast::YulStackAssignmentStatementStruct::variable: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 impl slang_solidity::ast::YulStackAssignmentStatementStruct
 pub fn slang_solidity::ast::YulStackAssignmentStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -2141,15 +2184,15 @@ impl core::fmt::Debug for slang_solidity::ast::YulStackAssignmentStatementStruct
 pub fn slang_solidity::ast::YulStackAssignmentStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulSwitchStatementStruct
 pub slang_solidity::ast::YulSwitchStatementStruct::cases: slang_solidity::ast::YulSwitchCases
-pub slang_solidity::ast::YulSwitchStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::YulSwitchStatementStruct::expression: slang_solidity::ast::YulExpression
+pub slang_solidity::ast::YulSwitchStatementStruct::node_id: usize
 impl slang_solidity::ast::YulSwitchStatementStruct
 pub fn slang_solidity::ast::YulSwitchStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulSwitchStatementStruct
 pub fn slang_solidity::ast::YulSwitchStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulValueCaseStruct
 pub slang_solidity::ast::YulValueCaseStruct::body: slang_solidity::ast::YulBlock
-pub slang_solidity::ast::YulValueCaseStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulValueCaseStruct::node_id: usize
 pub slang_solidity::ast::YulValueCaseStruct::value: slang_solidity::ast::YulLiteral
 impl slang_solidity::ast::YulValueCaseStruct
 pub fn slang_solidity::ast::YulValueCaseStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
@@ -2157,15 +2200,15 @@ impl core::fmt::Debug for slang_solidity::ast::YulValueCaseStruct
 pub fn slang_solidity::ast::YulValueCaseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulVariableAssignmentStatementStruct
 pub slang_solidity::ast::YulVariableAssignmentStatementStruct::assignment: slang_solidity::ast::YulAssignmentOperator
-pub slang_solidity::ast::YulVariableAssignmentStatementStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::YulVariableAssignmentStatementStruct::expression: slang_solidity::ast::YulExpression
+pub slang_solidity::ast::YulVariableAssignmentStatementStruct::node_id: usize
 pub slang_solidity::ast::YulVariableAssignmentStatementStruct::variables: slang_solidity::ast::YulPaths
 impl slang_solidity::ast::YulVariableAssignmentStatementStruct
 pub fn slang_solidity::ast::YulVariableAssignmentStatementStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulVariableAssignmentStatementStruct
 pub fn slang_solidity::ast::YulVariableAssignmentStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulVariableDeclarationStatementStruct
-pub slang_solidity::ast::YulVariableDeclarationStatementStruct::cursor: slang_solidity::cst::Cursor
+pub slang_solidity::ast::YulVariableDeclarationStatementStruct::node_id: usize
 pub slang_solidity::ast::YulVariableDeclarationStatementStruct::value: core::option::Option<slang_solidity::ast::YulVariableDeclarationValue>
 pub slang_solidity::ast::YulVariableDeclarationStatementStruct::variables: slang_solidity::ast::YulVariableNames
 impl slang_solidity::ast::YulVariableDeclarationStatementStruct
@@ -2174,8 +2217,8 @@ impl core::fmt::Debug for slang_solidity::ast::YulVariableDeclarationStatementSt
 pub fn slang_solidity::ast::YulVariableDeclarationStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::ast::YulVariableDeclarationValueStruct
 pub slang_solidity::ast::YulVariableDeclarationValueStruct::assignment: slang_solidity::ast::YulAssignmentOperator
-pub slang_solidity::ast::YulVariableDeclarationValueStruct::cursor: slang_solidity::cst::Cursor
 pub slang_solidity::ast::YulVariableDeclarationValueStruct::expression: slang_solidity::ast::YulExpression
+pub slang_solidity::ast::YulVariableDeclarationValueStruct::node_id: usize
 impl slang_solidity::ast::YulVariableDeclarationValueStruct
 pub fn slang_solidity::ast::YulVariableDeclarationValueStruct::accept(self: &alloc::rc::Rc<Self>, visitor: &mut dyn slang_solidity::ast::visitor::Visitor)
 impl core::fmt::Debug for slang_solidity::ast::YulVariableDeclarationValueStruct
