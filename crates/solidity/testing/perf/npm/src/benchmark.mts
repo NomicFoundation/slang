@@ -14,7 +14,7 @@ async function run(name: string, solidityVersion: string, dir: string, file: str
     }),
     bench.configure({
       cases: {
-        maxTime: 30,
+        maxTime: 2,
         minSamples: 2
       }
     }),
@@ -37,15 +37,28 @@ results.push(await run("AAVE", "0.8.10", "aave-v3-core-master", "contracts/proto
 results.push(await run("GraphToken", "0.7.6", "graph_protocol/contracts", "token/GraphToken.sol", 41, 97));
 results.push(await run("lidofinance", "0.8.9", "lidofinance/contracts/0.8.9", "WithdrawalQueueERC721.sol", 142, 325));
 
-function round(n: number): number {
-  return mathjs.round(n, 2);
+function round(n: number): string {
+  return mathjs.round(n, 2).toString();
 }
 
-const resultLine = results.map((s: Summary) => {
+const titleLine = ["name, slang.samples, slang.mean, slang.stddev, solc.mean, solc.stddev, ratio"];
+
+const resultsLine = results.map((s: Summary) => {
   const slang = s.results[0];
   const solc = s.results[1];
 
-  return [s.name, round(slang.details.mean), round(slang.details.standardDeviation), round(solc.details.mean), round(solc.details.standardDeviation), round(slang.details.mean / solc.details.mean)];
+  if (!slang.completed) {
+    console.log(`${slang.name} couldn't finish!`);
+  }
+  const line = [s.name,
+  slang.samples.toString(),
+  round(slang.details.mean),
+  round(slang.details.standardDeviation),
+  round(solc.details.mean),
+  round(solc.details.standardDeviation),
+  round(slang.details.mean / solc.details.mean)
+  ];
+  return line.join(", ");
 });
 
-console.log(resultLine.join("\n"));
+console.log(titleLine.concat(resultsLine).join("\n"));

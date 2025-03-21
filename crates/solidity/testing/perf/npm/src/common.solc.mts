@@ -43,7 +43,7 @@ export function testFileSolC(languageVersion: string, dir: string, file: string)
     }
     `;
   const parsing_result = JSON.parse(solc.default.compile(folderMeta, { import: findImports(dir) }));
-  //console.log(`Processing ${folder[0]} with solc takes ${round(performance.now() - start)}ms`);
+
   assert(parsing_result["sources"] != undefined);
   if (parsing_result["errors"] && !parsing_result["errors"].every((value: any) => value["type"] == "Warning")) {
     console.log(parsing_result["errors"]);
