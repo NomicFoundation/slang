@@ -1,5 +1,5 @@
 {%- if rendering_in_stubs -%}
-  // No AST nodes in stubs...
+  // No Intermediate Representation nodes in stubs...
 {%- else -%}
   use std::rc::Rc;
   use std::vec::Vec;
@@ -9,7 +9,7 @@
   // Sequences:
   //
 
-  {% for parent_type, sequence in model.ast.sequences %}
+  {% for parent_type, sequence in target.sequences %}
     /**
      * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
      *
@@ -27,7 +27,7 @@
       {%- for field in sequence.fields %}
         {%- if field.is_optional
                or not field.is_terminal
-               or not model.ast.unique_terminals is containing(field.type) -%}
+               or not target.unique_terminals is containing(field.type) -%}
           pub {{ field.label | snake_case }}:
           {%- if field.is_terminal -%}
             {%- if field.is_optional -%}
@@ -52,7 +52,7 @@
   // Choices:
   //
 
-  {% for parent_type, choice in model.ast.choices %}
+  {% for parent_type, choice in target.choices %}
     /**
      * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
      *
@@ -69,7 +69,7 @@
       {%- endfor %}
       {% for terminal in choice.terminal_types -%}
         {{ terminal }}
-        {%- if not model.ast.unique_terminals is containing(terminal) -%}
+        {%- if not target.unique_terminals is containing(terminal) -%}
           (Rc<TerminalNode>)
         {%- endif -%}
         ,
@@ -81,7 +81,7 @@
   // Repeated:
   //
 
-  {% for parent_type, repeated in model.ast.repeated %}
+  {% for parent_type, repeated in target.repeated %}
     /**
      * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
      *
@@ -104,7 +104,7 @@
   // Separated:
   //
 
-  {% for parent_type, separated in model.ast.separated %}
+  {% for parent_type, separated in target.separated %}
     /**
      * This node represents a `{{ parent_type }}` nonterminal, with the following structure:
      *

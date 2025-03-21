@@ -14,7 +14,7 @@ use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 use semver::Version;
 use serde::Serialize;
 
-use crate::ast::AstModel;
+pub use crate::ast::AstModel;
 use crate::bindings::BindingsModel;
 use crate::kinds::KindsModel;
 use crate::parser::ParserModel;

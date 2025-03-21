@@ -1,5 +1,5 @@
 {%- if rendering_in_stubs -%}
-  // No AST mutator in stubs...
+  // No Intermediate Representation mutator in stubs...
 {%- else -%}
   #![allow(clippy::too_many_lines)]
 
@@ -11,7 +11,7 @@
     //
     // Sequences:
     //
-    {% for parent_type, sequence in model.ast.sequences %}
+    {% for parent_type, sequence in target.sequences %}
       fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         {% for field in sequence.fields %}
           {%- if field.is_optional -%}
@@ -22,7 +22,7 @@
                 |value| self.mutate_{{ field.type | snake_case }}(value)
               {%- endif -%}
             );
-          {%- elif not field.is_terminal or not model.ast.unique_terminals is containing(field.type) -%}
+          {%- elif not field.is_terminal or not target.unique_terminals is containing(field.type) -%}
             let {{ field.label }} =
             {%- if field.is_terminal -%}
               Rc::clone(&source.{{ field.label }})
@@ -38,7 +38,7 @@
           {%- for field in sequence.fields -%}
             {%- if field.is_optional
                    or not field.is_terminal
-                   or not model.ast.unique_terminals is containing(field.type) -%}
+                   or not target.unique_terminals is containing(field.type) -%}
               {{ field.label }},
             {%- endif -%}
           {%- endfor %}
@@ -49,7 +49,7 @@
     //
     // Choices:
     //
-    {% for parent_type, choice in model.ast.choices %}
+    {% for parent_type, choice in target.choices %}
       fn default_mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         match source {
           {% for nonterminal in choice.nonterminal_types -%}
@@ -58,7 +58,7 @@
             }
           {%- endfor %}
           {%- for terminal in choice.terminal_types -%}
-            {%- if model.ast.unique_terminals is containing(terminal) -%}
+            {%- if target.unique_terminals is containing(terminal) -%}
               {{ parent_type }}::{{ terminal }} => {{ parent_type }}::{{ terminal }},
             {%- else -%}
               {{ parent_type }}::{{ terminal }}(node) => {{ parent_type }}::{{ terminal }}(Rc::clone(node)),
@@ -74,7 +74,7 @@
     //
     // Repeated:
     //
-    {% for parent_type, repeated in model.ast.repeated %}
+    {% for parent_type, repeated in target.repeated %}
       fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         source.iter().map(
           {%- if repeated.is_terminal -%}
@@ -89,7 +89,7 @@
     //
     // Separated:
     //
-    {% for parent_type, separated in model.ast.separated %}
+    {% for parent_type, separated in target.separated %}
       fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         source.iter().map(
           {%- if separated.is_terminal -%}

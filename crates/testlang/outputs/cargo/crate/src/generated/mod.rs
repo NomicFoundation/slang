@@ -1,6 +1,5 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-pub mod ast;
 #[cfg(feature = "__experimental_bindings_api")]
 pub mod bindings;
 #[cfg(all(

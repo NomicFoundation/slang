@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Result};
-use slang_solidity::ast;
+use slang_solidity::backend::ast;
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
 

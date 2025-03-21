@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
-use slang_solidity::ast;
-use slang_solidity::ast::visitor::Visitor;
+use slang_solidity::backend::ast;
+use slang_solidity::backend::ast::visitor::Visitor;
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
 

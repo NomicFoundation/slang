@@ -1,8 +1,8 @@
 use std::rc::Rc;
 
 use anyhow::{anyhow, Result};
-use slang_solidity::ast;
-use slang_solidity::ast::mutator::Mutator;
+use slang_solidity::backend::ast;
+use slang_solidity::backend::ast::mutator::Mutator;
 use slang_solidity::cst::{TerminalKind, TerminalNode};
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;

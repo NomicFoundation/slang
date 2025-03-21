@@ -1,5 +1,5 @@
 {%- if rendering_in_stubs -%}
-  // No AST building functions in stubs...
+  // No Intermediate Representation building functions in stubs...
 {%- else -%}
   #![allow(clippy::too_many_lines)]
 
@@ -12,7 +12,7 @@
   // Sequences:
   //
 
-  {% for parent_type, sequence in model.ast.sequences %}
+  {% for parent_type, sequence in target.sequences %}
     pub fn build_{{ parent_type | snake_case }}(cursor: Cursor) -> Result<{{ parent_type }}>
     {
       expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
@@ -36,7 +36,7 @@
 
         {%- else -%}
           {%- if not field.is_terminal
-                 or not model.ast.unique_terminals is containing(field.type) -%}
+                 or not target.unique_terminals is containing(field.type) -%}
             let {{ field.label }} =
           {%- else -%}
             _ =
@@ -57,7 +57,7 @@
         {%- for field in sequence.fields -%}
           {%- if field.is_optional
                  or not field.is_terminal
-                 or not model.ast.unique_terminals is containing(field.type) -%}
+                 or not target.unique_terminals is containing(field.type) -%}
             {{ field.label }},
           {%- endif -%}
         {%- endfor %}
@@ -70,7 +70,7 @@
   // Choices:
   //
 
-  {% for parent_type, choice in model.ast.choices %}
+  {% for parent_type, choice in target.choices %}
     pub fn build_{{ parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ parent_type }}> {
       expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
       if !cursor.go_to_first_child() {
@@ -85,14 +85,14 @@
 
         {% for type in choice.terminal_types -%}
           NodeKind::Terminal(TerminalKind::{{ type }}) => {
-            {%- if not model.ast.unique_terminals is containing(type) -%}
+            {%- if not target.unique_terminals is containing(type) -%}
               let node =
             {%- else -%}
               _ =
             {%- endif -%}
             fetch_terminal_node(&cursor)?;
             {{ parent_type }}::{{ type | pascal_case }}
-            {%- if not model.ast.unique_terminals is containing(type) -%}
+            {%- if not target.unique_terminals is containing(type) -%}
               (node)
             {%- endif -%}
           },
@@ -111,7 +111,7 @@
   // Repeated:
   //
 
-  {% for parent_type, repeated in model.ast.repeated %}
+  {% for parent_type, repeated in target.repeated %}
     pub fn build_{{ parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ parent_type }}> {
       expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
       let mut items = {{ parent_type }}::new();
@@ -141,7 +141,7 @@
   // Separated:
   //
 
-  {% for parent_type, separated in model.ast.separated %}
+  {% for parent_type, separated in target.separated %}
     pub fn build_{{ parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ parent_type }}> {
       expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
       let mut items = {{ parent_type }}::new();
