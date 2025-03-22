@@ -105,6 +105,11 @@ fn qualified_parent_call() -> Result<()> {
 }
 
 #[test]
+fn storage_layout_constant() -> Result<()> {
+    run("contracts", "storage_layout_constant")
+}
+
+#[test]
 fn super_deep() -> Result<()> {
     run("contracts", "super_deep")
 }

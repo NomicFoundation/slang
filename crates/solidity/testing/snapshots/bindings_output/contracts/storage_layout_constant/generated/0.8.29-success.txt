@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ uint256 constant C1 = 0;
+   │                  ─┬  
+   │                   ╰── name: 1
+   │ 
+ 3 │ contract X1 layout at C1 {
+   │          ─┬           ─┬  
+   │           ╰─────────────── name: 2
+   │                        │  
+   │                        ╰── ref: 1
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ │   uint256 constant C1 = 0;
+   │ │   ────────────┬────────────  
+   │ │               ╰────────────── definiens: 1
+ 2 │ ╭─▶ 
+   ┆ ┆   
+ 4 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 2
+───╯

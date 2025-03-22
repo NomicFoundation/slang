@@ -109,6 +109,59 @@ impl ParserResult {
             ControlFlow::Break(value) => value,
         }
     }
+
+    /// Whether this prefix-matched at least `n` (non-skipped) significant terminals.
+    pub fn matches_at_least_n_terminals(&self, n: u8) -> bool {
+        if n == 0 {
+            return true;
+        }
+
+        match self {
+            ParserResult::Match(Match { nodes, .. })
+            | ParserResult::IncompleteMatch(IncompleteMatch { nodes, .. })
+            | ParserResult::SkippedUntil(SkippedUntil { nodes, .. }) => {
+                matches_at_least_n_terminals(nodes.iter(), n)
+            }
+            ParserResult::PrattOperatorMatch(m) => {
+                let nodes = m.elements.iter().flat_map(|elem| elem.nodes());
+                matches_at_least_n_terminals(nodes, n)
+            }
+            ParserResult::NoMatch(_) => false,
+        }
+    }
+}
+
+fn matches_at_least_n_terminals<'a>(nodes: impl Iterator<Item = &'a Edge>, n: u8) -> bool {
+    if n == 0 {
+        return true;
+    }
+
+    let result = nodes
+        .flat_map(|edge| {
+            edge.node
+                .clone()
+                .create_cursor(TextIndex::ZERO)
+                .remaining_nodes()
+        })
+        .try_fold(0u8, |mut acc, edge| {
+            match edge.node {
+                Node::Terminal(tok) if tok.kind.is_valid() && !tok.kind.is_trivia() => {
+                    acc += 1;
+                }
+                _ => {}
+            }
+
+            // Short-circuit not to walk the whole tree if we've already matched enough
+            if acc >= n {
+                ControlFlow::Break(acc)
+            } else {
+                ControlFlow::Continue(acc)
+            }
+        });
+
+    match result {
+        ControlFlow::Continue(value) | ControlFlow::Break(value) => value >= n,
+    }
 }
 
 #[derive(PartialEq, Eq, Clone, Debug)]
@@ -167,6 +220,15 @@ pub enum PrattElement {
 }
 
 impl PrattElement {
+    pub fn nodes(&self) -> &Vec<Edge> {
+        match self {
+            Self::Expression { nodes }
+            | Self::Prefix { nodes, .. }
+            | Self::Binary { nodes, .. }
+            | Self::Postfix { nodes, .. } => nodes,
+        }
+    }
+
     pub fn into_nodes(self) -> Vec<Edge> {
         self.into_nodes_with_label(EdgeLabel::Root)
     }
@@ -209,38 +271,6 @@ impl IncompleteMatch {
         Self {
             nodes,
             expected_terminals,
-        }
-    }
-
-    /// Whether this prefix-matched at least `n` (non-skipped) significant terminals.
-    pub fn matches_at_least_n_terminals(&self, n: u8) -> bool {
-        let result = self
-            .nodes
-            .iter()
-            .flat_map(|edge| {
-                edge.node
-                    .clone()
-                    .create_cursor(TextIndex::ZERO)
-                    .remaining_nodes()
-            })
-            .try_fold(0u8, |mut acc, edge| {
-                match edge.node {
-                    Node::Terminal(tok) if tok.kind.is_valid() && !tok.kind.is_trivia() => {
-                        acc += 1;
-                    }
-                    _ => {}
-                }
-
-                // Short-circuit not to walk the whole tree if we've already matched enough
-                if acc >= n {
-                    ControlFlow::Break(acc)
-                } else {
-                    ControlFlow::Continue(acc)
-                }
-            });
-
-        match result {
-            ControlFlow::Continue(value) | ControlFlow::Break(value) => value >= n,
         }
     }
 }

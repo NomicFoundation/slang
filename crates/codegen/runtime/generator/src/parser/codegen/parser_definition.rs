@@ -209,13 +209,20 @@ impl ParserDefinitionNodeCodegen for ParserDefinitionNode {
                 let parser = body.to_parser_code(context_name, is_trivia);
                 let body_parser = body.version_specifier().to_conditional_code(
                     quote! {
-                        seq.elem(#parser
-                            .recover_until_with_nested_delims::<_, #lex_ctx>(input,
-                                self,
-                                TerminalKind::#close_delim,
-                                TerminalAcceptanceThreshold(#threshold),
-                            )
-                        )?;
+                        match #parser {
+                            // Make sure it matches the required threshold before attempting recovery:
+                            result if result.matches_at_least_n_terminals(#threshold) => {
+                                seq.elem(result.recover_until_with_nested_delims::<_, #lex_ctx>(
+                                    input,
+                                    self,
+                                    TerminalKind::#close_delim,
+                                ))?;
+                            },
+                            // Otherwise, reject the entire sequence, including the open delimiter:
+                            _ => {
+                                return std::ops::ControlFlow::Break(ParserResult::disabled());
+                            },
+                        }
                     },
                     None,
                 );
@@ -274,15 +281,20 @@ impl ParserDefinitionNodeCodegen for ParserDefinitionNode {
                 let parser = body.to_parser_code(context_name, is_trivia);
                 let body_parser = body.version_specifier().to_conditional_code(
                     quote! {
-                        seq.elem(
-                            #parser
-                            .recover_until_with_nested_delims::<_, #lex_ctx>(input,
-                                self,
-                                TerminalKind::#terminator,
-                                 // Requires at least a partial match not to risk misparsing
-                                TerminalAcceptanceThreshold(1u8),
-                            )
-                        )?;
+                        match #parser {
+                            // Require at least one terminal before attempting recovery:
+                            result if result.matches_at_least_n_terminals(1u8) => {
+                                seq.elem(result.recover_until_with_nested_delims::<_, #lex_ctx>(
+                                    input,
+                                    self,
+                                    TerminalKind::#terminator,
+                                ))?;
+                            },
+                            // Otherwise, append the result as-is:
+                            result => {
+                                seq.elem(result)?;
+                            },
+                        }
                     },
                     None,
                 );

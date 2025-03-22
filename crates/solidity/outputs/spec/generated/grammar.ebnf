@@ -207,6 +207,10 @@ AS_KEYWORD = "as";
 
 ASSEMBLY_KEYWORD = "assembly";
 
+(* Introduced in 0.8.29 *)
+(* Never reserved *)
+AT_KEYWORD = "at";
+
 (* Reserved in 0.5.0 *)
 AUTO_KEYWORD = "auto";
 
@@ -336,6 +340,10 @@ INTERNAL_KEYWORD = "internal";
 INT_KEYWORD = "int" ("8" | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256")?;
 
 IS_KEYWORD = "is";
+
+(* Introduced in 0.8.29 *)
+(* Never reserved *)
+LAYOUT_KEYWORD = "layout";
 
 LET_KEYWORD = "let";
 
@@ -604,10 +612,15 @@ TILDE = "~";
 ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
                      (* contract_keyword: *) CONTRACT_KEYWORD
                      (* name: *) IDENTIFIER
-                     (* inheritance: *) InheritanceSpecifier?
+                     (* specifiers: *) ContractSpecifiers
                      (* open_brace: *) OPEN_BRACE
                      (* members: *) ContractMembers
                      (* close_brace: *) CLOSE_BRACE;
+
+ContractSpecifiers = (* item: *) ContractSpecifier*;
+
+ContractSpecifier = (* variant: *) InheritanceSpecifier
+                  | (* variant: *) StorageLayoutSpecifier; (* Introduced in 0.8.29 *)
 
 InheritanceSpecifier = (* is_keyword: *) IS_KEYWORD
                        (* types: *) InheritanceTypes;
@@ -616,6 +629,11 @@ InheritanceTypes = (* item: *) InheritanceType ((* separator: *) COMMA (* item: 
 
 InheritanceType = (* type_name: *) IdentifierPath
                   (* arguments: *) ArgumentsDeclaration?;
+
+(* Introduced in 0.8.29 *)
+StorageLayoutSpecifier = (* layout_keyword: *) LAYOUT_KEYWORD
+                         (* at_keyword: *) AT_KEYWORD
+                         (* expression: *) Expression;
 
 ContractMembers = (* item: *) ContractMember*;
 

@@ -26,7 +26,7 @@ codegen_language_macros::compile!(Language(
         "0.6.12", "0.7.0", "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6", "0.8.0", "0.8.1",
         "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8", "0.8.9", "0.8.10", "0.8.11",
         "0.8.12", "0.8.13", "0.8.14", "0.8.15", "0.8.16", "0.8.17", "0.8.18", "0.8.19", "0.8.20",
-        "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26", "0.8.27", "0.8.28"
+        "0.8.21", "0.8.22", "0.8.23", "0.8.24", "0.8.25", "0.8.26", "0.8.27", "0.8.28", "0.8.29"
     ],
     sections = [
         Section(
@@ -521,6 +521,15 @@ codegen_language_macros::compile!(Language(
                             name = AssemblyKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(value = Atom("assembly"))]
+                        ),
+                        Keyword(
+                            name = AtKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.8.29"),
+                                reserved = Never,
+                                value = Atom("at")
+                            )]
                         ),
                         Keyword(
                             name = AutoKeyword,
@@ -1172,6 +1181,15 @@ codegen_language_macros::compile!(Language(
                             name = IsKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(value = Atom("is"))]
+                        ),
+                        Keyword(
+                            name = LayoutKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.8.29"),
+                                reserved = Never,
+                                value = Atom("layout")
+                            )]
                         ),
                         Keyword(
                             name = LetKeyword,
@@ -2100,11 +2118,26 @@ codegen_language_macros::compile!(Language(
                                     Optional(reference = AbstractKeyword, enabled = From("0.6.0")),
                                 contract_keyword = Required(ContractKeyword),
                                 name = Required(Identifier),
-                                inheritance = Optional(reference = InheritanceSpecifier),
+                                specifiers = Required(ContractSpecifiers),
                                 open_brace = Required(OpenBrace),
                                 members = Required(ContractMembers),
                                 close_brace = Required(CloseBrace)
                             )
+                        ),
+                        Repeated(
+                            name = ContractSpecifiers,
+                            reference = ContractSpecifier,
+                            allow_empty = true
+                        ),
+                        Enum(
+                            name = ContractSpecifier,
+                            variants = [
+                                EnumVariant(reference = InheritanceSpecifier),
+                                EnumVariant(
+                                    reference = StorageLayoutSpecifier,
+                                    enabled = From("0.8.29")
+                                )
+                            ]
                         ),
                         Struct(
                             name = InheritanceSpecifier,
@@ -2123,6 +2156,15 @@ codegen_language_macros::compile!(Language(
                             fields = (
                                 type_name = Required(IdentifierPath),
                                 arguments = Optional(reference = ArgumentsDeclaration)
+                            )
+                        ),
+                        Struct(
+                            name = StorageLayoutSpecifier,
+                            enabled = From("0.8.29"),
+                            fields = (
+                                layout_keyword = Required(LayoutKeyword),
+                                at_keyword = Required(AtKeyword),
+                                expression = Required(Expression)
                             )
                         ),
                         Repeated(
@@ -3461,10 +3503,22 @@ codegen_language_macros::compile!(Language(
                                             delimiters = FieldDelimiters(
                                                 open = open_brace,
                                                 close = close_brace,
-                                                // NOTE: Despite `CallOptions` requiring at least one element,
-                                                // we can only recover if we found at least two tokens (`ident:`)
-                                                // in the body, as this may be otherwise ambiguous with
-                                                // `try <EXPR> { func() } catch {}`.
+                                                // NOTE: Despite `CallOptions` requiring at least one element, we should
+                                                // only recover if we found at least two tokens ('Identifier' + 'Colon')
+                                                // between the braces, as  otherwise, this may be ambiguous when followed
+                                                // by an empty 'Block' node, for example, in a 'TryStatement':
+                                                //
+                                                //     try <EXPR> {
+                                                //         /* not call options  */
+                                                //     } catch {
+                                                //     }
+                                                //
+                                                // Or in 'ContractDefinition' that has a 'StorageLayoutSpecifier':
+                                                //
+                                                //     contract Foo layout is <EXPR> {
+                                                //         /* not call options  */
+                                                //     }
+                                                //
                                                 terminals_matched_acceptance_threshold = 2
                                             )
                                         ),

@@ -325,7 +325,7 @@ pub enum NonterminalKind {
     /// ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
     ///                      (* contract_keyword: *) CONTRACT_KEYWORD
     ///                      (* name: *) IDENTIFIER
-    ///                      (* inheritance: *) InheritanceSpecifier?
+    ///                      (* specifiers: *) ContractSpecifiers
     ///                      (* open_brace: *) OPEN_BRACE
     ///                      (* members: *) ContractMembers
     ///                      (* close_brace: *) CLOSE_BRACE;
@@ -355,6 +355,19 @@ pub enum NonterminalKind {
     /// ContractMembers = (* item: *) ContractMember*;
     /// ```
     ContractMembers,
+    /// Represents a node with kind `ContractSpecifier`, having the following structure:
+    ///
+    /// ```ebnf
+    /// ContractSpecifier = (* variant: *) InheritanceSpecifier
+    ///                   | (* variant: *) StorageLayoutSpecifier; (* Introduced in 0.8.29 *)
+    /// ```
+    ContractSpecifier,
+    /// Represents a node with kind `ContractSpecifiers`, having the following structure:
+    ///
+    /// ```ebnf
+    /// ContractSpecifiers = (* item: *) ContractSpecifier*;
+    /// ```
+    ContractSpecifiers,
     /// Represents a node with kind `DecimalNumberExpression`, having the following structure:
     ///
     /// ```ebnf
@@ -1358,6 +1371,15 @@ pub enum NonterminalKind {
     /// Statements = (* item: *) Statement*;
     /// ```
     Statements,
+    /// Represents a node with kind `StorageLayoutSpecifier`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Introduced in 0.8.29 *)
+    /// StorageLayoutSpecifier = (* layout_keyword: *) LAYOUT_KEYWORD
+    ///                          (* at_keyword: *) AT_KEYWORD
+    ///                          (* expression: *) Expression;
+    /// ```
+    StorageLayoutSpecifier,
     /// Represents a node with kind `StorageLocation`, having the following structure:
     ///
     /// ```ebnf

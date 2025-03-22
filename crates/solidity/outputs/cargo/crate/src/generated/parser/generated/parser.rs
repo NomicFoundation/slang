@@ -19,8 +19,7 @@ use crate::cst::{
 use crate::parser::lexer::{KeywordScan, Lexer, ScannedTerminal};
 use crate::parser::parser_support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
-    PrecedenceHelper, SeparatedHelper, SequenceHelper, TerminalAcceptanceThreshold,
-    ZeroOrMoreHelper,
+    PrecedenceHelper, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
 };
 use crate::parser::scanner_macros::{
     scan_char_range, scan_chars, scan_choice, scan_keyword_choice, scan_none_of,
@@ -61,6 +60,7 @@ pub struct Parser {
     pub(crate) version_is_at_least_0_8_19: bool,
     pub(crate) version_is_at_least_0_8_22: bool,
     pub(crate) version_is_at_least_0_8_27: bool,
+    pub(crate) version_is_at_least_0_8_29: bool,
     language_version: Version,
 }
 
@@ -108,6 +108,7 @@ impl Parser {
                 version_is_at_least_0_8_19: Version::new(0, 8, 19) <= language_version,
                 version_is_at_least_0_8_22: Version::new(0, 8, 22) <= language_version,
                 version_is_at_least_0_8_27: Version::new(0, 8, 27) <= language_version,
+                version_is_at_least_0_8_29: Version::new(0, 8, 29) <= language_version,
                 language_version,
             })
         } else {
@@ -185,6 +186,10 @@ impl Parser {
             }
             NonterminalKind::ContractMember => Self::contract_member.parse(self, input, kind),
             NonterminalKind::ContractMembers => Self::contract_members.parse(self, input, kind),
+            NonterminalKind::ContractSpecifier => Self::contract_specifier.parse(self, input, kind),
+            NonterminalKind::ContractSpecifiers => {
+                Self::contract_specifiers.parse(self, input, kind)
+            }
             NonterminalKind::DecimalNumberExpression => {
                 Self::decimal_number_expression.parse(self, input, kind)
             }
@@ -386,6 +391,9 @@ impl Parser {
             }
             NonterminalKind::Statement => Self::statement.parse(self, input, kind),
             NonterminalKind::Statements => Self::statements.parse(self, input, kind),
+            NonterminalKind::StorageLayoutSpecifier => {
+                Self::storage_layout_specifier.parse(self, input, kind)
+            }
             NonterminalKind::StorageLocation => Self::storage_location.parse(self, input, kind),
             NonterminalKind::StringExpression => Self::string_expression.parse(self, input, kind),
             NonterminalKind::StringLiteral => Self::string_literal.parse(self, input, kind),
@@ -656,16 +664,20 @@ impl Parser {
                     TerminalKind::OpenBracket,
                 ),
             )?;
-            seq.elem(
-                self.array_values(input)
-                    .with_label(EdgeLabel::Items)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseBracket,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-            )?;
+            match self.array_values(input).with_label(EdgeLabel::Items) {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::CloseBracket,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::CloseBracket,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -742,16 +754,21 @@ impl Parser {
                         TerminalKind::OpenParen,
                     ),
                 )?;
-                seq.elem(
-                    self.assembly_flags(input)
-                        .with_label(EdgeLabel::Flags)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-                )?;
+                match self.assembly_flags(input).with_label(EdgeLabel::Flags) {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseParen,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -897,16 +914,20 @@ impl Parser {
                     TerminalKind::OpenBrace,
                 ),
             )?;
-            seq.elem(
-                self.statements(input)
-                    .with_label(EdgeLabel::Statements)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseBrace,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-            )?;
+            match self.statements(input).with_label(EdgeLabel::Statements) {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::CloseBrace,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::CloseBrace,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -922,19 +943,26 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn break_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+            match self
+                .parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::BreakKeyword,
                 )
                 .with_label(EdgeLabel::BreakKeyword)
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
+            {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::Semicolon,
+                        ),
+                    )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -1071,40 +1099,46 @@ impl Parser {
     fn constant_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_7_4 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
-                        seq.elem_labeled(
-                            EdgeLabel::ConstantKeyword,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::ConstantKeyword,
-                            ),
+                match SequenceHelper::run(|mut seq| {
+                    seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
+                    seq.elem_labeled(
+                        EdgeLabel::ConstantKeyword,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::ConstantKeyword,
+                        ),
+                    )?;
+                    seq.elem_labeled(
+                        EdgeLabel::Name,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::Identifier,
+                        ),
+                    )?;
+                    seq.elem_labeled(
+                        EdgeLabel::Equal,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::Equal,
+                        ),
+                    )?;
+                    seq.elem_labeled(EdgeLabel::Value, self.expression(input))?;
+                    seq.finish()
+                }) {
+                    result if result.matches_at_least_n_terminals(1u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::Semicolon,
+                                ),
                         )?;
-                        seq.elem_labeled(
-                            EdgeLabel::Name,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::Identifier,
-                            ),
-                        )?;
-                        seq.elem_labeled(
-                            EdgeLabel::Equal,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::Equal,
-                            ),
-                        )?;
-                        seq.elem_labeled(EdgeLabel::Value, self.expression(input))?;
-                        seq.finish()
-                    })
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::Semicolon,
-                        TerminalAcceptanceThreshold(1u8),
-                    ),
-                )?;
+                    }
+                    result => {
+                        seq.elem(result)?;
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -1202,19 +1236,26 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn continue_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+            match self
+                .parse_terminal_with_trivia::<LexicalContextType::Default>(
                     input,
                     TerminalKind::ContinueKeyword,
                 )
                 .with_label(EdgeLabel::ContinueKeyword)
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
+            {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::Semicolon,
+                        ),
+                    )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -1255,10 +1296,7 @@ impl Parser {
                     TerminalKind::Identifier,
                 ),
             )?;
-            seq.elem_labeled(
-                EdgeLabel::Inheritance,
-                OptionalHelper::transform(self.inheritance_specifier(input)),
-            )?;
+            seq.elem_labeled(EdgeLabel::Specifiers, self.contract_specifiers(input))?;
             seq.elem(SequenceHelper::run(|mut seq| {
                 let mut delim_guard = input.open_delim(TerminalKind::CloseBrace);
                 let input = delim_guard.ctx();
@@ -1269,16 +1307,21 @@ impl Parser {
                         TerminalKind::OpenBrace,
                     ),
                 )?;
-                seq.elem(
-                    self.contract_members(input)
-                        .with_label(EdgeLabel::Members)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseBrace,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-                )?;
+                match self.contract_members(input).with_label(EdgeLabel::Members) {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseBrace,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -1349,6 +1392,29 @@ impl Parser {
     }
 
     #[allow(unused_assignments, unused_parens)]
+    fn contract_specifier(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.inheritance_specifier(input);
+            choice.consider(input, result)?;
+            if self.version_is_at_least_0_8_29 {
+                let result = self.storage_layout_specifier(input);
+                choice.consider(input, result)?;
+            }
+            choice.finish(input)
+        })
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonterminalKind::ContractSpecifier)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn contract_specifiers(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        ZeroOrMoreHelper::run(input, |input| {
+            self.contract_specifier(input).with_label(EdgeLabel::Item)
+        })
+        .with_kind(NonterminalKind::ContractSpecifiers)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
     fn decimal_number_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
             seq.elem_labeled(
@@ -1369,72 +1435,7 @@ impl Parser {
 
     #[allow(unused_assignments, unused_parens)]
     fn do_while_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(
-                        EdgeLabel::DoKeyword,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TerminalKind::DoKeyword,
-                        ),
-                    )?;
-                    seq.elem_labeled(EdgeLabel::Body, self.statement(input))?;
-                    seq.elem_labeled(
-                        EdgeLabel::WhileKeyword,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TerminalKind::WhileKeyword,
-                        ),
-                    )?;
-                    seq.elem(SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
-                        let input = delim_guard.ctx();
-                        seq.elem_labeled(
-                            EdgeLabel::OpenParen,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::OpenParen,
-                            ),
-                        )?;
-                        seq.elem(
-                            self.expression(input)
-                                .with_label(EdgeLabel::Condition)
-                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                                input,
-                                self,
-                                TerminalKind::CloseParen,
-                                TerminalAcceptanceThreshold(0u8),
-                            ),
-                        )?;
-                        seq.elem_labeled(
-                            EdgeLabel::CloseParen,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::CloseParen,
-                            ),
-                        )?;
-                        seq.finish()
-                    }))?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
-            seq.elem_labeled(
-                EdgeLabel::Semicolon,
-                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TerminalKind::Semicolon,
-                ),
-            )?;
-            seq.finish()
-        })
-        .with_kind(NonterminalKind::DoWhileStatement)
+        SequenceHelper :: run (| mut seq | { match SequenceHelper :: run (| mut seq | { seq . elem_labeled (EdgeLabel :: DoKeyword , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: DoKeyword)) ? ; seq . elem_labeled (EdgeLabel :: Body , self . statement (input)) ? ; seq . elem_labeled (EdgeLabel :: WhileKeyword , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: WhileKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TerminalKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_labeled (EdgeLabel :: OpenParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: OpenParen)) ? ; match self . expression (input) . with_label (EdgeLabel :: Condition) { result if result . matches_at_least_n_terminals (0u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseParen ,)) ? ; } , _ => { return std :: ops :: ControlFlow :: Break (ParserResult :: disabled ()) ; } , } seq . elem_labeled (EdgeLabel :: CloseParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) { result if result . matches_at_least_n_terminals (1u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: Semicolon ,)) ? ; } , result => { seq . elem (result) ? ; } , } seq . elem_labeled (EdgeLabel :: Semicolon , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: Semicolon)) ? ; seq . finish () }) . with_kind (NonterminalKind :: DoWhileStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1510,26 +1511,32 @@ impl Parser {
     fn emit_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_4_21 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem_labeled(
-                            EdgeLabel::EmitKeyword,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::EmitKeyword,
-                            ),
+                match SequenceHelper::run(|mut seq| {
+                    seq.elem_labeled(
+                        EdgeLabel::EmitKeyword,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::EmitKeyword,
+                        ),
+                    )?;
+                    seq.elem_labeled(EdgeLabel::Event, self.identifier_path(input))?;
+                    seq.elem_labeled(EdgeLabel::Arguments, self.arguments_declaration(input))?;
+                    seq.finish()
+                }) {
+                    result if result.matches_at_least_n_terminals(1u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::Semicolon,
+                                ),
                         )?;
-                        seq.elem_labeled(EdgeLabel::Event, self.identifier_path(input))?;
-                        seq.elem_labeled(EdgeLabel::Arguments, self.arguments_declaration(input))?;
-                        seq.finish()
-                    })
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::Semicolon,
-                        TerminalAcceptanceThreshold(1u8),
-                    ),
-                )?;
+                    }
+                    result => {
+                        seq.elem(result)?;
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -1572,16 +1579,21 @@ impl Parser {
                         TerminalKind::OpenBrace,
                     ),
                 )?;
-                seq.elem(
-                    self.enum_members(input)
-                        .with_label(EdgeLabel::Members)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseBrace,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-                )?;
+                match self.enum_members(input).with_label(EdgeLabel::Members) {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseBrace,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -1641,35 +1653,38 @@ impl Parser {
     fn error_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem_labeled(
-                            EdgeLabel::ErrorKeyword,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::ErrorKeyword,
-                            ),
+                match SequenceHelper::run(|mut seq| {
+                    seq.elem_labeled(
+                        EdgeLabel::ErrorKeyword,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::ErrorKeyword,
+                        ),
+                    )?;
+                    seq.elem_labeled(
+                        EdgeLabel::Name,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::Identifier,
+                        ),
+                    )?;
+                    seq.elem_labeled(EdgeLabel::Members, self.error_parameters_declaration(input))?;
+                    seq.finish()
+                }) {
+                    result if result.matches_at_least_n_terminals(1u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::Semicolon,
+                                ),
                         )?;
-                        seq.elem_labeled(
-                            EdgeLabel::Name,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::Identifier,
-                            ),
-                        )?;
-                        seq.elem_labeled(
-                            EdgeLabel::Members,
-                            self.error_parameters_declaration(input),
-                        )?;
-                        seq.finish()
-                    })
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::Semicolon,
-                        TerminalAcceptanceThreshold(1u8),
-                    ),
-                )?;
+                    }
+                    result => {
+                        seq.elem(result)?;
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -1736,16 +1751,24 @@ impl Parser {
                         TerminalKind::OpenParen,
                     ),
                 )?;
-                seq.elem(
-                    self.error_parameters(input)
-                        .with_label(EdgeLabel::Parameters)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TerminalKind::CloseParen,
-                            TerminalAcceptanceThreshold(0u8),
-                        ),
-                )?;
+                match self
+                    .error_parameters(input)
+                    .with_label(EdgeLabel::Parameters)
+                {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseParen,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -1764,44 +1787,49 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn event_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(
-                        EdgeLabel::EventKeyword,
+            match SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::EventKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::EventKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::Name,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::Identifier,
+                    ),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::Parameters,
+                    self.event_parameters_declaration(input),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::AnonymousKeyword,
+                    OptionalHelper::transform(
                         self.parse_terminal_with_trivia::<LexicalContextType::Default>(
                             input,
-                            TerminalKind::EventKeyword,
+                            TerminalKind::AnonymousKeyword,
                         ),
-                    )?;
-                    seq.elem_labeled(
-                        EdgeLabel::Name,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                    ),
+                )?;
+                seq.finish()
+            }) {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
-                            TerminalKind::Identifier,
+                            self,
+                            TerminalKind::Semicolon,
                         ),
                     )?;
-                    seq.elem_labeled(
-                        EdgeLabel::Parameters,
-                        self.event_parameters_declaration(input),
-                    )?;
-                    seq.elem_labeled(
-                        EdgeLabel::AnonymousKeyword,
-                        OptionalHelper::transform(
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::AnonymousKeyword,
-                            ),
-                        ),
-                    )?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -1865,16 +1893,23 @@ impl Parser {
                     TerminalKind::OpenParen,
                 ),
             )?;
-            seq.elem(
-                self.event_parameters(input)
-                    .with_label(EdgeLabel::Parameters)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-            )?;
+            match self
+                .event_parameters(input)
+                .with_label(EdgeLabel::Parameters)
+            {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::CloseParen,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -2416,7 +2451,14 @@ impl Parser {
                                     TerminalKind::OpenBrace,
                                 ),
                             )?;
-                            seq . elem (self . call_options (input) . with_label (EdgeLabel :: Options) . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseBrace , TerminalAcceptanceThreshold (2u8) ,)) ? ;
+                            match self.call_options(input).with_label(EdgeLabel::Options) {
+                                result if result.matches_at_least_n_terminals(2u8) => {
+                                    seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseBrace ,)) ? ;
+                                }
+                                _ => {
+                                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                                }
+                            }
                             seq.elem_labeled(
                                 EdgeLabel::CloseBrace,
                                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -2469,25 +2511,24 @@ impl Parser {
                             TerminalKind::OpenBracket,
                         ),
                     )?;
-                    seq.elem(
-                        SequenceHelper::run(|mut seq| {
-                            seq.elem_labeled(
-                                EdgeLabel::Start,
-                                OptionalHelper::transform(self.expression(input)),
-                            )?;
-                            seq.elem_labeled(
-                                EdgeLabel::End,
-                                OptionalHelper::transform(self.index_access_end(input)),
-                            )?;
-                            seq.finish()
-                        })
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TerminalKind::CloseBracket,
-                            TerminalAcceptanceThreshold(0u8),
-                        ),
-                    )?;
+                    match SequenceHelper::run(|mut seq| {
+                        seq.elem_labeled(
+                            EdgeLabel::Start,
+                            OptionalHelper::transform(self.expression(input)),
+                        )?;
+                        seq.elem_labeled(
+                            EdgeLabel::End,
+                            OptionalHelper::transform(self.index_access_end(input)),
+                        )?;
+                        seq.finish()
+                    }) {
+                        result if result.matches_at_least_n_terminals(0u8) => {
+                            seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseBracket ,)) ? ;
+                        }
+                        _ => {
+                            return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        }
+                    }
                     seq.elem_labeled(
                         EdgeLabel::CloseBracket,
                         self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -2641,16 +2682,20 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn expression_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                self.expression(input)
-                    .with_label(EdgeLabel::Expression)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::Semicolon,
-                        TerminalAcceptanceThreshold(1u8),
-                    ),
-            )?;
+            match self.expression(input).with_label(EdgeLabel::Expression) {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::Semicolon,
+                        ),
+                    )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -2767,29 +2812,32 @@ impl Parser {
                         TerminalKind::OpenParen,
                     ),
                 )?;
-                seq.elem(
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem_labeled(
-                            EdgeLabel::Initialization,
-                            self.for_statement_initialization(input),
+                match SequenceHelper::run(|mut seq| {
+                    seq.elem_labeled(
+                        EdgeLabel::Initialization,
+                        self.for_statement_initialization(input),
+                    )?;
+                    seq.elem_labeled(EdgeLabel::Condition, self.for_statement_condition(input))?;
+                    seq.elem_labeled(
+                        EdgeLabel::Iterator,
+                        OptionalHelper::transform(self.expression(input)),
+                    )?;
+                    seq.finish()
+                }) {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseParen,
+                                ),
                         )?;
-                        seq.elem_labeled(
-                            EdgeLabel::Condition,
-                            self.for_statement_condition(input),
-                        )?;
-                        seq.elem_labeled(
-                            EdgeLabel::Iterator,
-                            OptionalHelper::transform(self.expression(input)),
-                        )?;
-                        seq.finish()
-                    })
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-                )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -3178,16 +3226,21 @@ impl Parser {
                         TerminalKind::OpenParen,
                     ),
                 )?;
-                seq.elem(
-                    self.expression(input)
-                        .with_label(EdgeLabel::Condition)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-                )?;
+                match self.expression(input).with_label(EdgeLabel::Condition) {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseParen,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -3257,16 +3310,24 @@ impl Parser {
                         TerminalKind::OpenBrace,
                     ),
                 )?;
-                seq.elem(
-                    self.import_deconstruction_symbols(input)
-                        .with_label(EdgeLabel::Symbols)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TerminalKind::CloseBrace,
-                            TerminalAcceptanceThreshold(0u8),
-                        ),
-                )?;
+                match self
+                    .import_deconstruction_symbols(input)
+                    .with_label(EdgeLabel::Symbols)
+                {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseBrace,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -3326,25 +3387,30 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn import_directive(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(
-                        EdgeLabel::ImportKeyword,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+            match SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::ImportKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::ImportKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(EdgeLabel::Clause, self.import_clause(input))?;
+                seq.finish()
+            }) {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
-                            TerminalKind::ImportKeyword,
+                            self,
+                            TerminalKind::Semicolon,
                         ),
                     )?;
-                    seq.elem_labeled(EdgeLabel::Clause, self.import_clause(input))?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -3494,16 +3560,21 @@ impl Parser {
                         TerminalKind::OpenBrace,
                     ),
                 )?;
-                seq.elem(
-                    self.interface_members(input)
-                        .with_label(EdgeLabel::Members)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TerminalKind::CloseBrace,
-                            TerminalAcceptanceThreshold(0u8),
-                        ),
-                )?;
+                match self.interface_members(input).with_label(EdgeLabel::Members) {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseBrace,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -3553,16 +3624,21 @@ impl Parser {
                         TerminalKind::OpenBrace,
                     ),
                 )?;
-                seq.elem(
-                    self.library_members(input)
-                        .with_label(EdgeLabel::Members)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseBrace,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-                )?;
+                match self.library_members(input).with_label(EdgeLabel::Members) {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseBrace,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -3638,26 +3714,32 @@ impl Parser {
                         TerminalKind::OpenParen,
                     ),
                 )?;
-                seq.elem(
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem_labeled(EdgeLabel::KeyType, self.mapping_key(input))?;
-                        seq.elem_labeled(
-                            EdgeLabel::EqualGreaterThan,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::EqualGreaterThan,
-                            ),
+                match SequenceHelper::run(|mut seq| {
+                    seq.elem_labeled(EdgeLabel::KeyType, self.mapping_key(input))?;
+                    seq.elem_labeled(
+                        EdgeLabel::EqualGreaterThan,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::EqualGreaterThan,
+                        ),
+                    )?;
+                    seq.elem_labeled(EdgeLabel::ValueType, self.mapping_value(input))?;
+                    seq.finish()
+                }) {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseParen,
+                                ),
                         )?;
-                        seq.elem_labeled(EdgeLabel::ValueType, self.mapping_value(input))?;
-                        seq.finish()
-                    })
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-                )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -3842,16 +3924,20 @@ impl Parser {
                     TerminalKind::OpenBrace,
                 ),
             )?;
-            seq.elem(
-                self.named_arguments(input)
-                    .with_label(EdgeLabel::Arguments)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseBrace,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-            )?;
+            match self.named_arguments(input).with_label(EdgeLabel::Arguments) {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::CloseBrace,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::CloseBrace,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -3888,16 +3974,22 @@ impl Parser {
                     TerminalKind::OpenParen,
                 ),
             )?;
-            seq.elem(
-                OptionalHelper::transform(self.named_argument_group(input))
-                    .with_label(EdgeLabel::Arguments)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-            )?;
+            match OptionalHelper::transform(self.named_argument_group(input))
+                .with_label(EdgeLabel::Arguments)
+            {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::CloseParen,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -4074,16 +4166,21 @@ impl Parser {
                         TerminalKind::OpenParen,
                     ),
                 )?;
-                seq.elem(
-                    self.override_paths(input)
-                        .with_label(EdgeLabel::Paths)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-                )?;
+                match self.override_paths(input).with_label(EdgeLabel::Paths) {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseParen,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -4168,16 +4265,20 @@ impl Parser {
                     TerminalKind::OpenParen,
                 ),
             )?;
-            seq.elem(
-                self.parameters(input)
-                    .with_label(EdgeLabel::Parameters)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-            )?;
+            match self.parameters(input).with_label(EdgeLabel::Parameters) {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::CloseParen,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -4227,16 +4328,23 @@ impl Parser {
                     TerminalKind::OpenParen,
                 ),
             )?;
-            seq.elem(
-                self.positional_arguments(input)
-                    .with_label(EdgeLabel::Arguments)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-            )?;
+            match self
+                .positional_arguments(input)
+                .with_label(EdgeLabel::Arguments)
+            {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::CloseParen,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -4290,25 +4398,30 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn pragma_directive(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(
-                        EdgeLabel::PragmaKeyword,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+            match SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::PragmaKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                        input,
+                        TerminalKind::PragmaKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(EdgeLabel::Pragma, self.pragma(input))?;
+                seq.finish()
+            }) {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Pragma>(
                             input,
-                            TerminalKind::PragmaKeyword,
+                            self,
+                            TerminalKind::Semicolon,
                         ),
                     )?;
-                    seq.elem_labeled(EdgeLabel::Pragma, self.pragma(input))?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Pragma>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
@@ -4417,28 +4530,33 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn return_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(
-                        EdgeLabel::ReturnKeyword,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+            match SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::ReturnKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::ReturnKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::Expression,
+                    OptionalHelper::transform(self.expression(input)),
+                )?;
+                seq.finish()
+            }) {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
-                            TerminalKind::ReturnKeyword,
+                            self,
+                            TerminalKind::Semicolon,
                         ),
                     )?;
-                    seq.elem_labeled(
-                        EdgeLabel::Expression,
-                        OptionalHelper::transform(self.expression(input)),
-                    )?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -4471,29 +4589,35 @@ impl Parser {
     fn revert_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_4 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem_labeled(
-                            EdgeLabel::RevertKeyword,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::RevertKeyword,
-                            ),
+                match SequenceHelper::run(|mut seq| {
+                    seq.elem_labeled(
+                        EdgeLabel::RevertKeyword,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::RevertKeyword,
+                        ),
+                    )?;
+                    seq.elem_labeled(
+                        EdgeLabel::Error,
+                        OptionalHelper::transform(self.identifier_path(input)),
+                    )?;
+                    seq.elem_labeled(EdgeLabel::Arguments, self.arguments_declaration(input))?;
+                    seq.finish()
+                }) {
+                    result if result.matches_at_least_n_terminals(1u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::Semicolon,
+                                ),
                         )?;
-                        seq.elem_labeled(
-                            EdgeLabel::Error,
-                            OptionalHelper::transform(self.identifier_path(input)),
-                        )?;
-                        seq.elem_labeled(EdgeLabel::Arguments, self.arguments_declaration(input))?;
-                        seq.finish()
-                    })
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::Semicolon,
-                        TerminalAcceptanceThreshold(1u8),
-                    ),
-                )?;
+                    }
+                    result => {
+                        seq.elem(result)?;
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -4675,30 +4799,35 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn state_variable_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
-                    seq.elem_labeled(EdgeLabel::Attributes, self.state_variable_attributes(input))?;
-                    seq.elem_labeled(
-                        EdgeLabel::Name,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+            match SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
+                seq.elem_labeled(EdgeLabel::Attributes, self.state_variable_attributes(input))?;
+                seq.elem_labeled(
+                    EdgeLabel::Name,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::Identifier,
+                    ),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::Value,
+                    OptionalHelper::transform(self.state_variable_definition_value(input)),
+                )?;
+                seq.finish()
+            }) {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
-                            TerminalKind::Identifier,
+                            self,
+                            TerminalKind::Semicolon,
                         ),
                     )?;
-                    seq.elem_labeled(
-                        EdgeLabel::Value,
-                        OptionalHelper::transform(self.state_variable_definition_value(input)),
-                    )?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -4786,6 +4915,33 @@ impl Parser {
             self.statement(input).with_label(EdgeLabel::Item)
         })
         .with_kind(NonterminalKind::Statements)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn storage_layout_specifier(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        if self.version_is_at_least_0_8_29 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::LayoutKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::LayoutKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::AtKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::AtKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(EdgeLabel::Expression, self.expression(input))?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::disabled()
+        }
+        .with_kind(NonterminalKind::StorageLayoutSpecifier)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -4901,16 +5057,21 @@ impl Parser {
                         TerminalKind::OpenBrace,
                     ),
                 )?;
-                seq.elem(
-                    self.struct_members(input)
-                        .with_label(EdgeLabel::Members)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseBrace,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-                )?;
+                match self.struct_members(input).with_label(EdgeLabel::Members) {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseBrace,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -4928,25 +5089,30 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn struct_member(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
-                    seq.elem_labeled(
-                        EdgeLabel::Name,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+            match SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(EdgeLabel::TypeName, self.type_name(input))?;
+                seq.elem_labeled(
+                    EdgeLabel::Name,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::Identifier,
+                    ),
+                )?;
+                seq.finish()
+            }) {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
-                            TerminalKind::Identifier,
+                            self,
+                            TerminalKind::Semicolon,
                         ),
                     )?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -4971,19 +5137,27 @@ impl Parser {
     fn throw_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if !self.version_is_at_least_0_5_0 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
-                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                match self
+                    .parse_terminal_with_trivia::<LexicalContextType::Default>(
                         input,
                         TerminalKind::ThrowKeyword,
                     )
                     .with_label(EdgeLabel::ThrowKeyword)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::Semicolon,
-                        TerminalAcceptanceThreshold(1u8),
-                    ),
-                )?;
+                {
+                    result if result.matches_at_least_n_terminals(1u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::Semicolon,
+                                ),
+                        )?;
+                    }
+                    result => {
+                        seq.elem(result)?;
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -5049,76 +5223,7 @@ impl Parser {
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_deconstruction_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    if !self.version_is_at_least_0_5_0 {
-                        seq.elem_labeled(
-                            EdgeLabel::VarKeyword,
-                            OptionalHelper::transform(
-                                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TerminalKind::VarKeyword,
-                                ),
-                            ),
-                        )?;
-                    }
-                    seq.elem(SequenceHelper::run(|mut seq| {
-                        let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
-                        let input = delim_guard.ctx();
-                        seq.elem_labeled(
-                            EdgeLabel::OpenParen,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::OpenParen,
-                            ),
-                        )?;
-                        seq.elem(
-                            self.tuple_deconstruction_elements(input)
-                                .with_label(EdgeLabel::Elements)
-                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                                    input,
-                                    self,
-                                    TerminalKind::CloseParen,
-                                    TerminalAcceptanceThreshold(0u8),
-                                ),
-                        )?;
-                        seq.elem_labeled(
-                            EdgeLabel::CloseParen,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::CloseParen,
-                            ),
-                        )?;
-                        seq.finish()
-                    }))?;
-                    seq.elem_labeled(
-                        EdgeLabel::Equal,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TerminalKind::Equal,
-                        ),
-                    )?;
-                    seq.elem_labeled(EdgeLabel::Expression, self.expression(input))?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
-            seq.elem_labeled(
-                EdgeLabel::Semicolon,
-                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                    input,
-                    TerminalKind::Semicolon,
-                ),
-            )?;
-            seq.finish()
-        })
-        .with_kind(NonterminalKind::TupleDeconstructionStatement)
+        SequenceHelper :: run (| mut seq | { match SequenceHelper :: run (| mut seq | { if ! self . version_is_at_least_0_5_0 { seq . elem_labeled (EdgeLabel :: VarKeyword , OptionalHelper :: transform (self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: VarKeyword))) ? ; } seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TerminalKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_labeled (EdgeLabel :: OpenParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: OpenParen)) ? ; match self . tuple_deconstruction_elements (input) . with_label (EdgeLabel :: Elements) { result if result . matches_at_least_n_terminals (0u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseParen ,)) ? ; } , _ => { return std :: ops :: ControlFlow :: Break (ParserResult :: disabled ()) ; } , } seq . elem_labeled (EdgeLabel :: CloseParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem_labeled (EdgeLabel :: Equal , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: Equal)) ? ; seq . elem_labeled (EdgeLabel :: Expression , self . expression (input)) ? ; seq . finish () }) { result if result . matches_at_least_n_terminals (1u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: Semicolon ,)) ? ; } , result => { seq . elem (result) ? ; } , } seq . elem_labeled (EdgeLabel :: Semicolon , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: Semicolon)) ? ; seq . finish () }) . with_kind (NonterminalKind :: TupleDeconstructionStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5133,16 +5238,20 @@ impl Parser {
                     TerminalKind::OpenParen,
                 ),
             )?;
-            seq.elem(
-                self.tuple_values(input)
-                    .with_label(EdgeLabel::Items)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-            )?;
+            match self.tuple_values(input).with_label(EdgeLabel::Items) {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::CloseParen,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -5189,50 +5298,7 @@ impl Parser {
 
     #[allow(unused_assignments, unused_parens)]
     fn type_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        if self.version_is_at_least_0_5_3 {
-            SequenceHelper::run(|mut seq| {
-                seq.elem_labeled(
-                    EdgeLabel::TypeKeyword,
-                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                        input,
-                        TerminalKind::TypeKeyword,
-                    ),
-                )?;
-                seq.elem(SequenceHelper::run(|mut seq| {
-                    let mut delim_guard = input.open_delim(TerminalKind::CloseParen);
-                    let input = delim_guard.ctx();
-                    seq.elem_labeled(
-                        EdgeLabel::OpenParen,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TerminalKind::OpenParen,
-                        ),
-                    )?;
-                    seq.elem(
-                        self.type_name(input)
-                            .with_label(EdgeLabel::TypeName)
-                            .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TerminalKind::CloseParen,
-                            TerminalAcceptanceThreshold(0u8),
-                        ),
-                    )?;
-                    seq.elem_labeled(
-                        EdgeLabel::CloseParen,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TerminalKind::CloseParen,
-                        ),
-                    )?;
-                    seq.finish()
-                }))?;
-                seq.finish()
-            })
-        } else {
-            ParserResult::disabled()
-        }
-        .with_kind(NonterminalKind::TypeExpression)
+        if self . version_is_at_least_0_5_3 { SequenceHelper :: run (| mut seq | { seq . elem_labeled (EdgeLabel :: TypeKeyword , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: TypeKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TerminalKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_labeled (EdgeLabel :: OpenParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: OpenParen)) ? ; match self . type_name (input) . with_label (EdgeLabel :: TypeName) { result if result . matches_at_least_n_terminals (0u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseParen ,)) ? ; } , _ => { return std :: ops :: ControlFlow :: Break (ParserResult :: disabled ()) ; } , } seq . elem_labeled (EdgeLabel :: CloseParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) } else { ParserResult :: disabled () } . with_kind (NonterminalKind :: TypeExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5251,16 +5317,16 @@ impl Parser {
                             TerminalKind::OpenBracket,
                         ),
                     )?;
-                    seq.elem(
-                        OptionalHelper::transform(self.expression(input))
-                            .with_label(EdgeLabel::Index)
-                            .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                                input,
-                                self,
-                                TerminalKind::CloseBracket,
-                                TerminalAcceptanceThreshold(0u8),
-                            ),
-                    )?;
+                    match OptionalHelper::transform(self.expression(input))
+                        .with_label(EdgeLabel::Index)
+                    {
+                        result if result.matches_at_least_n_terminals(0u8) => {
+                            seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseBracket ,)) ? ;
+                        }
+                        _ => {
+                            return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        }
+                    }
                     seq.elem_labeled(
                         EdgeLabel::CloseBracket,
                         self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -5511,39 +5577,45 @@ impl Parser {
     fn user_defined_value_type_definition(&self, input: &mut ParserContext<'_>) -> ParserResult {
         if self.version_is_at_least_0_8_8 {
             SequenceHelper::run(|mut seq| {
-                seq.elem(
-                    SequenceHelper::run(|mut seq| {
-                        seq.elem_labeled(
-                            EdgeLabel::TypeKeyword,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::TypeKeyword,
-                            ),
+                match SequenceHelper::run(|mut seq| {
+                    seq.elem_labeled(
+                        EdgeLabel::TypeKeyword,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::TypeKeyword,
+                        ),
+                    )?;
+                    seq.elem_labeled(
+                        EdgeLabel::Name,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::Identifier,
+                        ),
+                    )?;
+                    seq.elem_labeled(
+                        EdgeLabel::IsKeyword,
+                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                            input,
+                            TerminalKind::IsKeyword,
+                        ),
+                    )?;
+                    seq.elem_labeled(EdgeLabel::ValueType, self.elementary_type(input))?;
+                    seq.finish()
+                }) {
+                    result if result.matches_at_least_n_terminals(1u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::Semicolon,
+                                ),
                         )?;
-                        seq.elem_labeled(
-                            EdgeLabel::Name,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::Identifier,
-                            ),
-                        )?;
-                        seq.elem_labeled(
-                            EdgeLabel::IsKeyword,
-                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                input,
-                                TerminalKind::IsKeyword,
-                            ),
-                        )?;
-                        seq.elem_labeled(EdgeLabel::ValueType, self.elementary_type(input))?;
-                        seq.finish()
-                    })
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::Semicolon,
-                        TerminalAcceptanceThreshold(1u8),
-                    ),
-                )?;
+                    }
+                    result => {
+                        seq.elem(result)?;
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::Semicolon,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -5607,16 +5679,24 @@ impl Parser {
                         TerminalKind::OpenBrace,
                     ),
                 )?;
-                seq.elem(
-                    self.using_deconstruction_symbols(input)
-                        .with_label(EdgeLabel::Symbols)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                            input,
-                            self,
-                            TerminalKind::CloseBrace,
-                            TerminalAcceptanceThreshold(0u8),
-                        ),
-                )?;
+                match self
+                    .using_deconstruction_symbols(input)
+                    .with_label(EdgeLabel::Symbols)
+                {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseBrace,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseBrace,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -5673,44 +5753,49 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn using_directive(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
+            match SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::UsingKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::UsingKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(EdgeLabel::Clause, self.using_clause(input))?;
+                seq.elem_labeled(
+                    EdgeLabel::ForKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::ForKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(EdgeLabel::Target, self.using_target(input))?;
+                if self.version_is_at_least_0_8_13 {
                     seq.elem_labeled(
-                        EdgeLabel::UsingKeyword,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TerminalKind::UsingKeyword,
-                        ),
-                    )?;
-                    seq.elem_labeled(EdgeLabel::Clause, self.using_clause(input))?;
-                    seq.elem_labeled(
-                        EdgeLabel::ForKeyword,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                            input,
-                            TerminalKind::ForKeyword,
-                        ),
-                    )?;
-                    seq.elem_labeled(EdgeLabel::Target, self.using_target(input))?;
-                    if self.version_is_at_least_0_8_13 {
-                        seq.elem_labeled(
-                            EdgeLabel::GlobalKeyword,
-                            OptionalHelper::transform(
-                                self.parse_terminal_with_trivia::<LexicalContextType::Default>(
-                                    input,
-                                    TerminalKind::GlobalKeyword,
-                                ),
+                        EdgeLabel::GlobalKeyword,
+                        OptionalHelper::transform(
+                            self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                                input,
+                                TerminalKind::GlobalKeyword,
                             ),
-                        )?;
-                    }
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
+                        ),
+                    )?;
+                }
+                seq.finish()
+            }) {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                            input,
+                            self,
+                            TerminalKind::Semicolon,
+                        ),
+                    )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -5830,36 +5915,41 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn variable_declaration_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(
-                        EdgeLabel::VariableType,
-                        self.variable_declaration_type(input),
-                    )?;
-                    seq.elem_labeled(
-                        EdgeLabel::StorageLocation,
-                        OptionalHelper::transform(self.storage_location(input)),
-                    )?;
-                    seq.elem_labeled(
-                        EdgeLabel::Name,
-                        self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+            match SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::VariableType,
+                    self.variable_declaration_type(input),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::StorageLocation,
+                    OptionalHelper::transform(self.storage_location(input)),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::Name,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Default>(
+                        input,
+                        TerminalKind::Identifier,
+                    ),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::Value,
+                    OptionalHelper::transform(self.variable_declaration_value(input)),
+                )?;
+                seq.finish()
+            }) {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Default>(
                             input,
-                            TerminalKind::Identifier,
+                            self,
+                            TerminalKind::Semicolon,
                         ),
                     )?;
-                    seq.elem_labeled(
-                        EdgeLabel::Value,
-                        OptionalHelper::transform(self.variable_declaration_value(input)),
-                    )?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -6073,16 +6163,21 @@ impl Parser {
                         TerminalKind::OpenParen,
                     ),
                 )?;
-                seq.elem(
-                    self.expression(input)
-                        .with_label(EdgeLabel::Condition)
-                        .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-                )?;
+                match self.expression(input).with_label(EdgeLabel::Condition) {
+                    result if result.matches_at_least_n_terminals(0u8) => {
+                        seq.elem(
+                            result
+                                .recover_until_with_nested_delims::<_, LexicalContextType::Default>(
+                                    input,
+                                    self,
+                                    TerminalKind::CloseParen,
+                                ),
+                        )?;
+                    }
+                    _ => {
+                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    }
+                }
                 seq.elem_labeled(
                     EdgeLabel::CloseParen,
                     self.parse_terminal_with_trivia::<LexicalContextType::Default>(
@@ -6140,16 +6235,20 @@ impl Parser {
                     TerminalKind::OpenBrace,
                 ),
             )?;
-            seq.elem(
-                self.yul_statements(input)
-                    .with_label(EdgeLabel::Statements)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
-                        input,
-                        self,
-                        TerminalKind::CloseBrace,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-            )?;
+            match self.yul_statements(input).with_label(EdgeLabel::Statements) {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
+                            input,
+                            self,
+                            TerminalKind::CloseBrace,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::CloseBrace,
                 self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
@@ -6266,16 +6365,21 @@ impl Parser {
                             TerminalKind::OpenParen,
                         ),
                     )?;
-                    seq.elem(
-                        self.yul_arguments(input)
-                            .with_label(EdgeLabel::Arguments)
-                            .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
-                            input,
-                            self,
-                            TerminalKind::CloseParen,
-                            TerminalAcceptanceThreshold(0u8),
-                        ),
-                    )?;
+                    match self.yul_arguments(input).with_label(EdgeLabel::Arguments) {
+                        result if result.matches_at_least_n_terminals(0u8) => {
+                            seq.elem(
+                                result
+                                    .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
+                                        input,
+                                        self,
+                                        TerminalKind::CloseParen,
+                                    ),
+                            )?;
+                        }
+                        _ => {
+                            return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        }
+                    }
                     seq.elem_labeled(
                         EdgeLabel::CloseParen,
                         self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
@@ -6515,16 +6619,20 @@ impl Parser {
                     TerminalKind::OpenParen,
                 ),
             )?;
-            seq.elem(
-                self.yul_parameters(input)
-                    .with_label(EdgeLabel::Parameters)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
-                        input,
-                        self,
-                        TerminalKind::CloseParen,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-            )?;
+            match self.yul_parameters(input).with_label(EdgeLabel::Parameters) {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Yul>(
+                            input,
+                            self,
+                            TerminalKind::CloseParen,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::CloseParen,
                 self.parse_terminal_with_trivia::<LexicalContextType::Yul>(
@@ -9308,6 +9416,13 @@ impl Lexer for Parser {
                                 }
                                 None => KeywordScan::Reserved(TerminalKind::AsKeyword),
                             },
+                            Some('t') => {
+                                if self.version_is_at_least_0_8_29 {
+                                    KeywordScan::Present(TerminalKind::AtKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
                             Some('u') => {
                                 if scan_chars!(input, 't', 'o') {
                                     if self.version_is_at_least_0_5_0 {
@@ -9854,6 +9969,17 @@ impl Lexer for Parser {
                             None => KeywordScan::Absent,
                         },
                         Some('l') => match input.next() {
+                            Some('a') => {
+                                if scan_chars!(input, 'y', 'o', 'u', 't') {
+                                    if self.version_is_at_least_0_8_29 {
+                                        KeywordScan::Present(TerminalKind::LayoutKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
                             Some('e') => {
                                 if scan_chars!(input, 't') {
                                     KeywordScan::Reserved(TerminalKind::LetKeyword)

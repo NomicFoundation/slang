@@ -19,8 +19,7 @@ use crate::cst::{
 use crate::parser::lexer::{KeywordScan, Lexer, ScannedTerminal};
 use crate::parser::parser_support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
-    PrecedenceHelper, SeparatedHelper, SequenceHelper, TerminalAcceptanceThreshold,
-    ZeroOrMoreHelper,
+    PrecedenceHelper, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
 };
 use crate::parser::scanner_macros::{
     scan_char_range, scan_chars, scan_choice, scan_keyword_choice, scan_none_of,
@@ -353,34 +352,39 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn tree(&self, input: &mut ParserContext<'_>) -> ParserResult {
         SequenceHelper::run(|mut seq| {
-            seq.elem(
-                SequenceHelper::run(|mut seq| {
-                    seq.elem_labeled(
-                        EdgeLabel::Keyword,
+            match SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::Keyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Tree>(
+                        input,
+                        TerminalKind::TreeKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(
+                    EdgeLabel::Name,
+                    OptionalHelper::transform(
                         self.parse_terminal_with_trivia::<LexicalContextType::Tree>(
                             input,
-                            TerminalKind::TreeKeyword,
+                            TerminalKind::Identifier,
+                        ),
+                    ),
+                )?;
+                seq.elem_labeled(EdgeLabel::Node, self.tree_node(input))?;
+                seq.finish()
+            }) {
+                result if result.matches_at_least_n_terminals(1u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Tree>(
+                            input,
+                            self,
+                            TerminalKind::Semicolon,
                         ),
                     )?;
-                    seq.elem_labeled(
-                        EdgeLabel::Name,
-                        OptionalHelper::transform(
-                            self.parse_terminal_with_trivia::<LexicalContextType::Tree>(
-                                input,
-                                TerminalKind::Identifier,
-                            ),
-                        ),
-                    )?;
-                    seq.elem_labeled(EdgeLabel::Node, self.tree_node(input))?;
-                    seq.finish()
-                })
-                .recover_until_with_nested_delims::<_, LexicalContextType::Tree>(
-                    input,
-                    self,
-                    TerminalKind::Semicolon,
-                    TerminalAcceptanceThreshold(1u8),
-                ),
-            )?;
+                }
+                result => {
+                    seq.elem(result)?;
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::Semicolon,
                 self.parse_terminal_with_trivia::<LexicalContextType::Tree>(
@@ -405,16 +409,23 @@ impl Parser {
                     TerminalKind::OpenBracket,
                 ),
             )?;
-            seq.elem(
-                self.tree_node_children(input)
-                    .with_label(EdgeLabel::Members)
-                    .recover_until_with_nested_delims::<_, LexicalContextType::Tree>(
-                        input,
-                        self,
-                        TerminalKind::CloseBracket,
-                        TerminalAcceptanceThreshold(0u8),
-                    ),
-            )?;
+            match self
+                .tree_node_children(input)
+                .with_label(EdgeLabel::Members)
+            {
+                result if result.matches_at_least_n_terminals(0u8) => {
+                    seq.elem(
+                        result.recover_until_with_nested_delims::<_, LexicalContextType::Tree>(
+                            input,
+                            self,
+                            TerminalKind::CloseBracket,
+                        ),
+                    )?;
+                }
+                _ => {
+                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                }
+            }
             seq.elem_labeled(
                 EdgeLabel::CloseBracket,
                 self.parse_terminal_with_trivia::<LexicalContextType::Tree>(
