@@ -131,6 +131,10 @@ impl Events {
         self.test_error(message);
     }
 
+    pub fn version_inference_error(&self, message: impl AsRef<str>) {
+        self.test_error(message);
+    }
+
     pub fn trace(&self, message: impl AsRef<str>) {
         self.reporter.println(message);
     }
