@@ -1,5 +1,7 @@
 {%- if rendering_in_stubs -%}
   // No Intermediate Representation building functions in stubs...
+{%- elif source -%}
+  // Not rendering builder for Intermediate Language
 {%- else -%}
   #![allow(clippy::too_many_lines)]
 

@@ -2,8 +2,34 @@ use codegen_language_definition::model::{self, PredefinedLabel};
 use indexmap::{IndexMap, IndexSet};
 use serde::Serialize;
 
-#[derive(Clone, Default, Serialize)]
+#[derive(Serialize)]
+pub struct ModelWrapper {
+    source: Option<IrModel>,
+    target: IrModel,
+}
+
+impl ModelWrapper {
+    pub fn new(name: &str, language: &model::Language) -> Self {
+        ModelWrapper {
+            source: None,
+            target: IrModel::from_language(name, language),
+        }
+    }
+
+    pub fn from(name: &str, other: ModelWrapper) -> Self {
+        let source = other.target;
+        let target = IrModel::from_model(name, &source);
+        ModelWrapper {
+            source: Some(source),
+            target,
+        }
+    }
+}
+
+#[derive(Default, Serialize)]
 pub struct IrModel {
+    pub name: String,
+
     #[serde(skip)]
     terminals: IndexSet<model::Identifier>,
 
@@ -52,10 +78,11 @@ pub struct Separated {
 }
 
 impl IrModel {
-    pub fn from_language(language: &model::Language) -> Self {
+    pub fn from_language(name: &str, language: &model::Language) -> Self {
         let mut model = Self {
-            terminals: IndexSet::new(),
+            name: name.to_owned(),
 
+            terminals: IndexSet::new(),
             unique_terminals: IndexSet::new(),
 
             sequences: IndexMap::new(),
@@ -71,6 +98,20 @@ impl IrModel {
         model.collect_nonterminals(language);
 
         model
+    }
+
+    pub fn from_model(name: &str, model: &Self) -> Self {
+        Self {
+            name: name.to_owned(),
+
+            terminals: model.terminals.clone(),
+            unique_terminals: model.unique_terminals.clone(),
+
+            sequences: model.sequences.clone(),
+            choices: model.choices.clone(),
+            repeated: model.repeated.clone(),
+            separated: model.separated.clone(),
+        }
     }
 
     fn collect_terminals(&mut self, language: &model::Language) {

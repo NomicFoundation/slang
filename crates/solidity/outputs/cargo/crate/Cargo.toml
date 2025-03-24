@@ -38,7 +38,6 @@ anyhow = { workspace = true }                    # __REMOVE_THIS_LINE_DURING_CAR
 codegen_runtime_generator = { workspace = true } # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 infra_utils = { workspace = true }               # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 solidity_language = { workspace = true }         # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
-serde = { workspace = true }
 
 [dependencies]
 ariadne = { workspace = true, optional = true }
