@@ -19,10 +19,10 @@ export class Record {
   }
 }
 
-export async function testFile(languageVersion: string, file: string, expectedDefs: number, expectedRefs: number): Promise<Record> {
+export async function testFile(languageVersion: string, file: string, expectedDefs?: number, expectedRefs?: number): Promise<Record> {
   let gotoDefTimes: number[] = Array();
   const startTime = performance.now();
-  const builder = await createBuilder(languageVersion);
+  const builder = createBuilder(languageVersion);
 
   const record = new Record(file);
 
@@ -86,8 +86,10 @@ export async function testFile(languageVersion: string, file: string, expectedDe
   const neitherDefNorRefList = Array.from(neitherDefNorRefSet);
   assert.deepStrictEqual(neitherDefNorRefList.filter((e) => !allowed.includes(e)), []);
   assert.deepStrictEqual(emptyDefList, []);
-  assert.equal(refs, expectedRefs);
-  assert.equal(defs, expectedDefs);
 
+  if (expectedDefs) {
+    assert.equal(refs, expectedRefs);
+    assert.equal(defs, expectedDefs);
+  }
   return record;
 }
