@@ -96,7 +96,10 @@ class Comparer {
     const solc_means = this.results.map((s: Summary) => { return s.results[1].details.mean; });
 
     // ignore the summary if there are no results
-    if (slang_means.length > 0 && solc_means.length > 0) {
+    if (slang_means.length == 0) {
+      console.warn(`No comparisons matching ${this.pattern} were run`);
+    }
+    else {
       const mean_slang = mathjs.mean(slang_means);
       const std_slang = mathjs.std(slang_means);
       const mean_solc = mathjs.mean(solc_means);
@@ -118,19 +121,19 @@ class Comparer {
 }
 
 async function runProjects(comparer: Comparer) {
-  await comparer.run("UiPoolDataProviderV2V3", "0.6.12", "0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A", "contracts/misc/UiPoolDataProviderV2V3.sol", 58, 418);
-  await comparer.run("DoodledBears", "0.8.11", "0x015E220901014BAE4f7e168925CD74e725e23692/sources", "DoodledBears.sol", 57, 131);
-  await comparer.run("ERC721AContract", "0.8.13", "0x01665987bC6725070e56d160d75AA19d8B73273e/sources", "project:/contracts/ERC721AContract.sol", 121, 365);
-  await comparer.run("SeniorBond", "0.7.6", "0x0170f38fa8df1440521c8b8520BaAd0CdA132E82/sources", "contracts/SeniorBond.sol", 10, 20);
-  await comparer.run("Mooniswap", "0.6.12", "0x01a11a5A999E57E1B177AA2fF7fEA957605adA2b/sources", "Users/k06a/Projects/mooniswap-v2/contracts/Mooniswap.sol", 176, 672);
-  await comparer.run("Darts", "0.8.0", "0x01a5E3268E3987f0EE5e6Eb12fe63fa2AF992D83/sources", "contracts/Darts.sol", 17, 51);
-  await comparer.run("WeightedPool", "0.7.6", "0x01abc00E86C7e258823b9a055Fd62cA6CF61a163/sources", "contracts/pools/weighted/WeightedPool.sol", 143, 472);
-  await comparer.run("YaxisVotePower", "0.6.12", "0x01fef0d5d6fd6b5701ae913cafb11ddaee982c9a/YaxisVotePower", "contracts/governance/YaxisVotePower.sol", 27, 99);
-  await comparer.run("0xProject", "0.8.19", "0xProject/contracts/governance", "src/ZeroExProtocolGovernor.sol", 48, 88);
-  await comparer.run("Uniswap", "0.7.6", "Uniswap", "contracts/UniswapV3Factory.sol", 17, 85);
-  await comparer.run("AAVE", "0.8.10", "aave-v3-core-master", "contracts/protocol/pool/Pool.sol", 191, 629);
-  await comparer.run("GraphToken", "0.7.6", "graph_protocol/contracts", "token/GraphToken.sol", 41, 97);
-  await comparer.run("lidofinance", "0.8.9", "lidofinance/contracts/0.8.9", "WithdrawalQueueERC721.sol", 142, 325);
+  await comparer.run("project/UiPoolDataProviderV2V3", "0.6.12", "0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A", "contracts/misc/UiPoolDataProviderV2V3.sol", 58, 418);
+  await comparer.run("projectDoodledBears", "0.8.11", "0x015E220901014BAE4f7e168925CD74e725e23692/sources", "DoodledBears.sol", 57, 131);
+  await comparer.run("project/ERC721AContract", "0.8.13", "0x01665987bC6725070e56d160d75AA19d8B73273e/sources", "project:/contracts/ERC721AContract.sol", 121, 365);
+  await comparer.run("project/SeniorBond", "0.7.6", "0x0170f38fa8df1440521c8b8520BaAd0CdA132E82/sources", "contracts/SeniorBond.sol", 10, 20);
+  await comparer.run("project/Mooniswap", "0.6.12", "0x01a11a5A999E57E1B177AA2fF7fEA957605adA2b/sources", "Users/k06a/Projects/mooniswap-v2/contracts/Mooniswap.sol", 176, 672);
+  await comparer.run("project/Darts", "0.8.0", "0x01a5E3268E3987f0EE5e6Eb12fe63fa2AF992D83/sources", "contracts/Darts.sol", 17, 51);
+  await comparer.run("project/WeightedPool", "0.7.6", "0x01abc00E86C7e258823b9a055Fd62cA6CF61a163/sources", "contracts/pools/weighted/WeightedPool.sol", 143, 472);
+  await comparer.run("project/YaxisVotePower", "0.6.12", "0x01fef0d5d6fd6b5701ae913cafb11ddaee982c9a/YaxisVotePower", "contracts/governance/YaxisVotePower.sol", 27, 99);
+  await comparer.run("project/0xProject", "0.8.19", "0xProject/contracts/governance", "src/ZeroExProtocolGovernor.sol", 48, 88);
+  await comparer.run("project/Uniswap", "0.7.6", "Uniswap", "contracts/UniswapV3Factory.sol", 17, 85);
+  await comparer.run("project/AAVE", "0.8.10", "aave-v3-core-master", "contracts/protocol/pool/Pool.sol", 191, 629);
+  await comparer.run("project/GraphToken", "0.7.6", "graph_protocol/contracts", "token/GraphToken.sol", 41, 97);
+  await comparer.run("project/lidofinance", "0.8.9", "lidofinance/contracts/0.8.9", "WithdrawalQueueERC721.sol", 142, 325);
 }
 
 const options = commandLineArgs({ name: "pattern", type: String, defaultOption: "" });
