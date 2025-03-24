@@ -5,7 +5,7 @@ import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
 
 export const INPUT_PATH = "crates/solidity/testing/perf/npm/inputs";
 
-function resolvePath(...relativePaths: string[]): string {
+export function resolvePath(...relativePaths: string[]): string {
   const repoRoot = process.env["REPO_ROOT"];
   assert(repoRoot);
 
@@ -19,7 +19,7 @@ export function readRepoFile(...relativePaths: string[]): string {
   return source.trim();
 }
 
-export async function createBuilder(languageVersion: string): Promise<CompilationBuilder> {
+export function createBuilder(languageVersion: string): CompilationBuilder {
   const builder = CompilationBuilder.create({
     languageVersion,
 

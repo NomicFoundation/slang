@@ -11,6 +11,8 @@ impl NpmController {
         command.run();
     }
 
+    #[allow(clippy::unnecessary_wraps)]
+    #[allow(clippy::unused_self)]
     pub fn execute(&self) -> Result<()> {
         Self::install_deps();
 

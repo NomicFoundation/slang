@@ -3,8 +3,12 @@ import * as bench from "benny";
 import { testFileSolC } from "./common.solc.mjs";
 import { Summary } from "benny/lib/internal/common-types.js";
 import * as mathjs from "mathjs";
+import { INPUT_PATH, resolvePath } from "./common.mjs";
+import path from "node:path";
+import { readdir } from "node:fs/promises";
 
-async function run(name: string, solidityVersion: string, dir: string, file: string, expectedDefs: number, expectedRefs: number): Promise<Summary> {
+
+async function run(name: string, solidityVersion: string, dir: string, file: string, expectedDefs?: number, expectedRefs?: number): Promise<Summary> {
   const results = await bench.suite(name,
     bench.add("slang", async () => {
       await testFile(solidityVersion, [dir, file].join("/"), expectedDefs, expectedRefs);
@@ -14,7 +18,7 @@ async function run(name: string, solidityVersion: string, dir: string, file: str
     }),
     bench.configure({
       cases: {
-        maxTime: 2,
+        maxTime: 1,
         minSamples: 2
       }
     }),
@@ -22,7 +26,7 @@ async function run(name: string, solidityVersion: string, dir: string, file: str
   return results;
 }
 
-const results = [];
+const results: Array<Summary> = [];
 results.push(await run("UiPoolDataProviderV2V3", "0.6.12", "0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A", "contracts/misc/UiPoolDataProviderV2V3.sol", 58, 418));
 results.push(await run("DoodledBears", "0.8.11", "0x015E220901014BAE4f7e168925CD74e725e23692/sources", "DoodledBears.sol", 57, 131));
 results.push(await run("ERC721AContract", "0.8.13", "0x01665987bC6725070e56d160d75AA19d8B73273e/sources", "project:/contracts/ERC721AContract.sol", 121, 365));
@@ -37,7 +41,36 @@ results.push(await run("AAVE", "0.8.10", "aave-v3-core-master", "contracts/proto
 results.push(await run("GraphToken", "0.7.6", "graph_protocol/contracts", "token/GraphToken.sol", 41, 97));
 results.push(await run("lidofinance", "0.8.9", "lidofinance/contracts/0.8.9", "WithdrawalQueueERC721.sol", 142, 325));
 
-function round(n: number): string {
+// list recursively all the files in oz_path and test it
+async function listFilesRecursively(dir: string): Promise<string[]> {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const files = await Promise.all(
+    entries.map((entry) => {
+      const fullPath = path.resolve(dir, entry.name);
+      return entry.isDirectory() ? listFilesRecursively(fullPath) : fullPath;
+    })
+  );
+  return files.flat();
+}
+
+async function testOpenZeppelinFiles() {
+  const root = "../node_modules/@openzeppelin/contracts";
+  const oz_path = resolvePath(INPUT_PATH, root);
+  const files = await listFilesRecursively(oz_path);
+  for (const file of files) {
+    if (file.endsWith(".sol")) {
+      const dir = path.relative(oz_path, path.dirname(file));
+      const fileName = path.basename(file);
+      const relativeFN = [dir, fileName].join("/");
+      results.push(await run(`@openzeppelin/${relativeFN}`, "0.8.26", root, relativeFN));
+    }
+  }
+}
+
+await testOpenZeppelinFiles();
+
+
+function round(n: number | mathjs.MathNumericType): string {
   return mathjs.round(n, 2).toString();
 }
 
@@ -50,15 +83,33 @@ const resultsLine = results.map((s: Summary) => {
   if (!slang.completed) {
     console.log(`${slang.name} couldn't finish!`);
   }
-  const line = [s.name,
-  slang.samples.toString(),
-  round(slang.details.mean),
-  round(slang.details.standardDeviation),
-  round(solc.details.mean),
-  round(solc.details.standardDeviation),
-  round(slang.details.mean / solc.details.mean)
-  ];
+  const line =
+    [s.name,
+    slang.samples.toString(),
+    round(slang.details.mean),
+    round(slang.details.standardDeviation),
+    round(solc.details.mean),
+    round(solc.details.standardDeviation),
+    round(slang.details.mean / solc.details.mean)];
   return line.join(", ");
 });
+
+const slang_means = results.map((s: Summary) => { return s.results[0].details.mean; });
+const solc_means = results.map((s: Summary) => { return s.results[1].details.mean; });
+
+const mean_slang = mathjs.mean(slang_means);
+const std_slang = mathjs.std(slang_means);
+const mean_solc = mathjs.mean(solc_means);
+const std_solc = mathjs.std(solc_means);
+
+resultsLine.push([
+  "Summary",
+  "",
+  round(mean_slang),
+  `${std_slang}`,
+  round(mean_solc),
+  `${std_solc}`,
+  round(mean_slang / mean_solc)
+].join(", "));
 
 console.log(titleLine.concat(resultsLine).join("\n"));

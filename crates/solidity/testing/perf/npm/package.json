@@ -4,18 +4,13 @@
   "type": "module",
   "dependencies": {
     "@nomicfoundation/slang": "file:../package",
+    "@openzeppelin/contracts": "^5.2.0",
+    "benny": "^3.7.1",
     "mathjs": "^14.0.1",
     "solc06": "npm:solc@0.6.12",
     "solc07": "npm:solc@0.7.6",
-    "solc08": "npm:solc@0.8.22",
-    "solc089": "npm:solc@0.8.9"
-  },
-  "devDependencies": {
-    "@types/jest": "29.5.14",
-    "benny": "^3.7.1",
-    "jest": "29.7.0",
-    "ts-jest": "29.2.5",
-    "ts-jest-resolver": "2.0.1",
+    "solc08": "npm:solc@0.8.26",
+    "solc089": "npm:solc@0.8.9",
     "ts-node": "10.9.2"
   }
 }
