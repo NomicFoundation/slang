@@ -675,7 +675,7 @@ impl Parser {
                     )?;
                 }
                 _ => {
-                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                 }
             }
             seq.elem_labeled(
@@ -736,7 +736,7 @@ impl Parser {
                 EdgeLabel::Separator,
             )
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::AssemblyFlags)
     }
@@ -766,7 +766,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -779,7 +779,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::AssemblyFlagsDeclaration)
     }
@@ -925,7 +925,7 @@ impl Parser {
                     )?;
                 }
                 _ => {
-                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                 }
             }
             seq.elem_labeled(
@@ -986,7 +986,7 @@ impl Parser {
                 EdgeLabel::Separator,
             )
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::CallOptions)
     }
@@ -1033,7 +1033,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::CatchClause)
     }
@@ -1055,7 +1055,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::CatchClauseError)
     }
@@ -1067,7 +1067,7 @@ impl Parser {
                 self.catch_clause(input).with_label(EdgeLabel::Item)
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::CatchClauses)
     }
@@ -1149,7 +1149,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ConstantDefinition)
     }
@@ -1193,7 +1193,7 @@ impl Parser {
             })
             .with_label(EdgeLabel::Variant)
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ConstructorAttribute)
     }
@@ -1206,7 +1206,7 @@ impl Parser {
                     .with_label(EdgeLabel::Item)
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ConstructorAttributes)
     }
@@ -1228,7 +1228,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ConstructorDefinition)
     }
@@ -1319,7 +1319,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -1435,7 +1435,7 @@ impl Parser {
 
     #[allow(unused_assignments, unused_parens)]
     fn do_while_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper :: run (| mut seq | { match SequenceHelper :: run (| mut seq | { seq . elem_labeled (EdgeLabel :: DoKeyword , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: DoKeyword)) ? ; seq . elem_labeled (EdgeLabel :: Body , self . statement (input)) ? ; seq . elem_labeled (EdgeLabel :: WhileKeyword , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: WhileKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TerminalKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_labeled (EdgeLabel :: OpenParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: OpenParen)) ? ; match self . expression (input) . with_label (EdgeLabel :: Condition) { result if result . matches_at_least_n_terminals (0u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseParen ,)) ? ; } , _ => { return std :: ops :: ControlFlow :: Break (ParserResult :: disabled ()) ; } , } seq . elem_labeled (EdgeLabel :: CloseParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) { result if result . matches_at_least_n_terminals (1u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: Semicolon ,)) ? ; } , result => { seq . elem (result) ? ; } , } seq . elem_labeled (EdgeLabel :: Semicolon , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: Semicolon)) ? ; seq . finish () }) . with_kind (NonterminalKind :: DoWhileStatement)
+        SequenceHelper :: run (| mut seq | { match SequenceHelper :: run (| mut seq | { seq . elem_labeled (EdgeLabel :: DoKeyword , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: DoKeyword)) ? ; seq . elem_labeled (EdgeLabel :: Body , self . statement (input)) ? ; seq . elem_labeled (EdgeLabel :: WhileKeyword , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: WhileKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TerminalKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_labeled (EdgeLabel :: OpenParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: OpenParen)) ? ; match self . expression (input) . with_label (EdgeLabel :: Condition) { result if result . matches_at_least_n_terminals (0u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseParen ,)) ? ; } , _ => { return std :: ops :: ControlFlow :: Break (ParserResult :: no_match (vec ! [])) ; } , } seq . elem_labeled (EdgeLabel :: CloseParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) { result if result . matches_at_least_n_terminals (1u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: Semicolon ,)) ? ; } , result => { seq . elem (result) ? ; } , } seq . elem_labeled (EdgeLabel :: Semicolon , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: Semicolon)) ? ; seq . finish () }) . with_kind (NonterminalKind :: DoWhileStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -1547,7 +1547,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::EmitStatement)
     }
@@ -1591,7 +1591,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -1695,7 +1695,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ErrorDefinition)
     }
@@ -1717,7 +1717,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ErrorParameter)
     }
@@ -1733,7 +1733,7 @@ impl Parser {
                 EdgeLabel::Separator,
             ))
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ErrorParameters)
     }
@@ -1766,7 +1766,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -1779,7 +1779,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ErrorParametersDeclaration)
     }
@@ -1907,7 +1907,7 @@ impl Parser {
                     )?;
                 }
                 _ => {
-                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                 }
             }
             seq.elem_labeled(
@@ -2456,7 +2456,9 @@ impl Parser {
                                     seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseBrace ,)) ? ;
                                 }
                                 _ => {
-                                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                                    return std::ops::ControlFlow::Break(ParserResult::no_match(
+                                        vec![],
+                                    ));
                                 }
                             }
                             seq.elem_labeled(
@@ -2526,7 +2528,7 @@ impl Parser {
                             seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseBracket ,)) ? ;
                         }
                         _ => {
-                            return std::ops::ControlFlow::Break(ParserResult::disabled());
+                            return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                         }
                     }
                     seq.elem_labeled(
@@ -2745,7 +2747,7 @@ impl Parser {
             })
             .with_label(EdgeLabel::Variant)
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::FallbackFunctionAttribute)
     }
@@ -2758,7 +2760,7 @@ impl Parser {
                     .with_label(EdgeLabel::Item)
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::FallbackFunctionAttributes)
     }
@@ -2787,7 +2789,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::FallbackFunctionDefinition)
     }
@@ -2835,7 +2837,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -3183,7 +3185,7 @@ impl Parser {
                 self.hex_string_literal(input).with_label(EdgeLabel::Item)
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::HexStringLiterals)
     }
@@ -3238,7 +3240,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -3325,7 +3327,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -3572,7 +3574,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -3636,7 +3638,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -3737,7 +3739,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -3935,7 +3937,7 @@ impl Parser {
                     )?;
                 }
                 _ => {
-                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                 }
             }
             seq.elem_labeled(
@@ -3987,7 +3989,7 @@ impl Parser {
                     )?;
                 }
                 _ => {
-                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                 }
             }
             seq.elem_labeled(
@@ -4148,7 +4150,7 @@ impl Parser {
                 EdgeLabel::Separator,
             )
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::OverridePaths)
     }
@@ -4178,7 +4180,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -4191,7 +4193,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::OverridePathsDeclaration)
     }
@@ -4214,7 +4216,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::OverrideSpecifier)
     }
@@ -4276,7 +4278,7 @@ impl Parser {
                     )?;
                 }
                 _ => {
-                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                 }
             }
             seq.elem_labeled(
@@ -4342,7 +4344,7 @@ impl Parser {
                     )?;
                 }
                 _ => {
-                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                 }
             }
             seq.elem_labeled(
@@ -4484,7 +4486,7 @@ impl Parser {
             })
             .with_label(EdgeLabel::Variant)
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ReceiveFunctionAttribute)
     }
@@ -4497,7 +4499,7 @@ impl Parser {
                     .with_label(EdgeLabel::Item)
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ReceiveFunctionAttributes)
     }
@@ -4522,7 +4524,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ReceiveFunctionDefinition)
     }
@@ -4628,7 +4630,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::RevertStatement)
     }
@@ -4939,7 +4941,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::StorageLayoutSpecifier)
     }
@@ -5025,7 +5027,7 @@ impl Parser {
                 self.string_literal(input).with_label(EdgeLabel::Item)
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::StringLiterals)
     }
@@ -5069,7 +5071,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -5168,7 +5170,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::ThrowStatement)
     }
@@ -5194,7 +5196,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::TryStatement)
     }
@@ -5223,7 +5225,7 @@ impl Parser {
 
     #[allow(unused_assignments, unused_parens)]
     fn tuple_deconstruction_statement(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper :: run (| mut seq | { match SequenceHelper :: run (| mut seq | { if ! self . version_is_at_least_0_5_0 { seq . elem_labeled (EdgeLabel :: VarKeyword , OptionalHelper :: transform (self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: VarKeyword))) ? ; } seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TerminalKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_labeled (EdgeLabel :: OpenParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: OpenParen)) ? ; match self . tuple_deconstruction_elements (input) . with_label (EdgeLabel :: Elements) { result if result . matches_at_least_n_terminals (0u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseParen ,)) ? ; } , _ => { return std :: ops :: ControlFlow :: Break (ParserResult :: disabled ()) ; } , } seq . elem_labeled (EdgeLabel :: CloseParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem_labeled (EdgeLabel :: Equal , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: Equal)) ? ; seq . elem_labeled (EdgeLabel :: Expression , self . expression (input)) ? ; seq . finish () }) { result if result . matches_at_least_n_terminals (1u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: Semicolon ,)) ? ; } , result => { seq . elem (result) ? ; } , } seq . elem_labeled (EdgeLabel :: Semicolon , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: Semicolon)) ? ; seq . finish () }) . with_kind (NonterminalKind :: TupleDeconstructionStatement)
+        SequenceHelper :: run (| mut seq | { match SequenceHelper :: run (| mut seq | { if ! self . version_is_at_least_0_5_0 { seq . elem_labeled (EdgeLabel :: VarKeyword , OptionalHelper :: transform (self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: VarKeyword))) ? ; } seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TerminalKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_labeled (EdgeLabel :: OpenParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: OpenParen)) ? ; match self . tuple_deconstruction_elements (input) . with_label (EdgeLabel :: Elements) { result if result . matches_at_least_n_terminals (0u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseParen ,)) ? ; } , _ => { return std :: ops :: ControlFlow :: Break (ParserResult :: no_match (vec ! [])) ; } , } seq . elem_labeled (EdgeLabel :: CloseParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . elem_labeled (EdgeLabel :: Equal , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: Equal)) ? ; seq . elem_labeled (EdgeLabel :: Expression , self . expression (input)) ? ; seq . finish () }) { result if result . matches_at_least_n_terminals (1u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: Semicolon ,)) ? ; } , result => { seq . elem (result) ? ; } , } seq . elem_labeled (EdgeLabel :: Semicolon , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: Semicolon)) ? ; seq . finish () }) . with_kind (NonterminalKind :: TupleDeconstructionStatement)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5249,7 +5251,7 @@ impl Parser {
                     )?;
                 }
                 _ => {
-                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                 }
             }
             seq.elem_labeled(
@@ -5298,7 +5300,7 @@ impl Parser {
 
     #[allow(unused_assignments, unused_parens)]
     fn type_expression(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        if self . version_is_at_least_0_5_3 { SequenceHelper :: run (| mut seq | { seq . elem_labeled (EdgeLabel :: TypeKeyword , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: TypeKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TerminalKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_labeled (EdgeLabel :: OpenParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: OpenParen)) ? ; match self . type_name (input) . with_label (EdgeLabel :: TypeName) { result if result . matches_at_least_n_terminals (0u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseParen ,)) ? ; } , _ => { return std :: ops :: ControlFlow :: Break (ParserResult :: disabled ()) ; } , } seq . elem_labeled (EdgeLabel :: CloseParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) } else { ParserResult :: disabled () } . with_kind (NonterminalKind :: TypeExpression)
+        if self . version_is_at_least_0_5_3 { SequenceHelper :: run (| mut seq | { seq . elem_labeled (EdgeLabel :: TypeKeyword , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: TypeKeyword)) ? ; seq . elem (SequenceHelper :: run (| mut seq | { let mut delim_guard = input . open_delim (TerminalKind :: CloseParen) ; let input = delim_guard . ctx () ; seq . elem_labeled (EdgeLabel :: OpenParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: OpenParen)) ? ; match self . type_name (input) . with_label (EdgeLabel :: TypeName) { result if result . matches_at_least_n_terminals (0u8) => { seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseParen ,)) ? ; } , _ => { return std :: ops :: ControlFlow :: Break (ParserResult :: no_match (vec ! [])) ; } , } seq . elem_labeled (EdgeLabel :: CloseParen , self . parse_terminal_with_trivia :: < LexicalContextType :: Default > (input , TerminalKind :: CloseParen)) ? ; seq . finish () })) ? ; seq . finish () }) } else { ParserResult :: no_match (vec ! []) } . with_kind (NonterminalKind :: TypeExpression)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -5324,7 +5326,7 @@ impl Parser {
                             seq . elem (result . recover_until_with_nested_delims :: < _ , LexicalContextType :: Default > (input , self , TerminalKind :: CloseBracket ,)) ? ;
                         }
                         _ => {
-                            return std::ops::ControlFlow::Break(ParserResult::disabled());
+                            return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                         }
                     }
                     seq.elem_labeled(
@@ -5408,7 +5410,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UncheckedBlock)
     }
@@ -5431,7 +5433,7 @@ impl Parser {
             })
             .with_label(EdgeLabel::Variant)
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UnicodeStringLiteral)
     }
@@ -5444,7 +5446,7 @@ impl Parser {
                     .with_label(EdgeLabel::Item)
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UnicodeStringLiterals)
     }
@@ -5511,7 +5513,7 @@ impl Parser {
             })
             .with_label(EdgeLabel::Variant)
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UnnamedFunctionAttribute)
     }
@@ -5524,7 +5526,7 @@ impl Parser {
                     .with_label(EdgeLabel::Item)
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UnnamedFunctionAttributes)
     }
@@ -5549,7 +5551,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UnnamedFunctionDefinition)
     }
@@ -5626,7 +5628,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UserDefinedValueTypeDefinition)
     }
@@ -5646,7 +5648,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UsingAlias)
     }
@@ -5694,7 +5696,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -5707,7 +5709,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UsingDeconstruction)
     }
@@ -5726,7 +5728,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UsingDeconstructionSymbol)
     }
@@ -5745,7 +5747,7 @@ impl Parser {
                 EdgeLabel::Separator,
             )
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UsingDeconstructionSymbols)
     }
@@ -5891,7 +5893,7 @@ impl Parser {
             })
             .with_label(EdgeLabel::Variant)
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::UsingOperator)
     }
@@ -6175,7 +6177,7 @@ impl Parser {
                         )?;
                     }
                     _ => {
-                        return std::ops::ControlFlow::Break(ParserResult::disabled());
+                        return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                     }
                 }
                 seq.elem_labeled(
@@ -6246,7 +6248,7 @@ impl Parser {
                     )?;
                 }
                 _ => {
-                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                 }
             }
             seq.elem_labeled(
@@ -6292,7 +6294,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::YulColonAndEqual)
     }
@@ -6344,7 +6346,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::YulEqualAndColon)
     }
@@ -6377,7 +6379,7 @@ impl Parser {
                             )?;
                         }
                         _ => {
-                            return std::ops::ControlFlow::Break(ParserResult::disabled());
+                            return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                         }
                     }
                     seq.elem_labeled(
@@ -6533,7 +6535,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::YulLabel)
     }
@@ -6547,7 +6549,7 @@ impl Parser {
             )
             .with_label(EdgeLabel::LeaveKeyword)
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::YulLeaveStatement)
     }
@@ -6630,7 +6632,7 @@ impl Parser {
                     )?;
                 }
                 _ => {
-                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                 }
             }
             seq.elem_labeled(
@@ -6706,7 +6708,7 @@ impl Parser {
             })
             .with_label(EdgeLabel::Variant)
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::YulStackAssignmentOperator)
     }
@@ -6729,7 +6731,7 @@ impl Parser {
                 seq.finish()
             })
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::YulStackAssignmentStatement)
     }

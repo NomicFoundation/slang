@@ -16,7 +16,7 @@ impl ParserDefinitionCodegen for ParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
         let code = self.node().version_specifier().to_conditional_code(
             self.node().to_parser_code(self.context(), false),
-            Some(quote! { ParserResult::disabled() }),
+            Some(quote! { ParserResult::no_match(vec![]) }),
         );
 
         let nonterminal_kind = format_ident!("{}", self.name());
@@ -220,7 +220,7 @@ impl ParserDefinitionNodeCodegen for ParserDefinitionNode {
                             },
                             // Otherwise, reject the entire sequence, including the open delimiter:
                             _ => {
-                                return std::ops::ControlFlow::Break(ParserResult::disabled());
+                                return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                             },
                         }
                     },

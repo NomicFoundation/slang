@@ -34,11 +34,6 @@ impl ParserResult {
         ParserResult::IncompleteMatch(IncompleteMatch::new(nodes, expected_terminals))
     }
 
-    /// Whenever a parser didn't run because it's disabled due to versioning. Shorthand for `no_match(vec![])`.
-    pub fn disabled() -> Self {
-        Self::no_match(vec![])
-    }
-
     pub fn no_match(expected_terminals: Vec<TerminalKind>) -> Self {
         ParserResult::NoMatch(NoMatch::new(expected_terminals))
     }

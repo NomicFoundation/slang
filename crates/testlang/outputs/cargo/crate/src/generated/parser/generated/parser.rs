@@ -312,7 +312,7 @@ impl Parser {
                 EdgeLabel::Separator,
             )
         } else {
-            ParserResult::disabled()
+            ParserResult::no_match(vec![])
         }
         .with_kind(NonterminalKind::SeparatedIdentifiers)
     }
@@ -423,7 +423,7 @@ impl Parser {
                     )?;
                 }
                 _ => {
-                    return std::ops::ControlFlow::Break(ParserResult::disabled());
+                    return std::ops::ControlFlow::Break(ParserResult::no_match(vec![]));
                 }
             }
             seq.elem_labeled(
