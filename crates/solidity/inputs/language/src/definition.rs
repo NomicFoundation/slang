@@ -3515,7 +3515,7 @@ codegen_language_macros::compile!(Language(
                                                 //
                                                 // Or in 'ContractDefinition' that has a 'StorageLayoutSpecifier':
                                                 //
-                                                //     contract Foo layout is <EXPR> {
+                                                //     contract Foo layout at <EXPR> {
                                                 //         /* not call options  */
                                                 //     }
                                                 //
