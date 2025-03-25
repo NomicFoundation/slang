@@ -25,6 +25,11 @@ fn constructors() -> Result<()> {
 }
 
 #[test]
+fn cyclic_inheritance() -> Result<()> {
+    run("contracts", "cyclic_inheritance")
+}
+
+#[test]
 fn diamond() -> Result<()> {
     run("contracts", "diamond")
 }
@@ -37,6 +42,11 @@ fn fallback_receive() -> Result<()> {
 #[test]
 fn inheritance() -> Result<()> {
     run("contracts", "inheritance")
+}
+
+#[test]
+fn inheritance_with_arguments() -> Result<()> {
+    run("contracts", "inheritance_with_arguments")
 }
 
 #[test]

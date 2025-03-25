@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ struct X {
+   │        ┬  
+   │        ╰── name: 1
+ 2 │     X x; // this should bind even though recursive structs are disallowed in Solidity
+   │     ┬ ┬  
+   │     ╰──── ref: 1
+   │       │  
+   │       ╰── name: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ struct X {
+ 2 │ │       X x; // this should bind even though recursive structs are disallowed in Solidity
+   │ │   ───────────────────────────────────────────┬──────────────────────────────────────────  
+   │ │                                              ╰──────────────────────────────────────────── definiens: 2
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+───╯
