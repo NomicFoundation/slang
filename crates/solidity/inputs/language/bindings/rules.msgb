@@ -504,8 +504,17 @@ inherit .star_extension
     [InheritanceTypes [InheritanceType @args [ArgumentsDeclaration]]]
   ]]]
 ] {
-  ;; Resolve any expression in the specifier using the parent scope
+  ;; Resolve arguments in inheritance specifiers using the parent scope
   edge @args.lexical_scope -> @contract.parent_scope
+}
+
+@contract [ContractDefinition
+  [ContractSpecifiers [ContractSpecifier
+    [StorageLayoutSpecifier @expr [Expression]]
+  ]]
+] {
+  ;; Resolve expressions in storage layout specifiers using the parent scope
+  let @expr.lexical_scope = @contract.parent_scope
 }
 
 ; Pure definitions that cannot contain expressions

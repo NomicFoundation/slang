@@ -6,7 +6,7 @@ Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyw
    │
  1 │ ╭─▶ uint256 constant C1 = 0;
    ┆ ┆   
- 4 │ ├─▶ }
+ 8 │ ├─▶ }
    │ │       
    │ ╰─────── Error occurred here.
 ───╯
