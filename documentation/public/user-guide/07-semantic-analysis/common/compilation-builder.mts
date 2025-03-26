@@ -1,10 +1,11 @@
 import { CompilationBuilder, CompilationUnit } from "@nomicfoundation/slang/compilation";
+import { LanguageFacts } from "@nomicfoundation/slang/utils";
 import { readFile } from "./read-file.mjs";
 import { resolveImport } from "./resolve-import.mjs";
 
 export async function buildCompilationUnit(): Promise<CompilationUnit> {
   const builder = CompilationBuilder.create({
-    languageVersion: "0.8.28",
+    languageVersion: LanguageFacts.latestVersion(),
     readFile,
     resolveImport,
   });

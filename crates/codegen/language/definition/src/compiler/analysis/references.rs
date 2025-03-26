@@ -243,6 +243,26 @@ fn check_fields(
                         Struct, Enum, Repeated, Separated, Precedence, Keyword, Token,
                     ],
                 );
+
+                if let Some(target) = analysis.metadata.get_mut(&**reference) {
+                    match &target.item {
+                        SpannedItem::Repeated { item: child } => {
+                            if child.allow_empty.as_ref().is_some_and(|b| **b) {
+                                analysis
+                                    .errors
+                                    .add(reference, &Errors::OptionalFieldAllowsEmpty);
+                            }
+                        }
+                        SpannedItem::Separated { item: child } => {
+                            if child.allow_empty.as_ref().is_some_and(|b| **b) {
+                                analysis
+                                    .errors
+                                    .add(reference, &Errors::OptionalFieldAllowsEmpty);
+                            }
+                        }
+                        _ => {}
+                    }
+                }
             }
         };
     }
@@ -535,6 +555,8 @@ enum Errors<'err> {
     UnknownReference(&'err Identifier),
     #[error("Reference '{0}' is only defined in '{1}', but not in '{2}'.")]
     InvalidReferenceVersion(&'err Identifier, &'err VersionSet, &'err VersionSet),
+    #[error("Optional field points to a container that allows empty children. Should this be required instead?")]
+    OptionalFieldAllowsEmpty,
     #[error("Reference '{0}' of kind '{1:?}' is not valid. Expected: {2:?}")]
     InvalidReferenceFilter(
         &'err Identifier,

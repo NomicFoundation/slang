@@ -455,7 +455,9 @@ inherit .star_extension
   edge @contract.lexical_scope -> @contract.yul_locals
 }
 
-@contract [ContractDefinition @specifier [InheritanceSpecifier]] {
+@contract [ContractDefinition
+  [ContractSpecifiers [ContractSpecifier @specifier [InheritanceSpecifier]]]
+] {
   ; The `.heir` scoped variable allows the rules for `InheritanceSpecifier`
   ; above to connect the instance scope of this contract to the parents.
   let @specifier.heir = @contract
@@ -488,9 +490,11 @@ inherit .star_extension
   edge super_instance -> @contract.super_scope
 }
 
-@contract [ContractDefinition [InheritanceSpecifier [InheritanceTypes
-    [InheritanceType @type_name [IdentifierPath]]
-]]] {
+@contract [ContractDefinition
+  [ContractSpecifiers [ContractSpecifier [InheritanceSpecifier
+    [InheritanceTypes [InheritanceType @type_name [IdentifierPath]]]
+  ]]]
+] {
   ;; The base contract defs are directly accesible through our super scope
   edge @contract.super_scope -> @type_name.push_begin
 }

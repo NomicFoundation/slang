@@ -61,6 +61,8 @@ pub enum EdgeLabel {
     Assignment,
     /// Represents a child node with the label `asterisk`.
     Asterisk,
+    /// Represents a child node with the label `at_keyword`.
+    AtKeyword,
     /// Represents a child node with the label `attributes`.
     Attributes,
     /// Represents a child node with the label `block`.
@@ -171,6 +173,8 @@ pub enum EdgeLabel {
     KeyType,
     /// Represents a child node with the label `label`.
     Label,
+    /// Represents a child node with the label `layout_keyword`.
+    LayoutKeyword,
     /// Represents a child node with the label `leave_keyword`.
     LeaveKeyword,
     /// Represents a child node with the label `let_keyword`.
@@ -241,6 +245,8 @@ pub enum EdgeLabel {
     Sets,
     /// Represents a child node with the label `solidity_keyword`.
     SolidityKeyword,
+    /// Represents a child node with the label `specifiers`.
+    Specifiers,
     /// Represents a child node with the label `start`.
     Start,
     /// Represents a child node with the label `statements`.

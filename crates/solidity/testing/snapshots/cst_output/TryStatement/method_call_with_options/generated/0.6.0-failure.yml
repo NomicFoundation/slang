@@ -2,14 +2,13 @@
 
 Source: >
   1  │ try foo() { x: 1 } {                                                             │ 0..20
-  2  │   bar();                                                                         │ 21..29
-  3  │ } catch {                                                                        │ 30..39
-  4  │ }                                                                                │ 40..41
+  2  │ } catch {                                                                        │ 21..30
+  3  │ }                                                                                │ 31..32
 
 Errors: # 2 total
   - >
     Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/try_expr_call_options/input.sol:1:14]
+       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/method_call_with_options/input.sol:1:14]
        │
      1 │ try foo() { x: 1 } {
        │              ──┬─  
@@ -17,17 +16,17 @@ Errors: # 2 total
     ───╯
   - >
     Error: Expected CatchKeyword.
-       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/try_expr_call_options/input.sol:1:19]
+       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/method_call_with_options/input.sol:1:19]
        │
      1 │ ╭─▶ try foo() { x: 1 } {
        ┆ ┆   
-     4 │ ├─▶ }
+     3 │ ├─▶ }
        │ │       
        │ ╰─────── Error occurred here.
     ───╯
 
 Tree:
-  - (root꞉ TryStatement): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" (0..42)
+  - (root꞉ TryStatement): # "try foo() { x: 1 } {\n} catch {\n}\n" (0..33)
       - (try_keyword꞉ TryKeyword): "try" # (0..3)
       - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # " foo()" (3..9)
           - (operand꞉ Expression): # " foo" (3..7)
@@ -46,4 +45,4 @@ Tree:
                   - (item꞉ Identifier): "x" # (12..13)
           - (unrecognized꞉ UNRECOGNIZED): ": 1 " # (13..17)
           - (close_brace꞉ CloseBrace): "}" # (17..18)
-      - (unrecognized꞉ UNRECOGNIZED): " {\n  bar();\n} catch {\n}\n" # (18..42)
+      - (unrecognized꞉ UNRECOGNIZED): " {\n} catch {\n}\n" # (18..33)

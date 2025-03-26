@@ -2,6 +2,7 @@ import assert from "node:assert";
 import { Parser } from "@nomicfoundation/slang/parser";
 import { NonterminalKind } from "@nomicfoundation/slang/cst";
 import { FunctionDefinition } from "@nomicfoundation/slang/ast";
+import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 test("using the ast", async () => {
   const source = `
@@ -10,7 +11,7 @@ test("using the ast", async () => {
     }
   `;
 
-  const parser = Parser.create("0.8.28");
+  const parser = Parser.create(LanguageFacts.latestVersion());
 
   const parseOutput = parser.parseNonterminal(NonterminalKind.FunctionDefinition, source);
   assert(parseOutput.isValid());

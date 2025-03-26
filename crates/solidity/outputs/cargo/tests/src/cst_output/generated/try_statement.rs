@@ -5,16 +5,21 @@ use anyhow::Result;
 use crate::cst_output::runner::run;
 
 #[test]
-fn try_catch() -> Result<()> {
-    run("TryStatement", "try_catch")
+fn method_call() -> Result<()> {
+    run("TryStatement", "method_call")
 }
 
 #[test]
-fn try_catch_empty_body() -> Result<()> {
-    run("TryStatement", "try_catch_empty_body")
+fn method_call_with_body() -> Result<()> {
+    run("TryStatement", "method_call_with_body")
 }
 
 #[test]
-fn try_expr_call_options() -> Result<()> {
-    run("TryStatement", "try_expr_call_options")
+fn method_call_with_options() -> Result<()> {
+    run("TryStatement", "method_call_with_options")
+}
+
+#[test]
+fn method_call_with_options_and_body() -> Result<()> {
+    run("TryStatement", "method_call_with_options_and_body")
 }

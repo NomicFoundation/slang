@@ -5,12 +5,6 @@ use crate::parser::parser_support::parser_result::SkippedUntil;
 use crate::parser::parser_support::ParserResult;
 use crate::parser::ParseError;
 
-/// How many terminals have to be matched to trigger the error recovery.
-/// For ambiguous syntaxes this needs to be set to at least N, where N
-/// is the terminal lookahead required to disambiguate the syntax.
-#[derive(Clone, Copy)]
-pub struct TerminalAcceptanceThreshold(pub(crate) u8);
-
 fn opt_parse(
     input: &mut ParserContext<'_>,
     parse: impl Fn(&mut ParserContext<'_>) -> ParserResult,
@@ -37,7 +31,6 @@ impl ParserResult {
         input: &mut ParserContext<'_>,
         lexer: &L,
         expected: TerminalKind,
-        acceptance_threshold: TerminalAcceptanceThreshold,
     ) -> ParserResult {
         enum ParseResultKind {
             Match,
@@ -48,15 +41,11 @@ impl ParserResult {
         let before_recovery = input.position();
 
         let (mut nodes, mut expected_terminals, result_kind) = match self {
-            ParserResult::IncompleteMatch(result)
-                if result.matches_at_least_n_terminals(acceptance_threshold.0) =>
-            {
-                (
-                    result.nodes,
-                    result.expected_terminals,
-                    ParseResultKind::Incomplete,
-                )
-            }
+            ParserResult::IncompleteMatch(result) => (
+                result.nodes,
+                result.expected_terminals,
+                ParseResultKind::Incomplete,
+            ),
             ParserResult::Match(result)
                 if lexer
                     .peek_terminal_with_trivia::<LexCtx>(input)
@@ -69,7 +58,7 @@ impl ParserResult {
                     ParseResultKind::Match,
                 )
             }
-            ParserResult::NoMatch(result) if acceptance_threshold.0 == 0 => {
+            ParserResult::NoMatch(result) => {
                 (vec![], result.expected_terminals, ParseResultKind::NoMatch)
             }
             // No need to recover, so just return as-is.
