@@ -7,11 +7,12 @@ import {
   TerminalKind,
   TerminalKindExtensions,
 } from "@nomicfoundation/slang/cst";
+import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 test("handling trivia", () => {
   const source = `  true\n`;
 
-  const parser = Parser.create("0.8.28");
+  const parser = Parser.create(LanguageFacts.latestVersion());
   const parseOutput = parser.parseNonterminal(NonterminalKind.Expression, source);
   assert(parseOutput.isValid());
 

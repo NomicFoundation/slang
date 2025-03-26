@@ -1,11 +1,12 @@
 import assert from "node:assert";
 import { Parser } from "@nomicfoundation/slang/parser";
 import { assertTerminalNode, NonterminalKind, TerminalKind, TerminalKindExtensions } from "@nomicfoundation/slang/cst";
+import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 test("missing error nodes", () => {
   const source = `contract`;
 
-  const parser = Parser.create("0.8.28");
+  const parser = Parser.create(LanguageFacts.latestVersion());
   const parseOutput = parser.parseNonterminal(NonterminalKind.ContractDefinition, source);
   assert(!parseOutput.isValid());
 

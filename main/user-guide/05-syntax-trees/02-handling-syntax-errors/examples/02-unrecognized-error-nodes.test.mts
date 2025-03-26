@@ -7,13 +7,14 @@ import {
   TerminalKind,
   TerminalKindExtensions,
 } from "@nomicfoundation/slang/cst";
+import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 test("unrecognized error nodes", () => {
   const source = `
     foo();
     %`;
 
-  const parser = Parser.create("0.8.28");
+  const parser = Parser.create(LanguageFacts.latestVersion());
   const parseOutput = parser.parseNonterminal(NonterminalKind.Statements, source);
   assert(!parseOutput.isValid());
 

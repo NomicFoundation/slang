@@ -7,11 +7,12 @@ import {
   NonterminalKind,
   TerminalKind,
 } from "@nomicfoundation/slang/cst";
+import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 test("parsing nonterminals", () => {
   const source = `x+y`;
 
-  const parser = Parser.create("0.8.28");
+  const parser = Parser.create(LanguageFacts.latestVersion());
   const parseOutput = parser.parseNonterminal(NonterminalKind.AdditiveExpression, source);
 
   assert(parseOutput.isValid());

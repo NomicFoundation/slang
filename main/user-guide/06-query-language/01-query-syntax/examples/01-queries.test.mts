@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { assertNonterminalNode, NonterminalKind, Query } from "@nomicfoundation/slang/cst";
 import { Parser } from "@nomicfoundation/slang/parser";
+import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 test("query-syntax-1", () => {
   const query = `
@@ -371,7 +372,7 @@ function extractMatches(queryString: string, kind: NonterminalKind, source: stri
     .filter((line) => !line.includes("--8<--"))
     .join("\n");
 
-  const parser = Parser.create("0.8.28");
+  const parser = Parser.create(LanguageFacts.latestVersion());
 
   const parseOutput = parser.parseNonterminal(kind, source);
   assert(parseOutput.isValid());
