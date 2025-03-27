@@ -1,5 +1,18 @@
 # changelog
 
+## 1.1.0
+
+### Minor Changes
+
+- [#1288](https://github.com/NomicFoundation/slang/pull/1288) [`2090ab8`](https://github.com/NomicFoundation/slang/commit/2090ab8bc5e6c4027ee7b065c217a59b1764be37) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - support Solidity `0.8.29` and [Custom Storage Layouts](https://docs.soliditylang.org/en/v0.8.29/contracts.html#custom-storage-layout):
+
+    - `ContractDefinition` nodes will no longer have an optional `InheritanceSpecifier` child directly, but will hold a list of `ContractSpecifier` children
+    - `ContractSpecifier` nodes have either `InheritanceSpecifier` or `StorageLayoutSpecifier` children
+
+### Patch Changes
+
+- [#1291](https://github.com/NomicFoundation/slang/pull/1291) [`da1f863`](https://github.com/NomicFoundation/slang/commit/da1f863cc7efa730a019046d7ecb055be070610f) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Resolve arguments to inheritance specifiers and expressions in storage layout specifiers using the contract's parent scope.
+
 ## 1.0.0
 
 ### Major Changes
