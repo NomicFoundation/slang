@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract A is A {} // this should bind even though it makes no sense
+   │          ┬    ┬  
+   │          ╰─────── name: 1
+   │               │  
+   │               ╰── ref: 1
+   │ 
+ 3 │ contract B is C {} // this should bind even though it makes no sense
+   │          ┬    ┬  
+   │          ╰─────── name: 2
+   │               │  
+   │               ╰── ref: 3
+ 4 │ contract C is B {} // this should bind even though it makes no sense
+   │          ┬    ┬  
+   │          ╰─────── name: 3
+   │               │  
+   │               ╰── ref: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ │   contract A is A {} // this should bind even though it makes no sense
+   │ │   ──────────────────────────────────┬──────────────────────────────────  
+   │ │                                     ╰──────────────────────────────────── definiens: 1
+ 2 │ ╭─▶ 
+ 3 │ ├─▶ contract B is C {} // this should bind even though it makes no sense
+   │ │                                                                          
+   │ ╰────────────────────────────────────────────────────────────────────────── definiens: 2
+ 4 │     contract C is B {} // this should bind even though it makes no sense
+   │     ──────────────────────────────────┬──────────────────────────────────  
+   │                                       ╰──────────────────────────────────── definiens: 3
+───╯

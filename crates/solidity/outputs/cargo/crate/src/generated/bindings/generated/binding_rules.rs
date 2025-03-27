@@ -503,6 +503,24 @@ inherit .star_extension
   edge @contract.super_scope -> @type_name.push_begin
 }
 
+@contract [ContractDefinition
+  [ContractSpecifiers [ContractSpecifier [InheritanceSpecifier
+    [InheritanceTypes [InheritanceType @args [ArgumentsDeclaration]]]
+  ]]]
+] {
+  ;; Resolve arguments in inheritance specifiers using the parent scope
+  edge @args.lexical_scope -> @contract.parent_scope
+}
+
+@contract [ContractDefinition
+  [ContractSpecifiers [ContractSpecifier
+    [StorageLayoutSpecifier @expr [Expression]]
+  ]]
+] {
+  ;; Resolve expressions in storage layout specifiers using the parent scope
+  let @expr.lexical_scope = @contract.parent_scope
+}
+
 ; Pure definitions that cannot contain expressions
 @contract [ContractDefinition [ContractMembers
     [ContractMember @member (
