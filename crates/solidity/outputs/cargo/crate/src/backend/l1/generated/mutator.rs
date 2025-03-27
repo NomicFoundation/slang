@@ -207,18 +207,15 @@ pub trait Mutator {
     fn mutate_contract_definition(&mut self, source: &ContractDefinition) -> ContractDefinition {
         let abstract_keyword = source.abstract_keyword.as_ref().map(Rc::clone);
         let name = Rc::clone(&source.name);
-        let inheritance = source
-            .inheritance
-            .as_ref()
-            .map(|value| self.mutate_inheritance_specifier(value));
         let members = self.mutate_contract_members(&source.members);
+        let inheritance_types = self.mutate_inheritance_types(&source.inheritance_types);
 
         Rc::new(ContractDefinitionStruct {
             node_id: source.node_id,
             abstract_keyword,
             name,
-            inheritance,
             members,
+            inheritance_types,
         })
     }
 
@@ -444,22 +441,6 @@ pub trait Mutator {
         let body = self.mutate_block(&source.body);
 
         Rc::new(ConstructorDefinitionStruct {
-            node_id: source.node_id,
-            parameters,
-            attributes,
-            body,
-        })
-    }
-
-    fn mutate_unnamed_function_definition(
-        &mut self,
-        source: &UnnamedFunctionDefinition,
-    ) -> UnnamedFunctionDefinition {
-        let parameters = self.mutate_parameters_declaration(&source.parameters);
-        let attributes = self.mutate_unnamed_function_attributes(&source.attributes);
-        let body = self.mutate_function_body(&source.body);
-
-        Rc::new(UnnamedFunctionDefinitionStruct {
             node_id: source.node_id,
             parameters,
             attributes,
@@ -1875,11 +1856,6 @@ pub trait Mutator {
                     self.mutate_fallback_function_definition(fallback_function_definition),
                 )
             }
-            ContractMember::UnnamedFunctionDefinition(ref unnamed_function_definition) => {
-                ContractMember::UnnamedFunctionDefinition(
-                    self.mutate_unnamed_function_definition(unnamed_function_definition),
-                )
-            }
             ContractMember::ModifierDefinition(ref modifier_definition) => {
                 ContractMember::ModifierDefinition(
                     self.mutate_modifier_definition(modifier_definition),
@@ -2823,16 +2799,6 @@ pub trait Mutator {
         source
             .iter()
             .map(|item| self.mutate_constructor_attribute(item))
-            .collect()
-    }
-
-    fn mutate_unnamed_function_attributes(
-        &mut self,
-        source: &UnnamedFunctionAttributes,
-    ) -> UnnamedFunctionAttributes {
-        source
-            .iter()
-            .map(|item| self.mutate_unnamed_function_attribute(item))
             .collect()
     }
 

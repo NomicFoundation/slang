@@ -185,11 +185,6 @@ pub trait Visitor {
     }
     fn leave_constructor_definition(&mut self, _target: &ConstructorDefinition) {}
 
-    fn enter_unnamed_function_definition(&mut self, _target: &UnnamedFunctionDefinition) -> bool {
-        true
-    }
-    fn leave_unnamed_function_definition(&mut self, _target: &UnnamedFunctionDefinition) {}
-
     fn enter_fallback_function_definition(&mut self, _target: &FallbackFunctionDefinition) -> bool {
         true
     }
@@ -871,11 +866,9 @@ impl UsingAliasStruct {
 impl ContractDefinitionStruct {
     pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
         if visitor.enter_contract_definition(self) {
-            if let Some(ref inheritance) = self.inheritance {
-                inheritance.accept(visitor);
-            }
-
             accept_contract_members(&self.members, visitor);
+
+            accept_inheritance_types(&self.inheritance_types, visitor);
         }
         visitor.leave_contract_definition(self);
     }
@@ -1067,19 +1060,6 @@ impl ConstructorDefinitionStruct {
             self.body.accept(visitor);
         }
         visitor.leave_constructor_definition(self);
-    }
-}
-
-impl UnnamedFunctionDefinitionStruct {
-    pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
-        if visitor.enter_unnamed_function_definition(self) {
-            self.parameters.accept(visitor);
-
-            accept_unnamed_function_attributes(&self.attributes, visitor);
-
-            self.body.accept(visitor);
-        }
-        visitor.leave_unnamed_function_definition(self);
     }
 }
 
@@ -2245,9 +2225,6 @@ impl ContractMember {
             Self::FallbackFunctionDefinition(ref fallback_function_definition) => {
                 fallback_function_definition.accept(visitor);
             }
-            Self::UnnamedFunctionDefinition(ref unnamed_function_definition) => {
-                unnamed_function_definition.accept(visitor);
-            }
             Self::ModifierDefinition(ref modifier_definition) => {
                 modifier_definition.accept(visitor);
             }
@@ -2894,16 +2871,6 @@ fn accept_function_attributes(items: &[FunctionAttribute], visitor: &mut dyn Vis
 
 #[inline]
 fn accept_constructor_attributes(items: &[ConstructorAttribute], visitor: &mut dyn Visitor) {
-    for item in items {
-        item.accept(visitor);
-    }
-}
-
-#[inline]
-fn accept_unnamed_function_attributes(
-    items: &[UnnamedFunctionAttribute],
-    visitor: &mut dyn Visitor,
-) {
     for item in items {
         item.accept(visitor);
     }

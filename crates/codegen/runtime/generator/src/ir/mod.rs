@@ -18,11 +18,129 @@ impl ModelWrapper {
 
     pub fn from(name: &str, other: ModelWrapper) -> Self {
         let source = other.target;
-        let target = IrModel::from_model(name, &source);
+        let mut target = IrModel::from_model(name, &source);
+
+        for (_, sequence) in &mut target.sequences {
+            sequence.can_build_from_source = true;
+        }
+
         ModelWrapper {
             source: Some(source),
             target,
         }
+    }
+
+    pub fn remove_type(&mut self, name: &str) -> bool {
+        let identifier: model::Identifier = name.into();
+        let removed = self.target.sequences.shift_remove(&identifier).is_some()
+            || self.target.choices.shift_remove(&identifier).is_some()
+            || self.target.repeated.shift_remove(&identifier).is_some()
+            || self.target.separated.shift_remove(&identifier).is_some()
+            || self.target.unique_terminals.shift_remove(&identifier)
+            || self.target.terminals.shift_remove(&identifier);
+
+        for (_, sequence) in &mut self.target.sequences {
+            let mut index = 0;
+            while index < sequence.fields.len() {
+                if sequence.fields[index].r#type == identifier {
+                    sequence.fields.remove(index);
+                } else {
+                    index += 1;
+                }
+            }
+        }
+
+        for (_, choice) in &mut self.target.choices {
+            let mut index = 0;
+            let mut removed_some = false;
+            while index < choice.terminal_types.len() {
+                if choice.terminal_types[index] == identifier {
+                    choice.terminal_types.remove(index);
+                    removed_some = true;
+                } else {
+                    index += 1;
+                }
+            }
+            index = 0;
+            while index < choice.nonterminal_types.len() {
+                if choice.nonterminal_types[index] == identifier {
+                    choice.nonterminal_types.remove(index);
+                    removed_some = true;
+                } else {
+                    index += 1;
+                }
+            }
+            choice.has_removed_variants = choice.has_removed_variants || removed_some;
+        }
+
+        if let Some(repeated_with_item_type) =
+            self.target.repeated.iter().find_map(|repeated_entry| {
+                if repeated_entry.1.item_type == identifier {
+                    Some(repeated_entry.0.clone())
+                } else {
+                    None
+                }
+            })
+        {
+            self.target.repeated.shift_remove(&repeated_with_item_type);
+        }
+
+        if let Some(separated_with_item_type) =
+            self.target.separated.iter().find_map(|separated_entry| {
+                if separated_entry.1.item_type == identifier {
+                    Some(separated_entry.0.clone())
+                } else {
+                    None
+                }
+            })
+        {
+            self.target
+                .separated
+                .shift_remove(&separated_with_item_type);
+        }
+
+        removed
+    }
+
+    pub fn remove_sequence_field(&mut self, sequence_id: &str, field_label: &str) -> bool {
+        let identifier: model::Identifier = sequence_id.into();
+        let Some(sequence) = self.target.sequences.get_mut(&identifier) else {
+            return false;
+        };
+        let mut index = 0;
+        while index < sequence.fields.len() {
+            if sequence.fields[index].label == field_label.into() {
+                sequence.fields.remove(index);
+                return true;
+            }
+            index += 1;
+        }
+        false
+    }
+
+    pub fn add_sequence_field(
+        &mut self,
+        sequence_id: &str,
+        field_label: &str,
+        field_type: &str,
+        is_optional: bool,
+    ) -> bool {
+        let identifier: model::Identifier = sequence_id.into();
+        let Some(sequence) = self.target.sequences.get_mut(&identifier) else {
+            return false;
+        };
+        let is_terminal = self
+            .target
+            .terminals
+            .contains::<model::Identifier>(&field_type.into());
+        sequence.fields.push(Field {
+            label: field_label.into(),
+            r#type: field_type.into(),
+            is_terminal,
+            is_optional,
+        });
+        sequence.can_build_from_source = false;
+        false
     }
 }
 
@@ -44,6 +162,7 @@ pub struct IrModel {
 #[derive(Clone, Serialize)]
 pub struct Sequence {
     pub fields: Vec<Field>,
+    pub can_build_from_source: bool,
 }
 
 #[derive(Clone, Serialize)]
@@ -61,6 +180,7 @@ pub struct Field {
 pub struct Choice {
     pub nonterminal_types: Vec<model::Identifier>,
     pub terminal_types: Vec<model::Identifier>,
+    pub has_removed_variants: bool,
 }
 
 #[derive(Clone, Serialize)]
@@ -184,7 +304,13 @@ impl IrModel {
         let parent_type = item.name.clone();
         let fields = self.convert_fields(&item.fields).collect();
 
-        self.sequences.insert(parent_type, Sequence { fields });
+        self.sequences.insert(
+            parent_type,
+            Sequence {
+                fields,
+                can_build_from_source: false,
+            },
+        );
     }
 
     fn add_enum_item(&mut self, item: &model::EnumItem) {
@@ -201,6 +327,7 @@ impl IrModel {
             Choice {
                 nonterminal_types,
                 terminal_types,
+                has_removed_variants: false,
             },
         );
     }
@@ -251,6 +378,7 @@ impl IrModel {
             Choice {
                 nonterminal_types,
                 terminal_types,
+                has_removed_variants: false,
             },
         );
     }
@@ -291,7 +419,13 @@ impl IrModel {
             }
         };
 
-        self.sequences.insert(parent_type, Sequence { fields });
+        self.sequences.insert(
+            parent_type,
+            Sequence {
+                fields,
+                can_build_from_source: false,
+            },
+        );
     }
 
     fn convert_fields<'a>(

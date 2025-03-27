@@ -161,8 +161,8 @@ pub struct ContractDefinitionStruct {
     pub node_id: usize,
     pub abstract_keyword: Option<Rc<TerminalNode>>,
     pub name: Rc<TerminalNode>,
-    pub inheritance: Option<InheritanceSpecifier>,
     pub members: ContractMembers,
+    pub inheritance_types: InheritanceTypes,
 }
 
 pub type InheritanceSpecifier = Rc<InheritanceSpecifierStruct>;
@@ -319,16 +319,6 @@ pub struct ConstructorDefinitionStruct {
     pub parameters: ParametersDeclaration,
     pub attributes: ConstructorAttributes,
     pub body: Block,
-}
-
-pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
-
-#[derive(Debug)]
-pub struct UnnamedFunctionDefinitionStruct {
-    pub node_id: usize,
-    pub parameters: ParametersDeclaration,
-    pub attributes: UnnamedFunctionAttributes,
-    pub body: FunctionBody,
 }
 
 pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
@@ -1253,7 +1243,6 @@ pub enum ContractMember {
     ConstructorDefinition(ConstructorDefinition),
     ReceiveFunctionDefinition(ReceiveFunctionDefinition),
     FallbackFunctionDefinition(FallbackFunctionDefinition),
-    UnnamedFunctionDefinition(UnnamedFunctionDefinition),
     ModifierDefinition(ModifierDefinition),
     StructDefinition(StructDefinition),
     EnumDefinition(EnumDefinition),
@@ -1603,8 +1592,6 @@ pub type StateVariableAttributes = Vec<StateVariableAttribute>;
 pub type FunctionAttributes = Vec<FunctionAttribute>;
 
 pub type ConstructorAttributes = Vec<ConstructorAttribute>;
-
-pub type UnnamedFunctionAttributes = Vec<UnnamedFunctionAttribute>;
 
 pub type FallbackFunctionAttributes = Vec<FallbackFunctionAttribute>;
 

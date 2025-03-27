@@ -35,9 +35,22 @@ fn main() -> Result<()> {
     _ = runtime.render_product(&ast_model, &ast_output_dir)?;
 
     let runtime = CodegenRuntime::new(&ir_input_dir)?;
-    let l1_model = ModelWrapper::from("l1", ast_model);
+    let mut l1_model = ModelWrapper::from("l1", ast_model);
+    update_l1_model(&mut l1_model);
     let l1_output_dir = ir_output_dir.join("l1");
     _ = runtime.render_product(&l1_model, &l1_output_dir)?;
 
     Ok(())
+}
+
+fn update_l1_model(model: &mut ModelWrapper) {
+    model.remove_type("UnnamedFunctionDefinition");
+    model.remove_type("UnnamedFunctionAttributes");
+    model.remove_sequence_field("ContractDefinition", "inheritance");
+    model.add_sequence_field(
+        "ContractDefinition",
+        "inheritance_types",
+        "InheritanceTypes",
+        false,
+    );
 }
