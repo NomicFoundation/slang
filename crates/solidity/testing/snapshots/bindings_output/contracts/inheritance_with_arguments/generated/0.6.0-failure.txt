@@ -2,13 +2,13 @@
 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
-    ╭─[input.sol:1:1]
-    │
-  1 │ ╭─▶ uint constant BASE = 42;
-    ┆ ┆   
- 11 │ ├─▶ }
-    │ │       
-    │ ╰─────── Error occurred here.
-────╯
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ uint constant BASE = 42;
+   ┆ ┆   
+ 7 │ ├─▶ contract Derived is Base(BASE) {}
+   │ │                                       
+   │ ╰─────────────────────────────────────── Error occurred here.
+───╯
 References and definitions: 
 Definiens: 

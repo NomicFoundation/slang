@@ -45,6 +45,11 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn inheritance_arguments_with_inner_constant() -> Result<()> {
+    run("contracts", "inheritance_arguments_with_inner_constant")
+}
+
+#[test]
 fn inheritance_with_arguments() -> Result<()> {
     run("contracts", "inheritance_with_arguments")
 }
@@ -117,6 +122,11 @@ fn qualified_parent_call() -> Result<()> {
 #[test]
 fn storage_layout_constant() -> Result<()> {
     run("contracts", "storage_layout_constant")
+}
+
+#[test]
+fn storage_layout_inner_constant() -> Result<()> {
+    run("contracts", "storage_layout_inner_constant")
 }
 
 #[test]

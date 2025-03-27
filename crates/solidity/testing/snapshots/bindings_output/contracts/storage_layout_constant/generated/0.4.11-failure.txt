@@ -6,7 +6,7 @@ Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryK
    │
  1 │ ╭─▶ uint256 constant C1 = 0;
    ┆ ┆   
- 8 │ ├─▶ }
+ 4 │ ├─▶ }
    │ │       
    │ ╰─────── Error occurred here.
 ───╯
