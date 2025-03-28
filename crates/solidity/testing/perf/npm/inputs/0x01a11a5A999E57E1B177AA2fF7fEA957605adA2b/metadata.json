@@ -1,0 +1,770 @@
+{
+  "compiler": { "version": "0.6.12+commit.27d51765" },
+  "language": "Solidity",
+  "output": {
+    "abi": [
+      {
+        "inputs": [
+          { "internalType": "contract IERC20", "name": "_token0", "type": "address" },
+          { "internalType": "contract IERC20", "name": "_token1", "type": "address" },
+          { "internalType": "string", "name": "name", "type": "string" },
+          { "internalType": "string", "name": "symbol", "type": "string" },
+          {
+            "internalType": "contract IMooniswapFactoryGovernance",
+            "name": "_mooniswapFactoryGovernance",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "owner", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "spender", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }
+        ],
+        "name": "Approval",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "decayPeriod", "type": "uint256" },
+          { "indexed": false, "internalType": "bool", "name": "isDefault", "type": "bool" },
+          { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "DecayPeriodVoteUpdate",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "sender", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "receiver", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "share", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "token0Amount", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "token1Amount", "type": "uint256" }
+        ],
+        "name": "Deposited",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [{ "indexed": false, "internalType": "string", "name": "reason", "type": "string" }],
+        "name": "Error",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "fee", "type": "uint256" },
+          { "indexed": false, "internalType": "bool", "name": "isDefault", "type": "bool" },
+          { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "FeeVoteUpdate",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "user", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "slippageFee", "type": "uint256" },
+          { "indexed": false, "internalType": "bool", "name": "isDefault", "type": "bool" },
+          { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "SlippageFeeVoteUpdate",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "sender", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "receiver", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "srcToken", "type": "address" },
+          { "indexed": false, "internalType": "address", "name": "dstToken", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "result", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "srcAdditionBalance", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "dstRemovalBalance", "type": "uint256" },
+          { "indexed": false, "internalType": "address", "name": "referral", "type": "address" }
+        ],
+        "name": "Swapped",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": false, "internalType": "uint256", "name": "srcBalance", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "dstBalance", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "fee", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "slippageFee", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "referralShare", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "governanceShare", "type": "uint256" }
+        ],
+        "name": "Sync",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "from", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "to", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "value", "type": "uint256" }
+        ],
+        "name": "Transfer",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "sender", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "receiver", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "share", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "token0Amount", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "token1Amount", "type": "uint256" }
+        ],
+        "name": "Withdrawn",
+        "type": "event"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "owner", "type": "address" },
+          { "internalType": "address", "name": "spender", "type": "address" }
+        ],
+        "name": "allowance",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "spender", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "approve",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
+        "name": "balanceOf",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "decayPeriod",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "uint256", "name": "vote", "type": "uint256" }],
+        "name": "decayPeriodVote",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "user", "type": "address" }],
+        "name": "decayPeriodVotes",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "spender", "type": "address" },
+          { "internalType": "uint256", "name": "subtractedValue", "type": "uint256" }
+        ],
+        "name": "decreaseAllowance",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "uint256[2]", "name": "maxAmounts", "type": "uint256[2]" },
+          { "internalType": "uint256[2]", "name": "minAmounts", "type": "uint256[2]" }
+        ],
+        "name": "deposit",
+        "outputs": [
+          { "internalType": "uint256", "name": "fairSupply", "type": "uint256" },
+          { "internalType": "uint256[2]", "name": "receivedAmounts", "type": "uint256[2]" }
+        ],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "uint256[2]", "name": "maxAmounts", "type": "uint256[2]" },
+          { "internalType": "uint256[2]", "name": "minAmounts", "type": "uint256[2]" },
+          { "internalType": "address", "name": "target", "type": "address" }
+        ],
+        "name": "depositFor",
+        "outputs": [
+          { "internalType": "uint256", "name": "fairSupply", "type": "uint256" },
+          { "internalType": "uint256[2]", "name": "receivedAmounts", "type": "uint256[2]" }
+        ],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "discardDecayPeriodVote",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      { "inputs": [], "name": "discardFeeVote", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
+      {
+        "inputs": [],
+        "name": "discardSlippageFeeVote",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "fee",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "uint256", "name": "vote", "type": "uint256" }],
+        "name": "feeVote",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "user", "type": "address" }],
+        "name": "feeVotes",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "contract IERC20", "name": "token", "type": "address" }],
+        "name": "getBalanceForAddition",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "contract IERC20", "name": "token", "type": "address" }],
+        "name": "getBalanceForRemoval",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "contract IERC20", "name": "src", "type": "address" },
+          { "internalType": "contract IERC20", "name": "dst", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "getReturn",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "getTokens",
+        "outputs": [{ "internalType": "contract IERC20[]", "name": "tokens", "type": "address[]" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "spender", "type": "address" },
+          { "internalType": "uint256", "name": "addedValue", "type": "uint256" }
+        ],
+        "name": "increaseAllowance",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "mooniswapFactoryGovernance",
+        "outputs": [{ "internalType": "contract IMooniswapFactoryGovernance", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "name",
+        "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      { "inputs": [], "name": "renounceOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
+      {
+        "inputs": [
+          { "internalType": "contract IERC20", "name": "token", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "rescueFunds",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "contract IMooniswapFactoryGovernance",
+            "name": "newMooniswapFactoryGovernance",
+            "type": "address"
+          }
+        ],
+        "name": "setMooniswapFactoryGovernance",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "slippageFee",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "uint256", "name": "vote", "type": "uint256" }],
+        "name": "slippageFeeVote",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "user", "type": "address" }],
+        "name": "slippageFeeVotes",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "contract IERC20", "name": "src", "type": "address" },
+          { "internalType": "contract IERC20", "name": "dst", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" },
+          { "internalType": "uint256", "name": "minReturn", "type": "uint256" },
+          { "internalType": "address", "name": "referral", "type": "address" }
+        ],
+        "name": "swap",
+        "outputs": [{ "internalType": "uint256", "name": "result", "type": "uint256" }],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "contract IERC20", "name": "src", "type": "address" },
+          { "internalType": "contract IERC20", "name": "dst", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" },
+          { "internalType": "uint256", "name": "minReturn", "type": "uint256" },
+          { "internalType": "address", "name": "referral", "type": "address" },
+          { "internalType": "address payable", "name": "receiver", "type": "address" }
+        ],
+        "name": "swapFor",
+        "outputs": [{ "internalType": "uint256", "name": "result", "type": "uint256" }],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "token0",
+        "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "token1",
+        "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "uint256", "name": "i", "type": "uint256" }],
+        "name": "tokens",
+        "outputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "recipient", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "transfer",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "sender", "type": "address" },
+          { "internalType": "address", "name": "recipient", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "transferFrom",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
+        "name": "virtualBalancesForAddition",
+        "outputs": [
+          { "internalType": "uint216", "name": "balance", "type": "uint216" },
+          { "internalType": "uint40", "name": "time", "type": "uint40" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
+        "name": "virtualBalancesForRemoval",
+        "outputs": [
+          { "internalType": "uint216", "name": "balance", "type": "uint216" },
+          { "internalType": "uint40", "name": "time", "type": "uint40" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "virtualDecayPeriod",
+        "outputs": [
+          { "internalType": "uint104", "name": "", "type": "uint104" },
+          { "internalType": "uint104", "name": "", "type": "uint104" },
+          { "internalType": "uint48", "name": "", "type": "uint48" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "virtualFee",
+        "outputs": [
+          { "internalType": "uint104", "name": "", "type": "uint104" },
+          { "internalType": "uint104", "name": "", "type": "uint104" },
+          { "internalType": "uint48", "name": "", "type": "uint48" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "virtualSlippageFee",
+        "outputs": [
+          { "internalType": "uint104", "name": "", "type": "uint104" },
+          { "internalType": "uint104", "name": "", "type": "uint104" },
+          { "internalType": "uint48", "name": "", "type": "uint48" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "contract IERC20", "name": "", "type": "address" }],
+        "name": "volumes",
+        "outputs": [
+          { "internalType": "uint128", "name": "confirmed", "type": "uint128" },
+          { "internalType": "uint128", "name": "result", "type": "uint128" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "uint256", "name": "amount", "type": "uint256" },
+          { "internalType": "uint256[]", "name": "minReturns", "type": "uint256[]" }
+        ],
+        "name": "withdraw",
+        "outputs": [{ "internalType": "uint256[2]", "name": "withdrawnAmounts", "type": "uint256[2]" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "uint256", "name": "amount", "type": "uint256" },
+          { "internalType": "uint256[]", "name": "minReturns", "type": "uint256[]" },
+          { "internalType": "address payable", "name": "target", "type": "address" }
+        ],
+        "name": "withdrawFor",
+        "outputs": [{ "internalType": "uint256[2]", "name": "withdrawnAmounts", "type": "uint256[2]" }],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ],
+    "devdoc": {
+      "kind": "dev",
+      "methods": {
+        "allowance(address,address)": { "details": "See {IERC20-allowance}." },
+        "approve(address,uint256)": {
+          "details": "See {IERC20-approve}. Requirements: - `spender` cannot be the zero address."
+        },
+        "balanceOf(address)": { "details": "See {IERC20-balanceOf}." },
+        "decimals()": {
+          "details": "Returns the number of decimals used to get its user representation. For example, if `decimals` equals `2`, a balance of `505` tokens should be displayed to a user as `5,05` (`505 / 10 ** 2`). Tokens usually opt for a value of 18, imitating the relationship between Ether and Wei. This is the value {ERC20} uses, unless {_setupDecimals} is called. NOTE: This information is only used for _display_ purposes: it in no way affects any of the arithmetic of the contract, including {IERC20-balanceOf} and {IERC20-transfer}."
+        },
+        "decreaseAllowance(address,uint256)": {
+          "details": "Atomically decreases the allowance granted to `spender` by the caller. This is an alternative to {approve} that can be used as a mitigation for problems described in {IERC20-approve}. Emits an {Approval} event indicating the updated allowance. Requirements: - `spender` cannot be the zero address. - `spender` must have allowance for the caller of at least `subtractedValue`."
+        },
+        "increaseAllowance(address,uint256)": {
+          "details": "Atomically increases the allowance granted to `spender` by the caller. This is an alternative to {approve} that can be used as a mitigation for problems described in {IERC20-approve}. Emits an {Approval} event indicating the updated allowance. Requirements: - `spender` cannot be the zero address."
+        },
+        "name()": { "details": "Returns the name of the token." },
+        "owner()": { "details": "Returns the address of the current owner." },
+        "renounceOwnership()": {
+          "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+        },
+        "symbol()": { "details": "Returns the symbol of the token, usually a shorter version of the name." },
+        "totalSupply()": { "details": "See {IERC20-totalSupply}." },
+        "transfer(address,uint256)": {
+          "details": "See {IERC20-transfer}. Requirements: - `recipient` cannot be the zero address. - the caller must have a balance of at least `amount`."
+        },
+        "transferFrom(address,address,uint256)": {
+          "details": "See {IERC20-transferFrom}. Emits an {Approval} event indicating the updated allowance. This is not required by the EIP. See the note at the beginning of {ERC20}; Requirements: - `sender` and `recipient` cannot be the zero address. - `sender` must have a balance of at least `amount`. - the caller must have allowance for ``sender``'s tokens of at least `amount`."
+        },
+        "transferOwnership(address)": {
+          "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+        }
+      },
+      "version": 1
+    },
+    "userdoc": { "kind": "user", "methods": {}, "version": 1 }
+  },
+  "settings": {
+    "compilationTarget": { "/Users/k06a/Projects/mooniswap-v2/contracts/Mooniswap.sol": "Mooniswap" },
+    "evmVersion": "istanbul",
+    "libraries": {},
+    "metadata": { "bytecodeHash": "ipfs" },
+    "optimizer": { "enabled": true, "runs": 1000 },
+    "remappings": []
+  },
+  "sources": {
+    "/Users/k06a/Projects/mooniswap-v2/contracts/Mooniswap.sol": {
+      "keccak256": "0xf4dfdd316f05e3a1519432a0fb8a4189674eb41928e979fd70189f8337262cc2",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://2bf714507dfcedb58fb8f38a7a8748141de9b2df028935aecfa71c2f79d9c1d4",
+        "dweb:/ipfs/QmcHVjDPWzjPAbKprDcvjgd3pn5su3kcMToMgin3WnN4d2"
+      ]
+    },
+    "/Users/k06a/Projects/mooniswap-v2/contracts/governance/MooniswapGovernance.sol": {
+      "keccak256": "0x62430fc9ad87ad51c5820482201ad5f6df47c838e8b9e50a5207eb9dbe7cc12e",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://8066f5e4054bb4a4e253693b8782b431ad0110875faf47d7f69acb3206b4b4f1",
+        "dweb:/ipfs/QmPt2CMqahyXaQAg5DHdum4Df18ugUmqzVcdVeCHiJEdjF"
+      ]
+    },
+    "/Users/k06a/Projects/mooniswap-v2/contracts/interfaces/IFeeCollector.sol": {
+      "keccak256": "0x32a215750177362f8077d6e4cf48ae508e0b6565f20f8eaa4b130260bf238555",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://c596513c3e587dac583be0d65d7840ab0e6c16f8e2c0bdbec4ff4ff93b3ccc99",
+        "dweb:/ipfs/QmUu7vkg3sXMvqPx7nKjGcESnndxaw1ytGsMjpaHqEKts6"
+      ]
+    },
+    "/Users/k06a/Projects/mooniswap-v2/contracts/interfaces/IMooniswapFactoryGovernance.sol": {
+      "keccak256": "0xf5a2f873490e950f72125859dade8528e62c70e2abfc7be17c22488b84c8adb7",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://62d928b60661516da9f50bbddfb81082beedbbb4d83f0feb083b01fc955c0173",
+        "dweb:/ipfs/QmfS9FJ5zHbbxm21d29xWKit8PtAvpemqddVkmNTwrqiJ4"
+      ]
+    },
+    "/Users/k06a/Projects/mooniswap-v2/contracts/libraries/LiquidVoting.sol": {
+      "keccak256": "0x0300c61b4bba9a58097ec0a843d04b42260f705dbc68bf3bbcc9e9011ffdfd7a",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://82deea804e69fc72159f9280eb4b2b72c4161c3143411e41bd2950c24195a1d0",
+        "dweb:/ipfs/QmSbhzSSNHiwywEGzdjK828KQijcbwQRF5ogPtd2jzXi3W"
+      ]
+    },
+    "/Users/k06a/Projects/mooniswap-v2/contracts/libraries/MooniswapConstants.sol": {
+      "keccak256": "0x9f6421e5cf8734fbf5670148f3d6030b69aaeba473933f9a07fd3766fdaf1733",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://85827e493fb354b56f866a4b89b18fb4989c644bde58d736ec3316e270c0cc01",
+        "dweb:/ipfs/QmTeA6CXbuYNb2CTufzDgZokuUuZn8MJACpHnDyb81z6JY"
+      ]
+    },
+    "/Users/k06a/Projects/mooniswap-v2/contracts/libraries/SafeCast.sol": {
+      "keccak256": "0x6f5e3e3d0bc762c2defe32c7bc62309cd7e60776bb5dc0d059a1bcf0874b4c51",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://037e1fec039b166eded383524aba14012639b20d05c03bce6dfae8ed77bdf6c8",
+        "dweb:/ipfs/Qma3nQzg3qR6vRXJyy4hiTeBNdrvyrm9a2G2NPXxmmqo1S"
+      ]
+    },
+    "/Users/k06a/Projects/mooniswap-v2/contracts/libraries/Sqrt.sol": {
+      "keccak256": "0x5674ed7d1bb3655d9d6698ff6175cb23261d8cf837915d0af70404aa019b5267",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://b79b00374537e2b24bb4b0ef1e4f86e67f7c789201d2cfae430beb11d4deade3",
+        "dweb:/ipfs/QmWDXiQrtSHbbAQctNjCo9w3zG4woPQBxz8kGskNDZ3EgZ"
+      ]
+    },
+    "/Users/k06a/Projects/mooniswap-v2/contracts/libraries/UniERC20.sol": {
+      "keccak256": "0x0edbb831cddd42ae71b178230188bd12c8f1cd362b148df704df6f0b1c9e015f",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://c2d8316e47def8848a0fbb7d8dd30de7f618b90c5ed7c0c193a553484a9fddb1",
+        "dweb:/ipfs/QmSttpg6nNScGrnQsuErFc4NXZtwLr2G4dwtgoHtL9YBdS"
+      ]
+    },
+    "/Users/k06a/Projects/mooniswap-v2/contracts/libraries/VirtualBalance.sol": {
+      "keccak256": "0x0493d4b88ca464df713e7978a995c26f378e458ffeffc4a0ca966510e4cea8cb",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://83e74ce6f1c7e88953c81f5207a2a3571ecb672ad355219d246fce38731ee61a",
+        "dweb:/ipfs/QmYxsp2Zpu7ywiNyyUXhHtQFysdywJpTkU23C75nZTH6Mt"
+      ]
+    },
+    "/Users/k06a/Projects/mooniswap-v2/contracts/libraries/VirtualVote.sol": {
+      "keccak256": "0xd62c910eb9b206eb6c2230be6c964824693fbe52436e53c3e69f02a84aa7c63d",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://8a8fae267dbafd1ea069cdbe58a01e8dc5327b3dd8b403766d35c4bd865b170b",
+        "dweb:/ipfs/Qmdpe4yUkvGNYyuVP92ZKZJ6Z46FUwi9TK4CRcP2tLzzjP"
+      ]
+    },
+    "/Users/k06a/Projects/mooniswap-v2/contracts/libraries/Vote.sol": {
+      "keccak256": "0xa31a88aebf9a52ea8c02e611cd798631e7296b78e9ecdf37d2b0c7eb2badb252",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://5a13a7b2c121fdff792f8ce50e9e705a7d1fd97a4ecb4ffc62d2cb5d2d5099fa",
+        "dweb:/ipfs/QmPdQzh9sneGYrTEwGNJPncV5eBueM4L2fWkmy8ocCn2c7"
+      ]
+    },
+    "@openzeppelin/contracts/GSN/Context.sol": {
+      "keccak256": "0xdb26cbf4d028490f49831a7865c2fe1b28db44b535ca8d343785a3b768aae183",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://840b14ce0315c47d49ba328f1f9fa7654ded1c9e1559e6c5e777a7b2dc28bf0a",
+        "dweb:/ipfs/QmTLLabn4wcfGro9LEmUXUN2nwKqZSotXMvjDCLXEnLtZP"
+      ]
+    },
+    "@openzeppelin/contracts/access/Ownable.sol": {
+      "keccak256": "0x4bd6402ca6b3419008c2b482aff54e66836e8cb4eba2680e42ac5884ae6424fc",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://8f9f711fb8d0d92aeea1c327e3845d13ca1fa8f142e47f8723cd5b3106fb29a3",
+        "dweb:/ipfs/QmVQUReDW9f4zGqhizwHnyU8EntMs95tbASdqkGncnikba"
+      ]
+    },
+    "@openzeppelin/contracts/math/Math.sol": {
+      "keccak256": "0x6c234834003dfb86e2c23d12dfdde7cc01e78013d71b52162cb308b4873562cb",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://f0e3f39b2ec26694a42c89a5d9e489d5228f1880fcf5e375c5c975ba816e5ffe",
+        "dweb:/ipfs/QmUErheHopnbBUSLDQAtWsmw6HsEvqTNp1QiBEuSJhmhHn"
+      ]
+    },
+    "@openzeppelin/contracts/math/SafeMath.sol": {
+      "keccak256": "0x9a9cf02622cd7a64261b10534fc3260449da25c98c9e96d1b4ae8110a20e5806",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://2df142592d1dc267d9549049ee3317fa190d2f87eaa565f86ab05ec83f7ab8f5",
+        "dweb:/ipfs/QmSkJtcfWo7c42KnL5hho6GFxK6HRNV91XABx1P7xDtfLV"
+      ]
+    },
+    "@openzeppelin/contracts/token/ERC20/ERC20.sol": {
+      "keccak256": "0xf204d98eef08edacf5a02a2af1516ea4febdb6aba7a1ae5ac8deb6e568fd3dbb",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://c4dea62bffbd180772a6cfe7cb90e3a045c52d6b502bdb2fdff83193da42d8d0",
+        "dweb:/ipfs/QmW8qGZ5nngajmv5Aamdrpkeuq7S5YCVaR7rtcqNekKHtK"
+      ]
+    },
+    "@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+      "keccak256": "0x5c26b39d26f7ed489e555d955dcd3e01872972e71fdd1528e93ec164e4f23385",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://efdc632af6960cf865dbc113665ea1f5b90eab75cc40ec062b2f6ae6da582017",
+        "dweb:/ipfs/QmfAZFDuG62vxmAN9DnXApv7e7PMzPqi4RkqqZHLMSQiY5"
+      ]
+    },
+    "@openzeppelin/contracts/token/ERC20/SafeERC20.sol": {
+      "keccak256": "0xf3b30f8a49631420635a8c35daacfcaa338012755f18a76fdd118730256f9a27",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://0d7de652204c2ee291a61aa984103dfc7ae4392d651fbbc44a0079caee7c69a3",
+        "dweb:/ipfs/Qmcw1cQnq9eWDnrCBwU3TNyqLfTMUFg5YKpYUkELoMPuUE"
+      ]
+    },
+    "@openzeppelin/contracts/utils/Address.sol": {
+      "keccak256": "0xdfb4f812600ba4ce6738c35584ceb8c9433472583051b48ba5b1f66cb758a498",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://df02dffe1c1de089d9b4f6192f0dcf464526f2230f420b3deec4645e0cdd2bff",
+        "dweb:/ipfs/QmcqXGAU3KJqwrgUVoGJ2W8osomhSJ4R5kdsRpbuW3fELS"
+      ]
+    },
+    "@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
+      "keccak256": "0x7ff0067f2d7df4187eaa1cb4800949b929602c9d9cb20fcaee6922a7613ef2fb",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://78aa63fd7fbb8df2942b6c6e7bd89349507e306edbd5909ee8d9575c31be57e5",
+        "dweb:/ipfs/Qmf6z9KWKCJCfEVokgTBhBVq5yHtE6is31N8AV5BHdMkqQ"
+      ]
+    }
+  },
+  "version": 1
+}
