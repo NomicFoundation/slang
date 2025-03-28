@@ -1,0 +1,89 @@
+{%- if rendering_in_stubs -%}
+  // No Intermediate Representation nodes in stubs...
+{%- else -%}
+  use std::rc::Rc;
+  use std::vec::Vec;
+  use crate::cst::TerminalNode;
+
+  //
+  // Sequences:
+  //
+
+  {% for parent_type, sequence in target.sequences %}
+    pub type {{ parent_type }} = Rc<{{ parent_type }}Struct>;
+
+    #[derive(Debug)]
+    pub struct {{ parent_type }}Struct {
+      pub node_id: usize,
+      {%- for field in sequence.fields %}
+        {%- if field.is_optional
+               or not field.is_terminal
+               or not target.unique_terminals is containing(field.type) -%}
+          pub {{ field.label | snake_case }}:
+          {%- if field.is_terminal -%}
+            {%- if field.is_optional -%}
+              Option<Rc<TerminalNode>>,
+            {%- else -%}
+              Rc<TerminalNode>,
+            {%- endif -%}
+          {%- else -%}
+            {%- if field.is_optional -%}
+              Option<{{ field.type | pascal_case }}>,
+            {%- else -%}
+              {{ field.type | pascal_case }},
+            {%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
+      {% endfor -%}
+    }
+
+  {% endfor %}
+
+  //
+  // Choices:
+  //
+
+  {% for parent_type, choice in target.choices %}
+    #[derive(Debug)]
+    pub enum {{ parent_type }} {
+      {% for nonterminal in choice.nonterminal_types -%}
+        {{ nonterminal }}({{ nonterminal | pascal_case }}),
+      {%- endfor %}
+      {% for terminal in choice.terminal_types -%}
+        {{ terminal }}
+        {%- if not target.unique_terminals is containing(terminal) -%}
+          (Rc<TerminalNode>)
+        {%- endif -%}
+        ,
+      {%- endfor %}
+    }
+  {% endfor %}
+
+  //
+  // Repeated:
+  //
+
+  {% for parent_type, repeated in target.repeated %}
+    pub type {{ parent_type }} = Vec<
+      {%- if repeated.is_terminal -%}
+        Rc<TerminalNode>
+      {%- else -%}
+        {{ repeated.item_type | pascal_case }}
+      {%- endif -%}
+    >;
+  {% endfor %}
+
+  //
+  // Separated:
+  //
+
+  {% for parent_type, separated in target.separated %}
+    pub type {{ parent_type }} = Vec<
+      {%- if separated.is_terminal -%}
+        Rc<TerminalNode>
+      {%- else -%}
+        {{ separated.item_type | pascal_case }}
+      {%- endif -%}
+    >;
+  {% endfor %}
+{%- endif %}
