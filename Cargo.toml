@@ -37,6 +37,7 @@ members = [
     "crates/solidity/testing/sanctuary",
     "crates/solidity/testing/snapshots",
     "crates/solidity/testing/solc",
+    "crates/solidity/testing/sourcify",
 
     "crates/testlang/inputs/language",
     "crates/testlang/outputs/cargo/crate",

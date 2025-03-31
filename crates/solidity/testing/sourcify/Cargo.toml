@@ -1,0 +1,19 @@
+[package]
+name = "solidity_testing_sourcify"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true }
+infra_utils = { workspace = true }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+slang_solidity = { workspace = true, features = ["__private_ariadne_errors", "__experimental_bindings_api"] }
+strum_macros = { workspace = true }
+
+[lints]
+workspace = true

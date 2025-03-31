@@ -2542,6 +2542,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "solidity_testing_sourcify"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "infra_utils",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "slang_solidity",
+ "strum_macros",
+]
+
+[[package]]
 name = "spdx"
 version = "0.10.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
