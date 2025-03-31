@@ -2,7 +2,7 @@
 
 ## Repository Structure
 
-This repository is split into multiple projects at the root folder. Each project has its own dependencies and tools used to build, test, and ship different parts of the repository. For example, a Rust environment for the compiler, a Python environment for documentation, and a NodeJS environment for linters. This allows us to implement different binaries, APIs, and internal tools/scripts, and package/version them together, while having minimal inter-dependencies.
+This repository is split into multiple projects at the `crates` folder. Each project has its own dependencies and tools used to build, test, and ship different parts of the repository. For example, a Rust environment for the compiler, a Python environment for documentation, and a NodeJS environment for linters. This allows us to implement different binaries, APIs, and internal tools/scripts, and package/version them together, while having minimal inter-dependencies.
 
 All dependencies should have exact full versions, and we can rely on tooling to automatically upgrade it over time. It allows us to have perfectly reproducible builds for every commit, [a critical aspect](https://github.com/dotnet/designs/blob/40794be63ecd8b35e9596412050a84dedd575b99/accepted/2020/reproducible-builds.md) for compilers, and developer tools in general.
 
@@ -13,6 +13,17 @@ Currently, the repository has the following projects:
 - `crates/`:
     - `infra/`: contains the CLI used for development, and utilities to build/test/run/debug all other projects.
     - `codegen/`: language analysis APIs that convert input crates to output crates below.
+        - `ebnf/`: EBNF snippet serializer for language definitions
+        - `spec/`: Language specification generator
+        - `runtime/`:
+            - `generator/`: Generates Rust source code from language definitions
+            - `cargo/crate`: Rust crate runtime code which gets copied over into generated language code.
+            - `cargo/wasm`: WASM bindings and runtime.
+            - `language/definition`: Building blocks for how languages can be defined
+    - `metaslang/`:
+        - `cst/`: A generic library for building, navigating and querying concrete syntax trees
+        - `bindings/`: Computes semantic language bindings from parsed source code
+        - `graph_builder/`: Construct binding graphs from parsed source code
     - `solidity/`:
         - `inputs/`: Solidity language definition.
         - `outputs/`: different packages and artifacts produced from it.
