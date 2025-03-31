@@ -87,9 +87,9 @@ The `Cursor` API is a low-level API that allows you to traverse the CST in a pro
 
 We're proud to support other projects in the Solidity ecosystem with our developer tools. Here are some of the projects currently using Slang:
 
-* [Hardhat Solidity VSCode Extension](https://github.com/NomicFoundation/hardhat-vscode)
-* [prettier-plugin-solidity](https://github.com/prettier-solidity/prettier-plugin-solidity/tree/v2)
-* [openzeppelin-upgrades](https://github.com/OpenZeppelin/openzeppelin-upgrades)
+- [Hardhat Solidity VSCode Extension](https://github.com/NomicFoundation/hardhat-vscode)
+- [prettier-plugin-solidity](https://github.com/prettier-solidity/prettier-plugin-solidity/tree/v2)
+- [openzeppelin-upgrades](https://github.com/OpenZeppelin/openzeppelin-upgrades)
 
 [Learn more about projects using Slang.](https://nomicfoundation.github.io/slang/latest/user-guide/02-powered-by-slang/)
 
