@@ -51,7 +51,7 @@ Although Slang is written in Rust, we do not currently support the usage of Slan
 
 ## Contributing
 
-Please check our [contributors guide](./CONTRIBUTING.md) to learn about how you can get started on Slang development.
+Please check our [contributors guide](https://github.com/NomicFoundation/slang/blob/main/CONTRIBUTING.md) to learn about how you can get started on Slang development.
 
 ## Using Slang
 
