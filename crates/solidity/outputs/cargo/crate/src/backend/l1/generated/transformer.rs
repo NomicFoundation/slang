@@ -256,6 +256,18 @@ pub trait Transformer {
         })
     }
 
+    fn transform_storage_layout_specifier(
+        &mut self,
+        source: &input::StorageLayoutSpecifier,
+    ) -> output::StorageLayoutSpecifier {
+        let expression = self.transform_expression(&source.expression);
+
+        Rc::new(output::StorageLayoutSpecifierStruct {
+            node_id: source.node_id,
+            expression,
+        })
+    }
+
     fn transform_interface_definition(
         &mut self,
         source: &input::InterfaceDefinition,
@@ -2044,6 +2056,31 @@ pub trait Transformer {
     }
     fn transform_using_target(&mut self, source: &input::UsingTarget) -> output::UsingTarget {
         self.default_transform_using_target(source)
+    }
+
+    fn default_transform_contract_specifier(
+        &mut self,
+        source: &input::ContractSpecifier,
+    ) -> output::ContractSpecifier {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        match source {
+            input::ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
+                output::ContractSpecifier::InheritanceSpecifier(
+                    self.transform_inheritance_specifier(inheritance_specifier),
+                )
+            }
+            input::ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
+                output::ContractSpecifier::StorageLayoutSpecifier(
+                    self.transform_storage_layout_specifier(storage_layout_specifier),
+                )
+            }
+        }
+    }
+    fn transform_contract_specifier(
+        &mut self,
+        source: &input::ContractSpecifier,
+    ) -> output::ContractSpecifier {
+        self.default_transform_contract_specifier(source)
     }
 
     fn default_transform_contract_member(

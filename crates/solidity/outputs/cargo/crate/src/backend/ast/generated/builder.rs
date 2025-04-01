@@ -284,13 +284,7 @@ pub fn build_contract_definition(cursor: Cursor) -> Result<ContractDefinition> {
     };
     _ = helper.accept_label(EdgeLabel::ContractKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
-    let inheritance = if helper.at_label(EdgeLabel::Inheritance) {
-        Some(build_inheritance_specifier(
-            helper.accept_label(EdgeLabel::Inheritance)?,
-        )?)
-    } else {
-        None
-    };
+    let specifiers = build_contract_specifiers(helper.accept_label(EdgeLabel::Specifiers)?)?;
     _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let members = build_contract_members(helper.accept_label(EdgeLabel::Members)?)?;
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
@@ -300,7 +294,7 @@ pub fn build_contract_definition(cursor: Cursor) -> Result<ContractDefinition> {
         node_id,
         abstract_keyword,
         name,
-        inheritance,
+        specifiers,
         members,
     }))
 }
@@ -334,6 +328,21 @@ pub fn build_inheritance_type(cursor: Cursor) -> Result<InheritanceType> {
         node_id,
         type_name,
         arguments,
+    }))
+}
+
+pub fn build_storage_layout_specifier(cursor: Cursor) -> Result<StorageLayoutSpecifier> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::StorageLayoutSpecifier)?;
+    let node_id = cursor.node().id();
+    let mut helper = SequenceHelper::new(cursor);
+    _ = helper.accept_label(EdgeLabel::LayoutKeyword)?;
+    _ = helper.accept_label(EdgeLabel::AtKeyword)?;
+    let expression = build_expression(helper.accept_label(EdgeLabel::Expression)?)?;
+    helper.finalize()?;
+
+    Ok(Rc::new(StorageLayoutSpecifierStruct {
+        node_id,
+        expression,
     }))
 }
 
@@ -2588,6 +2597,33 @@ pub fn build_using_target(mut cursor: Cursor) -> Result<UsingTarget> {
     Ok(item)
 }
 
+pub fn build_contract_specifier(mut cursor: Cursor) -> Result<ContractSpecifier> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::ContractSpecifier)?;
+    if !cursor.go_to_first_child() {
+        return Err("Expected choice node to have at least one children".into());
+    }
+    skip_trivia(&mut cursor)?;
+    expect_label(&cursor, EdgeLabel::Variant)?;
+    let item = match cursor.node().kind() {
+        NodeKind::Nonterminal(NonterminalKind::InheritanceSpecifier) => {
+            ContractSpecifier::InheritanceSpecifier(build_inheritance_specifier(cursor.clone())?)
+        }
+        NodeKind::Nonterminal(NonterminalKind::StorageLayoutSpecifier) => {
+            ContractSpecifier::StorageLayoutSpecifier(build_storage_layout_specifier(
+                cursor.clone(),
+            )?)
+        }
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                cursor.node().kind()
+            ));
+        }
+    };
+    consume_remaining_trivia(cursor)?;
+    Ok(item)
+}
+
 pub fn build_contract_member(mut cursor: Cursor) -> Result<ContractMember> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ContractMember)?;
     if !cursor.go_to_first_child() {
@@ -3789,6 +3825,25 @@ pub fn build_version_expression_set(mut cursor: Cursor) -> Result<VersionExpress
         if !cursor.node().is_trivia() {
             expect_label(&cursor, EdgeLabel::Item)?;
             let item = build_version_expression(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_contract_specifiers(mut cursor: Cursor) -> Result<ContractSpecifiers> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::ContractSpecifiers)?;
+    let mut items = ContractSpecifiers::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_contract_specifier(cursor.clone())?;
             items.push(item);
         }
         if !cursor.go_to_next_sibling() {

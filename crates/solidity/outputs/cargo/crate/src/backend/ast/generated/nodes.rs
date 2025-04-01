@@ -161,7 +161,7 @@ pub struct ContractDefinitionStruct {
     pub node_id: usize,
     pub abstract_keyword: Option<Rc<TerminalNode>>,
     pub name: Rc<TerminalNode>,
-    pub inheritance: Option<InheritanceSpecifier>,
+    pub specifiers: ContractSpecifiers,
     pub members: ContractMembers,
 }
 
@@ -180,6 +180,14 @@ pub struct InheritanceTypeStruct {
     pub node_id: usize,
     pub type_name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
+}
+
+pub type StorageLayoutSpecifier = Rc<StorageLayoutSpecifierStruct>;
+
+#[derive(Debug)]
+pub struct StorageLayoutSpecifierStruct {
+    pub node_id: usize,
+    pub expression: Expression,
 }
 
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
@@ -1247,6 +1255,12 @@ pub enum UsingTarget {
 }
 
 #[derive(Debug)]
+pub enum ContractSpecifier {
+    InheritanceSpecifier(InheritanceSpecifier),
+    StorageLayoutSpecifier(StorageLayoutSpecifier),
+}
+
+#[derive(Debug)]
 pub enum ContractMember {
     UsingDirective(UsingDirective),
     FunctionDefinition(FunctionDefinition),
@@ -1589,6 +1603,8 @@ pub enum YulLiteral {
 pub type SourceUnitMembers = Vec<SourceUnitMember>;
 
 pub type VersionExpressionSet = Vec<VersionExpression>;
+
+pub type ContractSpecifiers = Vec<ContractSpecifier>;
 
 pub type ContractMembers = Vec<ContractMember>;
 

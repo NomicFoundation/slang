@@ -207,17 +207,14 @@ pub trait Mutator {
     fn mutate_contract_definition(&mut self, source: &ContractDefinition) -> ContractDefinition {
         let abstract_keyword = source.abstract_keyword.as_ref().map(Rc::clone);
         let name = Rc::clone(&source.name);
-        let inheritance = source
-            .inheritance
-            .as_ref()
-            .map(|value| self.mutate_inheritance_specifier(value));
+        let specifiers = self.mutate_contract_specifiers(&source.specifiers);
         let members = self.mutate_contract_members(&source.members);
 
         Rc::new(ContractDefinitionStruct {
             node_id: source.node_id,
             abstract_keyword,
             name,
-            inheritance,
+            specifiers,
             members,
         })
     }
@@ -245,6 +242,18 @@ pub trait Mutator {
             node_id: source.node_id,
             type_name,
             arguments,
+        })
+    }
+
+    fn mutate_storage_layout_specifier(
+        &mut self,
+        source: &StorageLayoutSpecifier,
+    ) -> StorageLayoutSpecifier {
+        let expression = self.mutate_expression(&source.expression);
+
+        Rc::new(StorageLayoutSpecifierStruct {
+            node_id: source.node_id,
+            expression,
         })
     }
 
@@ -1850,6 +1859,27 @@ pub trait Mutator {
         self.default_mutate_using_target(source)
     }
 
+    fn default_mutate_contract_specifier(
+        &mut self,
+        source: &ContractSpecifier,
+    ) -> ContractSpecifier {
+        match source {
+            ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
+                ContractSpecifier::InheritanceSpecifier(
+                    self.mutate_inheritance_specifier(inheritance_specifier),
+                )
+            }
+            ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
+                ContractSpecifier::StorageLayoutSpecifier(
+                    self.mutate_storage_layout_specifier(storage_layout_specifier),
+                )
+            }
+        }
+    }
+    fn mutate_contract_specifier(&mut self, source: &ContractSpecifier) -> ContractSpecifier {
+        self.default_mutate_contract_specifier(source)
+    }
+
     fn default_mutate_contract_member(&mut self, source: &ContractMember) -> ContractMember {
         match source {
             ContractMember::UsingDirective(ref using_directive) => {
@@ -2768,6 +2798,13 @@ pub trait Mutator {
         source
             .iter()
             .map(|item| self.mutate_version_expression(item))
+            .collect()
+    }
+
+    fn mutate_contract_specifiers(&mut self, source: &ContractSpecifiers) -> ContractSpecifiers {
+        source
+            .iter()
+            .map(|item| self.mutate_contract_specifier(item))
             .collect()
     }
 

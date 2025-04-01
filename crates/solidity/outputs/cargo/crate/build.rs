@@ -72,12 +72,19 @@ fn build_l1_model_wrapper(ast_model_wrapper: &ModelWrapper) -> ModelWrapper {
 
     l1_model.remove_type("UnnamedFunctionDefinition");
     l1_model.remove_type("UnnamedFunctionAttributes");
-    l1_model.remove_sequence_field("ContractDefinition", "inheritance");
+    l1_model.remove_type("ContractSpecifiers");
+
     l1_model.add_sequence_field(
         "ContractDefinition",
         "inheritance_types",
         "InheritanceTypes",
         false,
+    );
+    l1_model.add_sequence_field(
+        "ContractDefinition",
+        "storage_layout",
+        "StorageLayoutSpecifier",
+        true,
     );
 
     ModelWrapper::with_transformer(ast_model, l1_model)

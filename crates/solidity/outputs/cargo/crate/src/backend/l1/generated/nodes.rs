@@ -163,6 +163,7 @@ pub struct ContractDefinitionStruct {
     pub name: Rc<TerminalNode>,
     pub members: ContractMembers,
     pub inheritance_types: InheritanceTypes,
+    pub storage_layout: Option<StorageLayoutSpecifier>,
 }
 
 pub type InheritanceSpecifier = Rc<InheritanceSpecifierStruct>;
@@ -180,6 +181,14 @@ pub struct InheritanceTypeStruct {
     pub node_id: usize,
     pub type_name: IdentifierPath,
     pub arguments: Option<ArgumentsDeclaration>,
+}
+
+pub type StorageLayoutSpecifier = Rc<StorageLayoutSpecifierStruct>;
+
+#[derive(Debug)]
+pub struct StorageLayoutSpecifierStruct {
+    pub node_id: usize,
+    pub expression: Expression,
 }
 
 pub type InterfaceDefinition = Rc<InterfaceDefinitionStruct>;
@@ -1234,6 +1243,12 @@ pub enum UsingOperator {
 pub enum UsingTarget {
     TypeName(TypeName),
     Asterisk,
+}
+
+#[derive(Debug)]
+pub enum ContractSpecifier {
+    InheritanceSpecifier(InheritanceSpecifier),
+    StorageLayoutSpecifier(StorageLayoutSpecifier),
 }
 
 #[derive(Debug)]

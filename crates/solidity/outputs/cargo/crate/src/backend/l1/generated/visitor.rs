@@ -107,6 +107,11 @@ pub trait Visitor {
     }
     fn leave_inheritance_type(&mut self, _target: &InheritanceType) {}
 
+    fn enter_storage_layout_specifier(&mut self, _target: &StorageLayoutSpecifier) -> bool {
+        true
+    }
+    fn leave_storage_layout_specifier(&mut self, _target: &StorageLayoutSpecifier) {}
+
     fn enter_interface_definition(&mut self, _target: &InterfaceDefinition) -> bool {
         true
     }
@@ -832,6 +837,9 @@ pub fn accept_contract_definition(target: &ContractDefinition, visitor: &mut dyn
     if visitor.enter_contract_definition(target) {
         accept_contract_members(&target.members, visitor);
         accept_inheritance_types(&target.inheritance_types, visitor);
+        if let Some(ref storage_layout) = target.storage_layout {
+            accept_storage_layout_specifier(storage_layout, visitor);
+        }
     }
     visitor.leave_contract_definition(target);
 }
@@ -851,6 +859,13 @@ pub fn accept_inheritance_type(target: &InheritanceType, visitor: &mut dyn Visit
         }
     }
     visitor.leave_inheritance_type(target);
+}
+
+pub fn accept_storage_layout_specifier(target: &StorageLayoutSpecifier, visitor: &mut dyn Visitor) {
+    if visitor.enter_storage_layout_specifier(target) {
+        accept_expression(&target.expression, visitor);
+    }
+    visitor.leave_storage_layout_specifier(target);
 }
 
 pub fn accept_interface_definition(target: &InterfaceDefinition, visitor: &mut dyn Visitor) {
@@ -1930,6 +1945,17 @@ pub fn accept_using_target(target: &UsingTarget, visitor: &mut dyn Visitor) {
             accept_type_name(type_name, visitor);
         }
         UsingTarget::Asterisk => {}
+    }
+}
+
+pub fn accept_contract_specifier(target: &ContractSpecifier, visitor: &mut dyn Visitor) {
+    match target {
+        ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
+            accept_inheritance_specifier(inheritance_specifier, visitor);
+        }
+        ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
+            accept_storage_layout_specifier(storage_layout_specifier, visitor);
+        }
     }
 }
 

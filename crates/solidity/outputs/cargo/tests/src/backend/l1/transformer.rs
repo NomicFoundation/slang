@@ -18,10 +18,23 @@ impl Transformer for AstToL1 {
         let name = Rc::clone(&source.name);
         let members = self.transform_contract_members(&source.members);
         let inheritance_types = source
-            .inheritance
-            .as_ref()
-            .map(|inheritance| self.transform_inheritance_types(&inheritance.types))
+            .specifiers
+            .iter()
+            .find_map(|specifier| {
+                if let ast::ContractSpecifier::InheritanceSpecifier(inheritance) = specifier {
+                    Some(self.transform_inheritance_types(&inheritance.types))
+                } else {
+                    None
+                }
+            })
             .unwrap_or_default();
+        let storage_layout = source.specifiers.iter().find_map(|specifier| {
+            if let ast::ContractSpecifier::StorageLayoutSpecifier(storage_layout) = specifier {
+                Some(self.transform_storage_layout_specifier(storage_layout))
+            } else {
+                None
+            }
+        });
 
         Rc::new(l1::ContractDefinitionStruct {
             node_id,
@@ -29,6 +42,7 @@ impl Transformer for AstToL1 {
             name,
             members,
             inheritance_types,
+            storage_layout,
         })
     }
 }
@@ -39,7 +53,7 @@ fn test_build_l1_from_ast() -> Result<()> {
     let output = parser.parse_file_contents(
         r###"
 contract Base {}
-contract Test is Base {}
+contract Test is Base layout at 0 {}
     "###,
     );
     assert!(output.is_valid());
@@ -57,6 +71,7 @@ contract Test is Base {}
     };
     assert_eq!("Base", base_contract.name.unparse());
     assert!(base_contract.inheritance_types.is_empty());
+    assert!(base_contract.storage_layout.is_none());
 
     let l1::SourceUnitMember::ContractDefinition(test_contract) = &l1.members[1] else {
         panic!("Expected ContractDefinition");
@@ -72,6 +87,7 @@ contract Test is Base {}
             .collect::<Vec<_>>()
             .join(".")
     );
+    assert!(test_contract.storage_layout.is_some());
 
     Ok(())
 }

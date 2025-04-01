@@ -209,6 +209,10 @@ pub trait Mutator {
         let name = Rc::clone(&source.name);
         let members = self.mutate_contract_members(&source.members);
         let inheritance_types = self.mutate_inheritance_types(&source.inheritance_types);
+        let storage_layout = source
+            .storage_layout
+            .as_ref()
+            .map(|value| self.mutate_storage_layout_specifier(value));
 
         Rc::new(ContractDefinitionStruct {
             node_id: source.node_id,
@@ -216,6 +220,7 @@ pub trait Mutator {
             name,
             members,
             inheritance_types,
+            storage_layout,
         })
     }
 
@@ -242,6 +247,18 @@ pub trait Mutator {
             node_id: source.node_id,
             type_name,
             arguments,
+        })
+    }
+
+    fn mutate_storage_layout_specifier(
+        &mut self,
+        source: &StorageLayoutSpecifier,
+    ) -> StorageLayoutSpecifier {
+        let expression = self.mutate_expression(&source.expression);
+
+        Rc::new(StorageLayoutSpecifierStruct {
+            node_id: source.node_id,
+            expression,
         })
     }
 
@@ -1829,6 +1846,27 @@ pub trait Mutator {
     }
     fn mutate_using_target(&mut self, source: &UsingTarget) -> UsingTarget {
         self.default_mutate_using_target(source)
+    }
+
+    fn default_mutate_contract_specifier(
+        &mut self,
+        source: &ContractSpecifier,
+    ) -> ContractSpecifier {
+        match source {
+            ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
+                ContractSpecifier::InheritanceSpecifier(
+                    self.mutate_inheritance_specifier(inheritance_specifier),
+                )
+            }
+            ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
+                ContractSpecifier::StorageLayoutSpecifier(
+                    self.mutate_storage_layout_specifier(storage_layout_specifier),
+                )
+            }
+        }
+    }
+    fn mutate_contract_specifier(&mut self, source: &ContractSpecifier) -> ContractSpecifier {
+        self.default_mutate_contract_specifier(source)
     }
 
     fn default_mutate_contract_member(&mut self, source: &ContractMember) -> ContractMember {

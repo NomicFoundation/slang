@@ -107,6 +107,11 @@ pub trait Visitor {
     }
     fn leave_inheritance_type(&mut self, _target: &InheritanceType) {}
 
+    fn enter_storage_layout_specifier(&mut self, _target: &StorageLayoutSpecifier) -> bool {
+        true
+    }
+    fn leave_storage_layout_specifier(&mut self, _target: &StorageLayoutSpecifier) {}
+
     fn enter_interface_definition(&mut self, _target: &InterfaceDefinition) -> bool {
         true
     }
@@ -835,9 +840,7 @@ pub fn accept_using_alias(target: &UsingAlias, visitor: &mut dyn Visitor) {
 
 pub fn accept_contract_definition(target: &ContractDefinition, visitor: &mut dyn Visitor) {
     if visitor.enter_contract_definition(target) {
-        if let Some(ref inheritance) = target.inheritance {
-            accept_inheritance_specifier(inheritance, visitor);
-        }
+        accept_contract_specifiers(&target.specifiers, visitor);
         accept_contract_members(&target.members, visitor);
     }
     visitor.leave_contract_definition(target);
@@ -858,6 +861,13 @@ pub fn accept_inheritance_type(target: &InheritanceType, visitor: &mut dyn Visit
         }
     }
     visitor.leave_inheritance_type(target);
+}
+
+pub fn accept_storage_layout_specifier(target: &StorageLayoutSpecifier, visitor: &mut dyn Visitor) {
+    if visitor.enter_storage_layout_specifier(target) {
+        accept_expression(&target.expression, visitor);
+    }
+    visitor.leave_storage_layout_specifier(target);
 }
 
 pub fn accept_interface_definition(target: &InterfaceDefinition, visitor: &mut dyn Visitor) {
@@ -1952,6 +1962,17 @@ pub fn accept_using_target(target: &UsingTarget, visitor: &mut dyn Visitor) {
     }
 }
 
+pub fn accept_contract_specifier(target: &ContractSpecifier, visitor: &mut dyn Visitor) {
+    match target {
+        ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
+            accept_inheritance_specifier(inheritance_specifier, visitor);
+        }
+        ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
+            accept_storage_layout_specifier(storage_layout_specifier, visitor);
+        }
+    }
+}
+
 pub fn accept_contract_member(target: &ContractMember, visitor: &mut dyn Visitor) {
     match target {
         ContractMember::UsingDirective(ref using_directive) => {
@@ -2531,6 +2552,13 @@ fn accept_source_unit_members(items: &[SourceUnitMember], visitor: &mut dyn Visi
 fn accept_version_expression_set(items: &[VersionExpression], visitor: &mut dyn Visitor) {
     for item in items {
         accept_version_expression(item, visitor);
+    }
+}
+
+#[inline]
+fn accept_contract_specifiers(items: &[ContractSpecifier], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_contract_specifier(item, visitor);
     }
 }
 

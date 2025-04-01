@@ -35,6 +35,8 @@ pub fn slang_solidity::backend::ast::builder::build_continue_statement(cursor: s
 pub fn slang_solidity::backend::ast::builder::build_contract_definition(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ContractDefinition, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_contract_member(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ContractMember, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_contract_members(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ContractMembers, alloc::string::String>
+pub fn slang_solidity::backend::ast::builder::build_contract_specifier(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ContractSpecifier, alloc::string::String>
+pub fn slang_solidity::backend::ast::builder::build_contract_specifiers(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ContractSpecifiers, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_decimal_number_expression(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::DecimalNumberExpression, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_do_while_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::DoWhileStatement, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_elementary_type(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ElementaryType, alloc::string::String>
@@ -140,6 +142,7 @@ pub fn slang_solidity::backend::ast::builder::build_state_variable_definition(cu
 pub fn slang_solidity::backend::ast::builder::build_state_variable_definition_value(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StateVariableDefinitionValue, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::Statement, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_statements(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::Statements, alloc::string::String>
+pub fn slang_solidity::backend::ast::builder::build_storage_layout_specifier(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StorageLayoutSpecifier, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_storage_location(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StorageLocation, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_string_expression(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StringExpression, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_string_literal(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StringLiteral, alloc::string::String>
@@ -225,6 +228,7 @@ pub trait slang_solidity::backend::ast::mutator::Mutator
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_arguments_declaration(&mut self, source: &slang_solidity::backend::ast::ArgumentsDeclaration) -> slang_solidity::backend::ast::ArgumentsDeclaration
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_constructor_attribute(&mut self, source: &slang_solidity::backend::ast::ConstructorAttribute) -> slang_solidity::backend::ast::ConstructorAttribute
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_contract_member(&mut self, source: &slang_solidity::backend::ast::ContractMember) -> slang_solidity::backend::ast::ContractMember
+pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_contract_specifier(&mut self, source: &slang_solidity::backend::ast::ContractSpecifier) -> slang_solidity::backend::ast::ContractSpecifier
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_elementary_type(&mut self, source: &slang_solidity::backend::ast::ElementaryType) -> slang_solidity::backend::ast::ElementaryType
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_experimental_feature(&mut self, source: &slang_solidity::backend::ast::ExperimentalFeature) -> slang_solidity::backend::ast::ExperimentalFeature
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_expression(&mut self, source: &slang_solidity::backend::ast::Expression) -> slang_solidity::backend::ast::Expression
@@ -296,6 +300,8 @@ pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_continue_statement
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_contract_definition(&mut self, source: &slang_solidity::backend::ast::ContractDefinition) -> slang_solidity::backend::ast::ContractDefinition
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_contract_member(&mut self, source: &slang_solidity::backend::ast::ContractMember) -> slang_solidity::backend::ast::ContractMember
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_contract_members(&mut self, source: &slang_solidity::backend::ast::ContractMembers) -> slang_solidity::backend::ast::ContractMembers
+pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_contract_specifier(&mut self, source: &slang_solidity::backend::ast::ContractSpecifier) -> slang_solidity::backend::ast::ContractSpecifier
+pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_contract_specifiers(&mut self, source: &slang_solidity::backend::ast::ContractSpecifiers) -> slang_solidity::backend::ast::ContractSpecifiers
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_decimal_number_expression(&mut self, source: &slang_solidity::backend::ast::DecimalNumberExpression) -> slang_solidity::backend::ast::DecimalNumberExpression
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_do_while_statement(&mut self, source: &slang_solidity::backend::ast::DoWhileStatement) -> slang_solidity::backend::ast::DoWhileStatement
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_elementary_type(&mut self, source: &slang_solidity::backend::ast::ElementaryType) -> slang_solidity::backend::ast::ElementaryType
@@ -401,6 +407,7 @@ pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_state_variable_def
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_state_variable_definition_value(&mut self, source: &slang_solidity::backend::ast::StateVariableDefinitionValue) -> slang_solidity::backend::ast::StateVariableDefinitionValue
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_statement(&mut self, source: &slang_solidity::backend::ast::Statement) -> slang_solidity::backend::ast::Statement
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_statements(&mut self, source: &slang_solidity::backend::ast::Statements) -> slang_solidity::backend::ast::Statements
+pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_storage_layout_specifier(&mut self, source: &slang_solidity::backend::ast::StorageLayoutSpecifier) -> slang_solidity::backend::ast::StorageLayoutSpecifier
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_storage_location(&mut self, source: &slang_solidity::backend::ast::StorageLocation) -> slang_solidity::backend::ast::StorageLocation
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_string_expression(&mut self, source: &slang_solidity::backend::ast::StringExpression) -> slang_solidity::backend::ast::StringExpression
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_string_literal(&mut self, source: &slang_solidity::backend::ast::StringLiteral) -> slang_solidity::backend::ast::StringLiteral
@@ -569,6 +576,7 @@ pub fn slang_solidity::backend::ast::visitor::Visitor::enter_shift_expression(&m
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_source_unit(&mut self, _target: &slang_solidity::backend::ast::SourceUnit) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_state_variable_definition(&mut self, _target: &slang_solidity::backend::ast::StateVariableDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_state_variable_definition_value(&mut self, _target: &slang_solidity::backend::ast::StateVariableDefinitionValue) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::ast::StorageLayoutSpecifier) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_struct_definition(&mut self, _target: &slang_solidity::backend::ast::StructDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_struct_member(&mut self, _target: &slang_solidity::backend::ast::StructMember) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_throw_statement(&mut self, _target: &slang_solidity::backend::ast::ThrowStatement) -> bool
@@ -698,6 +706,7 @@ pub fn slang_solidity::backend::ast::visitor::Visitor::leave_shift_expression(&m
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_source_unit(&mut self, _target: &slang_solidity::backend::ast::SourceUnit)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_state_variable_definition(&mut self, _target: &slang_solidity::backend::ast::StateVariableDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_state_variable_definition_value(&mut self, _target: &slang_solidity::backend::ast::StateVariableDefinitionValue)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::ast::StorageLayoutSpecifier)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_struct_definition(&mut self, _target: &slang_solidity::backend::ast::StructDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_struct_member(&mut self, _target: &slang_solidity::backend::ast::StructMember)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_throw_statement(&mut self, _target: &slang_solidity::backend::ast::ThrowStatement)
@@ -767,6 +776,7 @@ pub fn slang_solidity::backend::ast::visitor::accept_constructor_definition(targ
 pub fn slang_solidity::backend::ast::visitor::accept_continue_statement(target: &slang_solidity::backend::ast::ContinueStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_contract_definition(target: &slang_solidity::backend::ast::ContractDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_contract_member(target: &slang_solidity::backend::ast::ContractMember, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
+pub fn slang_solidity::backend::ast::visitor::accept_contract_specifier(target: &slang_solidity::backend::ast::ContractSpecifier, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_decimal_number_expression(target: &slang_solidity::backend::ast::DecimalNumberExpression, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_do_while_statement(target: &slang_solidity::backend::ast::DoWhileStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_elementary_type(target: &slang_solidity::backend::ast::ElementaryType, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
@@ -850,6 +860,7 @@ pub fn slang_solidity::backend::ast::visitor::accept_state_variable_attribute(ta
 pub fn slang_solidity::backend::ast::visitor::accept_state_variable_definition(target: &slang_solidity::backend::ast::StateVariableDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_state_variable_definition_value(target: &slang_solidity::backend::ast::StateVariableDefinitionValue, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_statement(target: &slang_solidity::backend::ast::Statement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
+pub fn slang_solidity::backend::ast::visitor::accept_storage_layout_specifier(target: &slang_solidity::backend::ast::StorageLayoutSpecifier, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_storage_location(_target: &slang_solidity::backend::ast::StorageLocation, _visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_string_expression(target: &slang_solidity::backend::ast::StringExpression, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_string_literal(_target: &slang_solidity::backend::ast::StringLiteral, _visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
@@ -944,6 +955,11 @@ pub slang_solidity::backend::ast::ContractMember::UserDefinedValueTypeDefinition
 pub slang_solidity::backend::ast::ContractMember::UsingDirective(slang_solidity::backend::ast::UsingDirective)
 impl core::fmt::Debug for slang_solidity::backend::ast::ContractMember
 pub fn slang_solidity::backend::ast::ContractMember::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::backend::ast::ContractSpecifier
+pub slang_solidity::backend::ast::ContractSpecifier::InheritanceSpecifier(slang_solidity::backend::ast::InheritanceSpecifier)
+pub slang_solidity::backend::ast::ContractSpecifier::StorageLayoutSpecifier(slang_solidity::backend::ast::StorageLayoutSpecifier)
+impl core::fmt::Debug for slang_solidity::backend::ast::ContractSpecifier
+pub fn slang_solidity::backend::ast::ContractSpecifier::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::ElementaryType
 pub slang_solidity::backend::ast::ElementaryType::AddressType(slang_solidity::backend::ast::AddressType)
 pub slang_solidity::backend::ast::ElementaryType::BoolKeyword
@@ -1422,10 +1438,10 @@ impl core::fmt::Debug for slang_solidity::backend::ast::ContinueStatementStruct
 pub fn slang_solidity::backend::ast::ContinueStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::ast::ContractDefinitionStruct
 pub slang_solidity::backend::ast::ContractDefinitionStruct::abstract_keyword: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
-pub slang_solidity::backend::ast::ContractDefinitionStruct::inheritance: core::option::Option<slang_solidity::backend::ast::InheritanceSpecifier>
 pub slang_solidity::backend::ast::ContractDefinitionStruct::members: slang_solidity::backend::ast::ContractMembers
 pub slang_solidity::backend::ast::ContractDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::ast::ContractDefinitionStruct::node_id: usize
+pub slang_solidity::backend::ast::ContractDefinitionStruct::specifiers: slang_solidity::backend::ast::ContractSpecifiers
 impl core::fmt::Debug for slang_solidity::backend::ast::ContractDefinitionStruct
 pub fn slang_solidity::backend::ast::ContractDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::ast::DecimalNumberExpressionStruct
@@ -1802,6 +1818,11 @@ pub slang_solidity::backend::ast::StateVariableDefinitionValueStruct::node_id: u
 pub slang_solidity::backend::ast::StateVariableDefinitionValueStruct::value: slang_solidity::backend::ast::Expression
 impl core::fmt::Debug for slang_solidity::backend::ast::StateVariableDefinitionValueStruct
 pub fn slang_solidity::backend::ast::StateVariableDefinitionValueStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::ast::StorageLayoutSpecifierStruct
+pub slang_solidity::backend::ast::StorageLayoutSpecifierStruct::expression: slang_solidity::backend::ast::Expression
+pub slang_solidity::backend::ast::StorageLayoutSpecifierStruct::node_id: usize
+impl core::fmt::Debug for slang_solidity::backend::ast::StorageLayoutSpecifierStruct
+pub fn slang_solidity::backend::ast::StorageLayoutSpecifierStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::ast::StructDefinitionStruct
 pub slang_solidity::backend::ast::StructDefinitionStruct::members: slang_solidity::backend::ast::StructMembers
 pub slang_solidity::backend::ast::StructDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
@@ -2081,6 +2102,7 @@ pub type slang_solidity::backend::ast::ConstructorDefinition = alloc::rc::Rc<sla
 pub type slang_solidity::backend::ast::ContinueStatement = alloc::rc::Rc<slang_solidity::backend::ast::ContinueStatementStruct>
 pub type slang_solidity::backend::ast::ContractDefinition = alloc::rc::Rc<slang_solidity::backend::ast::ContractDefinitionStruct>
 pub type slang_solidity::backend::ast::ContractMembers = alloc::vec::Vec<slang_solidity::backend::ast::ContractMember>
+pub type slang_solidity::backend::ast::ContractSpecifiers = alloc::vec::Vec<slang_solidity::backend::ast::ContractSpecifier>
 pub type slang_solidity::backend::ast::DecimalNumberExpression = alloc::rc::Rc<slang_solidity::backend::ast::DecimalNumberExpressionStruct>
 pub type slang_solidity::backend::ast::DoWhileStatement = alloc::rc::Rc<slang_solidity::backend::ast::DoWhileStatementStruct>
 pub type slang_solidity::backend::ast::ElseBranch = alloc::rc::Rc<slang_solidity::backend::ast::ElseBranchStruct>
@@ -2166,6 +2188,7 @@ pub type slang_solidity::backend::ast::StateVariableAttributes = alloc::vec::Vec
 pub type slang_solidity::backend::ast::StateVariableDefinition = alloc::rc::Rc<slang_solidity::backend::ast::StateVariableDefinitionStruct>
 pub type slang_solidity::backend::ast::StateVariableDefinitionValue = alloc::rc::Rc<slang_solidity::backend::ast::StateVariableDefinitionValueStruct>
 pub type slang_solidity::backend::ast::Statements = alloc::vec::Vec<slang_solidity::backend::ast::Statement>
+pub type slang_solidity::backend::ast::StorageLayoutSpecifier = alloc::rc::Rc<slang_solidity::backend::ast::StorageLayoutSpecifierStruct>
 pub type slang_solidity::backend::ast::StringLiterals = alloc::vec::Vec<slang_solidity::backend::ast::StringLiteral>
 pub type slang_solidity::backend::ast::StructDefinition = alloc::rc::Rc<slang_solidity::backend::ast::StructDefinitionStruct>
 pub type slang_solidity::backend::ast::StructMember = alloc::rc::Rc<slang_solidity::backend::ast::StructMemberStruct>
@@ -2261,6 +2284,8 @@ pub fn slang_solidity::backend::l1::input::builder::build_continue_statement(cur
 pub fn slang_solidity::backend::l1::input::builder::build_contract_definition(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ContractDefinition, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_contract_member(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ContractMember, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_contract_members(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ContractMembers, alloc::string::String>
+pub fn slang_solidity::backend::l1::input::builder::build_contract_specifier(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ContractSpecifier, alloc::string::String>
+pub fn slang_solidity::backend::l1::input::builder::build_contract_specifiers(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ContractSpecifiers, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_decimal_number_expression(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::DecimalNumberExpression, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_do_while_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::DoWhileStatement, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_elementary_type(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ElementaryType, alloc::string::String>
@@ -2366,6 +2391,7 @@ pub fn slang_solidity::backend::l1::input::builder::build_state_variable_definit
 pub fn slang_solidity::backend::l1::input::builder::build_state_variable_definition_value(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StateVariableDefinitionValue, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::Statement, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_statements(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::Statements, alloc::string::String>
+pub fn slang_solidity::backend::l1::input::builder::build_storage_layout_specifier(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StorageLayoutSpecifier, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_storage_location(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StorageLocation, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_string_expression(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StringExpression, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_string_literal(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StringLiteral, alloc::string::String>
@@ -2451,6 +2477,7 @@ pub trait slang_solidity::backend::l1::input::mutator::Mutator
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_arguments_declaration(&mut self, source: &slang_solidity::backend::ast::ArgumentsDeclaration) -> slang_solidity::backend::ast::ArgumentsDeclaration
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_constructor_attribute(&mut self, source: &slang_solidity::backend::ast::ConstructorAttribute) -> slang_solidity::backend::ast::ConstructorAttribute
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_contract_member(&mut self, source: &slang_solidity::backend::ast::ContractMember) -> slang_solidity::backend::ast::ContractMember
+pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_contract_specifier(&mut self, source: &slang_solidity::backend::ast::ContractSpecifier) -> slang_solidity::backend::ast::ContractSpecifier
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_elementary_type(&mut self, source: &slang_solidity::backend::ast::ElementaryType) -> slang_solidity::backend::ast::ElementaryType
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_experimental_feature(&mut self, source: &slang_solidity::backend::ast::ExperimentalFeature) -> slang_solidity::backend::ast::ExperimentalFeature
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_expression(&mut self, source: &slang_solidity::backend::ast::Expression) -> slang_solidity::backend::ast::Expression
@@ -2522,6 +2549,8 @@ pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_continue_sta
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_contract_definition(&mut self, source: &slang_solidity::backend::ast::ContractDefinition) -> slang_solidity::backend::ast::ContractDefinition
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_contract_member(&mut self, source: &slang_solidity::backend::ast::ContractMember) -> slang_solidity::backend::ast::ContractMember
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_contract_members(&mut self, source: &slang_solidity::backend::ast::ContractMembers) -> slang_solidity::backend::ast::ContractMembers
+pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_contract_specifier(&mut self, source: &slang_solidity::backend::ast::ContractSpecifier) -> slang_solidity::backend::ast::ContractSpecifier
+pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_contract_specifiers(&mut self, source: &slang_solidity::backend::ast::ContractSpecifiers) -> slang_solidity::backend::ast::ContractSpecifiers
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_decimal_number_expression(&mut self, source: &slang_solidity::backend::ast::DecimalNumberExpression) -> slang_solidity::backend::ast::DecimalNumberExpression
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_do_while_statement(&mut self, source: &slang_solidity::backend::ast::DoWhileStatement) -> slang_solidity::backend::ast::DoWhileStatement
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_elementary_type(&mut self, source: &slang_solidity::backend::ast::ElementaryType) -> slang_solidity::backend::ast::ElementaryType
@@ -2627,6 +2656,7 @@ pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_state_variab
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_state_variable_definition_value(&mut self, source: &slang_solidity::backend::ast::StateVariableDefinitionValue) -> slang_solidity::backend::ast::StateVariableDefinitionValue
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_statement(&mut self, source: &slang_solidity::backend::ast::Statement) -> slang_solidity::backend::ast::Statement
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_statements(&mut self, source: &slang_solidity::backend::ast::Statements) -> slang_solidity::backend::ast::Statements
+pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_storage_layout_specifier(&mut self, source: &slang_solidity::backend::ast::StorageLayoutSpecifier) -> slang_solidity::backend::ast::StorageLayoutSpecifier
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_storage_location(&mut self, source: &slang_solidity::backend::ast::StorageLocation) -> slang_solidity::backend::ast::StorageLocation
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_string_expression(&mut self, source: &slang_solidity::backend::ast::StringExpression) -> slang_solidity::backend::ast::StringExpression
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_string_literal(&mut self, source: &slang_solidity::backend::ast::StringLiteral) -> slang_solidity::backend::ast::StringLiteral
@@ -2795,6 +2825,7 @@ pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_shift_express
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_source_unit(&mut self, _target: &slang_solidity::backend::ast::SourceUnit) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_state_variable_definition(&mut self, _target: &slang_solidity::backend::ast::StateVariableDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_state_variable_definition_value(&mut self, _target: &slang_solidity::backend::ast::StateVariableDefinitionValue) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::ast::StorageLayoutSpecifier) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_struct_definition(&mut self, _target: &slang_solidity::backend::ast::StructDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_struct_member(&mut self, _target: &slang_solidity::backend::ast::StructMember) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_throw_statement(&mut self, _target: &slang_solidity::backend::ast::ThrowStatement) -> bool
@@ -2924,6 +2955,7 @@ pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_shift_express
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_source_unit(&mut self, _target: &slang_solidity::backend::ast::SourceUnit)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_state_variable_definition(&mut self, _target: &slang_solidity::backend::ast::StateVariableDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_state_variable_definition_value(&mut self, _target: &slang_solidity::backend::ast::StateVariableDefinitionValue)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::ast::StorageLayoutSpecifier)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_struct_definition(&mut self, _target: &slang_solidity::backend::ast::StructDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_struct_member(&mut self, _target: &slang_solidity::backend::ast::StructMember)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_throw_statement(&mut self, _target: &slang_solidity::backend::ast::ThrowStatement)
@@ -2993,6 +3025,7 @@ pub fn slang_solidity::backend::l1::input::visitor::accept_constructor_definitio
 pub fn slang_solidity::backend::l1::input::visitor::accept_continue_statement(target: &slang_solidity::backend::ast::ContinueStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_contract_definition(target: &slang_solidity::backend::ast::ContractDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_contract_member(target: &slang_solidity::backend::ast::ContractMember, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
+pub fn slang_solidity::backend::l1::input::visitor::accept_contract_specifier(target: &slang_solidity::backend::ast::ContractSpecifier, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_decimal_number_expression(target: &slang_solidity::backend::ast::DecimalNumberExpression, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_do_while_statement(target: &slang_solidity::backend::ast::DoWhileStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_elementary_type(target: &slang_solidity::backend::ast::ElementaryType, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
@@ -3076,6 +3109,7 @@ pub fn slang_solidity::backend::l1::input::visitor::accept_state_variable_attrib
 pub fn slang_solidity::backend::l1::input::visitor::accept_state_variable_definition(target: &slang_solidity::backend::ast::StateVariableDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_state_variable_definition_value(target: &slang_solidity::backend::ast::StateVariableDefinitionValue, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_statement(target: &slang_solidity::backend::ast::Statement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
+pub fn slang_solidity::backend::l1::input::visitor::accept_storage_layout_specifier(target: &slang_solidity::backend::ast::StorageLayoutSpecifier, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_storage_location(_target: &slang_solidity::backend::ast::StorageLocation, _visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_string_expression(target: &slang_solidity::backend::ast::StringExpression, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_string_literal(_target: &slang_solidity::backend::ast::StringLiteral, _visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
@@ -3170,6 +3204,11 @@ pub slang_solidity::backend::l1::input::ContractMember::UserDefinedValueTypeDefi
 pub slang_solidity::backend::l1::input::ContractMember::UsingDirective(slang_solidity::backend::ast::UsingDirective)
 impl core::fmt::Debug for slang_solidity::backend::ast::ContractMember
 pub fn slang_solidity::backend::ast::ContractMember::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::backend::l1::input::ContractSpecifier
+pub slang_solidity::backend::l1::input::ContractSpecifier::InheritanceSpecifier(slang_solidity::backend::ast::InheritanceSpecifier)
+pub slang_solidity::backend::l1::input::ContractSpecifier::StorageLayoutSpecifier(slang_solidity::backend::ast::StorageLayoutSpecifier)
+impl core::fmt::Debug for slang_solidity::backend::ast::ContractSpecifier
+pub fn slang_solidity::backend::ast::ContractSpecifier::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::ElementaryType
 pub slang_solidity::backend::l1::input::ElementaryType::AddressType(slang_solidity::backend::ast::AddressType)
 pub slang_solidity::backend::l1::input::ElementaryType::BoolKeyword
@@ -3648,10 +3687,10 @@ impl core::fmt::Debug for slang_solidity::backend::ast::ContinueStatementStruct
 pub fn slang_solidity::backend::ast::ContinueStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::input::ContractDefinitionStruct
 pub slang_solidity::backend::l1::input::ContractDefinitionStruct::abstract_keyword: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
-pub slang_solidity::backend::l1::input::ContractDefinitionStruct::inheritance: core::option::Option<slang_solidity::backend::ast::InheritanceSpecifier>
 pub slang_solidity::backend::l1::input::ContractDefinitionStruct::members: slang_solidity::backend::ast::ContractMembers
 pub slang_solidity::backend::l1::input::ContractDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1::input::ContractDefinitionStruct::node_id: usize
+pub slang_solidity::backend::l1::input::ContractDefinitionStruct::specifiers: slang_solidity::backend::ast::ContractSpecifiers
 impl core::fmt::Debug for slang_solidity::backend::ast::ContractDefinitionStruct
 pub fn slang_solidity::backend::ast::ContractDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::input::DecimalNumberExpressionStruct
@@ -4028,6 +4067,11 @@ pub slang_solidity::backend::l1::input::StateVariableDefinitionValueStruct::node
 pub slang_solidity::backend::l1::input::StateVariableDefinitionValueStruct::value: slang_solidity::backend::ast::Expression
 impl core::fmt::Debug for slang_solidity::backend::ast::StateVariableDefinitionValueStruct
 pub fn slang_solidity::backend::ast::StateVariableDefinitionValueStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::l1::input::StorageLayoutSpecifierStruct
+pub slang_solidity::backend::l1::input::StorageLayoutSpecifierStruct::expression: slang_solidity::backend::ast::Expression
+pub slang_solidity::backend::l1::input::StorageLayoutSpecifierStruct::node_id: usize
+impl core::fmt::Debug for slang_solidity::backend::ast::StorageLayoutSpecifierStruct
+pub fn slang_solidity::backend::ast::StorageLayoutSpecifierStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::input::StructDefinitionStruct
 pub slang_solidity::backend::l1::input::StructDefinitionStruct::members: slang_solidity::backend::ast::StructMembers
 pub slang_solidity::backend::l1::input::StructDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
@@ -4307,6 +4351,7 @@ pub type slang_solidity::backend::l1::input::ConstructorDefinition = alloc::rc::
 pub type slang_solidity::backend::l1::input::ContinueStatement = alloc::rc::Rc<slang_solidity::backend::ast::ContinueStatementStruct>
 pub type slang_solidity::backend::l1::input::ContractDefinition = alloc::rc::Rc<slang_solidity::backend::ast::ContractDefinitionStruct>
 pub type slang_solidity::backend::l1::input::ContractMembers = alloc::vec::Vec<slang_solidity::backend::ast::ContractMember>
+pub type slang_solidity::backend::l1::input::ContractSpecifiers = alloc::vec::Vec<slang_solidity::backend::ast::ContractSpecifier>
 pub type slang_solidity::backend::l1::input::DecimalNumberExpression = alloc::rc::Rc<slang_solidity::backend::ast::DecimalNumberExpressionStruct>
 pub type slang_solidity::backend::l1::input::DoWhileStatement = alloc::rc::Rc<slang_solidity::backend::ast::DoWhileStatementStruct>
 pub type slang_solidity::backend::l1::input::ElseBranch = alloc::rc::Rc<slang_solidity::backend::ast::ElseBranchStruct>
@@ -4392,6 +4437,7 @@ pub type slang_solidity::backend::l1::input::StateVariableAttributes = alloc::ve
 pub type slang_solidity::backend::l1::input::StateVariableDefinition = alloc::rc::Rc<slang_solidity::backend::ast::StateVariableDefinitionStruct>
 pub type slang_solidity::backend::l1::input::StateVariableDefinitionValue = alloc::rc::Rc<slang_solidity::backend::ast::StateVariableDefinitionValueStruct>
 pub type slang_solidity::backend::l1::input::Statements = alloc::vec::Vec<slang_solidity::backend::ast::Statement>
+pub type slang_solidity::backend::l1::input::StorageLayoutSpecifier = alloc::rc::Rc<slang_solidity::backend::ast::StorageLayoutSpecifierStruct>
 pub type slang_solidity::backend::l1::input::StringLiterals = alloc::vec::Vec<slang_solidity::backend::ast::StringLiteral>
 pub type slang_solidity::backend::l1::input::StructDefinition = alloc::rc::Rc<slang_solidity::backend::ast::StructDefinitionStruct>
 pub type slang_solidity::backend::l1::input::StructMember = alloc::rc::Rc<slang_solidity::backend::ast::StructMemberStruct>
@@ -4457,6 +4503,7 @@ pub trait slang_solidity::backend::l1::mutator::Mutator
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_arguments_declaration(&mut self, source: &slang_solidity::backend::l1::ArgumentsDeclaration) -> slang_solidity::backend::l1::ArgumentsDeclaration
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_constructor_attribute(&mut self, source: &slang_solidity::backend::l1::ConstructorAttribute) -> slang_solidity::backend::l1::ConstructorAttribute
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_contract_member(&mut self, source: &slang_solidity::backend::l1::ContractMember) -> slang_solidity::backend::l1::ContractMember
+pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_contract_specifier(&mut self, source: &slang_solidity::backend::l1::ContractSpecifier) -> slang_solidity::backend::l1::ContractSpecifier
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_elementary_type(&mut self, source: &slang_solidity::backend::l1::ElementaryType) -> slang_solidity::backend::l1::ElementaryType
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_experimental_feature(&mut self, source: &slang_solidity::backend::l1::ExperimentalFeature) -> slang_solidity::backend::l1::ExperimentalFeature
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_expression(&mut self, source: &slang_solidity::backend::l1::Expression) -> slang_solidity::backend::l1::Expression
@@ -4528,6 +4575,7 @@ pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_continue_statement(
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_contract_definition(&mut self, source: &slang_solidity::backend::l1::ContractDefinition) -> slang_solidity::backend::l1::ContractDefinition
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_contract_member(&mut self, source: &slang_solidity::backend::l1::ContractMember) -> slang_solidity::backend::l1::ContractMember
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_contract_members(&mut self, source: &slang_solidity::backend::l1::ContractMembers) -> slang_solidity::backend::l1::ContractMembers
+pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_contract_specifier(&mut self, source: &slang_solidity::backend::l1::ContractSpecifier) -> slang_solidity::backend::l1::ContractSpecifier
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_decimal_number_expression(&mut self, source: &slang_solidity::backend::l1::DecimalNumberExpression) -> slang_solidity::backend::l1::DecimalNumberExpression
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_do_while_statement(&mut self, source: &slang_solidity::backend::l1::DoWhileStatement) -> slang_solidity::backend::l1::DoWhileStatement
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_elementary_type(&mut self, source: &slang_solidity::backend::l1::ElementaryType) -> slang_solidity::backend::l1::ElementaryType
@@ -4633,6 +4681,7 @@ pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_state_variable_defi
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_state_variable_definition_value(&mut self, source: &slang_solidity::backend::l1::StateVariableDefinitionValue) -> slang_solidity::backend::l1::StateVariableDefinitionValue
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_statement(&mut self, source: &slang_solidity::backend::l1::Statement) -> slang_solidity::backend::l1::Statement
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_statements(&mut self, source: &slang_solidity::backend::l1::Statements) -> slang_solidity::backend::l1::Statements
+pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_storage_layout_specifier(&mut self, source: &slang_solidity::backend::l1::StorageLayoutSpecifier) -> slang_solidity::backend::l1::StorageLayoutSpecifier
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_storage_location(&mut self, source: &slang_solidity::backend::l1::StorageLocation) -> slang_solidity::backend::l1::StorageLocation
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_string_expression(&mut self, source: &slang_solidity::backend::l1::StringExpression) -> slang_solidity::backend::l1::StringExpression
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_string_literal(&mut self, source: &slang_solidity::backend::l1::StringLiteral) -> slang_solidity::backend::l1::StringLiteral
@@ -4716,6 +4765,7 @@ pub trait slang_solidity::backend::l1::transformer::Transformer
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_arguments_declaration(&mut self, source: &slang_solidity::backend::ast::ArgumentsDeclaration) -> slang_solidity::backend::l1::ArgumentsDeclaration
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_constructor_attribute(&mut self, source: &slang_solidity::backend::ast::ConstructorAttribute) -> slang_solidity::backend::l1::ConstructorAttribute
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_contract_member(&mut self, source: &slang_solidity::backend::ast::ContractMember) -> slang_solidity::backend::l1::ContractMember
+pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_contract_specifier(&mut self, source: &slang_solidity::backend::ast::ContractSpecifier) -> slang_solidity::backend::l1::ContractSpecifier
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_elementary_type(&mut self, source: &slang_solidity::backend::ast::ElementaryType) -> slang_solidity::backend::l1::ElementaryType
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_experimental_feature(&mut self, source: &slang_solidity::backend::ast::ExperimentalFeature) -> slang_solidity::backend::l1::ExperimentalFeature
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_expression(&mut self, source: &slang_solidity::backend::ast::Expression) -> slang_solidity::backend::l1::Expression
@@ -4787,6 +4837,7 @@ pub fn slang_solidity::backend::l1::transformer::Transformer::transform_continue
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_contract_definition(&mut self, source: &slang_solidity::backend::ast::ContractDefinition) -> slang_solidity::backend::l1::ContractDefinition
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_contract_member(&mut self, source: &slang_solidity::backend::ast::ContractMember) -> slang_solidity::backend::l1::ContractMember
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_contract_members(&mut self, source: &slang_solidity::backend::ast::ContractMembers) -> slang_solidity::backend::l1::ContractMembers
+pub fn slang_solidity::backend::l1::transformer::Transformer::transform_contract_specifier(&mut self, source: &slang_solidity::backend::ast::ContractSpecifier) -> slang_solidity::backend::l1::ContractSpecifier
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_decimal_number_expression(&mut self, source: &slang_solidity::backend::ast::DecimalNumberExpression) -> slang_solidity::backend::l1::DecimalNumberExpression
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_do_while_statement(&mut self, source: &slang_solidity::backend::ast::DoWhileStatement) -> slang_solidity::backend::l1::DoWhileStatement
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_elementary_type(&mut self, source: &slang_solidity::backend::ast::ElementaryType) -> slang_solidity::backend::l1::ElementaryType
@@ -4892,6 +4943,7 @@ pub fn slang_solidity::backend::l1::transformer::Transformer::transform_state_va
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_state_variable_definition_value(&mut self, source: &slang_solidity::backend::ast::StateVariableDefinitionValue) -> slang_solidity::backend::l1::StateVariableDefinitionValue
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_statement(&mut self, source: &slang_solidity::backend::ast::Statement) -> slang_solidity::backend::l1::Statement
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_statements(&mut self, source: &slang_solidity::backend::ast::Statements) -> slang_solidity::backend::l1::Statements
+pub fn slang_solidity::backend::l1::transformer::Transformer::transform_storage_layout_specifier(&mut self, source: &slang_solidity::backend::ast::StorageLayoutSpecifier) -> slang_solidity::backend::l1::StorageLayoutSpecifier
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_storage_location(&mut self, source: &slang_solidity::backend::ast::StorageLocation) -> slang_solidity::backend::l1::StorageLocation
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_string_expression(&mut self, source: &slang_solidity::backend::ast::StringExpression) -> slang_solidity::backend::l1::StringExpression
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_string_literal(&mut self, source: &slang_solidity::backend::ast::StringLiteral) -> slang_solidity::backend::l1::StringLiteral
@@ -5057,6 +5109,7 @@ pub fn slang_solidity::backend::l1::visitor::Visitor::enter_shift_expression(&mu
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_source_unit(&mut self, _target: &slang_solidity::backend::l1::SourceUnit) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_state_variable_definition(&mut self, _target: &slang_solidity::backend::l1::StateVariableDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_state_variable_definition_value(&mut self, _target: &slang_solidity::backend::l1::StateVariableDefinitionValue) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::l1::StorageLayoutSpecifier) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_struct_definition(&mut self, _target: &slang_solidity::backend::l1::StructDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_struct_member(&mut self, _target: &slang_solidity::backend::l1::StructMember) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_throw_statement(&mut self, _target: &slang_solidity::backend::l1::ThrowStatement) -> bool
@@ -5185,6 +5238,7 @@ pub fn slang_solidity::backend::l1::visitor::Visitor::leave_shift_expression(&mu
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_source_unit(&mut self, _target: &slang_solidity::backend::l1::SourceUnit)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_state_variable_definition(&mut self, _target: &slang_solidity::backend::l1::StateVariableDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_state_variable_definition_value(&mut self, _target: &slang_solidity::backend::l1::StateVariableDefinitionValue)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::l1::StorageLayoutSpecifier)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_struct_definition(&mut self, _target: &slang_solidity::backend::l1::StructDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_struct_member(&mut self, _target: &slang_solidity::backend::l1::StructMember)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_throw_statement(&mut self, _target: &slang_solidity::backend::l1::ThrowStatement)
@@ -5253,6 +5307,7 @@ pub fn slang_solidity::backend::l1::visitor::accept_constructor_definition(targe
 pub fn slang_solidity::backend::l1::visitor::accept_continue_statement(target: &slang_solidity::backend::l1::ContinueStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_contract_definition(target: &slang_solidity::backend::l1::ContractDefinition, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_contract_member(target: &slang_solidity::backend::l1::ContractMember, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
+pub fn slang_solidity::backend::l1::visitor::accept_contract_specifier(target: &slang_solidity::backend::l1::ContractSpecifier, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_decimal_number_expression(target: &slang_solidity::backend::l1::DecimalNumberExpression, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_do_while_statement(target: &slang_solidity::backend::l1::DoWhileStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_elementary_type(target: &slang_solidity::backend::l1::ElementaryType, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
@@ -5336,6 +5391,7 @@ pub fn slang_solidity::backend::l1::visitor::accept_state_variable_attribute(tar
 pub fn slang_solidity::backend::l1::visitor::accept_state_variable_definition(target: &slang_solidity::backend::l1::StateVariableDefinition, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_state_variable_definition_value(target: &slang_solidity::backend::l1::StateVariableDefinitionValue, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_statement(target: &slang_solidity::backend::l1::Statement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
+pub fn slang_solidity::backend::l1::visitor::accept_storage_layout_specifier(target: &slang_solidity::backend::l1::StorageLayoutSpecifier, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_storage_location(_target: &slang_solidity::backend::l1::StorageLocation, _visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_string_expression(target: &slang_solidity::backend::l1::StringExpression, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_string_literal(_target: &slang_solidity::backend::l1::StringLiteral, _visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
@@ -5428,6 +5484,11 @@ pub slang_solidity::backend::l1::ContractMember::UserDefinedValueTypeDefinition(
 pub slang_solidity::backend::l1::ContractMember::UsingDirective(slang_solidity::backend::l1::UsingDirective)
 impl core::fmt::Debug for slang_solidity::backend::l1::ContractMember
 pub fn slang_solidity::backend::l1::ContractMember::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub enum slang_solidity::backend::l1::ContractSpecifier
+pub slang_solidity::backend::l1::ContractSpecifier::InheritanceSpecifier(slang_solidity::backend::l1::InheritanceSpecifier)
+pub slang_solidity::backend::l1::ContractSpecifier::StorageLayoutSpecifier(slang_solidity::backend::l1::StorageLayoutSpecifier)
+impl core::fmt::Debug for slang_solidity::backend::l1::ContractSpecifier
+pub fn slang_solidity::backend::l1::ContractSpecifier::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::ElementaryType
 pub slang_solidity::backend::l1::ElementaryType::AddressType(slang_solidity::backend::l1::AddressType)
 pub slang_solidity::backend::l1::ElementaryType::BoolKeyword
@@ -5910,6 +5971,7 @@ pub slang_solidity::backend::l1::ContractDefinitionStruct::inheritance_types: sl
 pub slang_solidity::backend::l1::ContractDefinitionStruct::members: slang_solidity::backend::l1::ContractMembers
 pub slang_solidity::backend::l1::ContractDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1::ContractDefinitionStruct::node_id: usize
+pub slang_solidity::backend::l1::ContractDefinitionStruct::storage_layout: core::option::Option<slang_solidity::backend::l1::StorageLayoutSpecifier>
 impl core::fmt::Debug for slang_solidity::backend::l1::ContractDefinitionStruct
 pub fn slang_solidity::backend::l1::ContractDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::DecimalNumberExpressionStruct
@@ -6286,6 +6348,11 @@ pub slang_solidity::backend::l1::StateVariableDefinitionValueStruct::node_id: us
 pub slang_solidity::backend::l1::StateVariableDefinitionValueStruct::value: slang_solidity::backend::l1::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1::StateVariableDefinitionValueStruct
 pub fn slang_solidity::backend::l1::StateVariableDefinitionValueStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::l1::StorageLayoutSpecifierStruct
+pub slang_solidity::backend::l1::StorageLayoutSpecifierStruct::expression: slang_solidity::backend::l1::Expression
+pub slang_solidity::backend::l1::StorageLayoutSpecifierStruct::node_id: usize
+impl core::fmt::Debug for slang_solidity::backend::l1::StorageLayoutSpecifierStruct
+pub fn slang_solidity::backend::l1::StorageLayoutSpecifierStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::StructDefinitionStruct
 pub slang_solidity::backend::l1::StructDefinitionStruct::members: slang_solidity::backend::l1::StructMembers
 pub slang_solidity::backend::l1::StructDefinitionStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
@@ -6643,6 +6710,7 @@ pub type slang_solidity::backend::l1::StateVariableAttributes = alloc::vec::Vec<
 pub type slang_solidity::backend::l1::StateVariableDefinition = alloc::rc::Rc<slang_solidity::backend::l1::StateVariableDefinitionStruct>
 pub type slang_solidity::backend::l1::StateVariableDefinitionValue = alloc::rc::Rc<slang_solidity::backend::l1::StateVariableDefinitionValueStruct>
 pub type slang_solidity::backend::l1::Statements = alloc::vec::Vec<slang_solidity::backend::l1::Statement>
+pub type slang_solidity::backend::l1::StorageLayoutSpecifier = alloc::rc::Rc<slang_solidity::backend::l1::StorageLayoutSpecifierStruct>
 pub type slang_solidity::backend::l1::StringLiterals = alloc::vec::Vec<slang_solidity::backend::l1::StringLiteral>
 pub type slang_solidity::backend::l1::StructDefinition = alloc::rc::Rc<slang_solidity::backend::l1::StructDefinitionStruct>
 pub type slang_solidity::backend::l1::StructMember = alloc::rc::Rc<slang_solidity::backend::l1::StructMemberStruct>
