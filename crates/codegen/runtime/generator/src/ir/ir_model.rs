@@ -107,15 +107,17 @@ impl IrModel {
                     self.terminals.insert(item.name.clone());
                 }
                 model::Item::Keyword { item } => {
-                    self.terminals.insert(item.name.clone());
                     if item.is_unique() {
                         self.unique_terminals.insert(item.name.clone());
+                    } else {
+                        self.terminals.insert(item.name.clone());
                     }
                 }
                 model::Item::Token { item } => {
-                    self.terminals.insert(item.name.clone());
                     if item.is_unique() {
                         self.unique_terminals.insert(item.name.clone());
+                    } else {
+                        self.terminals.insert(item.name.clone());
                     }
                 }
                 model::Item::Fragment { .. } => {
@@ -224,7 +226,8 @@ impl IrModel {
             parent_type,
             Repeated {
                 item_type: item.reference.clone(),
-                is_terminal: self.terminals.contains(&item.reference),
+                is_terminal: self.terminals.contains(&item.reference)
+                    || self.unique_terminals.contains(&item.reference),
             },
         );
     }
@@ -236,7 +239,8 @@ impl IrModel {
             parent_type,
             Separated {
                 item_type: item.reference.clone(),
-                is_terminal: self.terminals.contains(&item.reference),
+                is_terminal: self.terminals.contains(&item.reference)
+                    || self.unique_terminals.contains(&item.reference),
             },
         );
     }
@@ -329,7 +333,8 @@ impl IrModel {
             Field {
                 label: label.clone(),
                 r#type: reference.clone(),
-                is_terminal: self.terminals.contains(reference),
+                is_terminal: self.terminals.contains(reference)
+                    || self.unique_terminals.contains(reference),
                 is_optional,
             }
         })
@@ -437,7 +442,10 @@ impl IrModel {
         };
         let is_terminal = self
             .terminals
-            .contains::<model::Identifier>(&field_type.into());
+            .contains::<model::Identifier>(&field_type.into())
+            || self
+                .unique_terminals
+                .contains::<model::Identifier>(&field_type.into());
         sequence.fields.push(Field {
             label: field_label.into(),
             r#type: field_type.into(),
