@@ -1,6 +1,7 @@
 import assert from "node:assert";
 import { Cursor, NonterminalKind, Query } from "@nomicfoundation/slang/cst";
 import { CompilationBuilder, CompilationUnit } from "@nomicfoundation/slang/compilation";
+import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 test("solidity builtins", async () => {
   const unit = await buildCompilationUnit();
@@ -66,7 +67,7 @@ contract TxUserWallet {
   };
 
   const builder = CompilationBuilder.create({
-    languageVersion: "0.8.28",
+    languageVersion: LanguageFacts.latestVersion(),
     readFile,
     resolveImport,
   });

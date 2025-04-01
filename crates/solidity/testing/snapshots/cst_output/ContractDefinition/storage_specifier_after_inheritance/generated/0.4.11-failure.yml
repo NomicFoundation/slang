@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Foo is Bar layout at 0 {                                                │ 0..33
+  2  │ }                                                                                │ 34..35
+
+Errors: # 1 total
+  - >
+    Error: Expected IsKeyword or OpenBrace.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/storage_specifier_after_inheritance/input.sol:1:20]
+       │
+     1 │ ╭─▶ contract Foo is Bar layout at 0 {
+     2 │ ├─▶ }
+       │ │       
+       │ ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ ContractDefinition): # "contract Foo is Bar layout at 0 {\n}\n" (0..36)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (leading_trivia꞉ Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Foo" # (9..12)
+      - (specifiers꞉ ContractSpecifiers): # " is Bar" (12..19)
+          - (item꞉ ContractSpecifier) ► (variant꞉ InheritanceSpecifier): # " is Bar" (12..19)
+              - (leading_trivia꞉ Whitespace): " " # (12..13)
+              - (is_keyword꞉ IsKeyword): "is" # (13..15)
+              - (types꞉ InheritanceTypes): # " Bar" (15..19)
+                  - (item꞉ InheritanceType) ► (type_name꞉ IdentifierPath): # " Bar" (15..19)
+                      - (leading_trivia꞉ Whitespace): " " # (15..16)
+                      - (item꞉ Identifier): "Bar" # (16..19)
+      - (unrecognized꞉ UNRECOGNIZED): " layout at 0 {\n}\n" # (19..36)

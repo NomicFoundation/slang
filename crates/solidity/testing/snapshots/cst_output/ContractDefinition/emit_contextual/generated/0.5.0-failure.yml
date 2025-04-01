@@ -29,6 +29,7 @@ Tree:
       - (contract_keyword꞉ ContractKeyword): "contract" # (103..111)
       - (leading_trivia꞉ Whitespace): " " # (111..112)
       - (name꞉ Identifier): "ClientReceipt" # (112..125)
+      - (specifiers꞉ ContractSpecifiers): [] # (125..125)
       - (leading_trivia꞉ Whitespace): " " # (125..126)
       - (open_brace꞉ OpenBrace): "{" # (126..127)
       - (trailing_trivia꞉ EndOfLine): "\n" # (127..128)

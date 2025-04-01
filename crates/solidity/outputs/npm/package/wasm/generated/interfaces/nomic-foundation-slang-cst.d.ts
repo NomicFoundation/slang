@@ -383,7 +383,7 @@ export declare enum NonterminalKind {
    * ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
    *                      (* contract_keyword: *) CONTRACT_KEYWORD
    *                      (* name: *) IDENTIFIER
-   *                      (* inheritance: *) InheritanceSpecifier?
+   *                      (* specifiers: *) ContractSpecifiers
    *                      (* open_brace: *) OPEN_BRACE
    *                      (* members: *) ContractMembers
    *                      (* close_brace: *) CLOSE_BRACE;
@@ -418,6 +418,23 @@ export declare enum NonterminalKind {
    * ```
    */
   ContractMembers = "ContractMembers",
+  /**
+   * Represents a node with kind `ContractSpecifier`, having the following structure:
+   *
+   * ```ebnf
+   * ContractSpecifier = (* variant: *) InheritanceSpecifier
+   *                   | (* variant: *) StorageLayoutSpecifier; (* Introduced in 0.8.29 *)
+   * ```
+   */
+  ContractSpecifier = "ContractSpecifier",
+  /**
+   * Represents a node with kind `ContractSpecifiers`, having the following structure:
+   *
+   * ```ebnf
+   * ContractSpecifiers = (* item: *) ContractSpecifier*;
+   * ```
+   */
+  ContractSpecifiers = "ContractSpecifiers",
   /**
    * Represents a node with kind `DecimalNumberExpression`, having the following structure:
    *
@@ -1632,6 +1649,17 @@ export declare enum NonterminalKind {
    */
   Statements = "Statements",
   /**
+   * Represents a node with kind `StorageLayoutSpecifier`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.8.29 *)
+   * StorageLayoutSpecifier = (* layout_keyword: *) LAYOUT_KEYWORD
+   *                          (* at_keyword: *) AT_KEYWORD
+   *                          (* expression: *) Expression;
+   * ```
+   */
+  StorageLayoutSpecifier = "StorageLayoutSpecifier",
+  /**
    * Represents a node with kind `StorageLocation`, having the following structure:
    *
    * ```ebnf
@@ -2592,6 +2620,16 @@ export declare enum TerminalKind {
    */
   AsteriskEqual = "AsteriskEqual",
   /**
+   * Represents a node with kind `AtKeyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.8.29 *)
+   * (* Never reserved *)
+   * AT_KEYWORD = "at";
+   * ```
+   */
+  AtKeyword = "AtKeyword",
+  /**
    * Represents a node with kind `AutoKeyword`, having the following structure:
    *
    * ```ebnf
@@ -3288,6 +3326,16 @@ export declare enum TerminalKind {
    * ```
    */
   IsKeyword = "IsKeyword",
+  /**
+   * Represents a node with kind `LayoutKeyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.8.29 *)
+   * (* Never reserved *)
+   * LAYOUT_KEYWORD = "layout";
+   * ```
+   */
+  LayoutKeyword = "LayoutKeyword",
   /**
    * Represents a node with kind `LessThan`, having the following structure:
    *
@@ -5126,6 +5174,10 @@ export declare enum EdgeLabel {
    */
   Asterisk = "Asterisk",
   /**
+   * Represents a child node with the label `at_keyword`.
+   */
+  AtKeyword = "AtKeyword",
+  /**
    * Represents a child node with the label `attributes`.
    */
   Attributes = "Attributes",
@@ -5346,6 +5398,10 @@ export declare enum EdgeLabel {
    */
   Label = "Label",
   /**
+   * Represents a child node with the label `layout_keyword`.
+   */
+  LayoutKeyword = "LayoutKeyword",
+  /**
    * Represents a child node with the label `leave_keyword`.
    */
   LeaveKeyword = "LeaveKeyword",
@@ -5485,6 +5541,10 @@ export declare enum EdgeLabel {
    * Represents a child node with the label `solidity_keyword`.
    */
   SolidityKeyword = "SolidityKeyword",
+  /**
+   * Represents a child node with the label `specifiers`.
+   */
+  Specifiers = "Specifiers",
   /**
    * Represents a child node with the label `start`.
    */

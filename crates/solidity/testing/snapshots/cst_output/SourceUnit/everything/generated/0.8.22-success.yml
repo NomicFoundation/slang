@@ -73,6 +73,7 @@ Tree:
           - (contract_keyword꞉ ContractKeyword): "contract" # (59..67)
           - (leading_trivia꞉ Whitespace): " " # (67..68)
           - (name꞉ Identifier): "C" # (68..69)
+          - (specifiers꞉ ContractSpecifiers): [] # (69..69)
           - (leading_trivia꞉ Whitespace): " " # (69..70)
           - (open_brace꞉ OpenBrace): "{" # (70..71)
           - (members꞉ ContractMembers): [] # (71..71)

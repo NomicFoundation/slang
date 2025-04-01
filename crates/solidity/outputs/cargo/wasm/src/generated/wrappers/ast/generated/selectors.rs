@@ -39,6 +39,7 @@ pub fn select_sequence(node: &Rc<NonterminalNode>) -> Result<Vec<Option<Node>>> 
         NonterminalKind::ContractDefinition => helper.contract_definition_sequence()?,
         NonterminalKind::InheritanceSpecifier => helper.inheritance_specifier_sequence()?,
         NonterminalKind::InheritanceType => helper.inheritance_type_sequence()?,
+        NonterminalKind::StorageLayoutSpecifier => helper.storage_layout_specifier_sequence()?,
         NonterminalKind::InterfaceDefinition => helper.interface_definition_sequence()?,
         NonterminalKind::LibraryDefinition => helper.library_definition_sequence()?,
         NonterminalKind::StructDefinition => helper.struct_definition_sequence()?,
@@ -371,7 +372,7 @@ impl Helper {
             self.try_select(EdgeLabel::AbstractKeyword),
             Some(self.select(EdgeLabel::ContractKeyword)?),
             Some(self.select(EdgeLabel::Name)?),
-            self.try_select(EdgeLabel::Inheritance),
+            Some(self.select(EdgeLabel::Specifiers)?),
             Some(self.select(EdgeLabel::OpenBrace)?),
             Some(self.select(EdgeLabel::Members)?),
             Some(self.select(EdgeLabel::CloseBrace)?),
@@ -393,6 +394,16 @@ impl Helper {
         Ok(vec![
             Some(self.select(EdgeLabel::TypeName)?),
             self.try_select(EdgeLabel::Arguments),
+        ])
+    }
+}
+
+impl Helper {
+    fn storage_layout_specifier_sequence(&mut self) -> Result<Vec<Option<Node>>> {
+        Ok(vec![
+            Some(self.select(EdgeLabel::LayoutKeyword)?),
+            Some(self.select(EdgeLabel::AtKeyword)?),
+            Some(self.select(EdgeLabel::Expression)?),
         ])
     }
 }

@@ -1,5 +1,11 @@
 # changelog
 
+## 1.0.0
+
+### Major Changes
+
+- [#1279](https://github.com/NomicFoundation/slang/pull/1279) [`6de3e41`](https://github.com/NomicFoundation/slang/commit/6de3e4119e496bd4bc16ac130b53ad1657def858) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - release Slang v1 🚀🚀🚀
+
 ## 0.20.1
 
 ### Patch Changes

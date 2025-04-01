@@ -6765,6 +6765,7 @@ pub slang_solidity::cst::EdgeLabel::AsKeyword
 pub slang_solidity::cst::EdgeLabel::AssemblyKeyword
 pub slang_solidity::cst::EdgeLabel::Assignment
 pub slang_solidity::cst::EdgeLabel::Asterisk
+pub slang_solidity::cst::EdgeLabel::AtKeyword
 pub slang_solidity::cst::EdgeLabel::Attributes
 pub slang_solidity::cst::EdgeLabel::Block
 pub slang_solidity::cst::EdgeLabel::Body
@@ -6821,6 +6822,7 @@ pub slang_solidity::cst::EdgeLabel::Items
 pub slang_solidity::cst::EdgeLabel::Iterator
 pub slang_solidity::cst::EdgeLabel::KeyType
 pub slang_solidity::cst::EdgeLabel::Label
+pub slang_solidity::cst::EdgeLabel::LayoutKeyword
 pub slang_solidity::cst::EdgeLabel::LeadingTrivia
 pub slang_solidity::cst::EdgeLabel::LeaveKeyword
 pub slang_solidity::cst::EdgeLabel::LeftOperand
@@ -6863,6 +6865,7 @@ pub slang_solidity::cst::EdgeLabel::Semicolon
 pub slang_solidity::cst::EdgeLabel::Separator
 pub slang_solidity::cst::EdgeLabel::Sets
 pub slang_solidity::cst::EdgeLabel::SolidityKeyword
+pub slang_solidity::cst::EdgeLabel::Specifiers
 pub slang_solidity::cst::EdgeLabel::Start
 pub slang_solidity::cst::EdgeLabel::Statements
 pub slang_solidity::cst::EdgeLabel::StorageLocation
@@ -6971,6 +6974,8 @@ pub slang_solidity::cst::NonterminalKind::ContinueStatement
 pub slang_solidity::cst::NonterminalKind::ContractDefinition
 pub slang_solidity::cst::NonterminalKind::ContractMember
 pub slang_solidity::cst::NonterminalKind::ContractMembers
+pub slang_solidity::cst::NonterminalKind::ContractSpecifier
+pub slang_solidity::cst::NonterminalKind::ContractSpecifiers
 pub slang_solidity::cst::NonterminalKind::DecimalNumberExpression
 pub slang_solidity::cst::NonterminalKind::DoWhileStatement
 pub slang_solidity::cst::NonterminalKind::ElementaryType
@@ -7076,6 +7081,7 @@ pub slang_solidity::cst::NonterminalKind::StateVariableDefinition
 pub slang_solidity::cst::NonterminalKind::StateVariableDefinitionValue
 pub slang_solidity::cst::NonterminalKind::Statement
 pub slang_solidity::cst::NonterminalKind::Statements
+pub slang_solidity::cst::NonterminalKind::StorageLayoutSpecifier
 pub slang_solidity::cst::NonterminalKind::StorageLocation
 pub slang_solidity::cst::NonterminalKind::StringExpression
 pub slang_solidity::cst::NonterminalKind::StringLiteral
@@ -7204,6 +7210,7 @@ pub slang_solidity::cst::TerminalKind::AssemblyKeyword
 pub slang_solidity::cst::TerminalKind::Asterisk
 pub slang_solidity::cst::TerminalKind::AsteriskAsterisk
 pub slang_solidity::cst::TerminalKind::AsteriskEqual
+pub slang_solidity::cst::TerminalKind::AtKeyword
 pub slang_solidity::cst::TerminalKind::AutoKeyword
 pub slang_solidity::cst::TerminalKind::Bang
 pub slang_solidity::cst::TerminalKind::BangEqual
@@ -7284,6 +7291,7 @@ pub slang_solidity::cst::TerminalKind::IntKeyword
 pub slang_solidity::cst::TerminalKind::InterfaceKeyword
 pub slang_solidity::cst::TerminalKind::InternalKeyword
 pub slang_solidity::cst::TerminalKind::IsKeyword
+pub slang_solidity::cst::TerminalKind::LayoutKeyword
 pub slang_solidity::cst::TerminalKind::LessThan
 pub slang_solidity::cst::TerminalKind::LessThanEqual
 pub slang_solidity::cst::TerminalKind::LessThanLessThan

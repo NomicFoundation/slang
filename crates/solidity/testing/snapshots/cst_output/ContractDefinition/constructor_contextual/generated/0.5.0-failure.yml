@@ -28,6 +28,7 @@ Tree:
       - (contract_keyword꞉ ContractKeyword): "contract" # (93..101)
       - (leading_trivia꞉ Whitespace): " " # (101..102)
       - (name꞉ Identifier): "Contract" # (102..110)
+      - (specifiers꞉ ContractSpecifiers): [] # (110..110)
       - (leading_trivia꞉ Whitespace): " " # (110..111)
       - (open_brace꞉ OpenBrace): "{" # (111..112)
       - (trailing_trivia꞉ EndOfLine): "\n" # (112..113)

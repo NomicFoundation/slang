@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import { ParseOutput, Parser } from "@nomicfoundation/slang/parser";
+import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 export function createTree(): ParseOutput {
   const source = `
@@ -14,7 +15,7 @@ export function createTree(): ParseOutput {
     }
   `;
 
-  const parser = Parser.create("0.8.28");
+  const parser = Parser.create(LanguageFacts.latestVersion());
 
   const parseOutput = parser.parseFileContents(source.trim());
   assert(parseOutput.isValid());

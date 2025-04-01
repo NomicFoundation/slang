@@ -1,0 +1,4 @@
+try foo() {
+  bar();
+} catch {
+}
