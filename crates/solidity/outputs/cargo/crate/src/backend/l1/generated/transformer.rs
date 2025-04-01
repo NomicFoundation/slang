@@ -2496,9 +2496,6 @@ pub trait Transformer {
             input::ElementaryType::AddressType(ref address_type) => {
                 output::ElementaryType::AddressType(self.transform_address_type(address_type))
             }
-            input::ElementaryType::BoolKeyword => output::ElementaryType::BoolKeyword,
-            input::ElementaryType::ByteKeyword => output::ElementaryType::ByteKeyword,
-            input::ElementaryType::StringKeyword => output::ElementaryType::StringKeyword,
             input::ElementaryType::BytesKeyword(node) => {
                 output::ElementaryType::BytesKeyword(Rc::clone(node))
             }
@@ -2514,6 +2511,9 @@ pub trait Transformer {
             input::ElementaryType::UfixedKeyword(node) => {
                 output::ElementaryType::UfixedKeyword(Rc::clone(node))
             }
+            input::ElementaryType::BoolKeyword => output::ElementaryType::BoolKeyword,
+            input::ElementaryType::ByteKeyword => output::ElementaryType::ByteKeyword,
+            input::ElementaryType::StringKeyword => output::ElementaryType::StringKeyword,
         }
     }
     fn transform_elementary_type(
@@ -2842,12 +2842,12 @@ pub trait Transformer {
             input::Expression::ElementaryType(ref elementary_type) => {
                 output::Expression::ElementaryType(self.transform_elementary_type(elementary_type))
             }
+            input::Expression::Identifier(node) => output::Expression::Identifier(Rc::clone(node)),
             input::Expression::PayableKeyword => output::Expression::PayableKeyword,
             input::Expression::ThisKeyword => output::Expression::ThisKeyword,
             input::Expression::SuperKeyword => output::Expression::SuperKeyword,
             input::Expression::TrueKeyword => output::Expression::TrueKeyword,
             input::Expression::FalseKeyword => output::Expression::FalseKeyword,
-            input::Expression::Identifier(node) => output::Expression::Identifier(Rc::clone(node)),
         }
     }
     fn transform_expression(&mut self, source: &input::Expression) -> output::Expression {
@@ -3173,14 +3173,14 @@ pub trait Transformer {
             input::YulLiteral::StringLiteral(ref string_literal) => {
                 output::YulLiteral::StringLiteral(self.transform_string_literal(string_literal))
             }
-            input::YulLiteral::YulTrueKeyword => output::YulLiteral::YulTrueKeyword,
-            input::YulLiteral::YulFalseKeyword => output::YulLiteral::YulFalseKeyword,
             input::YulLiteral::YulDecimalLiteral(node) => {
                 output::YulLiteral::YulDecimalLiteral(Rc::clone(node))
             }
             input::YulLiteral::YulHexLiteral(node) => {
                 output::YulLiteral::YulHexLiteral(Rc::clone(node))
             }
+            input::YulLiteral::YulTrueKeyword => output::YulLiteral::YulTrueKeyword,
+            input::YulLiteral::YulFalseKeyword => output::YulLiteral::YulFalseKeyword,
         }
     }
     fn transform_yul_literal(&mut self, source: &input::YulLiteral) -> output::YulLiteral {

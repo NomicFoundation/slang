@@ -16,22 +16,18 @@
     pub struct {{ parent_type }}Struct {
       pub node_id: usize,
       {%- for field in sequence.fields %}
-        {%- if field.is_optional
-               or not field.is_terminal
-               or not target.unique_terminals is containing(field.type) -%}
-          pub {{ field.label | snake_case }}:
-          {%- if field.is_terminal -%}
-            {%- if field.is_optional -%}
-              Option<Rc<TerminalNode>>,
-            {%- else -%}
-              Rc<TerminalNode>,
-            {%- endif -%}
+        pub {{ field.label | snake_case }}:
+        {%- if field.is_terminal -%}
+          {%- if field.is_optional -%}
+            Option<Rc<TerminalNode>>,
           {%- else -%}
-            {%- if field.is_optional -%}
-              Option<{{ field.type | pascal_case }}>,
-            {%- else -%}
-              {{ field.type | pascal_case }},
-            {%- endif -%}
+            Rc<TerminalNode>,
+          {%- endif -%}
+        {%- else -%}
+          {%- if field.is_optional -%}
+            Option<{{ field.type | pascal_case }}>,
+          {%- else -%}
+            {{ field.type | pascal_case }},
           {%- endif -%}
         {%- endif -%}
       {% endfor -%}
@@ -48,14 +44,13 @@
     pub enum {{ parent_type }} {
       {% for nonterminal in choice.nonterminal_types -%}
         {{ nonterminal }}({{ nonterminal | pascal_case }}),
-      {%- endfor %}
+      {%- endfor -%}
       {% for terminal in choice.terminal_types -%}
-        {{ terminal }}
-        {%- if not target.unique_terminals is containing(terminal) -%}
-          (Rc<TerminalNode>)
-        {%- endif -%}
-        ,
-      {%- endfor %}
+        {{ terminal }}(Rc<TerminalNode>),
+      {%- endfor -%}
+      {% for terminal in choice.unique_terminal_types -%}
+        {{ terminal }},
+      {%- endfor -%}
     }
   {% endfor %}
 

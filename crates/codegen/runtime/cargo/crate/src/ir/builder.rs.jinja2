@@ -1,6 +1,6 @@
 {%- if rendering_in_stubs -%}
   // No Intermediate Representation building functions in stubs...
-{%- elif source -%}
+{%- elif not builder -%}
   // Not rendering builder for Intermediate Language
 {%- else -%}
   #![allow(clippy::too_many_lines)]
@@ -14,65 +14,60 @@
   // Sequences:
   //
 
-  {% for parent_type, sequence in target.sequences %}
-    pub fn build_{{ parent_type | snake_case }}(cursor: Cursor) -> Result<{{ parent_type }}>
-    {
-      expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
-      let node_id = cursor.node().id();
-      let mut helper = SequenceHelper::new(cursor);
-      {% for field in sequence.fields %}
-        {%- if field.is_optional -%}
-          let {{ field.label }} = if helper.at_label(EdgeLabel::{{ field.label | pascal_case }}) {
-            {%- if field.is_terminal -%}
-              Some(fetch_terminal_node(
-                &helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
-              )?)
-            {%- else -%}
-              Some(build_{{ field.type | snake_case }}(
-                helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
-              )?)
-            {%- endif -%}
-          } else {
-            None
-          };
-
-        {%- else -%}
-          {%- if not field.is_terminal
-                 or not target.unique_terminals is containing(field.type) -%}
+  {% for parent_type, sequence in builder.sequences %}
+    {% if not sequence.has_added_fields %}
+      pub fn build_{{ parent_type | snake_case }}(cursor: Cursor) -> Result<{{ parent_type }}>
+      {
+        expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
+        let node_id = cursor.node().id();
+        let mut helper = SequenceHelper::new(cursor);
+        {% for field in sequence.fields %}
+          {%- if field.is_removed -%}
+            _ = helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?;
+          {%- elif field.is_optional -%}
+            let {{ field.label }} = if helper.at_label(EdgeLabel::{{ field.label | pascal_case }}) {
+              {%- if field.is_terminal -%}
+                Some(fetch_terminal_node(
+                  &helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
+                )?)
+              {%- else -%}
+                Some(build_{{ field.type | snake_case }}(
+                  helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
+                )?)
+              {%- endif -%}
+            } else {
+              None
+            };
+          {%- else -%}
             let {{ field.label }} =
-          {%- else -%}
-            _ =
-          {%- endif -%}
-          {%- if field.is_terminal -%}
-            fetch_terminal_node(&helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?)?;
-          {%- else -%}
-            build_{{ field.type | snake_case }}(
-              helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
-            )?;
-          {%- endif -%}
-        {%- endif -%}
-      {%- endfor %}
-      helper.finalize()?;
-
-      Ok(Rc::new({{ parent_type }}Struct {
-        node_id,
-        {%- for field in sequence.fields -%}
-          {%- if field.is_optional
-                 or not field.is_terminal
-                 or not target.unique_terminals is containing(field.type) -%}
-            {{ field.label }},
+            {%- if field.is_terminal -%}
+              fetch_terminal_node(&helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?)?;
+            {%- else -%}
+              build_{{ field.type | snake_case }}(
+                helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?,
+              )?;
+            {%- endif -%}
           {%- endif -%}
         {%- endfor %}
-      }))
-    }
+        helper.finalize()?;
 
+        Ok(Rc::new({{ parent_type }}Struct {
+          node_id,
+          {%- for field in sequence.fields -%}
+            {%- if not field.is_removed -%}
+              {{ field.label }},
+            {%- endif -%}
+          {%- endfor %}
+        }))
+      }
+    {% endif %}
   {% endfor %}
 
   //
   // Choices:
   //
 
-  {% for parent_type, choice in target.choices %}
+  {% for parent_type, choice in builder.choices %}
     pub fn build_{{ parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ parent_type }}> {
       expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
       if !cursor.go_to_first_child() {
@@ -87,18 +82,17 @@
 
         {% for type in choice.terminal_types -%}
           NodeKind::Terminal(TerminalKind::{{ type }}) => {
-            {%- if not target.unique_terminals is containing(type) -%}
-              let node =
-            {%- else -%}
-              _ =
-            {%- endif -%}
-            fetch_terminal_node(&cursor)?;
-            {{ parent_type }}::{{ type | pascal_case }}
-            {%- if not target.unique_terminals is containing(type) -%}
-              (node)
-            {%- endif -%}
+            let node = fetch_terminal_node(&cursor)?;
+            {{ parent_type }}::{{ type | pascal_case }}(node)
           },
         {%- endfor -%}
+
+        {% for type in choice.unique_terminal_types -%}
+          NodeKind::Terminal(TerminalKind::{{ type }}) => {
+            {{ parent_type }}::{{ type | pascal_case }}
+          },
+        {%- endfor -%}
+
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
           return Err(format!("Unexpected variant node of kind {:?}", cursor.node().kind()));
         }
@@ -113,7 +107,7 @@
   // Repeated:
   //
 
-  {% for parent_type, repeated in target.repeated %}
+  {% for parent_type, repeated in builder.repeated %}
     pub fn build_{{ parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ parent_type }}> {
       expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
       let mut items = {{ parent_type }}::new();
@@ -143,7 +137,7 @@
   // Separated:
   //
 
-  {% for parent_type, separated in target.separated %}
+  {% for parent_type, separated in builder.separated %}
     pub fn build_{{ parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ parent_type }}> {
       expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
       let mut items = {{ parent_type }}::new();
@@ -177,7 +171,10 @@
   #[allow(dead_code)]
   #[inline]
   fn fetch_terminal_node(cursor: &Cursor) -> Result<Rc<TerminalNode>> {
-    cursor.node().into_terminal().ok_or(format!("Expected terminal node, got {:?} instead", cursor.node().kind()))
+    cursor
+      .node()
+      .into_terminal()
+      .ok_or(format!("Expected terminal node, got {:?} instead", cursor.node().kind()))
   }
 
   #[allow(dead_code)]

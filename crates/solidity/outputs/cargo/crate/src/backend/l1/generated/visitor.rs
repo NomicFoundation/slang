@@ -2424,14 +2424,12 @@ impl ElementaryType {
             Self::AddressType(ref address_type) => {
                 address_type.accept(visitor);
             }
-            Self::BoolKeyword
-            | Self::ByteKeyword
-            | Self::StringKeyword
-            | Self::BytesKeyword(_)
+            Self::BytesKeyword(_)
             | Self::IntKeyword(_)
             | Self::UintKeyword(_)
             | Self::FixedKeyword(_)
             | Self::UfixedKeyword(_) => {}
+            Self::BoolKeyword | Self::ByteKeyword | Self::StringKeyword => {}
         }
     }
 }
@@ -2634,12 +2632,12 @@ impl Expression {
             Self::ElementaryType(ref elementary_type) => {
                 elementary_type.accept(visitor);
             }
+            Self::Identifier(_) => {}
             Self::PayableKeyword
             | Self::ThisKeyword
             | Self::SuperKeyword
             | Self::TrueKeyword
-            | Self::FalseKeyword
-            | Self::Identifier(_) => {}
+            | Self::FalseKeyword => {}
         }
     }
 }
@@ -2801,10 +2799,8 @@ impl YulLiteral {
             Self::StringLiteral(ref string_literal) => {
                 string_literal.accept(visitor);
             }
-            Self::YulTrueKeyword
-            | Self::YulFalseKeyword
-            | Self::YulDecimalLiteral(_)
-            | Self::YulHexLiteral(_) => {}
+            Self::YulDecimalLiteral(_) | Self::YulHexLiteral(_) => {}
+            Self::YulTrueKeyword | Self::YulFalseKeyword => {}
         }
     }
 }

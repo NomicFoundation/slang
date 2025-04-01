@@ -2155,14 +2155,14 @@ pub trait Mutator {
             ElementaryType::AddressType(ref address_type) => {
                 ElementaryType::AddressType(self.mutate_address_type(address_type))
             }
-            ElementaryType::BoolKeyword => ElementaryType::BoolKeyword,
-            ElementaryType::ByteKeyword => ElementaryType::ByteKeyword,
-            ElementaryType::StringKeyword => ElementaryType::StringKeyword,
             ElementaryType::BytesKeyword(node) => ElementaryType::BytesKeyword(Rc::clone(node)),
             ElementaryType::IntKeyword(node) => ElementaryType::IntKeyword(Rc::clone(node)),
             ElementaryType::UintKeyword(node) => ElementaryType::UintKeyword(Rc::clone(node)),
             ElementaryType::FixedKeyword(node) => ElementaryType::FixedKeyword(Rc::clone(node)),
             ElementaryType::UfixedKeyword(node) => ElementaryType::UfixedKeyword(Rc::clone(node)),
+            ElementaryType::BoolKeyword => ElementaryType::BoolKeyword,
+            ElementaryType::ByteKeyword => ElementaryType::ByteKeyword,
+            ElementaryType::StringKeyword => ElementaryType::StringKeyword,
         }
     }
     fn mutate_elementary_type(&mut self, source: &ElementaryType) -> ElementaryType {
@@ -2438,12 +2438,12 @@ pub trait Mutator {
             Expression::ElementaryType(ref elementary_type) => {
                 Expression::ElementaryType(self.mutate_elementary_type(elementary_type))
             }
+            Expression::Identifier(node) => Expression::Identifier(Rc::clone(node)),
             Expression::PayableKeyword => Expression::PayableKeyword,
             Expression::ThisKeyword => Expression::ThisKeyword,
             Expression::SuperKeyword => Expression::SuperKeyword,
             Expression::TrueKeyword => Expression::TrueKeyword,
             Expression::FalseKeyword => Expression::FalseKeyword,
-            Expression::Identifier(node) => Expression::Identifier(Rc::clone(node)),
         }
     }
     fn mutate_expression(&mut self, source: &Expression) -> Expression {
@@ -2716,10 +2716,10 @@ pub trait Mutator {
             YulLiteral::StringLiteral(ref string_literal) => {
                 YulLiteral::StringLiteral(self.mutate_string_literal(string_literal))
             }
-            YulLiteral::YulTrueKeyword => YulLiteral::YulTrueKeyword,
-            YulLiteral::YulFalseKeyword => YulLiteral::YulFalseKeyword,
             YulLiteral::YulDecimalLiteral(node) => YulLiteral::YulDecimalLiteral(Rc::clone(node)),
             YulLiteral::YulHexLiteral(node) => YulLiteral::YulHexLiteral(Rc::clone(node)),
+            YulLiteral::YulTrueKeyword => YulLiteral::YulTrueKeyword,
+            YulLiteral::YulFalseKeyword => YulLiteral::YulFalseKeyword,
         }
     }
     fn mutate_yul_literal(&mut self, source: &YulLiteral) -> YulLiteral {

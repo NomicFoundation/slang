@@ -1381,14 +1381,14 @@ pub enum MappingKeyType {
 #[derive(Debug)]
 pub enum ElementaryType {
     AddressType(AddressType),
-    BoolKeyword,
-    ByteKeyword,
-    StringKeyword,
     BytesKeyword(Rc<TerminalNode>),
     IntKeyword(Rc<TerminalNode>),
     UintKeyword(Rc<TerminalNode>),
     FixedKeyword(Rc<TerminalNode>),
     UfixedKeyword(Rc<TerminalNode>),
+    BoolKeyword,
+    ByteKeyword,
+    StringKeyword,
 }
 
 #[derive(Debug)]
@@ -1474,12 +1474,12 @@ pub enum Expression {
     DecimalNumberExpression(DecimalNumberExpression),
     StringExpression(StringExpression),
     ElementaryType(ElementaryType),
+    Identifier(Rc<TerminalNode>),
     PayableKeyword,
     ThisKeyword,
     SuperKeyword,
     TrueKeyword,
     FalseKeyword,
-    Identifier(Rc<TerminalNode>),
 }
 
 #[derive(Debug)]
@@ -1576,10 +1576,10 @@ pub enum YulExpression {
 pub enum YulLiteral {
     HexStringLiteral(HexStringLiteral),
     StringLiteral(StringLiteral),
-    YulTrueKeyword,
-    YulFalseKeyword,
     YulDecimalLiteral(Rc<TerminalNode>),
     YulHexLiteral(Rc<TerminalNode>),
+    YulTrueKeyword,
+    YulFalseKeyword,
 }
 
 //

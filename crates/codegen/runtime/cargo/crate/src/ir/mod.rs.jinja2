@@ -6,6 +6,6 @@ pub mod visitor;
 pub mod mutator;
 pub mod transformer;
 
-{% if source %}
-pub use super::{{ source.name }} as input;
+{% if transformer %}
+pub use super::{{ transformer.source_name }} as input;
 {% endif %}

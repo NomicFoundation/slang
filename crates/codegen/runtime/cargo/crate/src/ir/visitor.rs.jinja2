@@ -20,13 +20,7 @@
   {% for parent_type, sequence in target.sequences %}
     impl {{ parent_type }}Struct {
       pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
-        {%- set_global has_fields = false -%}
-        {%- for field in sequence.fields -%}
-           {%- if not field.is_terminal -%}
-              {%- set_global has_fields = true -%}
-           {%- endif -%}
-        {%- endfor -%}
-        {%- if has_fields %}
+        {%- if sequence.has_nonterminals %}
           if visitor.enter_{{ parent_type | snake_case }}(self) {
             {% for field in sequence.fields -%}
               {%- if not field.is_terminal -%}
@@ -82,10 +76,14 @@
             {%- if choice.terminal_types | length > 0 %}
               {%- for terminal in choice.terminal_types -%}
                 {%- if not loop.first -%} | {%- endif -%}
+                Self::{{terminal}}(_)
+              {%- endfor -%}
+              => {}
+            {% endif -%}
+            {%- if choice.unique_terminal_types | length > 0 %}
+              {%- for terminal in choice.unique_terminal_types -%}
+                {%- if not loop.first -%} | {%- endif -%}
                 Self::{{terminal}}
-                {%- if not target.unique_terminals is containing(terminal) -%}
-                  (_)
-                {%- endif -%}
               {%- endfor -%}
               => {}
             {% endif -%}

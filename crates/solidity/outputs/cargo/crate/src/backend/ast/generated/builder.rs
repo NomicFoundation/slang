@@ -26,9 +26,9 @@ pub fn build_pragma_directive(cursor: Cursor) -> Result<PragmaDirective> {
     expect_nonterminal_kind(&cursor, NonterminalKind::PragmaDirective)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::PragmaKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::PragmaKeyword)?;
     let pragma = build_pragma(helper.accept_label(EdgeLabel::Pragma)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(PragmaDirectiveStruct { node_id, pragma }))
@@ -38,7 +38,7 @@ pub fn build_abicoder_pragma(cursor: Cursor) -> Result<AbicoderPragma> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AbicoderPragma)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::AbicoderKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::AbicoderKeyword)?;
     let version = fetch_terminal_node(&helper.accept_label(EdgeLabel::Version)?)?;
     helper.finalize()?;
 
@@ -49,7 +49,7 @@ pub fn build_experimental_pragma(cursor: Cursor) -> Result<ExperimentalPragma> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ExperimentalPragma)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ExperimentalKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ExperimentalKeyword)?;
     let feature = build_experimental_feature(helper.accept_label(EdgeLabel::Feature)?)?;
     helper.finalize()?;
 
@@ -60,7 +60,7 @@ pub fn build_version_pragma(cursor: Cursor) -> Result<VersionPragma> {
     expect_nonterminal_kind(&cursor, NonterminalKind::VersionPragma)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::SolidityKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::SolidityKeyword)?;
     let sets = build_version_expression_sets(helper.accept_label(EdgeLabel::Sets)?)?;
     helper.finalize()?;
 
@@ -72,7 +72,7 @@ pub fn build_version_range(cursor: Cursor) -> Result<VersionRange> {
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let start = build_version_literal(helper.accept_label(EdgeLabel::Start)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Minus)?)?;
+    _ = helper.accept_label(EdgeLabel::Minus)?;
     let end = build_version_literal(helper.accept_label(EdgeLabel::End)?)?;
     helper.finalize()?;
 
@@ -108,9 +108,9 @@ pub fn build_import_directive(cursor: Cursor) -> Result<ImportDirective> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ImportDirective)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ImportKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ImportKeyword)?;
     let clause = build_import_clause(helper.accept_label(EdgeLabel::Clause)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(ImportDirectiveStruct { node_id, clause }))
@@ -139,9 +139,9 @@ pub fn build_named_import(cursor: Cursor) -> Result<NamedImport> {
     expect_nonterminal_kind(&cursor, NonterminalKind::NamedImport)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Asterisk)?)?;
+    _ = helper.accept_label(EdgeLabel::Asterisk)?;
     let alias = build_import_alias(helper.accept_label(EdgeLabel::Alias)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::FromKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::FromKeyword)?;
     let path = build_string_literal(helper.accept_label(EdgeLabel::Path)?)?;
     helper.finalize()?;
 
@@ -156,10 +156,10 @@ pub fn build_import_deconstruction(cursor: Cursor) -> Result<ImportDeconstructio
     expect_nonterminal_kind(&cursor, NonterminalKind::ImportDeconstruction)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let symbols = build_import_deconstruction_symbols(helper.accept_label(EdgeLabel::Symbols)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::FromKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBrace)?;
+    _ = helper.accept_label(EdgeLabel::FromKeyword)?;
     let path = build_string_literal(helper.accept_label(EdgeLabel::Path)?)?;
     helper.finalize()?;
 
@@ -193,7 +193,7 @@ pub fn build_import_alias(cursor: Cursor) -> Result<ImportAlias> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ImportAlias)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::AsKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::AsKeyword)?;
     let identifier = fetch_terminal_node(&helper.accept_label(EdgeLabel::Identifier)?)?;
     helper.finalize()?;
 
@@ -207,9 +207,9 @@ pub fn build_using_directive(cursor: Cursor) -> Result<UsingDirective> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UsingDirective)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::UsingKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::UsingKeyword)?;
     let clause = build_using_clause(helper.accept_label(EdgeLabel::Clause)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ForKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ForKeyword)?;
     let target = build_using_target(helper.accept_label(EdgeLabel::Target)?)?;
     let global_keyword = if helper.at_label(EdgeLabel::GlobalKeyword) {
         Some(fetch_terminal_node(
@@ -218,7 +218,7 @@ pub fn build_using_directive(cursor: Cursor) -> Result<UsingDirective> {
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(UsingDirectiveStruct {
@@ -233,9 +233,9 @@ pub fn build_using_deconstruction(cursor: Cursor) -> Result<UsingDeconstruction>
     expect_nonterminal_kind(&cursor, NonterminalKind::UsingDeconstruction)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let symbols = build_using_deconstruction_symbols(helper.accept_label(EdgeLabel::Symbols)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBrace)?;
     helper.finalize()?;
 
     Ok(Rc::new(UsingDeconstructionStruct { node_id, symbols }))
@@ -264,7 +264,7 @@ pub fn build_using_alias(cursor: Cursor) -> Result<UsingAlias> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UsingAlias)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::AsKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::AsKeyword)?;
     let operator = build_using_operator(helper.accept_label(EdgeLabel::Operator)?)?;
     helper.finalize()?;
 
@@ -282,7 +282,7 @@ pub fn build_contract_definition(cursor: Cursor) -> Result<ContractDefinition> {
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ContractKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ContractKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
     let inheritance = if helper.at_label(EdgeLabel::Inheritance) {
         Some(build_inheritance_specifier(
@@ -291,9 +291,9 @@ pub fn build_contract_definition(cursor: Cursor) -> Result<ContractDefinition> {
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let members = build_contract_members(helper.accept_label(EdgeLabel::Members)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBrace)?;
     helper.finalize()?;
 
     Ok(Rc::new(ContractDefinitionStruct {
@@ -309,7 +309,7 @@ pub fn build_inheritance_specifier(cursor: Cursor) -> Result<InheritanceSpecifie
     expect_nonterminal_kind(&cursor, NonterminalKind::InheritanceSpecifier)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::IsKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::IsKeyword)?;
     let types = build_inheritance_types(helper.accept_label(EdgeLabel::Types)?)?;
     helper.finalize()?;
 
@@ -341,7 +341,7 @@ pub fn build_interface_definition(cursor: Cursor) -> Result<InterfaceDefinition>
     expect_nonterminal_kind(&cursor, NonterminalKind::InterfaceDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::InterfaceKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::InterfaceKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
     let inheritance = if helper.at_label(EdgeLabel::Inheritance) {
         Some(build_inheritance_specifier(
@@ -350,9 +350,9 @@ pub fn build_interface_definition(cursor: Cursor) -> Result<InterfaceDefinition>
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let members = build_interface_members(helper.accept_label(EdgeLabel::Members)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBrace)?;
     helper.finalize()?;
 
     Ok(Rc::new(InterfaceDefinitionStruct {
@@ -367,11 +367,11 @@ pub fn build_library_definition(cursor: Cursor) -> Result<LibraryDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::LibraryDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::LibraryKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::LibraryKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let members = build_library_members(helper.accept_label(EdgeLabel::Members)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBrace)?;
     helper.finalize()?;
 
     Ok(Rc::new(LibraryDefinitionStruct {
@@ -385,11 +385,11 @@ pub fn build_struct_definition(cursor: Cursor) -> Result<StructDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::StructDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::StructKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::StructKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let members = build_struct_members(helper.accept_label(EdgeLabel::Members)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBrace)?;
     helper.finalize()?;
 
     Ok(Rc::new(StructDefinitionStruct {
@@ -405,7 +405,7 @@ pub fn build_struct_member(cursor: Cursor) -> Result<StructMember> {
     let mut helper = SequenceHelper::new(cursor);
     let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(StructMemberStruct {
@@ -419,11 +419,11 @@ pub fn build_enum_definition(cursor: Cursor) -> Result<EnumDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::EnumDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::EnumKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::EnumKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let members = build_enum_members(helper.accept_label(EdgeLabel::Members)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBrace)?;
     helper.finalize()?;
 
     Ok(Rc::new(EnumDefinitionStruct {
@@ -438,11 +438,11 @@ pub fn build_constant_definition(cursor: Cursor) -> Result<ConstantDefinition> {
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ConstantKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ConstantKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
+    _ = helper.accept_label(EdgeLabel::Equal)?;
     let value = build_expression(helper.accept_label(EdgeLabel::Value)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(ConstantDefinitionStruct {
@@ -467,7 +467,7 @@ pub fn build_state_variable_definition(cursor: Cursor) -> Result<StateVariableDe
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(StateVariableDefinitionStruct {
@@ -485,7 +485,7 @@ pub fn build_state_variable_definition_value(
     expect_nonterminal_kind(&cursor, NonterminalKind::StateVariableDefinitionValue)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
+    _ = helper.accept_label(EdgeLabel::Equal)?;
     let value = build_expression(helper.accept_label(EdgeLabel::Value)?)?;
     helper.finalize()?;
 
@@ -499,7 +499,7 @@ pub fn build_function_definition(cursor: Cursor) -> Result<FunctionDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::FunctionDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::FunctionKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::FunctionKeyword)?;
     let name = build_function_name(helper.accept_label(EdgeLabel::Name)?)?;
     let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
     let attributes = build_function_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
@@ -527,9 +527,9 @@ pub fn build_parameters_declaration(cursor: Cursor) -> Result<ParametersDeclarat
     expect_nonterminal_kind(&cursor, NonterminalKind::ParametersDeclaration)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let parameters = build_parameters(helper.accept_label(EdgeLabel::Parameters)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(ParametersDeclarationStruct {
@@ -569,7 +569,7 @@ pub fn build_override_specifier(cursor: Cursor) -> Result<OverrideSpecifier> {
     expect_nonterminal_kind(&cursor, NonterminalKind::OverrideSpecifier)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OverrideKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::OverrideKeyword)?;
     let overridden = if helper.at_label(EdgeLabel::Overridden) {
         Some(build_override_paths_declaration(
             helper.accept_label(EdgeLabel::Overridden)?,
@@ -589,9 +589,9 @@ pub fn build_override_paths_declaration(cursor: Cursor) -> Result<OverridePathsD
     expect_nonterminal_kind(&cursor, NonterminalKind::OverridePathsDeclaration)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let paths = build_override_paths(helper.accept_label(EdgeLabel::Paths)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(OverridePathsDeclarationStruct { node_id, paths }))
@@ -601,7 +601,7 @@ pub fn build_returns_declaration(cursor: Cursor) -> Result<ReturnsDeclaration> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ReturnsDeclaration)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ReturnsKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ReturnsKeyword)?;
     let variables = build_parameters_declaration(helper.accept_label(EdgeLabel::Variables)?)?;
     helper.finalize()?;
 
@@ -612,7 +612,7 @@ pub fn build_constructor_definition(cursor: Cursor) -> Result<ConstructorDefinit
     expect_nonterminal_kind(&cursor, NonterminalKind::ConstructorDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ConstructorKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ConstructorKeyword)?;
     let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
     let attributes = build_constructor_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
     let body = build_block(helper.accept_label(EdgeLabel::Body)?)?;
@@ -630,7 +630,7 @@ pub fn build_unnamed_function_definition(cursor: Cursor) -> Result<UnnamedFuncti
     expect_nonterminal_kind(&cursor, NonterminalKind::UnnamedFunctionDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::FunctionKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::FunctionKeyword)?;
     let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
     let attributes =
         build_unnamed_function_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
@@ -649,7 +649,7 @@ pub fn build_fallback_function_definition(cursor: Cursor) -> Result<FallbackFunc
     expect_nonterminal_kind(&cursor, NonterminalKind::FallbackFunctionDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::FallbackKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::FallbackKeyword)?;
     let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
     let attributes =
         build_fallback_function_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
@@ -676,7 +676,7 @@ pub fn build_receive_function_definition(cursor: Cursor) -> Result<ReceiveFuncti
     expect_nonterminal_kind(&cursor, NonterminalKind::ReceiveFunctionDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ReceiveKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ReceiveKeyword)?;
     let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
     let attributes =
         build_receive_function_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
@@ -695,7 +695,7 @@ pub fn build_modifier_definition(cursor: Cursor) -> Result<ModifierDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ModifierDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ModifierKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ModifierKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
     let parameters = if helper.at_label(EdgeLabel::Parameters) {
         Some(build_parameters_declaration(
@@ -742,7 +742,7 @@ pub fn build_event_definition(cursor: Cursor) -> Result<EventDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::EventDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::EventKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::EventKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
     let parameters =
         build_event_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
@@ -753,7 +753,7 @@ pub fn build_event_definition(cursor: Cursor) -> Result<EventDefinition> {
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(EventDefinitionStruct {
@@ -768,9 +768,9 @@ pub fn build_event_parameters_declaration(cursor: Cursor) -> Result<EventParamet
     expect_nonterminal_kind(&cursor, NonterminalKind::EventParametersDeclaration)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let parameters = build_event_parameters(helper.accept_label(EdgeLabel::Parameters)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(EventParametersDeclarationStruct {
@@ -812,11 +812,11 @@ pub fn build_user_defined_value_type_definition(
     expect_nonterminal_kind(&cursor, NonterminalKind::UserDefinedValueTypeDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::TypeKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::TypeKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::IsKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::IsKeyword)?;
     let value_type = build_elementary_type(helper.accept_label(EdgeLabel::ValueType)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(UserDefinedValueTypeDefinitionStruct {
@@ -830,10 +830,10 @@ pub fn build_error_definition(cursor: Cursor) -> Result<ErrorDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ErrorDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ErrorKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ErrorKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
     let members = build_error_parameters_declaration(helper.accept_label(EdgeLabel::Members)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(ErrorDefinitionStruct {
@@ -847,9 +847,9 @@ pub fn build_error_parameters_declaration(cursor: Cursor) -> Result<ErrorParamet
     expect_nonterminal_kind(&cursor, NonterminalKind::ErrorParametersDeclaration)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let parameters = build_error_parameters(helper.accept_label(EdgeLabel::Parameters)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(ErrorParametersDeclarationStruct {
@@ -882,13 +882,13 @@ pub fn build_array_type_name(cursor: Cursor) -> Result<ArrayTypeName> {
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let operand = build_type_name(helper.accept_label(EdgeLabel::Operand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBracket)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBracket)?;
     let index = if helper.at_label(EdgeLabel::Index) {
         Some(build_expression(helper.accept_label(EdgeLabel::Index)?)?)
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBracket)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBracket)?;
     helper.finalize()?;
 
     Ok(Rc::new(ArrayTypeNameStruct {
@@ -902,7 +902,7 @@ pub fn build_function_type(cursor: Cursor) -> Result<FunctionType> {
     expect_nonterminal_kind(&cursor, NonterminalKind::FunctionType)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::FunctionKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::FunctionKeyword)?;
     let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
     let attributes = build_function_type_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
     let returns = if helper.at_label(EdgeLabel::Returns) {
@@ -926,12 +926,12 @@ pub fn build_mapping_type(cursor: Cursor) -> Result<MappingType> {
     expect_nonterminal_kind(&cursor, NonterminalKind::MappingType)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::MappingKeyword)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::MappingKeyword)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let key_type = build_mapping_key(helper.accept_label(EdgeLabel::KeyType)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::EqualGreaterThan)?)?;
+    _ = helper.accept_label(EdgeLabel::EqualGreaterThan)?;
     let value_type = build_mapping_value(helper.accept_label(EdgeLabel::ValueType)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(MappingTypeStruct {
@@ -983,7 +983,7 @@ pub fn build_address_type(cursor: Cursor) -> Result<AddressType> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AddressType)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::AddressKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::AddressKeyword)?;
     let payable_keyword = if helper.at_label(EdgeLabel::PayableKeyword) {
         Some(fetch_terminal_node(
             &helper.accept_label(EdgeLabel::PayableKeyword)?,
@@ -1003,9 +1003,9 @@ pub fn build_block(cursor: Cursor) -> Result<Block> {
     expect_nonterminal_kind(&cursor, NonterminalKind::Block)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let statements = build_statements(helper.accept_label(EdgeLabel::Statements)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBrace)?;
     helper.finalize()?;
 
     Ok(Rc::new(BlockStruct {
@@ -1018,7 +1018,7 @@ pub fn build_unchecked_block(cursor: Cursor) -> Result<UncheckedBlock> {
     expect_nonterminal_kind(&cursor, NonterminalKind::UncheckedBlock)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::UncheckedKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::UncheckedKeyword)?;
     let block = build_block(helper.accept_label(EdgeLabel::Block)?)?;
     helper.finalize()?;
 
@@ -1030,7 +1030,7 @@ pub fn build_expression_statement(cursor: Cursor) -> Result<ExpressionStatement>
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let expression = build_expression(helper.accept_label(EdgeLabel::Expression)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(ExpressionStatementStruct {
@@ -1043,7 +1043,7 @@ pub fn build_assembly_statement(cursor: Cursor) -> Result<AssemblyStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AssemblyStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::AssemblyKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::AssemblyKeyword)?;
     let label = if helper.at_label(EdgeLabel::Label) {
         Some(build_string_literal(
             helper.accept_label(EdgeLabel::Label)?,
@@ -1073,9 +1073,9 @@ pub fn build_assembly_flags_declaration(cursor: Cursor) -> Result<AssemblyFlagsD
     expect_nonterminal_kind(&cursor, NonterminalKind::AssemblyFlagsDeclaration)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let flags = build_assembly_flags(helper.accept_label(EdgeLabel::Flags)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(AssemblyFlagsDeclarationStruct { node_id, flags }))
@@ -1094,12 +1094,12 @@ pub fn build_tuple_deconstruction_statement(
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let elements = build_tuple_deconstruction_elements(helper.accept_label(EdgeLabel::Elements)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
+    _ = helper.accept_label(EdgeLabel::Equal)?;
     let expression = build_expression(helper.accept_label(EdgeLabel::Expression)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(TupleDeconstructionStatementStruct {
@@ -1194,7 +1194,7 @@ pub fn build_variable_declaration_statement(
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(VariableDeclarationStatementStruct {
@@ -1210,7 +1210,7 @@ pub fn build_variable_declaration_value(cursor: Cursor) -> Result<VariableDeclar
     expect_nonterminal_kind(&cursor, NonterminalKind::VariableDeclarationValue)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
+    _ = helper.accept_label(EdgeLabel::Equal)?;
     let expression = build_expression(helper.accept_label(EdgeLabel::Expression)?)?;
     helper.finalize()?;
 
@@ -1224,10 +1224,10 @@ pub fn build_if_statement(cursor: Cursor) -> Result<IfStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::IfStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::IfKeyword)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::IfKeyword)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let condition = build_expression(helper.accept_label(EdgeLabel::Condition)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     let body = build_statement(helper.accept_label(EdgeLabel::Body)?)?;
     let else_branch = if helper.at_label(EdgeLabel::ElseBranch) {
         Some(build_else_branch(
@@ -1250,7 +1250,7 @@ pub fn build_else_branch(cursor: Cursor) -> Result<ElseBranch> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ElseBranch)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ElseKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ElseKeyword)?;
     let body = build_statement(helper.accept_label(EdgeLabel::Body)?)?;
     helper.finalize()?;
 
@@ -1261,8 +1261,8 @@ pub fn build_for_statement(cursor: Cursor) -> Result<ForStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ForStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ForKeyword)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::ForKeyword)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let initialization =
         build_for_statement_initialization(helper.accept_label(EdgeLabel::Initialization)?)?;
     let condition = build_for_statement_condition(helper.accept_label(EdgeLabel::Condition)?)?;
@@ -1271,7 +1271,7 @@ pub fn build_for_statement(cursor: Cursor) -> Result<ForStatement> {
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     let body = build_statement(helper.accept_label(EdgeLabel::Body)?)?;
     helper.finalize()?;
 
@@ -1288,10 +1288,10 @@ pub fn build_while_statement(cursor: Cursor) -> Result<WhileStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::WhileStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::WhileKeyword)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::WhileKeyword)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let condition = build_expression(helper.accept_label(EdgeLabel::Condition)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     let body = build_statement(helper.accept_label(EdgeLabel::Body)?)?;
     helper.finalize()?;
 
@@ -1306,13 +1306,13 @@ pub fn build_do_while_statement(cursor: Cursor) -> Result<DoWhileStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::DoWhileStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::DoKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::DoKeyword)?;
     let body = build_statement(helper.accept_label(EdgeLabel::Body)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::WhileKeyword)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::WhileKeyword)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let condition = build_expression(helper.accept_label(EdgeLabel::Condition)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(DoWhileStatementStruct {
@@ -1326,8 +1326,8 @@ pub fn build_continue_statement(cursor: Cursor) -> Result<ContinueStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ContinueStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ContinueKeyword)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::ContinueKeyword)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(ContinueStatementStruct { node_id }))
@@ -1337,8 +1337,8 @@ pub fn build_break_statement(cursor: Cursor) -> Result<BreakStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::BreakStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::BreakKeyword)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::BreakKeyword)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(BreakStatementStruct { node_id }))
@@ -1348,7 +1348,7 @@ pub fn build_return_statement(cursor: Cursor) -> Result<ReturnStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ReturnStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ReturnKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ReturnKeyword)?;
     let expression = if helper.at_label(EdgeLabel::Expression) {
         Some(build_expression(
             helper.accept_label(EdgeLabel::Expression)?,
@@ -1356,7 +1356,7 @@ pub fn build_return_statement(cursor: Cursor) -> Result<ReturnStatement> {
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(ReturnStatementStruct {
@@ -1369,10 +1369,10 @@ pub fn build_emit_statement(cursor: Cursor) -> Result<EmitStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::EmitStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::EmitKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::EmitKeyword)?;
     let event = build_identifier_path(helper.accept_label(EdgeLabel::Event)?)?;
     let arguments = build_arguments_declaration(helper.accept_label(EdgeLabel::Arguments)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(EmitStatementStruct {
@@ -1386,7 +1386,7 @@ pub fn build_try_statement(cursor: Cursor) -> Result<TryStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TryStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::TryKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::TryKeyword)?;
     let expression = build_expression(helper.accept_label(EdgeLabel::Expression)?)?;
     let returns = if helper.at_label(EdgeLabel::Returns) {
         Some(build_returns_declaration(
@@ -1412,7 +1412,7 @@ pub fn build_catch_clause(cursor: Cursor) -> Result<CatchClause> {
     expect_nonterminal_kind(&cursor, NonterminalKind::CatchClause)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CatchKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::CatchKeyword)?;
     let error = if helper.at_label(EdgeLabel::Error) {
         Some(build_catch_clause_error(
             helper.accept_label(EdgeLabel::Error)?,
@@ -1453,7 +1453,7 @@ pub fn build_revert_statement(cursor: Cursor) -> Result<RevertStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::RevertStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::RevertKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::RevertKeyword)?;
     let error = if helper.at_label(EdgeLabel::Error) {
         Some(build_identifier_path(
             helper.accept_label(EdgeLabel::Error)?,
@@ -1462,7 +1462,7 @@ pub fn build_revert_statement(cursor: Cursor) -> Result<RevertStatement> {
         None
     };
     let arguments = build_arguments_declaration(helper.accept_label(EdgeLabel::Arguments)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(RevertStatementStruct {
@@ -1476,8 +1476,8 @@ pub fn build_throw_statement(cursor: Cursor) -> Result<ThrowStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ThrowStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ThrowKeyword)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Semicolon)?)?;
+    _ = helper.accept_label(EdgeLabel::ThrowKeyword)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize()?;
 
     Ok(Rc::new(ThrowStatementStruct { node_id }))
@@ -1488,7 +1488,7 @@ pub fn build_assignment_expression(cursor: Cursor) -> Result<AssignmentExpressio
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1504,9 +1504,9 @@ pub fn build_conditional_expression(cursor: Cursor) -> Result<ConditionalExpress
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::QuestionMark)?)?;
+    _ = helper.accept_label(EdgeLabel::QuestionMark)?;
     let true_expression = build_expression(helper.accept_label(EdgeLabel::TrueExpression)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
+    _ = helper.accept_label(EdgeLabel::Colon)?;
     let false_expression = build_expression(helper.accept_label(EdgeLabel::FalseExpression)?)?;
     helper.finalize()?;
 
@@ -1523,7 +1523,7 @@ pub fn build_or_expression(cursor: Cursor) -> Result<OrExpression> {
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1539,7 +1539,7 @@ pub fn build_and_expression(cursor: Cursor) -> Result<AndExpression> {
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1555,7 +1555,7 @@ pub fn build_equality_expression(cursor: Cursor) -> Result<EqualityExpression> {
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1571,7 +1571,7 @@ pub fn build_inequality_expression(cursor: Cursor) -> Result<InequalityExpressio
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1587,7 +1587,7 @@ pub fn build_bitwise_or_expression(cursor: Cursor) -> Result<BitwiseOrExpression
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1603,7 +1603,7 @@ pub fn build_bitwise_xor_expression(cursor: Cursor) -> Result<BitwiseXorExpressi
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1619,7 +1619,7 @@ pub fn build_bitwise_and_expression(cursor: Cursor) -> Result<BitwiseAndExpressi
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1635,7 +1635,7 @@ pub fn build_shift_expression(cursor: Cursor) -> Result<ShiftExpression> {
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1651,7 +1651,7 @@ pub fn build_additive_expression(cursor: Cursor) -> Result<AdditiveExpression> {
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1667,7 +1667,7 @@ pub fn build_multiplicative_expression(cursor: Cursor) -> Result<MultiplicativeE
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1683,7 +1683,7 @@ pub fn build_exponentiation_expression(cursor: Cursor) -> Result<ExponentiationE
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let left_operand = build_expression(helper.accept_label(EdgeLabel::LeftOperand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let right_operand = build_expression(helper.accept_label(EdgeLabel::RightOperand)?)?;
     helper.finalize()?;
 
@@ -1699,7 +1699,7 @@ pub fn build_postfix_expression(cursor: Cursor) -> Result<PostfixExpression> {
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     helper.finalize()?;
 
     Ok(Rc::new(PostfixExpressionStruct { node_id, operand }))
@@ -1709,7 +1709,7 @@ pub fn build_prefix_expression(cursor: Cursor) -> Result<PrefixExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::PrefixExpression)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Operator)?)?;
+    _ = helper.accept_label(EdgeLabel::Operator)?;
     let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
     helper.finalize()?;
 
@@ -1736,9 +1736,9 @@ pub fn build_call_options_expression(cursor: Cursor) -> Result<CallOptionsExpres
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let options = build_call_options(helper.accept_label(EdgeLabel::Options)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBrace)?;
     helper.finalize()?;
 
     Ok(Rc::new(CallOptionsExpressionStruct {
@@ -1753,7 +1753,7 @@ pub fn build_member_access_expression(cursor: Cursor) -> Result<MemberAccessExpr
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Period)?)?;
+    _ = helper.accept_label(EdgeLabel::Period)?;
     let member = fetch_terminal_node(&helper.accept_label(EdgeLabel::Member)?)?;
     helper.finalize()?;
 
@@ -1769,7 +1769,7 @@ pub fn build_index_access_expression(cursor: Cursor) -> Result<IndexAccessExpres
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let operand = build_expression(helper.accept_label(EdgeLabel::Operand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBracket)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBracket)?;
     let start = if helper.at_label(EdgeLabel::Start) {
         Some(build_expression(helper.accept_label(EdgeLabel::Start)?)?)
     } else {
@@ -1782,7 +1782,7 @@ pub fn build_index_access_expression(cursor: Cursor) -> Result<IndexAccessExpres
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBracket)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBracket)?;
     helper.finalize()?;
 
     Ok(Rc::new(IndexAccessExpressionStruct {
@@ -1797,7 +1797,7 @@ pub fn build_index_access_end(cursor: Cursor) -> Result<IndexAccessEnd> {
     expect_nonterminal_kind(&cursor, NonterminalKind::IndexAccessEnd)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
+    _ = helper.accept_label(EdgeLabel::Colon)?;
     let end = if helper.at_label(EdgeLabel::End) {
         Some(build_expression(helper.accept_label(EdgeLabel::End)?)?)
     } else {
@@ -1814,9 +1814,9 @@ pub fn build_positional_arguments_declaration(
     expect_nonterminal_kind(&cursor, NonterminalKind::PositionalArgumentsDeclaration)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let arguments = build_positional_arguments(helper.accept_label(EdgeLabel::Arguments)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(PositionalArgumentsDeclarationStruct {
@@ -1829,7 +1829,7 @@ pub fn build_named_arguments_declaration(cursor: Cursor) -> Result<NamedArgument
     expect_nonterminal_kind(&cursor, NonterminalKind::NamedArgumentsDeclaration)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let arguments = if helper.at_label(EdgeLabel::Arguments) {
         Some(build_named_argument_group(
             helper.accept_label(EdgeLabel::Arguments)?,
@@ -1837,7 +1837,7 @@ pub fn build_named_arguments_declaration(cursor: Cursor) -> Result<NamedArgument
     } else {
         None
     };
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(NamedArgumentsDeclarationStruct {
@@ -1850,9 +1850,9 @@ pub fn build_named_argument_group(cursor: Cursor) -> Result<NamedArgumentGroup> 
     expect_nonterminal_kind(&cursor, NonterminalKind::NamedArgumentGroup)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let arguments = build_named_arguments(helper.accept_label(EdgeLabel::Arguments)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBrace)?;
     helper.finalize()?;
 
     Ok(Rc::new(NamedArgumentGroupStruct { node_id, arguments }))
@@ -1863,7 +1863,7 @@ pub fn build_named_argument(cursor: Cursor) -> Result<NamedArgument> {
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
+    _ = helper.accept_label(EdgeLabel::Colon)?;
     let value = build_expression(helper.accept_label(EdgeLabel::Value)?)?;
     helper.finalize()?;
 
@@ -1878,10 +1878,10 @@ pub fn build_type_expression(cursor: Cursor) -> Result<TypeExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TypeExpression)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::TypeKeyword)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::TypeKeyword)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(TypeExpressionStruct { node_id, type_name }))
@@ -1891,7 +1891,7 @@ pub fn build_new_expression(cursor: Cursor) -> Result<NewExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::NewExpression)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::NewKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::NewKeyword)?;
     let type_name = build_type_name(helper.accept_label(EdgeLabel::TypeName)?)?;
     helper.finalize()?;
 
@@ -1902,9 +1902,9 @@ pub fn build_tuple_expression(cursor: Cursor) -> Result<TupleExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::TupleExpression)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let items = build_tuple_values(helper.accept_label(EdgeLabel::Items)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(TupleExpressionStruct { node_id, items }))
@@ -1933,9 +1933,9 @@ pub fn build_array_expression(cursor: Cursor) -> Result<ArrayExpression> {
     expect_nonterminal_kind(&cursor, NonterminalKind::ArrayExpression)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBracket)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBracket)?;
     let items = build_array_values(helper.accept_label(EdgeLabel::Items)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBracket)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBracket)?;
     helper.finalize()?;
 
     Ok(Rc::new(ArrayExpressionStruct { node_id, items }))
@@ -1983,9 +1983,9 @@ pub fn build_yul_block(cursor: Cursor) -> Result<YulBlock> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulBlock)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let statements = build_yul_statements(helper.accept_label(EdgeLabel::Statements)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseBrace)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseBrace)?;
     helper.finalize()?;
 
     Ok(Rc::new(YulBlockStruct {
@@ -1998,7 +1998,7 @@ pub fn build_yul_function_definition(cursor: Cursor) -> Result<YulFunctionDefini
     expect_nonterminal_kind(&cursor, NonterminalKind::YulFunctionDefinition)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::FunctionKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::FunctionKeyword)?;
     let name = fetch_terminal_node(&helper.accept_label(EdgeLabel::Name)?)?;
     let parameters = build_yul_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
     let returns = if helper.at_label(EdgeLabel::Returns) {
@@ -2024,9 +2024,9 @@ pub fn build_yul_parameters_declaration(cursor: Cursor) -> Result<YulParametersD
     expect_nonterminal_kind(&cursor, NonterminalKind::YulParametersDeclaration)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let parameters = build_yul_parameters(helper.accept_label(EdgeLabel::Parameters)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(YulParametersDeclarationStruct {
@@ -2039,7 +2039,7 @@ pub fn build_yul_returns_declaration(cursor: Cursor) -> Result<YulReturnsDeclara
     expect_nonterminal_kind(&cursor, NonterminalKind::YulReturnsDeclaration)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::MinusGreaterThan)?)?;
+    _ = helper.accept_label(EdgeLabel::MinusGreaterThan)?;
     let variables = build_yul_variable_names(helper.accept_label(EdgeLabel::Variables)?)?;
     helper.finalize()?;
 
@@ -2052,7 +2052,7 @@ pub fn build_yul_variable_declaration_statement(
     expect_nonterminal_kind(&cursor, NonterminalKind::YulVariableDeclarationStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::LetKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::LetKeyword)?;
     let variables = build_yul_variable_names(helper.accept_label(EdgeLabel::Variables)?)?;
     let value = if helper.at_label(EdgeLabel::Value) {
         Some(build_yul_variable_declaration_value(
@@ -2108,8 +2108,8 @@ pub fn build_yul_colon_and_equal(cursor: Cursor) -> Result<YulColonAndEqual> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulColonAndEqual)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
+    _ = helper.accept_label(EdgeLabel::Colon)?;
+    _ = helper.accept_label(EdgeLabel::Equal)?;
     helper.finalize()?;
 
     Ok(Rc::new(YulColonAndEqualStruct { node_id }))
@@ -2135,8 +2135,8 @@ pub fn build_yul_equal_and_colon(cursor: Cursor) -> Result<YulEqualAndColon> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulEqualAndColon)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Equal)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
+    _ = helper.accept_label(EdgeLabel::Equal)?;
+    _ = helper.accept_label(EdgeLabel::Colon)?;
     helper.finalize()?;
 
     Ok(Rc::new(YulEqualAndColonStruct { node_id }))
@@ -2146,7 +2146,7 @@ pub fn build_yul_if_statement(cursor: Cursor) -> Result<YulIfStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulIfStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::IfKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::IfKeyword)?;
     let condition = build_yul_expression(helper.accept_label(EdgeLabel::Condition)?)?;
     let body = build_yul_block(helper.accept_label(EdgeLabel::Body)?)?;
     helper.finalize()?;
@@ -2162,7 +2162,7 @@ pub fn build_yul_for_statement(cursor: Cursor) -> Result<YulForStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulForStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ForKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ForKeyword)?;
     let initialization = build_yul_block(helper.accept_label(EdgeLabel::Initialization)?)?;
     let condition = build_yul_expression(helper.accept_label(EdgeLabel::Condition)?)?;
     let iterator = build_yul_block(helper.accept_label(EdgeLabel::Iterator)?)?;
@@ -2182,7 +2182,7 @@ pub fn build_yul_switch_statement(cursor: Cursor) -> Result<YulSwitchStatement> 
     expect_nonterminal_kind(&cursor, NonterminalKind::YulSwitchStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::SwitchKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::SwitchKeyword)?;
     let expression = build_yul_expression(helper.accept_label(EdgeLabel::Expression)?)?;
     let cases = build_yul_switch_cases(helper.accept_label(EdgeLabel::Cases)?)?;
     helper.finalize()?;
@@ -2198,7 +2198,7 @@ pub fn build_yul_default_case(cursor: Cursor) -> Result<YulDefaultCase> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulDefaultCase)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::DefaultKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::DefaultKeyword)?;
     let body = build_yul_block(helper.accept_label(EdgeLabel::Body)?)?;
     helper.finalize()?;
 
@@ -2209,7 +2209,7 @@ pub fn build_yul_value_case(cursor: Cursor) -> Result<YulValueCase> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulValueCase)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CaseKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::CaseKeyword)?;
     let value = build_yul_literal(helper.accept_label(EdgeLabel::Value)?)?;
     let body = build_yul_block(helper.accept_label(EdgeLabel::Body)?)?;
     helper.finalize()?;
@@ -2225,7 +2225,7 @@ pub fn build_yul_leave_statement(cursor: Cursor) -> Result<YulLeaveStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulLeaveStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::LeaveKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::LeaveKeyword)?;
     helper.finalize()?;
 
     Ok(Rc::new(YulLeaveStatementStruct { node_id }))
@@ -2235,7 +2235,7 @@ pub fn build_yul_break_statement(cursor: Cursor) -> Result<YulBreakStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulBreakStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::BreakKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::BreakKeyword)?;
     helper.finalize()?;
 
     Ok(Rc::new(YulBreakStatementStruct { node_id }))
@@ -2245,7 +2245,7 @@ pub fn build_yul_continue_statement(cursor: Cursor) -> Result<YulContinueStateme
     expect_nonterminal_kind(&cursor, NonterminalKind::YulContinueStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::ContinueKeyword)?)?;
+    _ = helper.accept_label(EdgeLabel::ContinueKeyword)?;
     helper.finalize()?;
 
     Ok(Rc::new(YulContinueStatementStruct { node_id }))
@@ -2256,7 +2256,7 @@ pub fn build_yul_label(cursor: Cursor) -> Result<YulLabel> {
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let label = fetch_terminal_node(&helper.accept_label(EdgeLabel::Label)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::Colon)?)?;
+    _ = helper.accept_label(EdgeLabel::Colon)?;
     helper.finalize()?;
 
     Ok(Rc::new(YulLabelStruct { node_id, label }))
@@ -2267,9 +2267,9 @@ pub fn build_yul_function_call_expression(cursor: Cursor) -> Result<YulFunctionC
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let operand = build_yul_expression(helper.accept_label(EdgeLabel::Operand)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::OpenParen)?)?;
+    _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let arguments = build_yul_arguments(helper.accept_label(EdgeLabel::Arguments)?)?;
-    _ = fetch_terminal_node(&helper.accept_label(EdgeLabel::CloseParen)?)?;
+    _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize()?;
 
     Ok(Rc::new(YulFunctionCallExpressionStruct {
@@ -2430,34 +2430,13 @@ pub fn build_version_operator(mut cursor: Cursor) -> Result<VersionOperator> {
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
     let item = match cursor.node().kind() {
-        NodeKind::Terminal(TerminalKind::Caret) => {
-            _ = fetch_terminal_node(&cursor)?;
-            VersionOperator::Caret
-        }
-        NodeKind::Terminal(TerminalKind::Tilde) => {
-            _ = fetch_terminal_node(&cursor)?;
-            VersionOperator::Tilde
-        }
-        NodeKind::Terminal(TerminalKind::Equal) => {
-            _ = fetch_terminal_node(&cursor)?;
-            VersionOperator::Equal
-        }
-        NodeKind::Terminal(TerminalKind::LessThan) => {
-            _ = fetch_terminal_node(&cursor)?;
-            VersionOperator::LessThan
-        }
-        NodeKind::Terminal(TerminalKind::GreaterThan) => {
-            _ = fetch_terminal_node(&cursor)?;
-            VersionOperator::GreaterThan
-        }
-        NodeKind::Terminal(TerminalKind::LessThanEqual) => {
-            _ = fetch_terminal_node(&cursor)?;
-            VersionOperator::LessThanEqual
-        }
-        NodeKind::Terminal(TerminalKind::GreaterThanEqual) => {
-            _ = fetch_terminal_node(&cursor)?;
-            VersionOperator::GreaterThanEqual
-        }
+        NodeKind::Terminal(TerminalKind::Caret) => VersionOperator::Caret,
+        NodeKind::Terminal(TerminalKind::Tilde) => VersionOperator::Tilde,
+        NodeKind::Terminal(TerminalKind::Equal) => VersionOperator::Equal,
+        NodeKind::Terminal(TerminalKind::LessThan) => VersionOperator::LessThan,
+        NodeKind::Terminal(TerminalKind::GreaterThan) => VersionOperator::GreaterThan,
+        NodeKind::Terminal(TerminalKind::LessThanEqual) => VersionOperator::LessThanEqual,
+        NodeKind::Terminal(TerminalKind::GreaterThanEqual) => VersionOperator::GreaterThanEqual,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -2560,66 +2539,21 @@ pub fn build_using_operator(mut cursor: Cursor) -> Result<UsingOperator> {
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
     let item = match cursor.node().kind() {
-        NodeKind::Terminal(TerminalKind::Ampersand) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::Ampersand
-        }
-        NodeKind::Terminal(TerminalKind::Asterisk) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::Asterisk
-        }
-        NodeKind::Terminal(TerminalKind::BangEqual) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::BangEqual
-        }
-        NodeKind::Terminal(TerminalKind::Bar) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::Bar
-        }
-        NodeKind::Terminal(TerminalKind::Caret) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::Caret
-        }
-        NodeKind::Terminal(TerminalKind::EqualEqual) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::EqualEqual
-        }
-        NodeKind::Terminal(TerminalKind::GreaterThan) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::GreaterThan
-        }
-        NodeKind::Terminal(TerminalKind::GreaterThanEqual) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::GreaterThanEqual
-        }
-        NodeKind::Terminal(TerminalKind::LessThan) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::LessThan
-        }
-        NodeKind::Terminal(TerminalKind::LessThanEqual) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::LessThanEqual
-        }
-        NodeKind::Terminal(TerminalKind::Minus) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::Minus
-        }
-        NodeKind::Terminal(TerminalKind::Percent) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::Percent
-        }
-        NodeKind::Terminal(TerminalKind::Plus) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::Plus
-        }
-        NodeKind::Terminal(TerminalKind::Slash) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::Slash
-        }
-        NodeKind::Terminal(TerminalKind::Tilde) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingOperator::Tilde
-        }
+        NodeKind::Terminal(TerminalKind::Ampersand) => UsingOperator::Ampersand,
+        NodeKind::Terminal(TerminalKind::Asterisk) => UsingOperator::Asterisk,
+        NodeKind::Terminal(TerminalKind::BangEqual) => UsingOperator::BangEqual,
+        NodeKind::Terminal(TerminalKind::Bar) => UsingOperator::Bar,
+        NodeKind::Terminal(TerminalKind::Caret) => UsingOperator::Caret,
+        NodeKind::Terminal(TerminalKind::EqualEqual) => UsingOperator::EqualEqual,
+        NodeKind::Terminal(TerminalKind::GreaterThan) => UsingOperator::GreaterThan,
+        NodeKind::Terminal(TerminalKind::GreaterThanEqual) => UsingOperator::GreaterThanEqual,
+        NodeKind::Terminal(TerminalKind::LessThan) => UsingOperator::LessThan,
+        NodeKind::Terminal(TerminalKind::LessThanEqual) => UsingOperator::LessThanEqual,
+        NodeKind::Terminal(TerminalKind::Minus) => UsingOperator::Minus,
+        NodeKind::Terminal(TerminalKind::Percent) => UsingOperator::Percent,
+        NodeKind::Terminal(TerminalKind::Plus) => UsingOperator::Plus,
+        NodeKind::Terminal(TerminalKind::Slash) => UsingOperator::Slash,
+        NodeKind::Terminal(TerminalKind::Tilde) => UsingOperator::Tilde,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -2642,10 +2576,7 @@ pub fn build_using_target(mut cursor: Cursor) -> Result<UsingTarget> {
         NodeKind::Nonterminal(NonterminalKind::TypeName) => {
             UsingTarget::TypeName(build_type_name(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::Asterisk) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UsingTarget::Asterisk
-        }
+        NodeKind::Terminal(TerminalKind::Asterisk) => UsingTarget::Asterisk,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -2737,27 +2668,17 @@ pub fn build_state_variable_attribute(mut cursor: Cursor) -> Result<StateVariabl
             StateVariableAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
         NodeKind::Terminal(TerminalKind::ConstantKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             StateVariableAttribute::ConstantKeyword
         }
         NodeKind::Terminal(TerminalKind::InternalKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             StateVariableAttribute::InternalKeyword
         }
-        NodeKind::Terminal(TerminalKind::PrivateKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            StateVariableAttribute::PrivateKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PublicKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            StateVariableAttribute::PublicKeyword
-        }
+        NodeKind::Terminal(TerminalKind::PrivateKeyword) => StateVariableAttribute::PrivateKeyword,
+        NodeKind::Terminal(TerminalKind::PublicKeyword) => StateVariableAttribute::PublicKeyword,
         NodeKind::Terminal(TerminalKind::ImmutableKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             StateVariableAttribute::ImmutableKeyword
         }
         NodeKind::Terminal(TerminalKind::TransientKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             StateVariableAttribute::TransientKeyword
         }
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
@@ -2783,14 +2704,8 @@ pub fn build_function_name(mut cursor: Cursor) -> Result<FunctionName> {
             let node = fetch_terminal_node(&cursor)?;
             FunctionName::Identifier(node)
         }
-        NodeKind::Terminal(TerminalKind::FallbackKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionName::FallbackKeyword
-        }
-        NodeKind::Terminal(TerminalKind::ReceiveKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionName::ReceiveKeyword
-        }
+        NodeKind::Terminal(TerminalKind::FallbackKeyword) => FunctionName::FallbackKeyword,
+        NodeKind::Terminal(TerminalKind::ReceiveKeyword) => FunctionName::ReceiveKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -2816,42 +2731,15 @@ pub fn build_function_attribute(mut cursor: Cursor) -> Result<FunctionAttribute>
         NodeKind::Nonterminal(NonterminalKind::OverrideSpecifier) => {
             FunctionAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::ConstantKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionAttribute::ConstantKeyword
-        }
-        NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionAttribute::ExternalKeyword
-        }
-        NodeKind::Terminal(TerminalKind::InternalKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionAttribute::InternalKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionAttribute::PayableKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PrivateKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionAttribute::PrivateKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PublicKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionAttribute::PublicKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PureKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionAttribute::PureKeyword
-        }
-        NodeKind::Terminal(TerminalKind::ViewKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionAttribute::ViewKeyword
-        }
-        NodeKind::Terminal(TerminalKind::VirtualKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionAttribute::VirtualKeyword
-        }
+        NodeKind::Terminal(TerminalKind::ConstantKeyword) => FunctionAttribute::ConstantKeyword,
+        NodeKind::Terminal(TerminalKind::ExternalKeyword) => FunctionAttribute::ExternalKeyword,
+        NodeKind::Terminal(TerminalKind::InternalKeyword) => FunctionAttribute::InternalKeyword,
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => FunctionAttribute::PayableKeyword,
+        NodeKind::Terminal(TerminalKind::PrivateKeyword) => FunctionAttribute::PrivateKeyword,
+        NodeKind::Terminal(TerminalKind::PublicKeyword) => FunctionAttribute::PublicKeyword,
+        NodeKind::Terminal(TerminalKind::PureKeyword) => FunctionAttribute::PureKeyword,
+        NodeKind::Terminal(TerminalKind::ViewKeyword) => FunctionAttribute::ViewKeyword,
+        NodeKind::Terminal(TerminalKind::VirtualKeyword) => FunctionAttribute::VirtualKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -2874,10 +2762,7 @@ pub fn build_function_body(mut cursor: Cursor) -> Result<FunctionBody> {
         NodeKind::Nonterminal(NonterminalKind::Block) => {
             FunctionBody::Block(build_block(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::Semicolon) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionBody::Semicolon
-        }
+        NodeKind::Terminal(TerminalKind::Semicolon) => FunctionBody::Semicolon,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -2900,26 +2785,11 @@ pub fn build_constructor_attribute(mut cursor: Cursor) -> Result<ConstructorAttr
         NodeKind::Nonterminal(NonterminalKind::ModifierInvocation) => {
             ConstructorAttribute::ModifierInvocation(build_modifier_invocation(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::InternalKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            ConstructorAttribute::InternalKeyword
-        }
-        NodeKind::Terminal(TerminalKind::OverrideKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            ConstructorAttribute::OverrideKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            ConstructorAttribute::PayableKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PublicKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            ConstructorAttribute::PublicKeyword
-        }
-        NodeKind::Terminal(TerminalKind::VirtualKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            ConstructorAttribute::VirtualKeyword
-        }
+        NodeKind::Terminal(TerminalKind::InternalKeyword) => ConstructorAttribute::InternalKeyword,
+        NodeKind::Terminal(TerminalKind::OverrideKeyword) => ConstructorAttribute::OverrideKeyword,
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => ConstructorAttribute::PayableKeyword,
+        NodeKind::Terminal(TerminalKind::PublicKeyword) => ConstructorAttribute::PublicKeyword,
+        NodeKind::Terminal(TerminalKind::VirtualKeyword) => ConstructorAttribute::VirtualKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -2943,37 +2813,23 @@ pub fn build_unnamed_function_attribute(mut cursor: Cursor) -> Result<UnnamedFun
             UnnamedFunctionAttribute::ModifierInvocation(build_modifier_invocation(cursor.clone())?)
         }
         NodeKind::Terminal(TerminalKind::ConstantKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             UnnamedFunctionAttribute::ConstantKeyword
         }
         NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             UnnamedFunctionAttribute::ExternalKeyword
         }
         NodeKind::Terminal(TerminalKind::InternalKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             UnnamedFunctionAttribute::InternalKeyword
         }
         NodeKind::Terminal(TerminalKind::PayableKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             UnnamedFunctionAttribute::PayableKeyword
         }
         NodeKind::Terminal(TerminalKind::PrivateKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             UnnamedFunctionAttribute::PrivateKeyword
         }
-        NodeKind::Terminal(TerminalKind::PublicKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UnnamedFunctionAttribute::PublicKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PureKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UnnamedFunctionAttribute::PureKeyword
-        }
-        NodeKind::Terminal(TerminalKind::ViewKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            UnnamedFunctionAttribute::ViewKeyword
-        }
+        NodeKind::Terminal(TerminalKind::PublicKeyword) => UnnamedFunctionAttribute::PublicKeyword,
+        NodeKind::Terminal(TerminalKind::PureKeyword) => UnnamedFunctionAttribute::PureKeyword,
+        NodeKind::Terminal(TerminalKind::ViewKeyword) => UnnamedFunctionAttribute::ViewKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3002,23 +2858,14 @@ pub fn build_fallback_function_attribute(mut cursor: Cursor) -> Result<FallbackF
             FallbackFunctionAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
         NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             FallbackFunctionAttribute::ExternalKeyword
         }
         NodeKind::Terminal(TerminalKind::PayableKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             FallbackFunctionAttribute::PayableKeyword
         }
-        NodeKind::Terminal(TerminalKind::PureKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FallbackFunctionAttribute::PureKeyword
-        }
-        NodeKind::Terminal(TerminalKind::ViewKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FallbackFunctionAttribute::ViewKeyword
-        }
+        NodeKind::Terminal(TerminalKind::PureKeyword) => FallbackFunctionAttribute::PureKeyword,
+        NodeKind::Terminal(TerminalKind::ViewKeyword) => FallbackFunctionAttribute::ViewKeyword,
         NodeKind::Terminal(TerminalKind::VirtualKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             FallbackFunctionAttribute::VirtualKeyword
         }
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
@@ -3047,15 +2894,12 @@ pub fn build_receive_function_attribute(mut cursor: Cursor) -> Result<ReceiveFun
             ReceiveFunctionAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
         NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             ReceiveFunctionAttribute::ExternalKeyword
         }
         NodeKind::Terminal(TerminalKind::PayableKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             ReceiveFunctionAttribute::PayableKeyword
         }
         NodeKind::Terminal(TerminalKind::VirtualKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
             ReceiveFunctionAttribute::VirtualKeyword
         }
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
@@ -3080,10 +2924,7 @@ pub fn build_modifier_attribute(mut cursor: Cursor) -> Result<ModifierAttribute>
         NodeKind::Nonterminal(NonterminalKind::OverrideSpecifier) => {
             ModifierAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::VirtualKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            ModifierAttribute::VirtualKeyword
-        }
+        NodeKind::Terminal(TerminalKind::VirtualKeyword) => ModifierAttribute::VirtualKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3137,38 +2978,14 @@ pub fn build_function_type_attribute(mut cursor: Cursor) -> Result<FunctionTypeA
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
     let item = match cursor.node().kind() {
-        NodeKind::Terminal(TerminalKind::InternalKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionTypeAttribute::InternalKeyword
-        }
-        NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionTypeAttribute::ExternalKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PrivateKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionTypeAttribute::PrivateKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PublicKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionTypeAttribute::PublicKeyword
-        }
-        NodeKind::Terminal(TerminalKind::ConstantKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionTypeAttribute::ConstantKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PureKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionTypeAttribute::PureKeyword
-        }
-        NodeKind::Terminal(TerminalKind::ViewKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionTypeAttribute::ViewKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            FunctionTypeAttribute::PayableKeyword
-        }
+        NodeKind::Terminal(TerminalKind::InternalKeyword) => FunctionTypeAttribute::InternalKeyword,
+        NodeKind::Terminal(TerminalKind::ExternalKeyword) => FunctionTypeAttribute::ExternalKeyword,
+        NodeKind::Terminal(TerminalKind::PrivateKeyword) => FunctionTypeAttribute::PrivateKeyword,
+        NodeKind::Terminal(TerminalKind::PublicKeyword) => FunctionTypeAttribute::PublicKeyword,
+        NodeKind::Terminal(TerminalKind::ConstantKeyword) => FunctionTypeAttribute::ConstantKeyword,
+        NodeKind::Terminal(TerminalKind::PureKeyword) => FunctionTypeAttribute::PureKeyword,
+        NodeKind::Terminal(TerminalKind::ViewKeyword) => FunctionTypeAttribute::ViewKeyword,
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => FunctionTypeAttribute::PayableKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3216,18 +3033,6 @@ pub fn build_elementary_type(mut cursor: Cursor) -> Result<ElementaryType> {
         NodeKind::Nonterminal(NonterminalKind::AddressType) => {
             ElementaryType::AddressType(build_address_type(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::BoolKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            ElementaryType::BoolKeyword
-        }
-        NodeKind::Terminal(TerminalKind::ByteKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            ElementaryType::ByteKeyword
-        }
-        NodeKind::Terminal(TerminalKind::StringKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            ElementaryType::StringKeyword
-        }
         NodeKind::Terminal(TerminalKind::BytesKeyword) => {
             let node = fetch_terminal_node(&cursor)?;
             ElementaryType::BytesKeyword(node)
@@ -3248,6 +3053,9 @@ pub fn build_elementary_type(mut cursor: Cursor) -> Result<ElementaryType> {
             let node = fetch_terminal_node(&cursor)?;
             ElementaryType::UfixedKeyword(node)
         }
+        NodeKind::Terminal(TerminalKind::BoolKeyword) => ElementaryType::BoolKeyword,
+        NodeKind::Terminal(TerminalKind::ByteKeyword) => ElementaryType::ByteKeyword,
+        NodeKind::Terminal(TerminalKind::StringKeyword) => ElementaryType::StringKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3369,10 +3177,7 @@ pub fn build_variable_declaration_type(mut cursor: Cursor) -> Result<VariableDec
         NodeKind::Nonterminal(NonterminalKind::TypeName) => {
             VariableDeclarationType::TypeName(build_type_name(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::VarKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            VariableDeclarationType::VarKeyword
-        }
+        NodeKind::Terminal(TerminalKind::VarKeyword) => VariableDeclarationType::VarKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3392,18 +3197,9 @@ pub fn build_storage_location(mut cursor: Cursor) -> Result<StorageLocation> {
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
     let item = match cursor.node().kind() {
-        NodeKind::Terminal(TerminalKind::MemoryKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            StorageLocation::MemoryKeyword
-        }
-        NodeKind::Terminal(TerminalKind::StorageKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            StorageLocation::StorageKeyword
-        }
-        NodeKind::Terminal(TerminalKind::CallDataKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            StorageLocation::CallDataKeyword
-        }
+        NodeKind::Terminal(TerminalKind::MemoryKeyword) => StorageLocation::MemoryKeyword,
+        NodeKind::Terminal(TerminalKind::StorageKeyword) => StorageLocation::StorageKeyword,
+        NodeKind::Terminal(TerminalKind::CallDataKeyword) => StorageLocation::CallDataKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3440,10 +3236,7 @@ pub fn build_for_statement_initialization(
                 cursor.clone(),
             )?)
         }
-        NodeKind::Terminal(TerminalKind::Semicolon) => {
-            _ = fetch_terminal_node(&cursor)?;
-            ForStatementInitialization::Semicolon
-        }
+        NodeKind::Terminal(TerminalKind::Semicolon) => ForStatementInitialization::Semicolon,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3466,10 +3259,7 @@ pub fn build_for_statement_condition(mut cursor: Cursor) -> Result<ForStatementC
         NodeKind::Nonterminal(NonterminalKind::ExpressionStatement) => {
             ForStatementCondition::ExpressionStatement(build_expression_statement(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::Semicolon) => {
-            _ = fetch_terminal_node(&cursor)?;
-            ForStatementCondition::Semicolon
-        }
+        NodeKind::Terminal(TerminalKind::Semicolon) => ForStatementCondition::Semicolon,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3570,30 +3360,15 @@ pub fn build_expression(mut cursor: Cursor) -> Result<Expression> {
         NodeKind::Nonterminal(NonterminalKind::ElementaryType) => {
             Expression::ElementaryType(build_elementary_type(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            Expression::PayableKeyword
-        }
-        NodeKind::Terminal(TerminalKind::ThisKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            Expression::ThisKeyword
-        }
-        NodeKind::Terminal(TerminalKind::SuperKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            Expression::SuperKeyword
-        }
-        NodeKind::Terminal(TerminalKind::TrueKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            Expression::TrueKeyword
-        }
-        NodeKind::Terminal(TerminalKind::FalseKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            Expression::FalseKeyword
-        }
         NodeKind::Terminal(TerminalKind::Identifier) => {
             let node = fetch_terminal_node(&cursor)?;
             Expression::Identifier(node)
         }
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => Expression::PayableKeyword,
+        NodeKind::Terminal(TerminalKind::ThisKeyword) => Expression::ThisKeyword,
+        NodeKind::Terminal(TerminalKind::SuperKeyword) => Expression::SuperKeyword,
+        NodeKind::Terminal(TerminalKind::TrueKeyword) => Expression::TrueKeyword,
+        NodeKind::Terminal(TerminalKind::FalseKeyword) => Expression::FalseKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3642,50 +3417,17 @@ pub fn build_number_unit(mut cursor: Cursor) -> Result<NumberUnit> {
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
     let item = match cursor.node().kind() {
-        NodeKind::Terminal(TerminalKind::WeiKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            NumberUnit::WeiKeyword
-        }
-        NodeKind::Terminal(TerminalKind::GweiKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            NumberUnit::GweiKeyword
-        }
-        NodeKind::Terminal(TerminalKind::SzaboKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            NumberUnit::SzaboKeyword
-        }
-        NodeKind::Terminal(TerminalKind::FinneyKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            NumberUnit::FinneyKeyword
-        }
-        NodeKind::Terminal(TerminalKind::EtherKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            NumberUnit::EtherKeyword
-        }
-        NodeKind::Terminal(TerminalKind::SecondsKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            NumberUnit::SecondsKeyword
-        }
-        NodeKind::Terminal(TerminalKind::MinutesKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            NumberUnit::MinutesKeyword
-        }
-        NodeKind::Terminal(TerminalKind::HoursKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            NumberUnit::HoursKeyword
-        }
-        NodeKind::Terminal(TerminalKind::DaysKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            NumberUnit::DaysKeyword
-        }
-        NodeKind::Terminal(TerminalKind::WeeksKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            NumberUnit::WeeksKeyword
-        }
-        NodeKind::Terminal(TerminalKind::YearsKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            NumberUnit::YearsKeyword
-        }
+        NodeKind::Terminal(TerminalKind::WeiKeyword) => NumberUnit::WeiKeyword,
+        NodeKind::Terminal(TerminalKind::GweiKeyword) => NumberUnit::GweiKeyword,
+        NodeKind::Terminal(TerminalKind::SzaboKeyword) => NumberUnit::SzaboKeyword,
+        NodeKind::Terminal(TerminalKind::FinneyKeyword) => NumberUnit::FinneyKeyword,
+        NodeKind::Terminal(TerminalKind::EtherKeyword) => NumberUnit::EtherKeyword,
+        NodeKind::Terminal(TerminalKind::SecondsKeyword) => NumberUnit::SecondsKeyword,
+        NodeKind::Terminal(TerminalKind::MinutesKeyword) => NumberUnit::MinutesKeyword,
+        NodeKind::Terminal(TerminalKind::HoursKeyword) => NumberUnit::HoursKeyword,
+        NodeKind::Terminal(TerminalKind::DaysKeyword) => NumberUnit::DaysKeyword,
+        NodeKind::Terminal(TerminalKind::WeeksKeyword) => NumberUnit::WeeksKeyword,
+        NodeKind::Terminal(TerminalKind::YearsKeyword) => NumberUnit::YearsKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3887,10 +3629,7 @@ pub fn build_yul_assignment_operator(mut cursor: Cursor) -> Result<YulAssignment
         NodeKind::Nonterminal(NonterminalKind::YulColonAndEqual) => {
             YulAssignmentOperator::YulColonAndEqual(build_yul_colon_and_equal(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::ColonEqual) => {
-            _ = fetch_terminal_node(&cursor)?;
-            YulAssignmentOperator::ColonEqual
-        }
+        NodeKind::Terminal(TerminalKind::ColonEqual) => YulAssignmentOperator::ColonEqual,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3915,10 +3654,7 @@ pub fn build_yul_stack_assignment_operator(
         NodeKind::Nonterminal(NonterminalKind::YulEqualAndColon) => {
             YulStackAssignmentOperator::YulEqualAndColon(build_yul_equal_and_colon(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::EqualColon) => {
-            _ = fetch_terminal_node(&cursor)?;
-            YulStackAssignmentOperator::EqualColon
-        }
+        NodeKind::Terminal(TerminalKind::EqualColon) => YulStackAssignmentOperator::EqualColon,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3999,14 +3735,6 @@ pub fn build_yul_literal(mut cursor: Cursor) -> Result<YulLiteral> {
         NodeKind::Nonterminal(NonterminalKind::StringLiteral) => {
             YulLiteral::StringLiteral(build_string_literal(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::YulTrueKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            YulLiteral::YulTrueKeyword
-        }
-        NodeKind::Terminal(TerminalKind::YulFalseKeyword) => {
-            _ = fetch_terminal_node(&cursor)?;
-            YulLiteral::YulFalseKeyword
-        }
         NodeKind::Terminal(TerminalKind::YulDecimalLiteral) => {
             let node = fetch_terminal_node(&cursor)?;
             YulLiteral::YulDecimalLiteral(node)
@@ -4015,6 +3743,8 @@ pub fn build_yul_literal(mut cursor: Cursor) -> Result<YulLiteral> {
             let node = fetch_terminal_node(&cursor)?;
             YulLiteral::YulHexLiteral(node)
         }
+        NodeKind::Terminal(TerminalKind::YulTrueKeyword) => YulLiteral::YulTrueKeyword,
+        NodeKind::Terminal(TerminalKind::YulFalseKeyword) => YulLiteral::YulFalseKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",

@@ -1,9 +1,9 @@
 {%- if rendering_in_stubs -%}
   // No Intermediate Representation transformer functions in stubs...
-{%- elif not source -%}
+{%- elif not transformer -%}
   // Not rendering transformer for first Intermediate Language
 {%- else -%}
-  // Transformer from previous language implementation `{{ source.name }}`
+  // Transformer from previous language implementation `{{ transformer.source_name }}`
   #![allow(clippy::too_many_lines)]
 
   use std::rc::Rc;
@@ -13,13 +13,12 @@
     //
     // Sequences:
     //
-    {% for parent_type, source_sequence in source.sequences %}
-      {% if target.sequences is containing(parent_type) %}
-        {% set sequence = target.sequences[parent_type] %}
-        fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
-        {% if sequence.can_build_from_source %}
-          {
-            {% for field in sequence.fields %}
+    {% for parent_type, sequence in transformer.sequences %}
+      fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }}
+      {% if not sequence.has_added_fields %}
+        {
+          {% for field in sequence.fields %}
+            {%- if not field.is_removed -%}
               {%- if field.is_optional -%}
                 let {{ field.label }} = source.{{ field.label }}.as_ref().map(
                   {%- if field.is_terminal -%}
@@ -28,7 +27,7 @@
                     |value| self.transform_{{ field.type | snake_case }}(value)
                   {%- endif -%}
                 );
-              {%- elif not field.is_terminal or not target.unique_terminals is containing(field.type) -%}
+              {%- else -%}
                 let {{ field.label }} =
                 {%- if field.is_terminal -%}
                   Rc::clone(&source.{{ field.label }})
@@ -37,91 +36,79 @@
                 {%- endif -%}
                 ;
               {%- endif -%}
-            {%- endfor %}
+            {%- endif -%}
+          {%- endfor %}
 
-            Rc::new(output::{{ parent_type }}Struct {
-              node_id: source.node_id,
-              {%- for field in sequence.fields -%}
-                {%- if field.is_optional
-                       or not field.is_terminal
-                       or not target.unique_terminals is containing(field.type) -%}
-                  {{ field.label }},
-                {%- endif -%}
-              {%- endfor %}
-            })
-          }
-        {% else %}
-          ;
-        {% endif %}
+          Rc::new(output::{{ parent_type }}Struct {
+            node_id: source.node_id,
+            {%- for field in sequence.fields -%}
+              {%- if not field.is_removed -%}
+                {{ field.label }},
+              {%- endif -%}
+            {%- endfor %}
+          })
+        }
+      {% else %}
+        ;
       {% endif %}
     {% endfor %}
 
     //
     // Choices:
     //
-    {% for parent_type, source_choice in source.choices %}
-      {% if target.choices is containing(parent_type) %}
-        {% set choice = target.choices[parent_type] %}
-        fn default_transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
-          #[allow(clippy::match_wildcard_for_single_variants)]
-          match source {
-            {% for nonterminal in choice.nonterminal_types -%}
-              input::{{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
-                output::{{ parent_type }}::{{ nonterminal }}(self.transform_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}))
-              }
-            {%- endfor %}
-            {%- for terminal in choice.terminal_types -%}
-              {%- if target.unique_terminals is containing(terminal) -%}
-                input::{{ parent_type }}::{{ terminal }} => output::{{ parent_type }}::{{ terminal }},
-              {%- else -%}
-                input::{{ parent_type }}::{{ terminal }}(node) => output::{{ parent_type }}::{{ terminal }}(Rc::clone(node)),
-              {%- endif -%}
-            {%- endfor -%}
-            {% if choice.has_removed_variants %}
-              _ => panic!("Unexpected variant {source:?}"),
-            {% endif %}
-          }
+    {% for parent_type, choice in transformer.choices %}
+      fn default_transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        match source {
+          {% for nonterminal in choice.nonterminal_types -%}
+            input::{{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
+              output::{{ parent_type }}::{{ nonterminal }}(self.transform_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}))
+            }
+          {%- endfor %}
+          {%- for terminal in choice.terminal_types -%}
+            input::{{ parent_type }}::{{ terminal }}(node) => output::{{ parent_type }}::{{ terminal }}(Rc::clone(node)),
+          {%- endfor -%}
+          {%- for terminal in choice.unique_terminal_types -%}
+            input::{{ parent_type }}::{{ terminal }} => output::{{ parent_type }}::{{ terminal }},
+          {%- endfor -%}
+          {% if choice.has_removed_variants %}
+            _ => panic!("Unexpected variant {source:?}"),
+          {% endif %}
         }
-        fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
-          self.default_transform_{{ parent_type | snake_case }}(source)
-        }
-      {% endif %}
+      }
+      fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
+        self.default_transform_{{ parent_type | snake_case }}(source)
+      }
     {% endfor %}
 
     //
     // Repeated:
     //
-    {% for parent_type, source_repeated in source.repeated %}
-      {% if target.repeated is containing(parent_type) %}
-        {% set repeated = target.repeated[parent_type] %}
-        fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
-          source.iter().map(
-            {%- if repeated.is_terminal -%}
-              Rc::clone
-            {%- else -%}
-              |item| self.transform_{{ repeated.item_type | snake_case }}(item)
-            {%- endif -%}
-          ).collect()
-        }
-      {% endif %}
+    {% for parent_type, repeated in transformer.repeated %}
+      fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
+        source.iter().map(
+          {%- if repeated.is_terminal -%}
+            Rc::clone
+          {%- else -%}
+            |item| self.transform_{{ repeated.item_type | snake_case }}(item)
+          {%- endif -%}
+        ).collect()
+      }
     {% endfor %}
 
     //
     // Separated:
     //
-    {% for parent_type, source_separated in source.separated %}
-      {% if target.separated is containing(parent_type) %}
-        {% set separated = target.separated[parent_type] %}
-        fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
-          source.iter().map(
-            {%- if separated.is_terminal -%}
-              Rc::clone
-            {%- else -%}
-              |item| self.transform_{{ separated.item_type | snake_case }}(item)
-            {%- endif -%}
-          ).collect()
-        }
-      {% endif %}
+    {% for parent_type, separated in transformer.separated %}
+      fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
+        source.iter().map(
+          {%- if separated.is_terminal -%}
+            Rc::clone
+          {%- else -%}
+            |item| self.transform_{{ separated.item_type | snake_case }}(item)
+          {%- endif -%}
+        ).collect()
+      }
     {% endfor %}
   }
 {%- endif -%}
