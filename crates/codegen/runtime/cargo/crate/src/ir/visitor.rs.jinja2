@@ -18,35 +18,25 @@
   //
 
   {% for parent_type, sequence in target.sequences %}
-    impl {{ parent_type }}Struct {
-      pub fn accept(self: &Rc<Self>, visitor: &mut dyn Visitor) {
-        {%- if sequence.has_nonterminals %}
-          if visitor.enter_{{ parent_type | snake_case }}(self) {
-            {% for field in sequence.fields -%}
-              {%- if not field.is_terminal -%}
-                {%- if field.is_optional %}
-                  if let Some(ref {{ field.label | snake_case }}) = self.{{ field.label | snake_case }} {
-                    {%- if field.type in target.repeated or field.type in target.separated %}
-                      accept_{{ field.type | snake_case }}({{ field.label }}, visitor);
-                    {% else %}
-                      {{ field.label }}.accept(visitor);
-                    {% endif -%}
-                  }
-                {% else -%}
-                  {%- if field.type in target.repeated or field.type in target.separated %}
-                    accept_{{ field.type | snake_case }}(&self.{{ field.label }}, visitor);
-                  {% else %}
-                    self.{{ field.label }}.accept(visitor);
-                  {% endif -%}
-                {%- endif -%}
+    pub fn accept_{{ parent_type | snake_case }}(target: &{{ parent_type }}, visitor: &mut dyn Visitor) {
+      {%- if sequence.has_nonterminals %}
+        if visitor.enter_{{ parent_type | snake_case }}(target) {
+          {% for field in sequence.fields -%}
+            {%- if not field.is_terminal -%}
+              {%- if field.is_optional %}
+                if let Some(ref {{ field.label | snake_case }}) = target.{{ field.label | snake_case }} {
+                  accept_{{ field.type | snake_case }}({{ field.label }}, visitor);
+                }
+              {% else -%}
+                accept_{{ field.type | snake_case }}(&target.{{ field.label }}, visitor);
               {%- endif -%}
-            {%- endfor -%}
-          }
-        {%- else -%}
-          visitor.enter_{{ parent_type | snake_case }}(self);
-        {%- endif %}
-        visitor.leave_{{ parent_type | snake_case }}(self);
-      }
+            {%- endif -%}
+          {%- endfor -%}
+        }
+      {%- else -%}
+        visitor.enter_{{ parent_type | snake_case }}(target);
+      {%- endif %}
+      visitor.leave_{{ parent_type | snake_case }}(target);
     }
 
   {% endfor %}
@@ -57,37 +47,29 @@
 
   {% for parent_type, choice in target.choices %}
     {% if choice.nonterminal_types | length == 0 %}
-      impl {{ parent_type }} {
-        pub fn accept(&self, _visitor: &mut dyn Visitor) {}
-      }
+      pub fn accept_{{ parent_type | snake_case }}(_target: &{{ parent_type }}, _visitor: &mut dyn Visitor) {}
     {% else %}
-      impl {{ parent_type }} {
-        pub fn accept(&self, visitor: &mut dyn Visitor) {
-          match self {
-            {% for nonterminal in choice.nonterminal_types -%}
-              Self::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
-                {%- if nonterminal in target.repeated or nonterminal in target.separated %}
-                  accept_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}, visitor);
-                {% else %}
-                  {{ nonterminal | snake_case }}.accept(visitor);
-                {% endif -%}
-              }
-            {%- endfor %}
-            {%- if choice.terminal_types | length > 0 %}
-              {%- for terminal in choice.terminal_types -%}
-                {%- if not loop.first -%} | {%- endif -%}
-                Self::{{terminal}}(_)
-              {%- endfor -%}
-              => {}
-            {% endif -%}
-            {%- if choice.unique_terminal_types | length > 0 %}
-              {%- for terminal in choice.unique_terminal_types -%}
-                {%- if not loop.first -%} | {%- endif -%}
-                Self::{{terminal}}
-              {%- endfor -%}
-              => {}
-            {% endif -%}
-          }
+      pub fn accept_{{ parent_type | snake_case }}(target: &{{ parent_type }}, visitor: &mut dyn Visitor) {
+        match target {
+          {% for nonterminal in choice.nonterminal_types -%}
+            {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
+              accept_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}, visitor);
+            }
+          {%- endfor %}
+          {%- if choice.terminal_types | length > 0 %}
+            {%- for terminal in choice.terminal_types -%}
+              {%- if not loop.first -%} | {%- endif -%}
+              {{ parent_type }}::{{terminal}}(_)
+            {%- endfor -%}
+            => {}
+          {% endif -%}
+          {%- if choice.unique_terminal_types | length > 0 %}
+            {%- for terminal in choice.unique_terminal_types -%}
+              {%- if not loop.first -%} | {%- endif -%}
+              {{ parent_type }}::{{terminal}}
+            {%- endfor -%}
+            => {}
+          {% endif -%}
         }
       }
     {% endif %}
@@ -105,12 +87,7 @@
       #[inline]
       fn accept_{{ parent_type | snake_case }}(items: &[{{ repeated.item_type }}], visitor: &mut dyn Visitor) {
         for item in items {
-          {%- if repeated.item_type in target.repeated or
-                 repeated.item_type in target.separated %}
-            accept_{{ repeated.item_type | snake_case }}(item, visitor);
-          {% else %}
-            item.accept(visitor);
-          {% endif -%}
+          accept_{{ repeated.item_type | snake_case }}(item, visitor);
         }
       }
     {% endif -%}
@@ -128,12 +105,7 @@
       #[inline]
       fn accept_{{ parent_type | snake_case }}(items: &[{{ separated.item_type }}], visitor: &mut dyn Visitor) {
         for item in items {
-          {%- if separated.item_type in target.repeated or
-                 separated.item_type in target.separated %}
-            accept_{{ separated.item_type | snake_case }}(item, visitor);
-          {% else %}
-            item.accept(visitor);
-          {% endif -%}
+          accept_{{ separated.item_type | snake_case }}(item, visitor);
         }
       }
     {% endif -%}

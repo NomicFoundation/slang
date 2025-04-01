@@ -89,7 +89,7 @@ contract Counter is Ownable {
         ast::builder::build_source_unit(output.create_tree_cursor()).map_err(|s| anyhow!(s))?;
 
     let mut visitor = CounterVisitor::new(true);
-    ast.accept(&mut visitor);
+    ast::visitor::accept_source_unit(&ast, &mut visitor);
 
     assert_eq!(2, visitor.contract);
     assert_eq!(2, visitor.ctor);
@@ -98,7 +98,7 @@ contract Counter is Ownable {
     assert_eq!(3, visitor.function);
 
     let mut shallow_visitor = CounterVisitor::new(false);
-    ast.accept(&mut shallow_visitor);
+    ast::visitor::accept_source_unit(&ast, &mut shallow_visitor);
 
     assert_eq!(2, shallow_visitor.contract);
     assert_eq!(0, shallow_visitor.ctor);
