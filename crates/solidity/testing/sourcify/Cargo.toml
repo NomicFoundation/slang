@@ -10,10 +10,12 @@ anyhow = { workspace = true }
 clap = { workspace = true }
 infra_utils = { workspace = true }
 reqwest = { workspace = true }
+semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 slang_solidity = { workspace = true, features = ["__private_ariadne_errors", "__experimental_bindings_api"] }
 strum_macros = { workspace = true }
+tar = { workspace = true }
 
 [lints]
 workspace = true

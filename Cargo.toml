@@ -105,6 +105,7 @@ clap_complete = { version = "4.5.13" }
 console = { version = "0.15.10" }
 derive-new = { version = "0.6.0" }
 env_logger = { version = "0.11.6" }
+flate2 = { version = "1.1.0" }
 iai-callgrind = { version = "0.12.3" }
 iai-callgrind-runner = { version = "0.12.3" }
 ignore = { version = "0.4.23" }
@@ -146,6 +147,7 @@ syn = { version = "2.0.98", features = [
     "parsing",
     "printing",
 ] }
+tar = { version = "0.4.44" }
 tempfile = { version = "3.17.1" }
 tera = { version = "1.20.0" }
 thiserror = { version = "2.0.11" }
