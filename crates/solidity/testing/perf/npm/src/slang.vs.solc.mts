@@ -7,6 +7,7 @@ import { INPUT_PATH, resolvePath } from "./common.mjs";
 import path from "node:path";
 import { readdir } from "node:fs/promises";
 import commandLineArgs from "command-line-args"
+import { exit } from "node:process";
 
 // little helper function to perform the printing of numbers
 function round(n: number | mathjs.MathNumericType): string {
@@ -136,6 +137,10 @@ async function runProjects(comparer: Comparer) {
   await comparer.run("project/lidofinance", "0.8.9", "lidofinance/contracts/0.8.9", "WithdrawalQueueERC721.sol", 142, 325);
 }
 
+if (process.env["CI"] == undefined) {
+  console.error("Must run with CI=true");
+  exit(-1);
+}
 const options = commandLineArgs({ name: "pattern", type: String, defaultOption: "" });
 const comparer = new Comparer(options.pattern);
 

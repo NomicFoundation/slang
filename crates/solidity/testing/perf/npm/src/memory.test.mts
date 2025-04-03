@@ -3,6 +3,7 @@ import fs from "node:fs";
 import assert from "node:assert";
 import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
 import { TerminalKind } from "@nomicfoundation/slang/cst";
+import { exit } from "node:process";
 
 export const INPUT_PATH = "crates/solidity/testing/perf/npm/inputs";
 
@@ -105,6 +106,12 @@ async function run() {
     external = roundE;
     i += 1;
   }
+}
+
+
+if (process.env["CI"] == undefined) {
+  console.error("Must run with CI=true");
+  exit(-1);
 }
 
 await run();
