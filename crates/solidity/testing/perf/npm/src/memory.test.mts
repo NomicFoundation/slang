@@ -3,7 +3,6 @@ import fs from "node:fs";
 import assert from "node:assert";
 import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
 import { TerminalKind } from "@nomicfoundation/slang/cst";
-import { handleTables } from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
 
 export const INPUT_PATH = "crates/solidity/testing/perf/npm/inputs";
 
@@ -100,21 +99,12 @@ async function run() {
   while (true) {
     await testFile("0.6.12", "0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A/contracts/misc/UiPoolDataProviderV2V3.sol");
     await sleep(100);
-    if (process.argv.includes("--print-tables")) {
-      printTables();
-    }
     const { heapUsed: roundHU, external: roundE } = process.memoryUsage();
     console.log(`${i}, ${roundHU}, ${roundE}, ${roundHU - heapUsed}, ${roundE - external}`);
     heapUsed = roundHU;
     external = roundE;
     i += 1;
   }
-}
-
-function printTables() {
-  const tables: number[][] = handleTables;
-  const sums = tables.map((table, index) => [index, table.reduce((accu, elem) => { if (elem > 0) { return (accu + 1) } else { return accu } }, 0)]);
-  console.log(sums);
 }
 
 await run();
