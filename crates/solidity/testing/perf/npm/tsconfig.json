@@ -1,0 +1,15 @@
+{
+  "extends": "../../../../../tsconfig.json",
+
+  "include": ["./src/**/*.mts"],
+
+  "noImplicitAny": false,
+
+  "compilerOptions": {
+    "target": "es2017",
+    /* Projects */
+    "composite": true,
+    "incremental": true,
+    "tsBuildInfoFile": "target/tsc/.tsbuildinfo"
+  },
+}
