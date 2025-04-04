@@ -8,6 +8,8 @@ publish = false
 [dependencies]
 anyhow = { workspace = true }
 clap = { workspace = true }
+console = { workspace = true }
+indicatif = { workspace = true }
 infra_utils = { workspace = true }
 reqwest = { workspace = true }
 semver = { workspace = true }

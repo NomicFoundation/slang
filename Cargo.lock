@@ -2598,6 +2598,8 @@ version = "1.0.0"
 dependencies = [
  "anyhow",
  "clap",
+ "console",
+ "indicatif",
  "infra_utils",
  "reqwest",
  "semver",
