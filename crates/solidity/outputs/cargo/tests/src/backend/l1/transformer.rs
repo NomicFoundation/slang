@@ -1,51 +1,8 @@
-use std::rc::Rc;
-
 use anyhow::{anyhow, Result};
 use slang_solidity::backend::l1::transformer::Transformer;
 use slang_solidity::backend::{ast, l1};
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
-
-struct AstToL1 {}
-
-impl Transformer for AstToL1 {
-    fn transform_contract_definition(
-        &mut self,
-        source: &ast::ContractDefinition,
-    ) -> l1::ContractDefinition {
-        let node_id = source.node_id;
-        let abstract_keyword = source.abstract_keyword.as_ref().map(Rc::clone);
-        let name = Rc::clone(&source.name);
-        let members = self.transform_contract_members(&source.members);
-        let inheritance_types = source
-            .specifiers
-            .iter()
-            .find_map(|specifier| {
-                if let ast::ContractSpecifier::InheritanceSpecifier(inheritance) = specifier {
-                    Some(self.transform_inheritance_types(&inheritance.types))
-                } else {
-                    None
-                }
-            })
-            .unwrap_or_default();
-        let storage_layout = source.specifiers.iter().find_map(|specifier| {
-            if let ast::ContractSpecifier::StorageLayoutSpecifier(storage_layout) = specifier {
-                Some(self.transform_storage_layout_specifier(storage_layout))
-            } else {
-                None
-            }
-        });
-
-        Rc::new(l1::ContractDefinitionStruct {
-            node_id,
-            abstract_keyword,
-            name,
-            members,
-            inheritance_types,
-            storage_layout,
-        })
-    }
-}
 
 #[test]
 fn test_build_l1_from_ast() -> Result<()> {
@@ -61,7 +18,7 @@ contract Test is Base layout at 0 {}
     let ast_source =
         ast::builder::build_source_unit(output.create_tree_cursor()).map_err(|s| anyhow!(s))?;
 
-    let mut transformer = AstToL1 {};
+    let mut transformer = l1::FromAst {};
     let l1 = transformer.transform_source_unit(&ast_source);
 
     assert_eq!(2, l1.members.len());

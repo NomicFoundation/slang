@@ -7,5 +7,5 @@ pub mod mutator;
 pub mod transformer;
 
 {% if transformer %}
-pub use super::{{ transformer.source_name }} as input;
+pub use super::super::{{ transformer.source_name }} as input;
 {% endif %}

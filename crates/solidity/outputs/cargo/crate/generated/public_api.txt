@@ -1338,6 +1338,10 @@ pub slang_solidity::backend::ast::CatchClauseStruct::error: core::option::Option
 pub slang_solidity::backend::ast::CatchClauseStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::CatchClauseStruct
 pub fn slang_solidity::backend::ast::CatchClauseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::ast::CompilationUnit
+pub slang_solidity::backend::ast::CompilationUnit::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::ast::SourceUnit>
+impl slang_solidity::backend::ast::CompilationUnit
+pub fn slang_solidity::backend::ast::CompilationUnit::build(input: &slang_solidity::compilation::CompilationUnit) -> core::result::Result<Self, alloc::string::String>
 pub struct slang_solidity::backend::ast::ConditionalExpressionStruct
 pub slang_solidity::backend::ast::ConditionalExpressionStruct::false_expression: slang_solidity::backend::ast::Expression
 pub slang_solidity::backend::ast::ConditionalExpressionStruct::node_id: usize
@@ -3475,6 +3479,10 @@ pub slang_solidity::backend::l1::input::CatchClauseStruct::error: core::option::
 pub slang_solidity::backend::l1::input::CatchClauseStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::CatchClauseStruct
 pub fn slang_solidity::backend::ast::CatchClauseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::l1::input::CompilationUnit
+pub slang_solidity::backend::l1::input::CompilationUnit::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::ast::SourceUnit>
+impl slang_solidity::backend::ast::CompilationUnit
+pub fn slang_solidity::backend::ast::CompilationUnit::build(input: &slang_solidity::compilation::CompilationUnit) -> core::result::Result<Self, alloc::string::String>
 pub struct slang_solidity::backend::l1::input::ConditionalExpressionStruct
 pub slang_solidity::backend::l1::input::ConditionalExpressionStruct::false_expression: slang_solidity::backend::ast::Expression
 pub slang_solidity::backend::l1::input::ConditionalExpressionStruct::node_id: usize
@@ -4780,6 +4788,8 @@ pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_vari
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_variable_declaration_statement(&mut self, source: &slang_solidity::backend::ast::YulVariableDeclarationStatement) -> slang_solidity::backend::l1::YulVariableDeclarationStatement
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_variable_declaration_value(&mut self, source: &slang_solidity::backend::ast::YulVariableDeclarationValue) -> slang_solidity::backend::l1::YulVariableDeclarationValue
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_variable_names(&mut self, source: &slang_solidity::backend::ast::YulVariableNames) -> slang_solidity::backend::l1::YulVariableNames
+impl slang_solidity::backend::l1::transformer::Transformer for slang_solidity::backend::l1::FromAst
+pub fn slang_solidity::backend::l1::FromAst::transform_contract_definition(&mut self, source: &slang_solidity::backend::ast::ContractDefinition) -> slang_solidity::backend::l1::ContractDefinition
 pub mod slang_solidity::backend::l1::visitor
 pub trait slang_solidity::backend::l1::visitor::Visitor
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_abicoder_pragma(&mut self, _target: &slang_solidity::backend::l1::AbicoderPragma) -> bool
@@ -5649,6 +5659,10 @@ pub slang_solidity::backend::l1::CatchClauseStruct::error: core::option::Option<
 pub slang_solidity::backend::l1::CatchClauseStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::l1::CatchClauseStruct
 pub fn slang_solidity::backend::l1::CatchClauseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::l1::CompilationUnit
+pub slang_solidity::backend::l1::CompilationUnit::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l1::SourceUnit>
+impl slang_solidity::backend::l1::CompilationUnit
+pub fn slang_solidity::backend::l1::CompilationUnit::from_ast(unit_ast: &slang_solidity::backend::ast::CompilationUnit) -> Self
 pub struct slang_solidity::backend::l1::ConditionalExpressionStruct
 pub slang_solidity::backend::l1::ConditionalExpressionStruct::false_expression: slang_solidity::backend::l1::Expression
 pub slang_solidity::backend::l1::ConditionalExpressionStruct::node_id: usize
@@ -5786,6 +5800,9 @@ pub slang_solidity::backend::l1::ForStatementStruct::iterator: core::option::Opt
 pub slang_solidity::backend::l1::ForStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::l1::ForStatementStruct
 pub fn slang_solidity::backend::l1::ForStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::l1::FromAst
+impl slang_solidity::backend::l1::transformer::Transformer for slang_solidity::backend::l1::FromAst
+pub fn slang_solidity::backend::l1::FromAst::transform_contract_definition(&mut self, source: &slang_solidity::backend::ast::ContractDefinition) -> slang_solidity::backend::l1::ContractDefinition
 pub struct slang_solidity::backend::l1::FunctionCallExpressionStruct
 pub slang_solidity::backend::l1::FunctionCallExpressionStruct::arguments: slang_solidity::backend::l1::ArgumentsDeclaration
 pub slang_solidity::backend::l1::FunctionCallExpressionStruct::node_id: usize
