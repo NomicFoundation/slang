@@ -1,3 +1,5 @@
+mod collect_types;
+
 use anyhow::Result;
 use slang_solidity::backend::{ast, l1};
 use slang_solidity::compilation::{self, InternalCompilationBuilder};
