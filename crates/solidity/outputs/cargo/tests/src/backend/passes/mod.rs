@@ -1,3 +1,5 @@
+mod collect_types;
+
 use anyhow::Result;
 use slang_solidity::backend::{l1_typed_cst, l2_flat_contracts};
 use slang_solidity::compilation::{self, InternalCompilationBuilder};

@@ -891,6 +891,11 @@ pub fn slang_solidity::backend::l1_typed_cst::visitor::Visitor::leave_yul_variab
 pub fn slang_solidity::backend::l1_typed_cst::visitor::Visitor::leave_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationStatement)
 pub fn slang_solidity::backend::l1_typed_cst::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationValue)
 pub fn slang_solidity::backend::l1_typed_cst::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::l1_typed_cst::YulVariableNames)
+impl slang_solidity::backend::l1_typed_cst::visitor::Visitor for slang_solidity::backend::passes::collect_types::Pass
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::ContractDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_enum_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::EnumDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_struct_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::StructDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_user_defined_value_type_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::UserDefinedValueTypeDefinition)
 pub fn slang_solidity::backend::l1_typed_cst::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::l1_typed_cst::AbicoderPragma, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
 pub fn slang_solidity::backend::l1_typed_cst::visitor::accept_additive_expression(node: &slang_solidity::backend::l1_typed_cst::AdditiveExpression, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
 pub fn slang_solidity::backend::l1_typed_cst::visitor::accept_address_type(node: &slang_solidity::backend::l1_typed_cst::AddressType, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
@@ -3204,6 +3209,11 @@ pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leav
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationStatement)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationValue)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::l1_typed_cst::YulVariableNames)
+impl slang_solidity::backend::l1_typed_cst::visitor::Visitor for slang_solidity::backend::passes::collect_types::Pass
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::ContractDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_enum_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::EnumDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_struct_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::StructDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_user_defined_value_type_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::UserDefinedValueTypeDefinition)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::l1_typed_cst::AbicoderPragma, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_additive_expression(node: &slang_solidity::backend::l1_typed_cst::AdditiveExpression, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_address_type(node: &slang_solidity::backend::l1_typed_cst::AddressType, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
@@ -6979,6 +6989,28 @@ pub type slang_solidity::backend::l2_flat_contracts::YulVariableAssignmentStatem
 pub type slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationStatement = alloc::rc::Rc<slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationStatementStruct>
 pub type slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValue = alloc::rc::Rc<slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValueStruct>
 pub type slang_solidity::backend::l2_flat_contracts::YulVariableNames = alloc::vec::Vec<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
+pub mod slang_solidity::backend::passes
+pub mod slang_solidity::backend::passes::collect_types
+pub enum slang_solidity::backend::passes::collect_types::Type
+pub slang_solidity::backend::passes::collect_types::Type::Contract(alloc::string::String)
+pub slang_solidity::backend::passes::collect_types::Type::Enum(alloc::string::String)
+pub slang_solidity::backend::passes::collect_types::Type::Struct(alloc::string::String)
+pub slang_solidity::backend::passes::collect_types::Type::UserDefinedValueType(alloc::string::String)
+impl core::cmp::Eq for slang_solidity::backend::passes::collect_types::Type
+impl core::cmp::PartialEq for slang_solidity::backend::passes::collect_types::Type
+pub fn slang_solidity::backend::passes::collect_types::Type::eq(&self, other: &slang_solidity::backend::passes::collect_types::Type) -> bool
+impl core::fmt::Debug for slang_solidity::backend::passes::collect_types::Type
+pub fn slang_solidity::backend::passes::collect_types::Type::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::backend::passes::collect_types::Type
+pub struct slang_solidity::backend::passes::collect_types::Pass
+pub slang_solidity::backend::passes::collect_types::Pass::types: alloc::vec::Vec<slang_solidity::backend::passes::collect_types::Type>
+impl slang_solidity::backend::passes::collect_types::Pass
+pub fn slang_solidity::backend::passes::collect_types::Pass::new() -> Self
+impl slang_solidity::backend::l1_typed_cst::visitor::Visitor for slang_solidity::backend::passes::collect_types::Pass
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::ContractDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_enum_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::EnumDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_struct_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::StructDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_user_defined_value_type_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::UserDefinedValueTypeDefinition)
 pub mod slang_solidity::bindings
 pub use slang_solidity::bindings::BuiltInLocation
 pub use slang_solidity::bindings::PathResolver
