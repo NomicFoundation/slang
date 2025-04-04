@@ -1510,6 +1510,10 @@ pub slang_solidity::backend::l1_typed_cst::CatchClauseStruct::error: core::optio
 pub slang_solidity::backend::l1_typed_cst::CatchClauseStruct::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::CatchClauseStruct
 pub fn slang_solidity::backend::l1_typed_cst::CatchClauseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::l1_typed_cst::CompilationUnit
+pub slang_solidity::backend::l1_typed_cst::CompilationUnit::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l1_typed_cst::SourceUnit>
+impl slang_solidity::backend::l1_typed_cst::CompilationUnit
+pub fn slang_solidity::backend::l1_typed_cst::CompilationUnit::build(input: &slang_solidity::compilation::CompilationUnit) -> core::result::Result<Self, alloc::string::String>
 pub struct slang_solidity::backend::l1_typed_cst::ConditionalExpressionStruct
 pub slang_solidity::backend::l1_typed_cst::ConditionalExpressionStruct::false_expression: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l1_typed_cst::ConditionalExpressionStruct::node_id: metaslang_cst::nodes::NodeId
@@ -3819,6 +3823,10 @@ pub slang_solidity::backend::l2_flat_contracts::input::CatchClauseStruct::error:
 pub slang_solidity::backend::l2_flat_contracts::input::CatchClauseStruct::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::CatchClauseStruct
 pub fn slang_solidity::backend::l1_typed_cst::CatchClauseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::l2_flat_contracts::input::CompilationUnit
+pub slang_solidity::backend::l2_flat_contracts::input::CompilationUnit::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l1_typed_cst::SourceUnit>
+impl slang_solidity::backend::l1_typed_cst::CompilationUnit
+pub fn slang_solidity::backend::l1_typed_cst::CompilationUnit::build(input: &slang_solidity::compilation::CompilationUnit) -> core::result::Result<Self, alloc::string::String>
 pub struct slang_solidity::backend::l2_flat_contracts::input::ConditionalExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::input::ConditionalExpressionStruct::false_expression: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l2_flat_contracts::input::ConditionalExpressionStruct::node_id: metaslang_cst::nodes::NodeId
@@ -5124,6 +5132,8 @@ pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::tra
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::transform_yul_variable_declaration_statement(&mut self, source: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationStatement) -> slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationStatement
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::transform_yul_variable_declaration_value(&mut self, source: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationValue) -> slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValue
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::transform_yul_variable_names(&mut self, source: &slang_solidity::backend::l1_typed_cst::YulVariableNames) -> slang_solidity::backend::l2_flat_contracts::YulVariableNames
+impl slang_solidity::backend::l2_flat_contracts::transformer::Transformer for slang_solidity::backend::l2_flat_contracts::FromL1
+pub fn slang_solidity::backend::l2_flat_contracts::FromL1::transform_contract_definition(&mut self, source: &slang_solidity::backend::l1_typed_cst::ContractDefinition) -> slang_solidity::backend::l2_flat_contracts::ContractDefinition
 pub mod slang_solidity::backend::l2_flat_contracts::visitor
 pub trait slang_solidity::backend::l2_flat_contracts::visitor::Visitor
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::enter_abicoder_pragma(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AbicoderPragma) -> bool
@@ -6163,6 +6173,10 @@ pub slang_solidity::backend::l2_flat_contracts::CatchClauseStruct::error: core::
 pub slang_solidity::backend::l2_flat_contracts::CatchClauseStruct::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::CatchClauseStruct
 pub fn slang_solidity::backend::l2_flat_contracts::CatchClauseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::l2_flat_contracts::CompilationUnit
+pub slang_solidity::backend::l2_flat_contracts::CompilationUnit::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
+impl slang_solidity::backend::l2_flat_contracts::CompilationUnit
+pub fn slang_solidity::backend::l2_flat_contracts::CompilationUnit::from_ast(unit_ast: &slang_solidity::backend::l1_typed_cst::CompilationUnit) -> Self
 pub struct slang_solidity::backend::l2_flat_contracts::ConditionalExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::ConditionalExpressionStruct::false_expression: slang_solidity::backend::l2_flat_contracts::Expression
 pub slang_solidity::backend::l2_flat_contracts::ConditionalExpressionStruct::node_id: metaslang_cst::nodes::NodeId
@@ -6300,6 +6314,9 @@ pub slang_solidity::backend::l2_flat_contracts::ForStatementStruct::iterator: co
 pub slang_solidity::backend::l2_flat_contracts::ForStatementStruct::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::ForStatementStruct
 pub fn slang_solidity::backend::l2_flat_contracts::ForStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::l2_flat_contracts::FromL1
+impl slang_solidity::backend::l2_flat_contracts::transformer::Transformer for slang_solidity::backend::l2_flat_contracts::FromL1
+pub fn slang_solidity::backend::l2_flat_contracts::FromL1::transform_contract_definition(&mut self, source: &slang_solidity::backend::l1_typed_cst::ContractDefinition) -> slang_solidity::backend::l2_flat_contracts::ContractDefinition
 pub struct slang_solidity::backend::l2_flat_contracts::FunctionCallExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::FunctionCallExpressionStruct::arguments: slang_solidity::backend::l2_flat_contracts::ArgumentsDeclaration
 pub slang_solidity::backend::l2_flat_contracts::FunctionCallExpressionStruct::node_id: metaslang_cst::nodes::NodeId

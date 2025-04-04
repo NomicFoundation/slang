@@ -1,5 +1,6 @@
 use anyhow::Result;
-use slang_solidity::compilation::InternalCompilationBuilder;
+use slang_solidity::backend::{l1_typed_cst, l2_flat_contracts};
+use slang_solidity::compilation::{self, InternalCompilationBuilder};
 use slang_solidity::utils::LanguageFacts;
 
 const MAIN_SOL_CONTENTS: &str = r#"
@@ -39,8 +40,7 @@ abstract contract Ownable {
 }
 "#;
 
-#[test]
-fn test_build_compilation_unit() -> Result<()> {
+fn build_compilation_unit() -> Result<compilation::CompilationUnit> {
     let mut internal_builder = InternalCompilationBuilder::create(LanguageFacts::LATEST_VERSION)?;
 
     let main_id = "MAIN-ID";
@@ -62,10 +62,17 @@ fn test_build_compilation_unit() -> Result<()> {
         internal_builder.add_file(ownable_id.to_string(), OWNABLE_SOL_CONTENTS);
     assert!(ownable_add_file_response.import_paths.is_empty());
 
-    let compilation_unit = internal_builder.build();
-    assert_eq!(compilation_unit.files().len(), 2);
-    assert!(compilation_unit.file(main_id).is_some());
-    assert!(compilation_unit.file(ownable_id).is_some());
+    Ok(internal_builder.build())
+}
+
+#[test]
+fn test_backend_pipeline() -> Result<()> {
+    let compilation_unit = build_compilation_unit()?;
+    let unit_l1 = l1_typed_cst::CompilationUnit::build(&compilation_unit).unwrap();
+    assert_eq!(2, unit_l1.files.len());
+
+    let unit_l2 = l2_flat_contracts::CompilationUnit::from_ast(&unit_l1);
+    assert_eq!(2, unit_l2.files.len());
 
     Ok(())
 }
