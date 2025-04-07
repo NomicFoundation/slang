@@ -26,18 +26,7 @@ fn run_test_command(cmd: &command::TestCommand) -> Result<()> {
     let shards = repo.fetch_entries()?;
     let shard_count = shards.len();
 
-    let (tx, rx) = std::sync::mpsc::channel();
-
-    let fetcher_thread = std::thread::spawn(move || {
-        for shard in shards {
-            match repo.fetch_archive(&shard) {
-                Ok(archive) => {
-                    tx.send(archive).unwrap();
-                },
-                Err(e) => eprintln!("Failed to create archive: {e}"),
-            }
-        }
-    });
+    let (tx, rx) = std::sync::mpsc::channel::<ContractArchive>();
 
     let process_thread = std::thread::spawn(move || {
         let mut events = Events::new(shard_count, 0);
@@ -48,7 +37,15 @@ fn run_test_command(cmd: &command::TestCommand) -> Result<()> {
         }
     });
 
-    fetcher_thread.join().unwrap();
+    for shard in shards {
+        match repo.fetch_archive(&shard) {
+            Ok(archive) => {
+                tx.send(archive).unwrap();
+            },
+            Err(e) => eprintln!("Failed to create archive: {e}"),
+        }
+    }
+
     process_thread.join().unwrap();
 
     Ok(())
