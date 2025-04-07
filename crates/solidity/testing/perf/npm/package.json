@@ -13,5 +13,8 @@
     "solc08": "npm:solc@0.8.26",
     "solc089": "npm:solc@0.8.9",
     "ts-node": "10.9.2"
+  },
+  "devDependencies": {
+    "@types/command-line-args": "^5.2.3"
   }
 }

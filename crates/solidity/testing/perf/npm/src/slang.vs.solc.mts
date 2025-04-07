@@ -121,28 +121,71 @@ class Comparer {
   }
 }
 
+async function logMemoryConsumption(previous: NodeJS.MemoryUsage | undefined, runGC = false): Promise<NodeJS.MemoryUsage | undefined> {
+  const hasGC = typeof global.gc == "function";
+  if (hasGC && runGC) {
+    global.gc!();
+    await sleep(100);
+  }
+
+  if (process.argv.includes("--report-memory") && previous) {
+    const current = process.memoryUsage();
+
+    if (!hasGC) {
+      console.warn("Running wihtout --expose-gc");
+    }
+    console.log(`mem: ${current.heapUsed}, ${current.external}, ${current.heapUsed - previous.heapUsed}, ${current.external - previous.external}`);
+    printTables();
+    return current;
+  }
+  else {
+    return undefined;
+  }
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function runProjects(comparer: Comparer) {
+  let memoryUsage: NodeJS.MemoryUsage | undefined = process.memoryUsage();
   await comparer.run("project/UiPoolDataProviderV2V3", "0.6.12", "0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A", "contracts/misc/UiPoolDataProviderV2V3.sol", 58, 418);
-  await comparer.run("projectDoodledBears", "0.8.11", "0x015E220901014BAE4f7e168925CD74e725e23692/sources", "DoodledBears.sol", 57, 131);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
+  await comparer.run("project/DoodledBears", "0.8.11", "0x015E220901014BAE4f7e168925CD74e725e23692/sources", "DoodledBears.sol", 57, 131);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
   await comparer.run("project/ERC721AContract", "0.8.13", "0x01665987bC6725070e56d160d75AA19d8B73273e/sources", "project:/contracts/ERC721AContract.sol", 121, 365);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
   await comparer.run("project/SeniorBond", "0.7.6", "0x0170f38fa8df1440521c8b8520BaAd0CdA132E82/sources", "contracts/SeniorBond.sol", 10, 20);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
   await comparer.run("project/Mooniswap", "0.6.12", "0x01a11a5A999E57E1B177AA2fF7fEA957605adA2b/sources", "Users/k06a/Projects/mooniswap-v2/contracts/Mooniswap.sol", 176, 672);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
   await comparer.run("project/Darts", "0.8.0", "0x01a5E3268E3987f0EE5e6Eb12fe63fa2AF992D83/sources", "contracts/Darts.sol", 17, 51);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
   await comparer.run("project/WeightedPool", "0.7.6", "0x01abc00E86C7e258823b9a055Fd62cA6CF61a163/sources", "contracts/pools/weighted/WeightedPool.sol", 143, 472);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
   await comparer.run("project/YaxisVotePower", "0.6.12", "0x01fef0d5d6fd6b5701ae913cafb11ddaee982c9a/YaxisVotePower", "contracts/governance/YaxisVotePower.sol", 27, 99);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
   await comparer.run("project/0xProject", "0.8.19", "0xProject/contracts/governance", "src/ZeroExProtocolGovernor.sol", 48, 88);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
   await comparer.run("project/Uniswap", "0.7.6", "Uniswap", "contracts/UniswapV3Factory.sol", 17, 85);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
   await comparer.run("project/AAVE", "0.8.10", "aave-v3-core-master", "contracts/protocol/pool/Pool.sol", 191, 629);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
   await comparer.run("project/GraphToken", "0.7.6", "graph_protocol/contracts", "token/GraphToken.sol", 41, 97);
+  memoryUsage = await logMemoryConsumption(memoryUsage);
   await comparer.run("project/lidofinance", "0.8.9", "lidofinance/contracts/0.8.9", "WithdrawalQueueERC721.sol", 142, 325);
+  memoryUsage = await logMemoryConsumption(memoryUsage, true);
 }
 
 if (process.env["CI"] == undefined) {
   console.error("Must run with CI=true");
   exit(-1);
 }
-const options = commandLineArgs({ name: "pattern", type: String, defaultOption: "" });
-const comparer = new Comparer(options.pattern);
+const options = commandLineArgs([{ name: "pattern", type: String, defaultValue: "" },
+{ name: "report-memory", type: Boolean, defaultValue: false }]
+);
+
+const comparer = new Comparer(options["pattern"]);
 
 await runProjects(comparer);
 
