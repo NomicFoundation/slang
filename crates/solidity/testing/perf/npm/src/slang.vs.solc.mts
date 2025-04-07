@@ -1,13 +1,12 @@
-import { testFile } from "./common.slang.mjs";
+import { printTables, testFile } from "./common.slang.mjs";
 import * as bench from "benny";
 import { testFileSolC } from "./common.solc.mjs";
 import { Summary } from "benny/lib/internal/common-types.js";
 import * as mathjs from "mathjs";
-import { INPUT_PATH, resolvePath } from "./common.mjs";
+import { checkCI, INPUT_PATH, resolvePath } from "./common.mjs";
 import path from "node:path";
 import { readdir } from "node:fs/promises";
 import commandLineArgs from "command-line-args"
-import { exit } from "node:process";
 
 // little helper function to perform the printing of numbers
 function round(n: number | mathjs.MathNumericType): string {
@@ -177,10 +176,7 @@ async function runProjects(comparer: Comparer) {
   memoryUsage = await logMemoryConsumption(memoryUsage, true);
 }
 
-if (process.env["CI"] == undefined) {
-  console.error("Must run with CI=true");
-  exit(-1);
-}
+checkCI();
 const options = commandLineArgs([{ name: "pattern", type: String, defaultValue: "" },
 { name: "report-memory", type: Boolean, defaultValue: false }]
 );
