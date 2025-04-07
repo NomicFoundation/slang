@@ -2,8 +2,9 @@ import { TerminalKind } from "@nomicfoundation/slang/cst";
 import { createBuilder } from "./common.mjs";
 import { MathNumericType, max, mean, round, std } from "mathjs";
 import assert from "node:assert";
-// // When debugging, add handleTables at the export list at the end of this imported file
-// import { handleTables } from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
+// When debugging, add handleTables at the export list at the end of this imported file
+import * as slang_raw from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
+import { exit } from "node:process";
 
 export class Record {
   file: string;
@@ -99,11 +100,19 @@ export async function testFile(languageVersion: string, file: string, expectedDe
 
 // DEBUG: See import above to enable this code
 export function printTables() {
-  // const tables: number[][] = handleTables;
-  // // The tables contain a list of elements coming in pairs:
-  // // - At even numbers, a 0 means the slot is not free, and with a number distinct from 0 the slot is free, and
-  // //   the number is the next free slot (or'ed with a constant).
-  // // - At odd numbers, the actual handle of the object
-  // const sums = tables.map((table, index) => [index, table.reduce((accu, elem, elemix) => { if ((elemix & 1) === 0 && (elem === 0)) { return (accu + 1) } else { return accu } }, 0)]);
-  // console.log(sums);
+  if (process.argv.includes("--print-tables")) {
+    if (slang_raw["handleTables"]) {
+      const tables: number[][] = slang_raw["handleTables"];
+      // The tables contain a list of elements coming in pairs:
+      // - At even numbers, a 0 means the slot is not free, and with a number distinct from 0 the slot is free, and
+      //   the number is the next free slot (or'ed with a constant).
+      // - At odd numbers, the actual handle of the object
+      const sums = tables.map((table, index) => [index, table.reduce((accu, elem, elemix) => { if ((elemix & 1) === 0 && (elem === 0)) { return (accu + 1) } else { return accu } }, 0)]);
+      console.log(sums);
+    }
+    else {
+      console.error("Asked to print tables, but they are not imported. Add `handleTables` to the list of imports in the solidity_cargo_wasm.component.js");
+      exit(-1);
+    }
+  }
 }

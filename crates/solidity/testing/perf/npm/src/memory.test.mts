@@ -101,9 +101,8 @@ async function run() {
   while (true) {
     await testFile("0.6.12", "0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A/contracts/misc/UiPoolDataProviderV2V3.sol");
     await sleep(100);
-    if (process.argv.includes("--print-tables")) {
-      printTables();
-    }
+    printTables();
+
     const { heapUsed: roundHU, external: roundE } = process.memoryUsage();
     console.log(`${i}, ${roundHU}, ${roundE}, ${roundHU - heapUsed}, ${roundE - external}`);
     heapUsed = roundHU;
@@ -114,4 +113,3 @@ async function run() {
 
 checkCI();
 await run();
-
