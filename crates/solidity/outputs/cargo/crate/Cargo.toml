@@ -43,6 +43,7 @@ solidity_language = { workspace = true }         # __REMOVE_THIS_LINE_DURING_CAR
 
 [dependencies]
 ariadne = { workspace = true, optional = true }
+indexmap = { workspace = true }
 metaslang_bindings = { workspace = true, optional = true }
 metaslang_cst = { workspace = true }
 semver = { workspace = true }

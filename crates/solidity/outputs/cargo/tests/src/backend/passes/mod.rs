@@ -12,9 +12,15 @@ pragma solidity ^0.8.29;
 import {Ownable} from "ownable.sol";
 
 contract Counter is Ownable {
+    enum State { DISABLED, ENABLED }
+
+    State _state;
     uint _count;
+    mapping (address => uint) _clickers;
+
     constructor(uint initial) Ownable() {
         _count = initial;
+        _state = State.DISABLED;
     }
     function count() public view returns (uint) {
         return _count;
@@ -22,6 +28,18 @@ contract Counter is Ownable {
     function increment(uint delta) public onlyOwner returns (uint) {
         _count += delta;
         return _count;
+    }
+    function enable() public onlyOwner {
+        _state = State.ENABLED;
+    }
+    function disable() public onlyOwner {
+        _state = State.DISABLED;
+    }
+    function click() public returns (uint) {
+        require(_state == State.ENABLED, "counter is disabled");
+        _count += 1;
+        _clickers[msg.sender] += 1;
+        return _clickers[msg.sender];
     }
 }
 "#;
