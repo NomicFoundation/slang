@@ -24,18 +24,32 @@ fn main() -> Result<()> {
 fn run_test_command(cmd: &command::TestCommand) -> Result<()> {
     let repo = Repository::new(cmd.chain)?;
     let shards = repo.fetch_entries()?;
+    let shard_count = shards.len();
 
-    let mut events = Events::new(shards.len(), 0);
+    let (tx, rx) = std::sync::mpsc::channel();
 
-    for shard in shards {
-        let archive = repo.fetch_archive(&shard)?;
+    let fetcher_thread = std::thread::spawn(move || {
+        for shard in shards {
+            match repo.fetch_archive(&shard) {
+                Ok(archive) => {
+                    tx.send(archive).unwrap();
+                },
+                Err(e) => eprintln!("Failed to create archive: {e}"),
+            }
+        }
+    });
 
-        events.start_directory(archive.contract_count());
+    let process_thread = std::thread::spawn(move || {
+        let mut events = Events::new(shard_count, 0);
+        while let Ok(archive) = rx.recv() {
+            events.start_directory(archive.contract_count());
+            run_in_parallel(&archive, &events);
+            events.finish_directory();
+        }
+    });
 
-        run_in_parallel(&archive, &events);
-
-        events.finish_directory();
-    }
+    fetcher_thread.join().unwrap();
+    process_thread.join().unwrap();
 
     Ok(())
 }
@@ -72,5 +86,5 @@ fn run_in_parallel(archive: &ContractArchive, events: &Events) {
         } else {
             events.test(TestOutcome::Passed);
         }
-    })
+    });
 }
