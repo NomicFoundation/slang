@@ -177,9 +177,12 @@ async function runProjects(comparer: Comparer) {
 }
 
 checkCI();
-const options = commandLineArgs([{ name: "pattern", type: String, defaultValue: "" },
-{ name: "report-memory", type: Boolean, defaultValue: false }]
-);
+
+const options = commandLineArgs([
+  { name: "pattern", type: String, defaultValue: "" },
+  { name: "report-memory", type: Boolean, defaultValue: false },
+  { name: "print-tables", type: Boolean, defaultValue: false }
+]);
 
 const comparer = new Comparer(options["pattern"]);
 
