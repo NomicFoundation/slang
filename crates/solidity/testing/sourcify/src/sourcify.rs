@@ -1,7 +1,7 @@
 use std::iter::Flatten;
 use std::io::{BufReader, ErrorKind, Read};
 use std::path::PathBuf;
-use std::fs::{self, ReadDir};
+use std::fs::{self, File, ReadDir};
 
 use crate::chains::Chain;
 use crate::metadata::ContractMetadata;
@@ -158,12 +158,17 @@ impl ContractArchive {
         fs::read_dir(&self.contracts_path).map(|i| i.count()).unwrap_or(0)
     }
 
-    pub fn contract_iter(&self) -> ContractArchiveIterator {
-        ContractArchiveIterator::new(self).expect("Failed to create ContractArchiveIterator")
-    }
-
     pub fn clean(&self) -> Result<()> {
         Ok(fs::remove_dir_all(&self.contracts_path)?)
+    }
+}
+
+impl IntoIterator for &ContractArchive {
+    type IntoIter = ContractArchiveIterator;
+    type Item = <ContractArchiveIterator as Iterator>::Item;
+
+    fn into_iter(self) -> Self::IntoIter {
+        ContractArchiveIterator::new(self).expect("Failed to create ContractArchiveIterator.")
     }
 }
 
@@ -177,22 +182,11 @@ pub struct ContractArchiveIterator {
     contracts: Flatten<ReadDir>,
 }
 
-pub struct Buffers {
-    source: String,
-    metadata: String,
-}
+impl Iterator for ContractArchiveIterator {
+    type Item = Result<Contract>;
 
-impl Buffers {
-    pub fn new() -> Buffers {
-        Buffers {
-            source: String::new(),
-            metadata: String::new(),
-        }
-    }
-
-    fn clear(&mut self) {
-        self.source.clear();
-        self.metadata.clear();
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next_contract()
     }
 }
 
@@ -205,8 +199,8 @@ impl ContractArchiveIterator {
         })
     }
 
-    pub fn next_contract(&mut self, buffers: &mut Buffers) -> Option<Result<Contract>> {
-        match self._next_contract(buffers) {
+    pub fn next_contract(&mut self) -> Option<Result<Contract>> {
+        match self._next_contract() {
             Ok(c) => match c {
                 Some(contract) => Some(Ok(contract)),
                 None => None,
@@ -215,17 +209,15 @@ impl ContractArchiveIterator {
         }
     }
 
-    pub fn _next_contract(&mut self, buffers: &mut Buffers) -> Result<Option<Contract>> {
+    pub fn _next_contract(&mut self) -> Result<Option<Contract>> {
         if let Some(next_contract) = self.contracts.next() {
-            buffers.clear();
-
             let contract_path = next_contract.path();
             let name = next_contract.file_name().into_string().map_err(|_| Error::msg("Could not get contract directory name"))?;
 
-            let mut metadata_file = fs::File::open(contract_path.join("metadata.json"))?;
-            metadata_file.read_to_string(&mut buffers.metadata);
+            let metadata_file = fs::File::open(contract_path.join("metadata.json"))?;
+            let reader = BufReader::new(metadata_file);
 
-            let metadata = serde_json::from_str(&buffers.metadata)?;
+            let metadata = serde_json::from_reader(reader)?;
 
             let sources_path = contract_path.join("sources");
 
@@ -252,31 +244,24 @@ impl Contract {
     /// Create a `CompilationUnit` for this contract. This includes all available source files and resolves
     /// imports, accounting for file remapping/renaming. The resulting `CompilationUnit` is ready to check for
     /// errors.
-    pub fn create_compilation_unit(&self, buffers: &mut Buffers) -> Result<CompilationUnit> {
+    pub fn create_compilation_unit(&self, buffer: &mut String) -> Result<CompilationUnit> {
         let mut builder = InternalCompilationBuilder::create(self.metadata.version.clone())?;
 
-        let mut source_iter = self.source_iter(&mut buffers.source);
+        for mut source_file in self.into_iter().flatten() {
+            buffer.clear();
+            source_file.file.read_to_string(buffer)?;
+            let AddFileResponse { import_paths } = builder.add_file(source_file.name.clone(), &buffer);
+            for import in import_paths {
+                let path = import.node().unparse();
+                let path = path
+                    .strip_prefix(|c| matches!(c, '"' | '\''))
+                    .unwrap()
+                    .strip_suffix(|c| matches!(c, '"' | '\''))
+                    .unwrap();
 
-        while let Some(s) = source_iter.next_source() {
-            match s {
-                Ok(source) => {
-                    let AddFileResponse { import_paths } = builder.add_file(source.name.clone(), &source.source);
-                    for import in import_paths {
-                        let path = import.node().unparse();
-                        let path = path
-                            .strip_prefix(|c| matches!(c, '"' | '\''))
-                            .unwrap()
-                            .strip_suffix(|c| matches!(c, '"' | '\''))
-                            .unwrap();
+                let target_filename = self.metadata.get_absolute_filename(&path);
 
-                        let target_filename = self.metadata.get_absolute_filename(&path);
-
-                        builder.resolve_import(&source.name, &import, target_filename)?;
-                    }
-                },
-                Err(e) => {
-                    println!("Failed getting source: {e}");
-                }
+                builder.resolve_import(&source_file.name, &import, target_filename)?;
             }
         }
 
@@ -286,24 +271,36 @@ impl Contract {
     pub fn sources_count(&self) -> usize {
         fs::read_dir(&self.sources_path).map(|i| i.count()).unwrap_or(0)
     }
+}
 
-    pub fn source_iter<'a>(&self, buffer: &'a mut String) -> SourceArchiveIterator<'a> {
-        SourceArchiveIterator::new(self, buffer).expect("Failed to create SourceArchiveIterator")
+impl IntoIterator for &Contract {
+    type IntoIter = SourceArchiveIterator;
+    type Item = <SourceArchiveIterator as Iterator>::Item;
+
+    fn into_iter(self) -> Self::IntoIter {
+        SourceArchiveIterator::new(self).expect("Failed to create SourceArchiveIterator.")
     }
 }
 
-pub struct SourceArchiveIterator<'a> {
+pub struct SourceArchiveIterator {
     sources: Flatten<ReadDir>,
-    source_buffer: &'a mut String,
 }
 
-impl <'a> SourceArchiveIterator<'a> {
-    fn new(contract_archive: &Contract, buffer: &'a mut String) -> Result<SourceArchiveIterator<'a>> {
+impl Iterator for SourceArchiveIterator {
+    type Item = Result<SourceFile>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next_source()        
+    }
+}
+
+impl SourceArchiveIterator {
+    fn new(contract_archive: &Contract) -> Result<SourceArchiveIterator> {
         let sources = fs::read_dir(&contract_archive.sources_path)?.flatten();
-        Ok(SourceArchiveIterator { sources, source_buffer: buffer, })
+        Ok(SourceArchiveIterator { sources })
     }
 
-    fn next_source(&mut self) -> Option<Result<SourceArchiveIteratorItem<'_>>> {
+    fn next_source(&mut self) -> Option<Result<SourceFile>> {
         match self._next_source() {
             Ok(s) => match s {
                 Some(source) => Some(Ok(source)),
@@ -313,17 +310,14 @@ impl <'a> SourceArchiveIterator<'a> {
         }
     }
 
-    fn _next_source(&mut self) -> Result<Option<SourceArchiveIteratorItem<'_>>> {
+    fn _next_source(&mut self) -> Result<Option<SourceFile>> {
         if let Some(source_file) = self.sources.next() {
             let name = source_file.file_name().into_string().map_err(|_| Error::msg("Failed to get file name"))?; 
 
-            self.source_buffer.clear();
-
-            let mut source = fs::File::open(source_file.path()).inspect_err(|e| eprintln!("Could not open file {name}: {e}"))?;
-            source.read_to_string(&mut self.source_buffer).inspect_err(|e| eprintln!("Failed to read file: {e}"))?;
-            Ok(Some(SourceArchiveIteratorItem{
+            let source = fs::File::open(source_file.path()).inspect_err(|e| eprintln!("Could not open file {name}: {e}"))?;
+            Ok(Some(SourceFile{
                 name,
-                source: &self.source_buffer,
+                file: source,
             }))
         } else {
             Ok(None)
@@ -332,9 +326,9 @@ impl <'a> SourceArchiveIterator<'a> {
     }
 }
 
-pub struct SourceArchiveIteratorItem<'it> {
+pub struct SourceFile {
     name: String,
-    source: &'it str,
+    file: File,
 }
 
 /// Helper function - create a directory, and if the directory already exits, delete the existing

@@ -80,11 +80,11 @@ impl Events {
         self.reporter.show();
     }
 
-    pub fn inc_files_count(&mut self, additional_files: usize) {
+    pub fn inc_files_count(&self, additional_files: usize) {
         self.source_files.inc_length(additional_files as u64);
     }
 
-    pub fn inc_files_processed(&mut self, files_processed: usize) {
+    pub fn inc_files_processed(&self, files_processed: usize) {
         self.source_files.inc(files_processed as u64);
     }
 
@@ -100,7 +100,6 @@ impl Events {
 
     pub fn test(&self, outcome: TestOutcome) {
         self.current_shard.inc(1);
-        // self.source_files.inc(1);
 
         self.passed.inc_length(1);
         self.failed.inc_length(1);

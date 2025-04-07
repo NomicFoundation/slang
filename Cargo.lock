@@ -2601,6 +2601,7 @@ dependencies = [
  "console",
  "indicatif",
  "infra_utils",
+ "rayon",
  "reqwest",
  "semver",
  "serde",
