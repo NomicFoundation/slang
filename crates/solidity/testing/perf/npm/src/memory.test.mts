@@ -3,7 +3,8 @@ import fs from "node:fs";
 import assert from "node:assert";
 import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
 import { TerminalKind } from "@nomicfoundation/slang/cst";
-import { exit } from "node:process";
+import { checkCI, sleep } from "./common.mjs";
+import { printTables } from "./common.slang.mjs";
 
 export const INPUT_PATH = "crates/solidity/testing/perf/npm/inputs";
 
@@ -100,6 +101,9 @@ async function run() {
   while (true) {
     await testFile("0.6.12", "0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A/contracts/misc/UiPoolDataProviderV2V3.sol");
     await sleep(100);
+    if (process.argv.includes("--print-tables")) {
+      printTables();
+    }
     const { heapUsed: roundHU, external: roundE } = process.memoryUsage();
     console.log(`${i}, ${roundHU}, ${roundE}, ${roundHU - heapUsed}, ${roundE - external}`);
     heapUsed = roundHU;
@@ -108,15 +112,6 @@ async function run() {
   }
 }
 
-
-if (process.env["CI"] == undefined) {
-  console.error("Must run with CI=true");
-  exit(-1);
-}
-
+checkCI();
 await run();
-
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 
