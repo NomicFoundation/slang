@@ -46,14 +46,34 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
     }
 
     pub fn definition_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Definition<KT>> {
-        self.graph.definition_at(cursor).map(|handle| Definition {
-            owner: Rc::clone(self),
-            handle,
-        })
+        self.graph
+            .definition_by_id(cursor.node().id())
+            .map(|handle| Definition {
+                owner: Rc::clone(self),
+                handle,
+            })
+    }
+
+    pub fn definition_by_node_id(self: &Rc<Self>, node_id: usize) -> Option<Definition<KT>> {
+        self.graph
+            .definition_by_id(node_id)
+            .map(|handle| Definition {
+                owner: Rc::clone(self),
+                handle,
+            })
     }
 
     pub fn reference_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Reference<KT>> {
-        self.graph.reference_at(cursor).map(|handle| Reference {
+        self.graph
+            .reference_by_id(cursor.node().id())
+            .map(|handle| Reference {
+                owner: Rc::clone(self),
+                handle,
+            })
+    }
+
+    pub fn reference_by_node_id(self: &Rc<Self>, node_id: usize) -> Option<Reference<KT>> {
+        self.graph.reference_by_id(node_id).map(|handle| Reference {
             owner: Rc::clone(self),
             handle,
         })
