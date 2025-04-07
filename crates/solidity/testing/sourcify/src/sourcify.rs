@@ -1,5 +1,5 @@
 use std::iter::Flatten;
-use std::io::{ErrorKind, Read};
+use std::io::{BufReader, ErrorKind, Read};
 use std::path::PathBuf;
 use std::fs::{self, ReadDir};
 
@@ -42,9 +42,7 @@ impl Repository {
             bail!("Error fetching manifest.json");
         }
 
-        let body = res.text()?;
-        let manifest: Manifest = serde_json::from_str(&body)?;
-
+        let manifest: Manifest = res.json()?;
         Ok(manifest.get_chain_shards(self.chain))
     }
 
