@@ -1,0 +1,806 @@
+{
+  "compiler": { "version": "0.8.17+commit.8df45f5f" },
+  "language": "Solidity",
+  "output": {
+    "abi": [
+      {
+        "inputs": [
+          { "internalType": "string", "name": "_name", "type": "string" },
+          { "internalType": "string", "name": "_symbol", "type": "string" },
+          { "internalType": "string", "name": "_uri", "type": "string" },
+          { "internalType": "address[]", "name": "_payees", "type": "address[]" },
+          { "internalType": "uint256[]", "name": "_shares", "type": "uint256[]" },
+          { "internalType": "address", "name": "_owner", "type": "address" },
+          { "internalType": "address", "name": "_r2eAddress", "type": "address" },
+          { "internalType": "address[]", "name": "_fiatMinters", "type": "address[]" },
+          { "internalType": "string", "name": "_provenance", "type": "string" },
+          {
+            "components": [
+              { "internalType": "uint16", "name": "maxSupply", "type": "uint16" },
+              { "internalType": "enum ERC721AContract.PublicMintType", "name": "pubMintType", "type": "uint8" },
+              { "internalType": "uint16", "name": "pubMaxMint", "type": "uint16" },
+              { "internalType": "uint72", "name": "preSalePrice", "type": "uint72" },
+              { "internalType": "uint72", "name": "pubSalePrice", "type": "uint72" },
+              { "internalType": "bool", "name": "preSaleIsActive", "type": "bool" },
+              { "internalType": "bool", "name": "pubSaleIsActive", "type": "bool" },
+              { "internalType": "bool", "name": "claimIsActive", "type": "bool" },
+              { "internalType": "uint8", "name": "preSalePhase", "type": "uint8" },
+              { "internalType": "bool", "name": "transferrable", "type": "bool" },
+              { "internalType": "bool", "name": "supplyLock", "type": "bool" }
+            ],
+            "internalType": "struct ERC721AContract.Token",
+            "name": "_token",
+            "type": "tuple"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
+      },
+      { "inputs": [], "name": "ApprovalCallerNotOwnerNorApproved", "type": "error" },
+      { "inputs": [], "name": "ApprovalQueryForNonexistentToken", "type": "error" },
+      { "inputs": [], "name": "BalanceQueryForZeroAddress", "type": "error" },
+      { "inputs": [], "name": "MintERC2309QuantityExceedsLimit", "type": "error" },
+      { "inputs": [], "name": "MintToZeroAddress", "type": "error" },
+      { "inputs": [], "name": "MintZeroQuantity", "type": "error" },
+      {
+        "inputs": [{ "internalType": "address", "name": "operator", "type": "address" }],
+        "name": "OperatorNotAllowed",
+        "type": "error"
+      },
+      { "inputs": [], "name": "OwnerQueryForNonexistentToken", "type": "error" },
+      { "inputs": [], "name": "OwnershipNotInitializedForExtraData", "type": "error" },
+      { "inputs": [], "name": "TransferCallerNotOwnerNorApproved", "type": "error" },
+      { "inputs": [], "name": "TransferFromIncorrectOwner", "type": "error" },
+      { "inputs": [], "name": "TransferToNonERC721ReceiverImplementer", "type": "error" },
+      { "inputs": [], "name": "TransferToZeroAddress", "type": "error" },
+      { "inputs": [], "name": "URIQueryForNonexistentToken", "type": "error" },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "owner", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "approved", "type": "address" },
+          { "indexed": true, "internalType": "uint256", "name": "tokenId", "type": "uint256" }
+        ],
+        "name": "Approval",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "owner", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "operator", "type": "address" },
+          { "indexed": false, "internalType": "bool", "name": "approved", "type": "bool" }
+        ],
+        "name": "ApprovalForAll",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "uint256", "name": "fromTokenId", "type": "uint256" },
+          { "indexed": false, "internalType": "uint256", "name": "toTokenId", "type": "uint256" },
+          { "indexed": true, "internalType": "address", "name": "from", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "to", "type": "address" }
+        ],
+        "name": "ConsecutiveTransfer",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "contract IERC20", "name": "token", "type": "address" },
+          { "indexed": false, "internalType": "address", "name": "to", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "ERC20PaymentReleased",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "previousOwner", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "newOwner", "type": "address" }
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": false, "internalType": "address", "name": "account", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "shares", "type": "uint256" }
+        ],
+        "name": "PayeeAdded",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": false, "internalType": "address", "name": "from", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "PaymentReceived",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": false, "internalType": "address", "name": "to", "type": "address" },
+          { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }
+        ],
+        "name": "PaymentReleased",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          { "indexed": true, "internalType": "address", "name": "from", "type": "address" },
+          { "indexed": true, "internalType": "address", "name": "to", "type": "address" },
+          { "indexed": true, "internalType": "uint256", "name": "tokenId", "type": "uint256" }
+        ],
+        "name": "Transfer",
+        "type": "event"
+      },
+      {
+        "inputs": [],
+        "name": "OPERATOR_FILTER_REGISTRY",
+        "outputs": [{ "internalType": "contract IOperatorFilterRegistry", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address[]", "name": "_addresses", "type": "address[]" },
+          { "internalType": "uint16[]", "name": "_quantities", "type": "uint16[]" }
+        ],
+        "name": "airdrop",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "operator", "type": "address" },
+          { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
+        ],
+        "name": "approve",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }],
+        "name": "balanceOf",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "uint256[]", "name": "_ids", "type": "uint256[]" }],
+        "name": "burn",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "claimMerkleRoot",
+        "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "name": "fiatMinters",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }],
+        "name": "getApproved",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "name": "hasClaimed",
+        "outputs": [{ "internalType": "uint16", "name": "", "type": "uint16" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "name": "hasMinted",
+        "outputs": [{ "internalType": "uint16", "name": "", "type": "uint16" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "owner", "type": "address" },
+          { "internalType": "address", "name": "operator", "type": "address" }
+        ],
+        "name": "isApprovedForAll",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      { "inputs": [], "name": "lockSupply", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "_address", "type": "address" },
+          { "internalType": "uint256", "name": "_quantity", "type": "uint256" },
+          { "internalType": "uint256", "name": "_maxMint", "type": "uint256" },
+          { "internalType": "bytes32[]", "name": "_proof", "type": "bytes32[]" },
+          { "internalType": "address payable", "name": "_referrer", "type": "address" }
+        ],
+        "name": "mint",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "mintpass",
+        "outputs": [{ "internalType": "contract IMintPass", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "name",
+        "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "uint256", "name": "tokenId", "type": "uint256" }],
+        "name": "ownerOf",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "uint256", "name": "index", "type": "uint256" }],
+        "name": "payee",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "provenance",
+        "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "r2eAddress",
+        "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
+        "name": "releasable",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "contract IERC20", "name": "token", "type": "address" },
+          { "internalType": "address", "name": "account", "type": "address" }
+        ],
+        "name": "releasable",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address payable", "name": "account", "type": "address" }],
+        "name": "release",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "contract IERC20", "name": "token", "type": "address" },
+          { "internalType": "address", "name": "account", "type": "address" }
+        ],
+        "name": "release",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "contract IERC20", "name": "token", "type": "address" },
+          { "internalType": "address", "name": "account", "type": "address" }
+        ],
+        "name": "released",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
+        "name": "released",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      { "inputs": [], "name": "renounceOwnership", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "from", "type": "address" },
+          { "internalType": "address", "name": "to", "type": "address" },
+          { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
+        ],
+        "name": "safeTransferFrom",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "from", "type": "address" },
+          { "internalType": "address", "name": "to", "type": "address" },
+          { "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+          { "internalType": "bytes", "name": "data", "type": "bytes" }
+        ],
+        "name": "safeTransferFrom",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "saleMerkleRoot",
+        "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "operator", "type": "address" },
+          { "internalType": "bool", "name": "approved", "type": "bool" }
+        ],
+        "name": "setApprovalForAll",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "string", "name": "_uri", "type": "string" }],
+        "name": "setBaseTokenURI",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "bytes32", "name": "_root", "type": "bytes32" }],
+        "name": "setClaimRoot",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "_address", "type": "address" },
+          { "internalType": "bool", "name": "_allowed", "type": "bool" }
+        ],
+        "name": "setFiatMinter",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "_address", "type": "address" }],
+        "name": "setMintPass",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "uint72", "name": "_preSalePrice", "type": "uint72" },
+          { "internalType": "uint72", "name": "_pubSalePrice", "type": "uint72" }
+        ],
+        "name": "setPrice",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "bytes32", "name": "_root", "type": "bytes32" }],
+        "name": "setSaleRoot",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
+        "name": "shares",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "bytes4", "name": "interfaceId", "type": "bytes4" }],
+        "name": "supportsInterface",
+        "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "symbol",
+        "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "token",
+        "outputs": [
+          { "internalType": "uint16", "name": "maxSupply", "type": "uint16" },
+          { "internalType": "enum ERC721AContract.PublicMintType", "name": "pubMintType", "type": "uint8" },
+          { "internalType": "uint16", "name": "pubMaxMint", "type": "uint16" },
+          { "internalType": "uint72", "name": "preSalePrice", "type": "uint72" },
+          { "internalType": "uint72", "name": "pubSalePrice", "type": "uint72" },
+          { "internalType": "bool", "name": "preSaleIsActive", "type": "bool" },
+          { "internalType": "bool", "name": "pubSaleIsActive", "type": "bool" },
+          { "internalType": "bool", "name": "claimIsActive", "type": "bool" },
+          { "internalType": "uint8", "name": "preSalePhase", "type": "uint8" },
+          { "internalType": "bool", "name": "transferrable", "type": "bool" },
+          { "internalType": "bool", "name": "supplyLock", "type": "bool" }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "uint256", "name": "_tokenId", "type": "uint256" }],
+        "name": "tokenURI",
+        "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "contract IERC20", "name": "token", "type": "address" }],
+        "name": "totalReleased",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "totalReleased",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "totalShares",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "totalSupply",
+        "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "address", "name": "from", "type": "address" },
+          { "internalType": "address", "name": "to", "type": "address" },
+          { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
+        ],
+        "name": "transferFrom",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [{ "internalType": "address", "name": "newOwner", "type": "address" }],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "uint16", "name": "_maxSupply", "type": "uint16" },
+          { "internalType": "uint16", "name": "_pubMaxMint", "type": "uint16" },
+          { "internalType": "enum ERC721AContract.PublicMintType", "name": "_pubMintType", "type": "uint8" }
+        ],
+        "name": "updateConfig",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          { "internalType": "bool", "name": "_preSaleIsActive", "type": "bool" },
+          { "internalType": "bool", "name": "_pubSaleIsActive", "type": "bool" },
+          { "internalType": "bool", "name": "_claimIsActive", "type": "bool" },
+          { "internalType": "uint8", "name": "_preSalePhase", "type": "uint8" }
+        ],
+        "name": "updateSaleState",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      { "stateMutability": "payable", "type": "receive" }
+    ],
+    "devdoc": {
+      "kind": "dev",
+      "methods": {
+        "balanceOf(address)": { "details": "Returns the number of tokens in `owner`'s account." },
+        "getApproved(uint256)": {
+          "details": "Returns the account approved for `tokenId` token. Requirements: - `tokenId` must exist."
+        },
+        "isApprovedForAll(address,address)": {
+          "details": "Returns if the `operator` is allowed to manage all of the assets of `owner`. See {setApprovalForAll}."
+        },
+        "name()": { "details": "Returns the token collection name." },
+        "owner()": { "details": "Returns the address of the current owner." },
+        "ownerOf(uint256)": {
+          "details": "Returns the owner of the `tokenId` token. Requirements: - `tokenId` must exist."
+        },
+        "payee(uint256)": { "details": "Getter for the address of the payee number `index`." },
+        "releasable(address)": { "details": "Getter for the amount of payee's releasable Ether." },
+        "releasable(address,address)": {
+          "details": "Getter for the amount of payee's releasable `token` tokens. `token` should be the address of an IERC20 contract."
+        },
+        "release(address)": {
+          "details": "Triggers a transfer to `account` of the amount of Ether they are owed, according to their percentage of the total shares and their previous withdrawals."
+        },
+        "release(address,address)": {
+          "details": "Triggers a transfer to `account` of the amount of `token` tokens they are owed, according to their percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20 contract."
+        },
+        "released(address)": { "details": "Getter for the amount of Ether already released to a payee." },
+        "released(address,address)": {
+          "details": "Getter for the amount of `token` tokens already released to a payee. `token` should be the address of an IERC20 contract."
+        },
+        "renounceOwnership()": {
+          "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+        },
+        "safeTransferFrom(address,address,uint256)": {
+          "details": "Equivalent to `safeTransferFrom(from, to, tokenId, '')`."
+        },
+        "setApprovalForAll(address,bool)": {
+          "details": "Approve or remove `operator` as an operator for the caller. Operators can call {transferFrom} or {safeTransferFrom} for any token owned by the caller. Requirements: - The `operator` cannot be the caller. Emits an {ApprovalForAll} event."
+        },
+        "shares(address)": { "details": "Getter for the amount of shares held by an account." },
+        "supportsInterface(bytes4)": {
+          "details": "Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding [EIP section](https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified) to learn more about how these ids are created. This function call must use less than 30000 gas."
+        },
+        "symbol()": { "details": "Returns the token collection symbol." },
+        "totalReleased()": { "details": "Getter for the total amount of Ether already released." },
+        "totalReleased(address)": {
+          "details": "Getter for the total amount of `token` already released. `token` should be the address of an IERC20 contract."
+        },
+        "totalShares()": { "details": "Getter for the total shares held by payees." },
+        "totalSupply()": {
+          "details": "Returns the total number of tokens in existence. Burned tokens will reduce the count. To get the total number of tokens minted, please see {_totalMinted}."
+        },
+        "transferFrom(address,address,uint256)": {
+          "details": "Transfers `tokenId` from `from` to `to`. Requirements: - `from` cannot be the zero address. - `to` cannot be the zero address. - `tokenId` token must be owned by `from`. - If the caller is not `from`, it must be approved to move this token by either {approve} or {setApprovalForAll}. Emits a {Transfer} event."
+        },
+        "transferOwnership(address)": {
+          "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+        }
+      },
+      "version": 1
+    },
+    "userdoc": {
+      "errors": {
+        "ApprovalCallerNotOwnerNorApproved()": [
+          { "notice": "The caller must own the token or be an approved operator." }
+        ],
+        "ApprovalQueryForNonexistentToken()": [{ "notice": "The token does not exist." }],
+        "BalanceQueryForZeroAddress()": [{ "notice": "Cannot query the balance for the zero address." }],
+        "MintERC2309QuantityExceedsLimit()": [
+          { "notice": "The `quantity` minted with ERC2309 exceeds the safety limit." }
+        ],
+        "MintToZeroAddress()": [{ "notice": "Cannot mint to the zero address." }],
+        "MintZeroQuantity()": [{ "notice": "The quantity of tokens minted must be more than zero." }],
+        "OwnerQueryForNonexistentToken()": [{ "notice": "The token does not exist." }],
+        "OwnershipNotInitializedForExtraData()": [
+          { "notice": "The `extraData` cannot be set on an unintialized ownership slot." }
+        ],
+        "TransferCallerNotOwnerNorApproved()": [
+          { "notice": "The caller must own the token or be an approved operator." }
+        ],
+        "TransferFromIncorrectOwner()": [{ "notice": "The token must be owned by `from`." }],
+        "TransferToNonERC721ReceiverImplementer()": [
+          { "notice": "Cannot safely transfer to a contract that does not implement the ERC721Receiver interface." }
+        ],
+        "TransferToZeroAddress()": [{ "notice": "Cannot transfer to the zero address." }],
+        "URIQueryForNonexistentToken()": [{ "notice": "The token does not exist." }]
+      },
+      "kind": "user",
+      "methods": {},
+      "version": 1
+    }
+  },
+  "settings": {
+    "compilationTarget": { "project:/contracts/ERC721AContract.sol": "ERC721AContract" },
+    "evmVersion": "london",
+    "libraries": {},
+    "metadata": { "bytecodeHash": "ipfs" },
+    "optimizer": { "enabled": true, "runs": 10 },
+    "remappings": []
+  },
+  "sources": {
+    "@openzeppelin/contracts/access/Ownable.sol": {
+      "keccak256": "0xa94b34880e3c1b0b931662cb1c09e5dfa6662f31cba80e07c5ee71cd135c9673",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://40fb1b5102468f783961d0af743f91b9980cf66b50d1d12009f6bb1869cea4d2",
+        "dweb:/ipfs/QmYqEbJML4jB1GHbzD4cUZDtJg5wVwNm3vDJq1GbyDus8y"
+      ]
+    },
+    "@openzeppelin/contracts/finance/PaymentSplitter.sol": {
+      "keccak256": "0xba00a079c0def02f9e905ed091f01bcf9caa41ec215862a315e9f3838be61cdc",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://64c2cac21034117cbda842f32ae50ab87aa0e71ffbeb94d9b6051f8085abd8a7",
+        "dweb:/ipfs/QmYUCe45jDezpnK9y7ecqZVy1iECqW63mUrgqnM6YZdrrF"
+      ]
+    },
+    "@openzeppelin/contracts/security/ReentrancyGuard.sol": {
+      "keccak256": "0x190dd6f8d592b7e4e930feb7f4313aeb8e1c4ad3154c27ce1cf6a512fc30d8cc",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://4ce8dfb62d0c4fa260d6eec8f1cd47f5f2a044e11bde5b31d18072fa6e7d9010",
+        "dweb:/ipfs/QmTyFztU3tLEcEDnqqiaW4UJetqsU77LXc6pjc9oTXCK5u"
+      ]
+    },
+    "@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+      "keccak256": "0x9750c6b834f7b43000631af5cc30001c5f547b3ceb3635488f140f60e897ea6b",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://5a7d5b1ef5d8d5889ad2ed89d8619c09383b80b72ab226e0fe7bde1636481e34",
+        "dweb:/ipfs/QmebXWgtEfumQGBdVeM6c71McLixYXQP5Bk6kKXuoY4Bmr"
+      ]
+    },
+    "@openzeppelin/contracts/token/ERC20/extensions/draft-IERC20Permit.sol": {
+      "keccak256": "0xf41ca991f30855bf80ffd11e9347856a517b977f0a6c2d52e6421a99b7840329",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://b2717fd2bdac99daa960a6de500754ea1b932093c946388c381da48658234b95",
+        "dweb:/ipfs/QmP6QVMn6UeA3ByahyJbYQr5M6coHKBKsf3ySZSfbyA8R7"
+      ]
+    },
+    "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol": {
+      "keccak256": "0x9b72f93be69ca894d8492c244259615c4a742afc8d63720dbc8bb81087d9b238",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://f5a7b96e511be78d5cdf635c784e6ab8cdd38625bb8cafb8a80914a1c89cf0f6",
+        "dweb:/ipfs/QmVzTCwJxQAkjRQHboT5QrvsVJGWQHgfEjeTbvyxoKBrds"
+      ]
+    },
+    "@openzeppelin/contracts/utils/Address.sol": {
+      "keccak256": "0xf96f969e24029d43d0df89e59d365f277021dac62b48e1c1e3ebe0acdd7f1ca1",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://ec772b45a624be516f1c81970caa8a2e144301e9d0921cbc1a2789fef39a1269",
+        "dweb:/ipfs/QmNyjwxCrGhQMyzLD93oUobJXVe9ceJvRvfXwbEtuxPiEj"
+      ]
+    },
+    "@openzeppelin/contracts/utils/Context.sol": {
+      "keccak256": "0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://6df0ddf21ce9f58271bdfaa85cde98b200ef242a05a3f85c2bc10a8294800a92",
+        "dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3"
+      ]
+    },
+    "@openzeppelin/contracts/utils/Strings.sol": {
+      "keccak256": "0xa4d1d62251f8574deb032a35fc948386a9b4de74b812d4f545a1ac120486b48a",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://8c969013129ba9e651a20735ef659fef6d8a1139ea3607bd4b26ddea2d645634",
+        "dweb:/ipfs/QmVhVa6LGuzAcB8qgDtVHRkucn4ihj5UZr8xBLcJkP6ucb"
+      ]
+    },
+    "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol": {
+      "keccak256": "0xd466e8b07f4c6220eac16da5127f3ff142e65f0c15c03c7d38f257b02c8585e1",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://e6b3cab69f655e40117bbdd8e68d7423f26d1b24248fb189c295f08de8940616",
+        "dweb:/ipfs/QmWoyRthsBDMa7gJpH5UCjpa8uNUQfyaGbSgY3uvhBH9F3"
+      ]
+    },
+    "@openzeppelin/contracts/utils/math/Math.sol": {
+      "keccak256": "0xa1e8e83cd0087785df04ac79fb395d9f3684caeaf973d9e2c71caef723a3a5d6",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://33bbf48cc069be677705037ba7520c22b1b622c23b33e1a71495f2d36549d40b",
+        "dweb:/ipfs/Qmct36zWXv3j7LZB83uwbg7TXwnZSN1fqHNDZ93GG98bGz"
+      ]
+    },
+    "erc721a/contracts/ERC721A.sol": {
+      "keccak256": "0x23116c16976b7d8c0c714ba1b38ae6b16c16fc90ec69b568fb1ebf1bc063e01c",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://b7874e48418b55b9d718680915454f2b0054d19d2a387e123b0c139294d0e809",
+        "dweb:/ipfs/QmdryJHATT4R454JY8FXCE5qTxanYWfjGKGMv5U6YJntWy"
+      ]
+    },
+    "erc721a/contracts/IERC721A.sol": {
+      "keccak256": "0xa31dfe2635a25f899e279befef27ffcc02fd16e636c58d4c251a303f2355f7ad",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://284680b4fdbf52b2aa888f7988447568ee82c5d1585c1535d985ff25153bc3b9",
+        "dweb:/ipfs/QmTWfDch6XJMwVLA4CY2pMedzrLWoN8ZdgYZ1UbRzesysz"
+      ]
+    },
+    "project:/contracts/ERC721AContract.sol": {
+      "keccak256": "0xf83c23a1af9574806aabce1dbf505ffaa5a9ad255e2ca6c2fed7a16ddf11bfac",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://bb67c8cba425e8826f766dc7649b3cac36e850c8ede64d9b74f240d14d0e4ebf",
+        "dweb:/ipfs/QmTyRbW5UWVVtbJ4VqNW5Jt9p7oJhTkcEZUP2nE7NkRorT"
+      ]
+    },
+    "project:/contracts/IMintPass.sol": {
+      "keccak256": "0xa68cdd810a43f003cd543cc2481b27fccd9c9dc569a819f93933cc56186b522c",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://67b3acfebcd84a3be27cca029b5641dad28c37bece302321e1f6effaa8e2915b",
+        "dweb:/ipfs/QmR2gJpoR5Ayn9x2waZ8J1djxvAQhfSACydohKimFYHKYu"
+      ]
+    },
+    "project:/contracts/opensea/DefaultOperatorFilterer.sol": {
+      "keccak256": "0x1d6616260cb0fa3a3c56c9db3c29b1db6037d0f30049dca5e94b4896999df991",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://dd672610b2df718151182ded4dac2c22be41ca2c3e981c2b2449c11bebcde1c6",
+        "dweb:/ipfs/QmNN4v58xrk1UtLbM5QHHNHaXShBv5fGXy7U2EhWWDXjj8"
+      ]
+    },
+    "project:/contracts/opensea/IOperatorFilterRegistry.sol": {
+      "keccak256": "0x0e6751a391939afcda79fde27c10b2b27c21041b5b9c81db28233fcdc1a2f9ba",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://eced709a040d7a4508174e96baa5cb8e9c323b10708be26ba1860945fe5aaac2",
+        "dweb:/ipfs/QmPd5q5JioYG4JeYYoRyQYSjHEwddfjXyxtgDKpeNyefYU"
+      ]
+    },
+    "project:/contracts/opensea/OperatorFilterer.sol": {
+      "keccak256": "0xcdf355575d1bd6730eab09060a2fbb2d59f2c9b92de8383d35960ecc1bfc0db3",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://5ab3cb815cda380daa8661e0ba88afba2ad2b06786eef74bf7a685834eb589ae",
+        "dweb:/ipfs/QmQyJGz4cXEWUvFdL52iJcooMDihJzXP9WSUn9gb8PdMDS"
+      ]
+    },
+    "refer2earn/Referable.sol": {
+      "keccak256": "0x6b9cce3b9814edd3176b822303e4b393693b1160a5a20cd1d10de2810960e920",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://6b9414220f258655343bbee6bc11e4e5a37831bc1e7b9ed8fe7df573a3a880ab",
+        "dweb:/ipfs/QmRt4V6wbpB7aenYZSKmn1eZ2wuLTHeW6vP7gut5RCvErf"
+      ]
+    }
+  },
+  "version": 1
+}
