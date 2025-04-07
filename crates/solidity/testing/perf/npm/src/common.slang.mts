@@ -101,8 +101,8 @@ export async function testFile(languageVersion: string, file: string, expectedDe
 // DEBUG: See import above to enable this code
 export function printTables() {
   if (process.argv.includes("--print-tables")) {
-    if (slang_raw["handleTables"]) {
-      const tables: number[][] = slang_raw["handleTables"];
+    if ("handleTables" in slang_raw) {
+      const tables = slang_raw["handleTables"] as number[][];
       // The tables contain a list of elements coming in pairs:
       // - At even numbers, a 0 means the slot is not free, and with a number distinct from 0 the slot is free, and
       //   the number is the next free slot (or'ed with a constant).
