@@ -12,8 +12,16 @@ pub enum Commands {
     Test(TestCommand),
 }
 
+// Need: sharding options
+
 #[derive(Debug, Parser)]
 pub struct TestCommand {
     #[command(subcommand)]
-    pub chain: Chain
+    pub chain: Chain,
+
+    #[arg(long, default_value_t = false)]
+    pub check_bindings: bool,
+
+    #[arg(long, default_value_t = false)]
+    pub trace: bool,
 }

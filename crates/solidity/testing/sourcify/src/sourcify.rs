@@ -4,10 +4,12 @@ use std::path::PathBuf;
 use std::fs::{self, File, ReadDir};
 
 use crate::chains::Chain;
+use crate::compilation_builder::CompilationBuilder;
 use crate::metadata::ContractMetadata;
 
 use anyhow::{bail, Error, Result};
 use reqwest::blocking::Client;
+use semver::Version;
 use serde::Deserialize;
 use slang_solidity::compilation::{AddFileResponse, CompilationUnit, InternalCompilationBuilder};
 use tar::Archive;
@@ -236,40 +238,34 @@ impl ContractArchiveIterator {
 /// processed, but can be found in the directory at `sources_path`.
 pub struct Contract {
     pub name: String,
+    pub metadata: ContractMetadata,
     sources_path: PathBuf,
-    metadata: ContractMetadata,
 }
 
 impl Contract {
     /// Create a `CompilationUnit` for this contract. This includes all available source files and resolves
     /// imports, accounting for file remapping/renaming. The resulting `CompilationUnit` is ready to check for
     /// errors.
-    pub fn create_compilation_unit(&self, buffer: &mut String) -> Result<CompilationUnit> {
-        let mut builder = InternalCompilationBuilder::create(self.metadata.version.clone())?;
+    pub fn create_compilation_unit(&self) -> Result<CompilationUnit> {
+        let mut builder = CompilationBuilder::new(self)?;
+        builder.create_compilation_unit()
+    }
 
-        for mut source_file in self.into_iter().flatten() {
-            buffer.clear();
-            source_file.file.read_to_string(buffer)?;
-            let AddFileResponse { import_paths } = builder.add_file(source_file.name.clone(), &buffer);
-            for import in import_paths {
-                let path = import.node().unparse();
-                let path = path
-                    .strip_prefix(|c| matches!(c, '"' | '\''))
-                    .unwrap()
-                    .strip_suffix(|c| matches!(c, '"' | '\''))
-                    .unwrap();
+    pub fn entrypoint(&self) -> Result<String> {
+        self.metadata.get_real_filename(&self.metadata.target)
+    }
 
-                let target_filename = self.metadata.get_absolute_filename(&path);
-
-                builder.resolve_import(&source_file.name, &import, target_filename)?;
-            }
-        }
-
-        Ok(builder.build())
+    pub fn read_file(&self, name: &str, buffer: &mut String) -> Result<usize> {
+        let mut file = fs::File::open(self.sources_path.join(name))?;
+        file.read_to_string(buffer).map_err(Error::new)
     }
 
     pub fn sources_count(&self) -> usize {
         fs::read_dir(&self.sources_path).map(|i| i.count()).unwrap_or(0)
+    }
+
+    pub fn version(&self) -> Version {
+        self.metadata.version.clone()
     }
 }
 
@@ -327,7 +323,7 @@ impl SourceArchiveIterator {
 }
 
 pub struct SourceFile {
-    name: String,
+    pub name: String,
     file: File,
 }
 
