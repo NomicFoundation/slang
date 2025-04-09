@@ -23,7 +23,7 @@ In Node.js, for instance, [finalizers are not run](https://github.com/rustwasm/w
 If your application runs Slang in a tight loop, it is a good idea to add an asynchronous call, such as sleeping for a few milliseconds:
 
 ```javascript
-await new Promise(r => setTimeout(r, 10));
+await new Promise((r) => setTimeout(r, 10));
 ```
 
 In our tests, adding this timeout was sufficient to give the `FinalizationRegistry` time to properly clean up the objects. The external memory reached a peak and then remained steady.
