@@ -5,8 +5,8 @@ use crate::backend::l1_typed_cst::{
     MappingKeyType, MappingType, Parameter, TypeName,
 };
 use crate::backend::types::{
-    ContractType, DataLocation, EnumType, FunctionTypeKind, StateVariable, StructField, StructType,
-    Type, TypeDefinition, TypeId, TypeRegistry, UserDefinedValueType,
+    ContractType, DataLocation, EnumType, FunctionTypeKind, InterfaceType, StateVariable,
+    StructField, StructType, Type, TypeDefinition, TypeId, TypeRegistry, UserDefinedValueType,
 };
 use crate::bindings::{BindingGraph, BindingLocation};
 use crate::cst::NonterminalKind;
@@ -192,6 +192,9 @@ impl Pass {
             NonterminalKind::ContractDefinition => {
                 self.types.register_type(Type::Contract { node_id })
             }
+            NonterminalKind::InterfaceDefinition => {
+                self.types.register_type(Type::Interface { node_id })
+            }
             NonterminalKind::EnumDefinition => self.types.register_type(Type::Enum { node_id }),
             NonterminalKind::StructDefinition => {
                 let Some(location) = location else {
@@ -238,6 +241,14 @@ impl l1_typed_cst::visitor::Visitor for Pass {
                 node_id: target.node_id,
                 name: target.name.unparse(),
                 state_variables,
+            }));
+    }
+
+    fn leave_interface_definition(&mut self, target: &l1_typed_cst::InterfaceDefinition) {
+        self.types
+            .register_definition(TypeDefinition::Interface(InterfaceType {
+                node_id: target.node_id,
+                name: target.name.unparse(),
             }));
     }
 

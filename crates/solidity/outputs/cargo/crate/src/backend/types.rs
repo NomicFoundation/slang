@@ -77,6 +77,7 @@ impl Default for TypeRegistry {
 pub enum TypeDefinition {
     Contract(ContractType),
     Enum(EnumType),
+    Interface(InterfaceType),
     Struct(StructType),
     UserDefinedValueType(UserDefinedValueType),
 }
@@ -86,6 +87,7 @@ impl TypeDefinition {
         match self {
             Self::Contract(ContractType { node_id, .. })
             | Self::Enum(EnumType { node_id, .. })
+            | Self::Interface(InterfaceType { node_id, .. })
             | Self::Struct(StructType { node_id, .. })
             | Self::UserDefinedValueType(UserDefinedValueType { node_id, .. }) => *node_id,
         }
@@ -104,6 +106,12 @@ pub struct StateVariable {
     pub node_id: NodeId,
     pub name: String,
     pub type_id: TypeId,
+}
+
+#[derive(Debug, Eq, PartialEq)]
+pub struct InterfaceType {
+    pub node_id: NodeId,
+    pub name: String,
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -177,6 +185,9 @@ pub enum Type {
         signed: bool,
         bits: u32,
     },
+    Interface {
+        node_id: NodeId,
+    },
     Mapping {
         key_name: Option<String>,
         key_type_id: TypeId,
@@ -215,10 +226,11 @@ pub enum FunctionTypeKind {
 impl Type {
     pub fn node_id(&self) -> Option<NodeId> {
         match self {
-            Self::Contract { node_id, .. } => Some(*node_id),
-            Self::Struct { node_id, .. } => Some(*node_id),
-            Self::Enum { node_id, .. } => Some(*node_id),
-            Self::UserDefinedValueType { node_id, .. } => Some(*node_id),
+            Self::Contract { node_id, .. }
+            | Self::Struct { node_id, .. }
+            | Self::Enum { node_id, .. }
+            | Self::Interface { node_id, .. }
+            | Self::UserDefinedValueType { node_id, .. } => Some(*node_id),
             _ => None,
         }
     }
@@ -232,8 +244,9 @@ impl Type {
             | Self::Enum { .. }
             | Self::Function { .. }
             | Self::FixedPointNumber { .. }
-            | Self::UserDefinedValueType { .. }
-            | Self::Integer { .. } => None,
+            | Self::Integer { .. }
+            | Self::Interface { .. }
+            | Self::UserDefinedValueType { .. } => None,
             Self::Mapping { .. } => Some(DataLocation::Storage),
             Self::Array { location, .. } => Some(*location),
             Self::Bytes { location } => Some(*location),

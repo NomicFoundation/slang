@@ -894,6 +894,7 @@ pub fn slang_solidity::backend::l1_typed_cst::visitor::Visitor::leave_yul_variab
 impl slang_solidity::backend::l1_typed_cst::visitor::Visitor for slang_solidity::backend::passes::collect_types::Pass
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::ContractDefinition)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_enum_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::EnumDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_interface_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::InterfaceDefinition)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_parameter(&mut self, target: &slang_solidity::backend::l1_typed_cst::Parameter)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_struct_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::StructDefinition)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_typed_tuple_member(&mut self, target: &slang_solidity::backend::l1_typed_cst::TypedTupleMember)
@@ -3220,6 +3221,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leav
 impl slang_solidity::backend::l1_typed_cst::visitor::Visitor for slang_solidity::backend::passes::collect_types::Pass
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::ContractDefinition)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_enum_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::EnumDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_interface_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::InterfaceDefinition)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_parameter(&mut self, target: &slang_solidity::backend::l1_typed_cst::Parameter)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_struct_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::StructDefinition)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_typed_tuple_member(&mut self, target: &slang_solidity::backend::l1_typed_cst::TypedTupleMember)
@@ -7014,6 +7016,7 @@ pub fn slang_solidity::backend::passes::collect_types::Pass::new(binding_graph: 
 impl slang_solidity::backend::l1_typed_cst::visitor::Visitor for slang_solidity::backend::passes::collect_types::Pass
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::ContractDefinition)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_enum_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::EnumDefinition)
+pub fn slang_solidity::backend::passes::collect_types::Pass::leave_interface_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::InterfaceDefinition)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_parameter(&mut self, target: &slang_solidity::backend::l1_typed_cst::Parameter)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_struct_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::StructDefinition)
 pub fn slang_solidity::backend::passes::collect_types::Pass::leave_typed_tuple_member(&mut self, target: &slang_solidity::backend::l1_typed_cst::TypedTupleMember)
@@ -7075,6 +7078,8 @@ pub slang_solidity::backend::types::Type::Function::return_types: alloc::vec::Ve
 pub slang_solidity::backend::types::Type::Integer
 pub slang_solidity::backend::types::Type::Integer::bits: u32
 pub slang_solidity::backend::types::Type::Integer::signed: bool
+pub slang_solidity::backend::types::Type::Interface
+pub slang_solidity::backend::types::Type::Interface::node_id: metaslang_cst::nodes::NodeId
 pub slang_solidity::backend::types::Type::Mapping
 pub slang_solidity::backend::types::Type::Mapping::key_name: core::option::Option<alloc::string::String>
 pub slang_solidity::backend::types::Type::Mapping::key_type_id: slang_solidity::backend::types::TypeId
@@ -7101,6 +7106,7 @@ impl core::marker::StructuralPartialEq for slang_solidity::backend::types::Type
 pub enum slang_solidity::backend::types::TypeDefinition
 pub slang_solidity::backend::types::TypeDefinition::Contract(slang_solidity::backend::types::ContractType)
 pub slang_solidity::backend::types::TypeDefinition::Enum(slang_solidity::backend::types::EnumType)
+pub slang_solidity::backend::types::TypeDefinition::Interface(slang_solidity::backend::types::InterfaceType)
 pub slang_solidity::backend::types::TypeDefinition::Struct(slang_solidity::backend::types::StructType)
 pub slang_solidity::backend::types::TypeDefinition::UserDefinedValueType(slang_solidity::backend::types::UserDefinedValueType)
 impl slang_solidity::backend::types::TypeDefinition
@@ -7140,6 +7146,15 @@ pub fn slang_solidity::backend::types::EnumType::eq(&self, other: &slang_solidit
 impl core::fmt::Debug for slang_solidity::backend::types::EnumType
 pub fn slang_solidity::backend::types::EnumType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity::backend::types::EnumType
+pub struct slang_solidity::backend::types::InterfaceType
+pub slang_solidity::backend::types::InterfaceType::name: alloc::string::String
+pub slang_solidity::backend::types::InterfaceType::node_id: metaslang_cst::nodes::NodeId
+impl core::cmp::Eq for slang_solidity::backend::types::InterfaceType
+impl core::cmp::PartialEq for slang_solidity::backend::types::InterfaceType
+pub fn slang_solidity::backend::types::InterfaceType::eq(&self, other: &slang_solidity::backend::types::InterfaceType) -> bool
+impl core::fmt::Debug for slang_solidity::backend::types::InterfaceType
+pub fn slang_solidity::backend::types::InterfaceType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::backend::types::InterfaceType
 pub struct slang_solidity::backend::types::StateVariable
 pub slang_solidity::backend::types::StateVariable::name: alloc::string::String
 pub slang_solidity::backend::types::StateVariable::node_id: metaslang_cst::nodes::NodeId
