@@ -9,8 +9,8 @@ use serde::Deserialize;
 pub struct ContractMetadata {
     pub version: Version,
     pub target: String,   
-    remappings: Vec<ImportRemap>,
-    sources: Vec<FileMapping>,
+    pub remappings: Vec<ImportRemap>,
+    pub sources: Vec<FileMapping>,
 }
 
 impl ContractMetadata {
@@ -143,7 +143,7 @@ impl ContractMetadata {
     }
 }
 
-struct FileMapping {
+pub struct FileMapping {
     /// The actual filename for the source file, as found in the archive. This name can
     /// be used to read the content of a source file.
     real_name: String,
@@ -153,7 +153,7 @@ struct FileMapping {
     virtual_path: String,
 }
 
-struct ImportRemap {
+pub struct ImportRemap {
     /// A stand-in value for the full path (`original`) to the imported file.
     mapped: String,
     /// The full path to the imported file.

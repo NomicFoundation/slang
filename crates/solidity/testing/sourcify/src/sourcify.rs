@@ -104,10 +104,10 @@ struct ManifestFile {
 
 pub struct Shard {
     /// A URL path used to fetch the `ContractArchive` for this shard.
-    path: String,
+    pub path: String,
     /// The chain that this shard is part of.
-    chain: Chain,
-    id: u16,
+    pub chain: Chain,
+    pub id: u16,
 }
 
 impl Shard {
@@ -152,6 +152,11 @@ pub struct ContractArchive {
 }
 
 impl ContractArchive {
+    pub fn get_contract(&self, contract_id: &str) -> Result<Contract> {
+        let contract_path = self.contracts_path.join(contract_id);
+        Contract::new(&contract_path)
+    }
+
     pub fn contracts_path(&self) -> String {
         self.contracts_path.to_str().unwrap().into()
     }
@@ -214,20 +219,9 @@ impl ContractArchiveIterator {
     pub fn _next_contract(&mut self) -> Result<Option<Contract>> {
         if let Some(next_contract) = self.contracts.next() {
             let contract_path = next_contract.path();
-            let name = next_contract.file_name().into_string().map_err(|_| Error::msg("Could not get contract directory name"))?;
+            let contract = Contract::new(&contract_path)?;
 
-            let metadata_file = fs::File::open(contract_path.join("metadata.json"))?;
-            let reader = BufReader::new(metadata_file);
-
-            let metadata = serde_json::from_reader(reader)?;
-
-            let sources_path = contract_path.join("sources");
-
-            Ok(Some(Contract{
-                metadata, 
-                name,
-                sources_path,
-            }))
+            Ok(Some(contract))
         } else {
             Ok(None)
         }
@@ -243,6 +237,23 @@ pub struct Contract {
 }
 
 impl Contract {
+    fn new(contract_path: &PathBuf) -> Result<Contract> {
+        let name = contract_path.file_name().unwrap().to_str().ok_or(Error::msg("Could not get contract directory name"))?;
+
+        let metadata_file = fs::File::open(contract_path.join("metadata.json"))?;
+        let reader = BufReader::new(metadata_file);
+
+        let metadata = serde_json::from_reader(reader)?;
+
+        let sources_path = contract_path.join("sources");
+
+        Ok(Contract{
+            metadata, 
+            sources_path,
+            name: name.into(),
+        })
+    }
+
     /// Create a `CompilationUnit` for this contract. This includes all available source files and resolves
     /// imports, accounting for file remapping/renaming. The resulting `CompilationUnit` is ready to check for
     /// errors.

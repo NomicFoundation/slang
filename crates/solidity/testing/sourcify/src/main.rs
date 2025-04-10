@@ -7,12 +7,13 @@ mod events;
 mod reporting;
 mod results;
 
+use chains::Chain;
 use events::{Events, TestOutcome};
 use semver::Version;
 use slang_solidity::{compilation::CompilationUnit, cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange}, diagnostic::{Diagnostic, Severity}};
 use sourcify::{Contract, ContractArchive, Repository};
 
-use anyhow::Result;
+use anyhow::{Error, Result};
 use clap::Parser;
 use rayon::{iter::ParallelBridge, prelude::ParallelIterator};
 
@@ -25,6 +26,10 @@ fn main() -> Result<()> {
 }
 
 fn run_test_command(cmd: &command::TestCommand) -> Result<()> {
+    if let Some(contract) = &cmd.contract {
+        return test_contract(cmd.chain, &contract);
+    }
+
     let repo = Repository::new(cmd.chain)?;
     let shards = repo.fetch_entries()?;
     let shard_count = shards.len();
@@ -54,6 +59,27 @@ fn run_test_command(cmd: &command::TestCommand) -> Result<()> {
     }
 
     fetch_thread.join().unwrap();
+
+    Ok(())
+}
+
+fn test_contract(chain: Chain, contract_id: &str) -> Result<()> {
+    let repo = Repository::new(chain)?;
+    let shards = repo.fetch_entries()?;
+
+    let contract_shard_id: u16 = contract_id.get(2..4).unwrap().parse()?;
+
+    let contract_shard = shards.iter().find(|shard| shard.id == contract_shard_id).ok_or(Error::msg(format!("Shard for {contract_id} not found")))?;
+
+    let archive = repo.fetch_archive(contract_shard)?;
+    let contract = archive.get_contract(contract_id)?;
+
+    let mut events = Events::new(1, 0);
+    events.start_directory(1);
+
+    run_test(&contract, &events, false);
+
+    events.finish_directory();
 
     Ok(())
 }
