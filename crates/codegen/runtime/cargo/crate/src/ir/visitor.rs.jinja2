@@ -79,19 +79,17 @@
   // Repeated & Separated
   //
 
-  {% for collections in [target.repeated, target.separated] %}
-    {% for parent_type, collection in collections -%}
-      {%- if collection.is_terminal %}
-        #[inline]
-        fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
-      {% else %}
-        #[inline]
-        fn accept_{{ parent_type | snake_case }}(items: &[{{ collection.item_type }}], visitor: &mut dyn Visitor) {
-          for item in items {
-            accept_{{ collection.item_type | snake_case }}(item, visitor);
-          }
+  {% for parent_type, collection in target.collections -%}
+    {%- if collection.is_terminal %}
+      #[inline]
+      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+    {% else %}
+      #[inline]
+      fn accept_{{ parent_type | snake_case }}(items: &[{{ collection.item_type }}], visitor: &mut dyn Visitor) {
+        for item in items {
+          accept_{{ collection.item_type | snake_case }}(item, visitor);
         }
-      {% endif -%}
-    {% endfor %}
+      }
+    {% endif -%}
   {% endfor %}
 {%- endif %}

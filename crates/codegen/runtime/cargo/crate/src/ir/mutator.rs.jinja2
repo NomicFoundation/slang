@@ -69,18 +69,16 @@
     //
     // Repeated & Separated
     //
-    {% for collections in [target.repeated, target.separated] %}
-      {% for parent_type, collection in collections %}
-        fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
-          source.iter().map(
-            {%- if collection.is_terminal -%}
-              Rc::clone
-            {%- else -%}
-              |item| self.mutate_{{ collection.item_type | snake_case }}(item)
-            {%- endif -%}
-          ).collect()
-        }
-      {% endfor %}
+    {% for parent_type, collection in target.collections %}
+      fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
+        source.iter().map(
+          {%- if collection.is_terminal -%}
+            Rc::clone
+          {%- else -%}
+            |item| self.mutate_{{ collection.item_type | snake_case }}(item)
+          {%- endif -%}
+        ).collect()
+      }
     {% endfor %}
   }
 {%- endif -%}

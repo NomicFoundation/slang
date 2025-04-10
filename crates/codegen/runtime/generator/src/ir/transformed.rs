@@ -10,8 +10,7 @@ pub struct TransformedIrModel {
 
     pub sequences: IndexMap<model::Identifier, TransformedSequence>,
     pub choices: IndexMap<model::Identifier, TransformedChoice>,
-    pub repeated: IndexMap<model::Identifier, Collection>,
-    pub separated: IndexMap<model::Identifier, Collection>,
+    pub collections: IndexMap<model::Identifier, Collection>,
 }
 
 #[derive(Clone, Serialize)]
@@ -63,26 +62,13 @@ impl TransformedIrModel {
             })
             .collect();
 
-        // Remove repeated types not present in target. Assume others are identical.
-        let repeated = source
-            .repeated
+        // Remove collections types not present in target. Assume others are identical.
+        let collections = source
+            .collections
             .iter()
             .filter_map(|(identifier, repeated)| {
-                if target.repeated.contains_key(identifier) {
+                if target.collections.contains_key(identifier) {
                     Some((identifier.clone(), repeated.clone()))
-                } else {
-                    None
-                }
-            })
-            .collect();
-
-        // Remove separated types not present in target. Assume others are identical.
-        let separated = source
-            .separated
-            .iter()
-            .filter_map(|(identifier, separated)| {
-                if target.separated.contains_key(identifier) {
-                    Some((identifier.clone(), separated.clone()))
                 } else {
                     None
                 }
@@ -93,8 +79,7 @@ impl TransformedIrModel {
             source_name,
             sequences,
             choices,
-            repeated,
-            separated,
+            collections,
         }
     }
 

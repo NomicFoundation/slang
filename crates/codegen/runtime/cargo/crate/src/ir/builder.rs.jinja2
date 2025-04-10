@@ -104,40 +104,10 @@
   {% endfor %}
 
   //
-  // Repeated:
+  // Repeated & Separated
   //
 
-  {% for parent_type, repeated in builder.repeated %}
-    pub fn build_{{ parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ parent_type }}> {
-      expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
-      let mut items = {{ parent_type }}::new();
-      if !cursor.go_to_first_child() {
-        return Ok(items);
-      }
-      loop {
-        if !cursor.node().is_trivia() {
-          expect_label(&cursor, EdgeLabel::Item)?;
-          {%- if repeated.is_terminal -%}
-            let item = fetch_terminal_node(&cursor)?;
-          {%- else -%}
-            let item = build_{{ repeated.item_type | snake_case }}(cursor.clone())?;
-          {%- endif -%}
-          items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-          break;
-        }
-      }
-      Ok(items)
-    }
-
-  {% endfor %}
-
-  //
-  // Separated:
-  //
-
-  {% for parent_type, separated in builder.separated %}
+  {% for parent_type, collection in builder.collections %}
     pub fn build_{{ parent_type | snake_case }}(mut cursor: Cursor) -> Result<{{ parent_type }}> {
       expect_nonterminal_kind(&cursor, NonterminalKind::{{ parent_type }})?;
       let mut items = {{ parent_type }}::new();
@@ -147,10 +117,10 @@
       loop {
         if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
           expect_label(&cursor, EdgeLabel::Item)?;
-          {%- if separated.is_terminal -%}
+          {%- if collection.is_terminal -%}
             let item = fetch_terminal_node(&cursor)?;
           {%- else -%}
-            let item = build_{{ separated.item_type | snake_case }}(cursor.clone())?;
+            let item = build_{{ collection.item_type | snake_case }}(cursor.clone())?;
           {%- endif -%}
           items.push(item);
         }

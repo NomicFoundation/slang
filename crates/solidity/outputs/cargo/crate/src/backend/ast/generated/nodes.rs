@@ -1602,9 +1602,19 @@ pub enum YulLiteral {
 
 pub type SourceUnitMembers = Vec<SourceUnitMember>;
 
+pub type VersionExpressionSets = Vec<VersionExpressionSet>;
+
 pub type VersionExpressionSet = Vec<VersionExpression>;
 
+pub type SimpleVersionLiteral = Vec<Rc<TerminalNode>>;
+
+pub type ImportDeconstructionSymbols = Vec<ImportDeconstructionSymbol>;
+
+pub type UsingDeconstructionSymbols = Vec<UsingDeconstructionSymbol>;
+
 pub type ContractSpecifiers = Vec<ContractSpecifier>;
+
+pub type InheritanceTypes = Vec<InheritanceType>;
 
 pub type ContractMembers = Vec<ContractMember>;
 
@@ -1614,9 +1624,15 @@ pub type LibraryMembers = Vec<ContractMember>;
 
 pub type StructMembers = Vec<StructMember>;
 
+pub type EnumMembers = Vec<Rc<TerminalNode>>;
+
 pub type StateVariableAttributes = Vec<StateVariableAttribute>;
 
+pub type Parameters = Vec<Parameter>;
+
 pub type FunctionAttributes = Vec<FunctionAttribute>;
+
+pub type OverridePaths = Vec<IdentifierPath>;
 
 pub type ConstructorAttributes = Vec<ConstructorAttribute>;
 
@@ -1628,45 +1644,19 @@ pub type ReceiveFunctionAttributes = Vec<ReceiveFunctionAttribute>;
 
 pub type ModifierAttributes = Vec<ModifierAttribute>;
 
-pub type FunctionTypeAttributes = Vec<FunctionTypeAttribute>;
-
-pub type Statements = Vec<Statement>;
-
-pub type CatchClauses = Vec<CatchClause>;
-
-pub type StringLiterals = Vec<StringLiteral>;
-
-pub type HexStringLiterals = Vec<HexStringLiteral>;
-
-pub type UnicodeStringLiterals = Vec<UnicodeStringLiteral>;
-
-pub type YulStatements = Vec<YulStatement>;
-
-pub type YulSwitchCases = Vec<YulSwitchCase>;
-
-pub type VersionExpressionSets = Vec<VersionExpressionSet>;
-
-pub type SimpleVersionLiteral = Vec<Rc<TerminalNode>>;
-
-pub type ImportDeconstructionSymbols = Vec<ImportDeconstructionSymbol>;
-
-pub type UsingDeconstructionSymbols = Vec<UsingDeconstructionSymbol>;
-
-pub type InheritanceTypes = Vec<InheritanceType>;
-
-pub type EnumMembers = Vec<Rc<TerminalNode>>;
-
-pub type Parameters = Vec<Parameter>;
-
-pub type OverridePaths = Vec<IdentifierPath>;
-
 pub type EventParameters = Vec<EventParameter>;
 
 pub type ErrorParameters = Vec<ErrorParameter>;
 
+pub type FunctionTypeAttributes = Vec<FunctionTypeAttribute>;
+
+pub type Statements = Vec<Statement>;
+
 pub type AssemblyFlags = Vec<StringLiteral>;
 
 pub type TupleDeconstructionElements = Vec<TupleDeconstructionElement>;
+
+pub type CatchClauses = Vec<CatchClause>;
 
 pub type PositionalArguments = Vec<Expression>;
 
@@ -1678,11 +1668,21 @@ pub type TupleValues = Vec<TupleValue>;
 
 pub type ArrayValues = Vec<Expression>;
 
+pub type StringLiterals = Vec<StringLiteral>;
+
+pub type HexStringLiterals = Vec<HexStringLiteral>;
+
+pub type UnicodeStringLiterals = Vec<UnicodeStringLiteral>;
+
 pub type IdentifierPath = Vec<Rc<TerminalNode>>;
+
+pub type YulStatements = Vec<YulStatement>;
 
 pub type YulParameters = Vec<Rc<TerminalNode>>;
 
 pub type YulVariableNames = Vec<Rc<TerminalNode>>;
+
+pub type YulSwitchCases = Vec<YulSwitchCase>;
 
 pub type YulArguments = Vec<YulExpression>;
 

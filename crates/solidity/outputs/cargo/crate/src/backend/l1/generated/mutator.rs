@@ -2775,6 +2775,16 @@ pub trait Mutator {
             .collect()
     }
 
+    fn mutate_version_expression_sets(
+        &mut self,
+        source: &VersionExpressionSets,
+    ) -> VersionExpressionSets {
+        source
+            .iter()
+            .map(|item| self.mutate_version_expression_set(item))
+            .collect()
+    }
+
     fn mutate_version_expression_set(
         &mut self,
         source: &VersionExpressionSet,
@@ -2782,6 +2792,40 @@ pub trait Mutator {
         source
             .iter()
             .map(|item| self.mutate_version_expression(item))
+            .collect()
+    }
+
+    fn mutate_simple_version_literal(
+        &mut self,
+        source: &SimpleVersionLiteral,
+    ) -> SimpleVersionLiteral {
+        source.iter().map(Rc::clone).collect()
+    }
+
+    fn mutate_import_deconstruction_symbols(
+        &mut self,
+        source: &ImportDeconstructionSymbols,
+    ) -> ImportDeconstructionSymbols {
+        source
+            .iter()
+            .map(|item| self.mutate_import_deconstruction_symbol(item))
+            .collect()
+    }
+
+    fn mutate_using_deconstruction_symbols(
+        &mut self,
+        source: &UsingDeconstructionSymbols,
+    ) -> UsingDeconstructionSymbols {
+        source
+            .iter()
+            .map(|item| self.mutate_using_deconstruction_symbol(item))
+            .collect()
+    }
+
+    fn mutate_inheritance_types(&mut self, source: &InheritanceTypes) -> InheritanceTypes {
+        source
+            .iter()
+            .map(|item| self.mutate_inheritance_type(item))
             .collect()
     }
 
@@ -2813,6 +2857,10 @@ pub trait Mutator {
             .collect()
     }
 
+    fn mutate_enum_members(&mut self, source: &EnumMembers) -> EnumMembers {
+        source.iter().map(Rc::clone).collect()
+    }
+
     fn mutate_state_variable_attributes(
         &mut self,
         source: &StateVariableAttributes,
@@ -2823,10 +2871,24 @@ pub trait Mutator {
             .collect()
     }
 
+    fn mutate_parameters(&mut self, source: &Parameters) -> Parameters {
+        source
+            .iter()
+            .map(|item| self.mutate_parameter(item))
+            .collect()
+    }
+
     fn mutate_function_attributes(&mut self, source: &FunctionAttributes) -> FunctionAttributes {
         source
             .iter()
             .map(|item| self.mutate_function_attribute(item))
+            .collect()
+    }
+
+    fn mutate_override_paths(&mut self, source: &OverridePaths) -> OverridePaths {
+        source
+            .iter()
+            .map(|item| self.mutate_identifier_path(item))
             .collect()
     }
 
@@ -2867,6 +2929,20 @@ pub trait Mutator {
             .collect()
     }
 
+    fn mutate_event_parameters(&mut self, source: &EventParameters) -> EventParameters {
+        source
+            .iter()
+            .map(|item| self.mutate_event_parameter(item))
+            .collect()
+    }
+
+    fn mutate_error_parameters(&mut self, source: &ErrorParameters) -> ErrorParameters {
+        source
+            .iter()
+            .map(|item| self.mutate_error_parameter(item))
+            .collect()
+    }
+
     fn mutate_function_type_attributes(
         &mut self,
         source: &FunctionTypeAttributes,
@@ -2884,127 +2960,6 @@ pub trait Mutator {
             .collect()
     }
 
-    fn mutate_catch_clauses(&mut self, source: &CatchClauses) -> CatchClauses {
-        source
-            .iter()
-            .map(|item| self.mutate_catch_clause(item))
-            .collect()
-    }
-
-    fn mutate_string_literals(&mut self, source: &StringLiterals) -> StringLiterals {
-        source
-            .iter()
-            .map(|item| self.mutate_string_literal(item))
-            .collect()
-    }
-
-    fn mutate_hex_string_literals(&mut self, source: &HexStringLiterals) -> HexStringLiterals {
-        source
-            .iter()
-            .map(|item| self.mutate_hex_string_literal(item))
-            .collect()
-    }
-
-    fn mutate_unicode_string_literals(
-        &mut self,
-        source: &UnicodeStringLiterals,
-    ) -> UnicodeStringLiterals {
-        source
-            .iter()
-            .map(|item| self.mutate_unicode_string_literal(item))
-            .collect()
-    }
-
-    fn mutate_yul_statements(&mut self, source: &YulStatements) -> YulStatements {
-        source
-            .iter()
-            .map(|item| self.mutate_yul_statement(item))
-            .collect()
-    }
-
-    fn mutate_yul_switch_cases(&mut self, source: &YulSwitchCases) -> YulSwitchCases {
-        source
-            .iter()
-            .map(|item| self.mutate_yul_switch_case(item))
-            .collect()
-    }
-
-    fn mutate_version_expression_sets(
-        &mut self,
-        source: &VersionExpressionSets,
-    ) -> VersionExpressionSets {
-        source
-            .iter()
-            .map(|item| self.mutate_version_expression_set(item))
-            .collect()
-    }
-
-    fn mutate_simple_version_literal(
-        &mut self,
-        source: &SimpleVersionLiteral,
-    ) -> SimpleVersionLiteral {
-        source.iter().map(Rc::clone).collect()
-    }
-
-    fn mutate_import_deconstruction_symbols(
-        &mut self,
-        source: &ImportDeconstructionSymbols,
-    ) -> ImportDeconstructionSymbols {
-        source
-            .iter()
-            .map(|item| self.mutate_import_deconstruction_symbol(item))
-            .collect()
-    }
-
-    fn mutate_using_deconstruction_symbols(
-        &mut self,
-        source: &UsingDeconstructionSymbols,
-    ) -> UsingDeconstructionSymbols {
-        source
-            .iter()
-            .map(|item| self.mutate_using_deconstruction_symbol(item))
-            .collect()
-    }
-
-    fn mutate_inheritance_types(&mut self, source: &InheritanceTypes) -> InheritanceTypes {
-        source
-            .iter()
-            .map(|item| self.mutate_inheritance_type(item))
-            .collect()
-    }
-
-    fn mutate_enum_members(&mut self, source: &EnumMembers) -> EnumMembers {
-        source.iter().map(Rc::clone).collect()
-    }
-
-    fn mutate_parameters(&mut self, source: &Parameters) -> Parameters {
-        source
-            .iter()
-            .map(|item| self.mutate_parameter(item))
-            .collect()
-    }
-
-    fn mutate_override_paths(&mut self, source: &OverridePaths) -> OverridePaths {
-        source
-            .iter()
-            .map(|item| self.mutate_identifier_path(item))
-            .collect()
-    }
-
-    fn mutate_event_parameters(&mut self, source: &EventParameters) -> EventParameters {
-        source
-            .iter()
-            .map(|item| self.mutate_event_parameter(item))
-            .collect()
-    }
-
-    fn mutate_error_parameters(&mut self, source: &ErrorParameters) -> ErrorParameters {
-        source
-            .iter()
-            .map(|item| self.mutate_error_parameter(item))
-            .collect()
-    }
-
     fn mutate_assembly_flags(&mut self, source: &AssemblyFlags) -> AssemblyFlags {
         source
             .iter()
@@ -3019,6 +2974,13 @@ pub trait Mutator {
         source
             .iter()
             .map(|item| self.mutate_tuple_deconstruction_element(item))
+            .collect()
+    }
+
+    fn mutate_catch_clauses(&mut self, source: &CatchClauses) -> CatchClauses {
+        source
+            .iter()
+            .map(|item| self.mutate_catch_clause(item))
             .collect()
     }
 
@@ -3057,8 +3019,39 @@ pub trait Mutator {
             .collect()
     }
 
+    fn mutate_string_literals(&mut self, source: &StringLiterals) -> StringLiterals {
+        source
+            .iter()
+            .map(|item| self.mutate_string_literal(item))
+            .collect()
+    }
+
+    fn mutate_hex_string_literals(&mut self, source: &HexStringLiterals) -> HexStringLiterals {
+        source
+            .iter()
+            .map(|item| self.mutate_hex_string_literal(item))
+            .collect()
+    }
+
+    fn mutate_unicode_string_literals(
+        &mut self,
+        source: &UnicodeStringLiterals,
+    ) -> UnicodeStringLiterals {
+        source
+            .iter()
+            .map(|item| self.mutate_unicode_string_literal(item))
+            .collect()
+    }
+
     fn mutate_identifier_path(&mut self, source: &IdentifierPath) -> IdentifierPath {
         source.iter().map(Rc::clone).collect()
+    }
+
+    fn mutate_yul_statements(&mut self, source: &YulStatements) -> YulStatements {
+        source
+            .iter()
+            .map(|item| self.mutate_yul_statement(item))
+            .collect()
     }
 
     fn mutate_yul_parameters(&mut self, source: &YulParameters) -> YulParameters {
@@ -3067,6 +3060,13 @@ pub trait Mutator {
 
     fn mutate_yul_variable_names(&mut self, source: &YulVariableNames) -> YulVariableNames {
         source.iter().map(Rc::clone).collect()
+    }
+
+    fn mutate_yul_switch_cases(&mut self, source: &YulSwitchCases) -> YulSwitchCases {
+        source
+            .iter()
+            .map(|item| self.mutate_yul_switch_case(item))
+            .collect()
     }
 
     fn mutate_yul_arguments(&mut self, source: &YulArguments) -> YulArguments {

@@ -3238,6 +3238,16 @@ pub trait Transformer {
             .collect()
     }
 
+    fn transform_version_expression_sets(
+        &mut self,
+        source: &input::VersionExpressionSets,
+    ) -> output::VersionExpressionSets {
+        source
+            .iter()
+            .map(|item| self.transform_version_expression_set(item))
+            .collect()
+    }
+
     fn transform_version_expression_set(
         &mut self,
         source: &input::VersionExpressionSet,
@@ -3245,6 +3255,43 @@ pub trait Transformer {
         source
             .iter()
             .map(|item| self.transform_version_expression(item))
+            .collect()
+    }
+
+    fn transform_simple_version_literal(
+        &mut self,
+        source: &input::SimpleVersionLiteral,
+    ) -> output::SimpleVersionLiteral {
+        source.iter().map(Rc::clone).collect()
+    }
+
+    fn transform_import_deconstruction_symbols(
+        &mut self,
+        source: &input::ImportDeconstructionSymbols,
+    ) -> output::ImportDeconstructionSymbols {
+        source
+            .iter()
+            .map(|item| self.transform_import_deconstruction_symbol(item))
+            .collect()
+    }
+
+    fn transform_using_deconstruction_symbols(
+        &mut self,
+        source: &input::UsingDeconstructionSymbols,
+    ) -> output::UsingDeconstructionSymbols {
+        source
+            .iter()
+            .map(|item| self.transform_using_deconstruction_symbol(item))
+            .collect()
+    }
+
+    fn transform_inheritance_types(
+        &mut self,
+        source: &input::InheritanceTypes,
+    ) -> output::InheritanceTypes {
+        source
+            .iter()
+            .map(|item| self.transform_inheritance_type(item))
             .collect()
     }
 
@@ -3285,6 +3332,10 @@ pub trait Transformer {
             .collect()
     }
 
+    fn transform_enum_members(&mut self, source: &input::EnumMembers) -> output::EnumMembers {
+        source.iter().map(Rc::clone).collect()
+    }
+
     fn transform_state_variable_attributes(
         &mut self,
         source: &input::StateVariableAttributes,
@@ -3295,6 +3346,13 @@ pub trait Transformer {
             .collect()
     }
 
+    fn transform_parameters(&mut self, source: &input::Parameters) -> output::Parameters {
+        source
+            .iter()
+            .map(|item| self.transform_parameter(item))
+            .collect()
+    }
+
     fn transform_function_attributes(
         &mut self,
         source: &input::FunctionAttributes,
@@ -3302,6 +3360,13 @@ pub trait Transformer {
         source
             .iter()
             .map(|item| self.transform_function_attribute(item))
+            .collect()
+    }
+
+    fn transform_override_paths(&mut self, source: &input::OverridePaths) -> output::OverridePaths {
+        source
+            .iter()
+            .map(|item| self.transform_identifier_path(item))
             .collect()
     }
 
@@ -3345,142 +3410,6 @@ pub trait Transformer {
             .collect()
     }
 
-    fn transform_function_type_attributes(
-        &mut self,
-        source: &input::FunctionTypeAttributes,
-    ) -> output::FunctionTypeAttributes {
-        source
-            .iter()
-            .map(|item| self.transform_function_type_attribute(item))
-            .collect()
-    }
-
-    fn transform_statements(&mut self, source: &input::Statements) -> output::Statements {
-        source
-            .iter()
-            .map(|item| self.transform_statement(item))
-            .collect()
-    }
-
-    fn transform_catch_clauses(&mut self, source: &input::CatchClauses) -> output::CatchClauses {
-        source
-            .iter()
-            .map(|item| self.transform_catch_clause(item))
-            .collect()
-    }
-
-    fn transform_string_literals(
-        &mut self,
-        source: &input::StringLiterals,
-    ) -> output::StringLiterals {
-        source
-            .iter()
-            .map(|item| self.transform_string_literal(item))
-            .collect()
-    }
-
-    fn transform_hex_string_literals(
-        &mut self,
-        source: &input::HexStringLiterals,
-    ) -> output::HexStringLiterals {
-        source
-            .iter()
-            .map(|item| self.transform_hex_string_literal(item))
-            .collect()
-    }
-
-    fn transform_unicode_string_literals(
-        &mut self,
-        source: &input::UnicodeStringLiterals,
-    ) -> output::UnicodeStringLiterals {
-        source
-            .iter()
-            .map(|item| self.transform_unicode_string_literal(item))
-            .collect()
-    }
-
-    fn transform_yul_statements(&mut self, source: &input::YulStatements) -> output::YulStatements {
-        source
-            .iter()
-            .map(|item| self.transform_yul_statement(item))
-            .collect()
-    }
-
-    fn transform_yul_switch_cases(
-        &mut self,
-        source: &input::YulSwitchCases,
-    ) -> output::YulSwitchCases {
-        source
-            .iter()
-            .map(|item| self.transform_yul_switch_case(item))
-            .collect()
-    }
-
-    fn transform_version_expression_sets(
-        &mut self,
-        source: &input::VersionExpressionSets,
-    ) -> output::VersionExpressionSets {
-        source
-            .iter()
-            .map(|item| self.transform_version_expression_set(item))
-            .collect()
-    }
-
-    fn transform_simple_version_literal(
-        &mut self,
-        source: &input::SimpleVersionLiteral,
-    ) -> output::SimpleVersionLiteral {
-        source.iter().map(Rc::clone).collect()
-    }
-
-    fn transform_import_deconstruction_symbols(
-        &mut self,
-        source: &input::ImportDeconstructionSymbols,
-    ) -> output::ImportDeconstructionSymbols {
-        source
-            .iter()
-            .map(|item| self.transform_import_deconstruction_symbol(item))
-            .collect()
-    }
-
-    fn transform_using_deconstruction_symbols(
-        &mut self,
-        source: &input::UsingDeconstructionSymbols,
-    ) -> output::UsingDeconstructionSymbols {
-        source
-            .iter()
-            .map(|item| self.transform_using_deconstruction_symbol(item))
-            .collect()
-    }
-
-    fn transform_inheritance_types(
-        &mut self,
-        source: &input::InheritanceTypes,
-    ) -> output::InheritanceTypes {
-        source
-            .iter()
-            .map(|item| self.transform_inheritance_type(item))
-            .collect()
-    }
-
-    fn transform_enum_members(&mut self, source: &input::EnumMembers) -> output::EnumMembers {
-        source.iter().map(Rc::clone).collect()
-    }
-
-    fn transform_parameters(&mut self, source: &input::Parameters) -> output::Parameters {
-        source
-            .iter()
-            .map(|item| self.transform_parameter(item))
-            .collect()
-    }
-
-    fn transform_override_paths(&mut self, source: &input::OverridePaths) -> output::OverridePaths {
-        source
-            .iter()
-            .map(|item| self.transform_identifier_path(item))
-            .collect()
-    }
-
     fn transform_event_parameters(
         &mut self,
         source: &input::EventParameters,
@@ -3501,6 +3430,23 @@ pub trait Transformer {
             .collect()
     }
 
+    fn transform_function_type_attributes(
+        &mut self,
+        source: &input::FunctionTypeAttributes,
+    ) -> output::FunctionTypeAttributes {
+        source
+            .iter()
+            .map(|item| self.transform_function_type_attribute(item))
+            .collect()
+    }
+
+    fn transform_statements(&mut self, source: &input::Statements) -> output::Statements {
+        source
+            .iter()
+            .map(|item| self.transform_statement(item))
+            .collect()
+    }
+
     fn transform_assembly_flags(&mut self, source: &input::AssemblyFlags) -> output::AssemblyFlags {
         source
             .iter()
@@ -3515,6 +3461,13 @@ pub trait Transformer {
         source
             .iter()
             .map(|item| self.transform_tuple_deconstruction_element(item))
+            .collect()
+    }
+
+    fn transform_catch_clauses(&mut self, source: &input::CatchClauses) -> output::CatchClauses {
+        source
+            .iter()
+            .map(|item| self.transform_catch_clause(item))
             .collect()
     }
 
@@ -3559,11 +3512,48 @@ pub trait Transformer {
             .collect()
     }
 
+    fn transform_string_literals(
+        &mut self,
+        source: &input::StringLiterals,
+    ) -> output::StringLiterals {
+        source
+            .iter()
+            .map(|item| self.transform_string_literal(item))
+            .collect()
+    }
+
+    fn transform_hex_string_literals(
+        &mut self,
+        source: &input::HexStringLiterals,
+    ) -> output::HexStringLiterals {
+        source
+            .iter()
+            .map(|item| self.transform_hex_string_literal(item))
+            .collect()
+    }
+
+    fn transform_unicode_string_literals(
+        &mut self,
+        source: &input::UnicodeStringLiterals,
+    ) -> output::UnicodeStringLiterals {
+        source
+            .iter()
+            .map(|item| self.transform_unicode_string_literal(item))
+            .collect()
+    }
+
     fn transform_identifier_path(
         &mut self,
         source: &input::IdentifierPath,
     ) -> output::IdentifierPath {
         source.iter().map(Rc::clone).collect()
+    }
+
+    fn transform_yul_statements(&mut self, source: &input::YulStatements) -> output::YulStatements {
+        source
+            .iter()
+            .map(|item| self.transform_yul_statement(item))
+            .collect()
     }
 
     fn transform_yul_parameters(&mut self, source: &input::YulParameters) -> output::YulParameters {
@@ -3575,6 +3565,16 @@ pub trait Transformer {
         source: &input::YulVariableNames,
     ) -> output::YulVariableNames {
         source.iter().map(Rc::clone).collect()
+    }
+
+    fn transform_yul_switch_cases(
+        &mut self,
+        source: &input::YulSwitchCases,
+    ) -> output::YulSwitchCases {
+        source
+            .iter()
+            .map(|item| self.transform_yul_switch_case(item))
+            .collect()
     }
 
     fn transform_yul_arguments(&mut self, source: &input::YulArguments) -> output::YulArguments {

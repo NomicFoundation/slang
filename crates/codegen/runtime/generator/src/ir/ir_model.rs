@@ -16,8 +16,7 @@ pub struct IrModel {
 
     pub sequences: IndexMap<model::Identifier, Sequence>,
     pub choices: IndexMap<model::Identifier, Choice>,
-    pub repeated: IndexMap<model::Identifier, Collection>,
-    pub separated: IndexMap<model::Identifier, Collection>,
+    pub collections: IndexMap<model::Identifier, Collection>,
 }
 
 #[derive(Clone, Serialize)]
@@ -60,8 +59,7 @@ impl IrModel {
 
             sequences: IndexMap::new(),
             choices: IndexMap::new(),
-            repeated: IndexMap::new(),
-            separated: IndexMap::new(),
+            collections: IndexMap::new(),
         };
 
         // First pass: collect all terminals:
@@ -82,8 +80,7 @@ impl IrModel {
 
             sequences: model.sequences.clone(),
             choices: model.choices.clone(),
-            repeated: model.repeated.clone(),
-            separated: model.separated.clone(),
+            collections: model.collections.clone(),
         }
     }
 
@@ -216,7 +213,7 @@ impl IrModel {
     fn add_repeated_item(&mut self, item: &model::RepeatedItem) {
         let parent_type = item.name.clone();
 
-        self.repeated.insert(
+        self.collections.insert(
             parent_type,
             Collection {
                 item_type: item.reference.clone(),
@@ -229,7 +226,7 @@ impl IrModel {
     fn add_separated_item(&mut self, item: &model::SeparatedItem) {
         let parent_type = item.name.clone();
 
-        self.separated.insert(
+        self.collections.insert(
             parent_type,
             Collection {
                 item_type: item.reference.clone(),
@@ -341,8 +338,7 @@ impl IrModel {
         let identifier: model::Identifier = name.into();
         let removed = self.sequences.shift_remove(&identifier).is_some()
             || self.choices.shift_remove(&identifier).is_some()
-            || self.repeated.shift_remove(&identifier).is_some()
-            || self.separated.shift_remove(&identifier).is_some()
+            || self.collections.shift_remove(&identifier).is_some()
             || self.unique_terminals.shift_remove(&identifier)
             || self.terminals.shift_remove(&identifier);
 
@@ -360,10 +356,8 @@ impl IrModel {
                 .retain(|item| *item != identifier);
         }
 
-        self.repeated
+        self.collections
             .retain(|_, repeated| repeated.item_type != identifier);
-        self.separated
-            .retain(|_, separated| separated.item_type != identifier);
     }
 
     pub fn remove_sequence_field(&mut self, sequence_id: &str, field_label: &str) {

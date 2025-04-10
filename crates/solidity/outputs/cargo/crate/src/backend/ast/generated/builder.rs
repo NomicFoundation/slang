@@ -3793,7 +3793,7 @@ pub fn build_yul_literal(mut cursor: Cursor) -> Result<YulLiteral> {
 }
 
 //
-// Repeated:
+// Repeated & Separated
 //
 
 pub fn build_source_unit_members(mut cursor: Cursor) -> Result<SourceUnitMembers> {
@@ -3803,9 +3803,28 @@ pub fn build_source_unit_members(mut cursor: Cursor) -> Result<SourceUnitMembers
         return Ok(items);
     }
     loop {
-        if !cursor.node().is_trivia() {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
             expect_label(&cursor, EdgeLabel::Item)?;
             let item = build_source_unit_member(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_version_expression_sets(mut cursor: Cursor) -> Result<VersionExpressionSets> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::VersionExpressionSets)?;
+    let mut items = VersionExpressionSets::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_version_expression_set(cursor.clone())?;
             items.push(item);
         }
         if !cursor.go_to_next_sibling() {
@@ -3822,414 +3841,9 @@ pub fn build_version_expression_set(mut cursor: Cursor) -> Result<VersionExpress
         return Ok(items);
     }
     loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_version_expression(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_contract_specifiers(mut cursor: Cursor) -> Result<ContractSpecifiers> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::ContractSpecifiers)?;
-    let mut items = ContractSpecifiers::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_contract_specifier(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_contract_members(mut cursor: Cursor) -> Result<ContractMembers> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::ContractMembers)?;
-    let mut items = ContractMembers::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_contract_member(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_interface_members(mut cursor: Cursor) -> Result<InterfaceMembers> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::InterfaceMembers)?;
-    let mut items = InterfaceMembers::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_contract_member(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_library_members(mut cursor: Cursor) -> Result<LibraryMembers> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::LibraryMembers)?;
-    let mut items = LibraryMembers::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_contract_member(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_struct_members(mut cursor: Cursor) -> Result<StructMembers> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::StructMembers)?;
-    let mut items = StructMembers::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_struct_member(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_state_variable_attributes(mut cursor: Cursor) -> Result<StateVariableAttributes> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::StateVariableAttributes)?;
-    let mut items = StateVariableAttributes::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_state_variable_attribute(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_function_attributes(mut cursor: Cursor) -> Result<FunctionAttributes> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::FunctionAttributes)?;
-    let mut items = FunctionAttributes::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_function_attribute(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_constructor_attributes(mut cursor: Cursor) -> Result<ConstructorAttributes> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::ConstructorAttributes)?;
-    let mut items = ConstructorAttributes::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_constructor_attribute(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_unnamed_function_attributes(mut cursor: Cursor) -> Result<UnnamedFunctionAttributes> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::UnnamedFunctionAttributes)?;
-    let mut items = UnnamedFunctionAttributes::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_unnamed_function_attribute(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_fallback_function_attributes(
-    mut cursor: Cursor,
-) -> Result<FallbackFunctionAttributes> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::FallbackFunctionAttributes)?;
-    let mut items = FallbackFunctionAttributes::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_fallback_function_attribute(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_receive_function_attributes(mut cursor: Cursor) -> Result<ReceiveFunctionAttributes> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::ReceiveFunctionAttributes)?;
-    let mut items = ReceiveFunctionAttributes::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_receive_function_attribute(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_modifier_attributes(mut cursor: Cursor) -> Result<ModifierAttributes> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::ModifierAttributes)?;
-    let mut items = ModifierAttributes::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_modifier_attribute(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_function_type_attributes(mut cursor: Cursor) -> Result<FunctionTypeAttributes> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::FunctionTypeAttributes)?;
-    let mut items = FunctionTypeAttributes::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_function_type_attribute(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_statements(mut cursor: Cursor) -> Result<Statements> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::Statements)?;
-    let mut items = Statements::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_statement(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_catch_clauses(mut cursor: Cursor) -> Result<CatchClauses> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::CatchClauses)?;
-    let mut items = CatchClauses::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_catch_clause(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_string_literals(mut cursor: Cursor) -> Result<StringLiterals> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::StringLiterals)?;
-    let mut items = StringLiterals::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_string_literal(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_hex_string_literals(mut cursor: Cursor) -> Result<HexStringLiterals> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::HexStringLiterals)?;
-    let mut items = HexStringLiterals::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_hex_string_literal(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_unicode_string_literals(mut cursor: Cursor) -> Result<UnicodeStringLiterals> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::UnicodeStringLiterals)?;
-    let mut items = UnicodeStringLiterals::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_unicode_string_literal(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_yul_statements(mut cursor: Cursor) -> Result<YulStatements> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::YulStatements)?;
-    let mut items = YulStatements::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_yul_statement(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_yul_switch_cases(mut cursor: Cursor) -> Result<YulSwitchCases> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::YulSwitchCases)?;
-    let mut items = YulSwitchCases::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_yul_switch_case(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-//
-// Separated:
-//
-
-pub fn build_version_expression_sets(mut cursor: Cursor) -> Result<VersionExpressionSets> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::VersionExpressionSets)?;
-    let mut items = VersionExpressionSets::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
         if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
             expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_version_expression_set(cursor.clone())?;
+            let item = build_version_expression(cursor.clone())?;
             items.push(item);
         }
         if !cursor.go_to_next_sibling() {
@@ -4300,6 +3914,25 @@ pub fn build_using_deconstruction_symbols(
     Ok(items)
 }
 
+pub fn build_contract_specifiers(mut cursor: Cursor) -> Result<ContractSpecifiers> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::ContractSpecifiers)?;
+    let mut items = ContractSpecifiers::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_contract_specifier(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
 pub fn build_inheritance_types(mut cursor: Cursor) -> Result<InheritanceTypes> {
     expect_nonterminal_kind(&cursor, NonterminalKind::InheritanceTypes)?;
     let mut items = InheritanceTypes::new();
@@ -4310,6 +3943,82 @@ pub fn build_inheritance_types(mut cursor: Cursor) -> Result<InheritanceTypes> {
         if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
             expect_label(&cursor, EdgeLabel::Item)?;
             let item = build_inheritance_type(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_contract_members(mut cursor: Cursor) -> Result<ContractMembers> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::ContractMembers)?;
+    let mut items = ContractMembers::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_contract_member(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_interface_members(mut cursor: Cursor) -> Result<InterfaceMembers> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::InterfaceMembers)?;
+    let mut items = InterfaceMembers::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_contract_member(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_library_members(mut cursor: Cursor) -> Result<LibraryMembers> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::LibraryMembers)?;
+    let mut items = LibraryMembers::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_contract_member(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_struct_members(mut cursor: Cursor) -> Result<StructMembers> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::StructMembers)?;
+    let mut items = StructMembers::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_struct_member(cursor.clone())?;
             items.push(item);
         }
         if !cursor.go_to_next_sibling() {
@@ -4338,6 +4047,25 @@ pub fn build_enum_members(mut cursor: Cursor) -> Result<EnumMembers> {
     Ok(items)
 }
 
+pub fn build_state_variable_attributes(mut cursor: Cursor) -> Result<StateVariableAttributes> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::StateVariableAttributes)?;
+    let mut items = StateVariableAttributes::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_state_variable_attribute(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
 pub fn build_parameters(mut cursor: Cursor) -> Result<Parameters> {
     expect_nonterminal_kind(&cursor, NonterminalKind::Parameters)?;
     let mut items = Parameters::new();
@@ -4357,6 +4085,25 @@ pub fn build_parameters(mut cursor: Cursor) -> Result<Parameters> {
     Ok(items)
 }
 
+pub fn build_function_attributes(mut cursor: Cursor) -> Result<FunctionAttributes> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::FunctionAttributes)?;
+    let mut items = FunctionAttributes::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_function_attribute(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
 pub fn build_override_paths(mut cursor: Cursor) -> Result<OverridePaths> {
     expect_nonterminal_kind(&cursor, NonterminalKind::OverridePaths)?;
     let mut items = OverridePaths::new();
@@ -4367,6 +4114,103 @@ pub fn build_override_paths(mut cursor: Cursor) -> Result<OverridePaths> {
         if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
             expect_label(&cursor, EdgeLabel::Item)?;
             let item = build_identifier_path(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_constructor_attributes(mut cursor: Cursor) -> Result<ConstructorAttributes> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::ConstructorAttributes)?;
+    let mut items = ConstructorAttributes::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_constructor_attribute(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_unnamed_function_attributes(mut cursor: Cursor) -> Result<UnnamedFunctionAttributes> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::UnnamedFunctionAttributes)?;
+    let mut items = UnnamedFunctionAttributes::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_unnamed_function_attribute(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_fallback_function_attributes(
+    mut cursor: Cursor,
+) -> Result<FallbackFunctionAttributes> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::FallbackFunctionAttributes)?;
+    let mut items = FallbackFunctionAttributes::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_fallback_function_attribute(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_receive_function_attributes(mut cursor: Cursor) -> Result<ReceiveFunctionAttributes> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::ReceiveFunctionAttributes)?;
+    let mut items = ReceiveFunctionAttributes::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_receive_function_attribute(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_modifier_attributes(mut cursor: Cursor) -> Result<ModifierAttributes> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::ModifierAttributes)?;
+    let mut items = ModifierAttributes::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_modifier_attribute(cursor.clone())?;
             items.push(item);
         }
         if !cursor.go_to_next_sibling() {
@@ -4414,6 +4258,44 @@ pub fn build_error_parameters(mut cursor: Cursor) -> Result<ErrorParameters> {
     Ok(items)
 }
 
+pub fn build_function_type_attributes(mut cursor: Cursor) -> Result<FunctionTypeAttributes> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::FunctionTypeAttributes)?;
+    let mut items = FunctionTypeAttributes::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_function_type_attribute(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_statements(mut cursor: Cursor) -> Result<Statements> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::Statements)?;
+    let mut items = Statements::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_statement(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
 pub fn build_assembly_flags(mut cursor: Cursor) -> Result<AssemblyFlags> {
     expect_nonterminal_kind(&cursor, NonterminalKind::AssemblyFlags)?;
     let mut items = AssemblyFlags::new();
@@ -4445,6 +4327,25 @@ pub fn build_tuple_deconstruction_elements(
         if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
             expect_label(&cursor, EdgeLabel::Item)?;
             let item = build_tuple_deconstruction_element(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_catch_clauses(mut cursor: Cursor) -> Result<CatchClauses> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::CatchClauses)?;
+    let mut items = CatchClauses::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_catch_clause(cursor.clone())?;
             items.push(item);
         }
         if !cursor.go_to_next_sibling() {
@@ -4549,6 +4450,63 @@ pub fn build_array_values(mut cursor: Cursor) -> Result<ArrayValues> {
     Ok(items)
 }
 
+pub fn build_string_literals(mut cursor: Cursor) -> Result<StringLiterals> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::StringLiterals)?;
+    let mut items = StringLiterals::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_string_literal(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_hex_string_literals(mut cursor: Cursor) -> Result<HexStringLiterals> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::HexStringLiterals)?;
+    let mut items = HexStringLiterals::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_hex_string_literal(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_unicode_string_literals(mut cursor: Cursor) -> Result<UnicodeStringLiterals> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::UnicodeStringLiterals)?;
+    let mut items = UnicodeStringLiterals::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_unicode_string_literal(cursor.clone())?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
 pub fn build_identifier_path(mut cursor: Cursor) -> Result<IdentifierPath> {
     expect_nonterminal_kind(&cursor, NonterminalKind::IdentifierPath)?;
     let mut items = IdentifierPath::new();
@@ -4559,6 +4517,25 @@ pub fn build_identifier_path(mut cursor: Cursor) -> Result<IdentifierPath> {
         if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
             expect_label(&cursor, EdgeLabel::Item)?;
             let item = fetch_terminal_node(&cursor)?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_yul_statements(mut cursor: Cursor) -> Result<YulStatements> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::YulStatements)?;
+    let mut items = YulStatements::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_yul_statement(cursor.clone())?;
             items.push(item);
         }
         if !cursor.go_to_next_sibling() {
@@ -4597,6 +4574,25 @@ pub fn build_yul_variable_names(mut cursor: Cursor) -> Result<YulVariableNames> 
         if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
             expect_label(&cursor, EdgeLabel::Item)?;
             let item = fetch_terminal_node(&cursor)?;
+            items.push(item);
+        }
+        if !cursor.go_to_next_sibling() {
+            break;
+        }
+    }
+    Ok(items)
+}
+
+pub fn build_yul_switch_cases(mut cursor: Cursor) -> Result<YulSwitchCases> {
+    expect_nonterminal_kind(&cursor, NonterminalKind::YulSwitchCases)?;
+    let mut items = YulSwitchCases::new();
+    if !cursor.go_to_first_child() {
+        return Ok(items);
+    }
+    loop {
+        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
+            expect_label(&cursor, EdgeLabel::Item)?;
+            let item = build_yul_switch_case(cursor.clone())?;
             items.push(item);
         }
         if !cursor.go_to_next_sibling() {

@@ -2532,9 +2532,46 @@ fn accept_source_unit_members(items: &[SourceUnitMember], visitor: &mut dyn Visi
 }
 
 #[inline]
+fn accept_version_expression_sets(items: &[VersionExpressionSet], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_version_expression_set(item, visitor);
+    }
+}
+
+#[inline]
 fn accept_version_expression_set(items: &[VersionExpression], visitor: &mut dyn Visitor) {
     for item in items {
         accept_version_expression(item, visitor);
+    }
+}
+
+#[inline]
+fn accept_simple_version_literal(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+
+#[inline]
+fn accept_import_deconstruction_symbols(
+    items: &[ImportDeconstructionSymbol],
+    visitor: &mut dyn Visitor,
+) {
+    for item in items {
+        accept_import_deconstruction_symbol(item, visitor);
+    }
+}
+
+#[inline]
+fn accept_using_deconstruction_symbols(
+    items: &[UsingDeconstructionSymbol],
+    visitor: &mut dyn Visitor,
+) {
+    for item in items {
+        accept_using_deconstruction_symbol(item, visitor);
+    }
+}
+
+#[inline]
+fn accept_inheritance_types(items: &[InheritanceType], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_inheritance_type(item, visitor);
     }
 }
 
@@ -2567,6 +2604,9 @@ fn accept_struct_members(items: &[StructMember], visitor: &mut dyn Visitor) {
 }
 
 #[inline]
+fn accept_enum_members(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+
+#[inline]
 fn accept_state_variable_attributes(items: &[StateVariableAttribute], visitor: &mut dyn Visitor) {
     for item in items {
         accept_state_variable_attribute(item, visitor);
@@ -2574,9 +2614,23 @@ fn accept_state_variable_attributes(items: &[StateVariableAttribute], visitor: &
 }
 
 #[inline]
+fn accept_parameters(items: &[Parameter], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_parameter(item, visitor);
+    }
+}
+
+#[inline]
 fn accept_function_attributes(items: &[FunctionAttribute], visitor: &mut dyn Visitor) {
     for item in items {
         accept_function_attribute(item, visitor);
+    }
+}
+
+#[inline]
+fn accept_override_paths(items: &[IdentifierPath], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_identifier_path(item, visitor);
     }
 }
 
@@ -2615,116 +2669,6 @@ fn accept_modifier_attributes(items: &[ModifierAttribute], visitor: &mut dyn Vis
 }
 
 #[inline]
-fn accept_function_type_attributes(items: &[FunctionTypeAttribute], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_function_type_attribute(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_statements(items: &[Statement], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_statement(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_catch_clauses(items: &[CatchClause], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_catch_clause(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_string_literals(items: &[StringLiteral], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_string_literal(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_hex_string_literals(items: &[HexStringLiteral], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_hex_string_literal(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_unicode_string_literals(items: &[UnicodeStringLiteral], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_unicode_string_literal(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_yul_statements(items: &[YulStatement], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_yul_statement(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_yul_switch_cases(items: &[YulSwitchCase], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_yul_switch_case(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_version_expression_sets(items: &[VersionExpressionSet], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_version_expression_set(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_simple_version_literal(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
-
-#[inline]
-fn accept_import_deconstruction_symbols(
-    items: &[ImportDeconstructionSymbol],
-    visitor: &mut dyn Visitor,
-) {
-    for item in items {
-        accept_import_deconstruction_symbol(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_using_deconstruction_symbols(
-    items: &[UsingDeconstructionSymbol],
-    visitor: &mut dyn Visitor,
-) {
-    for item in items {
-        accept_using_deconstruction_symbol(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_inheritance_types(items: &[InheritanceType], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_inheritance_type(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_enum_members(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
-
-#[inline]
-fn accept_parameters(items: &[Parameter], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_parameter(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_override_paths(items: &[IdentifierPath], visitor: &mut dyn Visitor) {
-    for item in items {
-        accept_identifier_path(item, visitor);
-    }
-}
-
-#[inline]
 fn accept_event_parameters(items: &[EventParameter], visitor: &mut dyn Visitor) {
     for item in items {
         accept_event_parameter(item, visitor);
@@ -2735,6 +2679,20 @@ fn accept_event_parameters(items: &[EventParameter], visitor: &mut dyn Visitor) 
 fn accept_error_parameters(items: &[ErrorParameter], visitor: &mut dyn Visitor) {
     for item in items {
         accept_error_parameter(item, visitor);
+    }
+}
+
+#[inline]
+fn accept_function_type_attributes(items: &[FunctionTypeAttribute], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_function_type_attribute(item, visitor);
+    }
+}
+
+#[inline]
+fn accept_statements(items: &[Statement], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_statement(item, visitor);
     }
 }
 
@@ -2752,6 +2710,13 @@ fn accept_tuple_deconstruction_elements(
 ) {
     for item in items {
         accept_tuple_deconstruction_element(item, visitor);
+    }
+}
+
+#[inline]
+fn accept_catch_clauses(items: &[CatchClause], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_catch_clause(item, visitor);
     }
 }
 
@@ -2791,13 +2756,48 @@ fn accept_array_values(items: &[Expression], visitor: &mut dyn Visitor) {
 }
 
 #[inline]
+fn accept_string_literals(items: &[StringLiteral], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_string_literal(item, visitor);
+    }
+}
+
+#[inline]
+fn accept_hex_string_literals(items: &[HexStringLiteral], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_hex_string_literal(item, visitor);
+    }
+}
+
+#[inline]
+fn accept_unicode_string_literals(items: &[UnicodeStringLiteral], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_unicode_string_literal(item, visitor);
+    }
+}
+
+#[inline]
 fn accept_identifier_path(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+
+#[inline]
+fn accept_yul_statements(items: &[YulStatement], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_yul_statement(item, visitor);
+    }
+}
 
 #[inline]
 fn accept_yul_parameters(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
 
 #[inline]
 fn accept_yul_variable_names(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+
+#[inline]
+fn accept_yul_switch_cases(items: &[YulSwitchCase], visitor: &mut dyn Visitor) {
+    for item in items {
+        accept_yul_switch_case(item, visitor);
+    }
+}
 
 #[inline]
 fn accept_yul_arguments(items: &[YulExpression], visitor: &mut dyn Visitor) {
