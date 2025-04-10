@@ -25,6 +25,11 @@ fn nested() -> Result<()> {
 }
 
 #[test]
+fn recursive() -> Result<()> {
+    run("structs", "recursive")
+}
+
+#[test]
 fn sample() -> Result<()> {
     run("structs", "sample")
 }

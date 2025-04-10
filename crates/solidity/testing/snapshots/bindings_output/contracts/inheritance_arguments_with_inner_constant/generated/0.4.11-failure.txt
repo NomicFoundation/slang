@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ConstantKeyword or Identifier or InternalKeyword or PrivateKeyword or PublicKeyword.
+   ╭─[input.sol:2:16]
+   │
+ 2 │     constructor(uint) {}
+   │                ─────┬────  
+   │                     ╰────── Error occurred here.
+───╯
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Base {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     constructor(uint) {}
+   │     ─────┬─────  
+   │          ╰─────── unresolved
+   │ 
+ 5 │ contract Derived is Base(OTHER) { // the initializer expression should NOT bind
+   │          ───┬───    ──┬─ ──┬──  
+   │             ╰─────────────────── name: 2
+   │                       │    │    
+   │                       ╰───────── ref: 1
+   │                            │    
+   │                            ╰──── unresolved
+ 6 │     uint constant OTHER = 33;
+   │                   ──┬──  
+   │                     ╰──── name: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │   ╭─▶ contract Base {
+   ┆   ┆   
+ 3 │ │ ├─▶ }
+   │ │ │       
+   │ │ ╰─────── definiens: 1
+ 4 │ ╭───▶ 
+   ┆ ┆     
+ 6 │ │         uint constant OTHER = 33;
+   │ │     ───────────────┬──────────────  
+   │ │                    ╰──────────────── definiens: 3
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 2
+───╯

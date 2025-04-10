@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Foo layout at 0 {                                                       │ 0..26
+  2  │     function foo(){}                                                             │ 27..47
+  3  │ }                                                                                │ 48..49
+
+Errors: []
+
+Tree:
+  - (root꞉ ContractDefinition): # "contract Foo layout at 0 {\n    function foo(){}\n}\n" (0..50)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (leading_trivia꞉ Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Foo" # (9..12)
+      - (specifiers꞉ ContractSpecifiers): # " layout at 0" (12..24)
+          - (item꞉ ContractSpecifier) ► (variant꞉ StorageLayoutSpecifier): # " layout at 0" (12..24)
+              - (leading_trivia꞉ Whitespace): " " # (12..13)
+              - (layout_keyword꞉ LayoutKeyword): "layout" # (13..19)
+              - (leading_trivia꞉ Whitespace): " " # (19..20)
+              - (at_keyword꞉ AtKeyword): "at" # (20..22)
+              - (expression꞉ Expression) ► (variant꞉ DecimalNumberExpression): # " 0" (22..24)
+                  - (leading_trivia꞉ Whitespace): " " # (22..23)
+                  - (literal꞉ DecimalLiteral): "0" # (23..24)
+      - (leading_trivia꞉ Whitespace): " " # (24..25)
+      - (open_brace꞉ OpenBrace): "{" # (25..26)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (26..27)
+      - (members꞉ ContractMembers): # "    function foo(){}\n" (27..48)
+          - (item꞉ ContractMember) ► (variant꞉ FunctionDefinition): # "    function foo(){}\n" (27..48)
+              - (leading_trivia꞉ Whitespace): "    " # (27..31)
+              - (function_keyword꞉ FunctionKeyword): "function" # (31..39)
+              - (name꞉ FunctionName): # " foo" (39..43)
+                  - (leading_trivia꞉ Whitespace): " " # (39..40)
+                  - (variant꞉ Identifier): "foo" # (40..43)
+              - (parameters꞉ ParametersDeclaration): # "()" (43..45)
+                  - (open_paren꞉ OpenParen): "(" # (43..44)
+                  - (parameters꞉ Parameters): [] # (44..44)
+                  - (close_paren꞉ CloseParen): ")" # (44..45)
+              - (attributes꞉ FunctionAttributes): [] # (45..45)
+              - (body꞉ FunctionBody) ► (variant꞉ Block): # "{}\n" (45..48)
+                  - (open_brace꞉ OpenBrace): "{" # (45..46)
+                  - (statements꞉ Statements): [] # (46..46)
+                  - (close_brace꞉ CloseBrace): "}" # (46..47)
+                  - (trailing_trivia꞉ EndOfLine): "\n" # (47..48)
+      - (close_brace꞉ CloseBrace): "}" # (48..49)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (49..50)

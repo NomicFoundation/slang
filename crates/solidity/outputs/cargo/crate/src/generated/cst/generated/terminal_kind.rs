@@ -118,6 +118,14 @@ pub enum TerminalKind {
     /// ASTERISK_EQUAL = "*=";
     /// ```
     AsteriskEqual,
+    /// Represents a node with kind `AtKeyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Introduced in 0.8.29 *)
+    /// (* Never reserved *)
+    /// AT_KEYWORD = "at";
+    /// ```
+    AtKeyword,
     /// Represents a node with kind `AutoKeyword`, having the following structure:
     ///
     /// ```ebnf
@@ -655,6 +663,14 @@ pub enum TerminalKind {
     /// IS_KEYWORD = "is";
     /// ```
     IsKeyword,
+    /// Represents a node with kind `LayoutKeyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Introduced in 0.8.29 *)
+    /// (* Never reserved *)
+    /// LAYOUT_KEYWORD = "layout";
+    /// ```
+    LayoutKeyword,
     /// Represents a node with kind `LessThan`, having the following structure:
     ///
     /// ```ebnf

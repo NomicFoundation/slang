@@ -310,7 +310,7 @@ interface cst {
                 /// ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
                 ///                      (* contract_keyword: *) CONTRACT_KEYWORD
                 ///                      (* name: *) IDENTIFIER
-                ///                      (* inheritance: *) InheritanceSpecifier?
+                ///                      (* specifiers: *) ContractSpecifiers
                 ///                      (* open_brace: *) OPEN_BRACE
                 ///                      (* members: *) ContractMembers
                 ///                      (* close_brace: *) CLOSE_BRACE;
@@ -340,6 +340,19 @@ interface cst {
                 /// ContractMembers = (* item: *) ContractMember*;
                 /// ```
                 %contract-members,
+                /// Represents a node with kind `ContractSpecifier`, having the following structure:
+                ///
+                /// ```ebnf
+                /// ContractSpecifier = (* variant: *) InheritanceSpecifier
+                ///                   | (* variant: *) StorageLayoutSpecifier; (* Introduced in 0.8.29 *)
+                /// ```
+                %contract-specifier,
+                /// Represents a node with kind `ContractSpecifiers`, having the following structure:
+                ///
+                /// ```ebnf
+                /// ContractSpecifiers = (* item: *) ContractSpecifier*;
+                /// ```
+                %contract-specifiers,
                 /// Represents a node with kind `DecimalNumberExpression`, having the following structure:
                 ///
                 /// ```ebnf
@@ -1343,6 +1356,15 @@ interface cst {
                 /// Statements = (* item: *) Statement*;
                 /// ```
                 %statements,
+                /// Represents a node with kind `StorageLayoutSpecifier`, having the following structure:
+                ///
+                /// ```ebnf
+                /// (* Introduced in 0.8.29 *)
+                /// StorageLayoutSpecifier = (* layout_keyword: *) LAYOUT_KEYWORD
+                ///                          (* at_keyword: *) AT_KEYWORD
+                ///                          (* expression: *) Expression;
+                /// ```
+                %storage-layout-specifier,
                 /// Represents a node with kind `StorageLocation`, having the following structure:
                 ///
                 /// ```ebnf
@@ -2108,6 +2130,14 @@ interface cst {
                 /// ASTERISK_EQUAL = "*=";
                 /// ```
                 %asterisk-equal,
+                /// Represents a node with kind `AtKeyword`, having the following structure:
+                ///
+                /// ```ebnf
+                /// (* Introduced in 0.8.29 *)
+                /// (* Never reserved *)
+                /// AT_KEYWORD = "at";
+                /// ```
+                %at-keyword,
                 /// Represents a node with kind `AutoKeyword`, having the following structure:
                 ///
                 /// ```ebnf
@@ -2645,6 +2675,14 @@ interface cst {
                 /// IS_KEYWORD = "is";
                 /// ```
                 %is-keyword,
+                /// Represents a node with kind `LayoutKeyword`, having the following structure:
+                ///
+                /// ```ebnf
+                /// (* Introduced in 0.8.29 *)
+                /// (* Never reserved *)
+                /// LAYOUT_KEYWORD = "layout";
+                /// ```
+                %layout-keyword,
                 /// Represents a node with kind `LessThan`, having the following structure:
                 ///
                 /// ```ebnf
@@ -4055,6 +4093,8 @@ interface cst {
                 %assignment,
                 /// Represents a child node with the label `asterisk`.
                 %asterisk,
+                /// Represents a child node with the label `at_keyword`.
+                %at-keyword,
                 /// Represents a child node with the label `attributes`.
                 %attributes,
                 /// Represents a child node with the label `block`.
@@ -4165,6 +4205,8 @@ interface cst {
                 %key-type,
                 /// Represents a child node with the label `label`.
                 %label,
+                /// Represents a child node with the label `layout_keyword`.
+                %layout-keyword,
                 /// Represents a child node with the label `leave_keyword`.
                 %leave-keyword,
                 /// Represents a child node with the label `let_keyword`.
@@ -4235,6 +4277,8 @@ interface cst {
                 %sets,
                 /// Represents a child node with the label `solidity_keyword`.
                 %solidity-keyword,
+                /// Represents a child node with the label `specifiers`.
+                %specifiers,
                 /// Represents a child node with the label `start`.
                 %start,
                 /// Represents a child node with the label `statements`.

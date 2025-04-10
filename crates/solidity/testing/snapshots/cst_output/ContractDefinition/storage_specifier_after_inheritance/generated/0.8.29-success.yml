@@ -1,0 +1,35 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Foo is Bar layout at 0 {                                                │ 0..33
+  2  │ }                                                                                │ 34..35
+
+Errors: []
+
+Tree:
+  - (root꞉ ContractDefinition): # "contract Foo is Bar layout at 0 {\n}\n" (0..36)
+      - (contract_keyword꞉ ContractKeyword): "contract" # (0..8)
+      - (leading_trivia꞉ Whitespace): " " # (8..9)
+      - (name꞉ Identifier): "Foo" # (9..12)
+      - (specifiers꞉ ContractSpecifiers): # " is Bar layout at 0" (12..31)
+          - (item꞉ ContractSpecifier) ► (variant꞉ InheritanceSpecifier): # " is Bar" (12..19)
+              - (leading_trivia꞉ Whitespace): " " # (12..13)
+              - (is_keyword꞉ IsKeyword): "is" # (13..15)
+              - (types꞉ InheritanceTypes): # " Bar" (15..19)
+                  - (item꞉ InheritanceType) ► (type_name꞉ IdentifierPath): # " Bar" (15..19)
+                      - (leading_trivia꞉ Whitespace): " " # (15..16)
+                      - (item꞉ Identifier): "Bar" # (16..19)
+          - (item꞉ ContractSpecifier) ► (variant꞉ StorageLayoutSpecifier): # " layout at 0" (19..31)
+              - (leading_trivia꞉ Whitespace): " " # (19..20)
+              - (layout_keyword꞉ LayoutKeyword): "layout" # (20..26)
+              - (leading_trivia꞉ Whitespace): " " # (26..27)
+              - (at_keyword꞉ AtKeyword): "at" # (27..29)
+              - (expression꞉ Expression) ► (variant꞉ DecimalNumberExpression): # " 0" (29..31)
+                  - (leading_trivia꞉ Whitespace): " " # (29..30)
+                  - (literal꞉ DecimalLiteral): "0" # (30..31)
+      - (leading_trivia꞉ Whitespace): " " # (31..32)
+      - (open_brace꞉ OpenBrace): "{" # (32..33)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (33..34)
+      - (members꞉ ContractMembers): [] # (34..34)
+      - (close_brace꞉ CloseBrace): "}" # (34..35)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (35..36)

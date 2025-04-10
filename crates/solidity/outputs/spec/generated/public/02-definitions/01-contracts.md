@@ -6,7 +6,19 @@
 
 ```
 
-<pre ebnf-snippet="ContractDefinition" style="display: none;"><a href="#ContractDefinition"><span class="k">ContractDefinition</span></a><span class="o"> = </span><span class="cm">(* abstract_keyword: *)</span><span class="o"> </span><a href="../../01-file-structure/06-keywords#AbstractKeyword"><span class="k">ABSTRACT_KEYWORD</span></a><span class="o">?</span><span class="o"> </span><span class="cm">(* Introduced in 0.6.0 *)</span><br /><span class="o">                     </span><span class="cm">(* contract_keyword: *)</span><span class="o"> </span><a href="../../01-file-structure/06-keywords#ContractKeyword"><span class="k">CONTRACT_KEYWORD</span></a><br /><span class="o">                     </span><span class="cm">(* name: *)</span><span class="o"> </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                     </span><span class="cm">(* inheritance: *)</span><span class="o"> </span><a href="#InheritanceSpecifier"><span class="k">InheritanceSpecifier</span></a><span class="o">?</span><br /><span class="o">                     </span><span class="cm">(* open_brace: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">                     </span><span class="cm">(* members: *)</span><span class="o"> </span><a href="#ContractMembers"><span class="k">ContractMembers</span></a><br /><span class="o">                     </span><span class="cm">(* close_brace: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ContractDefinition" style="display: none;"><a href="#ContractDefinition"><span class="k">ContractDefinition</span></a><span class="o"> = </span><span class="cm">(* abstract_keyword: *)</span><span class="o"> </span><a href="../../01-file-structure/06-keywords#AbstractKeyword"><span class="k">ABSTRACT_KEYWORD</span></a><span class="o">?</span><span class="o"> </span><span class="cm">(* Introduced in 0.6.0 *)</span><br /><span class="o">                     </span><span class="cm">(* contract_keyword: *)</span><span class="o"> </span><a href="../../01-file-structure/06-keywords#ContractKeyword"><span class="k">CONTRACT_KEYWORD</span></a><br /><span class="o">                     </span><span class="cm">(* name: *)</span><span class="o"> </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                     </span><span class="cm">(* specifiers: *)</span><span class="o"> </span><a href="#ContractSpecifiers"><span class="k">ContractSpecifiers</span></a><br /><span class="o">                     </span><span class="cm">(* open_brace: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#OpenBrace"><span class="k">OPEN_BRACE</span></a><br /><span class="o">                     </span><span class="cm">(* members: *)</span><span class="o"> </span><a href="#ContractMembers"><span class="k">ContractMembers</span></a><br /><span class="o">                     </span><span class="cm">(* close_brace: *)</span><span class="o"> </span><a href="../../01-file-structure/07-punctuation#CloseBrace"><span class="k">CLOSE_BRACE</span></a><span class="o">;</span></pre>
+
+```{ .ebnf #ContractSpecifiers }
+
+```
+
+<pre ebnf-snippet="ContractSpecifiers" style="display: none;"><a href="#ContractSpecifiers"><span class="k">ContractSpecifiers</span></a><span class="o"> = </span><span class="cm">(* item: *)</span><span class="o"> </span><a href="#ContractSpecifier"><span class="k">ContractSpecifier</span></a><span class="o">*</span><span class="o">;</span></pre>
+
+```{ .ebnf #ContractSpecifier }
+
+```
+
+<pre ebnf-snippet="ContractSpecifier" style="display: none;"><a href="#ContractSpecifier"><span class="k">ContractSpecifier</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#InheritanceSpecifier"><span class="k">InheritanceSpecifier</span></a><br /><span class="o">                  | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#StorageLayoutSpecifier"><span class="k">StorageLayoutSpecifier</span></a><span class="o">;</span><span class="o"> </span><span class="cm">(* Introduced in 0.8.29 *)</span></pre>
 
 ```{ .ebnf #InheritanceSpecifier }
 
@@ -25,6 +37,12 @@
 ```
 
 <pre ebnf-snippet="InheritanceType" style="display: none;"><a href="#InheritanceType"><span class="k">InheritanceType</span></a><span class="o"> = </span><span class="cm">(* type_name: *)</span><span class="o"> </span><a href="../../05-expressions/06-identifiers#IdentifierPath"><span class="k">IdentifierPath</span></a><br /><span class="o">                  </span><span class="cm">(* arguments: *)</span><span class="o"> </span><a href="../../05-expressions/02-function-calls#ArgumentsDeclaration"><span class="k">ArgumentsDeclaration</span></a><span class="o">?</span><span class="o">;</span></pre>
+
+```{ .ebnf #StorageLayoutSpecifier }
+
+```
+
+<pre ebnf-snippet="StorageLayoutSpecifier" style="display: none;"><span class="cm">(* Introduced in 0.8.29 *)</span><br /><a href="#StorageLayoutSpecifier"><span class="k">StorageLayoutSpecifier</span></a><span class="o"> = </span><span class="cm">(* layout_keyword: *)</span><span class="o"> </span><a href="../../01-file-structure/06-keywords#LayoutKeyword"><span class="k">LAYOUT_KEYWORD</span></a><br /><span class="o">                         </span><span class="cm">(* at_keyword: *)</span><span class="o"> </span><a href="../../01-file-structure/06-keywords#AtKeyword"><span class="k">AT_KEYWORD</span></a><br /><span class="o">                         </span><span class="cm">(* expression: *)</span><span class="o"> </span><a href="../../05-expressions/01-base-expressions#Expression"><span class="k">Expression</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ContractMembers }
 
