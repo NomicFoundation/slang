@@ -70,10 +70,17 @@ fn build_l1_model_wrapper(ast_model_wrapper: &ModelWrapper) -> ModelWrapper {
     let ast_model = &ast_model_wrapper.target;
     let mut l1_model = IrModel::from_model("l1", ast_model);
 
+    // L1 is for now only a proof of concept for rendering transfomation code
+    // from previous trees. Therefore, the following modifications are (a
+    // non-exhaustive list of) samples of what can be done.
+
+    // Remove deprecated language elements in Solidity 0.8
     l1_model.remove_type("UnnamedFunctionDefinition");
     l1_model.remove_type("UnnamedFunctionAttributes");
-    l1_model.remove_type("ContractSpecifiers");
 
+    // Flatten contract specifiers and bring the inherited types and storage
+    // layout to the contract definition itself.
+    l1_model.remove_type("ContractSpecifiers");
     l1_model.add_sequence_field(
         "ContractDefinition",
         "inheritance_types",
