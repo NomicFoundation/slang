@@ -82,33 +82,21 @@
     {% endfor %}
 
     //
-    // Repeated:
+    // Repeated & Separated
     //
-    {% for parent_type, repeated in transformer.repeated %}
-      fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
-        source.iter().map(
-          {%- if repeated.is_terminal -%}
-            Rc::clone
-          {%- else -%}
-            |item| self.transform_{{ repeated.item_type | snake_case }}(item)
-          {%- endif -%}
-        ).collect()
-      }
-    {% endfor %}
 
-    //
-    // Separated:
-    //
-    {% for parent_type, separated in transformer.separated %}
-      fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
-        source.iter().map(
-          {%- if separated.is_terminal -%}
-            Rc::clone
-          {%- else -%}
-            |item| self.transform_{{ separated.item_type | snake_case }}(item)
-          {%- endif -%}
-        ).collect()
-      }
+    {% for collections in [transformer.repeated, transformer.separated] %}
+      {% for parent_type, collection in collections %}
+        fn transform_{{ parent_type | snake_case }}(&mut self, source: &input::{{ parent_type }}) -> output::{{ parent_type }} {
+          source.iter().map(
+            {%- if collection.is_terminal -%}
+              Rc::clone
+            {%- else -%}
+              |item| self.transform_{{ collection.item_type | snake_case }}(item)
+            {%- endif -%}
+          ).collect()
+        }
+      {% endfor %}
     {% endfor %}
   }
 {%- endif -%}

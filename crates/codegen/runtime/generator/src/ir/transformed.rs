@@ -2,7 +2,7 @@ use codegen_language_definition::model;
 use indexmap::IndexMap;
 use serde::Serialize;
 
-use super::ir_model::{Choice, IrModel, Repeated, Separated, Sequence};
+use super::ir_model::{Choice, Collection, IrModel, Sequence};
 
 #[derive(Default, Serialize)]
 pub struct TransformedIrModel {
@@ -10,8 +10,8 @@ pub struct TransformedIrModel {
 
     pub sequences: IndexMap<model::Identifier, TransformedSequence>,
     pub choices: IndexMap<model::Identifier, TransformedChoice>,
-    pub repeated: IndexMap<model::Identifier, Repeated>,
-    pub separated: IndexMap<model::Identifier, Separated>,
+    pub repeated: IndexMap<model::Identifier, Collection>,
+    pub separated: IndexMap<model::Identifier, Collection>,
 }
 
 #[derive(Clone, Serialize)]

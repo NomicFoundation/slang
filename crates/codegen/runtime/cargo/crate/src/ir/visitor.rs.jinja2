@@ -76,39 +76,22 @@
   {% endfor %}
 
   //
-  // Repeated:
+  // Repeated & Separated
   //
 
-  {% for parent_type, repeated in target.repeated -%}
-    {%- if repeated.is_terminal %}
-      #[inline]
-      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
-    {% else %}
-      #[inline]
-      fn accept_{{ parent_type | snake_case }}(items: &[{{ repeated.item_type }}], visitor: &mut dyn Visitor) {
-        for item in items {
-          accept_{{ repeated.item_type | snake_case }}(item, visitor);
+  {% for collections in [target.repeated, target.separated] %}
+    {% for parent_type, collection in collections -%}
+      {%- if collection.is_terminal %}
+        #[inline]
+        fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+      {% else %}
+        #[inline]
+        fn accept_{{ parent_type | snake_case }}(items: &[{{ collection.item_type }}], visitor: &mut dyn Visitor) {
+          for item in items {
+            accept_{{ collection.item_type | snake_case }}(item, visitor);
+          }
         }
-      }
-    {% endif -%}
+      {% endif -%}
+    {% endfor %}
   {% endfor %}
-
-  //
-  // Separated:
-  //
-
-  {% for parent_type, separated in target.separated %}
-    {%- if separated.is_terminal %}
-      #[inline]
-      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
-    {% else %}
-      #[inline]
-      fn accept_{{ parent_type | snake_case }}(items: &[{{ separated.item_type }}], visitor: &mut dyn Visitor) {
-        for item in items {
-          accept_{{ separated.item_type | snake_case }}(item, visitor);
-        }
-      }
-    {% endif -%}
-  {% endfor %}
-
 {%- endif %}

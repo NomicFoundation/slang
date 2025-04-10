@@ -3225,7 +3225,7 @@ pub trait Transformer {
     }
 
     //
-    // Repeated:
+    // Repeated & Separated
     //
 
     fn transform_source_unit_members(
@@ -3415,10 +3415,6 @@ pub trait Transformer {
             .map(|item| self.transform_yul_switch_case(item))
             .collect()
     }
-
-    //
-    // Separated:
-    //
 
     fn transform_version_expression_sets(
         &mut self,

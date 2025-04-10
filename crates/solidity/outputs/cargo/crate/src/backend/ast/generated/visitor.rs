@@ -2538,7 +2538,7 @@ pub fn accept_yul_literal(target: &YulLiteral, visitor: &mut dyn Visitor) {
 }
 
 //
-// Repeated:
+// Repeated & Separated
 //
 
 #[inline]
@@ -2703,10 +2703,6 @@ fn accept_yul_switch_cases(items: &[YulSwitchCase], visitor: &mut dyn Visitor) {
         accept_yul_switch_case(item, visitor);
     }
 }
-
-//
-// Separated:
-//
 
 #[inline]
 fn accept_version_expression_sets(items: &[VersionExpressionSet], visitor: &mut dyn Visitor) {

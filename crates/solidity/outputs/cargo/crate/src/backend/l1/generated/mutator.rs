@@ -2765,7 +2765,7 @@ pub trait Mutator {
     }
 
     //
-    // Repeated:
+    // Repeated & Separated
     //
 
     fn mutate_source_unit_members(&mut self, source: &SourceUnitMembers) -> SourceUnitMembers {
@@ -2928,10 +2928,6 @@ pub trait Mutator {
             .map(|item| self.mutate_yul_switch_case(item))
             .collect()
     }
-
-    //
-    // Separated:
-    //
 
     fn mutate_version_expression_sets(
         &mut self,

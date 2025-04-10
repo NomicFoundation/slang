@@ -1597,7 +1597,7 @@ pub enum YulLiteral {
 }
 
 //
-// Repeated:
+// Repeated & Separated
 //
 
 pub type SourceUnitMembers = Vec<SourceUnitMember>;
@@ -1643,10 +1643,6 @@ pub type UnicodeStringLiterals = Vec<UnicodeStringLiteral>;
 pub type YulStatements = Vec<YulStatement>;
 
 pub type YulSwitchCases = Vec<YulSwitchCase>;
-
-//
-// Separated:
-//
 
 pub type VersionExpressionSets = Vec<VersionExpressionSet>;
 

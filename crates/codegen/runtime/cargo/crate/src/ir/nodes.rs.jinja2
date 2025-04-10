@@ -55,30 +55,18 @@
   {% endfor %}
 
   //
-  // Repeated:
+  // Repeated & Separated
   //
 
-  {% for parent_type, repeated in target.repeated %}
-    pub type {{ parent_type }} = Vec<
-      {%- if repeated.is_terminal -%}
-        Rc<TerminalNode>
-      {%- else -%}
-        {{ repeated.item_type | pascal_case }}
-      {%- endif -%}
-    >;
-  {% endfor %}
-
-  //
-  // Separated:
-  //
-
-  {% for parent_type, separated in target.separated %}
-    pub type {{ parent_type }} = Vec<
-      {%- if separated.is_terminal -%}
-        Rc<TerminalNode>
-      {%- else -%}
-        {{ separated.item_type | pascal_case }}
-      {%- endif -%}
-    >;
+  {% for collections in [target.repeated, target.separated] %}
+    {% for parent_type, collection in collections %}
+      pub type {{ parent_type }} = Vec<
+        {%- if collection.is_terminal -%}
+          Rc<TerminalNode>
+        {%- else -%}
+          {{ collection.item_type | pascal_case }}
+        {%- endif -%}
+      >;
+    {% endfor %}
   {% endfor %}
 {%- endif %}

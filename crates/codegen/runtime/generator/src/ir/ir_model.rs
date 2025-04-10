@@ -16,8 +16,8 @@ pub struct IrModel {
 
     pub sequences: IndexMap<model::Identifier, Sequence>,
     pub choices: IndexMap<model::Identifier, Choice>,
-    pub repeated: IndexMap<model::Identifier, Repeated>,
-    pub separated: IndexMap<model::Identifier, Separated>,
+    pub repeated: IndexMap<model::Identifier, Collection>,
+    pub separated: IndexMap<model::Identifier, Collection>,
 }
 
 #[derive(Clone, Serialize)]
@@ -44,13 +44,7 @@ pub struct Choice {
 }
 
 #[derive(Clone, Serialize)]
-pub struct Repeated {
-    pub item_type: model::Identifier,
-    pub is_terminal: bool,
-}
-
-#[derive(Clone, Serialize)]
-pub struct Separated {
+pub struct Collection {
     pub item_type: model::Identifier,
     pub is_terminal: bool,
 }
@@ -224,7 +218,7 @@ impl IrModel {
 
         self.repeated.insert(
             parent_type,
-            Repeated {
+            Collection {
                 item_type: item.reference.clone(),
                 is_terminal: self.terminals.contains(&item.reference)
                     || self.unique_terminals.contains(&item.reference),
@@ -237,7 +231,7 @@ impl IrModel {
 
         self.separated.insert(
             parent_type,
-            Separated {
+            Collection {
                 item_type: item.reference.clone(),
                 is_terminal: self.terminals.contains(&item.reference)
                     || self.unique_terminals.contains(&item.reference),
@@ -343,7 +337,7 @@ impl IrModel {
 
 // Mutation methods
 impl IrModel {
-    pub fn remove_type(&mut self, name: &str) -> bool {
+    pub fn remove_type(&mut self, name: &str) {
         let identifier: model::Identifier = name.into();
         let removed = self.sequences.shift_remove(&identifier).is_some()
             || self.choices.shift_remove(&identifier).is_some()
@@ -352,81 +346,38 @@ impl IrModel {
             || self.unique_terminals.shift_remove(&identifier)
             || self.terminals.shift_remove(&identifier);
 
+        assert!(removed, "Could not find type {name} to remove");
+
         for (_, sequence) in &mut self.sequences {
-            let mut index = 0;
-            while index < sequence.fields.len() {
-                if sequence.fields[index].r#type == identifier {
-                    sequence.fields.remove(index);
-                } else {
-                    index += 1;
-                }
-            }
+            sequence.fields.retain(|field| field.r#type != identifier);
         }
 
         for (_, choice) in &mut self.choices {
-            let mut index = 0;
-            while index < choice.nonterminal_types.len() {
-                if choice.nonterminal_types[index] == identifier {
-                    choice.nonterminal_types.remove(index);
-                } else {
-                    index += 1;
-                }
-            }
-            index = 0;
-            while index < choice.terminal_types.len() {
-                if choice.terminal_types[index] == identifier {
-                    choice.terminal_types.remove(index);
-                } else {
-                    index += 1;
-                }
-            }
-            index = 0;
-            while index < choice.unique_terminal_types.len() {
-                if choice.unique_terminal_types[index] == identifier {
-                    choice.unique_terminal_types.remove(index);
-                } else {
-                    index += 1;
-                }
-            }
+            choice.nonterminal_types.retain(|item| *item != identifier);
+            choice.terminal_types.retain(|item| *item != identifier);
+            choice
+                .unique_terminal_types
+                .retain(|item| *item != identifier);
         }
 
-        if let Some(repeated_with_item_type) = self.repeated.iter().find_map(|repeated_entry| {
-            if repeated_entry.1.item_type == identifier {
-                Some(repeated_entry.0.clone())
-            } else {
-                None
-            }
-        }) {
-            self.repeated.shift_remove(&repeated_with_item_type);
-        }
-
-        if let Some(separated_with_item_type) = self.separated.iter().find_map(|separated_entry| {
-            if separated_entry.1.item_type == identifier {
-                Some(separated_entry.0.clone())
-            } else {
-                None
-            }
-        }) {
-            self.separated.shift_remove(&separated_with_item_type);
-        }
-
-        removed
+        self.repeated
+            .retain(|_, repeated| repeated.item_type != identifier);
+        self.separated
+            .retain(|_, separated| separated.item_type != identifier);
     }
 
-    pub fn remove_sequence_field(&mut self, sequence_id: &str, field_label: &str) -> bool {
+    pub fn remove_sequence_field(&mut self, sequence_id: &str, field_label: &str) {
         let identifier: model::Identifier = sequence_id.into();
         let Some(sequence) = self.sequences.get_mut(&identifier) else {
-            return false;
+            panic!("Sequence {sequence_id} not found in IR model");
         };
-        let mut index = 0;
-        while index < sequence.fields.len() {
-            if sequence.fields[index].label == field_label.into() {
-                sequence.fields.remove(index);
-                return true;
-            }
-            index += 1;
-        }
-        false
+        let fields_count = sequence.fields.len();
+        let field_label: model::Identifier = field_label.into();
+        sequence.fields.retain(|field| field.label != field_label);
+        assert!(
+            fields_count > sequence.fields.len(),
+            "Could not find field {field_label} to remove in {sequence_id}"
+        );
     }
 
     pub fn add_sequence_field(
@@ -435,10 +386,10 @@ impl IrModel {
         field_label: &str,
         field_type: &str,
         is_optional: bool,
-    ) -> bool {
+    ) {
         let identifier: model::Identifier = sequence_id.into();
         let Some(sequence) = self.sequences.get_mut(&identifier) else {
-            return false;
+            panic!("Sequence {sequence_id} not found in IR model");
         };
         let is_terminal = self
             .terminals
@@ -452,6 +403,5 @@ impl IrModel {
             is_terminal,
             is_optional,
         });
-        false
     }
 }
