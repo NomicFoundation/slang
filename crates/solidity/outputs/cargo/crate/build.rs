@@ -52,18 +52,11 @@ fn build_ast_model_wrapper(cst_model: &IrModel) -> ModelWrapper {
 
     // remove fields from sequences that contain redundant terminal nodes
     for (_, sequence) in &mut ast_model.sequences {
-        let mut index = 0;
-        while index < sequence.fields.len() {
-            let field = &sequence.fields[index];
-            if field.is_optional
+        sequence.fields.retain(|field| {
+            field.is_optional
                 || !field.is_terminal
                 || !ast_model.unique_terminals.contains(&field.r#type)
-            {
-                index += 1;
-            } else {
-                sequence.fields.remove(index);
-            }
-        }
+        });
     }
 
     ModelWrapper::with_builder(cst_model, ast_model)
