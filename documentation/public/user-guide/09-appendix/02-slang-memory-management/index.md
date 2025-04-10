@@ -1,4 +1,4 @@
-# 9.2. Considerations on memory usage
+# 9.2. Slang Memory Management
 
 For typical uses of Slang, developers should not worry about memory usage. That said, this appendix may be useful if you're experiencing memory issues in your applications using Slang, or you're curious about the memory management when working with Slang objects.
 
@@ -6,7 +6,7 @@ Slang's core is written in Rust, cross-compiled into Web Assembly, and then impo
 
 ## Internal vs external memory
 
-JavaScript engines distinguish between the memory space that contains JavaScript objects, called _internal memory_ or _heap space_, and the space used for Wasm components, called _external memory_. The Slang objects that you interact with reside in internal memory. However, a Slang object, such as a `Cursor`, holds a _handle_ to a Wasm component that manages a corresponding resource in the Rust implementation. In the case of a `Cursor`, that resource contains among other things _a reference to the entire parsing tree_. Therefore, an instance of the `Cursor` class in JavaScript is lightweight in terms of internal memory as it only contains the handle number. But it is associated with a significant amount of external memory—the actual cursor in Wasm-land.
+JavaScript engines distinguish between the memory space that contains JavaScript objects, called _internal memory_ or _heap space_, and the space used for Wasm components, called _external memory_. The Slang objects that you interact with reside in internal memory. However, a Slang object, such as a `Cursor`, holds a _handle_ to a Wasm component that manages a corresponding resource in the Rust implementation. In the case of a `Cursor`, that resource contains among other things _a reference to the entire parsing tree_. Therefore, an instance of the `Cursor` class in JavaScript is lightweight in terms of internal memory as it only contains the handle number. But it is associated with a significant amount of external memory—the actual cursor and its tree in Wasm-land.
 
 ## Finalizers and cleanup callbacks
 
@@ -30,7 +30,7 @@ await new Promise((r) => setTimeout(r, 10));
 
 In our tests, adding this timeout was sufficient to give the `FinalizationRegistry` time to properly clean up the objects. The external memory usage grows at the start, but eventually stabilizes and remains steady.
 
-In an interactive environment, such as a browser, it should not be necessary to add such a pause, as the engine has several opportunities to perform cleanup while waiting for user input.
+In an interactive environment, such as an IDE or a browser, it should not be necessary to add such a pause, as the engine has several opportunities to perform cleanup while waiting for user input.
 
 An important point to mention is that the memory used in Wasm never shrinks back after being cleaned. This is [expected by design](https://github.com/WebAssembly/design/issues/1300#issuecomment-573867836).
 
