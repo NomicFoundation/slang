@@ -635,25 +635,6 @@ pub fn build_constructor_definition(cursor: Cursor) -> Result<ConstructorDefinit
     }))
 }
 
-pub fn build_unnamed_function_definition(cursor: Cursor) -> Result<UnnamedFunctionDefinition> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::UnnamedFunctionDefinition)?;
-    let node_id = cursor.node().id();
-    let mut helper = SequenceHelper::new(cursor);
-    _ = helper.accept_label(EdgeLabel::FunctionKeyword)?;
-    let parameters = build_parameters_declaration(helper.accept_label(EdgeLabel::Parameters)?)?;
-    let attributes =
-        build_unnamed_function_attributes(helper.accept_label(EdgeLabel::Attributes)?)?;
-    let body = build_function_body(helper.accept_label(EdgeLabel::Body)?)?;
-    helper.finalize()?;
-
-    Ok(Rc::new(UnnamedFunctionDefinitionStruct {
-        node_id,
-        parameters,
-        attributes,
-        body,
-    }))
-}
-
 pub fn build_fallback_function_definition(cursor: Cursor) -> Result<FallbackFunctionDefinition> {
     expect_nonterminal_kind(&cursor, NonterminalKind::FallbackFunctionDefinition)?;
     let node_id = cursor.node().id();
@@ -1096,13 +1077,6 @@ pub fn build_tuple_deconstruction_statement(
     expect_nonterminal_kind(&cursor, NonterminalKind::TupleDeconstructionStatement)?;
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
-    let var_keyword = if helper.at_label(EdgeLabel::VarKeyword) {
-        Some(fetch_terminal_node(
-            &helper.accept_label(EdgeLabel::VarKeyword)?,
-        )?)
-    } else {
-        None
-    };
     _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let elements = build_tuple_deconstruction_elements(helper.accept_label(EdgeLabel::Elements)?)?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
@@ -1113,7 +1087,6 @@ pub fn build_tuple_deconstruction_statement(
 
     Ok(Rc::new(TupleDeconstructionStatementStruct {
         node_id,
-        var_keyword,
         elements,
         expression,
     }))
@@ -1479,17 +1452,6 @@ pub fn build_revert_statement(cursor: Cursor) -> Result<RevertStatement> {
         error,
         arguments,
     }))
-}
-
-pub fn build_throw_statement(cursor: Cursor) -> Result<ThrowStatement> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::ThrowStatement)?;
-    let node_id = cursor.node().id();
-    let mut helper = SequenceHelper::new(cursor);
-    _ = helper.accept_label(EdgeLabel::ThrowKeyword)?;
-    _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize()?;
-
-    Ok(Rc::new(ThrowStatementStruct { node_id }))
 }
 
 pub fn build_assignment_expression(cursor: Cursor) -> Result<AssignmentExpression> {
@@ -1955,18 +1917,9 @@ pub fn build_hex_number_expression(cursor: Cursor) -> Result<HexNumberExpression
     let node_id = cursor.node().id();
     let mut helper = SequenceHelper::new(cursor);
     let literal = fetch_terminal_node(&helper.accept_label(EdgeLabel::Literal)?)?;
-    let unit = if helper.at_label(EdgeLabel::Unit) {
-        Some(build_number_unit(helper.accept_label(EdgeLabel::Unit)?)?)
-    } else {
-        None
-    };
     helper.finalize()?;
 
-    Ok(Rc::new(HexNumberExpressionStruct {
-        node_id,
-        literal,
-        unit,
-    }))
+    Ok(Rc::new(HexNumberExpressionStruct { node_id, literal }))
 }
 
 pub fn build_decimal_number_expression(cursor: Cursor) -> Result<DecimalNumberExpression> {
@@ -2113,44 +2066,6 @@ pub fn build_yul_variable_assignment_statement(
     }))
 }
 
-pub fn build_yul_colon_and_equal(cursor: Cursor) -> Result<YulColonAndEqual> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::YulColonAndEqual)?;
-    let node_id = cursor.node().id();
-    let mut helper = SequenceHelper::new(cursor);
-    _ = helper.accept_label(EdgeLabel::Colon)?;
-    _ = helper.accept_label(EdgeLabel::Equal)?;
-    helper.finalize()?;
-
-    Ok(Rc::new(YulColonAndEqualStruct { node_id }))
-}
-
-pub fn build_yul_stack_assignment_statement(cursor: Cursor) -> Result<YulStackAssignmentStatement> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::YulStackAssignmentStatement)?;
-    let node_id = cursor.node().id();
-    let mut helper = SequenceHelper::new(cursor);
-    let assignment =
-        build_yul_stack_assignment_operator(helper.accept_label(EdgeLabel::Assignment)?)?;
-    let variable = fetch_terminal_node(&helper.accept_label(EdgeLabel::Variable)?)?;
-    helper.finalize()?;
-
-    Ok(Rc::new(YulStackAssignmentStatementStruct {
-        node_id,
-        assignment,
-        variable,
-    }))
-}
-
-pub fn build_yul_equal_and_colon(cursor: Cursor) -> Result<YulEqualAndColon> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::YulEqualAndColon)?;
-    let node_id = cursor.node().id();
-    let mut helper = SequenceHelper::new(cursor);
-    _ = helper.accept_label(EdgeLabel::Equal)?;
-    _ = helper.accept_label(EdgeLabel::Colon)?;
-    helper.finalize()?;
-
-    Ok(Rc::new(YulEqualAndColonStruct { node_id }))
-}
-
 pub fn build_yul_if_statement(cursor: Cursor) -> Result<YulIfStatement> {
     expect_nonterminal_kind(&cursor, NonterminalKind::YulIfStatement)?;
     let node_id = cursor.node().id();
@@ -2258,17 +2173,6 @@ pub fn build_yul_continue_statement(cursor: Cursor) -> Result<YulContinueStateme
     helper.finalize()?;
 
     Ok(Rc::new(YulContinueStatementStruct { node_id }))
-}
-
-pub fn build_yul_label(cursor: Cursor) -> Result<YulLabel> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::YulLabel)?;
-    let node_id = cursor.node().id();
-    let mut helper = SequenceHelper::new(cursor);
-    let label = fetch_terminal_node(&helper.accept_label(EdgeLabel::Label)?)?;
-    _ = helper.accept_label(EdgeLabel::Colon)?;
-    helper.finalize()?;
-
-    Ok(Rc::new(YulLabelStruct { node_id, label }))
 }
 
 pub fn build_yul_function_call_expression(cursor: Cursor) -> Result<YulFunctionCallExpression> {
@@ -2651,11 +2555,6 @@ pub fn build_contract_member(mut cursor: Cursor) -> Result<ContractMember> {
                 cursor.clone(),
             )?)
         }
-        NodeKind::Nonterminal(NonterminalKind::UnnamedFunctionDefinition) => {
-            ContractMember::UnnamedFunctionDefinition(build_unnamed_function_definition(
-                cursor.clone(),
-            )?)
-        }
         NodeKind::Nonterminal(NonterminalKind::ModifierDefinition) => {
             ContractMember::ModifierDefinition(build_modifier_definition(cursor.clone())?)
         }
@@ -2767,7 +2666,6 @@ pub fn build_function_attribute(mut cursor: Cursor) -> Result<FunctionAttribute>
         NodeKind::Nonterminal(NonterminalKind::OverrideSpecifier) => {
             FunctionAttribute::OverrideSpecifier(build_override_specifier(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::ConstantKeyword) => FunctionAttribute::ConstantKeyword,
         NodeKind::Terminal(TerminalKind::ExternalKeyword) => FunctionAttribute::ExternalKeyword,
         NodeKind::Terminal(TerminalKind::InternalKeyword) => FunctionAttribute::InternalKeyword,
         NodeKind::Terminal(TerminalKind::PayableKeyword) => FunctionAttribute::PayableKeyword,
@@ -2822,50 +2720,8 @@ pub fn build_constructor_attribute(mut cursor: Cursor) -> Result<ConstructorAttr
             ConstructorAttribute::ModifierInvocation(build_modifier_invocation(cursor.clone())?)
         }
         NodeKind::Terminal(TerminalKind::InternalKeyword) => ConstructorAttribute::InternalKeyword,
-        NodeKind::Terminal(TerminalKind::OverrideKeyword) => ConstructorAttribute::OverrideKeyword,
         NodeKind::Terminal(TerminalKind::PayableKeyword) => ConstructorAttribute::PayableKeyword,
         NodeKind::Terminal(TerminalKind::PublicKeyword) => ConstructorAttribute::PublicKeyword,
-        NodeKind::Terminal(TerminalKind::VirtualKeyword) => ConstructorAttribute::VirtualKeyword,
-        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
-            return Err(format!(
-                "Unexpected variant node of kind {:?}",
-                cursor.node().kind()
-            ));
-        }
-    };
-    consume_remaining_trivia(cursor)?;
-    Ok(item)
-}
-
-pub fn build_unnamed_function_attribute(mut cursor: Cursor) -> Result<UnnamedFunctionAttribute> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::UnnamedFunctionAttribute)?;
-    if !cursor.go_to_first_child() {
-        return Err("Expected choice node to have at least one children".into());
-    }
-    skip_trivia(&mut cursor)?;
-    expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = match cursor.node().kind() {
-        NodeKind::Nonterminal(NonterminalKind::ModifierInvocation) => {
-            UnnamedFunctionAttribute::ModifierInvocation(build_modifier_invocation(cursor.clone())?)
-        }
-        NodeKind::Terminal(TerminalKind::ConstantKeyword) => {
-            UnnamedFunctionAttribute::ConstantKeyword
-        }
-        NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
-            UnnamedFunctionAttribute::ExternalKeyword
-        }
-        NodeKind::Terminal(TerminalKind::InternalKeyword) => {
-            UnnamedFunctionAttribute::InternalKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
-            UnnamedFunctionAttribute::PayableKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PrivateKeyword) => {
-            UnnamedFunctionAttribute::PrivateKeyword
-        }
-        NodeKind::Terminal(TerminalKind::PublicKeyword) => UnnamedFunctionAttribute::PublicKeyword,
-        NodeKind::Terminal(TerminalKind::PureKeyword) => UnnamedFunctionAttribute::PureKeyword,
-        NodeKind::Terminal(TerminalKind::ViewKeyword) => UnnamedFunctionAttribute::ViewKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3018,7 +2874,6 @@ pub fn build_function_type_attribute(mut cursor: Cursor) -> Result<FunctionTypeA
         NodeKind::Terminal(TerminalKind::ExternalKeyword) => FunctionTypeAttribute::ExternalKeyword,
         NodeKind::Terminal(TerminalKind::PrivateKeyword) => FunctionTypeAttribute::PrivateKeyword,
         NodeKind::Terminal(TerminalKind::PublicKeyword) => FunctionTypeAttribute::PublicKeyword,
-        NodeKind::Terminal(TerminalKind::ConstantKeyword) => FunctionTypeAttribute::ConstantKeyword,
         NodeKind::Terminal(TerminalKind::PureKeyword) => FunctionTypeAttribute::PureKeyword,
         NodeKind::Terminal(TerminalKind::ViewKeyword) => FunctionTypeAttribute::ViewKeyword,
         NodeKind::Terminal(TerminalKind::PayableKeyword) => FunctionTypeAttribute::PayableKeyword,
@@ -3090,7 +2945,6 @@ pub fn build_elementary_type(mut cursor: Cursor) -> Result<ElementaryType> {
             ElementaryType::UfixedKeyword(node)
         }
         NodeKind::Terminal(TerminalKind::BoolKeyword) => ElementaryType::BoolKeyword,
-        NodeKind::Terminal(TerminalKind::ByteKeyword) => ElementaryType::ByteKeyword,
         NodeKind::Terminal(TerminalKind::StringKeyword) => ElementaryType::StringKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
@@ -3131,9 +2985,6 @@ pub fn build_statement(mut cursor: Cursor) -> Result<Statement> {
         }
         NodeKind::Nonterminal(NonterminalKind::ReturnStatement) => {
             Statement::ReturnStatement(build_return_statement(cursor.clone())?)
-        }
-        NodeKind::Nonterminal(NonterminalKind::ThrowStatement) => {
-            Statement::ThrowStatement(build_throw_statement(cursor.clone())?)
         }
         NodeKind::Nonterminal(NonterminalKind::EmitStatement) => {
             Statement::EmitStatement(build_emit_statement(cursor.clone())?)
@@ -3213,7 +3064,6 @@ pub fn build_variable_declaration_type(mut cursor: Cursor) -> Result<VariableDec
         NodeKind::Nonterminal(NonterminalKind::TypeName) => {
             VariableDeclarationType::TypeName(build_type_name(cursor.clone())?)
         }
-        NodeKind::Terminal(TerminalKind::VarKeyword) => VariableDeclarationType::VarKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3455,15 +3305,12 @@ pub fn build_number_unit(mut cursor: Cursor) -> Result<NumberUnit> {
     let item = match cursor.node().kind() {
         NodeKind::Terminal(TerminalKind::WeiKeyword) => NumberUnit::WeiKeyword,
         NodeKind::Terminal(TerminalKind::GweiKeyword) => NumberUnit::GweiKeyword,
-        NodeKind::Terminal(TerminalKind::SzaboKeyword) => NumberUnit::SzaboKeyword,
-        NodeKind::Terminal(TerminalKind::FinneyKeyword) => NumberUnit::FinneyKeyword,
         NodeKind::Terminal(TerminalKind::EtherKeyword) => NumberUnit::EtherKeyword,
         NodeKind::Terminal(TerminalKind::SecondsKeyword) => NumberUnit::SecondsKeyword,
         NodeKind::Terminal(TerminalKind::MinutesKeyword) => NumberUnit::MinutesKeyword,
         NodeKind::Terminal(TerminalKind::HoursKeyword) => NumberUnit::HoursKeyword,
         NodeKind::Terminal(TerminalKind::DaysKeyword) => NumberUnit::DaysKeyword,
         NodeKind::Terminal(TerminalKind::WeeksKeyword) => NumberUnit::WeeksKeyword,
-        NodeKind::Terminal(TerminalKind::YearsKeyword) => NumberUnit::YearsKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3483,14 +3330,8 @@ pub fn build_string_expression(mut cursor: Cursor) -> Result<StringExpression> {
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
     let item = match cursor.node().kind() {
-        NodeKind::Nonterminal(NonterminalKind::StringLiteral) => {
-            StringExpression::StringLiteral(build_string_literal(cursor.clone())?)
-        }
         NodeKind::Nonterminal(NonterminalKind::StringLiterals) => {
             StringExpression::StringLiterals(build_string_literals(cursor.clone())?)
-        }
-        NodeKind::Nonterminal(NonterminalKind::HexStringLiteral) => {
-            StringExpression::HexStringLiteral(build_hex_string_literal(cursor.clone())?)
         }
         NodeKind::Nonterminal(NonterminalKind::HexStringLiterals) => {
             StringExpression::HexStringLiterals(build_hex_string_literals(cursor.clone())?)
@@ -3604,11 +3445,6 @@ pub fn build_yul_statement(mut cursor: Cursor) -> Result<YulStatement> {
         NodeKind::Nonterminal(NonterminalKind::YulFunctionDefinition) => {
             YulStatement::YulFunctionDefinition(build_yul_function_definition(cursor.clone())?)
         }
-        NodeKind::Nonterminal(NonterminalKind::YulStackAssignmentStatement) => {
-            YulStatement::YulStackAssignmentStatement(build_yul_stack_assignment_statement(
-                cursor.clone(),
-            )?)
-        }
         NodeKind::Nonterminal(NonterminalKind::YulIfStatement) => {
             YulStatement::YulIfStatement(build_yul_if_statement(cursor.clone())?)
         }
@@ -3631,9 +3467,6 @@ pub fn build_yul_statement(mut cursor: Cursor) -> Result<YulStatement> {
             YulStatement::YulVariableAssignmentStatement(build_yul_variable_assignment_statement(
                 cursor.clone(),
             )?)
-        }
-        NodeKind::Nonterminal(NonterminalKind::YulLabel) => {
-            YulStatement::YulLabel(build_yul_label(cursor.clone())?)
         }
         NodeKind::Nonterminal(NonterminalKind::YulVariableDeclarationStatement) => {
             YulStatement::YulVariableDeclarationStatement(build_yul_variable_declaration_statement(
@@ -3662,35 +3495,7 @@ pub fn build_yul_assignment_operator(mut cursor: Cursor) -> Result<YulAssignment
     skip_trivia(&mut cursor)?;
     expect_label(&cursor, EdgeLabel::Variant)?;
     let item = match cursor.node().kind() {
-        NodeKind::Nonterminal(NonterminalKind::YulColonAndEqual) => {
-            YulAssignmentOperator::YulColonAndEqual(build_yul_colon_and_equal(cursor.clone())?)
-        }
         NodeKind::Terminal(TerminalKind::ColonEqual) => YulAssignmentOperator::ColonEqual,
-        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
-            return Err(format!(
-                "Unexpected variant node of kind {:?}",
-                cursor.node().kind()
-            ));
-        }
-    };
-    consume_remaining_trivia(cursor)?;
-    Ok(item)
-}
-
-pub fn build_yul_stack_assignment_operator(
-    mut cursor: Cursor,
-) -> Result<YulStackAssignmentOperator> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::YulStackAssignmentOperator)?;
-    if !cursor.go_to_first_child() {
-        return Err("Expected choice node to have at least one children".into());
-    }
-    skip_trivia(&mut cursor)?;
-    expect_label(&cursor, EdgeLabel::Variant)?;
-    let item = match cursor.node().kind() {
-        NodeKind::Nonterminal(NonterminalKind::YulEqualAndColon) => {
-            YulStackAssignmentOperator::YulEqualAndColon(build_yul_equal_and_colon(cursor.clone())?)
-        }
-        NodeKind::Terminal(TerminalKind::EqualColon) => YulStackAssignmentOperator::EqualColon,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -4133,25 +3938,6 @@ pub fn build_constructor_attributes(mut cursor: Cursor) -> Result<ConstructorAtt
         if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
             expect_label(&cursor, EdgeLabel::Item)?;
             let item = build_constructor_attribute(cursor.clone())?;
-            items.push(item);
-        }
-        if !cursor.go_to_next_sibling() {
-            break;
-        }
-    }
-    Ok(items)
-}
-
-pub fn build_unnamed_function_attributes(mut cursor: Cursor) -> Result<UnnamedFunctionAttributes> {
-    expect_nonterminal_kind(&cursor, NonterminalKind::UnnamedFunctionAttributes)?;
-    let mut items = UnnamedFunctionAttributes::new();
-    if !cursor.go_to_first_child() {
-        return Ok(items);
-    }
-    loop {
-        if !cursor.node().is_trivia() && cursor.label() != EdgeLabel::Separator {
-            expect_label(&cursor, EdgeLabel::Item)?;
-            let item = build_unnamed_function_attribute(cursor.clone())?;
             items.push(item);
         }
         if !cursor.go_to_next_sibling() {

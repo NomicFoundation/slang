@@ -6,6 +6,7 @@ use codegen_runtime_generator::ir::{IrModel, ModelWrapper};
 use codegen_runtime_generator::RuntimeGenerator;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenRuntime;
+use semver::Version;
 use solidity_language::{render_built_ins, SolidityDefinition};
 
 fn main() -> Result<()> {
@@ -29,8 +30,10 @@ fn main() -> Result<()> {
         CargoWorkspace::locate_source_crate("codegen_runtime_cargo_crate")?.join("src/ir");
     let ir_output_dir = CargoWorkspace::locate_source_crate("slang_solidity")?.join("src/backend");
 
+    let minimum_version = Some(Version::parse("0.8.0").unwrap());
+
     let runtime = CodegenRuntime::new(&ir_input_dir)?;
-    let cst_model = IrModel::from_language("cst", &language);
+    let cst_model = IrModel::from_language("cst", &language, minimum_version);
     let ast_model_wrapper = build_ast_model_wrapper(&cst_model);
 
     let ast_output_dir = ir_output_dir.join(&ast_model_wrapper.target.name);
@@ -73,10 +76,6 @@ fn build_l1_model_wrapper(ast_model_wrapper: &ModelWrapper) -> ModelWrapper {
     // L1 is for now only a proof of concept for rendering transfomation code
     // from previous trees. Therefore, the following modifications are (a
     // non-exhaustive list of) samples of what can be done.
-
-    // Remove deprecated language elements in Solidity 0.8
-    l1_model.remove_type("UnnamedFunctionDefinition");
-    l1_model.remove_type("UnnamedFunctionAttributes");
 
     // Flatten contract specifiers and bring the inherited types and storage
     // layout to the contract definition itself.

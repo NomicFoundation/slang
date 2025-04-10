@@ -150,7 +150,6 @@ pub fn slang_solidity::backend::ast::builder::build_string_literals(cursor: slan
 pub fn slang_solidity::backend::ast::builder::build_struct_definition(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StructDefinition, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_struct_member(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StructMember, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_struct_members(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StructMembers, alloc::string::String>
-pub fn slang_solidity::backend::ast::builder::build_throw_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ThrowStatement, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_try_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::TryStatement, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_tuple_deconstruction_element(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::TupleDeconstructionElement, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_tuple_deconstruction_elements(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::TupleDeconstructionElements, alloc::string::String>
@@ -165,9 +164,6 @@ pub fn slang_solidity::backend::ast::builder::build_typed_tuple_member(cursor: s
 pub fn slang_solidity::backend::ast::builder::build_unchecked_block(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UncheckedBlock, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_unicode_string_literal(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UnicodeStringLiteral, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_unicode_string_literals(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UnicodeStringLiterals, alloc::string::String>
-pub fn slang_solidity::backend::ast::builder::build_unnamed_function_attribute(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UnnamedFunctionAttribute, alloc::string::String>
-pub fn slang_solidity::backend::ast::builder::build_unnamed_function_attributes(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UnnamedFunctionAttributes, alloc::string::String>
-pub fn slang_solidity::backend::ast::builder::build_unnamed_function_definition(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UnnamedFunctionDefinition, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_untyped_tuple_member(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UntypedTupleMember, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_user_defined_value_type_definition(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UserDefinedValueTypeDefinition, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_using_alias(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UsingAlias, alloc::string::String>
@@ -194,16 +190,13 @@ pub fn slang_solidity::backend::ast::builder::build_yul_arguments(cursor: slang_
 pub fn slang_solidity::backend::ast::builder::build_yul_assignment_operator(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulAssignmentOperator, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_block(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulBlock, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_break_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulBreakStatement, alloc::string::String>
-pub fn slang_solidity::backend::ast::builder::build_yul_colon_and_equal(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulColonAndEqual, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_continue_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulContinueStatement, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_default_case(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulDefaultCase, alloc::string::String>
-pub fn slang_solidity::backend::ast::builder::build_yul_equal_and_colon(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulEqualAndColon, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_expression(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulExpression, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_for_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulForStatement, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_function_call_expression(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulFunctionCallExpression, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_function_definition(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulFunctionDefinition, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_if_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulIfStatement, alloc::string::String>
-pub fn slang_solidity::backend::ast::builder::build_yul_label(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulLabel, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_leave_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulLeaveStatement, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_literal(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulLiteral, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_parameters(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulParameters, alloc::string::String>
@@ -211,8 +204,6 @@ pub fn slang_solidity::backend::ast::builder::build_yul_parameters_declaration(c
 pub fn slang_solidity::backend::ast::builder::build_yul_path(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulPath, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_paths(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulPaths, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_returns_declaration(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulReturnsDeclaration, alloc::string::String>
-pub fn slang_solidity::backend::ast::builder::build_yul_stack_assignment_operator(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulStackAssignmentOperator, alloc::string::String>
-pub fn slang_solidity::backend::ast::builder::build_yul_stack_assignment_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulStackAssignmentStatement, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulStatement, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_statements(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulStatements, alloc::string::String>
 pub fn slang_solidity::backend::ast::builder::build_yul_switch_case(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulSwitchCase, alloc::string::String>
@@ -255,7 +246,6 @@ pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_string_lit
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_tuple_member(&mut self, source: &slang_solidity::backend::ast::TupleMember) -> slang_solidity::backend::ast::TupleMember
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_type_name(&mut self, source: &slang_solidity::backend::ast::TypeName) -> slang_solidity::backend::ast::TypeName
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_unicode_string_literal(&mut self, source: &slang_solidity::backend::ast::UnicodeStringLiteral) -> slang_solidity::backend::ast::UnicodeStringLiteral
-pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_unnamed_function_attribute(&mut self, source: &slang_solidity::backend::ast::UnnamedFunctionAttribute) -> slang_solidity::backend::ast::UnnamedFunctionAttribute
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_using_clause(&mut self, source: &slang_solidity::backend::ast::UsingClause) -> slang_solidity::backend::ast::UsingClause
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_using_operator(&mut self, source: &slang_solidity::backend::ast::UsingOperator) -> slang_solidity::backend::ast::UsingOperator
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_using_target(&mut self, source: &slang_solidity::backend::ast::UsingTarget) -> slang_solidity::backend::ast::UsingTarget
@@ -266,7 +256,6 @@ pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_version_op
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_yul_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulAssignmentOperator) -> slang_solidity::backend::ast::YulAssignmentOperator
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_yul_expression(&mut self, source: &slang_solidity::backend::ast::YulExpression) -> slang_solidity::backend::ast::YulExpression
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_yul_literal(&mut self, source: &slang_solidity::backend::ast::YulLiteral) -> slang_solidity::backend::ast::YulLiteral
-pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_yul_stack_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulStackAssignmentOperator) -> slang_solidity::backend::ast::YulStackAssignmentOperator
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_yul_statement(&mut self, source: &slang_solidity::backend::ast::YulStatement) -> slang_solidity::backend::ast::YulStatement
 pub fn slang_solidity::backend::ast::mutator::Mutator::default_mutate_yul_switch_case(&mut self, source: &slang_solidity::backend::ast::YulSwitchCase) -> slang_solidity::backend::ast::YulSwitchCase
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_abicoder_pragma(&mut self, source: &slang_solidity::backend::ast::AbicoderPragma) -> slang_solidity::backend::ast::AbicoderPragma
@@ -415,7 +404,6 @@ pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_string_literals(&m
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_struct_definition(&mut self, source: &slang_solidity::backend::ast::StructDefinition) -> slang_solidity::backend::ast::StructDefinition
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_struct_member(&mut self, source: &slang_solidity::backend::ast::StructMember) -> slang_solidity::backend::ast::StructMember
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_struct_members(&mut self, source: &slang_solidity::backend::ast::StructMembers) -> slang_solidity::backend::ast::StructMembers
-pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_throw_statement(&mut self, source: &slang_solidity::backend::ast::ThrowStatement) -> slang_solidity::backend::ast::ThrowStatement
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_try_statement(&mut self, source: &slang_solidity::backend::ast::TryStatement) -> slang_solidity::backend::ast::TryStatement
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_tuple_deconstruction_element(&mut self, source: &slang_solidity::backend::ast::TupleDeconstructionElement) -> slang_solidity::backend::ast::TupleDeconstructionElement
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_tuple_deconstruction_elements(&mut self, source: &slang_solidity::backend::ast::TupleDeconstructionElements) -> slang_solidity::backend::ast::TupleDeconstructionElements
@@ -430,9 +418,6 @@ pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_typed_tuple_member
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_unchecked_block(&mut self, source: &slang_solidity::backend::ast::UncheckedBlock) -> slang_solidity::backend::ast::UncheckedBlock
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_unicode_string_literal(&mut self, source: &slang_solidity::backend::ast::UnicodeStringLiteral) -> slang_solidity::backend::ast::UnicodeStringLiteral
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_unicode_string_literals(&mut self, source: &slang_solidity::backend::ast::UnicodeStringLiterals) -> slang_solidity::backend::ast::UnicodeStringLiterals
-pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_unnamed_function_attribute(&mut self, source: &slang_solidity::backend::ast::UnnamedFunctionAttribute) -> slang_solidity::backend::ast::UnnamedFunctionAttribute
-pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_unnamed_function_attributes(&mut self, source: &slang_solidity::backend::ast::UnnamedFunctionAttributes) -> slang_solidity::backend::ast::UnnamedFunctionAttributes
-pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_unnamed_function_definition(&mut self, source: &slang_solidity::backend::ast::UnnamedFunctionDefinition) -> slang_solidity::backend::ast::UnnamedFunctionDefinition
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_untyped_tuple_member(&mut self, source: &slang_solidity::backend::ast::UntypedTupleMember) -> slang_solidity::backend::ast::UntypedTupleMember
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_user_defined_value_type_definition(&mut self, source: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition) -> slang_solidity::backend::ast::UserDefinedValueTypeDefinition
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_using_alias(&mut self, source: &slang_solidity::backend::ast::UsingAlias) -> slang_solidity::backend::ast::UsingAlias
@@ -459,16 +444,13 @@ pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_arguments(&mut
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulAssignmentOperator) -> slang_solidity::backend::ast::YulAssignmentOperator
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_block(&mut self, source: &slang_solidity::backend::ast::YulBlock) -> slang_solidity::backend::ast::YulBlock
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_break_statement(&mut self, source: &slang_solidity::backend::ast::YulBreakStatement) -> slang_solidity::backend::ast::YulBreakStatement
-pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_colon_and_equal(&mut self, source: &slang_solidity::backend::ast::YulColonAndEqual) -> slang_solidity::backend::ast::YulColonAndEqual
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_continue_statement(&mut self, source: &slang_solidity::backend::ast::YulContinueStatement) -> slang_solidity::backend::ast::YulContinueStatement
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_default_case(&mut self, source: &slang_solidity::backend::ast::YulDefaultCase) -> slang_solidity::backend::ast::YulDefaultCase
-pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_equal_and_colon(&mut self, source: &slang_solidity::backend::ast::YulEqualAndColon) -> slang_solidity::backend::ast::YulEqualAndColon
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_expression(&mut self, source: &slang_solidity::backend::ast::YulExpression) -> slang_solidity::backend::ast::YulExpression
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_for_statement(&mut self, source: &slang_solidity::backend::ast::YulForStatement) -> slang_solidity::backend::ast::YulForStatement
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_function_call_expression(&mut self, source: &slang_solidity::backend::ast::YulFunctionCallExpression) -> slang_solidity::backend::ast::YulFunctionCallExpression
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_function_definition(&mut self, source: &slang_solidity::backend::ast::YulFunctionDefinition) -> slang_solidity::backend::ast::YulFunctionDefinition
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_if_statement(&mut self, source: &slang_solidity::backend::ast::YulIfStatement) -> slang_solidity::backend::ast::YulIfStatement
-pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_label(&mut self, source: &slang_solidity::backend::ast::YulLabel) -> slang_solidity::backend::ast::YulLabel
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_leave_statement(&mut self, source: &slang_solidity::backend::ast::YulLeaveStatement) -> slang_solidity::backend::ast::YulLeaveStatement
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_literal(&mut self, source: &slang_solidity::backend::ast::YulLiteral) -> slang_solidity::backend::ast::YulLiteral
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_parameters(&mut self, source: &slang_solidity::backend::ast::YulParameters) -> slang_solidity::backend::ast::YulParameters
@@ -476,8 +458,6 @@ pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_parameters_dec
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_path(&mut self, source: &slang_solidity::backend::ast::YulPath) -> slang_solidity::backend::ast::YulPath
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_paths(&mut self, source: &slang_solidity::backend::ast::YulPaths) -> slang_solidity::backend::ast::YulPaths
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_returns_declaration(&mut self, source: &slang_solidity::backend::ast::YulReturnsDeclaration) -> slang_solidity::backend::ast::YulReturnsDeclaration
-pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_stack_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulStackAssignmentOperator) -> slang_solidity::backend::ast::YulStackAssignmentOperator
-pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_stack_assignment_statement(&mut self, source: &slang_solidity::backend::ast::YulStackAssignmentStatement) -> slang_solidity::backend::ast::YulStackAssignmentStatement
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_statement(&mut self, source: &slang_solidity::backend::ast::YulStatement) -> slang_solidity::backend::ast::YulStatement
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_statements(&mut self, source: &slang_solidity::backend::ast::YulStatements) -> slang_solidity::backend::ast::YulStatements
 pub fn slang_solidity::backend::ast::mutator::Mutator::mutate_yul_switch_case(&mut self, source: &slang_solidity::backend::ast::YulSwitchCase) -> slang_solidity::backend::ast::YulSwitchCase
@@ -579,7 +559,6 @@ pub fn slang_solidity::backend::ast::visitor::Visitor::enter_state_variable_defi
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::ast::StorageLayoutSpecifier) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_struct_definition(&mut self, _target: &slang_solidity::backend::ast::StructDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_struct_member(&mut self, _target: &slang_solidity::backend::ast::StructMember) -> bool
-pub fn slang_solidity::backend::ast::visitor::Visitor::enter_throw_statement(&mut self, _target: &slang_solidity::backend::ast::ThrowStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_try_statement(&mut self, _target: &slang_solidity::backend::ast::TryStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_tuple_deconstruction_element(&mut self, _target: &slang_solidity::backend::ast::TupleDeconstructionElement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_tuple_deconstruction_statement(&mut self, _target: &slang_solidity::backend::ast::TupleDeconstructionStatement) -> bool
@@ -588,7 +567,6 @@ pub fn slang_solidity::backend::ast::visitor::Visitor::enter_tuple_value(&mut se
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_type_expression(&mut self, _target: &slang_solidity::backend::ast::TypeExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_typed_tuple_member(&mut self, _target: &slang_solidity::backend::ast::TypedTupleMember) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_unchecked_block(&mut self, _target: &slang_solidity::backend::ast::UncheckedBlock) -> bool
-pub fn slang_solidity::backend::ast::visitor::Visitor::enter_unnamed_function_definition(&mut self, _target: &slang_solidity::backend::ast::UnnamedFunctionDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_untyped_tuple_member(&mut self, _target: &slang_solidity::backend::ast::UntypedTupleMember) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_user_defined_value_type_definition(&mut self, _target: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_using_alias(&mut self, _target: &slang_solidity::backend::ast::UsingAlias) -> bool
@@ -603,19 +581,15 @@ pub fn slang_solidity::backend::ast::visitor::Visitor::enter_version_term(&mut s
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_while_statement(&mut self, _target: &slang_solidity::backend::ast::WhileStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_block(&mut self, _target: &slang_solidity::backend::ast::YulBlock) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_break_statement(&mut self, _target: &slang_solidity::backend::ast::YulBreakStatement) -> bool
-pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_colon_and_equal(&mut self, _target: &slang_solidity::backend::ast::YulColonAndEqual) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_continue_statement(&mut self, _target: &slang_solidity::backend::ast::YulContinueStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_default_case(&mut self, _target: &slang_solidity::backend::ast::YulDefaultCase) -> bool
-pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_equal_and_colon(&mut self, _target: &slang_solidity::backend::ast::YulEqualAndColon) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_for_statement(&mut self, _target: &slang_solidity::backend::ast::YulForStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_function_call_expression(&mut self, _target: &slang_solidity::backend::ast::YulFunctionCallExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_function_definition(&mut self, _target: &slang_solidity::backend::ast::YulFunctionDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_if_statement(&mut self, _target: &slang_solidity::backend::ast::YulIfStatement) -> bool
-pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_label(&mut self, _target: &slang_solidity::backend::ast::YulLabel) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_leave_statement(&mut self, _target: &slang_solidity::backend::ast::YulLeaveStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_parameters_declaration(&mut self, _target: &slang_solidity::backend::ast::YulParametersDeclaration) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_returns_declaration(&mut self, _target: &slang_solidity::backend::ast::YulReturnsDeclaration) -> bool
-pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_stack_assignment_statement(&mut self, _target: &slang_solidity::backend::ast::YulStackAssignmentStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_switch_statement(&mut self, _target: &slang_solidity::backend::ast::YulSwitchStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_value_case(&mut self, _target: &slang_solidity::backend::ast::YulValueCase) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_variable_assignment_statement(&mut self, _target: &slang_solidity::backend::ast::YulVariableAssignmentStatement) -> bool
@@ -709,7 +683,6 @@ pub fn slang_solidity::backend::ast::visitor::Visitor::leave_state_variable_defi
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::ast::StorageLayoutSpecifier)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_struct_definition(&mut self, _target: &slang_solidity::backend::ast::StructDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_struct_member(&mut self, _target: &slang_solidity::backend::ast::StructMember)
-pub fn slang_solidity::backend::ast::visitor::Visitor::leave_throw_statement(&mut self, _target: &slang_solidity::backend::ast::ThrowStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_try_statement(&mut self, _target: &slang_solidity::backend::ast::TryStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_tuple_deconstruction_element(&mut self, _target: &slang_solidity::backend::ast::TupleDeconstructionElement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_tuple_deconstruction_statement(&mut self, _target: &slang_solidity::backend::ast::TupleDeconstructionStatement)
@@ -718,7 +691,6 @@ pub fn slang_solidity::backend::ast::visitor::Visitor::leave_tuple_value(&mut se
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_type_expression(&mut self, _target: &slang_solidity::backend::ast::TypeExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_typed_tuple_member(&mut self, _target: &slang_solidity::backend::ast::TypedTupleMember)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_unchecked_block(&mut self, _target: &slang_solidity::backend::ast::UncheckedBlock)
-pub fn slang_solidity::backend::ast::visitor::Visitor::leave_unnamed_function_definition(&mut self, _target: &slang_solidity::backend::ast::UnnamedFunctionDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_untyped_tuple_member(&mut self, _target: &slang_solidity::backend::ast::UntypedTupleMember)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_user_defined_value_type_definition(&mut self, _target: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_using_alias(&mut self, _target: &slang_solidity::backend::ast::UsingAlias)
@@ -733,19 +705,15 @@ pub fn slang_solidity::backend::ast::visitor::Visitor::leave_version_term(&mut s
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_while_statement(&mut self, _target: &slang_solidity::backend::ast::WhileStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_block(&mut self, _target: &slang_solidity::backend::ast::YulBlock)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_break_statement(&mut self, _target: &slang_solidity::backend::ast::YulBreakStatement)
-pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_colon_and_equal(&mut self, _target: &slang_solidity::backend::ast::YulColonAndEqual)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_continue_statement(&mut self, _target: &slang_solidity::backend::ast::YulContinueStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_default_case(&mut self, _target: &slang_solidity::backend::ast::YulDefaultCase)
-pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_equal_and_colon(&mut self, _target: &slang_solidity::backend::ast::YulEqualAndColon)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_for_statement(&mut self, _target: &slang_solidity::backend::ast::YulForStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_function_call_expression(&mut self, _target: &slang_solidity::backend::ast::YulFunctionCallExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_function_definition(&mut self, _target: &slang_solidity::backend::ast::YulFunctionDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_if_statement(&mut self, _target: &slang_solidity::backend::ast::YulIfStatement)
-pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_label(&mut self, _target: &slang_solidity::backend::ast::YulLabel)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_leave_statement(&mut self, _target: &slang_solidity::backend::ast::YulLeaveStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_parameters_declaration(&mut self, _target: &slang_solidity::backend::ast::YulParametersDeclaration)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_returns_declaration(&mut self, _target: &slang_solidity::backend::ast::YulReturnsDeclaration)
-pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_stack_assignment_statement(&mut self, _target: &slang_solidity::backend::ast::YulStackAssignmentStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_switch_statement(&mut self, _target: &slang_solidity::backend::ast::YulSwitchStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_value_case(&mut self, _target: &slang_solidity::backend::ast::YulValueCase)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_variable_assignment_statement(&mut self, _target: &slang_solidity::backend::ast::YulVariableAssignmentStatement)
@@ -866,7 +834,6 @@ pub fn slang_solidity::backend::ast::visitor::accept_string_expression(target: &
 pub fn slang_solidity::backend::ast::visitor::accept_string_literal(_target: &slang_solidity::backend::ast::StringLiteral, _visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_struct_definition(target: &slang_solidity::backend::ast::StructDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_struct_member(target: &slang_solidity::backend::ast::StructMember, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::ast::visitor::accept_throw_statement(target: &slang_solidity::backend::ast::ThrowStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_try_statement(target: &slang_solidity::backend::ast::TryStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_tuple_deconstruction_element(target: &slang_solidity::backend::ast::TupleDeconstructionElement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_tuple_deconstruction_statement(target: &slang_solidity::backend::ast::TupleDeconstructionStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
@@ -878,8 +845,6 @@ pub fn slang_solidity::backend::ast::visitor::accept_type_name(target: &slang_so
 pub fn slang_solidity::backend::ast::visitor::accept_typed_tuple_member(target: &slang_solidity::backend::ast::TypedTupleMember, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_unchecked_block(target: &slang_solidity::backend::ast::UncheckedBlock, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_unicode_string_literal(_target: &slang_solidity::backend::ast::UnicodeStringLiteral, _visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::ast::visitor::accept_unnamed_function_attribute(target: &slang_solidity::backend::ast::UnnamedFunctionAttribute, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::ast::visitor::accept_unnamed_function_definition(target: &slang_solidity::backend::ast::UnnamedFunctionDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_untyped_tuple_member(target: &slang_solidity::backend::ast::UntypedTupleMember, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_user_defined_value_type_definition(target: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_using_alias(target: &slang_solidity::backend::ast::UsingAlias, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
@@ -899,25 +864,20 @@ pub fn slang_solidity::backend::ast::visitor::accept_version_pragma(target: &sla
 pub fn slang_solidity::backend::ast::visitor::accept_version_range(target: &slang_solidity::backend::ast::VersionRange, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_version_term(target: &slang_solidity::backend::ast::VersionTerm, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_while_statement(target: &slang_solidity::backend::ast::WhileStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::ast::visitor::accept_yul_assignment_operator(target: &slang_solidity::backend::ast::YulAssignmentOperator, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
+pub fn slang_solidity::backend::ast::visitor::accept_yul_assignment_operator(_target: &slang_solidity::backend::ast::YulAssignmentOperator, _visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_block(target: &slang_solidity::backend::ast::YulBlock, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_break_statement(target: &slang_solidity::backend::ast::YulBreakStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::ast::visitor::accept_yul_colon_and_equal(target: &slang_solidity::backend::ast::YulColonAndEqual, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_continue_statement(target: &slang_solidity::backend::ast::YulContinueStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_default_case(target: &slang_solidity::backend::ast::YulDefaultCase, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::ast::visitor::accept_yul_equal_and_colon(target: &slang_solidity::backend::ast::YulEqualAndColon, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_expression(target: &slang_solidity::backend::ast::YulExpression, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_for_statement(target: &slang_solidity::backend::ast::YulForStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_function_call_expression(target: &slang_solidity::backend::ast::YulFunctionCallExpression, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_function_definition(target: &slang_solidity::backend::ast::YulFunctionDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_if_statement(target: &slang_solidity::backend::ast::YulIfStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::ast::visitor::accept_yul_label(target: &slang_solidity::backend::ast::YulLabel, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_leave_statement(target: &slang_solidity::backend::ast::YulLeaveStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_literal(target: &slang_solidity::backend::ast::YulLiteral, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_parameters_declaration(target: &slang_solidity::backend::ast::YulParametersDeclaration, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_returns_declaration(target: &slang_solidity::backend::ast::YulReturnsDeclaration, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::ast::visitor::accept_yul_stack_assignment_operator(target: &slang_solidity::backend::ast::YulStackAssignmentOperator, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::ast::visitor::accept_yul_stack_assignment_statement(target: &slang_solidity::backend::ast::YulStackAssignmentStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_statement(target: &slang_solidity::backend::ast::YulStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_switch_case(target: &slang_solidity::backend::ast::YulSwitchCase, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_yul_switch_statement(target: &slang_solidity::backend::ast::YulSwitchStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
@@ -933,10 +893,8 @@ pub fn slang_solidity::backend::ast::ArgumentsDeclaration::fmt(&self, f: &mut co
 pub enum slang_solidity::backend::ast::ConstructorAttribute
 pub slang_solidity::backend::ast::ConstructorAttribute::InternalKeyword
 pub slang_solidity::backend::ast::ConstructorAttribute::ModifierInvocation(slang_solidity::backend::ast::ModifierInvocation)
-pub slang_solidity::backend::ast::ConstructorAttribute::OverrideKeyword
 pub slang_solidity::backend::ast::ConstructorAttribute::PayableKeyword
 pub slang_solidity::backend::ast::ConstructorAttribute::PublicKeyword
-pub slang_solidity::backend::ast::ConstructorAttribute::VirtualKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::ConstructorAttribute
 pub fn slang_solidity::backend::ast::ConstructorAttribute::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::ContractMember
@@ -950,7 +908,6 @@ pub slang_solidity::backend::ast::ContractMember::ModifierDefinition(slang_solid
 pub slang_solidity::backend::ast::ContractMember::ReceiveFunctionDefinition(slang_solidity::backend::ast::ReceiveFunctionDefinition)
 pub slang_solidity::backend::ast::ContractMember::StateVariableDefinition(slang_solidity::backend::ast::StateVariableDefinition)
 pub slang_solidity::backend::ast::ContractMember::StructDefinition(slang_solidity::backend::ast::StructDefinition)
-pub slang_solidity::backend::ast::ContractMember::UnnamedFunctionDefinition(slang_solidity::backend::ast::UnnamedFunctionDefinition)
 pub slang_solidity::backend::ast::ContractMember::UserDefinedValueTypeDefinition(slang_solidity::backend::ast::UserDefinedValueTypeDefinition)
 pub slang_solidity::backend::ast::ContractMember::UsingDirective(slang_solidity::backend::ast::UsingDirective)
 impl core::fmt::Debug for slang_solidity::backend::ast::ContractMember
@@ -963,7 +920,6 @@ pub fn slang_solidity::backend::ast::ContractSpecifier::fmt(&self, f: &mut core:
 pub enum slang_solidity::backend::ast::ElementaryType
 pub slang_solidity::backend::ast::ElementaryType::AddressType(slang_solidity::backend::ast::AddressType)
 pub slang_solidity::backend::ast::ElementaryType::BoolKeyword
-pub slang_solidity::backend::ast::ElementaryType::ByteKeyword
 pub slang_solidity::backend::ast::ElementaryType::BytesKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::ast::ElementaryType::FixedKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::ast::ElementaryType::IntKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
@@ -1036,7 +992,6 @@ pub slang_solidity::backend::ast::ForStatementInitialization::VariableDeclaratio
 impl core::fmt::Debug for slang_solidity::backend::ast::ForStatementInitialization
 pub fn slang_solidity::backend::ast::ForStatementInitialization::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::FunctionAttribute
-pub slang_solidity::backend::ast::FunctionAttribute::ConstantKeyword
 pub slang_solidity::backend::ast::FunctionAttribute::ExternalKeyword
 pub slang_solidity::backend::ast::FunctionAttribute::InternalKeyword
 pub slang_solidity::backend::ast::FunctionAttribute::ModifierInvocation(slang_solidity::backend::ast::ModifierInvocation)
@@ -1061,7 +1016,6 @@ pub slang_solidity::backend::ast::FunctionName::ReceiveKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::FunctionName
 pub fn slang_solidity::backend::ast::FunctionName::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::FunctionTypeAttribute
-pub slang_solidity::backend::ast::FunctionTypeAttribute::ConstantKeyword
 pub slang_solidity::backend::ast::FunctionTypeAttribute::ExternalKeyword
 pub slang_solidity::backend::ast::FunctionTypeAttribute::InternalKeyword
 pub slang_solidity::backend::ast::FunctionTypeAttribute::PayableKeyword
@@ -1095,15 +1049,12 @@ pub fn slang_solidity::backend::ast::ModifierAttribute::fmt(&self, f: &mut core:
 pub enum slang_solidity::backend::ast::NumberUnit
 pub slang_solidity::backend::ast::NumberUnit::DaysKeyword
 pub slang_solidity::backend::ast::NumberUnit::EtherKeyword
-pub slang_solidity::backend::ast::NumberUnit::FinneyKeyword
 pub slang_solidity::backend::ast::NumberUnit::GweiKeyword
 pub slang_solidity::backend::ast::NumberUnit::HoursKeyword
 pub slang_solidity::backend::ast::NumberUnit::MinutesKeyword
 pub slang_solidity::backend::ast::NumberUnit::SecondsKeyword
-pub slang_solidity::backend::ast::NumberUnit::SzaboKeyword
 pub slang_solidity::backend::ast::NumberUnit::WeeksKeyword
 pub slang_solidity::backend::ast::NumberUnit::WeiKeyword
-pub slang_solidity::backend::ast::NumberUnit::YearsKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::NumberUnit
 pub fn slang_solidity::backend::ast::NumberUnit::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::Pragma
@@ -1158,7 +1109,6 @@ pub slang_solidity::backend::ast::Statement::ForStatement(slang_solidity::backen
 pub slang_solidity::backend::ast::Statement::IfStatement(slang_solidity::backend::ast::IfStatement)
 pub slang_solidity::backend::ast::Statement::ReturnStatement(slang_solidity::backend::ast::ReturnStatement)
 pub slang_solidity::backend::ast::Statement::RevertStatement(slang_solidity::backend::ast::RevertStatement)
-pub slang_solidity::backend::ast::Statement::ThrowStatement(slang_solidity::backend::ast::ThrowStatement)
 pub slang_solidity::backend::ast::Statement::TryStatement(slang_solidity::backend::ast::TryStatement)
 pub slang_solidity::backend::ast::Statement::TupleDeconstructionStatement(slang_solidity::backend::ast::TupleDeconstructionStatement)
 pub slang_solidity::backend::ast::Statement::UncheckedBlock(slang_solidity::backend::ast::UncheckedBlock)
@@ -1173,9 +1123,7 @@ pub slang_solidity::backend::ast::StorageLocation::StorageKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::StorageLocation
 pub fn slang_solidity::backend::ast::StorageLocation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::StringExpression
-pub slang_solidity::backend::ast::StringExpression::HexStringLiteral(slang_solidity::backend::ast::HexStringLiteral)
 pub slang_solidity::backend::ast::StringExpression::HexStringLiterals(slang_solidity::backend::ast::HexStringLiterals)
-pub slang_solidity::backend::ast::StringExpression::StringLiteral(slang_solidity::backend::ast::StringLiteral)
 pub slang_solidity::backend::ast::StringExpression::StringLiterals(slang_solidity::backend::ast::StringLiterals)
 pub slang_solidity::backend::ast::StringExpression::UnicodeStringLiterals(slang_solidity::backend::ast::UnicodeStringLiterals)
 impl core::fmt::Debug for slang_solidity::backend::ast::StringExpression
@@ -1203,18 +1151,6 @@ pub slang_solidity::backend::ast::UnicodeStringLiteral::DoubleQuotedUnicodeStrin
 pub slang_solidity::backend::ast::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 impl core::fmt::Debug for slang_solidity::backend::ast::UnicodeStringLiteral
 pub fn slang_solidity::backend::ast::UnicodeStringLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub enum slang_solidity::backend::ast::UnnamedFunctionAttribute
-pub slang_solidity::backend::ast::UnnamedFunctionAttribute::ConstantKeyword
-pub slang_solidity::backend::ast::UnnamedFunctionAttribute::ExternalKeyword
-pub slang_solidity::backend::ast::UnnamedFunctionAttribute::InternalKeyword
-pub slang_solidity::backend::ast::UnnamedFunctionAttribute::ModifierInvocation(slang_solidity::backend::ast::ModifierInvocation)
-pub slang_solidity::backend::ast::UnnamedFunctionAttribute::PayableKeyword
-pub slang_solidity::backend::ast::UnnamedFunctionAttribute::PrivateKeyword
-pub slang_solidity::backend::ast::UnnamedFunctionAttribute::PublicKeyword
-pub slang_solidity::backend::ast::UnnamedFunctionAttribute::PureKeyword
-pub slang_solidity::backend::ast::UnnamedFunctionAttribute::ViewKeyword
-impl core::fmt::Debug for slang_solidity::backend::ast::UnnamedFunctionAttribute
-pub fn slang_solidity::backend::ast::UnnamedFunctionAttribute::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::UsingClause
 pub slang_solidity::backend::ast::UsingClause::IdentifierPath(slang_solidity::backend::ast::IdentifierPath)
 pub slang_solidity::backend::ast::UsingClause::UsingDeconstruction(slang_solidity::backend::ast::UsingDeconstruction)
@@ -1245,7 +1181,6 @@ impl core::fmt::Debug for slang_solidity::backend::ast::UsingTarget
 pub fn slang_solidity::backend::ast::UsingTarget::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::VariableDeclarationType
 pub slang_solidity::backend::ast::VariableDeclarationType::TypeName(slang_solidity::backend::ast::TypeName)
-pub slang_solidity::backend::ast::VariableDeclarationType::VarKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::VariableDeclarationType
 pub fn slang_solidity::backend::ast::VariableDeclarationType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::VersionExpression
@@ -1271,7 +1206,6 @@ impl core::fmt::Debug for slang_solidity::backend::ast::VersionOperator
 pub fn slang_solidity::backend::ast::VersionOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::YulAssignmentOperator
 pub slang_solidity::backend::ast::YulAssignmentOperator::ColonEqual
-pub slang_solidity::backend::ast::YulAssignmentOperator::YulColonAndEqual(slang_solidity::backend::ast::YulColonAndEqual)
 impl core::fmt::Debug for slang_solidity::backend::ast::YulAssignmentOperator
 pub fn slang_solidity::backend::ast::YulAssignmentOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::YulExpression
@@ -1289,11 +1223,6 @@ pub slang_solidity::backend::ast::YulLiteral::YulHexLiteral(alloc::rc::Rc<slang_
 pub slang_solidity::backend::ast::YulLiteral::YulTrueKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::YulLiteral
 pub fn slang_solidity::backend::ast::YulLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub enum slang_solidity::backend::ast::YulStackAssignmentOperator
-pub slang_solidity::backend::ast::YulStackAssignmentOperator::EqualColon
-pub slang_solidity::backend::ast::YulStackAssignmentOperator::YulEqualAndColon(slang_solidity::backend::ast::YulEqualAndColon)
-impl core::fmt::Debug for slang_solidity::backend::ast::YulStackAssignmentOperator
-pub fn slang_solidity::backend::ast::YulStackAssignmentOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::ast::YulStatement
 pub slang_solidity::backend::ast::YulStatement::YulBlock(slang_solidity::backend::ast::YulBlock)
 pub slang_solidity::backend::ast::YulStatement::YulBreakStatement(slang_solidity::backend::ast::YulBreakStatement)
@@ -1302,9 +1231,7 @@ pub slang_solidity::backend::ast::YulStatement::YulExpression(slang_solidity::ba
 pub slang_solidity::backend::ast::YulStatement::YulForStatement(slang_solidity::backend::ast::YulForStatement)
 pub slang_solidity::backend::ast::YulStatement::YulFunctionDefinition(slang_solidity::backend::ast::YulFunctionDefinition)
 pub slang_solidity::backend::ast::YulStatement::YulIfStatement(slang_solidity::backend::ast::YulIfStatement)
-pub slang_solidity::backend::ast::YulStatement::YulLabel(slang_solidity::backend::ast::YulLabel)
 pub slang_solidity::backend::ast::YulStatement::YulLeaveStatement(slang_solidity::backend::ast::YulLeaveStatement)
-pub slang_solidity::backend::ast::YulStatement::YulStackAssignmentStatement(slang_solidity::backend::ast::YulStackAssignmentStatement)
 pub slang_solidity::backend::ast::YulStatement::YulSwitchStatement(slang_solidity::backend::ast::YulSwitchStatement)
 pub slang_solidity::backend::ast::YulStatement::YulVariableAssignmentStatement(slang_solidity::backend::ast::YulVariableAssignmentStatement)
 pub slang_solidity::backend::ast::YulStatement::YulVariableDeclarationStatement(slang_solidity::backend::ast::YulVariableDeclarationStatement)
@@ -1572,7 +1499,6 @@ pub fn slang_solidity::backend::ast::FunctionTypeStruct::fmt(&self, f: &mut core
 pub struct slang_solidity::backend::ast::HexNumberExpressionStruct
 pub slang_solidity::backend::ast::HexNumberExpressionStruct::literal: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::ast::HexNumberExpressionStruct::node_id: usize
-pub slang_solidity::backend::ast::HexNumberExpressionStruct::unit: core::option::Option<slang_solidity::backend::ast::NumberUnit>
 impl core::fmt::Debug for slang_solidity::backend::ast::HexNumberExpressionStruct
 pub fn slang_solidity::backend::ast::HexNumberExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::ast::IfStatementStruct
@@ -1835,10 +1761,6 @@ pub slang_solidity::backend::ast::StructMemberStruct::node_id: usize
 pub slang_solidity::backend::ast::StructMemberStruct::type_name: slang_solidity::backend::ast::TypeName
 impl core::fmt::Debug for slang_solidity::backend::ast::StructMemberStruct
 pub fn slang_solidity::backend::ast::StructMemberStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::ast::ThrowStatementStruct
-pub slang_solidity::backend::ast::ThrowStatementStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::ast::ThrowStatementStruct
-pub fn slang_solidity::backend::ast::ThrowStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::ast::TryStatementStruct
 pub slang_solidity::backend::ast::TryStatementStruct::body: slang_solidity::backend::ast::Block
 pub slang_solidity::backend::ast::TryStatementStruct::catch_clauses: slang_solidity::backend::ast::CatchClauses
@@ -1856,7 +1778,6 @@ pub struct slang_solidity::backend::ast::TupleDeconstructionStatementStruct
 pub slang_solidity::backend::ast::TupleDeconstructionStatementStruct::elements: slang_solidity::backend::ast::TupleDeconstructionElements
 pub slang_solidity::backend::ast::TupleDeconstructionStatementStruct::expression: slang_solidity::backend::ast::Expression
 pub slang_solidity::backend::ast::TupleDeconstructionStatementStruct::node_id: usize
-pub slang_solidity::backend::ast::TupleDeconstructionStatementStruct::var_keyword: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 impl core::fmt::Debug for slang_solidity::backend::ast::TupleDeconstructionStatementStruct
 pub fn slang_solidity::backend::ast::TupleDeconstructionStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::ast::TupleExpressionStruct
@@ -1886,13 +1807,6 @@ pub slang_solidity::backend::ast::UncheckedBlockStruct::block: slang_solidity::b
 pub slang_solidity::backend::ast::UncheckedBlockStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::UncheckedBlockStruct
 pub fn slang_solidity::backend::ast::UncheckedBlockStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::ast::UnnamedFunctionDefinitionStruct
-pub slang_solidity::backend::ast::UnnamedFunctionDefinitionStruct::attributes: slang_solidity::backend::ast::UnnamedFunctionAttributes
-pub slang_solidity::backend::ast::UnnamedFunctionDefinitionStruct::body: slang_solidity::backend::ast::FunctionBody
-pub slang_solidity::backend::ast::UnnamedFunctionDefinitionStruct::node_id: usize
-pub slang_solidity::backend::ast::UnnamedFunctionDefinitionStruct::parameters: slang_solidity::backend::ast::ParametersDeclaration
-impl core::fmt::Debug for slang_solidity::backend::ast::UnnamedFunctionDefinitionStruct
-pub fn slang_solidity::backend::ast::UnnamedFunctionDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::ast::UntypedTupleMemberStruct
 pub slang_solidity::backend::ast::UntypedTupleMemberStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::ast::UntypedTupleMemberStruct::node_id: usize
@@ -1973,10 +1887,6 @@ pub struct slang_solidity::backend::ast::YulBreakStatementStruct
 pub slang_solidity::backend::ast::YulBreakStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::YulBreakStatementStruct
 pub fn slang_solidity::backend::ast::YulBreakStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::ast::YulColonAndEqualStruct
-pub slang_solidity::backend::ast::YulColonAndEqualStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::ast::YulColonAndEqualStruct
-pub fn slang_solidity::backend::ast::YulColonAndEqualStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::ast::YulContinueStatementStruct
 pub slang_solidity::backend::ast::YulContinueStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::YulContinueStatementStruct
@@ -1986,10 +1896,6 @@ pub slang_solidity::backend::ast::YulDefaultCaseStruct::body: slang_solidity::ba
 pub slang_solidity::backend::ast::YulDefaultCaseStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::YulDefaultCaseStruct
 pub fn slang_solidity::backend::ast::YulDefaultCaseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::ast::YulEqualAndColonStruct
-pub slang_solidity::backend::ast::YulEqualAndColonStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::ast::YulEqualAndColonStruct
-pub fn slang_solidity::backend::ast::YulEqualAndColonStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::ast::YulForStatementStruct
 pub slang_solidity::backend::ast::YulForStatementStruct::body: slang_solidity::backend::ast::YulBlock
 pub slang_solidity::backend::ast::YulForStatementStruct::condition: slang_solidity::backend::ast::YulExpression
@@ -2018,11 +1924,6 @@ pub slang_solidity::backend::ast::YulIfStatementStruct::condition: slang_solidit
 pub slang_solidity::backend::ast::YulIfStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::YulIfStatementStruct
 pub fn slang_solidity::backend::ast::YulIfStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::ast::YulLabelStruct
-pub slang_solidity::backend::ast::YulLabelStruct::label: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
-pub slang_solidity::backend::ast::YulLabelStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::ast::YulLabelStruct
-pub fn slang_solidity::backend::ast::YulLabelStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::ast::YulLeaveStatementStruct
 pub slang_solidity::backend::ast::YulLeaveStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::YulLeaveStatementStruct
@@ -2037,12 +1938,6 @@ pub slang_solidity::backend::ast::YulReturnsDeclarationStruct::node_id: usize
 pub slang_solidity::backend::ast::YulReturnsDeclarationStruct::variables: slang_solidity::backend::ast::YulVariableNames
 impl core::fmt::Debug for slang_solidity::backend::ast::YulReturnsDeclarationStruct
 pub fn slang_solidity::backend::ast::YulReturnsDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::ast::YulStackAssignmentStatementStruct
-pub slang_solidity::backend::ast::YulStackAssignmentStatementStruct::assignment: slang_solidity::backend::ast::YulStackAssignmentOperator
-pub slang_solidity::backend::ast::YulStackAssignmentStatementStruct::node_id: usize
-pub slang_solidity::backend::ast::YulStackAssignmentStatementStruct::variable: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
-impl core::fmt::Debug for slang_solidity::backend::ast::YulStackAssignmentStatementStruct
-pub fn slang_solidity::backend::ast::YulStackAssignmentStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::ast::YulSwitchStatementStruct
 pub slang_solidity::backend::ast::YulSwitchStatementStruct::cases: slang_solidity::backend::ast::YulSwitchCases
 pub slang_solidity::backend::ast::YulSwitchStatementStruct::expression: slang_solidity::backend::ast::YulExpression
@@ -2193,7 +2088,6 @@ pub type slang_solidity::backend::ast::StringLiterals = alloc::vec::Vec<slang_so
 pub type slang_solidity::backend::ast::StructDefinition = alloc::rc::Rc<slang_solidity::backend::ast::StructDefinitionStruct>
 pub type slang_solidity::backend::ast::StructMember = alloc::rc::Rc<slang_solidity::backend::ast::StructMemberStruct>
 pub type slang_solidity::backend::ast::StructMembers = alloc::vec::Vec<slang_solidity::backend::ast::StructMember>
-pub type slang_solidity::backend::ast::ThrowStatement = alloc::rc::Rc<slang_solidity::backend::ast::ThrowStatementStruct>
 pub type slang_solidity::backend::ast::TryStatement = alloc::rc::Rc<slang_solidity::backend::ast::TryStatementStruct>
 pub type slang_solidity::backend::ast::TupleDeconstructionElement = alloc::rc::Rc<slang_solidity::backend::ast::TupleDeconstructionElementStruct>
 pub type slang_solidity::backend::ast::TupleDeconstructionElements = alloc::vec::Vec<slang_solidity::backend::ast::TupleDeconstructionElement>
@@ -2205,8 +2099,6 @@ pub type slang_solidity::backend::ast::TypeExpression = alloc::rc::Rc<slang_soli
 pub type slang_solidity::backend::ast::TypedTupleMember = alloc::rc::Rc<slang_solidity::backend::ast::TypedTupleMemberStruct>
 pub type slang_solidity::backend::ast::UncheckedBlock = alloc::rc::Rc<slang_solidity::backend::ast::UncheckedBlockStruct>
 pub type slang_solidity::backend::ast::UnicodeStringLiterals = alloc::vec::Vec<slang_solidity::backend::ast::UnicodeStringLiteral>
-pub type slang_solidity::backend::ast::UnnamedFunctionAttributes = alloc::vec::Vec<slang_solidity::backend::ast::UnnamedFunctionAttribute>
-pub type slang_solidity::backend::ast::UnnamedFunctionDefinition = alloc::rc::Rc<slang_solidity::backend::ast::UnnamedFunctionDefinitionStruct>
 pub type slang_solidity::backend::ast::UntypedTupleMember = alloc::rc::Rc<slang_solidity::backend::ast::UntypedTupleMemberStruct>
 pub type slang_solidity::backend::ast::UserDefinedValueTypeDefinition = alloc::rc::Rc<slang_solidity::backend::ast::UserDefinedValueTypeDefinitionStruct>
 pub type slang_solidity::backend::ast::UsingAlias = alloc::rc::Rc<slang_solidity::backend::ast::UsingAliasStruct>
@@ -2225,22 +2117,18 @@ pub type slang_solidity::backend::ast::WhileStatement = alloc::rc::Rc<slang_soli
 pub type slang_solidity::backend::ast::YulArguments = alloc::vec::Vec<slang_solidity::backend::ast::YulExpression>
 pub type slang_solidity::backend::ast::YulBlock = alloc::rc::Rc<slang_solidity::backend::ast::YulBlockStruct>
 pub type slang_solidity::backend::ast::YulBreakStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulBreakStatementStruct>
-pub type slang_solidity::backend::ast::YulColonAndEqual = alloc::rc::Rc<slang_solidity::backend::ast::YulColonAndEqualStruct>
 pub type slang_solidity::backend::ast::YulContinueStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulContinueStatementStruct>
 pub type slang_solidity::backend::ast::YulDefaultCase = alloc::rc::Rc<slang_solidity::backend::ast::YulDefaultCaseStruct>
-pub type slang_solidity::backend::ast::YulEqualAndColon = alloc::rc::Rc<slang_solidity::backend::ast::YulEqualAndColonStruct>
 pub type slang_solidity::backend::ast::YulForStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulForStatementStruct>
 pub type slang_solidity::backend::ast::YulFunctionCallExpression = alloc::rc::Rc<slang_solidity::backend::ast::YulFunctionCallExpressionStruct>
 pub type slang_solidity::backend::ast::YulFunctionDefinition = alloc::rc::Rc<slang_solidity::backend::ast::YulFunctionDefinitionStruct>
 pub type slang_solidity::backend::ast::YulIfStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulIfStatementStruct>
-pub type slang_solidity::backend::ast::YulLabel = alloc::rc::Rc<slang_solidity::backend::ast::YulLabelStruct>
 pub type slang_solidity::backend::ast::YulLeaveStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulLeaveStatementStruct>
 pub type slang_solidity::backend::ast::YulParameters = alloc::vec::Vec<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 pub type slang_solidity::backend::ast::YulParametersDeclaration = alloc::rc::Rc<slang_solidity::backend::ast::YulParametersDeclarationStruct>
 pub type slang_solidity::backend::ast::YulPath = alloc::vec::Vec<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 pub type slang_solidity::backend::ast::YulPaths = alloc::vec::Vec<slang_solidity::backend::ast::YulPath>
 pub type slang_solidity::backend::ast::YulReturnsDeclaration = alloc::rc::Rc<slang_solidity::backend::ast::YulReturnsDeclarationStruct>
-pub type slang_solidity::backend::ast::YulStackAssignmentStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulStackAssignmentStatementStruct>
 pub type slang_solidity::backend::ast::YulStatements = alloc::vec::Vec<slang_solidity::backend::ast::YulStatement>
 pub type slang_solidity::backend::ast::YulSwitchCases = alloc::vec::Vec<slang_solidity::backend::ast::YulSwitchCase>
 pub type slang_solidity::backend::ast::YulSwitchStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulSwitchStatementStruct>
@@ -2399,7 +2287,6 @@ pub fn slang_solidity::backend::l1::input::builder::build_string_literals(cursor
 pub fn slang_solidity::backend::l1::input::builder::build_struct_definition(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StructDefinition, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_struct_member(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StructMember, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_struct_members(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::StructMembers, alloc::string::String>
-pub fn slang_solidity::backend::l1::input::builder::build_throw_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::ThrowStatement, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_try_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::TryStatement, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_tuple_deconstruction_element(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::TupleDeconstructionElement, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_tuple_deconstruction_elements(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::TupleDeconstructionElements, alloc::string::String>
@@ -2414,9 +2301,6 @@ pub fn slang_solidity::backend::l1::input::builder::build_typed_tuple_member(cur
 pub fn slang_solidity::backend::l1::input::builder::build_unchecked_block(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UncheckedBlock, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_unicode_string_literal(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UnicodeStringLiteral, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_unicode_string_literals(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UnicodeStringLiterals, alloc::string::String>
-pub fn slang_solidity::backend::l1::input::builder::build_unnamed_function_attribute(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UnnamedFunctionAttribute, alloc::string::String>
-pub fn slang_solidity::backend::l1::input::builder::build_unnamed_function_attributes(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UnnamedFunctionAttributes, alloc::string::String>
-pub fn slang_solidity::backend::l1::input::builder::build_unnamed_function_definition(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UnnamedFunctionDefinition, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_untyped_tuple_member(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UntypedTupleMember, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_user_defined_value_type_definition(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UserDefinedValueTypeDefinition, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_using_alias(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::UsingAlias, alloc::string::String>
@@ -2443,16 +2327,13 @@ pub fn slang_solidity::backend::l1::input::builder::build_yul_arguments(cursor: 
 pub fn slang_solidity::backend::l1::input::builder::build_yul_assignment_operator(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulAssignmentOperator, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_block(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulBlock, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_break_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulBreakStatement, alloc::string::String>
-pub fn slang_solidity::backend::l1::input::builder::build_yul_colon_and_equal(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulColonAndEqual, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_continue_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulContinueStatement, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_default_case(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulDefaultCase, alloc::string::String>
-pub fn slang_solidity::backend::l1::input::builder::build_yul_equal_and_colon(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulEqualAndColon, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_expression(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulExpression, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_for_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulForStatement, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_function_call_expression(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulFunctionCallExpression, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_function_definition(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulFunctionDefinition, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_if_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulIfStatement, alloc::string::String>
-pub fn slang_solidity::backend::l1::input::builder::build_yul_label(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulLabel, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_leave_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulLeaveStatement, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_literal(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulLiteral, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_parameters(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulParameters, alloc::string::String>
@@ -2460,8 +2341,6 @@ pub fn slang_solidity::backend::l1::input::builder::build_yul_parameters_declara
 pub fn slang_solidity::backend::l1::input::builder::build_yul_path(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulPath, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_paths(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulPaths, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_returns_declaration(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulReturnsDeclaration, alloc::string::String>
-pub fn slang_solidity::backend::l1::input::builder::build_yul_stack_assignment_operator(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulStackAssignmentOperator, alloc::string::String>
-pub fn slang_solidity::backend::l1::input::builder::build_yul_stack_assignment_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulStackAssignmentStatement, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_statement(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulStatement, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_statements(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulStatements, alloc::string::String>
 pub fn slang_solidity::backend::l1::input::builder::build_yul_switch_case(cursor: slang_solidity::cst::Cursor) -> core::result::Result<slang_solidity::backend::ast::YulSwitchCase, alloc::string::String>
@@ -2504,7 +2383,6 @@ pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_stri
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_tuple_member(&mut self, source: &slang_solidity::backend::ast::TupleMember) -> slang_solidity::backend::ast::TupleMember
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_type_name(&mut self, source: &slang_solidity::backend::ast::TypeName) -> slang_solidity::backend::ast::TypeName
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_unicode_string_literal(&mut self, source: &slang_solidity::backend::ast::UnicodeStringLiteral) -> slang_solidity::backend::ast::UnicodeStringLiteral
-pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_unnamed_function_attribute(&mut self, source: &slang_solidity::backend::ast::UnnamedFunctionAttribute) -> slang_solidity::backend::ast::UnnamedFunctionAttribute
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_using_clause(&mut self, source: &slang_solidity::backend::ast::UsingClause) -> slang_solidity::backend::ast::UsingClause
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_using_operator(&mut self, source: &slang_solidity::backend::ast::UsingOperator) -> slang_solidity::backend::ast::UsingOperator
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_using_target(&mut self, source: &slang_solidity::backend::ast::UsingTarget) -> slang_solidity::backend::ast::UsingTarget
@@ -2515,7 +2393,6 @@ pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_vers
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_yul_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulAssignmentOperator) -> slang_solidity::backend::ast::YulAssignmentOperator
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_yul_expression(&mut self, source: &slang_solidity::backend::ast::YulExpression) -> slang_solidity::backend::ast::YulExpression
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_yul_literal(&mut self, source: &slang_solidity::backend::ast::YulLiteral) -> slang_solidity::backend::ast::YulLiteral
-pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_yul_stack_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulStackAssignmentOperator) -> slang_solidity::backend::ast::YulStackAssignmentOperator
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_yul_statement(&mut self, source: &slang_solidity::backend::ast::YulStatement) -> slang_solidity::backend::ast::YulStatement
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::default_mutate_yul_switch_case(&mut self, source: &slang_solidity::backend::ast::YulSwitchCase) -> slang_solidity::backend::ast::YulSwitchCase
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_abicoder_pragma(&mut self, source: &slang_solidity::backend::ast::AbicoderPragma) -> slang_solidity::backend::ast::AbicoderPragma
@@ -2664,7 +2541,6 @@ pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_string_liter
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_struct_definition(&mut self, source: &slang_solidity::backend::ast::StructDefinition) -> slang_solidity::backend::ast::StructDefinition
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_struct_member(&mut self, source: &slang_solidity::backend::ast::StructMember) -> slang_solidity::backend::ast::StructMember
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_struct_members(&mut self, source: &slang_solidity::backend::ast::StructMembers) -> slang_solidity::backend::ast::StructMembers
-pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_throw_statement(&mut self, source: &slang_solidity::backend::ast::ThrowStatement) -> slang_solidity::backend::ast::ThrowStatement
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_try_statement(&mut self, source: &slang_solidity::backend::ast::TryStatement) -> slang_solidity::backend::ast::TryStatement
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_tuple_deconstruction_element(&mut self, source: &slang_solidity::backend::ast::TupleDeconstructionElement) -> slang_solidity::backend::ast::TupleDeconstructionElement
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_tuple_deconstruction_elements(&mut self, source: &slang_solidity::backend::ast::TupleDeconstructionElements) -> slang_solidity::backend::ast::TupleDeconstructionElements
@@ -2679,9 +2555,6 @@ pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_typed_tuple_
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_unchecked_block(&mut self, source: &slang_solidity::backend::ast::UncheckedBlock) -> slang_solidity::backend::ast::UncheckedBlock
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_unicode_string_literal(&mut self, source: &slang_solidity::backend::ast::UnicodeStringLiteral) -> slang_solidity::backend::ast::UnicodeStringLiteral
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_unicode_string_literals(&mut self, source: &slang_solidity::backend::ast::UnicodeStringLiterals) -> slang_solidity::backend::ast::UnicodeStringLiterals
-pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_unnamed_function_attribute(&mut self, source: &slang_solidity::backend::ast::UnnamedFunctionAttribute) -> slang_solidity::backend::ast::UnnamedFunctionAttribute
-pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_unnamed_function_attributes(&mut self, source: &slang_solidity::backend::ast::UnnamedFunctionAttributes) -> slang_solidity::backend::ast::UnnamedFunctionAttributes
-pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_unnamed_function_definition(&mut self, source: &slang_solidity::backend::ast::UnnamedFunctionDefinition) -> slang_solidity::backend::ast::UnnamedFunctionDefinition
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_untyped_tuple_member(&mut self, source: &slang_solidity::backend::ast::UntypedTupleMember) -> slang_solidity::backend::ast::UntypedTupleMember
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_user_defined_value_type_definition(&mut self, source: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition) -> slang_solidity::backend::ast::UserDefinedValueTypeDefinition
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_using_alias(&mut self, source: &slang_solidity::backend::ast::UsingAlias) -> slang_solidity::backend::ast::UsingAlias
@@ -2708,16 +2581,13 @@ pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_argument
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulAssignmentOperator) -> slang_solidity::backend::ast::YulAssignmentOperator
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_block(&mut self, source: &slang_solidity::backend::ast::YulBlock) -> slang_solidity::backend::ast::YulBlock
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_break_statement(&mut self, source: &slang_solidity::backend::ast::YulBreakStatement) -> slang_solidity::backend::ast::YulBreakStatement
-pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_colon_and_equal(&mut self, source: &slang_solidity::backend::ast::YulColonAndEqual) -> slang_solidity::backend::ast::YulColonAndEqual
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_continue_statement(&mut self, source: &slang_solidity::backend::ast::YulContinueStatement) -> slang_solidity::backend::ast::YulContinueStatement
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_default_case(&mut self, source: &slang_solidity::backend::ast::YulDefaultCase) -> slang_solidity::backend::ast::YulDefaultCase
-pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_equal_and_colon(&mut self, source: &slang_solidity::backend::ast::YulEqualAndColon) -> slang_solidity::backend::ast::YulEqualAndColon
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_expression(&mut self, source: &slang_solidity::backend::ast::YulExpression) -> slang_solidity::backend::ast::YulExpression
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_for_statement(&mut self, source: &slang_solidity::backend::ast::YulForStatement) -> slang_solidity::backend::ast::YulForStatement
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_function_call_expression(&mut self, source: &slang_solidity::backend::ast::YulFunctionCallExpression) -> slang_solidity::backend::ast::YulFunctionCallExpression
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_function_definition(&mut self, source: &slang_solidity::backend::ast::YulFunctionDefinition) -> slang_solidity::backend::ast::YulFunctionDefinition
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_if_statement(&mut self, source: &slang_solidity::backend::ast::YulIfStatement) -> slang_solidity::backend::ast::YulIfStatement
-pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_label(&mut self, source: &slang_solidity::backend::ast::YulLabel) -> slang_solidity::backend::ast::YulLabel
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_leave_statement(&mut self, source: &slang_solidity::backend::ast::YulLeaveStatement) -> slang_solidity::backend::ast::YulLeaveStatement
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_literal(&mut self, source: &slang_solidity::backend::ast::YulLiteral) -> slang_solidity::backend::ast::YulLiteral
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_parameters(&mut self, source: &slang_solidity::backend::ast::YulParameters) -> slang_solidity::backend::ast::YulParameters
@@ -2725,8 +2595,6 @@ pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_paramete
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_path(&mut self, source: &slang_solidity::backend::ast::YulPath) -> slang_solidity::backend::ast::YulPath
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_paths(&mut self, source: &slang_solidity::backend::ast::YulPaths) -> slang_solidity::backend::ast::YulPaths
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_returns_declaration(&mut self, source: &slang_solidity::backend::ast::YulReturnsDeclaration) -> slang_solidity::backend::ast::YulReturnsDeclaration
-pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_stack_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulStackAssignmentOperator) -> slang_solidity::backend::ast::YulStackAssignmentOperator
-pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_stack_assignment_statement(&mut self, source: &slang_solidity::backend::ast::YulStackAssignmentStatement) -> slang_solidity::backend::ast::YulStackAssignmentStatement
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_statement(&mut self, source: &slang_solidity::backend::ast::YulStatement) -> slang_solidity::backend::ast::YulStatement
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_statements(&mut self, source: &slang_solidity::backend::ast::YulStatements) -> slang_solidity::backend::ast::YulStatements
 pub fn slang_solidity::backend::l1::input::mutator::Mutator::mutate_yul_switch_case(&mut self, source: &slang_solidity::backend::ast::YulSwitchCase) -> slang_solidity::backend::ast::YulSwitchCase
@@ -2828,7 +2696,6 @@ pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_state_variabl
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::ast::StorageLayoutSpecifier) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_struct_definition(&mut self, _target: &slang_solidity::backend::ast::StructDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_struct_member(&mut self, _target: &slang_solidity::backend::ast::StructMember) -> bool
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_throw_statement(&mut self, _target: &slang_solidity::backend::ast::ThrowStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_try_statement(&mut self, _target: &slang_solidity::backend::ast::TryStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_tuple_deconstruction_element(&mut self, _target: &slang_solidity::backend::ast::TupleDeconstructionElement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_tuple_deconstruction_statement(&mut self, _target: &slang_solidity::backend::ast::TupleDeconstructionStatement) -> bool
@@ -2837,7 +2704,6 @@ pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_tuple_value(&
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_type_expression(&mut self, _target: &slang_solidity::backend::ast::TypeExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_typed_tuple_member(&mut self, _target: &slang_solidity::backend::ast::TypedTupleMember) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_unchecked_block(&mut self, _target: &slang_solidity::backend::ast::UncheckedBlock) -> bool
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_unnamed_function_definition(&mut self, _target: &slang_solidity::backend::ast::UnnamedFunctionDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_untyped_tuple_member(&mut self, _target: &slang_solidity::backend::ast::UntypedTupleMember) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_user_defined_value_type_definition(&mut self, _target: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_using_alias(&mut self, _target: &slang_solidity::backend::ast::UsingAlias) -> bool
@@ -2852,19 +2718,15 @@ pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_version_term(
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_while_statement(&mut self, _target: &slang_solidity::backend::ast::WhileStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_block(&mut self, _target: &slang_solidity::backend::ast::YulBlock) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_break_statement(&mut self, _target: &slang_solidity::backend::ast::YulBreakStatement) -> bool
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_colon_and_equal(&mut self, _target: &slang_solidity::backend::ast::YulColonAndEqual) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_continue_statement(&mut self, _target: &slang_solidity::backend::ast::YulContinueStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_default_case(&mut self, _target: &slang_solidity::backend::ast::YulDefaultCase) -> bool
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_equal_and_colon(&mut self, _target: &slang_solidity::backend::ast::YulEqualAndColon) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_for_statement(&mut self, _target: &slang_solidity::backend::ast::YulForStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_function_call_expression(&mut self, _target: &slang_solidity::backend::ast::YulFunctionCallExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_function_definition(&mut self, _target: &slang_solidity::backend::ast::YulFunctionDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_if_statement(&mut self, _target: &slang_solidity::backend::ast::YulIfStatement) -> bool
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_label(&mut self, _target: &slang_solidity::backend::ast::YulLabel) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_leave_statement(&mut self, _target: &slang_solidity::backend::ast::YulLeaveStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_parameters_declaration(&mut self, _target: &slang_solidity::backend::ast::YulParametersDeclaration) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_returns_declaration(&mut self, _target: &slang_solidity::backend::ast::YulReturnsDeclaration) -> bool
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_stack_assignment_statement(&mut self, _target: &slang_solidity::backend::ast::YulStackAssignmentStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_switch_statement(&mut self, _target: &slang_solidity::backend::ast::YulSwitchStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_value_case(&mut self, _target: &slang_solidity::backend::ast::YulValueCase) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_variable_assignment_statement(&mut self, _target: &slang_solidity::backend::ast::YulVariableAssignmentStatement) -> bool
@@ -2958,7 +2820,6 @@ pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_state_variabl
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::ast::StorageLayoutSpecifier)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_struct_definition(&mut self, _target: &slang_solidity::backend::ast::StructDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_struct_member(&mut self, _target: &slang_solidity::backend::ast::StructMember)
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_throw_statement(&mut self, _target: &slang_solidity::backend::ast::ThrowStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_try_statement(&mut self, _target: &slang_solidity::backend::ast::TryStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_tuple_deconstruction_element(&mut self, _target: &slang_solidity::backend::ast::TupleDeconstructionElement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_tuple_deconstruction_statement(&mut self, _target: &slang_solidity::backend::ast::TupleDeconstructionStatement)
@@ -2967,7 +2828,6 @@ pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_tuple_value(&
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_type_expression(&mut self, _target: &slang_solidity::backend::ast::TypeExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_typed_tuple_member(&mut self, _target: &slang_solidity::backend::ast::TypedTupleMember)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_unchecked_block(&mut self, _target: &slang_solidity::backend::ast::UncheckedBlock)
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_unnamed_function_definition(&mut self, _target: &slang_solidity::backend::ast::UnnamedFunctionDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_untyped_tuple_member(&mut self, _target: &slang_solidity::backend::ast::UntypedTupleMember)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_user_defined_value_type_definition(&mut self, _target: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_using_alias(&mut self, _target: &slang_solidity::backend::ast::UsingAlias)
@@ -2982,19 +2842,15 @@ pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_version_term(
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_while_statement(&mut self, _target: &slang_solidity::backend::ast::WhileStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_block(&mut self, _target: &slang_solidity::backend::ast::YulBlock)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_break_statement(&mut self, _target: &slang_solidity::backend::ast::YulBreakStatement)
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_colon_and_equal(&mut self, _target: &slang_solidity::backend::ast::YulColonAndEqual)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_continue_statement(&mut self, _target: &slang_solidity::backend::ast::YulContinueStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_default_case(&mut self, _target: &slang_solidity::backend::ast::YulDefaultCase)
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_equal_and_colon(&mut self, _target: &slang_solidity::backend::ast::YulEqualAndColon)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_for_statement(&mut self, _target: &slang_solidity::backend::ast::YulForStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_function_call_expression(&mut self, _target: &slang_solidity::backend::ast::YulFunctionCallExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_function_definition(&mut self, _target: &slang_solidity::backend::ast::YulFunctionDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_if_statement(&mut self, _target: &slang_solidity::backend::ast::YulIfStatement)
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_label(&mut self, _target: &slang_solidity::backend::ast::YulLabel)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_leave_statement(&mut self, _target: &slang_solidity::backend::ast::YulLeaveStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_parameters_declaration(&mut self, _target: &slang_solidity::backend::ast::YulParametersDeclaration)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_returns_declaration(&mut self, _target: &slang_solidity::backend::ast::YulReturnsDeclaration)
-pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_stack_assignment_statement(&mut self, _target: &slang_solidity::backend::ast::YulStackAssignmentStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_switch_statement(&mut self, _target: &slang_solidity::backend::ast::YulSwitchStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_value_case(&mut self, _target: &slang_solidity::backend::ast::YulValueCase)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_variable_assignment_statement(&mut self, _target: &slang_solidity::backend::ast::YulVariableAssignmentStatement)
@@ -3115,7 +2971,6 @@ pub fn slang_solidity::backend::l1::input::visitor::accept_string_expression(tar
 pub fn slang_solidity::backend::l1::input::visitor::accept_string_literal(_target: &slang_solidity::backend::ast::StringLiteral, _visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_struct_definition(target: &slang_solidity::backend::ast::StructDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_struct_member(target: &slang_solidity::backend::ast::StructMember, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::l1::input::visitor::accept_throw_statement(target: &slang_solidity::backend::ast::ThrowStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_try_statement(target: &slang_solidity::backend::ast::TryStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_tuple_deconstruction_element(target: &slang_solidity::backend::ast::TupleDeconstructionElement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_tuple_deconstruction_statement(target: &slang_solidity::backend::ast::TupleDeconstructionStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
@@ -3127,8 +2982,6 @@ pub fn slang_solidity::backend::l1::input::visitor::accept_type_name(target: &sl
 pub fn slang_solidity::backend::l1::input::visitor::accept_typed_tuple_member(target: &slang_solidity::backend::ast::TypedTupleMember, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_unchecked_block(target: &slang_solidity::backend::ast::UncheckedBlock, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_unicode_string_literal(_target: &slang_solidity::backend::ast::UnicodeStringLiteral, _visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::l1::input::visitor::accept_unnamed_function_attribute(target: &slang_solidity::backend::ast::UnnamedFunctionAttribute, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::l1::input::visitor::accept_unnamed_function_definition(target: &slang_solidity::backend::ast::UnnamedFunctionDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_untyped_tuple_member(target: &slang_solidity::backend::ast::UntypedTupleMember, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_user_defined_value_type_definition(target: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_using_alias(target: &slang_solidity::backend::ast::UsingAlias, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
@@ -3148,25 +3001,20 @@ pub fn slang_solidity::backend::l1::input::visitor::accept_version_pragma(target
 pub fn slang_solidity::backend::l1::input::visitor::accept_version_range(target: &slang_solidity::backend::ast::VersionRange, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_version_term(target: &slang_solidity::backend::ast::VersionTerm, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_while_statement(target: &slang_solidity::backend::ast::WhileStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::l1::input::visitor::accept_yul_assignment_operator(target: &slang_solidity::backend::ast::YulAssignmentOperator, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
+pub fn slang_solidity::backend::l1::input::visitor::accept_yul_assignment_operator(_target: &slang_solidity::backend::ast::YulAssignmentOperator, _visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_block(target: &slang_solidity::backend::ast::YulBlock, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_break_statement(target: &slang_solidity::backend::ast::YulBreakStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::l1::input::visitor::accept_yul_colon_and_equal(target: &slang_solidity::backend::ast::YulColonAndEqual, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_continue_statement(target: &slang_solidity::backend::ast::YulContinueStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_default_case(target: &slang_solidity::backend::ast::YulDefaultCase, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::l1::input::visitor::accept_yul_equal_and_colon(target: &slang_solidity::backend::ast::YulEqualAndColon, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_expression(target: &slang_solidity::backend::ast::YulExpression, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_for_statement(target: &slang_solidity::backend::ast::YulForStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_function_call_expression(target: &slang_solidity::backend::ast::YulFunctionCallExpression, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_function_definition(target: &slang_solidity::backend::ast::YulFunctionDefinition, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_if_statement(target: &slang_solidity::backend::ast::YulIfStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::l1::input::visitor::accept_yul_label(target: &slang_solidity::backend::ast::YulLabel, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_leave_statement(target: &slang_solidity::backend::ast::YulLeaveStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_literal(target: &slang_solidity::backend::ast::YulLiteral, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_parameters_declaration(target: &slang_solidity::backend::ast::YulParametersDeclaration, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_returns_declaration(target: &slang_solidity::backend::ast::YulReturnsDeclaration, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::l1::input::visitor::accept_yul_stack_assignment_operator(target: &slang_solidity::backend::ast::YulStackAssignmentOperator, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
-pub fn slang_solidity::backend::l1::input::visitor::accept_yul_stack_assignment_statement(target: &slang_solidity::backend::ast::YulStackAssignmentStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_statement(target: &slang_solidity::backend::ast::YulStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_switch_case(target: &slang_solidity::backend::ast::YulSwitchCase, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_yul_switch_statement(target: &slang_solidity::backend::ast::YulSwitchStatement, visitor: &mut dyn slang_solidity::backend::ast::visitor::Visitor)
@@ -3182,10 +3030,8 @@ pub fn slang_solidity::backend::ast::ArgumentsDeclaration::fmt(&self, f: &mut co
 pub enum slang_solidity::backend::l1::input::ConstructorAttribute
 pub slang_solidity::backend::l1::input::ConstructorAttribute::InternalKeyword
 pub slang_solidity::backend::l1::input::ConstructorAttribute::ModifierInvocation(slang_solidity::backend::ast::ModifierInvocation)
-pub slang_solidity::backend::l1::input::ConstructorAttribute::OverrideKeyword
 pub slang_solidity::backend::l1::input::ConstructorAttribute::PayableKeyword
 pub slang_solidity::backend::l1::input::ConstructorAttribute::PublicKeyword
-pub slang_solidity::backend::l1::input::ConstructorAttribute::VirtualKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::ConstructorAttribute
 pub fn slang_solidity::backend::ast::ConstructorAttribute::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::ContractMember
@@ -3199,7 +3045,6 @@ pub slang_solidity::backend::l1::input::ContractMember::ModifierDefinition(slang
 pub slang_solidity::backend::l1::input::ContractMember::ReceiveFunctionDefinition(slang_solidity::backend::ast::ReceiveFunctionDefinition)
 pub slang_solidity::backend::l1::input::ContractMember::StateVariableDefinition(slang_solidity::backend::ast::StateVariableDefinition)
 pub slang_solidity::backend::l1::input::ContractMember::StructDefinition(slang_solidity::backend::ast::StructDefinition)
-pub slang_solidity::backend::l1::input::ContractMember::UnnamedFunctionDefinition(slang_solidity::backend::ast::UnnamedFunctionDefinition)
 pub slang_solidity::backend::l1::input::ContractMember::UserDefinedValueTypeDefinition(slang_solidity::backend::ast::UserDefinedValueTypeDefinition)
 pub slang_solidity::backend::l1::input::ContractMember::UsingDirective(slang_solidity::backend::ast::UsingDirective)
 impl core::fmt::Debug for slang_solidity::backend::ast::ContractMember
@@ -3212,7 +3057,6 @@ pub fn slang_solidity::backend::ast::ContractSpecifier::fmt(&self, f: &mut core:
 pub enum slang_solidity::backend::l1::input::ElementaryType
 pub slang_solidity::backend::l1::input::ElementaryType::AddressType(slang_solidity::backend::ast::AddressType)
 pub slang_solidity::backend::l1::input::ElementaryType::BoolKeyword
-pub slang_solidity::backend::l1::input::ElementaryType::ByteKeyword
 pub slang_solidity::backend::l1::input::ElementaryType::BytesKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::l1::input::ElementaryType::FixedKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::l1::input::ElementaryType::IntKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
@@ -3285,7 +3129,6 @@ pub slang_solidity::backend::l1::input::ForStatementInitialization::VariableDecl
 impl core::fmt::Debug for slang_solidity::backend::ast::ForStatementInitialization
 pub fn slang_solidity::backend::ast::ForStatementInitialization::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::FunctionAttribute
-pub slang_solidity::backend::l1::input::FunctionAttribute::ConstantKeyword
 pub slang_solidity::backend::l1::input::FunctionAttribute::ExternalKeyword
 pub slang_solidity::backend::l1::input::FunctionAttribute::InternalKeyword
 pub slang_solidity::backend::l1::input::FunctionAttribute::ModifierInvocation(slang_solidity::backend::ast::ModifierInvocation)
@@ -3310,7 +3153,6 @@ pub slang_solidity::backend::l1::input::FunctionName::ReceiveKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::FunctionName
 pub fn slang_solidity::backend::ast::FunctionName::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::FunctionTypeAttribute
-pub slang_solidity::backend::l1::input::FunctionTypeAttribute::ConstantKeyword
 pub slang_solidity::backend::l1::input::FunctionTypeAttribute::ExternalKeyword
 pub slang_solidity::backend::l1::input::FunctionTypeAttribute::InternalKeyword
 pub slang_solidity::backend::l1::input::FunctionTypeAttribute::PayableKeyword
@@ -3344,15 +3186,12 @@ pub fn slang_solidity::backend::ast::ModifierAttribute::fmt(&self, f: &mut core:
 pub enum slang_solidity::backend::l1::input::NumberUnit
 pub slang_solidity::backend::l1::input::NumberUnit::DaysKeyword
 pub slang_solidity::backend::l1::input::NumberUnit::EtherKeyword
-pub slang_solidity::backend::l1::input::NumberUnit::FinneyKeyword
 pub slang_solidity::backend::l1::input::NumberUnit::GweiKeyword
 pub slang_solidity::backend::l1::input::NumberUnit::HoursKeyword
 pub slang_solidity::backend::l1::input::NumberUnit::MinutesKeyword
 pub slang_solidity::backend::l1::input::NumberUnit::SecondsKeyword
-pub slang_solidity::backend::l1::input::NumberUnit::SzaboKeyword
 pub slang_solidity::backend::l1::input::NumberUnit::WeeksKeyword
 pub slang_solidity::backend::l1::input::NumberUnit::WeiKeyword
-pub slang_solidity::backend::l1::input::NumberUnit::YearsKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::NumberUnit
 pub fn slang_solidity::backend::ast::NumberUnit::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::Pragma
@@ -3407,7 +3246,6 @@ pub slang_solidity::backend::l1::input::Statement::ForStatement(slang_solidity::
 pub slang_solidity::backend::l1::input::Statement::IfStatement(slang_solidity::backend::ast::IfStatement)
 pub slang_solidity::backend::l1::input::Statement::ReturnStatement(slang_solidity::backend::ast::ReturnStatement)
 pub slang_solidity::backend::l1::input::Statement::RevertStatement(slang_solidity::backend::ast::RevertStatement)
-pub slang_solidity::backend::l1::input::Statement::ThrowStatement(slang_solidity::backend::ast::ThrowStatement)
 pub slang_solidity::backend::l1::input::Statement::TryStatement(slang_solidity::backend::ast::TryStatement)
 pub slang_solidity::backend::l1::input::Statement::TupleDeconstructionStatement(slang_solidity::backend::ast::TupleDeconstructionStatement)
 pub slang_solidity::backend::l1::input::Statement::UncheckedBlock(slang_solidity::backend::ast::UncheckedBlock)
@@ -3422,9 +3260,7 @@ pub slang_solidity::backend::l1::input::StorageLocation::StorageKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::StorageLocation
 pub fn slang_solidity::backend::ast::StorageLocation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::StringExpression
-pub slang_solidity::backend::l1::input::StringExpression::HexStringLiteral(slang_solidity::backend::ast::HexStringLiteral)
 pub slang_solidity::backend::l1::input::StringExpression::HexStringLiterals(slang_solidity::backend::ast::HexStringLiterals)
-pub slang_solidity::backend::l1::input::StringExpression::StringLiteral(slang_solidity::backend::ast::StringLiteral)
 pub slang_solidity::backend::l1::input::StringExpression::StringLiterals(slang_solidity::backend::ast::StringLiterals)
 pub slang_solidity::backend::l1::input::StringExpression::UnicodeStringLiterals(slang_solidity::backend::ast::UnicodeStringLiterals)
 impl core::fmt::Debug for slang_solidity::backend::ast::StringExpression
@@ -3452,18 +3288,6 @@ pub slang_solidity::backend::l1::input::UnicodeStringLiteral::DoubleQuotedUnicod
 pub slang_solidity::backend::l1::input::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 impl core::fmt::Debug for slang_solidity::backend::ast::UnicodeStringLiteral
 pub fn slang_solidity::backend::ast::UnicodeStringLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub enum slang_solidity::backend::l1::input::UnnamedFunctionAttribute
-pub slang_solidity::backend::l1::input::UnnamedFunctionAttribute::ConstantKeyword
-pub slang_solidity::backend::l1::input::UnnamedFunctionAttribute::ExternalKeyword
-pub slang_solidity::backend::l1::input::UnnamedFunctionAttribute::InternalKeyword
-pub slang_solidity::backend::l1::input::UnnamedFunctionAttribute::ModifierInvocation(slang_solidity::backend::ast::ModifierInvocation)
-pub slang_solidity::backend::l1::input::UnnamedFunctionAttribute::PayableKeyword
-pub slang_solidity::backend::l1::input::UnnamedFunctionAttribute::PrivateKeyword
-pub slang_solidity::backend::l1::input::UnnamedFunctionAttribute::PublicKeyword
-pub slang_solidity::backend::l1::input::UnnamedFunctionAttribute::PureKeyword
-pub slang_solidity::backend::l1::input::UnnamedFunctionAttribute::ViewKeyword
-impl core::fmt::Debug for slang_solidity::backend::ast::UnnamedFunctionAttribute
-pub fn slang_solidity::backend::ast::UnnamedFunctionAttribute::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::UsingClause
 pub slang_solidity::backend::l1::input::UsingClause::IdentifierPath(slang_solidity::backend::ast::IdentifierPath)
 pub slang_solidity::backend::l1::input::UsingClause::UsingDeconstruction(slang_solidity::backend::ast::UsingDeconstruction)
@@ -3494,7 +3318,6 @@ impl core::fmt::Debug for slang_solidity::backend::ast::UsingTarget
 pub fn slang_solidity::backend::ast::UsingTarget::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::VariableDeclarationType
 pub slang_solidity::backend::l1::input::VariableDeclarationType::TypeName(slang_solidity::backend::ast::TypeName)
-pub slang_solidity::backend::l1::input::VariableDeclarationType::VarKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::VariableDeclarationType
 pub fn slang_solidity::backend::ast::VariableDeclarationType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::VersionExpression
@@ -3520,7 +3343,6 @@ impl core::fmt::Debug for slang_solidity::backend::ast::VersionOperator
 pub fn slang_solidity::backend::ast::VersionOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::YulAssignmentOperator
 pub slang_solidity::backend::l1::input::YulAssignmentOperator::ColonEqual
-pub slang_solidity::backend::l1::input::YulAssignmentOperator::YulColonAndEqual(slang_solidity::backend::ast::YulColonAndEqual)
 impl core::fmt::Debug for slang_solidity::backend::ast::YulAssignmentOperator
 pub fn slang_solidity::backend::ast::YulAssignmentOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::YulExpression
@@ -3538,11 +3360,6 @@ pub slang_solidity::backend::l1::input::YulLiteral::YulHexLiteral(alloc::rc::Rc<
 pub slang_solidity::backend::l1::input::YulLiteral::YulTrueKeyword
 impl core::fmt::Debug for slang_solidity::backend::ast::YulLiteral
 pub fn slang_solidity::backend::ast::YulLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub enum slang_solidity::backend::l1::input::YulStackAssignmentOperator
-pub slang_solidity::backend::l1::input::YulStackAssignmentOperator::EqualColon
-pub slang_solidity::backend::l1::input::YulStackAssignmentOperator::YulEqualAndColon(slang_solidity::backend::ast::YulEqualAndColon)
-impl core::fmt::Debug for slang_solidity::backend::ast::YulStackAssignmentOperator
-pub fn slang_solidity::backend::ast::YulStackAssignmentOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::input::YulStatement
 pub slang_solidity::backend::l1::input::YulStatement::YulBlock(slang_solidity::backend::ast::YulBlock)
 pub slang_solidity::backend::l1::input::YulStatement::YulBreakStatement(slang_solidity::backend::ast::YulBreakStatement)
@@ -3551,9 +3368,7 @@ pub slang_solidity::backend::l1::input::YulStatement::YulExpression(slang_solidi
 pub slang_solidity::backend::l1::input::YulStatement::YulForStatement(slang_solidity::backend::ast::YulForStatement)
 pub slang_solidity::backend::l1::input::YulStatement::YulFunctionDefinition(slang_solidity::backend::ast::YulFunctionDefinition)
 pub slang_solidity::backend::l1::input::YulStatement::YulIfStatement(slang_solidity::backend::ast::YulIfStatement)
-pub slang_solidity::backend::l1::input::YulStatement::YulLabel(slang_solidity::backend::ast::YulLabel)
 pub slang_solidity::backend::l1::input::YulStatement::YulLeaveStatement(slang_solidity::backend::ast::YulLeaveStatement)
-pub slang_solidity::backend::l1::input::YulStatement::YulStackAssignmentStatement(slang_solidity::backend::ast::YulStackAssignmentStatement)
 pub slang_solidity::backend::l1::input::YulStatement::YulSwitchStatement(slang_solidity::backend::ast::YulSwitchStatement)
 pub slang_solidity::backend::l1::input::YulStatement::YulVariableAssignmentStatement(slang_solidity::backend::ast::YulVariableAssignmentStatement)
 pub slang_solidity::backend::l1::input::YulStatement::YulVariableDeclarationStatement(slang_solidity::backend::ast::YulVariableDeclarationStatement)
@@ -3821,7 +3636,6 @@ pub fn slang_solidity::backend::ast::FunctionTypeStruct::fmt(&self, f: &mut core
 pub struct slang_solidity::backend::l1::input::HexNumberExpressionStruct
 pub slang_solidity::backend::l1::input::HexNumberExpressionStruct::literal: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1::input::HexNumberExpressionStruct::node_id: usize
-pub slang_solidity::backend::l1::input::HexNumberExpressionStruct::unit: core::option::Option<slang_solidity::backend::ast::NumberUnit>
 impl core::fmt::Debug for slang_solidity::backend::ast::HexNumberExpressionStruct
 pub fn slang_solidity::backend::ast::HexNumberExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::input::IfStatementStruct
@@ -4084,10 +3898,6 @@ pub slang_solidity::backend::l1::input::StructMemberStruct::node_id: usize
 pub slang_solidity::backend::l1::input::StructMemberStruct::type_name: slang_solidity::backend::ast::TypeName
 impl core::fmt::Debug for slang_solidity::backend::ast::StructMemberStruct
 pub fn slang_solidity::backend::ast::StructMemberStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1::input::ThrowStatementStruct
-pub slang_solidity::backend::l1::input::ThrowStatementStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::ast::ThrowStatementStruct
-pub fn slang_solidity::backend::ast::ThrowStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::input::TryStatementStruct
 pub slang_solidity::backend::l1::input::TryStatementStruct::body: slang_solidity::backend::ast::Block
 pub slang_solidity::backend::l1::input::TryStatementStruct::catch_clauses: slang_solidity::backend::ast::CatchClauses
@@ -4105,7 +3915,6 @@ pub struct slang_solidity::backend::l1::input::TupleDeconstructionStatementStruc
 pub slang_solidity::backend::l1::input::TupleDeconstructionStatementStruct::elements: slang_solidity::backend::ast::TupleDeconstructionElements
 pub slang_solidity::backend::l1::input::TupleDeconstructionStatementStruct::expression: slang_solidity::backend::ast::Expression
 pub slang_solidity::backend::l1::input::TupleDeconstructionStatementStruct::node_id: usize
-pub slang_solidity::backend::l1::input::TupleDeconstructionStatementStruct::var_keyword: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 impl core::fmt::Debug for slang_solidity::backend::ast::TupleDeconstructionStatementStruct
 pub fn slang_solidity::backend::ast::TupleDeconstructionStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::input::TupleExpressionStruct
@@ -4135,13 +3944,6 @@ pub slang_solidity::backend::l1::input::UncheckedBlockStruct::block: slang_solid
 pub slang_solidity::backend::l1::input::UncheckedBlockStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::UncheckedBlockStruct
 pub fn slang_solidity::backend::ast::UncheckedBlockStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1::input::UnnamedFunctionDefinitionStruct
-pub slang_solidity::backend::l1::input::UnnamedFunctionDefinitionStruct::attributes: slang_solidity::backend::ast::UnnamedFunctionAttributes
-pub slang_solidity::backend::l1::input::UnnamedFunctionDefinitionStruct::body: slang_solidity::backend::ast::FunctionBody
-pub slang_solidity::backend::l1::input::UnnamedFunctionDefinitionStruct::node_id: usize
-pub slang_solidity::backend::l1::input::UnnamedFunctionDefinitionStruct::parameters: slang_solidity::backend::ast::ParametersDeclaration
-impl core::fmt::Debug for slang_solidity::backend::ast::UnnamedFunctionDefinitionStruct
-pub fn slang_solidity::backend::ast::UnnamedFunctionDefinitionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::input::UntypedTupleMemberStruct
 pub slang_solidity::backend::l1::input::UntypedTupleMemberStruct::name: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1::input::UntypedTupleMemberStruct::node_id: usize
@@ -4222,10 +4024,6 @@ pub struct slang_solidity::backend::l1::input::YulBreakStatementStruct
 pub slang_solidity::backend::l1::input::YulBreakStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::YulBreakStatementStruct
 pub fn slang_solidity::backend::ast::YulBreakStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1::input::YulColonAndEqualStruct
-pub slang_solidity::backend::l1::input::YulColonAndEqualStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::ast::YulColonAndEqualStruct
-pub fn slang_solidity::backend::ast::YulColonAndEqualStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::input::YulContinueStatementStruct
 pub slang_solidity::backend::l1::input::YulContinueStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::YulContinueStatementStruct
@@ -4235,10 +4033,6 @@ pub slang_solidity::backend::l1::input::YulDefaultCaseStruct::body: slang_solidi
 pub slang_solidity::backend::l1::input::YulDefaultCaseStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::YulDefaultCaseStruct
 pub fn slang_solidity::backend::ast::YulDefaultCaseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1::input::YulEqualAndColonStruct
-pub slang_solidity::backend::l1::input::YulEqualAndColonStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::ast::YulEqualAndColonStruct
-pub fn slang_solidity::backend::ast::YulEqualAndColonStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::input::YulForStatementStruct
 pub slang_solidity::backend::l1::input::YulForStatementStruct::body: slang_solidity::backend::ast::YulBlock
 pub slang_solidity::backend::l1::input::YulForStatementStruct::condition: slang_solidity::backend::ast::YulExpression
@@ -4267,11 +4061,6 @@ pub slang_solidity::backend::l1::input::YulIfStatementStruct::condition: slang_s
 pub slang_solidity::backend::l1::input::YulIfStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::YulIfStatementStruct
 pub fn slang_solidity::backend::ast::YulIfStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1::input::YulLabelStruct
-pub slang_solidity::backend::l1::input::YulLabelStruct::label: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
-pub slang_solidity::backend::l1::input::YulLabelStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::ast::YulLabelStruct
-pub fn slang_solidity::backend::ast::YulLabelStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::input::YulLeaveStatementStruct
 pub slang_solidity::backend::l1::input::YulLeaveStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::ast::YulLeaveStatementStruct
@@ -4286,12 +4075,6 @@ pub slang_solidity::backend::l1::input::YulReturnsDeclarationStruct::node_id: us
 pub slang_solidity::backend::l1::input::YulReturnsDeclarationStruct::variables: slang_solidity::backend::ast::YulVariableNames
 impl core::fmt::Debug for slang_solidity::backend::ast::YulReturnsDeclarationStruct
 pub fn slang_solidity::backend::ast::YulReturnsDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1::input::YulStackAssignmentStatementStruct
-pub slang_solidity::backend::l1::input::YulStackAssignmentStatementStruct::assignment: slang_solidity::backend::ast::YulStackAssignmentOperator
-pub slang_solidity::backend::l1::input::YulStackAssignmentStatementStruct::node_id: usize
-pub slang_solidity::backend::l1::input::YulStackAssignmentStatementStruct::variable: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
-impl core::fmt::Debug for slang_solidity::backend::ast::YulStackAssignmentStatementStruct
-pub fn slang_solidity::backend::ast::YulStackAssignmentStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::input::YulSwitchStatementStruct
 pub slang_solidity::backend::l1::input::YulSwitchStatementStruct::cases: slang_solidity::backend::ast::YulSwitchCases
 pub slang_solidity::backend::l1::input::YulSwitchStatementStruct::expression: slang_solidity::backend::ast::YulExpression
@@ -4442,7 +4225,6 @@ pub type slang_solidity::backend::l1::input::StringLiterals = alloc::vec::Vec<sl
 pub type slang_solidity::backend::l1::input::StructDefinition = alloc::rc::Rc<slang_solidity::backend::ast::StructDefinitionStruct>
 pub type slang_solidity::backend::l1::input::StructMember = alloc::rc::Rc<slang_solidity::backend::ast::StructMemberStruct>
 pub type slang_solidity::backend::l1::input::StructMembers = alloc::vec::Vec<slang_solidity::backend::ast::StructMember>
-pub type slang_solidity::backend::l1::input::ThrowStatement = alloc::rc::Rc<slang_solidity::backend::ast::ThrowStatementStruct>
 pub type slang_solidity::backend::l1::input::TryStatement = alloc::rc::Rc<slang_solidity::backend::ast::TryStatementStruct>
 pub type slang_solidity::backend::l1::input::TupleDeconstructionElement = alloc::rc::Rc<slang_solidity::backend::ast::TupleDeconstructionElementStruct>
 pub type slang_solidity::backend::l1::input::TupleDeconstructionElements = alloc::vec::Vec<slang_solidity::backend::ast::TupleDeconstructionElement>
@@ -4454,8 +4236,6 @@ pub type slang_solidity::backend::l1::input::TypeExpression = alloc::rc::Rc<slan
 pub type slang_solidity::backend::l1::input::TypedTupleMember = alloc::rc::Rc<slang_solidity::backend::ast::TypedTupleMemberStruct>
 pub type slang_solidity::backend::l1::input::UncheckedBlock = alloc::rc::Rc<slang_solidity::backend::ast::UncheckedBlockStruct>
 pub type slang_solidity::backend::l1::input::UnicodeStringLiterals = alloc::vec::Vec<slang_solidity::backend::ast::UnicodeStringLiteral>
-pub type slang_solidity::backend::l1::input::UnnamedFunctionAttributes = alloc::vec::Vec<slang_solidity::backend::ast::UnnamedFunctionAttribute>
-pub type slang_solidity::backend::l1::input::UnnamedFunctionDefinition = alloc::rc::Rc<slang_solidity::backend::ast::UnnamedFunctionDefinitionStruct>
 pub type slang_solidity::backend::l1::input::UntypedTupleMember = alloc::rc::Rc<slang_solidity::backend::ast::UntypedTupleMemberStruct>
 pub type slang_solidity::backend::l1::input::UserDefinedValueTypeDefinition = alloc::rc::Rc<slang_solidity::backend::ast::UserDefinedValueTypeDefinitionStruct>
 pub type slang_solidity::backend::l1::input::UsingAlias = alloc::rc::Rc<slang_solidity::backend::ast::UsingAliasStruct>
@@ -4474,22 +4254,18 @@ pub type slang_solidity::backend::l1::input::WhileStatement = alloc::rc::Rc<slan
 pub type slang_solidity::backend::l1::input::YulArguments = alloc::vec::Vec<slang_solidity::backend::ast::YulExpression>
 pub type slang_solidity::backend::l1::input::YulBlock = alloc::rc::Rc<slang_solidity::backend::ast::YulBlockStruct>
 pub type slang_solidity::backend::l1::input::YulBreakStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulBreakStatementStruct>
-pub type slang_solidity::backend::l1::input::YulColonAndEqual = alloc::rc::Rc<slang_solidity::backend::ast::YulColonAndEqualStruct>
 pub type slang_solidity::backend::l1::input::YulContinueStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulContinueStatementStruct>
 pub type slang_solidity::backend::l1::input::YulDefaultCase = alloc::rc::Rc<slang_solidity::backend::ast::YulDefaultCaseStruct>
-pub type slang_solidity::backend::l1::input::YulEqualAndColon = alloc::rc::Rc<slang_solidity::backend::ast::YulEqualAndColonStruct>
 pub type slang_solidity::backend::l1::input::YulForStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulForStatementStruct>
 pub type slang_solidity::backend::l1::input::YulFunctionCallExpression = alloc::rc::Rc<slang_solidity::backend::ast::YulFunctionCallExpressionStruct>
 pub type slang_solidity::backend::l1::input::YulFunctionDefinition = alloc::rc::Rc<slang_solidity::backend::ast::YulFunctionDefinitionStruct>
 pub type slang_solidity::backend::l1::input::YulIfStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulIfStatementStruct>
-pub type slang_solidity::backend::l1::input::YulLabel = alloc::rc::Rc<slang_solidity::backend::ast::YulLabelStruct>
 pub type slang_solidity::backend::l1::input::YulLeaveStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulLeaveStatementStruct>
 pub type slang_solidity::backend::l1::input::YulParameters = alloc::vec::Vec<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 pub type slang_solidity::backend::l1::input::YulParametersDeclaration = alloc::rc::Rc<slang_solidity::backend::ast::YulParametersDeclarationStruct>
 pub type slang_solidity::backend::l1::input::YulPath = alloc::vec::Vec<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 pub type slang_solidity::backend::l1::input::YulPaths = alloc::vec::Vec<slang_solidity::backend::ast::YulPath>
 pub type slang_solidity::backend::l1::input::YulReturnsDeclaration = alloc::rc::Rc<slang_solidity::backend::ast::YulReturnsDeclarationStruct>
-pub type slang_solidity::backend::l1::input::YulStackAssignmentStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulStackAssignmentStatementStruct>
 pub type slang_solidity::backend::l1::input::YulStatements = alloc::vec::Vec<slang_solidity::backend::ast::YulStatement>
 pub type slang_solidity::backend::l1::input::YulSwitchCases = alloc::vec::Vec<slang_solidity::backend::ast::YulSwitchCase>
 pub type slang_solidity::backend::l1::input::YulSwitchStatement = alloc::rc::Rc<slang_solidity::backend::ast::YulSwitchStatementStruct>
@@ -4530,7 +4306,6 @@ pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_string_lite
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_tuple_member(&mut self, source: &slang_solidity::backend::l1::TupleMember) -> slang_solidity::backend::l1::TupleMember
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_type_name(&mut self, source: &slang_solidity::backend::l1::TypeName) -> slang_solidity::backend::l1::TypeName
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_unicode_string_literal(&mut self, source: &slang_solidity::backend::l1::UnicodeStringLiteral) -> slang_solidity::backend::l1::UnicodeStringLiteral
-pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_unnamed_function_attribute(&mut self, source: &slang_solidity::backend::l1::UnnamedFunctionAttribute) -> slang_solidity::backend::l1::UnnamedFunctionAttribute
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_using_clause(&mut self, source: &slang_solidity::backend::l1::UsingClause) -> slang_solidity::backend::l1::UsingClause
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_using_operator(&mut self, source: &slang_solidity::backend::l1::UsingOperator) -> slang_solidity::backend::l1::UsingOperator
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_using_target(&mut self, source: &slang_solidity::backend::l1::UsingTarget) -> slang_solidity::backend::l1::UsingTarget
@@ -4541,7 +4316,6 @@ pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_version_ope
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_yul_assignment_operator(&mut self, source: &slang_solidity::backend::l1::YulAssignmentOperator) -> slang_solidity::backend::l1::YulAssignmentOperator
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_yul_expression(&mut self, source: &slang_solidity::backend::l1::YulExpression) -> slang_solidity::backend::l1::YulExpression
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_yul_literal(&mut self, source: &slang_solidity::backend::l1::YulLiteral) -> slang_solidity::backend::l1::YulLiteral
-pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_yul_stack_assignment_operator(&mut self, source: &slang_solidity::backend::l1::YulStackAssignmentOperator) -> slang_solidity::backend::l1::YulStackAssignmentOperator
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_yul_statement(&mut self, source: &slang_solidity::backend::l1::YulStatement) -> slang_solidity::backend::l1::YulStatement
 pub fn slang_solidity::backend::l1::mutator::Mutator::default_mutate_yul_switch_case(&mut self, source: &slang_solidity::backend::l1::YulSwitchCase) -> slang_solidity::backend::l1::YulSwitchCase
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_abicoder_pragma(&mut self, source: &slang_solidity::backend::l1::AbicoderPragma) -> slang_solidity::backend::l1::AbicoderPragma
@@ -4689,7 +4463,6 @@ pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_string_literals(&mu
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_struct_definition(&mut self, source: &slang_solidity::backend::l1::StructDefinition) -> slang_solidity::backend::l1::StructDefinition
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_struct_member(&mut self, source: &slang_solidity::backend::l1::StructMember) -> slang_solidity::backend::l1::StructMember
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_struct_members(&mut self, source: &slang_solidity::backend::l1::StructMembers) -> slang_solidity::backend::l1::StructMembers
-pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_throw_statement(&mut self, source: &slang_solidity::backend::l1::ThrowStatement) -> slang_solidity::backend::l1::ThrowStatement
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_try_statement(&mut self, source: &slang_solidity::backend::l1::TryStatement) -> slang_solidity::backend::l1::TryStatement
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_tuple_deconstruction_element(&mut self, source: &slang_solidity::backend::l1::TupleDeconstructionElement) -> slang_solidity::backend::l1::TupleDeconstructionElement
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_tuple_deconstruction_elements(&mut self, source: &slang_solidity::backend::l1::TupleDeconstructionElements) -> slang_solidity::backend::l1::TupleDeconstructionElements
@@ -4704,7 +4477,6 @@ pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_typed_tuple_member(
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_unchecked_block(&mut self, source: &slang_solidity::backend::l1::UncheckedBlock) -> slang_solidity::backend::l1::UncheckedBlock
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_unicode_string_literal(&mut self, source: &slang_solidity::backend::l1::UnicodeStringLiteral) -> slang_solidity::backend::l1::UnicodeStringLiteral
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_unicode_string_literals(&mut self, source: &slang_solidity::backend::l1::UnicodeStringLiterals) -> slang_solidity::backend::l1::UnicodeStringLiterals
-pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_unnamed_function_attribute(&mut self, source: &slang_solidity::backend::l1::UnnamedFunctionAttribute) -> slang_solidity::backend::l1::UnnamedFunctionAttribute
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_untyped_tuple_member(&mut self, source: &slang_solidity::backend::l1::UntypedTupleMember) -> slang_solidity::backend::l1::UntypedTupleMember
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_user_defined_value_type_definition(&mut self, source: &slang_solidity::backend::l1::UserDefinedValueTypeDefinition) -> slang_solidity::backend::l1::UserDefinedValueTypeDefinition
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_using_alias(&mut self, source: &slang_solidity::backend::l1::UsingAlias) -> slang_solidity::backend::l1::UsingAlias
@@ -4731,16 +4503,13 @@ pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_arguments(&mut 
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_assignment_operator(&mut self, source: &slang_solidity::backend::l1::YulAssignmentOperator) -> slang_solidity::backend::l1::YulAssignmentOperator
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_block(&mut self, source: &slang_solidity::backend::l1::YulBlock) -> slang_solidity::backend::l1::YulBlock
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_break_statement(&mut self, source: &slang_solidity::backend::l1::YulBreakStatement) -> slang_solidity::backend::l1::YulBreakStatement
-pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_colon_and_equal(&mut self, source: &slang_solidity::backend::l1::YulColonAndEqual) -> slang_solidity::backend::l1::YulColonAndEqual
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_continue_statement(&mut self, source: &slang_solidity::backend::l1::YulContinueStatement) -> slang_solidity::backend::l1::YulContinueStatement
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_default_case(&mut self, source: &slang_solidity::backend::l1::YulDefaultCase) -> slang_solidity::backend::l1::YulDefaultCase
-pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_equal_and_colon(&mut self, source: &slang_solidity::backend::l1::YulEqualAndColon) -> slang_solidity::backend::l1::YulEqualAndColon
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_expression(&mut self, source: &slang_solidity::backend::l1::YulExpression) -> slang_solidity::backend::l1::YulExpression
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_for_statement(&mut self, source: &slang_solidity::backend::l1::YulForStatement) -> slang_solidity::backend::l1::YulForStatement
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_function_call_expression(&mut self, source: &slang_solidity::backend::l1::YulFunctionCallExpression) -> slang_solidity::backend::l1::YulFunctionCallExpression
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_function_definition(&mut self, source: &slang_solidity::backend::l1::YulFunctionDefinition) -> slang_solidity::backend::l1::YulFunctionDefinition
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_if_statement(&mut self, source: &slang_solidity::backend::l1::YulIfStatement) -> slang_solidity::backend::l1::YulIfStatement
-pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_label(&mut self, source: &slang_solidity::backend::l1::YulLabel) -> slang_solidity::backend::l1::YulLabel
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_leave_statement(&mut self, source: &slang_solidity::backend::l1::YulLeaveStatement) -> slang_solidity::backend::l1::YulLeaveStatement
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_literal(&mut self, source: &slang_solidity::backend::l1::YulLiteral) -> slang_solidity::backend::l1::YulLiteral
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_parameters(&mut self, source: &slang_solidity::backend::l1::YulParameters) -> slang_solidity::backend::l1::YulParameters
@@ -4748,8 +4517,6 @@ pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_parameters_decl
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_path(&mut self, source: &slang_solidity::backend::l1::YulPath) -> slang_solidity::backend::l1::YulPath
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_paths(&mut self, source: &slang_solidity::backend::l1::YulPaths) -> slang_solidity::backend::l1::YulPaths
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_returns_declaration(&mut self, source: &slang_solidity::backend::l1::YulReturnsDeclaration) -> slang_solidity::backend::l1::YulReturnsDeclaration
-pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_stack_assignment_operator(&mut self, source: &slang_solidity::backend::l1::YulStackAssignmentOperator) -> slang_solidity::backend::l1::YulStackAssignmentOperator
-pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_stack_assignment_statement(&mut self, source: &slang_solidity::backend::l1::YulStackAssignmentStatement) -> slang_solidity::backend::l1::YulStackAssignmentStatement
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_statement(&mut self, source: &slang_solidity::backend::l1::YulStatement) -> slang_solidity::backend::l1::YulStatement
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_statements(&mut self, source: &slang_solidity::backend::l1::YulStatements) -> slang_solidity::backend::l1::YulStatements
 pub fn slang_solidity::backend::l1::mutator::Mutator::mutate_yul_switch_case(&mut self, source: &slang_solidity::backend::l1::YulSwitchCase) -> slang_solidity::backend::l1::YulSwitchCase
@@ -4792,7 +4559,6 @@ pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_tuple_member(&mut self, source: &slang_solidity::backend::ast::TupleMember) -> slang_solidity::backend::l1::TupleMember
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_type_name(&mut self, source: &slang_solidity::backend::ast::TypeName) -> slang_solidity::backend::l1::TypeName
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_unicode_string_literal(&mut self, source: &slang_solidity::backend::ast::UnicodeStringLiteral) -> slang_solidity::backend::l1::UnicodeStringLiteral
-pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_unnamed_function_attribute(&mut self, source: &slang_solidity::backend::ast::UnnamedFunctionAttribute) -> slang_solidity::backend::l1::UnnamedFunctionAttribute
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_using_clause(&mut self, source: &slang_solidity::backend::ast::UsingClause) -> slang_solidity::backend::l1::UsingClause
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_using_operator(&mut self, source: &slang_solidity::backend::ast::UsingOperator) -> slang_solidity::backend::l1::UsingOperator
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_using_target(&mut self, source: &slang_solidity::backend::ast::UsingTarget) -> slang_solidity::backend::l1::UsingTarget
@@ -4803,7 +4569,6 @@ pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_yul_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulAssignmentOperator) -> slang_solidity::backend::l1::YulAssignmentOperator
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_yul_expression(&mut self, source: &slang_solidity::backend::ast::YulExpression) -> slang_solidity::backend::l1::YulExpression
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_yul_literal(&mut self, source: &slang_solidity::backend::ast::YulLiteral) -> slang_solidity::backend::l1::YulLiteral
-pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_yul_stack_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulStackAssignmentOperator) -> slang_solidity::backend::l1::YulStackAssignmentOperator
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_yul_statement(&mut self, source: &slang_solidity::backend::ast::YulStatement) -> slang_solidity::backend::l1::YulStatement
 pub fn slang_solidity::backend::l1::transformer::Transformer::default_transform_yul_switch_case(&mut self, source: &slang_solidity::backend::ast::YulSwitchCase) -> slang_solidity::backend::l1::YulSwitchCase
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_abicoder_pragma(&mut self, source: &slang_solidity::backend::ast::AbicoderPragma) -> slang_solidity::backend::l1::AbicoderPragma
@@ -4951,7 +4716,6 @@ pub fn slang_solidity::backend::l1::transformer::Transformer::transform_string_l
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_struct_definition(&mut self, source: &slang_solidity::backend::ast::StructDefinition) -> slang_solidity::backend::l1::StructDefinition
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_struct_member(&mut self, source: &slang_solidity::backend::ast::StructMember) -> slang_solidity::backend::l1::StructMember
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_struct_members(&mut self, source: &slang_solidity::backend::ast::StructMembers) -> slang_solidity::backend::l1::StructMembers
-pub fn slang_solidity::backend::l1::transformer::Transformer::transform_throw_statement(&mut self, source: &slang_solidity::backend::ast::ThrowStatement) -> slang_solidity::backend::l1::ThrowStatement
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_try_statement(&mut self, source: &slang_solidity::backend::ast::TryStatement) -> slang_solidity::backend::l1::TryStatement
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_tuple_deconstruction_element(&mut self, source: &slang_solidity::backend::ast::TupleDeconstructionElement) -> slang_solidity::backend::l1::TupleDeconstructionElement
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_tuple_deconstruction_elements(&mut self, source: &slang_solidity::backend::ast::TupleDeconstructionElements) -> slang_solidity::backend::l1::TupleDeconstructionElements
@@ -4966,7 +4730,6 @@ pub fn slang_solidity::backend::l1::transformer::Transformer::transform_typed_tu
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_unchecked_block(&mut self, source: &slang_solidity::backend::ast::UncheckedBlock) -> slang_solidity::backend::l1::UncheckedBlock
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_unicode_string_literal(&mut self, source: &slang_solidity::backend::ast::UnicodeStringLiteral) -> slang_solidity::backend::l1::UnicodeStringLiteral
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_unicode_string_literals(&mut self, source: &slang_solidity::backend::ast::UnicodeStringLiterals) -> slang_solidity::backend::l1::UnicodeStringLiterals
-pub fn slang_solidity::backend::l1::transformer::Transformer::transform_unnamed_function_attribute(&mut self, source: &slang_solidity::backend::ast::UnnamedFunctionAttribute) -> slang_solidity::backend::l1::UnnamedFunctionAttribute
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_untyped_tuple_member(&mut self, source: &slang_solidity::backend::ast::UntypedTupleMember) -> slang_solidity::backend::l1::UntypedTupleMember
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_user_defined_value_type_definition(&mut self, source: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition) -> slang_solidity::backend::l1::UserDefinedValueTypeDefinition
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_using_alias(&mut self, source: &slang_solidity::backend::ast::UsingAlias) -> slang_solidity::backend::l1::UsingAlias
@@ -4993,16 +4756,13 @@ pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_argu
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulAssignmentOperator) -> slang_solidity::backend::l1::YulAssignmentOperator
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_block(&mut self, source: &slang_solidity::backend::ast::YulBlock) -> slang_solidity::backend::l1::YulBlock
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_break_statement(&mut self, source: &slang_solidity::backend::ast::YulBreakStatement) -> slang_solidity::backend::l1::YulBreakStatement
-pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_colon_and_equal(&mut self, source: &slang_solidity::backend::ast::YulColonAndEqual) -> slang_solidity::backend::l1::YulColonAndEqual
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_continue_statement(&mut self, source: &slang_solidity::backend::ast::YulContinueStatement) -> slang_solidity::backend::l1::YulContinueStatement
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_default_case(&mut self, source: &slang_solidity::backend::ast::YulDefaultCase) -> slang_solidity::backend::l1::YulDefaultCase
-pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_equal_and_colon(&mut self, source: &slang_solidity::backend::ast::YulEqualAndColon) -> slang_solidity::backend::l1::YulEqualAndColon
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_expression(&mut self, source: &slang_solidity::backend::ast::YulExpression) -> slang_solidity::backend::l1::YulExpression
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_for_statement(&mut self, source: &slang_solidity::backend::ast::YulForStatement) -> slang_solidity::backend::l1::YulForStatement
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_function_call_expression(&mut self, source: &slang_solidity::backend::ast::YulFunctionCallExpression) -> slang_solidity::backend::l1::YulFunctionCallExpression
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_function_definition(&mut self, source: &slang_solidity::backend::ast::YulFunctionDefinition) -> slang_solidity::backend::l1::YulFunctionDefinition
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_if_statement(&mut self, source: &slang_solidity::backend::ast::YulIfStatement) -> slang_solidity::backend::l1::YulIfStatement
-pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_label(&mut self, source: &slang_solidity::backend::ast::YulLabel) -> slang_solidity::backend::l1::YulLabel
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_leave_statement(&mut self, source: &slang_solidity::backend::ast::YulLeaveStatement) -> slang_solidity::backend::l1::YulLeaveStatement
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_literal(&mut self, source: &slang_solidity::backend::ast::YulLiteral) -> slang_solidity::backend::l1::YulLiteral
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_parameters(&mut self, source: &slang_solidity::backend::ast::YulParameters) -> slang_solidity::backend::l1::YulParameters
@@ -5010,8 +4770,6 @@ pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_para
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_path(&mut self, source: &slang_solidity::backend::ast::YulPath) -> slang_solidity::backend::l1::YulPath
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_paths(&mut self, source: &slang_solidity::backend::ast::YulPaths) -> slang_solidity::backend::l1::YulPaths
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_returns_declaration(&mut self, source: &slang_solidity::backend::ast::YulReturnsDeclaration) -> slang_solidity::backend::l1::YulReturnsDeclaration
-pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_stack_assignment_operator(&mut self, source: &slang_solidity::backend::ast::YulStackAssignmentOperator) -> slang_solidity::backend::l1::YulStackAssignmentOperator
-pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_stack_assignment_statement(&mut self, source: &slang_solidity::backend::ast::YulStackAssignmentStatement) -> slang_solidity::backend::l1::YulStackAssignmentStatement
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_statement(&mut self, source: &slang_solidity::backend::ast::YulStatement) -> slang_solidity::backend::l1::YulStatement
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_statements(&mut self, source: &slang_solidity::backend::ast::YulStatements) -> slang_solidity::backend::l1::YulStatements
 pub fn slang_solidity::backend::l1::transformer::Transformer::transform_yul_switch_case(&mut self, source: &slang_solidity::backend::ast::YulSwitchCase) -> slang_solidity::backend::l1::YulSwitchCase
@@ -5112,7 +4870,6 @@ pub fn slang_solidity::backend::l1::visitor::Visitor::enter_state_variable_defin
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::l1::StorageLayoutSpecifier) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_struct_definition(&mut self, _target: &slang_solidity::backend::l1::StructDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_struct_member(&mut self, _target: &slang_solidity::backend::l1::StructMember) -> bool
-pub fn slang_solidity::backend::l1::visitor::Visitor::enter_throw_statement(&mut self, _target: &slang_solidity::backend::l1::ThrowStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_try_statement(&mut self, _target: &slang_solidity::backend::l1::TryStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_tuple_deconstruction_element(&mut self, _target: &slang_solidity::backend::l1::TupleDeconstructionElement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_tuple_deconstruction_statement(&mut self, _target: &slang_solidity::backend::l1::TupleDeconstructionStatement) -> bool
@@ -5135,19 +4892,15 @@ pub fn slang_solidity::backend::l1::visitor::Visitor::enter_version_term(&mut se
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_while_statement(&mut self, _target: &slang_solidity::backend::l1::WhileStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_block(&mut self, _target: &slang_solidity::backend::l1::YulBlock) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_break_statement(&mut self, _target: &slang_solidity::backend::l1::YulBreakStatement) -> bool
-pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_colon_and_equal(&mut self, _target: &slang_solidity::backend::l1::YulColonAndEqual) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_continue_statement(&mut self, _target: &slang_solidity::backend::l1::YulContinueStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_default_case(&mut self, _target: &slang_solidity::backend::l1::YulDefaultCase) -> bool
-pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_equal_and_colon(&mut self, _target: &slang_solidity::backend::l1::YulEqualAndColon) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_for_statement(&mut self, _target: &slang_solidity::backend::l1::YulForStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_function_call_expression(&mut self, _target: &slang_solidity::backend::l1::YulFunctionCallExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_function_definition(&mut self, _target: &slang_solidity::backend::l1::YulFunctionDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_if_statement(&mut self, _target: &slang_solidity::backend::l1::YulIfStatement) -> bool
-pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_label(&mut self, _target: &slang_solidity::backend::l1::YulLabel) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_leave_statement(&mut self, _target: &slang_solidity::backend::l1::YulLeaveStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_parameters_declaration(&mut self, _target: &slang_solidity::backend::l1::YulParametersDeclaration) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_returns_declaration(&mut self, _target: &slang_solidity::backend::l1::YulReturnsDeclaration) -> bool
-pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_stack_assignment_statement(&mut self, _target: &slang_solidity::backend::l1::YulStackAssignmentStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_switch_statement(&mut self, _target: &slang_solidity::backend::l1::YulSwitchStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_value_case(&mut self, _target: &slang_solidity::backend::l1::YulValueCase) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_variable_assignment_statement(&mut self, _target: &slang_solidity::backend::l1::YulVariableAssignmentStatement) -> bool
@@ -5241,7 +4994,6 @@ pub fn slang_solidity::backend::l1::visitor::Visitor::leave_state_variable_defin
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_storage_layout_specifier(&mut self, _target: &slang_solidity::backend::l1::StorageLayoutSpecifier)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_struct_definition(&mut self, _target: &slang_solidity::backend::l1::StructDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_struct_member(&mut self, _target: &slang_solidity::backend::l1::StructMember)
-pub fn slang_solidity::backend::l1::visitor::Visitor::leave_throw_statement(&mut self, _target: &slang_solidity::backend::l1::ThrowStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_try_statement(&mut self, _target: &slang_solidity::backend::l1::TryStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_tuple_deconstruction_element(&mut self, _target: &slang_solidity::backend::l1::TupleDeconstructionElement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_tuple_deconstruction_statement(&mut self, _target: &slang_solidity::backend::l1::TupleDeconstructionStatement)
@@ -5264,19 +5016,15 @@ pub fn slang_solidity::backend::l1::visitor::Visitor::leave_version_term(&mut se
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_while_statement(&mut self, _target: &slang_solidity::backend::l1::WhileStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_block(&mut self, _target: &slang_solidity::backend::l1::YulBlock)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_break_statement(&mut self, _target: &slang_solidity::backend::l1::YulBreakStatement)
-pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_colon_and_equal(&mut self, _target: &slang_solidity::backend::l1::YulColonAndEqual)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_continue_statement(&mut self, _target: &slang_solidity::backend::l1::YulContinueStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_default_case(&mut self, _target: &slang_solidity::backend::l1::YulDefaultCase)
-pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_equal_and_colon(&mut self, _target: &slang_solidity::backend::l1::YulEqualAndColon)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_for_statement(&mut self, _target: &slang_solidity::backend::l1::YulForStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_function_call_expression(&mut self, _target: &slang_solidity::backend::l1::YulFunctionCallExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_function_definition(&mut self, _target: &slang_solidity::backend::l1::YulFunctionDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_if_statement(&mut self, _target: &slang_solidity::backend::l1::YulIfStatement)
-pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_label(&mut self, _target: &slang_solidity::backend::l1::YulLabel)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_leave_statement(&mut self, _target: &slang_solidity::backend::l1::YulLeaveStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_parameters_declaration(&mut self, _target: &slang_solidity::backend::l1::YulParametersDeclaration)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_returns_declaration(&mut self, _target: &slang_solidity::backend::l1::YulReturnsDeclaration)
-pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_stack_assignment_statement(&mut self, _target: &slang_solidity::backend::l1::YulStackAssignmentStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_switch_statement(&mut self, _target: &slang_solidity::backend::l1::YulSwitchStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_value_case(&mut self, _target: &slang_solidity::backend::l1::YulValueCase)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_variable_assignment_statement(&mut self, _target: &slang_solidity::backend::l1::YulVariableAssignmentStatement)
@@ -5397,7 +5145,6 @@ pub fn slang_solidity::backend::l1::visitor::accept_string_expression(target: &s
 pub fn slang_solidity::backend::l1::visitor::accept_string_literal(_target: &slang_solidity::backend::l1::StringLiteral, _visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_struct_definition(target: &slang_solidity::backend::l1::StructDefinition, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_struct_member(target: &slang_solidity::backend::l1::StructMember, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
-pub fn slang_solidity::backend::l1::visitor::accept_throw_statement(target: &slang_solidity::backend::l1::ThrowStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_try_statement(target: &slang_solidity::backend::l1::TryStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_tuple_deconstruction_element(target: &slang_solidity::backend::l1::TupleDeconstructionElement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_tuple_deconstruction_statement(target: &slang_solidity::backend::l1::TupleDeconstructionStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
@@ -5409,7 +5156,6 @@ pub fn slang_solidity::backend::l1::visitor::accept_type_name(target: &slang_sol
 pub fn slang_solidity::backend::l1::visitor::accept_typed_tuple_member(target: &slang_solidity::backend::l1::TypedTupleMember, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_unchecked_block(target: &slang_solidity::backend::l1::UncheckedBlock, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_unicode_string_literal(_target: &slang_solidity::backend::l1::UnicodeStringLiteral, _visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
-pub fn slang_solidity::backend::l1::visitor::accept_unnamed_function_attribute(target: &slang_solidity::backend::l1::UnnamedFunctionAttribute, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_untyped_tuple_member(target: &slang_solidity::backend::l1::UntypedTupleMember, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_user_defined_value_type_definition(target: &slang_solidity::backend::l1::UserDefinedValueTypeDefinition, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_using_alias(target: &slang_solidity::backend::l1::UsingAlias, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
@@ -5429,25 +5175,20 @@ pub fn slang_solidity::backend::l1::visitor::accept_version_pragma(target: &slan
 pub fn slang_solidity::backend::l1::visitor::accept_version_range(target: &slang_solidity::backend::l1::VersionRange, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_version_term(target: &slang_solidity::backend::l1::VersionTerm, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_while_statement(target: &slang_solidity::backend::l1::WhileStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
-pub fn slang_solidity::backend::l1::visitor::accept_yul_assignment_operator(target: &slang_solidity::backend::l1::YulAssignmentOperator, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
+pub fn slang_solidity::backend::l1::visitor::accept_yul_assignment_operator(_target: &slang_solidity::backend::l1::YulAssignmentOperator, _visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_block(target: &slang_solidity::backend::l1::YulBlock, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_break_statement(target: &slang_solidity::backend::l1::YulBreakStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
-pub fn slang_solidity::backend::l1::visitor::accept_yul_colon_and_equal(target: &slang_solidity::backend::l1::YulColonAndEqual, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_continue_statement(target: &slang_solidity::backend::l1::YulContinueStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_default_case(target: &slang_solidity::backend::l1::YulDefaultCase, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
-pub fn slang_solidity::backend::l1::visitor::accept_yul_equal_and_colon(target: &slang_solidity::backend::l1::YulEqualAndColon, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_expression(target: &slang_solidity::backend::l1::YulExpression, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_for_statement(target: &slang_solidity::backend::l1::YulForStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_function_call_expression(target: &slang_solidity::backend::l1::YulFunctionCallExpression, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_function_definition(target: &slang_solidity::backend::l1::YulFunctionDefinition, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_if_statement(target: &slang_solidity::backend::l1::YulIfStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
-pub fn slang_solidity::backend::l1::visitor::accept_yul_label(target: &slang_solidity::backend::l1::YulLabel, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_leave_statement(target: &slang_solidity::backend::l1::YulLeaveStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_literal(target: &slang_solidity::backend::l1::YulLiteral, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_parameters_declaration(target: &slang_solidity::backend::l1::YulParametersDeclaration, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_returns_declaration(target: &slang_solidity::backend::l1::YulReturnsDeclaration, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
-pub fn slang_solidity::backend::l1::visitor::accept_yul_stack_assignment_operator(target: &slang_solidity::backend::l1::YulStackAssignmentOperator, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
-pub fn slang_solidity::backend::l1::visitor::accept_yul_stack_assignment_statement(target: &slang_solidity::backend::l1::YulStackAssignmentStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_statement(target: &slang_solidity::backend::l1::YulStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_switch_case(target: &slang_solidity::backend::l1::YulSwitchCase, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_yul_switch_statement(target: &slang_solidity::backend::l1::YulSwitchStatement, visitor: &mut dyn slang_solidity::backend::l1::visitor::Visitor)
@@ -5463,10 +5204,8 @@ pub fn slang_solidity::backend::l1::ArgumentsDeclaration::fmt(&self, f: &mut cor
 pub enum slang_solidity::backend::l1::ConstructorAttribute
 pub slang_solidity::backend::l1::ConstructorAttribute::InternalKeyword
 pub slang_solidity::backend::l1::ConstructorAttribute::ModifierInvocation(slang_solidity::backend::l1::ModifierInvocation)
-pub slang_solidity::backend::l1::ConstructorAttribute::OverrideKeyword
 pub slang_solidity::backend::l1::ConstructorAttribute::PayableKeyword
 pub slang_solidity::backend::l1::ConstructorAttribute::PublicKeyword
-pub slang_solidity::backend::l1::ConstructorAttribute::VirtualKeyword
 impl core::fmt::Debug for slang_solidity::backend::l1::ConstructorAttribute
 pub fn slang_solidity::backend::l1::ConstructorAttribute::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::ContractMember
@@ -5492,7 +5231,6 @@ pub fn slang_solidity::backend::l1::ContractSpecifier::fmt(&self, f: &mut core::
 pub enum slang_solidity::backend::l1::ElementaryType
 pub slang_solidity::backend::l1::ElementaryType::AddressType(slang_solidity::backend::l1::AddressType)
 pub slang_solidity::backend::l1::ElementaryType::BoolKeyword
-pub slang_solidity::backend::l1::ElementaryType::ByteKeyword
 pub slang_solidity::backend::l1::ElementaryType::BytesKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::l1::ElementaryType::FixedKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::l1::ElementaryType::IntKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
@@ -5565,7 +5303,6 @@ pub slang_solidity::backend::l1::ForStatementInitialization::VariableDeclaration
 impl core::fmt::Debug for slang_solidity::backend::l1::ForStatementInitialization
 pub fn slang_solidity::backend::l1::ForStatementInitialization::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::FunctionAttribute
-pub slang_solidity::backend::l1::FunctionAttribute::ConstantKeyword
 pub slang_solidity::backend::l1::FunctionAttribute::ExternalKeyword
 pub slang_solidity::backend::l1::FunctionAttribute::InternalKeyword
 pub slang_solidity::backend::l1::FunctionAttribute::ModifierInvocation(slang_solidity::backend::l1::ModifierInvocation)
@@ -5590,7 +5327,6 @@ pub slang_solidity::backend::l1::FunctionName::ReceiveKeyword
 impl core::fmt::Debug for slang_solidity::backend::l1::FunctionName
 pub fn slang_solidity::backend::l1::FunctionName::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::FunctionTypeAttribute
-pub slang_solidity::backend::l1::FunctionTypeAttribute::ConstantKeyword
 pub slang_solidity::backend::l1::FunctionTypeAttribute::ExternalKeyword
 pub slang_solidity::backend::l1::FunctionTypeAttribute::InternalKeyword
 pub slang_solidity::backend::l1::FunctionTypeAttribute::PayableKeyword
@@ -5624,15 +5360,12 @@ pub fn slang_solidity::backend::l1::ModifierAttribute::fmt(&self, f: &mut core::
 pub enum slang_solidity::backend::l1::NumberUnit
 pub slang_solidity::backend::l1::NumberUnit::DaysKeyword
 pub slang_solidity::backend::l1::NumberUnit::EtherKeyword
-pub slang_solidity::backend::l1::NumberUnit::FinneyKeyword
 pub slang_solidity::backend::l1::NumberUnit::GweiKeyword
 pub slang_solidity::backend::l1::NumberUnit::HoursKeyword
 pub slang_solidity::backend::l1::NumberUnit::MinutesKeyword
 pub slang_solidity::backend::l1::NumberUnit::SecondsKeyword
-pub slang_solidity::backend::l1::NumberUnit::SzaboKeyword
 pub slang_solidity::backend::l1::NumberUnit::WeeksKeyword
 pub slang_solidity::backend::l1::NumberUnit::WeiKeyword
-pub slang_solidity::backend::l1::NumberUnit::YearsKeyword
 impl core::fmt::Debug for slang_solidity::backend::l1::NumberUnit
 pub fn slang_solidity::backend::l1::NumberUnit::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::Pragma
@@ -5687,7 +5420,6 @@ pub slang_solidity::backend::l1::Statement::ForStatement(slang_solidity::backend
 pub slang_solidity::backend::l1::Statement::IfStatement(slang_solidity::backend::l1::IfStatement)
 pub slang_solidity::backend::l1::Statement::ReturnStatement(slang_solidity::backend::l1::ReturnStatement)
 pub slang_solidity::backend::l1::Statement::RevertStatement(slang_solidity::backend::l1::RevertStatement)
-pub slang_solidity::backend::l1::Statement::ThrowStatement(slang_solidity::backend::l1::ThrowStatement)
 pub slang_solidity::backend::l1::Statement::TryStatement(slang_solidity::backend::l1::TryStatement)
 pub slang_solidity::backend::l1::Statement::TupleDeconstructionStatement(slang_solidity::backend::l1::TupleDeconstructionStatement)
 pub slang_solidity::backend::l1::Statement::UncheckedBlock(slang_solidity::backend::l1::UncheckedBlock)
@@ -5702,9 +5434,7 @@ pub slang_solidity::backend::l1::StorageLocation::StorageKeyword
 impl core::fmt::Debug for slang_solidity::backend::l1::StorageLocation
 pub fn slang_solidity::backend::l1::StorageLocation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::StringExpression
-pub slang_solidity::backend::l1::StringExpression::HexStringLiteral(slang_solidity::backend::l1::HexStringLiteral)
 pub slang_solidity::backend::l1::StringExpression::HexStringLiterals(slang_solidity::backend::l1::HexStringLiterals)
-pub slang_solidity::backend::l1::StringExpression::StringLiteral(slang_solidity::backend::l1::StringLiteral)
 pub slang_solidity::backend::l1::StringExpression::StringLiterals(slang_solidity::backend::l1::StringLiterals)
 pub slang_solidity::backend::l1::StringExpression::UnicodeStringLiterals(slang_solidity::backend::l1::UnicodeStringLiterals)
 impl core::fmt::Debug for slang_solidity::backend::l1::StringExpression
@@ -5732,18 +5462,6 @@ pub slang_solidity::backend::l1::UnicodeStringLiteral::DoubleQuotedUnicodeString
 pub slang_solidity::backend::l1::UnicodeStringLiteral::SingleQuotedUnicodeStringLiteral(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 impl core::fmt::Debug for slang_solidity::backend::l1::UnicodeStringLiteral
 pub fn slang_solidity::backend::l1::UnicodeStringLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub enum slang_solidity::backend::l1::UnnamedFunctionAttribute
-pub slang_solidity::backend::l1::UnnamedFunctionAttribute::ConstantKeyword
-pub slang_solidity::backend::l1::UnnamedFunctionAttribute::ExternalKeyword
-pub slang_solidity::backend::l1::UnnamedFunctionAttribute::InternalKeyword
-pub slang_solidity::backend::l1::UnnamedFunctionAttribute::ModifierInvocation(slang_solidity::backend::l1::ModifierInvocation)
-pub slang_solidity::backend::l1::UnnamedFunctionAttribute::PayableKeyword
-pub slang_solidity::backend::l1::UnnamedFunctionAttribute::PrivateKeyword
-pub slang_solidity::backend::l1::UnnamedFunctionAttribute::PublicKeyword
-pub slang_solidity::backend::l1::UnnamedFunctionAttribute::PureKeyword
-pub slang_solidity::backend::l1::UnnamedFunctionAttribute::ViewKeyword
-impl core::fmt::Debug for slang_solidity::backend::l1::UnnamedFunctionAttribute
-pub fn slang_solidity::backend::l1::UnnamedFunctionAttribute::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::UsingClause
 pub slang_solidity::backend::l1::UsingClause::IdentifierPath(slang_solidity::backend::l1::IdentifierPath)
 pub slang_solidity::backend::l1::UsingClause::UsingDeconstruction(slang_solidity::backend::l1::UsingDeconstruction)
@@ -5774,7 +5492,6 @@ impl core::fmt::Debug for slang_solidity::backend::l1::UsingTarget
 pub fn slang_solidity::backend::l1::UsingTarget::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::VariableDeclarationType
 pub slang_solidity::backend::l1::VariableDeclarationType::TypeName(slang_solidity::backend::l1::TypeName)
-pub slang_solidity::backend::l1::VariableDeclarationType::VarKeyword
 impl core::fmt::Debug for slang_solidity::backend::l1::VariableDeclarationType
 pub fn slang_solidity::backend::l1::VariableDeclarationType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::VersionExpression
@@ -5800,7 +5517,6 @@ impl core::fmt::Debug for slang_solidity::backend::l1::VersionOperator
 pub fn slang_solidity::backend::l1::VersionOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::YulAssignmentOperator
 pub slang_solidity::backend::l1::YulAssignmentOperator::ColonEqual
-pub slang_solidity::backend::l1::YulAssignmentOperator::YulColonAndEqual(slang_solidity::backend::l1::YulColonAndEqual)
 impl core::fmt::Debug for slang_solidity::backend::l1::YulAssignmentOperator
 pub fn slang_solidity::backend::l1::YulAssignmentOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::YulExpression
@@ -5818,11 +5534,6 @@ pub slang_solidity::backend::l1::YulLiteral::YulHexLiteral(alloc::rc::Rc<slang_s
 pub slang_solidity::backend::l1::YulLiteral::YulTrueKeyword
 impl core::fmt::Debug for slang_solidity::backend::l1::YulLiteral
 pub fn slang_solidity::backend::l1::YulLiteral::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub enum slang_solidity::backend::l1::YulStackAssignmentOperator
-pub slang_solidity::backend::l1::YulStackAssignmentOperator::EqualColon
-pub slang_solidity::backend::l1::YulStackAssignmentOperator::YulEqualAndColon(slang_solidity::backend::l1::YulEqualAndColon)
-impl core::fmt::Debug for slang_solidity::backend::l1::YulStackAssignmentOperator
-pub fn slang_solidity::backend::l1::YulStackAssignmentOperator::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1::YulStatement
 pub slang_solidity::backend::l1::YulStatement::YulBlock(slang_solidity::backend::l1::YulBlock)
 pub slang_solidity::backend::l1::YulStatement::YulBreakStatement(slang_solidity::backend::l1::YulBreakStatement)
@@ -5831,9 +5542,7 @@ pub slang_solidity::backend::l1::YulStatement::YulExpression(slang_solidity::bac
 pub slang_solidity::backend::l1::YulStatement::YulForStatement(slang_solidity::backend::l1::YulForStatement)
 pub slang_solidity::backend::l1::YulStatement::YulFunctionDefinition(slang_solidity::backend::l1::YulFunctionDefinition)
 pub slang_solidity::backend::l1::YulStatement::YulIfStatement(slang_solidity::backend::l1::YulIfStatement)
-pub slang_solidity::backend::l1::YulStatement::YulLabel(slang_solidity::backend::l1::YulLabel)
 pub slang_solidity::backend::l1::YulStatement::YulLeaveStatement(slang_solidity::backend::l1::YulLeaveStatement)
-pub slang_solidity::backend::l1::YulStatement::YulStackAssignmentStatement(slang_solidity::backend::l1::YulStackAssignmentStatement)
 pub slang_solidity::backend::l1::YulStatement::YulSwitchStatement(slang_solidity::backend::l1::YulSwitchStatement)
 pub slang_solidity::backend::l1::YulStatement::YulVariableAssignmentStatement(slang_solidity::backend::l1::YulVariableAssignmentStatement)
 pub slang_solidity::backend::l1::YulStatement::YulVariableDeclarationStatement(slang_solidity::backend::l1::YulVariableDeclarationStatement)
@@ -6102,7 +5811,6 @@ pub fn slang_solidity::backend::l1::FunctionTypeStruct::fmt(&self, f: &mut core:
 pub struct slang_solidity::backend::l1::HexNumberExpressionStruct
 pub slang_solidity::backend::l1::HexNumberExpressionStruct::literal: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1::HexNumberExpressionStruct::node_id: usize
-pub slang_solidity::backend::l1::HexNumberExpressionStruct::unit: core::option::Option<slang_solidity::backend::l1::NumberUnit>
 impl core::fmt::Debug for slang_solidity::backend::l1::HexNumberExpressionStruct
 pub fn slang_solidity::backend::l1::HexNumberExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::IfStatementStruct
@@ -6365,10 +6073,6 @@ pub slang_solidity::backend::l1::StructMemberStruct::node_id: usize
 pub slang_solidity::backend::l1::StructMemberStruct::type_name: slang_solidity::backend::l1::TypeName
 impl core::fmt::Debug for slang_solidity::backend::l1::StructMemberStruct
 pub fn slang_solidity::backend::l1::StructMemberStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1::ThrowStatementStruct
-pub slang_solidity::backend::l1::ThrowStatementStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::l1::ThrowStatementStruct
-pub fn slang_solidity::backend::l1::ThrowStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::TryStatementStruct
 pub slang_solidity::backend::l1::TryStatementStruct::body: slang_solidity::backend::l1::Block
 pub slang_solidity::backend::l1::TryStatementStruct::catch_clauses: slang_solidity::backend::l1::CatchClauses
@@ -6386,7 +6090,6 @@ pub struct slang_solidity::backend::l1::TupleDeconstructionStatementStruct
 pub slang_solidity::backend::l1::TupleDeconstructionStatementStruct::elements: slang_solidity::backend::l1::TupleDeconstructionElements
 pub slang_solidity::backend::l1::TupleDeconstructionStatementStruct::expression: slang_solidity::backend::l1::Expression
 pub slang_solidity::backend::l1::TupleDeconstructionStatementStruct::node_id: usize
-pub slang_solidity::backend::l1::TupleDeconstructionStatementStruct::var_keyword: core::option::Option<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 impl core::fmt::Debug for slang_solidity::backend::l1::TupleDeconstructionStatementStruct
 pub fn slang_solidity::backend::l1::TupleDeconstructionStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::TupleExpressionStruct
@@ -6496,10 +6199,6 @@ pub struct slang_solidity::backend::l1::YulBreakStatementStruct
 pub slang_solidity::backend::l1::YulBreakStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::l1::YulBreakStatementStruct
 pub fn slang_solidity::backend::l1::YulBreakStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1::YulColonAndEqualStruct
-pub slang_solidity::backend::l1::YulColonAndEqualStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::l1::YulColonAndEqualStruct
-pub fn slang_solidity::backend::l1::YulColonAndEqualStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::YulContinueStatementStruct
 pub slang_solidity::backend::l1::YulContinueStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::l1::YulContinueStatementStruct
@@ -6509,10 +6208,6 @@ pub slang_solidity::backend::l1::YulDefaultCaseStruct::body: slang_solidity::bac
 pub slang_solidity::backend::l1::YulDefaultCaseStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::l1::YulDefaultCaseStruct
 pub fn slang_solidity::backend::l1::YulDefaultCaseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1::YulEqualAndColonStruct
-pub slang_solidity::backend::l1::YulEqualAndColonStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::l1::YulEqualAndColonStruct
-pub fn slang_solidity::backend::l1::YulEqualAndColonStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::YulForStatementStruct
 pub slang_solidity::backend::l1::YulForStatementStruct::body: slang_solidity::backend::l1::YulBlock
 pub slang_solidity::backend::l1::YulForStatementStruct::condition: slang_solidity::backend::l1::YulExpression
@@ -6541,11 +6236,6 @@ pub slang_solidity::backend::l1::YulIfStatementStruct::condition: slang_solidity
 pub slang_solidity::backend::l1::YulIfStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::l1::YulIfStatementStruct
 pub fn slang_solidity::backend::l1::YulIfStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1::YulLabelStruct
-pub slang_solidity::backend::l1::YulLabelStruct::label: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
-pub slang_solidity::backend::l1::YulLabelStruct::node_id: usize
-impl core::fmt::Debug for slang_solidity::backend::l1::YulLabelStruct
-pub fn slang_solidity::backend::l1::YulLabelStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::YulLeaveStatementStruct
 pub slang_solidity::backend::l1::YulLeaveStatementStruct::node_id: usize
 impl core::fmt::Debug for slang_solidity::backend::l1::YulLeaveStatementStruct
@@ -6560,12 +6250,6 @@ pub slang_solidity::backend::l1::YulReturnsDeclarationStruct::node_id: usize
 pub slang_solidity::backend::l1::YulReturnsDeclarationStruct::variables: slang_solidity::backend::l1::YulVariableNames
 impl core::fmt::Debug for slang_solidity::backend::l1::YulReturnsDeclarationStruct
 pub fn slang_solidity::backend::l1::YulReturnsDeclarationStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1::YulStackAssignmentStatementStruct
-pub slang_solidity::backend::l1::YulStackAssignmentStatementStruct::assignment: slang_solidity::backend::l1::YulStackAssignmentOperator
-pub slang_solidity::backend::l1::YulStackAssignmentStatementStruct::node_id: usize
-pub slang_solidity::backend::l1::YulStackAssignmentStatementStruct::variable: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
-impl core::fmt::Debug for slang_solidity::backend::l1::YulStackAssignmentStatementStruct
-pub fn slang_solidity::backend::l1::YulStackAssignmentStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1::YulSwitchStatementStruct
 pub slang_solidity::backend::l1::YulSwitchStatementStruct::cases: slang_solidity::backend::l1::YulSwitchCases
 pub slang_solidity::backend::l1::YulSwitchStatementStruct::expression: slang_solidity::backend::l1::YulExpression
@@ -6715,7 +6399,6 @@ pub type slang_solidity::backend::l1::StringLiterals = alloc::vec::Vec<slang_sol
 pub type slang_solidity::backend::l1::StructDefinition = alloc::rc::Rc<slang_solidity::backend::l1::StructDefinitionStruct>
 pub type slang_solidity::backend::l1::StructMember = alloc::rc::Rc<slang_solidity::backend::l1::StructMemberStruct>
 pub type slang_solidity::backend::l1::StructMembers = alloc::vec::Vec<slang_solidity::backend::l1::StructMember>
-pub type slang_solidity::backend::l1::ThrowStatement = alloc::rc::Rc<slang_solidity::backend::l1::ThrowStatementStruct>
 pub type slang_solidity::backend::l1::TryStatement = alloc::rc::Rc<slang_solidity::backend::l1::TryStatementStruct>
 pub type slang_solidity::backend::l1::TupleDeconstructionElement = alloc::rc::Rc<slang_solidity::backend::l1::TupleDeconstructionElementStruct>
 pub type slang_solidity::backend::l1::TupleDeconstructionElements = alloc::vec::Vec<slang_solidity::backend::l1::TupleDeconstructionElement>
@@ -6745,22 +6428,18 @@ pub type slang_solidity::backend::l1::WhileStatement = alloc::rc::Rc<slang_solid
 pub type slang_solidity::backend::l1::YulArguments = alloc::vec::Vec<slang_solidity::backend::l1::YulExpression>
 pub type slang_solidity::backend::l1::YulBlock = alloc::rc::Rc<slang_solidity::backend::l1::YulBlockStruct>
 pub type slang_solidity::backend::l1::YulBreakStatement = alloc::rc::Rc<slang_solidity::backend::l1::YulBreakStatementStruct>
-pub type slang_solidity::backend::l1::YulColonAndEqual = alloc::rc::Rc<slang_solidity::backend::l1::YulColonAndEqualStruct>
 pub type slang_solidity::backend::l1::YulContinueStatement = alloc::rc::Rc<slang_solidity::backend::l1::YulContinueStatementStruct>
 pub type slang_solidity::backend::l1::YulDefaultCase = alloc::rc::Rc<slang_solidity::backend::l1::YulDefaultCaseStruct>
-pub type slang_solidity::backend::l1::YulEqualAndColon = alloc::rc::Rc<slang_solidity::backend::l1::YulEqualAndColonStruct>
 pub type slang_solidity::backend::l1::YulForStatement = alloc::rc::Rc<slang_solidity::backend::l1::YulForStatementStruct>
 pub type slang_solidity::backend::l1::YulFunctionCallExpression = alloc::rc::Rc<slang_solidity::backend::l1::YulFunctionCallExpressionStruct>
 pub type slang_solidity::backend::l1::YulFunctionDefinition = alloc::rc::Rc<slang_solidity::backend::l1::YulFunctionDefinitionStruct>
 pub type slang_solidity::backend::l1::YulIfStatement = alloc::rc::Rc<slang_solidity::backend::l1::YulIfStatementStruct>
-pub type slang_solidity::backend::l1::YulLabel = alloc::rc::Rc<slang_solidity::backend::l1::YulLabelStruct>
 pub type slang_solidity::backend::l1::YulLeaveStatement = alloc::rc::Rc<slang_solidity::backend::l1::YulLeaveStatementStruct>
 pub type slang_solidity::backend::l1::YulParameters = alloc::vec::Vec<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 pub type slang_solidity::backend::l1::YulParametersDeclaration = alloc::rc::Rc<slang_solidity::backend::l1::YulParametersDeclarationStruct>
 pub type slang_solidity::backend::l1::YulPath = alloc::vec::Vec<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 pub type slang_solidity::backend::l1::YulPaths = alloc::vec::Vec<slang_solidity::backend::l1::YulPath>
 pub type slang_solidity::backend::l1::YulReturnsDeclaration = alloc::rc::Rc<slang_solidity::backend::l1::YulReturnsDeclarationStruct>
-pub type slang_solidity::backend::l1::YulStackAssignmentStatement = alloc::rc::Rc<slang_solidity::backend::l1::YulStackAssignmentStatementStruct>
 pub type slang_solidity::backend::l1::YulStatements = alloc::vec::Vec<slang_solidity::backend::l1::YulStatement>
 pub type slang_solidity::backend::l1::YulSwitchCases = alloc::vec::Vec<slang_solidity::backend::l1::YulSwitchCase>
 pub type slang_solidity::backend::l1::YulSwitchStatement = alloc::rc::Rc<slang_solidity::backend::l1::YulSwitchStatementStruct>

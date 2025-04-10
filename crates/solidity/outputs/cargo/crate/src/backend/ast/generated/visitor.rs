@@ -190,11 +190,6 @@ pub trait Visitor {
     }
     fn leave_constructor_definition(&mut self, _target: &ConstructorDefinition) {}
 
-    fn enter_unnamed_function_definition(&mut self, _target: &UnnamedFunctionDefinition) -> bool {
-        true
-    }
-    fn leave_unnamed_function_definition(&mut self, _target: &UnnamedFunctionDefinition) {}
-
     fn enter_fallback_function_definition(&mut self, _target: &FallbackFunctionDefinition) -> bool {
         true
     }
@@ -413,11 +408,6 @@ pub trait Visitor {
     }
     fn leave_revert_statement(&mut self, _target: &RevertStatement) {}
 
-    fn enter_throw_statement(&mut self, _target: &ThrowStatement) -> bool {
-        true
-    }
-    fn leave_throw_statement(&mut self, _target: &ThrowStatement) {}
-
     fn enter_assignment_expression(&mut self, _target: &AssignmentExpression) -> bool {
         true
     }
@@ -629,24 +619,6 @@ pub trait Visitor {
     ) {
     }
 
-    fn enter_yul_colon_and_equal(&mut self, _target: &YulColonAndEqual) -> bool {
-        true
-    }
-    fn leave_yul_colon_and_equal(&mut self, _target: &YulColonAndEqual) {}
-
-    fn enter_yul_stack_assignment_statement(
-        &mut self,
-        _target: &YulStackAssignmentStatement,
-    ) -> bool {
-        true
-    }
-    fn leave_yul_stack_assignment_statement(&mut self, _target: &YulStackAssignmentStatement) {}
-
-    fn enter_yul_equal_and_colon(&mut self, _target: &YulEqualAndColon) -> bool {
-        true
-    }
-    fn leave_yul_equal_and_colon(&mut self, _target: &YulEqualAndColon) {}
-
     fn enter_yul_if_statement(&mut self, _target: &YulIfStatement) -> bool {
         true
     }
@@ -686,11 +658,6 @@ pub trait Visitor {
         true
     }
     fn leave_yul_continue_statement(&mut self, _target: &YulContinueStatement) {}
-
-    fn enter_yul_label(&mut self, _target: &YulLabel) -> bool {
-        true
-    }
-    fn leave_yul_label(&mut self, _target: &YulLabel) {}
 
     fn enter_yul_function_call_expression(&mut self, _target: &YulFunctionCallExpression) -> bool {
         true
@@ -1003,18 +970,6 @@ pub fn accept_constructor_definition(target: &ConstructorDefinition, visitor: &m
         accept_block(&target.body, visitor);
     }
     visitor.leave_constructor_definition(target);
-}
-
-pub fn accept_unnamed_function_definition(
-    target: &UnnamedFunctionDefinition,
-    visitor: &mut dyn Visitor,
-) {
-    if visitor.enter_unnamed_function_definition(target) {
-        accept_parameters_declaration(&target.parameters, visitor);
-        accept_unnamed_function_attributes(&target.attributes, visitor);
-        accept_function_body(&target.body, visitor);
-    }
-    visitor.leave_unnamed_function_definition(target);
 }
 
 pub fn accept_fallback_function_definition(
@@ -1397,11 +1352,6 @@ pub fn accept_revert_statement(target: &RevertStatement, visitor: &mut dyn Visit
     visitor.leave_revert_statement(target);
 }
 
-pub fn accept_throw_statement(target: &ThrowStatement, visitor: &mut dyn Visitor) {
-    visitor.enter_throw_statement(target);
-    visitor.leave_throw_statement(target);
-}
-
 pub fn accept_assignment_expression(target: &AssignmentExpression, visitor: &mut dyn Visitor) {
     if visitor.enter_assignment_expression(target) {
         accept_expression(&target.left_operand, visitor);
@@ -1647,11 +1597,7 @@ pub fn accept_array_expression(target: &ArrayExpression, visitor: &mut dyn Visit
 }
 
 pub fn accept_hex_number_expression(target: &HexNumberExpression, visitor: &mut dyn Visitor) {
-    if visitor.enter_hex_number_expression(target) {
-        if let Some(ref unit) = target.unit {
-            accept_number_unit(unit, visitor);
-        }
-    }
+    visitor.enter_hex_number_expression(target);
     visitor.leave_hex_number_expression(target);
 }
 
@@ -1738,26 +1684,6 @@ pub fn accept_yul_variable_assignment_statement(
     visitor.leave_yul_variable_assignment_statement(target);
 }
 
-pub fn accept_yul_colon_and_equal(target: &YulColonAndEqual, visitor: &mut dyn Visitor) {
-    visitor.enter_yul_colon_and_equal(target);
-    visitor.leave_yul_colon_and_equal(target);
-}
-
-pub fn accept_yul_stack_assignment_statement(
-    target: &YulStackAssignmentStatement,
-    visitor: &mut dyn Visitor,
-) {
-    if visitor.enter_yul_stack_assignment_statement(target) {
-        accept_yul_stack_assignment_operator(&target.assignment, visitor);
-    }
-    visitor.leave_yul_stack_assignment_statement(target);
-}
-
-pub fn accept_yul_equal_and_colon(target: &YulEqualAndColon, visitor: &mut dyn Visitor) {
-    visitor.enter_yul_equal_and_colon(target);
-    visitor.leave_yul_equal_and_colon(target);
-}
-
 pub fn accept_yul_if_statement(target: &YulIfStatement, visitor: &mut dyn Visitor) {
     if visitor.enter_yul_if_statement(target) {
         accept_yul_expression(&target.condition, visitor);
@@ -1812,11 +1738,6 @@ pub fn accept_yul_break_statement(target: &YulBreakStatement, visitor: &mut dyn 
 pub fn accept_yul_continue_statement(target: &YulContinueStatement, visitor: &mut dyn Visitor) {
     visitor.enter_yul_continue_statement(target);
     visitor.leave_yul_continue_statement(target);
-}
-
-pub fn accept_yul_label(target: &YulLabel, visitor: &mut dyn Visitor) {
-    visitor.enter_yul_label(target);
-    visitor.leave_yul_label(target);
 }
 
 pub fn accept_yul_function_call_expression(
@@ -1990,9 +1911,6 @@ pub fn accept_contract_member(target: &ContractMember, visitor: &mut dyn Visitor
         ContractMember::FallbackFunctionDefinition(ref fallback_function_definition) => {
             accept_fallback_function_definition(fallback_function_definition, visitor);
         }
-        ContractMember::UnnamedFunctionDefinition(ref unnamed_function_definition) => {
-            accept_unnamed_function_definition(unnamed_function_definition, visitor);
-        }
         ContractMember::ModifierDefinition(ref modifier_definition) => {
             accept_modifier_definition(modifier_definition, visitor);
         }
@@ -2041,8 +1959,7 @@ pub fn accept_function_attribute(target: &FunctionAttribute, visitor: &mut dyn V
         FunctionAttribute::OverrideSpecifier(ref override_specifier) => {
             accept_override_specifier(override_specifier, visitor);
         }
-        FunctionAttribute::ConstantKeyword
-        | FunctionAttribute::ExternalKeyword
+        FunctionAttribute::ExternalKeyword
         | FunctionAttribute::InternalKeyword
         | FunctionAttribute::PayableKeyword
         | FunctionAttribute::PrivateKeyword
@@ -2068,29 +1985,8 @@ pub fn accept_constructor_attribute(target: &ConstructorAttribute, visitor: &mut
             accept_modifier_invocation(modifier_invocation, visitor);
         }
         ConstructorAttribute::InternalKeyword
-        | ConstructorAttribute::OverrideKeyword
         | ConstructorAttribute::PayableKeyword
-        | ConstructorAttribute::PublicKeyword
-        | ConstructorAttribute::VirtualKeyword => {}
-    }
-}
-
-pub fn accept_unnamed_function_attribute(
-    target: &UnnamedFunctionAttribute,
-    visitor: &mut dyn Visitor,
-) {
-    match target {
-        UnnamedFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-            accept_modifier_invocation(modifier_invocation, visitor);
-        }
-        UnnamedFunctionAttribute::ConstantKeyword
-        | UnnamedFunctionAttribute::ExternalKeyword
-        | UnnamedFunctionAttribute::InternalKeyword
-        | UnnamedFunctionAttribute::PayableKeyword
-        | UnnamedFunctionAttribute::PrivateKeyword
-        | UnnamedFunctionAttribute::PublicKeyword
-        | UnnamedFunctionAttribute::PureKeyword
-        | UnnamedFunctionAttribute::ViewKeyword => {}
+        | ConstructorAttribute::PublicKeyword => {}
     }
 }
 
@@ -2183,9 +2079,7 @@ pub fn accept_elementary_type(target: &ElementaryType, visitor: &mut dyn Visitor
         | ElementaryType::UintKeyword(_)
         | ElementaryType::FixedKeyword(_)
         | ElementaryType::UfixedKeyword(_) => {}
-        ElementaryType::BoolKeyword
-        | ElementaryType::ByteKeyword
-        | ElementaryType::StringKeyword => {}
+        ElementaryType::BoolKeyword | ElementaryType::StringKeyword => {}
     }
 }
 
@@ -2211,9 +2105,6 @@ pub fn accept_statement(target: &Statement, visitor: &mut dyn Visitor) {
         }
         Statement::ReturnStatement(ref return_statement) => {
             accept_return_statement(return_statement, visitor);
-        }
-        Statement::ThrowStatement(ref throw_statement) => {
-            accept_throw_statement(throw_statement, visitor);
         }
         Statement::EmitStatement(ref emit_statement) => {
             accept_emit_statement(emit_statement, visitor);
@@ -2264,7 +2155,6 @@ pub fn accept_variable_declaration_type(
         VariableDeclarationType::TypeName(ref type_name) => {
             accept_type_name(type_name, visitor);
         }
-        VariableDeclarationType::VarKeyword => {}
     }
 }
 
@@ -2410,14 +2300,8 @@ pub fn accept_number_unit(_target: &NumberUnit, _visitor: &mut dyn Visitor) {}
 
 pub fn accept_string_expression(target: &StringExpression, visitor: &mut dyn Visitor) {
     match target {
-        StringExpression::StringLiteral(ref string_literal) => {
-            accept_string_literal(string_literal, visitor);
-        }
         StringExpression::StringLiterals(ref string_literals) => {
             accept_string_literals(string_literals, visitor);
-        }
-        StringExpression::HexStringLiteral(ref hex_string_literal) => {
-            accept_hex_string_literal(hex_string_literal, visitor);
         }
         StringExpression::HexStringLiterals(ref hex_string_literals) => {
             accept_hex_string_literals(hex_string_literals, visitor);
@@ -2442,9 +2326,6 @@ pub fn accept_yul_statement(target: &YulStatement, visitor: &mut dyn Visitor) {
         YulStatement::YulFunctionDefinition(ref yul_function_definition) => {
             accept_yul_function_definition(yul_function_definition, visitor);
         }
-        YulStatement::YulStackAssignmentStatement(ref yul_stack_assignment_statement) => {
-            accept_yul_stack_assignment_statement(yul_stack_assignment_statement, visitor);
-        }
         YulStatement::YulIfStatement(ref yul_if_statement) => {
             accept_yul_if_statement(yul_if_statement, visitor);
         }
@@ -2466,9 +2347,6 @@ pub fn accept_yul_statement(target: &YulStatement, visitor: &mut dyn Visitor) {
         YulStatement::YulVariableAssignmentStatement(ref yul_variable_assignment_statement) => {
             accept_yul_variable_assignment_statement(yul_variable_assignment_statement, visitor);
         }
-        YulStatement::YulLabel(ref yul_label) => {
-            accept_yul_label(yul_label, visitor);
-        }
         YulStatement::YulVariableDeclarationStatement(ref yul_variable_declaration_statement) => {
             accept_yul_variable_declaration_statement(yul_variable_declaration_statement, visitor);
         }
@@ -2478,25 +2356,7 @@ pub fn accept_yul_statement(target: &YulStatement, visitor: &mut dyn Visitor) {
     }
 }
 
-pub fn accept_yul_assignment_operator(target: &YulAssignmentOperator, visitor: &mut dyn Visitor) {
-    match target {
-        YulAssignmentOperator::YulColonAndEqual(ref yul_colon_and_equal) => {
-            accept_yul_colon_and_equal(yul_colon_and_equal, visitor);
-        }
-        YulAssignmentOperator::ColonEqual => {}
-    }
-}
-
-pub fn accept_yul_stack_assignment_operator(
-    target: &YulStackAssignmentOperator,
-    visitor: &mut dyn Visitor,
-) {
-    match target {
-        YulStackAssignmentOperator::YulEqualAndColon(ref yul_equal_and_colon) => {
-            accept_yul_equal_and_colon(yul_equal_and_colon, visitor);
-        }
-        YulStackAssignmentOperator::EqualColon => {}
-    }
+pub fn accept_yul_assignment_operator(_target: &YulAssignmentOperator, _visitor: &mut dyn Visitor) {
 }
 
 pub fn accept_yul_switch_case(target: &YulSwitchCase, visitor: &mut dyn Visitor) {
@@ -2662,16 +2522,6 @@ fn accept_override_paths(items: &[IdentifierPath], visitor: &mut dyn Visitor) {
 fn accept_constructor_attributes(items: &[ConstructorAttribute], visitor: &mut dyn Visitor) {
     for item in items {
         accept_constructor_attribute(item, visitor);
-    }
-}
-
-#[inline]
-fn accept_unnamed_function_attributes(
-    items: &[UnnamedFunctionAttribute],
-    visitor: &mut dyn Visitor,
-) {
-    for item in items {
-        accept_unnamed_function_attribute(item, visitor);
     }
 }
 
