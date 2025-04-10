@@ -252,7 +252,7 @@ impl Contract {
     }
 
     pub fn entrypoint(&self) -> Result<String> {
-        self.metadata.get_real_filename(&self.metadata.target)
+        self.metadata.get_real_name(&self.metadata.target)
     }
 
     pub fn read_file(&self, name: &str, buffer: &mut String) -> Result<usize> {

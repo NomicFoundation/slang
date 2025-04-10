@@ -47,7 +47,8 @@ impl <'c> CompilationBuilder<'c> {
                 .strip_prefix(|c| matches!(c, '"' | '\''))
                 .unwrap()
                 .strip_suffix(|c| matches!(c, '"' | '\''))
-                .unwrap();
+                .unwrap()
+                .trim();
 
             let import_real_name = self.contract.metadata.resolve_import(&filename, &import_path)?;
 
