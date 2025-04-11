@@ -5,7 +5,8 @@ import * as solc06 from "solc06";
 import * as solc07 from "solc07";
 import * as solc08 from "solc08";
 import * as solc089 from "solc089";
-import { INPUT_PATH } from "./common.mjs";
+import * as solc0812 from "solc0812";
+import * as solc0812 from "solc0823";
 
 export function testFileSolC(languageVersion: string, dir: string, file: string) {
   var solc = undefined;
@@ -18,12 +19,15 @@ export function testFileSolC(languageVersion: string, dir: string, file: string)
   else if (languageVersion.startsWith("0.8.9")) {
     solc = solc089;
   }
+  else if (languageVersion.startsWith("0.8.12")) {
+    solc = solc0812;
+  }
+  else if (languageVersion.startsWith("0.8.23")) {
+    solc = solc0823;
+  }
   else if (languageVersion.startsWith("0.8")) {
     solc = solc08;
   }
-
-  const repoRoot = process.env["REPO_ROOT"];
-  assert(repoRoot);
 
   const start = performance.now();
   var folderMeta = `{
@@ -50,13 +54,12 @@ export function testFileSolC(languageVersion: string, dir: string, file: string)
     assert(false);
   }
 }
+
 function findImports(folder: string): (file: string) => { contents: string; } {
   const repoRoot = process.env["REPO_ROOT"];
   assert(repoRoot);
   return (file: string) => {
     const absolutePath = path.resolve(
-      repoRoot,
-      INPUT_PATH,
       folder,
       file
     );

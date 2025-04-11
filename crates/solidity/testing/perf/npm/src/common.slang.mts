@@ -22,10 +22,10 @@ export class Record {
   }
 }
 
-export async function testFile(languageVersion: string, file: string, expectedDefs?: number, expectedRefs?: number): Promise<Record> {
+export async function testFile(languageVersion: string, dir: string, file: string, expectedDefs?: number, expectedRefs?: number): Promise<Record> {
   let gotoDefTimes: number[] = Array();
   const startTime = performance.now();
-  const builder = createBuilder(languageVersion);
+  const builder = createBuilder(languageVersion, dir);
 
   const record = new Record(file);
 
