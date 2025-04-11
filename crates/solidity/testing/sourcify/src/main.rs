@@ -7,7 +7,6 @@ mod events;
 mod reporting;
 mod results;
 
-use chains::Chain;
 use events::{Events, TestOutcome};
 use semver::Version;
 use slang_solidity::{compilation::CompilationUnit, cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange}, diagnostic::{Diagnostic, Severity}};
@@ -27,18 +26,20 @@ fn main() -> Result<()> {
 
 fn run_test_command(cmd: &command::TestCommand) -> Result<()> {
     if let Some(contract) = &cmd.contract {
-        return test_contract(cmd.chain, &contract);
+        return test_contract(cmd, &contract);
     }
 
+    let chain = cmd.chain;
     let repo = Repository::new(cmd.chain)?;
-    let shards = repo.fetch_entries()?;
+    let shards = repo.fetch_entries(&cmd.sharding_options)?;
+
     let shard_count = shards.len();
 
     let (tx, rx) = std::sync::mpsc::channel::<ContractArchive>();
 
     let fetch_thread = std::thread::spawn(move || {
         for shard in shards {
-            match repo.fetch_archive(&shard) {
+            match repo.fetch_archive(&shard, chain) {
                 Ok(archive) => {
                     tx.send(archive).unwrap();
                 },
@@ -63,15 +64,15 @@ fn run_test_command(cmd: &command::TestCommand) -> Result<()> {
     Ok(())
 }
 
-fn test_contract(chain: Chain, contract_id: &str) -> Result<()> {
-    let repo = Repository::new(chain)?;
-    let shards = repo.fetch_entries()?;
+fn test_contract(cmd: &command::TestCommand, contract_id: &str) -> Result<()> {
+    let repo = Repository::new(cmd.chain)?;
+    let shards = repo.fetch_entries(&cmd.sharding_options)?;
 
     let contract_shard_id: u16 = contract_id.get(2..4).unwrap().parse()?;
 
     let contract_shard = shards.iter().find(|shard| shard.id == contract_shard_id).ok_or(Error::msg(format!("Shard for {contract_id} not found")))?;
 
-    let archive = repo.fetch_archive(contract_shard)?;
+    let archive = repo.fetch_archive(contract_shard, cmd.chain)?;
     let contract = archive.get_contract(contract_id)?;
 
     let mut events = Events::new(1, 0);
@@ -126,6 +127,7 @@ impl Diagnostic for BindingError {
 
 fn run_with_trace(archive: &ContractArchive, events: &Events, check_bindings: bool) {
     for contract in archive.into_iter().flatten() {
+        events.trace(format!("Testing contract {}", contract.name));
         run_test(&contract, events, check_bindings);
     }
 }

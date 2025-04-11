@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use std::fs::{self, File, ReadDir};
 
 use crate::chains::Chain;
+use crate::command::ShardingOptions;
 use crate::compilation_builder::CompilationBuilder;
 use crate::metadata::ContractMetadata;
 
@@ -35,7 +36,7 @@ impl Repository {
         })
     }
 
-    pub fn fetch_entries(&self) -> Result<Vec<Shard>> {
+    pub fn fetch_entries(&self, options: &ShardingOptions) -> Result<Vec<Shard>> {
         let client = Client::new();
         let res = client.get("https://repo-backup.sourcify.dev/manifest.json").send()?;
 
@@ -45,12 +46,12 @@ impl Repository {
         }
 
         let manifest: Manifest = res.json()?;
-        Ok(manifest.get_chain_shards(self.chain))
+        Ok(manifest.get_chain_shards(self.chain, options))
     }
 
     /// Fetch the `ContractArchive` data for this shard. Data is recieved as a tar archive, and is unpacked
     /// into the directory created by this `Repository`.
-    pub fn fetch_archive(&self, shard: &Shard) -> Result<ContractArchive> {
+    pub fn fetch_archive(&self, shard: &Shard, chain: Chain) -> Result<ContractArchive> {
         let client = Client::new();
         let res = client.get(format!("https://repo-backup.sourcify.dev{}", shard.path)).send()?;
 
@@ -66,7 +67,8 @@ impl Repository {
         archive.unpack(&repo_dir)?;
 
         Ok(ContractArchive{
-            contracts_path: repo_dir.join(format!("repository/full_match/{}", shard.chain.id())),
+            id: shard.id,
+            contracts_path: repo_dir.join(format!("repository/{}/{}", shard.match_type.dir_name(), chain.id())),
         })
     }
 }
@@ -83,17 +85,72 @@ struct Manifest {
 }
 
 impl Manifest {
-    fn get_chain_shards(&self, chain: Chain) -> Vec<Shard> {
-        self.files.iter().filter_map(|file| {
-            if let Ok(shard) = Shard::try_from(file) {
-                if shard.is_chain(chain) {
-                    return Some(shard);
-                }
-            }
+    fn get_chain_shards(&self, chain: Chain, options: &ShardingOptions) -> Vec<Shard> {
+        let mut shard_size = if let Some(shard_count) = options.shard_count {
+            self.files.len() / shard_count
+        } else {
+            self.files.len()
+        };
 
-            None
-        }).collect()
+        if options.exclude_partials {
+            shard_size /= 2;
+        }
+
+        let mut shards = Vec::with_capacity(shard_size);
+
+        for file in &self.files {
+            add_from_manifest(&mut shards, file, options, chain);
+        }
+
+        shards.sort_by(|a, b| a.id.cmp(&b.id));
+        shards
     }
+}
+
+fn add_from_manifest(shards: &mut Vec<Shard>, file: &ManifestFile, options: &ShardingOptions, chain: Chain) -> Result<()> {
+    // File path should come in this format: 
+    // /sourcify-repository-2025-03-24T03-00-26/full_match.1.00.tar.gz
+    //                                                     - --
+    //                                                     | | shard prefix
+    //                                                     | chain ID
+    let mut parts = file.path.split('.');
+    let name_prefix = parts.next().unwrap();
+    let match_type = if name_prefix.ends_with("full_match") {
+        MatchType::Full
+    } else if name_prefix.ends_with("partial_match") {
+        MatchType::Partial
+    } else {
+        bail!("Invalid match type in archive path: {}", file.path);
+    };
+    
+    if match_type.is_partial() && options.exclude_partials {
+        return Ok(());
+    }
+
+    let chain_id_part = parts.next().ok_or(Error::msg("Failed to get chain ID"))?;
+    let chain_id: u64 = chain_id_part.parse()?;
+
+    if chain_id != chain.id() {
+        return Ok(());
+    }
+
+    let id_part = parts.next().ok_or(Error::msg("Failed to get shard prefix"))?;
+    let id = u16::from_str_radix(id_part, 16)?;
+
+    if !options.get_id_range().contains(&id) {
+        return Ok(())
+    }
+
+    let shard = Shard {
+        path: file.path.clone(),
+        id,
+        chain,
+        match_type,
+    };
+
+    shards.push(shard);
+
+    Ok(())
 }
 
 #[derive(Deserialize)]
@@ -102,52 +159,41 @@ struct ManifestFile {
     path: String,
 }
 
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum MatchType {
+    Full,
+    Partial,
+}
+
+impl MatchType {
+    pub fn is_full(&self) -> bool {
+        *self == MatchType::Full
+    }
+
+    pub fn is_partial(&self) -> bool {
+        *self == MatchType::Partial
+    }
+
+    pub fn dir_name(&self) -> &'static str {
+        match self {
+            MatchType::Full => "full_match",
+            MatchType::Partial => "partial_match",
+        }
+    }
+}
+
 pub struct Shard {
-    /// A URL path used to fetch the `ContractArchive` for this shard.
-    pub path: String,
     /// The chain that this shard is part of.
     pub chain: Chain,
+    /// A URL path used to fetch the `ContractArchive` for this shard.
+    pub path: String,
     pub id: u16,
-}
-
-impl Shard {
-    fn is_chain(&self, chain: Chain) -> bool {
-        self.chain == chain
-    }
-}
-
-impl TryFrom<&ManifestFile> for Shard {
-    type Error = anyhow::Error;
-
-    fn try_from(file: &ManifestFile) -> Result<Shard> {
-        // File path should come in this format: 
-        // /sourcify-repository-2025-03-24T03-00-26/full_match.1.00.tar.gz
-        //                                                     - --
-        //                                                     | | shard prefix
-        //                                                     | chain ID
-        let mut parts = file.path.split('.');
-        let name_prefix = parts.next().unwrap();
-        if !name_prefix.ends_with("match") {
-            bail!("Invalid entry name format: {}", file.path);
-        }
-
-        let chain_id_part = parts.next().ok_or(Error::msg("Failed to get chain ID"))?;
-        let chain_id: u64 = chain_id_part.parse()?;
-        let chain = Chain::from_id(chain_id).ok_or(Error::msg(format!("Invalid chain id: {chain_id}")))?;
-
-        let id_part = parts.next().ok_or(Error::msg("Failed to get shard prefix"))?;
-        let id = u16::from_str_radix(id_part, 16)?;
-
-        Ok(Shard{
-            id,
-            path: file.path.clone(),
-            chain,
-        })
-    }
+    pub match_type: MatchType,
 }
 
 #[derive(Clone)]
 pub struct ContractArchive {
+    pub id: u16,
     contracts_path: PathBuf,
 }
 
