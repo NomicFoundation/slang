@@ -1403,6 +1403,7 @@ dependencies = [
  "markdown",
  "public-api",
  "rayon",
+ "reqwest",
  "rustdoc-json",
  "semver",
  "serde",
