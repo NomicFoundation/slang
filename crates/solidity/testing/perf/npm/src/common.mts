@@ -4,28 +4,19 @@ import assert from "node:assert";
 import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
 import { exit } from "node:process";
 
-export const INPUT_PATH = "crates/solidity/testing/perf/npm/inputs";
-
-export function resolvePath(...relativePaths: string[]): string {
-  const repoRoot = process.env["REPO_ROOT"];
-  assert(repoRoot);
-
-  return path.join(repoRoot, ...relativePaths);
-}
-
 export function readRepoFile(...relativePaths: string[]): string {
-  const absolutePath = resolvePath(...relativePaths);
+  const absolutePath = path.join(...relativePaths);
   const source = fs.readFileSync(absolutePath, "utf8");
 
   return source.trim();
 }
 
-export function createBuilder(languageVersion: string): CompilationBuilder {
+export function createBuilder(languageVersion: string, directory: string): CompilationBuilder {
   const builder = CompilationBuilder.create({
     languageVersion,
 
     readFile: async (fileId) => {
-      return readRepoFile(INPUT_PATH, fileId);
+      return readRepoFile(directory, fileId);
     },
 
     resolveImport: async (sourceFileId, importPath) => {
@@ -42,7 +33,7 @@ export function createBuilder(languageVersion: string): CompilationBuilder {
       while (i < 7) {
         let splat = Array(i + 1).fill("..");
         let file = path.join(sourceFileId, ...splat, importString);
-        let realFile = resolvePath(INPUT_PATH, file);
+        let realFile = path.join(directory, file);
         try {
           if (fs.statSync(realFile)) {
             return file;

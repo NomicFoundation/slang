@@ -12,6 +12,8 @@
     "solc07": "npm:solc@0.7.6",
     "solc08": "npm:solc@0.8.26",
     "solc089": "npm:solc@0.8.9",
+    "solc0812": "npm:solc@0.8.12",
+    "solc0823": "npm:solc@0.8.23",
     "ts-node": "10.9.2"
   },
   "devDependencies": {
