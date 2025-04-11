@@ -13,6 +13,14 @@ pub struct KeywordItem {
     pub definitions: Vec<KeywordDefinition>,
 }
 
+impl KeywordItem {
+    pub fn is_unique(&self) -> bool {
+        self.definitions
+            .iter()
+            .all(|definition| definition.value.collect_variations().len() == 1)
+    }
+}
+
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[derive_spanned_type(Clone, Debug, ParseInputTokens, WriteOutputTokens)]
 pub struct KeywordDefinition {
