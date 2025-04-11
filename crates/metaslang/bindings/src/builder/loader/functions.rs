@@ -108,7 +108,10 @@ mod resolver {
                         // per context/path pait. This way, we can still run incrementally and resolve
                         // other symbols in the file:
                         let node_id = path_to_resolve.node().id();
-                        format!("__SLANG_UNRESOLVED_PATH__{context_path}__{node_id}__")
+                        format!(
+                            "__SLANG_UNRESOLVED_PATH__{context_path}__{node_id}__",
+                            node_id = node_id.as_usize()
+                        )
                     },
                     |resolved_path| FileDescriptor::User(resolved_path).as_string(),
                 );

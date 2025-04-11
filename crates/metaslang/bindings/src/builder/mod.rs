@@ -7,14 +7,14 @@ use std::rc::Rc;
 use loader::{LoadResult, Loader};
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
+use metaslang_cst::nodes::NodeId;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
 use semver::Version;
-use stack_graphs::graph::{NodeID, StackGraph};
+use stack_graphs::graph::{NodeID as GraphNodeId, StackGraph};
 
 pub type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 pub(crate) type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
-pub(crate) type CursorID = usize;
 
 pub use crate::graph::BindingGraph;
 
@@ -41,8 +41,8 @@ pub(crate) struct ExtendedStackGraph<KT: KindTypes + 'static> {
     pub(crate) stack_graph: StackGraph,
     definitions_info: HashMap<GraphHandle, DefinitionBindingInfo<KT>>,
     references_info: HashMap<GraphHandle, ReferenceBindingInfo<KT>>,
-    cursor_to_definitions: HashMap<CursorID, GraphHandle>,
-    cursor_to_references: HashMap<CursorID, GraphHandle>,
+    cursor_to_definitions: HashMap<NodeId, GraphHandle>,
+    cursor_to_references: HashMap<NodeId, GraphHandle>,
     extension_hooks: HashSet<GraphHandle>,
 }
 
@@ -226,12 +226,12 @@ impl<KT: KindTypes + 'static> ExtendedStackGraph<KT> {
         self.stack_graph.iter_files()
     }
 
-    pub(crate) fn definition_by_id(&self, cursor_id: CursorID) -> Option<GraphHandle> {
-        self.cursor_to_definitions.get(&cursor_id).copied()
+    pub(crate) fn definition_by_id(&self, node_id: NodeId) -> Option<GraphHandle> {
+        self.cursor_to_definitions.get(&node_id).copied()
     }
 
-    pub(crate) fn reference_by_id(&self, cursor_id: CursorID) -> Option<GraphHandle> {
-        self.cursor_to_references.get(&cursor_id).copied()
+    pub(crate) fn reference_by_id(&self, node_id: NodeId) -> Option<GraphHandle> {
+        self.cursor_to_references.get(&node_id).copied()
     }
 
     pub(crate) fn get_parents(&self, handle: GraphHandle) -> Vec<GraphHandle> {
@@ -317,7 +317,7 @@ impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
     pub fn root_node(&self) -> GraphHandle {
         self.graph
             .stack_graph
-            .node_for_id(NodeID::root())
+            .node_for_id(GraphNodeId::root())
             .expect("Root node not found in stack graph")
     }
 

@@ -35,7 +35,7 @@ pub struct Graph<KT: KindTypes> {
     graph_nodes: Vec<GraphNode>,
 }
 
-pub(crate) type SyntaxNodeID = u32;
+pub(crate) type SyntaxNodeID = usize;
 type GraphNodeID = u32;
 
 impl<KT: KindTypes> Graph<KT> {
@@ -53,7 +53,7 @@ impl<KT: KindTypes> Graph<KT> {
     /// those nodes that are referenced at some point during the execution of the graph DSL file.
     pub fn add_syntax_node(&mut self, cursor: metaslang_cst::cursor::Cursor<KT>) -> SyntaxNodeRef {
         let node = cursor.node();
-        let index = node.id() as SyntaxNodeID;
+        let index = node.id().as_usize();
         let node_ref = SyntaxNodeRef {
             index,
             kind: cursor.node().kind().into(),
