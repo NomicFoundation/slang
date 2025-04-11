@@ -176,15 +176,21 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
             .definitions_info
             .iter()
             .for_each(|(handle, definition_info)| {
-                let cursor_id = definition_info.cursor.node().id();
-                self.graph.cursor_to_definitions.insert(cursor_id, *handle);
+                let name_node_id = definition_info.cursor.node().id();
+                self.graph
+                    .cursor_to_definitions
+                    .insert(name_node_id, *handle);
+                let definiens_node_id = definition_info.definiens.node().id();
+                self.graph
+                    .cursor_to_definitions
+                    .insert(definiens_node_id, *handle);
             });
         result
             .references_info
             .iter()
             .for_each(|(handle, reference_info)| {
-                let cursor_id = reference_info.cursor.node().id();
-                self.graph.cursor_to_references.insert(cursor_id, *handle);
+                let node_id = reference_info.cursor.node().id();
+                self.graph.cursor_to_references.insert(node_id, *handle);
             });
 
         self.graph

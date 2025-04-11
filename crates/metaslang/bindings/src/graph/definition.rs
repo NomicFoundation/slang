@@ -17,7 +17,7 @@ pub struct Definition<KT: KindTypes + 'static> {
 
 impl<KT: KindTypes + 'static> Definition<KT> {
     pub fn id(&self) -> NodeId {
-        self.get_cursor().node().id()
+        self.get_definiens_cursor().node().id()
     }
 
     pub fn name_location(&self) -> BindingLocation<KT> {
