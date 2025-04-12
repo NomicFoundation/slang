@@ -6,7 +6,7 @@ import * as solc07 from "solc07";
 import * as solc08 from "solc08";
 import * as solc089 from "solc089";
 import * as solc0812 from "solc0812";
-import * as solc0812 from "solc0823";
+import * as solc0823 from "solc0823";
 
 export function testFileSolC(languageVersion: string, dir: string, file: string) {
   var solc = undefined;
