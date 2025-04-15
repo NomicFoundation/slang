@@ -37,7 +37,11 @@ impl Repository {
         let path = root.join(format!("sourcify_{}", chain.id()));
         create_or_replace_dir(&path)?;
 
-        Ok(Repository { chain, path, should_save })
+        Ok(Repository {
+            chain,
+            path,
+            should_save,
+        })
     }
 
     /// Fetch shard info for the current chain.

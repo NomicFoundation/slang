@@ -71,4 +71,3 @@ pub enum PolygonNetwork {
     Mainnet = 137,
     Amoy = 80002,
 }
-

@@ -49,14 +49,16 @@ impl ContractMetadata {
                 if source_is_url {
                     // Sometimes imports from URL-imports don't share the URL prefix
                     self.get_real_name(import_path)
-                } else if let Some(remapped_import) = self.remap_import(&source_file_path, &resolved_path) {
+                } else if let Some(remapped_import) =
+                    self.remap_import(&source_file_path, &resolved_path)
+                {
                     // Sometimes relative paths still need to be remapped after being resolved
                     self.get_real_name(&remapped_import)
                 } else {
                     // All other cases just return an error
                     e
                 }
-            },
+            }
             real_name => real_name,
         }
     }
@@ -65,7 +67,9 @@ impl ContractMetadata {
         for source in &self.sources {
             // On rare occasions imports may have '//' in between directories. solc seems
             // to consider these interchangeable with '/'
-            if source.virtual_path == virtual_path || source.virtual_path.replace("//", "/") == virtual_path {
+            if source.virtual_path == virtual_path
+                || source.virtual_path.replace("//", "/") == virtual_path
+            {
                 return Ok(source.real_name.clone());
             }
         }
@@ -202,7 +206,7 @@ pub struct FileMapping {
 
 pub struct ImportRemap {
     /// If provided, then this remap only applies to imports inside source files
-    /// whose paths begin with this string. 
+    /// whose paths begin with this string.
     context: Option<String>,
     /// The prefix value which will be found in the import path and replaced by
     /// `target`.

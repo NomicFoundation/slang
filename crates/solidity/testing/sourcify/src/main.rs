@@ -29,7 +29,9 @@ fn main() -> Result<()> {
     let command::Cli { command } = command::Cli::parse();
     match command {
         Commands::Test(test_command) => run_test_command(test_command),
-        Commands::ShowCombinedResults(results_command) => run_show_combined_results_command(results_command),
+        Commands::ShowCombinedResults(results_command) => {
+            run_show_combined_results_command(results_command)
+        }
     }
 }
 
@@ -118,9 +120,7 @@ fn test_contract(cmd: &command::TestCommand, contract_id: &str) -> Result<()> {
 
     let contract_shard_id = u16::from_str_radix(contract_id.get(2..4).unwrap(), 16)?;
 
-    let contract_shards = shards
-        .iter()
-        .filter(|shard| shard.id == contract_shard_id);
+    let contract_shards = shards.iter().filter(|shard| shard.id == contract_shard_id);
 
     for contract_shard in contract_shards {
         let archive = repo.fetch_archive(contract_shard, cmd.chain)?;
@@ -177,9 +177,17 @@ impl Diagnostic for BindingError {
 
 fn run_with_trace(archive: &ContractArchive, events: &Events, check_bindings: bool) {
     for contract in archive.contracts() {
-        events.trace(format!("[{version}] Starting contract {name}", version = contract.version(), name = contract.name));
+        events.trace(format!(
+            "[{version}] Starting contract {name}",
+            version = contract.version(),
+            name = contract.name
+        ));
         run_test(&contract, events, check_bindings);
-        events.trace(format!("[{version}] Finished contract {name}", version = contract.version(), name = contract.name));
+        events.trace(format!(
+            "[{version}] Finished contract {name}",
+            version = contract.version(),
+            name = contract.name
+        ));
     }
 }
 
@@ -297,4 +305,3 @@ fn run_show_combined_results_command(command: ShowCombinedResultsCommand) -> Res
     display_all_results(&all_results);
     Ok(())
 }
-
