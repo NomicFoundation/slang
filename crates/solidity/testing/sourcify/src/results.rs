@@ -10,8 +10,7 @@ pub struct ShardResults {
     pub source_files: u64,
     pub passed: u64,
     pub failed: u64,
-    pub incompatible: u64,
-    pub not_found: u64,
+    pub unresolved: u64,
     pub elapsed: Duration,
 }
 
@@ -79,21 +78,18 @@ pub fn display_all_results(all_results: &AllResults) {
              {source_files:>12} | \
              {passed:>12} | \
              {failed:>12} | \
-             {incompatible:>12} | \
-             {not_found:>12} | \
+             {unresolved:>12} | \
              {elapsed}",
             source_files = format!("{}", HumanCount(shard_results.source_files)),
             passed = format!("{}", HumanCount(shard_results.passed)),
             failed = format!("{}", HumanCount(shard_results.failed)),
-            incompatible = format!("{}", HumanCount(shard_results.incompatible)),
-            not_found = format!("{}", HumanCount(shard_results.not_found)),
+            unresolved = format!("{}", HumanCount(shard_results.unresolved)),
             elapsed = FormattedDuration(shard_results.elapsed),
         );
         totals.source_files += shard_results.source_files;
         totals.passed += shard_results.passed;
         totals.failed += shard_results.failed;
-        totals.incompatible += shard_results.incompatible;
-        totals.not_found += shard_results.not_found;
+        totals.unresolved += shard_results.unresolved;
         totals.elapsed += shard_results.elapsed;
     }
     println!("------------------------------------------------------------------------------------------------");
@@ -102,14 +98,12 @@ pub fn display_all_results(all_results: &AllResults) {
          {source_files:>12} | \
          {passed:>12} | \
          {failed:>12} | \
-         {incompatible:>12} | \
-         {not_found:>12} | \
+         {unresolved:>12} | \
          {elapsed}",
         source_files = format!("{}", HumanCount(totals.source_files)),
         passed = format!("{}", HumanCount(totals.passed)),
         failed = format!("{}", HumanCount(totals.failed)),
-        incompatible = format!("{}", HumanCount(totals.incompatible)),
-        not_found = format!("{}", HumanCount(totals.not_found)),
+        unresolved = format!("{}", HumanCount(totals.unresolved)),
         elapsed = FormattedDuration(totals.elapsed),
     );
 }

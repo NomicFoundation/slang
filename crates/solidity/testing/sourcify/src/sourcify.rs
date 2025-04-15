@@ -1,7 +1,6 @@
-use std::iter::Flatten;
 use std::io::{BufReader, ErrorKind, Read};
 use std::path::PathBuf;
-use std::fs::{self, File, ReadDir};
+use std::fs;
 
 use crate::chains::Chain;
 use crate::command::ShardingOptions;
@@ -27,16 +26,17 @@ pub struct Repository {
 
 impl Repository {
     pub fn new(chain: Chain) -> Result<Repository> {
-        let temp_dir_path = std::env::temp_dir().join(format!("sourcify_{}", chain.id()));
-        create_or_overwrite_dir(&temp_dir_path)?;
+        let path = std::env::temp_dir().join(format!("sourcify_{}", chain.id()));
+        create_or_replace_dir(&path)?;
 
         Ok(Repository{
             chain,
-            path: temp_dir_path,
+            path,
         })
     }
 
-    pub fn fetch_entries(&self, options: &ShardingOptions) -> Result<Vec<Shard>> {
+    /// Fetch shard info for the current chain.
+    pub fn fetch_shards(&self, options: &ShardingOptions) -> Result<Vec<Shard>> {
         let client = Client::new();
         let res = client.get("https://repo-backup.sourcify.dev/manifest.json").send()?;
 
@@ -61,13 +61,14 @@ impl Repository {
         }
 
         let repo_dir = self.path.join(format!("{}", shard.id));
-        create_or_overwrite_dir(&repo_dir).inspect_err(|e| eprintln!("Failed to create directory {}: {e}", repo_dir.to_str().unwrap()))?;
+        create_or_replace_dir(&repo_dir).inspect_err(|e| eprintln!("Failed to create directory {}: {e}", repo_dir.to_str().unwrap()))?;
 
         let mut archive = Archive::new(res);
         archive.unpack(&repo_dir)?;
 
         Ok(ContractArchive{
             id: shard.id,
+            match_type: shard.match_type,
             contracts_path: repo_dir.join(format!("repository/{}/{}", shard.match_type.dir_name(), chain.id())),
         })
     }
@@ -75,7 +76,7 @@ impl Repository {
 
 impl Drop for Repository {
     fn drop(&mut self) {
-        fs::remove_dir_all(&self.path).expect("Failed to remove Repository directory.");
+        fs::remove_dir_all(&self.path).unwrap();
     }
 }
 
@@ -86,28 +87,16 @@ struct Manifest {
 
 impl Manifest {
     fn get_chain_shards(&self, chain: Chain, options: &ShardingOptions) -> Vec<Shard> {
-        let mut shard_size = if let Some(shard_count) = options.shard_count {
-            self.files.len() / shard_count
-        } else {
-            self.files.len()
-        };
-
-        if options.exclude_partials {
-            shard_size /= 2;
-        }
-
-        let mut shards = Vec::with_capacity(shard_size);
-
-        for file in &self.files {
-            add_from_manifest(&mut shards, file, options, chain);
-        }
+        let mut shards: Vec<_> = self.files.iter()
+            .filter_map(|manifest| add_from_manifest(manifest, options, chain).ok())
+            .collect();
 
         shards.sort_by(|a, b| a.id.cmp(&b.id));
         shards
     }
 }
 
-fn add_from_manifest(shards: &mut Vec<Shard>, file: &ManifestFile, options: &ShardingOptions, chain: Chain) -> Result<()> {
+fn add_from_manifest(file: &ManifestFile, options: &ShardingOptions, chain: Chain) -> Result<Shard> {
     // File path should come in this format: 
     // /sourcify-repository-2025-03-24T03-00-26/full_match.1.00.tar.gz
     //                                                     - --
@@ -124,33 +113,29 @@ fn add_from_manifest(shards: &mut Vec<Shard>, file: &ManifestFile, options: &Sha
     };
     
     if match_type.is_partial() && options.exclude_partials {
-        return Ok(());
+        bail!("Partials are excluded");
     }
 
     let chain_id_part = parts.next().ok_or(Error::msg("Failed to get chain ID"))?;
     let chain_id: u64 = chain_id_part.parse()?;
 
     if chain_id != chain.id() {
-        return Ok(());
+        bail!("Wrong chain");
     }
 
     let id_part = parts.next().ok_or(Error::msg("Failed to get shard prefix"))?;
     let id = u16::from_str_radix(id_part, 16)?;
 
     if !options.get_id_range().contains(&id) {
-        return Ok(())
+        bail!("Shard not part of selected range.");
     }
 
-    let shard = Shard {
+    Ok(Shard {
         path: file.path.clone(),
         id,
         chain,
         match_type,
-    };
-
-    shards.push(shard);
-
-    Ok(())
+    })
 }
 
 #[derive(Deserialize)]
@@ -194,10 +179,24 @@ pub struct Shard {
 #[derive(Clone)]
 pub struct ContractArchive {
     pub id: u16,
+    pub match_type: MatchType,
     contracts_path: PathBuf,
 }
 
 impl ContractArchive {
+    pub fn contracts(&self) -> impl Iterator<Item = Contract> {
+        let dir = fs::read_dir(&self.contracts_path).expect("Could not open contract directory.");
+        dir
+            .flatten()
+            .map(|dir_entry| -> Result<Contract> {
+                let contract_path = dir_entry.path();
+                let contract = Contract::new(&contract_path)?;
+
+                Ok(contract)
+            })
+            .flatten()
+    }
+
     pub fn get_contract(&self, contract_id: &str) -> Result<Contract> {
         let contract_path = self.contracts_path.join(contract_id);
         Contract::new(&contract_path)
@@ -211,66 +210,14 @@ impl ContractArchive {
         fs::read_dir(&self.contracts_path).map(|i| i.count()).unwrap_or(0)
     }
 
-    pub fn clean(&self) -> Result<()> {
-        Ok(fs::remove_dir_all(&self.contracts_path)?)
-    }
-}
-
-impl IntoIterator for &ContractArchive {
-    type IntoIter = ContractArchiveIterator;
-    type Item = <ContractArchiveIterator as Iterator>::Item;
-
-    fn into_iter(self) -> Self::IntoIter {
-        ContractArchiveIterator::new(self).expect("Failed to create ContractArchiveIterator.")
+    pub fn clean(&self) {
+        let _ = fs::remove_dir_all(&self.contracts_path);
     }
 }
 
 impl Drop for ContractArchive {
     fn drop(&mut self) {
-        self.clean().unwrap();
-    }
-}
-
-pub struct ContractArchiveIterator {
-    contracts: Flatten<ReadDir>,
-}
-
-impl Iterator for ContractArchiveIterator {
-    type Item = Result<Contract>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.next_contract()
-    }
-}
-
-impl ContractArchiveIterator {
-    fn new(archive: &ContractArchive) -> Result<ContractArchiveIterator> {
-        let contracts = fs::read_dir(&archive.contracts_path)?.flatten();
-
-        Ok(ContractArchiveIterator{
-            contracts,
-        })
-    }
-
-    pub fn next_contract(&mut self) -> Option<Result<Contract>> {
-        match self._next_contract() {
-            Ok(c) => match c {
-                Some(contract) => Some(Ok(contract)),
-                None => None,
-            },
-            Err(e) => Some(Err(e)),
-        }
-    }
-
-    pub fn _next_contract(&mut self) -> Result<Option<Contract>> {
-        if let Some(next_contract) = self.contracts.next() {
-            let contract_path = next_contract.path();
-            let contract = Contract::new(&contract_path)?;
-
-            Ok(Some(contract))
-        } else {
-            Ok(None)
-        }
+        self.clean();
     }
 }
 
@@ -326,67 +273,9 @@ impl Contract {
     }
 }
 
-impl IntoIterator for &Contract {
-    type IntoIter = SourceArchiveIterator;
-    type Item = <SourceArchiveIterator as Iterator>::Item;
-
-    fn into_iter(self) -> Self::IntoIter {
-        SourceArchiveIterator::new(self).expect("Failed to create SourceArchiveIterator.")
-    }
-}
-
-pub struct SourceArchiveIterator {
-    sources: Flatten<ReadDir>,
-}
-
-impl Iterator for SourceArchiveIterator {
-    type Item = Result<SourceFile>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        self.next_source()        
-    }
-}
-
-impl SourceArchiveIterator {
-    fn new(contract_archive: &Contract) -> Result<SourceArchiveIterator> {
-        let sources = fs::read_dir(&contract_archive.sources_path)?.flatten();
-        Ok(SourceArchiveIterator { sources })
-    }
-
-    fn next_source(&mut self) -> Option<Result<SourceFile>> {
-        match self._next_source() {
-            Ok(s) => match s {
-                Some(source) => Some(Ok(source)),
-                None => None,
-            },
-            Err(e) => Some(Err(e)),
-        }
-    }
-
-    fn _next_source(&mut self) -> Result<Option<SourceFile>> {
-        if let Some(source_file) = self.sources.next() {
-            let name = source_file.file_name().into_string().map_err(|_| Error::msg("Failed to get file name"))?; 
-
-            let source = fs::File::open(source_file.path()).inspect_err(|e| eprintln!("Could not open file {name}: {e}"))?;
-            Ok(Some(SourceFile{
-                name,
-                file: source,
-            }))
-        } else {
-            Ok(None)
-        }
-        
-    }
-}
-
-pub struct SourceFile {
-    pub name: String,
-    file: File,
-}
-
 /// Helper function - create a directory, and if the directory already exits, delete the existing
 /// one and recreate it.
-fn create_or_overwrite_dir(path: &PathBuf) -> std::io::Result<()> {
+fn create_or_replace_dir(path: &PathBuf) -> std::io::Result<()> {
     if let Err(err) = fs::create_dir_all(path) {
         if err.kind() == ErrorKind::AlreadyExists {
             fs::remove_dir_all(path)?;

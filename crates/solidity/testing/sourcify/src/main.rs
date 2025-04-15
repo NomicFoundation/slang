@@ -8,6 +8,7 @@ mod reporting;
 mod results;
 
 use events::{Events, TestOutcome};
+use infra_utils::terminal::Terminal;
 use semver::Version;
 use slang_solidity::{compilation::CompilationUnit, cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange}, diagnostic::{Diagnostic, Severity}};
 use sourcify::{Contract, ContractArchive, Repository};
@@ -20,53 +21,69 @@ fn main() -> Result<()> {
     let command::Cli { command } = command::Cli::parse();
 
     match command {
-        command::Commands::Test(test_command) => run_test_command(&test_command),
+        command::Commands::Test(test_command) => run_test_command(test_command),
     }
 }
 
-fn run_test_command(cmd: &command::TestCommand) -> Result<()> {
+fn run_test_command(cmd: command::TestCommand) -> Result<()> {
+    Terminal::step(format!(
+        "Initialize {chain}/{network}", 
+        chain = cmd.chain.name(),
+        network = cmd.chain.network_name()
+    ));
+
     if let Some(contract) = &cmd.contract {
-        return test_contract(cmd, &contract);
+        return test_contract(&cmd, contract);
     }
 
-    let chain = cmd.chain;
     let repo = Repository::new(cmd.chain)?;
-    let shards = repo.fetch_entries(&cmd.sharding_options)?;
+    let shards = repo.fetch_shards(&cmd.sharding_options)?;
 
+    let chain = cmd.chain;
     let shard_count = shards.len();
-
+    
     let (tx, rx) = std::sync::mpsc::channel::<ContractArchive>();
 
-    let fetch_thread = std::thread::spawn(move || {
+    // process_thread vs. fetching_thread - we don't want the thread to take ownership of repo
+    // because then repo will be dropped as soon as the last archive is fetched (before processing
+    // has finished), which will delete all the archive files
+    let process_thread = std::thread::spawn(move || {
+        let mut events = Events::new(shard_count, 0);
+        for archive in rx {
+            Terminal::step(format!("Testing shard {}/{:#04x}", archive.match_type.dir_name(), archive.id));
+            events.start_directory(archive.contract_count());
+            if cmd.trace {
+                run_with_trace(&archive, &events, cmd.check_bindings);
+            } else {
+                run_in_parallel(&archive, &events, cmd.check_bindings);
+            }
+            events.finish_directory();
+        }
+    });
+
+    // Fetching the shards in this closure so that it takes ownership of the sender
+    // The sender needs to be dropped so that process_thread can finish
+    let fetcher = |t: std::sync::mpsc::Sender<ContractArchive>| {
         for shard in shards {
             match repo.fetch_archive(&shard, chain) {
                 Ok(archive) => {
-                    tx.send(archive).unwrap();
+                    t.send(archive).unwrap();
                 },
                 Err(e) => eprintln!("Failed to create archive: {e}"),
             }
         }
-    });
+    };
 
-    let mut events = Events::new(shard_count, 0);
-    while let Ok(archive) = rx.recv() {
-        events.start_directory(archive.contract_count());
-        if cmd.trace {
-            run_with_trace(&archive, &events, cmd.check_bindings);
-        } else {
-            run_in_parallel(&archive, &events, cmd.check_bindings);
-        }
-        events.finish_directory();
-    }
-
-    fetch_thread.join().unwrap();
+    fetcher(tx);
+   
+    process_thread.join().unwrap();
 
     Ok(())
 }
 
 fn test_contract(cmd: &command::TestCommand, contract_id: &str) -> Result<()> {
     let repo = Repository::new(cmd.chain)?;
-    let shards = repo.fetch_entries(&cmd.sharding_options)?;
+    let shards = repo.fetch_shards(&cmd.sharding_options)?;
 
     let contract_shard_id: u16 = contract_id.get(2..4).unwrap().parse()?;
 
@@ -121,26 +138,22 @@ impl Diagnostic for BindingError {
     }
 }
 
-// Need: run_with_traces, a runner that does not go in parallel for better debugging
-// Maybe: A verbose option with more debug output? Maybe unnecessary
-// Maybe: --fail-fast option, to quit after the first failure
-
 fn run_with_trace(archive: &ContractArchive, events: &Events, check_bindings: bool) {
-    for contract in archive.into_iter().flatten() {
+    for contract in archive.contracts() {
         events.trace(format!("Testing contract {}", contract.name));
         run_test(&contract, events, check_bindings);
     }
 }
 
 fn run_in_parallel(archive: &ContractArchive, events: &Events, check_bindings: bool) {
-    archive.into_iter().flatten().par_bridge().panic_fuse().for_each(|contract| run_test(&contract, events, check_bindings));
+    archive.contracts().par_bridge().panic_fuse().for_each(|contract| run_test(&contract, events, check_bindings));
 }
 
 fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
     let sources_count = contract.sources_count();
     events.inc_files_count(sources_count);
 
-    let mut did_fail = false;
+    let mut test_outcome = TestOutcome::Passed;
     match contract.create_compilation_unit() {
         Ok(unit) => {
             for file in unit.files() {
@@ -148,28 +161,23 @@ fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
                     for error in file.errors() {
                         events.parse_error(error.message());
                     }
-                    did_fail = true;
+                    test_outcome = TestOutcome::Failed;
                 }
             }
 
-            if check_bindings && run_bindings_check(&unit, events, &contract.version()).is_err() {
-                events.test(TestOutcome::Failed);
-                return;
+            let should_check_bindings = check_bindings && test_outcome == TestOutcome::Passed;
+            if should_check_bindings && run_bindings_check(&unit, events, &contract.version()).is_err() {
+                test_outcome = TestOutcome::Failed;
             }
         }
         Err(e) => {
             events.trace(format!("Failed to compile contract {}: {e}\n{}", contract.name, e.backtrace()));
-            did_fail = true;
+            test_outcome = TestOutcome::Unresolved;
         }
     }
 
     events.inc_files_processed(sources_count);
-
-    if did_fail {
-        events.test(TestOutcome::Failed);
-    } else {
-        events.test(TestOutcome::Passed);
-    }
+    events.test(test_outcome);
 }
 
 fn run_bindings_check(compilation_unit: &CompilationUnit, events: &Events, version: &Version) -> Result<(), BindingError> {

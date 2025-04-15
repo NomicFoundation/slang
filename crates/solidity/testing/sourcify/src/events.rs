@@ -9,12 +9,11 @@ use crate::results::ShardResults;
 
 const MAX_PRINTED_FAILURES: u64 = 1000;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Eq, PartialEq)]
 pub enum TestOutcome {
     Passed,
     Failed,
-    Incompatible,
-    NotFound,
+    Unresolved,
 }
 
 pub struct Events {
@@ -27,8 +26,7 @@ pub struct Events {
 
     passed: ProgressBar,
     failed: ProgressBar,
-    incompatible: ProgressBar,
-    not_found: ProgressBar,
+    unresolved: ProgressBar,
 }
 
 impl Events {
@@ -48,8 +46,7 @@ impl Events {
 
         let passed = reporter.add_counter("✅ Passed", Color::Green, 0);
         let failed = reporter.add_counter("❌ Failed", Color::Red, 0);
-        let incompatible = reporter.add_counter("❕ Incompatible", Color::White, 0);
-        let not_found = reporter.add_counter("❔ Missing", Color::White, 0);
+        let unresolved = reporter.add_counter("❔ Unresolved", Color::White, 0);
 
         reporter.add_blank();
 
@@ -63,8 +60,7 @@ impl Events {
 
             passed,
             failed,
-            incompatible,
-            not_found,
+            unresolved,
         }
     }
 
@@ -103,14 +99,12 @@ impl Events {
 
         self.passed.inc_length(1);
         self.failed.inc_length(1);
-        self.incompatible.inc_length(1);
-        self.not_found.inc_length(1);
+        self.unresolved.inc_length(1);
 
         match outcome {
             TestOutcome::Passed => self.passed.inc(1),
             TestOutcome::Failed => self.failed.inc(1),
-            TestOutcome::Incompatible => self.incompatible.inc(1),
-            TestOutcome::NotFound => self.not_found.inc(1),
+            TestOutcome::Unresolved => self.unresolved.inc(1),
         };
     }
 
@@ -147,8 +141,7 @@ impl Events {
             source_files: self.source_files.position(),
             passed: self.passed.position(),
             failed: self.failed.position(),
-            incompatible: self.incompatible.position(),
-            not_found: self.not_found.position(),
+            unresolved: self.unresolved.position(),
             elapsed: self.all_shards.elapsed(),
         }
     }

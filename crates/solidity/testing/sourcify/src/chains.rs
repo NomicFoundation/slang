@@ -22,6 +22,20 @@ impl Chain {
             _ => None
         }
     }
+
+    pub fn name(&self) -> &'static str {
+        match self {
+            Chain::Ethereum { .. } => "ethereum",
+        }
+    }
+
+    pub fn network_name(&self) -> &'static str {
+        match self {
+            Chain::Ethereum { network } => match network {
+                EthereumNetwork::Mainnet => "mainnet",
+            }
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, ValueEnum, AsRefStr)]

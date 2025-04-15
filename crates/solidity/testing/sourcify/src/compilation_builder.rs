@@ -50,7 +50,6 @@ impl <'c> CompilationBuilder<'c> {
                 .unwrap()
                 .trim();
 
-
             let import_real_name = self.contract.metadata.resolve_import(&filename, &import_path)?;
             self.add_file(&import_real_name)?;
         }
