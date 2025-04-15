@@ -17,6 +17,7 @@ fn test_collect_types_pass() -> Result<()> {
         l1_typed_cst::visitor::accept_source_unit(ast_unit, &mut pass);
     }
     pass.types.validate();
+    assert!(pass.errors.is_empty(), "No errors recorded during the pass");
 
     let Some(address_type) = pass.types.find_type(&Type::Address { payable: false }) else {
         panic!("address type not registered");

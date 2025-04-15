@@ -4,6 +4,20 @@ use std::ops::Index;
 use indexmap::IndexSet;
 use metaslang_cst::nodes::NodeId;
 
+#[derive(Debug)]
+pub enum TypeError {
+    // Data location specifier is required for this type
+    MissingDataLocation,
+    // Data location is incompatible with the type (eg. mapping types can only be located in storage)
+    InvalidDataLocation,
+    // The type name identifier cannot be resolved
+    UnresolvedTypeDefinition,
+    // The type name identifier resolves to multiple definitions that cannot be disambiguated
+    AmbiguousTypeDefinition,
+    // The type name identifier points to a definition that's not a user defined type (eg. a function)
+    InvalidUserType,
+}
+
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct TypeId(usize);
 

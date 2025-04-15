@@ -1108,8 +1108,8 @@ pub slang_solidity::backend::l1_typed_cst::ElementaryType::StringKeyword
 pub slang_solidity::backend::l1_typed_cst::ElementaryType::UfixedKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::l1_typed_cst::ElementaryType::UintKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 impl slang_solidity::backend::l1_typed_cst::ElementaryType
-pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type(&self) -> slang_solidity::backend::types::Type
-pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type_with_location(&self, location: slang_solidity::backend::types::DataLocation) -> slang_solidity::backend::types::Type
+pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type_with_location(&self, location: slang_solidity::backend::types::DataLocation) -> core::result::Result<slang_solidity::backend::types::Type, slang_solidity::backend::types::TypeError>
+pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::try_to_type(&self) -> core::result::Result<slang_solidity::backend::types::Type, slang_solidity::backend::types::TypeError>
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::ElementaryType
 pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1_typed_cst::ExperimentalFeature
@@ -3435,8 +3435,8 @@ pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::StringKey
 pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::UfixedKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::UintKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 impl slang_solidity::backend::l1_typed_cst::ElementaryType
-pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type(&self) -> slang_solidity::backend::types::Type
-pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type_with_location(&self, location: slang_solidity::backend::types::DataLocation) -> slang_solidity::backend::types::Type
+pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type_with_location(&self, location: slang_solidity::backend::types::DataLocation) -> core::result::Result<slang_solidity::backend::types::Type, slang_solidity::backend::types::TypeError>
+pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::try_to_type(&self) -> core::result::Result<slang_solidity::backend::types::Type, slang_solidity::backend::types::TypeError>
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::ElementaryType
 pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature
@@ -7009,7 +7009,13 @@ pub type slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValue
 pub type slang_solidity::backend::l2_flat_contracts::YulVariableNames = alloc::vec::Vec<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 pub mod slang_solidity::backend::passes
 pub mod slang_solidity::backend::passes::collect_types
+pub struct slang_solidity::backend::passes::collect_types::Error
+pub slang_solidity::backend::passes::collect_types::Error::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::passes::collect_types::Error::type_error: slang_solidity::backend::types::TypeError
+impl core::fmt::Debug for slang_solidity::backend::passes::collect_types::Error
+pub fn slang_solidity::backend::passes::collect_types::Error::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::passes::collect_types::Pass
+pub slang_solidity::backend::passes::collect_types::Pass::errors: alloc::vec::Vec<slang_solidity::backend::passes::collect_types::Error>
 pub slang_solidity::backend::passes::collect_types::Pass::types: slang_solidity::backend::types::TypeRegistry
 impl slang_solidity::backend::passes::collect_types::Pass
 pub fn slang_solidity::backend::passes::collect_types::Pass::new(binding_graph: alloc::rc::Rc<slang_solidity::bindings::BindingGraph>) -> Self
@@ -7117,6 +7123,14 @@ pub fn slang_solidity::backend::types::TypeDefinition::eq(&self, other: &slang_s
 impl core::fmt::Debug for slang_solidity::backend::types::TypeDefinition
 pub fn slang_solidity::backend::types::TypeDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity::backend::types::TypeDefinition
+pub enum slang_solidity::backend::types::TypeError
+pub slang_solidity::backend::types::TypeError::AmbiguousTypeDefinition
+pub slang_solidity::backend::types::TypeError::InvalidDataLocation
+pub slang_solidity::backend::types::TypeError::InvalidUserType
+pub slang_solidity::backend::types::TypeError::MissingDataLocation
+pub slang_solidity::backend::types::TypeError::UnresolvedTypeDefinition
+impl core::fmt::Debug for slang_solidity::backend::types::TypeError
+pub fn slang_solidity::backend::types::TypeError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::types::ContractType
 pub slang_solidity::backend::types::ContractType::name: alloc::string::String
 pub slang_solidity::backend::types::ContractType::node_id: metaslang_cst::nodes::NodeId
