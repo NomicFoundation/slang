@@ -4,7 +4,7 @@ use std::collections::HashMap;
 
 pub use generated::*;
 
-use super::types::{DataLocation, Type};
+use super::types::{DataLocation, Type, TypeError};
 use crate::compilation;
 
 pub struct CompilationUnit {
@@ -25,19 +25,20 @@ impl CompilationUnit {
 }
 
 impl ElementaryType {
-    pub fn to_type(&self) -> Type {
+    pub fn try_to_type(&self) -> Result<Type, TypeError> {
         match self {
             Self::AddressType(address) => {
                 let payable = address.payable_keyword.is_some();
-                Type::Address { payable }
+                Ok(Type::Address { payable })
             }
-            Self::BoolKeyword => Type::Boolean,
+            Self::BoolKeyword => Ok(Type::Boolean),
             Self::BytesKeyword(bytes) => {
                 if bytes.text == "bytes" {
-                    panic!("Cannot convert bytes type without a storage location")
+                    // Cannot convert bytes type without a storage location
+                    Err(TypeError::MissingDataLocation)
                 } else {
                     let width = bytes.text.strip_prefix("bytes").unwrap().parse().unwrap();
-                    Type::ByteArray { width }
+                    Ok(Type::ByteArray { width })
                 }
             }
             Self::FixedKeyword(fixed) => {
@@ -53,11 +54,11 @@ impl ElementaryType {
                 } else {
                     (parts[0], parts[1])
                 };
-                Type::FixedPointNumber {
+                Ok(Type::FixedPointNumber {
                     signed: true,
                     bits,
                     precision_bits,
-                }
+                })
             }
             Self::UfixedKeyword(ufixed) => {
                 let parts: Vec<_> = ufixed
@@ -72,11 +73,11 @@ impl ElementaryType {
                 } else {
                     (parts[0], parts[1])
                 };
-                Type::FixedPointNumber {
+                Ok(Type::FixedPointNumber {
                     signed: true,
                     bits,
                     precision_bits,
-                }
+                })
             }
             Self::IntKeyword(int) => {
                 let bits = int
@@ -85,7 +86,7 @@ impl ElementaryType {
                     .unwrap()
                     .parse::<u32>()
                     .unwrap_or(256);
-                Type::Integer { signed: true, bits }
+                Ok(Type::Integer { signed: true, bits })
             }
             Self::UintKeyword(uint) => {
                 let bits = uint
@@ -94,27 +95,29 @@ impl ElementaryType {
                     .unwrap()
                     .parse::<u32>()
                     .unwrap_or(256);
-                Type::Integer {
+                Ok(Type::Integer {
                     signed: false,
                     bits,
-                }
+                })
             }
             Self::StringKeyword => {
-                panic!("Cannot convert a string type without a storage location")
+                // Cannot convert a string type without a storage location
+                Err(TypeError::MissingDataLocation)
             }
         }
     }
-    pub fn to_type_with_location(&self, location: DataLocation) -> Type {
+
+    pub fn to_type_with_location(&self, location: DataLocation) -> Result<Type, TypeError> {
         match self {
             Self::BytesKeyword(bytes) => {
                 if bytes.text == "bytes" {
-                    Type::Bytes { location }
+                    Ok(Type::Bytes { location })
                 } else {
-                    self.to_type()
+                    self.try_to_type()
                 }
             }
-            Self::StringKeyword => Type::String { location },
-            _ => self.to_type(),
+            Self::StringKeyword => Ok(Type::String { location }),
+            _ => self.try_to_type(),
         }
     }
 }
