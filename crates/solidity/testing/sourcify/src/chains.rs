@@ -16,15 +16,6 @@ impl Chain {
         }
     }
 
-    pub fn from_id(id: u64) -> Option<Chain> {
-        match id {
-            1 => Some(Chain::Ethereum {
-                network: EthereumNetwork::Mainnet,
-            }),
-            _ => None,
-        }
-    }
-
     pub fn name(&self) -> &'static str {
         match self {
             Chain::Ethereum { .. } => "ethereum",

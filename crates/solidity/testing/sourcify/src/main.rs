@@ -7,9 +7,13 @@ mod reporting;
 mod results;
 mod sourcify;
 
+use std::path::PathBuf;
+
 use anyhow::{Error, Result};
 use clap::Parser;
 use events::{Events, TestOutcome};
+use infra_utils::github::GitHub;
+use infra_utils::paths::PathExtensions;
 use infra_utils::terminal::Terminal;
 use rayon::iter::ParallelBridge;
 use rayon::prelude::ParallelIterator;
@@ -21,7 +25,6 @@ use sourcify::{Contract, ContractArchive, Repository};
 
 fn main() -> Result<()> {
     let command::Cli { command } = command::Cli::parse();
-
     match command {
         command::Commands::Test(test_command) => run_test_command(test_command),
     }
@@ -49,13 +52,13 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     // process_thread vs. fetching_thread - we don't want the thread to take ownership of repo
     // because then repo will be dropped as soon as the last archive is fetched (before processing
     // has finished), which will delete all the archive files
-    let process_thread = std::thread::spawn(move || {
+    let process_thread = std::thread::spawn(move || -> Events {
         let mut events = Events::new(shard_count, 0);
         for archive in rx {
             Terminal::step(format!(
                 "Testing shard {}/{:#04x}",
                 archive.match_type.dir_name(),
-                archive.id
+                archive.id,
             ));
             events.start_directory(archive.contract_count());
             if cmd.trace {
@@ -65,6 +68,8 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
             }
             events.finish_directory();
         }
+
+        events
     });
 
     // Fetching the shards in this closure so that it takes ownership of the sender
@@ -82,7 +87,24 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
 
     fetcher(tx);
 
-    process_thread.join().unwrap();
+    let events = process_thread.join().unwrap();
+
+    if GitHub::is_running_in_ci() {
+        let output_path = PathBuf::from("target").join("__SLANG_SANCTUARY_SHARD_RESULTS__.json");
+        let results = events.to_results();
+        let value = serde_json::to_string(&results)?;
+
+        std::fs::create_dir_all(output_path.parent().unwrap())?;
+        output_path.write_string(value)?;
+        println!("Wrote results to {output_path:?}");
+    }
+
+    let failure_count = events.failure_count();
+    if failure_count > 0 {
+        println!(
+            "\nFound {failure_count} failure(s). Please check the logs above for more information.\n",
+        );
+    }
 
     Ok(())
 }
@@ -149,8 +171,9 @@ impl Diagnostic for BindingError {
 
 fn run_with_trace(archive: &ContractArchive, events: &Events, check_bindings: bool) {
     for contract in archive.contracts() {
-        events.trace(format!("Testing contract {}", contract.name));
+        events.trace(format!("[{version}] Starting contract {name}", version = contract.version(), name = contract.name));
         run_test(&contract, events, check_bindings);
+        events.trace(format!("[{version}] Finished contract {name}", version = contract.version(), name = contract.name));
     }
 }
 

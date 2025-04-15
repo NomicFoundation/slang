@@ -68,16 +68,3 @@ pub struct TestCommand {
     /// with this option enabled.
     pub trace: bool,
 }
-
-impl TestCommand {
-    pub fn sharding_options(&self) -> Option<(usize, usize)> {
-        if self.sharding_options.shard_count.is_none() {
-            None
-        } else {
-            Some((
-                self.sharding_options.shard_count.unwrap(),
-                self.sharding_options.shard_index.unwrap(),
-            ))
-        }
-    }
-}

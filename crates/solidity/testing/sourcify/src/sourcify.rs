@@ -6,7 +6,7 @@ use anyhow::{bail, Error, Result};
 use reqwest::blocking::Client;
 use semver::Version;
 use serde::Deserialize;
-use slang_solidity::compilation::{AddFileResponse, CompilationUnit, InternalCompilationBuilder};
+use slang_solidity::compilation::CompilationUnit;
 use tar::Archive;
 
 use crate::chains::Chain;
@@ -128,7 +128,7 @@ fn add_from_manifest(
         bail!("Invalid match type in archive path: {}", file.path);
     };
 
-    if match_type.is_partial() && options.exclude_partials {
+    if match_type == MatchType::Partial && options.exclude_partials {
         bail!("Partials are excluded");
     }
 
@@ -151,7 +151,6 @@ fn add_from_manifest(
     Ok(Shard {
         path: file.path.clone(),
         id,
-        chain,
         match_type,
     })
 }
@@ -169,14 +168,6 @@ pub enum MatchType {
 }
 
 impl MatchType {
-    pub fn is_full(&self) -> bool {
-        *self == MatchType::Full
-    }
-
-    pub fn is_partial(&self) -> bool {
-        *self == MatchType::Partial
-    }
-
     pub fn dir_name(&self) -> &'static str {
         match self {
             MatchType::Full => "full_match",
@@ -186,12 +177,10 @@ impl MatchType {
 }
 
 pub struct Shard {
-    /// The chain that this shard is part of.
-    pub chain: Chain,
-    /// A URL path used to fetch the `ContractArchive` for this shard.
-    pub path: String,
     pub id: u16,
     pub match_type: MatchType,
+    /// A URL path used to fetch the `ContractArchive` for this shard.
+    pub path: String,
 }
 
 #[derive(Clone)]
