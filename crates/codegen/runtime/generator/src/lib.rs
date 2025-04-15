@@ -3,6 +3,8 @@ mod bindings;
 mod kinds;
 mod parser;
 
+pub mod ir;
+
 use std::collections::BTreeSet;
 use std::path::Path;
 use std::rc::Rc;

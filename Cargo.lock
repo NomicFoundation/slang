@@ -2372,6 +2372,7 @@ dependencies = [
  "anyhow",
  "ariadne",
  "codegen_runtime_generator",
+ "indexmap",
  "infra_utils",
  "metaslang_bindings",
  "metaslang_cst",

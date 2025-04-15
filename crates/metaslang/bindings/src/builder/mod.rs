@@ -226,13 +226,11 @@ impl<KT: KindTypes + 'static> ExtendedStackGraph<KT> {
         self.stack_graph.iter_files()
     }
 
-    pub(crate) fn definition_at(&self, cursor: &Cursor<KT>) -> Option<GraphHandle> {
-        let cursor_id = cursor.node().id();
+    pub(crate) fn definition_by_id(&self, cursor_id: CursorID) -> Option<GraphHandle> {
         self.cursor_to_definitions.get(&cursor_id).copied()
     }
 
-    pub(crate) fn reference_at(&self, cursor: &Cursor<KT>) -> Option<GraphHandle> {
-        let cursor_id = cursor.node().id();
+    pub(crate) fn reference_by_id(&self, cursor_id: CursorID) -> Option<GraphHandle> {
         self.cursor_to_references.get(&cursor_id).copied()
     }
 

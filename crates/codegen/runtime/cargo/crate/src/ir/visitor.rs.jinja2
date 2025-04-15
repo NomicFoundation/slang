@@ -1,0 +1,95 @@
+{%- if rendering_in_stubs -%}
+  // No Intermediate Representation visitor in stubs...
+{%- else -%}
+  use std::rc::Rc;
+  use crate::cst::TerminalNode;
+  #[allow(clippy::wildcard_imports)]
+  use super::nodes::*;
+
+  pub trait Visitor {
+    {%- for parent_type, sequence in target.sequences %}
+      fn enter_{{ parent_type | snake_case }}(&mut self, _target: &{{ parent_type }}) -> bool { true }
+      fn leave_{{ parent_type | snake_case }}(&mut self, _target: &{{ parent_type }}) {}
+    {% endfor -%}
+  }
+
+  //
+  // Sequences:
+  //
+
+  {% for parent_type, sequence in target.sequences %}
+    pub fn accept_{{ parent_type | snake_case }}(target: &{{ parent_type }}, visitor: &mut dyn Visitor) {
+      {%- if sequence.has_nonterminals %}
+        if visitor.enter_{{ parent_type | snake_case }}(target) {
+          {% for field in sequence.fields -%}
+            {%- if not field.is_terminal -%}
+              {%- if field.is_optional %}
+                if let Some(ref {{ field.label | snake_case }}) = target.{{ field.label | snake_case }} {
+                  accept_{{ field.type | snake_case }}({{ field.label }}, visitor);
+                }
+              {% else -%}
+                accept_{{ field.type | snake_case }}(&target.{{ field.label }}, visitor);
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        }
+      {%- else -%}
+        visitor.enter_{{ parent_type | snake_case }}(target);
+      {%- endif %}
+      visitor.leave_{{ parent_type | snake_case }}(target);
+    }
+
+  {% endfor %}
+
+  //
+  // Choices:
+  //
+
+  {% for parent_type, choice in target.choices %}
+    {% if choice.nonterminal_types | length == 0 %}
+      pub fn accept_{{ parent_type | snake_case }}(_target: &{{ parent_type }}, _visitor: &mut dyn Visitor) {}
+    {% else %}
+      pub fn accept_{{ parent_type | snake_case }}(target: &{{ parent_type }}, visitor: &mut dyn Visitor) {
+        match target {
+          {% for nonterminal in choice.nonterminal_types -%}
+            {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
+              accept_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}, visitor);
+            }
+          {%- endfor %}
+          {%- if choice.terminal_types | length > 0 %}
+            {%- for terminal in choice.terminal_types -%}
+              {%- if not loop.first -%} | {%- endif -%}
+              {{ parent_type }}::{{terminal}}(_)
+            {%- endfor -%}
+            => {}
+          {% endif -%}
+          {%- if choice.unique_terminal_types | length > 0 %}
+            {%- for terminal in choice.unique_terminal_types -%}
+              {%- if not loop.first -%} | {%- endif -%}
+              {{ parent_type }}::{{terminal}}
+            {%- endfor -%}
+            => {}
+          {% endif -%}
+        }
+      }
+    {% endif %}
+  {% endfor %}
+
+  //
+  // Repeated & Separated
+  //
+
+  {% for parent_type, collection in target.collections -%}
+    {%- if collection.is_terminal %}
+      #[inline]
+      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+    {% else %}
+      #[inline]
+      fn accept_{{ parent_type | snake_case }}(items: &[{{ collection.item_type }}], visitor: &mut dyn Visitor) {
+        for item in items {
+          accept_{{ collection.item_type | snake_case }}(item, visitor);
+        }
+      }
+    {% endif -%}
+  {% endfor %}
+{%- endif %}
