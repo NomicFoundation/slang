@@ -1,11 +1,6 @@
+use std::fs;
 use std::io::{BufReader, ErrorKind, Read};
 use std::path::PathBuf;
-use std::fs;
-
-use crate::chains::Chain;
-use crate::command::ShardingOptions;
-use crate::compilation_builder::CompilationBuilder;
-use crate::metadata::ContractMetadata;
 
 use anyhow::{bail, Error, Result};
 use reqwest::blocking::Client;
@@ -13,6 +8,11 @@ use semver::Version;
 use serde::Deserialize;
 use slang_solidity::compilation::{AddFileResponse, CompilationUnit, InternalCompilationBuilder};
 use tar::Archive;
+
+use crate::chains::Chain;
+use crate::command::ShardingOptions;
+use crate::compilation_builder::CompilationBuilder;
+use crate::metadata::ContractMetadata;
 
 /// A `Repository` is used to fetch contracts from a certain chain. In addition to providing
 /// an API for fetching contracts, it also manages a directory where fetched contract archives will
@@ -29,16 +29,15 @@ impl Repository {
         let path = std::env::temp_dir().join(format!("sourcify_{}", chain.id()));
         create_or_replace_dir(&path)?;
 
-        Ok(Repository{
-            chain,
-            path,
-        })
+        Ok(Repository { chain, path })
     }
 
     /// Fetch shard info for the current chain.
     pub fn fetch_shards(&self, options: &ShardingOptions) -> Result<Vec<Shard>> {
         let client = Client::new();
-        let res = client.get("https://repo-backup.sourcify.dev/manifest.json").send()?;
+        let res = client
+            .get("https://repo-backup.sourcify.dev/manifest.json")
+            .send()?;
 
         let status = res.status();
         if !status.is_success() {
@@ -53,7 +52,9 @@ impl Repository {
     /// into the directory created by this `Repository`.
     pub fn fetch_archive(&self, shard: &Shard, chain: Chain) -> Result<ContractArchive> {
         let client = Client::new();
-        let res = client.get(format!("https://repo-backup.sourcify.dev{}", shard.path)).send()?;
+        let res = client
+            .get(format!("https://repo-backup.sourcify.dev{}", shard.path))
+            .send()?;
 
         let status = res.status();
         if !status.is_success() {
@@ -61,15 +62,24 @@ impl Repository {
         }
 
         let repo_dir = self.path.join(format!("{}", shard.id));
-        create_or_replace_dir(&repo_dir).inspect_err(|e| eprintln!("Failed to create directory {}: {e}", repo_dir.to_str().unwrap()))?;
+        create_or_replace_dir(&repo_dir).inspect_err(|e| {
+            eprintln!(
+                "Failed to create directory {}: {e}",
+                repo_dir.to_str().unwrap()
+            )
+        })?;
 
         let mut archive = Archive::new(res);
         archive.unpack(&repo_dir)?;
 
-        Ok(ContractArchive{
+        Ok(ContractArchive {
             id: shard.id,
             match_type: shard.match_type,
-            contracts_path: repo_dir.join(format!("repository/{}/{}", shard.match_type.dir_name(), chain.id())),
+            contracts_path: repo_dir.join(format!(
+                "repository/{}/{}",
+                shard.match_type.dir_name(),
+                chain.id()
+            )),
         })
     }
 }
@@ -87,7 +97,9 @@ struct Manifest {
 
 impl Manifest {
     fn get_chain_shards(&self, chain: Chain, options: &ShardingOptions) -> Vec<Shard> {
-        let mut shards: Vec<_> = self.files.iter()
+        let mut shards: Vec<_> = self
+            .files
+            .iter()
             .filter_map(|manifest| add_from_manifest(manifest, options, chain).ok())
             .collect();
 
@@ -96,8 +108,12 @@ impl Manifest {
     }
 }
 
-fn add_from_manifest(file: &ManifestFile, options: &ShardingOptions, chain: Chain) -> Result<Shard> {
-    // File path should come in this format: 
+fn add_from_manifest(
+    file: &ManifestFile,
+    options: &ShardingOptions,
+    chain: Chain,
+) -> Result<Shard> {
+    // File path should come in this format:
     // /sourcify-repository-2025-03-24T03-00-26/full_match.1.00.tar.gz
     //                                                     - --
     //                                                     | | shard prefix
@@ -111,7 +127,7 @@ fn add_from_manifest(file: &ManifestFile, options: &ShardingOptions, chain: Chai
     } else {
         bail!("Invalid match type in archive path: {}", file.path);
     };
-    
+
     if match_type.is_partial() && options.exclude_partials {
         bail!("Partials are excluded");
     }
@@ -123,7 +139,9 @@ fn add_from_manifest(file: &ManifestFile, options: &ShardingOptions, chain: Chai
         bail!("Wrong chain");
     }
 
-    let id_part = parts.next().ok_or(Error::msg("Failed to get shard prefix"))?;
+    let id_part = parts
+        .next()
+        .ok_or(Error::msg("Failed to get shard prefix"))?;
     let id = u16::from_str_radix(id_part, 16)?;
 
     if !options.get_id_range().contains(&id) {
@@ -186,8 +204,7 @@ pub struct ContractArchive {
 impl ContractArchive {
     pub fn contracts(&self) -> impl Iterator<Item = Contract> {
         let dir = fs::read_dir(&self.contracts_path).expect("Could not open contract directory.");
-        dir
-            .flatten()
+        dir.flatten()
             .map(|dir_entry| -> Result<Contract> {
                 let contract_path = dir_entry.path();
                 let contract = Contract::new(&contract_path)?;
@@ -207,7 +224,9 @@ impl ContractArchive {
     }
 
     pub fn contract_count(&self) -> usize {
-        fs::read_dir(&self.contracts_path).map(|i| i.count()).unwrap_or(0)
+        fs::read_dir(&self.contracts_path)
+            .map(|i| i.count())
+            .unwrap_or(0)
     }
 
     pub fn clean(&self) {
@@ -221,7 +240,7 @@ impl Drop for ContractArchive {
     }
 }
 
-/// A single contract, found inside a `ContractArchive`. Source files for this contract have not been read or 
+/// A single contract, found inside a `ContractArchive`. Source files for this contract have not been read or
 /// processed, but can be found in the directory at `sources_path`.
 pub struct Contract {
     pub name: String,
@@ -231,7 +250,11 @@ pub struct Contract {
 
 impl Contract {
     fn new(contract_path: &PathBuf) -> Result<Contract> {
-        let name = contract_path.file_name().unwrap().to_str().ok_or(Error::msg("Could not get contract directory name"))?;
+        let name = contract_path
+            .file_name()
+            .unwrap()
+            .to_str()
+            .ok_or(Error::msg("Could not get contract directory name"))?;
 
         let metadata_file = fs::File::open(contract_path.join("metadata.json"))?;
         let reader = BufReader::new(metadata_file);
@@ -240,8 +263,8 @@ impl Contract {
 
         let sources_path = contract_path.join("sources");
 
-        Ok(Contract{
-            metadata, 
+        Ok(Contract {
+            metadata,
             sources_path,
             name: name.into(),
         })
@@ -265,7 +288,9 @@ impl Contract {
     }
 
     pub fn sources_count(&self) -> usize {
-        fs::read_dir(&self.sources_path).map(|i| i.count()).unwrap_or(0)
+        fs::read_dir(&self.sources_path)
+            .map(|i| i.count())
+            .unwrap_or(0)
     }
 
     pub fn version(&self) -> Version {

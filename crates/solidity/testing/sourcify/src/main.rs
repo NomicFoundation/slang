@@ -1,21 +1,23 @@
 mod chains;
-mod compilation_builder;
-mod metadata;
 mod command;
-mod sourcify;
+mod compilation_builder;
 mod events;
+mod metadata;
 mod reporting;
 mod results;
-
-use events::{Events, TestOutcome};
-use infra_utils::terminal::Terminal;
-use semver::Version;
-use slang_solidity::{compilation::CompilationUnit, cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange}, diagnostic::{Diagnostic, Severity}};
-use sourcify::{Contract, ContractArchive, Repository};
+mod sourcify;
 
 use anyhow::{Error, Result};
 use clap::Parser;
-use rayon::{iter::ParallelBridge, prelude::ParallelIterator};
+use events::{Events, TestOutcome};
+use infra_utils::terminal::Terminal;
+use rayon::iter::ParallelBridge;
+use rayon::prelude::ParallelIterator;
+use semver::Version;
+use slang_solidity::compilation::CompilationUnit;
+use slang_solidity::cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange};
+use slang_solidity::diagnostic::{Diagnostic, Severity};
+use sourcify::{Contract, ContractArchive, Repository};
 
 fn main() -> Result<()> {
     let command::Cli { command } = command::Cli::parse();
@@ -27,7 +29,7 @@ fn main() -> Result<()> {
 
 fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     Terminal::step(format!(
-        "Initialize {chain}/{network}", 
+        "Initialize {chain}/{network}",
         chain = cmd.chain.name(),
         network = cmd.chain.network_name()
     ));
@@ -41,7 +43,7 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
 
     let chain = cmd.chain;
     let shard_count = shards.len();
-    
+
     let (tx, rx) = std::sync::mpsc::channel::<ContractArchive>();
 
     // process_thread vs. fetching_thread - we don't want the thread to take ownership of repo
@@ -50,7 +52,11 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     let process_thread = std::thread::spawn(move || {
         let mut events = Events::new(shard_count, 0);
         for archive in rx {
-            Terminal::step(format!("Testing shard {}/{:#04x}", archive.match_type.dir_name(), archive.id));
+            Terminal::step(format!(
+                "Testing shard {}/{:#04x}",
+                archive.match_type.dir_name(),
+                archive.id
+            ));
             events.start_directory(archive.contract_count());
             if cmd.trace {
                 run_with_trace(&archive, &events, cmd.check_bindings);
@@ -68,14 +74,14 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
             match repo.fetch_archive(&shard, chain) {
                 Ok(archive) => {
                     t.send(archive).unwrap();
-                },
+                }
                 Err(e) => eprintln!("Failed to create archive: {e}"),
             }
         }
     };
 
     fetcher(tx);
-   
+
     process_thread.join().unwrap();
 
     Ok(())
@@ -87,7 +93,10 @@ fn test_contract(cmd: &command::TestCommand, contract_id: &str) -> Result<()> {
 
     let contract_shard_id: u16 = contract_id.get(2..4).unwrap().parse()?;
 
-    let contract_shard = shards.iter().find(|shard| shard.id == contract_shard_id).ok_or(Error::msg(format!("Shard for {contract_id} not found")))?;
+    let contract_shard = shards
+        .iter()
+        .find(|shard| shard.id == contract_shard_id)
+        .ok_or(Error::msg(format!("Shard for {contract_id} not found")))?;
 
     let archive = repo.fetch_archive(contract_shard, cmd.chain)?;
     let contract = archive.get_contract(contract_id)?;
@@ -146,7 +155,11 @@ fn run_with_trace(archive: &ContractArchive, events: &Events, check_bindings: bo
 }
 
 fn run_in_parallel(archive: &ContractArchive, events: &Events, check_bindings: bool) {
-    archive.contracts().par_bridge().panic_fuse().for_each(|contract| run_test(&contract, events, check_bindings));
+    archive
+        .contracts()
+        .par_bridge()
+        .panic_fuse()
+        .for_each(|contract| run_test(&contract, events, check_bindings));
 }
 
 fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
@@ -166,12 +179,18 @@ fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
             }
 
             let should_check_bindings = check_bindings && test_outcome == TestOutcome::Passed;
-            if should_check_bindings && run_bindings_check(&unit, events, &contract.version()).is_err() {
+            if should_check_bindings
+                && run_bindings_check(&unit, events, &contract.version()).is_err()
+            {
                 test_outcome = TestOutcome::Failed;
             }
         }
         Err(e) => {
-            events.trace(format!("Failed to compile contract {}: {e}\n{}", contract.name, e.backtrace()));
+            events.trace(format!(
+                "Failed to compile contract {}: {e}\n{}",
+                contract.name,
+                e.backtrace()
+            ));
             test_outcome = TestOutcome::Unresolved;
         }
     }
@@ -180,7 +199,11 @@ fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
     events.test(test_outcome);
 }
 
-fn run_bindings_check(compilation_unit: &CompilationUnit, events: &Events, version: &Version) -> Result<(), BindingError> {
+fn run_bindings_check(
+    compilation_unit: &CompilationUnit,
+    events: &Events,
+    version: &Version,
+) -> Result<(), BindingError> {
     let binding_graph = compilation_unit.binding_graph();
 
     for reference in binding_graph.all_references() {
@@ -196,8 +219,10 @@ fn run_bindings_check(compilation_unit: &CompilationUnit, events: &Events, versi
             let cursor = reference.get_cursor().to_owned();
 
             let binding_error = BindingError::UnresolvedReference(cursor);
-            events.bindings_error(format!("[{version}] Binding Error: Reference has no definitions"));
-            
+            events.bindings_error(format!(
+                "[{version}] Binding Error: Reference has no definitions"
+            ));
+
             return Err(binding_error);
         }
     }
@@ -223,7 +248,9 @@ fn run_bindings_check(compilation_unit: &CompilationUnit, events: &Events, versi
                 && binding_graph.reference_at(&cursor).is_none()
             {
                 let binding_error = BindingError::UnboundIdentifier(cursor.clone());
-                events.bindings_error(format!("[{version}] Binding Error: No definition or reference"));
+                events.bindings_error(format!(
+                    "[{version}] Binding Error: No definition or reference"
+                ));
 
                 return Err(binding_error);
             }
@@ -232,4 +259,3 @@ fn run_bindings_check(compilation_unit: &CompilationUnit, events: &Events, versi
 
     Ok(())
 }
-

@@ -1,7 +1,8 @@
 use std::ops::Range;
 
-use crate::chains::Chain;
 use clap::{Parser, Subcommand};
+
+use crate::chains::Chain;
 
 #[derive(Debug, Parser)]
 pub struct Cli {
@@ -73,7 +74,10 @@ impl TestCommand {
         if self.sharding_options.shard_count.is_none() {
             None
         } else {
-            Some((self.sharding_options.shard_count.unwrap(), self.sharding_options.shard_index.unwrap()))
+            Some((
+                self.sharding_options.shard_count.unwrap(),
+                self.sharding_options.shard_index.unwrap(),
+            ))
         }
     }
 }

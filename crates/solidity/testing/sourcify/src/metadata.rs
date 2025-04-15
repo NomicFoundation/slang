@@ -1,4 +1,6 @@
-use std::{collections::HashMap, path::{Component, PathBuf}, str::FromStr};
+use std::collections::HashMap;
+use std::path::{Component, PathBuf};
+use std::str::FromStr;
 
 use anyhow::{bail, Error, Result};
 use semver::{BuildMetadata, Prerelease, Version};
@@ -8,7 +10,7 @@ use serde::Deserialize;
 #[serde(try_from = "ContractMetadataResponse")]
 pub struct ContractMetadata {
     pub version: Version,
-    pub target: String,   
+    pub target: String,
     pub remappings: Vec<ImportRemap>,
     pub sources: Vec<FileMapping>,
 }
@@ -44,7 +46,9 @@ impl ContractMetadata {
                 return Ok(source.real_name.clone());
             }
         }
-        Err(Error::msg(format!("Could not get real name for import {virtual_path}")))
+        Err(Error::msg(format!(
+            "Could not get real name for import {virtual_path}"
+        )))
     }
 
     pub fn get_virtual_path(&self, real_name: &str) -> Result<String> {
@@ -53,7 +57,9 @@ impl ContractMetadata {
                 return Ok(source.virtual_path.clone());
             }
         }
-        Err(Error::msg(format!("Could not get virtual path for source file {real_name}")))
+        Err(Error::msg(format!(
+            "Could not get virtual path for source file {real_name}"
+        )))
     }
 
     fn remap_import(&self, import_path: &str) -> Option<String> {
@@ -65,7 +71,7 @@ impl ContractMetadata {
                         if r.mapped.len() < remap.mapped.len() {
                             longest_match = Some(&remap);
                         }
-                    },
+                    }
                     None => {
                         longest_match = Some(&remap);
                     }
@@ -83,7 +89,9 @@ impl ContractMetadata {
     /// Resolve an import path that is relative to `source_path`.
     fn resolve_relative_import(&self, source_path: &str, import_path: &str) -> Result<String> {
         let source_file_path = PathBuf::from_str(source_path)?;
-        let source_dir = source_file_path.parent().ok_or(Error::msg(format!("Could not get directory of source file {source_path}")))?;
+        let source_dir = source_file_path.parent().ok_or(Error::msg(format!(
+            "Could not get directory of source file {source_path}"
+        )))?;
 
         let import_path = PathBuf::from_str(&import_path)?;
 
@@ -104,9 +112,11 @@ impl ContractMetadata {
             // ../a/b.sol - relative, but one dir above `source_dir`
             Component::ParentDir => {
                 resolved_parts.extend(source_dir_parts);
-               resolved_parts.pop();
-            },
-            Component::Prefix(_) => bail!("Found prefix component in import path, which is not supported"),
+                resolved_parts.pop();
+            }
+            Component::Prefix(_) => {
+                bail!("Found prefix component in import path, which is not supported")
+            }
         }
 
         for component in import_path_components {
@@ -114,8 +124,8 @@ impl ContractMetadata {
                 norm @ Component::Normal(_) => resolved_parts.push(norm),
                 Component::ParentDir => {
                     resolved_parts.pop();
-                },
-                Component::CurDir => {},
+                }
+                Component::CurDir => {}
                 invalid => bail!("Invalid path component found inside import path: {invalid:?}"),
             }
         }
@@ -127,8 +137,12 @@ impl ContractMetadata {
     /// Resolve an import from a source file which was imported using a URL. These need a bit of special handling
     /// because the resolved path needs to also be a URL.
     fn resolve_relative_url_import(&self, source_path: &str, import_path: &str) -> Result<String> {
-        let (proto, rest) = source_path.split_once("://").ok_or(Error::msg("Cannot parse url"))?;
-        let (host, path) = rest.split_once("/").ok_or(Error::msg("Cannot parse path"))?;
+        let (proto, rest) = source_path
+            .split_once("://")
+            .ok_or(Error::msg("Cannot parse url"))?;
+        let (host, path) = rest
+            .split_once("/")
+            .ok_or(Error::msg("Cannot parse path"))?;
 
         let resolved_path = self.resolve_relative_import(path, import_path)?;
 
@@ -148,7 +162,7 @@ pub struct FileMapping {
     /// be used to read the content of a source file.
     real_name: String,
     /// The path to the source file in the contract's "virtual filesystem". This is the
-    /// path to the source file as the contract was originally constructed. This value 
+    /// path to the source file as the contract was originally constructed. This value
     /// should be used when resolving imports to the real source files.
     virtual_path: String,
 }
@@ -197,12 +211,18 @@ impl TryFrom<ContractMetadataResponse> for ContractMetadata {
         version.pre = Prerelease::EMPTY;
         version.build = BuildMetadata::EMPTY;
 
-        let target = response.settings.compilation_target.keys().take(1).collect::<Vec<_>>()[0].to_owned();
+        let target = response
+            .settings
+            .compilation_target
+            .keys()
+            .take(1)
+            .collect::<Vec<_>>()[0]
+            .to_owned();
 
         let mut remappings = vec![];
         for remap in response.settings.remappings {
             if let Some((mapped, original)) = remap.split_once('=') {
-                remappings.push(ImportRemap{
+                remappings.push(ImportRemap {
                     original: original.into(),
                     mapped: mapped.trim_start_matches(':').into(),
                 });
@@ -211,7 +231,7 @@ impl TryFrom<ContractMetadataResponse> for ContractMetadata {
 
         let mut sources = vec![];
         for (virtual_path, source) in response.sources {
-            sources.push(FileMapping{
+            sources.push(FileMapping {
                 virtual_path,
                 real_name: source.keccak256,
             });

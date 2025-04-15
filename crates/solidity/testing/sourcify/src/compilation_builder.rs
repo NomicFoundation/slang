@@ -10,7 +10,7 @@ pub struct CompilationBuilder<'c> {
     read_buffer: String,
 }
 
-impl <'c> CompilationBuilder<'c> {
+impl<'c> CompilationBuilder<'c> {
     pub fn new(contract: &'c Contract) -> Result<CompilationBuilder<'c>> {
         Ok(CompilationBuilder {
             contract,
@@ -39,7 +39,8 @@ impl <'c> CompilationBuilder<'c> {
 
         self.contract.read_file(&filename, &mut self.read_buffer)?;
 
-        let AddFileResponse { import_paths } = self.internal.add_file(filename.clone(), &self.read_buffer);
+        let AddFileResponse { import_paths } =
+            self.internal.add_file(filename.clone(), &self.read_buffer);
 
         for import_path in import_paths {
             let import_path = import_path.node().unparse();
@@ -50,7 +51,10 @@ impl <'c> CompilationBuilder<'c> {
                 .unwrap()
                 .trim();
 
-            let import_real_name = self.contract.metadata.resolve_import(&filename, &import_path)?;
+            let import_real_name = self
+                .contract
+                .metadata
+                .resolve_import(&filename, &import_path)?;
             self.add_file(&import_real_name)?;
         }
 
