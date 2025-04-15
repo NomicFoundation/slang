@@ -11,12 +11,14 @@ use std::path::PathBuf;
 
 use anyhow::{Error, Result};
 use clap::Parser;
+use command::{Commands, ShowCombinedResultsCommand};
 use events::{Events, TestOutcome};
 use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 use infra_utils::terminal::Terminal;
 use rayon::iter::ParallelBridge;
 use rayon::prelude::ParallelIterator;
+use results::{display_all_results, AllResults};
 use semver::Version;
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange};
@@ -26,7 +28,8 @@ use sourcify::{Contract, ContractArchive, Repository};
 fn main() -> Result<()> {
     let command::Cli { command } = command::Cli::parse();
     match command {
-        command::Commands::Test(test_command) => run_test_command(test_command),
+        Commands::Test(test_command) => run_test_command(test_command),
+        Commands::ShowCombinedResults(results_command) => run_show_combined_results_command(results_command),
     }
 }
 
@@ -282,3 +285,13 @@ fn run_bindings_check(
 
     Ok(())
 }
+
+fn run_show_combined_results_command(command: ShowCombinedResultsCommand) -> Result<()> {
+    let ShowCombinedResultsCommand { results_file } = command;
+
+    let contents = results_file.read_to_string()?;
+    let all_results: AllResults = serde_json::from_str(&contents)?;
+    display_all_results(&all_results);
+    Ok(())
+}
+

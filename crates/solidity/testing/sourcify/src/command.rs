@@ -1,4 +1,4 @@
-use std::ops::Range;
+use std::{ops::Range, path::PathBuf};
 
 use clap::{Parser, Subcommand};
 
@@ -13,6 +13,34 @@ pub struct Cli {
 #[derive(Subcommand, Debug)]
 pub enum Commands {
     Test(TestCommand),
+    ShowCombinedResults(ShowCombinedResultsCommand),
+}
+
+#[derive(Debug, Parser)]
+pub struct TestCommand {
+    #[command(subcommand)]
+    pub chain: Chain,
+
+    #[command(flatten)]
+    pub sharding_options: ShardingOptions,
+
+    #[arg(long, conflicts_with = "sharding_options")]
+    /// Specify a single contract to test using the contract address.
+    pub contract: Option<String>,
+
+    #[arg(long, default_value_t = false)]
+    /// Run bindings tests.
+    pub check_bindings: bool,
+
+    #[arg(long, default_value_t = false)]
+    /// Run tests sequentially, and output extra logging. Tests will run significantly slower
+    /// with this option enabled.
+    pub trace: bool,
+}
+
+#[derive(Debug, Parser)]
+pub struct ShowCombinedResultsCommand {
+    pub results_file: PathBuf,
 }
 
 #[derive(Debug, Parser)]
@@ -45,26 +73,4 @@ impl ShardingOptions {
             0..256
         }
     }
-}
-
-#[derive(Debug, Parser)]
-pub struct TestCommand {
-    #[command(subcommand)]
-    pub chain: Chain,
-
-    #[command(flatten)]
-    pub sharding_options: ShardingOptions,
-
-    #[arg(long, conflicts_with = "sharding_options")]
-    /// Specify a single contract to test using the contract address.
-    pub contract: Option<String>,
-
-    #[arg(long, default_value_t = false)]
-    /// Run bindings tests.
-    pub check_bindings: bool,
-
-    #[arg(long, default_value_t = false)]
-    /// Run tests sequentially, and output extra logging. Tests will run significantly slower
-    /// with this option enabled.
-    pub trace: bool,
 }
