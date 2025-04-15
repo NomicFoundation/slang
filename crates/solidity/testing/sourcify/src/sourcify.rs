@@ -22,14 +22,22 @@ pub struct Repository {
     chain: Chain,
     /// The parent path where fetched `ContractArchives` will be unpacked to.
     path: PathBuf,
+    /// If `true`, then the files for this repository will not be deleted after the test is complete.
+    should_save: bool,
 }
 
 impl Repository {
-    pub fn new(chain: Chain) -> Result<Repository> {
-        let path = std::env::temp_dir().join(format!("sourcify_{}", chain.id()));
+    pub fn new(chain: Chain, should_save: bool) -> Result<Repository> {
+        let root = if should_save {
+            PathBuf::from("target")
+        } else {
+            std::env::temp_dir()
+        };
+
+        let path = root.join(format!("sourcify_{}", chain.id()));
         create_or_replace_dir(&path)?;
 
-        Ok(Repository { chain, path })
+        Ok(Repository { chain, path, should_save })
     }
 
     /// Fetch shard info for the current chain.
@@ -80,13 +88,20 @@ impl Repository {
                 shard.match_type.dir_name(),
                 chain.id()
             )),
+            should_save: self.should_save,
         })
+    }
+
+    fn clean(&self) {
+        if !self.should_save {
+            fs::remove_dir_all(&self.path).unwrap();
+        }
     }
 }
 
 impl Drop for Repository {
     fn drop(&mut self) {
-        fs::remove_dir_all(&self.path).unwrap();
+        self.clean();
     }
 }
 
@@ -188,6 +203,7 @@ pub struct ContractArchive {
     pub id: u16,
     pub match_type: MatchType,
     contracts_path: PathBuf,
+    should_save: bool,
 }
 
 impl ContractArchive {
@@ -219,7 +235,9 @@ impl ContractArchive {
     }
 
     pub fn clean(&self) {
-        let _ = fs::remove_dir_all(&self.contracts_path);
+        if !self.should_save {
+            let _ = fs::remove_dir_all(&self.contracts_path);
+        }
     }
 }
 

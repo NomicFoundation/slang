@@ -9,7 +9,7 @@ mod sourcify;
 
 use std::path::PathBuf;
 
-use anyhow::{Error, Result};
+use anyhow::{bail, Result};
 use clap::Parser;
 use command::{Commands, ShowCombinedResultsCommand};
 use events::{Events, TestOutcome};
@@ -44,7 +44,7 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
         return test_contract(&cmd, contract);
     }
 
-    let repo = Repository::new(cmd.chain)?;
+    let repo = Repository::new(cmd.chain, false)?;
     let shards = repo.fetch_shards(&cmd.sharding_options)?;
 
     let chain = cmd.chain;
@@ -113,27 +113,30 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
 }
 
 fn test_contract(cmd: &command::TestCommand, contract_id: &str) -> Result<()> {
-    let repo = Repository::new(cmd.chain)?;
+    let repo = Repository::new(cmd.chain, cmd.save)?;
     let shards = repo.fetch_shards(&cmd.sharding_options)?;
 
-    let contract_shard_id: u16 = contract_id.get(2..4).unwrap().parse()?;
+    let contract_shard_id = u16::from_str_radix(contract_id.get(2..4).unwrap(), 16)?;
 
-    let contract_shard = shards
+    let contract_shards = shards
         .iter()
-        .find(|shard| shard.id == contract_shard_id)
-        .ok_or(Error::msg(format!("Shard for {contract_id} not found")))?;
+        .filter(|shard| shard.id == contract_shard_id);
 
-    let archive = repo.fetch_archive(contract_shard, cmd.chain)?;
-    let contract = archive.get_contract(contract_id)?;
+    for contract_shard in contract_shards {
+        let archive = repo.fetch_archive(contract_shard, cmd.chain)?;
+        if let Ok(contract) = archive.get_contract(contract_id) {
+            let mut events = Events::new(1, 0);
+            events.start_directory(1);
 
-    let mut events = Events::new(1, 0);
-    events.start_directory(1);
+            run_test(&contract, &events, false);
 
-    run_test(&contract, &events, false);
+            events.finish_directory();
 
-    events.finish_directory();
+            return Ok(());
+        }
+    }
 
-    Ok(())
+    bail!("Contract {contract_id} not found");
 }
 
 enum BindingError {

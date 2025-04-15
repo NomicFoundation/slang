@@ -24,17 +24,23 @@ pub struct TestCommand {
     #[command(flatten)]
     pub sharding_options: ShardingOptions,
 
-    #[arg(long, conflicts_with = "sharding_options")]
     /// Specify a single contract to test using the contract address.
+    #[arg(long, conflicts_with = "shard_count")]
     pub contract: Option<String>,
 
-    #[arg(long, default_value_t = false)]
+    /// Save the fetch archive under `target/` and don't delete it after the test
+    /// is complete. Only used for debugging purposes. Requires you to select a
+    /// specific contract to test using the `--contract` option.
+    #[arg(long, requires = "contract", default_value_t = false)]
+    pub save: bool,
+
     /// Run bindings tests.
+    #[arg(long, default_value_t = false)]
     pub check_bindings: bool,
 
-    #[arg(long, default_value_t = false)]
     /// Run tests sequentially, and output extra logging. Tests will run significantly slower
     /// with this option enabled.
+    #[arg(long, default_value_t = false)]
     pub trace: bool,
 }
 
@@ -45,18 +51,18 @@ pub struct ShowCombinedResultsCommand {
 
 #[derive(Debug, Parser)]
 pub struct ShardingOptions {
-    #[arg(long, requires = "shard_index")]
     /// Divide the dataset into a smaller number of shards. Must be a factor of 256. 'shard_index'
     /// must be included along with this option.
+    #[arg(long, requires = "shard_index")]
     pub shard_count: Option<usize>,
 
-    #[arg(long, requires = "shard_count")]
     /// Select a single shard to test. Must be within the range [0..shard_count). Required if
     /// 'shard_count' is specified.
+    #[arg(long, requires = "shard_count")]
     pub shard_index: Option<usize>,
 
-    #[arg(long, default_value_t = false)]
     /// If set, will only test contracts under the 'full_match' category.
+    #[arg(long, default_value_t = false)]
     pub exclude_partials: bool,
 }
 

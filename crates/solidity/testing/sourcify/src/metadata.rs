@@ -19,9 +19,15 @@ impl ContractMetadata {
     /// Given an import path from a source file, traverse the remappings to find the real filename of
     /// the target source file.
     pub fn resolve_import(&self, source_name: &str, import_path: &str) -> Result<String> {
-        if let Some(remapped_import) = self.remap_import(import_path) {
+        let source_file_path = self.get_virtual_path(source_name)?;
+
+        if let Some(remapped_import) = self.remap_import(&source_file_path, import_path) {
             // Paths that have been remapped don't need to go through path resolution.
             return self.get_real_name(&remapped_import);
+        }
+
+        if import_path.starts_with('@') {
+            return self.get_real_name(import_path);
         }
 
         if path_is_url(import_path) {
@@ -29,20 +35,37 @@ impl ContractMetadata {
             return self.get_real_name(import_path);
         }
 
-        let source_file_path = self.get_virtual_path(source_name)?;
+        let source_is_url = path_is_url(&source_file_path);
 
-        let resolved_path = if path_is_url(&source_file_path) {
+        let resolved_path = if source_is_url {
             self.resolve_relative_url_import(&source_file_path, import_path)?
         } else {
             self.resolve_relative_import(&source_file_path, import_path)?
         };
 
-        self.get_real_name(&resolved_path)
+        match self.get_real_name(&resolved_path) {
+            e @ Err(_) => {
+                // Try to recover from some corner cases
+                if source_is_url {
+                    // Sometimes imports from URL-imports don't share the URL prefix
+                    self.get_real_name(import_path)
+                } else if let Some(remapped_import) = self.remap_import(&source_file_path, &resolved_path) {
+                    // Sometimes relative paths still need to be remapped after being resolved
+                    self.get_real_name(&remapped_import)
+                } else {
+                    // All other cases just return an error
+                    e
+                }
+            },
+            real_name => real_name,
+        }
     }
 
     pub fn get_real_name(&self, virtual_path: &str) -> Result<String> {
         for source in &self.sources {
-            if source.virtual_path == virtual_path {
+            // On rare occasions imports may have '//' in between directories. solc seems
+            // to consider these interchangeable with '/'
+            if source.virtual_path == virtual_path || source.virtual_path.replace("//", "/") == virtual_path {
                 return Ok(source.real_name.clone());
             }
         }
@@ -62,13 +85,23 @@ impl ContractMetadata {
         )))
     }
 
-    fn remap_import(&self, import_path: &str) -> Option<String> {
+    fn remap_import(&self, source_name: &str, import_path: &str) -> Option<String> {
         let mut longest_match: Option<&ImportRemap> = None;
         for remap in self.remappings.iter() {
-            if import_path.starts_with(&remap.mapped) {
+            if remap.has_known_bug() {
+                continue;
+            }
+
+            if let Some(context) = &remap.context {
+                if !source_name.starts_with(context) {
+                    continue;
+                }
+            }
+
+            if import_path.starts_with(&remap.prefix) {
                 match longest_match {
                     Some(r) => {
-                        if r.mapped.len() < remap.mapped.len() {
+                        if r.len() < remap.len() {
                             longest_match = Some(&remap);
                         }
                     }
@@ -80,7 +113,7 @@ impl ContractMetadata {
         }
 
         if let Some(r) = longest_match {
-            Some(import_path.replacen(&r.mapped, &r.original, 1))
+            Some(import_path.replacen(&r.prefix, &r.target, 1))
         } else {
             None
         }
@@ -168,10 +201,35 @@ pub struct FileMapping {
 }
 
 pub struct ImportRemap {
-    /// A stand-in value for the full path (`original`) to the imported file.
-    mapped: String,
-    /// The full path to the imported file.
-    original: String,
+    /// If provided, then this remap only applies to imports inside source files
+    /// whose paths begin with this string. 
+    context: Option<String>,
+    /// The prefix value which will be found in the import path and replaced by
+    /// `target`.
+    prefix: String,
+    /// The "real" import path. Replacing `prefix` with `target` in the import
+    /// path from a source file should give you a path that can be looked up
+    /// in `Metadata::sources`.
+    target: String,
+}
+
+impl ImportRemap {
+    fn len(&self) -> usize {
+        self.context.as_ref().map_or(0, |c| c.len()) + self.prefix.len()
+    }
+
+    /// Sometimes contracts contain a remapping entry that, for whatever reason,
+    /// is buggy. We can collect buggy remaps here so they're skipped during
+    /// import path resolution.
+    fn has_known_bug(&self) -> bool {
+        // Ex Contract: 0x56D47372A66b3f640Bff83E745dE7D10f4B29075
+        // Remapping list includes ":./=remappings.txt/"
+        if self.target.contains("remappings.txt") {
+            return true;
+        }
+
+        false
+    }
 }
 
 #[derive(Deserialize)]
@@ -221,11 +279,18 @@ impl TryFrom<ContractMetadataResponse> for ContractMetadata {
 
         let mut remappings = vec![];
         for remap in response.settings.remappings {
-            if let Some((mapped, original)) = remap.split_once('=') {
-                remappings.push(ImportRemap {
-                    original: original.into(),
-                    mapped: mapped.trim_start_matches(':').into(),
-                });
+            if let Some((context, rest)) = remap.split_once(':') {
+                if let Some((prefix, target)) = rest.split_once('=') {
+                    remappings.push(ImportRemap {
+                        context: if context.is_empty() {
+                            None
+                        } else {
+                            Some(context.into())
+                        },
+                        prefix: prefix.into(),
+                        target: target.into(),
+                    })
+                }
             }
         }
 
