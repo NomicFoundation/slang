@@ -228,10 +228,6 @@ impl ContractArchive {
         Contract::new(&contract_path)
     }
 
-    pub fn contracts_path(&self) -> String {
-        self.contracts_path.to_str().unwrap().into()
-    }
-
     pub fn contract_count(&self) -> usize {
         fs::read_dir(&self.contracts_path)
             .map(|i| i.count())
