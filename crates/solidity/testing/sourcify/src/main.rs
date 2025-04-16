@@ -167,6 +167,11 @@ fn run_in_parallel(archive: &ContractArchive, events: &Events, check_bindings: b
 }
 
 fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
+    if uses_exotic_parser_bug(contract) {
+        events.test(TestOutcome::Incompatible);
+        return;
+    }
+
     let sources_count = contract.sources_count();
     events.inc_files_count(sources_count);
 
@@ -220,6 +225,18 @@ fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
 
     events.inc_files_processed(sources_count);
     events.test(test_outcome);
+}
+
+fn uses_exotic_parser_bug(contract: &Contract) -> bool {
+    static CONTRACTS_WITH_EXOTIC_PARSER_BUGS: &[&str] = &[
+        // 0.4.24: // Accepts malformed `* /` in multi-line comments:
+        // Fixed in 0.4.25: https://github.com/ethereum/solidity/pull/4937
+        "0x79bb6f4492d5cb13fad8ca0ecfbccd9e2c26ac42",
+    ];
+
+    CONTRACTS_WITH_EXOTIC_PARSER_BUGS
+        .iter()
+        .any(|c| c == &contract.name)
 }
 
 enum BindingError {

@@ -14,6 +14,7 @@ pub enum TestOutcome {
     Passed,
     Failed,
     Unresolved,
+    Incompatible,
 }
 
 pub struct Events {
@@ -27,6 +28,7 @@ pub struct Events {
     passed: ProgressBar,
     failed: ProgressBar,
     unresolved: ProgressBar,
+    incompatible: ProgressBar,
 }
 
 impl Events {
@@ -47,6 +49,7 @@ impl Events {
         let passed = reporter.add_counter("✅ Passed", Color::Green, 0);
         let failed = reporter.add_counter("❌ Failed", Color::Red, 0);
         let unresolved = reporter.add_counter("❔ Unresolved", Color::White, 0);
+        let incompatible = reporter.add_counter("❕ Incompatible", Color::White, 0);
 
         reporter.add_blank();
 
@@ -61,6 +64,7 @@ impl Events {
             passed,
             failed,
             unresolved,
+            incompatible,
         }
     }
 
@@ -105,6 +109,7 @@ impl Events {
             TestOutcome::Passed => self.passed.inc(1),
             TestOutcome::Failed => self.failed.inc(1),
             TestOutcome::Unresolved => self.unresolved.inc(1),
+            TestOutcome::Incompatible => self.incompatible.inc(1),
         };
     }
 
@@ -142,6 +147,7 @@ impl Events {
             passed: self.passed.position(),
             failed: self.failed.position(),
             unresolved: self.unresolved.position(),
+            incompatible: self.incompatible.position(),
             elapsed: self.all_shards.elapsed(),
         }
     }
