@@ -104,6 +104,7 @@ impl Events {
         self.passed.inc_length(1);
         self.failed.inc_length(1);
         self.unresolved.inc_length(1);
+        self.incompatible.inc_length(1);
 
         match outcome {
             TestOutcome::Passed => self.passed.inc(1),

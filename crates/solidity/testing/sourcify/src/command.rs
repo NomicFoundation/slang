@@ -23,6 +23,9 @@ pub struct TestCommand {
     pub chain: Chain,
 
     #[command(flatten)]
+    pub test_options: TestOptions,
+    
+    #[command(flatten)]
     pub sharding_options: ShardingOptions,
 
     /// Specify a single contract to test using the contract address.
@@ -35,10 +38,6 @@ pub struct TestCommand {
     #[arg(long, requires = "contract", default_value_t = false)]
     pub save: bool,
 
-    /// Run bindings tests.
-    #[arg(long, default_value_t = false)]
-    pub check_bindings: bool,
-
     /// Run tests sequentially, and output extra logging. Tests will run significantly slower
     /// with this option enabled.
     #[arg(long, default_value_t = false)]
@@ -48,6 +47,19 @@ pub struct TestCommand {
 #[derive(Debug, Parser)]
 pub struct ShowCombinedResultsCommand {
     pub results_file: PathBuf,
+}
+
+#[derive(Debug, Parser)]
+pub struct TestOptions {
+    #[arg(long, default_value_t = true)]
+    pub check_parser: bool,
+
+    /// Run bindings tests.
+    #[arg(long, default_value_t = false)]
+    pub check_bindings: bool,
+
+    #[arg(long, default_value_t = false)]
+    pub check_infer_version: bool,
 }
 
 #[derive(Debug, Parser)]

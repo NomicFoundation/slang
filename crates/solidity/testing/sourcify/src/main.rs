@@ -11,7 +11,7 @@ use std::path::PathBuf;
 
 use anyhow::{bail, Result};
 use clap::Parser;
-use command::{Commands, ShowCombinedResultsCommand};
+use command::{Commands, ShowCombinedResultsCommand, TestOptions};
 use events::{Events, TestOutcome};
 use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
@@ -23,6 +23,7 @@ use semver::Version;
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
+use slang_solidity::utils::LanguageFacts;
 use sourcify::{Contract, ContractArchive, Repository};
 
 fn main() -> Result<()> {
@@ -46,7 +47,7 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     ));
 
     if let Some(contract) = &cmd.contract {
-        return test_contract(&cmd, contract);
+        return test_contract(&cmd, contract, &cmd.test_options);
     }
 
     let repo = Repository::new(cmd.chain, false)?;
@@ -70,9 +71,9 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
             ));
             events.start_directory(archive.contract_count());
             if cmd.trace {
-                run_with_trace(&archive, &events, cmd.check_bindings);
+                run_with_trace(&archive, &events, &cmd.test_options);
             } else {
-                run_in_parallel(&archive, &events, cmd.check_bindings);
+                run_in_parallel(&archive, &events, &cmd.test_options);
             }
             events.finish_directory();
         }
@@ -98,7 +99,7 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     let events = process_thread.join().unwrap();
 
     if GitHub::is_running_in_ci() {
-        let output_path = PathBuf::from("target").join("__SLANG_SANCTUARY_SHARD_RESULTS__.json");
+        let output_path = PathBuf::from("target").join("__SLANG_SOURCIFY_SHARD_RESULTS__.json");
         let results = events.to_results();
         let value = serde_json::to_string(&results)?;
 
@@ -117,7 +118,7 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     Ok(())
 }
 
-fn test_contract(cmd: &command::TestCommand, contract_id: &str) -> Result<()> {
+fn test_contract(cmd: &command::TestCommand, contract_id: &str, opts: &TestOptions) -> Result<()> {
     let repo = Repository::new(cmd.chain, cmd.save)?;
     let shards = repo.fetch_shards(&cmd.sharding_options)?;
 
@@ -131,7 +132,7 @@ fn test_contract(cmd: &command::TestCommand, contract_id: &str) -> Result<()> {
             let mut events = Events::new(1, 0);
             events.start_directory(1);
 
-            run_test(&contract, &events, false);
+            run_test(&contract, &events, opts);
 
             events.finish_directory();
 
@@ -142,14 +143,14 @@ fn test_contract(cmd: &command::TestCommand, contract_id: &str) -> Result<()> {
     bail!("Contract {contract_id} not found");
 }
 
-fn run_with_trace(archive: &ContractArchive, events: &Events, check_bindings: bool) {
+fn run_with_trace(archive: &ContractArchive, events: &Events, opts: &TestOptions) {
     for contract in archive.contracts() {
         events.trace(format!(
             "[{version}] Starting contract {name}",
             version = contract.version(),
             name = contract.name
         ));
-        run_test(&contract, events, check_bindings);
+        run_test(&contract, events, opts);
         events.trace(format!(
             "[{version}] Finished contract {name}",
             version = contract.version(),
@@ -158,15 +159,15 @@ fn run_with_trace(archive: &ContractArchive, events: &Events, check_bindings: bo
     }
 }
 
-fn run_in_parallel(archive: &ContractArchive, events: &Events, check_bindings: bool) {
+fn run_in_parallel(archive: &ContractArchive, events: &Events, opts: &TestOptions) {
     archive
         .contracts()
         .par_bridge()
         .panic_fuse()
-        .for_each(|contract| run_test(&contract, events, check_bindings));
+        .for_each(|contract| run_test(&contract, events, opts));
 }
 
-fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
+fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
     if uses_exotic_parser_bug(contract) {
         events.test(TestOutcome::Incompatible);
         return;
@@ -178,39 +179,16 @@ fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
     let mut test_outcome = TestOutcome::Passed;
     match contract.create_compilation_unit() {
         Ok(unit) => {
-            let mut source_buf = String::new();
-            for file in unit.files() {
-                if !file.errors().is_empty() {
-                    source_buf.clear();
-                    let _ = contract.read_file(file.id(), &mut source_buf);
-
-                    let source_name = contract
-                        .metadata
-                        .get_virtual_path(file.id())
-                        .unwrap_or(file.id().into());
-
-                    for error in file.errors() {
-                        let msg = slang_solidity::diagnostic::render(
-                            error,
-                            &source_name,
-                            &source_buf,
-                            true,
-                        );
-                        events.parse_error(format!(
-                            "[{version}] Parse error in contract {contract_name}\n{msg}",
-                            contract_name = contract.name,
-                            version = contract.version()
-                        ));
-                    }
-                    test_outcome = TestOutcome::Failed;
-                }
+            if opts.check_parser {
+                test_outcome = check_parsing_outcome(contract, &unit, events);
             }
 
-            let should_check_bindings = check_bindings && test_outcome == TestOutcome::Passed;
-            if should_check_bindings
-                && run_bindings_check(&unit, events, &contract.version()).is_err()
-            {
-                test_outcome = TestOutcome::Failed;
+            if opts.check_infer_version && test_outcome == TestOutcome::Passed {
+                test_outcome = check_infer_version_outcome(contract, &unit);
+            }
+
+            if opts.check_bindings && test_outcome == TestOutcome::Passed {
+                test_outcome = check_bindings_outcome(contract, &unit, events);
             }
         }
         Err(e) => {
@@ -225,6 +203,65 @@ fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
 
     events.inc_files_processed(sources_count);
     events.test(test_outcome);
+}
+
+fn check_parsing_outcome(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
+    let mut source_buf = String::new();
+
+    let mut test_outcome = TestOutcome::Passed;
+    for file in unit.files() {
+        if !file.errors().is_empty() {
+            source_buf.clear();
+            let _ = contract.read_file(file.id(), &mut source_buf);
+
+            let source_name = contract
+                .metadata
+                .get_virtual_path(file.id())
+                .unwrap_or(file.id().into());
+
+            for error in file.errors() {
+                let msg = slang_solidity::diagnostic::render(
+                    error,
+                    &source_name,
+                    &source_buf,
+                    true,
+                );
+                events.parse_error(format!(
+                    "[{version}] Parse error in contract {contract_name}\n{msg}",
+                    contract_name = contract.name,
+                    version = contract.version()
+                ));
+            }
+            test_outcome = TestOutcome::Failed;
+        }
+    }
+
+    test_outcome
+}
+
+fn check_infer_version_outcome(contract: &Contract, unit: &CompilationUnit) -> TestOutcome {
+    let mut source_buf = String::new();
+    let actual_version = contract.version();
+
+    for file in unit.files() {
+        source_buf.clear();
+
+        let _ = contract.read_file(file.id(), &mut source_buf);
+
+        if !LanguageFacts::infer_language_versions(&source_buf).any(|v| *v == actual_version) {
+            return TestOutcome::Failed;
+        }
+    }
+
+    TestOutcome::Passed
+}
+
+fn check_bindings_outcome(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
+    if run_bindings_check(unit, events, &contract.version()).is_ok() {
+        TestOutcome::Passed
+    } else {
+        TestOutcome::Failed
+    }
 }
 
 fn uses_exotic_parser_bug(contract: &Contract) -> bool {
