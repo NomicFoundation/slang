@@ -139,6 +139,86 @@ fn test_contract(cmd: &command::TestCommand, contract_id: &str) -> Result<()> {
     bail!("Contract {contract_id} not found");
 }
 
+fn run_with_trace(archive: &ContractArchive, events: &Events, check_bindings: bool) {
+    for contract in archive.contracts() {
+        events.trace(format!(
+            "[{version}] Starting contract {name}",
+            version = contract.version(),
+            name = contract.name
+        ));
+        run_test(&contract, events, check_bindings);
+        events.trace(format!(
+            "[{version}] Finished contract {name}",
+            version = contract.version(),
+            name = contract.name
+        ));
+    }
+}
+
+fn run_in_parallel(archive: &ContractArchive, events: &Events, check_bindings: bool) {
+    archive
+        .contracts()
+        .par_bridge()
+        .panic_fuse()
+        .for_each(|contract| run_test(&contract, events, check_bindings));
+}
+
+fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
+    let sources_count = contract.sources_count();
+    events.inc_files_count(sources_count);
+
+    let mut test_outcome = TestOutcome::Passed;
+    match contract.create_compilation_unit() {
+        Ok(unit) => {
+            let mut source_buf = String::new();
+            for file in unit.files() {
+                if !file.errors().is_empty() {
+                    source_buf.clear();
+                    let _ = contract.read_file(file.id(), &mut source_buf);
+
+                    let source_name = contract
+                        .metadata
+                        .get_virtual_path(file.id())
+                        .unwrap_or(file.id().into());
+
+                    for error in file.errors() {
+                        let msg = slang_solidity::diagnostic::render(
+                            error,
+                            &source_name,
+                            &source_buf,
+                            true,
+                        );
+                        events.parse_error(format!(
+                            "[{version}] Parse error in contract {contract_name}\n{msg}",
+                            contract_name = contract.name,
+                            version = contract.version()
+                        ));
+                    }
+                    test_outcome = TestOutcome::Failed;
+                }
+            }
+
+            let should_check_bindings = check_bindings && test_outcome == TestOutcome::Passed;
+            if should_check_bindings
+                && run_bindings_check(&unit, events, &contract.version()).is_err()
+            {
+                test_outcome = TestOutcome::Failed;
+            }
+        }
+        Err(e) => {
+            events.trace(format!(
+                "Failed to compile contract {}: {e}\n{}",
+                contract.name,
+                e.backtrace()
+            ));
+            test_outcome = TestOutcome::Unresolved;
+        }
+    }
+
+    events.inc_files_processed(sources_count);
+    events.test(test_outcome);
+}
+
 enum BindingError {
     UnresolvedReference(Cursor),
     UnboundIdentifier(Cursor),
@@ -173,67 +253,6 @@ impl Diagnostic for BindingError {
             }
         }
     }
-}
-
-fn run_with_trace(archive: &ContractArchive, events: &Events, check_bindings: bool) {
-    for contract in archive.contracts() {
-        events.trace(format!(
-            "[{version}] Starting contract {name}",
-            version = contract.version(),
-            name = contract.name
-        ));
-        run_test(&contract, events, check_bindings);
-        events.trace(format!(
-            "[{version}] Finished contract {name}",
-            version = contract.version(),
-            name = contract.name
-        ));
-    }
-}
-
-fn run_in_parallel(archive: &ContractArchive, events: &Events, check_bindings: bool) {
-    archive
-        .contracts()
-        .par_bridge()
-        .panic_fuse()
-        .for_each(|contract| run_test(&contract, events, check_bindings));
-}
-
-fn run_test(contract: &Contract, events: &Events, check_bindings: bool) {
-    let sources_count = contract.sources_count();
-    events.inc_files_count(sources_count);
-
-    let mut test_outcome = TestOutcome::Passed;
-    match contract.create_compilation_unit() {
-        Ok(unit) => {
-            for file in unit.files() {
-                if !file.errors().is_empty() {
-                    for error in file.errors() {
-                        events.parse_error(error.message());
-                    }
-                    test_outcome = TestOutcome::Failed;
-                }
-            }
-
-            let should_check_bindings = check_bindings && test_outcome == TestOutcome::Passed;
-            if should_check_bindings
-                && run_bindings_check(&unit, events, &contract.version()).is_err()
-            {
-                test_outcome = TestOutcome::Failed;
-            }
-        }
-        Err(e) => {
-            events.trace(format!(
-                "Failed to compile contract {}: {e}\n{}",
-                contract.name,
-                e.backtrace()
-            ));
-            test_outcome = TestOutcome::Unresolved;
-        }
-    }
-
-    events.inc_files_processed(sources_count);
-    events.test(test_outcome);
 }
 
 fn run_bindings_check(
