@@ -16,4 +16,8 @@ impl LanguageFacts {
     pub const LATEST_VERSION: Version = Version::new(
         {{ model.all_language_versions | last() | split(pat=".") | join(sep=", ") }}
     );
+
+    pub fn infer_language_versions(input: &str) -> impl Iterator<Item = &'static Version> {
+        crate::extensions::utils::infer_language_versions(input)
+    }
 }
