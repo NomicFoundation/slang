@@ -24,7 +24,7 @@ pub struct TestCommand {
 
     #[command(flatten)]
     pub test_options: TestOptions,
-    
+
     #[command(flatten)]
     pub sharding_options: ShardingOptions,
 

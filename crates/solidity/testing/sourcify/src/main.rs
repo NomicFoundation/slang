@@ -205,7 +205,11 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
     events.test(test_outcome);
 }
 
-fn check_parsing_outcome(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
+fn check_parsing_outcome(
+    contract: &Contract,
+    unit: &CompilationUnit,
+    events: &Events,
+) -> TestOutcome {
     let mut source_buf = String::new();
 
     let mut test_outcome = TestOutcome::Passed;
@@ -220,12 +224,8 @@ fn check_parsing_outcome(contract: &Contract, unit: &CompilationUnit, events: &E
                 .unwrap_or(file.id().into());
 
             for error in file.errors() {
-                let msg = slang_solidity::diagnostic::render(
-                    error,
-                    &source_name,
-                    &source_buf,
-                    true,
-                );
+                let msg =
+                    slang_solidity::diagnostic::render(error, &source_name, &source_buf, true);
                 events.parse_error(format!(
                     "[{version}] Parse error in contract {contract_name}\n{msg}",
                     contract_name = contract.name,
@@ -256,7 +256,11 @@ fn check_infer_version_outcome(contract: &Contract, unit: &CompilationUnit) -> T
     TestOutcome::Passed
 }
 
-fn check_bindings_outcome(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
+fn check_bindings_outcome(
+    contract: &Contract,
+    unit: &CompilationUnit,
+    events: &Events,
+) -> TestOutcome {
     if run_bindings_check(unit, events, &contract.version()).is_ok() {
         TestOutcome::Passed
     } else {
