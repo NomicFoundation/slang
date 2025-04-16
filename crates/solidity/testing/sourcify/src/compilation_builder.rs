@@ -54,7 +54,7 @@ impl<'c> CompilationBuilder<'c> {
             let import_real_name = self
                 .contract
                 .metadata
-                .resolve_import(&filename, &import_path)?;
+                .resolve_import(&filename, import_path)?;
             self.add_file(&import_real_name)?;
         }
 

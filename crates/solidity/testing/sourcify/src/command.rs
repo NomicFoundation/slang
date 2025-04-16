@@ -52,17 +52,17 @@ pub struct ShowCombinedResultsCommand {
 
 #[derive(Debug, Parser)]
 pub struct ShardingOptions {
-    /// Divide the dataset into a smaller number of shards. Must be a factor of 256. 'shard_index'
+    /// Divide the dataset into a smaller number of shards. Must be a factor of 256. '`shard_index`'
     /// must be included along with this option.
     #[arg(long, requires = "shard_index")]
     pub shard_count: Option<usize>,
 
-    /// Select a single shard to test. Must be within the range [0..shard_count). Required if
-    /// 'shard_count' is specified.
+    /// Select a single shard to test. Must be within the range [`0..shard_count`). Required if
+    /// '`shard_count`' is specified.
     #[arg(long, requires = "shard_count")]
     pub shard_index: Option<usize>,
 
-    /// If set, will only test contracts under the 'full_match' category.
+    /// If set, will only test contracts under the '`full_match`' category.
     #[arg(long, default_value_t = false)]
     pub exclude_partials: bool,
 }
@@ -70,10 +70,10 @@ pub struct ShardingOptions {
 impl ShardingOptions {
     pub fn get_id_range(&self) -> Range<u16> {
         if let Some(shard_count) = self.shard_count {
-            let shard_index = self.shard_index.unwrap() as u16;
+            let shard_index = u16::try_from(self.shard_index.unwrap()).unwrap();
 
-            let shard_size: u16 = 256 / (shard_count as u16);
-            let shard_start: u16 = (shard_size as u16) * shard_index;
+            let shard_size: u16 = 256 / u16::try_from(shard_count).unwrap();
+            let shard_start: u16 = shard_size * shard_index;
 
             shard_start..(shard_start + shard_size)
         } else {

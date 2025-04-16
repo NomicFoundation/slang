@@ -38,9 +38,9 @@ impl ContractMetadata {
         let source_is_url = path_is_url(&source_file_path);
 
         let resolved_path = if source_is_url {
-            self.resolve_relative_url_import(&source_file_path, import_path)?
+            resolve_relative_url_import(&source_file_path, import_path)?
         } else {
-            self.resolve_relative_import(&source_file_path, import_path)?
+            resolve_relative_import(&source_file_path, import_path)?
         };
 
         match self.get_real_name(&resolved_path) {
@@ -91,107 +91,97 @@ impl ContractMetadata {
 
     fn remap_import(&self, source_name: &str, import_path: &str) -> Option<String> {
         let mut longest_match: Option<&ImportRemap> = None;
-        for remap in self.remappings.iter() {
-            if remap.has_known_bug() {
+        for remap in &self.remappings {
+            if remap.has_known_bug() || !remap.matches_context(source_name) {
                 continue;
-            }
-
-            if let Some(context) = &remap.context {
-                if !source_name.starts_with(context) {
-                    continue;
-                }
             }
 
             if import_path.starts_with(&remap.prefix) {
                 match longest_match {
                     Some(r) => {
                         if r.len() < remap.len() {
-                            longest_match = Some(&remap);
+                            longest_match = Some(remap);
                         }
                     }
                     None => {
-                        longest_match = Some(&remap);
+                        longest_match = Some(remap);
                     }
                 }
             }
         }
 
-        if let Some(r) = longest_match {
-            Some(import_path.replacen(&r.prefix, &r.target, 1))
-        } else {
-            None
+        longest_match.map(|r| import_path.replacen(&r.prefix, &r.target, 1))
+    }
+}
+
+/// Resolve an import path that is relative to `source_path`.
+fn resolve_relative_import(source_path: &str, import_path: &str) -> Result<String> {
+    let source_file_path = PathBuf::from_str(source_path)?;
+    let source_dir = source_file_path.parent().ok_or(Error::msg(format!(
+        "Could not get directory of source file {source_path}"
+    )))?;
+
+    let import_path = PathBuf::from_str(import_path)?;
+
+    let source_dir_parts: Vec<_> = source_dir.components().collect();
+    let mut resolved_parts = vec![];
+
+    // We're basically doing what `Path::canonicalize()` would do, but we can't use that because
+    // the path must be a real path in the filesystem, and we're operating on "virtual" paths.
+    // We check the first import path component to initialize `resolved_parts`
+    let mut import_path_components = import_path.components();
+    match import_path_components.next().unwrap() {
+        // a/b.sol - an absolute path, so we can ignore `source_path`
+        norm @ Component::Normal(_) => resolved_parts.push(norm),
+        // /a/b.sol
+        root @ Component::RootDir => resolved_parts.push(root),
+        // ./a/b.sol - relative to `source_path`
+        Component::CurDir => resolved_parts.extend(source_dir_parts),
+        // ../a/b.sol - relative, but one dir above `source_dir`
+        Component::ParentDir => {
+            resolved_parts.extend(source_dir_parts);
+            resolved_parts.pop();
+        }
+        Component::Prefix(_) => {
+            bail!("Found prefix component in import path, which is not supported")
         }
     }
 
-    /// Resolve an import path that is relative to `source_path`.
-    fn resolve_relative_import(&self, source_path: &str, import_path: &str) -> Result<String> {
-        let source_file_path = PathBuf::from_str(source_path)?;
-        let source_dir = source_file_path.parent().ok_or(Error::msg(format!(
-            "Could not get directory of source file {source_path}"
-        )))?;
-
-        let import_path = PathBuf::from_str(&import_path)?;
-
-        let source_dir_parts: Vec<_> = source_dir.components().collect();
-        let mut resolved_parts = vec![];
-
-        // We're basically doing what `Path::canonicalize()` would do, but we can't use that because
-        // the path must be a real path in the filesystem, and we're operating on "virtual" paths.
-        // We check the first import path component to initialize `resolved_parts`
-        let mut import_path_components = import_path.components();
-        match import_path_components.next().unwrap() {
-            // a/b.sol - an absolute path, so we can ignore `source_path`
+    for component in import_path_components {
+        match component {
             norm @ Component::Normal(_) => resolved_parts.push(norm),
-            // /a/b.sol
-            root @ Component::RootDir => resolved_parts.push(root),
-            // ./a/b.sol - relative to `source_path`
-            Component::CurDir => resolved_parts.extend(source_dir_parts),
-            // ../a/b.sol - relative, but one dir above `source_dir`
             Component::ParentDir => {
-                resolved_parts.extend(source_dir_parts);
                 resolved_parts.pop();
             }
-            Component::Prefix(_) => {
-                bail!("Found prefix component in import path, which is not supported")
-            }
+            Component::CurDir => {}
+            invalid => bail!("Invalid path component found inside import path: {invalid:?}"),
         }
-
-        for component in import_path_components {
-            match component {
-                norm @ Component::Normal(_) => resolved_parts.push(norm),
-                Component::ParentDir => {
-                    resolved_parts.pop();
-                }
-                Component::CurDir => {}
-                invalid => bail!("Invalid path component found inside import path: {invalid:?}"),
-            }
-        }
-
-        let resolved_import_path: PathBuf = resolved_parts.iter().collect();
-        Ok(resolved_import_path.to_str().unwrap().into())
     }
 
-    /// Resolve an import from a source file which was imported using a URL. These need a bit of special handling
-    /// because the resolved path needs to also be a URL.
-    fn resolve_relative_url_import(&self, source_path: &str, import_path: &str) -> Result<String> {
-        let (proto, rest) = source_path
-            .split_once("://")
-            .ok_or(Error::msg("Cannot parse url"))?;
-        let (host, path) = rest
-            .split_once("/")
-            .ok_or(Error::msg("Cannot parse path"))?;
+    let resolved_import_path: PathBuf = resolved_parts.iter().collect();
+    Ok(resolved_import_path.to_str().unwrap().into())
+}
 
-        let resolved_path = self.resolve_relative_import(path, import_path)?;
+/// Resolve an import from a source file which was imported using a URL. These need a bit of special handling
+/// because the resolved path needs to also be a URL.
+fn resolve_relative_url_import(source_path: &str, import_path: &str) -> Result<String> {
+    let (proto, rest) = source_path
+        .split_once("://")
+        .ok_or(Error::msg("Cannot parse url"))?;
+    let (host, path) = rest
+        .split_once('/')
+        .ok_or(Error::msg("Cannot parse path"))?;
 
-        let mut res = String::new();
-        res.push_str(proto);
-        res.push_str("://");
-        res.push_str(host);
-        res.push_str("/");
-        res.push_str(&resolved_path);
+    let resolved_path = resolve_relative_import(path, import_path)?;
 
-        Ok(res)
-    }
+    let mut res = String::new();
+    res.push_str(proto);
+    res.push_str("://");
+    res.push_str(host);
+    res.push('/');
+    res.push_str(&resolved_path);
+
+    Ok(res)
 }
 
 pub struct FileMapping {
@@ -220,6 +210,14 @@ pub struct ImportRemap {
 impl ImportRemap {
     fn len(&self) -> usize {
         self.context.as_ref().map_or(0, |c| c.len()) + self.prefix.len()
+    }
+
+    fn matches_context(&self, source_name: &str) -> bool {
+        if let Some(context) = &self.context {
+            source_name.starts_with(context)
+        } else {
+            false
+        }
     }
 
     /// Sometimes contracts contain a remapping entry that, for whatever reason,
@@ -293,7 +291,7 @@ impl TryFrom<ContractMetadataResponse> for ContractMetadata {
                         },
                         prefix: prefix.into(),
                         target: target.into(),
-                    })
+                    });
                 }
             }
         }

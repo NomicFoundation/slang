@@ -35,6 +35,9 @@ fn main() -> Result<()> {
     }
 }
 
+// `cmd` is passed by value because it's consumed in the spawned thread,
+// but for whatever reason clippy can't figure that out
+#[allow(clippy::needless_pass_by_value)]
 fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     Terminal::step(format!(
         "Initialize {chain}/{network}",

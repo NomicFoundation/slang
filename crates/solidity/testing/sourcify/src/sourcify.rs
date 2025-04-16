@@ -1,6 +1,6 @@
 use std::fs;
 use std::io::{BufReader, ErrorKind, Read};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Error, Result};
 use reqwest::blocking::Client;
@@ -78,7 +78,7 @@ impl Repository {
             eprintln!(
                 "Failed to create directory {}: {e}",
                 repo_dir.to_str().unwrap()
-            )
+            );
         })?;
 
         let mut archive = Archive::new(res);
@@ -187,7 +187,7 @@ pub enum MatchType {
 }
 
 impl MatchType {
-    pub fn dir_name(&self) -> &'static str {
+    pub fn dir_name(self) -> &'static str {
         match self {
             MatchType::Full => "full_match",
             MatchType::Partial => "partial_match",
@@ -213,14 +213,12 @@ pub struct ContractArchive {
 impl ContractArchive {
     pub fn contracts(&self) -> impl Iterator<Item = Contract> {
         let dir = fs::read_dir(&self.contracts_path).expect("Could not open contract directory.");
-        dir.flatten()
-            .map(|dir_entry| -> Result<Contract> {
-                let contract_path = dir_entry.path();
-                let contract = Contract::new(&contract_path)?;
+        dir.flatten().flat_map(|dir_entry| -> Result<Contract> {
+            let contract_path = dir_entry.path();
+            let contract = Contract::new(&contract_path)?;
 
-                Ok(contract)
-            })
-            .flatten()
+            Ok(contract)
+        })
     }
 
     pub fn get_contract(&self, contract_id: &str) -> Result<Contract> {
@@ -256,7 +254,7 @@ pub struct Contract {
 }
 
 impl Contract {
-    fn new(contract_path: &PathBuf) -> Result<Contract> {
+    fn new(contract_path: &Path) -> Result<Contract> {
         let name = contract_path
             .file_name()
             .unwrap()
@@ -289,6 +287,10 @@ impl Contract {
         self.metadata.get_real_name(&self.metadata.target)
     }
 
+    // We want to use `file.read_to_string` instead of `File::read_to_string` because the
+    // former allows us to reuse a read buffer, meaning fewer allocations while processing
+    // contracts.
+    #[allow(clippy::verbose_file_reads)]
     pub fn read_file(&self, name: &str, buffer: &mut String) -> Result<usize> {
         let mut file = fs::File::open(self.sources_path.join(name))?;
         file.read_to_string(buffer).map_err(Error::new)
