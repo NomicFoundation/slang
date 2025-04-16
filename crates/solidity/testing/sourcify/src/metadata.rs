@@ -216,7 +216,7 @@ impl ImportRemap {
         if let Some(context) = &self.context {
             source_name.starts_with(context)
         } else {
-            false
+            true
         }
     }
 
