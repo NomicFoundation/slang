@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 use std::rc::Rc;
 
+use metaslang_cst::nodes::NodeId;
 use metaslang_cst::text_index::TextIndex;
 
 use crate::cst::{Cursor, NonterminalNode};
@@ -12,7 +13,7 @@ pub struct File {
     tree: Rc<NonterminalNode>,
     errors: Vec<ParseError>,
 
-    resolved_imports: BTreeMap<usize, String>,
+    resolved_imports: BTreeMap<NodeId, String>,
 }
 
 impl File {

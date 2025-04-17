@@ -2,8 +2,8 @@ use std::rc::Rc;
 
 use anyhow::Result;
 use semver::Version;
-use slang_solidity::bindings;
-use slang_solidity::cst::{Cursor, Query};
+use slang_solidity::bindings::{self, BindingGraph};
+use slang_solidity::cst::{Cursor, Query, TerminalKind};
 use slang_solidity::parser::Parser;
 
 use crate::resolver::TestsPathResolver;
@@ -42,8 +42,7 @@ fn find_all_matches(
     Ok(results)
 }
 
-#[test]
-fn test_resolve_references_from_definition() -> Result<()> {
+fn setup() -> Result<(Cursor, Rc<BindingGraph>)> {
     let version = TEST_VERSION;
     let parser = Parser::create(version.clone())?;
     let mut builder =
@@ -54,6 +53,13 @@ fn test_resolve_references_from_definition() -> Result<()> {
 
     let binding_graph = builder.build();
     let root_cursor = parse_output.create_tree_cursor();
+
+    Ok((root_cursor, binding_graph))
+}
+
+#[test]
+fn test_resolve_references_from_definition() -> Result<()> {
+    let (root_cursor, binding_graph) = setup()?;
 
     // "Base" identifier
     let base_cursor = find_first_match(
@@ -115,6 +121,83 @@ fn test_resolve_references_from_definition() -> Result<()> {
         "identifier",
     )?;
     assert!(test_ref_cursors.is_empty());
+
+    Ok(())
+}
+
+#[test]
+fn test_find_definitions_at_cursors() -> Result<()> {
+    let (root_cursor, binding_graph) = setup()?;
+
+    // Definitions can be obtained from cursors to their identifiers...
+    let base_identifier_cursor = find_first_match(
+        root_cursor.clone(),
+        "[ContractDefinition @identifier [\"Base\"]]",
+        "identifier",
+    )?;
+    let base_definition = binding_graph
+        .definition_by_node_id(base_identifier_cursor.node().id())
+        .expect("Base definition to be found");
+
+    // ...as well as the definiens
+    let base_contract_cursor = find_first_match(
+        root_cursor.clone(),
+        "@contract [ContractDefinition [\"Base\"]]",
+        "contract",
+    )?;
+    let base_contract_definition = binding_graph
+        .definition_at(&base_contract_cursor)
+        .expect("Base contract found via its definiens");
+
+    assert_eq!(
+        base_definition, base_contract_definition,
+        "Both cursors point to the same definition"
+    );
+
+    Ok(())
+}
+
+#[test]
+fn test_find_definitions_and_references_by_node_id() -> Result<()> {
+    let (root_cursor, binding_graph) = setup()?;
+
+    let contract_cursor = find_first_match(
+        root_cursor.clone(),
+        "@contract [ContractDefinition [\"Base\"]]",
+        "contract",
+    )?;
+    let contract_definition = binding_graph
+        .definition_by_node_id(contract_cursor.node().id())
+        .expect("Contract definition can be found by its node id");
+
+    let mut contract_name_cursor = contract_cursor.spawn();
+    contract_name_cursor.go_to_next_terminal_with_kind(TerminalKind::Identifier);
+    let contract_name_definition = binding_graph
+        .definition_by_node_id(contract_name_cursor.node().id())
+        .expect("Contract definition can be found by its identifier node id");
+
+    assert_eq!(
+        contract_definition, contract_name_definition,
+        "Both definitions are the same"
+    );
+
+    let base_ref_cursors = find_all_matches(
+        root_cursor.clone(),
+        "[IdentifierPath @identifier [\"Base\"]]",
+        "identifier",
+    )?;
+    for base_ref_cursor in &base_ref_cursors {
+        let reference = binding_graph
+            .reference_by_node_id(base_ref_cursor.node().id())
+            .expect("Reference can be found by node id");
+        let definitions = reference.definitions();
+        assert_eq!(
+            1,
+            definitions.len(),
+            "There's only a single definition for Base"
+        );
+        assert_eq!(definitions[0], contract_definition);
+    }
 
     Ok(())
 }

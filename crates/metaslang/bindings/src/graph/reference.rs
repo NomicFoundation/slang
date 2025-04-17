@@ -3,6 +3,7 @@ use std::rc::Rc;
 
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
+use metaslang_cst::nodes::NodeId;
 
 use super::{BindingGraph, BindingLocation, Definition};
 use crate::builder::{FileDescriptor, GraphHandle};
@@ -15,7 +16,7 @@ pub struct Reference<KT: KindTypes + 'static> {
 }
 
 impl<KT: KindTypes + 'static> Reference<KT> {
-    pub fn id(&self) -> usize {
+    pub fn id(&self) -> NodeId {
         self.get_cursor().node().id()
     }
 

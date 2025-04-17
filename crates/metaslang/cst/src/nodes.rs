@@ -6,6 +6,24 @@ use crate::cursor::{Cursor, CursorIterator};
 use crate::kinds::{KindTypes, NodeKind, TerminalKindExtensions};
 use crate::text_index::TextIndex;
 
+#[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+pub struct NodeId(usize);
+
+impl From<NodeId> for usize {
+    fn from(value: NodeId) -> Self {
+        value.0
+    }
+}
+
+impl TryFrom<NodeId> for u32 {
+    type Error = <u32 as TryFrom<usize>>::Error;
+
+    fn try_from(value: NodeId) -> Result<Self, Self::Error> {
+        value.0.try_into()
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct TerminalNode<T: KindTypes> {
     pub kind: T::TerminalKind,
@@ -69,7 +87,7 @@ impl<T: KindTypes> Node<T> {
 
     /// Returns a unique identifier of the node. It is not reproducible over parses
     /// and cannot be used in a persistent/serialised sense.
-    pub fn id(&self) -> usize {
+    pub fn id(&self) -> NodeId {
         match self {
             Self::Nonterminal(node) => node.id(),
             Self::Terminal(node) => node.id(),
@@ -228,8 +246,8 @@ impl<T: KindTypes> NonterminalNode<T> {
 
     /// Returns a unique identifier of the node. It is not reproducible over parses
     /// and cannot be used in a persistent/serialised sense.
-    pub fn id(self: &Rc<Self>) -> usize {
-        Rc::as_ptr(self) as usize
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
     }
 
     /// Returns the list of child edges directly connected to this node.
@@ -271,8 +289,8 @@ impl<T: KindTypes> TerminalNode<T> {
 
     /// Returns a unique identifier of the node. It is not reproducible over parses
     /// and cannot be used in a persistent/serialised sense.
-    pub fn id(self: &Rc<Self>) -> usize {
-        Rc::as_ptr(self) as usize
+    pub fn id(self: &Rc<Self>) -> NodeId {
+        NodeId(Rc::as_ptr(self) as usize)
     }
 
     /// Returns the list of child edges directly connected to this node.
