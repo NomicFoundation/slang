@@ -775,7 +775,7 @@ impl ScopedVariable {
                 while cursor.go_to_parent() {
                     if let Some(value) = exec
                         .scoped
-                        .try_get(cursor.node().id().as_usize())
+                        .try_get(cursor.node().id())
                         .and_then(|v| v.get(&self.name))
                     {
                         return Ok(value);

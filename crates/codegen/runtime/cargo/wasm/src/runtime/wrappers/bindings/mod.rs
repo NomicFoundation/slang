@@ -56,7 +56,7 @@ define_rc_wrapper! { BindingGraph {
 
 define_wrapper! { Definition {
     fn id(&self) -> u32 {
-        self._borrow_ffi().id().as_usize().try_into().unwrap()
+        self._borrow_ffi().id().try_into().unwrap()
     }
 
     fn name_location(&self) -> ffi::BindingLocation {
@@ -80,7 +80,7 @@ define_wrapper! { Definition {
 
 define_wrapper! { Reference {
     fn id(&self) -> u32 {
-        self._borrow_ffi().id().as_usize().try_into().unwrap()
+        self._borrow_ffi().id().try_into().unwrap()
     }
 
     fn location(&self) -> ffi::BindingLocation {

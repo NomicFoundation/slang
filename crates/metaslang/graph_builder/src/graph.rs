@@ -19,6 +19,7 @@ use std::ops::{Index, IndexMut};
 use std::path::Path;
 
 use metaslang_cst::kinds::KindTypes;
+use metaslang_cst::nodes::NodeId;
 use serde::ser::{SerializeMap, SerializeSeq};
 use serde::{Serialize, Serializer};
 use serde_json;
@@ -35,7 +36,7 @@ pub struct Graph<KT: KindTypes> {
     graph_nodes: Vec<GraphNode>,
 }
 
-pub(crate) type SyntaxNodeID = usize;
+pub(crate) type SyntaxNodeID = NodeId;
 type GraphNodeID = u32;
 
 impl<KT: KindTypes> Graph<KT> {
@@ -53,7 +54,7 @@ impl<KT: KindTypes> Graph<KT> {
     /// those nodes that are referenced at some point during the execution of the graph DSL file.
     pub fn add_syntax_node(&mut self, cursor: metaslang_cst::cursor::Cursor<KT>) -> SyntaxNodeRef {
         let node = cursor.node();
-        let index = node.id().as_usize();
+        let index = node.id();
         let node_ref = SyntaxNodeRef {
             index,
             kind: cursor.node().kind().into(),
@@ -622,7 +623,7 @@ impl Serialize for Value {
             Value::SyntaxNode(node) => {
                 let mut map = serializer.serialize_map(None)?;
                 map.serialize_entry("type", "syntaxNode")?;
-                map.serialize_entry("id", &node.index)?;
+                map.serialize_entry::<_, usize>("id", &node.index.into())?;
                 map.end()
             }
             Value::GraphNode(node) => {

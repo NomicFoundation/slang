@@ -120,7 +120,7 @@ impl FromFFI<rust::Node> for ffi::Node {
 
 define_rc_wrapper! { NonterminalNode {
     fn id(&self) -> u32 {
-        self._borrow_ffi().id().as_usize().try_into().unwrap()
+        self._borrow_ffi().id().try_into().unwrap()
     }
 
     fn kind(&self) -> ffi::NonterminalKind {
@@ -160,7 +160,7 @@ define_rc_wrapper! { NonterminalNode {
 
 define_rc_wrapper! { TerminalNode {
     fn id(&self) -> u32 {
-        self._borrow_ffi().id().as_usize().try_into().unwrap()
+        self._borrow_ffi().id().try_into().unwrap()
     }
 
     fn kind(&self) -> ffi::TerminalKind {

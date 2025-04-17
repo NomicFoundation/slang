@@ -55,7 +55,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             })
     }
 
-    pub fn definition_by_id(self: &Rc<Self>, node_id: NodeId) -> Option<Definition<KT>> {
+    pub fn definition_by_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<Definition<KT>> {
         self.graph
             .definition_by_id(node_id)
             .map(|handle| Definition {
@@ -73,7 +73,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             })
     }
 
-    pub fn reference_by_id(self: &Rc<Self>, node_id: NodeId) -> Option<Reference<KT>> {
+    pub fn reference_by_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<Reference<KT>> {
         self.graph.reference_by_id(node_id).map(|handle| Reference {
             owner: Rc::clone(self),
             handle,

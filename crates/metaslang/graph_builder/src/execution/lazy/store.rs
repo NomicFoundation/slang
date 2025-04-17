@@ -159,7 +159,7 @@ impl LazyScopedVariables {
         } else if exec.inherited_variables.contains(name) {
             if let Some(mut scope) = exec.graph.syntax_nodes.get(&scope.index).cloned() {
                 while scope.go_to_parent() {
-                    if let Some(value) = map.get(&(scope.node().id().as_usize())) {
+                    if let Some(value) = map.get(&scope.node().id()) {
                         result = Some(value.clone());
                         break;
                     }

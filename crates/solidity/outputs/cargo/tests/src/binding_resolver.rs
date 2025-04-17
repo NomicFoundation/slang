@@ -136,7 +136,7 @@ fn test_find_definitions_at_cursors() -> Result<()> {
         "identifier",
     )?;
     let base_definition = binding_graph
-        .definition_by_id(base_identifier_cursor.node().id())
+        .definition_by_node_id(base_identifier_cursor.node().id())
         .expect("Base definition to be found");
 
     // ...as well as the definiens
@@ -167,13 +167,13 @@ fn test_find_definitions_and_references_by_node_id() -> Result<()> {
         "contract",
     )?;
     let contract_definition = binding_graph
-        .definition_by_id(contract_cursor.node().id())
+        .definition_by_node_id(contract_cursor.node().id())
         .expect("Contract definition can be found by its node id");
 
     let mut contract_name_cursor = contract_cursor.spawn();
     contract_name_cursor.go_to_next_terminal_with_kind(TerminalKind::Identifier);
     let contract_name_definition = binding_graph
-        .definition_by_id(contract_name_cursor.node().id())
+        .definition_by_node_id(contract_name_cursor.node().id())
         .expect("Contract definition can be found by its identifier node id");
 
     assert_eq!(
@@ -188,7 +188,7 @@ fn test_find_definitions_and_references_by_node_id() -> Result<()> {
     )?;
     for base_ref_cursor in &base_ref_cursors {
         let reference = binding_graph
-            .reference_by_id(base_ref_cursor.node().id())
+            .reference_by_node_id(base_ref_cursor.node().id())
             .expect("Reference can be found by node id");
         let definitions = reference.definitions();
         assert_eq!(

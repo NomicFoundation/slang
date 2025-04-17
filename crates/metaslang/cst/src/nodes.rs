@@ -10,9 +10,17 @@ use crate::text_index::TextIndex;
 #[repr(transparent)]
 pub struct NodeId(usize);
 
-impl NodeId {
-    pub fn as_usize(&self) -> usize {
-        self.0
+impl From<NodeId> for usize {
+    fn from(value: NodeId) -> Self {
+        value.0
+    }
+}
+
+impl TryFrom<NodeId> for u32 {
+    type Error = <u32 as TryFrom<usize>>::Error;
+
+    fn try_from(value: NodeId) -> Result<Self, Self::Error> {
+        value.0.try_into()
     }
 }
 
