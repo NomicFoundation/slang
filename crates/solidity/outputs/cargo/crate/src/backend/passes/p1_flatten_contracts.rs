@@ -13,14 +13,14 @@ pub struct Output {
     pub binding_graph: Rc<BindingGraph>,
 }
 
-pub fn run(input: &Input) -> Output {
+pub fn run(input: Input) -> Output {
     let mut pass = Pass {};
     let files = input
         .files
         .iter()
         .map(|(file_id, source_unit)| (file_id.clone(), pass.transform_source_unit(source_unit)))
         .collect();
-    let binding_graph = Rc::clone(&input.binding_graph);
+    let binding_graph = input.binding_graph;
     Output {
         files,
         binding_graph,

@@ -6972,13 +6972,21 @@ pub mod slang_solidity::backend::passes::p1_flatten_contracts
 pub struct slang_solidity::backend::passes::p1_flatten_contracts::Output
 pub slang_solidity::backend::passes::p1_flatten_contracts::Output::binding_graph: alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
 pub slang_solidity::backend::passes::p1_flatten_contracts::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
-pub fn slang_solidity::backend::passes::p1_flatten_contracts::run(input: &slang_solidity::backend::passes::p0_build_ast::Output) -> slang_solidity::backend::passes::p1_flatten_contracts::Output
+pub fn slang_solidity::backend::passes::p1_flatten_contracts::run(input: slang_solidity::backend::passes::p0_build_ast::Output) -> slang_solidity::backend::passes::p1_flatten_contracts::Output
 pub mod slang_solidity::backend::passes::p2_collect_types
 pub struct slang_solidity::backend::passes::p2_collect_types::Output
 pub slang_solidity::backend::passes::p2_collect_types::Output::binding_graph: alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
+pub slang_solidity::backend::passes::p2_collect_types::Output::definition_types: std::collections::hash::map::HashMap<metaslang_cst::nodes::NodeId, slang_solidity::backend::types::TypeId>
 pub slang_solidity::backend::passes::p2_collect_types::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
 pub slang_solidity::backend::passes::p2_collect_types::Output::types: slang_solidity::backend::types::TypeRegistry
-pub fn slang_solidity::backend::passes::p2_collect_types::run(input: &slang_solidity::backend::passes::p1_flatten_contracts::Output) -> slang_solidity::backend::passes::p2_collect_types::Output
+pub fn slang_solidity::backend::passes::p2_collect_types::run(input: slang_solidity::backend::passes::p1_flatten_contracts::Output) -> slang_solidity::backend::passes::p2_collect_types::Output
+pub mod slang_solidity::backend::passes::p3_annotate_types
+pub struct slang_solidity::backend::passes::p3_annotate_types::Output
+pub slang_solidity::backend::passes::p3_annotate_types::Output::annotations: std::collections::hash::map::HashMap<metaslang_cst::nodes::NodeId, slang_solidity::backend::types::TypeId>
+pub slang_solidity::backend::passes::p3_annotate_types::Output::binding_graph: alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
+pub slang_solidity::backend::passes::p3_annotate_types::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
+pub slang_solidity::backend::passes::p3_annotate_types::Output::types: slang_solidity::backend::types::TypeRegistry
+pub fn slang_solidity::backend::passes::p3_annotate_types::run(input: slang_solidity::backend::passes::p2_collect_types::Output) -> slang_solidity::backend::passes::p3_annotate_types::Output
 pub mod slang_solidity::backend::types
 pub enum slang_solidity::backend::types::DataLocation
 pub slang_solidity::backend::types::DataLocation::Calldata
@@ -7031,7 +7039,7 @@ pub slang_solidity::backend::types::Type::Function
 pub slang_solidity::backend::types::Type::Function::external: bool
 pub slang_solidity::backend::types::Type::Function::kind: slang_solidity::backend::types::FunctionTypeKind
 pub slang_solidity::backend::types::Type::Function::parameter_types: alloc::vec::Vec<slang_solidity::backend::types::TypeId>
-pub slang_solidity::backend::types::Type::Function::return_types: alloc::vec::Vec<slang_solidity::backend::types::TypeId>
+pub slang_solidity::backend::types::Type::Function::return_type: slang_solidity::backend::types::TypeId
 pub slang_solidity::backend::types::Type::Integer
 pub slang_solidity::backend::types::Type::Integer::bits: u32
 pub slang_solidity::backend::types::Type::Integer::signed: bool
@@ -7042,13 +7050,17 @@ pub slang_solidity::backend::types::Type::Mapping::key_name: core::option::Optio
 pub slang_solidity::backend::types::Type::Mapping::key_type_id: slang_solidity::backend::types::TypeId
 pub slang_solidity::backend::types::Type::Mapping::value_name: core::option::Option<alloc::string::String>
 pub slang_solidity::backend::types::Type::Mapping::value_type_id: slang_solidity::backend::types::TypeId
+pub slang_solidity::backend::types::Type::Rational
 pub slang_solidity::backend::types::Type::String
 pub slang_solidity::backend::types::Type::String::location: slang_solidity::backend::types::DataLocation
 pub slang_solidity::backend::types::Type::Struct
 pub slang_solidity::backend::types::Type::Struct::location: slang_solidity::backend::types::DataLocation
 pub slang_solidity::backend::types::Type::Struct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::types::Type::Tuple
+pub slang_solidity::backend::types::Type::Tuple::types: alloc::vec::Vec<slang_solidity::backend::types::TypeId>
 pub slang_solidity::backend::types::Type::UserDefinedValueType
 pub slang_solidity::backend::types::Type::UserDefinedValueType::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::types::Type::Void
 impl slang_solidity::backend::types::Type
 pub fn slang_solidity::backend::types::Type::data_location(&self) -> core::option::Option<slang_solidity::backend::types::DataLocation>
 pub fn slang_solidity::backend::types::Type::node_id(&self) -> core::option::Option<metaslang_cst::nodes::NodeId>

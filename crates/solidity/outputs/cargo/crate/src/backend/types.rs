@@ -169,7 +169,7 @@ pub enum Type {
     },
     Function {
         parameter_types: Vec<TypeId>,
-        return_types: Vec<TypeId>,
+        return_type: TypeId,
         external: bool,
         kind: FunctionTypeKind,
     },
@@ -186,6 +186,7 @@ pub enum Type {
         value_name: Option<String>,
         value_type_id: TypeId,
     },
+    Rational,
     String {
         location: DataLocation,
     },
@@ -193,9 +194,13 @@ pub enum Type {
         node_id: NodeId,
         location: DataLocation,
     },
+    Tuple {
+        types: Vec<TypeId>,
+    },
     UserDefinedValueType {
         node_id: NodeId,
     },
+    Void,
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
@@ -238,7 +243,10 @@ impl Type {
             | Self::FixedPointNumber { .. }
             | Self::Integer { .. }
             | Self::Interface { .. }
-            | Self::UserDefinedValueType { .. } => None,
+            | Self::Rational
+            | Self::Tuple { .. }
+            | Self::UserDefinedValueType { .. }
+            | Self::Void => None,
             Self::Mapping { .. } => Some(DataLocation::Storage),
             Self::Array { location, .. } => Some(*location),
             Self::Bytes { location } => Some(*location),

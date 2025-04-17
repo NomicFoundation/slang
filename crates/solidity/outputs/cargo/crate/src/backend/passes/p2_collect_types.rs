@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use metaslang_cst::nodes::NodeId;
+
 use super::p1_flatten_contracts::Output as Input;
 use crate::backend::l2_flat_contracts::visitor::{accept_source_unit, Visitor};
 use crate::backend::l2_flat_contracts::{
@@ -19,35 +21,54 @@ pub struct Output {
     pub files: HashMap<String, SourceUnit>,
     pub binding_graph: Rc<BindingGraph>,
     pub types: TypeRegistry,
+    pub definition_types: HashMap<NodeId, TypeId>,
 }
 
-pub fn run(input: &Input) -> Output {
-    let files = input.files.clone();
-    let binding_graph = Rc::clone(&input.binding_graph);
+pub fn run(input: Input) -> Output {
+    let files = input.files;
+    let binding_graph = input.binding_graph;
     let mut pass = Pass::new(Rc::clone(&binding_graph));
     for source_unit in files.values() {
         accept_source_unit(source_unit, &mut pass);
     }
     pass.types.validate();
     let types = pass.types;
+    let definition_types = pass.definition_types;
 
     Output {
         files,
         binding_graph,
         types,
+        definition_types,
     }
 }
 
 struct Pass {
     binding_graph: Rc<BindingGraph>,
+
+    /// Contains all types found in the compilation unit
     types: TypeRegistry,
+    /// Types (as registered in the `TypeRegistry` above) for (state) variables, parameters and fields
+    definition_types: HashMap<NodeId, TypeId>,
 }
 
 impl Pass {
     fn new(binding_graph: Rc<BindingGraph>) -> Self {
+        let mut types = TypeRegistry::default();
+
+        // Register some always required built-in types
+        types.register_type(Type::Boolean);
+        types.register_type(Type::Integer {
+            signed: false,
+            bits: 256,
+        });
+        types.register_type(Type::Rational);
+        types.register_type(Type::Void);
+
         Self {
-            types: TypeRegistry::default(),
             binding_graph,
+            types,
+            definition_types: HashMap::new(),
         }
     }
 
@@ -114,18 +135,19 @@ impl Pass {
             .map(|parameter| self.find_or_register_parameter(parameter))
             .collect::<Vec<_>>();
 
-        let return_types = function_type
+        let return_type = function_type
             .returns
             .as_ref()
-            .map(|returns| {
-                returns
+            .map_or(Type::Void, |returns| {
+                let types = returns
                     .variables
                     .parameters
                     .iter()
                     .map(|return_parameter| self.find_or_register_parameter(return_parameter))
-                    .collect::<Vec<_>>()
-            })
-            .unwrap_or_default();
+                    .collect::<Vec<_>>();
+                Type::Tuple { types }
+            });
+        let return_type = self.types.register_type(return_type);
 
         // TODO: validate that attributes are non-conflicting
         let mut kind = FunctionTypeKind::Pure;
@@ -142,7 +164,7 @@ impl Pass {
 
         self.types.register_type(Type::Function {
             parameter_types,
-            return_types,
+            return_type,
             external,
             kind,
         })
@@ -255,6 +277,12 @@ impl Pass {
             }
         }
     }
+
+    fn register_definition_type(&mut self, identifier_node_id: NodeId, type_id: TypeId) {
+        if let Some(definition) = self.binding_graph.definition_by_node_id(identifier_node_id) {
+            self.definition_types.insert(definition.id(), type_id);
+        }
+    }
 }
 
 impl Visitor for Pass {
@@ -268,6 +296,7 @@ impl Visitor for Pass {
                         &state_variable.type_name,
                         Some(DataLocation::Storage),
                     );
+                    self.register_definition_type(state_variable.name.id(), type_id);
                     Some(StateVariable {
                         node_id: state_variable.node_id,
                         name: state_variable.name.unparse(),
@@ -301,6 +330,7 @@ impl Visitor for Pass {
             .map(|member| {
                 let type_id = self
                     .find_or_register_type_name(&member.type_name, Some(DataLocation::Inherited));
+                self.register_definition_type(member.name.id(), type_id);
                 StructField {
                     node_id: member.node_id,
                     name: member.name.unparse(),
@@ -332,6 +362,15 @@ impl Visitor for Pass {
                 name: node.name.unparse(),
                 members,
             }));
+
+        // Add definition types for all enum members
+        let enum_type_id = self.types.register_type(Type::Enum {
+            node_id: node.node_id,
+        });
+        for member in &node.members {
+            self.definition_types.insert(member.id(), enum_type_id);
+        }
+
         false
     }
 
@@ -353,7 +392,10 @@ impl Visitor for Pass {
     }
 
     fn enter_parameter(&mut self, node: &input_ir::Parameter) -> bool {
-        self.find_or_register_parameter(node);
+        let type_id = self.find_or_register_parameter(node);
+        if let Some(ref name) = node.name {
+            self.register_definition_type(name.id(), type_id);
+        }
         false
     }
 
@@ -366,7 +408,8 @@ impl Visitor for Pass {
             .as_ref()
             .map(|loc| loc.to_data_location());
         let input_ir::VariableDeclarationType::TypeName(type_name) = &node.variable_type;
-        self.find_or_register_type_name(type_name, location);
+        let type_id = self.find_or_register_type_name(type_name, location);
+        self.register_definition_type(node.name.id(), type_id);
         false
     }
 
@@ -375,7 +418,8 @@ impl Visitor for Pass {
             .storage_location
             .as_ref()
             .map(|loc| loc.to_data_location());
-        self.find_or_register_type_name(&node.type_name, location);
+        let type_id = self.find_or_register_type_name(&node.type_name, location);
+        self.register_definition_type(node.name.id(), type_id);
         false
     }
 
@@ -386,18 +430,16 @@ impl Visitor for Pass {
             .iter()
             .map(|parameter| self.find_or_register_parameter(parameter))
             .collect();
-        let return_types = node
-            .returns
-            .as_ref()
-            .map(|returns| {
-                returns
-                    .variables
-                    .parameters
-                    .iter()
-                    .map(|parameter| self.find_or_register_parameter(parameter))
-                    .collect()
-            })
-            .unwrap_or_default();
+        let return_type = node.returns.as_ref().map_or(Type::Void, |returns| {
+            let types = returns
+                .variables
+                .parameters
+                .iter()
+                .map(|parameter| self.find_or_register_parameter(parameter))
+                .collect();
+            Type::Tuple { types }
+        });
+        let return_type = self.types.register_type(return_type);
 
         // TODO: validate that attributes are non-conflicting
         let mut kind = FunctionTypeKind::Pure;
@@ -412,12 +454,15 @@ impl Visitor for Pass {
             }
         }
 
-        self.types.register_type(Type::Function {
+        let type_id = self.types.register_type(Type::Function {
             parameter_types,
-            return_types,
+            return_type,
             external,
             kind,
         });
+        if let input_ir::FunctionName::Identifier(ref name) = node.name {
+            self.register_definition_type(name.id(), type_id);
+        }
     }
 }
 

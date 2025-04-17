@@ -11,8 +11,8 @@ fn test_collect_types_pass() -> Result<()> {
     let unit = super::build_compilation_unit()?;
 
     let data = p0_build_ast::run(&unit).map_err(|s| anyhow!(s))?;
-    let data = p1_flatten_contracts::run(&data);
-    let data = p2_collect_types::run(&data);
+    let data = p1_flatten_contracts::run(data);
+    let data = p2_collect_types::run(data);
 
     let types = &data.types;
 
