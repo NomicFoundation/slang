@@ -81,6 +81,18 @@ The `Cursor` API is a low-level API that allows you to traverse the CST in a pro
 
 - [Learn more about using queries.](https://nomicfoundation.github.io/slang/latest/user-guide/06-query-language/01-query-syntax/)
 
+### Compilation Units
+
+Solidity projects are usually composed of multiple files. Slang has the concept of a `CompilationUnit`, which is built from parsing Solidity source files and their dependencies, transitively. This allows performing further analysis on the source code, such as semantic analysis.
+
+[Learn more about using compilation units.](https://nomicfoundation.github.io/slang/latest/user-guide/07-semantic-analysis/01-compilation-units/)
+
+### Binding Graph
+
+The binding graph is a structure that represents the relationships between identifiers across source files in a `CompilationUnit`. It stores `Cursor` objects to all Solidity definitions (contracts, functions, state variables, etc.), the references to them, and can resolve the links between the two.
+
+[Learn more about using the binding graph.](https://nomicfoundation.github.io/slang/latest/user-guide/07-semantic-analysis/02-binding-graph/)
+
 ## Built with Slang
 
 We're proud to support other projects in the Solidity ecosystem with our developer tools. Here are some of the projects currently using Slang:
