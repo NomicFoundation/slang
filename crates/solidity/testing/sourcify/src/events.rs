@@ -134,6 +134,10 @@ impl Events {
         self.test_error(message);
     }
 
+    pub fn version_error(&self, message: impl AsRef<str>) {
+        self.test_error(message);
+    }
+
     pub fn bindings_error(&self, message: impl AsRef<str>) {
         self.test_error(message);
     }

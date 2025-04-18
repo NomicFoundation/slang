@@ -184,7 +184,7 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
             }
 
             if opts.check_infer_version && test_outcome == TestOutcome::Passed {
-                test_outcome = check_infer_version_outcome(contract, &unit);
+                test_outcome = check_infer_version_outcome(contract, &unit, &events);
             }
 
             if opts.check_bindings && test_outcome == TestOutcome::Passed {
@@ -239,21 +239,32 @@ fn check_parsing_outcome(
     test_outcome
 }
 
-fn check_infer_version_outcome(contract: &Contract, unit: &CompilationUnit) -> TestOutcome {
+fn check_infer_version_outcome(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
     let mut source_buf = String::new();
     let actual_version = contract.version();
 
+    let mut did_fail = false;
     for file in unit.files() {
         source_buf.clear();
 
         let _ = contract.read_file(file.id(), &mut source_buf);
 
         if !LanguageFacts::infer_language_versions(&source_buf).any(|v| *v == actual_version) {
-            return TestOutcome::Failed;
+            let source_name = contract.metadata.get_real_name(file.id()).unwrap_or(file.id().into());
+            events.version_error(format!(
+                "[{version}] Could not infer correct version for {contract_name}:{source_name}", 
+                version = actual_version,
+                contract_name = contract.name,
+            ));
+            did_fail = true
         }
     }
 
-    TestOutcome::Passed
+    if did_fail {
+        TestOutcome::Failed
+    } else {
+        TestOutcome::Passed
+    }
 }
 
 fn check_bindings_outcome(
