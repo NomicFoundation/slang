@@ -17,6 +17,48 @@ Written in Rust and distributed in multiple languages.
 
 Slang analyzes Solidity source code and generates a rich concrete syntax tree (CST) that can be reasoned about. This is a departure from the classic approach of "black-box" compilers, which are handed the input and only their output can be observed.
 
+```ts
+import assert from "node:assert";
+import { ParseOutput, Parser } from "@nomicfoundation/slang/parser";
+import { LanguageFacts } from "@nomicfoundation/slang/utils";
+
+function createTree(): ParseOutput {
+  const source = `
+    contract Foo {
+      function foo_func() {}
+    }
+    contract Bar {
+      function bar_func() {}
+    }
+    contract Baz {
+      function baz_func() {}
+    }
+  `;
+
+  const parser = Parser.create(LanguageFacts.latestVersion());
+
+  const parseOutput = parser.parseFileContents(source.trim());
+  assert(parseOutput.isValid());
+
+  return parseOutput;
+}
+
+function getContractNames() {
+  const tree = createTree();
+  const cursor = tree.createTreeCursor();
+
+  const contracts = [];
+
+  while (cursor.goToNextNonterminalWithKind(NonterminalKind.ContractDefinition)) {
+    assert(cursor.goToNextTerminalWithKind(TerminalKind.Identifier));
+
+    contracts.push(cursor.node.unparse());
+  }
+
+  assert.deepStrictEqual(contracts, ["Foo", "Bar", "Baz"]);
+}
+```
+
 Slang is not a replacement for solc, the standard Solidity compiler. We do not plan at the moment to support emitting optimized EVM bytecode for use in production. It does not perform formal verification of contracts or Solidity logic in general. However, it is designed to empower such tools to be built on top of it.
 
 [Read the User Guide here.](https://nomicfoundation.github.io/slang/latest/user-guide/01-introduction/)
