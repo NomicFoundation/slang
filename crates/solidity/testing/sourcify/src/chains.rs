@@ -1,5 +1,7 @@
 #![allow(clippy::unreadable_literal)]
 
+use std::fmt::Display;
+
 use clap::{Subcommand, ValueEnum};
 use strum_macros::AsRefStr;
 
@@ -13,14 +15,24 @@ pub enum Chain {
     Polygon { network: PolygonNetwork },
 }
 
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Default)]
+#[repr(transparent)]
+pub struct ChainId(pub u64);
+
+impl Display for ChainId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
 impl Chain {
-    pub fn id(self) -> u64 {
+    pub fn id(self) -> ChainId {
         match self {
-            Chain::Arbitrum { network } => network as u64,
-            Chain::Avalanche { network } => network as u64,
-            Chain::Ethereum { network } => network as u64,
-            Chain::Fantom { network } => network as u64,
-            Chain::Polygon { network } => network as u64,
+            Chain::Arbitrum { network } => ChainId(network as u64),
+            Chain::Avalanche { network } => ChainId(network as u64),
+            Chain::Ethereum { network } => ChainId(network as u64),
+            Chain::Fantom { network } => ChainId(network as u64),
+            Chain::Polygon { network } => ChainId(network as u64),
         }
     }
 

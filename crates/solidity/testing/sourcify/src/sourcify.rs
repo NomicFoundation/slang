@@ -1,51 +1,25 @@
 use std::fs;
-use std::io::{BufReader, ErrorKind, Read};
-use std::path::{Path, PathBuf};
+use std::io::{BufReader, Read};
+use std::path::PathBuf;
 
 use anyhow::{bail, Error, Result};
 use reqwest::blocking::Client;
 use semver::Version;
-use serde::Deserialize;
 use slang_solidity::compilation::CompilationUnit;
 use tar::Archive;
 
-use crate::chains::Chain;
+use crate::chains::{Chain, ChainId};
 use crate::command::ShardingOptions;
 use crate::compilation_builder::CompilationBuilder;
 use crate::metadata::ContractMetadata;
 
-/// A `Repository` is used to fetch contracts from a certain chain. In addition to providing
-/// an API for fetching contracts, it also manages a directory where fetched contract archives will
-/// be written.
-pub struct Repository {
-    /// The chain that this Repository will fetch from
-    chain: Chain,
-    /// The parent path where fetched `ContractArchives` will be unpacked to.
-    path: PathBuf,
-    /// If `true`, then the files for this repository will not be deleted after the test is complete.
-    should_save: bool,
+pub struct Manifest {
+    /// Description of the archives that are available to fetch.
+    archive_descriptors: Vec<ArchiveDescriptor>,
 }
 
-impl Repository {
-    pub fn new(chain: Chain, should_save: bool) -> Result<Repository> {
-        let root = if should_save {
-            PathBuf::from("target")
-        } else {
-            std::env::temp_dir()
-        };
-
-        let path = root.join(format!("sourcify_{}", chain.id()));
-        create_or_replace_dir(&path)?;
-
-        Ok(Repository {
-            chain,
-            path,
-            should_save,
-        })
-    }
-
-    /// Fetch shard info for the current chain.
-    pub fn fetch_shards(&self, options: &ShardingOptions) -> Result<Vec<Shard>> {
+impl Manifest {
+    pub fn new(chain: Chain, options: &ShardingOptions) -> Result<Manifest> {
         let client = Client::new();
         let res = client
             .get("https://repo-backup.sourcify.dev/manifest.json")
@@ -56,128 +30,57 @@ impl Repository {
             bail!("Error fetching manifest.json");
         }
 
-        let manifest: Manifest = res.json()?;
-        Ok(manifest.get_chain_shards(self.chain, options))
-    }
-
-    /// Fetch the `ContractArchive` data for this shard. Data is recieved as a tar archive, and is unpacked
-    /// into the directory created by this `Repository`.
-    pub fn fetch_archive(&self, shard: &Shard, chain: Chain) -> Result<ContractArchive> {
-        let client = Client::new();
-        let res = client
-            .get(format!("https://repo-backup.sourcify.dev{}", shard.path))
-            .send()?;
-
-        let status = res.status();
-        if !status.is_success() {
-            bail!("Could not fetch source tarball");
-        }
-
-        let repo_dir = self.path.join(format!("{}", shard.id));
-        create_or_replace_dir(&repo_dir).inspect_err(|e| {
-            eprintln!(
-                "Failed to create directory {}: {e}",
-                repo_dir.to_str().unwrap()
+        let obj: serde_json::Value = res.json()?;
+        let archive_descs: Option<Vec<ArchiveDescriptor>> = obj.get("files")
+            .and_then(|files| files.as_array())
+            .map(|files| files
+                .iter()
+                .filter_map(|file| file.get("path").and_then(|val| val.as_str()))
+                .filter_map(|path| ArchiveDescriptor::new(path).ok())
+                .filter(|desc| desc.matches_chain_and_shard(chain, options))
+                .collect()
             );
-        })?;
 
-        let mut archive = Archive::new(res);
-        archive.unpack(&repo_dir)?;
+        if let Some(mut archive_descs) = archive_descs {
+            if !archive_descs.is_empty() {
+                archive_descs.sort_by(|a, b| a.shard_prefix.cmp(&b.shard_prefix));
 
-        Ok(ContractArchive {
-            id: shard.id,
-            match_type: shard.match_type,
-            contracts_path: repo_dir.join(format!(
-                "repository/{}/{}",
-                shard.match_type.dir_name(),
-                chain.id()
-            )),
-            should_save: self.should_save,
-        })
-    }
-
-    fn clean(&self) {
-        if !self.should_save {
-            fs::remove_dir_all(&self.path).unwrap();
+                return Ok(Manifest{
+                    archive_descriptors: archive_descs,
+                });
+            }
         }
-    }
-}
 
-impl Drop for Repository {
-    fn drop(&mut self) {
-        self.clean();
-    }
-}
-
-#[derive(Deserialize)]
-struct Manifest {
-    files: Vec<ManifestFile>,
-}
-
-impl Manifest {
-    fn get_chain_shards(&self, chain: Chain, options: &ShardingOptions) -> Vec<Shard> {
-        let mut shards: Vec<_> = self
-            .files
-            .iter()
-            .filter_map(|manifest| add_from_manifest(manifest, options, chain).ok())
-            .collect();
-
-        shards.sort_by(|a, b| a.id.cmp(&b.id));
-        shards
-    }
-}
-
-fn add_from_manifest(
-    file: &ManifestFile,
-    options: &ShardingOptions,
-    chain: Chain,
-) -> Result<Shard> {
-    // File path should come in this format:
-    // /sourcify-repository-2025-03-24T03-00-26/full_match.1.00.tar.gz
-    //                                                     - --
-    //                                                     | | shard prefix
-    //                                                     | chain ID
-    let mut parts = file.path.split('.');
-    let name_prefix = parts.next().unwrap();
-    let match_type = if name_prefix.ends_with("full_match") {
-        MatchType::Full
-    } else if name_prefix.ends_with("partial_match") {
-        MatchType::Partial
-    } else {
-        bail!("Invalid match type in archive path: {}", file.path);
-    };
-
-    if match_type == MatchType::Partial && options.exclude_partials {
-        bail!("Partials are excluded");
+        bail!("No valid archives found in manifest");
     }
 
-    let chain_id_part = parts.next().ok_or(Error::msg("Failed to get chain ID"))?;
-    let chain_id: u64 = chain_id_part.parse()?;
+    /// Search for a specific contract and return it if found. Returns `None` if the contract can not
+    /// be fetched for any reason (including if the `contract_id` is not parseable).
+    pub fn get_contract(&self, contract_id: &str) -> Option<Contract> {
+        if let Ok(contract_shard_id) = u16::from_str_radix(contract_id.get(2..4).unwrap(), 16) {
+            let archives = self.archive_descriptors
+                .iter()
+                .filter(|shard| shard.shard_prefix == contract_shard_id)
+                .map(|desc| ContractArchive::new(desc))
+                .flatten();
 
-    if chain_id != chain.id() {
-        bail!("Wrong chain");
+            for archive in archives {
+                if let Ok(contract) = archive.get_contract(contract_id) {
+                    return Some(contract);
+                }
+            }
+        }
+
+        None
     }
 
-    let id_part = parts
-        .next()
-        .ok_or(Error::msg("Failed to get shard prefix"))?;
-    let id = u16::from_str_radix(id_part, 16)?;
-
-    if !options.get_id_range().contains(&id) {
-        bail!("Shard not part of selected range.");
+    pub fn archives(self) -> impl Iterator<Item = ContractArchive> {
+        self.archive_descriptors.into_iter().map(|desc| ContractArchive::new(&desc)).flatten()
     }
 
-    Ok(Shard {
-        path: file.path.clone(),
-        id,
-        match_type,
-    })
-}
-
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct ManifestFile {
-    path: String,
+    pub fn archive_count(&self) -> usize {
+        self.archive_descriptors.len()
+    }
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
@@ -195,22 +98,116 @@ impl MatchType {
     }
 }
 
-pub struct Shard {
-    pub id: u16,
+/// Describes an archive that's available in the Sourcify repository.
+/// Can be used by `ContractArchive::fetch()` to download this archive.
+pub struct ArchiveDescriptor {
+    pub shard_prefix: u16,
+    pub chain_id: ChainId,
     pub match_type: MatchType,
     /// A URL path used to fetch the `ContractArchive` for this shard.
     pub path: String,
 }
 
+impl ArchiveDescriptor {
+    fn new(path_str: &str) -> Result<ArchiveDescriptor> {
+        // File path should come in this format:
+        // /sourcify-repository-2025-03-24T03-00-26/full_match.1.00.tar.gz
+        //                                                     - --
+        //                                                     | | shard prefix
+        //                                                     | chain ID
+        let mut parts = path_str.split('.');
+        let name_prefix = parts.next().unwrap();
+        let match_type = if name_prefix.ends_with("full_match") {
+            MatchType::Full
+        } else if name_prefix.ends_with("partial_match") {
+            MatchType::Partial
+        } else {
+            bail!("Invalid match type in archive path: {}", path_str);
+        };
+
+        let chain_id_part = parts.next().ok_or(Error::msg("Failed to get chain ID"))?;
+        let chain_id: u64 = chain_id_part.parse()?;
+
+        let shard_prefix_part = parts
+            .next()
+            .ok_or(Error::msg("Failed to get shard prefix"))?;
+        let shard_prefix = u16::from_str_radix(shard_prefix_part, 16)?;
+
+        Ok(ArchiveDescriptor {
+            path: path_str.into(),
+            shard_prefix,
+            chain_id: ChainId(chain_id),
+            match_type,
+        })
+    }
+
+    fn matches_chain_and_shard(&self, chain: Chain, options: &ShardingOptions) -> bool {
+        if self.match_type == MatchType::Partial && options.exclude_partial_matches {
+            return false;
+        }
+
+        if self.chain_id != chain.id() {
+            return false;
+        }
+        
+        if !options.get_id_range().contains(&self.shard_prefix) {
+            return false
+        }
+
+        true
+    }
+
+    /// Get a path that should be used as the target when unpacking the archive 
+    /// represented by this `ArchiveDescriptor`.
+    fn archive_dir(&self) -> PathBuf {
+        PathBuf::from(format!(
+            "target/sourcify_{chain_id}/{shard_prefix:02x}",
+            chain_id = self.chain_id,
+            shard_prefix = self.shard_prefix,
+        ))
+    }
+
+    /// Get the path inside `self.archive_dir()` that contains all of the contracts. 
+    /// This path is defined by the archives fetched from Sourcify, and should be updated 
+    /// in case Sourcify ever changes its repository format.
+    fn contracts_dir(&self) -> PathBuf {
+        self.archive_dir().join(format!(
+            "repository/{match_type}/{chain_id}",
+            match_type = self.match_type.dir_name(),
+            chain_id = self.chain_id,
+        ))
+    }
+}
+
 #[derive(Clone)]
 pub struct ContractArchive {
-    pub id: u16,
-    pub match_type: MatchType,
+    /// Path to the directory inside this archive which contains all of the contracts.
+    /// Iterate over the entries at this path to read the contracts.
     contracts_path: PathBuf,
-    should_save: bool,
 }
 
 impl ContractArchive {
+    pub fn new(desc: &ArchiveDescriptor) -> Result<ContractArchive> {
+        let client = Client::new();
+        let res = client
+            .get(format!("https://repo-backup.sourcify.dev{}", desc.path))
+            .send()?;
+
+        let status = res.status();
+        if !status.is_success() {
+            bail!("Could not fetch source tarball");
+        }
+
+        let archive_dir = desc.archive_dir();
+
+        let mut archive = Archive::new(res);
+        archive.unpack(&archive_dir)?;
+
+        Ok(ContractArchive {
+            contracts_path: desc.contracts_dir(),
+        })
+    }
+
     pub fn contracts(&self) -> impl Iterator<Item = Contract> {
         let dir = fs::read_dir(&self.contracts_path).expect("Could not open contract directory.");
         dir.flatten().flat_map(|dir_entry| -> Result<Contract> {
@@ -233,15 +230,11 @@ impl ContractArchive {
     }
 
     pub fn clean(&self) {
-        if !self.should_save {
-            let _ = fs::remove_dir_all(&self.contracts_path);
-        }
+        fs::remove_dir_all(&self.contracts_path).unwrap();
     }
-}
 
-impl Drop for ContractArchive {
-    fn drop(&mut self) {
-        self.clean();
+    pub fn display_path(&self) -> String {
+        self.contracts_path.to_str().unwrap().into()
     }
 }
 
@@ -254,7 +247,7 @@ pub struct Contract {
 }
 
 impl Contract {
-    fn new(contract_path: &Path) -> Result<Contract> {
+    fn new(contract_path: &PathBuf) -> Result<Contract> {
         let name = contract_path
             .file_name()
             .unwrap()
@@ -305,19 +298,4 @@ impl Contract {
     pub fn version(&self) -> Version {
         self.metadata.version.clone()
     }
-}
-
-/// Helper function - create a directory, and if the directory already exits, delete the existing
-/// one and recreate it.
-fn create_or_replace_dir(path: &PathBuf) -> std::io::Result<()> {
-    if let Err(err) = fs::create_dir_all(path) {
-        if err.kind() == ErrorKind::AlreadyExists {
-            fs::remove_dir_all(path)?;
-            fs::create_dir_all(path)?;
-        } else {
-            return Err(err);
-        }
-    }
-
-    Ok(())
 }

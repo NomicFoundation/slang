@@ -23,7 +23,7 @@ use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::utils::LanguageFacts;
-use sourcify::{Contract, ContractArchive, Repository};
+use sourcify::{Manifest, Contract, ContractArchive};
 
 fn main() -> Result<()> {
     let command::Cli { command } = command::Cli::parse();
@@ -45,15 +45,13 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
         network = cmd.chain.network_name()
     ));
 
+    let manifest = Manifest::new(cmd.chain, &cmd.sharding_options)?;
+    
     if let Some(contract) = &cmd.contract {
-        return test_contract(&cmd, contract, &cmd.test_options);
+        return test_single_contract(&manifest, contract, &cmd.test_options);
     }
 
-    let repo = Repository::new(cmd.chain, false)?;
-    let shards = repo.fetch_shards(&cmd.sharding_options)?;
-
-    let chain = cmd.chain;
-    let shard_count = shards.len();
+    let archive_count = manifest.archive_count();
 
     let (tx, rx) = std::sync::mpsc::channel::<ContractArchive>();
 
@@ -61,20 +59,21 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     // because then repo will be dropped as soon as the last archive is fetched (before processing
     // has finished), which will delete all the archive files
     let process_thread = std::thread::spawn(move || -> Events {
-        let mut events = Events::new(shard_count, 0);
+        let mut events = Events::new(archive_count, 0);
         for archive in rx {
-            Terminal::step(format!(
-                "Testing shard {}/{:#04x}",
-                archive.match_type.dir_name(),
-                archive.id,
-            ));
-            events.start_directory(archive.contract_count());
+            Terminal::step(archive.display_path());
+
+            events.start_archive(archive.contract_count());
             if cmd.trace {
                 run_with_trace(&archive, &events, &cmd.test_options);
             } else {
                 run_in_parallel(&archive, &events, &cmd.test_options);
             }
-            events.finish_directory();
+            events.finish_archive();
+
+            if !cmd.save {
+                archive.clean();
+            }
         }
 
         events
@@ -83,13 +82,8 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     // Fetching the shards in this closure so that it takes ownership of the sender
     // The sender needs to be dropped so that process_thread can finish
     let fetcher = |t: std::sync::mpsc::Sender<ContractArchive>| {
-        for shard in shards {
-            match repo.fetch_archive(&shard, chain) {
-                Ok(archive) => {
-                    t.send(archive).unwrap();
-                }
-                Err(e) => eprintln!("Failed to create archive: {e}"),
-            }
+        for archive in manifest.archives() {
+            t.send(archive).unwrap();
         }
     };
 
@@ -117,26 +111,15 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     Ok(())
 }
 
-fn test_contract(cmd: &command::TestCommand, contract_id: &str, opts: &TestOptions) -> Result<()> {
-    let repo = Repository::new(cmd.chain, cmd.save)?;
-    let shards = repo.fetch_shards(&cmd.sharding_options)?;
+fn test_single_contract(manifest: &Manifest, contract_id: &str, opts: &TestOptions) -> Result<()> {
+    if let Some(contract) = manifest.get_contract(contract_id) {
+        let mut events = Events::new(1, 0);
 
-    let contract_shard_id = u16::from_str_radix(contract_id.get(2..4).unwrap(), 16)?;
+        events.start_archive(1);
+        run_test(&contract, &events, opts);
+        events.finish_archive();
 
-    let contract_shards = shards.iter().filter(|shard| shard.id == contract_shard_id);
-
-    for contract_shard in contract_shards {
-        let archive = repo.fetch_archive(contract_shard, cmd.chain)?;
-        if let Ok(contract) = archive.get_contract(contract_id) {
-            let mut events = Events::new(1, 0);
-            events.start_directory(1);
-
-            run_test(&contract, &events, opts);
-
-            events.finish_directory();
-
-            return Ok(());
-        }
+        return Ok(());
     }
 
     bail!("Contract {contract_id} not found");
@@ -287,8 +270,8 @@ fn run_bindings_check(
         if reference.definitions().is_empty() {
             let cursor = reference.get_cursor().to_owned();
 
-            let binding_error = BindingError::UnresolvedReference(cursor);
             let source = cursor.node().unparse();
+            let binding_error = BindingError::UnresolvedReference(cursor);
             let msg = slang_solidity::diagnostic::render(&binding_error, ref_file.get_path(), &source, true); 
             events.bindings_error(format!(
                 "[{version}] Binding Error: Reference has no definitions\n{msg}"

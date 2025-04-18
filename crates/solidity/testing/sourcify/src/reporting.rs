@@ -81,6 +81,11 @@ impl Reporter {
         self.add_bar(message, template, 0);
     }
 
+    pub fn add_label(&mut self, message: &str) {
+        let template = "{wide_msg}";
+        self.add_bar(message, template, 0);
+    }
+
     pub fn add_progress(&mut self, message: impl Into<String>, total: usize) -> ProgressBar {
         let template = "[{elapsed_precise}]  {msg:^17}  [{wide_bar:.cyan/blue}]  {human_pos:>5}/{human_len:<5}  [ETA: {eta_precise:>3}]";
 

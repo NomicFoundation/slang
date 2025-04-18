@@ -20,8 +20,8 @@ pub enum TestOutcome {
 pub struct Events {
     reporter: Reporter,
 
-    all_shards: ProgressBar,
-    current_shard: ProgressBar,
+    all_archives: ProgressBar,
+    current_archive: ProgressBar,
 
     source_files: ProgressBar,
 
@@ -32,19 +32,20 @@ pub struct Events {
 }
 
 impl Events {
-    pub fn new(directories_count: usize, files_count: usize) -> Self {
+    pub fn new(archives_count: usize, files_count: usize) -> Self {
         let mut reporter = Reporter::new();
 
         reporter.add_blank();
 
-        let all_shards = reporter.add_progress("All Shards", directories_count);
-        let current_shard = reporter.add_progress("Current Shard", 0);
+        let all_archives = reporter.add_progress("All Archives", archives_count);
+        let current_archive = reporter.add_progress("Current Archives", 0);
 
         reporter.add_blank();
 
         let source_files = reporter.add_counter("📄 Source Files", Color::White, files_count);
 
         reporter.add_blank();
+        reporter.add_label("Contract Stats:");
 
         let passed = reporter.add_counter("✅ Passed", Color::Green, 0);
         let failed = reporter.add_counter("❌ Failed", Color::Red, 0);
@@ -56,8 +57,8 @@ impl Events {
         Self {
             reporter,
 
-            all_shards,
-            current_shard,
+            all_archives,
+            current_archive,
 
             source_files,
 
@@ -73,9 +74,9 @@ impl Events {
         self.failed.position() as usize
     }
 
-    pub fn start_directory(&mut self, directory_files: usize) {
-        self.current_shard.reset();
-        self.current_shard.set_length(directory_files as u64);
+    pub fn start_archive(&mut self, contract_count: usize) {
+        self.current_archive.reset();
+        self.current_archive.set_length(contract_count as u64);
 
         self.reporter.show();
     }
@@ -88,8 +89,8 @@ impl Events {
         self.source_files.inc(files_processed as u64);
     }
 
-    pub fn finish_directory(&mut self) {
-        self.all_shards.inc(1);
+    pub fn finish_archive(&mut self) {
+        self.all_archives.inc(1);
 
         self.reporter.hide();
 
@@ -99,7 +100,7 @@ impl Events {
     }
 
     pub fn test(&self, outcome: TestOutcome) {
-        self.current_shard.inc(1);
+        self.current_archive.inc(1);
 
         self.passed.inc_length(1);
         self.failed.inc_length(1);
@@ -153,7 +154,7 @@ impl Events {
             failed: self.failed.position(),
             unresolved: self.unresolved.position(),
             incompatible: self.incompatible.position(),
-            elapsed: self.all_shards.elapsed(),
+            elapsed: self.all_archives.elapsed(),
         }
     }
 }

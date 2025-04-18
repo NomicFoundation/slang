@@ -76,7 +76,7 @@ pub struct ShardingOptions {
 
     /// If set, will only test contracts under the '`full_match`' category.
     #[arg(long, default_value_t = false)]
-    pub exclude_partials: bool,
+    pub exclude_partial_matches: bool,
 }
 
 impl ShardingOptions {
