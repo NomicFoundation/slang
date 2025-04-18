@@ -19,7 +19,6 @@ use infra_utils::terminal::Terminal;
 use rayon::iter::ParallelBridge;
 use rayon::prelude::ParallelIterator;
 use results::{display_all_results, AllResults};
-use semver::Version;
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
@@ -180,15 +179,15 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
     match contract.create_compilation_unit() {
         Ok(unit) => {
             if opts.check_parser {
-                test_outcome = check_parsing_outcome(contract, &unit, events);
+                test_outcome = run_parser_check(contract, &unit, events);
             }
 
             if opts.check_infer_version && test_outcome == TestOutcome::Passed {
-                test_outcome = check_infer_version_outcome(contract, &unit, &events);
+                test_outcome = run_version_inference_check(contract, &unit, &events);
             }
 
             if opts.check_bindings && test_outcome == TestOutcome::Passed {
-                test_outcome = check_bindings_outcome(contract, &unit, events);
+                test_outcome = run_bindings_check(contract, &unit, events);
             }
         }
         Err(e) => {
@@ -205,7 +204,7 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
     events.test(test_outcome);
 }
 
-fn check_parsing_outcome(
+fn run_parser_check(
     contract: &Contract,
     unit: &CompilationUnit,
     events: &Events,
@@ -239,7 +238,7 @@ fn check_parsing_outcome(
     test_outcome
 }
 
-fn check_infer_version_outcome(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
+fn run_version_inference_check(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
     let mut source_buf = String::new();
     let actual_version = contract.version();
 
@@ -267,16 +266,83 @@ fn check_infer_version_outcome(contract: &Contract, unit: &CompilationUnit, even
     }
 }
 
-fn check_bindings_outcome(
+fn run_bindings_check(
     contract: &Contract,
-    unit: &CompilationUnit,
+    compilation_unit: &CompilationUnit,
     events: &Events,
 ) -> TestOutcome {
-    if run_bindings_check(unit, events, &contract.version()).is_ok() {
-        TestOutcome::Passed
-    } else {
-        TestOutcome::Failed
+    let version = contract.version();
+    let binding_graph = compilation_unit.binding_graph();
+
+    let mut test_outcome = TestOutcome::Passed;
+    for reference in binding_graph.all_references() {
+        let ref_file = reference.get_file();
+
+        if ref_file.is_built_ins() {
+            // skip built-ins
+            continue;
+        }
+        // We're not interested in the exact definition a reference resolves
+        // to, so we lookup all of them and fail if we find none.
+        if reference.definitions().is_empty() {
+            let cursor = reference.get_cursor().to_owned();
+
+            let binding_error = BindingError::UnresolvedReference(cursor);
+            let source = cursor.node().unparse();
+            let msg = slang_solidity::diagnostic::render(&binding_error, ref_file.get_path(), &source, true); 
+            events.bindings_error(format!(
+                "[{version}] Binding Error: Reference has no definitions\n{msg}"
+            ));
+
+            test_outcome = TestOutcome::Failed;
+        }
     }
+
+    // Check that all identifier nodes are bound to either a definition or a reference:
+    for file in compilation_unit.files() {
+        let mut cursor = file.create_tree_cursor();
+        while cursor.go_to_next_terminal() {
+            if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
+                continue;
+            }
+
+            if matches!(
+                cursor.ancestors().next(),
+                Some(ancestor)
+                // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
+                if ancestor.kind == NonterminalKind::ExperimentalFeature
+            ) {
+                continue;
+            }
+
+            if binding_graph.definition_at(&cursor).is_none()
+                && binding_graph.reference_at(&cursor).is_none()
+            {
+                let binding_error = BindingError::UnboundIdentifier(cursor.clone());
+
+                let mut source = String::new();
+                let _ = contract.read_file(file.id(), &mut source);
+
+                let msg = slang_solidity::diagnostic::render(&binding_error, file.id(), &source, true);
+                events.bindings_error(format!(
+                    "[{version}] Binding Error: No definition or reference\n{msg}"
+                ));
+
+                test_outcome = TestOutcome::Failed;
+            }
+        }
+    }
+
+    test_outcome
+}
+
+fn run_show_combined_results_command(command: ShowCombinedResultsCommand) -> Result<()> {
+    let ShowCombinedResultsCommand { results_file } = command;
+
+    let contents = results_file.read_to_string()?;
+    let all_results: AllResults = serde_json::from_str(&contents)?;
+    display_all_results(&all_results);
+    Ok(())
 }
 
 fn uses_exotic_parser_bug(contract: &Contract) -> bool {
@@ -325,74 +391,4 @@ impl Diagnostic for BindingError {
             }
         }
     }
-}
-
-fn run_bindings_check(
-    compilation_unit: &CompilationUnit,
-    events: &Events,
-    version: &Version,
-) -> Result<(), BindingError> {
-    let binding_graph = compilation_unit.binding_graph();
-
-    for reference in binding_graph.all_references() {
-        let ref_file = reference.get_file();
-
-        if ref_file.is_built_ins() {
-            // skip built-ins
-            continue;
-        }
-        // We're not interested in the exact definition a reference resolves
-        // to, so we lookup all of them and fail if we find none.
-        if reference.definitions().is_empty() {
-            let cursor = reference.get_cursor().to_owned();
-
-            let binding_error = BindingError::UnresolvedReference(cursor);
-            events.bindings_error(format!(
-                "[{version}] Binding Error: Reference has no definitions"
-            ));
-
-            return Err(binding_error);
-        }
-    }
-
-    // Check that all identifier nodes are bound to either a definition or a reference:
-    for file in compilation_unit.files() {
-        let mut cursor = file.create_tree_cursor();
-        while cursor.go_to_next_terminal() {
-            if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
-                continue;
-            }
-
-            if matches!(
-                cursor.ancestors().next(),
-                Some(ancestor)
-                // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
-                if ancestor.kind == NonterminalKind::ExperimentalFeature
-            ) {
-                continue;
-            }
-
-            if binding_graph.definition_at(&cursor).is_none()
-                && binding_graph.reference_at(&cursor).is_none()
-            {
-                let binding_error = BindingError::UnboundIdentifier(cursor.clone());
-                events.bindings_error(format!(
-                    "[{version}] Binding Error: No definition or reference"
-                ));
-
-                return Err(binding_error);
-            }
-        }
-    }
-
-    Ok(())
-}
-
-fn run_show_combined_results_command(command: ShowCombinedResultsCommand) -> Result<()> {
-    let ShowCombinedResultsCommand { results_file } = command;
-
-    let contents = results_file.read_to_string()?;
-    let all_results: AllResults = serde_json::from_str(&contents)?;
-    display_all_results(&all_results);
-    Ok(())
 }
