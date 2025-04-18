@@ -66,7 +66,12 @@ pub(crate) fn select_tests<'d>(
     }
 }
 
-pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool) -> Result<()> {
+pub fn run_test(
+    file: &SourceFile,
+    events: &Events,
+    check_bindings: bool,
+    check_infer_version: bool,
+) -> Result<()> {
     if !file.path.exists() {
         // Index can be out of date:
         events.test(TestOutcome::NotFound);
@@ -120,6 +125,19 @@ pub fn run_test(file: &SourceFile, events: &Events, check_bindings: bool) -> Res
 
         events.test(TestOutcome::Failed);
         return Ok(());
+    }
+
+    if check_infer_version && !has_known_version_mismatch(&file.path) {
+        let mut inferred_versions = LanguageFacts::infer_language_versions(&source);
+        if !inferred_versions.any(|v| *v == version) {
+            events.version_inference_error(format!(
+                "[{version}] Did not find correct version for {path}",
+                path = file.path.to_str().unwrap_or("[path not found]")
+            ));
+            events.test(TestOutcome::Failed);
+
+            return Ok(());
+        }
     }
 
     if check_bindings {
@@ -178,6 +196,19 @@ fn uses_exotic_parser_bug(file: &Path) -> bool {
     ];
 
     CONTRACTS_WITH_EXOTIC_PARSER_BUGS
+        .iter()
+        .any(|path| file.ends_with(path))
+}
+
+fn has_known_version_mismatch(file: &Path) -> bool {
+    static CONTRACTS_WITH_KNOWN_VERSION_MISMATCH: &[&str] = &[
+        // Registered with compiler version 0.4.20 but version pragma is 0.4.19
+        "ethereum/contracts/mainnet/ba/bab03ba1ad80dca87d4527960ea453a9a88a4d2e_DeNetToken.sol",
+        // Registered with compiler version 0.4.16 but version pragma is ^0.4.18
+        "ethereum/contracts/mainnet/c0/c0c45cbb1dce225cf620c36807a1cdecb85feda5_ETHMONEY.sol",
+    ];
+
+    CONTRACTS_WITH_KNOWN_VERSION_MISMATCH
         .iter()
         .any(|path| file.ends_with(path))
 }
