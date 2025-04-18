@@ -129,13 +129,13 @@ fn run_with_trace(archive: &ContractArchive, events: &Events, opts: &TestOptions
     for contract in archive.contracts() {
         events.trace(format!(
             "[{version}] Starting contract {name}",
-            version = contract.version(),
+            version = contract.version,
             name = contract.name
         ));
         run_test(&contract, events, opts);
         events.trace(format!(
             "[{version}] Finished contract {name}",
-            version = contract.version(),
+            version = contract.version,
             name = contract.name
         ));
     }
@@ -201,7 +201,7 @@ fn run_parser_check(
             let _ = contract.read_file(file.id(), &mut source_buf);
 
             let source_name = contract
-                .metadata
+                .import_resolver
                 .get_virtual_path(file.id())
                 .unwrap_or(file.id().into());
 
@@ -211,7 +211,7 @@ fn run_parser_check(
                 events.parse_error(format!(
                     "[{version}] Parse error in contract {contract_name}\n{msg}",
                     contract_name = contract.name,
-                    version = contract.version()
+                    version = contract.version
                 ));
             }
             test_outcome = TestOutcome::Failed;
@@ -223,7 +223,6 @@ fn run_parser_check(
 
 fn run_version_inference_check(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
     let mut source_buf = String::new();
-    let actual_version = contract.version();
 
     let mut did_fail = false;
     for file in unit.files() {
@@ -231,11 +230,11 @@ fn run_version_inference_check(contract: &Contract, unit: &CompilationUnit, even
 
         let _ = contract.read_file(file.id(), &mut source_buf);
 
-        if !LanguageFacts::infer_language_versions(&source_buf).any(|v| *v == actual_version) {
-            let source_name = contract.metadata.get_real_name(file.id()).unwrap_or(file.id().into());
+        if !LanguageFacts::infer_language_versions(&source_buf).any(|v| *v == contract.version) {
+            let source_name = contract.import_resolver.get_real_name(file.id()).unwrap_or(file.id().into());
             events.version_error(format!(
                 "[{version}] Could not infer correct version for {contract_name}:{source_name}", 
-                version = actual_version,
+                version = contract.version,
                 contract_name = contract.name,
             ));
             did_fail = true
@@ -254,7 +253,6 @@ fn run_bindings_check(
     compilation_unit: &CompilationUnit,
     events: &Events,
 ) -> TestOutcome {
-    let version = contract.version();
     let binding_graph = compilation_unit.binding_graph();
 
     let mut test_outcome = TestOutcome::Passed;
@@ -274,7 +272,8 @@ fn run_bindings_check(
             let binding_error = BindingError::UnresolvedReference(cursor);
             let msg = slang_solidity::diagnostic::render(&binding_error, ref_file.get_path(), &source, true); 
             events.bindings_error(format!(
-                "[{version}] Binding Error: Reference has no definitions\n{msg}"
+                "[{version}] Binding Error: Reference has no definitions\n{msg}",
+                version = contract.version,
             ));
 
             test_outcome = TestOutcome::Failed;
@@ -308,7 +307,8 @@ fn run_bindings_check(
 
                 let msg = slang_solidity::diagnostic::render(&binding_error, file.id(), &source, true);
                 events.bindings_error(format!(
-                    "[{version}] Binding Error: No definition or reference\n{msg}"
+                    "[{version}] Binding Error: No definition or reference\n{msg}",
+                    version = contract.version,
                 ));
 
                 test_outcome = TestOutcome::Failed;

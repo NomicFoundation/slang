@@ -14,7 +14,7 @@ impl<'c> CompilationBuilder<'c> {
     pub fn new(contract: &'c Contract) -> Result<CompilationBuilder<'c>> {
         Ok(CompilationBuilder {
             contract,
-            internal: InternalCompilationBuilder::create(contract.version())?,
+            internal: InternalCompilationBuilder::create(contract.version.clone())?,
             seen_files: vec![],
             read_buffer: String::new(),
         })
@@ -53,7 +53,7 @@ impl<'c> CompilationBuilder<'c> {
 
             let import_real_name = self
                 .contract
-                .metadata
+                .import_resolver
                 .resolve_import(&filename, import_path)?;
             self.add_file(&import_real_name)?;
         }

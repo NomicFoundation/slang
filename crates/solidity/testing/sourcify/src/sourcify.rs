@@ -4,14 +4,14 @@ use std::path::PathBuf;
 
 use anyhow::{bail, Error, Result};
 use reqwest::blocking::Client;
-use semver::Version;
+use semver::{BuildMetadata, Prerelease, Version};
 use slang_solidity::compilation::CompilationUnit;
 use tar::Archive;
 
 use crate::chains::{Chain, ChainId};
 use crate::command::ShardingOptions;
 use crate::compilation_builder::CompilationBuilder;
-use crate::metadata::ContractMetadata;
+use crate::metadata::ImportResolver;
 
 pub struct Manifest {
     /// Description of the archives that are available to fetch.
@@ -242,7 +242,10 @@ impl ContractArchive {
 /// processed, but can be found in the directory at `sources_path`.
 pub struct Contract {
     pub name: String,
-    pub metadata: ContractMetadata,
+    pub version: Version,
+    pub target: String,
+    pub import_resolver: ImportResolver,
+
     sources_path: PathBuf,
 }
 
@@ -257,13 +260,33 @@ impl Contract {
         let metadata_file = fs::File::open(contract_path.join("metadata.json"))?;
         let reader = BufReader::new(metadata_file);
 
-        let metadata = serde_json::from_reader(reader)?;
+        let metadata_val: serde_json::Value = serde_json::from_reader(reader)?;
 
-        let sources_path = contract_path.join("sources");
+        let version = metadata_val.get("compiler")
+            .and_then(|compiler| compiler.get("version"))
+            .and_then(|version_val| version_val.as_str())
+            .and_then(|version_str| Version::parse(version_str).ok())
+            .map(|mut version| {
+                version.pre = Prerelease::EMPTY;
+                version.build = BuildMetadata::EMPTY;
+                version
+            })
+            .ok_or(Error::msg("Could not get compiler version from contract metadata"))?;
+
+        let target = metadata_val.get("settings")
+            .and_then(|settings| settings.get("compilationTarget"))
+            .and_then(|target| target.as_object())
+            .and_then(|target_obj| target_obj.keys().next())
+            .ok_or(Error::msg("Could not get compilation target from contract metadata"))?
+            .clone();
+
+        let import_resolver: ImportResolver = metadata_val.try_into()?;
 
         Ok(Contract {
-            metadata,
-            sources_path,
+            target,
+            version,
+            import_resolver,
+            sources_path: contract_path.join("sources"),
             name: name.into(),
         })
     }
@@ -277,7 +300,7 @@ impl Contract {
     }
 
     pub fn entrypoint(&self) -> Result<String> {
-        self.metadata.get_real_name(&self.metadata.target)
+        self.import_resolver.get_real_name(&self.target)
     }
 
     // We want to use `file.read_to_string` instead of `File::read_to_string` because the
@@ -293,9 +316,5 @@ impl Contract {
         fs::read_dir(&self.sources_path)
             .map(|i| i.count())
             .unwrap_or(0)
-    }
-
-    pub fn version(&self) -> Version {
-        self.metadata.version.clone()
     }
 }

@@ -1,21 +1,14 @@
-use std::collections::HashMap;
 use std::path::{Component, PathBuf};
 use std::str::FromStr;
 
 use anyhow::{bail, Error, Result};
-use semver::{BuildMetadata, Prerelease, Version};
-use serde::Deserialize;
 
-#[derive(Deserialize)]
-#[serde(try_from = "ContractMetadataResponse")]
-pub struct ContractMetadata {
-    pub version: Version,
-    pub target: String,
+pub struct ImportResolver {
     pub remappings: Vec<ImportRemap>,
     pub sources: Vec<FileMapping>,
 }
 
-impl ContractMetadata {
+impl ImportResolver {
     /// Given an import path from a source file, traverse the remappings to find the real filename of
     /// the target source file.
     pub fn resolve_import(&self, source_name: &str, import_path: &str) -> Result<String> {
@@ -92,7 +85,7 @@ impl ContractMetadata {
     fn remap_import(&self, source_name: &str, import_path: &str) -> Option<String> {
         let mut longest_match: Option<&ImportRemap> = None;
         for remap in &self.remappings {
-            if remap.has_known_bug() || !remap.matches_context(source_name) {
+            if !remap.matches_context(source_name) {
                 continue;
             }
 
@@ -187,11 +180,11 @@ fn resolve_relative_url_import(source_path: &str, import_path: &str) -> Result<S
 pub struct FileMapping {
     /// The actual filename for the source file, as found in the archive. This name can
     /// be used to read the content of a source file.
-    real_name: String,
+    pub real_name: String,
     /// The path to the source file in the contract's "virtual filesystem". This is the
     /// path to the source file as the contract was originally constructed. This value
     /// should be used when resolving imports to the real source files.
-    virtual_path: String,
+    pub virtual_path: String,
 }
 
 pub struct ImportRemap {
@@ -208,6 +201,26 @@ pub struct ImportRemap {
 }
 
 impl ImportRemap {
+    pub fn new(remap_str: &str) -> Result<ImportRemap> {
+        if let Some((context, rest)) = remap_str.split_once(':') {
+            if let Some((prefix, target)) = rest.split_once('=') {
+                Ok(ImportRemap {
+                    context: if context.is_empty() {
+                        None
+                    } else {
+                        Some(context.into())
+                    },
+                    prefix: prefix.into(),
+                    target: target.into(),
+                })
+            } else {
+                bail!("{remap_str}: Could not separate prefix and target");
+            }
+        } else {
+            bail!("{remap_str}: Could not separate context from mapping");
+        }
+    }
+
     fn len(&self) -> usize {
         self.context.as_ref().map_or(0, |c| c.len()) + self.prefix.len()
     }
@@ -223,7 +236,7 @@ impl ImportRemap {
     /// Sometimes contracts contain a remapping entry that, for whatever reason,
     /// is buggy. We can collect buggy remaps here so they're skipped during
     /// import path resolution.
-    fn has_known_bug(&self) -> bool {
+    pub fn has_known_bug(&self) -> bool {
         // Ex Contract: 0x56D47372A66b3f640Bff83E745dE7D10f4B29075
         // Remapping list includes ":./=remappings.txt/"
         if self.target.contains("remappings.txt") {
@@ -234,79 +247,37 @@ impl ImportRemap {
     }
 }
 
-#[derive(Deserialize)]
-struct ContractMetadataResponse {
-    compiler: ContractVersion,
-    settings: ContractSettings,
-    language: String,
-    sources: HashMap<String, ContractSource>,
-}
-
-#[derive(Deserialize)]
-struct ContractVersion {
-    version: String,
-}
-
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct ContractSettings {
-    compilation_target: HashMap<String, String>,
-    remappings: Vec<String>,
-}
-
-#[derive(Deserialize)]
-struct ContractSource {
-    keccak256: String,
-}
-
-impl TryFrom<ContractMetadataResponse> for ContractMetadata {
+impl TryFrom<serde_json::Value> for ImportResolver {
     type Error = anyhow::Error;
 
-    fn try_from(response: ContractMetadataResponse) -> Result<ContractMetadata> {
-        if !response.language.eq_ignore_ascii_case("solidity") {
-            bail!("Only Solidity contracts are supported");
-        }
+    fn try_from(value: serde_json::Value) -> Result<ImportResolver, Self::Error> {
+        let remappings: Vec<ImportRemap> = value.get("settings")
+            .and_then(|settings| settings.get("remappings"))
+            .and_then(|remappings| remappings.as_array())
+            .map(|mappings| mappings
+                .iter()
+                .filter_map(|mapping| mapping.as_str())
+                .filter_map(|m| ImportRemap::new(m).ok())
+                .filter(|remap| remap.has_known_bug())
+                .collect()
+            )
+            .ok_or(Error::msg("Could not get remappings from contract metadata"))?;
 
-        let mut version = Version::parse(&response.compiler.version)?;
-        version.pre = Prerelease::EMPTY;
-        version.build = BuildMetadata::EMPTY;
+        let sources: Vec<FileMapping> = value.get("sources")
+            .and_then(|sources| sources.as_object())
+            .map(|sources| sources.iter()
+                .filter_map(|(key, value)| value.get("keccak256")
+                    .and_then(|k| k.as_str())
+                    .map(|real_name| FileMapping{
+                        real_name: real_name.into(),
+                        virtual_path: key.clone(),
+                    })
+                )
+                .collect()
+            )
+            .ok_or(Error::msg("Could not get sources from contract metadata"))?;
 
-        let target = response
-            .settings
-            .compilation_target
-            .keys()
-            .take(1)
-            .collect::<Vec<_>>()[0]
-            .to_owned();
-
-        let mut remappings = vec![];
-        for remap in response.settings.remappings {
-            if let Some((context, rest)) = remap.split_once(':') {
-                if let Some((prefix, target)) = rest.split_once('=') {
-                    remappings.push(ImportRemap {
-                        context: if context.is_empty() {
-                            None
-                        } else {
-                            Some(context.into())
-                        },
-                        prefix: prefix.into(),
-                        target: target.into(),
-                    });
-                }
-            }
-        }
-
-        let mut sources = vec![];
-        for (virtual_path, source) in response.sources {
-            sources.push(FileMapping {
-                virtual_path,
-                real_name: source.keccak256,
-            });
-        }
-
-        Ok(ContractMetadata {
-            version,
-            target,
+        Ok(ImportResolver{
             remappings,
             sources,
         })
