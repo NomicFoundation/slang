@@ -296,8 +296,7 @@ impl Contract {
     /// imports, accounting for file remapping/renaming. The resulting `CompilationUnit` is ready to check for
     /// errors.
     pub fn create_compilation_unit(&self) -> Result<CompilationUnit> {
-        let mut builder = CompilationBuilder::new(self)?;
-        builder.create_compilation_unit()
+        CompilationBuilder::new(self)?.build()
     }
 
     pub fn entrypoint(&self) -> Result<String> {
