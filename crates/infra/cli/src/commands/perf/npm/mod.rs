@@ -16,7 +16,10 @@ pub struct NpmController {
     /// Folder where contracts are stored
     input_folder: String,
 
-    #[arg(value_enum, default_value_t = Cases::All)]
+    #[arg(short, long, default_value_t = String::from(".*"))]
+    pattern: String,
+
+    #[arg(short, long, value_enum, default_value_t = Cases::All)]
     cases: Cases,
 
     #[arg(trailing_var_arg = true)]
@@ -60,6 +63,13 @@ impl NpmController {
                     .split(':')
                     .next()
                     .ok_or_else(|| anyhow::anyhow!("fullyQualifiedName is not well formatted"))?;
+
+                // Skip the iteration if the compilation_file does not match the pattern
+                if !regex::Regex::new(&self.pattern)?
+                    .is_match(path.join(fully_qualified_name).to_string_lossy().as_ref())
+                {
+                    continue;
+                }
 
                 let compiler_version = json
                     .get("compilerVersion")

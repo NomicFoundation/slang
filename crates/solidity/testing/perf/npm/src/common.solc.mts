@@ -59,6 +59,9 @@ function findImports(folder: string): (file: string) => { contents: string; } {
   const repoRoot = process.env["REPO_ROOT"];
   assert(repoRoot);
   return (file: string) => {
+    while (file.startsWith("/")) {
+      file = file.substring(1);
+    }
     const absolutePath = path.resolve(
       folder,
       file
