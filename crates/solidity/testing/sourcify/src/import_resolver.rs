@@ -181,33 +181,44 @@ impl TryFrom<serde_json::Value> for ImportResolver {
     type Error = anyhow::Error;
 
     fn try_from(value: serde_json::Value) -> Result<ImportResolver, Self::Error> {
-        let import_remaps: Vec<ImportRemap> = value.get("settings")
+        let import_remaps: Vec<ImportRemap> = value
+            .get("settings")
             .and_then(|settings| settings.get("remappings"))
             .and_then(|remappings| remappings.as_array())
-            .ok_or(Error::msg("Could not find settings.remappings array entry."))
-            .map(|mappings| mappings
-                .iter()
-                .filter_map(|mapping| mapping.as_str())
-                .filter_map(|m| ImportRemap::new(m).ok())
-                .filter(|remap| !remap.has_known_bug())
-                .collect()
-            )?;
+            .ok_or(Error::msg(
+                "Could not find settings.remappings array entry.",
+            ))
+            .map(|mappings| {
+                mappings
+                    .iter()
+                    .filter_map(|mapping| mapping.as_str())
+                    .filter_map(|m| ImportRemap::new(m).ok())
+                    .filter(|remap| !remap.has_known_bug())
+                    .collect()
+            })?;
 
-        let source_maps: Vec<SourceMap> = value.get("sources")
+        let source_maps: Vec<SourceMap> = value
+            .get("sources")
             .and_then(|sources| sources.as_object())
-            .ok_or(Error::msg("Could not get sources entry in contract metadata."))
-            .map(|sources| sources.iter()
-                .filter_map(|(key, value)| value.get("keccak256")
-                    .and_then(|k| k.as_str())
-                    .map(|real_name| SourceMap{
-                        real_name: real_name.into(),
-                        virtual_path: key.clone(),
+            .ok_or(Error::msg(
+                "Could not get sources entry in contract metadata.",
+            ))
+            .map(|sources| {
+                sources
+                    .iter()
+                    .filter_map(|(key, value)| {
+                        value
+                            .get("keccak256")
+                            .and_then(|k| k.as_str())
+                            .map(|real_name| SourceMap {
+                                real_name: real_name.into(),
+                                virtual_path: key.clone(),
+                            })
                     })
-                )
-                .collect()
-            )?;
+                    .collect()
+            })?;
 
-        Ok(ImportResolver{
+        Ok(ImportResolver {
             import_remaps,
             source_maps,
         })

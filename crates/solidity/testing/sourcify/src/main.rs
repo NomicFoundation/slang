@@ -23,7 +23,7 @@ use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::utils::LanguageFacts;
-use sourcify::{Manifest, Contract, ContractArchive};
+use sourcify::{Contract, ContractArchive, Manifest};
 
 fn main() -> Result<()> {
     let command::Cli { command } = command::Cli::parse();
@@ -46,7 +46,7 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     ));
 
     let manifest = Manifest::new(cmd.chain, &cmd.sharding_options)?;
-    
+
     if let Some(contract) = &cmd.contract {
         return test_single_contract(&manifest, contract, &cmd.test_options);
     }
@@ -166,7 +166,7 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
             }
 
             if opts.check_infer_version && test_outcome == TestOutcome::Passed {
-                test_outcome = run_version_inference_check(contract, &unit, &events);
+                test_outcome = run_version_inference_check(contract, &unit, events);
             }
 
             if opts.check_bindings && test_outcome == TestOutcome::Passed {
@@ -187,11 +187,7 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
     events.test(test_outcome);
 }
 
-fn run_parser_check(
-    contract: &Contract,
-    unit: &CompilationUnit,
-    events: &Events,
-) -> TestOutcome {
+fn run_parser_check(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
     let mut source_buf = String::new();
 
     let mut test_outcome = TestOutcome::Passed;
@@ -221,7 +217,11 @@ fn run_parser_check(
     test_outcome
 }
 
-fn run_version_inference_check(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
+fn run_version_inference_check(
+    contract: &Contract,
+    unit: &CompilationUnit,
+    events: &Events,
+) -> TestOutcome {
     let mut source_buf = String::new();
 
     let mut did_fail = false;
@@ -231,13 +231,16 @@ fn run_version_inference_check(contract: &Contract, unit: &CompilationUnit, even
         let _ = contract.read_file(file.id(), &mut source_buf);
 
         if !LanguageFacts::infer_language_versions(&source_buf).any(|v| *v == contract.version) {
-            let source_name = contract.import_resolver.get_real_name(file.id()).unwrap_or(file.id().into());
+            let source_name = contract
+                .import_resolver
+                .get_real_name(file.id())
+                .unwrap_or(file.id().into());
             events.version_error(format!(
-                "[{version}] Could not infer correct version for {contract_name}:{source_name}", 
+                "[{version}] Could not infer correct version for {contract_name}:{source_name}",
                 version = contract.version,
                 contract_name = contract.name,
             ));
-            did_fail = true
+            did_fail = true;
         }
     }
 
@@ -270,7 +273,12 @@ fn run_bindings_check(
 
             let source = cursor.node().unparse();
             let binding_error = BindingError::UnresolvedReference(cursor);
-            let msg = slang_solidity::diagnostic::render(&binding_error, ref_file.get_path(), &source, true); 
+            let msg = slang_solidity::diagnostic::render(
+                &binding_error,
+                ref_file.get_path(),
+                &source,
+                true,
+            );
             events.bindings_error(format!(
                 "[{version}] Binding Error: Reference has no definitions\n{msg}",
                 version = contract.version,
@@ -305,7 +313,8 @@ fn run_bindings_check(
                 let mut source = String::new();
                 let _ = contract.read_file(file.id(), &mut source);
 
-                let msg = slang_solidity::diagnostic::render(&binding_error, file.id(), &source, true);
+                let msg =
+                    slang_solidity::diagnostic::render(&binding_error, file.id(), &source, true);
                 events.bindings_error(format!(
                     "[{version}] Binding Error: No definition or reference\n{msg}",
                     version = contract.version,

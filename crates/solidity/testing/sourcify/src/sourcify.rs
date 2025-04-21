@@ -1,6 +1,6 @@
 use std::fs;
 use std::io::{BufReader, Read};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Error, Result};
 use reqwest::blocking::Client;
@@ -31,21 +31,23 @@ impl Manifest {
         }
 
         let obj: serde_json::Value = res.json()?;
-        let archive_descs: Option<Vec<ArchiveDescriptor>> = obj.get("files")
+        let archive_descs: Option<Vec<ArchiveDescriptor>> = obj
+            .get("files")
             .and_then(|files| files.as_array())
-            .map(|files| files
-                .iter()
-                .filter_map(|file| file.get("path").and_then(|val| val.as_str()))
-                .filter_map(|path| ArchiveDescriptor::new(path).ok())
-                .filter(|desc| desc.matches_chain_and_shard(chain, options))
-                .collect()
-            );
+            .map(|files| {
+                files
+                    .iter()
+                    .filter_map(|file| file.get("path").and_then(|val| val.as_str()))
+                    .filter_map(|path| ArchiveDescriptor::new(path).ok())
+                    .filter(|desc| desc.matches_chain_and_shard(chain, options))
+                    .collect()
+            });
 
         if let Some(mut archive_descs) = archive_descs {
             if !archive_descs.is_empty() {
                 archive_descs.sort_by(|a, b| a.shard_prefix.cmp(&b.shard_prefix));
 
-                return Ok(Manifest{
+                return Ok(Manifest {
                     archive_descriptors: archive_descs,
                 });
             }
@@ -58,11 +60,11 @@ impl Manifest {
     /// be fetched for any reason (including if the `contract_id` is not parseable).
     pub fn get_contract(&self, contract_id: &str) -> Option<Contract> {
         if let Ok(contract_shard_id) = u16::from_str_radix(contract_id.get(2..4).unwrap(), 16) {
-            let archives = self.archive_descriptors
+            let archives = self
+                .archive_descriptors
                 .iter()
                 .filter(|shard| shard.shard_prefix == contract_shard_id)
-                .map(|desc| ContractArchive::new(desc))
-                .flatten();
+                .flat_map(ContractArchive::new);
 
             for archive in archives {
                 if let Ok(contract) = archive.get_contract(contract_id) {
@@ -75,7 +77,9 @@ impl Manifest {
     }
 
     pub fn archives(self) -> impl Iterator<Item = ContractArchive> {
-        self.archive_descriptors.into_iter().map(|desc| ContractArchive::new(&desc)).flatten()
+        self.archive_descriptors
+            .into_iter()
+            .flat_map(|desc| ContractArchive::new(&desc))
     }
 
     pub fn archive_count(&self) -> usize {
@@ -149,15 +153,15 @@ impl ArchiveDescriptor {
         if self.chain_id != chain.id() {
             return false;
         }
-        
+
         if !options.get_id_range().contains(&self.shard_prefix) {
-            return false
+            return false;
         }
 
         true
     }
 
-    /// Get a path that should be used as the target when unpacking the archive 
+    /// Get a path that should be used as the target when unpacking the archive
     /// represented by this `ArchiveDescriptor`.
     fn archive_dir(&self) -> PathBuf {
         PathBuf::from(format!(
@@ -167,8 +171,8 @@ impl ArchiveDescriptor {
         ))
     }
 
-    /// Get the path inside `self.archive_dir()` that contains all of the contracts. 
-    /// This path is defined by the archives fetched from Sourcify, and should be updated 
+    /// Get the path inside `self.archive_dir()` that contains all of the contracts.
+    /// This path is defined by the archives fetched from Sourcify, and should be updated
     /// in case Sourcify ever changes its repository format.
     fn contracts_dir(&self) -> PathBuf {
         self.archive_dir().join(format!(
@@ -251,7 +255,7 @@ pub struct Contract {
 }
 
 impl Contract {
-    fn new(contract_path: &PathBuf) -> Result<Contract> {
+    fn new(contract_path: &Path) -> Result<Contract> {
         let name = contract_path
             .file_name()
             .unwrap()
@@ -263,10 +267,13 @@ impl Contract {
 
         let metadata_val: serde_json::Value = serde_json::from_reader(reader)?;
 
-        let version = metadata_val.get("compiler")
+        let version = metadata_val
+            .get("compiler")
             .and_then(|compiler| compiler.get("version"))
             .and_then(|version_val| version_val.as_str())
-            .ok_or(Error::msg("Could not get compiler.version from contract metadata"))
+            .ok_or(Error::msg(
+                "Could not get compiler.version from contract metadata",
+            ))
             .and_then(|version_str| Version::parse(version_str).map_err(Error::new))
             .map(|mut version| {
                 version.pre = Prerelease::EMPTY;
@@ -274,11 +281,14 @@ impl Contract {
                 version
             })?;
 
-        let target = metadata_val.get("settings")
+        let target = metadata_val
+            .get("settings")
             .and_then(|settings| settings.get("compilationTarget"))
             .and_then(|target| target.as_object())
             .and_then(|target_obj| target_obj.keys().next())
-            .ok_or(Error::msg("Could not get settings.compilationTarget from contract metadata"))?
+            .ok_or(Error::msg(
+                "Could not get settings.compilationTarget from contract metadata",
+            ))?
             .clone();
 
         let import_resolver: ImportResolver = metadata_val.try_into()?;

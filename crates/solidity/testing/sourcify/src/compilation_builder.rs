@@ -37,7 +37,7 @@ impl<'c> CompilationBuilder<'c> {
 
         self.read_buffer.clear();
 
-        self.contract.read_file(&filename, &mut self.read_buffer)?;
+        self.contract.read_file(filename, &mut self.read_buffer)?;
 
         let AddFileResponse { import_paths } =
             self.internal.add_file(filename.into(), &self.read_buffer);
@@ -54,7 +54,7 @@ impl<'c> CompilationBuilder<'c> {
             let import_real_name = self
                 .contract
                 .import_resolver
-                .resolve_import(&filename, import_path)?;
+                .resolve_import(filename, import_path)?;
             self.add_file(&import_real_name)?;
         }
 
