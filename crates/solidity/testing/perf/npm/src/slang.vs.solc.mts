@@ -102,7 +102,6 @@ function sleep(ms: number): Promise<void> {
 
 checkCI();
 
-// PROBLEM: can't run benny, as it will consume memory in each run
 const options = commandLineArgs([
   { name: "version", type: String },
   { name: "dir", type: String },
