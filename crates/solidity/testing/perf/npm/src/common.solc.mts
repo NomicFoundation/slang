@@ -33,7 +33,6 @@ export function testFileSolC(languageVersion: string, dir: string, file: string)
     process.exit(-1);
   }
 
-  const start = performance.now();
   var folderMeta = `{
       "language": "Solidity",
       "sources": {
