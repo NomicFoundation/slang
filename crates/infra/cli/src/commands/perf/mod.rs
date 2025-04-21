@@ -6,6 +6,7 @@ use std::path::Path;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
+use infra_utils::paths::PathExtensions;
 use reqwest::blocking::get;
 use serde_json::Value;
 
@@ -85,18 +86,35 @@ impl PerfController {
             PerfCommand::Npm(controller) => controller.execute(),
             PerfCommand::Fetch { path } => {
                 let base_path = Path::new(path);
-                // missing: 0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A
-                Self::fetch("0x01a5E3268E3987f0EE5e6Eb12fe63fa2AF992D83", base_path)?;
-                Self::fetch("0x01a11a5A999E57E1B177AA2fF7fEA957605adA2b", base_path)?;
-                Self::fetch("0x01abc00E86C7e258823b9a055Fd62cA6CF61a163", base_path)?;
-                // missing: 0x01fef0d5d6fd6b5701ae913cafb11ddaee982c9a
-                Self::fetch("0x015E220901014BAE4f7e168925CD74e725e23692", base_path)?;
-                Self::fetch("0x0170f38fa8df1440521c8b8520BaAd0CdA132E82", base_path)?;
-                Self::fetch("0x01665987bC6725070e56d160d75AA19d8B73273e", base_path)?;
-                // missing: 0x8B3f33234ABD88493c0Cd28De33D583B70beDe35" (Lido)
-                Self::fetch("0x1F98431c8aD98523631AE4a59f267346ea31F984", base_path)?;
-                Self::fetch("0xcA11bde05977b3631167028862bE2a173976CA11", base_path)?;
-                Self::fetch("0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed", base_path)?;
+
+                // Read hashes from a configuration file
+                let config_path =
+                    Path::repo_path("crates/infra/cli/src/commands/perf/projects.json");
+                let config_content = fs::read_to_string(config_path)?;
+                let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+
+                let hashes = config_json
+                    .get("sourcifyHashes")
+                    .and_then(|h| h.as_array())
+                    .ok_or_else(|| {
+                        anyhow::anyhow!(
+                            "Invalid or missing 'sourcifyHashes' field in projects.json"
+                        )
+                    })?;
+
+                for hash in hashes {
+                    let project = hash.as_object().ok_or_else(|| {
+                        anyhow::anyhow!("Invalid project format in projects.json")
+                    })?;
+                    let hash_str = project
+                        .get("hash")
+                        .ok_or_else(|| anyhow::anyhow!("Invalid hash format in projects.json"))?
+                        .as_str()
+                        .ok_or_else(|| anyhow::anyhow!("Invalid hash format in projects.json"))?;
+
+                    Self::fetch(hash_str, base_path)?;
+                }
+
                 Ok(())
             }
         }

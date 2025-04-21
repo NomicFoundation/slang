@@ -28,6 +28,10 @@ export function testFileSolC(languageVersion: string, dir: string, file: string)
   else if (languageVersion.startsWith("0.8")) {
     solc = solc08;
   }
+  else {
+    console.error(`Can't process version ${languageVersion}`);
+    process.exit(-1);
+  }
 
   const start = performance.now();
   var folderMeta = `{
