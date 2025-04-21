@@ -2,7 +2,6 @@ import path from "node:path";
 import fs from "node:fs";
 import assert from "node:assert";
 import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
-import { exit } from "node:process";
 
 export function readRepoFile(...relativePaths: string[]): string {
   const absolutePath = path.join(...relativePaths);
@@ -56,6 +55,5 @@ export function sleep(ms: number): Promise<void> {
 export function checkCI() {
   if (process.env["CI"] == undefined) {
     console.error("Must run with CI=true");
-    exit(-1);
   }
 }
