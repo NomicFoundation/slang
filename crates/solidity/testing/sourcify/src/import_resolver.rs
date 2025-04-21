@@ -4,8 +4,8 @@ use std::str::FromStr;
 use anyhow::{bail, Error, Result};
 
 pub struct ImportResolver {
-    pub remappings: Vec<ImportRemap>,
-    pub sources: Vec<FileMapping>,
+    import_remaps: Vec<ImportRemap>,
+    source_maps: Vec<SourceMap>,
 }
 
 impl ImportResolver {
@@ -57,7 +57,7 @@ impl ImportResolver {
     }
 
     pub fn get_real_name(&self, virtual_path: &str) -> Result<String> {
-        for source in &self.sources {
+        for source in &self.source_maps {
             // On rare occasions imports may have '//' in between directories. solc seems
             // to consider these interchangeable with '/'
             if source.virtual_path == virtual_path
@@ -72,7 +72,7 @@ impl ImportResolver {
     }
 
     pub fn get_virtual_path(&self, real_name: &str) -> Result<String> {
-        for source in &self.sources {
+        for source in &self.source_maps {
             if source.real_name == real_name {
                 return Ok(source.virtual_path.clone());
             }
@@ -84,7 +84,7 @@ impl ImportResolver {
 
     fn remap_import(&self, source_name: &str, import_path: &str) -> Option<String> {
         let mut longest_match: Option<&ImportRemap> = None;
-        for remap in &self.remappings {
+        for remap in &self.import_remaps {
             if !remap.matches_context(source_name) {
                 continue;
             }
@@ -107,77 +107,7 @@ impl ImportResolver {
     }
 }
 
-/// Resolve an import path that is relative to `source_path`.
-fn resolve_relative_import(source_path: &str, import_path: &str) -> Result<String> {
-    let source_file_path = PathBuf::from_str(source_path)?;
-    let source_dir = source_file_path.parent().ok_or(Error::msg(format!(
-        "Could not get directory of source file {source_path}"
-    )))?;
-
-    let import_path = PathBuf::from_str(import_path)?;
-
-    let source_dir_parts: Vec<_> = source_dir.components().collect();
-    let mut resolved_parts = vec![];
-
-    // We're basically doing what `Path::canonicalize()` would do, but we can't use that because
-    // the path must be a real path in the filesystem, and we're operating on "virtual" paths.
-    // We check the first import path component to initialize `resolved_parts`
-    let mut import_path_components = import_path.components();
-    match import_path_components.next().unwrap() {
-        // a/b.sol - an absolute path, so we can ignore `source_path`
-        norm @ Component::Normal(_) => resolved_parts.push(norm),
-        // /a/b.sol
-        root @ Component::RootDir => resolved_parts.push(root),
-        // ./a/b.sol - relative to `source_path`
-        Component::CurDir => resolved_parts.extend(source_dir_parts),
-        // ../a/b.sol - relative, but one dir above `source_dir`
-        Component::ParentDir => {
-            resolved_parts.extend(source_dir_parts);
-            resolved_parts.pop();
-        }
-        Component::Prefix(_) => {
-            bail!("Found prefix component in import path, which is not supported")
-        }
-    }
-
-    for component in import_path_components {
-        match component {
-            norm @ Component::Normal(_) => resolved_parts.push(norm),
-            Component::ParentDir => {
-                resolved_parts.pop();
-            }
-            Component::CurDir => {}
-            invalid => bail!("Invalid path component found inside import path: {invalid:?}"),
-        }
-    }
-
-    let resolved_import_path: PathBuf = resolved_parts.iter().collect();
-    Ok(resolved_import_path.to_str().unwrap().into())
-}
-
-/// Resolve an import from a source file which was imported using a URL. These need a bit of special handling
-/// because the resolved path needs to also be a URL.
-fn resolve_relative_url_import(source_path: &str, import_path: &str) -> Result<String> {
-    let (proto, rest) = source_path
-        .split_once("://")
-        .ok_or(Error::msg("Cannot parse url"))?;
-    let (host, path) = rest
-        .split_once('/')
-        .ok_or(Error::msg("Cannot parse path"))?;
-
-    let resolved_path = resolve_relative_import(path, import_path)?;
-
-    let mut res = String::new();
-    res.push_str(proto);
-    res.push_str("://");
-    res.push_str(host);
-    res.push('/');
-    res.push_str(&resolved_path);
-
-    Ok(res)
-}
-
-pub struct FileMapping {
+pub struct SourceMap {
     /// The actual filename for the source file, as found in the archive. This name can
     /// be used to read the content of a source file.
     pub real_name: String,
@@ -251,37 +181,106 @@ impl TryFrom<serde_json::Value> for ImportResolver {
     type Error = anyhow::Error;
 
     fn try_from(value: serde_json::Value) -> Result<ImportResolver, Self::Error> {
-        let remappings: Vec<ImportRemap> = value.get("settings")
+        let import_remaps: Vec<ImportRemap> = value.get("settings")
             .and_then(|settings| settings.get("remappings"))
             .and_then(|remappings| remappings.as_array())
+            .ok_or(Error::msg("Could not find settings.remappings array entry."))
             .map(|mappings| mappings
                 .iter()
                 .filter_map(|mapping| mapping.as_str())
                 .filter_map(|m| ImportRemap::new(m).ok())
-                .filter(|remap| remap.has_known_bug())
+                .filter(|remap| !remap.has_known_bug())
                 .collect()
-            )
-            .ok_or(Error::msg("Could not get remappings from contract metadata"))?;
+            )?;
 
-        let sources: Vec<FileMapping> = value.get("sources")
+        let source_maps: Vec<SourceMap> = value.get("sources")
             .and_then(|sources| sources.as_object())
+            .ok_or(Error::msg("Could not get sources entry in contract metadata."))
             .map(|sources| sources.iter()
                 .filter_map(|(key, value)| value.get("keccak256")
                     .and_then(|k| k.as_str())
-                    .map(|real_name| FileMapping{
+                    .map(|real_name| SourceMap{
                         real_name: real_name.into(),
                         virtual_path: key.clone(),
                     })
                 )
                 .collect()
-            )
-            .ok_or(Error::msg("Could not get sources from contract metadata"))?;
+            )?;
 
         Ok(ImportResolver{
-            remappings,
-            sources,
+            import_remaps,
+            source_maps,
         })
     }
+}
+
+/// Resolve an import path that is relative to `source_path`.
+fn resolve_relative_import(source_path: &str, import_path: &str) -> Result<String> {
+    let source_file_path = PathBuf::from_str(source_path)?;
+    let source_dir = source_file_path.parent().ok_or(Error::msg(format!(
+        "Could not get directory of source file {source_path}"
+    )))?;
+
+    let import_path = PathBuf::from_str(import_path)?;
+
+    let mut resolved_parts = vec![];
+
+    // We're basically doing what `Path::canonicalize()` would do, but we can't use that because
+    // the path must be a real path in the filesystem, and we're operating on "virtual" paths.
+    // We check the first import path component to initialize `resolved_parts`
+    let mut import_path_components = import_path.components();
+    match import_path_components.next().unwrap() {
+        // a/b.sol - an absolute path, so we can ignore `source_path`
+        norm @ Component::Normal(_) => resolved_parts.push(norm),
+        // /a/b.sol
+        root @ Component::RootDir => resolved_parts.push(root),
+        // ./a/b.sol - relative to `source_path`
+        Component::CurDir => resolved_parts.extend(source_dir.components()),
+        // ../a/b.sol - relative, but one dir above `source_dir`
+        Component::ParentDir => {
+            resolved_parts.extend(source_dir.components());
+            resolved_parts.pop();
+        }
+        Component::Prefix(_) => {
+            bail!("Found prefix component in import path, which is not supported")
+        }
+    }
+
+    for component in import_path_components {
+        match component {
+            norm @ Component::Normal(_) => resolved_parts.push(norm),
+            Component::ParentDir => {
+                resolved_parts.pop();
+            }
+            Component::CurDir => {}
+            invalid => bail!("Invalid path component found inside import path: {invalid:?}"),
+        }
+    }
+
+    let resolved_import_path: PathBuf = resolved_parts.iter().collect();
+    Ok(resolved_import_path.to_str().unwrap().into())
+}
+
+/// Resolve an import from a source file which was imported using a URL. These need a bit of special handling
+/// because the resolved path needs to also be a URL.
+fn resolve_relative_url_import(source_path: &str, import_path: &str) -> Result<String> {
+    let (proto, rest) = source_path
+        .split_once("://")
+        .ok_or(Error::msg("Cannot parse url"))?;
+    let (host, path) = rest
+        .split_once('/')
+        .ok_or(Error::msg("Cannot parse path"))?;
+
+    let resolved_path = resolve_relative_import(path, import_path)?;
+
+    let mut res = String::new();
+    res.push_str(proto);
+    res.push_str("://");
+    res.push_str(host);
+    res.push('/');
+    res.push_str(&resolved_path);
+
+    Ok(res)
 }
 
 fn path_is_url(path: &str) -> bool {

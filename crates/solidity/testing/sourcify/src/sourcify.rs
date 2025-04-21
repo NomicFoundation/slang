@@ -11,7 +11,7 @@ use tar::Archive;
 use crate::chains::{Chain, ChainId};
 use crate::command::ShardingOptions;
 use crate::compilation_builder::CompilationBuilder;
-use crate::metadata::ImportResolver;
+use crate::import_resolver::ImportResolver;
 
 pub struct Manifest {
     /// Description of the archives that are available to fetch.
@@ -212,7 +212,8 @@ impl ContractArchive {
         let dir = fs::read_dir(&self.contracts_path).expect("Could not open contract directory.");
         dir.flatten().flat_map(|dir_entry| -> Result<Contract> {
             let contract_path = dir_entry.path();
-            let contract = Contract::new(&contract_path)?;
+            let contract = Contract::new(&contract_path)
+                .inspect_err(|e| println!("Failed to create contract: {e}"))?;
 
             Ok(contract)
         })
@@ -265,19 +266,19 @@ impl Contract {
         let version = metadata_val.get("compiler")
             .and_then(|compiler| compiler.get("version"))
             .and_then(|version_val| version_val.as_str())
-            .and_then(|version_str| Version::parse(version_str).ok())
+            .ok_or(Error::msg("Could not get compiler.version from contract metadata"))
+            .and_then(|version_str| Version::parse(version_str).map_err(Error::new))
             .map(|mut version| {
                 version.pre = Prerelease::EMPTY;
                 version.build = BuildMetadata::EMPTY;
                 version
-            })
-            .ok_or(Error::msg("Could not get compiler version from contract metadata"))?;
+            })?;
 
         let target = metadata_val.get("settings")
             .and_then(|settings| settings.get("compilationTarget"))
             .and_then(|target| target.as_object())
             .and_then(|target_obj| target_obj.keys().next())
-            .ok_or(Error::msg("Could not get compilation target from contract metadata"))?
+            .ok_or(Error::msg("Could not get settings.compilationTarget from contract metadata"))?
             .clone();
 
         let import_resolver: ImportResolver = metadata_val.try_into()?;

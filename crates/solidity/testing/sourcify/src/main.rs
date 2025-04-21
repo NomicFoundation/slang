@@ -2,7 +2,7 @@ mod chains;
 mod command;
 mod compilation_builder;
 mod events;
-mod metadata;
+mod import_resolver;
 mod reporting;
 mod results;
 mod sourcify;
