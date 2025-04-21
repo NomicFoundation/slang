@@ -41,8 +41,8 @@ pub(crate) struct ExtendedStackGraph<KT: KindTypes + 'static> {
     pub(crate) stack_graph: StackGraph,
     definitions_info: HashMap<GraphHandle, DefinitionBindingInfo<KT>>,
     references_info: HashMap<GraphHandle, ReferenceBindingInfo<KT>>,
-    cursor_to_definitions: HashMap<NodeId, GraphHandle>,
-    cursor_to_references: HashMap<NodeId, GraphHandle>,
+    definitions_by_node_id: HashMap<NodeId, GraphHandle>,
+    references_by_node_id: HashMap<NodeId, GraphHandle>,
     extension_hooks: HashSet<GraphHandle>,
 }
 
@@ -125,8 +125,8 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
                 stack_graph,
                 definitions_info: HashMap::new(),
                 references_info: HashMap::new(),
-                cursor_to_definitions: HashMap::new(),
-                cursor_to_references: HashMap::new(),
+                definitions_by_node_id: HashMap::new(),
+                references_by_node_id: HashMap::new(),
                 extension_hooks: HashSet::new(),
             },
         }
@@ -178,11 +178,11 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
             .for_each(|(handle, definition_info)| {
                 let name_node_id = definition_info.cursor.node().id();
                 self.graph
-                    .cursor_to_definitions
+                    .definitions_by_node_id
                     .insert(name_node_id, *handle);
                 let definiens_node_id = definition_info.definiens.node().id();
                 self.graph
-                    .cursor_to_definitions
+                    .definitions_by_node_id
                     .insert(definiens_node_id, *handle);
             });
         result
@@ -190,7 +190,7 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
             .iter()
             .for_each(|(handle, reference_info)| {
                 let node_id = reference_info.cursor.node().id();
-                self.graph.cursor_to_references.insert(node_id, *handle);
+                self.graph.references_by_node_id.insert(node_id, *handle);
             });
 
         self.graph
@@ -232,12 +232,12 @@ impl<KT: KindTypes + 'static> ExtendedStackGraph<KT> {
         self.stack_graph.iter_files()
     }
 
-    pub(crate) fn definition_by_id(&self, node_id: NodeId) -> Option<GraphHandle> {
-        self.cursor_to_definitions.get(&node_id).copied()
+    pub(crate) fn definition_by_node_id(&self, node_id: NodeId) -> Option<GraphHandle> {
+        self.definitions_by_node_id.get(&node_id).copied()
     }
 
-    pub(crate) fn reference_by_id(&self, node_id: NodeId) -> Option<GraphHandle> {
-        self.cursor_to_references.get(&node_id).copied()
+    pub(crate) fn reference_by_node_id(&self, node_id: NodeId) -> Option<GraphHandle> {
+        self.references_by_node_id.get(&node_id).copied()
     }
 
     pub(crate) fn get_parents(&self, handle: GraphHandle) -> Vec<GraphHandle> {

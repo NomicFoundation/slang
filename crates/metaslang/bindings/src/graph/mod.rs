@@ -48,7 +48,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
 
     pub fn definition_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Definition<KT>> {
         self.graph
-            .definition_by_id(cursor.node().id())
+            .definition_by_node_id(cursor.node().id())
             .map(|handle| Definition {
                 owner: Rc::clone(self),
                 handle,
@@ -57,7 +57,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
 
     pub fn definition_by_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<Definition<KT>> {
         self.graph
-            .definition_by_id(node_id)
+            .definition_by_node_id(node_id)
             .map(|handle| Definition {
                 owner: Rc::clone(self),
                 handle,
@@ -66,7 +66,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
 
     pub fn reference_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Reference<KT>> {
         self.graph
-            .reference_by_id(cursor.node().id())
+            .reference_by_node_id(cursor.node().id())
             .map(|handle| Reference {
                 owner: Rc::clone(self),
                 handle,
@@ -74,10 +74,12 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
     }
 
     pub fn reference_by_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<Reference<KT>> {
-        self.graph.reference_by_id(node_id).map(|handle| Reference {
-            owner: Rc::clone(self),
-            handle,
-        })
+        self.graph
+            .reference_by_node_id(node_id)
+            .map(|handle| Reference {
+                owner: Rc::clone(self),
+                handle,
+            })
     }
 
     fn resolve_reference(self: &Rc<Self>, handle: GraphHandle) -> Vec<Definition<KT>> {
