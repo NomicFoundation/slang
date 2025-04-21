@@ -669,40 +669,40 @@ pub trait Visitor {
 // Sequences:
 //
 
-pub fn accept_source_unit(target: &SourceUnit, visitor: &mut dyn Visitor) {
+pub fn accept_source_unit(target: &SourceUnit, visitor: &mut impl Visitor) {
     if visitor.enter_source_unit(target) {
         accept_source_unit_members(&target.members, visitor);
     }
     visitor.leave_source_unit(target);
 }
 
-pub fn accept_pragma_directive(target: &PragmaDirective, visitor: &mut dyn Visitor) {
+pub fn accept_pragma_directive(target: &PragmaDirective, visitor: &mut impl Visitor) {
     if visitor.enter_pragma_directive(target) {
         accept_pragma(&target.pragma, visitor);
     }
     visitor.leave_pragma_directive(target);
 }
 
-pub fn accept_abicoder_pragma(target: &AbicoderPragma, visitor: &mut dyn Visitor) {
+pub fn accept_abicoder_pragma(target: &AbicoderPragma, visitor: &mut impl Visitor) {
     visitor.enter_abicoder_pragma(target);
     visitor.leave_abicoder_pragma(target);
 }
 
-pub fn accept_experimental_pragma(target: &ExperimentalPragma, visitor: &mut dyn Visitor) {
+pub fn accept_experimental_pragma(target: &ExperimentalPragma, visitor: &mut impl Visitor) {
     if visitor.enter_experimental_pragma(target) {
         accept_experimental_feature(&target.feature, visitor);
     }
     visitor.leave_experimental_pragma(target);
 }
 
-pub fn accept_version_pragma(target: &VersionPragma, visitor: &mut dyn Visitor) {
+pub fn accept_version_pragma(target: &VersionPragma, visitor: &mut impl Visitor) {
     if visitor.enter_version_pragma(target) {
         accept_version_expression_sets(&target.sets, visitor);
     }
     visitor.leave_version_pragma(target);
 }
 
-pub fn accept_version_range(target: &VersionRange, visitor: &mut dyn Visitor) {
+pub fn accept_version_range(target: &VersionRange, visitor: &mut impl Visitor) {
     if visitor.enter_version_range(target) {
         accept_version_literal(&target.start, visitor);
         accept_version_literal(&target.end, visitor);
@@ -710,7 +710,7 @@ pub fn accept_version_range(target: &VersionRange, visitor: &mut dyn Visitor) {
     visitor.leave_version_range(target);
 }
 
-pub fn accept_version_term(target: &VersionTerm, visitor: &mut dyn Visitor) {
+pub fn accept_version_term(target: &VersionTerm, visitor: &mut impl Visitor) {
     if visitor.enter_version_term(target) {
         if let Some(ref operator) = target.operator {
             accept_version_operator(operator, visitor);
@@ -720,14 +720,14 @@ pub fn accept_version_term(target: &VersionTerm, visitor: &mut dyn Visitor) {
     visitor.leave_version_term(target);
 }
 
-pub fn accept_import_directive(target: &ImportDirective, visitor: &mut dyn Visitor) {
+pub fn accept_import_directive(target: &ImportDirective, visitor: &mut impl Visitor) {
     if visitor.enter_import_directive(target) {
         accept_import_clause(&target.clause, visitor);
     }
     visitor.leave_import_directive(target);
 }
 
-pub fn accept_path_import(target: &PathImport, visitor: &mut dyn Visitor) {
+pub fn accept_path_import(target: &PathImport, visitor: &mut impl Visitor) {
     if visitor.enter_path_import(target) {
         accept_string_literal(&target.path, visitor);
         if let Some(ref alias) = target.alias {
@@ -737,7 +737,7 @@ pub fn accept_path_import(target: &PathImport, visitor: &mut dyn Visitor) {
     visitor.leave_path_import(target);
 }
 
-pub fn accept_named_import(target: &NamedImport, visitor: &mut dyn Visitor) {
+pub fn accept_named_import(target: &NamedImport, visitor: &mut impl Visitor) {
     if visitor.enter_named_import(target) {
         accept_import_alias(&target.alias, visitor);
         accept_string_literal(&target.path, visitor);
@@ -745,7 +745,7 @@ pub fn accept_named_import(target: &NamedImport, visitor: &mut dyn Visitor) {
     visitor.leave_named_import(target);
 }
 
-pub fn accept_import_deconstruction(target: &ImportDeconstruction, visitor: &mut dyn Visitor) {
+pub fn accept_import_deconstruction(target: &ImportDeconstruction, visitor: &mut impl Visitor) {
     if visitor.enter_import_deconstruction(target) {
         accept_import_deconstruction_symbols(&target.symbols, visitor);
         accept_string_literal(&target.path, visitor);
@@ -755,7 +755,7 @@ pub fn accept_import_deconstruction(target: &ImportDeconstruction, visitor: &mut
 
 pub fn accept_import_deconstruction_symbol(
     target: &ImportDeconstructionSymbol,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_import_deconstruction_symbol(target) {
         if let Some(ref alias) = target.alias {
@@ -765,12 +765,12 @@ pub fn accept_import_deconstruction_symbol(
     visitor.leave_import_deconstruction_symbol(target);
 }
 
-pub fn accept_import_alias(target: &ImportAlias, visitor: &mut dyn Visitor) {
+pub fn accept_import_alias(target: &ImportAlias, visitor: &mut impl Visitor) {
     visitor.enter_import_alias(target);
     visitor.leave_import_alias(target);
 }
 
-pub fn accept_using_directive(target: &UsingDirective, visitor: &mut dyn Visitor) {
+pub fn accept_using_directive(target: &UsingDirective, visitor: &mut impl Visitor) {
     if visitor.enter_using_directive(target) {
         accept_using_clause(&target.clause, visitor);
         accept_using_target(&target.target, visitor);
@@ -778,7 +778,7 @@ pub fn accept_using_directive(target: &UsingDirective, visitor: &mut dyn Visitor
     visitor.leave_using_directive(target);
 }
 
-pub fn accept_using_deconstruction(target: &UsingDeconstruction, visitor: &mut dyn Visitor) {
+pub fn accept_using_deconstruction(target: &UsingDeconstruction, visitor: &mut impl Visitor) {
     if visitor.enter_using_deconstruction(target) {
         accept_using_deconstruction_symbols(&target.symbols, visitor);
     }
@@ -787,7 +787,7 @@ pub fn accept_using_deconstruction(target: &UsingDeconstruction, visitor: &mut d
 
 pub fn accept_using_deconstruction_symbol(
     target: &UsingDeconstructionSymbol,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_using_deconstruction_symbol(target) {
         accept_identifier_path(&target.name, visitor);
@@ -798,14 +798,14 @@ pub fn accept_using_deconstruction_symbol(
     visitor.leave_using_deconstruction_symbol(target);
 }
 
-pub fn accept_using_alias(target: &UsingAlias, visitor: &mut dyn Visitor) {
+pub fn accept_using_alias(target: &UsingAlias, visitor: &mut impl Visitor) {
     if visitor.enter_using_alias(target) {
         accept_using_operator(&target.operator, visitor);
     }
     visitor.leave_using_alias(target);
 }
 
-pub fn accept_contract_definition(target: &ContractDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_contract_definition(target: &ContractDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_contract_definition(target) {
         accept_contract_specifiers(&target.specifiers, visitor);
         accept_contract_members(&target.members, visitor);
@@ -813,14 +813,14 @@ pub fn accept_contract_definition(target: &ContractDefinition, visitor: &mut dyn
     visitor.leave_contract_definition(target);
 }
 
-pub fn accept_inheritance_specifier(target: &InheritanceSpecifier, visitor: &mut dyn Visitor) {
+pub fn accept_inheritance_specifier(target: &InheritanceSpecifier, visitor: &mut impl Visitor) {
     if visitor.enter_inheritance_specifier(target) {
         accept_inheritance_types(&target.types, visitor);
     }
     visitor.leave_inheritance_specifier(target);
 }
 
-pub fn accept_inheritance_type(target: &InheritanceType, visitor: &mut dyn Visitor) {
+pub fn accept_inheritance_type(target: &InheritanceType, visitor: &mut impl Visitor) {
     if visitor.enter_inheritance_type(target) {
         accept_identifier_path(&target.type_name, visitor);
         if let Some(ref arguments) = target.arguments {
@@ -830,14 +830,17 @@ pub fn accept_inheritance_type(target: &InheritanceType, visitor: &mut dyn Visit
     visitor.leave_inheritance_type(target);
 }
 
-pub fn accept_storage_layout_specifier(target: &StorageLayoutSpecifier, visitor: &mut dyn Visitor) {
+pub fn accept_storage_layout_specifier(
+    target: &StorageLayoutSpecifier,
+    visitor: &mut impl Visitor,
+) {
     if visitor.enter_storage_layout_specifier(target) {
         accept_expression(&target.expression, visitor);
     }
     visitor.leave_storage_layout_specifier(target);
 }
 
-pub fn accept_interface_definition(target: &InterfaceDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_interface_definition(target: &InterfaceDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_interface_definition(target) {
         if let Some(ref inheritance) = target.inheritance {
             accept_inheritance_specifier(inheritance, visitor);
@@ -847,35 +850,35 @@ pub fn accept_interface_definition(target: &InterfaceDefinition, visitor: &mut d
     visitor.leave_interface_definition(target);
 }
 
-pub fn accept_library_definition(target: &LibraryDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_library_definition(target: &LibraryDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_library_definition(target) {
         accept_library_members(&target.members, visitor);
     }
     visitor.leave_library_definition(target);
 }
 
-pub fn accept_struct_definition(target: &StructDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_struct_definition(target: &StructDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_struct_definition(target) {
         accept_struct_members(&target.members, visitor);
     }
     visitor.leave_struct_definition(target);
 }
 
-pub fn accept_struct_member(target: &StructMember, visitor: &mut dyn Visitor) {
+pub fn accept_struct_member(target: &StructMember, visitor: &mut impl Visitor) {
     if visitor.enter_struct_member(target) {
         accept_type_name(&target.type_name, visitor);
     }
     visitor.leave_struct_member(target);
 }
 
-pub fn accept_enum_definition(target: &EnumDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_enum_definition(target: &EnumDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_enum_definition(target) {
         accept_enum_members(&target.members, visitor);
     }
     visitor.leave_enum_definition(target);
 }
 
-pub fn accept_constant_definition(target: &ConstantDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_constant_definition(target: &ConstantDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_constant_definition(target) {
         accept_type_name(&target.type_name, visitor);
         accept_expression(&target.value, visitor);
@@ -885,7 +888,7 @@ pub fn accept_constant_definition(target: &ConstantDefinition, visitor: &mut dyn
 
 pub fn accept_state_variable_definition(
     target: &StateVariableDefinition,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_state_variable_definition(target) {
         accept_type_name(&target.type_name, visitor);
@@ -899,7 +902,7 @@ pub fn accept_state_variable_definition(
 
 pub fn accept_state_variable_definition_value(
     target: &StateVariableDefinitionValue,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_state_variable_definition_value(target) {
         accept_expression(&target.value, visitor);
@@ -907,7 +910,7 @@ pub fn accept_state_variable_definition_value(
     visitor.leave_state_variable_definition_value(target);
 }
 
-pub fn accept_function_definition(target: &FunctionDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_function_definition(target: &FunctionDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_function_definition(target) {
         accept_function_name(&target.name, visitor);
         accept_parameters_declaration(&target.parameters, visitor);
@@ -920,14 +923,14 @@ pub fn accept_function_definition(target: &FunctionDefinition, visitor: &mut dyn
     visitor.leave_function_definition(target);
 }
 
-pub fn accept_parameters_declaration(target: &ParametersDeclaration, visitor: &mut dyn Visitor) {
+pub fn accept_parameters_declaration(target: &ParametersDeclaration, visitor: &mut impl Visitor) {
     if visitor.enter_parameters_declaration(target) {
         accept_parameters(&target.parameters, visitor);
     }
     visitor.leave_parameters_declaration(target);
 }
 
-pub fn accept_parameter(target: &Parameter, visitor: &mut dyn Visitor) {
+pub fn accept_parameter(target: &Parameter, visitor: &mut impl Visitor) {
     if visitor.enter_parameter(target) {
         accept_type_name(&target.type_name, visitor);
         if let Some(ref storage_location) = target.storage_location {
@@ -937,7 +940,7 @@ pub fn accept_parameter(target: &Parameter, visitor: &mut dyn Visitor) {
     visitor.leave_parameter(target);
 }
 
-pub fn accept_override_specifier(target: &OverrideSpecifier, visitor: &mut dyn Visitor) {
+pub fn accept_override_specifier(target: &OverrideSpecifier, visitor: &mut impl Visitor) {
     if visitor.enter_override_specifier(target) {
         if let Some(ref overridden) = target.overridden {
             accept_override_paths_declaration(overridden, visitor);
@@ -948,7 +951,7 @@ pub fn accept_override_specifier(target: &OverrideSpecifier, visitor: &mut dyn V
 
 pub fn accept_override_paths_declaration(
     target: &OverridePathsDeclaration,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_override_paths_declaration(target) {
         accept_override_paths(&target.paths, visitor);
@@ -956,14 +959,14 @@ pub fn accept_override_paths_declaration(
     visitor.leave_override_paths_declaration(target);
 }
 
-pub fn accept_returns_declaration(target: &ReturnsDeclaration, visitor: &mut dyn Visitor) {
+pub fn accept_returns_declaration(target: &ReturnsDeclaration, visitor: &mut impl Visitor) {
     if visitor.enter_returns_declaration(target) {
         accept_parameters_declaration(&target.variables, visitor);
     }
     visitor.leave_returns_declaration(target);
 }
 
-pub fn accept_constructor_definition(target: &ConstructorDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_constructor_definition(target: &ConstructorDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_constructor_definition(target) {
         accept_parameters_declaration(&target.parameters, visitor);
         accept_constructor_attributes(&target.attributes, visitor);
@@ -974,7 +977,7 @@ pub fn accept_constructor_definition(target: &ConstructorDefinition, visitor: &m
 
 pub fn accept_fallback_function_definition(
     target: &FallbackFunctionDefinition,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_fallback_function_definition(target) {
         accept_parameters_declaration(&target.parameters, visitor);
@@ -989,7 +992,7 @@ pub fn accept_fallback_function_definition(
 
 pub fn accept_receive_function_definition(
     target: &ReceiveFunctionDefinition,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_receive_function_definition(target) {
         accept_parameters_declaration(&target.parameters, visitor);
@@ -999,7 +1002,7 @@ pub fn accept_receive_function_definition(
     visitor.leave_receive_function_definition(target);
 }
 
-pub fn accept_modifier_definition(target: &ModifierDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_modifier_definition(target: &ModifierDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_modifier_definition(target) {
         if let Some(ref parameters) = target.parameters {
             accept_parameters_declaration(parameters, visitor);
@@ -1010,7 +1013,7 @@ pub fn accept_modifier_definition(target: &ModifierDefinition, visitor: &mut dyn
     visitor.leave_modifier_definition(target);
 }
 
-pub fn accept_modifier_invocation(target: &ModifierInvocation, visitor: &mut dyn Visitor) {
+pub fn accept_modifier_invocation(target: &ModifierInvocation, visitor: &mut impl Visitor) {
     if visitor.enter_modifier_invocation(target) {
         accept_identifier_path(&target.name, visitor);
         if let Some(ref arguments) = target.arguments {
@@ -1020,7 +1023,7 @@ pub fn accept_modifier_invocation(target: &ModifierInvocation, visitor: &mut dyn
     visitor.leave_modifier_invocation(target);
 }
 
-pub fn accept_event_definition(target: &EventDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_event_definition(target: &EventDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_event_definition(target) {
         accept_event_parameters_declaration(&target.parameters, visitor);
     }
@@ -1029,7 +1032,7 @@ pub fn accept_event_definition(target: &EventDefinition, visitor: &mut dyn Visit
 
 pub fn accept_event_parameters_declaration(
     target: &EventParametersDeclaration,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_event_parameters_declaration(target) {
         accept_event_parameters(&target.parameters, visitor);
@@ -1037,7 +1040,7 @@ pub fn accept_event_parameters_declaration(
     visitor.leave_event_parameters_declaration(target);
 }
 
-pub fn accept_event_parameter(target: &EventParameter, visitor: &mut dyn Visitor) {
+pub fn accept_event_parameter(target: &EventParameter, visitor: &mut impl Visitor) {
     if visitor.enter_event_parameter(target) {
         accept_type_name(&target.type_name, visitor);
     }
@@ -1046,7 +1049,7 @@ pub fn accept_event_parameter(target: &EventParameter, visitor: &mut dyn Visitor
 
 pub fn accept_user_defined_value_type_definition(
     target: &UserDefinedValueTypeDefinition,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_user_defined_value_type_definition(target) {
         accept_elementary_type(&target.value_type, visitor);
@@ -1054,7 +1057,7 @@ pub fn accept_user_defined_value_type_definition(
     visitor.leave_user_defined_value_type_definition(target);
 }
 
-pub fn accept_error_definition(target: &ErrorDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_error_definition(target: &ErrorDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_error_definition(target) {
         accept_error_parameters_declaration(&target.members, visitor);
     }
@@ -1063,7 +1066,7 @@ pub fn accept_error_definition(target: &ErrorDefinition, visitor: &mut dyn Visit
 
 pub fn accept_error_parameters_declaration(
     target: &ErrorParametersDeclaration,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_error_parameters_declaration(target) {
         accept_error_parameters(&target.parameters, visitor);
@@ -1071,14 +1074,14 @@ pub fn accept_error_parameters_declaration(
     visitor.leave_error_parameters_declaration(target);
 }
 
-pub fn accept_error_parameter(target: &ErrorParameter, visitor: &mut dyn Visitor) {
+pub fn accept_error_parameter(target: &ErrorParameter, visitor: &mut impl Visitor) {
     if visitor.enter_error_parameter(target) {
         accept_type_name(&target.type_name, visitor);
     }
     visitor.leave_error_parameter(target);
 }
 
-pub fn accept_array_type_name(target: &ArrayTypeName, visitor: &mut dyn Visitor) {
+pub fn accept_array_type_name(target: &ArrayTypeName, visitor: &mut impl Visitor) {
     if visitor.enter_array_type_name(target) {
         accept_type_name(&target.operand, visitor);
         if let Some(ref index) = target.index {
@@ -1088,7 +1091,7 @@ pub fn accept_array_type_name(target: &ArrayTypeName, visitor: &mut dyn Visitor)
     visitor.leave_array_type_name(target);
 }
 
-pub fn accept_function_type(target: &FunctionType, visitor: &mut dyn Visitor) {
+pub fn accept_function_type(target: &FunctionType, visitor: &mut impl Visitor) {
     if visitor.enter_function_type(target) {
         accept_parameters_declaration(&target.parameters, visitor);
         accept_function_type_attributes(&target.attributes, visitor);
@@ -1099,7 +1102,7 @@ pub fn accept_function_type(target: &FunctionType, visitor: &mut dyn Visitor) {
     visitor.leave_function_type(target);
 }
 
-pub fn accept_mapping_type(target: &MappingType, visitor: &mut dyn Visitor) {
+pub fn accept_mapping_type(target: &MappingType, visitor: &mut impl Visitor) {
     if visitor.enter_mapping_type(target) {
         accept_mapping_key(&target.key_type, visitor);
         accept_mapping_value(&target.value_type, visitor);
@@ -1107,47 +1110,47 @@ pub fn accept_mapping_type(target: &MappingType, visitor: &mut dyn Visitor) {
     visitor.leave_mapping_type(target);
 }
 
-pub fn accept_mapping_key(target: &MappingKey, visitor: &mut dyn Visitor) {
+pub fn accept_mapping_key(target: &MappingKey, visitor: &mut impl Visitor) {
     if visitor.enter_mapping_key(target) {
         accept_mapping_key_type(&target.key_type, visitor);
     }
     visitor.leave_mapping_key(target);
 }
 
-pub fn accept_mapping_value(target: &MappingValue, visitor: &mut dyn Visitor) {
+pub fn accept_mapping_value(target: &MappingValue, visitor: &mut impl Visitor) {
     if visitor.enter_mapping_value(target) {
         accept_type_name(&target.type_name, visitor);
     }
     visitor.leave_mapping_value(target);
 }
 
-pub fn accept_address_type(target: &AddressType, visitor: &mut dyn Visitor) {
+pub fn accept_address_type(target: &AddressType, visitor: &mut impl Visitor) {
     visitor.enter_address_type(target);
     visitor.leave_address_type(target);
 }
 
-pub fn accept_block(target: &Block, visitor: &mut dyn Visitor) {
+pub fn accept_block(target: &Block, visitor: &mut impl Visitor) {
     if visitor.enter_block(target) {
         accept_statements(&target.statements, visitor);
     }
     visitor.leave_block(target);
 }
 
-pub fn accept_unchecked_block(target: &UncheckedBlock, visitor: &mut dyn Visitor) {
+pub fn accept_unchecked_block(target: &UncheckedBlock, visitor: &mut impl Visitor) {
     if visitor.enter_unchecked_block(target) {
         accept_block(&target.block, visitor);
     }
     visitor.leave_unchecked_block(target);
 }
 
-pub fn accept_expression_statement(target: &ExpressionStatement, visitor: &mut dyn Visitor) {
+pub fn accept_expression_statement(target: &ExpressionStatement, visitor: &mut impl Visitor) {
     if visitor.enter_expression_statement(target) {
         accept_expression(&target.expression, visitor);
     }
     visitor.leave_expression_statement(target);
 }
 
-pub fn accept_assembly_statement(target: &AssemblyStatement, visitor: &mut dyn Visitor) {
+pub fn accept_assembly_statement(target: &AssemblyStatement, visitor: &mut impl Visitor) {
     if visitor.enter_assembly_statement(target) {
         if let Some(ref label) = target.label {
             accept_string_literal(label, visitor);
@@ -1163,7 +1166,7 @@ pub fn accept_assembly_statement(target: &AssemblyStatement, visitor: &mut dyn V
 
 pub fn accept_assembly_flags_declaration(
     target: &AssemblyFlagsDeclaration,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_assembly_flags_declaration(target) {
         accept_assembly_flags(&target.flags, visitor);
@@ -1173,7 +1176,7 @@ pub fn accept_assembly_flags_declaration(
 
 pub fn accept_tuple_deconstruction_statement(
     target: &TupleDeconstructionStatement,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_tuple_deconstruction_statement(target) {
         accept_tuple_deconstruction_elements(&target.elements, visitor);
@@ -1184,7 +1187,7 @@ pub fn accept_tuple_deconstruction_statement(
 
 pub fn accept_tuple_deconstruction_element(
     target: &TupleDeconstructionElement,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_tuple_deconstruction_element(target) {
         if let Some(ref member) = target.member {
@@ -1194,7 +1197,7 @@ pub fn accept_tuple_deconstruction_element(
     visitor.leave_tuple_deconstruction_element(target);
 }
 
-pub fn accept_typed_tuple_member(target: &TypedTupleMember, visitor: &mut dyn Visitor) {
+pub fn accept_typed_tuple_member(target: &TypedTupleMember, visitor: &mut impl Visitor) {
     if visitor.enter_typed_tuple_member(target) {
         accept_type_name(&target.type_name, visitor);
         if let Some(ref storage_location) = target.storage_location {
@@ -1204,7 +1207,7 @@ pub fn accept_typed_tuple_member(target: &TypedTupleMember, visitor: &mut dyn Vi
     visitor.leave_typed_tuple_member(target);
 }
 
-pub fn accept_untyped_tuple_member(target: &UntypedTupleMember, visitor: &mut dyn Visitor) {
+pub fn accept_untyped_tuple_member(target: &UntypedTupleMember, visitor: &mut impl Visitor) {
     if visitor.enter_untyped_tuple_member(target) {
         if let Some(ref storage_location) = target.storage_location {
             accept_storage_location(storage_location, visitor);
@@ -1215,7 +1218,7 @@ pub fn accept_untyped_tuple_member(target: &UntypedTupleMember, visitor: &mut dy
 
 pub fn accept_variable_declaration_statement(
     target: &VariableDeclarationStatement,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_variable_declaration_statement(target) {
         accept_variable_declaration_type(&target.variable_type, visitor);
@@ -1232,7 +1235,7 @@ pub fn accept_variable_declaration_statement(
 
 pub fn accept_variable_declaration_value(
     target: &VariableDeclarationValue,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_variable_declaration_value(target) {
         accept_expression(&target.expression, visitor);
@@ -1240,7 +1243,7 @@ pub fn accept_variable_declaration_value(
     visitor.leave_variable_declaration_value(target);
 }
 
-pub fn accept_if_statement(target: &IfStatement, visitor: &mut dyn Visitor) {
+pub fn accept_if_statement(target: &IfStatement, visitor: &mut impl Visitor) {
     if visitor.enter_if_statement(target) {
         accept_expression(&target.condition, visitor);
         accept_statement(&target.body, visitor);
@@ -1251,14 +1254,14 @@ pub fn accept_if_statement(target: &IfStatement, visitor: &mut dyn Visitor) {
     visitor.leave_if_statement(target);
 }
 
-pub fn accept_else_branch(target: &ElseBranch, visitor: &mut dyn Visitor) {
+pub fn accept_else_branch(target: &ElseBranch, visitor: &mut impl Visitor) {
     if visitor.enter_else_branch(target) {
         accept_statement(&target.body, visitor);
     }
     visitor.leave_else_branch(target);
 }
 
-pub fn accept_for_statement(target: &ForStatement, visitor: &mut dyn Visitor) {
+pub fn accept_for_statement(target: &ForStatement, visitor: &mut impl Visitor) {
     if visitor.enter_for_statement(target) {
         accept_for_statement_initialization(&target.initialization, visitor);
         accept_for_statement_condition(&target.condition, visitor);
@@ -1270,7 +1273,7 @@ pub fn accept_for_statement(target: &ForStatement, visitor: &mut dyn Visitor) {
     visitor.leave_for_statement(target);
 }
 
-pub fn accept_while_statement(target: &WhileStatement, visitor: &mut dyn Visitor) {
+pub fn accept_while_statement(target: &WhileStatement, visitor: &mut impl Visitor) {
     if visitor.enter_while_statement(target) {
         accept_expression(&target.condition, visitor);
         accept_statement(&target.body, visitor);
@@ -1278,7 +1281,7 @@ pub fn accept_while_statement(target: &WhileStatement, visitor: &mut dyn Visitor
     visitor.leave_while_statement(target);
 }
 
-pub fn accept_do_while_statement(target: &DoWhileStatement, visitor: &mut dyn Visitor) {
+pub fn accept_do_while_statement(target: &DoWhileStatement, visitor: &mut impl Visitor) {
     if visitor.enter_do_while_statement(target) {
         accept_statement(&target.body, visitor);
         accept_expression(&target.condition, visitor);
@@ -1286,17 +1289,17 @@ pub fn accept_do_while_statement(target: &DoWhileStatement, visitor: &mut dyn Vi
     visitor.leave_do_while_statement(target);
 }
 
-pub fn accept_continue_statement(target: &ContinueStatement, visitor: &mut dyn Visitor) {
+pub fn accept_continue_statement(target: &ContinueStatement, visitor: &mut impl Visitor) {
     visitor.enter_continue_statement(target);
     visitor.leave_continue_statement(target);
 }
 
-pub fn accept_break_statement(target: &BreakStatement, visitor: &mut dyn Visitor) {
+pub fn accept_break_statement(target: &BreakStatement, visitor: &mut impl Visitor) {
     visitor.enter_break_statement(target);
     visitor.leave_break_statement(target);
 }
 
-pub fn accept_return_statement(target: &ReturnStatement, visitor: &mut dyn Visitor) {
+pub fn accept_return_statement(target: &ReturnStatement, visitor: &mut impl Visitor) {
     if visitor.enter_return_statement(target) {
         if let Some(ref expression) = target.expression {
             accept_expression(expression, visitor);
@@ -1305,7 +1308,7 @@ pub fn accept_return_statement(target: &ReturnStatement, visitor: &mut dyn Visit
     visitor.leave_return_statement(target);
 }
 
-pub fn accept_emit_statement(target: &EmitStatement, visitor: &mut dyn Visitor) {
+pub fn accept_emit_statement(target: &EmitStatement, visitor: &mut impl Visitor) {
     if visitor.enter_emit_statement(target) {
         accept_identifier_path(&target.event, visitor);
         accept_arguments_declaration(&target.arguments, visitor);
@@ -1313,7 +1316,7 @@ pub fn accept_emit_statement(target: &EmitStatement, visitor: &mut dyn Visitor) 
     visitor.leave_emit_statement(target);
 }
 
-pub fn accept_try_statement(target: &TryStatement, visitor: &mut dyn Visitor) {
+pub fn accept_try_statement(target: &TryStatement, visitor: &mut impl Visitor) {
     if visitor.enter_try_statement(target) {
         accept_expression(&target.expression, visitor);
         if let Some(ref returns) = target.returns {
@@ -1325,7 +1328,7 @@ pub fn accept_try_statement(target: &TryStatement, visitor: &mut dyn Visitor) {
     visitor.leave_try_statement(target);
 }
 
-pub fn accept_catch_clause(target: &CatchClause, visitor: &mut dyn Visitor) {
+pub fn accept_catch_clause(target: &CatchClause, visitor: &mut impl Visitor) {
     if visitor.enter_catch_clause(target) {
         if let Some(ref error) = target.error {
             accept_catch_clause_error(error, visitor);
@@ -1335,14 +1338,14 @@ pub fn accept_catch_clause(target: &CatchClause, visitor: &mut dyn Visitor) {
     visitor.leave_catch_clause(target);
 }
 
-pub fn accept_catch_clause_error(target: &CatchClauseError, visitor: &mut dyn Visitor) {
+pub fn accept_catch_clause_error(target: &CatchClauseError, visitor: &mut impl Visitor) {
     if visitor.enter_catch_clause_error(target) {
         accept_parameters_declaration(&target.parameters, visitor);
     }
     visitor.leave_catch_clause_error(target);
 }
 
-pub fn accept_revert_statement(target: &RevertStatement, visitor: &mut dyn Visitor) {
+pub fn accept_revert_statement(target: &RevertStatement, visitor: &mut impl Visitor) {
     if visitor.enter_revert_statement(target) {
         if let Some(ref error) = target.error {
             accept_identifier_path(error, visitor);
@@ -1352,7 +1355,7 @@ pub fn accept_revert_statement(target: &RevertStatement, visitor: &mut dyn Visit
     visitor.leave_revert_statement(target);
 }
 
-pub fn accept_assignment_expression(target: &AssignmentExpression, visitor: &mut dyn Visitor) {
+pub fn accept_assignment_expression(target: &AssignmentExpression, visitor: &mut impl Visitor) {
     if visitor.enter_assignment_expression(target) {
         accept_expression(&target.left_operand, visitor);
         accept_expression(&target.right_operand, visitor);
@@ -1360,7 +1363,7 @@ pub fn accept_assignment_expression(target: &AssignmentExpression, visitor: &mut
     visitor.leave_assignment_expression(target);
 }
 
-pub fn accept_conditional_expression(target: &ConditionalExpression, visitor: &mut dyn Visitor) {
+pub fn accept_conditional_expression(target: &ConditionalExpression, visitor: &mut impl Visitor) {
     if visitor.enter_conditional_expression(target) {
         accept_expression(&target.operand, visitor);
         accept_expression(&target.true_expression, visitor);
@@ -1369,7 +1372,7 @@ pub fn accept_conditional_expression(target: &ConditionalExpression, visitor: &m
     visitor.leave_conditional_expression(target);
 }
 
-pub fn accept_or_expression(target: &OrExpression, visitor: &mut dyn Visitor) {
+pub fn accept_or_expression(target: &OrExpression, visitor: &mut impl Visitor) {
     if visitor.enter_or_expression(target) {
         accept_expression(&target.left_operand, visitor);
         accept_expression(&target.right_operand, visitor);
@@ -1377,7 +1380,7 @@ pub fn accept_or_expression(target: &OrExpression, visitor: &mut dyn Visitor) {
     visitor.leave_or_expression(target);
 }
 
-pub fn accept_and_expression(target: &AndExpression, visitor: &mut dyn Visitor) {
+pub fn accept_and_expression(target: &AndExpression, visitor: &mut impl Visitor) {
     if visitor.enter_and_expression(target) {
         accept_expression(&target.left_operand, visitor);
         accept_expression(&target.right_operand, visitor);
@@ -1385,7 +1388,7 @@ pub fn accept_and_expression(target: &AndExpression, visitor: &mut dyn Visitor) 
     visitor.leave_and_expression(target);
 }
 
-pub fn accept_equality_expression(target: &EqualityExpression, visitor: &mut dyn Visitor) {
+pub fn accept_equality_expression(target: &EqualityExpression, visitor: &mut impl Visitor) {
     if visitor.enter_equality_expression(target) {
         accept_expression(&target.left_operand, visitor);
         accept_expression(&target.right_operand, visitor);
@@ -1393,7 +1396,7 @@ pub fn accept_equality_expression(target: &EqualityExpression, visitor: &mut dyn
     visitor.leave_equality_expression(target);
 }
 
-pub fn accept_inequality_expression(target: &InequalityExpression, visitor: &mut dyn Visitor) {
+pub fn accept_inequality_expression(target: &InequalityExpression, visitor: &mut impl Visitor) {
     if visitor.enter_inequality_expression(target) {
         accept_expression(&target.left_operand, visitor);
         accept_expression(&target.right_operand, visitor);
@@ -1401,7 +1404,7 @@ pub fn accept_inequality_expression(target: &InequalityExpression, visitor: &mut
     visitor.leave_inequality_expression(target);
 }
 
-pub fn accept_bitwise_or_expression(target: &BitwiseOrExpression, visitor: &mut dyn Visitor) {
+pub fn accept_bitwise_or_expression(target: &BitwiseOrExpression, visitor: &mut impl Visitor) {
     if visitor.enter_bitwise_or_expression(target) {
         accept_expression(&target.left_operand, visitor);
         accept_expression(&target.right_operand, visitor);
@@ -1409,7 +1412,7 @@ pub fn accept_bitwise_or_expression(target: &BitwiseOrExpression, visitor: &mut 
     visitor.leave_bitwise_or_expression(target);
 }
 
-pub fn accept_bitwise_xor_expression(target: &BitwiseXorExpression, visitor: &mut dyn Visitor) {
+pub fn accept_bitwise_xor_expression(target: &BitwiseXorExpression, visitor: &mut impl Visitor) {
     if visitor.enter_bitwise_xor_expression(target) {
         accept_expression(&target.left_operand, visitor);
         accept_expression(&target.right_operand, visitor);
@@ -1417,7 +1420,7 @@ pub fn accept_bitwise_xor_expression(target: &BitwiseXorExpression, visitor: &mu
     visitor.leave_bitwise_xor_expression(target);
 }
 
-pub fn accept_bitwise_and_expression(target: &BitwiseAndExpression, visitor: &mut dyn Visitor) {
+pub fn accept_bitwise_and_expression(target: &BitwiseAndExpression, visitor: &mut impl Visitor) {
     if visitor.enter_bitwise_and_expression(target) {
         accept_expression(&target.left_operand, visitor);
         accept_expression(&target.right_operand, visitor);
@@ -1425,7 +1428,7 @@ pub fn accept_bitwise_and_expression(target: &BitwiseAndExpression, visitor: &mu
     visitor.leave_bitwise_and_expression(target);
 }
 
-pub fn accept_shift_expression(target: &ShiftExpression, visitor: &mut dyn Visitor) {
+pub fn accept_shift_expression(target: &ShiftExpression, visitor: &mut impl Visitor) {
     if visitor.enter_shift_expression(target) {
         accept_expression(&target.left_operand, visitor);
         accept_expression(&target.right_operand, visitor);
@@ -1433,7 +1436,7 @@ pub fn accept_shift_expression(target: &ShiftExpression, visitor: &mut dyn Visit
     visitor.leave_shift_expression(target);
 }
 
-pub fn accept_additive_expression(target: &AdditiveExpression, visitor: &mut dyn Visitor) {
+pub fn accept_additive_expression(target: &AdditiveExpression, visitor: &mut impl Visitor) {
     if visitor.enter_additive_expression(target) {
         accept_expression(&target.left_operand, visitor);
         accept_expression(&target.right_operand, visitor);
@@ -1443,7 +1446,7 @@ pub fn accept_additive_expression(target: &AdditiveExpression, visitor: &mut dyn
 
 pub fn accept_multiplicative_expression(
     target: &MultiplicativeExpression,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_multiplicative_expression(target) {
         accept_expression(&target.left_operand, visitor);
@@ -1454,7 +1457,7 @@ pub fn accept_multiplicative_expression(
 
 pub fn accept_exponentiation_expression(
     target: &ExponentiationExpression,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_exponentiation_expression(target) {
         accept_expression(&target.left_operand, visitor);
@@ -1463,21 +1466,24 @@ pub fn accept_exponentiation_expression(
     visitor.leave_exponentiation_expression(target);
 }
 
-pub fn accept_postfix_expression(target: &PostfixExpression, visitor: &mut dyn Visitor) {
+pub fn accept_postfix_expression(target: &PostfixExpression, visitor: &mut impl Visitor) {
     if visitor.enter_postfix_expression(target) {
         accept_expression(&target.operand, visitor);
     }
     visitor.leave_postfix_expression(target);
 }
 
-pub fn accept_prefix_expression(target: &PrefixExpression, visitor: &mut dyn Visitor) {
+pub fn accept_prefix_expression(target: &PrefixExpression, visitor: &mut impl Visitor) {
     if visitor.enter_prefix_expression(target) {
         accept_expression(&target.operand, visitor);
     }
     visitor.leave_prefix_expression(target);
 }
 
-pub fn accept_function_call_expression(target: &FunctionCallExpression, visitor: &mut dyn Visitor) {
+pub fn accept_function_call_expression(
+    target: &FunctionCallExpression,
+    visitor: &mut impl Visitor,
+) {
     if visitor.enter_function_call_expression(target) {
         accept_expression(&target.operand, visitor);
         accept_arguments_declaration(&target.arguments, visitor);
@@ -1485,7 +1491,7 @@ pub fn accept_function_call_expression(target: &FunctionCallExpression, visitor:
     visitor.leave_function_call_expression(target);
 }
 
-pub fn accept_call_options_expression(target: &CallOptionsExpression, visitor: &mut dyn Visitor) {
+pub fn accept_call_options_expression(target: &CallOptionsExpression, visitor: &mut impl Visitor) {
     if visitor.enter_call_options_expression(target) {
         accept_expression(&target.operand, visitor);
         accept_call_options(&target.options, visitor);
@@ -1493,14 +1499,17 @@ pub fn accept_call_options_expression(target: &CallOptionsExpression, visitor: &
     visitor.leave_call_options_expression(target);
 }
 
-pub fn accept_member_access_expression(target: &MemberAccessExpression, visitor: &mut dyn Visitor) {
+pub fn accept_member_access_expression(
+    target: &MemberAccessExpression,
+    visitor: &mut impl Visitor,
+) {
     if visitor.enter_member_access_expression(target) {
         accept_expression(&target.operand, visitor);
     }
     visitor.leave_member_access_expression(target);
 }
 
-pub fn accept_index_access_expression(target: &IndexAccessExpression, visitor: &mut dyn Visitor) {
+pub fn accept_index_access_expression(target: &IndexAccessExpression, visitor: &mut impl Visitor) {
     if visitor.enter_index_access_expression(target) {
         accept_expression(&target.operand, visitor);
         if let Some(ref start) = target.start {
@@ -1514,7 +1523,7 @@ pub fn accept_index_access_expression(target: &IndexAccessExpression, visitor: &
     visitor.leave_index_access_expression(target);
 }
 
-pub fn accept_index_access_end(target: &IndexAccessEnd, visitor: &mut dyn Visitor) {
+pub fn accept_index_access_end(target: &IndexAccessEnd, visitor: &mut impl Visitor) {
     if visitor.enter_index_access_end(target) {
         if let Some(ref end) = target.end {
             accept_expression(end, visitor);
@@ -1525,7 +1534,7 @@ pub fn accept_index_access_end(target: &IndexAccessEnd, visitor: &mut dyn Visito
 
 pub fn accept_positional_arguments_declaration(
     target: &PositionalArgumentsDeclaration,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_positional_arguments_declaration(target) {
         accept_positional_arguments(&target.arguments, visitor);
@@ -1535,7 +1544,7 @@ pub fn accept_positional_arguments_declaration(
 
 pub fn accept_named_arguments_declaration(
     target: &NamedArgumentsDeclaration,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_named_arguments_declaration(target) {
         if let Some(ref arguments) = target.arguments {
@@ -1545,42 +1554,42 @@ pub fn accept_named_arguments_declaration(
     visitor.leave_named_arguments_declaration(target);
 }
 
-pub fn accept_named_argument_group(target: &NamedArgumentGroup, visitor: &mut dyn Visitor) {
+pub fn accept_named_argument_group(target: &NamedArgumentGroup, visitor: &mut impl Visitor) {
     if visitor.enter_named_argument_group(target) {
         accept_named_arguments(&target.arguments, visitor);
     }
     visitor.leave_named_argument_group(target);
 }
 
-pub fn accept_named_argument(target: &NamedArgument, visitor: &mut dyn Visitor) {
+pub fn accept_named_argument(target: &NamedArgument, visitor: &mut impl Visitor) {
     if visitor.enter_named_argument(target) {
         accept_expression(&target.value, visitor);
     }
     visitor.leave_named_argument(target);
 }
 
-pub fn accept_type_expression(target: &TypeExpression, visitor: &mut dyn Visitor) {
+pub fn accept_type_expression(target: &TypeExpression, visitor: &mut impl Visitor) {
     if visitor.enter_type_expression(target) {
         accept_type_name(&target.type_name, visitor);
     }
     visitor.leave_type_expression(target);
 }
 
-pub fn accept_new_expression(target: &NewExpression, visitor: &mut dyn Visitor) {
+pub fn accept_new_expression(target: &NewExpression, visitor: &mut impl Visitor) {
     if visitor.enter_new_expression(target) {
         accept_type_name(&target.type_name, visitor);
     }
     visitor.leave_new_expression(target);
 }
 
-pub fn accept_tuple_expression(target: &TupleExpression, visitor: &mut dyn Visitor) {
+pub fn accept_tuple_expression(target: &TupleExpression, visitor: &mut impl Visitor) {
     if visitor.enter_tuple_expression(target) {
         accept_tuple_values(&target.items, visitor);
     }
     visitor.leave_tuple_expression(target);
 }
 
-pub fn accept_tuple_value(target: &TupleValue, visitor: &mut dyn Visitor) {
+pub fn accept_tuple_value(target: &TupleValue, visitor: &mut impl Visitor) {
     if visitor.enter_tuple_value(target) {
         if let Some(ref expression) = target.expression {
             accept_expression(expression, visitor);
@@ -1589,21 +1598,21 @@ pub fn accept_tuple_value(target: &TupleValue, visitor: &mut dyn Visitor) {
     visitor.leave_tuple_value(target);
 }
 
-pub fn accept_array_expression(target: &ArrayExpression, visitor: &mut dyn Visitor) {
+pub fn accept_array_expression(target: &ArrayExpression, visitor: &mut impl Visitor) {
     if visitor.enter_array_expression(target) {
         accept_array_values(&target.items, visitor);
     }
     visitor.leave_array_expression(target);
 }
 
-pub fn accept_hex_number_expression(target: &HexNumberExpression, visitor: &mut dyn Visitor) {
+pub fn accept_hex_number_expression(target: &HexNumberExpression, visitor: &mut impl Visitor) {
     visitor.enter_hex_number_expression(target);
     visitor.leave_hex_number_expression(target);
 }
 
 pub fn accept_decimal_number_expression(
     target: &DecimalNumberExpression,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_decimal_number_expression(target) {
         if let Some(ref unit) = target.unit {
@@ -1613,14 +1622,14 @@ pub fn accept_decimal_number_expression(
     visitor.leave_decimal_number_expression(target);
 }
 
-pub fn accept_yul_block(target: &YulBlock, visitor: &mut dyn Visitor) {
+pub fn accept_yul_block(target: &YulBlock, visitor: &mut impl Visitor) {
     if visitor.enter_yul_block(target) {
         accept_yul_statements(&target.statements, visitor);
     }
     visitor.leave_yul_block(target);
 }
 
-pub fn accept_yul_function_definition(target: &YulFunctionDefinition, visitor: &mut dyn Visitor) {
+pub fn accept_yul_function_definition(target: &YulFunctionDefinition, visitor: &mut impl Visitor) {
     if visitor.enter_yul_function_definition(target) {
         accept_yul_parameters_declaration(&target.parameters, visitor);
         if let Some(ref returns) = target.returns {
@@ -1633,7 +1642,7 @@ pub fn accept_yul_function_definition(target: &YulFunctionDefinition, visitor: &
 
 pub fn accept_yul_parameters_declaration(
     target: &YulParametersDeclaration,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_yul_parameters_declaration(target) {
         accept_yul_parameters(&target.parameters, visitor);
@@ -1641,7 +1650,7 @@ pub fn accept_yul_parameters_declaration(
     visitor.leave_yul_parameters_declaration(target);
 }
 
-pub fn accept_yul_returns_declaration(target: &YulReturnsDeclaration, visitor: &mut dyn Visitor) {
+pub fn accept_yul_returns_declaration(target: &YulReturnsDeclaration, visitor: &mut impl Visitor) {
     if visitor.enter_yul_returns_declaration(target) {
         accept_yul_variable_names(&target.variables, visitor);
     }
@@ -1650,7 +1659,7 @@ pub fn accept_yul_returns_declaration(target: &YulReturnsDeclaration, visitor: &
 
 pub fn accept_yul_variable_declaration_statement(
     target: &YulVariableDeclarationStatement,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_yul_variable_declaration_statement(target) {
         accept_yul_variable_names(&target.variables, visitor);
@@ -1663,7 +1672,7 @@ pub fn accept_yul_variable_declaration_statement(
 
 pub fn accept_yul_variable_declaration_value(
     target: &YulVariableDeclarationValue,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_yul_variable_declaration_value(target) {
         accept_yul_assignment_operator(&target.assignment, visitor);
@@ -1674,7 +1683,7 @@ pub fn accept_yul_variable_declaration_value(
 
 pub fn accept_yul_variable_assignment_statement(
     target: &YulVariableAssignmentStatement,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_yul_variable_assignment_statement(target) {
         accept_yul_paths(&target.variables, visitor);
@@ -1684,7 +1693,7 @@ pub fn accept_yul_variable_assignment_statement(
     visitor.leave_yul_variable_assignment_statement(target);
 }
 
-pub fn accept_yul_if_statement(target: &YulIfStatement, visitor: &mut dyn Visitor) {
+pub fn accept_yul_if_statement(target: &YulIfStatement, visitor: &mut impl Visitor) {
     if visitor.enter_yul_if_statement(target) {
         accept_yul_expression(&target.condition, visitor);
         accept_yul_block(&target.body, visitor);
@@ -1692,7 +1701,7 @@ pub fn accept_yul_if_statement(target: &YulIfStatement, visitor: &mut dyn Visito
     visitor.leave_yul_if_statement(target);
 }
 
-pub fn accept_yul_for_statement(target: &YulForStatement, visitor: &mut dyn Visitor) {
+pub fn accept_yul_for_statement(target: &YulForStatement, visitor: &mut impl Visitor) {
     if visitor.enter_yul_for_statement(target) {
         accept_yul_block(&target.initialization, visitor);
         accept_yul_expression(&target.condition, visitor);
@@ -1702,7 +1711,7 @@ pub fn accept_yul_for_statement(target: &YulForStatement, visitor: &mut dyn Visi
     visitor.leave_yul_for_statement(target);
 }
 
-pub fn accept_yul_switch_statement(target: &YulSwitchStatement, visitor: &mut dyn Visitor) {
+pub fn accept_yul_switch_statement(target: &YulSwitchStatement, visitor: &mut impl Visitor) {
     if visitor.enter_yul_switch_statement(target) {
         accept_yul_expression(&target.expression, visitor);
         accept_yul_switch_cases(&target.cases, visitor);
@@ -1710,14 +1719,14 @@ pub fn accept_yul_switch_statement(target: &YulSwitchStatement, visitor: &mut dy
     visitor.leave_yul_switch_statement(target);
 }
 
-pub fn accept_yul_default_case(target: &YulDefaultCase, visitor: &mut dyn Visitor) {
+pub fn accept_yul_default_case(target: &YulDefaultCase, visitor: &mut impl Visitor) {
     if visitor.enter_yul_default_case(target) {
         accept_yul_block(&target.body, visitor);
     }
     visitor.leave_yul_default_case(target);
 }
 
-pub fn accept_yul_value_case(target: &YulValueCase, visitor: &mut dyn Visitor) {
+pub fn accept_yul_value_case(target: &YulValueCase, visitor: &mut impl Visitor) {
     if visitor.enter_yul_value_case(target) {
         accept_yul_literal(&target.value, visitor);
         accept_yul_block(&target.body, visitor);
@@ -1725,24 +1734,24 @@ pub fn accept_yul_value_case(target: &YulValueCase, visitor: &mut dyn Visitor) {
     visitor.leave_yul_value_case(target);
 }
 
-pub fn accept_yul_leave_statement(target: &YulLeaveStatement, visitor: &mut dyn Visitor) {
+pub fn accept_yul_leave_statement(target: &YulLeaveStatement, visitor: &mut impl Visitor) {
     visitor.enter_yul_leave_statement(target);
     visitor.leave_yul_leave_statement(target);
 }
 
-pub fn accept_yul_break_statement(target: &YulBreakStatement, visitor: &mut dyn Visitor) {
+pub fn accept_yul_break_statement(target: &YulBreakStatement, visitor: &mut impl Visitor) {
     visitor.enter_yul_break_statement(target);
     visitor.leave_yul_break_statement(target);
 }
 
-pub fn accept_yul_continue_statement(target: &YulContinueStatement, visitor: &mut dyn Visitor) {
+pub fn accept_yul_continue_statement(target: &YulContinueStatement, visitor: &mut impl Visitor) {
     visitor.enter_yul_continue_statement(target);
     visitor.leave_yul_continue_statement(target);
 }
 
 pub fn accept_yul_function_call_expression(
     target: &YulFunctionCallExpression,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     if visitor.enter_yul_function_call_expression(target) {
         accept_yul_expression(&target.operand, visitor);
@@ -1755,7 +1764,7 @@ pub fn accept_yul_function_call_expression(
 // Choices:
 //
 
-pub fn accept_source_unit_member(target: &SourceUnitMember, visitor: &mut dyn Visitor) {
+pub fn accept_source_unit_member(target: &SourceUnitMember, visitor: &mut impl Visitor) {
     match target {
         SourceUnitMember::PragmaDirective(ref pragma_directive) => {
             accept_pragma_directive(pragma_directive, visitor);
@@ -1801,7 +1810,7 @@ pub fn accept_source_unit_member(target: &SourceUnitMember, visitor: &mut dyn Vi
     }
 }
 
-pub fn accept_pragma(target: &Pragma, visitor: &mut dyn Visitor) {
+pub fn accept_pragma(target: &Pragma, visitor: &mut impl Visitor) {
     match target {
         Pragma::AbicoderPragma(ref abicoder_pragma) => {
             accept_abicoder_pragma(abicoder_pragma, visitor);
@@ -1815,7 +1824,7 @@ pub fn accept_pragma(target: &Pragma, visitor: &mut dyn Visitor) {
     }
 }
 
-pub fn accept_experimental_feature(target: &ExperimentalFeature, visitor: &mut dyn Visitor) {
+pub fn accept_experimental_feature(target: &ExperimentalFeature, visitor: &mut impl Visitor) {
     match target {
         ExperimentalFeature::StringLiteral(ref string_literal) => {
             accept_string_literal(string_literal, visitor);
@@ -1824,7 +1833,7 @@ pub fn accept_experimental_feature(target: &ExperimentalFeature, visitor: &mut d
     }
 }
 
-pub fn accept_version_expression(target: &VersionExpression, visitor: &mut dyn Visitor) {
+pub fn accept_version_expression(target: &VersionExpression, visitor: &mut impl Visitor) {
     match target {
         VersionExpression::VersionRange(ref version_range) => {
             accept_version_range(version_range, visitor);
@@ -1835,9 +1844,9 @@ pub fn accept_version_expression(target: &VersionExpression, visitor: &mut dyn V
     }
 }
 
-pub fn accept_version_operator(_target: &VersionOperator, _visitor: &mut dyn Visitor) {}
+pub fn accept_version_operator(_target: &VersionOperator, _visitor: &mut impl Visitor) {}
 
-pub fn accept_version_literal(target: &VersionLiteral, visitor: &mut dyn Visitor) {
+pub fn accept_version_literal(target: &VersionLiteral, visitor: &mut impl Visitor) {
     match target {
         VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
             accept_simple_version_literal(simple_version_literal, visitor);
@@ -1847,7 +1856,7 @@ pub fn accept_version_literal(target: &VersionLiteral, visitor: &mut dyn Visitor
     }
 }
 
-pub fn accept_import_clause(target: &ImportClause, visitor: &mut dyn Visitor) {
+pub fn accept_import_clause(target: &ImportClause, visitor: &mut impl Visitor) {
     match target {
         ImportClause::PathImport(ref path_import) => {
             accept_path_import(path_import, visitor);
@@ -1861,7 +1870,7 @@ pub fn accept_import_clause(target: &ImportClause, visitor: &mut dyn Visitor) {
     }
 }
 
-pub fn accept_using_clause(target: &UsingClause, visitor: &mut dyn Visitor) {
+pub fn accept_using_clause(target: &UsingClause, visitor: &mut impl Visitor) {
     match target {
         UsingClause::IdentifierPath(ref identifier_path) => {
             accept_identifier_path(identifier_path, visitor);
@@ -1872,9 +1881,9 @@ pub fn accept_using_clause(target: &UsingClause, visitor: &mut dyn Visitor) {
     }
 }
 
-pub fn accept_using_operator(_target: &UsingOperator, _visitor: &mut dyn Visitor) {}
+pub fn accept_using_operator(_target: &UsingOperator, _visitor: &mut impl Visitor) {}
 
-pub fn accept_using_target(target: &UsingTarget, visitor: &mut dyn Visitor) {
+pub fn accept_using_target(target: &UsingTarget, visitor: &mut impl Visitor) {
     match target {
         UsingTarget::TypeName(ref type_name) => {
             accept_type_name(type_name, visitor);
@@ -1883,7 +1892,7 @@ pub fn accept_using_target(target: &UsingTarget, visitor: &mut dyn Visitor) {
     }
 }
 
-pub fn accept_contract_specifier(target: &ContractSpecifier, visitor: &mut dyn Visitor) {
+pub fn accept_contract_specifier(target: &ContractSpecifier, visitor: &mut impl Visitor) {
     match target {
         ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
             accept_inheritance_specifier(inheritance_specifier, visitor);
@@ -1894,7 +1903,7 @@ pub fn accept_contract_specifier(target: &ContractSpecifier, visitor: &mut dyn V
     }
 }
 
-pub fn accept_contract_member(target: &ContractMember, visitor: &mut dyn Visitor) {
+pub fn accept_contract_member(target: &ContractMember, visitor: &mut impl Visitor) {
     match target {
         ContractMember::UsingDirective(ref using_directive) => {
             accept_using_directive(using_directive, visitor);
@@ -1935,7 +1944,10 @@ pub fn accept_contract_member(target: &ContractMember, visitor: &mut dyn Visitor
     }
 }
 
-pub fn accept_state_variable_attribute(target: &StateVariableAttribute, visitor: &mut dyn Visitor) {
+pub fn accept_state_variable_attribute(
+    target: &StateVariableAttribute,
+    visitor: &mut impl Visitor,
+) {
     match target {
         StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
             accept_override_specifier(override_specifier, visitor);
@@ -1949,9 +1961,9 @@ pub fn accept_state_variable_attribute(target: &StateVariableAttribute, visitor:
     }
 }
 
-pub fn accept_function_name(_target: &FunctionName, _visitor: &mut dyn Visitor) {}
+pub fn accept_function_name(_target: &FunctionName, _visitor: &mut impl Visitor) {}
 
-pub fn accept_function_attribute(target: &FunctionAttribute, visitor: &mut dyn Visitor) {
+pub fn accept_function_attribute(target: &FunctionAttribute, visitor: &mut impl Visitor) {
     match target {
         FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
             accept_modifier_invocation(modifier_invocation, visitor);
@@ -1970,7 +1982,7 @@ pub fn accept_function_attribute(target: &FunctionAttribute, visitor: &mut dyn V
     }
 }
 
-pub fn accept_function_body(target: &FunctionBody, visitor: &mut dyn Visitor) {
+pub fn accept_function_body(target: &FunctionBody, visitor: &mut impl Visitor) {
     match target {
         FunctionBody::Block(ref block) => {
             accept_block(block, visitor);
@@ -1979,7 +1991,7 @@ pub fn accept_function_body(target: &FunctionBody, visitor: &mut dyn Visitor) {
     }
 }
 
-pub fn accept_constructor_attribute(target: &ConstructorAttribute, visitor: &mut dyn Visitor) {
+pub fn accept_constructor_attribute(target: &ConstructorAttribute, visitor: &mut impl Visitor) {
     match target {
         ConstructorAttribute::ModifierInvocation(ref modifier_invocation) => {
             accept_modifier_invocation(modifier_invocation, visitor);
@@ -1992,7 +2004,7 @@ pub fn accept_constructor_attribute(target: &ConstructorAttribute, visitor: &mut
 
 pub fn accept_fallback_function_attribute(
     target: &FallbackFunctionAttribute,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     match target {
         FallbackFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
@@ -2011,7 +2023,7 @@ pub fn accept_fallback_function_attribute(
 
 pub fn accept_receive_function_attribute(
     target: &ReceiveFunctionAttribute,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     match target {
         ReceiveFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
@@ -2026,7 +2038,7 @@ pub fn accept_receive_function_attribute(
     }
 }
 
-pub fn accept_modifier_attribute(target: &ModifierAttribute, visitor: &mut dyn Visitor) {
+pub fn accept_modifier_attribute(target: &ModifierAttribute, visitor: &mut impl Visitor) {
     match target {
         ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
             accept_override_specifier(override_specifier, visitor);
@@ -2035,7 +2047,7 @@ pub fn accept_modifier_attribute(target: &ModifierAttribute, visitor: &mut dyn V
     }
 }
 
-pub fn accept_type_name(target: &TypeName, visitor: &mut dyn Visitor) {
+pub fn accept_type_name(target: &TypeName, visitor: &mut impl Visitor) {
     match target {
         TypeName::ArrayTypeName(ref array_type_name) => {
             accept_array_type_name(array_type_name, visitor);
@@ -2055,10 +2067,13 @@ pub fn accept_type_name(target: &TypeName, visitor: &mut dyn Visitor) {
     }
 }
 
-pub fn accept_function_type_attribute(_target: &FunctionTypeAttribute, _visitor: &mut dyn Visitor) {
+pub fn accept_function_type_attribute(
+    _target: &FunctionTypeAttribute,
+    _visitor: &mut impl Visitor,
+) {
 }
 
-pub fn accept_mapping_key_type(target: &MappingKeyType, visitor: &mut dyn Visitor) {
+pub fn accept_mapping_key_type(target: &MappingKeyType, visitor: &mut impl Visitor) {
     match target {
         MappingKeyType::ElementaryType(ref elementary_type) => {
             accept_elementary_type(elementary_type, visitor);
@@ -2069,7 +2084,7 @@ pub fn accept_mapping_key_type(target: &MappingKeyType, visitor: &mut dyn Visito
     }
 }
 
-pub fn accept_elementary_type(target: &ElementaryType, visitor: &mut dyn Visitor) {
+pub fn accept_elementary_type(target: &ElementaryType, visitor: &mut impl Visitor) {
     match target {
         ElementaryType::AddressType(ref address_type) => {
             accept_address_type(address_type, visitor);
@@ -2083,7 +2098,7 @@ pub fn accept_elementary_type(target: &ElementaryType, visitor: &mut dyn Visitor
     }
 }
 
-pub fn accept_statement(target: &Statement, visitor: &mut dyn Visitor) {
+pub fn accept_statement(target: &Statement, visitor: &mut impl Visitor) {
     match target {
         Statement::IfStatement(ref if_statement) => {
             accept_if_statement(if_statement, visitor);
@@ -2136,7 +2151,7 @@ pub fn accept_statement(target: &Statement, visitor: &mut dyn Visitor) {
     }
 }
 
-pub fn accept_tuple_member(target: &TupleMember, visitor: &mut dyn Visitor) {
+pub fn accept_tuple_member(target: &TupleMember, visitor: &mut impl Visitor) {
     match target {
         TupleMember::TypedTupleMember(ref typed_tuple_member) => {
             accept_typed_tuple_member(typed_tuple_member, visitor);
@@ -2149,7 +2164,7 @@ pub fn accept_tuple_member(target: &TupleMember, visitor: &mut dyn Visitor) {
 
 pub fn accept_variable_declaration_type(
     target: &VariableDeclarationType,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     match target {
         VariableDeclarationType::TypeName(ref type_name) => {
@@ -2158,11 +2173,11 @@ pub fn accept_variable_declaration_type(
     }
 }
 
-pub fn accept_storage_location(_target: &StorageLocation, _visitor: &mut dyn Visitor) {}
+pub fn accept_storage_location(_target: &StorageLocation, _visitor: &mut impl Visitor) {}
 
 pub fn accept_for_statement_initialization(
     target: &ForStatementInitialization,
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     match target {
         ForStatementInitialization::TupleDeconstructionStatement(
@@ -2182,7 +2197,7 @@ pub fn accept_for_statement_initialization(
     }
 }
 
-pub fn accept_for_statement_condition(target: &ForStatementCondition, visitor: &mut dyn Visitor) {
+pub fn accept_for_statement_condition(target: &ForStatementCondition, visitor: &mut impl Visitor) {
     match target {
         ForStatementCondition::ExpressionStatement(ref expression_statement) => {
             accept_expression_statement(expression_statement, visitor);
@@ -2191,7 +2206,7 @@ pub fn accept_for_statement_condition(target: &ForStatementCondition, visitor: &
     }
 }
 
-pub fn accept_expression(target: &Expression, visitor: &mut dyn Visitor) {
+pub fn accept_expression(target: &Expression, visitor: &mut impl Visitor) {
     match target {
         Expression::AssignmentExpression(ref assignment_expression) => {
             accept_assignment_expression(assignment_expression, visitor);
@@ -2283,7 +2298,7 @@ pub fn accept_expression(target: &Expression, visitor: &mut dyn Visitor) {
     }
 }
 
-pub fn accept_arguments_declaration(target: &ArgumentsDeclaration, visitor: &mut dyn Visitor) {
+pub fn accept_arguments_declaration(target: &ArgumentsDeclaration, visitor: &mut impl Visitor) {
     match target {
         ArgumentsDeclaration::PositionalArgumentsDeclaration(
             ref positional_arguments_declaration,
@@ -2296,9 +2311,9 @@ pub fn accept_arguments_declaration(target: &ArgumentsDeclaration, visitor: &mut
     }
 }
 
-pub fn accept_number_unit(_target: &NumberUnit, _visitor: &mut dyn Visitor) {}
+pub fn accept_number_unit(_target: &NumberUnit, _visitor: &mut impl Visitor) {}
 
-pub fn accept_string_expression(target: &StringExpression, visitor: &mut dyn Visitor) {
+pub fn accept_string_expression(target: &StringExpression, visitor: &mut impl Visitor) {
     match target {
         StringExpression::StringLiterals(ref string_literals) => {
             accept_string_literals(string_literals, visitor);
@@ -2312,13 +2327,13 @@ pub fn accept_string_expression(target: &StringExpression, visitor: &mut dyn Vis
     }
 }
 
-pub fn accept_string_literal(_target: &StringLiteral, _visitor: &mut dyn Visitor) {}
+pub fn accept_string_literal(_target: &StringLiteral, _visitor: &mut impl Visitor) {}
 
-pub fn accept_hex_string_literal(_target: &HexStringLiteral, _visitor: &mut dyn Visitor) {}
+pub fn accept_hex_string_literal(_target: &HexStringLiteral, _visitor: &mut impl Visitor) {}
 
-pub fn accept_unicode_string_literal(_target: &UnicodeStringLiteral, _visitor: &mut dyn Visitor) {}
+pub fn accept_unicode_string_literal(_target: &UnicodeStringLiteral, _visitor: &mut impl Visitor) {}
 
-pub fn accept_yul_statement(target: &YulStatement, visitor: &mut dyn Visitor) {
+pub fn accept_yul_statement(target: &YulStatement, visitor: &mut impl Visitor) {
     match target {
         YulStatement::YulBlock(ref yul_block) => {
             accept_yul_block(yul_block, visitor);
@@ -2356,10 +2371,13 @@ pub fn accept_yul_statement(target: &YulStatement, visitor: &mut dyn Visitor) {
     }
 }
 
-pub fn accept_yul_assignment_operator(_target: &YulAssignmentOperator, _visitor: &mut dyn Visitor) {
+pub fn accept_yul_assignment_operator(
+    _target: &YulAssignmentOperator,
+    _visitor: &mut impl Visitor,
+) {
 }
 
-pub fn accept_yul_switch_case(target: &YulSwitchCase, visitor: &mut dyn Visitor) {
+pub fn accept_yul_switch_case(target: &YulSwitchCase, visitor: &mut impl Visitor) {
     match target {
         YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
             accept_yul_default_case(yul_default_case, visitor);
@@ -2370,7 +2388,7 @@ pub fn accept_yul_switch_case(target: &YulSwitchCase, visitor: &mut dyn Visitor)
     }
 }
 
-pub fn accept_yul_expression(target: &YulExpression, visitor: &mut dyn Visitor) {
+pub fn accept_yul_expression(target: &YulExpression, visitor: &mut impl Visitor) {
     match target {
         YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
             accept_yul_function_call_expression(yul_function_call_expression, visitor);
@@ -2384,7 +2402,7 @@ pub fn accept_yul_expression(target: &YulExpression, visitor: &mut dyn Visitor) 
     }
 }
 
-pub fn accept_yul_literal(target: &YulLiteral, visitor: &mut dyn Visitor) {
+pub fn accept_yul_literal(target: &YulLiteral, visitor: &mut impl Visitor) {
     match target {
         YulLiteral::HexStringLiteral(ref hex_string_literal) => {
             accept_hex_string_literal(hex_string_literal, visitor);
@@ -2402,33 +2420,33 @@ pub fn accept_yul_literal(target: &YulLiteral, visitor: &mut dyn Visitor) {
 //
 
 #[inline]
-fn accept_source_unit_members(items: &[SourceUnitMember], visitor: &mut dyn Visitor) {
+fn accept_source_unit_members(items: &[SourceUnitMember], visitor: &mut impl Visitor) {
     for item in items {
         accept_source_unit_member(item, visitor);
     }
 }
 
 #[inline]
-fn accept_version_expression_sets(items: &[VersionExpressionSet], visitor: &mut dyn Visitor) {
+fn accept_version_expression_sets(items: &[VersionExpressionSet], visitor: &mut impl Visitor) {
     for item in items {
         accept_version_expression_set(item, visitor);
     }
 }
 
 #[inline]
-fn accept_version_expression_set(items: &[VersionExpression], visitor: &mut dyn Visitor) {
+fn accept_version_expression_set(items: &[VersionExpression], visitor: &mut impl Visitor) {
     for item in items {
         accept_version_expression(item, visitor);
     }
 }
 
 #[inline]
-fn accept_simple_version_literal(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+fn accept_simple_version_literal(_items: &[Rc<TerminalNode>], _visitor: &mut impl Visitor) {}
 
 #[inline]
 fn accept_import_deconstruction_symbols(
     items: &[ImportDeconstructionSymbol],
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     for item in items {
         accept_import_deconstruction_symbol(item, visitor);
@@ -2438,7 +2456,7 @@ fn accept_import_deconstruction_symbols(
 #[inline]
 fn accept_using_deconstruction_symbols(
     items: &[UsingDeconstructionSymbol],
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     for item in items {
         accept_using_deconstruction_symbol(item, visitor);
@@ -2446,80 +2464,80 @@ fn accept_using_deconstruction_symbols(
 }
 
 #[inline]
-fn accept_contract_specifiers(items: &[ContractSpecifier], visitor: &mut dyn Visitor) {
+fn accept_contract_specifiers(items: &[ContractSpecifier], visitor: &mut impl Visitor) {
     for item in items {
         accept_contract_specifier(item, visitor);
     }
 }
 
 #[inline]
-fn accept_inheritance_types(items: &[InheritanceType], visitor: &mut dyn Visitor) {
+fn accept_inheritance_types(items: &[InheritanceType], visitor: &mut impl Visitor) {
     for item in items {
         accept_inheritance_type(item, visitor);
     }
 }
 
 #[inline]
-fn accept_contract_members(items: &[ContractMember], visitor: &mut dyn Visitor) {
+fn accept_contract_members(items: &[ContractMember], visitor: &mut impl Visitor) {
     for item in items {
         accept_contract_member(item, visitor);
     }
 }
 
 #[inline]
-fn accept_interface_members(items: &[ContractMember], visitor: &mut dyn Visitor) {
+fn accept_interface_members(items: &[ContractMember], visitor: &mut impl Visitor) {
     for item in items {
         accept_contract_member(item, visitor);
     }
 }
 
 #[inline]
-fn accept_library_members(items: &[ContractMember], visitor: &mut dyn Visitor) {
+fn accept_library_members(items: &[ContractMember], visitor: &mut impl Visitor) {
     for item in items {
         accept_contract_member(item, visitor);
     }
 }
 
 #[inline]
-fn accept_struct_members(items: &[StructMember], visitor: &mut dyn Visitor) {
+fn accept_struct_members(items: &[StructMember], visitor: &mut impl Visitor) {
     for item in items {
         accept_struct_member(item, visitor);
     }
 }
 
 #[inline]
-fn accept_enum_members(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+fn accept_enum_members(_items: &[Rc<TerminalNode>], _visitor: &mut impl Visitor) {}
 
 #[inline]
-fn accept_state_variable_attributes(items: &[StateVariableAttribute], visitor: &mut dyn Visitor) {
+fn accept_state_variable_attributes(items: &[StateVariableAttribute], visitor: &mut impl Visitor) {
     for item in items {
         accept_state_variable_attribute(item, visitor);
     }
 }
 
 #[inline]
-fn accept_parameters(items: &[Parameter], visitor: &mut dyn Visitor) {
+fn accept_parameters(items: &[Parameter], visitor: &mut impl Visitor) {
     for item in items {
         accept_parameter(item, visitor);
     }
 }
 
 #[inline]
-fn accept_function_attributes(items: &[FunctionAttribute], visitor: &mut dyn Visitor) {
+fn accept_function_attributes(items: &[FunctionAttribute], visitor: &mut impl Visitor) {
     for item in items {
         accept_function_attribute(item, visitor);
     }
 }
 
 #[inline]
-fn accept_override_paths(items: &[IdentifierPath], visitor: &mut dyn Visitor) {
+fn accept_override_paths(items: &[IdentifierPath], visitor: &mut impl Visitor) {
     for item in items {
         accept_identifier_path(item, visitor);
     }
 }
 
 #[inline]
-fn accept_constructor_attributes(items: &[ConstructorAttribute], visitor: &mut dyn Visitor) {
+fn accept_constructor_attributes(items: &[ConstructorAttribute], visitor: &mut impl Visitor) {
     for item in items {
         accept_constructor_attribute(item, visitor);
     }
@@ -2528,7 +2546,7 @@ fn accept_constructor_attributes(items: &[ConstructorAttribute], visitor: &mut d
 #[inline]
 fn accept_fallback_function_attributes(
     items: &[FallbackFunctionAttribute],
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     for item in items {
         accept_fallback_function_attribute(item, visitor);
@@ -2538,7 +2556,7 @@ fn accept_fallback_function_attributes(
 #[inline]
 fn accept_receive_function_attributes(
     items: &[ReceiveFunctionAttribute],
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     for item in items {
         accept_receive_function_attribute(item, visitor);
@@ -2546,42 +2564,42 @@ fn accept_receive_function_attributes(
 }
 
 #[inline]
-fn accept_modifier_attributes(items: &[ModifierAttribute], visitor: &mut dyn Visitor) {
+fn accept_modifier_attributes(items: &[ModifierAttribute], visitor: &mut impl Visitor) {
     for item in items {
         accept_modifier_attribute(item, visitor);
     }
 }
 
 #[inline]
-fn accept_event_parameters(items: &[EventParameter], visitor: &mut dyn Visitor) {
+fn accept_event_parameters(items: &[EventParameter], visitor: &mut impl Visitor) {
     for item in items {
         accept_event_parameter(item, visitor);
     }
 }
 
 #[inline]
-fn accept_error_parameters(items: &[ErrorParameter], visitor: &mut dyn Visitor) {
+fn accept_error_parameters(items: &[ErrorParameter], visitor: &mut impl Visitor) {
     for item in items {
         accept_error_parameter(item, visitor);
     }
 }
 
 #[inline]
-fn accept_function_type_attributes(items: &[FunctionTypeAttribute], visitor: &mut dyn Visitor) {
+fn accept_function_type_attributes(items: &[FunctionTypeAttribute], visitor: &mut impl Visitor) {
     for item in items {
         accept_function_type_attribute(item, visitor);
     }
 }
 
 #[inline]
-fn accept_statements(items: &[Statement], visitor: &mut dyn Visitor) {
+fn accept_statements(items: &[Statement], visitor: &mut impl Visitor) {
     for item in items {
         accept_statement(item, visitor);
     }
 }
 
 #[inline]
-fn accept_assembly_flags(items: &[StringLiteral], visitor: &mut dyn Visitor) {
+fn accept_assembly_flags(items: &[StringLiteral], visitor: &mut impl Visitor) {
     for item in items {
         accept_string_literal(item, visitor);
     }
@@ -2590,7 +2608,7 @@ fn accept_assembly_flags(items: &[StringLiteral], visitor: &mut dyn Visitor) {
 #[inline]
 fn accept_tuple_deconstruction_elements(
     items: &[TupleDeconstructionElement],
-    visitor: &mut dyn Visitor,
+    visitor: &mut impl Visitor,
 ) {
     for item in items {
         accept_tuple_deconstruction_element(item, visitor);
@@ -2598,104 +2616,104 @@ fn accept_tuple_deconstruction_elements(
 }
 
 #[inline]
-fn accept_catch_clauses(items: &[CatchClause], visitor: &mut dyn Visitor) {
+fn accept_catch_clauses(items: &[CatchClause], visitor: &mut impl Visitor) {
     for item in items {
         accept_catch_clause(item, visitor);
     }
 }
 
 #[inline]
-fn accept_positional_arguments(items: &[Expression], visitor: &mut dyn Visitor) {
+fn accept_positional_arguments(items: &[Expression], visitor: &mut impl Visitor) {
     for item in items {
         accept_expression(item, visitor);
     }
 }
 
 #[inline]
-fn accept_named_arguments(items: &[NamedArgument], visitor: &mut dyn Visitor) {
+fn accept_named_arguments(items: &[NamedArgument], visitor: &mut impl Visitor) {
     for item in items {
         accept_named_argument(item, visitor);
     }
 }
 
 #[inline]
-fn accept_call_options(items: &[NamedArgument], visitor: &mut dyn Visitor) {
+fn accept_call_options(items: &[NamedArgument], visitor: &mut impl Visitor) {
     for item in items {
         accept_named_argument(item, visitor);
     }
 }
 
 #[inline]
-fn accept_tuple_values(items: &[TupleValue], visitor: &mut dyn Visitor) {
+fn accept_tuple_values(items: &[TupleValue], visitor: &mut impl Visitor) {
     for item in items {
         accept_tuple_value(item, visitor);
     }
 }
 
 #[inline]
-fn accept_array_values(items: &[Expression], visitor: &mut dyn Visitor) {
+fn accept_array_values(items: &[Expression], visitor: &mut impl Visitor) {
     for item in items {
         accept_expression(item, visitor);
     }
 }
 
 #[inline]
-fn accept_string_literals(items: &[StringLiteral], visitor: &mut dyn Visitor) {
+fn accept_string_literals(items: &[StringLiteral], visitor: &mut impl Visitor) {
     for item in items {
         accept_string_literal(item, visitor);
     }
 }
 
 #[inline]
-fn accept_hex_string_literals(items: &[HexStringLiteral], visitor: &mut dyn Visitor) {
+fn accept_hex_string_literals(items: &[HexStringLiteral], visitor: &mut impl Visitor) {
     for item in items {
         accept_hex_string_literal(item, visitor);
     }
 }
 
 #[inline]
-fn accept_unicode_string_literals(items: &[UnicodeStringLiteral], visitor: &mut dyn Visitor) {
+fn accept_unicode_string_literals(items: &[UnicodeStringLiteral], visitor: &mut impl Visitor) {
     for item in items {
         accept_unicode_string_literal(item, visitor);
     }
 }
 
 #[inline]
-fn accept_identifier_path(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+fn accept_identifier_path(_items: &[Rc<TerminalNode>], _visitor: &mut impl Visitor) {}
 
 #[inline]
-fn accept_yul_statements(items: &[YulStatement], visitor: &mut dyn Visitor) {
+fn accept_yul_statements(items: &[YulStatement], visitor: &mut impl Visitor) {
     for item in items {
         accept_yul_statement(item, visitor);
     }
 }
 
 #[inline]
-fn accept_yul_parameters(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+fn accept_yul_parameters(_items: &[Rc<TerminalNode>], _visitor: &mut impl Visitor) {}
 
 #[inline]
-fn accept_yul_variable_names(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+fn accept_yul_variable_names(_items: &[Rc<TerminalNode>], _visitor: &mut impl Visitor) {}
 
 #[inline]
-fn accept_yul_switch_cases(items: &[YulSwitchCase], visitor: &mut dyn Visitor) {
+fn accept_yul_switch_cases(items: &[YulSwitchCase], visitor: &mut impl Visitor) {
     for item in items {
         accept_yul_switch_case(item, visitor);
     }
 }
 
 #[inline]
-fn accept_yul_arguments(items: &[YulExpression], visitor: &mut dyn Visitor) {
+fn accept_yul_arguments(items: &[YulExpression], visitor: &mut impl Visitor) {
     for item in items {
         accept_yul_expression(item, visitor);
     }
 }
 
 #[inline]
-fn accept_yul_paths(items: &[YulPath], visitor: &mut dyn Visitor) {
+fn accept_yul_paths(items: &[YulPath], visitor: &mut impl Visitor) {
     for item in items {
         accept_yul_path(item, visitor);
     }
 }
 
 #[inline]
-fn accept_yul_path(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+fn accept_yul_path(_items: &[Rc<TerminalNode>], _visitor: &mut impl Visitor) {}

@@ -18,7 +18,7 @@
   //
 
   {% for parent_type, sequence in target.sequences %}
-    pub fn accept_{{ parent_type | snake_case }}(target: &{{ parent_type }}, visitor: &mut dyn Visitor) {
+    pub fn accept_{{ parent_type | snake_case }}(target: &{{ parent_type }}, visitor: &mut impl Visitor) {
       {%- if sequence.has_nonterminals %}
         if visitor.enter_{{ parent_type | snake_case }}(target) {
           {% for field in sequence.fields -%}
@@ -47,9 +47,9 @@
 
   {% for parent_type, choice in target.choices %}
     {% if choice.nonterminal_types | length == 0 %}
-      pub fn accept_{{ parent_type | snake_case }}(_target: &{{ parent_type }}, _visitor: &mut dyn Visitor) {}
+      pub fn accept_{{ parent_type | snake_case }}(_target: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
     {% else %}
-      pub fn accept_{{ parent_type | snake_case }}(target: &{{ parent_type }}, visitor: &mut dyn Visitor) {
+      pub fn accept_{{ parent_type | snake_case }}(target: &{{ parent_type }}, visitor: &mut impl Visitor) {
         match target {
           {% for nonterminal in choice.nonterminal_types -%}
             {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
@@ -82,10 +82,10 @@
   {% for parent_type, collection in target.collections -%}
     {%- if collection.is_terminal %}
       #[inline]
-      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut dyn Visitor) {}
+      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut impl Visitor) {}
     {% else %}
       #[inline]
-      fn accept_{{ parent_type | snake_case }}(items: &[{{ collection.item_type }}], visitor: &mut dyn Visitor) {
+      fn accept_{{ parent_type | snake_case }}(items: &[{{ collection.item_type }}], visitor: &mut impl Visitor) {
         for item in items {
           accept_{{ collection.item_type | snake_case }}(item, visitor);
         }

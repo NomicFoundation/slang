@@ -4,6 +4,7 @@
   use std::rc::Rc;
   use std::vec::Vec;
   use crate::cst::TerminalNode;
+  use metaslang_cst::nodes::NodeId;
 
   //
   // Sequences:
@@ -14,7 +15,7 @@
 
     #[derive(Debug)]
     pub struct {{ parent_type }}Struct {
-      pub node_id: usize,
+      pub node_id: NodeId,
       {%- for field in sequence.fields %}
         pub {{ field.label | snake_case }}:
         {%- if field.is_terminal -%}
