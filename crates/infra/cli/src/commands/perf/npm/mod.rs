@@ -60,8 +60,8 @@ impl NpmController {
                             "Missing fullyQualifiedName field in file: {compilation_file:?}"
                         )
                     })?
-                    .split(':')
-                    .next()
+                    .rsplit_once(':')
+                    .map(|(before_last_colon, _)| before_last_colon)
                     .ok_or_else(|| anyhow::anyhow!("fullyQualifiedName is not well formatted"))?;
 
                 // Skip the iteration if the compilation_file does not match the pattern
