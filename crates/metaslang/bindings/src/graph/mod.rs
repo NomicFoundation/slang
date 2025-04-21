@@ -11,6 +11,7 @@ pub use definition::Definition;
 pub use location::{BindingLocation, BuiltInLocation, UserFileLocation};
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
+use metaslang_cst::nodes::NodeId;
 pub use reference::Reference;
 use resolver::Resolver;
 
@@ -46,17 +47,39 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
     }
 
     pub fn definition_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Definition<KT>> {
-        self.graph.definition_at(cursor).map(|handle| Definition {
-            owner: Rc::clone(self),
-            handle,
-        })
+        self.graph
+            .definition_by_node_id(cursor.node().id())
+            .map(|handle| Definition {
+                owner: Rc::clone(self),
+                handle,
+            })
+    }
+
+    pub fn definition_by_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<Definition<KT>> {
+        self.graph
+            .definition_by_node_id(node_id)
+            .map(|handle| Definition {
+                owner: Rc::clone(self),
+                handle,
+            })
     }
 
     pub fn reference_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Reference<KT>> {
-        self.graph.reference_at(cursor).map(|handle| Reference {
-            owner: Rc::clone(self),
-            handle,
-        })
+        self.graph
+            .reference_by_node_id(cursor.node().id())
+            .map(|handle| Reference {
+                owner: Rc::clone(self),
+                handle,
+            })
+    }
+
+    pub fn reference_by_node_id(self: &Rc<Self>, node_id: NodeId) -> Option<Reference<KT>> {
+        self.graph
+            .reference_by_node_id(node_id)
+            .map(|handle| Reference {
+                owner: Rc::clone(self),
+                handle,
+            })
     }
 
     fn resolve_reference(self: &Rc<Self>, handle: GraphHandle) -> Vec<Definition<KT>> {
