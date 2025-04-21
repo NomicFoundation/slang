@@ -107,7 +107,7 @@ mod resolver {
                         // In case we cannot resolve the path, we return a special value that is unique
                         // per context/path pait. This way, we can still run incrementally and resolve
                         // other symbols in the file:
-                        let node_id = path_to_resolve.node().id();
+                        let node_id: usize = path_to_resolve.node().id().into();
                         format!("__SLANG_UNRESOLVED_PATH__{context_path}__{node_id}__")
                     },
                     |resolved_path| FileDescriptor::User(resolved_path).as_string(),
