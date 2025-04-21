@@ -47,7 +47,13 @@ impl Scanner {
             Self::Sequence { scanners } => scanners.iter().all(|scanner| scanner.is_unique()),
             Self::TrailingContext { scanner, .. } => scanner.is_unique(),
             Self::Atom { .. } => true,
-            _ => false,
+            Self::Choice { .. }
+            | Self::Optional { .. }
+            | Self::ZeroOrMore { .. }
+            | Self::OneOrMore { .. }
+            | Self::Not { .. }
+            | Self::Range { .. }
+            | Self::Fragment { .. } => false,
         }
     }
 }
