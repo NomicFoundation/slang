@@ -7,14 +7,14 @@ use std::rc::Rc;
 use loader::{LoadResult, Loader};
 use metaslang_cst::cursor::Cursor;
 use metaslang_cst::kinds::KindTypes;
+use metaslang_cst::nodes::NodeId;
 use metaslang_graph_builder::ast::File;
 use metaslang_graph_builder::functions::Functions;
 use semver::Version;
-use stack_graphs::graph::{NodeID, StackGraph};
+use stack_graphs::graph::{NodeID as GraphNodeId, StackGraph};
 
 pub type GraphHandle = stack_graphs::arena::Handle<stack_graphs::graph::Node>;
 pub(crate) type FileHandle = stack_graphs::arena::Handle<stack_graphs::graph::File>;
-pub(crate) type CursorID = usize;
 
 pub use crate::graph::BindingGraph;
 
@@ -41,8 +41,8 @@ pub(crate) struct ExtendedStackGraph<KT: KindTypes + 'static> {
     pub(crate) stack_graph: StackGraph,
     definitions_info: HashMap<GraphHandle, DefinitionBindingInfo<KT>>,
     references_info: HashMap<GraphHandle, ReferenceBindingInfo<KT>>,
-    cursor_to_definitions: HashMap<CursorID, GraphHandle>,
-    cursor_to_references: HashMap<CursorID, GraphHandle>,
+    definitions_by_node_id: HashMap<NodeId, GraphHandle>,
+    references_by_node_id: HashMap<NodeId, GraphHandle>,
     extension_hooks: HashSet<GraphHandle>,
 }
 
@@ -125,8 +125,8 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
                 stack_graph,
                 definitions_info: HashMap::new(),
                 references_info: HashMap::new(),
-                cursor_to_definitions: HashMap::new(),
-                cursor_to_references: HashMap::new(),
+                definitions_by_node_id: HashMap::new(),
+                references_by_node_id: HashMap::new(),
                 extension_hooks: HashSet::new(),
             },
         }
@@ -176,15 +176,21 @@ impl<KT: KindTypes + 'static> BindingGraphBuilder<KT> {
             .definitions_info
             .iter()
             .for_each(|(handle, definition_info)| {
-                let cursor_id = definition_info.cursor.node().id();
-                self.graph.cursor_to_definitions.insert(cursor_id, *handle);
+                let name_node_id = definition_info.cursor.node().id();
+                self.graph
+                    .definitions_by_node_id
+                    .insert(name_node_id, *handle);
+                let definiens_node_id = definition_info.definiens.node().id();
+                self.graph
+                    .definitions_by_node_id
+                    .insert(definiens_node_id, *handle);
             });
         result
             .references_info
             .iter()
             .for_each(|(handle, reference_info)| {
-                let cursor_id = reference_info.cursor.node().id();
-                self.graph.cursor_to_references.insert(cursor_id, *handle);
+                let node_id = reference_info.cursor.node().id();
+                self.graph.references_by_node_id.insert(node_id, *handle);
             });
 
         self.graph
@@ -226,14 +232,12 @@ impl<KT: KindTypes + 'static> ExtendedStackGraph<KT> {
         self.stack_graph.iter_files()
     }
 
-    pub(crate) fn definition_at(&self, cursor: &Cursor<KT>) -> Option<GraphHandle> {
-        let cursor_id = cursor.node().id();
-        self.cursor_to_definitions.get(&cursor_id).copied()
+    pub(crate) fn definition_by_node_id(&self, node_id: NodeId) -> Option<GraphHandle> {
+        self.definitions_by_node_id.get(&node_id).copied()
     }
 
-    pub(crate) fn reference_at(&self, cursor: &Cursor<KT>) -> Option<GraphHandle> {
-        let cursor_id = cursor.node().id();
-        self.cursor_to_references.get(&cursor_id).copied()
+    pub(crate) fn reference_by_node_id(&self, node_id: NodeId) -> Option<GraphHandle> {
+        self.references_by_node_id.get(&node_id).copied()
     }
 
     pub(crate) fn get_parents(&self, handle: GraphHandle) -> Vec<GraphHandle> {
@@ -319,7 +323,7 @@ impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
     pub fn root_node(&self) -> GraphHandle {
         self.graph
             .stack_graph
-            .node_for_id(NodeID::root())
+            .node_for_id(GraphNodeId::root())
             .expect("Root node not found in stack graph")
     }
 

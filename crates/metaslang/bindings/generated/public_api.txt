@@ -16,7 +16,9 @@ impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::BindingG
 pub fn metaslang_bindings::BindingGraph<KT>::all_definitions(self: &alloc::rc::Rc<Self>) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Definition<KT>> + '_
 pub fn metaslang_bindings::BindingGraph<KT>::all_references(self: &alloc::rc::Rc<Self>) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_bindings::Reference<KT>> + '_
 pub fn metaslang_bindings::BindingGraph<KT>::definition_at(self: &alloc::rc::Rc<Self>, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Definition<KT>>
+pub fn metaslang_bindings::BindingGraph<KT>::definition_by_node_id(self: &alloc::rc::Rc<Self>, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<metaslang_bindings::Definition<KT>>
 pub fn metaslang_bindings::BindingGraph<KT>::reference_at(self: &alloc::rc::Rc<Self>, cursor: &metaslang_cst::cursor::Cursor<KT>) -> core::option::Option<metaslang_bindings::Reference<KT>>
+pub fn metaslang_bindings::BindingGraph<KT>::reference_by_node_id(self: &alloc::rc::Rc<Self>, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<metaslang_bindings::Reference<KT>>
 pub struct metaslang_bindings::BindingGraphBuilder<KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::BindingGraphBuilder<KT>
 pub fn metaslang_bindings::BindingGraphBuilder<KT>::add_user_file(&mut self, file_path: &str, tree_cursor: metaslang_cst::cursor::Cursor<KT>)
@@ -35,7 +37,7 @@ pub fn metaslang_bindings::Definition<KT>::definiens_location(&self) -> metaslan
 pub fn metaslang_bindings::Definition<KT>::get_cursor(&self) -> &metaslang_cst::cursor::Cursor<KT>
 pub fn metaslang_bindings::Definition<KT>::get_definiens_cursor(&self) -> &metaslang_cst::cursor::Cursor<KT>
 pub fn metaslang_bindings::Definition<KT>::get_file(&self) -> FileDescriptor
-pub fn metaslang_bindings::Definition<KT>::id(&self) -> usize
+pub fn metaslang_bindings::Definition<KT>::id(&self) -> metaslang_cst::nodes::NodeId
 pub fn metaslang_bindings::Definition<KT>::name_location(&self) -> metaslang_bindings::BindingLocation<KT>
 pub fn metaslang_bindings::Definition<KT>::references(&self) -> alloc::vec::Vec<metaslang_bindings::Reference<KT>>
 impl<KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Definition<KT>
@@ -59,7 +61,7 @@ impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Referenc
 pub fn metaslang_bindings::Reference<KT>::definitions(&self) -> alloc::vec::Vec<metaslang_bindings::Definition<KT>>
 pub fn metaslang_bindings::Reference<KT>::get_cursor(&self) -> &metaslang_cst::cursor::Cursor<KT>
 pub fn metaslang_bindings::Reference<KT>::get_file(&self) -> FileDescriptor
-pub fn metaslang_bindings::Reference<KT>::id(&self) -> usize
+pub fn metaslang_bindings::Reference<KT>::id(&self) -> metaslang_cst::nodes::NodeId
 pub fn metaslang_bindings::Reference<KT>::location(&self) -> metaslang_bindings::BindingLocation<KT>
 impl<KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Reference<KT>
 pub fn metaslang_bindings::Reference<KT>::clone(&self) -> metaslang_bindings::Reference<KT>
