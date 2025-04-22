@@ -2,7 +2,7 @@ import { printTables, testFile as testFileSlang } from "./common.slang.mjs";
 import path from "node:path";
 import { testFile as testFileSolC } from "./common.solc.mjs";
 import * as mathjs from "mathjs";
-import { checkCI } from "./common.mjs";
+import { checkCI, sleep } from "./common.mjs";
 import commandLineArgs from "command-line-args"
 
 // little helper function to perform the printing of numbers
@@ -49,11 +49,33 @@ async function logMemoryConsumption(previous: NodeJS.MemoryUsage | undefined, ru
   }
 }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+checkCI();
+
+class Output {
+  public name: String = "";
+  public coldSlang: number = 0;
+  public coldSolC: number = 0;
+  public coldRatio: number = 0;
+  public hotSlang: number = 0;
+  public hotSolC: number = 0;
+  public hotRatio: number = 0;
 }
 
-checkCI();
+function round2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
+function buildOutput(resultCold: Measure, resultHot: Measure): Output {
+  const output = new Output();
+  output.name = resultCold.name;
+  output.coldSlang = round2(resultCold.timeSlang);
+  output.coldSolC = round2(resultCold.timeSolC);
+  output.coldRatio = round2(resultCold.timeSlang / resultCold.timeSolC);
+  output.hotSlang = round2(resultHot.timeSlang);
+  output.hotSolC = round2(resultHot.timeSolC);
+  output.hotRatio = round2(resultHot.timeSlang / resultHot.timeSolC);
+  return output;
+}
 
 const options = commandLineArgs([
   { name: "version", type: String },
@@ -63,17 +85,10 @@ const options = commandLineArgs([
   { name: "print-tables", type: Boolean, defaultValue: false }
 ]);
 
-const resultCold = await run(options["version"], options["dir"], options["file"]);
-const resultHot = await run(options["version"], options["dir"], options["file"]);
+const [version, dir, file] = [options["version"], options["dir"], options["file"]];
 
-const line =
-  [resultCold.name,
-  round(resultCold.timeSlang),
-  round(resultCold.timeSolC),
-  round(resultCold.timeSlang / resultCold.timeSolC),
-  round(resultHot.timeSlang),
-  round(resultHot.timeSolC),
-  round(resultHot.timeSlang / resultHot.timeSolC)];
-line.join(", ");
+const resultCold = await run(version, dir, file);
+const resultHot = await run(version, dir, file);
 
-console.log(line);
+const output = buildOutput(resultCold, resultHot);
+console.log(JSON.stringify(output, null, 2));
