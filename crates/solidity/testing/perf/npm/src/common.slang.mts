@@ -1,10 +1,12 @@
+import fs from "node:fs";
+import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
 import { TerminalKind } from "@nomicfoundation/slang/cst";
-import { createBuilder } from "./common.mjs";
 import { MathNumericType, max, mean, round, std } from "mathjs";
 import assert from "node:assert";
 // When debugging, add handleTables at the export list at the end of this imported file
 import * as slang_raw from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
 import { exit } from "node:process";
+import path from "node:path";
 
 export class Record {
   file: string;
@@ -21,6 +23,53 @@ export class Record {
     this.file = file
   }
 }
+
+
+export function readRepoFile(...relativePaths: string[]): string {
+  const absolutePath = path.join(...relativePaths);
+  const source = fs.readFileSync(absolutePath, "utf8");
+
+  return source.trim();
+}
+
+export function createBuilder(languageVersion: string, directory: string): CompilationBuilder {
+  const builder = CompilationBuilder.create({
+    languageVersion,
+
+    readFile: async (fileId) => {
+      return readRepoFile(directory, fileId);
+    },
+
+    resolveImport: async (sourceFileId, importPath) => {
+      const importLiteral = importPath.node.unparse();
+      assert(importLiteral.startsWith('"') || importLiteral.startsWith("'"));
+      assert(importLiteral.endsWith('"') || importLiteral.endsWith("'"));
+
+      const importString = importLiteral.slice(1, -1);
+
+      // HACK: The source file might be buried in some structure a/b/c/d/file.sol
+      // in order to resolve its imports we allow ourselves to walk up the hierarchy
+      // until we find the proper root of the import.
+      let i = 0;
+      while (i < 7) {
+        let splat = Array(i + 1).fill("..");
+        let file = path.join(sourceFileId, ...splat, importString);
+        let realFile = path.join(directory, file);
+        try {
+          if (fs.statSync(realFile)) {
+            return file;
+          }
+        }
+        catch { }
+        i++;
+      }
+      throw `Can't resolve import ${importPath}`;
+    },
+  });
+
+  return builder;
+}
+
 
 export async function testFile(languageVersion: string, dir: string, file: string, expectedDefs?: number, expectedRefs?: number): Promise<Record> {
   let gotoDefTimes: number[] = Array();
