@@ -1,12 +1,12 @@
 import { testFile as testFileSlang } from "./common.slang.mjs";
 import path from "node:path";
-import { testFile as testFileSolC } from "./common.solc.mjs";
+import { testFile as testFileSolc } from "./common.solc.mjs";
 import { checkCI, sleep } from "./common.mjs";
 import commandLineArgs from "command-line-args"
 
 class Measure {
   public name: string = "";
-  public timeSolC: number = 0;
+  public timeSolc: number = 0;
   public timeSlang: number = 0;
   public heapUsedSlang: number = 0;
   public externalSlang: number = 0;
@@ -37,20 +37,20 @@ async function run(solidityVersion: string, dir: string, file: string): Promise<
   measure.externalSlang = afterMemory.external - beforeMemory.external;
 
   start = performance.now();
-  await testFileSolC(solidityVersion, dir, file);
-  measure.timeSolC = performance.now() - start;
+  await testFileSolc(solidityVersion, dir, file);
+  measure.timeSolc = performance.now() - start;
   return measure;
 }
 
 class Output {
   public name: String = "";
   public coldSlang: number = 0;
-  public coldSolC: number = 0;
+  public coldSolc: number = 0;
   public coldRatio: number = 0;
   public coldHeap: number = 0;
   public coldExternal: number = 0;
   public hotSlang: number = 0;
-  public hotSolC: number = 0;
+  public hotSolc: number = 0;
   public hotRatio: number = 0;
   public hotHeap: number = 0;
   public hotExternal: number = 0;
@@ -64,14 +64,14 @@ function buildOutput(resultCold: Measure, resultHot: Measure): Output {
   const output = new Output();
   output.name = resultCold.name;
   output.coldSlang = round2(resultCold.timeSlang);
-  output.coldSolC = round2(resultCold.timeSolC);
-  output.coldRatio = round2(resultCold.timeSlang / resultCold.timeSolC);
+  output.coldSolc = round2(resultCold.timeSolc);
+  output.coldRatio = round2(resultCold.timeSlang / resultCold.timeSolc);
   output.coldHeap = resultCold.heapUsedSlang;
   output.coldExternal = resultCold.externalSlang;
 
   output.hotSlang = round2(resultHot.timeSlang);
-  output.hotSolC = round2(resultHot.timeSolC);
-  output.hotRatio = round2(resultHot.timeSlang / resultHot.timeSolC);
+  output.hotSolc = round2(resultHot.timeSolc);
+  output.hotRatio = round2(resultHot.timeSlang / resultHot.timeSolc);
   output.hotHeap = resultHot.heapUsedSlang;
   output.hotExternal = resultHot.externalSlang;
 

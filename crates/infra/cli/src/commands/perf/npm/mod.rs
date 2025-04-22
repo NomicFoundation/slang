@@ -4,6 +4,7 @@ use std::path::Path;
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use infra_utils::commands::Command;
+use serde::Deserialize;
 
 #[derive(Clone, Debug, ValueEnum, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Cases {
@@ -24,6 +25,22 @@ pub struct NpmController {
 
     #[arg(trailing_var_arg = true)]
     extra_args: Vec<String>, // Collects all arguments after `--`
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Output {
+    pub name: String,
+    pub cold_slang: f64,
+    pub cold_solc: f64,
+    pub cold_ratio: f64,
+    pub cold_heap: i64,
+    pub cold_external: i64,
+    pub hot_slang: f64,
+    pub hot_solc: f64,
+    pub hot_ratio: f64,
+    pub hot_heap: i64,
+    pub hot_external: i64,
 }
 
 impl NpmController {
@@ -83,22 +100,59 @@ impl NpmController {
                     .next()
                     .ok_or_else(|| anyhow::anyhow!("compilerVersion is not well formatted"))?;
 
-                let command = Command::new("npx")
-                    .arg("tsx")
-                    .flag("--trace-uncaught")
-                    .flag("--expose-gc")
-                    .arg("crates/solidity/testing/perf/npm/src/slang.vs.solc.mts")
-                    .property("--version", compiler_version)
-                    .property("--dir", path.to_string_lossy())
-                    .property("--file", fully_qualified_name)
-                    .args(&self.extra_args);
-
-                let result = command.evaluate()?;
+                let result =
+                    self.execute_comparison(compiler_version, path, fully_qualified_name)?;
                 results.push(result);
             }
         }
+        Self::add_summary(&mut results);
         println!("{results:?}");
         Ok(())
+    }
+
+    fn add_summary(results: &mut Vec<Output>) {
+        let len = results.len() as i64;
+        if len > 1 {
+            let len_f = results.len() as f64;
+            let summary = Output {
+                name: "Summary".to_string(),
+                cold_slang: results.iter().map(|r| r.cold_slang).sum::<f64>() / len_f,
+                cold_solc: results.iter().map(|r| r.cold_solc).sum::<f64>() / len_f,
+                cold_ratio: results.iter().map(|r| r.cold_ratio).sum::<f64>() / len_f,
+                cold_heap: results.iter().map(|r| r.cold_heap).sum::<i64>() / len,
+                cold_external: results.iter().map(|r| r.cold_external).sum::<i64>() / len,
+                hot_slang: results.iter().map(|r| r.hot_slang).sum::<f64>() / len_f,
+                hot_solc: results.iter().map(|r| r.hot_solc).sum::<f64>() / len_f,
+                hot_ratio: results.iter().map(|r| r.hot_ratio).sum::<f64>() / len_f,
+                hot_heap: results.iter().map(|r| r.hot_heap).sum::<i64>() / len,
+                hot_external: results.iter().map(|r| r.hot_external).sum::<i64>() / len,
+            };
+
+            results.push(summary);
+        }
+    }
+
+    fn execute_comparison(
+        &self,
+        compiler_version: &str,
+        path: std::path::PathBuf,
+        fully_qualified_name: &str,
+    ) -> Result<Output, anyhow::Error> {
+        let command = Command::new("npx")
+            .arg("tsx")
+            .flag("--trace-uncaught")
+            .flag("--expose-gc")
+            .arg("crates/solidity/testing/perf/npm/src/slang.vs.solc.mts")
+            .property("--version", compiler_version)
+            .property("--dir", path.to_string_lossy())
+            .property("--file", fully_qualified_name)
+            .args(&self.extra_args);
+        let result = command.evaluate()?;
+
+        let output: Output = serde_json::from_str(&result)
+            .map_err(|e| anyhow::anyhow!("Failed to parse JSON output: {}", e))?;
+
+        Ok(output)
     }
 
     #[allow(clippy::unnecessary_wraps)]
