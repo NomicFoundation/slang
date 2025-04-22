@@ -1,4 +1,4 @@
-import { printTables, testFile as testFileSlang } from "./common.slang.mjs";
+import { testFile as testFileSlang } from "./common.slang.mjs";
 import path from "node:path";
 import { testFile as testFileSolC } from "./common.solc.mjs";
 import { checkCI, sleep } from "./common.mjs";
