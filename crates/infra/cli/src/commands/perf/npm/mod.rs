@@ -86,6 +86,7 @@ impl NpmController {
                 let command = Command::new("npx")
                     .arg("tsx")
                     .flag("--trace-uncaught")
+                    .flag("--expose-gc")
                     .arg("crates/solidity/testing/perf/npm/src/slang.vs.solc.mts")
                     .property("--version", compiler_version)
                     .property("--dir", path.to_string_lossy())
