@@ -1,14 +1,8 @@
 import { printTables, testFile as testFileSlang } from "./common.slang.mjs";
 import path from "node:path";
 import { testFile as testFileSolC } from "./common.solc.mjs";
-import * as mathjs from "mathjs";
 import { checkCI, sleep } from "./common.mjs";
 import commandLineArgs from "command-line-args"
-
-// little helper function to perform the printing of numbers
-function round(n: number | mathjs.MathNumericType): string {
-  return mathjs.round(n, 2).toString();
-}
 
 class Measure {
   public name: string = "";
