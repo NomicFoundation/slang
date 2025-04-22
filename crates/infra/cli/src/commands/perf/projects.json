@@ -52,6 +52,16 @@
       "hash": "0xb8FFC3Cd6e7Cf5a098A1c92F48009765B24088Dc",
       "name": "LidoDAO",
       "reason": "Version too old (4.2)"
+    },
+    {
+      "hash": "",
+      "name": "aave-v3-core-master",
+      "reason": "TODO"
+    },
+    {
+      "hash": "",
+      "name": "graph_protocol",
+      "reason": "TODO"
     }
   ]
 }
