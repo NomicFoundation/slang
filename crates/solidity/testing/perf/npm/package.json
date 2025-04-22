@@ -5,7 +5,6 @@
   "dependencies": {
     "@nomicfoundation/slang": "file:../package",
     "@openzeppelin/contracts": "^5.2.0",
-    "benny": "^3.7.1",
     "command-line-args": "^6.0.1",
     "mathjs": "^14.0.1",
     "solc06": "npm:solc@0.6.12",

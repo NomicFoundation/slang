@@ -35,6 +35,8 @@ impl NpmController {
     fn compare_with_solc(&self) -> Result<()> {
         let input_path = Path::new(&self.input_folder);
 
+        let mut results = vec![];
+
         for entry in fs::read_dir(input_path)? {
             let entry = entry?;
             let path = entry.path();
@@ -90,10 +92,11 @@ impl NpmController {
                     .property("--file", fully_qualified_name)
                     .args(&self.extra_args);
 
-                command.run();
+                let result = command.evaluate()?;
+                results.push(result);
             }
         }
-
+        println!("{results:?}");
         Ok(())
     }
 

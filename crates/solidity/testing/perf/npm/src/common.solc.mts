@@ -8,7 +8,7 @@ import * as solc089 from "solc089";
 import * as solc0812 from "solc0812";
 import * as solc0823 from "solc0823";
 
-export function testFileSolC(languageVersion: string, dir: string, file: string) {
+export function testFile(languageVersion: string, dir: string, file: string) {
   var solc = undefined;
   if (languageVersion.startsWith("0.6")) {
     solc = solc06;
