@@ -25,22 +25,22 @@ impl CounterVisitor {
 }
 
 impl Visitor for CounterVisitor {
-    fn enter_contract_definition(&mut self, _target: &ast::ContractDefinition) -> bool {
+    fn enter_contract_definition(&mut self, _node: &ast::ContractDefinition) -> bool {
         self.enter_contracts
     }
-    fn leave_contract_definition(&mut self, _target: &ast::ContractDefinition) {
+    fn leave_contract_definition(&mut self, _node: &ast::ContractDefinition) {
         self.contract += 1;
     }
-    fn leave_constructor_definition(&mut self, _target: &ast::ConstructorDefinition) {
+    fn leave_constructor_definition(&mut self, _node: &ast::ConstructorDefinition) {
         self.ctor += 1;
     }
-    fn leave_function_definition(&mut self, _target: &ast::FunctionDefinition) {
+    fn leave_function_definition(&mut self, _node: &ast::FunctionDefinition) {
         self.function += 1;
     }
-    fn leave_modifier_definition(&mut self, _target: &ast::ModifierDefinition) {
+    fn leave_modifier_definition(&mut self, _node: &ast::ModifierDefinition) {
         self.modifier += 1;
     }
-    fn leave_state_variable_definition(&mut self, _target: &ast::StateVariableDefinition) {
+    fn leave_state_variable_definition(&mut self, _node: &ast::StateVariableDefinition) {
         self.state_vars += 1;
     }
 }

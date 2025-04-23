@@ -1,20 +1,20 @@
-mod ir_model;
-mod transformed;
+mod model;
+mod diff;
 
-pub use ir_model::IrModel;
+pub use model::IrModel;
 use serde::Serialize;
-use transformed::TransformedIrModel;
+use diff::IrModelDiff;
 
 #[derive(Serialize)]
 pub struct ModelWrapper {
     pub target: IrModel,
-    pub builder: Option<TransformedIrModel>,
-    pub transformer: Option<TransformedIrModel>,
+    pub builder: Option<IrModelDiff>,
+    pub transformer: Option<IrModelDiff>,
 }
 
 impl ModelWrapper {
     pub fn with_builder(source: &IrModel, target: IrModel) -> Self {
-        let builder = Some(TransformedIrModel::diff(source, &target));
+        let builder = Some(IrModelDiff::diff(source, &target));
         Self {
             target,
             builder,
@@ -23,7 +23,7 @@ impl ModelWrapper {
     }
 
     pub fn with_transformer(source: &IrModel, target: IrModel) -> Self {
-        let transformer = Some(TransformedIrModel::diff(source, &target));
+        let transformer = Some(IrModelDiff::diff(source, &target));
         Self {
             target,
             builder: None,

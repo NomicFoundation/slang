@@ -9,7 +9,7 @@ pub struct IrModel {
 
     // set of non-unique terminals, ie. the value depends on the node contents, eg. Identifier
     #[serde(skip)]
-    pub terminals: IndexSet<model::Identifier>,
+    pub non_unique_terminals: IndexSet<model::Identifier>,
 
     // set of unique terminals, ie. content is fixed for the kind, eg. Asterisk
     #[serde(skip)]
@@ -39,7 +39,7 @@ pub struct Field {
 #[derive(Clone, Serialize)]
 pub struct Choice {
     pub nonterminal_types: Vec<model::Identifier>,
-    pub terminal_types: Vec<model::Identifier>,
+    pub non_unique_terminal_types: Vec<model::Identifier>,
     pub unique_terminal_types: Vec<model::Identifier>,
 }
 
@@ -62,7 +62,7 @@ impl IrModel {
         Self {
             name: name.to_owned(),
 
-            terminals: builder.terminals,
+            non_unique_terminals: builder.non_unique_terminals,
             unique_terminals: builder.unique_terminals,
 
             sequences: builder.sequences,
@@ -75,7 +75,7 @@ impl IrModel {
         Self {
             name: name.to_owned(),
 
-            terminals: model.terminals.clone(),
+            non_unique_terminals: model.non_unique_terminals.clone(),
             unique_terminals: model.unique_terminals.clone(),
 
             sequences: model.sequences.clone(),
@@ -93,7 +93,7 @@ impl IrModel {
             || self.choices.shift_remove(&identifier).is_some()
             || self.collections.shift_remove(&identifier).is_some()
             || self.unique_terminals.shift_remove(&identifier)
-            || self.terminals.shift_remove(&identifier);
+            || self.non_unique_terminals.shift_remove(&identifier);
 
         assert!(removed, "Could not find type {name} to remove");
 
@@ -103,7 +103,7 @@ impl IrModel {
 
         for (_, choice) in &mut self.choices {
             choice.nonterminal_types.retain(|item| *item != identifier);
-            choice.terminal_types.retain(|item| *item != identifier);
+            choice.non_unique_terminal_types.retain(|item| *item != identifier);
             choice
                 .unique_terminal_types
                 .retain(|item| *item != identifier);
@@ -139,7 +139,7 @@ impl IrModel {
             panic!("Sequence {sequence_id} not found in IR model");
         };
         let is_terminal = self
-            .terminals
+            .non_unique_terminals
             .contains::<model::Identifier>(&field_type.into())
             || self
                 .unique_terminals
@@ -157,7 +157,7 @@ struct IrModelBuilder {
     pub target_versions: Option<VersionSpecifier>,
 
     // set of non-unique terminals, ie. the value depends on the node contents, eg. Identifier
-    pub terminals: IndexSet<model::Identifier>,
+    pub non_unique_terminals: IndexSet<model::Identifier>,
 
     // set of unique terminals, ie. content is fixed for the kind, eg. Asterisk
     pub unique_terminals: IndexSet<model::Identifier>,
@@ -172,7 +172,7 @@ impl IrModelBuilder {
         let mut builder = Self {
             target_versions,
 
-            terminals: IndexSet::new(),
+            non_unique_terminals: IndexSet::new(),
             unique_terminals: IndexSet::new(),
 
             sequences: IndexMap::new(),
@@ -233,20 +233,20 @@ impl IrModelBuilder {
                     // These items are nonterminals.
                 }
                 model::Item::Trivia { item } => {
-                    self.terminals.insert(item.name.clone());
+                    self.non_unique_terminals.insert(item.name.clone());
                 }
                 model::Item::Keyword { item } => {
                     if item.is_unique() {
                         self.unique_terminals.insert(item.name.clone());
                     } else {
-                        self.terminals.insert(item.name.clone());
+                        self.non_unique_terminals.insert(item.name.clone());
                     }
                 }
                 model::Item::Token { item } => {
                     if item.is_unique() {
                         self.unique_terminals.insert(item.name.clone());
                     } else {
-                        self.terminals.insert(item.name.clone());
+                        self.non_unique_terminals.insert(item.name.clone());
                     }
                 }
                 model::Item::Fragment { .. } => {
@@ -322,7 +322,7 @@ impl IrModelBuilder {
         for identifier in types {
             if self.unique_terminals.contains(&identifier) {
                 unique_terminal_types.push(identifier);
-            } else if self.terminals.contains(&identifier) {
+            } else if self.non_unique_terminals.contains(&identifier) {
                 terminal_types.push(identifier);
             } else {
                 nonterminal_types.push(identifier);
@@ -351,7 +351,7 @@ impl IrModelBuilder {
             parent_type,
             Choice {
                 nonterminal_types,
-                terminal_types,
+                non_unique_terminal_types: terminal_types,
                 unique_terminal_types,
             },
         );
@@ -367,7 +367,7 @@ impl IrModelBuilder {
             parent_type,
             Collection {
                 item_type: item.reference.clone(),
-                is_terminal: self.terminals.contains(&item.reference)
+                is_terminal: self.non_unique_terminals.contains(&item.reference)
                     || self.unique_terminals.contains(&item.reference),
             },
         );
@@ -383,7 +383,7 @@ impl IrModelBuilder {
             parent_type,
             Collection {
                 item_type: item.reference.clone(),
-                is_terminal: self.terminals.contains(&item.reference)
+                is_terminal: self.non_unique_terminals.contains(&item.reference)
                     || self.unique_terminals.contains(&item.reference),
             },
         );
@@ -412,7 +412,7 @@ impl IrModelBuilder {
             parent_type,
             Choice {
                 nonterminal_types,
-                terminal_types,
+                non_unique_terminal_types: terminal_types,
                 unique_terminal_types,
             },
         );
@@ -480,7 +480,7 @@ impl IrModelBuilder {
                 Some(Field {
                     label: label.clone(),
                     r#type: reference.clone(),
-                    is_terminal: self.terminals.contains(reference)
+                    is_terminal: self.non_unique_terminals.contains(reference)
                         || self.unique_terminals.contains(reference),
                     is_optional,
                 })

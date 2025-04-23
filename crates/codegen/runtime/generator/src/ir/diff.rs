@@ -2,25 +2,25 @@ use codegen_language_definition::model;
 use indexmap::IndexMap;
 use serde::Serialize;
 
-use super::ir_model::{Choice, Collection, IrModel, Sequence};
+use super::model::{Choice, Collection, IrModel, Sequence};
 
 #[derive(Default, Serialize)]
-pub struct TransformedIrModel {
+pub struct IrModelDiff {
     pub source_name: String,
 
-    pub sequences: IndexMap<model::Identifier, TransformedSequence>,
-    pub choices: IndexMap<model::Identifier, TransformedChoice>,
+    pub sequences: IndexMap<model::Identifier, SequenceDiff>,
+    pub choices: IndexMap<model::Identifier, ChoiceDiff>,
     pub collections: IndexMap<model::Identifier, Collection>,
 }
 
 #[derive(Clone, Serialize)]
-pub struct TransformedSequence {
-    pub fields: Vec<TransformedField>,
+pub struct SequenceDiff {
+    pub fields: Vec<FieldDiff>,
     pub has_added_fields: bool,
 }
 
 #[derive(Clone, Serialize)]
-pub struct TransformedField {
+pub struct FieldDiff {
     pub label: model::Identifier,
     pub r#type: model::Identifier,
 
@@ -30,14 +30,14 @@ pub struct TransformedField {
 }
 
 #[derive(Clone, Serialize)]
-pub struct TransformedChoice {
+pub struct ChoiceDiff {
     pub nonterminal_types: Vec<model::Identifier>,
-    pub terminal_types: Vec<model::Identifier>,
+    pub non_unique_terminal_types: Vec<model::Identifier>,
     pub unique_terminal_types: Vec<model::Identifier>,
     pub has_removed_variants: bool,
 }
 
-impl TransformedIrModel {
+impl IrModelDiff {
     pub fn diff(source: &IrModel, target: &IrModel) -> Self {
         let source_name = source.name.clone();
 
@@ -75,7 +75,7 @@ impl TransformedIrModel {
             })
             .collect();
 
-        TransformedIrModel {
+        IrModelDiff {
             source_name,
             sequences,
             choices,
@@ -86,7 +86,7 @@ impl TransformedIrModel {
     fn diff_sequence(
         source_sequence: &Sequence,
         target_sequence: &Sequence,
-    ) -> TransformedSequence {
+    ) -> SequenceDiff {
         // For sequences we compute determine which fields were removed, and if
         // *any* was added (because in that case we cannot generate
         // transformation code). We assume the order of the existing fields is
@@ -105,7 +105,7 @@ impl TransformedIrModel {
                 true
             };
 
-            fields.push(TransformedField {
+            fields.push(FieldDiff {
                 label: source_field.label.clone(),
                 r#type: source_field.r#type.clone(),
                 is_terminal: source_field.is_terminal,
@@ -114,21 +114,21 @@ impl TransformedIrModel {
             });
         }
         let has_added_fields = target_index < target_sequence.fields.len();
-        TransformedSequence {
+        SequenceDiff {
             fields,
             has_added_fields,
         }
     }
 
-    fn diff_choice(source_choice: &Choice, target_choice: &Choice) -> TransformedChoice {
+    fn diff_choice(source_choice: &Choice, target_choice: &Choice) -> ChoiceDiff {
         // For choices we want to find out if some variant was removed and mark the type if so.
         let (removed_nonterminals, nonterminal_types) = Self::filter_removed_variants(
             &source_choice.nonterminal_types,
             &target_choice.nonterminal_types,
         );
         let (removed_terminals, terminal_types) = Self::filter_removed_variants(
-            &source_choice.terminal_types,
-            &target_choice.terminal_types,
+            &source_choice.non_unique_terminal_types,
+            &target_choice.non_unique_terminal_types,
         );
         let (removed_unique_terminals, unique_terminal_types) = Self::filter_removed_variants(
             &source_choice.unique_terminal_types,
@@ -137,9 +137,9 @@ impl TransformedIrModel {
         let has_removed_variants =
             removed_nonterminals || removed_terminals || removed_unique_terminals;
 
-        TransformedChoice {
+        ChoiceDiff {
             nonterminal_types,
-            terminal_types,
+            non_unique_terminal_types: terminal_types,
             unique_terminal_types,
             has_removed_variants,
         }

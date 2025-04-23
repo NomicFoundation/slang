@@ -53,7 +53,7 @@
               {{ parent_type }}::{{ nonterminal }}(self.mutate_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}))
             }
           {%- endfor %}
-          {%- for terminal in choice.terminal_types -%}
+          {%- for terminal in choice.non_unique_terminal_types -%}
             {{ parent_type }}::{{ terminal }}(node) => {{ parent_type }}::{{ terminal }}(Rc::clone(node)),
           {%- endfor -%}
           {%- for terminal in choice.unique_terminal_types -%}

@@ -80,7 +80,7 @@
           NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ parent_type }}::{{ type | pascal_case }}(build_{{ type | snake_case }}(cursor.clone())?),
         {%- endfor -%}
 
-        {% for type in choice.terminal_types -%}
+        {% for type in choice.non_unique_terminal_types -%}
           NodeKind::Terminal(TerminalKind::{{ type }}) => {
             let node = fetch_terminal_node(&cursor)?;
             {{ parent_type }}::{{ type | pascal_case }}(node)

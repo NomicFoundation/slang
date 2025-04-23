@@ -46,7 +46,7 @@
       {% for nonterminal in choice.nonterminal_types -%}
         {{ nonterminal }}({{ nonterminal | pascal_case }}),
       {%- endfor -%}
-      {% for terminal in choice.terminal_types -%}
+      {% for terminal in choice.non_unique_terminal_types -%}
         {{ terminal }}(Rc<TerminalNode>),
       {%- endfor -%}
       {% for terminal in choice.unique_terminal_types -%}

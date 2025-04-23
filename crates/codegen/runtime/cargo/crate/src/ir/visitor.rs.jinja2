@@ -8,8 +8,8 @@
 
   pub trait Visitor {
     {%- for parent_type, sequence in target.sequences %}
-      fn enter_{{ parent_type | snake_case }}(&mut self, _target: &{{ parent_type }}) -> bool { true }
-      fn leave_{{ parent_type | snake_case }}(&mut self, _target: &{{ parent_type }}) {}
+      fn enter_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) -> bool { true }
+      fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
     {% endfor -%}
   }
 
@@ -18,25 +18,25 @@
   //
 
   {% for parent_type, sequence in target.sequences %}
-    pub fn accept_{{ parent_type | snake_case }}(target: &{{ parent_type }}, visitor: &mut impl Visitor) {
+    pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
       {%- if sequence.has_nonterminals %}
-        if visitor.enter_{{ parent_type | snake_case }}(target) {
+        if visitor.enter_{{ parent_type | snake_case }}(node) {
           {% for field in sequence.fields -%}
             {%- if not field.is_terminal -%}
               {%- if field.is_optional %}
-                if let Some(ref {{ field.label | snake_case }}) = target.{{ field.label | snake_case }} {
+                if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
                   accept_{{ field.type | snake_case }}({{ field.label }}, visitor);
                 }
               {% else -%}
-                accept_{{ field.type | snake_case }}(&target.{{ field.label }}, visitor);
+                accept_{{ field.type | snake_case }}(&node.{{ field.label }}, visitor);
               {%- endif -%}
             {%- endif -%}
           {%- endfor -%}
         }
       {%- else -%}
-        visitor.enter_{{ parent_type | snake_case }}(target);
+        visitor.enter_{{ parent_type | snake_case }}(node);
       {%- endif %}
-      visitor.leave_{{ parent_type | snake_case }}(target);
+      visitor.leave_{{ parent_type | snake_case }}(node);
     }
 
   {% endfor %}
@@ -47,17 +47,17 @@
 
   {% for parent_type, choice in target.choices %}
     {% if choice.nonterminal_types | length == 0 %}
-      pub fn accept_{{ parent_type | snake_case }}(_target: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
+      pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
     {% else %}
-      pub fn accept_{{ parent_type | snake_case }}(target: &{{ parent_type }}, visitor: &mut impl Visitor) {
-        match target {
+      pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
+        match node {
           {% for nonterminal in choice.nonterminal_types -%}
             {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
               accept_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}, visitor);
             }
           {%- endfor %}
-          {%- if choice.terminal_types | length > 0 %}
-            {%- for terminal in choice.terminal_types -%}
+          {%- if choice.non_unique_terminal_types | length > 0 %}
+            {%- for terminal in choice.non_unique_terminal_types -%}
               {%- if not loop.first -%} | {%- endif -%}
               {{ parent_type }}::{{terminal}}(_)
             {%- endfor -%}
