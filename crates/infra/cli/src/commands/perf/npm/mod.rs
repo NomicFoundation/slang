@@ -30,6 +30,7 @@ pub struct NpmController {
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Output {
+    #[allow(dead_code)]
     pub name: String,
     pub cold_slang: f64,
     pub cold_solc: f64,
@@ -101,7 +102,7 @@ impl NpmController {
                     .ok_or_else(|| anyhow::anyhow!("compilerVersion is not well formatted"))?;
 
                 let result =
-                    self.execute_comparison(compiler_version, path, fully_qualified_name)?;
+                    self.execute_comparison(compiler_version, &path, fully_qualified_name)?;
                 results.push(result);
             }
         }
@@ -111,9 +112,10 @@ impl NpmController {
     }
 
     fn add_summary(results: &mut Vec<Output>) {
-        let len = results.len() as i64;
+        let len = i64::try_from(results.len()).unwrap();
         if len > 1 {
-            let len_f = results.len() as f64;
+            #[allow(clippy::cast_precision_loss)]
+            let len_f = len as f64;
             let summary = Output {
                 name: "Summary".to_string(),
                 cold_slang: results.iter().map(|r| r.cold_slang).sum::<f64>() / len_f,
@@ -135,7 +137,7 @@ impl NpmController {
     fn execute_comparison(
         &self,
         compiler_version: &str,
-        path: std::path::PathBuf,
+        path: &Path,
         fully_qualified_name: &str,
     ) -> Result<Output, anyhow::Error> {
         let command = Command::new("npx")
