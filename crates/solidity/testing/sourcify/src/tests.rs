@@ -14,17 +14,17 @@ pub fn test_single_contract(
     contract_id: &str,
     opts: &TestOptions,
 ) -> Result<()> {
-    if let Some(contract) = manifest.fetch_contract(contract_id) {
-        let mut events = Events::new(1, 0);
+    let Some(contract) = manifest.fetch_contract(contract_id) else {
+        bail!("Contract {contract_id} not found");
+    };
 
-        events.start_archive(1);
-        run_test(&contract, &events, opts);
-        events.finish_archive();
+    let mut events = Events::new(1, 0);
 
-        return Ok(());
-    }
+    events.start_archive(1);
+    run_test(&contract, &events, opts);
+    events.finish_archive();
 
-    bail!("Contract {contract_id} not found");
+    return Ok(());
 }
 
 pub fn run_with_trace(archive: &ContractArchive, events: &Events, opts: &TestOptions) {
