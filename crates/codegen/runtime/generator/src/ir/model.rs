@@ -54,10 +54,9 @@ impl IrModel {
     pub fn from_language(
         name: &str,
         language: &model::Language,
-        minimum_version: Option<Version>,
+        minimum_version: Version,
     ) -> Self {
-        let target_versions = minimum_version.map(|from| VersionSpecifier::From { from });
-        let builder = IrModelBuilder::create(language, target_versions);
+        let builder = IrModelBuilder::create(language, minimum_version);
 
         Self {
             name: name.to_owned(),
@@ -154,7 +153,9 @@ impl IrModel {
 }
 
 struct IrModelBuilder {
-    pub target_versions: Option<VersionSpecifier>,
+    // language elements not enabled on this version or above will be removed
+    // from the resulting IrModel
+    pub minimum_version: Version,
 
     // set of non-unique terminals, ie. the value depends on the node contents, eg. Identifier
     pub non_unique_terminals: IndexSet<model::Identifier>,
@@ -168,9 +169,9 @@ struct IrModelBuilder {
 }
 
 impl IrModelBuilder {
-    fn create(language: &model::Language, target_versions: Option<VersionSpecifier>) -> Self {
+    fn create(language: &model::Language, minimum_version: Version) -> Self {
         let mut builder = Self {
-            target_versions,
+            minimum_version,
 
             non_unique_terminals: IndexSet::new(),
             unique_terminals: IndexSet::new(),
@@ -190,35 +191,12 @@ impl IrModelBuilder {
     }
 
     fn is_enabled_in_target_versions(&self, enabled: &Option<VersionSpecifier>) -> bool {
-        match &self.target_versions {
-            None => true,
+        match enabled {
+            None | Some(VersionSpecifier::From { .. }) => true,
             Some(VersionSpecifier::Never) => false,
-            Some(VersionSpecifier::From { from: target_from }) => match enabled {
-                None | Some(VersionSpecifier::From { .. }) => true,
-                Some(VersionSpecifier::Never) => false,
-                Some(VersionSpecifier::Till { till } | VersionSpecifier::Range { till, .. }) => {
-                    till > target_from
-                }
-            },
-            Some(VersionSpecifier::Till { till: target_till }) => match enabled {
-                None | Some(VersionSpecifier::Till { .. }) => true,
-                Some(VersionSpecifier::Never) => false,
-                Some(VersionSpecifier::From { from } | VersionSpecifier::Range { from, .. }) => {
-                    from < target_till
-                }
-            },
-            Some(VersionSpecifier::Range {
-                from: target_from,
-                till: target_till,
-            }) => match enabled {
-                None => true,
-                Some(VersionSpecifier::Never) => false,
-                Some(VersionSpecifier::From { from }) => from < target_till,
-                Some(VersionSpecifier::Till { till }) => till > target_from,
-                Some(VersionSpecifier::Range { from, till }) => {
-                    from < target_till && till > target_from
-                }
-            },
+            Some(VersionSpecifier::Till { till } | VersionSpecifier::Range { till, .. }) => {
+                till > &self.minimum_version
+            }
         }
     }
 

@@ -30,7 +30,7 @@ fn main() -> Result<()> {
         CargoWorkspace::locate_source_crate("codegen_runtime_cargo_crate")?.join("src/ir");
     let ir_output_dir = CargoWorkspace::locate_source_crate("slang_solidity")?.join("src/backend");
 
-    let minimum_version = Some(Version::parse("0.8.0").unwrap());
+    let minimum_version = Version::parse("0.8.0").unwrap();
 
     let runtime = CodegenRuntime::new(&ir_input_dir)?;
     let cst_model = IrModel::from_language("cst", &language, minimum_version);
