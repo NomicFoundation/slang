@@ -303,7 +303,7 @@ impl Contract {
     }
 
     pub fn entrypoint(&self) -> Result<String> {
-        self.import_resolver.get_real_name(&self.target)
+        self.import_resolver.get_source_id(&self.target)
     }
 
     pub fn read_file(&self, name: &str) -> Result<String> {

@@ -1,4 +1,4 @@
-use std::ops::{Range, RangeInclusive};
+use std::ops::RangeInclusive;
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};

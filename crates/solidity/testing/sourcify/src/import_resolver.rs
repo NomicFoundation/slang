@@ -16,16 +16,16 @@ impl ImportResolver {
 
         if let Some(remapped_import) = self.remap_import(&source_file_path, import_path) {
             // Paths that have been remapped don't need to go through path resolution.
-            return self.get_real_name(&remapped_import);
+            return self.get_source_id(&remapped_import);
         }
 
         if import_path.starts_with('@') {
-            return self.get_real_name(import_path);
+            return self.get_source_id(import_path);
         }
 
         if path_is_url(import_path) {
             // URL imports don't need path resolution
-            return self.get_real_name(import_path);
+            return self.get_source_id(import_path);
         }
 
         let source_is_url = path_is_url(&source_file_path);
@@ -36,50 +36,40 @@ impl ImportResolver {
             resolve_relative_import(&source_file_path, import_path)?
         };
 
-        match self.get_real_name(&resolved_path) {
+        match self.get_source_id(&resolved_path) {
             e @ Err(_) => {
                 // Try to recover from some corner cases
                 if source_is_url {
                     // Sometimes imports from URL-imports don't share the URL prefix
-                    self.get_real_name(import_path)
+                    self.get_source_id(import_path)
                 } else if let Some(remapped_import) =
                     self.remap_import(&source_file_path, &resolved_path)
                 {
                     // Sometimes relative paths still need to be remapped after being resolved
-                    self.get_real_name(&remapped_import)
+                    self.get_source_id(&remapped_import)
                 } else {
                     // All other cases just return an error
                     e
                 }
             }
-            real_name => real_name,
+            source_id => source_id,
         }
     }
 
-    pub fn get_real_name(&self, virtual_path: &str) -> Result<String> {
-        for source in &self.source_maps {
-            // On rare occasions imports may have '//' in between directories. solc seems
-            // to consider these interchangeable with '/'
-            if source.virtual_path == virtual_path
-                || source.virtual_path.replace("//", "/") == virtual_path
-            {
-                return Ok(source.real_name.clone());
-            }
-        }
-        Err(Error::msg(format!(
-            "Could not get real name for import {virtual_path}"
-        )))
+    pub fn get_source_id(&self, virtual_path: &str) -> Result<String> {
+        self.source_maps
+            .iter()
+            .find(|source| source.matches_virtual_path(virtual_path))
+            .map(|source| source.source_id.clone())
+            .ok_or(Error::msg(format!("Could not get real name for import {virtual_path}")))
     }
 
-    pub fn get_virtual_path(&self, real_name: &str) -> Result<String> {
-        for source in &self.source_maps {
-            if source.real_name == real_name {
-                return Ok(source.virtual_path.clone());
-            }
-        }
-        Err(Error::msg(format!(
-            "Could not get virtual path for source file {real_name}"
-        )))
+    pub fn get_virtual_path(&self, source_id: &str) -> Result<String> {
+        self.source_maps
+            .iter()
+            .find(|source| source.matches_source_id(source_id))
+            .map(|source| source.virtual_path.clone())
+            .ok_or(Error::msg(format!("Could not get virtual path for source file {source_id}")))
     }
 
     fn remap_import(&self, source_name: &str, import_path: &str) -> Option<String> {
@@ -107,31 +97,41 @@ impl ImportResolver {
     }
 }
 
-pub struct SourceMap {
+struct SourceMap {
     /// The actual filename for the source file, as found in the archive. This name can
     /// be used to read the content of a source file.
-    pub real_name: String,
+    source_id: String,
     /// The path to the source file in the contract's "virtual filesystem". This is the
     /// path to the source file as the contract was originally constructed. This value
     /// should be used when resolving imports to the real source files.
-    pub virtual_path: String,
+    virtual_path: String,
 }
 
-pub struct ImportRemap {
+impl SourceMap {
+    fn matches_virtual_path(&self, virtual_path: &str) -> bool {
+        self.virtual_path == virtual_path || self.virtual_path.replace("//", "/") == virtual_path
+    }
+
+    fn matches_source_id(&self, source_id: &str) -> bool {
+        self.source_id == source_id
+    }
+}
+
+struct ImportRemap {
     /// If provided, then this remap only applies to imports inside source files
     /// whose paths begin with this string.
     context: Option<String>,
     /// The prefix value which will be found in the import path and replaced by
     /// `target`.
     prefix: String,
-    /// The "real" import path. Replacing `prefix` with `target` in the import
+    /// The target virtual path. Replacing `prefix` with `target` in the import
     /// path from a source file should give you a path that can be looked up
     /// in `Metadata::sources`.
     target: String,
 }
 
 impl ImportRemap {
-    pub fn new(remap_str: &str) -> Result<ImportRemap> {
+    fn new(remap_str: &str) -> Result<ImportRemap> {
         if let Some((context, rest)) = remap_str.split_once(':') {
             if let Some((prefix, target)) = rest.split_once('=') {
                 Ok(ImportRemap {
@@ -210,8 +210,8 @@ impl TryFrom<serde_json::Value> for ImportResolver {
                         value
                             .get("keccak256")
                             .and_then(|k| k.as_str())
-                            .map(|real_name| SourceMap {
-                                real_name: real_name.into(),
+                            .map(|source_id| SourceMap {
+                                source_id: source_id.into(),
                                 virtual_path: key.clone(),
                             })
                     })

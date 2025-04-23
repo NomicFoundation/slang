@@ -128,7 +128,7 @@ fn run_version_inference_check(
             if !LanguageFacts::infer_language_versions(&source).any(|v| *v == contract.version) {
                 let source_name = contract
                     .import_resolver
-                    .get_real_name(file.id())
+                    .get_source_id(file.id())
                     .unwrap_or(file.id().into());
                 events.version_error(format!(
                     "[{version}] Could not infer correct version for {contract_name}:{source_name}",
