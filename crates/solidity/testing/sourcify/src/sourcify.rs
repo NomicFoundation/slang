@@ -40,14 +40,14 @@ impl Manifest {
                 files
                     .iter()
                     .filter_map(|file| file.get("path").and_then(|val| val.as_str()))
-                    .filter_map(|path| ArchiveDescriptor::new(path).ok())
+                    .filter_map(|path| ArchiveDescriptor::new("https://repo-backup.sourcify.dev", path).ok())
                     .filter(|desc| desc.matches_chain_and_shard(chain, options))
                     .collect()
             });
 
         if let Some(mut archive_descs) = archive_descs {
             if !archive_descs.is_empty() {
-                archive_descs.sort_by(|a, b| a.shard_prefix.cmp(&b.shard_prefix));
+                archive_descs.sort_by(|a, b| a.prefix.cmp(&b.prefix));
 
                 return Ok(Manifest {
                     archive_descriptors: archive_descs,
@@ -60,28 +60,17 @@ impl Manifest {
 
     /// Search for a specific contract and return it if found. Returns `None` if the contract can not
     /// be fetched for any reason (including if the `contract_id` is not parseable).
-    pub fn get_contract(&self, contract_id: &str) -> Option<Contract> {
-        if let Ok(contract_shard_id) = u16::from_str_radix(contract_id.get(2..4).unwrap(), 16) {
-            let archives = self
-                .archive_descriptors
-                .iter()
-                .filter(|shard| shard.shard_prefix == contract_shard_id)
-                .flat_map(ContractArchive::new);
-
-            for archive in archives {
-                if let Ok(contract) = archive.get_contract(contract_id) {
-                    return Some(contract);
-                }
-            }
-        }
-
-        None
+    pub fn fetch_contract(&self, contract_id: &str) -> Option<Contract> {
+        u8::from_str_radix(contract_id.get(2..4).unwrap(), 16).ok()
+            .and_then(|contract_prefix| self.archives()
+                .filter(|desc| desc.prefix == contract_prefix)
+                .flat_map(ContractArchive::fetch)
+                .find_map(|archive| archive.get_contract(contract_id).ok())
+            )
     }
 
-    pub fn archives(self) -> impl Iterator<Item = ContractArchive> {
-        self.archive_descriptors
-            .into_iter()
-            .flat_map(|desc| ContractArchive::new(&desc))
+    pub fn archives(&self) -> impl Iterator<Item = &ArchiveDescriptor> {
+        self.archive_descriptors.iter()
     }
 
     pub fn archive_count(&self) -> usize {
@@ -107,15 +96,15 @@ impl MatchType {
 /// Describes an archive that's available in the Sourcify repository.
 /// Can be used by `ContractArchive::fetch()` to download this archive.
 pub struct ArchiveDescriptor {
-    pub shard_prefix: u16,
+    pub prefix: u8,
     pub chain_id: ChainId,
     pub match_type: MatchType,
-    /// A URL path used to fetch the `ContractArchive` for this shard.
-    pub path: String,
+    /// GET this url to fetch the `ContractArchive` for this `ArchiveDescriptor`.
+    pub url: String,
 }
 
 impl ArchiveDescriptor {
-    fn new(path_str: &str) -> Result<ArchiveDescriptor> {
+    fn new(base_url: &str, path_str: &str) -> Result<ArchiveDescriptor> {
         // File path should come in this format:
         // /sourcify-repository-2025-03-24T03-00-26/full_match.1.00.tar.gz
         //                                                     - --
@@ -134,14 +123,14 @@ impl ArchiveDescriptor {
         let chain_id_part = parts.next().ok_or(Error::msg("Failed to get chain ID"))?;
         let chain_id: u64 = chain_id_part.parse()?;
 
-        let shard_prefix_part = parts
+        let prefix_part = parts
             .next()
             .ok_or(Error::msg("Failed to get shard prefix"))?;
-        let shard_prefix = u16::from_str_radix(shard_prefix_part, 16)?;
+        let prefix = u8::from_str_radix(prefix_part, 16)?;
 
         Ok(ArchiveDescriptor {
-            path: path_str.into(),
-            shard_prefix,
+            url: format!("{base_url}{path_str}"),
+            prefix,
             chain_id: ChainId(chain_id),
             match_type,
         })
@@ -156,7 +145,7 @@ impl ArchiveDescriptor {
             return false;
         }
 
-        if !options.get_id_range().contains(&self.shard_prefix) {
+        if !options.get_id_range().contains(&self.prefix) {
             return false;
         }
 
@@ -169,9 +158,9 @@ impl ArchiveDescriptor {
         CargoWorkspace::locate_source_crate("solidity_testing_sourcify")
             .unwrap_or_default()
             .join(format!(
-                "target/sourcify_{chain_id}/{shard_prefix:02x}",
+                "target/sourcify_{chain_id}/{prefix:02x}",
                 chain_id = self.chain_id,
-                shard_prefix = self.shard_prefix,
+                prefix = self.prefix,
             ))
     }
 
@@ -195,10 +184,10 @@ pub struct ContractArchive {
 }
 
 impl ContractArchive {
-    pub fn new(desc: &ArchiveDescriptor) -> Result<ContractArchive> {
+    pub fn fetch(desc: &ArchiveDescriptor) -> Result<ContractArchive> {
         let client = Client::new();
         let res = client
-            .get(format!("https://repo-backup.sourcify.dev{}", desc.path))
+            .get(&desc.url)
             .send()?;
 
         let status = res.status();

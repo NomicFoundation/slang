@@ -1,4 +1,4 @@
-use std::ops::Range;
+use std::ops::{Range, RangeInclusive};
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
@@ -80,16 +80,19 @@ pub struct ShardingOptions {
 }
 
 impl ShardingOptions {
-    pub fn get_id_range(&self) -> Range<u16> {
+    pub fn get_id_range(&self) -> RangeInclusive<u8> {
         if let Some(shard_count) = self.shard_count {
-            let shard_index = u16::try_from(self.shard_index.unwrap()).unwrap();
+            let shard_index = u8::try_from(self.shard_index.unwrap()).unwrap();
 
-            let shard_size: u16 = 256 / u16::try_from(shard_count).unwrap();
-            let shard_start: u16 = shard_size * shard_index;
+            let shard_size: u8 = u16::try_from(shard_count)
+                .map(|sc| 256 / sc)
+                .and_then(|size| u8::try_from(size))
+                .unwrap();
+            let shard_start: u8 = shard_size * shard_index;
 
-            shard_start..(shard_start + shard_size)
+            shard_start..=(shard_start + shard_size)
         } else {
-            0..256
+            0..=255
         }
     }
 }

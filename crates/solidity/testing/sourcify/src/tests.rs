@@ -14,7 +14,7 @@ pub fn test_single_contract(
     contract_id: &str,
     opts: &TestOptions,
 ) -> Result<()> {
-    if let Some(contract) = manifest.get_contract(contract_id) {
+    if let Some(contract) = manifest.fetch_contract(contract_id) {
         let mut events = Events::new(1, 0);
 
         events.start_archive(1);

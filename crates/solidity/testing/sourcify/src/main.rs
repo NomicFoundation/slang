@@ -51,10 +51,8 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
 
     let (tx, rx) = std::sync::mpsc::channel::<ContractArchive>();
 
-    // process_thread vs. fetching_thread - we don't want the thread to take ownership of repo
-    // because then repo will be dropped as soon as the last archive is fetched (before processing
-    // has finished), which will delete all the archive files
-    let process_thread = std::thread::spawn(move || -> Events {
+    // Test archives which have been fetched and unpacked
+    let testing_thread = std::thread::spawn(move || -> Events {
         let mut events = Events::new(archive_count, 0);
         for archive in rx {
             Terminal::step(archive.display_path());
@@ -78,14 +76,15 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     // Fetching the shards in this closure so that it takes ownership of the sender
     // The sender needs to be dropped so that process_thread can finish
     let fetcher = |t: std::sync::mpsc::Sender<ContractArchive>| {
-        for archive in manifest.archives() {
+        for archive_desc in manifest.archives() {
+            let Ok(archive) = ContractArchive::fetch(&archive_desc) else { continue; };
             t.send(archive).unwrap();
         }
     };
 
     fetcher(tx);
 
-    let events = process_thread.join().unwrap();
+    let events = testing_thread.join().unwrap();
 
     if GitHub::is_running_in_ci() {
         let output_path = PathBuf::from("target").join("__SLANG_SOURCIFY_SHARD_RESULTS__.json");
