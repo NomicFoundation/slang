@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use anyhow::Result;
+use anyhow::{Error, Result};
 use slang_solidity::compilation::{AddFileResponse, CompilationUnit, InternalCompilationBuilder};
 
 use crate::sourcify::Contract;
@@ -21,7 +21,10 @@ impl<'c> CompilationBuilder<'c> {
     }
 
     pub fn build(mut self) -> Result<CompilationUnit> {
-        let entrypoint = self.contract.entrypoint()?;
+        let entrypoint = self.contract.entrypoint().ok_or(Error::msg(format!(
+            "Entrypoint not found in contract {name}",
+            name = self.contract.name
+        )))?;
 
         self.add_file(&entrypoint)?;
 
@@ -49,7 +52,10 @@ impl<'c> CompilationBuilder<'c> {
             let import_real_name = self
                 .contract
                 .import_resolver
-                .resolve_import(filename, import_path)?;
+                .resolve_import(filename, import_path)
+                .ok_or(Error::msg(
+                    "Could not resolve import path {import_path} in source file {filename}",
+                ))?;
             self.add_file(&import_real_name)?;
         }
 

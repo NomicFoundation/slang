@@ -11,10 +11,10 @@ pub struct ImportResolver {
 impl ImportResolver {
     /// Given an import path from a source file, traverse the remappings to find the real filename of
     /// the target source file.
-    pub fn resolve_import(&self, source_name: &str, import_path: &str) -> Result<String> {
-        let source_file_path = self.get_virtual_path(source_name)?;
+    pub fn resolve_import(&self, source_id: &str, import_path: &str) -> Option<String> {
+        let source_virtual_path = self.get_virtual_path(source_id)?;
 
-        if let Some(remapped_import) = self.remap_import(&source_file_path, import_path) {
+        if let Some(remapped_import) = self.remap_import(&source_virtual_path, import_path) {
             // Paths that have been remapped don't need to go through path resolution.
             return self.get_source_id(&remapped_import);
         }
@@ -28,72 +28,56 @@ impl ImportResolver {
             return self.get_source_id(import_path);
         }
 
-        let source_is_url = path_is_url(&source_file_path);
+        let source_is_url = path_is_url(&source_virtual_path);
 
         let resolved_path = if source_is_url {
-            resolve_relative_url_import(&source_file_path, import_path)?
+            resolve_relative_url_import(&source_virtual_path, import_path).ok()?
         } else {
-            resolve_relative_import(&source_file_path, import_path)?
+            resolve_relative_import(&source_virtual_path, import_path).ok()?
         };
 
-        match self.get_source_id(&resolved_path) {
-            e @ Err(_) => {
-                // Try to recover from some corner cases
-                if source_is_url {
-                    // Sometimes imports from URL-imports don't share the URL prefix
-                    self.get_source_id(import_path)
-                } else if let Some(remapped_import) =
-                    self.remap_import(&source_file_path, &resolved_path)
-                {
-                    // Sometimes relative paths still need to be remapped after being resolved
-                    self.get_source_id(&remapped_import)
-                } else {
-                    // All other cases just return an error
-                    e
-                }
+        self.get_source_id(&resolved_path).or_else(|| {
+            if source_is_url {
+                // Sometimes imports from URL-imports don't share the URL prefix
+                self.get_source_id(import_path)
+            } else if let Some(remapped_import) =
+                self.remap_import(&source_virtual_path, &resolved_path)
+            {
+                // Sometimes relative paths still need to be remapped after being resolved
+                self.get_source_id(&remapped_import)
+            } else {
+                // All other cases just say we couldn't resolve anything
+                None
             }
-            source_id => source_id,
-        }
+        })
     }
 
-    pub fn get_source_id(&self, virtual_path: &str) -> Result<String> {
+    pub fn get_source_id(&self, virtual_path: &str) -> Option<String> {
         self.source_maps
             .iter()
             .find(|source| source.matches_virtual_path(virtual_path))
             .map(|source| source.source_id.clone())
-            .ok_or(Error::msg(format!("Could not get real name for import {virtual_path}")))
     }
 
-    pub fn get_virtual_path(&self, source_id: &str) -> Result<String> {
+    pub fn get_virtual_path(&self, source_id: &str) -> Option<String> {
         self.source_maps
             .iter()
             .find(|source| source.matches_source_id(source_id))
             .map(|source| source.virtual_path.clone())
-            .ok_or(Error::msg(format!("Could not get virtual path for source file {source_id}")))
     }
 
-    fn remap_import(&self, source_name: &str, import_path: &str) -> Option<String> {
-        let mut longest_match: Option<&ImportRemap> = None;
-        for remap in &self.import_remaps {
-            if !remap.matches_context(source_name) {
-                continue;
-            }
-
-            if import_path.starts_with(&remap.prefix) {
-                match longest_match {
-                    Some(r) => {
-                        if r.len() < remap.len() {
-                            longest_match = Some(remap);
-                        }
-                    }
-                    None => {
-                        longest_match = Some(remap);
-                    }
+    fn remap_import(&self, source_virtual_path: &str, import_path: &str) -> Option<String> {
+        self.import_remaps
+            .iter()
+            .filter(|remap| remap.matches(source_virtual_path, import_path))
+            .reduce(|longest, current| {
+                if current.match_len() > longest.match_len() {
+                    current
+                } else {
+                    longest
                 }
-            }
-        }
-
-        longest_match.map(|r| import_path.replacen(&r.prefix, &r.target, 1))
+            })
+            .map(|remap| import_path.replacen(&remap.prefix, &remap.target, 1))
     }
 }
 
@@ -132,35 +116,42 @@ struct ImportRemap {
 
 impl ImportRemap {
     fn new(remap_str: &str) -> Result<ImportRemap> {
-        if let Some((context, rest)) = remap_str.split_once(':') {
-            if let Some((prefix, target)) = rest.split_once('=') {
-                Ok(ImportRemap {
-                    context: if context.is_empty() {
-                        None
-                    } else {
-                        Some(context.into())
-                    },
-                    prefix: prefix.into(),
-                    target: target.into(),
-                })
-            } else {
-                bail!("{remap_str}: Could not separate prefix and target");
-            }
-        } else {
+        let Some((context, rest)) = remap_str.split_once(':') else {
             bail!("{remap_str}: Could not separate context from mapping");
-        }
+        };
+
+        let Some((prefix, target)) = rest.split_once('=') else {
+            bail!("{remap_str}: Could not separate prefix and target");
+        };
+
+        Ok(ImportRemap {
+            context: if context.is_empty() {
+                None
+            } else {
+                Some(context.into())
+            },
+            prefix: prefix.into(),
+            target: target.into(),
+        })
     }
 
-    fn len(&self) -> usize {
-        self.context.as_ref().map_or(0, |c| c.len()) + self.prefix.len()
-    }
-
-    fn matches_context(&self, source_name: &str) -> bool {
-        if let Some(context) = &self.context {
-            source_name.starts_with(context)
+    /// Determine if `self` applies to the import `import_path` found in the file at `source_path`.
+    fn matches(&self, source_path: &str, import_path: &str) -> bool {
+        let context_matches = if let Some(context) = &self.context {
+            source_path.starts_with(context)
         } else {
             true
-        }
+        };
+
+        context_matches && import_path.starts_with(&self.prefix)
+    }
+
+    /// The `match_size` is the length of the remap context + the length of the remap
+    /// prefix. This is used to compare `ImportRemap`s: if a source file + import path combo matches
+    /// two or more `ImportRemap`s, then it should use the one with the biggest match, since
+    /// that one will be the most specific.
+    fn match_len(&self) -> usize {
+        self.context.as_ref().map(|c| c.len()).unwrap_or(0) + self.prefix.len()
     }
 
     /// Sometimes contracts contain a remapping entry that, for whatever reason,

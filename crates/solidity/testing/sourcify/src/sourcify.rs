@@ -40,7 +40,9 @@ impl Manifest {
                 files
                     .iter()
                     .filter_map(|file| file.get("path").and_then(|val| val.as_str()))
-                    .filter_map(|path| ArchiveDescriptor::new("https://repo-backup.sourcify.dev", path).ok())
+                    .filter_map(|path| {
+                        ArchiveDescriptor::new("https://repo-backup.sourcify.dev", path).ok()
+                    })
                     .filter(|desc| desc.matches_chain_and_shard(chain, options))
                     .collect()
             });
@@ -61,12 +63,14 @@ impl Manifest {
     /// Search for a specific contract and return it if found. Returns `None` if the contract can not
     /// be fetched for any reason (including if the `contract_id` is not parseable).
     pub fn fetch_contract(&self, contract_id: &str) -> Option<Contract> {
-        u8::from_str_radix(contract_id.get(2..4).unwrap(), 16).ok()
-            .and_then(|contract_prefix| self.archives()
-                .filter(|desc| desc.prefix == contract_prefix)
-                .flat_map(ContractArchive::fetch)
-                .find_map(|archive| archive.get_contract(contract_id).ok())
-            )
+        u8::from_str_radix(contract_id.get(2..4).unwrap(), 16)
+            .ok()
+            .and_then(|contract_prefix| {
+                self.archives()
+                    .filter(|desc| desc.prefix == contract_prefix)
+                    .flat_map(ContractArchive::fetch)
+                    .find_map(|archive| archive.get_contract(contract_id).ok())
+            })
     }
 
     pub fn archives(&self) -> impl Iterator<Item = &ArchiveDescriptor> {
@@ -186,9 +190,7 @@ pub struct ContractArchive {
 impl ContractArchive {
     pub fn fetch(desc: &ArchiveDescriptor) -> Result<ContractArchive> {
         let client = Client::new();
-        let res = client
-            .get(&desc.url)
-            .send()?;
+        let res = client.get(&desc.url).send()?;
 
         let status = res.status();
         if !status.is_success() {
@@ -302,7 +304,7 @@ impl Contract {
         CompilationBuilder::new(self)?.build()
     }
 
-    pub fn entrypoint(&self) -> Result<String> {
+    pub fn entrypoint(&self) -> Option<String> {
         self.import_resolver.get_source_id(&self.target)
     }
 
