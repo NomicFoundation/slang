@@ -11,6 +11,14 @@
       fn enter_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) -> bool { true }
       fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
     {% endfor -%}
+    {%- for parent_type, choice in target.choices %}
+      fn enter_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) -> bool { true }
+      fn leave_{{ parent_type | snake_case }}(&mut self, _node: &{{ parent_type }}) {}
+    {% endfor -%}
+    {%- for parent_type, collection in target.collections %}
+      fn enter_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) -> bool { true }
+      fn leave_{{ parent_type | snake_case }}(&mut self, _items: &{{ parent_type }}) {}
+    {% endfor -%}
   }
 
   //
@@ -19,24 +27,20 @@
 
   {% for parent_type, sequence in target.sequences %}
     pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
-      {%- if sequence.has_nonterminals %}
-        if visitor.enter_{{ parent_type | snake_case }}(node) {
-          {% for field in sequence.fields -%}
-            {%- if not field.is_terminal -%}
-              {%- if field.is_optional %}
-                if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
-                  accept_{{ field.type | snake_case }}({{ field.label }}, visitor);
-                }
-              {% else -%}
-                accept_{{ field.type | snake_case }}(&node.{{ field.label }}, visitor);
-              {%- endif -%}
+      if visitor.enter_{{ parent_type | snake_case }}(node) {
+        {% for field in sequence.fields -%}
+          {%- if not field.is_terminal -%}
+            {%- if field.is_optional %}
+              if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
+                accept_{{ field.type | snake_case }}({{ field.label }}, visitor);
+              }
+            {% else -%}
+              accept_{{ field.type | snake_case }}(&node.{{ field.label }}, visitor);
             {%- endif -%}
-          {%- endfor -%}
-        }
-      {%- else -%}
-        visitor.enter_{{ parent_type | snake_case }}(node);
-      {%- endif %}
-      visitor.leave_{{ parent_type | snake_case }}(node);
+          {%- endif -%}
+        {%- endfor -%}
+        visitor.leave_{{ parent_type | snake_case }}(node);
+      }
     }
 
   {% endfor %}
@@ -82,12 +86,19 @@
   {% for parent_type, collection in target.collections -%}
     {%- if collection.is_terminal %}
       #[inline]
-      fn accept_{{ parent_type | snake_case }}(_items: &[Rc<TerminalNode>], _visitor: &mut impl Visitor) {}
+      fn accept_{{ parent_type | snake_case }}(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visitor) {
+        if visitor.enter_{{ parent_type | snake_case }}(items) {
+          visitor.leave_{{ parent_type | snake_case }}(items);
+        }
+      }
     {% else %}
       #[inline]
-      fn accept_{{ parent_type | snake_case }}(items: &[{{ collection.item_type }}], visitor: &mut impl Visitor) {
-        for item in items {
-          accept_{{ collection.item_type | snake_case }}(item, visitor);
+      fn accept_{{ parent_type | snake_case }}(items: &Vec<{{ collection.item_type }}>, visitor: &mut impl Visitor) {
+        if visitor.enter_{{ parent_type | snake_case }}(items) {
+          for item in items {
+            accept_{{ collection.item_type | snake_case }}(item, visitor);
+          }
+          visitor.leave_{{ parent_type | snake_case }}(items);
         }
       }
     {% endif -%}

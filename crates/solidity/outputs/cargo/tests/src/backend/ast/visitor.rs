@@ -26,10 +26,8 @@ impl CounterVisitor {
 
 impl Visitor for CounterVisitor {
     fn enter_contract_definition(&mut self, _node: &ast::ContractDefinition) -> bool {
-        self.enter_contracts
-    }
-    fn leave_contract_definition(&mut self, _node: &ast::ContractDefinition) {
         self.contract += 1;
+        self.enter_contracts
     }
     fn leave_constructor_definition(&mut self, _node: &ast::ConstructorDefinition) {
         self.ctor += 1;

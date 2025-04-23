@@ -475,8 +475,11 @@ pub fn slang_solidity::backend::ast::visitor::Visitor::enter_abicoder_pragma(&mu
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_additive_expression(&mut self, _node: &slang_solidity::backend::ast::AdditiveExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_address_type(&mut self, _node: &slang_solidity::backend::ast::AddressType) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_and_expression(&mut self, _node: &slang_solidity::backend::ast::AndExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::ArgumentsDeclaration) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_array_expression(&mut self, _node: &slang_solidity::backend::ast::ArrayExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_array_type_name(&mut self, _node: &slang_solidity::backend::ast::ArrayTypeName) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_array_values(&mut self, _items: &slang_solidity::backend::ast::ArrayValues) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_assembly_flags(&mut self, _items: &slang_solidity::backend::ast::AssemblyFlags) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_assembly_flags_declaration(&mut self, _node: &slang_solidity::backend::ast::AssemblyFlagsDeclaration) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_assembly_statement(&mut self, _node: &slang_solidity::backend::ast::AssemblyStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_assignment_expression(&mut self, _node: &slang_solidity::backend::ast::AssignmentExpression) -> bool
@@ -485,122 +488,208 @@ pub fn slang_solidity::backend::ast::visitor::Visitor::enter_bitwise_or_expressi
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_bitwise_xor_expression(&mut self, _node: &slang_solidity::backend::ast::BitwiseXorExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_block(&mut self, _node: &slang_solidity::backend::ast::Block) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_break_statement(&mut self, _node: &slang_solidity::backend::ast::BreakStatement) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_call_options(&mut self, _items: &slang_solidity::backend::ast::CallOptions) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_call_options_expression(&mut self, _node: &slang_solidity::backend::ast::CallOptionsExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_catch_clause(&mut self, _node: &slang_solidity::backend::ast::CatchClause) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_catch_clause_error(&mut self, _node: &slang_solidity::backend::ast::CatchClauseError) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_catch_clauses(&mut self, _items: &slang_solidity::backend::ast::CatchClauses) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_conditional_expression(&mut self, _node: &slang_solidity::backend::ast::ConditionalExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_constant_definition(&mut self, _node: &slang_solidity::backend::ast::ConstantDefinition) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_constructor_attribute(&mut self, _node: &slang_solidity::backend::ast::ConstructorAttribute) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_constructor_attributes(&mut self, _items: &slang_solidity::backend::ast::ConstructorAttributes) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_constructor_definition(&mut self, _node: &slang_solidity::backend::ast::ConstructorDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_continue_statement(&mut self, _node: &slang_solidity::backend::ast::ContinueStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_contract_definition(&mut self, _node: &slang_solidity::backend::ast::ContractDefinition) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_contract_member(&mut self, _node: &slang_solidity::backend::ast::ContractMember) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_contract_members(&mut self, _items: &slang_solidity::backend::ast::ContractMembers) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_contract_specifier(&mut self, _node: &slang_solidity::backend::ast::ContractSpecifier) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_contract_specifiers(&mut self, _items: &slang_solidity::backend::ast::ContractSpecifiers) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_decimal_number_expression(&mut self, _node: &slang_solidity::backend::ast::DecimalNumberExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_do_while_statement(&mut self, _node: &slang_solidity::backend::ast::DoWhileStatement) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_elementary_type(&mut self, _node: &slang_solidity::backend::ast::ElementaryType) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_else_branch(&mut self, _node: &slang_solidity::backend::ast::ElseBranch) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_emit_statement(&mut self, _node: &slang_solidity::backend::ast::EmitStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_enum_definition(&mut self, _node: &slang_solidity::backend::ast::EnumDefinition) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_enum_members(&mut self, _items: &slang_solidity::backend::ast::EnumMembers) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_equality_expression(&mut self, _node: &slang_solidity::backend::ast::EqualityExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_error_definition(&mut self, _node: &slang_solidity::backend::ast::ErrorDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_error_parameter(&mut self, _node: &slang_solidity::backend::ast::ErrorParameter) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_error_parameters(&mut self, _items: &slang_solidity::backend::ast::ErrorParameters) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_error_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::ErrorParametersDeclaration) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_event_definition(&mut self, _node: &slang_solidity::backend::ast::EventDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_event_parameter(&mut self, _node: &slang_solidity::backend::ast::EventParameter) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_event_parameters(&mut self, _items: &slang_solidity::backend::ast::EventParameters) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_event_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::EventParametersDeclaration) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_experimental_feature(&mut self, _node: &slang_solidity::backend::ast::ExperimentalFeature) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_experimental_pragma(&mut self, _node: &slang_solidity::backend::ast::ExperimentalPragma) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_exponentiation_expression(&mut self, _node: &slang_solidity::backend::ast::ExponentiationExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_expression(&mut self, _node: &slang_solidity::backend::ast::Expression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_expression_statement(&mut self, _node: &slang_solidity::backend::ast::ExpressionStatement) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_fallback_function_attribute(&mut self, _node: &slang_solidity::backend::ast::FallbackFunctionAttribute) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_fallback_function_attributes(&mut self, _items: &slang_solidity::backend::ast::FallbackFunctionAttributes) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_fallback_function_definition(&mut self, _node: &slang_solidity::backend::ast::FallbackFunctionDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_for_statement(&mut self, _node: &slang_solidity::backend::ast::ForStatement) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_for_statement_condition(&mut self, _node: &slang_solidity::backend::ast::ForStatementCondition) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_for_statement_initialization(&mut self, _node: &slang_solidity::backend::ast::ForStatementInitialization) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_function_attribute(&mut self, _node: &slang_solidity::backend::ast::FunctionAttribute) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_function_attributes(&mut self, _items: &slang_solidity::backend::ast::FunctionAttributes) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_function_body(&mut self, _node: &slang_solidity::backend::ast::FunctionBody) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_function_call_expression(&mut self, _node: &slang_solidity::backend::ast::FunctionCallExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_function_definition(&mut self, _node: &slang_solidity::backend::ast::FunctionDefinition) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_function_name(&mut self, _node: &slang_solidity::backend::ast::FunctionName) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_function_type(&mut self, _node: &slang_solidity::backend::ast::FunctionType) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_function_type_attribute(&mut self, _node: &slang_solidity::backend::ast::FunctionTypeAttribute) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_function_type_attributes(&mut self, _items: &slang_solidity::backend::ast::FunctionTypeAttributes) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_hex_number_expression(&mut self, _node: &slang_solidity::backend::ast::HexNumberExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_hex_string_literal(&mut self, _node: &slang_solidity::backend::ast::HexStringLiteral) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_hex_string_literals(&mut self, _items: &slang_solidity::backend::ast::HexStringLiterals) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_identifier_path(&mut self, _items: &slang_solidity::backend::ast::IdentifierPath) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_if_statement(&mut self, _node: &slang_solidity::backend::ast::IfStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_import_alias(&mut self, _node: &slang_solidity::backend::ast::ImportAlias) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_import_clause(&mut self, _node: &slang_solidity::backend::ast::ImportClause) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_import_deconstruction(&mut self, _node: &slang_solidity::backend::ast::ImportDeconstruction) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_import_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::ast::ImportDeconstructionSymbol) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_import_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::ast::ImportDeconstructionSymbols) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_import_directive(&mut self, _node: &slang_solidity::backend::ast::ImportDirective) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_index_access_end(&mut self, _node: &slang_solidity::backend::ast::IndexAccessEnd) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_index_access_expression(&mut self, _node: &slang_solidity::backend::ast::IndexAccessExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_inequality_expression(&mut self, _node: &slang_solidity::backend::ast::InequalityExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_inheritance_specifier(&mut self, _node: &slang_solidity::backend::ast::InheritanceSpecifier) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_inheritance_type(&mut self, _node: &slang_solidity::backend::ast::InheritanceType) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_inheritance_types(&mut self, _items: &slang_solidity::backend::ast::InheritanceTypes) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_interface_definition(&mut self, _node: &slang_solidity::backend::ast::InterfaceDefinition) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_interface_members(&mut self, _items: &slang_solidity::backend::ast::InterfaceMembers) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_library_definition(&mut self, _node: &slang_solidity::backend::ast::LibraryDefinition) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_library_members(&mut self, _items: &slang_solidity::backend::ast::LibraryMembers) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_mapping_key(&mut self, _node: &slang_solidity::backend::ast::MappingKey) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_mapping_key_type(&mut self, _node: &slang_solidity::backend::ast::MappingKeyType) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_mapping_type(&mut self, _node: &slang_solidity::backend::ast::MappingType) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_mapping_value(&mut self, _node: &slang_solidity::backend::ast::MappingValue) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_member_access_expression(&mut self, _node: &slang_solidity::backend::ast::MemberAccessExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_modifier_attribute(&mut self, _node: &slang_solidity::backend::ast::ModifierAttribute) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_modifier_attributes(&mut self, _items: &slang_solidity::backend::ast::ModifierAttributes) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_modifier_definition(&mut self, _node: &slang_solidity::backend::ast::ModifierDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_modifier_invocation(&mut self, _node: &slang_solidity::backend::ast::ModifierInvocation) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_multiplicative_expression(&mut self, _node: &slang_solidity::backend::ast::MultiplicativeExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_named_argument(&mut self, _node: &slang_solidity::backend::ast::NamedArgument) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_named_argument_group(&mut self, _node: &slang_solidity::backend::ast::NamedArgumentGroup) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_named_arguments(&mut self, _items: &slang_solidity::backend::ast::NamedArguments) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_named_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::NamedArgumentsDeclaration) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_named_import(&mut self, _node: &slang_solidity::backend::ast::NamedImport) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_new_expression(&mut self, _node: &slang_solidity::backend::ast::NewExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_number_unit(&mut self, _node: &slang_solidity::backend::ast::NumberUnit) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_or_expression(&mut self, _node: &slang_solidity::backend::ast::OrExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_override_paths(&mut self, _items: &slang_solidity::backend::ast::OverridePaths) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_override_paths_declaration(&mut self, _node: &slang_solidity::backend::ast::OverridePathsDeclaration) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_override_specifier(&mut self, _node: &slang_solidity::backend::ast::OverrideSpecifier) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_parameter(&mut self, _node: &slang_solidity::backend::ast::Parameter) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_parameters(&mut self, _items: &slang_solidity::backend::ast::Parameters) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::ParametersDeclaration) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_path_import(&mut self, _node: &slang_solidity::backend::ast::PathImport) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_positional_arguments(&mut self, _items: &slang_solidity::backend::ast::PositionalArguments) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_positional_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::PositionalArgumentsDeclaration) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_postfix_expression(&mut self, _node: &slang_solidity::backend::ast::PostfixExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_pragma(&mut self, _node: &slang_solidity::backend::ast::Pragma) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_pragma_directive(&mut self, _node: &slang_solidity::backend::ast::PragmaDirective) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_prefix_expression(&mut self, _node: &slang_solidity::backend::ast::PrefixExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_receive_function_attribute(&mut self, _node: &slang_solidity::backend::ast::ReceiveFunctionAttribute) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_receive_function_attributes(&mut self, _items: &slang_solidity::backend::ast::ReceiveFunctionAttributes) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_receive_function_definition(&mut self, _node: &slang_solidity::backend::ast::ReceiveFunctionDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_return_statement(&mut self, _node: &slang_solidity::backend::ast::ReturnStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_returns_declaration(&mut self, _node: &slang_solidity::backend::ast::ReturnsDeclaration) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_revert_statement(&mut self, _node: &slang_solidity::backend::ast::RevertStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_shift_expression(&mut self, _node: &slang_solidity::backend::ast::ShiftExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_simple_version_literal(&mut self, _items: &slang_solidity::backend::ast::SimpleVersionLiteral) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_source_unit(&mut self, _node: &slang_solidity::backend::ast::SourceUnit) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_source_unit_member(&mut self, _node: &slang_solidity::backend::ast::SourceUnitMember) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_source_unit_members(&mut self, _items: &slang_solidity::backend::ast::SourceUnitMembers) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_state_variable_attribute(&mut self, _node: &slang_solidity::backend::ast::StateVariableAttribute) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_state_variable_attributes(&mut self, _items: &slang_solidity::backend::ast::StateVariableAttributes) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_state_variable_definition(&mut self, _node: &slang_solidity::backend::ast::StateVariableDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_state_variable_definition_value(&mut self, _node: &slang_solidity::backend::ast::StateVariableDefinitionValue) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_statement(&mut self, _node: &slang_solidity::backend::ast::Statement) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_statements(&mut self, _items: &slang_solidity::backend::ast::Statements) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_storage_layout_specifier(&mut self, _node: &slang_solidity::backend::ast::StorageLayoutSpecifier) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_storage_location(&mut self, _node: &slang_solidity::backend::ast::StorageLocation) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_string_expression(&mut self, _node: &slang_solidity::backend::ast::StringExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_string_literal(&mut self, _node: &slang_solidity::backend::ast::StringLiteral) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_string_literals(&mut self, _items: &slang_solidity::backend::ast::StringLiterals) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_struct_definition(&mut self, _node: &slang_solidity::backend::ast::StructDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_struct_member(&mut self, _node: &slang_solidity::backend::ast::StructMember) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_struct_members(&mut self, _items: &slang_solidity::backend::ast::StructMembers) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_try_statement(&mut self, _node: &slang_solidity::backend::ast::TryStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_tuple_deconstruction_element(&mut self, _node: &slang_solidity::backend::ast::TupleDeconstructionElement) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_tuple_deconstruction_elements(&mut self, _items: &slang_solidity::backend::ast::TupleDeconstructionElements) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_tuple_deconstruction_statement(&mut self, _node: &slang_solidity::backend::ast::TupleDeconstructionStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_tuple_expression(&mut self, _node: &slang_solidity::backend::ast::TupleExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_tuple_member(&mut self, _node: &slang_solidity::backend::ast::TupleMember) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_tuple_value(&mut self, _node: &slang_solidity::backend::ast::TupleValue) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_tuple_values(&mut self, _items: &slang_solidity::backend::ast::TupleValues) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_type_expression(&mut self, _node: &slang_solidity::backend::ast::TypeExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_type_name(&mut self, _node: &slang_solidity::backend::ast::TypeName) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_typed_tuple_member(&mut self, _node: &slang_solidity::backend::ast::TypedTupleMember) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_unchecked_block(&mut self, _node: &slang_solidity::backend::ast::UncheckedBlock) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_unicode_string_literal(&mut self, _node: &slang_solidity::backend::ast::UnicodeStringLiteral) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_unicode_string_literals(&mut self, _items: &slang_solidity::backend::ast::UnicodeStringLiterals) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_untyped_tuple_member(&mut self, _node: &slang_solidity::backend::ast::UntypedTupleMember) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_user_defined_value_type_definition(&mut self, _node: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_using_alias(&mut self, _node: &slang_solidity::backend::ast::UsingAlias) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_using_clause(&mut self, _node: &slang_solidity::backend::ast::UsingClause) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_using_deconstruction(&mut self, _node: &slang_solidity::backend::ast::UsingDeconstruction) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_using_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::ast::UsingDeconstructionSymbol) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_using_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::ast::UsingDeconstructionSymbols) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_using_directive(&mut self, _node: &slang_solidity::backend::ast::UsingDirective) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_using_operator(&mut self, _node: &slang_solidity::backend::ast::UsingOperator) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_using_target(&mut self, _node: &slang_solidity::backend::ast::UsingTarget) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationStatement) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_variable_declaration_type(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationType) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_variable_declaration_value(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationValue) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_version_expression(&mut self, _node: &slang_solidity::backend::ast::VersionExpression) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_version_expression_set(&mut self, _items: &slang_solidity::backend::ast::VersionExpressionSet) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_version_expression_sets(&mut self, _items: &slang_solidity::backend::ast::VersionExpressionSets) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_version_literal(&mut self, _node: &slang_solidity::backend::ast::VersionLiteral) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_version_operator(&mut self, _node: &slang_solidity::backend::ast::VersionOperator) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_version_pragma(&mut self, _node: &slang_solidity::backend::ast::VersionPragma) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_version_range(&mut self, _node: &slang_solidity::backend::ast::VersionRange) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_version_term(&mut self, _node: &slang_solidity::backend::ast::VersionTerm) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_while_statement(&mut self, _node: &slang_solidity::backend::ast::WhileStatement) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_arguments(&mut self, _items: &slang_solidity::backend::ast::YulArguments) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_assignment_operator(&mut self, _node: &slang_solidity::backend::ast::YulAssignmentOperator) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_block(&mut self, _node: &slang_solidity::backend::ast::YulBlock) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_break_statement(&mut self, _node: &slang_solidity::backend::ast::YulBreakStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_continue_statement(&mut self, _node: &slang_solidity::backend::ast::YulContinueStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_default_case(&mut self, _node: &slang_solidity::backend::ast::YulDefaultCase) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_expression(&mut self, _node: &slang_solidity::backend::ast::YulExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_for_statement(&mut self, _node: &slang_solidity::backend::ast::YulForStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_function_call_expression(&mut self, _node: &slang_solidity::backend::ast::YulFunctionCallExpression) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_function_definition(&mut self, _node: &slang_solidity::backend::ast::YulFunctionDefinition) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_if_statement(&mut self, _node: &slang_solidity::backend::ast::YulIfStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_leave_statement(&mut self, _node: &slang_solidity::backend::ast::YulLeaveStatement) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_literal(&mut self, _node: &slang_solidity::backend::ast::YulLiteral) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_parameters(&mut self, _items: &slang_solidity::backend::ast::YulParameters) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::YulParametersDeclaration) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_path(&mut self, _items: &slang_solidity::backend::ast::YulPath) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_paths(&mut self, _items: &slang_solidity::backend::ast::YulPaths) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_returns_declaration(&mut self, _node: &slang_solidity::backend::ast::YulReturnsDeclaration) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_statement(&mut self, _node: &slang_solidity::backend::ast::YulStatement) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_statements(&mut self, _items: &slang_solidity::backend::ast::YulStatements) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_switch_case(&mut self, _node: &slang_solidity::backend::ast::YulSwitchCase) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_switch_cases(&mut self, _items: &slang_solidity::backend::ast::YulSwitchCases) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_switch_statement(&mut self, _node: &slang_solidity::backend::ast::YulSwitchStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_value_case(&mut self, _node: &slang_solidity::backend::ast::YulValueCase) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_variable_assignment_statement(&mut self, _node: &slang_solidity::backend::ast::YulVariableAssignmentStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::ast::YulVariableDeclarationStatement) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::ast::YulVariableDeclarationValue) -> bool
+pub fn slang_solidity::backend::ast::visitor::Visitor::enter_yul_variable_names(&mut self, _items: &slang_solidity::backend::ast::YulVariableNames) -> bool
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_abicoder_pragma(&mut self, _node: &slang_solidity::backend::ast::AbicoderPragma)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_additive_expression(&mut self, _node: &slang_solidity::backend::ast::AdditiveExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_address_type(&mut self, _node: &slang_solidity::backend::ast::AddressType)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_and_expression(&mut self, _node: &slang_solidity::backend::ast::AndExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::ArgumentsDeclaration)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_array_expression(&mut self, _node: &slang_solidity::backend::ast::ArrayExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_array_type_name(&mut self, _node: &slang_solidity::backend::ast::ArrayTypeName)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_array_values(&mut self, _items: &slang_solidity::backend::ast::ArrayValues)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_assembly_flags(&mut self, _items: &slang_solidity::backend::ast::AssemblyFlags)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_assembly_flags_declaration(&mut self, _node: &slang_solidity::backend::ast::AssemblyFlagsDeclaration)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_assembly_statement(&mut self, _node: &slang_solidity::backend::ast::AssemblyStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_assignment_expression(&mut self, _node: &slang_solidity::backend::ast::AssignmentExpression)
@@ -609,116 +698,199 @@ pub fn slang_solidity::backend::ast::visitor::Visitor::leave_bitwise_or_expressi
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_bitwise_xor_expression(&mut self, _node: &slang_solidity::backend::ast::BitwiseXorExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_block(&mut self, _node: &slang_solidity::backend::ast::Block)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_break_statement(&mut self, _node: &slang_solidity::backend::ast::BreakStatement)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_call_options(&mut self, _items: &slang_solidity::backend::ast::CallOptions)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_call_options_expression(&mut self, _node: &slang_solidity::backend::ast::CallOptionsExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_catch_clause(&mut self, _node: &slang_solidity::backend::ast::CatchClause)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_catch_clause_error(&mut self, _node: &slang_solidity::backend::ast::CatchClauseError)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_catch_clauses(&mut self, _items: &slang_solidity::backend::ast::CatchClauses)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_conditional_expression(&mut self, _node: &slang_solidity::backend::ast::ConditionalExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_constant_definition(&mut self, _node: &slang_solidity::backend::ast::ConstantDefinition)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_constructor_attribute(&mut self, _node: &slang_solidity::backend::ast::ConstructorAttribute)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_constructor_attributes(&mut self, _items: &slang_solidity::backend::ast::ConstructorAttributes)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_constructor_definition(&mut self, _node: &slang_solidity::backend::ast::ConstructorDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_continue_statement(&mut self, _node: &slang_solidity::backend::ast::ContinueStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_contract_definition(&mut self, _node: &slang_solidity::backend::ast::ContractDefinition)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_contract_member(&mut self, _node: &slang_solidity::backend::ast::ContractMember)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_contract_members(&mut self, _items: &slang_solidity::backend::ast::ContractMembers)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_contract_specifier(&mut self, _node: &slang_solidity::backend::ast::ContractSpecifier)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_contract_specifiers(&mut self, _items: &slang_solidity::backend::ast::ContractSpecifiers)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_decimal_number_expression(&mut self, _node: &slang_solidity::backend::ast::DecimalNumberExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_do_while_statement(&mut self, _node: &slang_solidity::backend::ast::DoWhileStatement)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_elementary_type(&mut self, _node: &slang_solidity::backend::ast::ElementaryType)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_else_branch(&mut self, _node: &slang_solidity::backend::ast::ElseBranch)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_emit_statement(&mut self, _node: &slang_solidity::backend::ast::EmitStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_enum_definition(&mut self, _node: &slang_solidity::backend::ast::EnumDefinition)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_enum_members(&mut self, _items: &slang_solidity::backend::ast::EnumMembers)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_equality_expression(&mut self, _node: &slang_solidity::backend::ast::EqualityExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_error_definition(&mut self, _node: &slang_solidity::backend::ast::ErrorDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_error_parameter(&mut self, _node: &slang_solidity::backend::ast::ErrorParameter)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_error_parameters(&mut self, _items: &slang_solidity::backend::ast::ErrorParameters)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_error_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::ErrorParametersDeclaration)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_event_definition(&mut self, _node: &slang_solidity::backend::ast::EventDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_event_parameter(&mut self, _node: &slang_solidity::backend::ast::EventParameter)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_event_parameters(&mut self, _items: &slang_solidity::backend::ast::EventParameters)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_event_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::EventParametersDeclaration)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_experimental_feature(&mut self, _node: &slang_solidity::backend::ast::ExperimentalFeature)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_experimental_pragma(&mut self, _node: &slang_solidity::backend::ast::ExperimentalPragma)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_exponentiation_expression(&mut self, _node: &slang_solidity::backend::ast::ExponentiationExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_expression(&mut self, _node: &slang_solidity::backend::ast::Expression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_expression_statement(&mut self, _node: &slang_solidity::backend::ast::ExpressionStatement)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_fallback_function_attribute(&mut self, _node: &slang_solidity::backend::ast::FallbackFunctionAttribute)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_fallback_function_attributes(&mut self, _items: &slang_solidity::backend::ast::FallbackFunctionAttributes)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_fallback_function_definition(&mut self, _node: &slang_solidity::backend::ast::FallbackFunctionDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_for_statement(&mut self, _node: &slang_solidity::backend::ast::ForStatement)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_for_statement_condition(&mut self, _node: &slang_solidity::backend::ast::ForStatementCondition)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_for_statement_initialization(&mut self, _node: &slang_solidity::backend::ast::ForStatementInitialization)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_function_attribute(&mut self, _node: &slang_solidity::backend::ast::FunctionAttribute)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_function_attributes(&mut self, _items: &slang_solidity::backend::ast::FunctionAttributes)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_function_body(&mut self, _node: &slang_solidity::backend::ast::FunctionBody)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_function_call_expression(&mut self, _node: &slang_solidity::backend::ast::FunctionCallExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_function_definition(&mut self, _node: &slang_solidity::backend::ast::FunctionDefinition)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_function_name(&mut self, _node: &slang_solidity::backend::ast::FunctionName)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_function_type(&mut self, _node: &slang_solidity::backend::ast::FunctionType)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_function_type_attribute(&mut self, _node: &slang_solidity::backend::ast::FunctionTypeAttribute)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_function_type_attributes(&mut self, _items: &slang_solidity::backend::ast::FunctionTypeAttributes)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_hex_number_expression(&mut self, _node: &slang_solidity::backend::ast::HexNumberExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_hex_string_literal(&mut self, _node: &slang_solidity::backend::ast::HexStringLiteral)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_hex_string_literals(&mut self, _items: &slang_solidity::backend::ast::HexStringLiterals)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_identifier_path(&mut self, _items: &slang_solidity::backend::ast::IdentifierPath)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_if_statement(&mut self, _node: &slang_solidity::backend::ast::IfStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_import_alias(&mut self, _node: &slang_solidity::backend::ast::ImportAlias)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_import_clause(&mut self, _node: &slang_solidity::backend::ast::ImportClause)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_import_deconstruction(&mut self, _node: &slang_solidity::backend::ast::ImportDeconstruction)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_import_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::ast::ImportDeconstructionSymbol)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_import_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::ast::ImportDeconstructionSymbols)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_import_directive(&mut self, _node: &slang_solidity::backend::ast::ImportDirective)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_index_access_end(&mut self, _node: &slang_solidity::backend::ast::IndexAccessEnd)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_index_access_expression(&mut self, _node: &slang_solidity::backend::ast::IndexAccessExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_inequality_expression(&mut self, _node: &slang_solidity::backend::ast::InequalityExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_inheritance_specifier(&mut self, _node: &slang_solidity::backend::ast::InheritanceSpecifier)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_inheritance_type(&mut self, _node: &slang_solidity::backend::ast::InheritanceType)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_inheritance_types(&mut self, _items: &slang_solidity::backend::ast::InheritanceTypes)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_interface_definition(&mut self, _node: &slang_solidity::backend::ast::InterfaceDefinition)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_interface_members(&mut self, _items: &slang_solidity::backend::ast::InterfaceMembers)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_library_definition(&mut self, _node: &slang_solidity::backend::ast::LibraryDefinition)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_library_members(&mut self, _items: &slang_solidity::backend::ast::LibraryMembers)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_mapping_key(&mut self, _node: &slang_solidity::backend::ast::MappingKey)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_mapping_key_type(&mut self, _node: &slang_solidity::backend::ast::MappingKeyType)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_mapping_type(&mut self, _node: &slang_solidity::backend::ast::MappingType)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_mapping_value(&mut self, _node: &slang_solidity::backend::ast::MappingValue)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_member_access_expression(&mut self, _node: &slang_solidity::backend::ast::MemberAccessExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_modifier_attribute(&mut self, _node: &slang_solidity::backend::ast::ModifierAttribute)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_modifier_attributes(&mut self, _items: &slang_solidity::backend::ast::ModifierAttributes)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_modifier_definition(&mut self, _node: &slang_solidity::backend::ast::ModifierDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_modifier_invocation(&mut self, _node: &slang_solidity::backend::ast::ModifierInvocation)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_multiplicative_expression(&mut self, _node: &slang_solidity::backend::ast::MultiplicativeExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_named_argument(&mut self, _node: &slang_solidity::backend::ast::NamedArgument)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_named_argument_group(&mut self, _node: &slang_solidity::backend::ast::NamedArgumentGroup)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_named_arguments(&mut self, _items: &slang_solidity::backend::ast::NamedArguments)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_named_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::NamedArgumentsDeclaration)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_named_import(&mut self, _node: &slang_solidity::backend::ast::NamedImport)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_new_expression(&mut self, _node: &slang_solidity::backend::ast::NewExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_number_unit(&mut self, _node: &slang_solidity::backend::ast::NumberUnit)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_or_expression(&mut self, _node: &slang_solidity::backend::ast::OrExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_override_paths(&mut self, _items: &slang_solidity::backend::ast::OverridePaths)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_override_paths_declaration(&mut self, _node: &slang_solidity::backend::ast::OverridePathsDeclaration)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_override_specifier(&mut self, _node: &slang_solidity::backend::ast::OverrideSpecifier)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_parameter(&mut self, _node: &slang_solidity::backend::ast::Parameter)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_parameters(&mut self, _items: &slang_solidity::backend::ast::Parameters)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::ParametersDeclaration)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_path_import(&mut self, _node: &slang_solidity::backend::ast::PathImport)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_positional_arguments(&mut self, _items: &slang_solidity::backend::ast::PositionalArguments)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_positional_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::PositionalArgumentsDeclaration)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_postfix_expression(&mut self, _node: &slang_solidity::backend::ast::PostfixExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_pragma(&mut self, _node: &slang_solidity::backend::ast::Pragma)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_pragma_directive(&mut self, _node: &slang_solidity::backend::ast::PragmaDirective)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_prefix_expression(&mut self, _node: &slang_solidity::backend::ast::PrefixExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_receive_function_attribute(&mut self, _node: &slang_solidity::backend::ast::ReceiveFunctionAttribute)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_receive_function_attributes(&mut self, _items: &slang_solidity::backend::ast::ReceiveFunctionAttributes)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_receive_function_definition(&mut self, _node: &slang_solidity::backend::ast::ReceiveFunctionDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_return_statement(&mut self, _node: &slang_solidity::backend::ast::ReturnStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_returns_declaration(&mut self, _node: &slang_solidity::backend::ast::ReturnsDeclaration)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_revert_statement(&mut self, _node: &slang_solidity::backend::ast::RevertStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_shift_expression(&mut self, _node: &slang_solidity::backend::ast::ShiftExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_simple_version_literal(&mut self, _items: &slang_solidity::backend::ast::SimpleVersionLiteral)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_source_unit(&mut self, _node: &slang_solidity::backend::ast::SourceUnit)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_source_unit_member(&mut self, _node: &slang_solidity::backend::ast::SourceUnitMember)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_source_unit_members(&mut self, _items: &slang_solidity::backend::ast::SourceUnitMembers)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_state_variable_attribute(&mut self, _node: &slang_solidity::backend::ast::StateVariableAttribute)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_state_variable_attributes(&mut self, _items: &slang_solidity::backend::ast::StateVariableAttributes)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_state_variable_definition(&mut self, _node: &slang_solidity::backend::ast::StateVariableDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_state_variable_definition_value(&mut self, _node: &slang_solidity::backend::ast::StateVariableDefinitionValue)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_statement(&mut self, _node: &slang_solidity::backend::ast::Statement)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_statements(&mut self, _items: &slang_solidity::backend::ast::Statements)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_storage_layout_specifier(&mut self, _node: &slang_solidity::backend::ast::StorageLayoutSpecifier)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_storage_location(&mut self, _node: &slang_solidity::backend::ast::StorageLocation)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_string_expression(&mut self, _node: &slang_solidity::backend::ast::StringExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_string_literal(&mut self, _node: &slang_solidity::backend::ast::StringLiteral)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_string_literals(&mut self, _items: &slang_solidity::backend::ast::StringLiterals)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_struct_definition(&mut self, _node: &slang_solidity::backend::ast::StructDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_struct_member(&mut self, _node: &slang_solidity::backend::ast::StructMember)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_struct_members(&mut self, _items: &slang_solidity::backend::ast::StructMembers)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_try_statement(&mut self, _node: &slang_solidity::backend::ast::TryStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_tuple_deconstruction_element(&mut self, _node: &slang_solidity::backend::ast::TupleDeconstructionElement)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_tuple_deconstruction_elements(&mut self, _items: &slang_solidity::backend::ast::TupleDeconstructionElements)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_tuple_deconstruction_statement(&mut self, _node: &slang_solidity::backend::ast::TupleDeconstructionStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_tuple_expression(&mut self, _node: &slang_solidity::backend::ast::TupleExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_tuple_member(&mut self, _node: &slang_solidity::backend::ast::TupleMember)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_tuple_value(&mut self, _node: &slang_solidity::backend::ast::TupleValue)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_tuple_values(&mut self, _items: &slang_solidity::backend::ast::TupleValues)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_type_expression(&mut self, _node: &slang_solidity::backend::ast::TypeExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_type_name(&mut self, _node: &slang_solidity::backend::ast::TypeName)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_typed_tuple_member(&mut self, _node: &slang_solidity::backend::ast::TypedTupleMember)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_unchecked_block(&mut self, _node: &slang_solidity::backend::ast::UncheckedBlock)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_unicode_string_literal(&mut self, _node: &slang_solidity::backend::ast::UnicodeStringLiteral)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_unicode_string_literals(&mut self, _items: &slang_solidity::backend::ast::UnicodeStringLiterals)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_untyped_tuple_member(&mut self, _node: &slang_solidity::backend::ast::UntypedTupleMember)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_user_defined_value_type_definition(&mut self, _node: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_using_alias(&mut self, _node: &slang_solidity::backend::ast::UsingAlias)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_using_clause(&mut self, _node: &slang_solidity::backend::ast::UsingClause)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_using_deconstruction(&mut self, _node: &slang_solidity::backend::ast::UsingDeconstruction)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_using_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::ast::UsingDeconstructionSymbol)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_using_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::ast::UsingDeconstructionSymbols)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_using_directive(&mut self, _node: &slang_solidity::backend::ast::UsingDirective)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_using_operator(&mut self, _node: &slang_solidity::backend::ast::UsingOperator)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_using_target(&mut self, _node: &slang_solidity::backend::ast::UsingTarget)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationStatement)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_variable_declaration_type(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationType)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_variable_declaration_value(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationValue)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_version_expression(&mut self, _node: &slang_solidity::backend::ast::VersionExpression)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_version_expression_set(&mut self, _items: &slang_solidity::backend::ast::VersionExpressionSet)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_version_expression_sets(&mut self, _items: &slang_solidity::backend::ast::VersionExpressionSets)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_version_literal(&mut self, _node: &slang_solidity::backend::ast::VersionLiteral)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_version_operator(&mut self, _node: &slang_solidity::backend::ast::VersionOperator)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_version_pragma(&mut self, _node: &slang_solidity::backend::ast::VersionPragma)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_version_range(&mut self, _node: &slang_solidity::backend::ast::VersionRange)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_version_term(&mut self, _node: &slang_solidity::backend::ast::VersionTerm)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_while_statement(&mut self, _node: &slang_solidity::backend::ast::WhileStatement)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_arguments(&mut self, _items: &slang_solidity::backend::ast::YulArguments)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_assignment_operator(&mut self, _node: &slang_solidity::backend::ast::YulAssignmentOperator)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_block(&mut self, _node: &slang_solidity::backend::ast::YulBlock)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_break_statement(&mut self, _node: &slang_solidity::backend::ast::YulBreakStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_continue_statement(&mut self, _node: &slang_solidity::backend::ast::YulContinueStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_default_case(&mut self, _node: &slang_solidity::backend::ast::YulDefaultCase)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_expression(&mut self, _node: &slang_solidity::backend::ast::YulExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_for_statement(&mut self, _node: &slang_solidity::backend::ast::YulForStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_function_call_expression(&mut self, _node: &slang_solidity::backend::ast::YulFunctionCallExpression)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_function_definition(&mut self, _node: &slang_solidity::backend::ast::YulFunctionDefinition)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_if_statement(&mut self, _node: &slang_solidity::backend::ast::YulIfStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_leave_statement(&mut self, _node: &slang_solidity::backend::ast::YulLeaveStatement)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_literal(&mut self, _node: &slang_solidity::backend::ast::YulLiteral)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_parameters(&mut self, _items: &slang_solidity::backend::ast::YulParameters)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::YulParametersDeclaration)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_path(&mut self, _items: &slang_solidity::backend::ast::YulPath)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_paths(&mut self, _items: &slang_solidity::backend::ast::YulPaths)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_returns_declaration(&mut self, _node: &slang_solidity::backend::ast::YulReturnsDeclaration)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_statement(&mut self, _node: &slang_solidity::backend::ast::YulStatement)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_statements(&mut self, _items: &slang_solidity::backend::ast::YulStatements)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_switch_case(&mut self, _node: &slang_solidity::backend::ast::YulSwitchCase)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_switch_cases(&mut self, _items: &slang_solidity::backend::ast::YulSwitchCases)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_switch_statement(&mut self, _node: &slang_solidity::backend::ast::YulSwitchStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_value_case(&mut self, _node: &slang_solidity::backend::ast::YulValueCase)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_variable_assignment_statement(&mut self, _node: &slang_solidity::backend::ast::YulVariableAssignmentStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::ast::YulVariableDeclarationStatement)
 pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::ast::YulVariableDeclarationValue)
+pub fn slang_solidity::backend::ast::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::ast::YulVariableNames)
 pub fn slang_solidity::backend::ast::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::ast::AbicoderPragma, visitor: &mut impl slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_additive_expression(node: &slang_solidity::backend::ast::AdditiveExpression, visitor: &mut impl slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::ast::visitor::accept_address_type(node: &slang_solidity::backend::ast::AddressType, visitor: &mut impl slang_solidity::backend::ast::visitor::Visitor)
@@ -2612,8 +2784,11 @@ pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_abicoder_prag
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_additive_expression(&mut self, _node: &slang_solidity::backend::ast::AdditiveExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_address_type(&mut self, _node: &slang_solidity::backend::ast::AddressType) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_and_expression(&mut self, _node: &slang_solidity::backend::ast::AndExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::ArgumentsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_array_expression(&mut self, _node: &slang_solidity::backend::ast::ArrayExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_array_type_name(&mut self, _node: &slang_solidity::backend::ast::ArrayTypeName) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_array_values(&mut self, _items: &slang_solidity::backend::ast::ArrayValues) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_assembly_flags(&mut self, _items: &slang_solidity::backend::ast::AssemblyFlags) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_assembly_flags_declaration(&mut self, _node: &slang_solidity::backend::ast::AssemblyFlagsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_assembly_statement(&mut self, _node: &slang_solidity::backend::ast::AssemblyStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_assignment_expression(&mut self, _node: &slang_solidity::backend::ast::AssignmentExpression) -> bool
@@ -2622,122 +2797,208 @@ pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_bitwise_or_ex
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_bitwise_xor_expression(&mut self, _node: &slang_solidity::backend::ast::BitwiseXorExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_block(&mut self, _node: &slang_solidity::backend::ast::Block) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_break_statement(&mut self, _node: &slang_solidity::backend::ast::BreakStatement) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_call_options(&mut self, _items: &slang_solidity::backend::ast::CallOptions) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_call_options_expression(&mut self, _node: &slang_solidity::backend::ast::CallOptionsExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_catch_clause(&mut self, _node: &slang_solidity::backend::ast::CatchClause) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_catch_clause_error(&mut self, _node: &slang_solidity::backend::ast::CatchClauseError) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_catch_clauses(&mut self, _items: &slang_solidity::backend::ast::CatchClauses) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_conditional_expression(&mut self, _node: &slang_solidity::backend::ast::ConditionalExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_constant_definition(&mut self, _node: &slang_solidity::backend::ast::ConstantDefinition) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_constructor_attribute(&mut self, _node: &slang_solidity::backend::ast::ConstructorAttribute) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_constructor_attributes(&mut self, _items: &slang_solidity::backend::ast::ConstructorAttributes) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_constructor_definition(&mut self, _node: &slang_solidity::backend::ast::ConstructorDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_continue_statement(&mut self, _node: &slang_solidity::backend::ast::ContinueStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_contract_definition(&mut self, _node: &slang_solidity::backend::ast::ContractDefinition) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_contract_member(&mut self, _node: &slang_solidity::backend::ast::ContractMember) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_contract_members(&mut self, _items: &slang_solidity::backend::ast::ContractMembers) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_contract_specifier(&mut self, _node: &slang_solidity::backend::ast::ContractSpecifier) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_contract_specifiers(&mut self, _items: &slang_solidity::backend::ast::ContractSpecifiers) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_decimal_number_expression(&mut self, _node: &slang_solidity::backend::ast::DecimalNumberExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_do_while_statement(&mut self, _node: &slang_solidity::backend::ast::DoWhileStatement) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_elementary_type(&mut self, _node: &slang_solidity::backend::ast::ElementaryType) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_else_branch(&mut self, _node: &slang_solidity::backend::ast::ElseBranch) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_emit_statement(&mut self, _node: &slang_solidity::backend::ast::EmitStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_enum_definition(&mut self, _node: &slang_solidity::backend::ast::EnumDefinition) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_enum_members(&mut self, _items: &slang_solidity::backend::ast::EnumMembers) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_equality_expression(&mut self, _node: &slang_solidity::backend::ast::EqualityExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_error_definition(&mut self, _node: &slang_solidity::backend::ast::ErrorDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_error_parameter(&mut self, _node: &slang_solidity::backend::ast::ErrorParameter) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_error_parameters(&mut self, _items: &slang_solidity::backend::ast::ErrorParameters) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_error_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::ErrorParametersDeclaration) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_event_definition(&mut self, _node: &slang_solidity::backend::ast::EventDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_event_parameter(&mut self, _node: &slang_solidity::backend::ast::EventParameter) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_event_parameters(&mut self, _items: &slang_solidity::backend::ast::EventParameters) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_event_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::EventParametersDeclaration) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_experimental_feature(&mut self, _node: &slang_solidity::backend::ast::ExperimentalFeature) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_experimental_pragma(&mut self, _node: &slang_solidity::backend::ast::ExperimentalPragma) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_exponentiation_expression(&mut self, _node: &slang_solidity::backend::ast::ExponentiationExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_expression(&mut self, _node: &slang_solidity::backend::ast::Expression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_expression_statement(&mut self, _node: &slang_solidity::backend::ast::ExpressionStatement) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_fallback_function_attribute(&mut self, _node: &slang_solidity::backend::ast::FallbackFunctionAttribute) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_fallback_function_attributes(&mut self, _items: &slang_solidity::backend::ast::FallbackFunctionAttributes) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_fallback_function_definition(&mut self, _node: &slang_solidity::backend::ast::FallbackFunctionDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_for_statement(&mut self, _node: &slang_solidity::backend::ast::ForStatement) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_for_statement_condition(&mut self, _node: &slang_solidity::backend::ast::ForStatementCondition) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_for_statement_initialization(&mut self, _node: &slang_solidity::backend::ast::ForStatementInitialization) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_function_attribute(&mut self, _node: &slang_solidity::backend::ast::FunctionAttribute) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_function_attributes(&mut self, _items: &slang_solidity::backend::ast::FunctionAttributes) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_function_body(&mut self, _node: &slang_solidity::backend::ast::FunctionBody) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_function_call_expression(&mut self, _node: &slang_solidity::backend::ast::FunctionCallExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_function_definition(&mut self, _node: &slang_solidity::backend::ast::FunctionDefinition) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_function_name(&mut self, _node: &slang_solidity::backend::ast::FunctionName) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_function_type(&mut self, _node: &slang_solidity::backend::ast::FunctionType) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_function_type_attribute(&mut self, _node: &slang_solidity::backend::ast::FunctionTypeAttribute) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_function_type_attributes(&mut self, _items: &slang_solidity::backend::ast::FunctionTypeAttributes) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_hex_number_expression(&mut self, _node: &slang_solidity::backend::ast::HexNumberExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_hex_string_literal(&mut self, _node: &slang_solidity::backend::ast::HexStringLiteral) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_hex_string_literals(&mut self, _items: &slang_solidity::backend::ast::HexStringLiterals) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_identifier_path(&mut self, _items: &slang_solidity::backend::ast::IdentifierPath) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_if_statement(&mut self, _node: &slang_solidity::backend::ast::IfStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_import_alias(&mut self, _node: &slang_solidity::backend::ast::ImportAlias) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_import_clause(&mut self, _node: &slang_solidity::backend::ast::ImportClause) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_import_deconstruction(&mut self, _node: &slang_solidity::backend::ast::ImportDeconstruction) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_import_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::ast::ImportDeconstructionSymbol) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_import_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::ast::ImportDeconstructionSymbols) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_import_directive(&mut self, _node: &slang_solidity::backend::ast::ImportDirective) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_index_access_end(&mut self, _node: &slang_solidity::backend::ast::IndexAccessEnd) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_index_access_expression(&mut self, _node: &slang_solidity::backend::ast::IndexAccessExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_inequality_expression(&mut self, _node: &slang_solidity::backend::ast::InequalityExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_inheritance_specifier(&mut self, _node: &slang_solidity::backend::ast::InheritanceSpecifier) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_inheritance_type(&mut self, _node: &slang_solidity::backend::ast::InheritanceType) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_inheritance_types(&mut self, _items: &slang_solidity::backend::ast::InheritanceTypes) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_interface_definition(&mut self, _node: &slang_solidity::backend::ast::InterfaceDefinition) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_interface_members(&mut self, _items: &slang_solidity::backend::ast::InterfaceMembers) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_library_definition(&mut self, _node: &slang_solidity::backend::ast::LibraryDefinition) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_library_members(&mut self, _items: &slang_solidity::backend::ast::LibraryMembers) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_mapping_key(&mut self, _node: &slang_solidity::backend::ast::MappingKey) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_mapping_key_type(&mut self, _node: &slang_solidity::backend::ast::MappingKeyType) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_mapping_type(&mut self, _node: &slang_solidity::backend::ast::MappingType) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_mapping_value(&mut self, _node: &slang_solidity::backend::ast::MappingValue) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_member_access_expression(&mut self, _node: &slang_solidity::backend::ast::MemberAccessExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_modifier_attribute(&mut self, _node: &slang_solidity::backend::ast::ModifierAttribute) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_modifier_attributes(&mut self, _items: &slang_solidity::backend::ast::ModifierAttributes) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_modifier_definition(&mut self, _node: &slang_solidity::backend::ast::ModifierDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_modifier_invocation(&mut self, _node: &slang_solidity::backend::ast::ModifierInvocation) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_multiplicative_expression(&mut self, _node: &slang_solidity::backend::ast::MultiplicativeExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_named_argument(&mut self, _node: &slang_solidity::backend::ast::NamedArgument) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_named_argument_group(&mut self, _node: &slang_solidity::backend::ast::NamedArgumentGroup) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_named_arguments(&mut self, _items: &slang_solidity::backend::ast::NamedArguments) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_named_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::NamedArgumentsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_named_import(&mut self, _node: &slang_solidity::backend::ast::NamedImport) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_new_expression(&mut self, _node: &slang_solidity::backend::ast::NewExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_number_unit(&mut self, _node: &slang_solidity::backend::ast::NumberUnit) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_or_expression(&mut self, _node: &slang_solidity::backend::ast::OrExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_override_paths(&mut self, _items: &slang_solidity::backend::ast::OverridePaths) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_override_paths_declaration(&mut self, _node: &slang_solidity::backend::ast::OverridePathsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_override_specifier(&mut self, _node: &slang_solidity::backend::ast::OverrideSpecifier) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_parameter(&mut self, _node: &slang_solidity::backend::ast::Parameter) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_parameters(&mut self, _items: &slang_solidity::backend::ast::Parameters) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::ParametersDeclaration) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_path_import(&mut self, _node: &slang_solidity::backend::ast::PathImport) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_positional_arguments(&mut self, _items: &slang_solidity::backend::ast::PositionalArguments) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_positional_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::PositionalArgumentsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_postfix_expression(&mut self, _node: &slang_solidity::backend::ast::PostfixExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_pragma(&mut self, _node: &slang_solidity::backend::ast::Pragma) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_pragma_directive(&mut self, _node: &slang_solidity::backend::ast::PragmaDirective) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_prefix_expression(&mut self, _node: &slang_solidity::backend::ast::PrefixExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_receive_function_attribute(&mut self, _node: &slang_solidity::backend::ast::ReceiveFunctionAttribute) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_receive_function_attributes(&mut self, _items: &slang_solidity::backend::ast::ReceiveFunctionAttributes) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_receive_function_definition(&mut self, _node: &slang_solidity::backend::ast::ReceiveFunctionDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_return_statement(&mut self, _node: &slang_solidity::backend::ast::ReturnStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_returns_declaration(&mut self, _node: &slang_solidity::backend::ast::ReturnsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_revert_statement(&mut self, _node: &slang_solidity::backend::ast::RevertStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_shift_expression(&mut self, _node: &slang_solidity::backend::ast::ShiftExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_simple_version_literal(&mut self, _items: &slang_solidity::backend::ast::SimpleVersionLiteral) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_source_unit(&mut self, _node: &slang_solidity::backend::ast::SourceUnit) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_source_unit_member(&mut self, _node: &slang_solidity::backend::ast::SourceUnitMember) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_source_unit_members(&mut self, _items: &slang_solidity::backend::ast::SourceUnitMembers) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_state_variable_attribute(&mut self, _node: &slang_solidity::backend::ast::StateVariableAttribute) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_state_variable_attributes(&mut self, _items: &slang_solidity::backend::ast::StateVariableAttributes) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_state_variable_definition(&mut self, _node: &slang_solidity::backend::ast::StateVariableDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_state_variable_definition_value(&mut self, _node: &slang_solidity::backend::ast::StateVariableDefinitionValue) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_statement(&mut self, _node: &slang_solidity::backend::ast::Statement) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_statements(&mut self, _items: &slang_solidity::backend::ast::Statements) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_storage_layout_specifier(&mut self, _node: &slang_solidity::backend::ast::StorageLayoutSpecifier) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_storage_location(&mut self, _node: &slang_solidity::backend::ast::StorageLocation) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_string_expression(&mut self, _node: &slang_solidity::backend::ast::StringExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_string_literal(&mut self, _node: &slang_solidity::backend::ast::StringLiteral) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_string_literals(&mut self, _items: &slang_solidity::backend::ast::StringLiterals) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_struct_definition(&mut self, _node: &slang_solidity::backend::ast::StructDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_struct_member(&mut self, _node: &slang_solidity::backend::ast::StructMember) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_struct_members(&mut self, _items: &slang_solidity::backend::ast::StructMembers) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_try_statement(&mut self, _node: &slang_solidity::backend::ast::TryStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_tuple_deconstruction_element(&mut self, _node: &slang_solidity::backend::ast::TupleDeconstructionElement) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_tuple_deconstruction_elements(&mut self, _items: &slang_solidity::backend::ast::TupleDeconstructionElements) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_tuple_deconstruction_statement(&mut self, _node: &slang_solidity::backend::ast::TupleDeconstructionStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_tuple_expression(&mut self, _node: &slang_solidity::backend::ast::TupleExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_tuple_member(&mut self, _node: &slang_solidity::backend::ast::TupleMember) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_tuple_value(&mut self, _node: &slang_solidity::backend::ast::TupleValue) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_tuple_values(&mut self, _items: &slang_solidity::backend::ast::TupleValues) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_type_expression(&mut self, _node: &slang_solidity::backend::ast::TypeExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_type_name(&mut self, _node: &slang_solidity::backend::ast::TypeName) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_typed_tuple_member(&mut self, _node: &slang_solidity::backend::ast::TypedTupleMember) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_unchecked_block(&mut self, _node: &slang_solidity::backend::ast::UncheckedBlock) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_unicode_string_literal(&mut self, _node: &slang_solidity::backend::ast::UnicodeStringLiteral) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_unicode_string_literals(&mut self, _items: &slang_solidity::backend::ast::UnicodeStringLiterals) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_untyped_tuple_member(&mut self, _node: &slang_solidity::backend::ast::UntypedTupleMember) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_user_defined_value_type_definition(&mut self, _node: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_using_alias(&mut self, _node: &slang_solidity::backend::ast::UsingAlias) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_using_clause(&mut self, _node: &slang_solidity::backend::ast::UsingClause) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_using_deconstruction(&mut self, _node: &slang_solidity::backend::ast::UsingDeconstruction) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_using_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::ast::UsingDeconstructionSymbol) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_using_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::ast::UsingDeconstructionSymbols) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_using_directive(&mut self, _node: &slang_solidity::backend::ast::UsingDirective) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_using_operator(&mut self, _node: &slang_solidity::backend::ast::UsingOperator) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_using_target(&mut self, _node: &slang_solidity::backend::ast::UsingTarget) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationStatement) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_variable_declaration_type(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationType) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_variable_declaration_value(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationValue) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_version_expression(&mut self, _node: &slang_solidity::backend::ast::VersionExpression) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_version_expression_set(&mut self, _items: &slang_solidity::backend::ast::VersionExpressionSet) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_version_expression_sets(&mut self, _items: &slang_solidity::backend::ast::VersionExpressionSets) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_version_literal(&mut self, _node: &slang_solidity::backend::ast::VersionLiteral) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_version_operator(&mut self, _node: &slang_solidity::backend::ast::VersionOperator) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_version_pragma(&mut self, _node: &slang_solidity::backend::ast::VersionPragma) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_version_range(&mut self, _node: &slang_solidity::backend::ast::VersionRange) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_version_term(&mut self, _node: &slang_solidity::backend::ast::VersionTerm) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_while_statement(&mut self, _node: &slang_solidity::backend::ast::WhileStatement) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_arguments(&mut self, _items: &slang_solidity::backend::ast::YulArguments) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_assignment_operator(&mut self, _node: &slang_solidity::backend::ast::YulAssignmentOperator) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_block(&mut self, _node: &slang_solidity::backend::ast::YulBlock) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_break_statement(&mut self, _node: &slang_solidity::backend::ast::YulBreakStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_continue_statement(&mut self, _node: &slang_solidity::backend::ast::YulContinueStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_default_case(&mut self, _node: &slang_solidity::backend::ast::YulDefaultCase) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_expression(&mut self, _node: &slang_solidity::backend::ast::YulExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_for_statement(&mut self, _node: &slang_solidity::backend::ast::YulForStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_function_call_expression(&mut self, _node: &slang_solidity::backend::ast::YulFunctionCallExpression) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_function_definition(&mut self, _node: &slang_solidity::backend::ast::YulFunctionDefinition) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_if_statement(&mut self, _node: &slang_solidity::backend::ast::YulIfStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_leave_statement(&mut self, _node: &slang_solidity::backend::ast::YulLeaveStatement) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_literal(&mut self, _node: &slang_solidity::backend::ast::YulLiteral) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_parameters(&mut self, _items: &slang_solidity::backend::ast::YulParameters) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::YulParametersDeclaration) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_path(&mut self, _items: &slang_solidity::backend::ast::YulPath) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_paths(&mut self, _items: &slang_solidity::backend::ast::YulPaths) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_returns_declaration(&mut self, _node: &slang_solidity::backend::ast::YulReturnsDeclaration) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_statement(&mut self, _node: &slang_solidity::backend::ast::YulStatement) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_statements(&mut self, _items: &slang_solidity::backend::ast::YulStatements) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_switch_case(&mut self, _node: &slang_solidity::backend::ast::YulSwitchCase) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_switch_cases(&mut self, _items: &slang_solidity::backend::ast::YulSwitchCases) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_switch_statement(&mut self, _node: &slang_solidity::backend::ast::YulSwitchStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_value_case(&mut self, _node: &slang_solidity::backend::ast::YulValueCase) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_variable_assignment_statement(&mut self, _node: &slang_solidity::backend::ast::YulVariableAssignmentStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::ast::YulVariableDeclarationStatement) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::ast::YulVariableDeclarationValue) -> bool
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::enter_yul_variable_names(&mut self, _items: &slang_solidity::backend::ast::YulVariableNames) -> bool
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_abicoder_pragma(&mut self, _node: &slang_solidity::backend::ast::AbicoderPragma)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_additive_expression(&mut self, _node: &slang_solidity::backend::ast::AdditiveExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_address_type(&mut self, _node: &slang_solidity::backend::ast::AddressType)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_and_expression(&mut self, _node: &slang_solidity::backend::ast::AndExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::ArgumentsDeclaration)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_array_expression(&mut self, _node: &slang_solidity::backend::ast::ArrayExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_array_type_name(&mut self, _node: &slang_solidity::backend::ast::ArrayTypeName)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_array_values(&mut self, _items: &slang_solidity::backend::ast::ArrayValues)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_assembly_flags(&mut self, _items: &slang_solidity::backend::ast::AssemblyFlags)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_assembly_flags_declaration(&mut self, _node: &slang_solidity::backend::ast::AssemblyFlagsDeclaration)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_assembly_statement(&mut self, _node: &slang_solidity::backend::ast::AssemblyStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_assignment_expression(&mut self, _node: &slang_solidity::backend::ast::AssignmentExpression)
@@ -2746,116 +3007,199 @@ pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_bitwise_or_ex
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_bitwise_xor_expression(&mut self, _node: &slang_solidity::backend::ast::BitwiseXorExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_block(&mut self, _node: &slang_solidity::backend::ast::Block)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_break_statement(&mut self, _node: &slang_solidity::backend::ast::BreakStatement)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_call_options(&mut self, _items: &slang_solidity::backend::ast::CallOptions)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_call_options_expression(&mut self, _node: &slang_solidity::backend::ast::CallOptionsExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_catch_clause(&mut self, _node: &slang_solidity::backend::ast::CatchClause)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_catch_clause_error(&mut self, _node: &slang_solidity::backend::ast::CatchClauseError)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_catch_clauses(&mut self, _items: &slang_solidity::backend::ast::CatchClauses)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_conditional_expression(&mut self, _node: &slang_solidity::backend::ast::ConditionalExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_constant_definition(&mut self, _node: &slang_solidity::backend::ast::ConstantDefinition)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_constructor_attribute(&mut self, _node: &slang_solidity::backend::ast::ConstructorAttribute)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_constructor_attributes(&mut self, _items: &slang_solidity::backend::ast::ConstructorAttributes)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_constructor_definition(&mut self, _node: &slang_solidity::backend::ast::ConstructorDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_continue_statement(&mut self, _node: &slang_solidity::backend::ast::ContinueStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_contract_definition(&mut self, _node: &slang_solidity::backend::ast::ContractDefinition)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_contract_member(&mut self, _node: &slang_solidity::backend::ast::ContractMember)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_contract_members(&mut self, _items: &slang_solidity::backend::ast::ContractMembers)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_contract_specifier(&mut self, _node: &slang_solidity::backend::ast::ContractSpecifier)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_contract_specifiers(&mut self, _items: &slang_solidity::backend::ast::ContractSpecifiers)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_decimal_number_expression(&mut self, _node: &slang_solidity::backend::ast::DecimalNumberExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_do_while_statement(&mut self, _node: &slang_solidity::backend::ast::DoWhileStatement)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_elementary_type(&mut self, _node: &slang_solidity::backend::ast::ElementaryType)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_else_branch(&mut self, _node: &slang_solidity::backend::ast::ElseBranch)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_emit_statement(&mut self, _node: &slang_solidity::backend::ast::EmitStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_enum_definition(&mut self, _node: &slang_solidity::backend::ast::EnumDefinition)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_enum_members(&mut self, _items: &slang_solidity::backend::ast::EnumMembers)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_equality_expression(&mut self, _node: &slang_solidity::backend::ast::EqualityExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_error_definition(&mut self, _node: &slang_solidity::backend::ast::ErrorDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_error_parameter(&mut self, _node: &slang_solidity::backend::ast::ErrorParameter)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_error_parameters(&mut self, _items: &slang_solidity::backend::ast::ErrorParameters)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_error_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::ErrorParametersDeclaration)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_event_definition(&mut self, _node: &slang_solidity::backend::ast::EventDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_event_parameter(&mut self, _node: &slang_solidity::backend::ast::EventParameter)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_event_parameters(&mut self, _items: &slang_solidity::backend::ast::EventParameters)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_event_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::EventParametersDeclaration)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_experimental_feature(&mut self, _node: &slang_solidity::backend::ast::ExperimentalFeature)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_experimental_pragma(&mut self, _node: &slang_solidity::backend::ast::ExperimentalPragma)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_exponentiation_expression(&mut self, _node: &slang_solidity::backend::ast::ExponentiationExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_expression(&mut self, _node: &slang_solidity::backend::ast::Expression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_expression_statement(&mut self, _node: &slang_solidity::backend::ast::ExpressionStatement)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_fallback_function_attribute(&mut self, _node: &slang_solidity::backend::ast::FallbackFunctionAttribute)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_fallback_function_attributes(&mut self, _items: &slang_solidity::backend::ast::FallbackFunctionAttributes)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_fallback_function_definition(&mut self, _node: &slang_solidity::backend::ast::FallbackFunctionDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_for_statement(&mut self, _node: &slang_solidity::backend::ast::ForStatement)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_for_statement_condition(&mut self, _node: &slang_solidity::backend::ast::ForStatementCondition)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_for_statement_initialization(&mut self, _node: &slang_solidity::backend::ast::ForStatementInitialization)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_function_attribute(&mut self, _node: &slang_solidity::backend::ast::FunctionAttribute)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_function_attributes(&mut self, _items: &slang_solidity::backend::ast::FunctionAttributes)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_function_body(&mut self, _node: &slang_solidity::backend::ast::FunctionBody)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_function_call_expression(&mut self, _node: &slang_solidity::backend::ast::FunctionCallExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_function_definition(&mut self, _node: &slang_solidity::backend::ast::FunctionDefinition)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_function_name(&mut self, _node: &slang_solidity::backend::ast::FunctionName)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_function_type(&mut self, _node: &slang_solidity::backend::ast::FunctionType)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_function_type_attribute(&mut self, _node: &slang_solidity::backend::ast::FunctionTypeAttribute)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_function_type_attributes(&mut self, _items: &slang_solidity::backend::ast::FunctionTypeAttributes)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_hex_number_expression(&mut self, _node: &slang_solidity::backend::ast::HexNumberExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_hex_string_literal(&mut self, _node: &slang_solidity::backend::ast::HexStringLiteral)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_hex_string_literals(&mut self, _items: &slang_solidity::backend::ast::HexStringLiterals)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_identifier_path(&mut self, _items: &slang_solidity::backend::ast::IdentifierPath)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_if_statement(&mut self, _node: &slang_solidity::backend::ast::IfStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_import_alias(&mut self, _node: &slang_solidity::backend::ast::ImportAlias)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_import_clause(&mut self, _node: &slang_solidity::backend::ast::ImportClause)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_import_deconstruction(&mut self, _node: &slang_solidity::backend::ast::ImportDeconstruction)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_import_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::ast::ImportDeconstructionSymbol)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_import_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::ast::ImportDeconstructionSymbols)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_import_directive(&mut self, _node: &slang_solidity::backend::ast::ImportDirective)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_index_access_end(&mut self, _node: &slang_solidity::backend::ast::IndexAccessEnd)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_index_access_expression(&mut self, _node: &slang_solidity::backend::ast::IndexAccessExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_inequality_expression(&mut self, _node: &slang_solidity::backend::ast::InequalityExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_inheritance_specifier(&mut self, _node: &slang_solidity::backend::ast::InheritanceSpecifier)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_inheritance_type(&mut self, _node: &slang_solidity::backend::ast::InheritanceType)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_inheritance_types(&mut self, _items: &slang_solidity::backend::ast::InheritanceTypes)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_interface_definition(&mut self, _node: &slang_solidity::backend::ast::InterfaceDefinition)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_interface_members(&mut self, _items: &slang_solidity::backend::ast::InterfaceMembers)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_library_definition(&mut self, _node: &slang_solidity::backend::ast::LibraryDefinition)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_library_members(&mut self, _items: &slang_solidity::backend::ast::LibraryMembers)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_mapping_key(&mut self, _node: &slang_solidity::backend::ast::MappingKey)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_mapping_key_type(&mut self, _node: &slang_solidity::backend::ast::MappingKeyType)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_mapping_type(&mut self, _node: &slang_solidity::backend::ast::MappingType)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_mapping_value(&mut self, _node: &slang_solidity::backend::ast::MappingValue)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_member_access_expression(&mut self, _node: &slang_solidity::backend::ast::MemberAccessExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_modifier_attribute(&mut self, _node: &slang_solidity::backend::ast::ModifierAttribute)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_modifier_attributes(&mut self, _items: &slang_solidity::backend::ast::ModifierAttributes)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_modifier_definition(&mut self, _node: &slang_solidity::backend::ast::ModifierDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_modifier_invocation(&mut self, _node: &slang_solidity::backend::ast::ModifierInvocation)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_multiplicative_expression(&mut self, _node: &slang_solidity::backend::ast::MultiplicativeExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_named_argument(&mut self, _node: &slang_solidity::backend::ast::NamedArgument)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_named_argument_group(&mut self, _node: &slang_solidity::backend::ast::NamedArgumentGroup)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_named_arguments(&mut self, _items: &slang_solidity::backend::ast::NamedArguments)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_named_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::NamedArgumentsDeclaration)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_named_import(&mut self, _node: &slang_solidity::backend::ast::NamedImport)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_new_expression(&mut self, _node: &slang_solidity::backend::ast::NewExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_number_unit(&mut self, _node: &slang_solidity::backend::ast::NumberUnit)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_or_expression(&mut self, _node: &slang_solidity::backend::ast::OrExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_override_paths(&mut self, _items: &slang_solidity::backend::ast::OverridePaths)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_override_paths_declaration(&mut self, _node: &slang_solidity::backend::ast::OverridePathsDeclaration)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_override_specifier(&mut self, _node: &slang_solidity::backend::ast::OverrideSpecifier)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_parameter(&mut self, _node: &slang_solidity::backend::ast::Parameter)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_parameters(&mut self, _items: &slang_solidity::backend::ast::Parameters)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::ParametersDeclaration)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_path_import(&mut self, _node: &slang_solidity::backend::ast::PathImport)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_positional_arguments(&mut self, _items: &slang_solidity::backend::ast::PositionalArguments)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_positional_arguments_declaration(&mut self, _node: &slang_solidity::backend::ast::PositionalArgumentsDeclaration)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_postfix_expression(&mut self, _node: &slang_solidity::backend::ast::PostfixExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_pragma(&mut self, _node: &slang_solidity::backend::ast::Pragma)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_pragma_directive(&mut self, _node: &slang_solidity::backend::ast::PragmaDirective)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_prefix_expression(&mut self, _node: &slang_solidity::backend::ast::PrefixExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_receive_function_attribute(&mut self, _node: &slang_solidity::backend::ast::ReceiveFunctionAttribute)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_receive_function_attributes(&mut self, _items: &slang_solidity::backend::ast::ReceiveFunctionAttributes)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_receive_function_definition(&mut self, _node: &slang_solidity::backend::ast::ReceiveFunctionDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_return_statement(&mut self, _node: &slang_solidity::backend::ast::ReturnStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_returns_declaration(&mut self, _node: &slang_solidity::backend::ast::ReturnsDeclaration)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_revert_statement(&mut self, _node: &slang_solidity::backend::ast::RevertStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_shift_expression(&mut self, _node: &slang_solidity::backend::ast::ShiftExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_simple_version_literal(&mut self, _items: &slang_solidity::backend::ast::SimpleVersionLiteral)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_source_unit(&mut self, _node: &slang_solidity::backend::ast::SourceUnit)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_source_unit_member(&mut self, _node: &slang_solidity::backend::ast::SourceUnitMember)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_source_unit_members(&mut self, _items: &slang_solidity::backend::ast::SourceUnitMembers)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_state_variable_attribute(&mut self, _node: &slang_solidity::backend::ast::StateVariableAttribute)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_state_variable_attributes(&mut self, _items: &slang_solidity::backend::ast::StateVariableAttributes)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_state_variable_definition(&mut self, _node: &slang_solidity::backend::ast::StateVariableDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_state_variable_definition_value(&mut self, _node: &slang_solidity::backend::ast::StateVariableDefinitionValue)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_statement(&mut self, _node: &slang_solidity::backend::ast::Statement)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_statements(&mut self, _items: &slang_solidity::backend::ast::Statements)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_storage_layout_specifier(&mut self, _node: &slang_solidity::backend::ast::StorageLayoutSpecifier)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_storage_location(&mut self, _node: &slang_solidity::backend::ast::StorageLocation)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_string_expression(&mut self, _node: &slang_solidity::backend::ast::StringExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_string_literal(&mut self, _node: &slang_solidity::backend::ast::StringLiteral)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_string_literals(&mut self, _items: &slang_solidity::backend::ast::StringLiterals)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_struct_definition(&mut self, _node: &slang_solidity::backend::ast::StructDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_struct_member(&mut self, _node: &slang_solidity::backend::ast::StructMember)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_struct_members(&mut self, _items: &slang_solidity::backend::ast::StructMembers)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_try_statement(&mut self, _node: &slang_solidity::backend::ast::TryStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_tuple_deconstruction_element(&mut self, _node: &slang_solidity::backend::ast::TupleDeconstructionElement)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_tuple_deconstruction_elements(&mut self, _items: &slang_solidity::backend::ast::TupleDeconstructionElements)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_tuple_deconstruction_statement(&mut self, _node: &slang_solidity::backend::ast::TupleDeconstructionStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_tuple_expression(&mut self, _node: &slang_solidity::backend::ast::TupleExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_tuple_member(&mut self, _node: &slang_solidity::backend::ast::TupleMember)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_tuple_value(&mut self, _node: &slang_solidity::backend::ast::TupleValue)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_tuple_values(&mut self, _items: &slang_solidity::backend::ast::TupleValues)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_type_expression(&mut self, _node: &slang_solidity::backend::ast::TypeExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_type_name(&mut self, _node: &slang_solidity::backend::ast::TypeName)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_typed_tuple_member(&mut self, _node: &slang_solidity::backend::ast::TypedTupleMember)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_unchecked_block(&mut self, _node: &slang_solidity::backend::ast::UncheckedBlock)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_unicode_string_literal(&mut self, _node: &slang_solidity::backend::ast::UnicodeStringLiteral)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_unicode_string_literals(&mut self, _items: &slang_solidity::backend::ast::UnicodeStringLiterals)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_untyped_tuple_member(&mut self, _node: &slang_solidity::backend::ast::UntypedTupleMember)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_user_defined_value_type_definition(&mut self, _node: &slang_solidity::backend::ast::UserDefinedValueTypeDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_using_alias(&mut self, _node: &slang_solidity::backend::ast::UsingAlias)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_using_clause(&mut self, _node: &slang_solidity::backend::ast::UsingClause)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_using_deconstruction(&mut self, _node: &slang_solidity::backend::ast::UsingDeconstruction)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_using_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::ast::UsingDeconstructionSymbol)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_using_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::ast::UsingDeconstructionSymbols)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_using_directive(&mut self, _node: &slang_solidity::backend::ast::UsingDirective)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_using_operator(&mut self, _node: &slang_solidity::backend::ast::UsingOperator)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_using_target(&mut self, _node: &slang_solidity::backend::ast::UsingTarget)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationStatement)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_variable_declaration_type(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationType)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_variable_declaration_value(&mut self, _node: &slang_solidity::backend::ast::VariableDeclarationValue)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_version_expression(&mut self, _node: &slang_solidity::backend::ast::VersionExpression)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_version_expression_set(&mut self, _items: &slang_solidity::backend::ast::VersionExpressionSet)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_version_expression_sets(&mut self, _items: &slang_solidity::backend::ast::VersionExpressionSets)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_version_literal(&mut self, _node: &slang_solidity::backend::ast::VersionLiteral)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_version_operator(&mut self, _node: &slang_solidity::backend::ast::VersionOperator)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_version_pragma(&mut self, _node: &slang_solidity::backend::ast::VersionPragma)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_version_range(&mut self, _node: &slang_solidity::backend::ast::VersionRange)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_version_term(&mut self, _node: &slang_solidity::backend::ast::VersionTerm)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_while_statement(&mut self, _node: &slang_solidity::backend::ast::WhileStatement)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_arguments(&mut self, _items: &slang_solidity::backend::ast::YulArguments)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_assignment_operator(&mut self, _node: &slang_solidity::backend::ast::YulAssignmentOperator)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_block(&mut self, _node: &slang_solidity::backend::ast::YulBlock)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_break_statement(&mut self, _node: &slang_solidity::backend::ast::YulBreakStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_continue_statement(&mut self, _node: &slang_solidity::backend::ast::YulContinueStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_default_case(&mut self, _node: &slang_solidity::backend::ast::YulDefaultCase)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_expression(&mut self, _node: &slang_solidity::backend::ast::YulExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_for_statement(&mut self, _node: &slang_solidity::backend::ast::YulForStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_function_call_expression(&mut self, _node: &slang_solidity::backend::ast::YulFunctionCallExpression)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_function_definition(&mut self, _node: &slang_solidity::backend::ast::YulFunctionDefinition)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_if_statement(&mut self, _node: &slang_solidity::backend::ast::YulIfStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_leave_statement(&mut self, _node: &slang_solidity::backend::ast::YulLeaveStatement)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_literal(&mut self, _node: &slang_solidity::backend::ast::YulLiteral)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_parameters(&mut self, _items: &slang_solidity::backend::ast::YulParameters)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_parameters_declaration(&mut self, _node: &slang_solidity::backend::ast::YulParametersDeclaration)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_path(&mut self, _items: &slang_solidity::backend::ast::YulPath)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_paths(&mut self, _items: &slang_solidity::backend::ast::YulPaths)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_returns_declaration(&mut self, _node: &slang_solidity::backend::ast::YulReturnsDeclaration)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_statement(&mut self, _node: &slang_solidity::backend::ast::YulStatement)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_statements(&mut self, _items: &slang_solidity::backend::ast::YulStatements)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_switch_case(&mut self, _node: &slang_solidity::backend::ast::YulSwitchCase)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_switch_cases(&mut self, _items: &slang_solidity::backend::ast::YulSwitchCases)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_switch_statement(&mut self, _node: &slang_solidity::backend::ast::YulSwitchStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_value_case(&mut self, _node: &slang_solidity::backend::ast::YulValueCase)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_variable_assignment_statement(&mut self, _node: &slang_solidity::backend::ast::YulVariableAssignmentStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::ast::YulVariableDeclarationStatement)
 pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::ast::YulVariableDeclarationValue)
+pub fn slang_solidity::backend::l1::input::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::ast::YulVariableNames)
 pub fn slang_solidity::backend::l1::input::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::ast::AbicoderPragma, visitor: &mut impl slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_additive_expression(node: &slang_solidity::backend::ast::AdditiveExpression, visitor: &mut impl slang_solidity::backend::ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1::input::visitor::accept_address_type(node: &slang_solidity::backend::ast::AddressType, visitor: &mut impl slang_solidity::backend::ast::visitor::Visitor)
@@ -4786,8 +5130,11 @@ pub fn slang_solidity::backend::l1::visitor::Visitor::enter_abicoder_pragma(&mut
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_additive_expression(&mut self, _node: &slang_solidity::backend::l1::AdditiveExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_address_type(&mut self, _node: &slang_solidity::backend::l1::AddressType) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_and_expression(&mut self, _node: &slang_solidity::backend::l1::AndExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_arguments_declaration(&mut self, _node: &slang_solidity::backend::l1::ArgumentsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_array_expression(&mut self, _node: &slang_solidity::backend::l1::ArrayExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_array_type_name(&mut self, _node: &slang_solidity::backend::l1::ArrayTypeName) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_array_values(&mut self, _items: &slang_solidity::backend::l1::ArrayValues) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_assembly_flags(&mut self, _items: &slang_solidity::backend::l1::AssemblyFlags) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_assembly_flags_declaration(&mut self, _node: &slang_solidity::backend::l1::AssemblyFlagsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_assembly_statement(&mut self, _node: &slang_solidity::backend::l1::AssemblyStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_assignment_expression(&mut self, _node: &slang_solidity::backend::l1::AssignmentExpression) -> bool
@@ -4796,122 +5143,207 @@ pub fn slang_solidity::backend::l1::visitor::Visitor::enter_bitwise_or_expressio
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_bitwise_xor_expression(&mut self, _node: &slang_solidity::backend::l1::BitwiseXorExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_block(&mut self, _node: &slang_solidity::backend::l1::Block) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_break_statement(&mut self, _node: &slang_solidity::backend::l1::BreakStatement) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_call_options(&mut self, _items: &slang_solidity::backend::l1::CallOptions) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_call_options_expression(&mut self, _node: &slang_solidity::backend::l1::CallOptionsExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_catch_clause(&mut self, _node: &slang_solidity::backend::l1::CatchClause) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_catch_clause_error(&mut self, _node: &slang_solidity::backend::l1::CatchClauseError) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_catch_clauses(&mut self, _items: &slang_solidity::backend::l1::CatchClauses) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_conditional_expression(&mut self, _node: &slang_solidity::backend::l1::ConditionalExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_constant_definition(&mut self, _node: &slang_solidity::backend::l1::ConstantDefinition) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_constructor_attribute(&mut self, _node: &slang_solidity::backend::l1::ConstructorAttribute) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_constructor_attributes(&mut self, _items: &slang_solidity::backend::l1::ConstructorAttributes) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_constructor_definition(&mut self, _node: &slang_solidity::backend::l1::ConstructorDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_continue_statement(&mut self, _node: &slang_solidity::backend::l1::ContinueStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_contract_definition(&mut self, _node: &slang_solidity::backend::l1::ContractDefinition) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_contract_member(&mut self, _node: &slang_solidity::backend::l1::ContractMember) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_contract_members(&mut self, _items: &slang_solidity::backend::l1::ContractMembers) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_contract_specifier(&mut self, _node: &slang_solidity::backend::l1::ContractSpecifier) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_decimal_number_expression(&mut self, _node: &slang_solidity::backend::l1::DecimalNumberExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_do_while_statement(&mut self, _node: &slang_solidity::backend::l1::DoWhileStatement) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_elementary_type(&mut self, _node: &slang_solidity::backend::l1::ElementaryType) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_else_branch(&mut self, _node: &slang_solidity::backend::l1::ElseBranch) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_emit_statement(&mut self, _node: &slang_solidity::backend::l1::EmitStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_enum_definition(&mut self, _node: &slang_solidity::backend::l1::EnumDefinition) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_enum_members(&mut self, _items: &slang_solidity::backend::l1::EnumMembers) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_equality_expression(&mut self, _node: &slang_solidity::backend::l1::EqualityExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_error_definition(&mut self, _node: &slang_solidity::backend::l1::ErrorDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_error_parameter(&mut self, _node: &slang_solidity::backend::l1::ErrorParameter) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_error_parameters(&mut self, _items: &slang_solidity::backend::l1::ErrorParameters) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_error_parameters_declaration(&mut self, _node: &slang_solidity::backend::l1::ErrorParametersDeclaration) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_event_definition(&mut self, _node: &slang_solidity::backend::l1::EventDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_event_parameter(&mut self, _node: &slang_solidity::backend::l1::EventParameter) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_event_parameters(&mut self, _items: &slang_solidity::backend::l1::EventParameters) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_event_parameters_declaration(&mut self, _node: &slang_solidity::backend::l1::EventParametersDeclaration) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_experimental_feature(&mut self, _node: &slang_solidity::backend::l1::ExperimentalFeature) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_experimental_pragma(&mut self, _node: &slang_solidity::backend::l1::ExperimentalPragma) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_exponentiation_expression(&mut self, _node: &slang_solidity::backend::l1::ExponentiationExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_expression(&mut self, _node: &slang_solidity::backend::l1::Expression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_expression_statement(&mut self, _node: &slang_solidity::backend::l1::ExpressionStatement) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_fallback_function_attribute(&mut self, _node: &slang_solidity::backend::l1::FallbackFunctionAttribute) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_fallback_function_attributes(&mut self, _items: &slang_solidity::backend::l1::FallbackFunctionAttributes) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_fallback_function_definition(&mut self, _node: &slang_solidity::backend::l1::FallbackFunctionDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_for_statement(&mut self, _node: &slang_solidity::backend::l1::ForStatement) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_for_statement_condition(&mut self, _node: &slang_solidity::backend::l1::ForStatementCondition) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_for_statement_initialization(&mut self, _node: &slang_solidity::backend::l1::ForStatementInitialization) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_function_attribute(&mut self, _node: &slang_solidity::backend::l1::FunctionAttribute) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_function_attributes(&mut self, _items: &slang_solidity::backend::l1::FunctionAttributes) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_function_body(&mut self, _node: &slang_solidity::backend::l1::FunctionBody) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_function_call_expression(&mut self, _node: &slang_solidity::backend::l1::FunctionCallExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_function_definition(&mut self, _node: &slang_solidity::backend::l1::FunctionDefinition) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_function_name(&mut self, _node: &slang_solidity::backend::l1::FunctionName) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_function_type(&mut self, _node: &slang_solidity::backend::l1::FunctionType) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_function_type_attribute(&mut self, _node: &slang_solidity::backend::l1::FunctionTypeAttribute) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_function_type_attributes(&mut self, _items: &slang_solidity::backend::l1::FunctionTypeAttributes) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_hex_number_expression(&mut self, _node: &slang_solidity::backend::l1::HexNumberExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_hex_string_literal(&mut self, _node: &slang_solidity::backend::l1::HexStringLiteral) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_hex_string_literals(&mut self, _items: &slang_solidity::backend::l1::HexStringLiterals) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_identifier_path(&mut self, _items: &slang_solidity::backend::l1::IdentifierPath) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_if_statement(&mut self, _node: &slang_solidity::backend::l1::IfStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_import_alias(&mut self, _node: &slang_solidity::backend::l1::ImportAlias) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_import_clause(&mut self, _node: &slang_solidity::backend::l1::ImportClause) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_import_deconstruction(&mut self, _node: &slang_solidity::backend::l1::ImportDeconstruction) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_import_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::l1::ImportDeconstructionSymbol) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_import_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::l1::ImportDeconstructionSymbols) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_import_directive(&mut self, _node: &slang_solidity::backend::l1::ImportDirective) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_index_access_end(&mut self, _node: &slang_solidity::backend::l1::IndexAccessEnd) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_index_access_expression(&mut self, _node: &slang_solidity::backend::l1::IndexAccessExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_inequality_expression(&mut self, _node: &slang_solidity::backend::l1::InequalityExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_inheritance_specifier(&mut self, _node: &slang_solidity::backend::l1::InheritanceSpecifier) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_inheritance_type(&mut self, _node: &slang_solidity::backend::l1::InheritanceType) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_inheritance_types(&mut self, _items: &slang_solidity::backend::l1::InheritanceTypes) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_interface_definition(&mut self, _node: &slang_solidity::backend::l1::InterfaceDefinition) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_interface_members(&mut self, _items: &slang_solidity::backend::l1::InterfaceMembers) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_library_definition(&mut self, _node: &slang_solidity::backend::l1::LibraryDefinition) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_library_members(&mut self, _items: &slang_solidity::backend::l1::LibraryMembers) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_mapping_key(&mut self, _node: &slang_solidity::backend::l1::MappingKey) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_mapping_key_type(&mut self, _node: &slang_solidity::backend::l1::MappingKeyType) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_mapping_type(&mut self, _node: &slang_solidity::backend::l1::MappingType) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_mapping_value(&mut self, _node: &slang_solidity::backend::l1::MappingValue) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_member_access_expression(&mut self, _node: &slang_solidity::backend::l1::MemberAccessExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_modifier_attribute(&mut self, _node: &slang_solidity::backend::l1::ModifierAttribute) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_modifier_attributes(&mut self, _items: &slang_solidity::backend::l1::ModifierAttributes) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_modifier_definition(&mut self, _node: &slang_solidity::backend::l1::ModifierDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_modifier_invocation(&mut self, _node: &slang_solidity::backend::l1::ModifierInvocation) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_multiplicative_expression(&mut self, _node: &slang_solidity::backend::l1::MultiplicativeExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_named_argument(&mut self, _node: &slang_solidity::backend::l1::NamedArgument) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_named_argument_group(&mut self, _node: &slang_solidity::backend::l1::NamedArgumentGroup) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_named_arguments(&mut self, _items: &slang_solidity::backend::l1::NamedArguments) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_named_arguments_declaration(&mut self, _node: &slang_solidity::backend::l1::NamedArgumentsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_named_import(&mut self, _node: &slang_solidity::backend::l1::NamedImport) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_new_expression(&mut self, _node: &slang_solidity::backend::l1::NewExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_number_unit(&mut self, _node: &slang_solidity::backend::l1::NumberUnit) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_or_expression(&mut self, _node: &slang_solidity::backend::l1::OrExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_override_paths(&mut self, _items: &slang_solidity::backend::l1::OverridePaths) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_override_paths_declaration(&mut self, _node: &slang_solidity::backend::l1::OverridePathsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_override_specifier(&mut self, _node: &slang_solidity::backend::l1::OverrideSpecifier) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_parameter(&mut self, _node: &slang_solidity::backend::l1::Parameter) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_parameters(&mut self, _items: &slang_solidity::backend::l1::Parameters) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_parameters_declaration(&mut self, _node: &slang_solidity::backend::l1::ParametersDeclaration) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_path_import(&mut self, _node: &slang_solidity::backend::l1::PathImport) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_positional_arguments(&mut self, _items: &slang_solidity::backend::l1::PositionalArguments) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_positional_arguments_declaration(&mut self, _node: &slang_solidity::backend::l1::PositionalArgumentsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_postfix_expression(&mut self, _node: &slang_solidity::backend::l1::PostfixExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_pragma(&mut self, _node: &slang_solidity::backend::l1::Pragma) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_pragma_directive(&mut self, _node: &slang_solidity::backend::l1::PragmaDirective) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_prefix_expression(&mut self, _node: &slang_solidity::backend::l1::PrefixExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_receive_function_attribute(&mut self, _node: &slang_solidity::backend::l1::ReceiveFunctionAttribute) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_receive_function_attributes(&mut self, _items: &slang_solidity::backend::l1::ReceiveFunctionAttributes) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_receive_function_definition(&mut self, _node: &slang_solidity::backend::l1::ReceiveFunctionDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_return_statement(&mut self, _node: &slang_solidity::backend::l1::ReturnStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_returns_declaration(&mut self, _node: &slang_solidity::backend::l1::ReturnsDeclaration) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_revert_statement(&mut self, _node: &slang_solidity::backend::l1::RevertStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_shift_expression(&mut self, _node: &slang_solidity::backend::l1::ShiftExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_simple_version_literal(&mut self, _items: &slang_solidity::backend::l1::SimpleVersionLiteral) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_source_unit(&mut self, _node: &slang_solidity::backend::l1::SourceUnit) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_source_unit_member(&mut self, _node: &slang_solidity::backend::l1::SourceUnitMember) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_source_unit_members(&mut self, _items: &slang_solidity::backend::l1::SourceUnitMembers) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_state_variable_attribute(&mut self, _node: &slang_solidity::backend::l1::StateVariableAttribute) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_state_variable_attributes(&mut self, _items: &slang_solidity::backend::l1::StateVariableAttributes) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_state_variable_definition(&mut self, _node: &slang_solidity::backend::l1::StateVariableDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_state_variable_definition_value(&mut self, _node: &slang_solidity::backend::l1::StateVariableDefinitionValue) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_statement(&mut self, _node: &slang_solidity::backend::l1::Statement) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_statements(&mut self, _items: &slang_solidity::backend::l1::Statements) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_storage_layout_specifier(&mut self, _node: &slang_solidity::backend::l1::StorageLayoutSpecifier) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_storage_location(&mut self, _node: &slang_solidity::backend::l1::StorageLocation) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_string_expression(&mut self, _node: &slang_solidity::backend::l1::StringExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_string_literal(&mut self, _node: &slang_solidity::backend::l1::StringLiteral) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_string_literals(&mut self, _items: &slang_solidity::backend::l1::StringLiterals) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_struct_definition(&mut self, _node: &slang_solidity::backend::l1::StructDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_struct_member(&mut self, _node: &slang_solidity::backend::l1::StructMember) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_struct_members(&mut self, _items: &slang_solidity::backend::l1::StructMembers) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_try_statement(&mut self, _node: &slang_solidity::backend::l1::TryStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_tuple_deconstruction_element(&mut self, _node: &slang_solidity::backend::l1::TupleDeconstructionElement) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_tuple_deconstruction_elements(&mut self, _items: &slang_solidity::backend::l1::TupleDeconstructionElements) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_tuple_deconstruction_statement(&mut self, _node: &slang_solidity::backend::l1::TupleDeconstructionStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_tuple_expression(&mut self, _node: &slang_solidity::backend::l1::TupleExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_tuple_member(&mut self, _node: &slang_solidity::backend::l1::TupleMember) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_tuple_value(&mut self, _node: &slang_solidity::backend::l1::TupleValue) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_tuple_values(&mut self, _items: &slang_solidity::backend::l1::TupleValues) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_type_expression(&mut self, _node: &slang_solidity::backend::l1::TypeExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_type_name(&mut self, _node: &slang_solidity::backend::l1::TypeName) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_typed_tuple_member(&mut self, _node: &slang_solidity::backend::l1::TypedTupleMember) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_unchecked_block(&mut self, _node: &slang_solidity::backend::l1::UncheckedBlock) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_unicode_string_literal(&mut self, _node: &slang_solidity::backend::l1::UnicodeStringLiteral) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_unicode_string_literals(&mut self, _items: &slang_solidity::backend::l1::UnicodeStringLiterals) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_untyped_tuple_member(&mut self, _node: &slang_solidity::backend::l1::UntypedTupleMember) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_user_defined_value_type_definition(&mut self, _node: &slang_solidity::backend::l1::UserDefinedValueTypeDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_using_alias(&mut self, _node: &slang_solidity::backend::l1::UsingAlias) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_using_clause(&mut self, _node: &slang_solidity::backend::l1::UsingClause) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_using_deconstruction(&mut self, _node: &slang_solidity::backend::l1::UsingDeconstruction) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_using_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::l1::UsingDeconstructionSymbol) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_using_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::l1::UsingDeconstructionSymbols) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_using_directive(&mut self, _node: &slang_solidity::backend::l1::UsingDirective) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_using_operator(&mut self, _node: &slang_solidity::backend::l1::UsingOperator) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_using_target(&mut self, _node: &slang_solidity::backend::l1::UsingTarget) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::l1::VariableDeclarationStatement) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_variable_declaration_type(&mut self, _node: &slang_solidity::backend::l1::VariableDeclarationType) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1::VariableDeclarationValue) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_version_expression(&mut self, _node: &slang_solidity::backend::l1::VersionExpression) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_version_expression_set(&mut self, _items: &slang_solidity::backend::l1::VersionExpressionSet) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_version_expression_sets(&mut self, _items: &slang_solidity::backend::l1::VersionExpressionSets) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_version_literal(&mut self, _node: &slang_solidity::backend::l1::VersionLiteral) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_version_operator(&mut self, _node: &slang_solidity::backend::l1::VersionOperator) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_version_pragma(&mut self, _node: &slang_solidity::backend::l1::VersionPragma) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_version_range(&mut self, _node: &slang_solidity::backend::l1::VersionRange) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_version_term(&mut self, _node: &slang_solidity::backend::l1::VersionTerm) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_while_statement(&mut self, _node: &slang_solidity::backend::l1::WhileStatement) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_arguments(&mut self, _items: &slang_solidity::backend::l1::YulArguments) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_assignment_operator(&mut self, _node: &slang_solidity::backend::l1::YulAssignmentOperator) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_block(&mut self, _node: &slang_solidity::backend::l1::YulBlock) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_break_statement(&mut self, _node: &slang_solidity::backend::l1::YulBreakStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_continue_statement(&mut self, _node: &slang_solidity::backend::l1::YulContinueStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_default_case(&mut self, _node: &slang_solidity::backend::l1::YulDefaultCase) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_expression(&mut self, _node: &slang_solidity::backend::l1::YulExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_for_statement(&mut self, _node: &slang_solidity::backend::l1::YulForStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_function_call_expression(&mut self, _node: &slang_solidity::backend::l1::YulFunctionCallExpression) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_function_definition(&mut self, _node: &slang_solidity::backend::l1::YulFunctionDefinition) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_if_statement(&mut self, _node: &slang_solidity::backend::l1::YulIfStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_leave_statement(&mut self, _node: &slang_solidity::backend::l1::YulLeaveStatement) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_literal(&mut self, _node: &slang_solidity::backend::l1::YulLiteral) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_parameters(&mut self, _items: &slang_solidity::backend::l1::YulParameters) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_parameters_declaration(&mut self, _node: &slang_solidity::backend::l1::YulParametersDeclaration) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_path(&mut self, _items: &slang_solidity::backend::l1::YulPath) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_paths(&mut self, _items: &slang_solidity::backend::l1::YulPaths) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_returns_declaration(&mut self, _node: &slang_solidity::backend::l1::YulReturnsDeclaration) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_statement(&mut self, _node: &slang_solidity::backend::l1::YulStatement) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_statements(&mut self, _items: &slang_solidity::backend::l1::YulStatements) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_switch_case(&mut self, _node: &slang_solidity::backend::l1::YulSwitchCase) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_switch_cases(&mut self, _items: &slang_solidity::backend::l1::YulSwitchCases) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_switch_statement(&mut self, _node: &slang_solidity::backend::l1::YulSwitchStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_value_case(&mut self, _node: &slang_solidity::backend::l1::YulValueCase) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_variable_assignment_statement(&mut self, _node: &slang_solidity::backend::l1::YulVariableAssignmentStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::l1::YulVariableDeclarationStatement) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1::YulVariableDeclarationValue) -> bool
+pub fn slang_solidity::backend::l1::visitor::Visitor::enter_yul_variable_names(&mut self, _items: &slang_solidity::backend::l1::YulVariableNames) -> bool
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_abicoder_pragma(&mut self, _node: &slang_solidity::backend::l1::AbicoderPragma)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_additive_expression(&mut self, _node: &slang_solidity::backend::l1::AdditiveExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_address_type(&mut self, _node: &slang_solidity::backend::l1::AddressType)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_and_expression(&mut self, _node: &slang_solidity::backend::l1::AndExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_arguments_declaration(&mut self, _node: &slang_solidity::backend::l1::ArgumentsDeclaration)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_array_expression(&mut self, _node: &slang_solidity::backend::l1::ArrayExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_array_type_name(&mut self, _node: &slang_solidity::backend::l1::ArrayTypeName)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_array_values(&mut self, _items: &slang_solidity::backend::l1::ArrayValues)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_assembly_flags(&mut self, _items: &slang_solidity::backend::l1::AssemblyFlags)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_assembly_flags_declaration(&mut self, _node: &slang_solidity::backend::l1::AssemblyFlagsDeclaration)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_assembly_statement(&mut self, _node: &slang_solidity::backend::l1::AssemblyStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_assignment_expression(&mut self, _node: &slang_solidity::backend::l1::AssignmentExpression)
@@ -4920,116 +5352,198 @@ pub fn slang_solidity::backend::l1::visitor::Visitor::leave_bitwise_or_expressio
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_bitwise_xor_expression(&mut self, _node: &slang_solidity::backend::l1::BitwiseXorExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_block(&mut self, _node: &slang_solidity::backend::l1::Block)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_break_statement(&mut self, _node: &slang_solidity::backend::l1::BreakStatement)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_call_options(&mut self, _items: &slang_solidity::backend::l1::CallOptions)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_call_options_expression(&mut self, _node: &slang_solidity::backend::l1::CallOptionsExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_catch_clause(&mut self, _node: &slang_solidity::backend::l1::CatchClause)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_catch_clause_error(&mut self, _node: &slang_solidity::backend::l1::CatchClauseError)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_catch_clauses(&mut self, _items: &slang_solidity::backend::l1::CatchClauses)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_conditional_expression(&mut self, _node: &slang_solidity::backend::l1::ConditionalExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_constant_definition(&mut self, _node: &slang_solidity::backend::l1::ConstantDefinition)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_constructor_attribute(&mut self, _node: &slang_solidity::backend::l1::ConstructorAttribute)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_constructor_attributes(&mut self, _items: &slang_solidity::backend::l1::ConstructorAttributes)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_constructor_definition(&mut self, _node: &slang_solidity::backend::l1::ConstructorDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_continue_statement(&mut self, _node: &slang_solidity::backend::l1::ContinueStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_contract_definition(&mut self, _node: &slang_solidity::backend::l1::ContractDefinition)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_contract_member(&mut self, _node: &slang_solidity::backend::l1::ContractMember)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_contract_members(&mut self, _items: &slang_solidity::backend::l1::ContractMembers)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_contract_specifier(&mut self, _node: &slang_solidity::backend::l1::ContractSpecifier)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_decimal_number_expression(&mut self, _node: &slang_solidity::backend::l1::DecimalNumberExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_do_while_statement(&mut self, _node: &slang_solidity::backend::l1::DoWhileStatement)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_elementary_type(&mut self, _node: &slang_solidity::backend::l1::ElementaryType)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_else_branch(&mut self, _node: &slang_solidity::backend::l1::ElseBranch)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_emit_statement(&mut self, _node: &slang_solidity::backend::l1::EmitStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_enum_definition(&mut self, _node: &slang_solidity::backend::l1::EnumDefinition)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_enum_members(&mut self, _items: &slang_solidity::backend::l1::EnumMembers)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_equality_expression(&mut self, _node: &slang_solidity::backend::l1::EqualityExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_error_definition(&mut self, _node: &slang_solidity::backend::l1::ErrorDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_error_parameter(&mut self, _node: &slang_solidity::backend::l1::ErrorParameter)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_error_parameters(&mut self, _items: &slang_solidity::backend::l1::ErrorParameters)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_error_parameters_declaration(&mut self, _node: &slang_solidity::backend::l1::ErrorParametersDeclaration)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_event_definition(&mut self, _node: &slang_solidity::backend::l1::EventDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_event_parameter(&mut self, _node: &slang_solidity::backend::l1::EventParameter)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_event_parameters(&mut self, _items: &slang_solidity::backend::l1::EventParameters)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_event_parameters_declaration(&mut self, _node: &slang_solidity::backend::l1::EventParametersDeclaration)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_experimental_feature(&mut self, _node: &slang_solidity::backend::l1::ExperimentalFeature)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_experimental_pragma(&mut self, _node: &slang_solidity::backend::l1::ExperimentalPragma)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_exponentiation_expression(&mut self, _node: &slang_solidity::backend::l1::ExponentiationExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_expression(&mut self, _node: &slang_solidity::backend::l1::Expression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_expression_statement(&mut self, _node: &slang_solidity::backend::l1::ExpressionStatement)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_fallback_function_attribute(&mut self, _node: &slang_solidity::backend::l1::FallbackFunctionAttribute)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_fallback_function_attributes(&mut self, _items: &slang_solidity::backend::l1::FallbackFunctionAttributes)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_fallback_function_definition(&mut self, _node: &slang_solidity::backend::l1::FallbackFunctionDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_for_statement(&mut self, _node: &slang_solidity::backend::l1::ForStatement)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_for_statement_condition(&mut self, _node: &slang_solidity::backend::l1::ForStatementCondition)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_for_statement_initialization(&mut self, _node: &slang_solidity::backend::l1::ForStatementInitialization)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_function_attribute(&mut self, _node: &slang_solidity::backend::l1::FunctionAttribute)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_function_attributes(&mut self, _items: &slang_solidity::backend::l1::FunctionAttributes)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_function_body(&mut self, _node: &slang_solidity::backend::l1::FunctionBody)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_function_call_expression(&mut self, _node: &slang_solidity::backend::l1::FunctionCallExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_function_definition(&mut self, _node: &slang_solidity::backend::l1::FunctionDefinition)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_function_name(&mut self, _node: &slang_solidity::backend::l1::FunctionName)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_function_type(&mut self, _node: &slang_solidity::backend::l1::FunctionType)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_function_type_attribute(&mut self, _node: &slang_solidity::backend::l1::FunctionTypeAttribute)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_function_type_attributes(&mut self, _items: &slang_solidity::backend::l1::FunctionTypeAttributes)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_hex_number_expression(&mut self, _node: &slang_solidity::backend::l1::HexNumberExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_hex_string_literal(&mut self, _node: &slang_solidity::backend::l1::HexStringLiteral)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_hex_string_literals(&mut self, _items: &slang_solidity::backend::l1::HexStringLiterals)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_identifier_path(&mut self, _items: &slang_solidity::backend::l1::IdentifierPath)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_if_statement(&mut self, _node: &slang_solidity::backend::l1::IfStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_import_alias(&mut self, _node: &slang_solidity::backend::l1::ImportAlias)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_import_clause(&mut self, _node: &slang_solidity::backend::l1::ImportClause)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_import_deconstruction(&mut self, _node: &slang_solidity::backend::l1::ImportDeconstruction)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_import_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::l1::ImportDeconstructionSymbol)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_import_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::l1::ImportDeconstructionSymbols)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_import_directive(&mut self, _node: &slang_solidity::backend::l1::ImportDirective)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_index_access_end(&mut self, _node: &slang_solidity::backend::l1::IndexAccessEnd)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_index_access_expression(&mut self, _node: &slang_solidity::backend::l1::IndexAccessExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_inequality_expression(&mut self, _node: &slang_solidity::backend::l1::InequalityExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_inheritance_specifier(&mut self, _node: &slang_solidity::backend::l1::InheritanceSpecifier)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_inheritance_type(&mut self, _node: &slang_solidity::backend::l1::InheritanceType)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_inheritance_types(&mut self, _items: &slang_solidity::backend::l1::InheritanceTypes)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_interface_definition(&mut self, _node: &slang_solidity::backend::l1::InterfaceDefinition)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_interface_members(&mut self, _items: &slang_solidity::backend::l1::InterfaceMembers)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_library_definition(&mut self, _node: &slang_solidity::backend::l1::LibraryDefinition)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_library_members(&mut self, _items: &slang_solidity::backend::l1::LibraryMembers)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_mapping_key(&mut self, _node: &slang_solidity::backend::l1::MappingKey)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_mapping_key_type(&mut self, _node: &slang_solidity::backend::l1::MappingKeyType)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_mapping_type(&mut self, _node: &slang_solidity::backend::l1::MappingType)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_mapping_value(&mut self, _node: &slang_solidity::backend::l1::MappingValue)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_member_access_expression(&mut self, _node: &slang_solidity::backend::l1::MemberAccessExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_modifier_attribute(&mut self, _node: &slang_solidity::backend::l1::ModifierAttribute)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_modifier_attributes(&mut self, _items: &slang_solidity::backend::l1::ModifierAttributes)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_modifier_definition(&mut self, _node: &slang_solidity::backend::l1::ModifierDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_modifier_invocation(&mut self, _node: &slang_solidity::backend::l1::ModifierInvocation)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_multiplicative_expression(&mut self, _node: &slang_solidity::backend::l1::MultiplicativeExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_named_argument(&mut self, _node: &slang_solidity::backend::l1::NamedArgument)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_named_argument_group(&mut self, _node: &slang_solidity::backend::l1::NamedArgumentGroup)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_named_arguments(&mut self, _items: &slang_solidity::backend::l1::NamedArguments)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_named_arguments_declaration(&mut self, _node: &slang_solidity::backend::l1::NamedArgumentsDeclaration)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_named_import(&mut self, _node: &slang_solidity::backend::l1::NamedImport)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_new_expression(&mut self, _node: &slang_solidity::backend::l1::NewExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_number_unit(&mut self, _node: &slang_solidity::backend::l1::NumberUnit)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_or_expression(&mut self, _node: &slang_solidity::backend::l1::OrExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_override_paths(&mut self, _items: &slang_solidity::backend::l1::OverridePaths)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_override_paths_declaration(&mut self, _node: &slang_solidity::backend::l1::OverridePathsDeclaration)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_override_specifier(&mut self, _node: &slang_solidity::backend::l1::OverrideSpecifier)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_parameter(&mut self, _node: &slang_solidity::backend::l1::Parameter)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_parameters(&mut self, _items: &slang_solidity::backend::l1::Parameters)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_parameters_declaration(&mut self, _node: &slang_solidity::backend::l1::ParametersDeclaration)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_path_import(&mut self, _node: &slang_solidity::backend::l1::PathImport)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_positional_arguments(&mut self, _items: &slang_solidity::backend::l1::PositionalArguments)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_positional_arguments_declaration(&mut self, _node: &slang_solidity::backend::l1::PositionalArgumentsDeclaration)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_postfix_expression(&mut self, _node: &slang_solidity::backend::l1::PostfixExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_pragma(&mut self, _node: &slang_solidity::backend::l1::Pragma)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_pragma_directive(&mut self, _node: &slang_solidity::backend::l1::PragmaDirective)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_prefix_expression(&mut self, _node: &slang_solidity::backend::l1::PrefixExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_receive_function_attribute(&mut self, _node: &slang_solidity::backend::l1::ReceiveFunctionAttribute)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_receive_function_attributes(&mut self, _items: &slang_solidity::backend::l1::ReceiveFunctionAttributes)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_receive_function_definition(&mut self, _node: &slang_solidity::backend::l1::ReceiveFunctionDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_return_statement(&mut self, _node: &slang_solidity::backend::l1::ReturnStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_returns_declaration(&mut self, _node: &slang_solidity::backend::l1::ReturnsDeclaration)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_revert_statement(&mut self, _node: &slang_solidity::backend::l1::RevertStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_shift_expression(&mut self, _node: &slang_solidity::backend::l1::ShiftExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_simple_version_literal(&mut self, _items: &slang_solidity::backend::l1::SimpleVersionLiteral)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_source_unit(&mut self, _node: &slang_solidity::backend::l1::SourceUnit)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_source_unit_member(&mut self, _node: &slang_solidity::backend::l1::SourceUnitMember)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_source_unit_members(&mut self, _items: &slang_solidity::backend::l1::SourceUnitMembers)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_state_variable_attribute(&mut self, _node: &slang_solidity::backend::l1::StateVariableAttribute)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_state_variable_attributes(&mut self, _items: &slang_solidity::backend::l1::StateVariableAttributes)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_state_variable_definition(&mut self, _node: &slang_solidity::backend::l1::StateVariableDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_state_variable_definition_value(&mut self, _node: &slang_solidity::backend::l1::StateVariableDefinitionValue)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_statement(&mut self, _node: &slang_solidity::backend::l1::Statement)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_statements(&mut self, _items: &slang_solidity::backend::l1::Statements)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_storage_layout_specifier(&mut self, _node: &slang_solidity::backend::l1::StorageLayoutSpecifier)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_storage_location(&mut self, _node: &slang_solidity::backend::l1::StorageLocation)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_string_expression(&mut self, _node: &slang_solidity::backend::l1::StringExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_string_literal(&mut self, _node: &slang_solidity::backend::l1::StringLiteral)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_string_literals(&mut self, _items: &slang_solidity::backend::l1::StringLiterals)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_struct_definition(&mut self, _node: &slang_solidity::backend::l1::StructDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_struct_member(&mut self, _node: &slang_solidity::backend::l1::StructMember)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_struct_members(&mut self, _items: &slang_solidity::backend::l1::StructMembers)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_try_statement(&mut self, _node: &slang_solidity::backend::l1::TryStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_tuple_deconstruction_element(&mut self, _node: &slang_solidity::backend::l1::TupleDeconstructionElement)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_tuple_deconstruction_elements(&mut self, _items: &slang_solidity::backend::l1::TupleDeconstructionElements)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_tuple_deconstruction_statement(&mut self, _node: &slang_solidity::backend::l1::TupleDeconstructionStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_tuple_expression(&mut self, _node: &slang_solidity::backend::l1::TupleExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_tuple_member(&mut self, _node: &slang_solidity::backend::l1::TupleMember)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_tuple_value(&mut self, _node: &slang_solidity::backend::l1::TupleValue)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_tuple_values(&mut self, _items: &slang_solidity::backend::l1::TupleValues)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_type_expression(&mut self, _node: &slang_solidity::backend::l1::TypeExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_type_name(&mut self, _node: &slang_solidity::backend::l1::TypeName)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_typed_tuple_member(&mut self, _node: &slang_solidity::backend::l1::TypedTupleMember)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_unchecked_block(&mut self, _node: &slang_solidity::backend::l1::UncheckedBlock)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_unicode_string_literal(&mut self, _node: &slang_solidity::backend::l1::UnicodeStringLiteral)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_unicode_string_literals(&mut self, _items: &slang_solidity::backend::l1::UnicodeStringLiterals)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_untyped_tuple_member(&mut self, _node: &slang_solidity::backend::l1::UntypedTupleMember)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_user_defined_value_type_definition(&mut self, _node: &slang_solidity::backend::l1::UserDefinedValueTypeDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_using_alias(&mut self, _node: &slang_solidity::backend::l1::UsingAlias)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_using_clause(&mut self, _node: &slang_solidity::backend::l1::UsingClause)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_using_deconstruction(&mut self, _node: &slang_solidity::backend::l1::UsingDeconstruction)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_using_deconstruction_symbol(&mut self, _node: &slang_solidity::backend::l1::UsingDeconstructionSymbol)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_using_deconstruction_symbols(&mut self, _items: &slang_solidity::backend::l1::UsingDeconstructionSymbols)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_using_directive(&mut self, _node: &slang_solidity::backend::l1::UsingDirective)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_using_operator(&mut self, _node: &slang_solidity::backend::l1::UsingOperator)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_using_target(&mut self, _node: &slang_solidity::backend::l1::UsingTarget)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::l1::VariableDeclarationStatement)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_variable_declaration_type(&mut self, _node: &slang_solidity::backend::l1::VariableDeclarationType)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1::VariableDeclarationValue)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_version_expression(&mut self, _node: &slang_solidity::backend::l1::VersionExpression)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_version_expression_set(&mut self, _items: &slang_solidity::backend::l1::VersionExpressionSet)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_version_expression_sets(&mut self, _items: &slang_solidity::backend::l1::VersionExpressionSets)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_version_literal(&mut self, _node: &slang_solidity::backend::l1::VersionLiteral)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_version_operator(&mut self, _node: &slang_solidity::backend::l1::VersionOperator)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_version_pragma(&mut self, _node: &slang_solidity::backend::l1::VersionPragma)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_version_range(&mut self, _node: &slang_solidity::backend::l1::VersionRange)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_version_term(&mut self, _node: &slang_solidity::backend::l1::VersionTerm)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_while_statement(&mut self, _node: &slang_solidity::backend::l1::WhileStatement)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_arguments(&mut self, _items: &slang_solidity::backend::l1::YulArguments)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_assignment_operator(&mut self, _node: &slang_solidity::backend::l1::YulAssignmentOperator)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_block(&mut self, _node: &slang_solidity::backend::l1::YulBlock)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_break_statement(&mut self, _node: &slang_solidity::backend::l1::YulBreakStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_continue_statement(&mut self, _node: &slang_solidity::backend::l1::YulContinueStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_default_case(&mut self, _node: &slang_solidity::backend::l1::YulDefaultCase)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_expression(&mut self, _node: &slang_solidity::backend::l1::YulExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_for_statement(&mut self, _node: &slang_solidity::backend::l1::YulForStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_function_call_expression(&mut self, _node: &slang_solidity::backend::l1::YulFunctionCallExpression)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_function_definition(&mut self, _node: &slang_solidity::backend::l1::YulFunctionDefinition)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_if_statement(&mut self, _node: &slang_solidity::backend::l1::YulIfStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_leave_statement(&mut self, _node: &slang_solidity::backend::l1::YulLeaveStatement)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_literal(&mut self, _node: &slang_solidity::backend::l1::YulLiteral)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_parameters(&mut self, _items: &slang_solidity::backend::l1::YulParameters)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_parameters_declaration(&mut self, _node: &slang_solidity::backend::l1::YulParametersDeclaration)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_path(&mut self, _items: &slang_solidity::backend::l1::YulPath)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_paths(&mut self, _items: &slang_solidity::backend::l1::YulPaths)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_returns_declaration(&mut self, _node: &slang_solidity::backend::l1::YulReturnsDeclaration)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_statement(&mut self, _node: &slang_solidity::backend::l1::YulStatement)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_statements(&mut self, _items: &slang_solidity::backend::l1::YulStatements)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_switch_case(&mut self, _node: &slang_solidity::backend::l1::YulSwitchCase)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_switch_cases(&mut self, _items: &slang_solidity::backend::l1::YulSwitchCases)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_switch_statement(&mut self, _node: &slang_solidity::backend::l1::YulSwitchStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_value_case(&mut self, _node: &slang_solidity::backend::l1::YulValueCase)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_variable_assignment_statement(&mut self, _node: &slang_solidity::backend::l1::YulVariableAssignmentStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::l1::YulVariableDeclarationStatement)
 pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1::YulVariableDeclarationValue)
+pub fn slang_solidity::backend::l1::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::l1::YulVariableNames)
 pub fn slang_solidity::backend::l1::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::l1::AbicoderPragma, visitor: &mut impl slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_additive_expression(node: &slang_solidity::backend::l1::AdditiveExpression, visitor: &mut impl slang_solidity::backend::l1::visitor::Visitor)
 pub fn slang_solidity::backend::l1::visitor::accept_address_type(node: &slang_solidity::backend::l1::AddressType, visitor: &mut impl slang_solidity::backend::l1::visitor::Visitor)
