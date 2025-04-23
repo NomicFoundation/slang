@@ -77,7 +77,7 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     // The sender needs to be dropped so that process_thread can finish
     let fetcher = |t: std::sync::mpsc::Sender<ContractArchive>| {
         for archive_desc in manifest.archives() {
-            let Ok(archive) = ContractArchive::fetch(&archive_desc) else {
+            let Ok(archive) = ContractArchive::fetch(archive_desc) else {
                 continue;
             };
             t.send(archive).unwrap();

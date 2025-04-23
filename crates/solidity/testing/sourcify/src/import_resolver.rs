@@ -155,7 +155,7 @@ impl ImportRemap {
     /// two or more `ImportRemap`s, then it should use the one with the biggest match, since
     /// that one will be the most specific.
     fn match_len(&self) -> usize {
-        self.context.as_ref().map(|c| c.len()).unwrap_or(0) + self.prefix.len()
+        self.context.as_ref().map_or(0, |c| c.len()) + self.prefix.len()
     }
 
     /// Sometimes contracts contain a remapping entry that, for whatever reason,
