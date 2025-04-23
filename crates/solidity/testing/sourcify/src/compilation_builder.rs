@@ -35,8 +35,7 @@ impl<'c> CompilationBuilder<'c> {
 
         let source = self.contract.read_file(filename)?;
 
-        let AddFileResponse { import_paths } =
-            self.internal.add_file(filename.into(), &source);
+        let AddFileResponse { import_paths } = self.internal.add_file(filename.into(), &source);
 
         for import_path in import_paths {
             let import_path = import_path.node().unparse();

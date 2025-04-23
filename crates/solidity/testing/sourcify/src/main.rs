@@ -18,7 +18,6 @@ use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 use infra_utils::terminal::Terminal;
 use results::{display_all_results, AllResults};
-use slang_solidity::compilation::CompilationUnit;
 use sourcify::{ContractArchive, Manifest};
 use tests::{run_in_parallel, run_with_trace, test_single_contract};
 

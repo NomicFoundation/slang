@@ -167,7 +167,7 @@ impl ArchiveDescriptor {
     /// represented by this `ArchiveDescriptor`.
     fn archive_dir(&self) -> PathBuf {
         CargoWorkspace::locate_source_crate("solidity_testing_sourcify")
-            .unwrap_or(PathBuf::new())
+            .unwrap_or_default()
             .join(format!(
                 "target/sourcify_{chain_id}/{shard_prefix:02x}",
                 chain_id = self.chain_id,

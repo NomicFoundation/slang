@@ -1,14 +1,19 @@
-use anyhow::{Result, bail};
+use anyhow::{bail, Result};
 use rayon::iter::{ParallelBridge, ParallelIterator};
- 
-use slang_solidity::cst::{Cursor, NodeKind, NonterminalKind, TextRange, TerminalKindExtensions};
+use slang_solidity::compilation::CompilationUnit;
+use slang_solidity::cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
-use slang_solidity::{compilation::CompilationUnit, utils::LanguageFacts};
+use slang_solidity::utils::LanguageFacts;
 
+use crate::command::TestOptions;
+use crate::events::{Events, TestOutcome};
 use crate::sourcify::{Contract, ContractArchive, Manifest};
-use crate::{command::TestOptions, events::{Events, TestOutcome}};
 
-pub fn test_single_contract(manifest: &Manifest, contract_id: &str, opts: &TestOptions) -> Result<()> {
+pub fn test_single_contract(
+    manifest: &Manifest,
+    contract_id: &str,
+    opts: &TestOptions,
+) -> Result<()> {
     if let Some(contract) = manifest.get_contract(contract_id) {
         let mut events = Events::new(1, 0);
 
@@ -204,14 +209,17 @@ fn run_bindings_check(
                 let binding_error = BindingError::UnboundIdentifier(cursor.clone());
 
                 if let Ok(source) = contract.read_file(file.id()) {
-                    let msg =
-                        slang_solidity::diagnostic::render(&binding_error, file.id(), &source, true);
+                    let msg = slang_solidity::diagnostic::render(
+                        &binding_error,
+                        file.id(),
+                        &source,
+                        true,
+                    );
                     events.bindings_error(format!(
                         "[{version}] Binding Error: No definition or reference\n{msg}",
                         version = contract.version,
                     ));
                 }
-
 
                 test_outcome = TestOutcome::Failed;
             }
