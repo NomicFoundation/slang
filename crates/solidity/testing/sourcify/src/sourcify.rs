@@ -1,8 +1,10 @@
 use std::fs;
-use std::io::{BufReader, Read};
+use std::io::BufReader;
 use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Error, Result};
+use infra_utils::cargo::CargoWorkspace;
+use infra_utils::paths::PathExtensions;
 use reqwest::blocking::Client;
 use semver::{BuildMetadata, Prerelease, Version};
 use slang_solidity::compilation::CompilationUnit;
@@ -164,11 +166,13 @@ impl ArchiveDescriptor {
     /// Get a path that should be used as the target when unpacking the archive
     /// represented by this `ArchiveDescriptor`.
     fn archive_dir(&self) -> PathBuf {
-        PathBuf::from(format!(
-            "target/sourcify_{chain_id}/{shard_prefix:02x}",
-            chain_id = self.chain_id,
-            shard_prefix = self.shard_prefix,
-        ))
+        CargoWorkspace::locate_source_crate("solidity_testing_sourcify")
+            .unwrap_or(PathBuf::new())
+            .join(format!(
+                "target/sourcify_{chain_id}/{shard_prefix:02x}",
+                chain_id = self.chain_id,
+                shard_prefix = self.shard_prefix,
+            ))
     }
 
     /// Get the path inside `self.archive_dir()` that contains all of the contracts.
