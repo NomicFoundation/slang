@@ -66,6 +66,10 @@ impl ImportResolver {
             .map(|source| source.virtual_path.clone())
     }
 
+    pub fn sources_count(&self) -> usize {
+        self.source_maps.len()
+    }
+
     fn remap_import(&self, source_virtual_path: &str, import_path: &str) -> Option<String> {
         self.import_remaps
             .iter()

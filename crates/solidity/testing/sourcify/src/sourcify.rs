@@ -63,7 +63,7 @@ impl Manifest {
     /// Search for a specific contract and return it if found. Returns `None` if the contract can not
     /// be fetched for any reason (including if the `contract_id` is not parseable).
     pub fn fetch_contract(&self, contract_id: &str) -> Option<Contract> {
-        u8::from_str_radix(contract_id.get(2..4).unwrap(), 16)
+        u16::from_str_radix(contract_id.get(2..4).unwrap(), 16)
             .ok()
             .and_then(|contract_prefix| {
                 self.archives()
@@ -100,7 +100,7 @@ impl MatchType {
 /// Describes an archive that's available in the Sourcify repository.
 /// Can be used by `ContractArchive::fetch()` to download this archive.
 pub struct ArchiveDescriptor {
-    pub prefix: u8,
+    pub prefix: u16,
     pub chain_id: ChainId,
     pub match_type: MatchType,
     /// GET this url to fetch the `ContractArchive` for this `ArchiveDescriptor`.
@@ -130,7 +130,7 @@ impl ArchiveDescriptor {
         let prefix_part = parts
             .next()
             .ok_or(Error::msg("Failed to get shard prefix"))?;
-        let prefix = u8::from_str_radix(prefix_part, 16)?;
+        let prefix = u16::from_str_radix(prefix_part, 16)?;
 
         Ok(ArchiveDescriptor {
             url: format!("{base_url}{path_str}"),
@@ -229,7 +229,7 @@ impl ContractArchive {
             .unwrap_or(0)
     }
 
-    pub fn clean(&self) {
+    pub fn clean(self) {
         fs::remove_dir_all(&self.contracts_path).unwrap();
     }
 
@@ -313,8 +313,6 @@ impl Contract {
     }
 
     pub fn sources_count(&self) -> usize {
-        fs::read_dir(&self.sources_path)
-            .map(|i| i.count())
-            .unwrap_or(0)
+        self.import_resolver.sources_count()
     }
 }
