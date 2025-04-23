@@ -6,27 +6,32 @@ use serde::Serialize;
 use diff::IrModelDiff;
 
 #[derive(Serialize)]
-pub struct ModelWrapper {
+pub struct ModelWithBuilder {
     pub target: IrModel,
-    pub builder: Option<IrModelDiff>,
-    pub transformer: Option<IrModelDiff>,
+    pub builder: IrModelDiff,
 }
 
-impl ModelWrapper {
-    pub fn with_builder(source: &IrModel, target: IrModel) -> Self {
-        let builder = Some(IrModelDiff::diff(source, &target));
+impl ModelWithBuilder {
+    pub fn new(source: &IrModel, target: IrModel) -> Self {
+        let builder = IrModelDiff::diff(source, &target);
         Self {
             target,
             builder,
-            transformer: None,
         }
     }
+}
 
-    pub fn with_transformer(source: &IrModel, target: IrModel) -> Self {
-        let transformer = Some(IrModelDiff::diff(source, &target));
+#[derive(Serialize)]
+pub struct ModelWithTransformer {
+    pub target: IrModel,
+    pub transformer: IrModelDiff,
+}
+
+impl ModelWithTransformer {
+    pub fn new(source: &IrModel, target: IrModel) -> Self {
+        let transformer = IrModelDiff::diff(source, &target);
         Self {
             target,
-            builder: None,
             transformer,
         }
     }

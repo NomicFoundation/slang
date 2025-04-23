@@ -2,7 +2,7 @@
 //! It is removed when publishing to crates.io.
 
 use anyhow::Result;
-use codegen_runtime_generator::ir::{IrModel, ModelWrapper};
+use codegen_runtime_generator::ir::{IrModel, ModelWithBuilder, ModelWithTransformer};
 use codegen_runtime_generator::RuntimeGenerator;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenRuntime;
@@ -40,14 +40,14 @@ fn main() -> Result<()> {
     _ = runtime.render_product(&ast_model_wrapper, &ast_output_dir)?;
 
     let runtime = CodegenRuntime::new(&ir_input_dir)?;
-    let l1_model_wrapper = build_l1_model_wrapper(&ast_model_wrapper);
+    let l1_model_wrapper = build_l1_model_wrapper(&ast_model_wrapper.target);
     let l1_output_dir = ir_output_dir.join(&l1_model_wrapper.target.name);
     _ = runtime.render_product(&l1_model_wrapper, &l1_output_dir)?;
 
     Ok(())
 }
 
-fn build_ast_model_wrapper(cst_model: &IrModel) -> ModelWrapper {
+fn build_ast_model_wrapper(cst_model: &IrModel) -> ModelWithBuilder {
     let mut ast_model = IrModel::from_model("ast", cst_model);
 
     // remove fields from sequences that contain redundant terminal nodes
@@ -59,11 +59,10 @@ fn build_ast_model_wrapper(cst_model: &IrModel) -> ModelWrapper {
         });
     }
 
-    ModelWrapper::with_builder(cst_model, ast_model)
+    ModelWithBuilder::new(cst_model, ast_model)
 }
 
-fn build_l1_model_wrapper(ast_model_wrapper: &ModelWrapper) -> ModelWrapper {
-    let ast_model = &ast_model_wrapper.target;
+fn build_l1_model_wrapper(ast_model: &IrModel) -> ModelWithTransformer {
     let mut l1_model = IrModel::from_model("l1", ast_model);
 
     // L1 is for now only a proof of concept for rendering transfomation code
@@ -86,5 +85,5 @@ fn build_l1_model_wrapper(ast_model_wrapper: &ModelWrapper) -> ModelWrapper {
         true,
     );
 
-    ModelWrapper::with_transformer(ast_model, l1_model)
+    ModelWithTransformer::new(ast_model, l1_model)
 }
