@@ -162,15 +162,15 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
     match contract.create_compilation_unit() {
         Ok(unit) => {
             if opts.check_parser {
-                test_outcome = run_parser_check(contract, &unit, events);
+                test_outcome = run_parser_check(contract, &unit, events).unwrap_or(TestOutcome::Failed);
             }
 
             if opts.check_infer_version && test_outcome == TestOutcome::Passed {
-                test_outcome = run_version_inference_check(contract, &unit, events);
+                test_outcome = run_version_inference_check(contract, &unit, events).unwrap_or(TestOutcome::Failed);
             }
 
             if opts.check_bindings && test_outcome == TestOutcome::Passed {
-                test_outcome = run_bindings_check(contract, &unit, events);
+                test_outcome = run_bindings_check(contract, &unit, events).unwrap_or(TestOutcome::Failed);
             }
         }
         Err(e) => {
@@ -187,14 +187,11 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
     events.test(test_outcome);
 }
 
-fn run_parser_check(contract: &Contract, unit: &CompilationUnit, events: &Events) -> TestOutcome {
-    let mut source_buf = String::new();
-
+fn run_parser_check(contract: &Contract, unit: &CompilationUnit, events: &Events) -> Result<TestOutcome> {
     let mut test_outcome = TestOutcome::Passed;
     for file in unit.files() {
         if !file.errors().is_empty() {
-            source_buf.clear();
-            let _ = contract.read_file(file.id(), &mut source_buf);
+            let source = contract.read_file(file.id())?;
 
             let source_name = contract
                 .import_resolver
@@ -203,7 +200,7 @@ fn run_parser_check(contract: &Contract, unit: &CompilationUnit, events: &Events
 
             for error in file.errors() {
                 let msg =
-                    slang_solidity::diagnostic::render(error, &source_name, &source_buf, true);
+                    slang_solidity::diagnostic::render(error, &source_name, &source, true);
                 events.parse_error(format!(
                     "[{version}] Parse error in contract {contract_name}\n{msg}",
                     contract_name = contract.name,
@@ -214,23 +211,19 @@ fn run_parser_check(contract: &Contract, unit: &CompilationUnit, events: &Events
         }
     }
 
-    test_outcome
+    Ok(test_outcome)
 }
 
 fn run_version_inference_check(
     contract: &Contract,
     unit: &CompilationUnit,
     events: &Events,
-) -> TestOutcome {
-    let mut source_buf = String::new();
-
+) -> Result<TestOutcome> {
     let mut did_fail = false;
     for file in unit.files() {
-        source_buf.clear();
+        let source = contract.read_file(file.id())?;
 
-        let _ = contract.read_file(file.id(), &mut source_buf);
-
-        if !LanguageFacts::infer_language_versions(&source_buf).any(|v| *v == contract.version) {
+        if !LanguageFacts::infer_language_versions(&source).any(|v| *v == contract.version) {
             let source_name = contract
                 .import_resolver
                 .get_real_name(file.id())
@@ -245,9 +238,9 @@ fn run_version_inference_check(
     }
 
     if did_fail {
-        TestOutcome::Failed
+        Ok(TestOutcome::Failed)
     } else {
-        TestOutcome::Passed
+        Ok(TestOutcome::Passed)
     }
 }
 
@@ -255,7 +248,7 @@ fn run_bindings_check(
     contract: &Contract,
     compilation_unit: &CompilationUnit,
     events: &Events,
-) -> TestOutcome {
+) -> Result<TestOutcome> {
     let binding_graph = compilation_unit.binding_graph();
 
     let mut test_outcome = TestOutcome::Passed;
@@ -310,8 +303,7 @@ fn run_bindings_check(
             {
                 let binding_error = BindingError::UnboundIdentifier(cursor.clone());
 
-                let mut source = String::new();
-                let _ = contract.read_file(file.id(), &mut source);
+                let source = contract.read_file(file.id())?;
 
                 let msg =
                     slang_solidity::diagnostic::render(&binding_error, file.id(), &source, true);
@@ -325,7 +317,7 @@ fn run_bindings_check(
         }
     }
 
-    test_outcome
+    Ok(test_outcome)
 }
 
 fn run_show_combined_results_command(command: ShowCombinedResultsCommand) -> Result<()> {

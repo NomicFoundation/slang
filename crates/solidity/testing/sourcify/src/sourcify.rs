@@ -313,13 +313,8 @@ impl Contract {
         self.import_resolver.get_real_name(&self.target)
     }
 
-    // We want to use `file.read_to_string` instead of `File::read_to_string` because the
-    // former allows us to reuse a read buffer, meaning fewer allocations while processing
-    // contracts.
-    #[allow(clippy::verbose_file_reads)]
-    pub fn read_file(&self, name: &str, buffer: &mut String) -> Result<usize> {
-        let mut file = fs::File::open(self.sources_path.join(name))?;
-        file.read_to_string(buffer).map_err(Error::new)
+    pub fn read_file(&self, name: &str) -> Result<String> {
+        self.sources_path.join(name).read_to_string()
     }
 
     pub fn sources_count(&self) -> usize {

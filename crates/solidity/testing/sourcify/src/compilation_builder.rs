@@ -9,7 +9,6 @@ pub struct CompilationBuilder<'c> {
     internal: InternalCompilationBuilder,
     contract: &'c Contract,
     seen_files: HashSet<String>,
-    read_buffer: String,
 }
 
 impl<'c> CompilationBuilder<'c> {
@@ -18,7 +17,6 @@ impl<'c> CompilationBuilder<'c> {
             contract,
             internal: InternalCompilationBuilder::create(contract.version.clone())?,
             seen_files: HashSet::new(),
-            read_buffer: String::new(),
         })
     }
 
@@ -35,12 +33,10 @@ impl<'c> CompilationBuilder<'c> {
             return Ok(());
         }
 
-        self.read_buffer.clear();
-
-        self.contract.read_file(filename, &mut self.read_buffer)?;
+        let source = self.contract.read_file(filename)?;
 
         let AddFileResponse { import_paths } =
-            self.internal.add_file(filename.into(), &self.read_buffer);
+            self.internal.add_file(filename.into(), &source);
 
         for import_path in import_paths {
             let import_path = import_path.node().unparse();
