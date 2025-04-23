@@ -19,6 +19,7 @@ serde_json = { workspace = true }
 slang_solidity = { workspace = true, features = ["__private_ariadne_errors", "__experimental_bindings_api"] }
 strum_macros = { workspace = true }
 tar = { workspace = true }
+url = { workspace = true }
 
 [lints]
 workspace = true

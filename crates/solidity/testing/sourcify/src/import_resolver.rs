@@ -2,6 +2,7 @@ use std::path::{Component, PathBuf};
 use std::str::FromStr;
 
 use anyhow::{bail, Error, Result};
+use url::Url;
 
 pub struct ImportResolver {
     import_remaps: Vec<ImportRemap>,
@@ -270,25 +271,22 @@ fn resolve_relative_import(source_path: &str, import_path: &str) -> Result<Strin
 /// Resolve an import from a source file which was imported using a URL. These need a bit of special handling
 /// because the resolved path needs to also be a URL.
 fn resolve_relative_url_import(source_path: &str, import_path: &str) -> Result<String> {
-    let (proto, rest) = source_path
-        .split_once("://")
-        .ok_or(Error::msg("Cannot parse url"))?;
-    let (host, path) = rest
-        .split_once('/')
-        .ok_or(Error::msg("Cannot parse path"))?;
+    let url = Url::parse(source_path)?;
+
+    let path = url.path();
+    let path = path.strip_prefix('/').unwrap_or(path);
 
     let resolved_path = resolve_relative_import(path, import_path)?;
 
-    let mut res = String::new();
-    res.push_str(proto);
-    res.push_str("://");
-    res.push_str(host);
-    res.push('/');
-    res.push_str(&resolved_path);
-
-    Ok(res)
+    Ok(format!(
+        "{scheme}://{host}/{resolved_path}",
+        scheme = url.scheme(),
+        host = url.host_str().unwrap(),
+    ))
 }
 
 fn path_is_url(path: &str) -> bool {
-    path.starts_with("http") || path.starts_with("ipfs")
+    Url::parse(path)
+        .map(|url| url.is_special())
+        .unwrap_or(false)
 }

@@ -53,9 +53,9 @@ impl<'c> CompilationBuilder<'c> {
                 .contract
                 .import_resolver
                 .resolve_import(filename, import_path)
-                .ok_or(Error::msg(
-                    "Could not resolve import path {import_path} in source file {filename}",
-                ))?;
+                .ok_or(Error::msg(format!(
+                    "Could not resolve import path {import_path} in source file {filename}"
+                )))?;
             self.add_file(&import_real_name)?;
         }
 

@@ -2610,6 +2610,7 @@ dependencies = [
  "slang_solidity",
  "strum_macros",
  "tar",
+ "url",
 ]
 
 [[package]]
