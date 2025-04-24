@@ -1,9 +1,9 @@
-mod model;
 mod diff;
+mod model;
 
+use diff::IrModelDiff;
 pub use model::IrModel;
 use serde::Serialize;
-use diff::IrModelDiff;
 
 #[derive(Serialize)]
 pub struct ModelWithBuilder {
@@ -14,10 +14,7 @@ pub struct ModelWithBuilder {
 impl ModelWithBuilder {
     pub fn new(source: &IrModel, target: IrModel) -> Self {
         let builder = IrModelDiff::diff(source, &target);
-        Self {
-            target,
-            builder,
-        }
+        Self { target, builder }
     }
 }
 

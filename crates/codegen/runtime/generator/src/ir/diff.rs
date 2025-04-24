@@ -83,10 +83,7 @@ impl IrModelDiff {
         }
     }
 
-    fn diff_sequence(
-        source_sequence: &Sequence,
-        target_sequence: &Sequence,
-    ) -> SequenceDiff {
+    fn diff_sequence(source_sequence: &Sequence, target_sequence: &Sequence) -> SequenceDiff {
         // For sequences we compute determine which fields were removed, and if
         // *any* was added (because in that case we cannot generate
         // transformation code). We assume the order of the existing fields is

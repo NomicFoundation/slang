@@ -51,11 +51,7 @@ pub struct Collection {
 
 // Construction
 impl IrModel {
-    pub fn from_language(
-        name: &str,
-        language: &model::Language,
-        minimum_version: Version,
-    ) -> Self {
+    pub fn from_language(name: &str, language: &model::Language, minimum_version: Version) -> Self {
         let builder = IrModelBuilder::create(language, minimum_version);
 
         Self {
@@ -102,7 +98,9 @@ impl IrModel {
 
         for (_, choice) in &mut self.choices {
             choice.nonterminal_types.retain(|item| *item != identifier);
-            choice.non_unique_terminal_types.retain(|item| *item != identifier);
+            choice
+                .non_unique_terminal_types
+                .retain(|item| *item != identifier);
             choice
                 .unique_terminal_types
                 .retain(|item| *item != identifier);
