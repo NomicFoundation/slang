@@ -1,5 +1,5 @@
-#[path = "ast/generated/mod.rs"]
-pub mod ast;
+#[path = "l1_typed_cst/generated/mod.rs"]
+pub mod l1_typed_cst;
 
-#[path = "l1/generated/mod.rs"]
-pub mod l1;
+#[path = "l2_flat_contracts/generated/mod.rs"]
+pub mod l2_flat_contracts;

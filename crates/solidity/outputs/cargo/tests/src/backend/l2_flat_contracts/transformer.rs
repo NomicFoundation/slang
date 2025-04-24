@@ -1,8 +1,8 @@
 use std::rc::Rc;
 
 use anyhow::{anyhow, Result};
-use slang_solidity::backend::l1::transformer::Transformer;
-use slang_solidity::backend::{ast, l1};
+use slang_solidity::backend::l2_flat_contracts::transformer::Transformer;
+use slang_solidity::backend::{l1_typed_cst, l2_flat_contracts};
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
 
@@ -11,8 +11,8 @@ struct AstToL1 {}
 impl Transformer for AstToL1 {
     fn transform_contract_definition(
         &mut self,
-        source: &ast::ContractDefinition,
-    ) -> l1::ContractDefinition {
+        source: &l1_typed_cst::ContractDefinition,
+    ) -> l2_flat_contracts::ContractDefinition {
         let node_id = source.node_id;
         let abstract_keyword = source.abstract_keyword.as_ref().map(Rc::clone);
         let name = Rc::clone(&source.name);
@@ -21,7 +21,9 @@ impl Transformer for AstToL1 {
             .specifiers
             .iter()
             .find_map(|specifier| {
-                if let ast::ContractSpecifier::InheritanceSpecifier(inheritance) = specifier {
+                if let l1_typed_cst::ContractSpecifier::InheritanceSpecifier(inheritance) =
+                    specifier
+                {
                     Some(self.transform_inheritance_types(&inheritance.types))
                 } else {
                     None
@@ -29,14 +31,16 @@ impl Transformer for AstToL1 {
             })
             .unwrap_or_default();
         let storage_layout = source.specifiers.iter().find_map(|specifier| {
-            if let ast::ContractSpecifier::StorageLayoutSpecifier(storage_layout) = specifier {
+            if let l1_typed_cst::ContractSpecifier::StorageLayoutSpecifier(storage_layout) =
+                specifier
+            {
                 Some(self.transform_storage_layout_specifier(storage_layout))
             } else {
                 None
             }
         });
 
-        Rc::new(l1::ContractDefinitionStruct {
+        Rc::new(l2_flat_contracts::ContractDefinitionStruct {
             node_id,
             abstract_keyword,
             name,
@@ -58,22 +62,24 @@ contract Test is Base layout at 0 {}
     );
     assert!(output.is_valid());
 
-    let ast_source =
-        ast::builder::build_source_unit(output.create_tree_cursor()).map_err(|s| anyhow!(s))?;
+    let ast_source = l1_typed_cst::builder::build_source_unit(output.create_tree_cursor())
+        .map_err(|s| anyhow!(s))?;
 
     let mut transformer = AstToL1 {};
     let l1 = transformer.transform_source_unit(&ast_source);
 
     assert_eq!(2, l1.members.len());
 
-    let l1::SourceUnitMember::ContractDefinition(base_contract) = &l1.members[0] else {
+    let l2_flat_contracts::SourceUnitMember::ContractDefinition(base_contract) = &l1.members[0]
+    else {
         panic!("Expected ContractDefinition");
     };
     assert_eq!("Base", base_contract.name.unparse());
     assert!(base_contract.inheritance_types.is_empty());
     assert!(base_contract.storage_layout.is_none());
 
-    let l1::SourceUnitMember::ContractDefinition(test_contract) = &l1.members[1] else {
+    let l2_flat_contracts::SourceUnitMember::ContractDefinition(test_contract) = &l1.members[1]
+    else {
         panic!("Expected ContractDefinition");
     };
     assert_eq!("Test", test_contract.name.unparse());
