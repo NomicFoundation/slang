@@ -24,7 +24,7 @@ pub fn test_single_contract(
     run_test(&contract, &events, opts);
     events.finish_archive();
 
-    return Ok(());
+    Ok(())
 }
 
 pub fn run_with_trace(archive: &ContractArchive, events: &Events, opts: &TestOptions) {
