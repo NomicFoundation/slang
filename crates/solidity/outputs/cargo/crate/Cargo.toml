@@ -30,6 +30,7 @@ categories = [
 default = []
 __experimental_bindings_api = ["dep:metaslang_bindings"]
 __private_ariadne_errors = ["dep:ariadne"]
+__private_backend_api = []
 __private_compilation_api = []
 __private_testing_utils = []
 
