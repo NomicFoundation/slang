@@ -2,14 +2,14 @@ use std::rc::Rc;
 
 use anyhow::{anyhow, Result};
 use slang_solidity::backend::ast;
-use slang_solidity::backend::ast::mutator::Mutator;
+use slang_solidity::backend::ast::rewriter::Rewriter;
 use slang_solidity::cst::{TerminalKind, TerminalNode};
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
 
 struct Cloner {}
 
-impl Mutator for Cloner {}
+impl Rewriter for Cloner {}
 
 #[test]
 fn test_copy_source_unit_ast() -> Result<()> {
@@ -36,7 +36,7 @@ contract MyContract {
         ast::builder::build_source_unit(output.create_tree_cursor()).map_err(|s| anyhow!(s))?;
 
     let mut cloner = Cloner {};
-    let ast = cloner.mutate_source_unit(&source);
+    let ast = cloner.rewrite_source_unit(&source);
 
     assert_eq!(2, ast.members.len());
     assert!(matches!(
@@ -97,15 +97,15 @@ contract MyContract {
     Ok(())
 }
 
-// A constant folding mutator that can only fold multiplication of unit-less
+// A constant folding rewriter that can only fold multiplication of unit-less
 // decimal numbers that use an underlying 64-bit floating point type
 struct ConstantFolder {}
 
-impl Mutator for ConstantFolder {
-    fn mutate_expression(&mut self, source: &ast::Expression) -> ast::Expression {
+impl Rewriter for ConstantFolder {
+    fn rewrite_expression(&mut self, source: &ast::Expression) -> ast::Expression {
         if let ast::Expression::MultiplicativeExpression(multiplicative_expression) = source {
-            let left_operand = self.mutate_expression(&multiplicative_expression.left_operand);
-            let right_operand = self.mutate_expression(&multiplicative_expression.right_operand);
+            let left_operand = self.rewrite_expression(&multiplicative_expression.left_operand);
+            let right_operand = self.rewrite_expression(&multiplicative_expression.right_operand);
             return if let (
                 ast::Expression::DecimalNumberExpression(left_decimal),
                 ast::Expression::DecimalNumberExpression(right_decimal),
@@ -136,7 +136,7 @@ impl Mutator for ConstantFolder {
                 ))
             };
         }
-        self.default_mutate_expression(source)
+        self.default_rewrite_expression(source)
     }
 }
 
@@ -157,7 +157,7 @@ function weeksToSeconds(uint _weeks) returns (uint) {
         ast::builder::build_source_unit(output.create_tree_cursor()).map_err(|s| anyhow!(s))?;
 
     let mut constant_folder = ConstantFolder {};
-    let ast = constant_folder.mutate_source_unit(&source);
+    let ast = constant_folder.rewrite_source_unit(&source);
 
     let ast::SourceUnitMember::FunctionDefinition(weeks_to_seconds) = &ast.members[0] else {
         panic!("Expected FunctionDefinition")

@@ -1,5 +1,5 @@
 {%- if rendering_in_stubs -%}
-  // No Intermediate Representation mutator in stubs...
+  // No Intermediate Representation rewriter in stubs...
 {%- else -%}
   #![allow(clippy::too_many_lines)]
 
@@ -7,19 +7,19 @@
   #[allow(clippy::wildcard_imports)]
   use super::nodes::*;
 
-  pub trait Mutator {
+  pub trait Rewriter {
     //
     // Sequences:
     //
     {% for parent_type, sequence in target.sequences %}
-      fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
+      fn rewrite_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         {% for field in sequence.fields %}
           {%- if field.is_optional -%}
             let {{ field.label }} = source.{{ field.label }}.as_ref().map(
               {%- if field.is_terminal -%}
                 Rc::clone
               {%- else -%}
-                |value| self.mutate_{{ field.type | snake_case }}(value)
+                |value| self.rewrite_{{ field.type | snake_case }}(value)
               {%- endif -%}
             );
           {%- else -%}
@@ -27,7 +27,7 @@
             {%- if field.is_terminal -%}
               Rc::clone(&source.{{ field.label }})
             {%- else -%}
-              self.mutate_{{ field.type | snake_case }}(&source.{{ field.label }})
+              self.rewrite_{{ field.type | snake_case }}(&source.{{ field.label }})
             {%- endif -%}
             ;
           {%- endif -%}
@@ -46,11 +46,11 @@
     // Choices:
     //
     {% for parent_type, choice in target.choices %}
-      fn default_mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
+      fn default_rewrite_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         match source {
           {% for nonterminal in choice.nonterminal_types -%}
             {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
-              {{ parent_type }}::{{ nonterminal }}(self.mutate_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}))
+              {{ parent_type }}::{{ nonterminal }}(self.rewrite_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}))
             }
           {%- endfor %}
           {%- for terminal in choice.non_unique_terminal_types -%}
@@ -61,8 +61,8 @@
           {%- endfor -%}
         }
       }
-      fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
-        self.default_mutate_{{ parent_type | snake_case }}(source)
+      fn rewrite_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
+        self.default_rewrite_{{ parent_type | snake_case }}(source)
       }
     {% endfor %}
 
@@ -70,12 +70,12 @@
     // Repeated & Separated
     //
     {% for parent_type, collection in target.collections %}
-      fn mutate_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
+      fn rewrite_{{ parent_type | snake_case }}(&mut self, source: &{{ parent_type }}) -> {{ parent_type }} {
         source.iter().map(
           {%- if collection.is_terminal -%}
             Rc::clone
           {%- else -%}
-            |item| self.mutate_{{ collection.item_type | snake_case }}(item)
+            |item| self.rewrite_{{ collection.item_type | snake_case }}(item)
           {%- endif -%}
         ).collect()
       }

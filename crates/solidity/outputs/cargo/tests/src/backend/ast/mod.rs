@@ -1,3 +1,3 @@
 mod builder;
-mod mutator;
+mod rewriter;
 mod visitor;
