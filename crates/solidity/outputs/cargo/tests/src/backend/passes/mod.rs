@@ -91,7 +91,7 @@ fn test_backend_pipeline() -> Result<()> {
     let unit_l1 = l1_typed_cst::CompilationUnit::build(&compilation_unit).unwrap();
     assert_eq!(2, unit_l1.files.len());
 
-    let unit_l2 = l2_flat_contracts::CompilationUnit::from_ast(&unit_l1);
+    let unit_l2 = l2_flat_contracts::CompilationUnit::from_l1(&unit_l1);
     assert_eq!(2, unit_l2.files.len());
 
     Ok(())

@@ -11,16 +11,13 @@ pub struct CompilationUnit {
 }
 
 impl CompilationUnit {
-    pub fn from_ast(unit_ast: &input::CompilationUnit) -> Self {
-        let mut ast_to_l1 = FromL1 {};
-        let files = unit_ast
+    pub fn from_l1(unit_l1: &input::CompilationUnit) -> Self {
+        let mut l1_to_l2 = FromL1 {};
+        let files = unit_l1
             .files
             .iter()
             .map(|(file_id, source_unit)| {
-                (
-                    file_id.clone(),
-                    ast_to_l1.transform_source_unit(source_unit),
-                )
+                (file_id.clone(), l1_to_l2.transform_source_unit(source_unit))
             })
             .collect();
         Self { files }

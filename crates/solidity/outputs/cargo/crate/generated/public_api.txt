@@ -6204,7 +6204,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::CatchClauseStruct::fmt(&self,
 pub struct slang_solidity::backend::l2_flat_contracts::CompilationUnit
 pub slang_solidity::backend::l2_flat_contracts::CompilationUnit::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
 impl slang_solidity::backend::l2_flat_contracts::CompilationUnit
-pub fn slang_solidity::backend::l2_flat_contracts::CompilationUnit::from_ast(unit_ast: &slang_solidity::backend::l1_typed_cst::CompilationUnit) -> Self
+pub fn slang_solidity::backend::l2_flat_contracts::CompilationUnit::from_l1(unit_l1: &slang_solidity::backend::l1_typed_cst::CompilationUnit) -> Self
 pub struct slang_solidity::backend::l2_flat_contracts::ConditionalExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::ConditionalExpressionStruct::false_expression: slang_solidity::backend::l2_flat_contracts::Expression
 pub slang_solidity::backend::l2_flat_contracts::ConditionalExpressionStruct::node_id: metaslang_cst::nodes::NodeId
