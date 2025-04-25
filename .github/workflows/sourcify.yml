@@ -25,7 +25,28 @@ on:
         type: "boolean"
         required: false
         default: false
-
+  workflow_call:
+    inputs:
+      chain:
+        description: "Name of the chain/SOURCIFY to run against, e.g. 'ethereum' or 'tron'."
+        type: "string"
+        required: true
+        default: "ethereum"
+      network:
+        description: "Name of the sub-network to run against, e.g. 'mainnet' or 'testnet'."
+        type: "string"
+        required: true
+        default: "mainnet"
+      check_bindings:
+        description: "Check name bindings on contracts, failing if there's any unresolved symbol."
+        type: "boolean"
+        required: false
+        default: false
+      check_infer_version:
+        description: "Check that we can infer the correct language version based on the available version pragmas."
+        type: "boolean"
+        required: false
+        default: false
 jobs:
   singleShard:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)

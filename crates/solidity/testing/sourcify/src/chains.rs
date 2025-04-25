@@ -9,9 +9,8 @@ use strum_macros::AsRefStr;
 #[strum(serialize_all = "lowercase")]
 pub enum Chain {
     Arbitrum { network: ArbitrumNetwork },
-    Avalanche { network: AvalancheNetwork },
+    Base { network: BaseNetwork },
     Ethereum { network: EthereumNetwork },
-    Fantom { network: FantomNetwork },
     Polygon { network: PolygonNetwork },
 }
 
@@ -29,9 +28,8 @@ impl Chain {
     pub fn id(self) -> ChainId {
         match self {
             Chain::Arbitrum { network } => ChainId(network as u64),
-            Chain::Avalanche { network } => ChainId(network as u64),
+            Chain::Base { network } => ChainId(network as u64),
             Chain::Ethereum { network } => ChainId(network as u64),
-            Chain::Fantom { network } => ChainId(network as u64),
             Chain::Polygon { network } => ChainId(network as u64),
         }
     }
@@ -43,9 +41,8 @@ impl Chain {
     pub fn network_name(&self) -> &str {
         match self {
             Chain::Arbitrum { network } => network.as_ref(),
-            Chain::Avalanche { network } => network.as_ref(),
+            Chain::Base { network } => network.as_ref(),
             Chain::Ethereum { network } => network.as_ref(),
-            Chain::Fantom { network } => network.as_ref(),
             Chain::Polygon { network } => network.as_ref(),
         }
     }
@@ -55,31 +52,21 @@ impl Chain {
 #[strum(serialize_all = "lowercase")]
 pub enum ArbitrumNetwork {
     One = 42161,
-    Nova = 42170,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, ValueEnum, AsRefStr)]
 #[strum(serialize_all = "lowercase")]
-pub enum AvalancheNetwork {
-    CChain = 43114,
-    Testnet = 43113,
+pub enum BaseNetwork {
+    Mainnet = 8453,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, ValueEnum, AsRefStr)]
 pub enum EthereumNetwork {
     Mainnet = 1,
-    Sepolia = 11155111,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, ValueEnum, AsRefStr)]
-#[strum(serialize_all = "lowercase")]
-pub enum FantomNetwork {
-    Opera = 250,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, ValueEnum, AsRefStr)]
 #[strum(serialize_all = "lowercase")]
 pub enum PolygonNetwork {
     Mainnet = 137,
-    Amoy = 80002,
 }

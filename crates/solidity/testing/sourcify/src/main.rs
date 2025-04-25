@@ -79,7 +79,7 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
         for archive_desc in manifest.archives() {
             match ContractArchive::fetch(archive_desc) {
                 Ok(archive) => t.send(archive).unwrap(),
-                Err(e) => eprintln!("Failed to fetch archive {}:\n{e}", archive_desc.url)
+                Err(e) => eprintln!("Failed to fetch archive {}:\n{e}", archive_desc.url),
             }
         }
     };

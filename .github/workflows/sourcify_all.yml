@@ -1,0 +1,36 @@
+name: "sourcify_all"
+
+on:
+  workflow_dispatch:
+    inputs:
+      check_bindings:
+        description: "Check name bindings on contracts, failing if there's any unresolved symbol."
+        type: "boolean"
+        required: false
+        default: false
+      check_infer_version:
+        description: "Check that we can infer the correct language version based on the available version pragmas."
+        type: "boolean"
+        required: false
+        default: false
+jobs:
+  run_tests:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    uses: "./.github/workflows/sourcify.yml"
+    with:
+      chain: "${matrix.chains.name}"
+      network: "${matrix.chains.network}"
+      check_bindings: "${inputs.check_bindings}"
+      check_infer_version: "${inputs.check_infer_version}"
+    strategy:
+      fail-fast: false
+      matrix:
+        chains:
+          - name: "arbitrum"
+            network: "one"
+          - name: "base"
+            network: "mainnet"
+          - name: "ethereum"
+            network: "mainnet"
+          - name: "polygon"
+            network: "mainnet"
