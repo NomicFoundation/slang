@@ -233,7 +233,15 @@ fn uses_exotic_parser_bug(contract: &Contract) -> bool {
     static CONTRACTS_WITH_EXOTIC_PARSER_BUGS: &[&str] = &[
         // 0.4.24: // Accepts malformed `* /` in multi-line comments:
         // Fixed in 0.4.25: https://github.com/ethereum/solidity/pull/4937
-        "0x79bb6f4492d5cb13fad8ca0ecfbccd9e2c26ac42",
+        "0x79Bb6f4492D5CB13Fad8cA0ecfBccD9e2c26ac42",
+        // 0.5.11: Double `indexed` keyword
+        // Fixed in 0.8.18: https://github.com/ethereum/solidity/blob/develop/Changelog.md#0818-2023-02-01
+        "0x9F4F8Cb4863D3467F03773cC4c172837106C21D8",
+        // 0.5.16: Double `indexed` keyword
+        // Fixed in 0.8.18: https://github.com/ethereum/solidity/blob/develop/Changelog.md#0818-2023-02-01
+        "0xDe201dAec04ba73166d9917Fdf08e1728E270F06",
+        // 0.4.19: Unclosed multi-line comment at EOF
+        "0xf330AA697a1128B7A2D2204F6794afe0cAAF58FC",
     ];
 
     CONTRACTS_WITH_EXOTIC_PARSER_BUGS
