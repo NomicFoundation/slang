@@ -62,8 +62,8 @@ contract Test is Base layout at 0 {}
     );
     assert!(output.is_valid());
 
-    let ast_source = l1_typed_cst::builder::build_source_unit(output.create_tree_cursor())
-        .map_err(|s| anyhow!(s))?;
+    let ast_source =
+        l1_typed_cst::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
 
     let mut transformer = AstToL1 {};
     let l1 = transformer.transform_source_unit(&ast_source);

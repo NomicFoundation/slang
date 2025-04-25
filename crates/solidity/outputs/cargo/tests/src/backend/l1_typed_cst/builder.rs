@@ -24,8 +24,7 @@ contract MyContract {
     );
     assert!(output.is_valid());
 
-    let ast = l1_typed_cst::builder::build_source_unit(output.create_tree_cursor())
-        .map_err(|s| anyhow!(s))?;
+    let ast = l1_typed_cst::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
     assert_eq!(2, ast.members.len());
     assert!(matches!(
         ast.members[0],

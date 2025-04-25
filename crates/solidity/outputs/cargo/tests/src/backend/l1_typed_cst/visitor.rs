@@ -83,8 +83,7 @@ contract Counter is Ownable {
     );
     assert!(output.is_valid());
 
-    let ast = l1_typed_cst::builder::build_source_unit(output.create_tree_cursor())
-        .map_err(|s| anyhow!(s))?;
+    let ast = l1_typed_cst::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
 
     let mut visitor = CounterVisitor::new(true);
     l1_typed_cst::visitor::accept_source_unit(&ast, &mut visitor);
