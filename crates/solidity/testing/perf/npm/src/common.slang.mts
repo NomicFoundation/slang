@@ -7,6 +7,7 @@ import assert from "node:assert";
 import * as slang_raw from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
 import { exit } from "node:process";
 import path from "node:path";
+import { Test } from "./common.mjs";
 
 export class Record {
   file: string;
@@ -70,6 +71,13 @@ export function createBuilder(languageVersion: string, directory: string): Compi
   return builder;
 }
 
+export class SlangTest implements Test<void> {
+  public name = "slang";
+
+  async test(languageVersion: string, dir: string, file: string) {
+    testFile(languageVersion, dir, file);
+  }
+}
 
 export async function testFile(languageVersion: string, dir: string, file: string, expectedDefs?: number, expectedRefs?: number): Promise<Record> {
   let gotoDefTimes: number[] = Array();
