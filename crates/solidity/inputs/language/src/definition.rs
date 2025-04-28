@@ -6638,12 +6638,8 @@ codegen_language_macros::compile!(Language(
                 ),
                 BuiltInFunction(name = "callvalue", parameters = [], return_type = "uint256"),
                 BuiltInFunction(
-                    name = "codecopy", 
-                    parameters = [
-                        "uint256 t",
-                        "uint256 f",
-                        "uint256 s"
-                    ]
+                    name = "codecopy",
+                    parameters = ["uint256 t", "uint256 f", "uint256 s"]
                 ),
                 BuiltInFunction(name = "codesize", parameters = [], return_type = "uint256"),
                 BuiltInFunction(name = "coinbase", parameters = [], return_type = "uint256"),
