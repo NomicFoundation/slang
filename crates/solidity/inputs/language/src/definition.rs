@@ -6642,8 +6642,8 @@ codegen_language_macros::compile!(Language(
                     parameters = [
                         "uint256 t",
                         "uint256 f",
-                        "uint256 s",
-                    ],
+                        "uint256 s"
+                    ]
                 ),
                 BuiltInFunction(name = "codesize", parameters = [], return_type = "uint256"),
                 BuiltInFunction(name = "coinbase", parameters = [], return_type = "uint256"),
