@@ -169,7 +169,8 @@ fn run_bindings_check(
         if reference.definitions().is_empty() {
             let cursor = reference.get_cursor().to_owned();
 
-            let source = cursor.node().unparse();
+            let source = contract.read_file(ref_file.get_path()).unwrap_or_default();
+
             let binding_error = BindingError::UnresolvedReference(cursor);
             let msg = slang_solidity::diagnostic::render(
                 &binding_error,
