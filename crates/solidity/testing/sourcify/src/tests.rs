@@ -198,8 +198,10 @@ fn run_bindings_check(
             if matches!(
                 cursor.ancestors().next(),
                 Some(ancestor)
-                // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
-                if ancestor.kind == NonterminalKind::ExperimentalFeature
+                // Ignore identifiers in certain pragma contexts
+                // `pragma experimental`: they are unbound feature names
+                // `pragma abicoder`: they are unbound abi version names
+                if ancestor.kind == NonterminalKind::ExperimentalFeature || ancestor.kind == NonterminalKind::AbicoderPragma
             ) {
                 continue;
             }
