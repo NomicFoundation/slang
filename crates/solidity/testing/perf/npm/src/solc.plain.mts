@@ -59,7 +59,9 @@ export function testFile(languageVersion: string, dir: string, file: string) {
     }
     `;
   const parsing_result = JSON.parse(solc.default.compile(folderMeta, { import: findImports(dir) }));
-
+  if (process.argv.includes("--verbose")) {
+    console.log(parsing_result);
+  }
   assert(parsing_result["sources"] != undefined);
   if (parsing_result["errors"] && !parsing_result["errors"].every((value: any) => value["type"] == "Warning")) {
     console.log(parsing_result["errors"]);

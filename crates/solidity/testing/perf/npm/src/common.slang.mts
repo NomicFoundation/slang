@@ -75,7 +75,7 @@ export class SlangTest implements Test<void> {
   public name = "slang";
 
   async test(languageVersion: string, dir: string, file: string) {
-    testFile(languageVersion, dir, file);
+    await testFile(languageVersion, dir, file);
   }
 }
 

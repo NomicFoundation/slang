@@ -1,4 +1,4 @@
-import { SlangTest, Record } from "./common.slang.mjs";
+import { SlangTest } from "./common.slang.mjs";
 import path from "node:path";
 import { SolcPlainTest } from "./solc.plain.mjs";
 import { checkCI, Test } from "./common.mjs";
@@ -24,12 +24,13 @@ async function run(solidityVersion: string, dir: string, file: string): Promise<
   const measure = new Measure();
   measure.name = path.parse(file).name;
 
-  const tests: Test<void | Record>[] = [new SlangTest(), new SolcPlainTest(), new SolcTypedAstTest()];
-  tests.forEach(async test => {
+  const tests: Test<void>[] = [new SlangTest(), new SolcPlainTest(), new SolcTypedAstTest()];
+
+  for (const test of tests) {
     const start = performance.now();
     await test.test(solidityVersion, dir, file);
     measure.timings.push(new Timing(test.name, performance.now() - start));
-  });
+  };
 
   return measure;
 }
@@ -57,7 +58,8 @@ checkCI();
 const options = commandLineArgs([
   { name: "version", type: String },
   { name: "dir", type: String },
-  { name: "file", type: String }
+  { name: "file", type: String },
+  { name: "verbose", type: Boolean, defaultValue: false }
 ]);
 
 const [version, dir, file] = [options["version"], options["dir"], options["file"]];
