@@ -1,9 +1,11 @@
+use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use infra_utils::commands::Command;
+use itertools::Itertools;
 use serde::Deserialize;
 
 #[derive(Clone, Debug, ValueEnum, PartialEq, Eq, PartialOrd, Ord)]
@@ -29,19 +31,17 @@ pub struct NpmController {
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Output {
+pub struct Measure {
     #[allow(dead_code)]
     pub name: String,
-    pub cold_slang: f64,
-    pub cold_solc: f64,
-    pub cold_ratio: f64,
-    pub cold_heap: i64,
-    pub cold_external: i64,
-    pub hot_slang: f64,
-    pub hot_solc: f64,
-    pub hot_ratio: f64,
-    pub hot_heap: i64,
-    pub hot_external: i64,
+    pub timings: Vec<Timing>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Timing {
+    pub component: String,
+    pub time: f64,
 }
 
 impl NpmController {
@@ -106,31 +106,41 @@ impl NpmController {
                 results.push(result);
             }
         }
-        Self::add_summary(&mut results);
+        let summary = Self::add_summary(&results);
+        if let Some(summary) = summary {
+            results.push(summary);
+        }
         println!("{results:?}");
         Ok(())
     }
 
-    fn add_summary(results: &mut Vec<Output>) {
-        let len = i64::try_from(results.len()).unwrap();
-        if len > 1 {
+    fn add_summary(results: &Vec<Measure>) -> Option<Measure> {
+        let mut per_component = HashMap::new();
+        for result in results {
+            for timing in &result.timings {
+                per_component
+                    .entry(timing.component.clone())
+                    .or_insert_with(Vec::new)
+                    .push(timing.time);
+            }
+        }
+
+        if results.len() <= 1 {
+            None
+        } else {
             #[allow(clippy::cast_precision_loss)]
-            let len_f = len as f64;
-            let summary = Output {
+            let summary = Measure {
                 name: "Summary".to_string(),
-                cold_slang: results.iter().map(|r| r.cold_slang).sum::<f64>() / len_f,
-                cold_solc: results.iter().map(|r| r.cold_solc).sum::<f64>() / len_f,
-                cold_ratio: results.iter().map(|r| r.cold_ratio).sum::<f64>() / len_f,
-                cold_heap: results.iter().map(|r| r.cold_heap).sum::<i64>() / len,
-                cold_external: results.iter().map(|r| r.cold_external).sum::<i64>() / len,
-                hot_slang: results.iter().map(|r| r.hot_slang).sum::<f64>() / len_f,
-                hot_solc: results.iter().map(|r| r.hot_solc).sum::<f64>() / len_f,
-                hot_ratio: results.iter().map(|r| r.hot_ratio).sum::<f64>() / len_f,
-                hot_heap: results.iter().map(|r| r.hot_heap).sum::<i64>() / len,
-                hot_external: results.iter().map(|r| r.hot_external).sum::<i64>() / len,
+                timings: per_component
+                    .iter()
+                    .map(|component| Timing {
+                        component: component.0.clone(),
+                        time: component.1.iter().sum::<f64>() / component.1.len() as f64,
+                    })
+                    .collect_vec(),
             };
 
-            results.push(summary);
+            Some(summary)
         }
     }
 
@@ -139,22 +149,25 @@ impl NpmController {
         compiler_version: &str,
         path: &Path,
         fully_qualified_name: &str,
-    ) -> Result<Output, anyhow::Error> {
+    ) -> Result<Measure, anyhow::Error> {
         let command = Command::new("npx")
             .arg("tsx")
             .flag("--trace-uncaught")
             .flag("--expose-gc")
-            .arg("crates/solidity/testing/perf/npm/src/slang.vs.solc.mts")
+            .arg("crates/solidity/testing/perf/npm/src/comparisons.mts")
             .property("--version", compiler_version)
             .property("--dir", path.to_string_lossy())
             .property("--file", fully_qualified_name)
             .args(&self.extra_args);
         let result = command.evaluate()?;
 
-        let output: Output = serde_json::from_str(&result)
-            .map_err(|e| anyhow::anyhow!("Failed to parse JSON output: {}", e))?;
-
-        Ok(output)
+        match serde_json::from_str(&result) {
+            Ok(output) => Ok(output),
+            Err(e) => {
+                eprintln!("Error: Can't parse output as json.\n\tOutput: {result}");
+                Err(e.into())
+            }
+        }
     }
 
     #[allow(clippy::unnecessary_wraps)]

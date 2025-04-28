@@ -7,6 +7,15 @@ import * as solc08 from "solc08";
 import * as solc089 from "solc089";
 import * as solc0812 from "solc0812";
 import * as solc0823 from "solc0823";
+import { Test } from "./common.mjs";
+
+export class SolcPlainTest implements Test<void> {
+  public name = "solc plain";
+
+  async test(languageVersion: string, dir: string, file: string) {
+    testFile(languageVersion, dir, file);
+  }
+}
 
 export function testFile(languageVersion: string, dir: string, file: string) {
   var solc = undefined;
