@@ -64,184 +64,190 @@ References and definitions:
  21 │             chainid()
     │             ───┬───  
     │                ╰───── ref: built-in
- 22 │             coinbase()
+ 22 │             codecopy()
     │             ────┬───  
     │                 ╰───── ref: built-in
- 23 │             create()
+ 23 │             codesize()
+    │             ────┬───  
+    │                 ╰───── ref: built-in
+ 24 │             coinbase()
+    │             ────┬───  
+    │                 ╰───── ref: built-in
+ 25 │             create()
     │             ───┬──  
     │                ╰──── ref: built-in
- 24 │             create2()
+ 26 │             create2()
     │             ───┬───  
     │                ╰───── ref: built-in
- 25 │             delegatecall()
+ 27 │             delegatecall()
     │             ──────┬─────  
     │                   ╰─────── ref: built-in
- 26 │             div()
+ 28 │             div()
     │             ─┬─  
     │              ╰─── ref: built-in
- 27 │             eq()
+ 29 │             eq()
     │             ─┬  
     │              ╰── ref: built-in
- 28 │             exp()
+ 30 │             exp()
     │             ─┬─  
     │              ╰─── ref: built-in
- 29 │             extcodecopy()
+ 31 │             extcodecopy()
     │             ─────┬─────  
     │                  ╰─────── ref: built-in
- 30 │             extcodehash()
+ 32 │             extcodehash()
     │             ─────┬─────  
     │                  ╰─────── ref: built-in
- 31 │             extcodesize()
+ 33 │             extcodesize()
     │             ─────┬─────  
     │                  ╰─────── ref: built-in
- 32 │             gas()
+ 34 │             gas()
     │             ─┬─  
     │              ╰─── ref: built-in
- 33 │             gaslimit()
+ 35 │             gaslimit()
     │             ────┬───  
     │                 ╰───── ref: built-in
- 34 │             gasprice()
+ 36 │             gasprice()
     │             ────┬───  
     │                 ╰───── ref: built-in
- 35 │             gt()
+ 37 │             gt()
     │             ─┬  
     │              ╰── ref: built-in
- 36 │             invalid()
+ 38 │             invalid()
     │             ───┬───  
     │                ╰───── ref: built-in
- 37 │             iszero()
+ 39 │             iszero()
     │             ───┬──  
     │                ╰──── ref: built-in
- 38 │             keccak256()
+ 40 │             keccak256()
     │             ────┬────  
     │                 ╰────── ref: built-in
- 39 │             log0()
+ 41 │             log0()
     │             ──┬─  
     │               ╰─── ref: built-in
- 40 │             log1()
+ 42 │             log1()
     │             ──┬─  
     │               ╰─── ref: built-in
- 41 │             log2()
+ 43 │             log2()
     │             ──┬─  
     │               ╰─── ref: built-in
- 42 │             log3()
+ 44 │             log3()
     │             ──┬─  
     │               ╰─── ref: built-in
- 43 │             log4()
+ 45 │             log4()
     │             ──┬─  
     │               ╰─── ref: built-in
- 44 │             lt()
+ 46 │             lt()
     │             ─┬  
     │              ╰── ref: built-in
- 45 │             mcopy()
+ 47 │             mcopy()
     │             ──┬──  
     │               ╰──── ref: built-in
- 46 │             mload()
+ 48 │             mload()
     │             ──┬──  
     │               ╰──── ref: built-in
- 47 │             mod()
+ 49 │             mod()
     │             ─┬─  
     │              ╰─── ref: built-in
- 48 │             msize()
+ 50 │             msize()
     │             ──┬──  
     │               ╰──── ref: built-in
- 49 │             mstore()
+ 51 │             mstore()
     │             ───┬──  
     │                ╰──── ref: built-in
- 50 │             mstore8()
+ 52 │             mstore8()
     │             ───┬───  
     │                ╰───── ref: built-in
- 51 │             mul()
+ 53 │             mul()
     │             ─┬─  
     │              ╰─── ref: built-in
- 52 │             mulmod()
+ 54 │             mulmod()
     │             ───┬──  
     │                ╰──── ref: built-in
- 53 │             not()
+ 55 │             not()
     │             ─┬─  
     │              ╰─── ref: built-in
- 54 │             number()
+ 56 │             number()
     │             ───┬──  
     │                ╰──── ref: built-in
- 55 │             or()
+ 57 │             or()
     │             ─┬  
     │              ╰── ref: built-in
- 56 │             origin()
+ 58 │             origin()
     │             ───┬──  
     │                ╰──── ref: built-in
- 57 │             pop()
+ 59 │             pop()
     │             ─┬─  
     │              ╰─── ref: built-in
- 58 │             prevrandao()
+ 60 │             prevrandao()
     │             ─────┬────  
     │                  ╰────── ref: built-in
- 59 │             return()
+ 61 │             return()
     │             ───┬──  
     │                ╰──── ref: built-in
- 60 │             returndatacopy()
+ 62 │             returndatacopy()
     │             ───────┬──────  
     │                    ╰──────── ref: built-in
- 61 │             returndatasize()
+ 63 │             returndatasize()
     │             ───────┬──────  
     │                    ╰──────── ref: built-in
- 62 │             revert()
+ 64 │             revert()
     │             ───┬──  
     │                ╰──── ref: built-in
- 63 │             sar()
+ 65 │             sar()
     │             ─┬─  
     │              ╰─── ref: built-in
- 64 │             sdiv()
+ 66 │             sdiv()
     │             ──┬─  
     │               ╰─── ref: built-in
- 65 │             selfbalance()
+ 67 │             selfbalance()
     │             ─────┬─────  
     │                  ╰─────── ref: built-in
- 66 │             selfdestruct()
+ 68 │             selfdestruct()
     │             ──────┬─────  
     │                   ╰─────── ref: built-in
- 67 │             sgt()
+ 69 │             sgt()
     │             ─┬─  
     │              ╰─── ref: built-in
- 68 │             shl()
+ 70 │             shl()
     │             ─┬─  
     │              ╰─── ref: built-in
- 69 │             shr()
+ 71 │             shr()
     │             ─┬─  
     │              ╰─── ref: built-in
- 70 │             signextend()
+ 72 │             signextend()
     │             ─────┬────  
     │                  ╰────── ref: built-in
- 71 │             sload()
+ 73 │             sload()
     │             ──┬──  
     │               ╰──── ref: built-in
- 72 │             slt()
+ 74 │             slt()
     │             ─┬─  
     │              ╰─── ref: built-in
- 73 │             smod()
+ 75 │             smod()
     │             ──┬─  
     │               ╰─── ref: built-in
- 74 │             sstore()
+ 76 │             sstore()
     │             ───┬──  
     │                ╰──── ref: built-in
- 75 │             staticcall()
+ 77 │             staticcall()
     │             ─────┬────  
     │                  ╰────── ref: built-in
- 76 │             stop()
+ 78 │             stop()
     │             ──┬─  
     │               ╰─── ref: built-in
- 77 │             sub()
+ 79 │             sub()
     │             ─┬─  
     │              ╰─── ref: built-in
- 78 │             timestamp()
+ 80 │             timestamp()
     │             ────┬────  
     │                 ╰────── ref: built-in
- 79 │             tload()
+ 81 │             tload()
     │             ──┬──  
     │               ╰──── ref: built-in
- 80 │             tstore()
+ 82 │             tstore()
     │             ───┬──  
     │                ╰──── ref: built-in
- 81 │             xor()
+ 83 │             xor()
     │             ─┬─  
     │              ╰─── ref: built-in
 ────╯
@@ -251,10 +257,10 @@ Definiens:
   1 │ ╭─│ ▶ contract Test {
   2 │ │ ╭─▶     function test() public {
     ┆ ┆ ┆   
- 83 │ │ ├─▶     }
+ 85 │ │ ├─▶     }
     │ │ │           
     │ │ ╰─────────── definiens: 2
- 84 │ ├───▶ }
+ 86 │ ├───▶ }
     │ │         
     │ ╰───────── definiens: 1
 ────╯
