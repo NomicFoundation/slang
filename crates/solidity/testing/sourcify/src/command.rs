@@ -80,9 +80,12 @@ pub struct ShardingOptions {
 }
 
 impl ShardingOptions {
+    // clippy complains about the exclusive range below, but its suggestion (change to exclusive range)
+    // doesn't work because we're returning a `RangeInclusive`
+    #[allow(clippy::range_minus_one)]
     pub fn get_id_range(&self) -> RangeInclusive<u8> {
         if let Some(shard_count) = self.shard_count {
-            let shard_size = (256 / (shard_count as u16)) as u8;
+            let shard_size = u8::try_from(256 / u16::from(shard_count)).unwrap();
 
             let shard_index = self.shard_index.unwrap();
             let shard_start = shard_size * shard_index;
