@@ -1,5 +1,5 @@
 ---
-"@nomicfoundation/slang": minor
+"@nomicfoundation/slang": patch
 ---
 
 Adding missing YUL built in functions:
