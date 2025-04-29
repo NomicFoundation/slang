@@ -1366,7 +1366,6 @@ dependencies = [
  "markdown",
  "public-api",
  "rayon",
- "regex",
  "reqwest",
  "rustdoc-json",
  "semver",
@@ -2488,10 +2487,16 @@ version = "1.2.0"
 name = "solidity_testing_perf"
 version = "1.2.0"
 dependencies = [
+ "anyhow",
+ "clap",
  "iai-callgrind",
  "infra_utils",
+ "itertools 0.13.0",
  "metaslang_bindings",
+ "regex",
  "semver",
+ "serde",
+ "serde_json",
  "slang_solidity",
 ]
 
