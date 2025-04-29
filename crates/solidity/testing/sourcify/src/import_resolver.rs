@@ -290,3 +290,145 @@ fn path_is_url(path: &str) -> bool {
         .map(|url| url.is_special())
         .unwrap_or(false)
 }
+
+#[cfg(test)]
+mod test {
+    use super::{ImportRemap, ImportResolver, SourceMap};
+
+    #[test]
+    fn absolute_import() {
+        let resolver = new_resolver(
+            &[],
+            &[("src/main.sol", "entry"), ("src/a/other.sol", "target")],
+        );
+        test_import(&resolver, "entry", "src/a/other.sol", "target");
+    }
+
+    #[test]
+    fn relative_import() {
+        let resolver = new_resolver(
+            &[],
+            &[("src/main.sol", "target"), ("src/a/other.sol", "entry")],
+        );
+        test_import(&resolver, "entry", "../main.sol", "target");
+    }
+
+    #[test]
+    fn remapped_import() {
+        let resolver = new_resolver(
+            &[":xd=src/a"],
+            &[("src/main.sol", "entry"), ("src/a/other.sol", "target")],
+        );
+        test_import(&resolver, "entry", "xd/other.sol", "target");
+    }
+
+    #[test]
+    fn remapped_import_with_context() {
+        let resolver = new_resolver(
+            &["src/b:xd=src/a"],
+            &[("src/a/other.sol", "target"), ("src/b/extra.sol", "entry")],
+        );
+        test_import(&resolver, "entry", "xd/other.sol", "target");
+    }
+
+    #[test]
+    fn url_import() {
+        let resolver = new_resolver(
+            &[],
+            &[
+                ("src/main.sol", "entry"),
+                ("https://github.com/org/project/main.sol", "target"),
+            ],
+        );
+        test_import(
+            &resolver,
+            "entry",
+            "https://github.com/org/project/main.sol",
+            "target",
+        );
+    }
+
+    #[test]
+    fn relative_import_from_url_source() {
+        let resolver = new_resolver(
+            &[],
+            &[
+                ("https://github.com/org/project/main.sol", "target"),
+                ("https://github.com/org/project/folder/other.sol", "entry"),
+            ],
+        );
+        test_import(&resolver, "entry", "../main.sol", "target");
+    }
+
+    #[test]
+    fn remap_with_relative_path() {
+        // If a remap target contains a relative path, then that path is not expanded/resolved
+        // when sourcify creates the sources list. Instead, it's used verbatim.
+        let resolver = new_resolver(
+            &[":xd=../folder"],
+            &[("main.sol", "entry"), ("../folder/file.sol", "target")],
+        );
+        test_import(&resolver, "entry", "xd/file.sol", "target");
+    }
+
+    #[test]
+    fn dueling_remaps() {
+        let resolver = new_resolver(
+            &["a:@org=node_modules/@org", "b:@org=node_modules/@org-v2"],
+            &[
+                ("a/file.sol", "entry_a"),
+                ("b/file.sol", "entry_b"),
+                ("node_modules/@org/main.sol", "target_a"),
+                ("node_modules/@org-v2/main.sol", "target_b"),
+            ],
+        );
+        test_import(&resolver, "entry_a", "@org/main.sol", "target_a");
+        test_import(&resolver, "entry_b", "@org/main.sol", "target_b");
+    }
+
+    #[test]
+    fn url_source_fallback() {
+        // Sometimes, imports found in a URL source file don't share the URL prefix.
+        // We can fallback on the import path to resolve the source file.
+        let resolver = new_resolver(
+            &[],
+            &[
+                ("https://github.com/org/project/main.sol", "entry"),
+                ("file.sol", "target"),
+            ],
+        );
+        test_import(&resolver, "entry", "file.sol", "target");
+    }
+
+    fn test_import(
+        resolver: &ImportResolver,
+        source_id: &str,
+        import_path: &str,
+        expected_id: &str,
+    ) {
+        let resolved_id = resolver
+            .resolve_import(source_id, import_path)
+            .expect("Could not resolve import");
+        assert_eq!(resolved_id, expected_id);
+    }
+
+    fn new_resolver(remap_strs: &[&str], sources: &[(&str, &str)]) -> ImportResolver {
+        let import_remaps: Vec<_> = remap_strs
+            .iter()
+            .flat_map(|s| ImportRemap::new(s))
+            .collect();
+
+        let source_maps: Vec<_> = sources
+            .iter()
+            .map(|(path, id)| SourceMap {
+                source_id: id.to_owned().into(),
+                virtual_path: path.to_owned().into(),
+            })
+            .collect();
+
+        ImportResolver {
+            import_remaps,
+            source_maps,
+        }
+    }
+}

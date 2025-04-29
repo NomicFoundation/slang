@@ -4,8 +4,8 @@ mod events;
 mod import_resolver;
 mod reporting;
 mod results;
+mod run;
 mod sourcify;
-mod tests;
 
 use std::path::PathBuf;
 
@@ -17,8 +17,8 @@ use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 use infra_utils::terminal::Terminal;
 use results::{display_all_results, AllResults};
+use run::{run_in_parallel, run_with_trace, test_single_contract};
 use sourcify::{ContractArchive, Manifest};
-use tests::{run_in_parallel, run_with_trace, test_single_contract};
 
 fn main() -> Result<()> {
     let command::Cli { command } = command::Cli::parse();
