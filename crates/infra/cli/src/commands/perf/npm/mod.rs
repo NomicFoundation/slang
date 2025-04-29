@@ -50,7 +50,7 @@ impl NpmController {
         command.run();
     }
 
-    fn compare_with_solc(&self) -> Result<()> {
+    fn ts_comparisons(&self) -> Result<()> {
         let input_path = Path::new(&self.input_folder);
 
         let mut results = vec![];
@@ -175,6 +175,6 @@ impl NpmController {
         Self::install_deps();
 
         // if self.cases == Cases::VsSolc || self.cases == Cases::All {
-        self.compare_with_solc()
+        self.ts_comparisons()
     }
 }
