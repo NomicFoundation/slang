@@ -2608,7 +2608,6 @@ dependencies = [
  "serde",
  "serde_json",
  "slang_solidity",
- "strum_macros",
  "tar",
  "url",
 ]

@@ -1,4 +1,3 @@
-mod chains;
 mod command;
 mod compilation_builder;
 mod events;
@@ -35,13 +34,10 @@ fn main() -> Result<()> {
 // but for whatever reason clippy can't figure that out
 #[allow(clippy::needless_pass_by_value)]
 fn run_test_command(cmd: command::TestCommand) -> Result<()> {
-    Terminal::step(format!(
-        "Initialize {chain}/{network}",
-        chain = cmd.chain.name(),
-        network = cmd.chain.network_name()
-    ));
+    Terminal::step(format!("Initialize chain {chain}", chain = cmd.chain_id,));
 
-    let manifest = Manifest::new(cmd.chain, &cmd.sharding_options)?;
+    let manifest = Manifest::new(cmd.chain_id, &cmd.sharding_options)
+        .inspect_err(|e| eprintln!("Error fetching chain manifest: {e}"))?;
 
     if let Some(contract) = &cmd.contract {
         return test_single_contract(&manifest, contract, &cmd.test_options);

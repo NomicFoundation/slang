@@ -18,19 +18,14 @@ jobs:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     uses: "./.github/workflows/sourcify.yml"
     with:
-      chain: "${matrix.chains.name}"
-      network: "${matrix.chains.network}"
+      chain_id: "${matrix.chain_id}"
       check_bindings: "${inputs.check_bindings}"
       check_infer_version: "${inputs.check_infer_version}"
     strategy:
       fail-fast: false
       matrix:
-        chains:
-          - name: "arbitrum"
-            network: "one"
-          - name: "base"
-            network: "mainnet"
-          - name: "ethereum"
-            network: "mainnet"
-          - name: "polygon"
-            network: "mainnet"
+        chain_id:
+          - 1 # Ethereum Mainnet
+          - 42161 # Arbitrum One
+          - 8453 # Base
+          - 137 # Polygon Mainnet

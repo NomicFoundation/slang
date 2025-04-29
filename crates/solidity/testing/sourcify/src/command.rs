@@ -1,9 +1,9 @@
+use std::fmt::Display;
 use std::ops::RangeInclusive;
 use std::path::PathBuf;
+use std::str::FromStr;
 
 use clap::{Parser, Subcommand};
-
-use crate::chains::Chain;
 
 #[derive(Debug, Parser)]
 pub struct Cli {
@@ -19,8 +19,10 @@ pub enum Commands {
 
 #[derive(Debug, Parser)]
 pub struct TestCommand {
-    #[command(subcommand)]
-    pub chain: Chain,
+    /// Chain to pull contracts from. See <https://docs.sourcify.dev/docs/chains/> to get a list of valid chain IDs.
+    /// Defaults to Ethereum Mainnet.
+    #[arg(long, default_value_t = ChainId(1))]
+    pub chain_id: ChainId,
 
     #[command(flatten)]
     pub test_options: TestOptions,
@@ -51,6 +53,7 @@ pub struct ShowCombinedResultsCommand {
 
 #[derive(Debug, Parser)]
 pub struct TestOptions {
+    /// Run parser tests.
     #[arg(long, default_value_t = true)]
     pub check_parser: bool,
 
@@ -58,19 +61,20 @@ pub struct TestOptions {
     #[arg(long, default_value_t = false)]
     pub check_bindings: bool,
 
+    /// Run version inference tests.
     #[arg(long, default_value_t = false)]
     pub check_infer_version: bool,
 }
 
 #[derive(Debug, Parser)]
 pub struct ShardingOptions {
-    /// Divide the dataset into a smaller number of shards. Must be a factor of 256. '`shard_index`'
+    /// Divide the dataset into a smaller number of shards. Must be a factor of 256. '`--shard-index`'
     /// must be included along with this option.
     #[arg(long, requires = "shard_index")]
     pub shard_count: Option<u8>,
 
-    /// Select a single shard to test. Must be within the range [`0..shard_count`). Required if
-    /// '`shard_count`' is specified.
+    /// Select a single shard to test. Must be within the range [`0..shard-count`). Required if
+    /// '`--shard-count`' is specified.
     #[arg(long, requires = "shard_count")]
     pub shard_index: Option<u8>,
 
@@ -94,5 +98,24 @@ impl ShardingOptions {
         } else {
             0..=255
         }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug, Default)]
+#[repr(transparent)]
+pub struct ChainId(pub u64);
+
+impl Display for ChainId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl FromStr for ChainId {
+    type Err = anyhow::Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let val: u64 = s.parse()?;
+        Ok(ChainId(val))
     }
 }

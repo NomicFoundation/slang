@@ -10,8 +10,7 @@ use semver::{BuildMetadata, Prerelease, Version};
 use slang_solidity::compilation::CompilationUnit;
 use tar::Archive;
 
-use crate::chains::{Chain, ChainId};
-use crate::command::ShardingOptions;
+use crate::command::{ChainId, ShardingOptions};
 use crate::compilation_builder::CompilationBuilder;
 use crate::import_resolver::ImportResolver;
 
@@ -21,7 +20,7 @@ pub struct Manifest {
 }
 
 impl Manifest {
-    pub fn new(chain: Chain, options: &ShardingOptions) -> Result<Manifest> {
+    pub fn new(chain_id: ChainId, options: &ShardingOptions) -> Result<Manifest> {
         let client = Client::new();
         let res = client
             .get("https://repo-backup.sourcify.dev/manifest.json")
@@ -33,7 +32,7 @@ impl Manifest {
         }
 
         let obj: serde_json::Value = res.json()?;
-        let archive_descs: Option<Vec<ArchiveDescriptor>> = obj
+        let mut archive_descriptors: Vec<_> = obj
             .get("files")
             .and_then(|files| files.as_array())
             .map(|files| {
@@ -43,21 +42,22 @@ impl Manifest {
                     .filter_map(|path| {
                         ArchiveDescriptor::new("https://repo-backup.sourcify.dev", path).ok()
                     })
-                    .filter(|desc| desc.matches_chain_and_shard(chain, options))
+                    .filter(|desc| desc.matches_chain_and_shard(chain_id, options))
                     .collect()
-            });
+            })
+            .unwrap_or_default();
 
-        if let Some(mut archive_descs) = archive_descs {
-            if !archive_descs.is_empty() {
-                archive_descs.sort_by(|a, b| a.prefix.cmp(&b.prefix));
+        archive_descriptors.sort_by(|a, b| a.prefix.cmp(&b.prefix));
 
-                return Ok(Manifest {
-                    archive_descriptors: archive_descs,
-                });
-            }
+        if archive_descriptors.is_empty() {
+            return Err(Error::msg(format!(
+                "No valid archive found for chain {chain_id}"
+            )));
         }
 
-        bail!("No valid archives found in manifest");
+        Ok(Manifest {
+            archive_descriptors,
+        })
     }
 
     /// Search for a specific contract and return it if found. Returns `None` if the contract can not
@@ -125,7 +125,7 @@ impl ArchiveDescriptor {
         };
 
         let chain_id_part = parts.next().ok_or(Error::msg("Failed to get chain ID"))?;
-        let chain_id: u64 = chain_id_part.parse()?;
+        let chain_id: ChainId = chain_id_part.parse()?;
 
         let prefix_part = parts
             .next()
@@ -135,17 +135,17 @@ impl ArchiveDescriptor {
         Ok(ArchiveDescriptor {
             url: format!("{base_url}{path_str}"),
             prefix,
-            chain_id: ChainId(chain_id),
+            chain_id,
             match_type,
         })
     }
 
-    fn matches_chain_and_shard(&self, chain: Chain, options: &ShardingOptions) -> bool {
+    fn matches_chain_and_shard(&self, chain_id: ChainId, options: &ShardingOptions) -> bool {
         if self.match_type == MatchType::Partial && options.exclude_partial_matches {
             return false;
         }
 
-        if self.chain_id != chain.id() {
+        if self.chain_id != chain_id {
             return false;
         }
 
