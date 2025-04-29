@@ -9128,6 +9128,10 @@
           }
         },
         { "BuiltInFunction": { "item": { "name": "callvalue", "return_type": "uint256" } } },
+        {
+          "BuiltInFunction": { "item": { "name": "codecopy", "parameters": ["uint256 t", "uint256 f", "uint256 s"] } }
+        },
+        { "BuiltInFunction": { "item": { "name": "codesize", "return_type": "uint256" } } },
         { "BuiltInFunction": { "item": { "name": "coinbase", "return_type": "uint256" } } },
         {
           "BuiltInFunction": {

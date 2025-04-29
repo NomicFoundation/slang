@@ -108,6 +108,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -265,6 +267,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -426,6 +430,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -595,6 +601,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -767,6 +775,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -938,6 +948,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -1114,6 +1126,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -1294,6 +1308,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -1476,6 +1492,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -1660,6 +1678,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -1839,6 +1859,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -2018,6 +2040,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -2198,6 +2222,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -2380,6 +2406,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -2563,6 +2591,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -2750,6 +2780,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -2938,6 +2970,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -3127,6 +3161,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -3318,6 +3354,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));
@@ -3515,6 +3553,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             scope.define_function(builder, "caller", Some("uint256"));
             scope.define_function(builder, "call", Some("uint256"));
             scope.define_function(builder, "callvalue", Some("uint256"));
+            scope.define_function(builder, "codecopy", None);
+            scope.define_function(builder, "codesize", Some("uint256"));
             scope.define_function(builder, "coinbase", Some("uint256"));
             scope.define_function(builder, "create", Some("uint256"));
             scope.define_function(builder, "delegatecall", Some("uint256"));

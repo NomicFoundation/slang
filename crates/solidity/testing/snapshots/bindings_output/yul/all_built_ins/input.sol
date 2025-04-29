@@ -19,6 +19,8 @@ contract Test {
             caller()
             callvalue()
             chainid()
+            codecopy()
+            codesize()
             coinbase()
             create()
             create2()
