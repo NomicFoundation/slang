@@ -1,4 +1,4 @@
-name: "sourcify_all"
+name: "sourcify_all_chains"
 
 on:
   workflow_dispatch:

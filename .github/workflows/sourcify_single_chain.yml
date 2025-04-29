@@ -1,4 +1,4 @@
-name: "sourcify"
+name: "sourcify_single_chain"
 
 on:
   # Run using manual triggers from GitHub UI:
