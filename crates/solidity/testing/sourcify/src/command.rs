@@ -1,4 +1,4 @@
-use std::ops::Range;
+use std::ops::RangeInclusive;
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
@@ -67,12 +67,12 @@ pub struct ShardingOptions {
     /// Divide the dataset into a smaller number of shards. Must be a factor of 256. '`shard_index`'
     /// must be included along with this option.
     #[arg(long, requires = "shard_index")]
-    pub shard_count: Option<u16>,
+    pub shard_count: Option<u8>,
 
     /// Select a single shard to test. Must be within the range [`0..shard_count`). Required if
     /// '`shard_count`' is specified.
     #[arg(long, requires = "shard_count")]
-    pub shard_index: Option<u16>,
+    pub shard_index: Option<u8>,
 
     /// If set, will only test contracts under the '`full_match`' category.
     #[arg(long, default_value_t = false)]
@@ -80,17 +80,16 @@ pub struct ShardingOptions {
 }
 
 impl ShardingOptions {
-    pub fn get_id_range(&self) -> Range<u16> {
+    pub fn get_id_range(&self) -> RangeInclusive<u8> {
         if let Some(shard_count) = self.shard_count {
-            assert!(shard_count > 0 && shard_count <= 256);
-            let shard_size = 256 / shard_count;
+            let shard_size = (256 / (shard_count as u16)) as u8;
 
             let shard_index = self.shard_index.unwrap();
             let shard_start = shard_size * shard_index;
 
-            shard_start..(shard_start + shard_size)
+            shard_start..=(shard_start + shard_size - 1)
         } else {
-            0..256
+            0..=255
         }
     }
 }
