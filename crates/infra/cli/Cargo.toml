@@ -25,7 +25,6 @@ strum_macros = { workspace = true }
 tempfile = { workspace = true }
 toml = { workspace = true }
 reqwest = { workspace = true }
-regex = { workspace = true }
 
 [lints]
 workspace = true
