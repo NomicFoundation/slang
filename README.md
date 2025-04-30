@@ -89,7 +89,8 @@ function getContractNames() {
 
 Slang is not a replacement for solc, the standard Solidity compiler. We do not plan at the moment to support emitting optimized EVM bytecode for use in production. It does not perform formal verification of contracts or Solidity logic in general. However, it is designed to empower such tools to be built on top of it.
 
-- [Read the User Guide here.](https://nomicfoundation.github.io/slang/latest/user-guide/01-introduction/)
+- [Slang v1 Announcement - Blog Post](https://blog.nomic.foundation/slang-v1-a-reliable-way-to-analyze-solidity-code/)
+- [Slang User Guide](https://nomicfoundation.github.io/slang/latest/user-guide/01-introduction/)
 
 ## Using Slang
 
