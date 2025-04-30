@@ -40,3 +40,20 @@ pub enum Scanner {
         reference: Identifier,
     },
 }
+
+impl Scanner {
+    pub fn is_unique(&self) -> bool {
+        match self {
+            Self::Sequence { scanners } => scanners.iter().all(|scanner| scanner.is_unique()),
+            Self::TrailingContext { scanner, .. } => scanner.is_unique(),
+            Self::Atom { .. } => true,
+            Self::Choice { .. }
+            | Self::Optional { .. }
+            | Self::ZeroOrMore { .. }
+            | Self::OneOrMore { .. }
+            | Self::Not { .. }
+            | Self::Range { .. }
+            | Self::Fragment { .. } => false,
+        }
+    }
+}
