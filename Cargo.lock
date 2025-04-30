@@ -2486,17 +2486,24 @@ dependencies = [
 name = "solidity_testing_perf"
 version = "1.0.0"
 dependencies = [
- "anyhow",
- "clap",
  "iai-callgrind",
  "infra_utils",
- "itertools 0.13.0",
  "metaslang_bindings",
- "regex",
  "semver",
+ "slang_solidity",
+]
+
+[[package]]
+name = "solidity_testing_perf_npmdriver"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "clap",
+ "infra_utils",
+ "itertools 0.13.0",
+ "regex",
  "serde",
  "serde_json",
- "slang_solidity",
 ]
 
 [[package]]
