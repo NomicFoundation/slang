@@ -26,7 +26,7 @@ function createTree(): ParseOutput {
   return parseOutput;
 }
 
-test('Get contract names', () => {
+test("Get contract names", () => {
   const tree = createTree();
   const cursor = tree.createTreeCursor();
 

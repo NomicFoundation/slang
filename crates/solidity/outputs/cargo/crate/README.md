@@ -17,9 +17,38 @@ Written in Rust and distributed in multiple languages.
 
 Slang analyzes Solidity source code and generates a rich concrete syntax tree (CST) that can be reasoned about. This is a departure from the classic approach of "black-box" compilers, which are handed the input and only their output can be observed.
 
+### Supporting Multiple Solidity Versions
+
+The Solidity programming language has evolved quite a bit since its inception. Some features were introduced, some changed, while some eventually became obsolete and were removed altogether. Developer tooling must be able to understand and consume older contracts that are still being used on the blockchain, written in older versions of Solidity.
+
+Because of that, Slang must be able to reason about different versions of Solidity; how the language grammar, name capture rules, and semantics have changed across different versions. One of our goals is to document differences as part of our [Solidity Grammar](https://nomicfoundation.github.io/slang/latest/solidity-grammar/).
+
+This is why, instead of having to download separate versions of Slang for each Solidity version, you specify the Solidity version that you want to work with when you use the Slang language APIs.
+
+- [See our supported versions.](https://nomicfoundation.github.io/slang/latest/solidity-grammar/supported-versions/)
+
+## Installation
+
+You can install the [Slang NPM package](https://www.npmjs.com/package/@nomicfoundation/slang) with the following `npm` command:
+
+```sh
+npm install "@nomicfoundation/slang"
+```
+
+Or if you are using `yarn`:
+
+```sh
+yarn add "@nomicfoundation/slang"
+```
+
+- [Learn more about how to get started with Slang.](https://nomicfoundation.github.io/slang/latest/user-guide/04-getting-started/01-installation/)
+
+## Example
+
 ```ts
 import assert from "node:assert";
 import { ParseOutput, Parser } from "@nomicfoundation/slang/parser";
+import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
 import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 function createTree(): ParseOutput {
@@ -43,7 +72,7 @@ function createTree(): ParseOutput {
     return parseOutput;
 }
 
-function getContractNames() {
+test("Get contract names", () => {
     const tree = createTree();
     const cursor = tree.createTreeCursor();
 
@@ -51,47 +80,17 @@ function getContractNames() {
 
     while (cursor.goToNextNonterminalWithKind(NonterminalKind.ContractDefinition)) {
         assert(cursor.goToNextTerminalWithKind(TerminalKind.Identifier));
-
         contracts.push(cursor.node.unparse());
     }
 
     assert.deepStrictEqual(contracts, ["Foo", "Bar", "Baz"]);
-}
+});
 ```
 
 Slang is not a replacement for solc, the standard Solidity compiler. We do not plan at the moment to support emitting optimized EVM bytecode for use in production. It does not perform formal verification of contracts or Solidity logic in general. However, it is designed to empower such tools to be built on top of it.
 
-[Read the User Guide here.](https://nomicfoundation.github.io/slang/latest/user-guide/01-introduction/)
-
-### Supporting Multiple Solidity Versions
-
-The Solidity programming language has evolved quite a bit since its inception. Some features were introduced, some changed, while some eventually became obsolete and were removed altogether. Developer tooling must be able to understand and consume older contracts that are still being used on the blockchain, written in older versions of Solidity.
-
-Because of that, Slang must be able to reason about different versions of Solidity; how the language grammar, name capture rules, and semantics have changed across different versions. One of our goals is to document differences as part of our [Solidity Grammar](https://nomicfoundation.github.io/slang/latest/solidity-grammar/).
-
-This is why, instead of having to download separate versions of Slang for each Solidity version, you specify the Solidity version that you want to work with when you use the Slang language APIs.
-
-[See our supported versions.](https://nomicfoundation.github.io/slang/latest/solidity-grammar/supported-versions/)
-
-## Installation
-
-You can install the [Slang NPM package](https://www.npmjs.com/package/@nomicfoundation/slang) with the following `npm` command:
-
-```sh
-npm install "@nomicfoundation/slang"
-```
-
-Or if you are using `yarn`:
-
-```sh
-yarn add "@nomicfoundation/slang"
-```
-
-- [Learn more about how to get started with Slang.](https://nomicfoundation.github.io/slang/latest/user-guide/04-getting-started/01-installation/)
-
-## Contributing
-
-Please check our [contributors guide](https://github.com/NomicFoundation/slang/blob/main/CONTRIBUTING.md) to learn about how you can get started on Slang development.
+- [Slang v1 Announcement - Blog Post](https://blog.nomic.foundation/slang-v1-a-reliable-way-to-analyze-solidity-code/)
+- [Slang User Guide](https://nomicfoundation.github.io/slang/latest/user-guide/01-introduction/)
 
 ## Using Slang
 
@@ -127,13 +126,17 @@ The `Cursor` API is a low-level API that allows you to traverse the CST in a pro
 
 Solidity projects are usually composed of multiple files. Slang has the concept of a `CompilationUnit`, which is built from parsing Solidity source files and their dependencies, transitively. This allows performing further analysis on the source code, such as semantic analysis.
 
-[Learn more about using compilation units.](https://nomicfoundation.github.io/slang/latest/user-guide/07-semantic-analysis/01-compilation-units/)
+- [Learn more about using compilation units.](https://nomicfoundation.github.io/slang/latest/user-guide/07-semantic-analysis/01-compilation-units/)
 
 ### Binding Graph
 
 The binding graph is a structure that represents the relationships between identifiers across source files in a `CompilationUnit`. It stores `Cursor` objects to all Solidity definitions (contracts, functions, state variables, etc.), the references to them, and can resolve the links between the two.
 
-[Learn more about using the binding graph.](https://nomicfoundation.github.io/slang/latest/user-guide/07-semantic-analysis/02-binding-graph/)
+- [Learn more about using the binding graph.](https://nomicfoundation.github.io/slang/latest/user-guide/07-semantic-analysis/02-binding-graph/)
+
+## Contributing
+
+Please check our [contributors guide](https://github.com/NomicFoundation/slang/blob/main/CONTRIBUTING.md) to learn about how you can get started on Slang development.
 
 ## Built with Slang
 

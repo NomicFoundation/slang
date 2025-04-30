@@ -52,7 +52,7 @@ import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
 import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 function createTree(): ParseOutput {
-  const source = `
+    const source = `
     contract Foo {
       function foo_func() {}
     }
@@ -64,26 +64,26 @@ function createTree(): ParseOutput {
     }
   `;
 
-  const parser = Parser.create(LanguageFacts.latestVersion());
+    const parser = Parser.create(LanguageFacts.latestVersion());
 
-  const parseOutput = parser.parseFileContents(source.trim());
-  assert(parseOutput.isValid());
+    const parseOutput = parser.parseFileContents(source.trim());
+    assert(parseOutput.isValid());
 
-  return parseOutput;
+    return parseOutput;
 }
 
-test('Get contract names', () => {
-  const tree = createTree();
-  const cursor = tree.createTreeCursor();
+test("Get contract names", () => {
+    const tree = createTree();
+    const cursor = tree.createTreeCursor();
 
-  const contracts = [];
+    const contracts = [];
 
-  while (cursor.goToNextNonterminalWithKind(NonterminalKind.ContractDefinition)) {
-    assert(cursor.goToNextTerminalWithKind(TerminalKind.Identifier));
-    contracts.push(cursor.node.unparse());
-  }
+    while (cursor.goToNextNonterminalWithKind(NonterminalKind.ContractDefinition)) {
+        assert(cursor.goToNextTerminalWithKind(TerminalKind.Identifier));
+        contracts.push(cursor.node.unparse());
+    }
 
-  assert.deepStrictEqual(contracts, ["Foo", "Bar", "Baz"]);
+    assert.deepStrictEqual(contracts, ["Foo", "Bar", "Baz"]);
 });
 ```
 
