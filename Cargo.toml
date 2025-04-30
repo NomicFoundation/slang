@@ -35,6 +35,7 @@ members = [
     "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/spec",
     "crates/solidity/testing/perf",
+    "crates/solidity/testing/perf/npm-driver",
     "crates/solidity/testing/sanctuary",
     "crates/solidity/testing/snapshots",
     "crates/solidity/testing/solc",

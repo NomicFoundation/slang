@@ -9,25 +9,15 @@ publish = false
 slang_solidity = { workspace = true, features = [
   "__experimental_bindings_api",
 ] }
-serde = { workspace = true }
-serde_json = { workspace = true }
 infra_utils = { workspace = true }
 semver = { workspace = true }
 metaslang_bindings = { workspace = true }
-anyhow = { workspace = true }
-itertools = { workspace = true }
-regex = { workspace = true }
-clap = { workspace = true }
 
 [dev-dependencies]
 iai-callgrind = { workspace = true }
 
 [[bench]]
 name = "iai"
-harness = false
-
-[[bin]]
-name = "json"
 harness = false
 
 [lints]

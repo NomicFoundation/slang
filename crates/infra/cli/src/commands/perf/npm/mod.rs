@@ -1,11 +1,8 @@
-use std::path::Path;
-
 use anyhow::Result;
 use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
-use infra_utils::paths::PathExtensions;
 
 use crate::utils::DryRun;
 
@@ -49,8 +46,7 @@ impl NpmController {
             )
         };
 
-        let package_name = "solidity_testing_perf";
-        let bench_name = "json";
+        let package_name = "solidity_testing_perf_npmdriver";
         let input_folder = &self.input_folder;
         let pattern = &self.pattern;
         let extra_args = if self.extra_args.is_empty() {
@@ -58,7 +54,9 @@ impl NpmController {
         } else {
             "-- ".to_owned() + &self.extra_args.join(" ")
         };
-        let test_runner = format!("cargo run --package {package_name} --bin={bench_name} -- {input_folder} --pattern={pattern} {extra_args}");
+        let test_runner = format!(
+            "cargo run --package {package_name} -- {input_folder} --pattern={pattern} {extra_args}"
+        );
 
         let testbed = if GitHub::is_running_in_ci() {
             "ci"
@@ -80,17 +78,11 @@ impl NpmController {
         // Has to be the last argument:
         command.arg(test_runner).run();
 
-        let reports_dir = Path::repo_path("target/json")
-            .join(package_name)
-            .join(bench_name);
-
         println!(
             "
 
 Bencher Run is complete...
 Test Results: [https://bencher.dev/console/projects/slang/reports]
-
-Reports/Logs: {reports_dir:?}
 "
         );
     }
