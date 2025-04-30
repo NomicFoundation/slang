@@ -11,5 +11,5 @@
     "composite": true,
     "incremental": true,
     "tsBuildInfoFile": "target/tsc/.tsbuildinfo"
-  },
+  }
 }

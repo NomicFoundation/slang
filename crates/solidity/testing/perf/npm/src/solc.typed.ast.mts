@@ -11,11 +11,17 @@ export class SolcTypedAstTest implements Test<void> {
 
 export async function testFile(languageVersion: string, dir: string, file: string) {
   try {
-    let result = await compileSol(file, languageVersion, { basePath: dir }, [CompilationOutput.AST], undefined, CompilerKind.WASM);
+    let result = await compileSol(
+      file,
+      languageVersion,
+      { basePath: dir },
+      [CompilationOutput.AST],
+      undefined,
+      CompilerKind.WASM,
+    );
     if (process.argv.includes("--verbose")) {
       console.log(result);
     }
-
   } catch (e) {
     console.error("Errors encountered during compilation:");
     if (e instanceof CompileFailedError) {
@@ -29,5 +35,4 @@ export async function testFile(languageVersion: string, dir: string, file: strin
     }
     process.exit(-1);
   }
-
 }
