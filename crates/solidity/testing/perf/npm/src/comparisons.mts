@@ -2,7 +2,7 @@ import { SlangTest } from "./common.slang.mjs";
 import path from "node:path";
 import { SolcPlainTest } from "./solc.plain.mjs";
 import { checkCI, Test } from "./common.mjs";
-import commandLineArgs from "command-line-args"
+import commandLineArgs from "command-line-args";
 import { SolcTypedAstTest } from "./solc.typed.ast.mjs";
 
 class Timing {
@@ -30,7 +30,7 @@ async function run(solidityVersion: string, dir: string, file: string): Promise<
     const start = performance.now();
     await test.test(solidityVersion, dir, file);
     measure.timings.push(new Timing(test.name, performance.now() - start));
-  };
+  }
 
   return measure;
 }
@@ -59,7 +59,7 @@ const options = commandLineArgs([
   { name: "version", type: String },
   { name: "dir", type: String },
   { name: "file", type: String },
-  { name: "verbose", type: Boolean, defaultValue: false }
+  { name: "verbose", type: Boolean, defaultValue: false },
 ]);
 
 const [version, dir, file] = [options["version"], options["dir"], options["file"]];

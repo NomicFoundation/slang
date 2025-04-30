@@ -21,10 +21,9 @@ export class Record {
   numberOfIdentifiers: number = 0;
 
   public constructor(file: string) {
-    this.file = file
+    this.file = file;
   }
 }
-
 
 export function readRepoFile(...relativePaths: string[]): string {
   const absolutePath = path.join(...relativePaths);
@@ -60,8 +59,7 @@ export function createBuilder(languageVersion: string, directory: string): Compi
           if (fs.statSync(realFile)) {
             return file;
           }
-        }
-        catch { }
+        } catch {}
         i++;
       }
       throw `Can't resolve import ${importPath}`;
@@ -79,7 +77,13 @@ export class SlangTest implements Test<void> {
   }
 }
 
-export async function testFile(languageVersion: string, dir: string, file: string, expectedDefs?: number, expectedRefs?: number): Promise<Record> {
+export async function testFile(
+  languageVersion: string,
+  dir: string,
+  file: string,
+  expectedDefs?: number,
+  expectedRefs?: number,
+): Promise<Record> {
   let gotoDefTimes: number[] = Array();
   const startTime = performance.now();
   const builder = createBuilder(languageVersion, dir);
@@ -144,7 +148,10 @@ export async function testFile(languageVersion: string, dir: string, file: strin
   // We don't recognize `ABIEncoderV2` in `pragma experimental`, so let's ignore it
   const allowed = ["ABIEncoderV2", "v2"];
   const neitherDefNorRefList = Array.from(neitherDefNorRefSet);
-  assert.deepStrictEqual(neitherDefNorRefList.filter((e) => !allowed.includes(e)), []);
+  assert.deepStrictEqual(
+    neitherDefNorRefList.filter((e) => !allowed.includes(e)),
+    [],
+  );
   assert.deepStrictEqual(emptyDefList, []);
 
   if (expectedDefs) {
@@ -164,11 +171,21 @@ export function printTables() {
       // - At even numbers, a 0 means the slot is not free, and with a number distinct from 0 the slot is free, and
       //   the number is the next free slot (or'ed with a constant).
       // - At odd numbers, the actual handle of the object
-      const sums = tables.map((table, index) => [index, table.reduce((accu, elem, elemix) => { if ((elemix & 1) === 0 && (elem === 0)) { return (accu + 1) } else { return accu } }, 0)]);
+      const sums = tables.map((table, index) => [
+        index,
+        table.reduce((accu, elem, elemix) => {
+          if ((elemix & 1) === 0 && elem === 0) {
+            return accu + 1;
+          } else {
+            return accu;
+          }
+        }, 0),
+      ]);
       console.log(sums);
-    }
-    else {
-      console.error("Asked to print tables, but they are not imported. Add `handleTables` to the list of imports in the solidity_cargo_wasm.component.js");
+    } else {
+      console.error(
+        "Asked to print tables, but they are not imported. Add `handleTables` to the list of imports in the solidity_cargo_wasm.component.js",
+      );
       exit(-1);
     }
   }
