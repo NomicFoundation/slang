@@ -11,6 +11,9 @@ use serde_json::Value;
 pub struct FetchController {
     /// Base path to store the fetched files
     path: String,
+    /// Hash when fetching a specific project
+    #[arg(long)]
+    hash: Option<String>,
 }
 
 impl FetchController {
@@ -64,31 +67,34 @@ impl FetchController {
     pub fn execute(&self) -> Result<(), Error> {
         let base_path = Path::new(&self.path);
 
-        // Read hashes from a configuration file
-        let config_path = Path::repo_path("crates/infra/cli/src/commands/perf/projects.json");
-        let config_content = fs::read_to_string(config_path)?;
-        let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+        if let Some(hash) = &self.hash {
+            Self::fetch(hash, base_path)?;
+        } else {
+            // Read hashes from a configuration file
+            let config_path = Path::repo_path("crates/infra/cli/src/commands/perf/projects.json");
+            let config_content = fs::read_to_string(config_path)?;
+            let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
 
-        let hashes = config_json
-            .get("sourcifyHashes")
-            .and_then(|h| h.as_array())
-            .ok_or_else(|| {
-                anyhow::anyhow!("Invalid or missing 'sourcifyHashes' field in projects.json")
-            })?;
+            let hashes = config_json
+                .get("sourcifyHashes")
+                .and_then(|h| h.as_array())
+                .ok_or_else(|| {
+                    anyhow::anyhow!("Invalid or missing 'sourcifyHashes' field in projects.json")
+                })?;
 
-        for hash in hashes {
-            let project = hash
-                .as_object()
-                .ok_or_else(|| anyhow::anyhow!("Invalid project format in projects.json"))?;
-            let hash_str = project
-                .get("hash")
-                .ok_or_else(|| anyhow::anyhow!("Invalid hash format in projects.json"))?
-                .as_str()
-                .ok_or_else(|| anyhow::anyhow!("Invalid hash format in projects.json"))?;
+            for hash in hashes {
+                let project = hash
+                    .as_object()
+                    .ok_or_else(|| anyhow::anyhow!("Invalid project format in projects.json"))?;
+                let hash_str = project
+                    .get("hash")
+                    .ok_or_else(|| anyhow::anyhow!("Invalid hash format in projects.json"))?
+                    .as_str()
+                    .ok_or_else(|| anyhow::anyhow!("Invalid hash format in projects.json"))?;
 
-            Self::fetch(hash_str, base_path)?;
+                Self::fetch(hash_str, base_path)?;
+            }
         }
-
         Ok(())
     }
 }
