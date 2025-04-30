@@ -48,10 +48,11 @@ yarn add "@nomicfoundation/slang"
 ```ts
 import assert from "node:assert";
 import { ParseOutput, Parser } from "@nomicfoundation/slang/parser";
+import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
 import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 function createTree(): ParseOutput {
-    const source = `
+  const source = `
     contract Foo {
       function foo_func() {}
     }
@@ -63,28 +64,27 @@ function createTree(): ParseOutput {
     }
   `;
 
-    const parser = Parser.create(LanguageFacts.latestVersion());
+  const parser = Parser.create(LanguageFacts.latestVersion());
 
-    const parseOutput = parser.parseFileContents(source.trim());
-    assert(parseOutput.isValid());
+  const parseOutput = parser.parseFileContents(source.trim());
+  assert(parseOutput.isValid());
 
-    return parseOutput;
+  return parseOutput;
 }
 
-function getContractNames() {
-    const tree = createTree();
-    const cursor = tree.createTreeCursor();
+test('Get contract names', () => {
+  const tree = createTree();
+  const cursor = tree.createTreeCursor();
 
-    const contracts = [];
+  const contracts = [];
 
-    while (cursor.goToNextNonterminalWithKind(NonterminalKind.ContractDefinition)) {
-        assert(cursor.goToNextTerminalWithKind(TerminalKind.Identifier));
+  while (cursor.goToNextNonterminalWithKind(NonterminalKind.ContractDefinition)) {
+    assert(cursor.goToNextTerminalWithKind(TerminalKind.Identifier));
+    contracts.push(cursor.node.unparse());
+  }
 
-        contracts.push(cursor.node.unparse());
-    }
-
-    assert.deepStrictEqual(contracts, ["Foo", "Bar", "Baz"]);
-}
+  assert.deepStrictEqual(contracts, ["Foo", "Bar", "Baz"]);
+});
 ```
 
 Slang is not a replacement for solc, the standard Solidity compiler. We do not plan at the moment to support emitting optimized EVM bytecode for use in production. It does not perform formal verification of contracts or Solidity logic in general. However, it is designed to empower such tools to be built on top of it.
