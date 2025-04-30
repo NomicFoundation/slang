@@ -117,6 +117,13 @@ impl FromFFI<rust::Node> for ffi::Node {
 //================================================
 
 define_rc_wrapper! { NonterminalNode {
+    fn create(kind: ffi::NonterminalKind, children: Vec<ffi::Edge>) -> ffi::NonterminalNode {
+        rust::NonterminalNode::create(
+            kind._from_ffi(),
+            children.into_iter().map(|child| child._from_ffi()).collect(),
+        )._into_ffi()
+    }
+
     fn id(&self) -> u32 {
         self._borrow_ffi().id().try_into().unwrap()
     }
@@ -157,6 +164,10 @@ define_rc_wrapper! { NonterminalNode {
 //================================================
 
 define_rc_wrapper! { TerminalNode {
+    fn create(kind: ffi::TerminalKind, text: String) -> ffi::TerminalNode {
+        rust::TerminalNode::create(kind._from_ffi(), text)._into_ffi()
+    }
+
     fn id(&self) -> u32 {
         self._borrow_ffi().id().try_into().unwrap()
     }
