@@ -25,7 +25,7 @@ Because of that, Slang must be able to reason about different versions of Solidi
 
 This is why, instead of having to download separate versions of Slang for each Solidity version, you specify the Solidity version that you want to work with when you use the Slang language APIs.
 
-[See our supported versions.](https://nomicfoundation.github.io/slang/latest/solidity-grammar/supported-versions/)
+- [See our supported versions.](https://nomicfoundation.github.io/slang/latest/solidity-grammar/supported-versions/)
 
 ## Installation
 
@@ -89,12 +89,7 @@ function getContractNames() {
 
 Slang is not a replacement for solc, the standard Solidity compiler. We do not plan at the moment to support emitting optimized EVM bytecode for use in production. It does not perform formal verification of contracts or Solidity logic in general. However, it is designed to empower such tools to be built on top of it.
 
-[Read the User Guide here.](https://nomicfoundation.github.io/slang/latest/user-guide/01-introduction/)
-
-
-## Contributing
-
-Please check our [contributors guide](https://github.com/NomicFoundation/slang/blob/main/CONTRIBUTING.md) to learn about how you can get started on Slang development.
+- [Read the User Guide here.](https://nomicfoundation.github.io/slang/latest/user-guide/01-introduction/)
 
 ## Using Slang
 
@@ -130,13 +125,17 @@ The `Cursor` API is a low-level API that allows you to traverse the CST in a pro
 
 Solidity projects are usually composed of multiple files. Slang has the concept of a `CompilationUnit`, which is built from parsing Solidity source files and their dependencies, transitively. This allows performing further analysis on the source code, such as semantic analysis.
 
-[Learn more about using compilation units.](https://nomicfoundation.github.io/slang/latest/user-guide/07-semantic-analysis/01-compilation-units/)
+- [Learn more about using compilation units.](https://nomicfoundation.github.io/slang/latest/user-guide/07-semantic-analysis/01-compilation-units/)
 
 ### Binding Graph
 
 The binding graph is a structure that represents the relationships between identifiers across source files in a `CompilationUnit`. It stores `Cursor` objects to all Solidity definitions (contracts, functions, state variables, etc.), the references to them, and can resolve the links between the two.
 
-[Learn more about using the binding graph.](https://nomicfoundation.github.io/slang/latest/user-guide/07-semantic-analysis/02-binding-graph/)
+- [Learn more about using the binding graph.](https://nomicfoundation.github.io/slang/latest/user-guide/07-semantic-analysis/02-binding-graph/)
+
+## Contributing
+
+Please check our [contributors guide](https://github.com/NomicFoundation/slang/blob/main/CONTRIBUTING.md) to learn about how you can get started on Slang development.
 
 ## Built with Slang
 
