@@ -10,14 +10,14 @@ pub fn render_built_ins(language: &Rc<Language>) -> Result<String, Error> {
     let mut buffer = String::new();
 
     writeln!(buffer, "use metaslang_bindings::FileGraphBuilder;")?;
-    writeln!(buffer, "use metaslang_bindings::ScopeGraphBuilder;")?;
+    writeln!(buffer, "use metaslang_bindings::ScopeBuilder;")?;
     writeln!(buffer, "use metaslang_cst::kinds::KindTypes;")?;
     writeln!(buffer, "use semver::Version;")?;
 
     writeln!(buffer, "#[allow(clippy::too_many_lines)]")?;
     writeln!(
         buffer,
-        "\npub fn define_built_ins<KT: KindTypes + 'static>(builder: &mut FileGraphBuilder<'_, KT>, scope: &mut ScopeGraphBuilder, version: &Version) {{",
+        "\npub fn define_built_ins<KT: KindTypes + 'static>(builder: &mut FileGraphBuilder<'_, KT>, scope: &mut impl ScopeBuilder<KT>, version: &Version) {{",
     )?;
     let versions = language.collect_built_ins_versions();
     let versions = versions.iter().collect::<Vec<_>>();
@@ -94,8 +94,9 @@ fn render_contexts_for_version(
                 BuiltIn::BuiltInFunction { item } => {
                     writeln!(
                         buffer,
-                        "      scope.define_function(builder, \"{name}\", {return_type});",
+                        "      scope.define_function(builder, \"{name}\", &[{parameters}], {return_type});",
                         name = item.name,
+                        parameters = item.parameters.iter().map(|parameter| format!("\"{parameter}\"")).collect::<Vec<_>>().join(","),
                         return_type = optional_type(&item.return_type),
                     )?;
                 }
@@ -123,8 +124,9 @@ fn render_contexts_for_version(
                         for function in &item.functions {
                             writeln!(
                                 buffer,
-                                "      type_scope.define_function(builder, \"{name}\", {return_type});",
+                                "      type_scope.define_function(builder, \"{name}\", &[{parameters}], {return_type});",
                                 name = function.name,
+                                parameters = function.parameters.iter().map(|parameter| format!("\"{parameter}\"")).collect::<Vec<_>>().join(","),
                                 return_type = optional_type(&function.return_type),
                             )?;
                         }

@@ -327,7 +327,7 @@ impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
             .expect("Root node not found in stack graph")
     }
 
-    pub fn new_scope_node(&mut self, extension_hook: bool) -> GraphHandle {
+    fn new_scope_node(&mut self, extension_hook: bool) -> GraphHandle {
         let id = self.graph.stack_graph.new_node_id(self.file);
         let scope_node = self
             .graph
@@ -340,7 +340,7 @@ impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
         scope_node
     }
 
-    pub fn new_pop_symbol_node<S: AsRef<str> + ?Sized>(
+    fn new_pop_symbol_node<S: AsRef<str> + ?Sized>(
         &mut self,
         symbol: &S,
         is_definition: bool,
@@ -367,7 +367,7 @@ impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
         node
     }
 
-    pub fn new_push_symbol_node<S: AsRef<str> + ?Sized>(
+    fn new_push_symbol_node<S: AsRef<str> + ?Sized>(
         &mut self,
         symbol: &S,
         is_reference: bool,
@@ -391,9 +391,32 @@ impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
         node
     }
 
-    pub fn edge(&mut self, source: GraphHandle, sink: GraphHandle) {
+    fn edge(&mut self, source: GraphHandle, sink: GraphHandle) {
         self.graph.stack_graph.add_edge(source, sink, 0);
     }
+}
+
+pub trait ScopeBuilder<KT: KindTypes + 'static> {
+    #[must_use]
+    fn new_context(&self, builder: &mut FileGraphBuilder<'_, KT>, guard_symbol: &str) -> Self;
+
+    fn define_function(
+        &mut self,
+        builder: &mut FileGraphBuilder<'_, KT>,
+        identifier: &str,
+        parameters: &[&str],
+        return_type: Option<&str>,
+    );
+
+    fn define_field(
+        &mut self,
+        builder: &mut FileGraphBuilder<'_, KT>,
+        identifier: &str,
+        field_type: &str,
+    );
+
+    #[must_use]
+    fn define_type(&mut self, builder: &mut FileGraphBuilder<'_, KT>, identifier: &str) -> Self;
 }
 
 pub struct ScopeGraphBuilder {
