@@ -5,7 +5,9 @@
   "dependencies": {
     "@nomicfoundation/slang": "file:../package",
     "@openzeppelin/contracts": "^5.2.0",
+    "@solidity-parser/parser": "^0.20.1",
     "command-line-args": "^6.0.1",
+    "command-line-usage": "^7.0.3",
     "mathjs": "^14.0.1",
     "solc-typed-ast": "^18.2.5",
     "solc06": "npm:solc@0.6.12",
@@ -17,6 +19,7 @@
     "ts-node": "10.9.2"
   },
   "devDependencies": {
-    "@types/command-line-args": "^5.2.3"
+    "@types/command-line-args": "^5.2.3",
+    "@types/command-line-usage": "^5.0.4"
   }
 }

@@ -7,7 +7,7 @@ import assert from "node:assert";
 import * as slang_raw from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
 import { exit } from "node:process";
 import path from "node:path";
-import { Test } from "./common.mjs";
+import { Options, Test } from "./common.mjs";
 
 export class Record {
   file: string;
@@ -59,7 +59,7 @@ export function createBuilder(languageVersion: string, directory: string): Compi
           if (fs.statSync(realFile)) {
             return file;
           }
-        } catch {}
+        } catch { }
         i++;
       }
       throw `Can't resolve import ${importPath}`;
@@ -69,11 +69,16 @@ export function createBuilder(languageVersion: string, directory: string): Compi
   return builder;
 }
 
-export class SlangTest implements Test<void> {
+export class SlangTest implements Test {
   public name = "slang";
+  testBindings: boolean;
+
+  public constructor(testBindings: boolean) {
+    this.testBindings = testBindings;
+  }
 
   async test(languageVersion: string, dir: string, file: string) {
-    await testFile(languageVersion, dir, file);
+    await testFile(languageVersion, dir, file, this.testBindings);
   }
 }
 
@@ -81,6 +86,7 @@ export async function testFile(
   languageVersion: string,
   dir: string,
   file: string,
+  testBindings: boolean,
   expectedDefs?: number,
   expectedRefs?: number,
 ): Promise<Record> {
@@ -100,6 +106,10 @@ export async function testFile(
   const files_w_errors = unit.files().filter((f) => f.errors().length > 0);
   const errors = files_w_errors.flatMap((f) => f.errors().map((e) => [f.id, e.message, e.textRange]));
   assert.deepStrictEqual(errors, []);
+
+  if (!testBindings) {
+    return record;
+  }
 
   let defs = 0;
   let refs = 0;

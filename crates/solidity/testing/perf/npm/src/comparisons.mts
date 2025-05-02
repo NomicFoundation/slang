@@ -1,9 +1,11 @@
 import { SlangTest } from "./slang.runner.mjs";
 import path from "node:path";
 import { SolcPlainTest } from "./solc.runner.mjs";
-import { checkCI, Test } from "./common.mjs";
+import { checkCI, Options, Test } from "./common.mjs";
 import commandLineArgs from "command-line-args";
+import commandLineUsage from "command-line-usage";
 import { SolcTypedAstTest } from "./solc.typed.ast.runner.mjs";
+import { SolidityParserTest } from "./solidity.parser.runner.mjs";
 
 class Timing {
   public component: string;
@@ -16,20 +18,31 @@ class Timing {
 }
 
 class Measure {
-  public name: string = "";
+  public name: string;
   public timings: Timing[] = [];
+
+  public constructor(name: string) {
+    this.name = name;
+  }
 }
 
-async function run(solidityVersion: string, dir: string, file: string): Promise<Measure> {
-  const measure = new Measure();
-  measure.name = path.parse(file).name;
+async function run(solidityVersion: string, dir: string, file: string, options: Options): Promise<Measure> {
+  const measure = new Measure(path.parse(file).name);
 
-  const tests: Test<void>[] = [new SlangTest(), new SolcPlainTest(), new SolcTypedAstTest()];
+  let tests: Test[];
+  if (options == Options.Parse) {
+    tests = [new SlangTest(true), new SolidityParserTest(), new SolcTypedAstTest()];
+  }
+  else {
+    tests = [new SlangTest(false), new SolcPlainTest()];
+  }
 
   for (const test of tests) {
     const start = performance.now();
-    await test.test(solidityVersion, dir, file);
-    measure.timings.push(new Timing(test.name, performance.now() - start));
+    await test.test(solidityVersion, dir, file, options);
+    const time = performance.now() - start;
+    const name = test.name + (options == Options.Parse ? " parsing" : "");
+    measure.timings.push(new Timing(name, time));
   }
 
   return measure;
@@ -53,19 +66,39 @@ function buildOutput(resultCold: Measure, resultHot: Measure): Measure {
   return resultCold;
 }
 
+function capitalizeFirstLetter(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 checkCI();
 
-const options = commandLineArgs([
+const optionDefinitions = [
   { name: "version", type: String },
   { name: "dir", type: String },
   { name: "file", type: String },
+  { name: "test", type: (input: string) => Options[capitalizeFirstLetter(input) as keyof typeof Options] },
   { name: "verbose", type: Boolean, defaultValue: false },
-]);
+];
 
-const [version, dir, file] = [options["version"], options["dir"], options["file"]];
+const options = commandLineArgs(optionDefinitions);
 
-const resultCold = await run(version, dir, file);
-const resultHot = await run(version, dir, file);
+const [version, dir, file, test] = [options["version"], options["dir"], options["file"], options["test"]];
+
+if (!(version && dir && file && test)) {
+  const usage = commandLineUsage([
+    {
+      header: "Comparisons"
+    },
+    {
+      header: "Options",
+      optionList: optionDefinitions
+    }
+  ]);
+  console.log(usage);
+  process.exit(-1);
+}
+const resultCold = await run(version, dir, file, test);
+const resultHot = await run(version, dir, file, test);
 
 const output = buildOutput(resultCold, resultHot);
 
