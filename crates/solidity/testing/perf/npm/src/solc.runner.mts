@@ -9,8 +9,8 @@ import * as solc0812 from "solc0812";
 import * as solc0823 from "solc0823";
 import { Test } from "./common.mjs";
 
-export class SolcPlainTest implements Test<void> {
-  public name = "solc plain";
+export class SolcPlainTest implements Test {
+  public name = "solc";
 
   async test(languageVersion: string, dir: string, file: string) {
     testFile(languageVersion, dir, file);
