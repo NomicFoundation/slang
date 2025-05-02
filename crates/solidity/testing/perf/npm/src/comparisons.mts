@@ -1,9 +1,9 @@
-import { SlangTest } from "./common.slang.mjs";
+import { SlangTest } from "./slang.runner.mjs";
 import path from "node:path";
-import { SolcPlainTest } from "./solc.plain.mjs";
+import { SolcPlainTest } from "./solc.runner.mjs";
 import { checkCI, Test } from "./common.mjs";
 import commandLineArgs from "command-line-args";
-import { SolcTypedAstTest } from "./solc.typed.ast.mjs";
+import { SolcTypedAstTest } from "./solc.typed.ast.runner.mjs";
 
 class Timing {
   public component: string;
