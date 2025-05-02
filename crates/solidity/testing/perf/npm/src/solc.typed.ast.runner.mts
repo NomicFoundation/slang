@@ -1,7 +1,7 @@
 import { CompilationOutput, CompileFailedError, CompilerKind, compileSol } from "solc-typed-ast";
-import { Test } from "./common.mjs";
+import { Runner } from "./common.mjs";
 
-export class SolcTypedAstTest implements Test {
+export class SolcTypedAstRunner implements Runner {
   public name = "solc typed ast";
 
   async test(languageVersion: string, dir: string, file: string) {

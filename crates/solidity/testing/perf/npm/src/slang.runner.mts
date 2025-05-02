@@ -1,13 +1,13 @@
 import fs from "node:fs";
-import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
-import { TerminalKind } from "@nomicfoundation/slang/cst";
+import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
+import { Cursor, TerminalKind } from "@nomicfoundation/slang/cst";
 import { MathNumericType, max, mean, round, std } from "mathjs";
 import assert from "node:assert";
 // When debugging, add handleTables at the export list at the end of this imported file
 import * as slang_raw from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
 import { exit } from "node:process";
 import path from "node:path";
-import { Options, Test } from "./common.mjs";
+import { Options, Runner } from "./common.mjs";
 
 export class Record {
   file: string;
@@ -69,107 +69,97 @@ export function createBuilder(languageVersion: string, directory: string): Compi
   return builder;
 }
 
-export class SlangTest implements Test {
+export class SlangRunner implements Runner {
   public name = "slang";
-  testBindings: boolean;
+  options: Options;
 
-  public constructor(testBindings: boolean) {
-    this.testBindings = testBindings;
+  public constructor(options: Options) {
+    this.options = options;
   }
 
-  async test(languageVersion: string, dir: string, file: string) {
-    await testFile(languageVersion, dir, file, this.testBindings);
-  }
-}
+  async test(languageVersion: string, dir: string, file: string): Promise<void> {
+    let gotoDefTimes: number[] = Array();
+    const startTime = performance.now();
+    const builder = createBuilder(languageVersion, dir);
 
-export async function testFile(
-  languageVersion: string,
-  dir: string,
-  file: string,
-  testBindings: boolean,
-  expectedDefs?: number,
-  expectedRefs?: number,
-): Promise<Record> {
-  let gotoDefTimes: number[] = Array();
-  const startTime = performance.now();
-  const builder = createBuilder(languageVersion, dir);
+    const record = new Record(file);
 
-  const record = new Record(file);
+    await builder.addFile(file);
 
-  await builder.addFile(file);
+    const unit = builder.build();
+    const mainCursor = unit.file(file)!.createTreeCursor();
+    record.setupTime = round(performance.now() - startTime);
 
-  const unit = builder.build();
-  const cursor = unit.file(file)!.createTreeCursor();
-  record.setupTime = round(performance.now() - startTime);
+    // Validation: there shouldn't be any parsing errors, but if there are, let's print them nicely
+    const files_w_errors = unit.files().filter((f) => f.errors().length > 0);
+    const errors = files_w_errors.flatMap((f) => f.errors().map((e) => [f.id, e.message, e.textRange]));
+    assert.deepStrictEqual(errors, []);
 
-  // Validation: there shouldn't be any parsing errors, but if there are, let's print them nicely
-  const files_w_errors = unit.files().filter((f) => f.errors().length > 0);
-  const errors = files_w_errors.flatMap((f) => f.errors().map((e) => [f.id, e.message, e.textRange]));
-  assert.deepStrictEqual(errors, []);
+    if (this.options == Options.Parse) {
+      return;
+    }
 
-  if (!testBindings) {
-    return record;
-  }
+    // first access constructs the graph
+    assert(typeof unit.bindingGraph.definitionAt == "function");
+    record.buildGraphTime = round(performance.now() - startTime - record.setupTime);
 
-  let defs = 0;
-  let refs = 0;
-  let emptyDefList = [];
-  let neitherDefNorRefSet = new Set<string>();
+    let cursors: Cursor[] = [mainCursor];
 
-  // first access constructs the graph
-  assert(typeof unit.bindingGraph.definitionAt == "function");
-  record.buildGraphTime = round(performance.now() - startTime - record.setupTime);
+    if (this.options == Options.Project) {
+      cursors = unit.files().map((f) => f.createTreeCursor());
+    }
 
-  while (cursor.goToNextTerminalWithKind(TerminalKind.Identifier)) {
-    record.numberOfIdentifiers++;
-    const startDefRef = performance.now();
-    const definition = unit.bindingGraph.definitionAt(cursor);
-    const reference = unit.bindingGraph.referenceAt(cursor);
+    cursors.forEach((cursor) => {
+      let defs = 0;
+      let refs = 0;
+      let emptyDefList = [];
+      let neitherDefNorRefSet = new Set<string>();
 
-    const gotoDefTime = performance.now() - startDefRef;
+      while (cursor.goToNextTerminalWithKind(TerminalKind.Identifier)) {
+        record.numberOfIdentifiers++;
+        const startDefRef = performance.now();
+        const definition = unit.bindingGraph.definitionAt(cursor);
+        const reference = unit.bindingGraph.referenceAt(cursor);
 
-    if (reference) {
-      const defs = reference.definitions().length;
-      if (defs > 0) {
-        refs++;
-      } else {
-        emptyDefList.push(cursor.node.unparse());
+        const gotoDefTime = performance.now() - startDefRef;
+
+        if (reference) {
+          const defs = reference.definitions().length;
+          if (defs > 0) {
+            refs++;
+          } else {
+            emptyDefList.push(cursor.node.unparse());
+          }
+        }
+
+        if (definition) {
+          defs++;
+        }
+
+        const value = definition || reference;
+        if (!value) {
+          neitherDefNorRefSet.add(cursor.node.unparse());
+        }
+
+        gotoDefTimes.push(gotoDefTime);
       }
-    }
 
-    if (definition) {
-      defs++;
-    }
+      record.totalTime = round(performance.now() - startTime);
+      record.resolutionTime = record.totalTime - record.buildGraphTime - record.setupTime;
+      record.maxGoto = round(max(gotoDefTimes));
+      record.meanGoto = round(mean(gotoDefTimes));
+      record.stdGoto = round(std(gotoDefTimes)[0] || 0);
 
-    const value = definition || reference;
-    if (!value) {
-      neitherDefNorRefSet.add(cursor.node.unparse());
-    }
-
-    gotoDefTimes.push(gotoDefTime);
+      // We don't recognize `ABIEncoderV2` in `pragma experimental`, so let's ignore it
+      const allowed = ["ABIEncoderV2", "v2"];
+      const neitherDefNorRefList = Array.from(neitherDefNorRefSet);
+      assert.deepStrictEqual(
+        neitherDefNorRefList.filter((e) => !allowed.includes(e)),
+        [],
+      );
+      assert.deepStrictEqual(emptyDefList, []);
+    });
   }
-
-  record.totalTime = round(performance.now() - startTime);
-  record.resolutionTime = record.totalTime - record.buildGraphTime - record.setupTime;
-  record.maxGoto = round(max(gotoDefTimes));
-  record.meanGoto = round(mean(gotoDefTimes));
-  record.stdGoto = round(std(gotoDefTimes)[0] || 0);
-
-  // We don't recognize `ABIEncoderV2` in `pragma experimental`, so let's ignore it
-  const allowed = ["ABIEncoderV2", "v2"];
-  const neitherDefNorRefList = Array.from(neitherDefNorRefSet);
-  assert.deepStrictEqual(
-    neitherDefNorRefList.filter((e) => !allowed.includes(e)),
-    [],
-  );
-  assert.deepStrictEqual(emptyDefList, []);
-
-  if (expectedDefs) {
-    assert.equal(refs, expectedRefs);
-    assert.equal(defs, expectedDefs);
-  }
-
-  return record;
 }
 
 // DEBUG: See import above to enable this code

@@ -1,9 +1,9 @@
 import path from "node:path";
 import { parse } from "@solidity-parser/parser";
-import { Test } from "./common.mjs";
+import { Runner } from "./common.mjs";
 import { readFile } from "node:fs/promises";
 
-export class SolidityParserTest implements Test {
+export class SolidityParserRunner implements Runner {
   public name = "solidity parser";
 
   async test(_languageVersion: string, dir: string, file: string) {

@@ -7,9 +7,9 @@ import * as solc08 from "solc08";
 import * as solc089 from "solc089";
 import * as solc0812 from "solc0812";
 import * as solc0823 from "solc0823";
-import { Test } from "./common.mjs";
+import { Runner } from "./common.mjs";
 
-export class SolcPlainTest implements Test {
+export class SolcRunner implements Runner {
   public name = "solc";
 
   async test(languageVersion: string, dir: string, file: string) {
