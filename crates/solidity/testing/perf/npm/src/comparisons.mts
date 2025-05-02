@@ -1,11 +1,11 @@
-import { SlangTest } from "./slang.runner.mjs";
+import { SlangRunner } from "./slang.runner.mjs";
 import path from "node:path";
-import { SolcPlainTest } from "./solc.runner.mjs";
-import { checkCI, Options, Test } from "./common.mjs";
+import { SolcRunner } from "./solc.runner.mjs";
+import { checkCI, Runner, round2, Options } from "./common.mjs";
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
-import { SolcTypedAstTest } from "./solc.typed.ast.runner.mjs";
-import { SolidityParserTest } from "./solidity.parser.runner.mjs";
+import { SolcTypedAstRunner } from "./solc.typed.ast.runner.mjs";
+import { SolidityParserRunner } from "./solidity.parser.runner.mjs";
 
 class Timing {
   public component: string;
@@ -29,27 +29,23 @@ class Measure {
 async function run(solidityVersion: string, dir: string, file: string, options: Options): Promise<Measure> {
   const measure = new Measure(path.parse(file).name);
 
-  let tests: Test[];
+  let tests: Runner[];
   if (options == Options.Parse) {
-    tests = [new SlangTest(true), new SolidityParserTest(), new SolcTypedAstTest()];
+    tests = [new SlangRunner(options), new SolidityParserRunner(), new SolcTypedAstRunner()];
   }
   else {
-    tests = [new SlangTest(false), new SolcPlainTest()];
+    tests = [new SlangRunner(options), new SolcRunner()];
   }
 
   for (const test of tests) {
     const start = performance.now();
-    await test.test(solidityVersion, dir, file, options);
+    await test.test(solidityVersion, dir, file);
     const time = performance.now() - start;
     const name = test.name + (options == Options.Parse ? " parsing" : "");
     measure.timings.push(new Timing(name, time));
   }
 
   return measure;
-}
-
-function round2(n: number): number {
-  return Math.round(n * 100) / 100;
 }
 
 function buildOutput(resultCold: Measure, resultHot: Measure): Measure {
