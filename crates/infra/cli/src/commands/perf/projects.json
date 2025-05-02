@@ -1,5 +1,5 @@
 {
-  "sourcifyHashes": [
+  "projects": [
     {
       "hash": "0x01a5E3268E3987f0EE5e6Eb12fe63fa2AF992D83",
       "name": "Darts"
@@ -35,6 +35,16 @@
     {
       "hash": "0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed",
       "name": "CreateX"
+    }
+  ],
+  "files": [
+    {
+      "hash": "0x0000000000d6A44FaCfBe05Faaee691aFaCC0f81",
+      "file": "lib/seaport-types/src/interfaces/SeaportInterface.sol"
+    },
+    {
+      "hash": "0x00aB290CC289F818a9E80eBaF18685E353DF16F0",
+      "file": "contracts/OneStepLeverage.f.sol"
     }
   ],
   "missing": [

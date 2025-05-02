@@ -72,13 +72,13 @@ const optionDefinitions = [
   { name: "version", type: String },
   { name: "dir", type: String },
   { name: "file", type: String },
-  { name: "test", type: (input: string) => Options[capitalizeFirstLetter(input) as keyof typeof Options] },
+  { name: "options", type: (input: string) => Options[capitalizeFirstLetter(input) as keyof typeof Options] },
   { name: "verbose", type: Boolean, defaultValue: false },
 ];
 
 const options = commandLineArgs(optionDefinitions);
 
-const [version, dir, file, test] = [options["version"], options["dir"], options["file"], options["test"]];
+const [version, dir, file, test] = [options["version"], options["dir"], options["file"], options["options"]];
 
 if (!(version && dir && file && test)) {
   const usage = commandLineUsage([

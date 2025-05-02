@@ -75,14 +75,26 @@ impl FetchController {
             let config_content = fs::read_to_string(config_path)?;
             let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
 
-            let hashes = config_json
-                .get("sourcifyHashes")
+            let projects_key = "projects";
+            let mut hashes_projects = config_json
+                .get(projects_key)
                 .and_then(|h| h.as_array())
                 .ok_or_else(|| {
-                    anyhow::anyhow!("Invalid or missing 'sourcifyHashes' field in projects.json")
+                    anyhow::anyhow!("Invalid or missing '{projects_key}' field in projects.json")
+                })?
+                .to_owned();
+
+            let files_key = "files";
+
+            let hashes_keys = config_json
+                .get(files_key)
+                .and_then(|h| h.as_array())
+                .ok_or_else(|| {
+                    anyhow::anyhow!("Invalid or missing '{files_key}' field in projects.json")
                 })?;
 
-            for hash in hashes {
+            hashes_projects.extend(hashes_keys.iter().cloned());
+            for hash in hashes_projects {
                 let project = hash
                     .as_object()
                     .ok_or_else(|| anyhow::anyhow!("Invalid project format in projects.json"))?;

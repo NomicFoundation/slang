@@ -1,18 +1,39 @@
+use core::fmt;
 use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
 use anyhow::Result;
-use clap::Parser;
+use clap::{Parser, ValueEnum};
 use infra_utils::commands::Command;
 use itertools::Itertools;
 use serde::Deserialize;
 use serde_json::json;
 
+#[derive(Clone, Debug, Parser, ValueEnum)]
+pub enum Options {
+    Parse,
+    File,
+    Project,
+}
+
+impl fmt::Display for Options {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let string = match self {
+            Options::Parse => "parse",
+            Options::File => "file",
+            Options::Project => "project",
+        };
+        write!(f, "{string}")
+    }
+}
+
 #[derive(Clone, Debug, Parser)]
 pub struct NpmController {
     /// Folder where contracts are stored
     input_folder: String,
+    #[arg(short, long)]
+    options: Options,
 
     #[arg(short, long, default_value_t = String::from(".*"))]
     pattern: String,
@@ -142,6 +163,7 @@ impl NpmController {
             .property("--version", compiler_version)
             .property("--dir", path.to_string_lossy())
             .property("--file", fully_qualified_name)
+            .property("--options", self.options.to_string())
             .args(&self.extra_args);
         let result = command.evaluate()?;
 
