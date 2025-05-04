@@ -24,6 +24,7 @@ pub(crate) struct DefinitionBindingInfo<KT: KindTypes + 'static> {
     parents: Vec<GraphHandle>,
     extension_scope: Option<GraphHandle>,
     inherit_extensions: bool,
+    built_in_tag: Option<u32>,
 }
 
 pub(crate) struct ReferenceBindingInfo<KT: KindTypes + 'static> {
@@ -303,6 +304,16 @@ impl<KT: KindTypes + 'static> ExtendedStackGraph<KT> {
             None
         }
     }
+
+    pub(crate) fn get_built_in_tag(&self, handle: GraphHandle) -> Option<u32> {
+        if self.is_definition(handle) {
+            self.definitions_info
+                .get(&handle)
+                .and_then(|info| info.built_in_tag)
+        } else {
+            None
+        }
+    }
 }
 
 pub struct FileGraphBuilder<'a, KT: KindTypes + 'static> {
@@ -340,55 +351,48 @@ impl<'a, KT: KindTypes + 'static> FileGraphBuilder<'a, KT> {
         scope_node
     }
 
-    fn new_pop_symbol_node<S: AsRef<str> + ?Sized>(
+    fn new_pop_symbol_node<S: AsRef<str> + ?Sized>(&mut self, symbol: &S) -> GraphHandle {
+        let id = self.graph.stack_graph.new_node_id(self.file);
+        let symbol = self.graph.stack_graph.add_symbol(symbol);
+        self.graph
+            .stack_graph
+            .add_pop_symbol_node(id, symbol, false)
+            .expect("Failed to add pop symbol node")
+    }
+
+    fn new_definition_node<S: AsRef<str> + ?Sized>(
         &mut self,
         symbol: &S,
-        is_definition: bool,
+        built_in_tag: Option<u32>,
     ) -> GraphHandle {
         let id = self.graph.stack_graph.new_node_id(self.file);
         let symbol = self.graph.stack_graph.add_symbol(symbol);
         let node = self
             .graph
             .stack_graph
-            .add_pop_symbol_node(id, symbol, is_definition)
+            .add_pop_symbol_node(id, symbol, true)
             .expect("Failed to add pop symbol node");
-        if is_definition {
-            self.graph.definitions_info.insert(
-                node,
-                DefinitionBindingInfo {
-                    cursor: self.cursor.clone(),
-                    definiens: self.cursor.clone(),
-                    parents: Vec::new(),
-                    extension_scope: None,
-                    inherit_extensions: false,
-                },
-            );
-        }
+        self.graph.definitions_info.insert(
+            node,
+            DefinitionBindingInfo {
+                cursor: self.cursor.clone(),
+                definiens: self.cursor.clone(),
+                parents: Vec::new(),
+                extension_scope: None,
+                inherit_extensions: false,
+                built_in_tag,
+            },
+        );
         node
     }
 
-    fn new_push_symbol_node<S: AsRef<str> + ?Sized>(
-        &mut self,
-        symbol: &S,
-        is_reference: bool,
-    ) -> GraphHandle {
+    fn new_push_symbol_node<S: AsRef<str> + ?Sized>(&mut self, symbol: &S) -> GraphHandle {
         let id = self.graph.stack_graph.new_node_id(self.file);
         let symbol = self.graph.stack_graph.add_symbol(symbol);
-        let node = self
-            .graph
+        self.graph
             .stack_graph
-            .add_push_symbol_node(id, symbol, is_reference)
-            .expect("Failed to add push symbol node");
-        if is_reference {
-            self.graph.references_info.insert(
-                node,
-                ReferenceBindingInfo {
-                    cursor: self.cursor.clone(),
-                    parents: Vec::new(),
-                },
-            );
-        }
-        node
+            .add_push_symbol_node(id, symbol, false)
+            .expect("Failed to add push symbol node")
     }
 
     fn edge(&mut self, source: GraphHandle, sink: GraphHandle) {
@@ -434,7 +438,7 @@ impl ScopeGraphBuilder {
     ) -> Self {
         let resolution_scope = builder.new_scope_node(true);
 
-        let guard = builder.new_pop_symbol_node(guard_symbol, false);
+        let guard = builder.new_pop_symbol_node(guard_symbol);
         let defs = builder.new_scope_node(false);
         builder.edge(root_node, guard);
         builder.edge(guard, defs);
@@ -468,8 +472,8 @@ impl ScopeGraphBuilder {
         if let Some(handle) = self.typeof_refs.get(symbol) {
             *handle
         } else {
-            let r#typeof = builder.new_push_symbol_node("@typeof", false);
-            let r#type = builder.new_push_symbol_node(symbol, false);
+            let r#typeof = builder.new_push_symbol_node("@typeof");
+            let r#type = builder.new_push_symbol_node(symbol);
             builder.edge(r#typeof, r#type);
             builder.edge(r#type, self.resolution_scope);
             self.typeof_refs.insert(symbol.to_owned(), r#typeof);
@@ -482,14 +486,15 @@ impl ScopeGraphBuilder {
         builder: &mut FileGraphBuilder<'_, KT>,
         identifier: &str,
         return_type: Option<&str>,
+        built_in_tag: Option<u32>,
     ) {
-        let function_def = builder.new_pop_symbol_node(identifier, true);
+        let function_def = builder.new_definition_node(identifier, built_in_tag);
         builder.edge(self.defs, function_def);
 
         let function_typeof = self.typeof_reference(builder, "%Function");
         builder.edge(function_def, function_typeof);
 
-        let call = builder.new_pop_symbol_node("()", false);
+        let call = builder.new_pop_symbol_node("()");
         builder.edge(function_def, call);
 
         if let Some(return_type) = return_type {
@@ -503,8 +508,9 @@ impl ScopeGraphBuilder {
         builder: &mut FileGraphBuilder<'_, KT>,
         identifier: &str,
         field_type: &str,
+        built_in_tag: Option<u32>,
     ) {
-        let field_def = builder.new_pop_symbol_node(identifier, true);
+        let field_def = builder.new_definition_node(identifier, built_in_tag);
         builder.edge(self.defs, field_def);
 
         let field_typeof = self.typeof_reference(builder, field_type);
@@ -516,14 +522,15 @@ impl ScopeGraphBuilder {
         &mut self,
         builder: &mut FileGraphBuilder<'_, KT>,
         identifier: &str,
+        built_in_tag: Option<u32>,
     ) -> Self {
-        let type_def = builder.new_pop_symbol_node(identifier, true);
+        let type_def = builder.new_definition_node(identifier, built_in_tag);
         builder.edge(self.defs, type_def);
-        let typeof_def = builder.new_pop_symbol_node("@typeof", false);
+        let typeof_def = builder.new_pop_symbol_node("@typeof");
         builder.edge(type_def, typeof_def);
-        let call_def = builder.new_pop_symbol_node("()", false);
+        let call_def = builder.new_pop_symbol_node("()");
         builder.edge(type_def, call_def);
-        let dot = builder.new_pop_symbol_node(".", false);
+        let dot = builder.new_pop_symbol_node(".");
         builder.edge(typeof_def, dot);
         builder.edge(call_def, dot);
 

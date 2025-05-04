@@ -911,6 +911,7 @@ impl<'a, KT: KindTypes> Loader<'a, KT> {
                     parents,
                     extension_scope,
                     inherit_extensions,
+                    built_in_tag: None,
                 },
             );
         } else if stack_graph_node.is_reference() {

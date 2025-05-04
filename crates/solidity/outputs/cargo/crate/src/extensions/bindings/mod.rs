@@ -34,6 +34,8 @@ pub fn add_built_ins(
 
 struct SolidityScopeBuilder {
     scope_builder: ScopeGraphBuilder,
+    #[allow(dead_code)]
+    enclosing_type: Option<String>,
 }
 
 impl SolidityScopeBuilder {
@@ -43,7 +45,10 @@ impl SolidityScopeBuilder {
         root_node: GraphHandle,
     ) -> Self {
         let scope_builder = ScopeGraphBuilder::new(builder, guard_symbol, root_node, None);
-        Self { scope_builder }
+        Self {
+            scope_builder,
+            enclosing_type: None,
+        }
     }
 }
 
@@ -55,18 +60,25 @@ impl ScopeBuilder<KindTypes> for SolidityScopeBuilder {
     ) -> Self {
         let scope_builder =
             ScopeGraphBuilder::new_context(&self.scope_builder, builder, guard_symbol);
-        Self { scope_builder }
+        Self {
+            scope_builder,
+            enclosing_type: None,
+        }
     }
 
     fn define_function(
         &mut self,
         builder: &mut metaslang_bindings::FileGraphBuilder<'_, KindTypes>,
         identifier: &str,
-        _parameters: &[&str],
+        #[allow(unused_variables)] parameters: &[&str],
         return_type: Option<&str>,
     ) {
+        #[cfg(feature = "__private_backend_api")]
+        let tag = function_built_in_tag(identifier, parameters).map(|tag| tag as u32);
+        #[cfg(not(feature = "__private_backend_api"))]
+        let tag = None;
         self.scope_builder
-            .define_function(builder, identifier, return_type);
+            .define_function(builder, identifier, return_type, tag);
     }
 
     fn define_field(
@@ -75,8 +87,13 @@ impl ScopeBuilder<KindTypes> for SolidityScopeBuilder {
         identifier: &str,
         field_type: &str,
     ) {
+        #[cfg(feature = "__private_backend_api")]
+        let tag = field_built_in_tag(self.enclosing_type.as_deref(), identifier, field_type)
+            .map(|tag| tag as u32);
+        #[cfg(not(feature = "__private_backend_api"))]
+        let tag = None;
         self.scope_builder
-            .define_field(builder, identifier, field_type);
+            .define_field(builder, identifier, field_type, tag);
     }
 
     fn define_type(
@@ -84,7 +101,58 @@ impl ScopeBuilder<KindTypes> for SolidityScopeBuilder {
         builder: &mut metaslang_bindings::FileGraphBuilder<'_, KindTypes>,
         identifier: &str,
     ) -> Self {
-        let scope_builder = self.scope_builder.define_type(builder, identifier);
-        Self { scope_builder }
+        #[cfg(feature = "__private_backend_api")]
+        let tag = type_built_in_tag(identifier).map(|tag| tag as u32);
+        #[cfg(not(feature = "__private_backend_api"))]
+        let tag = None;
+        let scope_builder = self.scope_builder.define_type(builder, identifier, tag);
+        Self {
+            scope_builder,
+            enclosing_type: Some(identifier.to_owned()),
+        }
     }
+}
+
+#[cfg(feature = "__private_backend_api")]
+use super::built_ins::BuiltInTag;
+
+#[cfg(feature = "__private_backend_api")]
+fn function_built_in_tag(identifier: &str, parameters: &[&str]) -> Option<BuiltInTag> {
+    match identifier {
+        "require" => {
+            if parameters.len() == 1 {
+                Some(BuiltInTag::RequireBool)
+            } else if parameters.len() == 2 {
+                if parameters[1].starts_with("string") {
+                    Some(BuiltInTag::RequireBoolString)
+                } else {
+                    Some(BuiltInTag::RequireBoolError)
+                }
+            } else {
+                None
+            }
+        }
+        _ => None,
+    }
+}
+
+#[cfg(feature = "__private_backend_api")]
+fn field_built_in_tag(
+    enclosing_type: Option<&str>,
+    identifier: &str,
+    _field_type: &str,
+) -> Option<BuiltInTag> {
+    match enclosing_type {
+        None => None,
+        Some("%MessageType") => match identifier {
+            "sender" => Some(BuiltInTag::MsgSender),
+            _ => None,
+        },
+        Some(_) => None,
+    }
+}
+
+#[cfg(feature = "__private_backend_api")]
+fn type_built_in_tag(_identifier: &str) -> Option<BuiltInTag> {
+    None
 }

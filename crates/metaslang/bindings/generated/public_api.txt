@@ -34,6 +34,7 @@ pub fn metaslang_bindings::BuiltInLocation::fmt(&self, f: &mut core::fmt::Format
 pub struct metaslang_bindings::Definition<KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Definition<KT>
 pub fn metaslang_bindings::Definition<KT>::definiens_location(&self) -> metaslang_bindings::BindingLocation<KT>
+pub fn metaslang_bindings::Definition<KT>::get_built_in_tag(&self) -> core::option::Option<u32>
 pub fn metaslang_bindings::Definition<KT>::get_cursor(&self) -> &metaslang_cst::cursor::Cursor<KT>
 pub fn metaslang_bindings::Definition<KT>::get_definiens_cursor(&self) -> &metaslang_cst::cursor::Cursor<KT>
 pub fn metaslang_bindings::Definition<KT>::get_file(&self) -> FileDescriptor
@@ -67,9 +68,9 @@ impl<KT: metaslang_cst::kinds::KindTypes + 'static> core::fmt::Display for metas
 pub fn metaslang_bindings::Reference<KT>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct metaslang_bindings::ScopeGraphBuilder
 impl metaslang_bindings::ScopeGraphBuilder
-pub fn metaslang_bindings::ScopeGraphBuilder::define_field<KT: metaslang_cst::kinds::KindTypes + 'static>(&mut self, builder: &mut metaslang_bindings::FileGraphBuilder<'_, KT>, identifier: &str, field_type: &str)
-pub fn metaslang_bindings::ScopeGraphBuilder::define_function<KT: metaslang_cst::kinds::KindTypes + 'static>(&mut self, builder: &mut metaslang_bindings::FileGraphBuilder<'_, KT>, identifier: &str, return_type: core::option::Option<&str>)
-pub fn metaslang_bindings::ScopeGraphBuilder::define_type<KT: metaslang_cst::kinds::KindTypes + 'static>(&mut self, builder: &mut metaslang_bindings::FileGraphBuilder<'_, KT>, identifier: &str) -> Self
+pub fn metaslang_bindings::ScopeGraphBuilder::define_field<KT: metaslang_cst::kinds::KindTypes + 'static>(&mut self, builder: &mut metaslang_bindings::FileGraphBuilder<'_, KT>, identifier: &str, field_type: &str, built_in_tag: core::option::Option<u32>)
+pub fn metaslang_bindings::ScopeGraphBuilder::define_function<KT: metaslang_cst::kinds::KindTypes + 'static>(&mut self, builder: &mut metaslang_bindings::FileGraphBuilder<'_, KT>, identifier: &str, return_type: core::option::Option<&str>, built_in_tag: core::option::Option<u32>)
+pub fn metaslang_bindings::ScopeGraphBuilder::define_type<KT: metaslang_cst::kinds::KindTypes + 'static>(&mut self, builder: &mut metaslang_bindings::FileGraphBuilder<'_, KT>, identifier: &str, built_in_tag: core::option::Option<u32>) -> Self
 pub fn metaslang_bindings::ScopeGraphBuilder::new<KT: metaslang_cst::kinds::KindTypes + 'static>(builder: &mut metaslang_bindings::FileGraphBuilder<'_, KT>, guard_symbol: &str, root_node: metaslang_bindings::GraphHandle, parent_scope: core::option::Option<metaslang_bindings::GraphHandle>) -> Self
 pub fn metaslang_bindings::ScopeGraphBuilder::new_context<KT: metaslang_cst::kinds::KindTypes + 'static>(&self, builder: &mut metaslang_bindings::FileGraphBuilder<'_, KT>, guard_symbol: &str) -> Self
 pub struct metaslang_bindings::UserFileLocation<KT: metaslang_cst::kinds::KindTypes + 'static>
