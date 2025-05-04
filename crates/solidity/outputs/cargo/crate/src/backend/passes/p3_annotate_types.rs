@@ -1,14 +1,18 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use metaslang_bindings::BuiltInLocation;
 use metaslang_cst::nodes::NodeId;
+use num_traits::FromPrimitive;
 
 use super::p2_collect_types::Output as Input;
+use crate::backend::built_ins::built_in_type;
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir, Expression, SourceUnit};
 use crate::backend::types::{Type, TypeId, TypeRegistry};
-use crate::bindings::BindingGraph;
+use crate::bindings::{BindingGraph, BindingLocation, Definition, UserFileLocation};
 use crate::cst::TerminalNode;
+use crate::extensions::built_ins::BuiltInTag;
 
 pub struct Output {
     pub files: HashMap<String, SourceUnit>,
@@ -19,13 +23,18 @@ pub struct Output {
 
 pub fn run(input: Input) -> Output {
     let files = input.files;
-    let types = input.types;
     let definition_types = input.definition_types;
-    let mut pass = Pass::new(Rc::clone(&input.binding_graph), &types, definition_types);
+    let mut pass = Pass::new(
+        Rc::clone(&input.binding_graph),
+        input.types,
+        definition_types,
+    );
     for source_unit in files.values() {
         input_ir::visitor::accept_source_unit(source_unit, &mut pass);
     }
+
     let annotations = pass.annotations;
+    let types = pass.types;
 
     Output {
         files,
@@ -35,49 +44,22 @@ pub fn run(input: Input) -> Output {
     }
 }
 
-struct Pass<'a> {
+struct Pass {
     binding_graph: Rc<BindingGraph>,
-    types: &'a TypeRegistry,
+    types: TypeRegistry,
     pub annotations: HashMap<NodeId, TypeId>,
-
-    bool_type: TypeId,
-    rational_type: TypeId,
-    #[allow(dead_code)]
-    uint256_type: TypeId,
-    #[allow(dead_code)]
-    void_type: TypeId,
 }
 
-impl<'a> Pass<'a> {
-    fn new(
+impl Pass {
+    pub fn new(
         binding_graph: Rc<BindingGraph>,
-        types: &'a TypeRegistry,
+        types: TypeRegistry,
         definition_types: HashMap<NodeId, TypeId>,
     ) -> Self {
-        let Some(bool_type) = types.find_type(&Type::Boolean) else {
-            unreachable!("Expected bool type to be registered");
-        };
-        let Some(uint256_type) = types.find_type(&Type::Integer {
-            signed: false,
-            bits: 256,
-        }) else {
-            unreachable!("Expected uint256 type to be registered");
-        };
-        let Some(rational_type) = types.find_type(&Type::Rational) else {
-            unreachable!("Expected rational type to be registered");
-        };
-        let Some(void_type) = types.find_type(&Type::Void) else {
-            unreachable!("Expected void type to be registered");
-        };
-
         Self {
             binding_graph,
             types,
             annotations: definition_types,
-            bool_type,
-            rational_type,
-            uint256_type,
-            void_type,
         }
     }
 
@@ -120,7 +102,7 @@ impl<'a> Pass<'a> {
             Expression::PayableKeyword => todo!(),
             Expression::ThisKeyword => todo!(),
             Expression::SuperKeyword => todo!(),
-            Expression::TrueKeyword | Expression::FalseKeyword => self.bool_type,
+            Expression::TrueKeyword | Expression::FalseKeyword => self.types.bool(),
         }
     }
 
@@ -134,17 +116,33 @@ impl<'a> Pass<'a> {
             0 => {
                 unimplemented!("Reference to {identifier:?} cannot be resolved");
             }
-            1 => {
-                let definition = &definitions[0];
-                self.annotations
-                    .get(&definition.id())
-                    .copied()
-                    .unwrap_or_else(|| {
-                        unimplemented!("Type for definition of {identifier:?} is not registered")
-                    })
-            }
+            1 => self.type_of_definition(&definitions[0]),
             _ => {
-                unimplemented!("Cannot disambiguate from multiple definitions of {identifier:?}");
+                let choices = definitions
+                    .iter()
+                    .map(|definition| self.type_of_definition(definition))
+                    .collect();
+                self.types.register_type(Type::Undecided { choices })
+            }
+        }
+    }
+
+    fn type_of_definition(&mut self, definition: &Definition) -> TypeId {
+        match definition.definiens_location() {
+            BindingLocation::UserFile(UserFileLocation { .. }) => self
+                .annotations
+                .get(&definition.id())
+                .copied()
+                .unwrap_or_else(|| {
+                    let identifier = definition.get_cursor().node().unparse();
+                    unimplemented!("Type for definition of {identifier:?} is not registered")
+                }),
+            BindingLocation::BuiltIn(BuiltInLocation { .. }) => {
+                let tag = definition
+                    .get_built_in_tag()
+                    .expect("Missing built-in tag for definition {definition:?}");
+                let tag = BuiltInTag::from_u32(tag).expect("Invalid built-in tag {tag}");
+                built_in_type(tag, &mut self.types)
             }
         }
     }
@@ -155,17 +153,17 @@ impl<'a> Pass<'a> {
         left_operand: &Expression,
         right_operand: &Expression,
     ) {
-        if self.type_of_expression(left_operand) == self.bool_type
-            && self.type_of_expression(right_operand) == self.bool_type
+        if self.type_of_expression(left_operand) == self.types.bool()
+            && self.type_of_expression(right_operand) == self.types.bool()
         {
-            self.annotations.insert(node_id, self.bool_type);
+            self.annotations.insert(node_id, self.types.bool());
         } else {
             unimplemented!("Type error: logical expression operands are not boolean");
         }
     }
 }
 
-impl<'a> Visitor for Pass<'a> {
+impl Visitor for Pass {
     fn leave_assignment_expression(&mut self, node: &input_ir::AssignmentExpression) {
         let assignment_type = self.type_of_expression(&node.left_operand);
         self.annotations.insert(node.node_id, assignment_type);
@@ -184,11 +182,11 @@ impl<'a> Visitor for Pass<'a> {
     }
 
     fn leave_equality_expression(&mut self, node: &input_ir::EqualityExpression) {
-        self.annotations.insert(node.node_id, self.bool_type);
+        self.annotations.insert(node.node_id, self.types.bool());
     }
 
     fn leave_inequality_expression(&mut self, node: &input_ir::InequalityExpression) {
-        self.annotations.insert(node.node_id, self.bool_type);
+        self.annotations.insert(node.node_id, self.types.bool());
     }
 
     fn leave_bitwise_or_expression(&mut self, _node: &input_ir::BitwiseOrExpression) {
@@ -286,6 +284,6 @@ impl<'a> Visitor for Pass<'a> {
     }
 
     fn leave_decimal_number_expression(&mut self, node: &input_ir::DecimalNumberExpression) {
-        self.annotations.insert(node.node_id, self.rational_type);
+        self.annotations.insert(node.node_id, self.types.rational());
     }
 }

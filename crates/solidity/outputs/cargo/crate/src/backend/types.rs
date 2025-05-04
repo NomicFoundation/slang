@@ -9,13 +9,44 @@ pub struct TypeId(usize);
 pub struct TypeRegistry {
     types: IndexSet<Type>,
     definitions: HashMap<NodeId, TypeDefinition>,
+
+    // Pre-defined core types
+    address_type_id: TypeId,
+    bool_type_id: TypeId,
+    error_type_id: TypeId,
+    rational_type_id: TypeId,
+    string_type_id: TypeId,
+    uint256_type_id: TypeId,
+    void_type_id: TypeId,
 }
 
 impl TypeRegistry {
     fn new() -> Self {
+        let mut types = IndexSet::new();
+        let (address_type, _) = types.insert_full(Type::Address { payable: false });
+        let (bool_type, _) = types.insert_full(Type::Boolean);
+        let (error_type, _) = types.insert_full(Type::Error { node_id: None });
+        let (rational_type, _) = types.insert_full(Type::Rational);
+        let (string_type, _) = types.insert_full(Type::String {
+            location: DataLocation::Memory,
+        });
+        let (uint256_type, _) = types.insert_full(Type::Integer {
+            signed: false,
+            bits: 256,
+        });
+        let (void_type, _) = types.insert_full(Type::Void);
+
         Self {
-            types: IndexSet::new(),
+            types,
             definitions: HashMap::new(),
+
+            address_type_id: TypeId(address_type),
+            bool_type_id: TypeId(bool_type),
+            error_type_id: TypeId(error_type),
+            rational_type_id: TypeId(rational_type),
+            string_type_id: TypeId(string_type),
+            uint256_type_id: TypeId(uint256_type),
+            void_type_id: TypeId(void_type),
         }
     }
 
@@ -57,6 +88,30 @@ impl TypeRegistry {
     }
 }
 
+impl TypeRegistry {
+    pub fn address(&self) -> TypeId {
+        self.address_type_id
+    }
+    pub fn bool(&self) -> TypeId {
+        self.bool_type_id
+    }
+    pub fn error(&self) -> TypeId {
+        self.error_type_id
+    }
+    pub fn rational(&self) -> TypeId {
+        self.rational_type_id
+    }
+    pub fn string(&self) -> TypeId {
+        self.string_type_id
+    }
+    pub fn uint256(&self) -> TypeId {
+        self.uint256_type_id
+    }
+    pub fn void(&self) -> TypeId {
+        self.void_type_id
+    }
+}
+
 impl Default for TypeRegistry {
     fn default() -> Self {
         Self::new()
@@ -67,6 +122,7 @@ impl Default for TypeRegistry {
 pub enum TypeDefinition {
     Contract(ContractTypeDefinition),
     Enum(EnumTypeDefinition),
+    Error(ErrorTypeDefinition),
     Interface(InterfaceTypeDefinition),
     Struct(StructTypeDefinition),
     UserDefinedValueType(UserDefinedValueTypeDefinition),
@@ -77,6 +133,7 @@ impl TypeDefinition {
         match self {
             Self::Contract(ContractTypeDefinition { node_id, .. })
             | Self::Enum(EnumTypeDefinition { node_id, .. })
+            | Self::Error(ErrorTypeDefinition { node_id, .. })
             | Self::Interface(InterfaceTypeDefinition { node_id, .. })
             | Self::Struct(StructTypeDefinition { node_id, .. })
             | Self::UserDefinedValueType(UserDefinedValueTypeDefinition { node_id, .. }) => {
@@ -134,11 +191,26 @@ pub struct EnumMember {
 }
 
 #[derive(Debug, Eq, PartialEq)]
+pub struct ErrorTypeDefinition {
+    pub node_id: NodeId,
+    pub name: String,
+    pub members: Vec<ErrorField>,
+}
+
+#[derive(Debug, Eq, PartialEq)]
+pub struct ErrorField {
+    pub node_id: NodeId,
+    pub name: Option<String>,
+    pub type_id: TypeId,
+}
+
+#[derive(Debug, Eq, PartialEq)]
 pub struct UserDefinedValueTypeDefinition {
     pub node_id: NodeId,
     pub name: String,
     pub type_id: TypeId,
 }
+
 #[derive(Debug, Eq, Hash, PartialEq)]
 pub enum Type {
     Address {
@@ -161,6 +233,9 @@ pub enum Type {
     },
     Enum {
         node_id: NodeId,
+    },
+    Error {
+        node_id: Option<NodeId>,
     },
     FixedPointNumber {
         signed: bool,
@@ -196,6 +271,9 @@ pub enum Type {
     },
     Tuple {
         types: Vec<TypeId>,
+    },
+    Undecided {
+        choices: Vec<TypeId>,
     },
     UserDefinedValueType {
         node_id: NodeId,
@@ -239,12 +317,14 @@ impl Type {
             | Self::ByteArray { .. }
             | Self::Contract { .. }
             | Self::Enum { .. }
+            | Self::Error { .. }
             | Self::Function { .. }
             | Self::FixedPointNumber { .. }
             | Self::Integer { .. }
             | Self::Interface { .. }
             | Self::Rational
             | Self::Tuple { .. }
+            | Self::Undecided { .. }
             | Self::UserDefinedValueType { .. }
             | Self::Void => None,
             Self::Mapping { .. } => Some(DataLocation::Storage),
