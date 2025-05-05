@@ -1,6 +1,7 @@
 name: "sourcify_all_chains"
 
 on:
+  pull_request:
   workflow_dispatch:
     inputs:
       check_bindings:
