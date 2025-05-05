@@ -1,7 +1,6 @@
 name: "sourcify_all_chains"
 
 on:
-  pull_request:
   workflow_dispatch:
     inputs:
       check_bindings:
@@ -19,8 +18,8 @@ jobs:
     uses: "./.github/workflows/sourcify_single_chain.yml"
     with:
       chain_id: "${{ matrix.chain_id }}"
-      check_bindings: "${{ inputs.check_bindings || false }}"
-      check_infer_version: "${{ inputs.check_infer_version || true }}"
+      check_bindings: "${{ inputs.check_bindings }}"
+      check_infer_version: "${{ inputs.check_infer_version }}"
     strategy:
       fail-fast: false
       matrix:
