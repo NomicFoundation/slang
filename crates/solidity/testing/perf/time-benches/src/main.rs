@@ -74,28 +74,10 @@ impl NpmController {
 
             let path = input_path.join(&file.hash);
 
-            let compilation_file = path.join("compilation.json");
-
-            if !compilation_file.exists() {
-                return Err(anyhow::anyhow!(
-                    "Missing compilation.json in folder: {:?}",
-                    path
-                ));
-            }
-
-            let content = fs::read_to_string(&compilation_file)?;
-            let json: serde_json::Value = serde_json::from_str(&content)?;
-
-            let compiler_version = json
-                .get("compilerVersion")
-                .and_then(|f| f.as_str())
-                .ok_or_else(|| anyhow::anyhow!("Missing compilerVersion in {compilation_file:?}"))?
-                .split('+')
-                .next()
-                .ok_or_else(|| anyhow::anyhow!("compilerVersion is not well formatted"))?;
+            let (compiler_version, _) = Self::compilation_options(&path)?;
 
             let result =
-                self.execute_comparison(compiler_version, &path, &file.file, &Options::Parse)?;
+                self.execute_comparison(&compiler_version, &path, &file.file, &Options::Parse)?;
             results.push(result);
         }
         let summary = Self::add_summary(&results);
@@ -114,48 +96,18 @@ impl NpmController {
         for project in projects {
             let path = input_path.join(&project.hash);
 
-            let compilation_file = path.join("compilation.json");
-
-            if !compilation_file.exists() {
-                return Err(anyhow::anyhow!(
-                    "Missing compilation.json in folder: {:?}",
-                    path
-                ));
-            }
-
-            let content = fs::read_to_string(&compilation_file)?;
-            let json: serde_json::Value = serde_json::from_str(&content)?;
-
-            let fully_qualified_name = json
-                .get("fullyQualifiedName")
-                .and_then(|f| f.as_str())
-                .ok_or_else(|| {
-                    anyhow::anyhow!(
-                        "Missing fullyQualifiedName field in file: {compilation_file:?}"
-                    )
-                })?
-                .rsplit_once(':')
-                .map(|(before_last_colon, _)| before_last_colon)
-                .ok_or_else(|| anyhow::anyhow!("fullyQualifiedName is not well formatted"))?;
+            let (compiler_version, fully_qualified_name) = Self::compilation_options(&path)?;
 
             if !regex::Regex::new(&self.pattern)?
-                .is_match(path.join(fully_qualified_name).to_string_lossy().as_ref())
+                .is_match(path.join(&fully_qualified_name).to_string_lossy().as_ref())
             {
                 continue;
             }
 
-            let compiler_version = json
-                .get("compilerVersion")
-                .and_then(|f| f.as_str())
-                .ok_or_else(|| anyhow::anyhow!("Missing compilerVersion in {compilation_file:?}"))?
-                .split('+')
-                .next()
-                .ok_or_else(|| anyhow::anyhow!("compilerVersion is not well formatted"))?;
-
             let result = self.execute_comparison(
-                compiler_version,
+                &compiler_version,
                 &path,
-                fully_qualified_name,
+                &fully_qualified_name,
                 if file_only {
                     &Options::File
                 } else {
@@ -170,6 +122,40 @@ impl NpmController {
         }
         publish(&results)?;
         Ok(())
+    }
+
+    fn compilation_options(path: &Path) -> Result<(String, String)> {
+        let compilation_file = path.join("compilation.json");
+
+        if !compilation_file.exists() {
+            return Err(anyhow::anyhow!(
+                "Missing compilation.json in folder: {:?}",
+                path
+            ));
+        }
+
+        let content = fs::read_to_string(&compilation_file)?;
+        let json: serde_json::Value = serde_json::from_str(&content)?;
+
+        let fully_qualified_name = json
+            .get("fullyQualifiedName")
+            .and_then(|f| f.as_str())
+            .ok_or_else(|| {
+                anyhow::anyhow!("Missing fullyQualifiedName field in file: {compilation_file:?}")
+            })?
+            .rsplit_once(':')
+            .map(|(before_last_colon, _)| before_last_colon)
+            .ok_or_else(|| anyhow::anyhow!("fullyQualifiedName is not well formatted"))?;
+
+        let compiler_version = json
+            .get("compilerVersion")
+            .and_then(|f| f.as_str())
+            .ok_or_else(|| anyhow::anyhow!("Missing compilerVersion in {compilation_file:?}"))?
+            .split('+')
+            .next()
+            .ok_or_else(|| anyhow::anyhow!("compilerVersion is not well formatted"))?;
+
+        Ok((compiler_version.into(), fully_qualified_name.into()))
     }
 
     fn add_summary(results: &Vec<Measure>) -> Option<Measure> {
