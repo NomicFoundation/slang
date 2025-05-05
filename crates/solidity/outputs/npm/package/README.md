@@ -53,16 +53,10 @@ import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 function createTree(): ParseOutput {
     const source = `
-    contract Foo {
-      function foo_func() {}
-    }
-    contract Bar {
-      function bar_func() {}
-    }
-    contract Baz {
-      function baz_func() {}
-    }
-  `;
+      contract Foo {}
+      contract Bar {}
+      contract Baz {}
+    `;
 
     const parser = Parser.create(LanguageFacts.latestVersion());
 
