@@ -8,7 +8,9 @@ use num_traits::FromPrimitive;
 use super::p2_collect_types::Output as Input;
 use crate::backend::built_ins::built_in_type;
 use crate::backend::l2_flat_contracts::visitor::Visitor;
-use crate::backend::l2_flat_contracts::{self as input_ir, Expression, SourceUnit};
+use crate::backend::l2_flat_contracts::{
+    self as input_ir, ArgumentsDeclaration, Expression, SourceUnit,
+};
 use crate::backend::types::{Type, TypeId, TypeRegistry};
 use crate::bindings::{BindingGraph, BindingLocation, Definition, UserFileLocation};
 use crate::cst::TerminalNode;
@@ -65,44 +67,78 @@ impl Pass {
 
     fn type_of_expression(&mut self, expression: &Expression) -> TypeId {
         match expression {
-            Expression::AssignmentExpression(_) => todo!(),
-            Expression::ConditionalExpression(_) => todo!(),
-            Expression::OrExpression(_) => todo!(),
-            Expression::AndExpression(_) => todo!(),
-            Expression::EqualityExpression(_) => todo!(),
-            Expression::InequalityExpression(_) => todo!(),
-            Expression::BitwiseOrExpression(_) => todo!(),
-            Expression::BitwiseXorExpression(_) => todo!(),
-            Expression::BitwiseAndExpression(_) => todo!(),
-            Expression::ShiftExpression(_) => todo!(),
-            Expression::AdditiveExpression(_) => todo!(),
-            Expression::MultiplicativeExpression(_) => todo!(),
-            Expression::ExponentiationExpression(_) => todo!(),
-            Expression::PostfixExpression(_) => todo!(),
-            Expression::PrefixExpression(_) => todo!(),
-            Expression::FunctionCallExpression(_) => todo!(),
-            Expression::CallOptionsExpression(_) => todo!(),
-            Expression::MemberAccessExpression(_) => todo!(),
-            Expression::IndexAccessExpression(index_access_expression) => self
-                .annotations
-                .get(&index_access_expression.node_id)
-                .copied()
-                .unwrap_or_else(|| {
-                    unimplemented!("Expected index access expression to already be typed")
-                }),
-            Expression::NewExpression(_) => todo!(),
-            Expression::TupleExpression(_) => todo!(),
-            Expression::TypeExpression(_) => todo!(),
-            Expression::ArrayExpression(_) => todo!(),
-            Expression::HexNumberExpression(_) => todo!(),
-            Expression::DecimalNumberExpression(_) => todo!(),
-            Expression::StringExpression(_) => todo!(),
+            Expression::StringExpression(_) => self.types.string(),
             Expression::ElementaryType(_) => todo!(),
             Expression::Identifier(identifier) => self.type_of_identifier(identifier),
             Expression::PayableKeyword => todo!(),
             Expression::ThisKeyword => todo!(),
             Expression::SuperKeyword => todo!(),
             Expression::TrueKeyword | Expression::FalseKeyword => self.types.bool(),
+            _ => {
+                let node_id = match expression {
+                    Expression::AssignmentExpression(assignment_expression) => {
+                        assignment_expression.node_id
+                    }
+                    Expression::ConditionalExpression(conditional_expression) => {
+                        conditional_expression.node_id
+                    }
+                    Expression::OrExpression(or_expression) => or_expression.node_id,
+                    Expression::AndExpression(and_expression) => and_expression.node_id,
+                    Expression::EqualityExpression(equality_expression) => {
+                        equality_expression.node_id
+                    }
+                    Expression::InequalityExpression(inequality_expression) => {
+                        inequality_expression.node_id
+                    }
+                    Expression::BitwiseOrExpression(bitwise_or_expression) => {
+                        bitwise_or_expression.node_id
+                    }
+                    Expression::BitwiseXorExpression(bitwise_xor_expression) => {
+                        bitwise_xor_expression.node_id
+                    }
+                    Expression::BitwiseAndExpression(bitwise_and_expression) => {
+                        bitwise_and_expression.node_id
+                    }
+                    Expression::ShiftExpression(shift_expression) => shift_expression.node_id,
+                    Expression::AdditiveExpression(additive_expression) => {
+                        additive_expression.node_id
+                    }
+                    Expression::MultiplicativeExpression(multiplicative_expression) => {
+                        multiplicative_expression.node_id
+                    }
+                    Expression::ExponentiationExpression(exponetiation_expression) => {
+                        exponetiation_expression.node_id
+                    }
+                    Expression::PostfixExpression(postfix_expression) => postfix_expression.node_id,
+                    Expression::PrefixExpression(prefix_expression) => prefix_expression.node_id,
+                    Expression::FunctionCallExpression(function_call_expression) => {
+                        function_call_expression.node_id
+                    }
+                    Expression::CallOptionsExpression(call_options_expression) => {
+                        call_options_expression.node_id
+                    }
+                    Expression::MemberAccessExpression(member_access_expression) => {
+                        member_access_expression.node_id
+                    }
+                    Expression::IndexAccessExpression(index_access_expression) => {
+                        index_access_expression.node_id
+                    }
+                    Expression::NewExpression(new_expression) => new_expression.node_id,
+                    Expression::TupleExpression(tuple_expression) => tuple_expression.node_id,
+                    Expression::TypeExpression(type_expression) => type_expression.node_id,
+                    Expression::ArrayExpression(array_expression) => array_expression.node_id,
+                    Expression::HexNumberExpression(hex_number_expression) => {
+                        hex_number_expression.node_id
+                    }
+                    Expression::DecimalNumberExpression(decimal_number_expression) => {
+                        decimal_number_expression.node_id
+                    }
+                    _ => unreachable!(),
+                };
+                self.annotations.get(&node_id).copied().unwrap_or_else(|| {
+                    unimplemented!("Expected index access expression to already be typed")
+                })
+            }
         }
     }
 
@@ -137,7 +173,7 @@ impl Pass {
                     let identifier = definition.get_cursor().node().unparse();
                     unimplemented!("Type for definition of {identifier:?} is not registered")
                 }),
-            BindingLocation::BuiltIn(BuiltInLocation { .. }) => {
+            BindingLocation::BuiltIn(BuiltInLocation {}) => {
                 let tag = definition
                     .get_built_in_tag()
                     .expect("Missing built-in tag for definition {definition:?}");
@@ -160,6 +196,26 @@ impl Pass {
         } else {
             unimplemented!("Type error: logical expression operands are not boolean");
         }
+    }
+
+    fn resolve_overload(&self, choices: &[TypeId], argument_types: &[TypeId]) -> TypeId {
+        for type_id in choices {
+            let Type::Function {
+                parameter_types, ..
+            } = self.types.get_type_by_id(*type_id).unwrap()
+            else {
+                unimplemented!("Type error: overload choice is not a function");
+            };
+            if parameter_types
+                .iter()
+                .zip(argument_types)
+                .all(|(parameter, argument)| parameter == argument)
+            {
+                return *type_id;
+            }
+        }
+
+        unimplemented!("Type error: failed to resolve overloaded function");
     }
 }
 
@@ -231,6 +287,31 @@ impl Visitor for Pass {
         match function_type {
             Type::Function { return_type, .. } => {
                 self.annotations.insert(node.node_id, *return_type);
+            }
+            Type::Undecided { choices } => {
+                // clone here to release the borrow on self
+                let choices = choices.clone();
+                match &node.arguments {
+                    ArgumentsDeclaration::PositionalArgumentsDeclaration(positional_arguments) => {
+                        let argument_types = positional_arguments
+                            .arguments
+                            .iter()
+                            .map(|argument| self.type_of_expression(argument))
+                            .collect::<Vec<_>>();
+                        let overload_type_id = self.resolve_overload(&choices, &argument_types);
+                        let Type::Function { return_type, .. } =
+                            self.types.get_type_by_id(overload_type_id).unwrap()
+                        else {
+                            unimplemented!("Type error: resolved overload is not a function");
+                        };
+                        self.annotations.insert(node.node_id, *return_type);
+                    }
+                    ArgumentsDeclaration::NamedArgumentsDeclaration(_) => {
+                        unimplemented!(
+                            "Type error: overload resolution not supported with named arguments"
+                        );
+                    }
+                }
             }
             _ => {
                 unimplemented!("Type error: function call operand is not a function");

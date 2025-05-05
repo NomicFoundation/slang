@@ -1,6 +1,6 @@
 use num_derive::FromPrimitive;
 
-#[derive(Debug, FromPrimitive)]
+#[derive(Clone, Copy, Debug, FromPrimitive)]
 pub enum BuiltInTag {
     // fields of global `msg`
     MsgSender,
