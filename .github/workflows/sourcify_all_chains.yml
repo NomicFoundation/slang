@@ -19,9 +19,9 @@ jobs:
     # runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     uses: "./.github/workflows/sourcify_single_chain.yml"
     with:
-      chain_id: "${matrix.chain_id}"
-      check_bindings: "${inputs.check_bindings}"
-      check_infer_version: "${inputs.check_infer_version}"
+      chain_id: ${matrix.chain_id}
+      check_bindings: ${inputs.check_bindings}
+      check_infer_version: ${inputs.check_infer_version}
     strategy:
       fail-fast: false
       matrix:
