@@ -40,6 +40,8 @@ impl Terminal {
         let left_spacer_width = spacer_width / 2;
         let right_spacer_width = spacer_width - left_spacer_width;
 
+        println!("Terminal width: {terminal_width}\nSpacer width: {spacer_width}");
+
         let contents = format!(
             "{start} {middle} {end}",
             start = style(format!("╾{sep}┤", sep = "─".repeat(left_spacer_width))).dim(),
