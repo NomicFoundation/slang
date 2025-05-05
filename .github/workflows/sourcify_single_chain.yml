@@ -23,7 +23,7 @@ on:
   workflow_call:
     inputs:
       chain_id:
-        description: "ID of the chain to run against."
+        description: "ID of the chain to run against: https://docs.sourcify.dev/docs/chains/"
         type: "number"
         required: true
         default: 1
