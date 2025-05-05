@@ -6,7 +6,7 @@ use std::path::Path;
 use anyhow::Result;
 use clap::Parser;
 use infra_utils::commands::Command;
-use infra_utils::config;
+use infra_utils::config::{self, File, Project};
 use itertools::Itertools;
 use serde::Deserialize;
 use serde_json::json;
@@ -56,12 +56,63 @@ pub struct Timing {
 impl NpmController {
     fn ts_comparisons(&self) -> Result<()> {
         let config = config::read_config()?;
+        self.file_comparisons(&config.files)?;
+        self.project_comparisons(&config.projects, true)?;
+        self.project_comparisons(&config.projects, false)?;
+        Ok(())
+    }
+
+    fn file_comparisons(&self, files: &Vec<File>) -> Result<()> {
         let input_path = Path::new(&self.input_folder);
 
         let mut results = vec![];
 
-        for project in config.projects {
-            let path = input_path.join(project.hash);
+        for file in files {
+            if !regex::Regex::new(&self.pattern)?.is_match(&file.file) {
+                continue;
+            }
+
+            let path = input_path.join(&file.hash);
+
+            let compilation_file = path.join("compilation.json");
+
+            if !compilation_file.exists() {
+                return Err(anyhow::anyhow!(
+                    "Missing compilation.json in folder: {:?}",
+                    path
+                ));
+            }
+
+            let content = fs::read_to_string(&compilation_file)?;
+            let json: serde_json::Value = serde_json::from_str(&content)?;
+
+            let compiler_version = json
+                .get("compilerVersion")
+                .and_then(|f| f.as_str())
+                .ok_or_else(|| anyhow::anyhow!("Missing compilerVersion in {compilation_file:?}"))?
+                .split('+')
+                .next()
+                .ok_or_else(|| anyhow::anyhow!("compilerVersion is not well formatted"))?;
+
+            let result =
+                self.execute_comparison(compiler_version, &path, &file.file, &Options::Parse)?;
+            results.push(result);
+        }
+        let summary = Self::add_summary(&results);
+        if let Some(summary) = summary {
+            results.push(summary);
+        }
+        publish(&results)?;
+        Ok(())
+    }
+
+    fn project_comparisons(&self, projects: &Vec<Project>, file_only: bool) -> Result<()> {
+        let input_path = Path::new(&self.input_folder);
+
+        let mut results = vec![];
+
+        for project in projects {
+            let path = input_path.join(&project.hash);
 
             let compilation_file = path.join("compilation.json");
 
@@ -87,7 +138,6 @@ impl NpmController {
                 .map(|(before_last_colon, _)| before_last_colon)
                 .ok_or_else(|| anyhow::anyhow!("fullyQualifiedName is not well formatted"))?;
 
-            // Skip the iteration if the compilation_file does not match the pattern
             if !regex::Regex::new(&self.pattern)?
                 .is_match(path.join(fully_qualified_name).to_string_lossy().as_ref())
             {
@@ -106,7 +156,11 @@ impl NpmController {
                 compiler_version,
                 &path,
                 fully_qualified_name,
-                Options::Project,
+                if file_only {
+                    &Options::File
+                } else {
+                    &Options::Project
+                },
             )?;
             results.push(result);
         }
@@ -153,7 +207,7 @@ impl NpmController {
         compiler_version: &str,
         path: &Path,
         fully_qualified_name: &str,
-        options: Options,
+        options: &Options,
     ) -> Result<Measure, anyhow::Error> {
         let command = Command::new("npx")
             .arg("tsx")
@@ -178,6 +232,10 @@ impl NpmController {
 }
 
 fn publish(results: &[Measure]) -> Result<()> {
+    if results.is_empty() {
+        return Ok(());
+    };
+
     let mut benchmark_map = serde_json::Map::new();
 
     for result in results {
