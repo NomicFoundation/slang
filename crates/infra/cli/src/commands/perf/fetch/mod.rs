@@ -1,9 +1,9 @@
 use std::fs;
 use std::path::Path;
 
-use anyhow::Error;
+use anyhow::Result;
 use clap::Parser;
-use infra_utils::paths::PathExtensions;
+use infra_utils::config;
 use reqwest::blocking::get;
 use serde_json::Value;
 
@@ -19,7 +19,7 @@ pub struct FetchController {
 impl FetchController {
     // Given an address and a path, it downloads the json file from sourcify,
     // and recreates the file system
-    fn fetch(address: &str, base_path: &Path) -> Result<(), Error> {
+    fn fetch(address: &str, base_path: &Path) -> Result<()> {
         let url = format!(
             "https://sourcify.dev/server/v2/contract/1/{address}/?fields=sources,compilation"
         );
@@ -64,47 +64,19 @@ impl FetchController {
         Ok(())
     }
 
-    pub fn execute(&self) -> Result<(), Error> {
+    pub fn execute(&self) -> Result<()> {
         let base_path = Path::new(&self.path);
 
         if let Some(hash) = &self.hash {
             Self::fetch(hash, base_path)?;
         } else {
-            // Read hashes from a configuration file
-            let config_path = Path::repo_path("crates/infra/cli/src/commands/perf/projects.json");
-            let config_content = fs::read_to_string(config_path)?;
-            let config_json: serde_json::Value = serde_json::from_str(&config_content)?;
+            let config = config::read_config()?;
+            let mut hashes_projects: Vec<_> = config.projects.iter().map(|p| &p.hash).collect();
+            let hashes_keys: Vec<_> = config.files.iter().map(|f| &f.hash).collect();
 
-            let projects_key = "projects";
-            let mut hashes_projects = config_json
-                .get(projects_key)
-                .and_then(|h| h.as_array())
-                .ok_or_else(|| {
-                    anyhow::anyhow!("Invalid or missing '{projects_key}' field in projects.json")
-                })?
-                .to_owned();
-
-            let files_key = "files";
-
-            let hashes_keys = config_json
-                .get(files_key)
-                .and_then(|h| h.as_array())
-                .ok_or_else(|| {
-                    anyhow::anyhow!("Invalid or missing '{files_key}' field in projects.json")
-                })?;
-
-            hashes_projects.extend(hashes_keys.iter().cloned());
+            hashes_projects.extend(hashes_keys);
             for hash in hashes_projects {
-                let project = hash
-                    .as_object()
-                    .ok_or_else(|| anyhow::anyhow!("Invalid project format in projects.json"))?;
-                let hash_str = project
-                    .get("hash")
-                    .ok_or_else(|| anyhow::anyhow!("Invalid hash format in projects.json"))?
-                    .as_str()
-                    .ok_or_else(|| anyhow::anyhow!("Invalid hash format in projects.json"))?;
-
-                Self::fetch(hash_str, base_path)?;
+                Self::fetch(hash, base_path)?;
             }
         }
         Ok(())
