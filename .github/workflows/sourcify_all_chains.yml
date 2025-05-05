@@ -16,7 +16,7 @@ on:
         default: false
 jobs:
   run_tests:
-    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    # runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     uses: "./.github/workflows/sourcify_single_chain.yml"
     with:
       chain_id: "${matrix.chain_id}"
