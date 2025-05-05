@@ -60,12 +60,9 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
     let sources_count = contract.sources_count();
     events.inc_files_count(sources_count);
 
-    let mut test_outcome = TestOutcome::Passed;
-    match contract.create_compilation_unit() {
+    let test_outcome = match contract.create_compilation_unit() {
         Ok(unit) => {
-            if opts.check_parser {
-                test_outcome = run_parser_check(contract, &unit, events);
-            }
+            let mut test_outcome = run_parser_check(contract, &unit, events);
 
             if opts.check_infer_version && test_outcome == TestOutcome::Passed {
                 test_outcome = run_version_inference_check(contract, &unit, events);
@@ -74,6 +71,8 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
             if opts.check_bindings && test_outcome == TestOutcome::Passed {
                 test_outcome = run_bindings_check(contract, &unit, events);
             }
+
+            test_outcome
         }
         Err(e) => {
             events.trace(format!(
@@ -81,9 +80,9 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
                 contract.name,
                 e.backtrace()
             ));
-            test_outcome = TestOutcome::Unresolved;
+            TestOutcome::Unresolved
         }
-    }
+    };
 
     events.inc_files_processed(sources_count);
     events.test(test_outcome);

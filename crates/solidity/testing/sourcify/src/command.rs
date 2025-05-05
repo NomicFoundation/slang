@@ -53,10 +53,6 @@ pub struct ShowCombinedResultsCommand {
 
 #[derive(Debug, Parser)]
 pub struct TestOptions {
-    /// Run parser tests.
-    #[arg(long, default_value_t = true)]
-    pub check_parser: bool,
-
     /// Run bindings tests.
     #[arg(long, default_value_t = false)]
     pub check_bindings: bool,
