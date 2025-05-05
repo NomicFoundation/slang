@@ -234,7 +234,12 @@ impl ContractArchive {
     }
 
     pub fn display_path(&self) -> String {
-        self.contracts_path.to_str().unwrap().into()
+        self.contracts_path
+            .strip_repo_root()
+            .unwrap_or(&self.contracts_path)
+            .to_str()
+            .unwrap()
+            .into()
     }
 }
 

@@ -51,7 +51,11 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     let testing_thread = std::thread::spawn(move || -> Events {
         let mut events = Events::new(archive_count, 0);
         for archive in rx {
-            println!("Display path: {} | Len: {}", archive.display_path(), archive.display_path().len());
+            println!(
+                "Display path: {} | Len: {}",
+                archive.display_path(),
+                archive.display_path().len()
+            );
             Terminal::step(archive.display_path());
 
             events.start_archive(archive.contract_count());
