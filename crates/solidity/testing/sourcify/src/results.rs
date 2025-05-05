@@ -47,10 +47,10 @@ impl<'de> Visitor<'de> for AllResultsVisitor {
         let mut shards: BTreeMap<usize, ShardResults> = BTreeMap::new();
         while let Some((key, value)) = access.next_entry::<String, String>()? {
             let shard_index = key
-                .strip_prefix("__SLANG_SANCTUARY_SHARD_RESULTS__")
+                .strip_prefix("__SLANG_SOURCIFY_SHARD_RESULTS__")
                 .ok_or(Error::invalid_value(
                     Unexpected::Str(&key),
-                    &"a string prefixed with __SLANG_SANCTUARY_SHARD_RESULTS__",
+                    &"a string prefixed with __SLANG_SOURCIFY_SHARD_RESULTS__",
                 ))?
                 .parse()
                 .map_err(|_| {
