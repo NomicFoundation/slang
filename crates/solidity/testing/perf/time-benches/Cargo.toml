@@ -1,5 +1,5 @@
 [package]
-name = "solidity_testing_perf_npmdriver"
+name = "solidity_testing_perf_timebenches"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true

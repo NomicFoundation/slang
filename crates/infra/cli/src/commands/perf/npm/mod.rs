@@ -46,7 +46,7 @@ impl NpmController {
             )
         };
 
-        let package_name = "solidity_testing_perf_npmdriver";
+        let package_name = "solidity_testing_perf_timebenches";
         let input_folder = &self.input_folder;
         let pattern = &self.pattern;
         let extra_args = if self.extra_args.is_empty() {
