@@ -49,10 +49,10 @@ jobs:
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
-      - name: "Setup"
-        run: "source ./scripts/_common.sh"
       - name: "Build Test Binary"
-        run: "cargo build --bin solidity_testing_sourcify --release"
+        run: |
+          source ./scripts/_common.sh
+          cargo build --bin solidity_testing_sourcify --release
 
   singleShard:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
@@ -139,7 +139,9 @@ jobs:
         uses: "./.github/actions/cache/restore"
 
       - name: "Run Tests"
-        run: "${{ needs.buildSlang.outputs.solidity_testing_sourcify }} test --shard-count ${{ env.SHARD_COUNT }} --shard-index ${{ matrix.shard_index }} ${{ inputs.check_bindings == true && '--check-bindings' || '' }} ${{ inputs.check_infer_version == true && '--check-infer-version' || '' }} --chain-id ${{ inputs.chain_id }} ${{ inputs.network }}"
+        run: |
+          source ./scripts/_common.sh
+          ${{ needs.buildSlang.outputs.solidity_testing_sourcify }} test --shard-count ${{ env.SHARD_COUNT }} --shard-index ${{ matrix.shard_index }} ${{ inputs.check_bindings == true && '--check-bindings' || '' }} ${{ inputs.check_infer_version == true && '--check-infer-version' || '' }} --chain-id ${{ inputs.chain_id }} ${{ inputs.network }}
       - name: "Write shard results to output"
         if: "!cancelled()"
         id: "output-shard-results"
@@ -162,4 +164,6 @@ jobs:
         run: "echo '${{ toJSON(needs.singleShard.outputs) }}' > __SLANG_SOURCIFY_MATRIX_RESULTS__.json"
 
       - name: "Show combined results"
-        run: "${{ needs.buildSlang.outputs.solidity_testing_sourcify }} show-combined-results __SLANG_SOURCIFY_MATRIX_RESULTS__.json"
+        run: |
+          source ./scripts/_common.sh
+          ${{ needs.buildSlang.outputs.solidity_testing_sourcify }} show-combined-results __SLANG_SOURCIFY_MATRIX_RESULTS__.json
