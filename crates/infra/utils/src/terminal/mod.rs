@@ -35,7 +35,7 @@ impl Terminal {
         let message_width = strip_ansi_codes(&message).chars().count();
 
         let terminal_width = Term::stdout().size().1 as usize;
-        let spacer_width = terminal_width - message_width - BANNER_GLYPHS;
+        let spacer_width = terminal_width.saturating_sub(message_width - BANNER_GLYPHS);
 
         let left_spacer_width = spacer_width / 2;
         let right_spacer_width = spacer_width - left_spacer_width;
