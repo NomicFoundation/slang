@@ -97,7 +97,7 @@ interface cst {
     /// Represents a non-terminal node in the syntax tree.
     /// These nodes can have child nodes and represent language constructs.
     resource nonterminal-node {
-        /// Create a new nonterminal node with kind `kind` and children `children`.
+        /// Creates a new nonterminal node with the specified `kind` and `children`.
         create: static func(kind: nonterminal-kind, children: list<edge>) -> nonterminal-node;
         /// Returns a unique numerical identifier of the node.
         /// It is only valid for the lifetime of the enclosing tree.
@@ -125,7 +125,7 @@ interface cst {
     /// Represents a terminal node in the syntax tree.
     /// These are leaf nodes that represent actual tokens from the source code.
     resource terminal-node {
-        /// Create a new terminal node with kind `kind` representing `text`.
+        /// Creates a new terminal node with the specified `kind` and `text`.
         create: static func(kind: terminal-kind, text: string) -> terminal-node;
         /// Returns a unique numerical identifier of the node.
         /// It is only valid for the lifetime of the enclosing tree.

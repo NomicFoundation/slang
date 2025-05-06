@@ -440,7 +440,7 @@ export class NonterminalNode {
   isTerminalNode(): false;
 
   /**
-   * Create a new nonterminal node with kind `kind` and children `children`.
+   * Creates a new nonterminal node with the specified `kind` and `children`.
    */
   static create(kind: NonterminalKind, children: Array<Edge>): NonterminalNode;
   /**
@@ -576,7 +576,7 @@ export class TerminalNode {
   isNonterminalNode(): false;
 
   /**
-   * Create a new terminal node with kind `kind` representing `text`.
+   * Creates a new terminal node with the specified `kind` and `text`.
    */
   static create(kind: TerminalKind, text: string): TerminalNode;
   /**
