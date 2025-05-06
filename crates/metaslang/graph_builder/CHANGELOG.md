@@ -1,5 +1,14 @@
 # changelog
 
+## 1.1.1
+
+### Patch Changes
+
+- [#1314](https://github.com/NomicFoundation/slang/pull/1314) [`743d6b0`](https://github.com/NomicFoundation/slang/commit/743d6b0c3271a9a2e86103dab18656650cd3f6a7) Thanks [@mjoerussell](https://github.com/mjoerussell)! - Adding missing YUL built in functions:
+
+    - `codesize()`
+    - `codecopy(f, t, s)`
+
 ## 1.1.0
 
 ### Minor Changes
