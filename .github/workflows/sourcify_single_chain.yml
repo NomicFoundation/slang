@@ -50,7 +50,7 @@ jobs:
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
       - name: "Build Test Binary"
-        run: "./scripts/bin/sourcify build"
+        run: "./scripts/bin/with-hermit cargo build --bin solidity_testing_sourcify --release"
 
   singleShard:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
