@@ -30,6 +30,9 @@ enum BinaryName {
     /// Runs compatibility tests between our language definition and 'solc' actual output.
     #[clap(name = "solidity_testing_solc")]
     SolidityTestingSolc,
+    /// Tests our parser/binding graph against contracts fetched from the Sourcify dataset.
+    #[clap(name = "solidity_testing_sourcify")]
+    SolidityTestingSourcify,
 }
 
 impl RunController {
