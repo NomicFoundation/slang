@@ -682,6 +682,10 @@ export class NonterminalNode {
   isTerminalNode(): false;
 
   /**
+   * Creates a new nonterminal node with the specified `kind` and `children`.
+   */
+  static create(kind: NonterminalKind, children: Array<Edge>): NonterminalNode;
+  /**
    * Returns a unique numerical identifier of the node.
    * It is only valid for the lifetime of the enclosing tree.
    * It can change between multiple parses, even for the same source code input.
@@ -813,6 +817,10 @@ export class TerminalNode {
    */
   isNonterminalNode(): false;
 
+  /**
+   * Creates a new terminal node with the specified `kind` and `text`.
+   */
+  static create(kind: TerminalKind, text: string): TerminalNode;
   /**
    * Returns a unique numerical identifier of the node.
    * It is only valid for the lifetime of the enclosing tree.
