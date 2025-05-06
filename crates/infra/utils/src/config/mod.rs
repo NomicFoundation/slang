@@ -6,6 +6,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::paths::PathExtensions;
 
+/*
+ Reader for the configuration file that contians the projects and files to benchmark
+*/
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Project {
     pub hash: String,
@@ -25,7 +29,6 @@ pub struct Configuration {
 }
 
 pub fn read_config() -> Result<Configuration> {
-    // Read hashes from a configuration file
     let config_path = Path::repo_path("crates/infra/cli/src/commands/perf/projects.json");
     let config_content = fs::read_to_string(config_path)?;
     let config: Configuration = serde_json::from_str(&config_content)?;

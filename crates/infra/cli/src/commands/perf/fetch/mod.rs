@@ -18,13 +18,19 @@ pub struct FetchController {
 
 impl FetchController {
     // Given an address and a path, it downloads the json file from sourcify,
-    // and recreates the file system
+    // and recreates the file system as `<path>/<address>/`. We store in `./compilation.json`
+    // the specifics of the compilation, in particular, `compilerVersion` and the `fullyQualifiedName`
+    // (main entry point).
     fn fetch(address: &str, base_path: &Path) -> Result<()> {
+        //TODO: generalize for any chain
         let url = format!(
             "https://sourcify.dev/server/v2/contract/1/{address}/?fields=sources,compilation"
         );
         let response = get(&url)?.text()?;
         let json: Value = serde_json::from_str(&response)?;
+
+        // The expected json result should have two fields of interest to us: `sources`,
+        // with the files, and `compilation`, with the specifics of compilation.
 
         let base_path = base_path.join(Path::new(address));
 
@@ -49,7 +55,7 @@ impl FetchController {
                 .ok_or_else(|| anyhow::anyhow!("File {path} of {address} has no content"))?;
 
             let path = Path::new(path);
-            // Ensure the path does not escape base_path
+            // Basic sanitizations: ensure the path does not escape base_path
             let sanitized_path = path.strip_prefix("/").unwrap_or(path);
             let file_path = base_path.join(sanitized_path);
 
@@ -71,10 +77,13 @@ impl FetchController {
             Self::fetch(hash, base_path)?;
         } else {
             let config = config::read_config()?;
+
+            // We need to download all the hashes, no matter where they come from.
             let mut hashes_projects: Vec<_> = config.projects.iter().map(|p| &p.hash).collect();
             let hashes_keys: Vec<_> = config.files.iter().map(|f| &f.hash).collect();
 
             hashes_projects.extend(hashes_keys);
+
             for hash in hashes_projects {
                 Self::fetch(hash, base_path)?;
             }
