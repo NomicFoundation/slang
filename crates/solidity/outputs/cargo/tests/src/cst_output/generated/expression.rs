@@ -4,365 +4,364 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "Expression";
+
 #[test]
 fn _0() -> Result<()> {
-    run("Expression", "_0")
+    run(T, "_0")
 }
 
 #[test]
 fn _a() -> Result<()> {
-    run("Expression", "_a")
+    run(T, "_a")
 }
 
 #[test]
 fn add_mul() -> Result<()> {
-    run("Expression", "add_mul")
+    run(T, "add_mul")
 }
 
 #[test]
 fn address_call() -> Result<()> {
-    run("Expression", "address_call")
+    run(T, "address_call")
 }
 
 #[test]
 fn address_payable_call() -> Result<()> {
-    run("Expression", "address_payable_call")
+    run(T, "address_payable_call")
 }
 
 #[test]
 fn areturn() -> Result<()> {
-    run("Expression", "areturn")
+    run(T, "areturn")
 }
 
 #[test]
 fn delete() -> Result<()> {
-    run("Expression", "delete")
+    run(T, "delete")
 }
 
 #[test]
 fn delete_conditional() -> Result<()> {
-    run("Expression", "delete_conditional")
+    run(T, "delete_conditional")
 }
 
 #[test]
 fn function_call() -> Result<()> {
-    run("Expression", "function_call")
+    run(T, "function_call")
 }
 
 #[test]
 fn function_call_argument_has_type_name_as_prefix() -> Result<()> {
-    run(
-        "Expression",
-        "function_call_argument_has_type_name_as_prefix",
-    )
+    run(T, "function_call_argument_has_type_name_as_prefix")
 }
 
 #[test]
 fn function_call_chain() -> Result<()> {
-    run("Expression", "function_call_chain")
+    run(T, "function_call_chain")
 }
 
 #[test]
 fn function_call_member_access() -> Result<()> {
-    run("Expression", "function_call_member_access")
+    run(T, "function_call_member_access")
 }
 
 #[test]
 fn function_call_options() -> Result<()> {
-    run("Expression", "function_call_options")
+    run(T, "function_call_options")
 }
 
 #[test]
 fn function_call_options_split() -> Result<()> {
-    run("Expression", "function_call_options_split")
+    run(T, "function_call_options_split")
 }
 
 #[test]
 fn identifier_call() -> Result<()> {
-    run("Expression", "identifier_call")
+    run(T, "identifier_call")
 }
 
 #[test]
 fn incomplete_operand() -> Result<()> {
-    run("Expression", "incomplete_operand")
+    run(T, "incomplete_operand")
 }
 
 #[test]
 fn index_access() -> Result<()> {
-    run("Expression", "index_access")
+    run(T, "index_access")
 }
 
 #[test]
 fn index_access_chain() -> Result<()> {
-    run("Expression", "index_access_chain")
+    run(T, "index_access_chain")
 }
 
 #[test]
 fn index_slice_end() -> Result<()> {
-    run("Expression", "index_slice_end")
+    run(T, "index_slice_end")
 }
 
 #[test]
 fn index_slice_start() -> Result<()> {
-    run("Expression", "index_slice_start")
+    run(T, "index_slice_start")
 }
 
 #[test]
 fn index_slice_start_end() -> Result<()> {
-    run("Expression", "index_slice_start_end")
+    run(T, "index_slice_start_end")
 }
 
 #[test]
 fn index_slice_unbounded() -> Result<()> {
-    run("Expression", "index_slice_unbounded")
+    run(T, "index_slice_unbounded")
 }
 
 #[test]
 fn keyword_alias() -> Result<()> {
-    run("Expression", "keyword_alias")
+    run(T, "keyword_alias")
 }
 
 #[test]
 fn keyword_apply() -> Result<()> {
-    run("Expression", "keyword_apply")
+    run(T, "keyword_apply")
 }
 
 #[test]
 fn keyword_auto() -> Result<()> {
-    run("Expression", "keyword_auto")
+    run(T, "keyword_auto")
 }
 
 #[test]
 fn keyword_calldata() -> Result<()> {
-    run("Expression", "keyword_calldata")
+    run(T, "keyword_calldata")
 }
 
 #[test]
 fn keyword_constructor() -> Result<()> {
-    run("Expression", "keyword_constructor")
+    run(T, "keyword_constructor")
 }
 
 #[test]
 fn keyword_copyof() -> Result<()> {
-    run("Expression", "keyword_copyof")
+    run(T, "keyword_copyof")
 }
 
 #[test]
 fn keyword_define() -> Result<()> {
-    run("Expression", "keyword_define")
+    run(T, "keyword_define")
 }
 
 #[test]
 fn keyword_emit() -> Result<()> {
-    run("Expression", "keyword_emit")
+    run(T, "keyword_emit")
 }
 
 #[test]
 fn keyword_fallback() -> Result<()> {
-    run("Expression", "keyword_fallback")
+    run(T, "keyword_fallback")
 }
 
 #[test]
 fn keyword_finney() -> Result<()> {
-    run("Expression", "keyword_finney")
+    run(T, "keyword_finney")
 }
 
 #[test]
 fn keyword_immutable() -> Result<()> {
-    run("Expression", "keyword_immutable")
+    run(T, "keyword_immutable")
 }
 
 #[test]
 fn keyword_implements() -> Result<()> {
-    run("Expression", "keyword_implements")
+    run(T, "keyword_implements")
 }
 
 #[test]
 fn keyword_macro() -> Result<()> {
-    run("Expression", "keyword_macro")
+    run(T, "keyword_macro")
 }
 
 #[test]
 fn keyword_mutable() -> Result<()> {
-    run("Expression", "keyword_mutable")
+    run(T, "keyword_mutable")
 }
 
 #[test]
 fn keyword_override() -> Result<()> {
-    run("Expression", "keyword_override")
+    run(T, "keyword_override")
 }
 
 #[test]
 fn keyword_partial() -> Result<()> {
-    run("Expression", "keyword_partial")
+    run(T, "keyword_partial")
 }
 
 #[test]
 fn keyword_promise() -> Result<()> {
-    run("Expression", "keyword_promise")
+    run(T, "keyword_promise")
 }
 
 #[test]
 fn keyword_receive() -> Result<()> {
-    run("Expression", "keyword_receive")
+    run(T, "keyword_receive")
 }
 
 #[test]
 fn keyword_reference() -> Result<()> {
-    run("Expression", "keyword_reference")
+    run(T, "keyword_reference")
 }
 
 #[test]
 fn keyword_sealed() -> Result<()> {
-    run("Expression", "keyword_sealed")
+    run(T, "keyword_sealed")
 }
 
 #[test]
 fn keyword_sizeof() -> Result<()> {
-    run("Expression", "keyword_sizeof")
+    run(T, "keyword_sizeof")
 }
 
 #[test]
 fn keyword_supports() -> Result<()> {
-    run("Expression", "keyword_supports")
+    run(T, "keyword_supports")
 }
 
 #[test]
 fn keyword_szabo() -> Result<()> {
-    run("Expression", "keyword_szabo")
+    run(T, "keyword_szabo")
 }
 
 #[test]
 fn keyword_typedef() -> Result<()> {
-    run("Expression", "keyword_typedef")
+    run(T, "keyword_typedef")
 }
 
 #[test]
 fn keyword_ufixed() -> Result<()> {
-    run("Expression", "keyword_ufixed")
+    run(T, "keyword_ufixed")
 }
 
 #[test]
 fn keyword_unchecked() -> Result<()> {
-    run("Expression", "keyword_unchecked")
+    run(T, "keyword_unchecked")
 }
 
 #[test]
 fn keyword_virtual() -> Result<()> {
-    run("Expression", "keyword_virtual")
+    run(T, "keyword_virtual")
 }
 
 #[test]
 fn member_access() -> Result<()> {
-    run("Expression", "member_access")
+    run(T, "member_access")
 }
 
 #[test]
 fn member_access_address() -> Result<()> {
-    run("Expression", "member_access_address")
+    run(T, "member_access_address")
 }
 
 #[test]
 fn member_access_chain() -> Result<()> {
-    run("Expression", "member_access_chain")
+    run(T, "member_access_chain")
 }
 
 #[test]
 fn member_access_function_call() -> Result<()> {
-    run("Expression", "member_access_function_call")
+    run(T, "member_access_function_call")
 }
 
 #[test]
 fn member_access_index_access() -> Result<()> {
-    run("Expression", "member_access_index_access")
+    run(T, "member_access_index_access")
 }
 
 #[test]
 fn member_access_integer() -> Result<()> {
-    run("Expression", "member_access_integer")
+    run(T, "member_access_integer")
 }
 
 #[test]
 fn member_access_options() -> Result<()> {
-    run("Expression", "member_access_options")
+    run(T, "member_access_options")
 }
 
 #[test]
 fn member_access_rational() -> Result<()> {
-    run("Expression", "member_access_rational")
+    run(T, "member_access_rational")
 }
 
 #[test]
 fn member_access_rational_leading_period() -> Result<()> {
-    run("Expression", "member_access_rational_leading_period")
+    run(T, "member_access_rational_leading_period")
 }
 
 #[test]
 fn member_access_super() -> Result<()> {
-    run("Expression", "member_access_super")
+    run(T, "member_access_super")
 }
 
 #[test]
 fn member_access_this() -> Result<()> {
-    run("Expression", "member_access_this")
+    run(T, "member_access_this")
 }
 
 #[test]
 fn new_expression() -> Result<()> {
-    run("Expression", "new_expression")
+    run(T, "new_expression")
 }
 
 #[test]
 fn new_expression_options() -> Result<()> {
-    run("Expression", "new_expression_options")
+    run(T, "new_expression_options")
 }
 
 #[test]
 fn overlapping_operators() -> Result<()> {
-    run("Expression", "overlapping_operators")
+    run(T, "overlapping_operators")
 }
 
 #[test]
 fn paren_expression_options() -> Result<()> {
-    run("Expression", "paren_expression_options")
+    run(T, "paren_expression_options")
 }
 
 #[test]
 fn postfix_decrement() -> Result<()> {
-    run("Expression", "postfix_decrement")
+    run(T, "postfix_decrement")
 }
 
 #[test]
 fn prefix_decrement() -> Result<()> {
-    run("Expression", "prefix_decrement")
+    run(T, "prefix_decrement")
 }
 
 #[test]
 fn prefix_minus() -> Result<()> {
-    run("Expression", "prefix_minus")
+    run(T, "prefix_minus")
 }
 
 #[test]
 fn prefix_plus() -> Result<()> {
-    run("Expression", "prefix_plus")
+    run(T, "prefix_plus")
 }
 
 #[test]
 fn returna() -> Result<()> {
-    run("Expression", "returna")
+    run(T, "returna")
 }
 
 #[test]
 fn returns() -> Result<()> {
-    run("Expression", "returns")
+    run(T, "returns")
 }
 
 #[test]
 fn underscore_is_identifier() -> Result<()> {
-    run("Expression", "underscore_is_identifier")
+    run(T, "underscore_is_identifier")
 }
 
 #[test]
 fn unicode_string_literal() -> Result<()> {
-    run("Expression", "unicode_string_literal")
+    run(T, "unicode_string_literal")
 }

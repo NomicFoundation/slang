@@ -4,22 +4,24 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "user_types";
+
 #[test]
 fn in_contract() -> Result<()> {
-    run("user_types", "in_contract")
+    run(T, "in_contract")
 }
 
 #[test]
 fn in_library() -> Result<()> {
-    run("user_types", "in_library")
+    run(T, "in_library")
 }
 
 #[test]
 fn top_level() -> Result<()> {
-    run("user_types", "top_level")
+    run(T, "top_level")
 }
 
 #[test]
 fn wrap_unwrap() -> Result<()> {
-    run("user_types", "wrap_unwrap")
+    run(T, "wrap_unwrap")
 }

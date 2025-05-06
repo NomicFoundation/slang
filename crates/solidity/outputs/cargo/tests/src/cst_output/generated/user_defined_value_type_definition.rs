@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "UserDefinedValueTypeDefinition";
+
 #[test]
 fn bool() -> Result<()> {
-    run("UserDefinedValueTypeDefinition", "bool")
+    run(T, "bool")
 }

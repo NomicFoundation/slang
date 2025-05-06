@@ -11,12 +11,6 @@ publish = false
 [lib]
 crate-type = ["cdylib"]
 
-[build-dependencies]
-anyhow = { workspace = true }
-codegen_runtime_generator = { workspace = true }
-infra_utils = { workspace = true }
-solidity_language = { workspace = true }
-
 [dependencies]
 paste = { workspace = true }
 semver = { workspace = true }

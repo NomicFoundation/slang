@@ -4,22 +4,24 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "interfaces";
+
 #[test]
 fn inheritance() -> Result<()> {
-    run("interfaces", "inheritance")
+    run(T, "inheritance")
 }
 
 #[test]
 fn own_types_access() -> Result<()> {
-    run("interfaces", "own_types_access")
+    run(T, "own_types_access")
 }
 
 #[test]
 fn simple() -> Result<()> {
-    run("interfaces", "simple")
+    run(T, "simple")
 }
 
 #[test]
 fn visibility() -> Result<()> {
-    run("interfaces", "visibility")
+    run(T, "visibility")
 }

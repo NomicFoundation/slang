@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "ThrowStatement";
+
 #[test]
 fn throw() -> Result<()> {
-    run("ThrowStatement", "throw")
+    run(T, "throw")
 }

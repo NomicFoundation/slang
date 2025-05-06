@@ -4,12 +4,14 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "YulStatement";
+
 #[test]
 fn label() -> Result<()> {
-    run("YulStatement", "label")
+    run(T, "label")
 }
 
 #[test]
 fn var_assign_colon_and_equals() -> Result<()> {
-    run("YulStatement", "var_assign_colon_and_equals")
+    run(T, "var_assign_colon_and_equals")
 }

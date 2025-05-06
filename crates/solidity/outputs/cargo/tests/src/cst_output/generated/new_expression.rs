@@ -4,22 +4,24 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "NewExpression";
+
 #[test]
 fn array_1d() -> Result<()> {
-    run("NewExpression", "array_1d")
+    run(T, "array_1d")
 }
 
 #[test]
 fn array_1d_expression() -> Result<()> {
-    run("NewExpression", "array_1d_expression")
+    run(T, "array_1d_expression")
 }
 
 #[test]
 fn array_2d() -> Result<()> {
-    run("NewExpression", "array_2d")
+    run(T, "array_2d")
 }
 
 #[test]
 fn identifier_path() -> Result<()> {
-    run("NewExpression", "identifier_path")
+    run(T, "identifier_path")
 }

@@ -1,5 +1,4 @@
 use std::collections::BTreeSet;
-use std::rc::Rc;
 
 use codegen_ebnf::{EbnfModel, PlainWriter};
 use codegen_language_definition::model::{self, Identifier, Item, PredefinedLabel};
@@ -18,7 +17,7 @@ struct EbnfBuilder {
 }
 
 impl EbnfBuilder {
-    fn new(language: &Rc<model::Language>) -> EbnfBuilder {
+    fn new(language: &model::Language) -> EbnfBuilder {
         EbnfBuilder {
             model: EbnfModel::build(language),
             writer: PlainWriter::default(),
@@ -76,7 +75,7 @@ impl Default for KindsModel {
 }
 
 impl KindsModel {
-    pub fn from_language(language: &Rc<model::Language>) -> Self {
+    pub fn from_language(language: &model::Language) -> Self {
         let mut kind_builder = EbnfBuilder::new(language);
 
         let terminal_kinds = language

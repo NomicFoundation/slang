@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "ConstantDefinition";
+
 #[test]
 fn int() -> Result<()> {
-    run("ConstantDefinition", "int")
+    run(T, "int")
 }

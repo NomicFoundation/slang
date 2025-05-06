@@ -4,22 +4,24 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "function_types";
+
 #[test]
 fn args_return_types() -> Result<()> {
-    run("function_types", "args_return_types")
+    run(T, "args_return_types")
 }
 
 #[test]
 fn call() -> Result<()> {
-    run("function_types", "call")
+    run(T, "call")
 }
 
 #[test]
 fn externals() -> Result<()> {
-    run("function_types", "externals")
+    run(T, "externals")
 }
 
 #[test]
 fn reference() -> Result<()> {
-    run("function_types", "reference")
+    run(T, "reference")
 }

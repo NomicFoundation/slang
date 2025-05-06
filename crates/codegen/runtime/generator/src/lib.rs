@@ -7,7 +7,6 @@ pub mod ir;
 
 use std::collections::BTreeSet;
 use std::path::Path;
-use std::rc::Rc;
 
 use anyhow::Result;
 use codegen_language_definition::model::Language;
@@ -25,29 +24,26 @@ pub struct RuntimeGenerator;
 
 impl RuntimeGenerator {
     pub fn generate_product(
-        language: &Rc<Language>,
+        language: &Language,
+        fs: &mut CodegenFileSystem,
         input_dir: &Path,
         output_dir: &Path,
-    ) -> Result<CodegenFileSystem> {
+    ) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: false,
             model: RuntimeModel::from_language(language)?,
         };
 
-        let runtime = CodegenRuntime::new(input_dir)?;
-
-        runtime.render_product(model, output_dir)
+        CodegenRuntime::render_product(fs, input_dir, output_dir, model)
     }
 
-    pub fn generate_stubs(source_dir: &Path) -> Result<()> {
+    pub fn generate_stubs(fs: &mut CodegenFileSystem, source_dir: &Path) -> Result<()> {
         let model = ModelWrapper {
             rendering_in_stubs: true,
             model: RuntimeModel::default(),
         };
 
-        let mut runtime = CodegenRuntime::new(source_dir)?;
-
-        runtime.render_stubs(&model)
+        CodegenRuntime::render_stubs(fs, source_dir, &model)
     }
 }
 
@@ -74,7 +70,7 @@ struct RuntimeModel {
 }
 
 impl RuntimeModel {
-    fn from_language(language: &Rc<Language>) -> Result<Self> {
+    fn from_language(language: &Language) -> Result<Self> {
         Ok(Self {
             slang_version: CargoWorkspace::local_version()?,
             language_name: language.name.to_string(),

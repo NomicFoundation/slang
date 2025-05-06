@@ -5,11 +5,5 @@ rust-version.workspace = true
 edition.workspace = true
 publish = false
 
-[build-dependencies]
-anyhow = { workspace = true }
-codegen_runtime_generator = { workspace = true }
-infra_utils = { workspace = true }
-testlang_language = { workspace = true }
-
 [lints]
 workspace = true

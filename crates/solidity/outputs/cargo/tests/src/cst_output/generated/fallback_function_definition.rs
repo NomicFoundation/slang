@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "FallbackFunctionDefinition";
+
 #[test]
 fn simple() -> Result<()> {
-    run("FallbackFunctionDefinition", "simple")
+    run(T, "simple")
 }

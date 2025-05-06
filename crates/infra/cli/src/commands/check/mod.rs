@@ -23,6 +23,8 @@ impl CheckController {
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, ValueEnum)]
 enum CheckCommand {
+    /// Run code generation scripts for different crates in the codebase.
+    Codegen,
     /// Run 'cargo check' for all crates, features, and targets.
     Cargo,
     /// Check NPM packages for any outdated codegen steps.
@@ -36,6 +38,7 @@ impl OrderedCommand for CheckCommand {
         Terminal::step(format!("check {name}", name = self.clap_name()));
 
         match self {
+            CheckCommand::Codegen => check_codegen(),
             CheckCommand::Cargo => check_cargo(),
             CheckCommand::Npm => check_npm(),
             CheckCommand::PublicApi => check_public_api(),
@@ -43,6 +46,13 @@ impl OrderedCommand for CheckCommand {
 
         Ok(())
     }
+}
+
+fn check_codegen() {
+    Command::new("cargo")
+        .arg("run")
+        .property("--bin", "codegen_runner")
+        .run();
 }
 
 fn check_cargo() {

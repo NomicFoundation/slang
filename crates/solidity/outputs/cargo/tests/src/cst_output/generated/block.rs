@@ -4,12 +4,14 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "Block";
+
 #[test]
 fn postfix_recovery_regression() -> Result<()> {
-    run("Block", "postfix_recovery_regression")
+    run(T, "postfix_recovery_regression")
 }
 
 #[test]
 fn unchecked() -> Result<()> {
-    run("Block", "unchecked")
+    run(T, "unchecked")
 }

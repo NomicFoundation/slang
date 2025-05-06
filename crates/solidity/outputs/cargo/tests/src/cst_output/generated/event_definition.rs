@@ -4,12 +4,14 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "EventDefinition";
+
 #[test]
 fn no_parens() -> Result<()> {
-    run("EventDefinition", "no_parens")
+    run(T, "no_parens")
 }
 
 #[test]
 fn transfer() -> Result<()> {
-    run("EventDefinition", "transfer")
+    run(T, "transfer")
 }

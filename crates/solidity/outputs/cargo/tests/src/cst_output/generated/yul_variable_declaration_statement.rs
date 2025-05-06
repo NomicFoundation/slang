@@ -4,55 +4,54 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "YulVariableDeclarationStatement";
+
 #[test]
 fn colon_equal_separated() -> Result<()> {
-    run("YulVariableDeclarationStatement", "colon_equal_separated")
+    run(T, "colon_equal_separated")
 }
 
 #[test]
 fn identifier_with_dots() -> Result<()> {
-    run("YulVariableDeclarationStatement", "identifier_with_dots")
+    run(T, "identifier_with_dots")
 }
 
 #[test]
 fn keyword_bytes() -> Result<()> {
-    run("YulVariableDeclarationStatement", "keyword_bytes")
+    run(T, "keyword_bytes")
 }
 
 #[test]
 fn keyword_bytes1() -> Result<()> {
-    run("YulVariableDeclarationStatement", "keyword_bytes1")
+    run(T, "keyword_bytes1")
 }
 
 #[test]
 fn keyword_bytes11() -> Result<()> {
-    run("YulVariableDeclarationStatement", "keyword_bytes11")
+    run(T, "keyword_bytes11")
 }
 
 #[test]
 fn keyword_ufixed184x80() -> Result<()> {
-    run("YulVariableDeclarationStatement", "keyword_ufixed184x80")
+    run(T, "keyword_ufixed184x80")
 }
 
 #[test]
 fn keyword_ufixed8x0() -> Result<()> {
-    run("YulVariableDeclarationStatement", "keyword_ufixed8x0")
+    run(T, "keyword_ufixed8x0")
 }
 
 #[test]
 fn keyword_ufixed8x8() -> Result<()> {
-    run("YulVariableDeclarationStatement", "keyword_ufixed8x8")
+    run(T, "keyword_ufixed8x8")
 }
 
 #[test]
 fn multiple_variables() -> Result<()> {
-    run("YulVariableDeclarationStatement", "multiple_variables")
+    run(T, "multiple_variables")
 }
 
 #[test]
 fn multiple_variables_with_value() -> Result<()> {
-    run(
-        "YulVariableDeclarationStatement",
-        "multiple_variables_with_value",
-    )
+    run(T, "multiple_variables_with_value")
 }

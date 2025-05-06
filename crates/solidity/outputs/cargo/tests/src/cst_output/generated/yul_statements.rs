@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "YulStatements";
+
 #[test]
 fn function_pointer() -> Result<()> {
-    run("YulStatements", "function_pointer")
+    run(T, "function_pointer")
 }

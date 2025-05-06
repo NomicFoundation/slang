@@ -9,7 +9,7 @@ use indicatif::{ProgressBar, ProgressStyle};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
-use rayon::prelude::{ParallelBridge, ParallelIterator};
+use rayon::iter::{ParallelBridge, ParallelIterator};
 use semver::Version;
 use serde::Deserialize;
 use url::Url;

@@ -4,27 +4,29 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "variables";
+
 #[test]
 fn destructuring() -> Result<()> {
-    run("variables", "destructuring")
+    run(T, "destructuring")
 }
 
 #[test]
 fn local_vars() -> Result<()> {
-    run("variables", "local_vars")
+    run(T, "local_vars")
 }
 
 #[test]
 fn params() -> Result<()> {
-    run("variables", "params")
+    run(T, "params")
 }
 
 #[test]
 fn state_vars() -> Result<()> {
-    run("variables", "state_vars")
+    run(T, "state_vars")
 }
 
 #[test]
 fn var_declaration() -> Result<()> {
-    run("variables", "var_declaration")
+    run(T, "var_declaration")
 }

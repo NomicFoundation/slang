@@ -5,12 +5,6 @@ rust-version.workspace = true
 edition.workspace = true
 publish = false
 
-[build-dependencies]
-anyhow = { workspace = true }
-codegen_testing = { workspace = true }
-infra_utils = { workspace = true }
-solidity_language = { workspace = true }
-
 [dev-dependencies]
 anyhow = { workspace = true }
 ariadne = { workspace = true }

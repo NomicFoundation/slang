@@ -254,12 +254,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cargo-emit"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1582e1c9e755dd6ad6b224dcffb135d199399a4568d454bd89fe515ca8425695"
-
-[[package]]
 name = "cargo-manifest"
 version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -451,13 +445,26 @@ dependencies = [
 ]
 
 [[package]]
-name = "codegen_runtime_cargo_crate"
+name = "codegen_runner"
 version = "1.1.0"
 dependencies = [
  "anyhow",
- "ariadne",
+ "codegen_language_definition",
  "codegen_runtime_generator",
+ "codegen_spec",
+ "codegen_testing",
  "infra_utils",
+ "rayon",
+ "semver",
+ "solidity_language",
+ "testlang_language",
+]
+
+[[package]]
+name = "codegen_runtime_cargo_crate"
+version = "1.1.0"
+dependencies = [
+ "ariadne",
  "metaslang_bindings",
  "metaslang_cst",
  "semver",
@@ -471,10 +478,7 @@ dependencies = [
 name = "codegen_runtime_cargo_wasm"
 version = "1.1.0"
 dependencies = [
- "anyhow",
  "codegen_runtime_cargo_crate",
- "codegen_runtime_generator",
- "infra_utils",
  "paste",
  "semver",
  "serde_json",
@@ -503,11 +507,6 @@ dependencies = [
 [[package]]
 name = "codegen_runtime_npm_package"
 version = "1.1.0"
-dependencies = [
- "anyhow",
- "codegen_runtime_generator",
- "infra_utils",
-]
 
 [[package]]
 name = "codegen_spec"
@@ -531,6 +530,7 @@ dependencies = [
  "anyhow",
  "codegen_language_definition",
  "infra_utils",
+ "semver",
 ]
 
 [[package]]
@@ -1432,7 +1432,6 @@ dependencies = [
  "Inflector",
  "anyhow",
  "ariadne",
- "cargo-emit",
  "console",
  "ignore",
  "itertools 0.13.0",
@@ -2401,15 +2400,11 @@ dependencies = [
 name = "slang_solidity"
 version = "1.1.0"
 dependencies = [
- "anyhow",
  "ariadne",
- "codegen_runtime_generator",
- "infra_utils",
  "metaslang_bindings",
  "metaslang_cst",
  "semver",
  "serde",
- "solidity_language",
  "strum",
  "strum_macros",
  "thiserror 2.0.12",
@@ -2429,17 +2424,13 @@ dependencies = [
 name = "slang_testlang"
 version = "1.1.0"
 dependencies = [
- "anyhow",
  "ariadne",
- "codegen_runtime_generator",
- "infra_utils",
  "metaslang_bindings",
  "metaslang_cst",
  "semver",
  "serde",
  "strum",
  "strum_macros",
- "testlang_language",
  "thiserror 2.0.12",
 ]
 
@@ -2476,7 +2467,6 @@ dependencies = [
  "anyhow",
  "ariadne",
  "codegen_language_definition",
- "codegen_testing",
  "indoc",
  "infra_utils",
  "metaslang_bindings",
@@ -2493,14 +2483,10 @@ dependencies = [
 name = "solidity_cargo_wasm"
 version = "1.1.0"
 dependencies = [
- "anyhow",
- "codegen_runtime_generator",
- "infra_utils",
  "paste",
  "semver",
  "serde_json",
  "slang_solidity",
- "solidity_language",
  "wit-bindgen",
 ]
 
@@ -2516,22 +2502,10 @@ dependencies = [
 [[package]]
 name = "solidity_npm_package"
 version = "1.1.0"
-dependencies = [
- "anyhow",
- "codegen_runtime_generator",
- "infra_utils",
- "solidity_language",
-]
 
 [[package]]
 name = "solidity_spec"
 version = "1.1.0"
-dependencies = [
- "anyhow",
- "codegen_spec",
- "infra_utils",
- "solidity_language",
-]
 
 [[package]]
 name = "solidity_testing_perf"
@@ -2839,14 +2813,10 @@ dependencies = [
 name = "testlang_cargo_wasm"
 version = "1.1.0"
 dependencies = [
- "anyhow",
- "codegen_runtime_generator",
- "infra_utils",
  "paste",
  "semver",
  "serde_json",
  "slang_testlang",
- "testlang_language",
  "wit-bindgen",
 ]
 
@@ -2862,12 +2832,6 @@ dependencies = [
 [[package]]
 name = "testlang_npm_package"
 version = "1.1.0"
-dependencies = [
- "anyhow",
- "codegen_runtime_generator",
- "infra_utils",
- "testlang_language",
-]
 
 [[package]]
 name = "thiserror"

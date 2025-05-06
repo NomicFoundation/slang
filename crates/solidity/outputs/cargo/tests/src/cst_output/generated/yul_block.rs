@@ -4,17 +4,19 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "YulBlock";
+
 #[test]
 fn function_def() -> Result<()> {
-    run("YulBlock", "function_def")
+    run(T, "function_def")
 }
 
 #[test]
 fn ignore_unknown_delim() -> Result<()> {
-    run("YulBlock", "ignore_unknown_delim")
+    run(T, "ignore_unknown_delim")
 }
 
 #[test]
 fn multiple_stack_assignments() -> Result<()> {
-    run("YulBlock", "multiple_stack_assignments")
+    run(T, "multiple_stack_assignments")
 }
