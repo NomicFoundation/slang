@@ -49,9 +49,11 @@ jobs:
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
+      - name: "Setup"
+        run: "source ./scripts/_common.sh"
       - name: "Build Test Binary"
         run: "cargo build --bin solidity_testing_sourcify --release"
-       
+
   singleShard:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
     needs: "buildSlang"
@@ -145,7 +147,9 @@ jobs:
 
   combinedResults:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-    needs: ["buildSlang", "singleShard"]
+    needs:
+      - "buildSlang"
+      - "singleShard"
     if: "!cancelled()"
     steps:
       - name: "Checkout Repository"
