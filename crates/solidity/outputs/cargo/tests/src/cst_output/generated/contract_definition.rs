@@ -126,6 +126,21 @@ fn recovery_testbed() -> Result<()> {
 }
 
 #[test]
+fn storage_specifier_after_inheritance() -> Result<()> {
+    run("ContractDefinition", "storage_specifier_after_inheritance")
+}
+
+#[test]
+fn storage_specifier_before_inheritance() -> Result<()> {
+    run("ContractDefinition", "storage_specifier_before_inheritance")
+}
+
+#[test]
+fn storage_specifier_only() -> Result<()> {
+    run("ContractDefinition", "storage_specifier_only")
+}
+
+#[test]
 fn unicode_in_doc_comments() -> Result<()> {
     run("ContractDefinition", "unicode_in_doc_comments")
 }

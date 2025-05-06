@@ -17,7 +17,6 @@ pub use optional_helper::OptionalHelper;
 pub use parser_function::ParserFunction;
 pub use parser_result::ParserResult;
 pub use precedence_helper::PrecedenceHelper;
-pub use recovery::TerminalAcceptanceThreshold;
 pub use repetition_helper::{OneOrMoreHelper, ZeroOrMoreHelper};
 pub use separated_helper::SeparatedHelper;
 pub use sequence_helper::SequenceHelper;

@@ -30,6 +30,7 @@ categories = [
 default = []
 __experimental_bindings_api = ["dep:metaslang_bindings"]
 __private_ariadne_errors = ["dep:ariadne"]
+__private_backend_api = []
 __private_compilation_api = []
 __private_testing_utils = []
 
@@ -37,6 +38,7 @@ __private_testing_utils = []
 anyhow = { workspace = true }                    # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 codegen_runtime_generator = { workspace = true } # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 infra_utils = { workspace = true }               # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
+semver = { workspace = true }                    # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 solidity_language = { workspace = true }         # __REMOVE_THIS_LINE_DURING_CARGO_PUBLISH__
 
 [dependencies]

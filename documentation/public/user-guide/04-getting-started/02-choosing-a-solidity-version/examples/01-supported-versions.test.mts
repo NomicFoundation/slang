@@ -2,9 +2,9 @@ import assert from "node:assert";
 import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 test("supported versions", () => {
-  assert.strictEqual(LanguageFacts.allVersions().length, 83);
+  assert.strictEqual(LanguageFacts.allVersions().length, 84);
 
   assert.strictEqual(LanguageFacts.earliestVersion(), "0.4.11");
 
-  assert.strictEqual(LanguageFacts.latestVersion(), "0.8.28");
+  assert.strictEqual(LanguageFacts.latestVersion(), "0.8.29");
 });

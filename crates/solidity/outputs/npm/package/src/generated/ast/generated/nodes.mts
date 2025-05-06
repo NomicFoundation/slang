@@ -892,7 +892,7 @@ export class UsingAlias {
  * ContractDefinition = (* abstract_keyword: *) ABSTRACT_KEYWORD? (* Introduced in 0.6.0 *)
  *                      (* contract_keyword: *) CONTRACT_KEYWORD
  *                      (* name: *) IDENTIFIER
- *                      (* inheritance: *) InheritanceSpecifier?
+ *                      (* specifiers: *) ContractSpecifiers
  *                      (* open_brace: *) OPEN_BRACE
  *                      (* members: *) ContractMembers
  *                      (* close_brace: *) CLOSE_BRACE;
@@ -900,14 +900,14 @@ export class UsingAlias {
  */
 export class ContractDefinition {
   private readonly fetch = once(() => {
-    const [$abstractKeyword, $contractKeyword, $name, $inheritance, $openBrace, $members, $closeBrace] =
+    const [$abstractKeyword, $contractKeyword, $name, $specifiers, $openBrace, $members, $closeBrace] =
       wasm.ast.Selectors.sequence(this.cst);
 
     return {
       abstractKeyword: $abstractKeyword === undefined ? undefined : ($abstractKeyword as TerminalNode),
       contractKeyword: $contractKeyword as TerminalNode,
       name: $name as TerminalNode,
-      inheritance: $inheritance === undefined ? undefined : new InheritanceSpecifier($inheritance as NonterminalNode),
+      specifiers: new ContractSpecifiers($specifiers as NonterminalNode),
       openBrace: $openBrace as TerminalNode,
       members: new ContractMembers($members as NonterminalNode),
       closeBrace: $closeBrace as TerminalNode,
@@ -948,10 +948,10 @@ export class ContractDefinition {
   }
 
   /**
-   * Returns the child node that has the label `inheritance`.
+   * Returns the child node that has the label `specifiers`.
    */
-  public get inheritance(): InheritanceSpecifier | undefined {
-    return this.fetch().inheritance;
+  public get specifiers(): ContractSpecifiers {
+    return this.fetch().specifiers;
   }
 
   /**
@@ -1063,6 +1063,61 @@ export class InheritanceType {
    */
   public get arguments(): ArgumentsDeclaration | undefined {
     return this.fetch().arguments;
+  }
+}
+
+/**
+ * This node represents a `StorageLayoutSpecifier` nonterminal, with the following structure:
+ *
+ * ```ebnf
+ * (* Introduced in 0.8.29 *)
+ * StorageLayoutSpecifier = (* layout_keyword: *) LAYOUT_KEYWORD
+ *                          (* at_keyword: *) AT_KEYWORD
+ *                          (* expression: *) Expression;
+ * ```
+ */
+export class StorageLayoutSpecifier {
+  private readonly fetch = once(() => {
+    const [$layoutKeyword, $atKeyword, $expression] = wasm.ast.Selectors.sequence(this.cst);
+
+    return {
+      layoutKeyword: $layoutKeyword as TerminalNode,
+      atKeyword: $atKeyword as TerminalNode,
+      expression: new Expression($expression as NonterminalNode),
+    };
+  });
+
+  /**
+   * Constructs a new AST node of type `StorageLayoutSpecifier`, given a nonterminal CST node of the same kind.
+   */
+  public constructor(
+    /**
+     * The underlying nonterminal CST node of kind `StorageLayoutSpecifier`.
+     */
+    public readonly cst: NonterminalNode,
+  ) {
+    assertKind(this.cst.kind, NonterminalKind.StorageLayoutSpecifier);
+  }
+
+  /**
+   * Returns the child node that has the label `layout_keyword`.
+   */
+  public get layoutKeyword(): TerminalNode {
+    return this.fetch().layoutKeyword;
+  }
+
+  /**
+   * Returns the child node that has the label `at_keyword`.
+   */
+  public get atKeyword(): TerminalNode {
+    return this.fetch().atKeyword;
+  }
+
+  /**
+   * Returns the child node that has the label `expression`.
+   */
+  public get expression(): Expression {
+    return this.fetch().expression;
   }
 }
 
@@ -7907,6 +7962,49 @@ export class UsingTarget {
 }
 
 /**
+ * This node represents a `ContractSpecifier` nonterminal, with the following structure:
+ *
+ * ```ebnf
+ * ContractSpecifier = (* variant: *) InheritanceSpecifier
+ *                   | (* variant: *) StorageLayoutSpecifier; (* Introduced in 0.8.29 *)
+ * ```
+ */
+export class ContractSpecifier {
+  private readonly fetch: () => InheritanceSpecifier | StorageLayoutSpecifier = once(() => {
+    const variant = wasm.ast.Selectors.choice(this.cst);
+
+    switch (variant.kind) {
+      case NonterminalKind.InheritanceSpecifier:
+        return new InheritanceSpecifier(variant as NonterminalNode);
+      case NonterminalKind.StorageLayoutSpecifier:
+        return new StorageLayoutSpecifier(variant as NonterminalNode);
+
+      default:
+        throw new Error(`Unexpected variant: '${variant.kind}'.`);
+    }
+  });
+
+  /**
+   * Constructs a new AST node of type `ContractSpecifier`, given a nonterminal CST node of the same kind.
+   */
+  public constructor(
+    /**
+     * The underlying nonterminal CST node of kind `ContractSpecifier`.
+     */
+    public readonly cst: NonterminalNode,
+  ) {
+    assertKind(this.cst.kind, NonterminalKind.ContractSpecifier);
+  }
+
+  /**
+   * Returns the child node that has the label `variant`.
+   */
+  public get variant(): InheritanceSpecifier | StorageLayoutSpecifier {
+    return this.fetch();
+  }
+}
+
+/**
  * This node represents a `ContractMember` nonterminal, with the following structure:
  *
  * ```ebnf
@@ -9820,6 +9918,39 @@ export class VersionExpressionSet {
    * Returns an array of the child nodes that have the label `item`.
    */
   public get items(): readonly VersionExpression[] {
+    return this.fetch();
+  }
+}
+
+/**
+ * This node represents a `ContractSpecifiers` nonterminal, with the following structure:
+ *
+ * ```ebnf
+ * ContractSpecifiers = (* item: *) ContractSpecifier*;
+ * ```
+ */
+export class ContractSpecifiers {
+  private readonly fetch = once(() => {
+    const items = wasm.ast.Selectors.repeated(this.cst);
+    return items.map((item) => new ContractSpecifier(item as NonterminalNode));
+  });
+
+  /**
+   * Constructs a new AST node of type `ContractSpecifiers`, given a nonterminal CST node of the same kind.
+   */
+  public constructor(
+    /**
+     * The underlying nonterminal CST node of kind `ContractSpecifiers`.
+     */
+    public readonly cst: NonterminalNode,
+  ) {
+    assertKind(this.cst.kind, NonterminalKind.ContractSpecifiers);
+  }
+
+  /**
+   * Returns an array of the child nodes that have the label `item`.
+   */
+  public get items(): readonly ContractSpecifier[] {
     return this.fetch();
   }
 }

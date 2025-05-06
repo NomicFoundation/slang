@@ -1,0 +1,49 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ try foo() { x: 1 } {                                                             │ 0..20
+  2  │   bar();                                                                         │ 21..29
+  3  │ } catch {                                                                        │ 30..39
+  4  │ }                                                                                │ 40..41
+
+Errors: # 2 total
+  - >
+    Error: Expected CallDataKeyword or Identifier or MemoryKeyword or StorageKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/method_call_with_options_and_body/input.sol:1:14]
+       │
+     1 │ try foo() { x: 1 } {
+       │              ──┬─  
+       │                ╰─── Error occurred here.
+    ───╯
+  - >
+    Error: Expected CatchKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/TryStatement/method_call_with_options_and_body/input.sol:1:19]
+       │
+     1 │ ╭─▶ try foo() { x: 1 } {
+       ┆ ┆   
+     4 │ ├─▶ }
+       │ │       
+       │ ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ TryStatement): # "try foo() { x: 1 } {\n  bar();\n} catch {\n}\n" (0..42)
+      - (try_keyword꞉ TryKeyword): "try" # (0..3)
+      - (expression꞉ Expression) ► (variant꞉ FunctionCallExpression): # " foo()" (3..9)
+          - (operand꞉ Expression): # " foo" (3..7)
+              - (leading_trivia꞉ Whitespace): " " # (3..4)
+              - (variant꞉ Identifier): "foo" # (4..7)
+          - (arguments꞉ ArgumentsDeclaration) ► (variant꞉ PositionalArgumentsDeclaration): # "()" (7..9)
+              - (open_paren꞉ OpenParen): "(" # (7..8)
+              - (arguments꞉ PositionalArguments): [] # (8..8)
+              - (close_paren꞉ CloseParen): ")" # (8..9)
+      - (body꞉ Block): # " { x: 1 }" (9..18)
+          - (leading_trivia꞉ Whitespace): " " # (9..10)
+          - (open_brace꞉ OpenBrace): "{" # (10..11)
+          - (statements꞉ Statements): # " x" (11..13)
+              - (item꞉ Statement) ► (variant꞉ VariableDeclarationStatement) ► (variable_type꞉ VariableDeclarationType) ► (variant꞉ TypeName) ► (variant꞉ IdentifierPath): # " x" (11..13)
+                  - (leading_trivia꞉ Whitespace): " " # (11..12)
+                  - (item꞉ Identifier): "x" # (12..13)
+          - (unrecognized꞉ UNRECOGNIZED): ": 1 " # (13..17)
+          - (close_brace꞉ CloseBrace): "}" # (17..18)
+      - (unrecognized꞉ UNRECOGNIZED): " {\n  bar();\n} catch {\n}\n" # (18..42)

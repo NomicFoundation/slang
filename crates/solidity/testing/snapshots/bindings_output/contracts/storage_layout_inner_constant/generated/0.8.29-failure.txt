@@ -1,0 +1,25 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract X2 layout at C2 { // should not bind to a constant defined in the contract
+   │          ─┬           ─┬  
+   │           ╰─────────────── name: 1
+   │                        │  
+   │                        ╰── unresolved
+ 2 │     uint256 constant C2 = 0;
+   │                      ─┬  
+   │                       ╰── name: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ contract X2 layout at C2 { // should not bind to a constant defined in the contract
+ 2 │ │       uint256 constant C2 = 0;
+   │ │   ──────────────┬──────────────  
+   │ │                 ╰──────────────── definiens: 2
+ 3 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+───╯

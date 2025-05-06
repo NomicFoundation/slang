@@ -19,8 +19,7 @@ use crate::cst::{
 use crate::parser::lexer::{KeywordScan, Lexer, ScannedTerminal};
 use crate::parser::parser_support::{
     ChoiceHelper, OneOrMoreHelper, OptionalHelper, ParserContext, ParserFunction, ParserResult,
-    PrecedenceHelper, SeparatedHelper, SequenceHelper, TerminalAcceptanceThreshold,
-    ZeroOrMoreHelper,
+    PrecedenceHelper, SeparatedHelper, SequenceHelper, ZeroOrMoreHelper,
 };
 use crate::parser::scanner_macros::{
     scan_char_range, scan_chars, scan_choice, scan_keyword_choice, scan_none_of,

@@ -50,6 +50,12 @@
 
 <pre ebnf-snippet="AssemblyKeyword" style="display: none;"><a href="#AssemblyKeyword"><span class="k">ASSEMBLY_KEYWORD</span></a><span class="o"> = </span><span class="s2">"assembly"</span><span class="o">;</span></pre>
 
+```{ .ebnf #AtKeyword }
+
+```
+
+<pre ebnf-snippet="AtKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.29 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#AtKeyword"><span class="k">AT_KEYWORD</span></a><span class="o"> = </span><span class="s2">"at"</span><span class="o">;</span></pre>
+
 ```{ .ebnf #AutoKeyword }
 
 ```
@@ -337,6 +343,12 @@
 ```
 
 <pre ebnf-snippet="IsKeyword" style="display: none;"><a href="#IsKeyword"><span class="k">IS_KEYWORD</span></a><span class="o"> = </span><span class="s2">"is"</span><span class="o">;</span></pre>
+
+```{ .ebnf #LayoutKeyword }
+
+```
+
+<pre ebnf-snippet="LayoutKeyword" style="display: none;"><span class="cm">(* Introduced in 0.8.29 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#LayoutKeyword"><span class="k">LAYOUT_KEYWORD</span></a><span class="o"> = </span><span class="s2">"layout"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #LetKeyword }
 

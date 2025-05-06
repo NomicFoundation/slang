@@ -32,6 +32,7 @@ Tree:
       - (contract_keyword꞉ ContractKeyword): "contract" # (1986..1994)
       - (leading_trivia꞉ Whitespace): " " # (1994..1995)
       - (name꞉ Identifier): "Foo" # (1995..1998)
+      - (specifiers꞉ ContractSpecifiers): [] # (1998..1998)
       - (leading_trivia꞉ Whitespace): " " # (1998..1999)
       - (open_brace꞉ OpenBrace): "{" # (1999..2000)
       - (members꞉ ContractMembers): [] # (2000..2000)
