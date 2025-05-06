@@ -47,8 +47,8 @@ jobs:
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
-      - name: "Restore Cache"
-        uses: "./.github/actions/cache/restore"
+      - name: "Setup Hermit Environment"
+        run: "source ./bin/activate-hermit"
       - name: "Build Test Binary"
         run: "cargo build --bin solidity_testing_sourcify --release"
        
