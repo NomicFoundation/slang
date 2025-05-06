@@ -9,8 +9,6 @@ use serde_json::Value;
 
 #[derive(Clone, Debug, Parser)]
 pub struct FetchController {
-    /// Base path to store the fetched files
-    path: String,
     /// Hash when fetching a specific project
     #[arg(long)]
     hash: Option<String>,
@@ -71,13 +69,13 @@ impl FetchController {
     }
 
     pub fn execute(&self) -> Result<()> {
-        let base_path = Path::new(&self.path);
+        let config = config::read_config()?;
+
+        let base_path = Path::new(&config.working_dir);
 
         if let Some(hash) = &self.hash {
             Self::fetch(hash, base_path)?;
         } else {
-            let config = config::read_config()?;
-
             // We need to download all the hashes, no matter where they come from.
             let mut hashes_projects: Vec<_> = config.projects.iter().map(|p| &p.hash).collect();
             let hashes_keys: Vec<_> = config.files.iter().map(|f| &f.hash).collect();
