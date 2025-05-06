@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
+import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
 import { Cursor, TerminalKind } from "@nomicfoundation/slang/cst";
 import { MathNumericType, max, mean, round, std } from "mathjs";
 import assert from "node:assert";
@@ -7,9 +7,10 @@ import assert from "node:assert";
 import * as slang_raw from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
 import { exit } from "node:process";
 import path from "node:path";
-import { Options, Runner } from "./common.mjs";
+import { Options, readRepoFile, Runner } from "./common.mjs";
 
-export class Record {
+// Currently unused, but left here because we will likely want to report these
+class Record {
   file: string;
   totalTime: number = 0;
   buildGraphTime: number = 0;
@@ -23,13 +24,6 @@ export class Record {
   public constructor(file: string) {
     this.file = file;
   }
-}
-
-export function readRepoFile(...relativePaths: string[]): string {
-  const absolutePath = path.join(...relativePaths);
-  const source = fs.readFileSync(absolutePath, "utf8");
-
-  return source.trim();
 }
 
 export function createBuilder(languageVersion: string, directory: string): CompilationBuilder {

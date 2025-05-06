@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 export interface Runner {
   name: string;
   test(languageVersion: string, dir: string, file: string): Promise<void>;
@@ -7,8 +10,8 @@ export interface Runner {
 export enum Options {
   None, // HACK: this is so this option is the false / no entry option
   Parse,
-  File, // bindings of main file only
-  Project // bindings of the entire project
+  File, // resolve bindings of the main file only
+  Project, // resolve bindings of the entire project
 }
 
 export const hasGC = typeof global.gc == "function";
@@ -32,4 +35,11 @@ export function checkCI() {
 
 export function round2(n: number): number {
   return Math.round(n * 100) / 100;
+}
+
+export function readRepoFile(...relativePaths: string[]): string {
+  const absolutePath = path.join(...relativePaths);
+  const source = fs.readFileSync(absolutePath, "utf8");
+
+  return source.trim();
 }
