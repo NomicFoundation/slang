@@ -1,0 +1,21 @@
+#!/bin/bash
+set -evuo pipefail
+
+# Helper script for running Sourcify tests, mostly useful for Github workflows.
+# The sourcify tests don't require the whole `infra` harness to compile/run. Setting that up
+# is a bit of a waste. It gets way worse when running in workflows because it can take well
+# over 5 minutes to compile everything, even though all we _really_ need from scripts/bin/infra
+# is setting up the Hermit env.
+
+source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
+
+if [[ $# = 0 ]]; then
+  echo "Usage: ${BASH_SOURCE[0]} build | run [args]"
+  exit 1
+fi
+
+if [[ "$1" = "build" ]]; then
+  cargo build --bin solidity_testing_sourcify --release
+elif [[ "$1" = "run" ]]; then
+  ./target/release/solidity_testing_sourcify "${@:2}"
+fi
