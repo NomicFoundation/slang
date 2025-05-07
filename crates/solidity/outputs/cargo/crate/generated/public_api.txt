@@ -1107,8 +1107,6 @@ pub slang_solidity::backend::l1_typed_cst::ElementaryType::IntKeyword(alloc::rc:
 pub slang_solidity::backend::l1_typed_cst::ElementaryType::StringKeyword
 pub slang_solidity::backend::l1_typed_cst::ElementaryType::UfixedKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::l1_typed_cst::ElementaryType::UintKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
-impl slang_solidity::backend::l1_typed_cst::ElementaryType
-pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type(&self, location: core::option::Option<slang_solidity::backend::types::DataLocation>) -> slang_solidity::backend::types::Type
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::ElementaryType
 pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1_typed_cst::ExperimentalFeature
@@ -1303,8 +1301,6 @@ pub enum slang_solidity::backend::l1_typed_cst::StorageLocation
 pub slang_solidity::backend::l1_typed_cst::StorageLocation::CallDataKeyword
 pub slang_solidity::backend::l1_typed_cst::StorageLocation::MemoryKeyword
 pub slang_solidity::backend::l1_typed_cst::StorageLocation::StorageKeyword
-impl slang_solidity::backend::l1_typed_cst::StorageLocation
-pub fn slang_solidity::backend::l1_typed_cst::StorageLocation::to_data_location(&self) -> slang_solidity::backend::types::DataLocation
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::StorageLocation
 pub fn slang_solidity::backend::l1_typed_cst::StorageLocation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1_typed_cst::StringExpression
@@ -3433,8 +3429,6 @@ pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::IntKeywor
 pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::StringKeyword
 pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::UfixedKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::UintKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
-impl slang_solidity::backend::l1_typed_cst::ElementaryType
-pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type(&self, location: core::option::Option<slang_solidity::backend::types::DataLocation>) -> slang_solidity::backend::types::Type
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::ElementaryType
 pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature
@@ -3629,8 +3623,6 @@ pub enum slang_solidity::backend::l2_flat_contracts::input::StorageLocation
 pub slang_solidity::backend::l2_flat_contracts::input::StorageLocation::CallDataKeyword
 pub slang_solidity::backend::l2_flat_contracts::input::StorageLocation::MemoryKeyword
 pub slang_solidity::backend::l2_flat_contracts::input::StorageLocation::StorageKeyword
-impl slang_solidity::backend::l1_typed_cst::StorageLocation
-pub fn slang_solidity::backend::l1_typed_cst::StorageLocation::to_data_location(&self) -> slang_solidity::backend::types::DataLocation
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::StorageLocation
 pub fn slang_solidity::backend::l1_typed_cst::StorageLocation::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::input::StringExpression
