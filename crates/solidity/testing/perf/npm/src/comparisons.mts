@@ -57,9 +57,7 @@ async function run(solidityVersion: string, dir: string, file: string, options: 
   }
 
   for (const test of tests) {
-    const start = performance.now();
-    await test.test(solidityVersion, dir, file);
-    const time = performance.now() - start;
+    const time = await test.test(solidityVersion, dir, file);
     const name = test.name + " " + optionsName;
     measure.timings.push(new Timing(name, time));
   }

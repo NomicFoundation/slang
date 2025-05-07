@@ -6,7 +6,8 @@ import { readFile } from "node:fs/promises";
 export class SolidityParserRunner implements Runner {
   public name = "solidity parser";
 
-  async test(_languageVersion: string, dir: string, file: string) {
+  async test(_languageVersion: string, dir: string, file: string): Promise<number> {
+    const start = performance.now();
     const filePath = path.join(dir, file);
     const content = await readFile(filePath, { encoding: "utf8" });
     const result = parse(content, { tolerant: true, loc: true });
@@ -15,5 +16,6 @@ export class SolidityParserRunner implements Runner {
       console.error(result.errors);
       process.exit(-1);
     }
+    return performance.now() - start;
   }
 }

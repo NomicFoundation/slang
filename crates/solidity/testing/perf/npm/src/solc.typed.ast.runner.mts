@@ -4,8 +4,9 @@ import { Runner } from "./common.mjs";
 export class SolcTypedAstRunner implements Runner {
   public name = "solc typed ast";
 
-  async test(languageVersion: string, dir: string, file: string) {
+  async test(languageVersion: string, dir: string, file: string): Promise<number> {
     await testFile(languageVersion, dir, file);
+    return 0; // TODO
   }
 }
 
