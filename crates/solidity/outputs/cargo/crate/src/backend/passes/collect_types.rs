@@ -75,11 +75,7 @@ impl Pass {
         elementary_type: &ElementaryType,
         location: Option<DataLocation>,
     ) -> TypeId {
-        let built_in_type = if let Some(location) = location {
-            elementary_type.to_type_with_location(location)
-        } else {
-            elementary_type.try_to_type()
-        };
+        let built_in_type = elementary_type.to_type(location);
         self.types.register_type(built_in_type)
     }
 
@@ -316,7 +312,7 @@ impl l1_typed_cst::visitor::Visitor for Pass {
         &mut self,
         target: &l1_typed_cst::UserDefinedValueTypeDefinition,
     ) {
-        let value_type = target.value_type.try_to_type();
+        let value_type = target.value_type.to_type(None);
         let value_type_id = self.types.register_type(value_type);
         self.types
             .register_definition(TypeDefinition::UserDefinedValueType(UserDefinedValueType {

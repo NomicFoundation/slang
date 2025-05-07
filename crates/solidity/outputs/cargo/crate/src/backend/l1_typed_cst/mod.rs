@@ -22,7 +22,7 @@ impl CompilationUnit {
 }
 
 impl ElementaryType {
-    pub fn try_to_type(&self) -> Type {
+    pub fn to_type(&self, location: Option<DataLocation>) -> Type {
         match self {
             Self::AddressType(address) => {
                 let payable = address.payable_keyword.is_some();
@@ -31,8 +31,10 @@ impl ElementaryType {
             Self::BoolKeyword => Type::Boolean,
             Self::BytesKeyword(bytes) => {
                 if bytes.text == "bytes" {
-                    // Cannot convert bytes type without a storage location
-                    unimplemented!("bytes type is missing a data location specifier");
+                    let Some(location) = location else {
+                        unimplemented!("bytes type is missing a data location specifier");
+                    };
+                    Type::Bytes { location }
                 } else {
                     let width = bytes.text.strip_prefix("bytes").unwrap().parse().unwrap();
                     Type::ByteArray { width }
@@ -98,22 +100,11 @@ impl ElementaryType {
                 }
             }
             Self::StringKeyword => {
-                unimplemented!("Missing data location specifier for string type");
+                let Some(location) = location else {
+                    unimplemented!("Missing data location specifier for string type");
+                };
+                Type::String { location }
             }
-        }
-    }
-
-    pub fn to_type_with_location(&self, location: DataLocation) -> Type {
-        match self {
-            Self::BytesKeyword(bytes) => {
-                if bytes.text == "bytes" {
-                    Type::Bytes { location }
-                } else {
-                    self.try_to_type()
-                }
-            }
-            Self::StringKeyword => Type::String { location },
-            _ => self.try_to_type(),
         }
     }
 }

@@ -1108,8 +1108,7 @@ pub slang_solidity::backend::l1_typed_cst::ElementaryType::StringKeyword
 pub slang_solidity::backend::l1_typed_cst::ElementaryType::UfixedKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::l1_typed_cst::ElementaryType::UintKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 impl slang_solidity::backend::l1_typed_cst::ElementaryType
-pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type_with_location(&self, location: slang_solidity::backend::types::DataLocation) -> slang_solidity::backend::types::Type
-pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::try_to_type(&self) -> slang_solidity::backend::types::Type
+pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type(&self, location: core::option::Option<slang_solidity::backend::types::DataLocation>) -> slang_solidity::backend::types::Type
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::ElementaryType
 pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1_typed_cst::ExperimentalFeature
@@ -3435,8 +3434,7 @@ pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::StringKey
 pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::UfixedKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::UintKeyword(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
 impl slang_solidity::backend::l1_typed_cst::ElementaryType
-pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type_with_location(&self, location: slang_solidity::backend::types::DataLocation) -> slang_solidity::backend::types::Type
-pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::try_to_type(&self) -> slang_solidity::backend::types::Type
+pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::to_type(&self, location: core::option::Option<slang_solidity::backend::types::DataLocation>) -> slang_solidity::backend::types::Type
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::ElementaryType
 pub fn slang_solidity::backend::l1_typed_cst::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature
