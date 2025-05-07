@@ -1,7 +1,8 @@
-mod collect_types;
+mod p1_flatten_contracts;
+mod p2_collect_types;
 
-use anyhow::Result;
-use slang_solidity::backend::{l1_typed_cst, l2_flat_contracts};
+use anyhow::{anyhow, Result};
+use slang_solidity::backend::passes;
 use slang_solidity::compilation::{self, InternalCompilationBuilder};
 use slang_solidity::utils::LanguageFacts;
 
@@ -87,12 +88,11 @@ fn build_compilation_unit() -> Result<compilation::CompilationUnit> {
 
 #[test]
 fn test_backend_pipeline() -> Result<()> {
-    let compilation_unit = build_compilation_unit()?;
-    let unit_l1 = l1_typed_cst::CompilationUnit::build(&compilation_unit).unwrap();
-    assert_eq!(2, unit_l1.files.len());
-
-    let unit_l2 = l2_flat_contracts::CompilationUnit::from_l1(&unit_l1);
-    assert_eq!(2, unit_l2.files.len());
+    let unit = build_compilation_unit()?;
+    let data = passes::p0_build_ast::Output::build(&unit).map_err(|s| anyhow!(s))?;
+    let data = passes::p1_flatten_contracts::Output::build_from(&data);
+    let data = passes::p2_collect_types::Output::build_from(&data);
+    assert_eq!(2, data.files.len());
 
     Ok(())
 }

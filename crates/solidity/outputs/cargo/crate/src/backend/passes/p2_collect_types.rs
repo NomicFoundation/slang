@@ -1,8 +1,11 @@
+use std::collections::HashMap;
 use std::rc::Rc;
 
-use crate::backend::l1_typed_cst::{
-    self, ArrayTypeName, ElementaryType, FunctionType, FunctionTypeAttribute, IdentifierPath,
-    MappingKeyType, MappingType, Parameter, StorageLocation, TypeName,
+use super::p1_flatten_contracts::Output as Input;
+use crate::backend::l2_flat_contracts::visitor::{accept_source_unit, Visitor};
+use crate::backend::l2_flat_contracts::{
+    self as input_ir, ArrayTypeName, ElementaryType, FunctionType, FunctionTypeAttribute,
+    IdentifierPath, MappingKeyType, MappingType, Parameter, SourceUnit, StorageLocation, TypeName,
 };
 use crate::backend::types::{
     ContractType, DataLocation, EnumType, FunctionTypeKind, InterfaceType, StateVariable,
@@ -11,13 +14,38 @@ use crate::backend::types::{
 use crate::bindings::{BindingGraph, BindingLocation};
 use crate::cst::NonterminalKind;
 
-pub struct Pass {
-    binding_graph: Rc<BindingGraph>,
+pub struct Output {
+    pub files: HashMap<String, SourceUnit>,
+    pub binding_graph: Rc<BindingGraph>,
     pub types: TypeRegistry,
 }
 
+impl Output {
+    pub fn build_from(input: &Input) -> Self {
+        let files = input.files.clone();
+        let binding_graph = Rc::clone(&input.binding_graph);
+        let mut pass = Pass::new(Rc::clone(&binding_graph));
+        for source_unit in files.values() {
+            accept_source_unit(source_unit, &mut pass);
+        }
+        pass.types.validate();
+        let types = pass.types;
+
+        Self {
+            files,
+            binding_graph,
+            types,
+        }
+    }
+}
+
+struct Pass {
+    binding_graph: Rc<BindingGraph>,
+    types: TypeRegistry,
+}
+
 impl Pass {
-    pub fn new(binding_graph: Rc<BindingGraph>) -> Self {
+    fn new(binding_graph: Rc<BindingGraph>) -> Self {
         Self {
             types: TypeRegistry::default(),
             binding_graph,
@@ -230,15 +258,13 @@ impl Pass {
     }
 }
 
-impl l1_typed_cst::visitor::Visitor for Pass {
-    fn leave_contract_definition(&mut self, target: &l1_typed_cst::ContractDefinition) {
+impl Visitor for Pass {
+    fn leave_contract_definition(&mut self, target: &input_ir::ContractDefinition) {
         let state_variables = target
             .members
             .iter()
             .filter_map(|member| {
-                if let l1_typed_cst::ContractMember::StateVariableDefinition(state_variable) =
-                    member
-                {
+                if let input_ir::ContractMember::StateVariableDefinition(state_variable) = member {
                     let type_id = self.find_or_register_type_name(
                         &state_variable.type_name,
                         Some(DataLocation::Storage),
@@ -261,7 +287,7 @@ impl l1_typed_cst::visitor::Visitor for Pass {
             }));
     }
 
-    fn leave_interface_definition(&mut self, target: &l1_typed_cst::InterfaceDefinition) {
+    fn leave_interface_definition(&mut self, target: &input_ir::InterfaceDefinition) {
         self.types
             .register_definition(TypeDefinition::Interface(InterfaceType {
                 node_id: target.node_id,
@@ -269,7 +295,7 @@ impl l1_typed_cst::visitor::Visitor for Pass {
             }));
     }
 
-    fn leave_struct_definition(&mut self, target: &l1_typed_cst::StructDefinition) {
+    fn leave_struct_definition(&mut self, target: &input_ir::StructDefinition) {
         let fields = target
             .members
             .iter()
@@ -291,7 +317,7 @@ impl l1_typed_cst::visitor::Visitor for Pass {
             }));
     }
 
-    fn leave_enum_definition(&mut self, target: &l1_typed_cst::EnumDefinition) {
+    fn leave_enum_definition(&mut self, target: &input_ir::EnumDefinition) {
         let members = target
             .members
             .iter()
@@ -310,7 +336,7 @@ impl l1_typed_cst::visitor::Visitor for Pass {
 
     fn leave_user_defined_value_type_definition(
         &mut self,
-        target: &l1_typed_cst::UserDefinedValueTypeDefinition,
+        target: &input_ir::UserDefinedValueTypeDefinition,
     ) {
         let value_type = target.value_type.to_type(None);
         let value_type_id = self.types.register_type(value_type);
@@ -322,23 +348,23 @@ impl l1_typed_cst::visitor::Visitor for Pass {
             }));
     }
 
-    fn leave_parameter(&mut self, target: &l1_typed_cst::Parameter) {
+    fn leave_parameter(&mut self, target: &input_ir::Parameter) {
         self.find_or_register_parameter(target);
     }
 
     fn leave_variable_declaration_statement(
         &mut self,
-        target: &l1_typed_cst::VariableDeclarationStatement,
+        target: &input_ir::VariableDeclarationStatement,
     ) {
         let location = target
             .storage_location
             .as_ref()
             .map(|loc| loc.to_data_location());
-        let l1_typed_cst::VariableDeclarationType::TypeName(type_name) = &target.variable_type;
+        let input_ir::VariableDeclarationType::TypeName(type_name) = &target.variable_type;
         self.find_or_register_type_name(type_name, location);
     }
 
-    fn leave_typed_tuple_member(&mut self, target: &l1_typed_cst::TypedTupleMember) {
+    fn leave_typed_tuple_member(&mut self, target: &input_ir::TypedTupleMember) {
         let location = target
             .storage_location
             .as_ref()

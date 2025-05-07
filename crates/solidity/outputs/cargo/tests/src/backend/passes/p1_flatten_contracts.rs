@@ -1,24 +1,24 @@
 use anyhow::{anyhow, Result};
-use slang_solidity::backend::l2_flat_contracts::transformer::Transformer;
-use slang_solidity::backend::{l1_typed_cst, l2_flat_contracts};
-use slang_solidity::parser::Parser;
+use slang_solidity::backend::l2_flat_contracts;
+use slang_solidity::backend::passes::{p0_build_ast, p1_flatten_contracts};
+use slang_solidity::compilation::InternalCompilationBuilder;
 use slang_solidity::utils::LanguageFacts;
 
 #[test]
-fn test_build_l2_from_l1() -> Result<()> {
-    let parser = Parser::create(LanguageFacts::LATEST_VERSION)?;
-    let output = parser.parse_file_contents(
-        r###"
+fn test_flatten_contracts() -> Result<()> {
+    const CONTENTS: &str = r###"
 contract Base {}
 contract Test is Base layout at 0 {}
-    "###,
-    );
-    assert!(output.is_valid());
+    "###;
 
-    let l1 = l1_typed_cst::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
+    let mut internal_builder = InternalCompilationBuilder::create(LanguageFacts::LATEST_VERSION)?;
+    _ = internal_builder.add_file("main.sol".into(), CONTENTS);
+    let compilation_unit = internal_builder.build();
 
-    let mut transformer = l2_flat_contracts::FromL1 {};
-    let l2 = transformer.transform_source_unit(&l1);
+    let data = p0_build_ast::Output::build(&compilation_unit).map_err(|s| anyhow!(s))?;
+    let data = p1_flatten_contracts::Output::build_from(&data);
+
+    let l2 = &data.files["main.sol"];
 
     assert_eq!(2, l2.members.len());
 

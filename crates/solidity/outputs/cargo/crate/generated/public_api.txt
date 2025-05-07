@@ -891,15 +891,6 @@ pub fn slang_solidity::backend::l1_typed_cst::visitor::Visitor::leave_yul_variab
 pub fn slang_solidity::backend::l1_typed_cst::visitor::Visitor::leave_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationStatement)
 pub fn slang_solidity::backend::l1_typed_cst::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationValue)
 pub fn slang_solidity::backend::l1_typed_cst::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::l1_typed_cst::YulVariableNames)
-impl slang_solidity::backend::l1_typed_cst::visitor::Visitor for slang_solidity::backend::passes::collect_types::Pass
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::ContractDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_enum_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::EnumDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_interface_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::InterfaceDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_parameter(&mut self, target: &slang_solidity::backend::l1_typed_cst::Parameter)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_struct_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::StructDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_typed_tuple_member(&mut self, target: &slang_solidity::backend::l1_typed_cst::TypedTupleMember)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_user_defined_value_type_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::UserDefinedValueTypeDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_variable_declaration_statement(&mut self, target: &slang_solidity::backend::l1_typed_cst::VariableDeclarationStatement)
 pub fn slang_solidity::backend::l1_typed_cst::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::l1_typed_cst::AbicoderPragma, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
 pub fn slang_solidity::backend::l1_typed_cst::visitor::accept_additive_expression(node: &slang_solidity::backend::l1_typed_cst::AdditiveExpression, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
 pub fn slang_solidity::backend::l1_typed_cst::visitor::accept_address_type(node: &slang_solidity::backend::l1_typed_cst::AddressType, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
@@ -1519,10 +1510,6 @@ pub slang_solidity::backend::l1_typed_cst::CatchClauseStruct::error: core::optio
 pub slang_solidity::backend::l1_typed_cst::CatchClauseStruct::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::CatchClauseStruct
 pub fn slang_solidity::backend::l1_typed_cst::CatchClauseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l1_typed_cst::CompilationUnit
-pub slang_solidity::backend::l1_typed_cst::CompilationUnit::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l1_typed_cst::SourceUnit>
-impl slang_solidity::backend::l1_typed_cst::CompilationUnit
-pub fn slang_solidity::backend::l1_typed_cst::CompilationUnit::build(input: &slang_solidity::compilation::CompilationUnit) -> core::result::Result<Self, alloc::string::String>
 pub struct slang_solidity::backend::l1_typed_cst::ConditionalExpressionStruct
 pub slang_solidity::backend::l1_typed_cst::ConditionalExpressionStruct::false_expression: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l1_typed_cst::ConditionalExpressionStruct::node_id: metaslang_cst::nodes::NodeId
@@ -3213,15 +3200,6 @@ pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leav
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationStatement)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationValue)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::l1_typed_cst::YulVariableNames)
-impl slang_solidity::backend::l1_typed_cst::visitor::Visitor for slang_solidity::backend::passes::collect_types::Pass
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::ContractDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_enum_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::EnumDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_interface_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::InterfaceDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_parameter(&mut self, target: &slang_solidity::backend::l1_typed_cst::Parameter)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_struct_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::StructDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_typed_tuple_member(&mut self, target: &slang_solidity::backend::l1_typed_cst::TypedTupleMember)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_user_defined_value_type_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::UserDefinedValueTypeDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_variable_declaration_statement(&mut self, target: &slang_solidity::backend::l1_typed_cst::VariableDeclarationStatement)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::l1_typed_cst::AbicoderPragma, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_additive_expression(node: &slang_solidity::backend::l1_typed_cst::AdditiveExpression, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_address_type(node: &slang_solidity::backend::l1_typed_cst::AddressType, visitor: &mut impl slang_solidity::backend::l1_typed_cst::visitor::Visitor)
@@ -3841,10 +3819,6 @@ pub slang_solidity::backend::l2_flat_contracts::input::CatchClauseStruct::error:
 pub slang_solidity::backend::l2_flat_contracts::input::CatchClauseStruct::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::CatchClauseStruct
 pub fn slang_solidity::backend::l1_typed_cst::CatchClauseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l2_flat_contracts::input::CompilationUnit
-pub slang_solidity::backend::l2_flat_contracts::input::CompilationUnit::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l1_typed_cst::SourceUnit>
-impl slang_solidity::backend::l1_typed_cst::CompilationUnit
-pub fn slang_solidity::backend::l1_typed_cst::CompilationUnit::build(input: &slang_solidity::compilation::CompilationUnit) -> core::result::Result<Self, alloc::string::String>
 pub struct slang_solidity::backend::l2_flat_contracts::input::ConditionalExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::input::ConditionalExpressionStruct::false_expression: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l2_flat_contracts::input::ConditionalExpressionStruct::node_id: metaslang_cst::nodes::NodeId
@@ -5150,8 +5124,6 @@ pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::tra
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::transform_yul_variable_declaration_statement(&mut self, source: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationStatement) -> slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationStatement
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::transform_yul_variable_declaration_value(&mut self, source: &slang_solidity::backend::l1_typed_cst::YulVariableDeclarationValue) -> slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValue
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::transform_yul_variable_names(&mut self, source: &slang_solidity::backend::l1_typed_cst::YulVariableNames) -> slang_solidity::backend::l2_flat_contracts::YulVariableNames
-impl slang_solidity::backend::l2_flat_contracts::transformer::Transformer for slang_solidity::backend::l2_flat_contracts::FromL1
-pub fn slang_solidity::backend::l2_flat_contracts::FromL1::transform_contract_definition(&mut self, source: &slang_solidity::backend::l1_typed_cst::ContractDefinition) -> slang_solidity::backend::l2_flat_contracts::ContractDefinition
 pub mod slang_solidity::backend::l2_flat_contracts::visitor
 pub trait slang_solidity::backend::l2_flat_contracts::visitor::Visitor
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::enter_abicoder_pragma(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AbicoderPragma) -> bool
@@ -6191,10 +6163,6 @@ pub slang_solidity::backend::l2_flat_contracts::CatchClauseStruct::error: core::
 pub slang_solidity::backend::l2_flat_contracts::CatchClauseStruct::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::CatchClauseStruct
 pub fn slang_solidity::backend::l2_flat_contracts::CatchClauseStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l2_flat_contracts::CompilationUnit
-pub slang_solidity::backend::l2_flat_contracts::CompilationUnit::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
-impl slang_solidity::backend::l2_flat_contracts::CompilationUnit
-pub fn slang_solidity::backend::l2_flat_contracts::CompilationUnit::from_l1(unit_l1: &slang_solidity::backend::l1_typed_cst::CompilationUnit) -> Self
 pub struct slang_solidity::backend::l2_flat_contracts::ConditionalExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::ConditionalExpressionStruct::false_expression: slang_solidity::backend::l2_flat_contracts::Expression
 pub slang_solidity::backend::l2_flat_contracts::ConditionalExpressionStruct::node_id: metaslang_cst::nodes::NodeId
@@ -6332,9 +6300,6 @@ pub slang_solidity::backend::l2_flat_contracts::ForStatementStruct::iterator: co
 pub slang_solidity::backend::l2_flat_contracts::ForStatementStruct::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::ForStatementStruct
 pub fn slang_solidity::backend::l2_flat_contracts::ForStatementStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub struct slang_solidity::backend::l2_flat_contracts::FromL1
-impl slang_solidity::backend::l2_flat_contracts::transformer::Transformer for slang_solidity::backend::l2_flat_contracts::FromL1
-pub fn slang_solidity::backend::l2_flat_contracts::FromL1::transform_contract_definition(&mut self, source: &slang_solidity::backend::l1_typed_cst::ContractDefinition) -> slang_solidity::backend::l2_flat_contracts::ContractDefinition
 pub struct slang_solidity::backend::l2_flat_contracts::FunctionCallExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::FunctionCallExpressionStruct::arguments: slang_solidity::backend::l2_flat_contracts::ArgumentsDeclaration
 pub slang_solidity::backend::l2_flat_contracts::FunctionCallExpressionStruct::node_id: metaslang_cst::nodes::NodeId
@@ -6998,20 +6963,25 @@ pub type slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationState
 pub type slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValue = alloc::rc::Rc<slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValueStruct>
 pub type slang_solidity::backend::l2_flat_contracts::YulVariableNames = alloc::vec::Vec<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 pub mod slang_solidity::backend::passes
-pub mod slang_solidity::backend::passes::collect_types
-pub struct slang_solidity::backend::passes::collect_types::Pass
-pub slang_solidity::backend::passes::collect_types::Pass::types: slang_solidity::backend::types::TypeRegistry
-impl slang_solidity::backend::passes::collect_types::Pass
-pub fn slang_solidity::backend::passes::collect_types::Pass::new(binding_graph: alloc::rc::Rc<slang_solidity::bindings::BindingGraph>) -> Self
-impl slang_solidity::backend::l1_typed_cst::visitor::Visitor for slang_solidity::backend::passes::collect_types::Pass
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::ContractDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_enum_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::EnumDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_interface_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::InterfaceDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_parameter(&mut self, target: &slang_solidity::backend::l1_typed_cst::Parameter)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_struct_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::StructDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_typed_tuple_member(&mut self, target: &slang_solidity::backend::l1_typed_cst::TypedTupleMember)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_user_defined_value_type_definition(&mut self, target: &slang_solidity::backend::l1_typed_cst::UserDefinedValueTypeDefinition)
-pub fn slang_solidity::backend::passes::collect_types::Pass::leave_variable_declaration_statement(&mut self, target: &slang_solidity::backend::l1_typed_cst::VariableDeclarationStatement)
+pub mod slang_solidity::backend::passes::p0_build_ast
+pub struct slang_solidity::backend::passes::p0_build_ast::Output
+pub slang_solidity::backend::passes::p0_build_ast::Output::binding_graph: alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
+pub slang_solidity::backend::passes::p0_build_ast::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l1_typed_cst::SourceUnit>
+impl slang_solidity::backend::passes::p0_build_ast::Output
+pub fn slang_solidity::backend::passes::p0_build_ast::Output::build(input: &slang_solidity::compilation::CompilationUnit) -> core::result::Result<Self, alloc::string::String>
+pub mod slang_solidity::backend::passes::p1_flatten_contracts
+pub struct slang_solidity::backend::passes::p1_flatten_contracts::Output
+pub slang_solidity::backend::passes::p1_flatten_contracts::Output::binding_graph: alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
+pub slang_solidity::backend::passes::p1_flatten_contracts::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
+impl slang_solidity::backend::passes::p1_flatten_contracts::Output
+pub fn slang_solidity::backend::passes::p1_flatten_contracts::Output::build_from(input: &slang_solidity::backend::passes::p0_build_ast::Output) -> Self
+pub mod slang_solidity::backend::passes::p2_collect_types
+pub struct slang_solidity::backend::passes::p2_collect_types::Output
+pub slang_solidity::backend::passes::p2_collect_types::Output::binding_graph: alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
+pub slang_solidity::backend::passes::p2_collect_types::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
+pub slang_solidity::backend::passes::p2_collect_types::Output::types: slang_solidity::backend::types::TypeRegistry
+impl slang_solidity::backend::passes::p2_collect_types::Output
+pub fn slang_solidity::backend::passes::p2_collect_types::Output::build_from(input: &slang_solidity::backend::passes::p1_flatten_contracts::Output) -> Self
 pub mod slang_solidity::backend::types
 pub enum slang_solidity::backend::types::DataLocation
 pub slang_solidity::backend::types::DataLocation::Calldata
