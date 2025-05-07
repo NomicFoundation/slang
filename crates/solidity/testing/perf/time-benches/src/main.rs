@@ -149,10 +149,7 @@ impl NpmController {
         let compiler_version = json
             .get("compilerVersion")
             .and_then(|f| f.as_str())
-            .ok_or_else(|| anyhow::anyhow!("Missing compilerVersion in {compilation_file:?}"))?
-            .split('+')
-            .next()
-            .ok_or_else(|| anyhow::anyhow!("compilerVersion is not well formatted"))?;
+            .ok_or_else(|| anyhow::anyhow!("Missing compilerVersion in {compilation_file:?}"))?;
 
         Ok((compiler_version.into(), fully_qualified_name.into()))
     }
