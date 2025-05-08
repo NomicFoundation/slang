@@ -195,7 +195,7 @@ impl NpmController {
             .arg("tsx")
             .flag("--trace-uncaught")
             .flag("--expose-gc")
-            .arg("crates/solidity/testing/perf/npm/src/comparisons.mts")
+            .arg("crates/solidity/testing/perf/npm/src/main.mts")
             .property("--version", compiler_version)
             .property("--dir", path.to_string_lossy())
             .property("--file", fully_qualified_name)
