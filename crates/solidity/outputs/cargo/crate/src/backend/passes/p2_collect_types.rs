@@ -8,8 +8,9 @@ use crate::backend::l2_flat_contracts::{
     IdentifierPath, MappingKeyType, MappingType, Parameter, SourceUnit, StorageLocation, TypeName,
 };
 use crate::backend::types::{
-    ContractType, DataLocation, EnumType, FunctionTypeKind, InterfaceType, StateVariable,
-    StructField, StructType, Type, TypeDefinition, TypeId, TypeRegistry, UserDefinedValueType,
+    ContractTypeDefinition, DataLocation, EnumTypeDefinition, FunctionTypeKind,
+    InterfaceTypeDefinition, StateVariable, StructField, StructTypeDefinition, Type,
+    TypeDefinition, TypeId, TypeRegistry, UserDefinedValueTypeDefinition,
 };
 use crate::bindings::{BindingGraph, BindingLocation};
 use crate::cst::NonterminalKind;
@@ -280,7 +281,7 @@ impl Visitor for Pass {
             })
             .collect();
         self.types
-            .register_definition(TypeDefinition::Contract(ContractType {
+            .register_definition(TypeDefinition::Contract(ContractTypeDefinition {
                 node_id: target.node_id,
                 name: target.name.unparse(),
                 state_variables,
@@ -289,7 +290,7 @@ impl Visitor for Pass {
 
     fn leave_interface_definition(&mut self, target: &input_ir::InterfaceDefinition) {
         self.types
-            .register_definition(TypeDefinition::Interface(InterfaceType {
+            .register_definition(TypeDefinition::Interface(InterfaceTypeDefinition {
                 node_id: target.node_id,
                 name: target.name.unparse(),
             }));
@@ -310,7 +311,7 @@ impl Visitor for Pass {
             })
             .collect();
         self.types
-            .register_definition(TypeDefinition::Struct(StructType {
+            .register_definition(TypeDefinition::Struct(StructTypeDefinition {
                 node_id: target.node_id,
                 name: target.name.unparse(),
                 fields,
@@ -327,7 +328,7 @@ impl Visitor for Pass {
             })
             .collect();
         self.types
-            .register_definition(TypeDefinition::Enum(EnumType {
+            .register_definition(TypeDefinition::Enum(EnumTypeDefinition {
                 node_id: target.node_id,
                 name: target.name.unparse(),
                 members,
@@ -341,11 +342,13 @@ impl Visitor for Pass {
         let value_type = target.value_type.to_type(None);
         let value_type_id = self.types.register_type(value_type);
         self.types
-            .register_definition(TypeDefinition::UserDefinedValueType(UserDefinedValueType {
-                node_id: target.node_id,
-                name: target.name.unparse(),
-                type_id: value_type_id,
-            }));
+            .register_definition(TypeDefinition::UserDefinedValueType(
+                UserDefinedValueTypeDefinition {
+                    node_id: target.node_id,
+                    name: target.name.unparse(),
+                    type_id: value_type_id,
+                },
+            ));
     }
 
     fn leave_parameter(&mut self, target: &input_ir::Parameter) {

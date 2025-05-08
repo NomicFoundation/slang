@@ -38,7 +38,10 @@ impl TypeRegistry {
 
     pub fn register_definition(&mut self, type_definition: TypeDefinition) {
         let node_id = type_definition.node_id();
-        _ = self.definitions.insert(node_id, type_definition);
+        let previous_def = self.definitions.insert(node_id, type_definition);
+        if let Some(previous_def) = previous_def {
+            unimplemented!("attempt to re-register type definition {previous_def:?}");
+        }
     }
 
     pub fn validate(&self) {
@@ -62,27 +65,29 @@ impl Default for TypeRegistry {
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum TypeDefinition {
-    Contract(ContractType),
-    Enum(EnumType),
-    Interface(InterfaceType),
-    Struct(StructType),
-    UserDefinedValueType(UserDefinedValueType),
+    Contract(ContractTypeDefinition),
+    Enum(EnumTypeDefinition),
+    Interface(InterfaceTypeDefinition),
+    Struct(StructTypeDefinition),
+    UserDefinedValueType(UserDefinedValueTypeDefinition),
 }
 
 impl TypeDefinition {
     pub fn node_id(&self) -> NodeId {
         match self {
-            Self::Contract(ContractType { node_id, .. })
-            | Self::Enum(EnumType { node_id, .. })
-            | Self::Interface(InterfaceType { node_id, .. })
-            | Self::Struct(StructType { node_id, .. })
-            | Self::UserDefinedValueType(UserDefinedValueType { node_id, .. }) => *node_id,
+            Self::Contract(ContractTypeDefinition { node_id, .. })
+            | Self::Enum(EnumTypeDefinition { node_id, .. })
+            | Self::Interface(InterfaceTypeDefinition { node_id, .. })
+            | Self::Struct(StructTypeDefinition { node_id, .. })
+            | Self::UserDefinedValueType(UserDefinedValueTypeDefinition { node_id, .. }) => {
+                *node_id
+            }
         }
     }
 }
 
 #[derive(Debug, Eq, PartialEq)]
-pub struct ContractType {
+pub struct ContractTypeDefinition {
     pub node_id: NodeId,
     pub name: String,
     pub state_variables: Vec<StateVariable>,
@@ -96,13 +101,13 @@ pub struct StateVariable {
 }
 
 #[derive(Debug, Eq, PartialEq)]
-pub struct InterfaceType {
+pub struct InterfaceTypeDefinition {
     pub node_id: NodeId,
     pub name: String,
 }
 
 #[derive(Debug, Eq, PartialEq)]
-pub struct StructType {
+pub struct StructTypeDefinition {
     pub node_id: NodeId,
     pub name: String,
     pub fields: Vec<StructField>,
@@ -116,7 +121,7 @@ pub struct StructField {
 }
 
 #[derive(Debug, Eq, PartialEq)]
-pub struct EnumType {
+pub struct EnumTypeDefinition {
     pub node_id: NodeId,
     pub name: String,
     pub members: Vec<EnumMember>,
@@ -129,7 +134,7 @@ pub struct EnumMember {
 }
 
 #[derive(Debug, Eq, PartialEq)]
-pub struct UserDefinedValueType {
+pub struct UserDefinedValueTypeDefinition {
     pub node_id: NodeId,
     pub name: String,
     pub type_id: TypeId,

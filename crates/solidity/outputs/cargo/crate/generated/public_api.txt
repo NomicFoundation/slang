@@ -7064,11 +7064,11 @@ impl core::hash::Hash for slang_solidity::backend::types::Type
 pub fn slang_solidity::backend::types::Type::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::StructuralPartialEq for slang_solidity::backend::types::Type
 pub enum slang_solidity::backend::types::TypeDefinition
-pub slang_solidity::backend::types::TypeDefinition::Contract(slang_solidity::backend::types::ContractType)
-pub slang_solidity::backend::types::TypeDefinition::Enum(slang_solidity::backend::types::EnumType)
-pub slang_solidity::backend::types::TypeDefinition::Interface(slang_solidity::backend::types::InterfaceType)
-pub slang_solidity::backend::types::TypeDefinition::Struct(slang_solidity::backend::types::StructType)
-pub slang_solidity::backend::types::TypeDefinition::UserDefinedValueType(slang_solidity::backend::types::UserDefinedValueType)
+pub slang_solidity::backend::types::TypeDefinition::Contract(slang_solidity::backend::types::ContractTypeDefinition)
+pub slang_solidity::backend::types::TypeDefinition::Enum(slang_solidity::backend::types::EnumTypeDefinition)
+pub slang_solidity::backend::types::TypeDefinition::Interface(slang_solidity::backend::types::InterfaceTypeDefinition)
+pub slang_solidity::backend::types::TypeDefinition::Struct(slang_solidity::backend::types::StructTypeDefinition)
+pub slang_solidity::backend::types::TypeDefinition::UserDefinedValueType(slang_solidity::backend::types::UserDefinedValueTypeDefinition)
 impl slang_solidity::backend::types::TypeDefinition
 pub fn slang_solidity::backend::types::TypeDefinition::node_id(&self) -> metaslang_cst::nodes::NodeId
 impl core::cmp::Eq for slang_solidity::backend::types::TypeDefinition
@@ -7077,16 +7077,16 @@ pub fn slang_solidity::backend::types::TypeDefinition::eq(&self, other: &slang_s
 impl core::fmt::Debug for slang_solidity::backend::types::TypeDefinition
 pub fn slang_solidity::backend::types::TypeDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity::backend::types::TypeDefinition
-pub struct slang_solidity::backend::types::ContractType
-pub slang_solidity::backend::types::ContractType::name: alloc::string::String
-pub slang_solidity::backend::types::ContractType::node_id: metaslang_cst::nodes::NodeId
-pub slang_solidity::backend::types::ContractType::state_variables: alloc::vec::Vec<slang_solidity::backend::types::StateVariable>
-impl core::cmp::Eq for slang_solidity::backend::types::ContractType
-impl core::cmp::PartialEq for slang_solidity::backend::types::ContractType
-pub fn slang_solidity::backend::types::ContractType::eq(&self, other: &slang_solidity::backend::types::ContractType) -> bool
-impl core::fmt::Debug for slang_solidity::backend::types::ContractType
-pub fn slang_solidity::backend::types::ContractType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity::backend::types::ContractType
+pub struct slang_solidity::backend::types::ContractTypeDefinition
+pub slang_solidity::backend::types::ContractTypeDefinition::name: alloc::string::String
+pub slang_solidity::backend::types::ContractTypeDefinition::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::types::ContractTypeDefinition::state_variables: alloc::vec::Vec<slang_solidity::backend::types::StateVariable>
+impl core::cmp::Eq for slang_solidity::backend::types::ContractTypeDefinition
+impl core::cmp::PartialEq for slang_solidity::backend::types::ContractTypeDefinition
+pub fn slang_solidity::backend::types::ContractTypeDefinition::eq(&self, other: &slang_solidity::backend::types::ContractTypeDefinition) -> bool
+impl core::fmt::Debug for slang_solidity::backend::types::ContractTypeDefinition
+pub fn slang_solidity::backend::types::ContractTypeDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::backend::types::ContractTypeDefinition
 pub struct slang_solidity::backend::types::EnumMember
 pub slang_solidity::backend::types::EnumMember::name: alloc::string::String
 pub slang_solidity::backend::types::EnumMember::node_id: metaslang_cst::nodes::NodeId
@@ -7096,25 +7096,25 @@ pub fn slang_solidity::backend::types::EnumMember::eq(&self, other: &slang_solid
 impl core::fmt::Debug for slang_solidity::backend::types::EnumMember
 pub fn slang_solidity::backend::types::EnumMember::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity::backend::types::EnumMember
-pub struct slang_solidity::backend::types::EnumType
-pub slang_solidity::backend::types::EnumType::members: alloc::vec::Vec<slang_solidity::backend::types::EnumMember>
-pub slang_solidity::backend::types::EnumType::name: alloc::string::String
-pub slang_solidity::backend::types::EnumType::node_id: metaslang_cst::nodes::NodeId
-impl core::cmp::Eq for slang_solidity::backend::types::EnumType
-impl core::cmp::PartialEq for slang_solidity::backend::types::EnumType
-pub fn slang_solidity::backend::types::EnumType::eq(&self, other: &slang_solidity::backend::types::EnumType) -> bool
-impl core::fmt::Debug for slang_solidity::backend::types::EnumType
-pub fn slang_solidity::backend::types::EnumType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity::backend::types::EnumType
-pub struct slang_solidity::backend::types::InterfaceType
-pub slang_solidity::backend::types::InterfaceType::name: alloc::string::String
-pub slang_solidity::backend::types::InterfaceType::node_id: metaslang_cst::nodes::NodeId
-impl core::cmp::Eq for slang_solidity::backend::types::InterfaceType
-impl core::cmp::PartialEq for slang_solidity::backend::types::InterfaceType
-pub fn slang_solidity::backend::types::InterfaceType::eq(&self, other: &slang_solidity::backend::types::InterfaceType) -> bool
-impl core::fmt::Debug for slang_solidity::backend::types::InterfaceType
-pub fn slang_solidity::backend::types::InterfaceType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity::backend::types::InterfaceType
+pub struct slang_solidity::backend::types::EnumTypeDefinition
+pub slang_solidity::backend::types::EnumTypeDefinition::members: alloc::vec::Vec<slang_solidity::backend::types::EnumMember>
+pub slang_solidity::backend::types::EnumTypeDefinition::name: alloc::string::String
+pub slang_solidity::backend::types::EnumTypeDefinition::node_id: metaslang_cst::nodes::NodeId
+impl core::cmp::Eq for slang_solidity::backend::types::EnumTypeDefinition
+impl core::cmp::PartialEq for slang_solidity::backend::types::EnumTypeDefinition
+pub fn slang_solidity::backend::types::EnumTypeDefinition::eq(&self, other: &slang_solidity::backend::types::EnumTypeDefinition) -> bool
+impl core::fmt::Debug for slang_solidity::backend::types::EnumTypeDefinition
+pub fn slang_solidity::backend::types::EnumTypeDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::backend::types::EnumTypeDefinition
+pub struct slang_solidity::backend::types::InterfaceTypeDefinition
+pub slang_solidity::backend::types::InterfaceTypeDefinition::name: alloc::string::String
+pub slang_solidity::backend::types::InterfaceTypeDefinition::node_id: metaslang_cst::nodes::NodeId
+impl core::cmp::Eq for slang_solidity::backend::types::InterfaceTypeDefinition
+impl core::cmp::PartialEq for slang_solidity::backend::types::InterfaceTypeDefinition
+pub fn slang_solidity::backend::types::InterfaceTypeDefinition::eq(&self, other: &slang_solidity::backend::types::InterfaceTypeDefinition) -> bool
+impl core::fmt::Debug for slang_solidity::backend::types::InterfaceTypeDefinition
+pub fn slang_solidity::backend::types::InterfaceTypeDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::backend::types::InterfaceTypeDefinition
 pub struct slang_solidity::backend::types::StateVariable
 pub slang_solidity::backend::types::StateVariable::name: alloc::string::String
 pub slang_solidity::backend::types::StateVariable::node_id: metaslang_cst::nodes::NodeId
@@ -7135,16 +7135,16 @@ pub fn slang_solidity::backend::types::StructField::eq(&self, other: &slang_soli
 impl core::fmt::Debug for slang_solidity::backend::types::StructField
 pub fn slang_solidity::backend::types::StructField::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity::backend::types::StructField
-pub struct slang_solidity::backend::types::StructType
-pub slang_solidity::backend::types::StructType::fields: alloc::vec::Vec<slang_solidity::backend::types::StructField>
-pub slang_solidity::backend::types::StructType::name: alloc::string::String
-pub slang_solidity::backend::types::StructType::node_id: metaslang_cst::nodes::NodeId
-impl core::cmp::Eq for slang_solidity::backend::types::StructType
-impl core::cmp::PartialEq for slang_solidity::backend::types::StructType
-pub fn slang_solidity::backend::types::StructType::eq(&self, other: &slang_solidity::backend::types::StructType) -> bool
-impl core::fmt::Debug for slang_solidity::backend::types::StructType
-pub fn slang_solidity::backend::types::StructType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity::backend::types::StructType
+pub struct slang_solidity::backend::types::StructTypeDefinition
+pub slang_solidity::backend::types::StructTypeDefinition::fields: alloc::vec::Vec<slang_solidity::backend::types::StructField>
+pub slang_solidity::backend::types::StructTypeDefinition::name: alloc::string::String
+pub slang_solidity::backend::types::StructTypeDefinition::node_id: metaslang_cst::nodes::NodeId
+impl core::cmp::Eq for slang_solidity::backend::types::StructTypeDefinition
+impl core::cmp::PartialEq for slang_solidity::backend::types::StructTypeDefinition
+pub fn slang_solidity::backend::types::StructTypeDefinition::eq(&self, other: &slang_solidity::backend::types::StructTypeDefinition) -> bool
+impl core::fmt::Debug for slang_solidity::backend::types::StructTypeDefinition
+pub fn slang_solidity::backend::types::StructTypeDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::backend::types::StructTypeDefinition
 pub struct slang_solidity::backend::types::TypeId(_)
 impl core::clone::Clone for slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeId::clone(&self) -> slang_solidity::backend::types::TypeId
@@ -7157,34 +7157,26 @@ impl core::hash::Hash for slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeId::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::Copy for slang_solidity::backend::types::TypeId
 impl core::marker::StructuralPartialEq for slang_solidity::backend::types::TypeId
-impl core::ops::index::Index<slang_solidity::backend::types::TypeId> for slang_solidity::backend::types::TypeRegistry
-pub type slang_solidity::backend::types::TypeRegistry::Output = slang_solidity::backend::types::Type
-pub fn slang_solidity::backend::types::TypeRegistry::index(&self, index: slang_solidity::backend::types::TypeId) -> &Self::Output
 pub struct slang_solidity::backend::types::TypeRegistry
 impl slang_solidity::backend::types::TypeRegistry
-pub fn slang_solidity::backend::types::TypeRegistry::find_definition(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::types::TypeDefinition>
 pub fn slang_solidity::backend::types::TypeRegistry::find_type(&self, type_: &slang_solidity::backend::types::Type) -> core::option::Option<slang_solidity::backend::types::TypeId>
+pub fn slang_solidity::backend::types::TypeRegistry::get_type_by_id(&self, type_id: slang_solidity::backend::types::TypeId) -> core::option::Option<&slang_solidity::backend::types::Type>
+pub fn slang_solidity::backend::types::TypeRegistry::get_type_definition_by_node_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::types::TypeDefinition>
 pub fn slang_solidity::backend::types::TypeRegistry::register_definition(&mut self, type_definition: slang_solidity::backend::types::TypeDefinition)
 pub fn slang_solidity::backend::types::TypeRegistry::register_type(&mut self, type_: slang_solidity::backend::types::Type) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::validate(&self)
 impl core::default::Default for slang_solidity::backend::types::TypeRegistry
 pub fn slang_solidity::backend::types::TypeRegistry::default() -> Self
-impl core::ops::index::Index<metaslang_cst::nodes::NodeId> for slang_solidity::backend::types::TypeRegistry
-pub type slang_solidity::backend::types::TypeRegistry::Output = slang_solidity::backend::types::TypeDefinition
-pub fn slang_solidity::backend::types::TypeRegistry::index(&self, index: metaslang_cst::nodes::NodeId) -> &Self::Output
-impl core::ops::index::Index<slang_solidity::backend::types::TypeId> for slang_solidity::backend::types::TypeRegistry
-pub type slang_solidity::backend::types::TypeRegistry::Output = slang_solidity::backend::types::Type
-pub fn slang_solidity::backend::types::TypeRegistry::index(&self, index: slang_solidity::backend::types::TypeId) -> &Self::Output
-pub struct slang_solidity::backend::types::UserDefinedValueType
-pub slang_solidity::backend::types::UserDefinedValueType::name: alloc::string::String
-pub slang_solidity::backend::types::UserDefinedValueType::node_id: metaslang_cst::nodes::NodeId
-pub slang_solidity::backend::types::UserDefinedValueType::type_id: slang_solidity::backend::types::TypeId
-impl core::cmp::Eq for slang_solidity::backend::types::UserDefinedValueType
-impl core::cmp::PartialEq for slang_solidity::backend::types::UserDefinedValueType
-pub fn slang_solidity::backend::types::UserDefinedValueType::eq(&self, other: &slang_solidity::backend::types::UserDefinedValueType) -> bool
-impl core::fmt::Debug for slang_solidity::backend::types::UserDefinedValueType
-pub fn slang_solidity::backend::types::UserDefinedValueType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::StructuralPartialEq for slang_solidity::backend::types::UserDefinedValueType
+pub struct slang_solidity::backend::types::UserDefinedValueTypeDefinition
+pub slang_solidity::backend::types::UserDefinedValueTypeDefinition::name: alloc::string::String
+pub slang_solidity::backend::types::UserDefinedValueTypeDefinition::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::types::UserDefinedValueTypeDefinition::type_id: slang_solidity::backend::types::TypeId
+impl core::cmp::Eq for slang_solidity::backend::types::UserDefinedValueTypeDefinition
+impl core::cmp::PartialEq for slang_solidity::backend::types::UserDefinedValueTypeDefinition
+pub fn slang_solidity::backend::types::UserDefinedValueTypeDefinition::eq(&self, other: &slang_solidity::backend::types::UserDefinedValueTypeDefinition) -> bool
+impl core::fmt::Debug for slang_solidity::backend::types::UserDefinedValueTypeDefinition
+pub fn slang_solidity::backend::types::UserDefinedValueTypeDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::StructuralPartialEq for slang_solidity::backend::types::UserDefinedValueTypeDefinition
 pub mod slang_solidity::bindings
 pub use slang_solidity::bindings::BuiltInLocation
 pub use slang_solidity::bindings::PathResolver
