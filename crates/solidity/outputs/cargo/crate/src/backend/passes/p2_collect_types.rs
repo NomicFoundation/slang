@@ -21,22 +21,20 @@ pub struct Output {
     pub types: TypeRegistry,
 }
 
-impl Output {
-    pub fn build_from(input: &Input) -> Self {
-        let files = input.files.clone();
-        let binding_graph = Rc::clone(&input.binding_graph);
-        let mut pass = Pass::new(Rc::clone(&binding_graph));
-        for source_unit in files.values() {
-            accept_source_unit(source_unit, &mut pass);
-        }
-        pass.types.validate();
-        let types = pass.types;
+pub fn run(input: &Input) -> Output {
+    let files = input.files.clone();
+    let binding_graph = Rc::clone(&input.binding_graph);
+    let mut pass = Pass::new(Rc::clone(&binding_graph));
+    for source_unit in files.values() {
+        accept_source_unit(source_unit, &mut pass);
+    }
+    pass.types.validate();
+    let types = pass.types;
 
-        Self {
-            files,
-            binding_graph,
-            types,
-        }
+    Output {
+        files,
+        binding_graph,
+        types,
     }
 }
 
@@ -401,6 +399,7 @@ impl Visitor for Pass {
             })
             .unwrap_or_default();
 
+        // TODO: validate that attributes are non-conflicting
         let mut kind = FunctionTypeKind::Pure;
         let mut external = false;
         for attribute in &node.attributes {

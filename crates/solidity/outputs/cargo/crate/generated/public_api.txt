@@ -6967,21 +6967,18 @@ pub mod slang_solidity::backend::passes::p0_build_ast
 pub struct slang_solidity::backend::passes::p0_build_ast::Output
 pub slang_solidity::backend::passes::p0_build_ast::Output::binding_graph: alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
 pub slang_solidity::backend::passes::p0_build_ast::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l1_typed_cst::SourceUnit>
-impl slang_solidity::backend::passes::p0_build_ast::Output
-pub fn slang_solidity::backend::passes::p0_build_ast::Output::build(input: &slang_solidity::compilation::CompilationUnit) -> core::result::Result<Self, alloc::string::String>
+pub fn slang_solidity::backend::passes::p0_build_ast::run(input: &slang_solidity::compilation::CompilationUnit) -> core::result::Result<slang_solidity::backend::passes::p0_build_ast::Output, alloc::string::String>
 pub mod slang_solidity::backend::passes::p1_flatten_contracts
 pub struct slang_solidity::backend::passes::p1_flatten_contracts::Output
 pub slang_solidity::backend::passes::p1_flatten_contracts::Output::binding_graph: alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
 pub slang_solidity::backend::passes::p1_flatten_contracts::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
-impl slang_solidity::backend::passes::p1_flatten_contracts::Output
-pub fn slang_solidity::backend::passes::p1_flatten_contracts::Output::build_from(input: &slang_solidity::backend::passes::p0_build_ast::Output) -> Self
+pub fn slang_solidity::backend::passes::p1_flatten_contracts::run(input: &slang_solidity::backend::passes::p0_build_ast::Output) -> slang_solidity::backend::passes::p1_flatten_contracts::Output
 pub mod slang_solidity::backend::passes::p2_collect_types
 pub struct slang_solidity::backend::passes::p2_collect_types::Output
 pub slang_solidity::backend::passes::p2_collect_types::Output::binding_graph: alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
 pub slang_solidity::backend::passes::p2_collect_types::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
 pub slang_solidity::backend::passes::p2_collect_types::Output::types: slang_solidity::backend::types::TypeRegistry
-impl slang_solidity::backend::passes::p2_collect_types::Output
-pub fn slang_solidity::backend::passes::p2_collect_types::Output::build_from(input: &slang_solidity::backend::passes::p1_flatten_contracts::Output) -> Self
+pub fn slang_solidity::backend::passes::p2_collect_types::run(input: &slang_solidity::backend::passes::p1_flatten_contracts::Output) -> slang_solidity::backend::passes::p2_collect_types::Output
 pub mod slang_solidity::backend::types
 pub enum slang_solidity::backend::types::DataLocation
 pub slang_solidity::backend::types::DataLocation::Calldata

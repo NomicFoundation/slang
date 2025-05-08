@@ -10,16 +10,14 @@ pub struct Output {
     pub binding_graph: Rc<BindingGraph>,
 }
 
-impl Output {
-    pub fn build(input: &compilation::CompilationUnit) -> Result<Self, String> {
-        let mut files = HashMap::new();
-        for file in &input.files() {
-            files.insert(file.id().into(), builder::build_source_unit(file.tree())?);
-        }
-        let binding_graph = Rc::clone(input.binding_graph());
-        Ok(Self {
-            files,
-            binding_graph,
-        })
+pub fn run(input: &compilation::CompilationUnit) -> Result<Output, String> {
+    let mut files = HashMap::new();
+    for file in &input.files() {
+        files.insert(file.id().into(), builder::build_source_unit(file.tree())?);
     }
+    let binding_graph = Rc::clone(input.binding_graph());
+    Ok(Output {
+        files,
+        binding_graph,
+    })
 }

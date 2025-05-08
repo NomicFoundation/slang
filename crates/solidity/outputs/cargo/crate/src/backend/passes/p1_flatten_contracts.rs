@@ -13,21 +13,17 @@ pub struct Output {
     pub binding_graph: Rc<BindingGraph>,
 }
 
-impl Output {
-    pub fn build_from(input: &Input) -> Self {
-        let mut pass = Pass {};
-        let files = input
-            .files
-            .iter()
-            .map(|(file_id, source_unit)| {
-                (file_id.clone(), pass.transform_source_unit(source_unit))
-            })
-            .collect();
-        let binding_graph = Rc::clone(&input.binding_graph);
-        Self {
-            files,
-            binding_graph,
-        }
+pub fn run(input: &Input) -> Output {
+    let mut pass = Pass {};
+    let files = input
+        .files
+        .iter()
+        .map(|(file_id, source_unit)| (file_id.clone(), pass.transform_source_unit(source_unit)))
+        .collect();
+    let binding_graph = Rc::clone(&input.binding_graph);
+    Output {
+        files,
+        binding_graph,
     }
 }
 

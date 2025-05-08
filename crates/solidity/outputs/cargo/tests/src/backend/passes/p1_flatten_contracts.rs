@@ -15,8 +15,8 @@ contract Test is Base layout at 0 {}
     _ = internal_builder.add_file("main.sol".into(), CONTENTS);
     let compilation_unit = internal_builder.build();
 
-    let data = p0_build_ast::Output::build(&compilation_unit).map_err(|s| anyhow!(s))?;
-    let data = p1_flatten_contracts::Output::build_from(&data);
+    let data = p0_build_ast::run(&compilation_unit).map_err(|s| anyhow!(s))?;
+    let data = p1_flatten_contracts::run(&data);
 
     let l2 = &data.files["main.sol"];
 
