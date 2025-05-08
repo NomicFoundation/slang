@@ -3,12 +3,12 @@ import fs from "node:fs";
 import { promisify } from "node:util";
 import path from "path";
 import * as solc from "solc";
-import { Runner } from "./common.mjs";
+import { Runner, Timing } from "./common.mjs";
 
 export class SolcRunner implements Runner {
   public name = "solc";
 
-  async test(languageVersion: string, dir: string, file: string): Promise<number> {
+  async test(languageVersion: string, dir: string, file: string): Promise<Timing[]> {
     const loadRemoteVersion: (version: string) => Promise<{ compile: (input: string, options: any) => string }> =
       promisify(solc.default.loadRemoteVersion);
 
@@ -40,7 +40,7 @@ export class SolcRunner implements Runner {
           console.log(parsing_result["errors"]);
           assert(false);
         }
-        return performance.now() - start;
+        return [new Timing("solc_build_ast_duration", performance.now() - start)];
       })
       .catch((err) => {
         console.error(`Can't process version ${languageVersion}`);

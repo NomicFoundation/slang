@@ -10,9 +10,9 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 infra_utils = { workspace = true }
 anyhow = { workspace = true }
-itertools = { workspace = true }
 regex = { workspace = true }
 clap = { workspace = true }
+enum-display = { workspace = true }
 
 [lints]
 workspace = true

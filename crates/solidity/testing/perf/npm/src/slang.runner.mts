@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
+import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
 import { Cursor, TerminalKind } from "@nomicfoundation/slang/cst";
 import { MathNumericType, max, mean, round, std } from "mathjs";
 import assert from "node:assert";
@@ -7,14 +7,14 @@ import assert from "node:assert";
 import * as slang_raw from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
 import { exit } from "node:process";
 import path from "node:path";
-import { Options, readRepoFile, Runner } from "./common.mjs";
+import { readRepoFile, Runner, Timing } from "./common.mjs";
 
 // Currently unused, but left here because we will likely want to report these
 class Record {
   file: string;
   totalTime: number = 0;
   buildGraphTime: number = 0;
-  setupTime: number = 0;
+  parseAllFilesTime: number = 0;
   resolutionTime: number = 0;
   maxGoto: number = 0;
   meanGoto: number = 0;
@@ -26,7 +26,7 @@ class Record {
   }
 }
 
-export function createBuilder(languageVersion: string, directory: string): CompilationBuilder {
+function createBuilder(languageVersion: string, directory: string): CompilationBuilder {
   languageVersion = languageVersion.split("+")[0];
   const builder = CompilationBuilder.create({
     languageVersion,
@@ -54,7 +54,7 @@ export function createBuilder(languageVersion: string, directory: string): Compi
           if (fs.statSync(realFile)) {
             return file;
           }
-        } catch {}
+        } catch { }
         i++;
       }
       throw `Can't resolve import ${importPath}`;
@@ -64,7 +64,12 @@ export function createBuilder(languageVersion: string, directory: string): Compi
   return builder;
 }
 
-export class SlangRunner implements Runner {
+enum Options {
+  BindingsFile,
+  BindingsProject,
+}
+
+class SlangRunner implements Runner {
   public name = "slang";
   options: Options;
 
@@ -72,7 +77,7 @@ export class SlangRunner implements Runner {
     this.options = options;
   }
 
-  async test(languageVersion: string, dir: string, file: string): Promise<number> {
+  async test(languageVersion: string, dir: string, file: string): Promise<Timing[]> {
     let gotoDefTimes: number[] = Array();
     const startTime = performance.now();
     const builder = createBuilder(languageVersion, dir);
@@ -82,29 +87,26 @@ export class SlangRunner implements Runner {
     await builder.addFile(file);
 
     const unit = builder.build();
-    const mainCursor = unit.file(file)!.createTreeCursor();
-    record.setupTime = round(performance.now() - startTime);
+    const mainFile = unit.file(file)!;
+    record.parseAllFilesTime = round(performance.now() - startTime);
 
     // Validation: there shouldn't be any parsing errors, but if there are, let's print them nicely
     const files_w_errors = unit.files().filter((f) => f.errors().length > 0);
     const errors = files_w_errors.flatMap((f) => f.errors().map((e) => [f.id, e.message, e.textRange]));
     assert.deepStrictEqual(errors, []);
 
-    if (this.options == Options.Parse) {
-      return performance.now() - startTime;
-    }
-
     // first access constructs the graph
     assert(typeof unit.bindingGraph.definitionAt == "function");
-    record.buildGraphTime = round(performance.now() - startTime - record.setupTime);
+    record.buildGraphTime = round(performance.now() - startTime - record.parseAllFilesTime);
 
-    let cursors: Cursor[] = [mainCursor];
+    let files: File[] = [mainFile];
 
-    if (this.options == Options.Project) {
-      cursors = unit.files().map((f) => f.createTreeCursor());
+    if (this.options == Options.BindingsProject) {
+      files = unit.files();
     }
 
-    cursors.forEach((cursor) => {
+    files.forEach((file) => {
+      let cursor = file.createTreeCursor();
       let defs = 0;
       let refs = 0;
       let emptyDefList = [];
@@ -123,7 +125,7 @@ export class SlangRunner implements Runner {
           if (defs > 0) {
             refs++;
           } else {
-            emptyDefList.push(cursor.node.unparse());
+            emptyDefList.push(file.id, cursor.node.unparse());
           }
         }
 
@@ -140,7 +142,7 @@ export class SlangRunner implements Runner {
       }
 
       record.totalTime = round(performance.now() - startTime);
-      record.resolutionTime = record.totalTime - record.buildGraphTime - record.setupTime;
+      record.resolutionTime = record.totalTime - record.buildGraphTime - record.parseAllFilesTime;
       record.maxGoto = round(max(gotoDefTimes));
       record.meanGoto = round(mean(gotoDefTimes));
       record.stdGoto = round(std(gotoDefTimes)[0] || 0);
@@ -154,7 +156,25 @@ export class SlangRunner implements Runner {
       );
       assert.deepStrictEqual(emptyDefList, []);
     });
-    return performance.now() - startTime;
+
+    const timings = [
+      new Timing("slang_parse_all_files_duration", record.parseAllFilesTime),
+      new Timing("slang_init_bindings_graph_duration", record.buildGraphTime),
+      new Timing("slang_resolve_all_bindings_duration", record.resolutionTime),
+    ];
+    return timings;
+  }
+}
+
+export class SlangBindingsFileRunner extends SlangRunner {
+  public constructor() {
+    super(Options.BindingsFile);
+  }
+}
+
+export class SlangBindingsProjectRunner extends SlangRunner {
+  public constructor() {
+    super(Options.BindingsProject);
   }
 }
 
