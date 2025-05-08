@@ -9,8 +9,8 @@ export class SolcRunner implements Runner {
   public name = "solc";
 
   async test(languageVersion: string, dir: string, file: string): Promise<number> {
-    const loadRemoteVersion: (version: string) => Promise<{ compile: (input: string, options: any) => string }>
-      = promisify(solc.default.loadRemoteVersion);
+    const loadRemoteVersion: (version: string) => Promise<{ compile: (input: string, options: any) => string }> =
+      promisify(solc.default.loadRemoteVersion);
 
     return await loadRemoteVersion("v" + languageVersion)
       .then((solcSnapshot) => {
