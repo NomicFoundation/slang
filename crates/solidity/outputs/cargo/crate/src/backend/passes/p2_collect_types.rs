@@ -260,8 +260,8 @@ impl Pass {
 }
 
 impl Visitor for Pass {
-    fn leave_contract_definition(&mut self, target: &input_ir::ContractDefinition) {
-        let state_variables = target
+    fn leave_contract_definition(&mut self, node: &input_ir::ContractDefinition) {
+        let state_variables = node
             .members
             .iter()
             .filter_map(|member| {
@@ -282,22 +282,22 @@ impl Visitor for Pass {
             .collect();
         self.types
             .register_definition(TypeDefinition::Contract(ContractTypeDefinition {
-                node_id: target.node_id,
-                name: target.name.unparse(),
+                node_id: node.node_id,
+                name: node.name.unparse(),
                 state_variables,
             }));
     }
 
-    fn leave_interface_definition(&mut self, target: &input_ir::InterfaceDefinition) {
+    fn leave_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) {
         self.types
             .register_definition(TypeDefinition::Interface(InterfaceTypeDefinition {
-                node_id: target.node_id,
-                name: target.name.unparse(),
+                node_id: node.node_id,
+                name: node.name.unparse(),
             }));
     }
 
-    fn leave_struct_definition(&mut self, target: &input_ir::StructDefinition) {
-        let fields = target
+    fn enter_struct_definition(&mut self, node: &input_ir::StructDefinition) -> bool {
+        let fields = node
             .members
             .iter()
             .map(|member| {
@@ -312,14 +312,15 @@ impl Visitor for Pass {
             .collect();
         self.types
             .register_definition(TypeDefinition::Struct(StructTypeDefinition {
-                node_id: target.node_id,
-                name: target.name.unparse(),
+                node_id: node.node_id,
+                name: node.name.unparse(),
                 fields,
             }));
+        false
     }
 
-    fn leave_enum_definition(&mut self, target: &input_ir::EnumDefinition) {
-        let members = target
+    fn enter_enum_definition(&mut self, node: &input_ir::EnumDefinition) -> bool {
+        let members = node
             .members
             .iter()
             .map(|member| crate::backend::types::EnumMember {
@@ -329,50 +330,95 @@ impl Visitor for Pass {
             .collect();
         self.types
             .register_definition(TypeDefinition::Enum(EnumTypeDefinition {
-                node_id: target.node_id,
-                name: target.name.unparse(),
+                node_id: node.node_id,
+                name: node.name.unparse(),
                 members,
             }));
+        false
     }
 
-    fn leave_user_defined_value_type_definition(
+    fn enter_user_defined_value_type_definition(
         &mut self,
-        target: &input_ir::UserDefinedValueTypeDefinition,
-    ) {
-        let value_type = target.value_type.to_type(None);
+        node: &input_ir::UserDefinedValueTypeDefinition,
+    ) -> bool {
+        let value_type = node.value_type.to_type(None);
         let value_type_id = self.types.register_type(value_type);
         self.types
             .register_definition(TypeDefinition::UserDefinedValueType(
                 UserDefinedValueTypeDefinition {
-                    node_id: target.node_id,
-                    name: target.name.unparse(),
+                    node_id: node.node_id,
+                    name: node.name.unparse(),
                     type_id: value_type_id,
                 },
             ));
+        false
     }
 
-    fn leave_parameter(&mut self, target: &input_ir::Parameter) {
-        self.find_or_register_parameter(target);
+    fn enter_parameter(&mut self, node: &input_ir::Parameter) -> bool {
+        self.find_or_register_parameter(node);
+        false
     }
 
-    fn leave_variable_declaration_statement(
+    fn enter_variable_declaration_statement(
         &mut self,
-        target: &input_ir::VariableDeclarationStatement,
-    ) {
-        let location = target
+        node: &input_ir::VariableDeclarationStatement,
+    ) -> bool {
+        let location = node
             .storage_location
             .as_ref()
             .map(|loc| loc.to_data_location());
-        let input_ir::VariableDeclarationType::TypeName(type_name) = &target.variable_type;
+        let input_ir::VariableDeclarationType::TypeName(type_name) = &node.variable_type;
         self.find_or_register_type_name(type_name, location);
+        false
     }
 
-    fn leave_typed_tuple_member(&mut self, target: &input_ir::TypedTupleMember) {
-        let location = target
+    fn enter_typed_tuple_member(&mut self, node: &input_ir::TypedTupleMember) -> bool {
+        let location = node
             .storage_location
             .as_ref()
             .map(|loc| loc.to_data_location());
-        self.find_or_register_type_name(&target.type_name, location);
+        self.find_or_register_type_name(&node.type_name, location);
+        false
+    }
+
+    fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
+        let parameter_types = node
+            .parameters
+            .parameters
+            .iter()
+            .map(|parameter| self.find_or_register_parameter(parameter))
+            .collect();
+        let return_types = node
+            .returns
+            .as_ref()
+            .map(|returns| {
+                returns
+                    .variables
+                    .parameters
+                    .iter()
+                    .map(|parameter| self.find_or_register_parameter(parameter))
+                    .collect()
+            })
+            .unwrap_or_default();
+
+        let mut kind = FunctionTypeKind::Pure;
+        let mut external = false;
+        for attribute in &node.attributes {
+            match attribute {
+                input_ir::FunctionAttribute::ExternalKeyword => external = true,
+                input_ir::FunctionAttribute::PureKeyword => kind = FunctionTypeKind::Pure,
+                input_ir::FunctionAttribute::ViewKeyword => kind = FunctionTypeKind::View,
+                input_ir::FunctionAttribute::PayableKeyword => kind = FunctionTypeKind::Payable,
+                _ => {}
+            }
+        }
+
+        self.types.register_type(Type::Function {
+            parameter_types,
+            return_types,
+            external,
+            kind,
+        });
     }
 }
 
