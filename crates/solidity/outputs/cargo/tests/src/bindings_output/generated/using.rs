@@ -4,137 +4,139 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "using";
+
 #[test]
 fn address() -> Result<()> {
-    run("using", "address")
+    run(T, "address")
 }
 
 #[test]
 fn binding_enum() -> Result<()> {
-    run("using", "binding_enum")
+    run(T, "binding_enum")
 }
 
 #[test]
 fn binding_enum_member() -> Result<()> {
-    run("using", "binding_enum_member")
+    run(T, "binding_enum_member")
 }
 
 #[test]
 fn casting() -> Result<()> {
-    run("using", "casting")
+    run(T, "casting")
 }
 
 #[test]
 fn chained_calls() -> Result<()> {
-    run("using", "chained_calls")
+    run(T, "chained_calls")
 }
 
 #[test]
 fn deconstruction() -> Result<()> {
-    run("using", "deconstruction")
+    run(T, "deconstruction")
 }
 
 #[test]
 fn elementary() -> Result<()> {
-    run("using", "elementary")
+    run(T, "elementary")
 }
 
 #[test]
 fn elementary_arrays() -> Result<()> {
-    run("using", "elementary_arrays")
+    run(T, "elementary_arrays")
 }
 
 #[test]
 fn function_types() -> Result<()> {
-    run("using", "function_types")
+    run(T, "function_types")
 }
 
 #[test]
 fn global() -> Result<()> {
-    run("using", "global")
+    run(T, "global")
 }
 
 #[test]
 fn global_multi_file() -> Result<()> {
-    run("using", "global_multi_file")
+    run(T, "global_multi_file")
 }
 
 #[test]
 fn in_contract() -> Result<()> {
-    run("using", "in_contract")
+    run(T, "in_contract")
 }
 
 #[test]
 fn in_library() -> Result<()> {
-    run("using", "in_library")
+    run(T, "in_library")
 }
 
 #[test]
 fn inherit_extension() -> Result<()> {
-    run("using", "inherit_extension")
+    run(T, "inherit_extension")
 }
 
 #[test]
 fn inherited_types() -> Result<()> {
-    run("using", "inherited_types")
+    run(T, "inherited_types")
 }
 
 #[test]
 fn mappings() -> Result<()> {
-    run("using", "mappings")
+    run(T, "mappings")
 }
 
 #[test]
 fn on_interfaces_inherited() -> Result<()> {
-    run("using", "on_interfaces_inherited")
+    run(T, "on_interfaces_inherited")
 }
 
 #[test]
 fn on_parameters() -> Result<()> {
-    run("using", "on_parameters")
+    run(T, "on_parameters")
 }
 
 #[test]
 fn on_state_var_initialization() -> Result<()> {
-    run("using", "on_state_var_initialization")
+    run(T, "on_state_var_initialization")
 }
 
 #[test]
 fn on_super_calls() -> Result<()> {
-    run("using", "on_super_calls")
+    run(T, "on_super_calls")
 }
 
 #[test]
 fn qualified_type() -> Result<()> {
-    run("using", "qualified_type")
+    run(T, "qualified_type")
 }
 
 #[test]
 fn star() -> Result<()> {
-    run("using", "star")
+    run(T, "star")
 }
 
 #[test]
 fn star_in_library() -> Result<()> {
-    run("using", "star_in_library")
+    run(T, "star_in_library")
 }
 
 #[test]
 fn star_inherited() -> Result<()> {
-    run("using", "star_inherited")
+    run(T, "star_inherited")
 }
 
 #[test]
 fn top_level() -> Result<()> {
-    run("using", "top_level")
+    run(T, "top_level")
 }
 
 #[test]
 fn uint_alias() -> Result<()> {
-    run("using", "uint_alias")
+    run(T, "uint_alias")
 }
 
 #[test]
 fn user_types() -> Result<()> {
-    run("using", "user_types")
+    run(T, "user_types")
 }

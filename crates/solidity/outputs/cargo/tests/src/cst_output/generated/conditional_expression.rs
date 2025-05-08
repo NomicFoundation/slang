@@ -4,22 +4,24 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "ConditionalExpression";
+
 #[test]
 fn identifier_base() -> Result<()> {
-    run("ConditionalExpression", "identifier_base")
+    run(T, "identifier_base")
 }
 
 #[test]
 fn nested_base() -> Result<()> {
-    run("ConditionalExpression", "nested_base")
+    run(T, "nested_base")
 }
 
 #[test]
 fn nested_conditions() -> Result<()> {
-    run("ConditionalExpression", "nested_conditions")
+    run(T, "nested_conditions")
 }
 
 #[test]
 fn recursive() -> Result<()> {
-    run("ConditionalExpression", "recursive")
+    run(T, "recursive")
 }

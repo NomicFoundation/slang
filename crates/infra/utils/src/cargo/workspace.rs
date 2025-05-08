@@ -1,4 +1,3 @@
-use std::env::var;
 use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Context, Result};
@@ -43,10 +42,6 @@ impl CargoWorkspace {
         command.run();
 
         Ok(())
-    }
-
-    pub fn is_running_inside_build_scripts() -> bool {
-        var("CARGO_MANIFEST_DIR").is_ok() && var("TARGET").is_ok()
     }
 
     pub fn locate_source_crate(crate_name: impl AsRef<str>) -> Result<PathBuf> {

@@ -4,32 +4,34 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "modifiers";
+
 #[test]
 fn diamond() -> Result<()> {
-    run("modifiers", "diamond")
+    run(T, "diamond")
 }
 
 #[test]
 fn function_named_underscore() -> Result<()> {
-    run("modifiers", "function_named_underscore")
+    run(T, "function_named_underscore")
 }
 
 #[test]
 fn inherited() -> Result<()> {
-    run("modifiers", "inherited")
+    run(T, "inherited")
 }
 
 #[test]
 fn simple() -> Result<()> {
-    run("modifiers", "simple")
+    run(T, "simple")
 }
 
 #[test]
 fn virtual_modifier() -> Result<()> {
-    run("modifiers", "virtual_modifier")
+    run(T, "virtual_modifier")
 }
 
 #[test]
 fn with_args() -> Result<()> {
-    run("modifiers", "with_args")
+    run(T, "with_args")
 }

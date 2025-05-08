@@ -4,12 +4,14 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "StructDefinition";
+
 #[test]
 fn member_function_pointer() -> Result<()> {
-    run("StructDefinition", "member_function_pointer")
+    run(T, "member_function_pointer")
 }
 
 #[test]
 fn no_members() -> Result<()> {
-    run("StructDefinition", "no_members")
+    run(T, "no_members")
 }

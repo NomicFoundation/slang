@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "ReturnStatement";
+
 #[test]
 fn invalid_terminator() -> Result<()> {
-    run("ReturnStatement", "invalid_terminator")
+    run(T, "invalid_terminator")
 }

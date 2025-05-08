@@ -4,17 +4,19 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "TupleExpression";
+
 #[test]
 fn empty() -> Result<()> {
-    run("TupleExpression", "empty")
+    run(T, "empty")
 }
 
 #[test]
 fn full() -> Result<()> {
-    run("TupleExpression", "full")
+    run(T, "full")
 }
 
 #[test]
 fn missing_elements() -> Result<()> {
-    run("TupleExpression", "missing_elements")
+    run(T, "missing_elements")
 }

@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "ExponentiationExpression";
+
 #[test]
 fn associativity() -> Result<()> {
-    run("ExponentiationExpression", "associativity")
+    run(T, "associativity")
 }

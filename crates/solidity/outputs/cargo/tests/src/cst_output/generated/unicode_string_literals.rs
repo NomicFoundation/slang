@@ -4,17 +4,19 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "UnicodeStringLiterals";
+
 #[test]
 fn multiple() -> Result<()> {
-    run("UnicodeStringLiterals", "multiple")
+    run(T, "multiple")
 }
 
 #[test]
 fn single() -> Result<()> {
-    run("UnicodeStringLiterals", "single")
+    run(T, "single")
 }
 
 #[test]
 fn single_trailing_ident() -> Result<()> {
-    run("UnicodeStringLiterals", "single_trailing_ident")
+    run(T, "single_trailing_ident")
 }

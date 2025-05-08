@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "YulLabel";
+
 #[test]
 fn single_label() -> Result<()> {
-    run("YulLabel", "single_label")
+    run(T, "single_label")
 }

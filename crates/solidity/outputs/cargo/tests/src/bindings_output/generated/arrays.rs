@@ -4,12 +4,14 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "arrays";
+
 #[test]
 fn indexing() -> Result<()> {
-    run("arrays", "indexing")
+    run(T, "indexing")
 }
 
 #[test]
 fn length() -> Result<()> {
-    run("arrays", "length")
+    run(T, "length")
 }

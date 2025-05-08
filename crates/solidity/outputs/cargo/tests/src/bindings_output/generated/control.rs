@@ -4,72 +4,74 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "control";
+
 #[test]
 fn do_while() -> Result<()> {
-    run("control", "do_while")
+    run(T, "do_while")
 }
 
 #[test]
 fn emit_event() -> Result<()> {
-    run("control", "emit_event")
+    run(T, "emit_event")
 }
 
 #[test]
 fn for_empty_clauses() -> Result<()> {
-    run("control", "for_empty_clauses")
+    run(T, "for_empty_clauses")
 }
 
 #[test]
 fn for_empty_cond() -> Result<()> {
-    run("control", "for_empty_cond")
+    run(T, "for_empty_cond")
 }
 
 #[test]
 fn for_empty_init() -> Result<()> {
-    run("control", "for_empty_init")
+    run(T, "for_empty_init")
 }
 
 #[test]
 fn for_expr_init() -> Result<()> {
-    run("control", "for_expr_init")
+    run(T, "for_expr_init")
 }
 
 #[test]
 fn for_stmt() -> Result<()> {
-    run("control", "for_stmt")
+    run(T, "for_stmt")
 }
 
 #[test]
 fn for_tuple_init() -> Result<()> {
-    run("control", "for_tuple_init")
+    run(T, "for_tuple_init")
 }
 
 #[test]
 fn if_else() -> Result<()> {
-    run("control", "if_else")
+    run(T, "if_else")
 }
 
 #[test]
 fn return_stmt() -> Result<()> {
-    run("control", "return_stmt")
+    run(T, "return_stmt")
 }
 
 #[test]
 fn try_catch() -> Result<()> {
-    run("control", "try_catch")
+    run(T, "try_catch")
 }
 
 #[test]
 fn try_stmt() -> Result<()> {
-    run("control", "try_stmt")
+    run(T, "try_stmt")
 }
 
 #[test]
 fn unchecked() -> Result<()> {
-    run("control", "unchecked")
+    run(T, "unchecked")
 }
 
 #[test]
 fn while_stmt() -> Result<()> {
-    run("control", "while_stmt")
+    run(T, "while_stmt")
 }

@@ -4,67 +4,69 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "built_ins";
+
 #[test]
 fn address() -> Result<()> {
-    run("built_ins", "address")
+    run(T, "address")
 }
 
 #[test]
 fn address_payable() -> Result<()> {
-    run("built_ins", "address_payable")
+    run(T, "address_payable")
 }
 
 #[test]
 fn array_push() -> Result<()> {
-    run("built_ins", "array_push")
+    run(T, "array_push")
 }
 
 #[test]
 fn arrays() -> Result<()> {
-    run("built_ins", "arrays")
+    run(T, "arrays")
 }
 
 #[test]
 fn bytes() -> Result<()> {
-    run("built_ins", "bytes")
+    run(T, "bytes")
 }
 
 #[test]
 fn function_type() -> Result<()> {
-    run("built_ins", "function_type")
+    run(T, "function_type")
 }
 
 #[test]
 fn functions() -> Result<()> {
-    run("built_ins", "functions")
+    run(T, "functions")
 }
 
 #[test]
 fn global_properties() -> Result<()> {
-    run("built_ins", "global_properties")
+    run(T, "global_properties")
 }
 
 #[test]
 fn shadowing() -> Result<()> {
-    run("built_ins", "shadowing")
+    run(T, "shadowing")
 }
 
 #[test]
 fn this() -> Result<()> {
-    run("built_ins", "this")
+    run(T, "this")
 }
 
 #[test]
 fn this_as_address() -> Result<()> {
-    run("built_ins", "this_as_address")
+    run(T, "this_as_address")
 }
 
 #[test]
 fn type_expr() -> Result<()> {
-    run("built_ins", "type_expr")
+    run(T, "type_expr")
 }
 
 #[test]
 fn yul_built_in_doesn_t_bind() -> Result<()> {
-    run("built_ins", "yul_built_in_doesn_t_bind")
+    run(T, "yul_built_in_doesn_t_bind")
 }

@@ -4,27 +4,29 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "libraries";
+
 #[test]
 fn constants() -> Result<()> {
-    run("libraries", "constants")
+    run(T, "constants")
 }
 
 #[test]
 fn modifiers() -> Result<()> {
-    run("libraries", "modifiers")
+    run(T, "modifiers")
 }
 
 #[test]
 fn modifiers_scope() -> Result<()> {
-    run("libraries", "modifiers_scope")
+    run(T, "modifiers_scope")
 }
 
 #[test]
 fn propagate_dynamic_scope() -> Result<()> {
-    run("libraries", "propagate_dynamic_scope")
+    run(T, "propagate_dynamic_scope")
 }
 
 #[test]
 fn visibility() -> Result<()> {
-    run("libraries", "visibility")
+    run(T, "visibility")
 }

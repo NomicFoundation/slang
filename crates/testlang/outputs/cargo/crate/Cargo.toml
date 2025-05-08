@@ -14,12 +14,6 @@ __private_ariadne_errors = ["dep:ariadne"]
 __private_compilation_api = []
 __private_testing_utils = []
 
-[build-dependencies]
-anyhow = { workspace = true }
-codegen_runtime_generator = { workspace = true }
-infra_utils = { workspace = true }
-testlang_language = { workspace = true }
-
 [dependencies]
 ariadne = { workspace = true, optional = true }
 metaslang_bindings = { workspace = true, optional = true }

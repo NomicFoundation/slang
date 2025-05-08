@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "ModifierDefinition";
+
 #[test]
 fn override_attr() -> Result<()> {
-    run("ModifierDefinition", "override_attr")
+    run(T, "override_attr")
 }

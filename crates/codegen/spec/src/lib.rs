@@ -26,9 +26,9 @@ pub struct Spec;
 
 impl Spec {
     pub fn generate(language: Rc<Language>, output_dir: &Path) -> Result<()> {
-        let mut fs = CodegenFileSystem::new(output_dir)?;
+        let mut fs = CodegenFileSystem::default();
 
-        fs.write_file(
+        fs.write_file_formatted(
             output_dir.join("language-definition.json"),
             serde_json::to_string(&language)?,
         )?;
@@ -38,7 +38,7 @@ impl Spec {
 
         public_dir.write_to_disk(&mut fs, output_dir)?;
 
-        fs.write_file(
+        fs.write_file_raw(
             output_dir.join("grammar.ebnf"),
             generate_grammar_ebnf(&model)?,
         )?;

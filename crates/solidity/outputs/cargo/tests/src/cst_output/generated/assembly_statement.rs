@@ -4,12 +4,14 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "AssemblyStatement";
+
 #[test]
 fn simple() -> Result<()> {
-    run("AssemblyStatement", "simple")
+    run(T, "simple")
 }
 
 #[test]
 fn with_flags() -> Result<()> {
-    run("AssemblyStatement", "with_flags")
+    run(T, "with_flags")
 }

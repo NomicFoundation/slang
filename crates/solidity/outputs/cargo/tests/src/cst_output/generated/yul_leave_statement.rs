@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "YulLeaveStatement";
+
 #[test]
 fn leave() -> Result<()> {
-    run("YulLeaveStatement", "leave")
+    run(T, "leave")
 }

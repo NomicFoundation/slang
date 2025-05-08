@@ -4,47 +4,49 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "YulExpression";
+
 #[test]
 fn decimal_literal() -> Result<()> {
-    run("YulExpression", "decimal_literal")
+    run(T, "decimal_literal")
 }
 
 #[test]
 fn decimal_trailing_ident_start() -> Result<()> {
-    run("YulExpression", "decimal_trailing_ident_start")
+    run(T, "decimal_trailing_ident_start")
 }
 
 #[test]
 fn false_keyword() -> Result<()> {
-    run("YulExpression", "false_keyword")
+    run(T, "false_keyword")
 }
 
 #[test]
 fn function_call() -> Result<()> {
-    run("YulExpression", "function_call")
+    run(T, "function_call")
 }
 
 #[test]
 fn hex_literal() -> Result<()> {
-    run("YulExpression", "hex_literal")
+    run(T, "hex_literal")
 }
 
 #[test]
 fn hex_trailing_ident_start() -> Result<()> {
-    run("YulExpression", "hex_trailing_ident_start")
+    run(T, "hex_trailing_ident_start")
 }
 
 #[test]
 fn identifier_path() -> Result<()> {
-    run("YulExpression", "identifier_path")
+    run(T, "identifier_path")
 }
 
 #[test]
 fn identifier_with_dot() -> Result<()> {
-    run("YulExpression", "identifier_with_dot")
+    run(T, "identifier_with_dot")
 }
 
 #[test]
 fn true_keyword() -> Result<()> {
-    run("YulExpression", "true_keyword")
+    run(T, "true_keyword")
 }
