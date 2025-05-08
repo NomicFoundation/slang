@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
-import { Cursor, TerminalKind } from "@nomicfoundation/slang/cst";
+import { TerminalKind } from "@nomicfoundation/slang/cst";
 import { MathNumericType, max, mean, round, std } from "mathjs";
 import assert from "node:assert";
 // When debugging, add handleTables at the export list at the end of this imported file
@@ -54,7 +54,9 @@ function createBuilder(languageVersion: string, directory: string): CompilationB
           if (fs.statSync(realFile)) {
             return file;
           }
-        } catch {}
+        } catch {
+          // continue walking up the path
+        }
         i++;
       }
       throw `Can't resolve import ${importPath}`;
