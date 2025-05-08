@@ -54,7 +54,7 @@ function createBuilder(languageVersion: string, directory: string): CompilationB
           if (fs.statSync(realFile)) {
             return file;
           }
-        } catch { }
+        } catch {}
         i++;
       }
       throw `Can't resolve import ${importPath}`;
