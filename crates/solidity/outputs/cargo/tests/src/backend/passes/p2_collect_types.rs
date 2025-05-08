@@ -42,7 +42,9 @@ fn test_collect_types_pass() -> Result<()> {
         panic!("Cannot find definition for State enum");
     };
     let state_node_id = state_enum.get_definiens_cursor().node().id();
-    assert!(types.find_definition(state_node_id).is_some());
+    assert!(types
+        .get_type_definition_by_node_id(state_node_id)
+        .is_some());
     assert!(types
         .find_type(&Type::Enum {
             node_id: state_node_id
@@ -57,7 +59,9 @@ fn test_collect_types_pass() -> Result<()> {
         panic!("Cannot find definition for Counter contract");
     };
     let counter_node_id = counter_contract.get_definiens_cursor().node().id();
-    assert!(types.find_definition(counter_node_id).is_some());
+    assert!(types
+        .get_type_definition_by_node_id(counter_node_id)
+        .is_some());
 
     let Some(ownable_contract) = find_definition(
         unit.binding_graph(),
@@ -67,7 +71,9 @@ fn test_collect_types_pass() -> Result<()> {
         panic!("Cannot find definition for Ownable contract");
     };
     let ownable_node_id = ownable_contract.get_definiens_cursor().node().id();
-    assert!(types.find_definition(ownable_node_id).is_some());
+    assert!(types
+        .get_type_definition_by_node_id(ownable_node_id)
+        .is_some());
 
     Ok(())
 }

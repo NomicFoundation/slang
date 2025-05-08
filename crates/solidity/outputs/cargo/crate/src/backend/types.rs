@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::ops::Index;
 
 use indexmap::IndexSet;
 use metaslang_cst::nodes::NodeId;
@@ -29,7 +28,11 @@ impl TypeRegistry {
         TypeId(index)
     }
 
-    pub fn find_definition(&self, node_id: NodeId) -> Option<&TypeDefinition> {
+    pub fn get_type_by_id(&self, type_id: TypeId) -> Option<&Type> {
+        self.types.get_index(type_id.0)
+    }
+
+    pub fn get_type_definition_by_node_id(&self, node_id: NodeId) -> Option<&TypeDefinition> {
         self.definitions.get(&node_id)
     }
 
@@ -48,22 +51,6 @@ impl TypeRegistry {
                 );
             }
         }
-    }
-}
-
-impl Index<TypeId> for TypeRegistry {
-    type Output = Type;
-
-    fn index(&self, index: TypeId) -> &Self::Output {
-        self.types.get_index(index.0).unwrap()
-    }
-}
-
-impl Index<NodeId> for TypeRegistry {
-    type Output = TypeDefinition;
-
-    fn index(&self, index: NodeId) -> &Self::Output {
-        self.definitions.get(&index).unwrap()
     }
 }
 
