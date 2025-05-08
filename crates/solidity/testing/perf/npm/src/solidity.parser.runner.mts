@@ -16,6 +16,6 @@ export class SolidityParserRunner implements Runner {
       console.error(result.errors);
       process.exit(-1);
     }
-    return [new Timing("solc_build_ast_duration", performance.now() - start)];
+    return [new Timing("antlr_build_ast_duration", performance.now() - start)];
   }
 }
