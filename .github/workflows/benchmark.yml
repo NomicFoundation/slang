@@ -38,8 +38,13 @@ jobs:
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
 
-      - name: "infra perf benchmark"
-        run: "./scripts/bin/infra perf benchmark ${{ inputs.dryRun == true && '--dry-run' || '' }}"
+      - name: "infra perf cargo"
+        run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }}"
+        env:
+          BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
+
+      - name: "infra perf npm"
+        run: "./scripts/bin/infra perf npm ${{ inputs.dryRun == true && '--dry-run' || '' }}"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
 
