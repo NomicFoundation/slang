@@ -27,6 +27,7 @@ class Record {
 }
 
 export function createBuilder(languageVersion: string, directory: string): CompilationBuilder {
+  languageVersion = languageVersion.split("+")[0];
   const builder = CompilationBuilder.create({
     languageVersion,
 
@@ -53,7 +54,7 @@ export function createBuilder(languageVersion: string, directory: string): Compi
           if (fs.statSync(realFile)) {
             return file;
           }
-        } catch {}
+        } catch { }
         i++;
       }
       throw `Can't resolve import ${importPath}`;
