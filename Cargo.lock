@@ -2514,7 +2514,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "solidity_testing_perf_timebenches"
+name = "solidity_testing_perf_npmbenches"
 version = "1.1.0"
 dependencies = [
  "anyhow",

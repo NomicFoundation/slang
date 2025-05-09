@@ -43,7 +43,7 @@ impl NpmController {
             )
         };
 
-        let package_name = "solidity_testing_perf_timebenches";
+        let package_name = "solidity_testing_perf_npmbenches";
         let pattern = &self.pattern;
         let extra_args = if self.extra_args.is_empty() {
             String::new()
