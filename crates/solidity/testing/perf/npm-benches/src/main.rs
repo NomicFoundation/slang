@@ -11,7 +11,6 @@ use serde_json::json;
 
 #[derive(Clone, Copy, Debug, EnumDisplay)]
 pub enum Runner {
-    SlangFile,    // resolve bindings of the main file only
     SlangProject, // resolve bindings of the entire project
     SolidityParser,
     Solc,
@@ -19,13 +18,7 @@ pub enum Runner {
 
 impl Runner {
     pub fn variants() -> impl Iterator<Item = Runner> {
-        [
-            Runner::SlangFile,
-            Runner::SlangProject,
-            Runner::SolidityParser,
-            Runner::Solc,
-        ]
-        .into_iter()
+        [Runner::SlangProject, Runner::SolidityParser, Runner::Solc].into_iter()
     }
 }
 

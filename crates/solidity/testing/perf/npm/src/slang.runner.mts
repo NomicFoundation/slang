@@ -1,30 +1,12 @@
 import fs from "node:fs";
 import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
 import { TerminalKind } from "@nomicfoundation/slang/cst";
-import { MathNumericType, max, mean, round, std } from "mathjs";
 import assert from "node:assert";
 // When debugging, add handleTables at the export list at the end of this imported file
 import * as slang_raw from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
 import { exit } from "node:process";
 import path from "node:path";
 import { readRepoFile, Runner, Timing } from "./common.mjs";
-
-// Currently unused, but left here because we will likely want to report these
-class Record {
-  file: string;
-  totalTime: number = 0;
-  buildGraphTime: number = 0;
-  parseAllFilesTime: number = 0;
-  resolutionTime: number = 0;
-  maxGoto: number = 0;
-  meanGoto: number = 0;
-  stdGoto: MathNumericType = 0;
-  numberOfIdentifiers: number = 0;
-
-  public constructor(file: string) {
-    this.file = file;
-  }
-}
 
 function createBuilder(languageVersion: string, directory: string): CompilationBuilder {
   languageVersion = languageVersion.split("+")[0];
@@ -80,17 +62,14 @@ class SlangRunner implements Runner {
   }
 
   async test(languageVersion: string, dir: string, file: string): Promise<Timing[]> {
-    let gotoDefTimes: number[] = Array();
     const startTime = performance.now();
     const builder = createBuilder(languageVersion, dir);
-
-    const record = new Record(file);
 
     await builder.addFile(file);
 
     const unit = builder.build();
     const mainFile = unit.file(file)!;
-    record.parseAllFilesTime = round(performance.now() - startTime);
+    const parsedAllFilesTime = performance.now();
 
     // Validation: there shouldn't be any parsing errors, but if there are, let's print them nicely
     const files_w_errors = unit.files().filter((f) => f.errors().length > 0);
@@ -99,7 +78,7 @@ class SlangRunner implements Runner {
 
     // first access constructs the graph
     assert(typeof unit.bindingGraph.definitionAt == "function");
-    record.buildGraphTime = round(performance.now() - startTime - record.parseAllFilesTime);
+    const builtGraphTime = performance.now();
 
     let files: File[] = [mainFile];
 
@@ -109,45 +88,21 @@ class SlangRunner implements Runner {
 
     files.forEach((file) => {
       let cursor = file.createTreeCursor();
-      let defs = 0;
-      let refs = 0;
       let emptyDefList = [];
       let neitherDefNorRefSet = new Set<string>();
 
       while (cursor.goToNextTerminalWithKind(TerminalKind.Identifier)) {
-        record.numberOfIdentifiers++;
-        const startDefRef = performance.now();
         const definition = unit.bindingGraph.definitionAt(cursor);
         const reference = unit.bindingGraph.referenceAt(cursor);
 
-        const gotoDefTime = performance.now() - startDefRef;
-
-        if (reference) {
-          const defs = reference.definitions().length;
-          if (defs > 0) {
-            refs++;
-          } else {
-            emptyDefList.push(file.id, cursor.node.unparse());
-          }
+        if (reference && reference.definitions().length == 0) {
+          emptyDefList.push(file.id, cursor.node.unparse());
         }
 
-        if (definition) {
-          defs++;
-        }
-
-        const value = definition || reference;
-        if (!value) {
+        if (!(definition || reference)) {
           neitherDefNorRefSet.add(cursor.node.unparse());
         }
-
-        gotoDefTimes.push(gotoDefTime);
       }
-
-      record.totalTime = round(performance.now() - startTime);
-      record.resolutionTime = record.totalTime - record.buildGraphTime - record.parseAllFilesTime;
-      record.maxGoto = round(max(gotoDefTimes));
-      record.meanGoto = round(mean(gotoDefTimes));
-      record.stdGoto = round(std(gotoDefTimes)[0] || 0);
 
       // We don't recognize `ABIEncoderV2` in `pragma experimental`, so let's ignore it
       const allowed = ["ABIEncoderV2", "v2"];
@@ -159,10 +114,12 @@ class SlangRunner implements Runner {
       assert.deepStrictEqual(emptyDefList, []);
     });
 
+    const resolutionTime = performance.now() - builtGraphTime;
+
     const timings = [
-      new Timing("slang_parse_all_files_duration", record.parseAllFilesTime),
-      new Timing("slang_init_bindings_graph_duration", record.buildGraphTime),
-      new Timing("slang_resolve_all_bindings_duration", record.resolutionTime),
+      new Timing("slang_parse_all_files_duration", parsedAllFilesTime - startTime),
+      new Timing("slang_init_bindings_graph_duration", builtGraphTime - parsedAllFilesTime),
+      new Timing("slang_resolve_all_bindings_duration", resolutionTime),
     ];
     return timings;
   }
