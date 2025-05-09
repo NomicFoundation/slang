@@ -49,8 +49,8 @@ jobs:
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
 
-      - name: "infra fetch"
-        run: "./scripts/bin/infra fetch"
+      - name: "infra perf fetch"
+        run: "./scripts/bin/infra perf fetch"
 
       - name: "infra perf cargo"
         run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }}"
