@@ -10,6 +10,17 @@ on:
         type: "boolean"
         required: true
         default: true
+      runCargo:
+        description: "Runs the cargo benchmarks."
+        type: "boolean"
+        required: true
+        default: true
+
+      runNPM:
+        description: "Runs the npm benchmarks."
+        type: "boolean"
+        required: true
+        default: true
 
   # Run on pushes to 'main' branch:
   push:
@@ -38,15 +49,20 @@ jobs:
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
 
+      - name: "infra fetch"
+        run: "./scripts/bin/infra fetch"
+
       - name: "infra perf cargo"
         run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }}"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
+        if: "${{ inputs.runCargo }}"
 
       - name: "infra perf npm"
         run: "./scripts/bin/infra perf npm ${{ inputs.dryRun == true && '--dry-run' || '' }}"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
+        if: "${{ inputs.runNPM }}"
 
       - name: "Upload Benchmarking Data"
         uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
