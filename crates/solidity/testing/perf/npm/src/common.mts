@@ -46,3 +46,9 @@ export function readRepoFile(...relativePaths: string[]): string {
 
   return source.trim();
 }
+
+export function log(what: string) {
+  if (process.argv.includes("--verbose")) {
+    console.log(what);
+  }
+}
