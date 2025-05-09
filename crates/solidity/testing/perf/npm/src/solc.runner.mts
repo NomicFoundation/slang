@@ -8,9 +8,10 @@ import { Runner } from "./common.mjs";
 export class SolcRunner implements Runner {
   public name = "solc";
 
-  async test(languageVersion: string, dir: string, file: string) {
+  async test(languageVersion: string, dir: string, file: string): Promise<number> {
     const loadRemoteVersion = promisify(solc.default.loadRemoteVersion);
-    await loadRemoteVersion("v" + languageVersion).then((solcSnapshot) => {
+    return await loadRemoteVersion("v" + languageVersion).then((solcSnapshot) => {
+      const start = performance.now();
       var folderMeta = `{
         "language": "Solidity",
         "sources": {
@@ -36,6 +37,7 @@ export class SolcRunner implements Runner {
         console.log(parsing_result["errors"]);
         assert(false);
       }
+      return performance.now() - start;
     }).catch((err) => {
       console.error(`Can't process version ${languageVersion}`);
       console.error(err);

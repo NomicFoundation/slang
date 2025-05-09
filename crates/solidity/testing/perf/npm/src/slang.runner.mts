@@ -72,7 +72,7 @@ export class SlangRunner implements Runner {
     this.options = options;
   }
 
-  async test(languageVersion: string, dir: string, file: string): Promise<void> {
+  async test(languageVersion: string, dir: string, file: string): Promise<number> {
     let gotoDefTimes: number[] = Array();
     const startTime = performance.now();
     const builder = createBuilder(languageVersion, dir);
@@ -91,7 +91,7 @@ export class SlangRunner implements Runner {
     assert.deepStrictEqual(errors, []);
 
     if (this.options == Options.Parse) {
-      return;
+      return performance.now() - startTime;
     }
 
     // first access constructs the graph
@@ -154,6 +154,7 @@ export class SlangRunner implements Runner {
       );
       assert.deepStrictEqual(emptyDefList, []);
     });
+    return performance.now() - startTime;
   }
 }
 
