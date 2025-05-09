@@ -10,7 +10,6 @@
     "command-line-usage": "^7.0.3",
     "mathjs": "^14.0.1",
     "solc": "^0.8.29",
-    "solc-typed-ast": "^18.2.5",
     "ts-node": "10.9.2"
   },
   "devDependencies": {
