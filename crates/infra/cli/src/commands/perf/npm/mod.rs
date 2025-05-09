@@ -11,9 +11,6 @@ const BENCHER_TEST_TOKEN: &str = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiO
 
 #[derive(Clone, Debug, Parser)]
 pub struct NpmController {
-    /// Folder where contracts are stored
-    input_folder: String,
-
     #[arg(short, long, default_value_t = String::from(".*"))]
     pattern: String,
 
@@ -47,16 +44,14 @@ impl NpmController {
         };
 
         let package_name = "solidity_testing_perf_timebenches";
-        let input_folder = &self.input_folder;
         let pattern = &self.pattern;
         let extra_args = if self.extra_args.is_empty() {
             String::new()
         } else {
             "-- ".to_owned() + &self.extra_args.join(" ")
         };
-        let test_runner = format!(
-            "cargo run --package {package_name} -- {input_folder} --pattern={pattern} {extra_args}"
-        );
+        let test_runner =
+            format!("cargo run --package {package_name} -- --pattern={pattern} {extra_args}");
 
         let testbed = if GitHub::is_running_in_ci() {
             "ci"

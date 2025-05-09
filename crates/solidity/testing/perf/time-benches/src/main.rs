@@ -31,9 +31,6 @@ impl fmt::Display for Options {
 
 #[derive(Clone, Debug, Parser)]
 pub struct NpmController {
-    /// Folder where contracts are stored
-    input_folder: String,
-
     #[arg(short, long, default_value_t = String::from(".*"))]
     pattern: String,
     #[arg(trailing_var_arg = true)]
@@ -56,15 +53,14 @@ pub struct Timing {
 impl NpmController {
     fn ts_comparisons(&self) -> Result<()> {
         let config = config::read_config()?;
-        self.file_comparisons(&config.files)?;
-        self.project_comparisons(&config.projects, true)?;
-        self.project_comparisons(&config.projects, false)?;
+        let input_path = Path::new(&config.working_dir);
+        self.file_comparisons(input_path, &config.files)?;
+        self.project_comparisons(input_path, &config.projects, true)?;
+        self.project_comparisons(input_path, &config.projects, false)?;
         Ok(())
     }
 
-    fn file_comparisons(&self, files: &Vec<File>) -> Result<()> {
-        let input_path = Path::new(&self.input_folder);
-
+    fn file_comparisons(&self, input_path: &Path, files: &Vec<File>) -> Result<()> {
         let mut results = vec![];
 
         for file in files {
@@ -88,9 +84,12 @@ impl NpmController {
         Ok(())
     }
 
-    fn project_comparisons(&self, projects: &Vec<Project>, file_only: bool) -> Result<()> {
-        let input_path = Path::new(&self.input_folder);
-
+    fn project_comparisons(
+        &self,
+        input_path: &Path,
+        projects: &Vec<Project>,
+        file_only: bool,
+    ) -> Result<()> {
         let mut results = vec![];
 
         for project in projects {

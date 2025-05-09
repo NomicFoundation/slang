@@ -11,6 +11,14 @@ use crate::paths::PathExtensions;
 */
 
 #[derive(Serialize, Deserialize, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct Configuration {
+    pub working_dir: String,
+    pub projects: Vec<Project>,
+    pub files: Vec<File>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Project {
     pub hash: String,
     pub name: String,
@@ -20,12 +28,6 @@ pub struct Project {
 pub struct File {
     pub hash: String,
     pub file: String,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Configuration {
-    pub projects: Vec<Project>,
-    pub files: Vec<File>,
 }
 
 pub fn read_config() -> Result<Configuration> {
