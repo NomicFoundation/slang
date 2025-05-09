@@ -1,31 +1,31 @@
-use core::fmt;
-use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
 use anyhow::Result;
 use clap::Parser;
+use enum_display::EnumDisplay;
 use infra_utils::commands::Command;
 use infra_utils::config::{self, File, Project};
-use itertools::Itertools;
 use serde::Deserialize;
 use serde_json::json;
 
-#[derive(Clone, Debug)]
-pub enum Options {
-    Parse,
-    File,
-    Project,
+#[derive(Clone, Copy, Debug, EnumDisplay)]
+pub enum Runner {
+    SlangFile,    // resolve bindings of the main file only
+    SlangProject, // resolve bindings of the entire project
+    SolidityParser,
+    Solc,
 }
 
-impl fmt::Display for Options {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let string = match self {
-            Options::Parse => "parse",
-            Options::File => "file",
-            Options::Project => "project",
-        };
-        write!(f, "{string}")
+impl Runner {
+    pub fn variants() -> impl Iterator<Item = Runner> {
+        [
+            Runner::SlangFile,
+            Runner::SlangProject,
+            Runner::SolidityParser,
+            Runner::Solc,
+        ]
+        .into_iter()
     }
 }
 
@@ -38,29 +38,36 @@ pub struct NpmController {
 }
 
 #[derive(Debug, Deserialize)]
-pub struct Measure {
-    #[allow(dead_code)]
-    pub name: String,
-    pub timings: Vec<Timing>,
-}
-
-#[derive(Debug, Deserialize)]
 pub struct Timing {
     pub component: String,
     pub time: f64,
 }
 
 impl NpmController {
-    fn ts_comparisons(&self) -> Result<()> {
+    fn execute(&self) -> Result<()> {
         let config = config::read_config()?;
         let input_path = Path::new(&config.working_dir);
-        self.file_comparisons(input_path, &config.files)?;
-        self.project_comparisons(input_path, &config.projects, true)?;
-        self.project_comparisons(input_path, &config.projects, false)?;
-        Ok(())
+        let mut file_benchmarks = self.individual_file_benchmarks(input_path, &config.files)?;
+        let mut project_benchmarks = self.project_benchmarks(input_path, &config.projects)?;
+        file_benchmarks.append(&mut project_benchmarks);
+        publish(&file_benchmarks)
     }
 
-    fn file_comparisons(&self, input_path: &Path, files: &Vec<File>) -> Result<()> {
+    fn run_benchmarks(&self, version: &str, path: &Path, file: &str) -> Result<Vec<Timing>> {
+        let mut results = vec![];
+        for runner in Runner::variants() {
+            let mut runner_result = self.run(version, path, file, runner)?;
+            results.append(&mut runner_result);
+        }
+
+        Ok(results)
+    }
+
+    fn individual_file_benchmarks(
+        &self,
+        input_path: &Path,
+        files: &Vec<File>,
+    ) -> Result<Vec<Timing>> {
         let mut results = vec![];
 
         for file in files {
@@ -72,24 +79,17 @@ impl NpmController {
 
             let (compiler_version, _) = Self::compilation_options(&path)?;
 
-            let result =
-                self.execute_comparison(&compiler_version, &path, &file.file, &Options::Parse)?;
-            results.push(result);
+            let mut result = self.run_benchmarks(&compiler_version, &path, &file.file)?;
+            results.append(&mut result);
         }
-        let summary = Self::add_summary(&results);
-        if let Some(summary) = summary {
-            results.push(summary);
-        }
-        publish(&results)?;
-        Ok(())
+        Ok(results)
     }
 
-    fn project_comparisons(
+    fn project_benchmarks(
         &self,
         input_path: &Path,
         projects: &Vec<Project>,
-        file_only: bool,
-    ) -> Result<()> {
+    ) -> Result<Vec<Timing>> {
         let mut results = vec![];
 
         for project in projects {
@@ -103,24 +103,11 @@ impl NpmController {
                 continue;
             }
 
-            let result = self.execute_comparison(
-                &compiler_version,
-                &path,
-                &fully_qualified_name,
-                if file_only {
-                    &Options::File
-                } else {
-                    &Options::Project
-                },
-            )?;
-            results.push(result);
+            let mut result =
+                self.run_benchmarks(&compiler_version, &path, &fully_qualified_name)?;
+            results.append(&mut result);
         }
-        let summary = Self::add_summary(&results);
-        if let Some(summary) = summary {
-            results.push(summary);
-        }
-        publish(&results)?;
-        Ok(())
+        Ok(results)
     }
 
     fn compilation_options(path: &Path) -> Result<(String, String)> {
@@ -154,43 +141,13 @@ impl NpmController {
         Ok((compiler_version.into(), fully_qualified_name.into()))
     }
 
-    fn add_summary(results: &Vec<Measure>) -> Option<Measure> {
-        let mut per_component = HashMap::new();
-        for result in results {
-            for timing in &result.timings {
-                per_component
-                    .entry(timing.component.clone())
-                    .or_insert_with(Vec::new)
-                    .push(timing.time);
-            }
-        }
-
-        if results.len() <= 1 {
-            None
-        } else {
-            #[allow(clippy::cast_precision_loss)]
-            let summary = Measure {
-                name: "Summary".to_string(),
-                timings: per_component
-                    .iter()
-                    .map(|component| Timing {
-                        component: component.0.clone(),
-                        time: component.1.iter().sum::<f64>() / component.1.len() as f64,
-                    })
-                    .collect_vec(),
-            };
-
-            Some(summary)
-        }
-    }
-
-    fn execute_comparison(
+    fn run(
         &self,
         compiler_version: &str,
         path: &Path,
         fully_qualified_name: &str,
-        options: &Options,
-    ) -> Result<Measure, anyhow::Error> {
+        runner: Runner,
+    ) -> Result<Vec<Timing>, anyhow::Error> {
         let command = Command::new("npx")
             .arg("tsx")
             .flag("--trace-uncaught")
@@ -199,7 +156,9 @@ impl NpmController {
             .property("--version", compiler_version)
             .property("--dir", path.to_string_lossy())
             .property("--file", fully_qualified_name)
-            .property("--options", options.to_string())
+            .property("--runner", runner.to_string())
+            .property("--cold", 0.to_string())
+            .property("--hot", 1.to_string())
             .args(&self.extra_args);
         let result = command.evaluate()?;
 
@@ -213,31 +172,23 @@ impl NpmController {
     }
 }
 
-fn publish(results: &[Measure]) -> Result<()> {
-    if results.is_empty() {
-        return Ok(());
-    };
+fn publish(results: &[Timing]) -> Result<()> {
+    let measures: serde_json::Value = results
+        .iter()
+        .map(|timing| {
+            json!({timing.component.clone(): {
+                "value": timing.time
+            }})
+        })
+        .collect();
 
-    let mut benchmark_map = serde_json::Map::new();
-
-    for result in results {
-        let measures: serde_json::Value = result
-            .timings
-            .iter()
-            .map(|timing| {
-                json!({timing.component.clone(): {
-                    "value": timing.time
-                }})
-            })
-            .collect();
-
-        benchmark_map.insert(result.name.clone(), measures);
-    }
-
-    println!("{}", serde_json::to_string_pretty(&benchmark_map)?);
+    println!(
+        "\"npm_benchmarks\": {{\n\t{}\n}}",
+        serde_json::to_string_pretty(&measures)?
+    );
     Ok(())
 }
 
 fn main() -> Result<()> {
-    NpmController::parse().ts_comparisons()
+    NpmController::parse().execute()
 }
