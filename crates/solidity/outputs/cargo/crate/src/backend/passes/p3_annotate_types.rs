@@ -13,7 +13,7 @@ use crate::backend::l2_flat_contracts::{
 };
 use crate::backend::types::{Type, TypeId, TypeRegistry};
 use crate::bindings::{BindingGraph, BindingLocation, Definition, UserFileLocation};
-use crate::cst::TerminalNode;
+use crate::cst::{TerminalKind, TerminalNode};
 use crate::extensions::built_ins::BuiltInTag;
 
 pub struct Output {
@@ -198,6 +198,40 @@ impl Pass {
         }
     }
 
+    fn annotate_bitwise_expression(
+        &mut self,
+        node_id: NodeId,
+        left_operand: &Expression,
+        right_operand: &Expression,
+    ) {
+        let left_type = self.type_of_expression(left_operand);
+        let right_type = self.type_of_expression(right_operand);
+        if self.types.implicitly_convertible_to(right_type, left_type) {
+            self.annotations.insert(node_id, left_type);
+        } else if self.types.implicitly_convertible_to(left_type, right_type) {
+            self.annotations.insert(node_id, right_type);
+        } else {
+            unimplemented!("operands type mismatch in bitwise expression");
+        }
+    }
+
+    fn annotate_arithmetic_expression(
+        &mut self,
+        node_id: NodeId,
+        left_operand: &Expression,
+        right_operand: &Expression,
+    ) {
+        let left_type = self.type_of_expression(left_operand);
+        let right_type = self.type_of_expression(right_operand);
+        if self.types.implicitly_convertible_to(right_type, left_type) {
+            self.annotations.insert(node_id, left_type);
+        } else if self.types.implicitly_convertible_to(left_type, right_type) {
+            self.annotations.insert(node_id, right_type);
+        } else {
+            unimplemented!("operands type mismatch in arithmetic expression");
+        }
+    }
+
     fn resolve_overload(&self, choices: &[TypeId], argument_types: &[TypeId]) -> TypeId {
         for type_id in choices {
             let Type::Function {
@@ -225,8 +259,13 @@ impl Visitor for Pass {
         self.annotations.insert(node.node_id, assignment_type);
     }
 
-    fn leave_conditional_expression(&mut self, _node: &input_ir::ConditionalExpression) {
-        todo!()
+    fn leave_conditional_expression(&mut self, node: &input_ir::ConditionalExpression) {
+        let true_type = self.type_of_expression(&node.true_expression);
+        let false_type = self.type_of_expression(&node.false_expression);
+        if true_type != false_type {
+            unimplemented!("type mismatch between true and false expressions in conditional");
+        }
+        self.annotations.insert(node.node_id, true_type);
     }
 
     fn leave_or_expression(&mut self, node: &input_ir::OrExpression) {
@@ -245,40 +284,60 @@ impl Visitor for Pass {
         self.annotations.insert(node.node_id, self.types.bool());
     }
 
-    fn leave_bitwise_or_expression(&mut self, _node: &input_ir::BitwiseOrExpression) {
-        todo!()
+    fn leave_bitwise_or_expression(&mut self, node: &input_ir::BitwiseOrExpression) {
+        self.annotate_bitwise_expression(node.node_id, &node.left_operand, &node.right_operand);
     }
 
-    fn leave_bitwise_xor_expression(&mut self, _node: &input_ir::BitwiseXorExpression) {
-        todo!()
+    fn leave_bitwise_xor_expression(&mut self, node: &input_ir::BitwiseXorExpression) {
+        self.annotate_bitwise_expression(node.node_id, &node.left_operand, &node.right_operand);
     }
 
-    fn leave_bitwise_and_expression(&mut self, _node: &input_ir::BitwiseAndExpression) {
-        todo!()
+    fn leave_bitwise_and_expression(&mut self, node: &input_ir::BitwiseAndExpression) {
+        self.annotate_bitwise_expression(node.node_id, &node.left_operand, &node.right_operand);
     }
 
-    fn leave_shift_expression(&mut self, _node: &input_ir::ShiftExpression) {
-        todo!()
+    fn leave_shift_expression(&mut self, node: &input_ir::ShiftExpression) {
+        let left_type_id = self.type_of_expression(&node.left_operand);
+        self.annotations.insert(node.node_id, left_type_id);
     }
 
-    fn leave_additive_expression(&mut self, _node: &input_ir::AdditiveExpression) {
-        todo!()
+    fn leave_additive_expression(&mut self, node: &input_ir::AdditiveExpression) {
+        self.annotate_arithmetic_expression(node.node_id, &node.left_operand, &node.right_operand);
     }
 
-    fn leave_multiplicative_expression(&mut self, _node: &input_ir::MultiplicativeExpression) {
-        todo!()
+    fn leave_multiplicative_expression(&mut self, node: &input_ir::MultiplicativeExpression) {
+        self.annotate_arithmetic_expression(node.node_id, &node.left_operand, &node.right_operand);
     }
 
-    fn leave_exponentiation_expression(&mut self, _node: &input_ir::ExponentiationExpression) {
-        todo!()
+    fn leave_exponentiation_expression(&mut self, node: &input_ir::ExponentiationExpression) {
+        let left_type_id = self.type_of_expression(&node.left_operand);
+        self.annotations.insert(node.node_id, left_type_id);
     }
 
-    fn leave_postfix_expression(&mut self, _node: &input_ir::PostfixExpression) {
-        todo!()
+    fn leave_postfix_expression(&mut self, node: &input_ir::PostfixExpression) {
+        let operand_type_id = self.type_of_expression(&node.operand);
+        self.annotations.insert(node.node_id, operand_type_id);
     }
 
-    fn leave_prefix_expression(&mut self, _node: &input_ir::PrefixExpression) {
-        todo!()
+    fn leave_prefix_expression(&mut self, node: &input_ir::PrefixExpression) {
+        match node.operator.kind {
+            TerminalKind::PlusPlus | TerminalKind::MinusMinus | TerminalKind::Tilde => {
+                // TODO: should validate that the type is an integer
+                let operand_type_id = self.type_of_expression(&node.operand);
+                self.annotations.insert(node.node_id, operand_type_id);
+            }
+            TerminalKind::Bang => {
+                let operand_type_id = self.type_of_expression(&node.operand);
+                if operand_type_id != self.types.bool() {
+                    unimplemented!("logical negation only operates on booleans");
+                }
+                self.annotations.insert(node.node_id, operand_type_id);
+            }
+            TerminalKind::DeleteKeyword => {
+                self.annotations.insert(node.node_id, self.types.void());
+            }
+            _ => unreachable!("invalid operator in prefix expression"),
+        }
     }
 
     fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {

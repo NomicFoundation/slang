@@ -7231,6 +7231,7 @@ impl slang_solidity::backend::types::TypeRegistry
 pub fn slang_solidity::backend::types::TypeRegistry::find_type(&self, type_: &slang_solidity::backend::types::Type) -> core::option::Option<slang_solidity::backend::types::TypeId>
 pub fn slang_solidity::backend::types::TypeRegistry::get_type_by_id(&self, type_id: slang_solidity::backend::types::TypeId) -> core::option::Option<&slang_solidity::backend::types::Type>
 pub fn slang_solidity::backend::types::TypeRegistry::get_type_definition_by_node_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::types::TypeDefinition>
+pub fn slang_solidity::backend::types::TypeRegistry::implicitly_convertible_to(&self, from_type_id: slang_solidity::backend::types::TypeId, to_type_id: slang_solidity::backend::types::TypeId) -> bool
 pub fn slang_solidity::backend::types::TypeRegistry::register_definition(&mut self, type_definition: slang_solidity::backend::types::TypeDefinition)
 pub fn slang_solidity::backend::types::TypeRegistry::register_type(&mut self, type_: slang_solidity::backend::types::Type) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::validate(&self)

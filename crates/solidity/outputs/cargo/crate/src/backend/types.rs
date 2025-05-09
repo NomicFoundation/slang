@@ -86,6 +86,49 @@ impl TypeRegistry {
             }
         }
     }
+
+    pub fn implicitly_convertible_to(&self, from_type_id: TypeId, to_type_id: TypeId) -> bool {
+        if from_type_id == to_type_id {
+            return true;
+        }
+        let from_type = self.get_type_by_id(from_type_id).unwrap();
+        let to_type = self.get_type_by_id(to_type_id).unwrap();
+
+        match (from_type, to_type) {
+            (
+                Type::Address {
+                    payable: from_payable,
+                },
+                Type::Address { .. },
+            ) => *from_payable,
+
+            (
+                Type::Integer {
+                    signed: from_signed,
+                    bits: from_bits,
+                },
+                Type::Integer {
+                    signed: to_signed,
+                    bits: to_bits,
+                },
+            ) => {
+                if from_signed == to_signed {
+                    from_bits <= to_bits
+                } else if *from_signed {
+                    false
+                } else {
+                    from_bits < to_bits
+                }
+            }
+
+            (Type::Rational, Type::Integer { .. }) => true,
+
+            // TODO: add more implicit conversion rules
+            _ => unimplemented!(
+                "implicitly converting from {from_type:?} to {to_type:?} not supported"
+            ),
+        }
+    }
 }
 
 impl TypeRegistry {
