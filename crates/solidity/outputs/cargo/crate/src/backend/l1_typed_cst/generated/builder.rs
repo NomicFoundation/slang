@@ -1549,7 +1549,7 @@ pub fn build_assignment_expression(node: &Rc<NonterminalNode>) -> Result<Assignm
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1558,6 +1558,7 @@ pub fn build_assignment_expression(node: &Rc<NonterminalNode>) -> Result<Assignm
     Ok(Rc::new(AssignmentExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1628,7 +1629,7 @@ pub fn build_equality_expression(node: &Rc<NonterminalNode>) -> Result<EqualityE
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1637,6 +1638,7 @@ pub fn build_equality_expression(node: &Rc<NonterminalNode>) -> Result<EqualityE
     Ok(Rc::new(EqualityExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1647,7 +1649,7 @@ pub fn build_inequality_expression(node: &Rc<NonterminalNode>) -> Result<Inequal
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1656,6 +1658,7 @@ pub fn build_inequality_expression(node: &Rc<NonterminalNode>) -> Result<Inequal
     Ok(Rc::new(InequalityExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1723,7 +1726,7 @@ pub fn build_shift_expression(node: &Rc<NonterminalNode>) -> Result<ShiftExpress
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1732,6 +1735,7 @@ pub fn build_shift_expression(node: &Rc<NonterminalNode>) -> Result<ShiftExpress
     Ok(Rc::new(ShiftExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1742,7 +1746,7 @@ pub fn build_additive_expression(node: &Rc<NonterminalNode>) -> Result<AdditiveE
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1751,6 +1755,7 @@ pub fn build_additive_expression(node: &Rc<NonterminalNode>) -> Result<AdditiveE
     Ok(Rc::new(AdditiveExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1763,7 +1768,7 @@ pub fn build_multiplicative_expression(
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1772,6 +1777,7 @@ pub fn build_multiplicative_expression(
     Ok(Rc::new(MultiplicativeExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1784,7 +1790,7 @@ pub fn build_exponentiation_expression(
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1793,6 +1799,7 @@ pub fn build_exponentiation_expression(
     Ok(Rc::new(ExponentiationExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1801,24 +1808,26 @@ pub fn build_postfix_expression(node: &Rc<NonterminalNode>) -> Result<PostfixExp
     expect_nonterminal_kind(node, NonterminalKind::PostfixExpression)?;
     let mut helper = ChildrenHelper::new(&node.children);
     let operand = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Operand)?)?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     helper.finalize()?;
 
     Ok(Rc::new(PostfixExpressionStruct {
         node_id: node.id(),
         operand,
+        operator,
     }))
 }
 
 pub fn build_prefix_expression(node: &Rc<NonterminalNode>) -> Result<PrefixExpression> {
     expect_nonterminal_kind(node, NonterminalKind::PrefixExpression)?;
     let mut helper = ChildrenHelper::new(&node.children);
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let operand = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Operand)?)?)?;
     helper.finalize()?;
 
     Ok(Rc::new(PrefixExpressionStruct {
         node_id: node.id(),
+        operator,
         operand,
     }))
 }
