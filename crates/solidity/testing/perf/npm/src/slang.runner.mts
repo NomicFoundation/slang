@@ -54,7 +54,7 @@ export function createBuilder(languageVersion: string, directory: string): Compi
           if (fs.statSync(realFile)) {
             return file;
           }
-        } catch { }
+        } catch {}
         i++;
       }
       throw `Can't resolve import ${importPath}`;

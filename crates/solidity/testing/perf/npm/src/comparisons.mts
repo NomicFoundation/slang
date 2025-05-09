@@ -4,7 +4,6 @@ import { SolcRunner } from "./solc.runner.mjs";
 import { checkCI, Runner, round2, Options } from "./common.mjs";
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
-import { SolcTypedAstRunner } from "./solc.typed.ast.runner.mjs";
 import { SolidityParserRunner } from "./solidity.parser.runner.mjs";
 import { assert } from "node:console";
 
@@ -32,7 +31,7 @@ async function run(solidityVersion: string, dir: string, file: string, options: 
 
   let tests: Runner[];
   if (options == Options.Parse) {
-    tests = [new SlangRunner(options), new SolidityParserRunner(), new SolcTypedAstRunner()];
+    tests = [new SlangRunner(options), new SolidityParserRunner()];
   } else {
     tests = [new SlangRunner(options), new SolcRunner()];
   }
