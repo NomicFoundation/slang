@@ -37,6 +37,7 @@ impl metaslang_cst::kinds::KindTypes for KindTypes {
     type EdgeLabel = EdgeLabel;
 }
 
+pub use metaslang_cst::nodes::NodeId;
 pub type Node = metaslang_cst::nodes::Node<KindTypes>;
 pub type NonterminalNode = metaslang_cst::nodes::NonterminalNode<KindTypes>;
 pub type TerminalNode = metaslang_cst::nodes::TerminalNode<KindTypes>;

@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
 use indexmap::IndexSet;
-use metaslang_cst::nodes::NodeId;
+
+use crate::cst::NodeId;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct TypeId(usize);
@@ -152,6 +153,16 @@ impl TypeRegistry {
     }
     pub fn void(&self) -> TypeId {
         self.void_type_id
+    }
+}
+
+impl TypeRegistry {
+    pub fn iter_types(&self) -> impl Iterator<Item = (TypeId, &Type)> {
+        (0usize..).map(TypeId).zip(self.types.iter())
+    }
+
+    pub fn iter_definitions(&self) -> impl Iterator<Item = &TypeDefinition> {
+        self.definitions.values()
     }
 }
 
