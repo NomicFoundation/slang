@@ -40,10 +40,6 @@
   ],
   "files": [
     {
-      "hash": "0x0000000000d6A44FaCfBe05Faaee691aFaCC0f81",
-      "file": "lib/seaport-types/src/interfaces/SeaportInterface.sol"
-    },
-    {
       "hash": "0x00aB290CC289F818a9E80eBaF18685E353DF16F0",
       "file": "contracts/OneStepLeverage.f.sol"
     }
@@ -73,6 +69,11 @@
       "hash": "",
       "name": "graph_protocol",
       "reason": "TODO"
+    },
+    {
+      "hash": "0x0000000000d6A44FaCfBe05Faaee691aFaCC0f81",
+      "file": "lib/seaport-types/src/interfaces/SeaportInterface.sol",
+      "reason": "Not binding correctly"
     }
   ]
 }

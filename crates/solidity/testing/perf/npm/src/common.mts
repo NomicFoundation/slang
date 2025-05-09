@@ -1,18 +1,20 @@
 import fs from "node:fs";
 import path from "node:path";
 
+export class Timing {
+  public component: string;
+  public time: number;
+
+  public constructor(component: string, time: number) {
+    this.component = component;
+    this.time = time;
+  }
+}
+
 export interface Runner {
   name: string;
   // returns the time it takes to run the test
-  test(languageVersion: string, dir: string, file: string): Promise<number>;
-}
-
-/// What to test
-export enum Options {
-  None, // HACK: this is so this option is the false / no entry option
-  Parse,
-  File, // resolve bindings of the main file only
-  Project, // resolve bindings of the entire project
+  test(languageVersion: string, dir: string, file: string): Promise<Timing[]>;
 }
 
 export const hasGC = typeof global.gc == "function";
