@@ -150,8 +150,6 @@ impl NpmController {
             .property("--dir", path.to_string_lossy())
             .property("--file", fully_qualified_name)
             .property("--runner", runner.to_string())
-            .property("--cold", 0.to_string())
-            .property("--hot", 1.to_string())
             .args(&self.extra_args);
         let result = command.evaluate()?;
 

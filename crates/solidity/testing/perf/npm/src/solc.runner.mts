@@ -3,7 +3,7 @@ import fs from "node:fs";
 import { promisify } from "node:util";
 import path from "path";
 import * as solc from "solc";
-import { Runner, Timing } from "./common.mjs";
+import { log, Runner, Timing } from "./common.mjs";
 
 export class SolcRunner implements Runner {
   public name = "solc";
@@ -32,9 +32,7 @@ export class SolcRunner implements Runner {
       }
       `;
         const parsing_result = JSON.parse(solcSnapshot.compile(folderMeta, { import: findImports(dir) }));
-        if (process.argv.includes("--verbose")) {
-          console.log(parsing_result);
-        }
+        log(parsing_result);
         assert(parsing_result["sources"] != undefined);
         if (parsing_result["errors"] && !parsing_result["errors"].every((value: any) => value["type"] == "Warning")) {
           console.log(parsing_result["errors"]);
