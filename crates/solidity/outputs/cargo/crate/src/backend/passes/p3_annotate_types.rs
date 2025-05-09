@@ -68,11 +68,25 @@ impl Pass {
     fn type_of_expression(&mut self, expression: &Expression) -> TypeId {
         match expression {
             Expression::StringExpression(_) => self.types.string(),
-            Expression::ElementaryType(_) => todo!(),
+            Expression::ElementaryType(_) => {
+                // TODO: we probably need a meta type to describe the type of
+                // the elementary type
+                unimplemented!("typing of elementary type names is not yet implemented")
+            }
             Expression::Identifier(identifier) => self.type_of_identifier(identifier),
-            Expression::PayableKeyword => todo!(),
-            Expression::ThisKeyword => todo!(),
-            Expression::SuperKeyword => todo!(),
+            Expression::PayableKeyword => {
+                // TODO: need a meta type
+                unimplemented!("typing of payable type is not implemented yet")
+            }
+            Expression::ThisKeyword => {
+                // TODO: need to keep track of the current enclosing scope
+                unimplemented!("`this` cannot be typed yet");
+            }
+            Expression::SuperKeyword => {
+                // TODO: need to keep track of the current enclosing scope, and
+                // possibly a special type
+                unimplemented!("`super` cannot be typed yet");
+            }
             Expression::TrueKeyword | Expression::FalseKeyword => self.types.bool(),
             _ => {
                 let node_id = match expression {
@@ -181,6 +195,15 @@ impl Pass {
                 built_in_type(tag, &mut self.types)
             }
         }
+    }
+
+    #[allow(clippy::unused_self)]
+    fn type_of_type_name(&self, _type_name: &input_ir::TypeName) -> TypeId {
+        // TODO: we may want to do this here using a similar machinery as in the
+        // collect types pass, or do it in that pass at the expense of having to
+        // traverse the full tree (currently, expressions). We probably want to
+        // extract the common functionality somewhere.
+        unimplemented!("resolving the type of a TypeName is not yet implemented");
     }
 
     fn annotate_logical_expression(
@@ -378,8 +401,9 @@ impl Visitor for Pass {
         }
     }
 
-    fn leave_call_options_expression(&mut self, _node: &input_ir::CallOptionsExpression) {
-        todo!()
+    fn leave_call_options_expression(&mut self, node: &input_ir::CallOptionsExpression) {
+        let operand_type = self.type_of_expression(&node.operand);
+        self.annotations.insert(node.node_id, operand_type);
     }
 
     fn leave_member_access_expression(&mut self, node: &input_ir::MemberAccessExpression) {
@@ -403,24 +427,32 @@ impl Visitor for Pass {
         }
     }
 
-    fn leave_new_expression(&mut self, _node: &input_ir::NewExpression) {
-        todo!()
+    fn leave_new_expression(&mut self, node: &input_ir::NewExpression) {
+        let operand_type = self.type_of_type_name(&node.type_name);
+        self.annotations.insert(node.node_id, operand_type);
     }
 
-    fn leave_tuple_expression(&mut self, _node: &input_ir::TupleExpression) {
-        todo!()
+    fn leave_tuple_expression(&mut self, node: &input_ir::TupleExpression) {
+        let types = node
+            .items
+            .iter()
+            .map(|value| self.type_of_expression(value.expression.as_ref().unwrap()))
+            .collect::<Vec<_>>();
+        let tuple_type_id = self.types.register_type(Type::Tuple { types });
+        self.annotations.insert(node.node_id, tuple_type_id);
     }
 
     fn leave_type_expression(&mut self, _node: &input_ir::TypeExpression) {
-        todo!()
+        unimplemented!("typing of type() expressions not supported yet");
     }
 
     fn leave_array_expression(&mut self, _node: &input_ir::ArrayExpression) {
-        todo!()
+        unimplemented!("typing of array expressions not supported yet");
     }
 
-    fn leave_hex_number_expression(&mut self, _node: &input_ir::HexNumberExpression) {
-        todo!()
+    fn leave_hex_number_expression(&mut self, node: &input_ir::HexNumberExpression) {
+        // TODO: do we need special handling for hex numbers representing addresses?
+        self.annotations.insert(node.node_id, self.types.rational());
     }
 
     fn leave_decimal_number_expression(&mut self, node: &input_ir::DecimalNumberExpression) {
