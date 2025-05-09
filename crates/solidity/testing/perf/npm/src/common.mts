@@ -3,7 +3,8 @@ import path from "node:path";
 
 export interface Runner {
   name: string;
-  test(languageVersion: string, dir: string, file: string): Promise<void>;
+  // returns the time it takes to run the test
+  test(languageVersion: string, dir: string, file: string): Promise<number>;
 }
 
 /// What to test
