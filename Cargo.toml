@@ -117,7 +117,9 @@ itertools = { version = "0.13.0" }
 log = { version = "0.4.27" }
 markdown = { version = "0.3.0" }
 nom = { version = "7.1.3" }
+num-derive = { version = "0.4.2" }
 num-format = { version = "0.4.4" }
+num-traits = { version = "0.2.19" }
 once_cell = { version = "1.21.3" }
 paste = { version = "1.0.15" }
 proc-macro2 = { version = "1.0.94" }

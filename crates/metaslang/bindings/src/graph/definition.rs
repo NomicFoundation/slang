@@ -52,6 +52,10 @@ impl<KT: KindTypes + 'static> Definition<KT> {
             .expect("Definition handle is valid")
     }
 
+    pub fn get_built_in_tag(&self) -> Option<u32> {
+        self.owner.graph.get_built_in_tag(self.handle)
+    }
+
     pub fn get_file(&self) -> FileDescriptor {
         self.owner
             .graph
