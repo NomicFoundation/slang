@@ -1,3 +1,4 @@
+use std::fmt::Write;
 use std::fs;
 use std::path::Path;
 
@@ -7,7 +8,6 @@ use enum_display::EnumDisplay;
 use infra_utils::commands::Command;
 use infra_utils::config::{self, File, Project};
 use serde::Deserialize;
-use serde_json::json;
 
 #[derive(Clone, Copy, Debug, EnumDisplay)]
 pub enum Runner {
@@ -164,19 +164,26 @@ impl NpmController {
 }
 
 fn publish(results: &[Timing]) -> Result<()> {
-    let measures: serde_json::Value = results
-        .iter()
-        .map(|timing| {
-            json!({timing.component.clone(): {
-                "value": timing.time
-            }})
-        })
-        .collect();
+    let mut output = String::new();
+    writeln!(output, "{{")?;
+    writeln!(output, "\t\"npm_benchmarks\": {{")?;
 
-    println!(
-        "\"npm_benchmarks\": {{\n\t{}\n}}",
-        serde_json::to_string_pretty(&measures)?
-    );
+    for (i, timing) in results.iter().enumerate() {
+        writeln!(output, "\t\t\"{}\": {{", timing.component)?;
+        writeln!(output, "\t\t\t\"value\": {}", timing.time)?;
+        write!(output, "\t\t}}")?;
+
+        if i < results.len() - 1 {
+            writeln!(output, ",")?;
+        } else {
+            writeln!(output)?;
+        }
+    }
+
+    writeln!(output, "\t}}")?;
+    writeln!(output, "}}")?;
+
+    println!("{output}");
     Ok(())
 }
 
