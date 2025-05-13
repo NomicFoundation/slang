@@ -37,7 +37,7 @@ jobs:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     # Only run on the main repo (not forks), unless it is a dry run:
-    if: "${{ github.repository == 'NomicFoundation/slang' || github.event.inputs.dryRun == true }}"
+    if: "${{ github.repository == 'NomicFoundation/slang' || inputs.dryRun == true }}"
 
     steps:
       # Installs basic dependencies when running locally with https://github.com/nextos/act,
@@ -60,20 +60,20 @@ jobs:
         run: "./scripts/bin/infra perf fetch"
 
       - name: "infra perf cargo"
-        run: "echo './scripts/bin/infra perf cargo ${{ github.event.inputs.dryRun == true && '--dry-run' || '' }}'"
+        run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }}"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
-        if: "${{ github.event.inputs.runCargo }}"
+        if: "${{ inputs.runCargo }}"
 
       - name: "infra check"
-        run: "echo './scripts/bin/infra check'"
-        if: "${{ github.event.inputs.runNPM }}"
+        run: "./scripts/bin/infra check"
+        if: "${{ inputs.runNPM }}"
 
       - name: "infra perf npm"
-        run: "echo './scripts/bin/infra perf npm ${{ github.event.inputs.dryRun == true && '--dry-run' || '' }}'"
+        run: "./scripts/bin/infra perf npm ${{ inputs.dryRun == true && '--dry-run' || '' }}"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
-        if: "${{ github.event.inputs.runNPM }}"
+        if: "${{ inputs.runNPM }}"
 
       - name: "Upload Benchmarking Data"
         uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
@@ -81,4 +81,4 @@ jobs:
           name: "benchmarking-data"
           path: "target/iai"
           if-no-files-found: "error"
-        if: "${{ github.event.inputs.runCargo }}"
+        if: "${{ inputs.runCargo }}"
