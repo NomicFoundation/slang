@@ -42,8 +42,8 @@ jobs:
     steps:
       # Installs basic dependencies when running locally with https://github.com/nextos/act,
       # whose Ubuntu image is bare
-      - name: Install Act dependencies
-        if: ${{ env.ACT }}
+      - name: "Install Act dependencies"
+        if: "${{ env.ACT }}"
         run: |
           apt-get update && apt-get install sudo curl build-essential git pkg-config libssl-dev -y
 
