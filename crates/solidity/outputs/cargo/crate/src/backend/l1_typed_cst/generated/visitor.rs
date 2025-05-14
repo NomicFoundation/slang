@@ -2193,237 +2193,287 @@ pub fn accept_yul_function_call_expression(
 //
 
 pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Visitor) {
-    match node {
-        SourceUnitMember::PragmaDirective(ref pragma_directive) => {
-            accept_pragma_directive(pragma_directive, visitor);
+    if visitor.enter_source_unit_member(node) {
+        match node {
+            SourceUnitMember::PragmaDirective(ref pragma_directive) => {
+                accept_pragma_directive(pragma_directive, visitor);
+            }
+            SourceUnitMember::ImportDirective(ref import_directive) => {
+                accept_import_directive(import_directive, visitor);
+            }
+            SourceUnitMember::ContractDefinition(ref contract_definition) => {
+                accept_contract_definition(contract_definition, visitor);
+            }
+            SourceUnitMember::InterfaceDefinition(ref interface_definition) => {
+                accept_interface_definition(interface_definition, visitor);
+            }
+            SourceUnitMember::LibraryDefinition(ref library_definition) => {
+                accept_library_definition(library_definition, visitor);
+            }
+            SourceUnitMember::StructDefinition(ref struct_definition) => {
+                accept_struct_definition(struct_definition, visitor);
+            }
+            SourceUnitMember::EnumDefinition(ref enum_definition) => {
+                accept_enum_definition(enum_definition, visitor);
+            }
+            SourceUnitMember::FunctionDefinition(ref function_definition) => {
+                accept_function_definition(function_definition, visitor);
+            }
+            SourceUnitMember::ErrorDefinition(ref error_definition) => {
+                accept_error_definition(error_definition, visitor);
+            }
+            SourceUnitMember::UserDefinedValueTypeDefinition(
+                ref user_defined_value_type_definition,
+            ) => {
+                accept_user_defined_value_type_definition(
+                    user_defined_value_type_definition,
+                    visitor,
+                );
+            }
+            SourceUnitMember::UsingDirective(ref using_directive) => {
+                accept_using_directive(using_directive, visitor);
+            }
+            SourceUnitMember::EventDefinition(ref event_definition) => {
+                accept_event_definition(event_definition, visitor);
+            }
+            SourceUnitMember::ConstantDefinition(ref constant_definition) => {
+                accept_constant_definition(constant_definition, visitor);
+            }
         }
-        SourceUnitMember::ImportDirective(ref import_directive) => {
-            accept_import_directive(import_directive, visitor);
-        }
-        SourceUnitMember::ContractDefinition(ref contract_definition) => {
-            accept_contract_definition(contract_definition, visitor);
-        }
-        SourceUnitMember::InterfaceDefinition(ref interface_definition) => {
-            accept_interface_definition(interface_definition, visitor);
-        }
-        SourceUnitMember::LibraryDefinition(ref library_definition) => {
-            accept_library_definition(library_definition, visitor);
-        }
-        SourceUnitMember::StructDefinition(ref struct_definition) => {
-            accept_struct_definition(struct_definition, visitor);
-        }
-        SourceUnitMember::EnumDefinition(ref enum_definition) => {
-            accept_enum_definition(enum_definition, visitor);
-        }
-        SourceUnitMember::FunctionDefinition(ref function_definition) => {
-            accept_function_definition(function_definition, visitor);
-        }
-        SourceUnitMember::ErrorDefinition(ref error_definition) => {
-            accept_error_definition(error_definition, visitor);
-        }
-        SourceUnitMember::UserDefinedValueTypeDefinition(
-            ref user_defined_value_type_definition,
-        ) => {
-            accept_user_defined_value_type_definition(user_defined_value_type_definition, visitor);
-        }
-        SourceUnitMember::UsingDirective(ref using_directive) => {
-            accept_using_directive(using_directive, visitor);
-        }
-        SourceUnitMember::EventDefinition(ref event_definition) => {
-            accept_event_definition(event_definition, visitor);
-        }
-        SourceUnitMember::ConstantDefinition(ref constant_definition) => {
-            accept_constant_definition(constant_definition, visitor);
-        }
+        visitor.leave_source_unit_member(node);
     }
 }
 
 pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
-    match node {
-        Pragma::AbicoderPragma(ref abicoder_pragma) => {
-            accept_abicoder_pragma(abicoder_pragma, visitor);
+    if visitor.enter_pragma(node) {
+        match node {
+            Pragma::AbicoderPragma(ref abicoder_pragma) => {
+                accept_abicoder_pragma(abicoder_pragma, visitor);
+            }
+            Pragma::ExperimentalPragma(ref experimental_pragma) => {
+                accept_experimental_pragma(experimental_pragma, visitor);
+            }
+            Pragma::VersionPragma(ref version_pragma) => {
+                accept_version_pragma(version_pragma, visitor);
+            }
         }
-        Pragma::ExperimentalPragma(ref experimental_pragma) => {
-            accept_experimental_pragma(experimental_pragma, visitor);
-        }
-        Pragma::VersionPragma(ref version_pragma) => {
-            accept_version_pragma(version_pragma, visitor);
-        }
+        visitor.leave_pragma(node);
     }
 }
 
 pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut impl Visitor) {
-    match node {
-        ExperimentalFeature::StringLiteral(ref string_literal) => {
-            accept_string_literal(string_literal, visitor);
+    if visitor.enter_experimental_feature(node) {
+        match node {
+            ExperimentalFeature::StringLiteral(ref string_literal) => {
+                accept_string_literal(string_literal, visitor);
+            }
+            ExperimentalFeature::Identifier(_) => {}
         }
-        ExperimentalFeature::Identifier(_) => {}
+        visitor.leave_experimental_feature(node);
     }
 }
 
 pub fn accept_version_expression(node: &VersionExpression, visitor: &mut impl Visitor) {
-    match node {
-        VersionExpression::VersionRange(ref version_range) => {
-            accept_version_range(version_range, visitor);
+    if visitor.enter_version_expression(node) {
+        match node {
+            VersionExpression::VersionRange(ref version_range) => {
+                accept_version_range(version_range, visitor);
+            }
+            VersionExpression::VersionTerm(ref version_term) => {
+                accept_version_term(version_term, visitor);
+            }
         }
-        VersionExpression::VersionTerm(ref version_term) => {
-            accept_version_term(version_term, visitor);
-        }
+        visitor.leave_version_expression(node);
     }
 }
 
 pub fn accept_version_operator(_node: &VersionOperator, _visitor: &mut impl Visitor) {}
 
 pub fn accept_version_literal(node: &VersionLiteral, visitor: &mut impl Visitor) {
-    match node {
-        VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
-            accept_simple_version_literal(simple_version_literal, visitor);
+    if visitor.enter_version_literal(node) {
+        match node {
+            VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
+                accept_simple_version_literal(simple_version_literal, visitor);
+            }
+            VersionLiteral::SingleQuotedVersionLiteral(_)
+            | VersionLiteral::DoubleQuotedVersionLiteral(_) => {}
         }
-        VersionLiteral::SingleQuotedVersionLiteral(_)
-        | VersionLiteral::DoubleQuotedVersionLiteral(_) => {}
+        visitor.leave_version_literal(node);
     }
 }
 
 pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
-    match node {
-        ImportClause::PathImport(ref path_import) => {
-            accept_path_import(path_import, visitor);
+    if visitor.enter_import_clause(node) {
+        match node {
+            ImportClause::PathImport(ref path_import) => {
+                accept_path_import(path_import, visitor);
+            }
+            ImportClause::NamedImport(ref named_import) => {
+                accept_named_import(named_import, visitor);
+            }
+            ImportClause::ImportDeconstruction(ref import_deconstruction) => {
+                accept_import_deconstruction(import_deconstruction, visitor);
+            }
         }
-        ImportClause::NamedImport(ref named_import) => {
-            accept_named_import(named_import, visitor);
-        }
-        ImportClause::ImportDeconstruction(ref import_deconstruction) => {
-            accept_import_deconstruction(import_deconstruction, visitor);
-        }
+        visitor.leave_import_clause(node);
     }
 }
 
 pub fn accept_using_clause(node: &UsingClause, visitor: &mut impl Visitor) {
-    match node {
-        UsingClause::IdentifierPath(ref identifier_path) => {
-            accept_identifier_path(identifier_path, visitor);
+    if visitor.enter_using_clause(node) {
+        match node {
+            UsingClause::IdentifierPath(ref identifier_path) => {
+                accept_identifier_path(identifier_path, visitor);
+            }
+            UsingClause::UsingDeconstruction(ref using_deconstruction) => {
+                accept_using_deconstruction(using_deconstruction, visitor);
+            }
         }
-        UsingClause::UsingDeconstruction(ref using_deconstruction) => {
-            accept_using_deconstruction(using_deconstruction, visitor);
-        }
+        visitor.leave_using_clause(node);
     }
 }
 
 pub fn accept_using_operator(_node: &UsingOperator, _visitor: &mut impl Visitor) {}
 
 pub fn accept_using_target(node: &UsingTarget, visitor: &mut impl Visitor) {
-    match node {
-        UsingTarget::TypeName(ref type_name) => {
-            accept_type_name(type_name, visitor);
+    if visitor.enter_using_target(node) {
+        match node {
+            UsingTarget::TypeName(ref type_name) => {
+                accept_type_name(type_name, visitor);
+            }
+            UsingTarget::Asterisk => {}
         }
-        UsingTarget::Asterisk => {}
+        visitor.leave_using_target(node);
     }
 }
 
 pub fn accept_contract_specifier(node: &ContractSpecifier, visitor: &mut impl Visitor) {
-    match node {
-        ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
-            accept_inheritance_specifier(inheritance_specifier, visitor);
+    if visitor.enter_contract_specifier(node) {
+        match node {
+            ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
+                accept_inheritance_specifier(inheritance_specifier, visitor);
+            }
+            ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
+                accept_storage_layout_specifier(storage_layout_specifier, visitor);
+            }
         }
-        ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
-            accept_storage_layout_specifier(storage_layout_specifier, visitor);
-        }
+        visitor.leave_contract_specifier(node);
     }
 }
 
 pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor) {
-    match node {
-        ContractMember::UsingDirective(ref using_directive) => {
-            accept_using_directive(using_directive, visitor);
+    if visitor.enter_contract_member(node) {
+        match node {
+            ContractMember::UsingDirective(ref using_directive) => {
+                accept_using_directive(using_directive, visitor);
+            }
+            ContractMember::FunctionDefinition(ref function_definition) => {
+                accept_function_definition(function_definition, visitor);
+            }
+            ContractMember::ConstructorDefinition(ref constructor_definition) => {
+                accept_constructor_definition(constructor_definition, visitor);
+            }
+            ContractMember::ReceiveFunctionDefinition(ref receive_function_definition) => {
+                accept_receive_function_definition(receive_function_definition, visitor);
+            }
+            ContractMember::FallbackFunctionDefinition(ref fallback_function_definition) => {
+                accept_fallback_function_definition(fallback_function_definition, visitor);
+            }
+            ContractMember::ModifierDefinition(ref modifier_definition) => {
+                accept_modifier_definition(modifier_definition, visitor);
+            }
+            ContractMember::StructDefinition(ref struct_definition) => {
+                accept_struct_definition(struct_definition, visitor);
+            }
+            ContractMember::EnumDefinition(ref enum_definition) => {
+                accept_enum_definition(enum_definition, visitor);
+            }
+            ContractMember::EventDefinition(ref event_definition) => {
+                accept_event_definition(event_definition, visitor);
+            }
+            ContractMember::ErrorDefinition(ref error_definition) => {
+                accept_error_definition(error_definition, visitor);
+            }
+            ContractMember::UserDefinedValueTypeDefinition(
+                ref user_defined_value_type_definition,
+            ) => {
+                accept_user_defined_value_type_definition(
+                    user_defined_value_type_definition,
+                    visitor,
+                );
+            }
+            ContractMember::StateVariableDefinition(ref state_variable_definition) => {
+                accept_state_variable_definition(state_variable_definition, visitor);
+            }
         }
-        ContractMember::FunctionDefinition(ref function_definition) => {
-            accept_function_definition(function_definition, visitor);
-        }
-        ContractMember::ConstructorDefinition(ref constructor_definition) => {
-            accept_constructor_definition(constructor_definition, visitor);
-        }
-        ContractMember::ReceiveFunctionDefinition(ref receive_function_definition) => {
-            accept_receive_function_definition(receive_function_definition, visitor);
-        }
-        ContractMember::FallbackFunctionDefinition(ref fallback_function_definition) => {
-            accept_fallback_function_definition(fallback_function_definition, visitor);
-        }
-        ContractMember::ModifierDefinition(ref modifier_definition) => {
-            accept_modifier_definition(modifier_definition, visitor);
-        }
-        ContractMember::StructDefinition(ref struct_definition) => {
-            accept_struct_definition(struct_definition, visitor);
-        }
-        ContractMember::EnumDefinition(ref enum_definition) => {
-            accept_enum_definition(enum_definition, visitor);
-        }
-        ContractMember::EventDefinition(ref event_definition) => {
-            accept_event_definition(event_definition, visitor);
-        }
-        ContractMember::ErrorDefinition(ref error_definition) => {
-            accept_error_definition(error_definition, visitor);
-        }
-        ContractMember::UserDefinedValueTypeDefinition(ref user_defined_value_type_definition) => {
-            accept_user_defined_value_type_definition(user_defined_value_type_definition, visitor);
-        }
-        ContractMember::StateVariableDefinition(ref state_variable_definition) => {
-            accept_state_variable_definition(state_variable_definition, visitor);
-        }
+        visitor.leave_contract_member(node);
     }
 }
 
 pub fn accept_state_variable_attribute(node: &StateVariableAttribute, visitor: &mut impl Visitor) {
-    match node {
-        StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
-            accept_override_specifier(override_specifier, visitor);
+    if visitor.enter_state_variable_attribute(node) {
+        match node {
+            StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
+                accept_override_specifier(override_specifier, visitor);
+            }
+            StateVariableAttribute::ConstantKeyword
+            | StateVariableAttribute::InternalKeyword
+            | StateVariableAttribute::PrivateKeyword
+            | StateVariableAttribute::PublicKeyword
+            | StateVariableAttribute::ImmutableKeyword
+            | StateVariableAttribute::TransientKeyword => {}
         }
-        StateVariableAttribute::ConstantKeyword
-        | StateVariableAttribute::InternalKeyword
-        | StateVariableAttribute::PrivateKeyword
-        | StateVariableAttribute::PublicKeyword
-        | StateVariableAttribute::ImmutableKeyword
-        | StateVariableAttribute::TransientKeyword => {}
+        visitor.leave_state_variable_attribute(node);
     }
 }
 
 pub fn accept_function_name(_node: &FunctionName, _visitor: &mut impl Visitor) {}
 
 pub fn accept_function_attribute(node: &FunctionAttribute, visitor: &mut impl Visitor) {
-    match node {
-        FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-            accept_modifier_invocation(modifier_invocation, visitor);
+    if visitor.enter_function_attribute(node) {
+        match node {
+            FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+                accept_modifier_invocation(modifier_invocation, visitor);
+            }
+            FunctionAttribute::OverrideSpecifier(ref override_specifier) => {
+                accept_override_specifier(override_specifier, visitor);
+            }
+            FunctionAttribute::ExternalKeyword
+            | FunctionAttribute::InternalKeyword
+            | FunctionAttribute::PayableKeyword
+            | FunctionAttribute::PrivateKeyword
+            | FunctionAttribute::PublicKeyword
+            | FunctionAttribute::PureKeyword
+            | FunctionAttribute::ViewKeyword
+            | FunctionAttribute::VirtualKeyword => {}
         }
-        FunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-            accept_override_specifier(override_specifier, visitor);
-        }
-        FunctionAttribute::ExternalKeyword
-        | FunctionAttribute::InternalKeyword
-        | FunctionAttribute::PayableKeyword
-        | FunctionAttribute::PrivateKeyword
-        | FunctionAttribute::PublicKeyword
-        | FunctionAttribute::PureKeyword
-        | FunctionAttribute::ViewKeyword
-        | FunctionAttribute::VirtualKeyword => {}
+        visitor.leave_function_attribute(node);
     }
 }
 
 pub fn accept_function_body(node: &FunctionBody, visitor: &mut impl Visitor) {
-    match node {
-        FunctionBody::Block(ref block) => {
-            accept_block(block, visitor);
+    if visitor.enter_function_body(node) {
+        match node {
+            FunctionBody::Block(ref block) => {
+                accept_block(block, visitor);
+            }
+            FunctionBody::Semicolon => {}
         }
-        FunctionBody::Semicolon => {}
+        visitor.leave_function_body(node);
     }
 }
 
 pub fn accept_constructor_attribute(node: &ConstructorAttribute, visitor: &mut impl Visitor) {
-    match node {
-        ConstructorAttribute::ModifierInvocation(ref modifier_invocation) => {
-            accept_modifier_invocation(modifier_invocation, visitor);
+    if visitor.enter_constructor_attribute(node) {
+        match node {
+            ConstructorAttribute::ModifierInvocation(ref modifier_invocation) => {
+                accept_modifier_invocation(modifier_invocation, visitor);
+            }
+            ConstructorAttribute::InternalKeyword
+            | ConstructorAttribute::PayableKeyword
+            | ConstructorAttribute::PublicKeyword => {}
         }
-        ConstructorAttribute::InternalKeyword
-        | ConstructorAttribute::PayableKeyword
-        | ConstructorAttribute::PublicKeyword => {}
+        visitor.leave_constructor_attribute(node);
     }
 }
 
@@ -2431,18 +2481,21 @@ pub fn accept_fallback_function_attribute(
     node: &FallbackFunctionAttribute,
     visitor: &mut impl Visitor,
 ) {
-    match node {
-        FallbackFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-            accept_modifier_invocation(modifier_invocation, visitor);
+    if visitor.enter_fallback_function_attribute(node) {
+        match node {
+            FallbackFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+                accept_modifier_invocation(modifier_invocation, visitor);
+            }
+            FallbackFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
+                accept_override_specifier(override_specifier, visitor);
+            }
+            FallbackFunctionAttribute::ExternalKeyword
+            | FallbackFunctionAttribute::PayableKeyword
+            | FallbackFunctionAttribute::PureKeyword
+            | FallbackFunctionAttribute::ViewKeyword
+            | FallbackFunctionAttribute::VirtualKeyword => {}
         }
-        FallbackFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-            accept_override_specifier(override_specifier, visitor);
-        }
-        FallbackFunctionAttribute::ExternalKeyword
-        | FallbackFunctionAttribute::PayableKeyword
-        | FallbackFunctionAttribute::PureKeyword
-        | FallbackFunctionAttribute::ViewKeyword
-        | FallbackFunctionAttribute::VirtualKeyword => {}
+        visitor.leave_fallback_function_attribute(node);
     }
 }
 
@@ -2450,136 +2503,157 @@ pub fn accept_receive_function_attribute(
     node: &ReceiveFunctionAttribute,
     visitor: &mut impl Visitor,
 ) {
-    match node {
-        ReceiveFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-            accept_modifier_invocation(modifier_invocation, visitor);
+    if visitor.enter_receive_function_attribute(node) {
+        match node {
+            ReceiveFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+                accept_modifier_invocation(modifier_invocation, visitor);
+            }
+            ReceiveFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
+                accept_override_specifier(override_specifier, visitor);
+            }
+            ReceiveFunctionAttribute::ExternalKeyword
+            | ReceiveFunctionAttribute::PayableKeyword
+            | ReceiveFunctionAttribute::VirtualKeyword => {}
         }
-        ReceiveFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-            accept_override_specifier(override_specifier, visitor);
-        }
-        ReceiveFunctionAttribute::ExternalKeyword
-        | ReceiveFunctionAttribute::PayableKeyword
-        | ReceiveFunctionAttribute::VirtualKeyword => {}
+        visitor.leave_receive_function_attribute(node);
     }
 }
 
 pub fn accept_modifier_attribute(node: &ModifierAttribute, visitor: &mut impl Visitor) {
-    match node {
-        ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
-            accept_override_specifier(override_specifier, visitor);
+    if visitor.enter_modifier_attribute(node) {
+        match node {
+            ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
+                accept_override_specifier(override_specifier, visitor);
+            }
+            ModifierAttribute::VirtualKeyword => {}
         }
-        ModifierAttribute::VirtualKeyword => {}
+        visitor.leave_modifier_attribute(node);
     }
 }
 
 pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
-    match node {
-        TypeName::ArrayTypeName(ref array_type_name) => {
-            accept_array_type_name(array_type_name, visitor);
+    if visitor.enter_type_name(node) {
+        match node {
+            TypeName::ArrayTypeName(ref array_type_name) => {
+                accept_array_type_name(array_type_name, visitor);
+            }
+            TypeName::FunctionType(ref function_type) => {
+                accept_function_type(function_type, visitor);
+            }
+            TypeName::MappingType(ref mapping_type) => {
+                accept_mapping_type(mapping_type, visitor);
+            }
+            TypeName::ElementaryType(ref elementary_type) => {
+                accept_elementary_type(elementary_type, visitor);
+            }
+            TypeName::IdentifierPath(ref identifier_path) => {
+                accept_identifier_path(identifier_path, visitor);
+            }
         }
-        TypeName::FunctionType(ref function_type) => {
-            accept_function_type(function_type, visitor);
-        }
-        TypeName::MappingType(ref mapping_type) => {
-            accept_mapping_type(mapping_type, visitor);
-        }
-        TypeName::ElementaryType(ref elementary_type) => {
-            accept_elementary_type(elementary_type, visitor);
-        }
-        TypeName::IdentifierPath(ref identifier_path) => {
-            accept_identifier_path(identifier_path, visitor);
-        }
+        visitor.leave_type_name(node);
     }
 }
 
 pub fn accept_function_type_attribute(_node: &FunctionTypeAttribute, _visitor: &mut impl Visitor) {}
 
 pub fn accept_mapping_key_type(node: &MappingKeyType, visitor: &mut impl Visitor) {
-    match node {
-        MappingKeyType::ElementaryType(ref elementary_type) => {
-            accept_elementary_type(elementary_type, visitor);
+    if visitor.enter_mapping_key_type(node) {
+        match node {
+            MappingKeyType::ElementaryType(ref elementary_type) => {
+                accept_elementary_type(elementary_type, visitor);
+            }
+            MappingKeyType::IdentifierPath(ref identifier_path) => {
+                accept_identifier_path(identifier_path, visitor);
+            }
         }
-        MappingKeyType::IdentifierPath(ref identifier_path) => {
-            accept_identifier_path(identifier_path, visitor);
-        }
+        visitor.leave_mapping_key_type(node);
     }
 }
 
 pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor) {
-    match node {
-        ElementaryType::AddressType(ref address_type) => {
-            accept_address_type(address_type, visitor);
+    if visitor.enter_elementary_type(node) {
+        match node {
+            ElementaryType::AddressType(ref address_type) => {
+                accept_address_type(address_type, visitor);
+            }
+            ElementaryType::BytesKeyword(_)
+            | ElementaryType::IntKeyword(_)
+            | ElementaryType::UintKeyword(_)
+            | ElementaryType::FixedKeyword(_)
+            | ElementaryType::UfixedKeyword(_) => {}
+            ElementaryType::BoolKeyword | ElementaryType::StringKeyword => {}
         }
-        ElementaryType::BytesKeyword(_)
-        | ElementaryType::IntKeyword(_)
-        | ElementaryType::UintKeyword(_)
-        | ElementaryType::FixedKeyword(_)
-        | ElementaryType::UfixedKeyword(_) => {}
-        ElementaryType::BoolKeyword | ElementaryType::StringKeyword => {}
+        visitor.leave_elementary_type(node);
     }
 }
 
 pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
-    match node {
-        Statement::IfStatement(ref if_statement) => {
-            accept_if_statement(if_statement, visitor);
+    if visitor.enter_statement(node) {
+        match node {
+            Statement::IfStatement(ref if_statement) => {
+                accept_if_statement(if_statement, visitor);
+            }
+            Statement::ForStatement(ref for_statement) => {
+                accept_for_statement(for_statement, visitor);
+            }
+            Statement::WhileStatement(ref while_statement) => {
+                accept_while_statement(while_statement, visitor);
+            }
+            Statement::DoWhileStatement(ref do_while_statement) => {
+                accept_do_while_statement(do_while_statement, visitor);
+            }
+            Statement::ContinueStatement(ref continue_statement) => {
+                accept_continue_statement(continue_statement, visitor);
+            }
+            Statement::BreakStatement(ref break_statement) => {
+                accept_break_statement(break_statement, visitor);
+            }
+            Statement::ReturnStatement(ref return_statement) => {
+                accept_return_statement(return_statement, visitor);
+            }
+            Statement::EmitStatement(ref emit_statement) => {
+                accept_emit_statement(emit_statement, visitor);
+            }
+            Statement::TryStatement(ref try_statement) => {
+                accept_try_statement(try_statement, visitor);
+            }
+            Statement::RevertStatement(ref revert_statement) => {
+                accept_revert_statement(revert_statement, visitor);
+            }
+            Statement::AssemblyStatement(ref assembly_statement) => {
+                accept_assembly_statement(assembly_statement, visitor);
+            }
+            Statement::Block(ref block) => {
+                accept_block(block, visitor);
+            }
+            Statement::UncheckedBlock(ref unchecked_block) => {
+                accept_unchecked_block(unchecked_block, visitor);
+            }
+            Statement::TupleDeconstructionStatement(ref tuple_deconstruction_statement) => {
+                accept_tuple_deconstruction_statement(tuple_deconstruction_statement, visitor);
+            }
+            Statement::VariableDeclarationStatement(ref variable_declaration_statement) => {
+                accept_variable_declaration_statement(variable_declaration_statement, visitor);
+            }
+            Statement::ExpressionStatement(ref expression_statement) => {
+                accept_expression_statement(expression_statement, visitor);
+            }
         }
-        Statement::ForStatement(ref for_statement) => {
-            accept_for_statement(for_statement, visitor);
-        }
-        Statement::WhileStatement(ref while_statement) => {
-            accept_while_statement(while_statement, visitor);
-        }
-        Statement::DoWhileStatement(ref do_while_statement) => {
-            accept_do_while_statement(do_while_statement, visitor);
-        }
-        Statement::ContinueStatement(ref continue_statement) => {
-            accept_continue_statement(continue_statement, visitor);
-        }
-        Statement::BreakStatement(ref break_statement) => {
-            accept_break_statement(break_statement, visitor);
-        }
-        Statement::ReturnStatement(ref return_statement) => {
-            accept_return_statement(return_statement, visitor);
-        }
-        Statement::EmitStatement(ref emit_statement) => {
-            accept_emit_statement(emit_statement, visitor);
-        }
-        Statement::TryStatement(ref try_statement) => {
-            accept_try_statement(try_statement, visitor);
-        }
-        Statement::RevertStatement(ref revert_statement) => {
-            accept_revert_statement(revert_statement, visitor);
-        }
-        Statement::AssemblyStatement(ref assembly_statement) => {
-            accept_assembly_statement(assembly_statement, visitor);
-        }
-        Statement::Block(ref block) => {
-            accept_block(block, visitor);
-        }
-        Statement::UncheckedBlock(ref unchecked_block) => {
-            accept_unchecked_block(unchecked_block, visitor);
-        }
-        Statement::TupleDeconstructionStatement(ref tuple_deconstruction_statement) => {
-            accept_tuple_deconstruction_statement(tuple_deconstruction_statement, visitor);
-        }
-        Statement::VariableDeclarationStatement(ref variable_declaration_statement) => {
-            accept_variable_declaration_statement(variable_declaration_statement, visitor);
-        }
-        Statement::ExpressionStatement(ref expression_statement) => {
-            accept_expression_statement(expression_statement, visitor);
-        }
+        visitor.leave_statement(node);
     }
 }
 
 pub fn accept_tuple_member(node: &TupleMember, visitor: &mut impl Visitor) {
-    match node {
-        TupleMember::TypedTupleMember(ref typed_tuple_member) => {
-            accept_typed_tuple_member(typed_tuple_member, visitor);
+    if visitor.enter_tuple_member(node) {
+        match node {
+            TupleMember::TypedTupleMember(ref typed_tuple_member) => {
+                accept_typed_tuple_member(typed_tuple_member, visitor);
+            }
+            TupleMember::UntypedTupleMember(ref untyped_tuple_member) => {
+                accept_untyped_tuple_member(untyped_tuple_member, visitor);
+            }
         }
-        TupleMember::UntypedTupleMember(ref untyped_tuple_member) => {
-            accept_untyped_tuple_member(untyped_tuple_member, visitor);
-        }
+        visitor.leave_tuple_member(node);
     }
 }
 
@@ -2587,10 +2661,13 @@ pub fn accept_variable_declaration_type(
     node: &VariableDeclarationType,
     visitor: &mut impl Visitor,
 ) {
-    match node {
-        VariableDeclarationType::TypeName(ref type_name) => {
-            accept_type_name(type_name, visitor);
+    if visitor.enter_variable_declaration_type(node) {
+        match node {
+            VariableDeclarationType::TypeName(ref type_name) => {
+                accept_type_name(type_name, visitor);
+            }
         }
+        visitor.leave_variable_declaration_type(node);
     }
 }
 
@@ -2600,151 +2677,166 @@ pub fn accept_for_statement_initialization(
     node: &ForStatementInitialization,
     visitor: &mut impl Visitor,
 ) {
-    match node {
-        ForStatementInitialization::TupleDeconstructionStatement(
-            ref tuple_deconstruction_statement,
-        ) => {
-            accept_tuple_deconstruction_statement(tuple_deconstruction_statement, visitor);
+    if visitor.enter_for_statement_initialization(node) {
+        match node {
+            ForStatementInitialization::TupleDeconstructionStatement(
+                ref tuple_deconstruction_statement,
+            ) => {
+                accept_tuple_deconstruction_statement(tuple_deconstruction_statement, visitor);
+            }
+            ForStatementInitialization::VariableDeclarationStatement(
+                ref variable_declaration_statement,
+            ) => {
+                accept_variable_declaration_statement(variable_declaration_statement, visitor);
+            }
+            ForStatementInitialization::ExpressionStatement(ref expression_statement) => {
+                accept_expression_statement(expression_statement, visitor);
+            }
+            ForStatementInitialization::Semicolon => {}
         }
-        ForStatementInitialization::VariableDeclarationStatement(
-            ref variable_declaration_statement,
-        ) => {
-            accept_variable_declaration_statement(variable_declaration_statement, visitor);
-        }
-        ForStatementInitialization::ExpressionStatement(ref expression_statement) => {
-            accept_expression_statement(expression_statement, visitor);
-        }
-        ForStatementInitialization::Semicolon => {}
+        visitor.leave_for_statement_initialization(node);
     }
 }
 
 pub fn accept_for_statement_condition(node: &ForStatementCondition, visitor: &mut impl Visitor) {
-    match node {
-        ForStatementCondition::ExpressionStatement(ref expression_statement) => {
-            accept_expression_statement(expression_statement, visitor);
+    if visitor.enter_for_statement_condition(node) {
+        match node {
+            ForStatementCondition::ExpressionStatement(ref expression_statement) => {
+                accept_expression_statement(expression_statement, visitor);
+            }
+            ForStatementCondition::Semicolon => {}
         }
-        ForStatementCondition::Semicolon => {}
+        visitor.leave_for_statement_condition(node);
     }
 }
 
 pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
-    match node {
-        Expression::AssignmentExpression(ref assignment_expression) => {
-            accept_assignment_expression(assignment_expression, visitor);
+    if visitor.enter_expression(node) {
+        match node {
+            Expression::AssignmentExpression(ref assignment_expression) => {
+                accept_assignment_expression(assignment_expression, visitor);
+            }
+            Expression::ConditionalExpression(ref conditional_expression) => {
+                accept_conditional_expression(conditional_expression, visitor);
+            }
+            Expression::OrExpression(ref or_expression) => {
+                accept_or_expression(or_expression, visitor);
+            }
+            Expression::AndExpression(ref and_expression) => {
+                accept_and_expression(and_expression, visitor);
+            }
+            Expression::EqualityExpression(ref equality_expression) => {
+                accept_equality_expression(equality_expression, visitor);
+            }
+            Expression::InequalityExpression(ref inequality_expression) => {
+                accept_inequality_expression(inequality_expression, visitor);
+            }
+            Expression::BitwiseOrExpression(ref bitwise_or_expression) => {
+                accept_bitwise_or_expression(bitwise_or_expression, visitor);
+            }
+            Expression::BitwiseXorExpression(ref bitwise_xor_expression) => {
+                accept_bitwise_xor_expression(bitwise_xor_expression, visitor);
+            }
+            Expression::BitwiseAndExpression(ref bitwise_and_expression) => {
+                accept_bitwise_and_expression(bitwise_and_expression, visitor);
+            }
+            Expression::ShiftExpression(ref shift_expression) => {
+                accept_shift_expression(shift_expression, visitor);
+            }
+            Expression::AdditiveExpression(ref additive_expression) => {
+                accept_additive_expression(additive_expression, visitor);
+            }
+            Expression::MultiplicativeExpression(ref multiplicative_expression) => {
+                accept_multiplicative_expression(multiplicative_expression, visitor);
+            }
+            Expression::ExponentiationExpression(ref exponentiation_expression) => {
+                accept_exponentiation_expression(exponentiation_expression, visitor);
+            }
+            Expression::PostfixExpression(ref postfix_expression) => {
+                accept_postfix_expression(postfix_expression, visitor);
+            }
+            Expression::PrefixExpression(ref prefix_expression) => {
+                accept_prefix_expression(prefix_expression, visitor);
+            }
+            Expression::FunctionCallExpression(ref function_call_expression) => {
+                accept_function_call_expression(function_call_expression, visitor);
+            }
+            Expression::CallOptionsExpression(ref call_options_expression) => {
+                accept_call_options_expression(call_options_expression, visitor);
+            }
+            Expression::MemberAccessExpression(ref member_access_expression) => {
+                accept_member_access_expression(member_access_expression, visitor);
+            }
+            Expression::IndexAccessExpression(ref index_access_expression) => {
+                accept_index_access_expression(index_access_expression, visitor);
+            }
+            Expression::NewExpression(ref new_expression) => {
+                accept_new_expression(new_expression, visitor);
+            }
+            Expression::TupleExpression(ref tuple_expression) => {
+                accept_tuple_expression(tuple_expression, visitor);
+            }
+            Expression::TypeExpression(ref type_expression) => {
+                accept_type_expression(type_expression, visitor);
+            }
+            Expression::ArrayExpression(ref array_expression) => {
+                accept_array_expression(array_expression, visitor);
+            }
+            Expression::HexNumberExpression(ref hex_number_expression) => {
+                accept_hex_number_expression(hex_number_expression, visitor);
+            }
+            Expression::DecimalNumberExpression(ref decimal_number_expression) => {
+                accept_decimal_number_expression(decimal_number_expression, visitor);
+            }
+            Expression::StringExpression(ref string_expression) => {
+                accept_string_expression(string_expression, visitor);
+            }
+            Expression::ElementaryType(ref elementary_type) => {
+                accept_elementary_type(elementary_type, visitor);
+            }
+            Expression::Identifier(_) => {}
+            Expression::PayableKeyword
+            | Expression::ThisKeyword
+            | Expression::SuperKeyword
+            | Expression::TrueKeyword
+            | Expression::FalseKeyword => {}
         }
-        Expression::ConditionalExpression(ref conditional_expression) => {
-            accept_conditional_expression(conditional_expression, visitor);
-        }
-        Expression::OrExpression(ref or_expression) => {
-            accept_or_expression(or_expression, visitor);
-        }
-        Expression::AndExpression(ref and_expression) => {
-            accept_and_expression(and_expression, visitor);
-        }
-        Expression::EqualityExpression(ref equality_expression) => {
-            accept_equality_expression(equality_expression, visitor);
-        }
-        Expression::InequalityExpression(ref inequality_expression) => {
-            accept_inequality_expression(inequality_expression, visitor);
-        }
-        Expression::BitwiseOrExpression(ref bitwise_or_expression) => {
-            accept_bitwise_or_expression(bitwise_or_expression, visitor);
-        }
-        Expression::BitwiseXorExpression(ref bitwise_xor_expression) => {
-            accept_bitwise_xor_expression(bitwise_xor_expression, visitor);
-        }
-        Expression::BitwiseAndExpression(ref bitwise_and_expression) => {
-            accept_bitwise_and_expression(bitwise_and_expression, visitor);
-        }
-        Expression::ShiftExpression(ref shift_expression) => {
-            accept_shift_expression(shift_expression, visitor);
-        }
-        Expression::AdditiveExpression(ref additive_expression) => {
-            accept_additive_expression(additive_expression, visitor);
-        }
-        Expression::MultiplicativeExpression(ref multiplicative_expression) => {
-            accept_multiplicative_expression(multiplicative_expression, visitor);
-        }
-        Expression::ExponentiationExpression(ref exponentiation_expression) => {
-            accept_exponentiation_expression(exponentiation_expression, visitor);
-        }
-        Expression::PostfixExpression(ref postfix_expression) => {
-            accept_postfix_expression(postfix_expression, visitor);
-        }
-        Expression::PrefixExpression(ref prefix_expression) => {
-            accept_prefix_expression(prefix_expression, visitor);
-        }
-        Expression::FunctionCallExpression(ref function_call_expression) => {
-            accept_function_call_expression(function_call_expression, visitor);
-        }
-        Expression::CallOptionsExpression(ref call_options_expression) => {
-            accept_call_options_expression(call_options_expression, visitor);
-        }
-        Expression::MemberAccessExpression(ref member_access_expression) => {
-            accept_member_access_expression(member_access_expression, visitor);
-        }
-        Expression::IndexAccessExpression(ref index_access_expression) => {
-            accept_index_access_expression(index_access_expression, visitor);
-        }
-        Expression::NewExpression(ref new_expression) => {
-            accept_new_expression(new_expression, visitor);
-        }
-        Expression::TupleExpression(ref tuple_expression) => {
-            accept_tuple_expression(tuple_expression, visitor);
-        }
-        Expression::TypeExpression(ref type_expression) => {
-            accept_type_expression(type_expression, visitor);
-        }
-        Expression::ArrayExpression(ref array_expression) => {
-            accept_array_expression(array_expression, visitor);
-        }
-        Expression::HexNumberExpression(ref hex_number_expression) => {
-            accept_hex_number_expression(hex_number_expression, visitor);
-        }
-        Expression::DecimalNumberExpression(ref decimal_number_expression) => {
-            accept_decimal_number_expression(decimal_number_expression, visitor);
-        }
-        Expression::StringExpression(ref string_expression) => {
-            accept_string_expression(string_expression, visitor);
-        }
-        Expression::ElementaryType(ref elementary_type) => {
-            accept_elementary_type(elementary_type, visitor);
-        }
-        Expression::Identifier(_) => {}
-        Expression::PayableKeyword
-        | Expression::ThisKeyword
-        | Expression::SuperKeyword
-        | Expression::TrueKeyword
-        | Expression::FalseKeyword => {}
+        visitor.leave_expression(node);
     }
 }
 
 pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut impl Visitor) {
-    match node {
-        ArgumentsDeclaration::PositionalArgumentsDeclaration(
-            ref positional_arguments_declaration,
-        ) => {
-            accept_positional_arguments_declaration(positional_arguments_declaration, visitor);
+    if visitor.enter_arguments_declaration(node) {
+        match node {
+            ArgumentsDeclaration::PositionalArgumentsDeclaration(
+                ref positional_arguments_declaration,
+            ) => {
+                accept_positional_arguments_declaration(positional_arguments_declaration, visitor);
+            }
+            ArgumentsDeclaration::NamedArgumentsDeclaration(ref named_arguments_declaration) => {
+                accept_named_arguments_declaration(named_arguments_declaration, visitor);
+            }
         }
-        ArgumentsDeclaration::NamedArgumentsDeclaration(ref named_arguments_declaration) => {
-            accept_named_arguments_declaration(named_arguments_declaration, visitor);
-        }
+        visitor.leave_arguments_declaration(node);
     }
 }
 
 pub fn accept_number_unit(_node: &NumberUnit, _visitor: &mut impl Visitor) {}
 
 pub fn accept_string_expression(node: &StringExpression, visitor: &mut impl Visitor) {
-    match node {
-        StringExpression::StringLiterals(ref string_literals) => {
-            accept_string_literals(string_literals, visitor);
+    if visitor.enter_string_expression(node) {
+        match node {
+            StringExpression::StringLiterals(ref string_literals) => {
+                accept_string_literals(string_literals, visitor);
+            }
+            StringExpression::HexStringLiterals(ref hex_string_literals) => {
+                accept_hex_string_literals(hex_string_literals, visitor);
+            }
+            StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
+                accept_unicode_string_literals(unicode_string_literals, visitor);
+            }
         }
-        StringExpression::HexStringLiterals(ref hex_string_literals) => {
-            accept_hex_string_literals(hex_string_literals, visitor);
-        }
-        StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
-            accept_unicode_string_literals(unicode_string_literals, visitor);
-        }
+        visitor.leave_string_expression(node);
     }
 }
 
@@ -2755,80 +2847,100 @@ pub fn accept_hex_string_literal(_node: &HexStringLiteral, _visitor: &mut impl V
 pub fn accept_unicode_string_literal(_node: &UnicodeStringLiteral, _visitor: &mut impl Visitor) {}
 
 pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
-    match node {
-        YulStatement::YulBlock(ref yul_block) => {
-            accept_yul_block(yul_block, visitor);
+    if visitor.enter_yul_statement(node) {
+        match node {
+            YulStatement::YulBlock(ref yul_block) => {
+                accept_yul_block(yul_block, visitor);
+            }
+            YulStatement::YulFunctionDefinition(ref yul_function_definition) => {
+                accept_yul_function_definition(yul_function_definition, visitor);
+            }
+            YulStatement::YulIfStatement(ref yul_if_statement) => {
+                accept_yul_if_statement(yul_if_statement, visitor);
+            }
+            YulStatement::YulForStatement(ref yul_for_statement) => {
+                accept_yul_for_statement(yul_for_statement, visitor);
+            }
+            YulStatement::YulSwitchStatement(ref yul_switch_statement) => {
+                accept_yul_switch_statement(yul_switch_statement, visitor);
+            }
+            YulStatement::YulLeaveStatement(ref yul_leave_statement) => {
+                accept_yul_leave_statement(yul_leave_statement, visitor);
+            }
+            YulStatement::YulBreakStatement(ref yul_break_statement) => {
+                accept_yul_break_statement(yul_break_statement, visitor);
+            }
+            YulStatement::YulContinueStatement(ref yul_continue_statement) => {
+                accept_yul_continue_statement(yul_continue_statement, visitor);
+            }
+            YulStatement::YulVariableAssignmentStatement(ref yul_variable_assignment_statement) => {
+                accept_yul_variable_assignment_statement(
+                    yul_variable_assignment_statement,
+                    visitor,
+                );
+            }
+            YulStatement::YulVariableDeclarationStatement(
+                ref yul_variable_declaration_statement,
+            ) => {
+                accept_yul_variable_declaration_statement(
+                    yul_variable_declaration_statement,
+                    visitor,
+                );
+            }
+            YulStatement::YulExpression(ref yul_expression) => {
+                accept_yul_expression(yul_expression, visitor);
+            }
         }
-        YulStatement::YulFunctionDefinition(ref yul_function_definition) => {
-            accept_yul_function_definition(yul_function_definition, visitor);
-        }
-        YulStatement::YulIfStatement(ref yul_if_statement) => {
-            accept_yul_if_statement(yul_if_statement, visitor);
-        }
-        YulStatement::YulForStatement(ref yul_for_statement) => {
-            accept_yul_for_statement(yul_for_statement, visitor);
-        }
-        YulStatement::YulSwitchStatement(ref yul_switch_statement) => {
-            accept_yul_switch_statement(yul_switch_statement, visitor);
-        }
-        YulStatement::YulLeaveStatement(ref yul_leave_statement) => {
-            accept_yul_leave_statement(yul_leave_statement, visitor);
-        }
-        YulStatement::YulBreakStatement(ref yul_break_statement) => {
-            accept_yul_break_statement(yul_break_statement, visitor);
-        }
-        YulStatement::YulContinueStatement(ref yul_continue_statement) => {
-            accept_yul_continue_statement(yul_continue_statement, visitor);
-        }
-        YulStatement::YulVariableAssignmentStatement(ref yul_variable_assignment_statement) => {
-            accept_yul_variable_assignment_statement(yul_variable_assignment_statement, visitor);
-        }
-        YulStatement::YulVariableDeclarationStatement(ref yul_variable_declaration_statement) => {
-            accept_yul_variable_declaration_statement(yul_variable_declaration_statement, visitor);
-        }
-        YulStatement::YulExpression(ref yul_expression) => {
-            accept_yul_expression(yul_expression, visitor);
-        }
+        visitor.leave_yul_statement(node);
     }
 }
 
 pub fn accept_yul_assignment_operator(_node: &YulAssignmentOperator, _visitor: &mut impl Visitor) {}
 
 pub fn accept_yul_switch_case(node: &YulSwitchCase, visitor: &mut impl Visitor) {
-    match node {
-        YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
-            accept_yul_default_case(yul_default_case, visitor);
+    if visitor.enter_yul_switch_case(node) {
+        match node {
+            YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
+                accept_yul_default_case(yul_default_case, visitor);
+            }
+            YulSwitchCase::YulValueCase(ref yul_value_case) => {
+                accept_yul_value_case(yul_value_case, visitor);
+            }
         }
-        YulSwitchCase::YulValueCase(ref yul_value_case) => {
-            accept_yul_value_case(yul_value_case, visitor);
-        }
+        visitor.leave_yul_switch_case(node);
     }
 }
 
 pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
-    match node {
-        YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
-            accept_yul_function_call_expression(yul_function_call_expression, visitor);
+    if visitor.enter_yul_expression(node) {
+        match node {
+            YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
+                accept_yul_function_call_expression(yul_function_call_expression, visitor);
+            }
+            YulExpression::YulLiteral(ref yul_literal) => {
+                accept_yul_literal(yul_literal, visitor);
+            }
+            YulExpression::YulPath(ref yul_path) => {
+                accept_yul_path(yul_path, visitor);
+            }
         }
-        YulExpression::YulLiteral(ref yul_literal) => {
-            accept_yul_literal(yul_literal, visitor);
-        }
-        YulExpression::YulPath(ref yul_path) => {
-            accept_yul_path(yul_path, visitor);
-        }
+        visitor.leave_yul_expression(node);
     }
 }
 
 pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
-    match node {
-        YulLiteral::HexStringLiteral(ref hex_string_literal) => {
-            accept_hex_string_literal(hex_string_literal, visitor);
+    if visitor.enter_yul_literal(node) {
+        match node {
+            YulLiteral::HexStringLiteral(ref hex_string_literal) => {
+                accept_hex_string_literal(hex_string_literal, visitor);
+            }
+            YulLiteral::StringLiteral(ref string_literal) => {
+                accept_string_literal(string_literal, visitor);
+            }
+            YulLiteral::YulDecimalLiteral(_) | YulLiteral::YulHexLiteral(_) => {}
+            YulLiteral::YulTrueKeyword | YulLiteral::YulFalseKeyword => {}
         }
-        YulLiteral::StringLiteral(ref string_literal) => {
-            accept_string_literal(string_literal, visitor);
-        }
-        YulLiteral::YulDecimalLiteral(_) | YulLiteral::YulHexLiteral(_) => {}
-        YulLiteral::YulTrueKeyword | YulLiteral::YulFalseKeyword => {}
+        visitor.leave_yul_literal(node);
     }
 }
 

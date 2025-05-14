@@ -54,26 +54,29 @@
       pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
     {% else %}
       pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
-        match node {
-          {% for nonterminal in choice.nonterminal_types -%}
-            {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
-              accept_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}, visitor);
-            }
-          {%- endfor %}
-          {%- if choice.non_unique_terminal_types | length > 0 %}
-            {%- for terminal in choice.non_unique_terminal_types -%}
-              {%- if not loop.first -%} | {%- endif -%}
-              {{ parent_type }}::{{terminal}}(_)
-            {%- endfor -%}
-            => {}
-          {% endif -%}
-          {%- if choice.unique_terminal_types | length > 0 %}
-            {%- for terminal in choice.unique_terminal_types -%}
-              {%- if not loop.first -%} | {%- endif -%}
-              {{ parent_type }}::{{terminal}}
-            {%- endfor -%}
-            => {}
-          {% endif -%}
+        if visitor.enter_{{ parent_type | snake_case }}(node) {
+          match node {
+            {% for nonterminal in choice.nonterminal_types -%}
+              {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
+                accept_{{ nonterminal | snake_case }}({{ nonterminal | snake_case }}, visitor);
+              }
+            {%- endfor %}
+            {%- if choice.non_unique_terminal_types | length > 0 %}
+              {%- for terminal in choice.non_unique_terminal_types -%}
+                {%- if not loop.first -%} | {%- endif -%}
+                {{ parent_type }}::{{terminal}}(_)
+              {%- endfor -%}
+              => {}
+            {% endif -%}
+            {%- if choice.unique_terminal_types | length > 0 %}
+              {%- for terminal in choice.unique_terminal_types -%}
+                {%- if not loop.first -%} | {%- endif -%}
+                {{ parent_type }}::{{terminal}}
+              {%- endfor -%}
+              => {}
+            {% endif -%}
+          }
+          visitor.leave_{{ parent_type | snake_case }}(node);
         }
       }
     {% endif %}
