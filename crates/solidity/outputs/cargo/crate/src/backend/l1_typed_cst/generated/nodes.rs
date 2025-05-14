@@ -708,6 +708,7 @@ pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
 pub struct AssignmentExpressionStruct {
     pub node_id: NodeId,
     pub left_operand: Expression,
+    pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
 }
 
@@ -745,6 +746,7 @@ pub type EqualityExpression = Rc<EqualityExpressionStruct>;
 pub struct EqualityExpressionStruct {
     pub node_id: NodeId,
     pub left_operand: Expression,
+    pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
 }
 
@@ -754,6 +756,7 @@ pub type InequalityExpression = Rc<InequalityExpressionStruct>;
 pub struct InequalityExpressionStruct {
     pub node_id: NodeId,
     pub left_operand: Expression,
+    pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
 }
 
@@ -790,6 +793,7 @@ pub type ShiftExpression = Rc<ShiftExpressionStruct>;
 pub struct ShiftExpressionStruct {
     pub node_id: NodeId,
     pub left_operand: Expression,
+    pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
 }
 
@@ -799,6 +803,7 @@ pub type AdditiveExpression = Rc<AdditiveExpressionStruct>;
 pub struct AdditiveExpressionStruct {
     pub node_id: NodeId,
     pub left_operand: Expression,
+    pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
 }
 
@@ -808,6 +813,7 @@ pub type MultiplicativeExpression = Rc<MultiplicativeExpressionStruct>;
 pub struct MultiplicativeExpressionStruct {
     pub node_id: NodeId,
     pub left_operand: Expression,
+    pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
 }
 
@@ -817,6 +823,7 @@ pub type ExponentiationExpression = Rc<ExponentiationExpressionStruct>;
 pub struct ExponentiationExpressionStruct {
     pub node_id: NodeId,
     pub left_operand: Expression,
+    pub operator: Rc<TerminalNode>,
     pub right_operand: Expression,
 }
 
@@ -826,6 +833,7 @@ pub type PostfixExpression = Rc<PostfixExpressionStruct>;
 pub struct PostfixExpressionStruct {
     pub node_id: NodeId,
     pub operand: Expression,
+    pub operator: Rc<TerminalNode>,
 }
 
 pub type PrefixExpression = Rc<PrefixExpressionStruct>;
@@ -833,6 +841,7 @@ pub type PrefixExpression = Rc<PrefixExpressionStruct>;
 #[derive(Debug)]
 pub struct PrefixExpressionStruct {
     pub node_id: NodeId,
+    pub operator: Rc<TerminalNode>,
     pub operand: Expression,
 }
 
