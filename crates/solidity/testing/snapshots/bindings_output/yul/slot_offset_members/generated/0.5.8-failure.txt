@@ -38,11 +38,11 @@ Definiens:
  3 │ │ ╭─▶     function test() public {
    ┆ ┆ ┆   
  5 │ │ │               let s := sload(data.slot)
-   │ │ │   ───────────────────┬──────────────────  
-   │ │ │                      ╰──────────────────── definiens: 4
+   │ │ │                   ┬  
+   │ │ │                   ╰── definiens: 4
  6 │ │ │               let o := sload(data.offset)
-   │ │ │   ────────────────────┬───────────────────  
-   │ │ │                       ╰───────────────────── definiens: 5
+   │ │ │                   ┬  
+   │ │ │                   ╰── definiens: 5
    ┆ ┆ ┆   
  8 │ │ ├─▶     }
    │ │ │           

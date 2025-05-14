@@ -1857,7 +1857,7 @@ inherit .star_extension
 
 @tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
     [TupleDeconstructionElement
-        @tuple_member [TupleMember variant: [UntypedTupleMember
+        [TupleMember @tuple_member variant: [UntypedTupleMember
             @name name: [Identifier]]
         ]
     ]
@@ -1871,7 +1871,7 @@ inherit .star_extension
 
 @tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
     [TupleDeconstructionElement
-        @tuple_member [TupleMember variant: [TypedTupleMember
+        [TupleMember @tuple_member variant: [TypedTupleMember
             @member_type type_name: [TypeName]
             @name name: [Identifier]]
         ]
@@ -2817,7 +2817,7 @@ inherit .star_extension
 @var_decl [YulVariableDeclarationStatement [YulVariableNames @name [YulIdentifier]]] {
   node def
   attr (def) node_definition = @name
-  attr (def) definiens_node = @var_decl
+  attr (def) definiens_node = @name
 
   edge @var_decl.defs -> def
 }
