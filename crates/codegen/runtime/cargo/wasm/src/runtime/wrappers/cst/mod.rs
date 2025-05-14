@@ -7,12 +7,12 @@ use crate::wasm_crate::utils::{
 mod ffi {
     pub use crate::wasm_crate::bindgen::exports::nomic_foundation::slang::cst::{
         AncestorsIterator, AncestorsIteratorBorrow, Cursor, CursorBorrow, CursorIterator,
-        CursorIteratorBorrow, Edge, EdgeLabel, Guest, GuestAncestorsIterator, GuestCursor,
-        GuestCursorIterator, GuestNonterminalNode, GuestQuery, GuestQueryMatchIterator,
-        GuestTerminalKindExtensions, GuestTerminalNode, Node, NonterminalKind, NonterminalNode,
-        NonterminalNodeBorrow, Query, QueryBorrow, QueryError, QueryMatch, QueryMatchIterator,
-        QueryMatchIteratorBorrow, TerminalKind, TerminalNode, TerminalNodeBorrow, TextIndex,
-        TextRange,
+        CursorIteratorBorrow, Edge, EdgeBorrow, EdgeLabel, Guest, GuestAncestorsIterator,
+        GuestCursor, GuestCursorIterator, GuestEdge, GuestNonterminalNode, GuestQuery,
+        GuestQueryMatchIterator, GuestTerminalKindExtensions, GuestTerminalNode, Node,
+        NonterminalKind, NonterminalNode, NonterminalNodeBorrow, Query, QueryBorrow, QueryError,
+        QueryMatch, QueryMatchIterator, QueryMatchIteratorBorrow, TerminalKind, TerminalNode,
+        TerminalNodeBorrow, TextIndex, TextRange,
     };
 }
 
@@ -26,6 +26,8 @@ mod rust {
 
 impl ffi::Guest for crate::wasm_crate::World {
     type TerminalKindExtensions = TerminalKindExtensionsWrapper;
+
+    type Edge = EdgeWrapper;
 
     type NonterminalNode = NonterminalNodeWrapper;
     type TerminalNode = TerminalNodeWrapper;
@@ -203,25 +205,23 @@ define_rc_wrapper! { TerminalNode {
 //
 //================================================
 
-impl IntoFFI<ffi::Edge> for rust::Edge {
-    #[inline]
-    fn _into_ffi(self) -> ffi::Edge {
-        ffi::Edge {
-            label: self.label._into_ffi(),
-            node: self.node._into_ffi(),
-        }
+define_wrapper! { Edge {
+    fn label(&self) -> ffi::EdgeLabel {
+        self._borrow_ffi().label._into_ffi()
     }
-}
 
-impl FromFFI<rust::Edge> for ffi::Edge {
-    #[inline]
-    fn _from_ffi(self) -> rust::Edge {
-        rust::Edge {
-            label: self.label._from_ffi(),
-            node: self.node._from_ffi(),
-        }
+    fn node(&self) -> ffi::Node {
+        self._borrow_ffi().node.clone()._into_ffi()
     }
-}
+
+    fn create_terminal(label: ffi::EdgeLabel, node: ffi::TerminalNode) -> ffi::Edge {
+        rust::Edge{ label: label._from_ffi(), node: rust::Node::Terminal(node._from_ffi()) }._into_ffi()
+    }
+
+    fn create_nonterminal(label: ffi::EdgeLabel, node: ffi::NonterminalNode) -> ffi::Edge {
+        rust::Edge{ label: label._from_ffi(), node: rust::Node::Nonterminal(node._from_ffi()) }._into_ffi()
+    }
+} }
 
 //================================================
 //

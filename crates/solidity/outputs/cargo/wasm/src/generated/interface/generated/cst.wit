@@ -4391,11 +4391,16 @@ interface cst {
     }
 
     /// Represents a connection between nodes in the syntax tree.
-    record edge {
+    resource edge {
+        /// Creates a new edge connecting a terminal node `node` with the label `label`.
+        create-terminal: static func(label: edge-label, node: terminal-node) -> edge;
+        /// Creates a new edge connecting a nonterminal node `node` with the label `label`.
+        create-nonterminal: static func(label: edge-label, node: nonterminal-node) -> edge;
+
         /// Describes the relationship between this node and its parent.
-        label: edge-label,
+        label: func() -> edge-label;
         /// The target node of this edge.
-        node: node,
+        node: func() -> node;
     }
 
     /// Provides navigation and traversal capabilities over the syntax tree.

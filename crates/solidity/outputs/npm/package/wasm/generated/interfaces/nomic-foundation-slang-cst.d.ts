@@ -4,6 +4,7 @@ export namespace NomicFoundationSlangCst {
   export { TerminalKindExtensions };
   export { NonterminalNode };
   export { TerminalNode };
+  export { Edge };
   export { Cursor };
   export { CursorIterator };
   export { AncestorsIterator };
@@ -5662,19 +5663,6 @@ export enum NodeType {
   TerminalNode = "TerminalNode",
 }
 /**
- * Represents a connection between nodes in the syntax tree.
- */
-export interface Edge {
-  /**
-   * Describes the relationship between this node and its parent.
-   */
-  label: EdgeLabel;
-  /**
-   * The target node of this edge.
-   */
-  node: Node;
-}
-/**
  * Represents a match found by executing queries on a cursor.
  */
 export interface QueryMatch {
@@ -5921,6 +5909,33 @@ export class CursorIterator {
    * Returns the next edge in the iteration, or `undefined` if there are no more edges.
    */
   next(): Edge | undefined;
+}
+
+/**
+ * Represents a connection between nodes in the syntax tree.
+ */
+
+export class Edge {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+  /**
+   * Creates a new edge connecting a terminal node `node` with the label `label`.
+   */
+  static createTerminal(label: EdgeLabel, node: TerminalNode): Edge;
+  /**
+   * Creates a new edge connecting a nonterminal node `node` with the label `label`.
+   */
+  static createNonterminal(label: EdgeLabel, node: NonterminalNode): Edge;
+  /**
+   * Describes the relationship between this node and its parent.
+   */
+  get label(): EdgeLabel;
+  /**
+   * The target node of this edge.
+   */
+  get node(): Node;
 }
 
 /**
