@@ -31,8 +31,8 @@ Definiens:
  2 │ │ ╭─▶     function test() public {
    ┆ ┆ ┆   
  4 │ │ │               let x.y.z := 0
-   │ │ │   ────────┬────────  
-   │ │ │           ╰────────── definiens: 3
+   │ │ │                   ┬  
+   │ │ │                   ╰── definiens: 3
    ┆ ┆ ┆   
  7 │ │ ├─▶     }
    │ │ │           
