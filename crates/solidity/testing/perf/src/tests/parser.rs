@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+use semver::Version;
 use slang_solidity::parser::{ParseOutput, Parser};
 
 use crate::dataset::{SourceFile, SOLC_VERSION};
@@ -14,12 +15,13 @@ pub struct ParsedFile {
     pub parse_output: ParseOutput,
 }
 
-pub fn setup() -> Vec<SourceFile> {
-    SourceFile::load_all()
+pub fn setup() -> (Vec<SourceFile>, Version) {
+    (SourceFile::load_all(), SOLC_VERSION)
 }
 
-pub fn run(files: Vec<SourceFile>) -> Vec<ParsedFile> {
-    let parser = Parser::create(SOLC_VERSION).unwrap();
+pub fn run(payload: (Vec<SourceFile>, Version)) -> Vec<ParsedFile> {
+    let (files, language_version) = payload;
+    let parser = Parser::create(language_version).unwrap();
 
     let mut results = vec![];
 

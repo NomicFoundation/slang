@@ -31,7 +31,7 @@ macro_rules! define_payload_benchmark {
  *
  * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
  */
-define_payload_benchmark!(parser, Vec<SourceFile>);
+define_payload_benchmark!(parser, (Vec<SourceFile>, semver::Version));
 define_payload_benchmark!(cursor, Vec<ParsedFile>);
 define_payload_benchmark!(query, Vec<ParsedFile>);
 define_payload_benchmark!(bindings_build, Vec<ParsedFile>);
