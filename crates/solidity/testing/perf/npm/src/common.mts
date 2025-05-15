@@ -2,7 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 
 export class Timing {
-  public constructor(public component: string, public time: number) { }
+  public constructor(
+    public component: string,
+    public time: number,
+  ) {}
 }
 
 export interface Runner {
@@ -56,20 +59,18 @@ export function resolveImport(directory: string, sourceFile: string, importStrin
   const sourceFileDir = path.dirname(sourceFile);
 
   // first do a little sanitization of the import string: remove the first slashes
-  importString = importString.replace(/^\/*/, '');
+  importString = importString.replace(/^\/*/, "");
 
   const file = path.normalize(path.join(sourceFileDir, importString));
   const realFile = path.join(directory, file);
   if (fs.statSync(realFile, { throwIfNoEntry: false })) {
     return file;
-  }
-  else {
+  } else {
     const realFile = path.normalize(path.join(directory, importString));
     if (fs.statSync(realFile, { throwIfNoEntry: false })) {
       // it's already relative to the direcotry, no need to do anything else
       return importString;
-    }
-    else {
+    } else {
       throw `Can't resolve import ${importString}`;
     }
   }

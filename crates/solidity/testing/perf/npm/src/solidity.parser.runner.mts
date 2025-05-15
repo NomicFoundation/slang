@@ -40,5 +40,4 @@ export class SolidityParserRunner implements Runner {
 
     return [new Timing("antlr_build_ast_duration", performance.now() - start)];
   }
-
 }
