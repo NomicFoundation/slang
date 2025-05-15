@@ -1,3 +1,4 @@
+mod bencher;
 mod cargo;
 mod fetch;
 mod npm;
