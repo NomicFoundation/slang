@@ -2511,6 +2511,7 @@ version = "1.2.0"
 name = "solidity_testing_perf"
 version = "1.2.0"
 dependencies = [
+ "anyhow",
  "iai-callgrind",
  "infra_utils",
  "metaslang_bindings",

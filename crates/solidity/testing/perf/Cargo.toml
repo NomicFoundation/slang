@@ -9,12 +9,17 @@ publish = false
 slang_solidity = { workspace = true, features = [
   "__experimental_bindings_api",
 ] }
+anyhow = { workspace = true }
 infra_utils = { workspace = true }
 semver = { workspace = true }
 metaslang_bindings = { workspace = true }
 
 [dev-dependencies]
 iai-callgrind = { workspace = true }
+
+[build-dependencies]
+infra_utils = { workspace = true }
+anyhow = { workspace = true }
 
 [[bench]]
 name = "iai"
