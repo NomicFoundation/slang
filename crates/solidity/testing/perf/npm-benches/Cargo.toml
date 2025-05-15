@@ -12,7 +12,7 @@ infra_utils = { workspace = true }
 anyhow = { workspace = true }
 regex = { workspace = true }
 clap = { workspace = true }
-enum-display = { workspace = true }
+strum_macros = { workspace = true }
 
 [lints]
 workspace = true

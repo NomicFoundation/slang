@@ -1,15 +1,15 @@
-use std::fmt::Write;
 use std::fs;
+use std::io::Write;
 use std::path::Path;
 
 use anyhow::Result;
 use clap::Parser;
-use enum_display::EnumDisplay;
 use infra_utils::commands::Command;
 use infra_utils::config::{self, File, Project};
 use serde::Deserialize;
+use strum_macros::AsRefStr;
 
-#[derive(Clone, Copy, Debug, EnumDisplay)]
+#[derive(Clone, Copy, Debug, AsRefStr)]
 pub enum Runner {
     SlangProject, // resolve bindings of the entire project
     SolidityParser,
@@ -63,8 +63,9 @@ impl NpmController {
     ) -> Result<Vec<Timing>> {
         let mut results = vec![];
 
+        let pattern_regex = regex::Regex::new(&self.pattern)?;
         for file in files {
-            if !regex::Regex::new(&self.pattern)?.is_match(&file.file) {
+            if !pattern_regex.is_match(&file.file) {
                 continue;
             }
 
@@ -84,14 +85,14 @@ impl NpmController {
         projects: &Vec<Project>,
     ) -> Result<Vec<Timing>> {
         let mut results = vec![];
+        let pattern_regex = regex::Regex::new(&self.pattern)?;
 
         for project in projects {
             let path = input_path.join(&project.hash);
 
             let (compiler_version, fully_qualified_name) = Self::compilation_options(&path)?;
 
-            if !regex::Regex::new(&self.pattern)?
-                .is_match(path.join(&fully_qualified_name).to_string_lossy().as_ref())
+            if !pattern_regex.is_match(path.join(&fully_qualified_name).to_string_lossy().as_ref())
             {
                 continue;
             }
@@ -149,7 +150,7 @@ impl NpmController {
             .property("--version", compiler_version)
             .property("--dir", path.to_string_lossy())
             .property("--file", fully_qualified_name)
-            .property("--runner", runner.to_string())
+            .property("--runner", runner.as_ref())
             .args(&self.extra_args);
         let result = command.evaluate()?;
 
@@ -164,7 +165,7 @@ impl NpmController {
 }
 
 fn publish(results: &[Timing]) -> Result<()> {
-    let mut output = String::new();
+    let mut output = std::io::stdout();
     writeln!(output, "{{")?;
     writeln!(output, "\t\"npm_benchmarks\": {{")?;
 
@@ -182,8 +183,6 @@ fn publish(results: &[Timing]) -> Result<()> {
 
     writeln!(output, "\t}}")?;
     writeln!(output, "}}")?;
-
-    println!("{output}");
     Ok(())
 }
 

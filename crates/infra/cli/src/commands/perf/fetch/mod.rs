@@ -24,8 +24,7 @@ impl FetchController {
         let url = format!(
             "https://sourcify.dev/server/v2/contract/1/{address}/?fields=sources,compilation"
         );
-        let response = get(&url)?.text()?;
-        let json: Value = serde_json::from_str(&response)?;
+        let json: Value = get(&url)?.json()?;
 
         // The expected json result should have two fields of interest to us: `sources`,
         // with the files, and `compilation`, with the specifics of compilation.
@@ -77,10 +76,11 @@ impl FetchController {
             Self::fetch(hash, base_path)?;
         } else {
             // We need to download all the hashes, no matter where they come from.
-            let mut hashes_projects: Vec<_> = config.projects.iter().map(|p| &p.hash).collect();
-            let hashes_keys: Vec<_> = config.files.iter().map(|f| &f.hash).collect();
-
-            hashes_projects.extend(hashes_keys);
+            let hashes_projects = config
+                .projects
+                .iter()
+                .map(|p| &p.hash)
+                .chain(config.files.iter().map(|f| &f.hash));
 
             for hash in hashes_projects {
                 Self::fetch(hash, base_path)?;

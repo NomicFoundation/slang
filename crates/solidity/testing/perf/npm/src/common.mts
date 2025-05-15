@@ -2,13 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 export class Timing {
-  public component: string;
-  public time: number;
-
-  public constructor(component: string, time: number) {
-    this.component = component;
-    this.time = time;
-  }
+  public constructor(public component: string, public time: number) { }
 }
 
 export interface Runner {
