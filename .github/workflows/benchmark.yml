@@ -10,6 +10,7 @@ on:
         type: "boolean"
         required: true
         default: true
+
       runCargo:
         description: "Runs the cargo benchmarks."
         type: "boolean"
