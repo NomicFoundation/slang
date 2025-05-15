@@ -46,3 +46,31 @@ export function log(what: string) {
     console.log(what);
   }
 }
+
+/// Resolves an import of a solidity file. Parameters are:
+/// - `directory`: the directory of the solidity project,
+/// - `sourceFile`: the relavive path to the file under inspection,
+/// - `importString`: the import string as parsed from the source file.
+/// Returns the relative path of the imported file.
+export function resolveImport(directory: string, sourceFile: string, importString: string): string {
+  const sourceFileDir = path.dirname(sourceFile);
+
+  // first do a little sanitization of the import string: remove the first slashes
+  importString = importString.replace(/^\/*/, '');
+
+  const file = path.normalize(path.join(sourceFileDir, importString));
+  const realFile = path.join(directory, file);
+  if (fs.statSync(realFile, { throwIfNoEntry: false })) {
+    return file;
+  }
+  else {
+    const realFile = path.normalize(path.join(directory, importString));
+    if (fs.statSync(realFile, { throwIfNoEntry: false })) {
+      // it's already relative to the direcotry, no need to do anything else
+      return importString;
+    }
+    else {
+      throw `Can't resolve import ${importString}`;
+    }
+  }
+}

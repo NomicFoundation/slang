@@ -1,12 +1,10 @@
-import fs from "node:fs";
 import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
 import { TerminalKind } from "@nomicfoundation/slang/cst";
 import assert from "node:assert";
 // When debugging, add handleTables at the export list at the end of this imported file
 import * as slang_raw from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
 import { exit } from "node:process";
-import path from "node:path";
-import { readRepoFile, Runner, Timing } from "./common.mjs";
+import { readRepoFile, resolveImport, Runner, Timing } from "./common.mjs";
 
 function createBuilder(languageVersion: string, directory: string): CompilationBuilder {
   languageVersion = languageVersion.split("+")[0];
@@ -22,26 +20,8 @@ function createBuilder(languageVersion: string, directory: string): CompilationB
       assert(importLiteral.startsWith('"') || importLiteral.startsWith("'"));
       assert(importLiteral.endsWith('"') || importLiteral.endsWith("'"));
 
-      const importString = importLiteral.slice(1, -1);
-
-      // HACK: The source file might be buried in some structure a/b/c/d/file.sol
-      // in order to resolve its imports we allow ourselves to walk up the hierarchy
-      // until we find the proper root of the import.
-      let i = 0;
-      while (i < 7) {
-        let splat = Array(i + 1).fill("..");
-        let file = path.join(sourceFileId, ...splat, importString);
-        let realFile = path.join(directory, file);
-        try {
-          if (fs.statSync(realFile)) {
-            return file;
-          }
-        } catch {
-          // continue walking up the path
-        }
-        i++;
-      }
-      throw `Can't resolve import ${importPath}`;
+      let importString = importLiteral.slice(1, -1);
+      return resolveImport(directory, sourceFileId, importString);
     },
   });
 
