@@ -1,7 +1,6 @@
 use anyhow::Result;
 use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::commands::Command;
 
 use super::bencher::run_bench;
 use crate::utils::DryRun;
@@ -20,9 +19,6 @@ pub struct NpmController {
 
 impl NpmController {
     fn install_deps() -> Result<()> {
-        let command = Command::new("npm").arg("install").arg("tsx");
-        command.evaluate()?;
-
         CargoWorkspace::install_binary("bencher_cli")?;
         Ok(())
     }
