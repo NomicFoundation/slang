@@ -2,14 +2,15 @@
 #![allow(clippy::needless_pass_by_value)]
 
 use std::hint::black_box;
+use std::rc::Rc;
 
 use iai_callgrind::{
     library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
-use solidity_testing_perf::dataset::SourceFile;
+use slang_solidity::compilation::CompilationUnit;
+use solidity_testing_perf::dataset::SolidityProject;
 use solidity_testing_perf::tests::bindings_resolve::BuiltBindingGraph;
-use solidity_testing_perf::tests::parser::ParsedFile;
 
 mod __dependencies_used_in_lib__ {
     use {infra_utils as _, metaslang_bindings as _, semver as _, slang_solidity as _};
@@ -31,10 +32,10 @@ macro_rules! define_payload_benchmark {
  *
  * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
  */
-define_payload_benchmark!(parser, (Vec<SourceFile>, semver::Version));
-define_payload_benchmark!(cursor, Vec<ParsedFile>);
-define_payload_benchmark!(query, Vec<ParsedFile>);
-define_payload_benchmark!(bindings_build, Vec<ParsedFile>);
+define_payload_benchmark!(parser, SolidityProject);
+define_payload_benchmark!(cursor, Rc<CompilationUnit>);
+define_payload_benchmark!(query, Rc<CompilationUnit>);
+define_payload_benchmark!(bindings_build, Rc<CompilationUnit>);
 define_payload_benchmark!(bindings_resolve, BuiltBindingGraph);
 
 library_benchmark_group!(

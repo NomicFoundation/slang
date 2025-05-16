@@ -1,18 +1,17 @@
+use std::rc::Rc;
+
+use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::NonterminalKind;
 
-use crate::tests::parser::ParsedFile;
-
-pub fn setup() -> Vec<ParsedFile> {
-    let files = super::parser::setup();
-
-    super::parser::run(files)
+pub fn setup() -> Rc<CompilationUnit> {
+    super::parser::run(super::parser::setup())
 }
 
-pub fn run(files: Vec<ParsedFile>) {
+pub fn run(unit: Rc<CompilationUnit>) {
     let mut functions_count = 0;
 
-    for file in &files {
-        let mut cursor = file.parse_output.create_tree_cursor();
+    for file in &unit.files() {
+        let mut cursor = file.create_tree_cursor();
 
         while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::FunctionDefinition) {
             functions_count += 1;

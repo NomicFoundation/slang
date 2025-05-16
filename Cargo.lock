@@ -2516,6 +2516,7 @@ dependencies = [
  "infra_utils",
  "metaslang_bindings",
  "semver",
+ "serde_json",
  "slang_solidity",
 ]
 

@@ -1,39 +1,23 @@
-use std::path::PathBuf;
+use std::rc::Rc;
 
-use semver::Version;
-use slang_solidity::compilation::InternalCompilationBuilder;
-use slang_solidity::parser::{ParseOutput, Parser};
+use semver::{BuildMetadata, Prerelease};
+use slang_solidity::compilation::CompilationUnit;
 
-use crate::dataset::{SourceFile, SOLC_VERSION};
-use crate::compilation_builder::{self};
+use crate::compilation_builder::CompilationBuilder;
+use crate::dataset::{load_projects, SolidityProject};
 
-#[derive(Clone)]
-pub struct ParsedFile {
-    pub path: PathBuf,
-    pub parse_output: ParseOutput,
+pub fn setup() -> SolidityProject {
+    let projects = load_projects().unwrap();
+    let project = projects.first().unwrap();
+    project.to_owned()
 }
 
-pub fn setup() -> (Vec<SourceFile>, Version) {
-    (SourceFile::load_all(), SOLC_VERSION)
-}
+pub fn run(project: SolidityProject) -> Rc<CompilationUnit> {
+    let mut version = semver::Version::parse(&project.version).unwrap();
+    version.pre = Prerelease::EMPTY;
+    version.build = BuildMetadata::EMPTY;
 
-pub fn run(payload: (Vec<SourceFile>, Version)) -> Vec<ParsedFile> {
-    let (files, language_version) = payload;
-    let builder = InternalCompilationBuilder::create(language_version).unwrap();
-    builder.add_file(id, contents)
-    let mut results = vec![];
+    let builder = CompilationBuilder::new(version, project.root, project.entrypoint).unwrap();
 
-    for SourceFile { path, contents } in files {
-        let parse_output = parser.parse_file_contents(&contents);
-
-        assert!(
-            parse_output.is_valid(),
-            "Found parse errors:\n{0:#?}",
-            parse_output.errors(),
-        );
-
-        results.push(ParsedFile { path, parse_output });
-    }
-
-    results
+    builder.build().unwrap().into()
 }

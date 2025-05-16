@@ -1,14 +1,13 @@
+use std::rc::Rc;
+
+use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::Query;
 
-use crate::tests::parser::ParsedFile;
-
-pub fn setup() -> Vec<ParsedFile> {
-    let files = super::parser::setup();
-
-    super::parser::run(files)
+pub fn setup() -> Rc<CompilationUnit> {
+    super::parser::run(super::parser::setup())
 }
 
-pub fn run(files: Vec<ParsedFile>) {
+pub fn run(unit: Rc<CompilationUnit>) {
     let mut functions_count = 0;
 
     let queries = vec![Query::create(
@@ -18,8 +17,8 @@ pub fn run(files: Vec<ParsedFile>) {
     )
     .unwrap()];
 
-    for file in &files {
-        let cursor = file.parse_output.create_tree_cursor();
+    for file in &unit.files() {
+        let cursor = file.create_tree_cursor();
 
         for query_match in cursor.query(queries.clone()) {
             assert_eq!(query_match.captures.len(), 1);

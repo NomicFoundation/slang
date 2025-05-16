@@ -3,6 +3,7 @@
 
 mod compilation_builder;
 pub mod dataset;
+mod import_resolver;
 pub mod tests;
 
 #[cfg(test)]
