@@ -6,6 +6,7 @@ import {
   NonterminalKind,
   EdgeLabel,
   Edge,
+  createEdge,
 } from "@nomicfoundation/slang/cst";
 
 test("Create TerminalNode", () => {
@@ -35,4 +36,11 @@ test("Create NonterminalNode with children", () => {
   assert.equal(nonterminalNode.asNonterminalNode().kind, NonterminalKind.ArrayExpression);
   assert.equal(nonterminalNode.asNonterminalNode().unparse(), "[");
   assert.deepEqual(nonterminalNode.asNonterminalNode().children(), [childEdge]);
+});
+
+test("Create Edge using top-level createEdge() function", () => {
+  const node = TerminalNode.create(TerminalKind.IfKeyword, "if");
+  const childEdge = createEdge(EdgeLabel.IfKeyword, node);
+
+  assert.deepEqual(childEdge.node, node);
 });
