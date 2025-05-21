@@ -10,10 +10,11 @@ use crate::paths::PathExtensions;
  Reader for the configuration file that contians the projects and files to benchmark
 */
 
+pub const WORKING_DIR: &str = "target/benchmarks-inputs";
+
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Configuration {
-    pub working_dir: String,
     pub projects: Vec<Project>,
     pub files: Vec<File>,
 }

@@ -70,7 +70,7 @@ impl FetchController {
     pub fn execute(&self) -> Result<()> {
         let config = config::read_config()?;
 
-        let base_path = Path::new(&config.working_dir);
+        let base_path = Path::new(&config::WORKING_DIR);
 
         if let Some(hash) = &self.hash {
             Self::fetch(hash, base_path)?;
