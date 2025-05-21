@@ -4,57 +4,59 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "VersionPragma";
+
 #[test]
 fn alternatives() -> Result<()> {
-    run("VersionPragma", "alternatives")
+    run(T, "alternatives")
 }
 
 #[test]
 fn double_quotes_string() -> Result<()> {
-    run("VersionPragma", "double_quotes_string")
+    run(T, "double_quotes_string")
 }
 
 #[test]
 fn equal_operator() -> Result<()> {
-    run("VersionPragma", "equal_operator")
+    run(T, "equal_operator")
 }
 
 #[test]
 fn exact_version() -> Result<()> {
-    run("VersionPragma", "exact_version")
+    run(T, "exact_version")
 }
 
 #[test]
 fn less_than_operator() -> Result<()> {
-    run("VersionPragma", "less_than_operator")
+    run(T, "less_than_operator")
 }
 
 #[test]
 fn multiple_exact_versions() -> Result<()> {
-    run("VersionPragma", "multiple_exact_versions")
+    run(T, "multiple_exact_versions")
 }
 
 #[test]
 fn multiple_strings() -> Result<()> {
-    run("VersionPragma", "multiple_strings")
+    run(T, "multiple_strings")
 }
 
 #[test]
 fn nested_expressions() -> Result<()> {
-    run("VersionPragma", "nested_expressions")
+    run(T, "nested_expressions")
 }
 
 #[test]
 fn ranges() -> Result<()> {
-    run("VersionPragma", "ranges")
+    run(T, "ranges")
 }
 
 #[test]
 fn single_quote_string() -> Result<()> {
-    run("VersionPragma", "single_quote_string")
+    run(T, "single_quote_string")
 }
 
 #[test]
 fn with_trivia() -> Result<()> {
-    run("VersionPragma", "with_trivia")
+    run(T, "with_trivia")
 }

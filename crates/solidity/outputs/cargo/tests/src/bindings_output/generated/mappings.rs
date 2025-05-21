@@ -4,32 +4,34 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "mappings";
+
 #[test]
 fn custom_types() -> Result<()> {
-    run("mappings", "custom_types")
+    run(T, "custom_types")
 }
 
 #[test]
 fn elementary() -> Result<()> {
-    run("mappings", "elementary")
+    run(T, "elementary")
 }
 
 #[test]
 fn indexing() -> Result<()> {
-    run("mappings", "indexing")
+    run(T, "indexing")
 }
 
 #[test]
 fn named_parameters() -> Result<()> {
-    run("mappings", "named_parameters")
+    run(T, "named_parameters")
 }
 
 #[test]
 fn nested() -> Result<()> {
-    run("mappings", "nested")
+    run(T, "nested")
 }
 
 #[test]
 fn nested_custom() -> Result<()> {
-    run("mappings", "nested_custom")
+    run(T, "nested_custom")
 }

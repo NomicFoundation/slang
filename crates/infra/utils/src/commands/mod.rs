@@ -8,7 +8,7 @@ use std::process::{Child, Command as StdCommand, ExitStatus, Output, Stdio};
 
 use anyhow::{bail, Context, Result};
 use itertools::Itertools;
-use rayon::prelude::{IntoParallelIterator, ParallelIterator};
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::github::GitHub;
 use crate::paths::{PathExtensions, PrivatePathExtensions};

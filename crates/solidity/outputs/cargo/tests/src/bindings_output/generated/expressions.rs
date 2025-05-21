@@ -4,77 +4,79 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "expressions";
+
 #[test]
 fn basic() -> Result<()> {
-    run("expressions", "basic")
+    run(T, "basic")
 }
 
 #[test]
 fn binary_operators() -> Result<()> {
-    run("expressions", "binary_operators")
+    run(T, "binary_operators")
 }
 
 #[test]
 fn call_options() -> Result<()> {
-    run("expressions", "call_options")
+    run(T, "call_options")
 }
 
 #[test]
 fn elementary_casting() -> Result<()> {
-    run("expressions", "elementary_casting")
+    run(T, "elementary_casting")
 }
 
 #[test]
 fn emit_named_args() -> Result<()> {
-    run("expressions", "emit_named_args")
+    run(T, "emit_named_args")
 }
 
 #[test]
 fn funcalls() -> Result<()> {
-    run("expressions", "funcalls")
+    run(T, "funcalls")
 }
 
 #[test]
 fn funcalls_named_args() -> Result<()> {
-    run("expressions", "funcalls_named_args")
+    run(T, "funcalls_named_args")
 }
 
 #[test]
 fn funcalls_output() -> Result<()> {
-    run("expressions", "funcalls_output")
+    run(T, "funcalls_output")
 }
 
 #[test]
 fn legacy_call_options() -> Result<()> {
-    run("expressions", "legacy_call_options")
+    run(T, "legacy_call_options")
 }
 
 #[test]
 fn literal_address() -> Result<()> {
-    run("expressions", "literal_address")
+    run(T, "literal_address")
 }
 
 #[test]
 fn literal_integers() -> Result<()> {
-    run("expressions", "literal_integers")
+    run(T, "literal_integers")
 }
 
 #[test]
 fn new_output() -> Result<()> {
-    run("expressions", "new_output")
+    run(T, "new_output")
 }
 
 #[test]
 fn revert_named_args() -> Result<()> {
-    run("expressions", "revert_named_args")
+    run(T, "revert_named_args")
 }
 
 #[test]
 fn type_expr() -> Result<()> {
-    run("expressions", "type_expr")
+    run(T, "type_expr")
 }
 
 #[test]
 fn type_expr_minmax() -> Result<()> {
-    run("expressions", "type_expr_minmax")
+    run(T, "type_expr_minmax")
 }

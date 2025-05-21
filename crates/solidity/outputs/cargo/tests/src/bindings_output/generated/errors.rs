@@ -4,22 +4,24 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "errors";
+
 #[test]
 fn custom_types() -> Result<()> {
-    run("errors", "custom_types")
+    run(T, "custom_types")
 }
 
 #[test]
 fn named_args() -> Result<()> {
-    run("errors", "named_args")
+    run(T, "named_args")
 }
 
 #[test]
 fn revert_stmt() -> Result<()> {
-    run("errors", "revert_stmt")
+    run(T, "revert_stmt")
 }
 
 #[test]
 fn selector() -> Result<()> {
-    run("errors", "selector")
+    run(T, "selector")
 }

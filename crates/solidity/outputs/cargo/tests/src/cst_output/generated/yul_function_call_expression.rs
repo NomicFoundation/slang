@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "YulFunctionCallExpression";
+
 #[test]
 fn built_in_and() -> Result<()> {
-    run("YulFunctionCallExpression", "built_in_and")
+    run(T, "built_in_and")
 }

@@ -4,37 +4,39 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "structs";
+
 #[test]
 fn declaration() -> Result<()> {
-    run("structs", "declaration")
+    run(T, "declaration")
 }
 
 #[test]
 fn function_call() -> Result<()> {
-    run("structs", "function_call")
+    run(T, "function_call")
 }
 
 #[test]
 fn named_params_construction() -> Result<()> {
-    run("structs", "named_params_construction")
+    run(T, "named_params_construction")
 }
 
 #[test]
 fn nested() -> Result<()> {
-    run("structs", "nested")
+    run(T, "nested")
 }
 
 #[test]
 fn recursive() -> Result<()> {
-    run("structs", "recursive")
+    run(T, "recursive")
 }
 
 #[test]
 fn sample() -> Result<()> {
-    run("structs", "sample")
+    run(T, "sample")
 }
 
 #[test]
 fn simple() -> Result<()> {
-    run("structs", "simple")
+    run(T, "simple")
 }
