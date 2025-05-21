@@ -1011,11 +1011,13 @@ pub trait Rewriter {
         source: &AssignmentExpression,
     ) -> AssignmentExpression {
         let left_operand = self.rewrite_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(AssignmentExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1060,11 +1062,13 @@ pub trait Rewriter {
 
     fn rewrite_equality_expression(&mut self, source: &EqualityExpression) -> EqualityExpression {
         let left_operand = self.rewrite_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(EqualityExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1074,11 +1078,13 @@ pub trait Rewriter {
         source: &InequalityExpression,
     ) -> InequalityExpression {
         let left_operand = self.rewrite_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(InequalityExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1127,22 +1133,26 @@ pub trait Rewriter {
 
     fn rewrite_shift_expression(&mut self, source: &ShiftExpression) -> ShiftExpression {
         let left_operand = self.rewrite_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(ShiftExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
 
     fn rewrite_additive_expression(&mut self, source: &AdditiveExpression) -> AdditiveExpression {
         let left_operand = self.rewrite_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(AdditiveExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1152,11 +1162,13 @@ pub trait Rewriter {
         source: &MultiplicativeExpression,
     ) -> MultiplicativeExpression {
         let left_operand = self.rewrite_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(MultiplicativeExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1166,29 +1178,35 @@ pub trait Rewriter {
         source: &ExponentiationExpression,
     ) -> ExponentiationExpression {
         let left_operand = self.rewrite_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.rewrite_expression(&source.right_operand);
 
         Rc::new(ExponentiationExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
 
     fn rewrite_postfix_expression(&mut self, source: &PostfixExpression) -> PostfixExpression {
         let operand = self.rewrite_expression(&source.operand);
+        let operator = Rc::clone(&source.operator);
 
         Rc::new(PostfixExpressionStruct {
             node_id: source.node_id,
             operand,
+            operator,
         })
     }
 
     fn rewrite_prefix_expression(&mut self, source: &PrefixExpression) -> PrefixExpression {
+        let operator = Rc::clone(&source.operator);
         let operand = self.rewrite_expression(&source.operand);
 
         Rc::new(PrefixExpressionStruct {
             node_id: source.node_id,
+            operator,
             operand,
         })
     }
