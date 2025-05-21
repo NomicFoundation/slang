@@ -11,8 +11,8 @@ pub(crate) fn run_bench(dry_run: bool, adapter: &str, test_runner: &str) {
         BENCHER_TEST_TOKEN.to_string()
     } else {
         std::env::var("BENCHER_API_TOKEN").expect(
-              "BENCHER_API_TOKEN is not set. Either perform a '--dry-run', or set it to your Bencher API token: https://bencher.dev/console"
-            )
+            "BENCHER_API_TOKEN is not set. Either perform a '--dry-run', or set it to your Bencher API token: https://bencher.dev/console"
+        )
     };
 
     let testbed = if GitHub::is_running_in_ci() {
