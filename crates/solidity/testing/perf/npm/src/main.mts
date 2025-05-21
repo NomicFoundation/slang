@@ -6,32 +6,22 @@ import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
 import { SolidityParserRunner } from "./solidity.parser.runner.mjs";
 
-/// What to test
-enum Runners {
-  None, // Hack to make 0 be equal no "not specified"
-  SlangFile, // resolve bindings of the main file only
-  SlangProject, // resolve bindings of the entire project
-  SolidityParser,
-  Solc,
-}
-
-const runners: Map<Runners, Runner> = new Map([
-  [Runners.SlangFile, new SlangBindingsFileRunner()],
-  [Runners.SlangProject, new SlangBindingsProjectRunner()],
-  [Runners.SolidityParser, new SolidityParserRunner()],
-  [Runners.Solc, new SolcRunner()],
+const runners: Map<string, Runner> = new Map([
+  ["SlangFile", new SlangBindingsFileRunner()],
+  ["SlangProject", new SlangBindingsProjectRunner()],
+  ["SolidityParser", new SolidityParserRunner()],
+  ["Solc", new SolcRunner()],
 ]);
 
 async function run(
   solidityVersion: string,
   dir: string,
   file: string,
-  runnerType: Runners,
+  runner: Runner,
   cold: number,
   hot: number,
 ): Promise<Timing[]> {
   const project = path.parse(file).name.toLowerCase();
-  const runner = runners.get(runnerType)!;
 
   // cold runs
   for (let i = 0; i < cold; i++) {
@@ -64,7 +54,7 @@ const optionDefinitions = [
   { name: "version", type: String },
   { name: "dir", type: String },
   { name: "file", type: String },
-  { name: "runner", type: (input: string) => Runners[input as keyof typeof Runners] },
+  { name: "runner", type: (input: string) => runners.get(input) },
   { name: "cold", type: Number, defaultValue: 2 },
   { name: "hot", type: Number, defaultValue: 5 },
   { name: "verbose", type: Boolean, defaultValue: false },
