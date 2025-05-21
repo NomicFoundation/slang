@@ -1,8 +1,6 @@
 import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
 import { TerminalKind } from "@nomicfoundation/slang/cst";
 import assert from "node:assert";
-// When debugging, add handleTables at the export list at the end of this imported file
-import * as slang_raw from "../../../../outputs/npm/package/wasm/generated/solidity_cargo_wasm.component.js";
 import { exit } from "node:process";
 import { readRepoFile, resolveImport, Runner, Timing } from "./common.mjs";
 
@@ -113,34 +111,5 @@ export class SlangBindingsFileRunner extends SlangRunner {
 export class SlangBindingsProjectRunner extends SlangRunner {
   public constructor() {
     super(Options.BindingsProject);
-  }
-}
-
-// DEBUG: See import above to enable this code
-export function printTables() {
-  if (process.argv.includes("--print-tables")) {
-    if ("handleTables" in slang_raw) {
-      const tables = slang_raw["handleTables"] as number[][];
-      // The tables contain a list of elements coming in pairs:
-      // - At even numbers, a 0 means the slot is not free, and with a number distinct from 0 the slot is free, and
-      //   the number is the next free slot (or'ed with a constant).
-      // - At odd numbers, the actual handle of the object
-      const sums = tables.map((table, index) => [
-        index,
-        table.reduce((accu, elem, elemix) => {
-          if ((elemix & 1) === 0 && elem === 0) {
-            return accu + 1;
-          } else {
-            return accu;
-          }
-        }, 0),
-      ]);
-      console.log(sums);
-    } else {
-      console.error(
-        "Asked to print tables, but they are not imported. Add `handleTables` to the list of imports in the solidity_cargo_wasm.component.js",
-      );
-      exit(-1);
-    }
   }
 }
