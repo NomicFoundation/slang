@@ -1,13 +1,15 @@
 import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
 import { TerminalKind } from "@nomicfoundation/slang/cst";
 import assert from "node:assert";
-import { exit } from "node:process";
 import { readRepoFile, resolveImport, Runner, Timing } from "./common.mjs";
 
-function createBuilder(languageVersion: string, directory: string): CompilationBuilder {
-  languageVersion = languageVersion.split("+")[0];
+function versionWithoutBuildNumber(fullVersion: string): string {
+  return fullVersion.split("+")[0];
+}
+
+function createBuilder(version: string, directory: string): CompilationBuilder {
   const builder = CompilationBuilder.create({
-    languageVersion,
+    languageVersion: versionWithoutBuildNumber(version),
 
     readFile: async (fileId) => {
       return readRepoFile(directory, fileId);
@@ -26,17 +28,17 @@ function createBuilder(languageVersion: string, directory: string): CompilationB
   return builder;
 }
 
-enum Options {
-  BindingsFile,
-  BindingsProject,
+enum BindingsTarget {
+  File,
+  Project,
 }
 
 class SlangRunner implements Runner {
   public name = "slang";
-  options: Options;
+  target: BindingsTarget;
 
-  public constructor(options: Options) {
-    this.options = options;
+  public constructor(target: BindingsTarget) {
+    this.target = target;
   }
 
   async test(languageVersion: string, dir: string, file: string): Promise<Timing[]> {
@@ -59,7 +61,7 @@ class SlangRunner implements Runner {
 
     let files: File[] = [mainFile];
 
-    if (this.options == Options.BindingsProject) {
+    if (this.target == BindingsTarget.Project) {
       files = unit.files();
     }
 
@@ -104,12 +106,12 @@ class SlangRunner implements Runner {
 
 export class SlangBindingsFileRunner extends SlangRunner {
   public constructor() {
-    super(Options.BindingsFile);
+    super(BindingsTarget.File);
   }
 }
 
 export class SlangBindingsProjectRunner extends SlangRunner {
   public constructor() {
-    super(Options.BindingsProject);
+    super(BindingsTarget.Project);
   }
 }
