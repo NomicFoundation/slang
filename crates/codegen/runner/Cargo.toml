@@ -1,6 +1,6 @@
 [package]
 name = "codegen_runner"
-description = "Using a cargo binary rather than a build task, to avoid invalidating the build tree when only the inputs change."
+description = "Generates the artifacts required to use slang."
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true

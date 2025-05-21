@@ -62,8 +62,8 @@ impl CodegenRuntime {
             let output_path = source_path.replace_prefix(&input_dir, output_dir);
 
             ensure!(
-                source_path.generated_dir().is_err(),
-                "Source file is generated: {source_path:?}"
+                !source_path.is_generated(),
+                "Source file should not be inside a generated directory: {source_path:?}"
             );
 
             fs.write_file_raw(output_path, contents)?;

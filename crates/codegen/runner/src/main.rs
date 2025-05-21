@@ -14,7 +14,9 @@ use testlang_language::TestlangDefinition;
 use crate::passes::generate_passes;
 
 fn main() {
-    // TODO(#1286): this is a poor man's version of a "build script" that runs all codegen steps in parallel.
+    // TODO(#1286):
+    // Using a cargo binary rather than a build task, to avoid invalidating the build tree when only the inputs change.
+    // This is a poor man's version of a "build script" that runs all codegen steps in parallel.
     // It is temporary step, and should be simplified/removed in subsequent PRs.
 
     [
