@@ -39,7 +39,7 @@ pub struct Timing {
 impl NpmController {
     fn execute(&self) -> Result<()> {
         let config = config::read_config()?;
-        let input_path = Path::new(&config.working_dir);
+        let input_path = Path::new(&config::WORKING_DIR);
         let mut file_benchmarks = self.individual_file_benchmarks(input_path, &config.files)?;
         let mut project_benchmarks = self.project_benchmarks(input_path, &config.projects)?;
         file_benchmarks.append(&mut project_benchmarks);
