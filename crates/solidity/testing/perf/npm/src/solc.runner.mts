@@ -1,18 +1,16 @@
 import assert from "assert";
-import fs from "node:fs";
 import { promisify } from "node:util";
-import path from "path";
 import * as solc from "solc";
-import { log, Runner, Timing } from "./common.mjs";
+import { log, Runner, SolidityProject, Timing } from "./common.mjs";
 
 export class SolcRunner implements Runner {
   public name = "solc";
 
-  async test(languageVersion: string, dir: string, file: string): Promise<Timing[]> {
+  async test(project: SolidityProject, file: string): Promise<Timing[]> {
     const loadRemoteVersion: (version: string) => Promise<{ compile: (input: string, options: any) => string }> =
       promisify(solc.default.loadRemoteVersion);
 
-    return await loadRemoteVersion("v" + languageVersion)
+    return await loadRemoteVersion("v" + project.compilation.compilerVersion)
       .then((solcSnapshot) => {
         const start = performance.now();
         var folderMeta = `{
@@ -31,7 +29,7 @@ export class SolcRunner implements Runner {
         }
       }
       `;
-        const parsing_result = JSON.parse(solcSnapshot.compile(folderMeta, { import: findImports(dir) }));
+        const parsing_result = JSON.parse(solcSnapshot.compile(folderMeta, { import: findImports(project) }));
         log(parsing_result);
         assert(parsing_result["sources"] != undefined);
         if (parsing_result["errors"] && !parsing_result["errors"].every((value: any) => value["type"] == "Warning")) {
@@ -41,23 +39,15 @@ export class SolcRunner implements Runner {
         return [new Timing("solc_build_ast_duration", performance.now() - start)];
       })
       .catch((err) => {
-        console.error(`Can't process version ${languageVersion}`);
+        console.error(`Can't process version ${project.compilation.compilerVersion}`);
         console.error(err);
         process.exit(-1);
       });
   }
 }
 
-function findImports(folder: string): (file: string) => { contents: string } {
-  const repoRoot = process.env["REPO_ROOT"];
-  assert(repoRoot);
+function findImports(project: SolidityProject): (file: string) => { contents: string } {
   return (file: string) => {
-    // basic sanitization
-    while (file.startsWith("/")) {
-      file = file.substring(1);
-    }
-    const absolutePath = path.resolve(folder, file);
-    const source = fs.readFileSync(absolutePath, "utf8");
-    return { contents: source };
+    return { contents: project.fileContents(file) };
   };
 }

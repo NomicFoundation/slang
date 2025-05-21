@@ -1,20 +1,19 @@
 import { parse } from "@solidity-parser/parser";
-import { log, readRepoFile, resolveImport, Runner, Timing } from "./common.mjs";
+import { log, Runner, SolidityProject, Timing } from "./common.mjs";
 
 export class SolidityParserRunner implements Runner {
   public name = "solidity parser";
 
-  async test(_languageVersion: string, dir: string, file: string): Promise<Timing[]> {
+  async test(project: SolidityProject, file: string): Promise<Timing[]> {
     const start = performance.now();
 
-    let toProcess = new Set<string>([file]);
+    let toProcess = new Array<string>(file);
     let processed = new Set<string>();
 
     log("Start");
 
-    while (toProcess.size > 0) {
-      const filePath = toProcess.values().next().value!;
-      toProcess.delete(filePath);
+    while (toProcess.length > 0) {
+      const filePath = toProcess.pop()!;
 
       if (processed.has(filePath)) {
         continue;
@@ -23,7 +22,7 @@ export class SolidityParserRunner implements Runner {
       log(`To process ${filePath}`);
       processed.add(filePath);
 
-      const content = readRepoFile(dir, filePath);
+      const content = project.fileContents(filePath);
       const result = parse(content, { tolerant: true, loc: true });
       if (result.errors) {
         console.error("Errors during parsing with solidity-parser:");
@@ -34,7 +33,7 @@ export class SolidityParserRunner implements Runner {
       const imports = result.children.filter((f) => f.type == "ImportDirective");
 
       imports.forEach((imprt) => {
-        toProcess.add(resolveImport(dir, filePath, imprt.path));
+        toProcess.push(project.resolveImport(filePath, imprt.path));
       });
     }
 
