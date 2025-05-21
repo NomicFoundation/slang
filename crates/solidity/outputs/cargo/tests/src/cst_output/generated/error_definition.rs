@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "ErrorDefinition";
+
 #[test]
 fn top_level() -> Result<()> {
-    run("ErrorDefinition", "top_level")
+    run(T, "top_level")
 }

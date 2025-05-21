@@ -70,13 +70,13 @@ impl SpecDir {
                     writeln!(index, "- [{child_title}](./{child_slug}.md)")?;
                     writeln!(navigation, "- [{child_title}](./{child_slug}.md)")?;
 
-                    fs.write_file(current_dir.join(format!("{child_slug}.md")), contents)?;
+                    fs.write_file_raw(current_dir.join(format!("{child_slug}.md")), contents)?;
                 }
             }
         }
 
-        fs.write_file(current_dir.join("index.md"), index)?;
-        fs.write_file(current_dir.join(".navigation.md"), navigation)?;
+        fs.write_file_raw(current_dir.join("index.md"), index)?;
+        fs.write_file_raw(current_dir.join(".navigation.md"), navigation)?;
         Ok(())
     }
 }

@@ -4,22 +4,24 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "PragmaDirective";
+
 #[test]
 fn abi_coder() -> Result<()> {
-    run("PragmaDirective", "abi_coder")
+    run(T, "abi_coder")
 }
 
 #[test]
 fn experimental() -> Result<()> {
-    run("PragmaDirective", "experimental")
+    run(T, "experimental")
 }
 
 #[test]
 fn experimental_string() -> Result<()> {
-    run("PragmaDirective", "experimental_string")
+    run(T, "experimental_string")
 }
 
 #[test]
 fn version() -> Result<()> {
-    run("PragmaDirective", "version")
+    run(T, "version")
 }

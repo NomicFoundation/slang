@@ -4,52 +4,54 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "HexStringLiterals";
+
 #[test]
 fn all_separated_pairs() -> Result<()> {
-    run("HexStringLiterals", "all_separated_pairs")
+    run(T, "all_separated_pairs")
 }
 
 #[test]
 fn invalid_consecutive_separators() -> Result<()> {
-    run("HexStringLiterals", "invalid_consecutive_separators")
+    run(T, "invalid_consecutive_separators")
 }
 
 #[test]
 fn invalid_leading_separator() -> Result<()> {
-    run("HexStringLiterals", "invalid_leading_separator")
+    run(T, "invalid_leading_separator")
 }
 
 #[test]
 fn invalid_separator_after_single_char() -> Result<()> {
-    run("HexStringLiterals", "invalid_separator_after_single_char")
+    run(T, "invalid_separator_after_single_char")
 }
 
 #[test]
 fn invalid_trailing_separator() -> Result<()> {
-    run("HexStringLiterals", "invalid_trailing_separator")
+    run(T, "invalid_trailing_separator")
 }
 
 #[test]
 fn multiple() -> Result<()> {
-    run("HexStringLiterals", "multiple")
+    run(T, "multiple")
 }
 
 #[test]
 fn no_separators() -> Result<()> {
-    run("HexStringLiterals", "no_separators")
+    run(T, "no_separators")
 }
 
 #[test]
 fn single() -> Result<()> {
-    run("HexStringLiterals", "single")
+    run(T, "single")
 }
 
 #[test]
 fn single_trailing_ident() -> Result<()> {
-    run("HexStringLiterals", "single_trailing_ident")
+    run(T, "single_trailing_ident")
 }
 
 #[test]
 fn some_separated_pairs() -> Result<()> {
-    run("HexStringLiterals", "some_separated_pairs")
+    run(T, "some_separated_pairs")
 }

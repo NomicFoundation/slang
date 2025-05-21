@@ -12,7 +12,7 @@ use clap::{Parser, Subcommand};
 use infra_utils::github::GitHub;
 use infra_utils::paths::PathExtensions;
 use infra_utils::terminal::{NumbersDefaultDisplay, Terminal};
-use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use results::{display_all_results, AllResults};
 
 use crate::chains::Chain;

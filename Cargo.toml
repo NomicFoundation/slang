@@ -12,6 +12,7 @@ members = [
     "crates/codegen/language/internal_macros",
     "crates/codegen/language/macros",
     "crates/codegen/language/tests",
+    "crates/codegen/runner",
     "crates/codegen/runtime/cargo/crate",
     "crates/codegen/runtime/cargo/wasm",
     "crates/codegen/runtime/generator",
@@ -55,6 +56,7 @@ codegen_language_definition = { path = "crates/codegen/language/definition", ver
 codegen_language_internal_macros = { path = "crates/codegen/language/internal_macros", version = "1.1.0" }
 codegen_language_macros = { path = "crates/codegen/language/macros", version = "1.1.0" }
 codegen_language_tests = { path = "crates/codegen/language/tests", version = "1.1.0" }
+codegen_runner = { path = "crates/codegen/runner", version = "1.1.0" }
 codegen_runtime_cargo_crate = { path = "crates/codegen/runtime/cargo/crate", version = "1.1.0" }
 codegen_runtime_cargo_wasm = { path = "crates/codegen/runtime/cargo/wasm", version = "1.1.0" }
 codegen_runtime_generator = { path = "crates/codegen/runtime/generator", version = "1.1.0" }
@@ -97,10 +99,7 @@ ariadne = { version = "0.2.0" }
 # They recommend always running with the latest CLI version from 'main' until it is stabilized.
 bencher_cli = { git = "https://github.com/bencherdev/bencher", branch = "main" }
 cargo-edit = { version = "0.12.3" }
-cargo-emit = { version = "0.2.1" }
 cargo-nextest = { version = "0.9.72" }
-cargo-xwin = { version = "0.14.2" }
-cargo-zigbuild = { version = "0.18.3" }
 clap = { version = "4.5.13", features = ["derive", "wrap_help"] }
 clap_complete = { version = "4.5.13" }
 console = { version = "0.15.11" }

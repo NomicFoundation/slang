@@ -4,32 +4,34 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "ImportDirective";
+
 #[test]
 fn destructure_import_empty() -> Result<()> {
-    run("ImportDirective", "destructure_import_empty")
+    run(T, "destructure_import_empty")
 }
 
 #[test]
 fn destructure_import_multiple() -> Result<()> {
-    run("ImportDirective", "destructure_import_multiple")
+    run(T, "destructure_import_multiple")
 }
 
 #[test]
 fn destructure_import_single() -> Result<()> {
-    run("ImportDirective", "destructure_import_single")
+    run(T, "destructure_import_single")
 }
 
 #[test]
 fn named_import() -> Result<()> {
-    run("ImportDirective", "named_import")
+    run(T, "named_import")
 }
 
 #[test]
 fn path_import() -> Result<()> {
-    run("ImportDirective", "path_import")
+    run(T, "path_import")
 }
 
 #[test]
 fn path_import_with_alias() -> Result<()> {
-    run("ImportDirective", "path_import_with_alias")
+    run(T, "path_import_with_alias")
 }
