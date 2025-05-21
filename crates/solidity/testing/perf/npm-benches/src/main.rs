@@ -4,6 +4,7 @@ use std::path::Path;
 
 use anyhow::Result;
 use clap::Parser;
+use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::config::{self, File, Project};
 use serde::Deserialize;
@@ -136,11 +137,12 @@ impl NpmController {
         fully_qualified_name: &str,
         runner: Runner,
     ) -> Result<Vec<Timing>, anyhow::Error> {
+        let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf")?;
         let command = Command::new("npx")
             .arg("tsx")
             .flag("--trace-uncaught")
             .flag("--expose-gc")
-            .arg("crates/solidity/testing/perf/npm/src/main.mts")
+            .arg(perf_crate.join("npm/src/main.mts").to_str().unwrap())
             .property("--version", compiler_version)
             .property("--dir", path.to_string_lossy())
             .property("--file", fully_qualified_name)
