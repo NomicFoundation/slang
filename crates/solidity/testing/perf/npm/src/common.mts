@@ -1,19 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 
-export class Timing {
-  public constructor(
-    public component: string,
-    public time: number,
-  ) {}
-}
-
-export interface Runner {
-  name: string;
-  // returns the time it takes to run the test
-  test(languageVersion: string, dir: string, file: string): Promise<Timing[]>;
-}
-
 export const hasGC = typeof global.gc == "function";
 
 export async function runGC() {
@@ -37,13 +24,6 @@ export function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
 
-export function readRepoFile(...relativePaths: string[]): string {
-  const absolutePath = path.join(...relativePaths);
-  const source = fs.readFileSync(absolutePath, "utf8");
-
-  return source.trim();
-}
-
 const verbose = process.argv.includes("--verbose");
 
 export function log(what: string) {
@@ -52,28 +32,85 @@ export function log(what: string) {
   }
 }
 
-/// Resolves an import of a solidity file. Parameters are:
-/// - `directory`: the directory of the solidity project,
-/// - `sourceFile`: the relavive path to the file under inspection,
-/// - `importString`: the import string as parsed from the source file.
-/// Returns the relative path of the imported file.
-export function resolveImport(directory: string, sourceFile: string, importString: string): string {
-  const sourceFileDir = path.dirname(sourceFile);
+export class SolidityCompilation {
+  constructor(public compilerVersion: string) { }
 
-  // first do a little sanitization of the import string: remove the first slashes
-  importString = importString.replace(/^\/*/, "");
+  public plainVersion(): string {
+    return this.compilerVersion.split("+")[0];
+  }
+}
+export class SolidityProject {
 
-  const file = path.normalize(path.join(sourceFileDir, importString));
-  const realFile = path.join(directory, file);
-  if (fs.statSync(realFile, { throwIfNoEntry: false })) {
-    return file;
-  } else {
-    const realFile = path.normalize(path.join(directory, importString));
-    if (fs.statSync(realFile, { throwIfNoEntry: false })) {
-      // it's already relative to the direcotry, no need to do anything else
+  constructor(public sources: Map<string, string>, public compilation: SolidityCompilation) {
+  }
+
+  public static build(jsonFile: string): SolidityProject {
+    const json = JSON.parse(fs.readFileSync(jsonFile, "utf8"));
+    let sources = new Map<string, string>();
+
+    if (json.sources && typeof json.sources === "object") {
+      for (const [file, data] of Object.entries(json.sources)) {
+        if (typeof data === "object" && typeof (data as { content?: string }).content === "string") {
+          sources.set(file, (data as { content: string }).content);
+        }
+        else {
+          fail("Invalid source in json");
+        }
+      }
+    }
+    else {
+      fail("No sources in json");
+    }
+
+    let compilation;
+    if (json.compilation && typeof json.compilation === "object") {
+      if (json.compilation.compilerVersion && typeof json.compilation.compilerVersion === "string") {
+        compilation = new SolidityCompilation(json.compilation.compilerVersion);
+      }
+      else {
+        fail("No proper version in json");
+      }
+    }
+    else {
+      fail("No compilation data in json");
+    }
+
+    return new SolidityProject(sources, compilation);
+  }
+
+  public fileContents(file: string): string {
+    return this.sources.get(file) || fail(`Can't find ${file}`);
+  }
+
+  /// Resolves an import of a solidity file. Parameters are:
+  /// - `sourceFile`: the relavive path to the file under inspection,
+  /// - `importString`: the import string as parsed from the source file.
+  /// Returns the relative path of the imported file.
+  public resolveImport(sourceFile: string, importString: string): string {
+    const sourceFileDir = path.dirname(sourceFile);
+
+    const file = path.normalize(path.join(sourceFileDir, importString));
+    if (this.sources.has(file)) {
+      return file;
+    }
+    else if (this.sources.has(importString)) {
       return importString;
-    } else {
-      throw `Can't resolve import ${importString}`;
+    }
+    else {
+      fail(`Can't resolve import ${importString} in the context of ${sourceFileDir}`);
     }
   }
+}
+
+export class Timing {
+  public constructor(
+    public component: string,
+    public time: number,
+  ) {}
+}
+
+export interface Runner {
+  name: string;
+
+  test(project: SolidityProject, file: string): Promise<Timing[]>;
 }

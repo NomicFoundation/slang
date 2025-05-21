@@ -24,45 +24,14 @@ impl FetchController {
         let url = format!(
             "https://sourcify.dev/server/v2/contract/1/{address}/?fields=sources,compilation"
         );
-        let json: Value = get(&url)?.json()?;
+        let project_json: Value = get(&url)?.json()?;
 
-        // The expected json result should have two fields of interest to us: `sources`,
-        // with the files, and `compilation`, with the specifics of compilation.
+        let file_name = address.to_owned() + ".json";
+        let project_file_path = base_path.join(Path::new(&file_name));
 
-        let base_path = base_path.join(Path::new(address));
-
-        let sources = json
-            .get("sources")
-            .and_then(|s| s.as_object())
-            .ok_or_else(|| anyhow::anyhow!("Project {address} has no sources"))?;
-
-        // Ensure the "compilation" field exists and save it as "compilation.json"
-        let compilation = json
-            .get("compilation")
-            .ok_or_else(|| anyhow::anyhow!("Project {address} has no compilation field"))?;
-        let compilation_path = base_path.join("compilation.json");
-        let compilation_content = serde_json::to_string_pretty(compilation)?;
-        fs::create_dir_all(&base_path)?;
-        fs::write(compilation_path, compilation_content)?;
-
-        for (path, file) in sources {
-            let content = file
-                .get("content")
-                .and_then(|c| c.as_str())
-                .ok_or_else(|| anyhow::anyhow!("File {path} of {address} has no content"))?;
-
-            let path = Path::new(path);
-            // Basic sanitizations: ensure the path does not escape base_path
-            let sanitized_path = path.strip_prefix("/").unwrap_or(path);
-            let file_path = base_path.join(sanitized_path);
-
-            let parent = file_path
-                .parent()
-                .ok_or_else(|| anyhow::anyhow!("Can't obtain parent dir for {file_path:?}"))?;
-            fs::create_dir_all(parent)?;
-
-            fs::write(file_path, content)?;
-        }
+        let content = serde_json::to_string_pretty(&project_json)?;
+        fs::create_dir_all(base_path)?;
+        fs::write(project_file_path, content)?;
 
         Ok(())
     }

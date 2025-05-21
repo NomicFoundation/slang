@@ -1,18 +1,14 @@
 import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
 import { TerminalKind } from "@nomicfoundation/slang/cst";
 import assert from "node:assert";
-import { readRepoFile, resolveImport, Runner, Timing } from "./common.mjs";
+import { Runner, SolidityProject, Timing } from "./common.mjs";
 
-function versionWithoutBuildNumber(fullVersion: string): string {
-  return fullVersion.split("+")[0];
-}
-
-function createBuilder(version: string, directory: string): CompilationBuilder {
+function createBuilder(project: SolidityProject): CompilationBuilder {
   const builder = CompilationBuilder.create({
-    languageVersion: versionWithoutBuildNumber(version),
+    languageVersion: project.compilation.plainVersion(),
 
     readFile: async (fileId) => {
-      return readRepoFile(directory, fileId);
+      return project.fileContents(fileId);
     },
 
     resolveImport: async (sourceFileId, importPath) => {
@@ -21,7 +17,7 @@ function createBuilder(version: string, directory: string): CompilationBuilder {
       assert(importLiteral.endsWith('"') || importLiteral.endsWith("'"));
 
       let importString = importLiteral.slice(1, -1);
-      return resolveImport(directory, sourceFileId, importString);
+      return project.resolveImport(sourceFileId, importString);
     },
   });
 
@@ -41,9 +37,9 @@ class SlangRunner implements Runner {
     this.target = target;
   }
 
-  async test(languageVersion: string, dir: string, file: string): Promise<Timing[]> {
+  async test(project: SolidityProject, file: string): Promise<Timing[]> {
     const startTime = performance.now();
-    const builder = createBuilder(languageVersion, dir);
+    const builder = createBuilder(project);
 
     await builder.addFile(file);
 
