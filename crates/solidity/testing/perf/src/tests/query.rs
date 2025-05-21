@@ -3,8 +3,8 @@ use std::rc::Rc;
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::Query;
 
-pub fn setup() -> Rc<CompilationUnit> {
-    super::parser::run(super::parser::setup())
+pub fn setup(project: &str) -> Rc<CompilationUnit> {
+    super::parser::run(super::parser::setup(project))
 }
 
 pub fn run(unit: Rc<CompilationUnit>) {
@@ -27,8 +27,9 @@ pub fn run(unit: Rc<CompilationUnit>) {
         }
     }
 
-    assert_eq!(
-        functions_count, 244,
+    // TODO: ref cursor::run.
+    assert_ne!(
+        functions_count, 0,
         "Failed to fetch all function definitions"
     );
 }

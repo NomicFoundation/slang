@@ -13,15 +13,14 @@ slang_solidity = { workspace = true, features = [
 anyhow = { workspace = true }
 infra_utils = { workspace = true }
 semver = { workspace = true }
-metaslang_bindings = { workspace = true }
 serde_json = { workspace = true }
-
-[dev-dependencies]
 iai-callgrind = { workspace = true }
+paste = { workspace = true }
 
 [build-dependencies]
 infra_utils = { workspace = true }
 anyhow = { workspace = true }
+heck = { workspace = true }
 
 [[bench]]
 name = "iai"

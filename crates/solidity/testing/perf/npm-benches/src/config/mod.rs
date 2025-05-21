@@ -4,6 +4,10 @@ use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use serde::{Deserialize, Serialize};
 
+use crate::paths::PathExtensions;
+
+pub const CONFIG_FILE: &str = "crates/infra/cli/src/commands/perf/projects.json";
+
 /*
  Reader for the configuration file that contians the projects and files to benchmark
 */

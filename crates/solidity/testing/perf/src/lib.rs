@@ -6,29 +6,35 @@ pub mod dataset;
 mod import_resolver;
 pub mod tests;
 
-#[cfg(test)]
 mod __dependencies_used_in_benches__ {
-    use iai_callgrind as _;
+    use {iai_callgrind as _, paste as _};
 }
 
 #[cfg(test)]
 mod unit_tests {
     macro_rules! define_payload_test {
-        ($name:ident) => {
+        ($name:ident, $prj:expr) => {
             #[test]
             fn $name() {
-                let payload = crate::tests::$name::setup();
+                let payload = crate::tests::$name::setup($prj);
                 crate::tests::$name::run(payload);
             }
         };
     }
-
     /*
      * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
      */
-    define_payload_test!(parser);
-    define_payload_test!(cursor);
-    define_payload_test!(query);
-    define_payload_test!(bindings_build);
-    define_payload_test!(bindings_resolve);
+    macro_rules! define_payload_tests {
+        ($prj:ident, $name:tt) => {
+            mod $prj {
+                define_payload_test!(parser, $name);
+                define_payload_test!(cursor, $name);
+                define_payload_test!(query, $name);
+                define_payload_test!(bindings_build, $name);
+                define_payload_test!(bindings_resolve, $name);
+            }
+        };
+    }
+
+    include!("benches_list.rs");
 }

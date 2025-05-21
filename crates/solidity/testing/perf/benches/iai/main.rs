@@ -8,43 +8,62 @@ use iai_callgrind::{
     library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
     LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
+use paste::paste;
 use slang_solidity::compilation::CompilationUnit;
 use solidity_testing_perf::dataset::SolidityProject;
 use solidity_testing_perf::tests::bindings_resolve::BuiltBindingGraph;
 
 mod __dependencies_used_in_lib__ {
-    use {infra_utils as _, metaslang_bindings as _, semver as _, slang_solidity as _};
+    use {anyhow as _, infra_utils as _, semver as _, serde_json as _, slang_solidity as _};
 }
 
 macro_rules! define_payload_benchmark {
-    ($name:ident, $payload:ty) => {
-        #[library_benchmark(setup = solidity_testing_perf::tests::$name::setup)]
-        fn $name(payload: $payload) {
-            black_box(solidity_testing_perf::tests::$name::run(payload));
+    ($name:ident, $prj: ident, $file: expr, $payload:ty) => {
+        paste! {
+          #[library_benchmark]
+          #[bench::first(args = ($file), setup = solidity_testing_perf::tests::$name::setup)]
+          pub fn [<$prj _ $name>](payload: $payload) {
+              black_box(solidity_testing_perf::tests::$name::run(payload));
+          }
         }
     };
 }
 
-/*
- * WARNING:
- * The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
- * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
- *
- * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
- */
-define_payload_benchmark!(parser, SolidityProject);
-define_payload_benchmark!(cursor, Rc<CompilationUnit>);
-define_payload_benchmark!(query, Rc<CompilationUnit>);
-define_payload_benchmark!(bindings_build, Rc<CompilationUnit>);
-define_payload_benchmark!(bindings_resolve, BuiltBindingGraph);
+macro_rules! define_payload_tests {
+    ($prj:ident, $name:tt) => {
+        /*
+         * WARNING:
+         * The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
+         * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
+         *
+         * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
+         */
+        define_payload_benchmark!(parser, $prj, $name, SolidityProject);
+        define_payload_benchmark!(cursor, $prj, $name, Rc<CompilationUnit>);
+        define_payload_benchmark!(query, $prj, $name, Rc<CompilationUnit>);
+        define_payload_benchmark!(bindings_build, $prj, $name, Rc<CompilationUnit>);
+        define_payload_benchmark!(bindings_resolve, $prj, $name, BuiltBindingGraph);
 
-library_benchmark_group!(
-    name = benchmarks;
+        paste! {
+        library_benchmark_group!(
+              name = $prj;
 
-    // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
-    benchmarks = parser, cursor, query, bindings_build, bindings_resolve,
-);
+              // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
+              benchmarks =
+                [< $prj _parser>],
+                [< $prj _cursor>],
+                [< $prj _query>],
+                [< $prj _bindings_build>],
+                [< $prj _bindings_resolve>],
+            );
+          }
+    };
+}
 
+include!("../../src/benches_list.rs");
+
+macro_rules! do_main {
+    ($($groups:ident),+ $(,)?) => {
 main!(
     config = LibraryBenchmarkConfig::default()
         // 'valgrind' supports many tools. By default, it runs 'callgrind', which reports these metrics:
@@ -78,5 +97,21 @@ main!(
         // Let's disable this behavior to be able to execute our infra utilities:
         .env_clear(false);
 
-    library_benchmark_groups = benchmarks
+    library_benchmark_groups = $($groups,)+
+);
+}
+}
+
+// manually listed because I found no way to successfully do it dynamically
+do_main!(
+    darts,
+    mooniswap,
+    weighted_pool,
+    doodled_bears,
+    senior_bond,
+    erc721a_contract,
+    uniswap,
+    multicall3,
+    create_x,
+    one_step_leverage_f,
 );

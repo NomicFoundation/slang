@@ -1,5 +1,7 @@
+use std::collections::HashMap;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::OnceLock;
 
 use anyhow::Result;
 use infra_utils::config::{self};
@@ -11,6 +13,8 @@ pub struct SolidityProject {
     pub root: PathBuf,
     pub entrypoint: String,
 }
+
+type ProjectMap = HashMap<String, SolidityProject>;
 
 impl SolidityProject {
     pub(crate) fn new(path: &Path) -> Result<SolidityProject> {
@@ -49,21 +53,34 @@ impl SolidityProject {
     }
 }
 
-pub fn load_projects() -> Result<Vec<SolidityProject>> {
+fn load_projects_internal() -> Result<ProjectMap> {
+    let mut map = ProjectMap::new();
     let config = config::read_config()?;
     let working_directory_path = Path::repo_path(&config.working_dir);
-    let mut projects = vec![];
+
+    let mut insert = |key: String, project: SolidityProject| {
+        map.insert(key, project);
+    };
 
     for file in config.files {
         let mut project = SolidityProject::new(&working_directory_path.join(file.hash))?;
+        let key = Path::new(&file.file)
+            .file_stem()
+            .expect("entrypoint is a file");
         // override the entrypoint with the path given
-        project.entrypoint = file.file;
-        projects.push(project);
+        project.entrypoint = file.file.clone();
+        insert(key.to_os_string().into_string().unwrap(), project);
     }
 
     for project in config.projects {
-        let project = SolidityProject::new(&working_directory_path.join(project.hash))?;
-        projects.push(project);
+        let sol_project = SolidityProject::new(&working_directory_path.join(project.hash))?;
+        insert(project.name, sol_project);
     }
-    Ok(projects)
+    Ok(map)
+}
+
+pub fn load_projects() -> &'static ProjectMap {
+    static CACHE: OnceLock<ProjectMap> = OnceLock::new();
+
+    CACHE.get_or_init(|| load_projects_internal().unwrap())
 }

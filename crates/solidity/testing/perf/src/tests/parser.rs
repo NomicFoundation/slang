@@ -6,9 +6,8 @@ use slang_solidity::compilation::CompilationUnit;
 use crate::compilation_builder::CompilationBuilder;
 use crate::dataset::{load_projects, SolidityProject};
 
-pub fn setup() -> SolidityProject {
-    let projects = load_projects().unwrap();
-    let project = projects.first().unwrap();
+pub fn setup(project: &str) -> SolidityProject {
+    let project = load_projects().get(project).unwrap();
     project.to_owned()
 }
 

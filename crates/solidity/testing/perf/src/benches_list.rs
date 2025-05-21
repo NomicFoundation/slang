@@ -1,0 +1,10 @@
+    define_payload_tests!(darts, "Darts");
+    define_payload_tests!(mooniswap, "Mooniswap");
+    define_payload_tests!(weighted_pool, "WeightedPool");
+    define_payload_tests!(doodled_bears, "DoodledBears");
+    define_payload_tests!(senior_bond, "SeniorBond");
+    define_payload_tests!(erc721a_contract, "ERC721AContract");
+    define_payload_tests!(uniswap, "Uniswap");
+    define_payload_tests!(multicall3, "Multicall3");
+    define_payload_tests!(create_x, "CreateX");
+    define_payload_tests!(one_step_leverage_f, "OneStepLeverage.f");

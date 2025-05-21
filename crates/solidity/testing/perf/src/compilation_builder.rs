@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use infra_utils::paths::PathExtensions;
@@ -15,6 +15,9 @@ pub struct CompilationBuilder {
     seen_files: HashSet<String>,
 }
 
+// a poor-man's copy of crates/solidity/testing/sourcify/src/compilation_builder.rs
+// TODO: abstract the functionality that is common to both
+// NOTE: here we deal with a real file system, unlike in sourcify.
 impl CompilationBuilder {
     pub fn new(
         language_version: Version,
@@ -32,19 +35,27 @@ impl CompilationBuilder {
     pub fn build(mut self) -> Result<CompilationUnit> {
         let entrypoint = self.entrypoint.clone();
 
-        self.add_file(&entrypoint)?;
+        // Sanitize the import string: remove leading slashes
+        let filename = self
+            .project_root
+            .join(entrypoint.trim_start_matches('/'))
+            .canonicalize()
+            .unwrap_or_else(|_| panic!("Can't find {entrypoint}"));
+
+        self.add_file(filename.to_string_lossy().as_ref())?;
 
         Ok(self.internal.build())
     }
 
     fn add_file(&mut self, filename: &str) -> Result<()> {
-        if !self.seen_files.insert(filename.into()) {
+        if !self.seen_files.insert(filename.to_string()) {
             return Ok(());
         }
 
-        let source = self.project_root.join(filename).read_to_string()?;
+        let source = Path::new(filename).read_to_string()?;
 
-        let AddFileResponse { import_paths } = self.internal.add_file(filename.into(), &source);
+        let AddFileResponse { import_paths } =
+            self.internal.add_file(filename.to_string(), &source);
 
         for import_path in import_paths {
             let import_path = import_path.node().unparse();

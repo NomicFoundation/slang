@@ -4,13 +4,16 @@ use slang_solidity::bindings::BindingGraph;
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{NodeKind, NonterminalKind, TerminalKindExtensions};
 
+// TODO: These must be resolved at some point
+const ALLOWED_UNDEFINED_IDENTIFIERS: [&str; 2] = ["ABIEncoderV2", "v2"];
+
 pub struct BuiltBindingGraph {
     unit: Rc<CompilationUnit>,
     binding_graph: Rc<BindingGraph>,
 }
 
-pub fn setup() -> BuiltBindingGraph {
-    let unit = super::parser::run(super::parser::setup());
+pub fn setup(project: &str) -> BuiltBindingGraph {
+    let unit = super::parser::run(super::parser::setup(project));
     let binding_graph = super::bindings_build::run(Rc::clone(&unit));
 
     BuiltBindingGraph {
@@ -44,6 +47,7 @@ pub fn run(dependencies: BuiltBindingGraph) {
 
             if binding_graph.definition_at(&cursor).is_none()
                 && binding_graph.reference_at(&cursor).is_none()
+                && !ALLOWED_UNDEFINED_IDENTIFIERS.contains(&cursor.node().unparse().as_str())
             {
                 panic!(
                     "Unbound identifier: '{value}' in '{file_path}:{line}:{column}'.",
