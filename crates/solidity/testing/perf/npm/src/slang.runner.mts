@@ -52,8 +52,7 @@ class SlangRunner implements Runner {
     const parsedAllFilesTime = performance.now();
 
     // Validation: there shouldn't be any parsing errors, but if there are, let's print them nicely
-    const files_w_errors = unit.files().filter((f) => f.errors().length > 0);
-    const errors = files_w_errors.flatMap((f) => f.errors().map((e) => [f.id, e.message, e.textRange]));
+    const errors = unit.files().flatMap((f) => f.errors().map((e) => [f.id, e.message, e.textRange]));
     assert.deepStrictEqual(errors, []);
 
     // first access constructs the graph
