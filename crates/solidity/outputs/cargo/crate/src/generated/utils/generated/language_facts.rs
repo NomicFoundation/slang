@@ -90,11 +90,12 @@ impl LanguageFacts {
         Version::new(0, 8, 27),
         Version::new(0, 8, 28),
         Version::new(0, 8, 29),
+        Version::new(0, 8, 30),
     ];
 
     pub const EARLIEST_VERSION: Version = Version::new(0, 4, 11);
 
-    pub const LATEST_VERSION: Version = Version::new(0, 8, 29);
+    pub const LATEST_VERSION: Version = Version::new(0, 8, 30);
 
     pub fn infer_language_versions(input: &str) -> impl Iterator<Item = &'static Version> {
         crate::extensions::utils::infer_language_versions(input)
