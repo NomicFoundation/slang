@@ -35,10 +35,9 @@ impl NpmController {
     fn execute(&self) -> Result<()> {
         let config = config::read_config()?;
         let input_path = Path::new(&config::WORKING_DIR);
-        let mut file_benchmarks = self.individual_file_benchmarks(input_path, &config.files)?;
-        let mut project_benchmarks = self.project_benchmarks(input_path, &config.projects)?;
-        file_benchmarks.append(&mut project_benchmarks);
-        publish(&file_benchmarks)
+        let file_benchmarks = self.individual_file_benchmarks(input_path, &config.files)?;
+        let project_benchmarks = self.project_benchmarks(input_path, &config.projects)?;
+        publish(file_benchmarks.iter().chain(project_benchmarks.iter()))
     }
 
     fn run_benchmarks(&self, version: &str, path: &Path, file: &str) -> Result<Vec<Timing>> {
@@ -159,24 +158,24 @@ impl NpmController {
     }
 }
 
-fn publish(results: &[Timing]) -> Result<()> {
+fn publish<'a>(results: impl Iterator<Item = &'a Timing>) -> Result<()> {
     let mut output = std::io::stdout();
     writeln!(output, "{{")?;
     writeln!(output, "\t\"npm_benchmarks\": {{")?;
 
-    for (i, timing) in results.iter().enumerate() {
+    let mut buffer = None;
+    for timing in results {
+        if let Some(value) = buffer {
+            writeln!(output, "{value}")?;
+        }
         writeln!(output, "\t\t\"{}\": {{", timing.component)?;
         writeln!(output, "\t\t\t\"value\": {}", timing.time)?;
         write!(output, "\t\t}}")?;
 
-        if i < results.len() - 1 {
-            writeln!(output, ",")?;
-        } else {
-            writeln!(output)?;
-        }
+        buffer = Some(",");
     }
 
-    writeln!(output, "\t}}")?;
+    writeln!(output, "\n\t}}")?;
     writeln!(output, "}}")?;
     Ok(())
 }
