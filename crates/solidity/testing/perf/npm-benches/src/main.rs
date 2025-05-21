@@ -7,19 +7,14 @@ use clap::Parser;
 use infra_utils::commands::Command;
 use infra_utils::config::{self, File, Project};
 use serde::Deserialize;
-use strum_macros::AsRefStr;
+use strum::IntoEnumIterator;
+use strum_macros::{AsRefStr, EnumIter};
 
-#[derive(Clone, Copy, Debug, AsRefStr)]
+#[derive(Clone, Copy, Debug, AsRefStr, EnumIter)]
 pub enum Runner {
-    SlangProject, // resolve bindings of the entire project
+    SlangProject, // resolve bindings of the entire project instead of just the main file, see the options in the npm counterpart
     SolidityParser,
     Solc,
-}
-
-impl Runner {
-    pub fn variants() -> impl Iterator<Item = Runner> {
-        [Runner::SlangProject, Runner::SolidityParser, Runner::Solc].into_iter()
-    }
 }
 
 #[derive(Clone, Debug, Parser)]
@@ -48,7 +43,7 @@ impl NpmController {
 
     fn run_benchmarks(&self, version: &str, path: &Path, file: &str) -> Result<Vec<Timing>> {
         let mut results = vec![];
-        for runner in Runner::variants() {
+        for runner in Runner::iter() {
             let mut runner_result = self.run(version, path, file, runner)?;
             results.append(&mut runner_result);
         }
