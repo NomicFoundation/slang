@@ -12,7 +12,7 @@ use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
 
 #[derive(Clone, Copy, Debug, AsRefStr, EnumIter)]
-pub enum Runner {
+pub enum SubjectUT {
     SlangProject, // resolve bindings of the entire project instead of just the main file, see the options in the npm counterpart
     SolidityParser,
     Solc,
@@ -43,9 +43,9 @@ impl NpmController {
 
     fn run_benchmarks(&self, version: &str, path: &Path, file: &str) -> Result<Vec<Timing>> {
         let mut results = vec![];
-        for runner in Runner::iter() {
-            let mut runner_result = self.run(version, path, file, runner)?;
-            results.append(&mut runner_result);
+        for sut in SubjectUT::iter() {
+            let mut sut_result = self.run(version, path, file, sut)?;
+            results.append(&mut sut_result);
         }
 
         Ok(results)
@@ -135,7 +135,7 @@ impl NpmController {
         compiler_version: &str,
         path: &Path,
         fully_qualified_name: &str,
-        runner: Runner,
+        sut: SubjectUT,
     ) -> Result<Vec<Timing>, anyhow::Error> {
         let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf")?;
         let command = Command::new("npx")
@@ -146,7 +146,7 @@ impl NpmController {
             .property("--version", compiler_version)
             .property("--dir", path.to_string_lossy())
             .property("--file", fully_qualified_name)
-            .property("--runner", runner.as_ref())
+            .property("--runner", sut.as_ref())
             .args(&self.extra_args);
         let result = command.evaluate()?;
 
