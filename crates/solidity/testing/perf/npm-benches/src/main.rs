@@ -1,4 +1,3 @@
-use std::fs;
 use std::io::Write;
 use std::path::Path;
 
@@ -41,10 +40,10 @@ impl NpmController {
         publish(file_benchmarks.iter().chain(project_benchmarks.iter()))
     }
 
-    fn run_benchmarks(&self, version: &str, path: &Path, file: &str) -> Result<Vec<Timing>> {
+    fn run_benchmarks(&self, path: &Path, file: Option<&str>) -> Result<Vec<Timing>> {
         let mut results = vec![];
         for sut in SubjectUT::iter() {
-            let mut sut_result = self.run(version, path, file, sut)?;
+            let mut sut_result = self.run(path, file, sut)?;
             results.append(&mut sut_result);
         }
 
@@ -66,9 +65,7 @@ impl NpmController {
 
             let path = input_path.join(&file.hash);
 
-            let (compiler_version, _) = Self::compilation_options(&path)?;
-
-            let mut result = self.run_benchmarks(&compiler_version, &path, &file.file)?;
+            let mut result = self.run_benchmarks(&path, Some(&file.file))?;
             results.append(&mut result);
         }
         Ok(results)
@@ -85,67 +82,35 @@ impl NpmController {
         for project in projects {
             let path = input_path.join(&project.hash);
 
-            let (compiler_version, fully_qualified_name) = Self::compilation_options(&path)?;
-
-            if !pattern_regex.is_match(path.join(&fully_qualified_name).to_string_lossy().as_ref())
-            {
+            if !pattern_regex.is_match(&project.name) {
                 continue;
             }
 
-            let mut result =
-                self.run_benchmarks(&compiler_version, &path, &fully_qualified_name)?;
+            let mut result = self.run_benchmarks(&path, None)?;
             results.append(&mut result);
         }
         Ok(results)
     }
 
-    fn compilation_options(path: &Path) -> Result<(String, String)> {
-        let compilation_file = path.join("compilation.json");
-
-        if !compilation_file.exists() {
-            return Err(anyhow::anyhow!(
-                "Missing compilation.json in folder: {:?}",
-                path
-            ));
-        }
-
-        let content = fs::read_to_string(&compilation_file)?;
-        let json: serde_json::Value = serde_json::from_str(&content)?;
-
-        let fully_qualified_name = json
-            .get("fullyQualifiedName")
-            .and_then(|f| f.as_str())
-            .ok_or_else(|| {
-                anyhow::anyhow!("Missing fullyQualifiedName field in file: {compilation_file:?}")
-            })?
-            .rsplit_once(':')
-            .map(|(before_last_colon, _)| before_last_colon)
-            .ok_or_else(|| anyhow::anyhow!("fullyQualifiedName is not well formatted"))?;
-
-        let compiler_version = json
-            .get("compilerVersion")
-            .and_then(|f| f.as_str())
-            .ok_or_else(|| anyhow::anyhow!("Missing compilerVersion in {compilation_file:?}"))?;
-
-        Ok((compiler_version.into(), fully_qualified_name.into()))
-    }
-
     fn run(
         &self,
-        compiler_version: &str,
         path: &Path,
-        fully_qualified_name: &str,
+        file: Option<&str>,
         sut: SubjectUT,
     ) -> Result<Vec<Timing>, anyhow::Error> {
         let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf")?;
-        let command = Command::new("npx")
+        let mut command = Command::new("npx")
             .arg("tsx")
             .flag("--trace-uncaught")
             .flag("--expose-gc")
             .arg(perf_crate.join("npm/src/main.mts").to_str().unwrap())
-            .property("--version", compiler_version)
-            .property("--dir", path.to_string_lossy())
-            .property("--file", fully_qualified_name)
+            .property("--dir", path.to_string_lossy());
+
+        if let Some(file) = file {
+            command = command.property("--file", file);
+        }
+
+        command = command
             .property("--runner", sut.as_ref())
             .args(&self.extra_args);
         let result = command.evaluate()?;
