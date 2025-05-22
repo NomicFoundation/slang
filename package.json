@@ -12,7 +12,7 @@
     "crates/testlang/outputs/npm/tests",
     "documentation/public/user-guide"
   ],
-  "dependencies": {
+  "devDependencies": {
     "tsx": "^4.19.4"
   }
 }
