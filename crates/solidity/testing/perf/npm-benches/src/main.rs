@@ -20,9 +20,16 @@ pub enum SubjectUT {
 #[derive(Clone, Debug, Parser)]
 pub struct NpmController {
     #[arg(short, long, default_value_t = String::from(".*"))]
+    /// A regex pattern to select which project(s) to run
     pattern: String,
-    #[arg(trailing_var_arg = true)]
-    extra_args: Vec<String>, // Collects all arguments after `--`
+
+    #[arg(long, default_value_t = 2)]
+    /// The number of cold runs
+    cold: usize,
+
+    #[arg(long, default_value_t = 5)]
+    /// The number of hot runs
+    hot: usize,
 }
 
 #[derive(Debug, Deserialize)]
@@ -112,7 +119,9 @@ impl NpmController {
 
         command = command
             .property("--runner", sut.as_ref())
-            .args(&self.extra_args);
+            .property("--cold", self.cold.to_string())
+            .property("--hot", self.hot.to_string());
+
         let result = command.evaluate()?;
 
         match serde_json::from_str(&result) {
