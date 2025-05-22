@@ -8,13 +8,19 @@ use crate::utils::DryRun;
 #[derive(Clone, Debug, Parser)]
 pub struct NpmController {
     #[arg(short, long, default_value_t = String::from(".*"))]
+    /// A regex pattern to select which project(s) to run
     pattern: String,
 
     #[command(flatten)]
     dry_run: DryRun,
 
-    #[arg(trailing_var_arg = true)]
-    extra_args: Vec<String>, // Collects all arguments after `--`
+    #[arg(long, default_value_t = 2)]
+    /// The number of cold runs
+    cold: usize,
+
+    #[arg(long, default_value_t = 5)]
+    /// The number of hot runs
+    hot: usize,
 }
 
 impl NpmController {
@@ -24,13 +30,13 @@ impl NpmController {
     }
 
     fn execute_npm_benchmarks(&self) {
-        let extra_args = if self.extra_args.is_empty() {
-            String::new()
-        } else {
-            "-- ".to_owned() + &self.extra_args.join(" ")
-        };
-        let test_runner =
-            format!("cargo run --package solidity_testing_perf_npmbenches -- --pattern={pattern} {extra_args}", pattern = &self.pattern);
+        let test_runner = format!(
+            "cargo run --package {package} -- --pattern={pattern} --cold={cold} --hot={hot}",
+            package = "solidity_testing_perf_npmbenches",
+            pattern = &self.pattern,
+            cold = &self.cold,
+            hot = &self.hot,
+        );
 
         run_bench(self.dry_run.get(), "json", &test_runner);
     }
