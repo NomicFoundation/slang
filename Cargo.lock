@@ -388,7 +388,7 @@ checksum = "98cc8fbded0c607b7ba9dd60cd98df59af97e84d24e49c8557331cfc26d301ce"
 
 [[package]]
 name = "codegen_ebnf"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "Inflector",
  "codegen_language_definition",
@@ -398,7 +398,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_language_definition"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "Inflector",
  "codegen_language_internal_macros",
@@ -417,7 +417,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_language_internal_macros"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "itertools 0.13.0",
  "proc-macro2",
@@ -427,14 +427,14 @@ dependencies = [
 
 [[package]]
 name = "codegen_language_macros"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "codegen_language_definition",
 ]
 
 [[package]]
 name = "codegen_language_tests"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -446,7 +446,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_runner"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "anyhow",
  "codegen_language_definition",
@@ -462,7 +462,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_runtime_cargo_crate"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "ariadne",
  "metaslang_bindings",
@@ -476,7 +476,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_runtime_cargo_wasm"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "codegen_runtime_cargo_crate",
  "paste",
@@ -487,7 +487,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_runtime_generator"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -506,11 +506,11 @@ dependencies = [
 
 [[package]]
 name = "codegen_runtime_npm_package"
-version = "1.1.0"
+version = "1.2.0"
 
 [[package]]
 name = "codegen_spec"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -524,7 +524,7 @@ dependencies = [
 
 [[package]]
 name = "codegen_testing"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -1405,7 +1405,7 @@ checksum = "f4c7245a08504955605670dbf141fceab975f15ca21570696aebe9d2e71576bd"
 
 [[package]]
 name = "infra_cli"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -1427,7 +1427,7 @@ dependencies = [
 
 [[package]]
 name = "infra_utils"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -1583,7 +1583,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_bindings"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "metaslang_cst",
  "metaslang_graph_builder",
@@ -1595,7 +1595,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_cst"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "nom",
  "serde",
@@ -1604,7 +1604,7 @@ dependencies = [
 
 [[package]]
 name = "metaslang_graph_builder"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "env_logger",
  "indoc",
@@ -2398,7 +2398,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "ariadne",
  "metaslang_bindings",
@@ -2412,7 +2412,7 @@ dependencies = [
 
 [[package]]
 name = "slang_solidity_cli"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "clap",
  "semver",
@@ -2422,7 +2422,7 @@ dependencies = [
 
 [[package]]
 name = "slang_testlang"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "ariadne",
  "metaslang_bindings",
@@ -2461,7 +2461,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_cargo_tests"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "Inflector",
  "anyhow",
@@ -2481,7 +2481,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_cargo_wasm"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "paste",
  "semver",
@@ -2492,7 +2492,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_language"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -2501,15 +2501,15 @@ dependencies = [
 
 [[package]]
 name = "solidity_npm_package"
-version = "1.1.0"
+version = "1.2.0"
 
 [[package]]
 name = "solidity_spec"
-version = "1.1.0"
+version = "1.2.0"
 
 [[package]]
 name = "solidity_testing_perf"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "iai-callgrind",
  "infra_utils",
@@ -2520,7 +2520,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_sanctuary"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -2542,11 +2542,11 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_snapshots"
-version = "1.1.0"
+version = "1.2.0"
 
 [[package]]
 name = "solidity_testing_solc"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "anyhow",
  "ariadne",
@@ -2569,7 +2569,7 @@ dependencies = [
 
 [[package]]
 name = "solidity_testing_sourcify"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -2802,7 +2802,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_cargo_tests"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "metaslang_graph_builder",
  "semver",
@@ -2811,7 +2811,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_cargo_wasm"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "paste",
  "semver",
@@ -2822,7 +2822,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_language"
-version = "1.1.0"
+version = "1.2.0"
 dependencies = [
  "codegen_language_definition",
  "codegen_language_macros",
@@ -2831,7 +2831,7 @@ dependencies = [
 
 [[package]]
 name = "testlang_npm_package"
-version = "1.1.0"
+version = "1.2.0"
 
 [[package]]
 name = "thiserror"
