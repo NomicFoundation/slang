@@ -69,9 +69,6 @@ jobs:
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
 
-      - name: "infra perf fetch"
-        run: "./scripts/bin/infra perf fetch"
-
       - name: "infra perf cargo"
         run: "./scripts/bin/infra perf cargo ${{ github.event.inputs.dryRun == true && '--dry-run' || '' }}"
         env:
