@@ -71,7 +71,7 @@ class SlangRunner implements Runner {
         const reference = unit.bindingGraph.referenceAt(cursor);
 
         if (reference && reference.definitions().length == 0) {
-          emptyDefList.push(file.id, cursor.node.unparse());
+          emptyDefList.push(file.id, cursor.node.unparse(), cursor.textRange);
         }
 
         if (!(definition || reference)) {

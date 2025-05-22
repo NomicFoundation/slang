@@ -23,9 +23,17 @@ pub enum SubjectUT {
 
 #[derive(Clone, Debug, Parser)]
 pub struct NpmController {
-    #[arg(short, long, default_value_t = String::from(".*"))]
+    #[arg(short, long)]
     /// A regex pattern to select which project(s) to run
-    pattern: String,
+    pattern: Option<String>,
+
+    #[arg(long)]
+    /// A specific hash to load
+    hash: Option<String>,
+
+    #[arg(long)]
+    /// If hash is specified, it is possible to optionally change the entrypoint file
+    entrypoint: Option<String>,
 
     #[arg(long, default_value_t = 2)]
     /// The number of cold runs
@@ -46,19 +54,41 @@ impl NpmController {
     fn execute(&self) -> Result<()> {
         let config = config::read_config()?;
         let input_path = Path::new(&config::WORKING_DIR);
-        let file_benchmarks = self.individual_file_benchmarks(input_path, &config.files)?;
-        let project_benchmarks = self.project_benchmarks(input_path, &config.projects)?;
-        publish(file_benchmarks.iter().chain(project_benchmarks.iter()))
+
+        if let Some(hash) = &self.hash {
+            let result = self.run_benchmarks(input_path, hash, self.entrypoint.as_deref())?;
+            publish(result.iter())
+        } else {
+            let file_benchmarks = self.individual_file_benchmarks(input_path, &config.files)?;
+            let project_benchmarks = self.project_benchmarks(input_path, &config.projects)?;
+            publish(file_benchmarks.iter().chain(project_benchmarks.iter()))
+        }
     }
 
-    fn run_benchmarks(&self, path: &Path, file: Option<&str>) -> Result<Vec<Timing>> {
+    fn run_benchmarks(
+        &self,
+        input_path: &Path,
+        hash: &str,
+        file: Option<&str>,
+    ) -> Result<Vec<Timing>> {
+        fetch(hash, input_path)?;
+        let path = input_path.join(hash);
+
         let mut results = vec![];
         for sut in SubjectUT::iter() {
-            let mut sut_result = self.run(path, file, sut)?;
+            let mut sut_result = self.run(&path, file, sut)?;
             results.append(&mut sut_result);
         }
 
         Ok(results)
+    }
+
+    fn compute_regex(&self) -> Result<regex::Regex> {
+        if let Some(pattern) = &self.pattern {
+            Ok(regex::Regex::new(pattern)?)
+        } else {
+            Ok(regex::Regex::new(".*")?)
+        }
     }
 
     fn individual_file_benchmarks(
@@ -68,17 +98,13 @@ impl NpmController {
     ) -> Result<Vec<Timing>> {
         let mut results = vec![];
 
-        let pattern_regex = regex::Regex::new(&self.pattern)?;
+        let pattern_regex = self.compute_regex()?;
         for file in files {
             if !pattern_regex.is_match(&file.file) {
                 continue;
             }
 
-            fetch(&file.hash, input_path)?;
-
-            let path = input_path.join(&file.hash);
-
-            let mut result = self.run_benchmarks(&path, Some(&file.file))?;
+            let mut result = self.run_benchmarks(input_path, &file.hash, Some(&file.file))?;
             results.append(&mut result);
         }
         Ok(results)
@@ -90,18 +116,14 @@ impl NpmController {
         projects: &Vec<Project>,
     ) -> Result<Vec<Timing>> {
         let mut results = vec![];
-        let pattern_regex = regex::Regex::new(&self.pattern)?;
+        let pattern_regex = self.compute_regex()?;
 
         for project in projects {
-            let path = input_path.join(&project.hash);
-
             if !pattern_regex.is_match(&project.name) {
                 continue;
             }
 
-            fetch(&project.hash, input_path)?;
-
-            let mut result = self.run_benchmarks(&path, None)?;
+            let mut result = self.run_benchmarks(input_path, &project.hash, None)?;
             results.append(&mut result);
         }
         Ok(results)
