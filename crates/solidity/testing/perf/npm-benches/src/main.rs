@@ -10,6 +10,10 @@ use serde::Deserialize;
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
 
+use crate::fetch::fetch;
+
+mod fetch;
+
 #[derive(Clone, Copy, Debug, AsRefStr, EnumIter)]
 pub enum SubjectUT {
     SlangProject, // resolve bindings of the entire project instead of just the main file, see the options in the npm counterpart
@@ -70,6 +74,8 @@ impl NpmController {
                 continue;
             }
 
+            fetch(&file.hash, input_path)?;
+
             let path = input_path.join(&file.hash);
 
             let mut result = self.run_benchmarks(&path, Some(&file.file))?;
@@ -92,6 +98,8 @@ impl NpmController {
             if !pattern_regex.is_match(&project.name) {
                 continue;
             }
+
+            fetch(&project.hash, input_path)?;
 
             let mut result = self.run_benchmarks(&path, None)?;
             results.append(&mut result);

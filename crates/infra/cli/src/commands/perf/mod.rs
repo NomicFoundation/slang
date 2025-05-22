@@ -1,13 +1,11 @@
 mod bencher;
 mod cargo;
-mod fetch;
 mod npm;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 
 use crate::commands::perf::cargo::CargoController;
-use crate::commands::perf::fetch::FetchController;
 use crate::commands::perf::npm::NpmController;
 
 #[derive(Clone, Debug, Parser)]
@@ -22,8 +20,6 @@ enum PerfCommand {
     Cargo(CargoController),
     /// Run benchmark tests for the typescript api
     Npm(NpmController),
-    /// Fetch the sources of contracts
-    Fetch(FetchController),
 }
 
 impl PerfController {
@@ -31,7 +27,6 @@ impl PerfController {
         match &self.command {
             PerfCommand::Cargo(controller) => controller.execute(),
             PerfCommand::Npm(controller) => controller.execute(),
-            PerfCommand::Fetch(controller) => controller.execute(),
         }
     }
 }
