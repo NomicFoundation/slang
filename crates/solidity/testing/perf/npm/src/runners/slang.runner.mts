@@ -1,7 +1,7 @@
 import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
 import { TerminalKind } from "@nomicfoundation/slang/cst";
 import assert from "node:assert";
-import { Runner, SolidityProject, Timing } from "./common.mjs";
+import { Runner, SolidityProject, Timing } from "../common.mjs";
 
 function createBuilder(project: SolidityProject): CompilationBuilder {
   const builder = CompilationBuilder.create({

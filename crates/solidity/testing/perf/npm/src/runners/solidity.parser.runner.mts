@@ -1,5 +1,5 @@
 import { parse } from "@solidity-parser/parser";
-import { log, Runner, SolidityProject, Timing } from "./common.mjs";
+import { log, Runner, SolidityProject, Timing } from "../common.mjs";
 
 export class AntlrRunner implements Runner {
   public name = "solidity parser";

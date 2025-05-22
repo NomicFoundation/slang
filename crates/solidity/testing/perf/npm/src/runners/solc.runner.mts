@@ -1,7 +1,7 @@
 import assert from "assert";
 import { promisify } from "node:util";
 import * as solc from "solc";
-import { log, Runner, SolidityProject, Timing } from "./common.mjs";
+import { log, Runner, SolidityProject, Timing } from "../common.mjs";
 
 export class SolcRunner implements Runner {
   public name = "solc";

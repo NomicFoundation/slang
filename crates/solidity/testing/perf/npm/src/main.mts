@@ -1,9 +1,7 @@
-import { SlangBindingsFileRunner, SlangBindingsProjectRunner } from "./slang.runner.mjs";
-import { SolcRunner } from "./solc.runner.mjs";
 import { checkCI, Runner, round2, Timing, SolidityProject } from "./common.mjs";
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
-import { AntlrRunner } from "./solidity.parser.runner.mjs";
+import { AntlrRunner, SlangBindingsFileRunner, SlangBindingsProjectRunner, SolcRunner } from "./runners/runners.mjs";
 
 const runners: Map<string, Runner> = new Map([
   ["SlangFile", new SlangBindingsFileRunner()],
