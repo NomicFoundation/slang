@@ -5,13 +5,14 @@ use anyhow::Result;
 use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
-use infra_utils::config::{self, File, Project};
 use serde::Deserialize;
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
 
+use crate::config::{File, Project};
 use crate::fetch::fetch;
 
+mod config;
 mod fetch;
 
 #[derive(Clone, Copy, Debug, AsRefStr, EnumIter)]
