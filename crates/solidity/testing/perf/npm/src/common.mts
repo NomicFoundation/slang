@@ -33,16 +33,29 @@ export function log(what: string) {
 }
 
 export class SolidityCompilation {
-  constructor(public compilerVersion: string) { }
+  constructor(
+    public compilerVersion: string,
+    public fullyQualifiedName: string,
+  ) {}
 
   public plainVersion(): string {
     return this.compilerVersion.split("+")[0];
   }
-}
-export class SolidityProject {
 
-  constructor(public sources: Map<string, string>, public compilation: SolidityCompilation) {
+  public entrypoint(): string {
+    return this.fullyQualifiedName.split(":")[0];
   }
+
+  public projectName(): string {
+    return this.fullyQualifiedName.split(":")[1];
+  }
+}
+
+export class SolidityProject {
+  constructor(
+    public sources: Map<string, string>,
+    public compilation: SolidityCompilation,
+  ) {}
 
   public static build(jsonFile: string): SolidityProject {
     const json = JSON.parse(fs.readFileSync(jsonFile, "utf8"));
@@ -52,26 +65,32 @@ export class SolidityProject {
       for (const [file, data] of Object.entries(json.sources)) {
         if (typeof data === "object" && typeof (data as { content?: string }).content === "string") {
           sources.set(file, (data as { content: string }).content);
-        }
-        else {
+        } else {
           fail("Invalid source in json");
         }
       }
-    }
-    else {
+    } else {
       fail("No sources in json");
     }
 
     let compilation;
     if (json.compilation && typeof json.compilation === "object") {
+      let compilerVersion;
       if (json.compilation.compilerVersion && typeof json.compilation.compilerVersion === "string") {
-        compilation = new SolidityCompilation(json.compilation.compilerVersion);
-      }
-      else {
+        compilerVersion = json.compilation.compilerVersion;
+      } else {
         fail("No proper version in json");
       }
-    }
-    else {
+
+      let fullyQualifiedName;
+      if (json.compilation.fullyQualifiedName && typeof json.compilation.fullyQualifiedName === "string") {
+        fullyQualifiedName = json.compilation.fullyQualifiedName;
+      } else {
+        fail("No proper fullyQualifiedName in json");
+      }
+
+      compilation = new SolidityCompilation(compilerVersion, fullyQualifiedName);
+    } else {
       fail("No compilation data in json");
     }
 
@@ -92,11 +111,9 @@ export class SolidityProject {
     const file = path.normalize(path.join(sourceFileDir, importString));
     if (this.sources.has(file)) {
       return file;
-    }
-    else if (this.sources.has(importString)) {
+    } else if (this.sources.has(importString)) {
       return importString;
-    }
-    else {
+    } else {
       fail(`Can't resolve import ${importString} in the context of ${sourceFileDir}`);
     }
   }
