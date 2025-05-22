@@ -3,12 +3,12 @@ import { SolcRunner } from "./solc.runner.mjs";
 import { checkCI, Runner, round2, Timing, SolidityProject } from "./common.mjs";
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
-import { SolidityParserRunner } from "./solidity.parser.runner.mjs";
+import { AntlrRunner } from "./solidity.parser.runner.mjs";
 
 const runners: Map<string, Runner> = new Map([
   ["SlangFile", new SlangBindingsFileRunner()],
   ["SlangProject", new SlangBindingsProjectRunner()],
-  ["SolidityParser", new SolidityParserRunner()],
+  ["Antlr", new AntlrRunner()],
   ["Solc", new SolcRunner()],
 ]);
 
