@@ -13,7 +13,7 @@ use strum_macros::{AsRefStr, EnumIter};
 #[derive(Clone, Copy, Debug, AsRefStr, EnumIter)]
 pub enum SubjectUT {
     SlangProject, // resolve bindings of the entire project instead of just the main file, see the options in the npm counterpart
-    SolidityParser,
+    Antlr,
     Solc,
 }
 
