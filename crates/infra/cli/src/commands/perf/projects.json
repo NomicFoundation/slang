@@ -35,44 +35,16 @@
     {
       "hash": "0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed",
       "name": "CreateX"
+    },
+    {
+      "hash": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",
+      "name": "UiPoolDataProviderV3"
     }
   ],
   "files": [
     {
       "hash": "0x00aB290CC289F818a9E80eBaF18685E353DF16F0",
       "file": "contracts/OneStepLeverage.f.sol"
-    }
-  ],
-  "missing": [
-    {
-      "hash": "0x00e50FAB64eBB37b87df06Aa46b8B35d5f1A4e1A",
-      "name": "UiPoolDataProvider",
-      "reason": "Not in sourcify"
-    },
-    {
-      "hash": "0x01fef0d5d6fd6b5701ae913cafb11ddaee982c9a",
-      "name": "YaxisVotePower",
-      "reason": "Not in sourcify"
-    },
-    {
-      "hash": "0xb8FFC3Cd6e7Cf5a098A1c92F48009765B24088Dc",
-      "name": "LidoDAO",
-      "reason": "Version too old (4.2)"
-    },
-    {
-      "hash": "",
-      "name": "aave-v3-core-master",
-      "reason": "TODO"
-    },
-    {
-      "hash": "",
-      "name": "graph_protocol",
-      "reason": "TODO"
-    },
-    {
-      "hash": "0x0000000000d6A44FaCfBe05Faaee691aFaCC0f81",
-      "file": "lib/seaport-types/src/interfaces/SeaportInterface.sol",
-      "reason": "Not binding correctly"
     }
   ]
 }
