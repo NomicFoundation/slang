@@ -1,6 +1,6 @@
 {
   "name": "@nomicfoundation/slang",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "type": "module",
   "description": "A modular set of compiler APIs empowering the next generation of Solidity code analysis and developer tooling. Written in Rust and distributed in multiple languages.",
   "homepage": "https://nomicfoundation.github.io/slang/",

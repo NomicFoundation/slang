@@ -1,5 +1,12 @@
 # changelog
 
+## 1.2.1
+
+### Patch Changes
+
+- [#1326](https://github.com/NomicFoundation/slang/pull/1326) [`045179b`](https://github.com/NomicFoundation/slang/commit/045179b80f18efa4a8b75e528f475da37d948077) Thanks [@ggiraldez](https://github.com/ggiraldez)! - - Fix binding rules for `TupleDeconstructionStatement` so that their definiens is the `TypedTupleMember`/`UntypedTupleMember` for each variable declared.
+    - Fix binding rules for `YulVariableDeclarationStatement` so that their definiens is the `YulIdentifier` for each variable declared.
+
 ## 1.2.0
 
 ### Minor Changes
