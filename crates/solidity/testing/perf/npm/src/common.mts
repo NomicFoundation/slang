@@ -43,11 +43,11 @@ export class SolidityCompilation {
   }
 
   public entrypoint(): string {
-    return this.fullyQualifiedName.split(":")[0];
+    return this.fullyQualifiedName.substring(0, this.fullyQualifiedName.lastIndexOf(":"));
   }
 
   public projectName(): string {
-    return this.fullyQualifiedName.split(":")[1];
+    return this.fullyQualifiedName.substring(this.fullyQualifiedName.lastIndexOf(":") + 1);
   }
 }
 
@@ -66,11 +66,11 @@ export class SolidityProject {
         if (typeof data === "object" && typeof (data as { content?: string }).content === "string") {
           sources.set(file, (data as { content: string }).content);
         } else {
-          fail("Invalid source in json");
+          throw new Error("Invalid source in json");
         }
       }
     } else {
-      fail("No sources in json");
+      throw new Error("No sources in json");
     }
 
     let compilation;
@@ -79,26 +79,31 @@ export class SolidityProject {
       if (json.compilation.compilerVersion && typeof json.compilation.compilerVersion === "string") {
         compilerVersion = json.compilation.compilerVersion;
       } else {
-        fail("No proper version in json");
+        throw new Error("No proper version in json");
       }
 
       let fullyQualifiedName;
       if (json.compilation.fullyQualifiedName && typeof json.compilation.fullyQualifiedName === "string") {
         fullyQualifiedName = json.compilation.fullyQualifiedName;
       } else {
-        fail("No proper fullyQualifiedName in json");
+        throw new Error("No proper fullyQualifiedName in json");
       }
 
       compilation = new SolidityCompilation(compilerVersion, fullyQualifiedName);
     } else {
-      fail("No compilation data in json");
+      throw new Error("No compilation data in json");
     }
 
     return new SolidityProject(sources, compilation);
   }
 
   public fileContents(file: string): string {
-    return this.sources.get(file) || fail(`Can't find ${file}`);
+    const content = this.sources.get(file);
+    if (content) {
+      return content;
+    } else {
+      throw new Error(`Can't find ${file}`);
+    }
   }
 
   /// Resolves an import of a solidity file. Parameters are:
@@ -114,7 +119,7 @@ export class SolidityProject {
     } else if (this.sources.has(importString)) {
       return importString;
     } else {
-      fail(`Can't resolve import ${importString} in the context of ${sourceFileDir}`);
+      throw new Error(`Can't resolve import ${importString} in the context of ${sourceFileDir}`);
     }
   }
 }
