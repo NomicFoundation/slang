@@ -1,50 +1,42 @@
-//! This build script is only used for local development.
-//! It is removed when publishing to crates.io.
-
 use anyhow::Result;
+use codegen_language_definition::model::Language;
 use codegen_runtime_generator::ir::{IrModel, ModelWithBuilder, ModelWithTransformer};
-use codegen_runtime_generator::RuntimeGenerator;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::CodegenRuntime;
+use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
 use semver::Version;
-use solidity_language::{render_built_ins, SolidityDefinition};
 
-fn main() -> Result<()> {
-    let language = SolidityDefinition::create();
+pub fn generate_passes(
+    fs: &mut CodegenFileSystem,
+    language: &Language,
+    input_crate: &str,
+    output_crate: &str,
+) -> Result<()> {
+    let ir_input_dir = CargoWorkspace::locate_source_crate(input_crate)?.join("src/ir");
+    let ir_output_dir = CargoWorkspace::locate_source_crate(output_crate)?.join("src/backend");
 
-    let input_dir =
-        CargoWorkspace::locate_source_crate("codegen_runtime_cargo_crate")?.join("src/runtime");
-
-    let output_dir = CargoWorkspace::locate_source_crate("slang_solidity")?.join("src/generated");
-
-    let mut fs = RuntimeGenerator::generate_product(&language, &input_dir, &output_dir)?;
-
-    let built_ins_output_dir = output_dir.join("extensions");
-    let built_ins_path = built_ins_output_dir.join("built_ins.rs");
-    let contents = render_built_ins(&language)?;
-    fs.write_file(built_ins_path, contents)?;
-
-    // Intermediate Representation Languages for the backend
-
-    let ir_input_dir =
-        CargoWorkspace::locate_source_crate("codegen_runtime_cargo_crate")?.join("src/ir");
-    let ir_output_dir = CargoWorkspace::locate_source_crate("slang_solidity")?.join("src/backend");
-
-    // L0: CST
+    // L0: CST:
     let minimum_version = Version::parse("0.8.0").unwrap();
-    let cst_model = IrModel::from_language("cst", &language, minimum_version);
+    let cst_model = IrModel::from_language("cst", language, minimum_version);
 
-    // L1: typed CST
-    let runtime = CodegenRuntime::new(&ir_input_dir)?;
+    // L1: typed CST:
     let l1_typed_cst_model = build_l1_typed_cst_model(&cst_model);
     let l1_typed_cst_output_dir = ir_output_dir.join(&l1_typed_cst_model.target.name);
-    _ = runtime.render_product(&l1_typed_cst_model, &l1_typed_cst_output_dir)?;
+    CodegenRuntime::render_product(
+        fs,
+        &ir_input_dir,
+        &l1_typed_cst_output_dir,
+        &l1_typed_cst_model,
+    )?;
 
-    // L2: flat contract specifiers
-    let runtime = CodegenRuntime::new(&ir_input_dir)?;
+    // L2: flat contract specifiers:
     let l2_flat_contracts_model = build_l2_flat_contracts_model(&l1_typed_cst_model.target);
     let l2_flat_contracts_output_dir = ir_output_dir.join(&l2_flat_contracts_model.target.name);
-    _ = runtime.render_product(&l2_flat_contracts_model, &l2_flat_contracts_output_dir)?;
+    CodegenRuntime::render_product(
+        fs,
+        &ir_input_dir,
+        &l2_flat_contracts_output_dir,
+        &l2_flat_contracts_model,
+    )?;
 
     Ok(())
 }

@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "ReceiveFunctionDefinition";
+
 #[test]
 fn simple() -> Result<()> {
-    run("ReceiveFunctionDefinition", "simple")
+    run(T, "simple")
 }

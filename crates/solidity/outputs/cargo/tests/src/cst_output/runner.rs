@@ -24,7 +24,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
         .join(parser_name)
         .join(test_name);
 
-    let mut fs = CodegenFileSystem::new(&test_dir)?;
+    let mut fs = CodegenFileSystem::default();
 
     let input_path = test_dir.join("input.sol");
     let source_id = input_path.strip_repo_root()?.unwrap_str();
@@ -79,7 +79,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .join("generated")
             .join(format!("{version}-{status}.yml"));
 
-        fs.write_file(snapshot_path, &snapshot)?;
+        fs.write_file_raw(snapshot_path, &snapshot)?;
     }
 
     Ok(())

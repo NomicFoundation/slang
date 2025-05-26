@@ -4,22 +4,24 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "scoping";
+
 #[test]
 fn c99_scopes() -> Result<()> {
-    run("scoping", "c99_scopes")
+    run(T, "c99_scopes")
 }
 
 #[test]
 fn functions() -> Result<()> {
-    run("scoping", "functions")
+    run(T, "functions")
 }
 
 #[test]
 fn hoisting_scopes() -> Result<()> {
-    run("scoping", "hoisting_scopes")
+    run(T, "hoisting_scopes")
 }
 
 #[test]
 fn shadowing() -> Result<()> {
-    run("scoping", "shadowing")
+    run(T, "shadowing")
 }

@@ -4,7 +4,9 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "InterfaceDefinition";
+
 #[test]
 fn sample_counter() -> Result<()> {
-    run("InterfaceDefinition", "sample_counter")
+    run(T, "sample_counter")
 }

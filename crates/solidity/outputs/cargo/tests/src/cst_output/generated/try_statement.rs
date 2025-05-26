@@ -4,22 +4,24 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "TryStatement";
+
 #[test]
 fn method_call() -> Result<()> {
-    run("TryStatement", "method_call")
+    run(T, "method_call")
 }
 
 #[test]
 fn method_call_with_body() -> Result<()> {
-    run("TryStatement", "method_call_with_body")
+    run(T, "method_call_with_body")
 }
 
 #[test]
 fn method_call_with_options() -> Result<()> {
-    run("TryStatement", "method_call_with_options")
+    run(T, "method_call_with_options")
 }
 
 #[test]
 fn method_call_with_options_and_body() -> Result<()> {
-    run("TryStatement", "method_call_with_options_and_body")
+    run(T, "method_call_with_options_and_body")
 }

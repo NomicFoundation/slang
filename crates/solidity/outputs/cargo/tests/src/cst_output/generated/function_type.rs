@@ -4,17 +4,19 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "FunctionType";
+
 #[test]
 fn basic() -> Result<()> {
-    run("FunctionType", "basic")
+    run(T, "basic")
 }
 
 #[test]
 fn constant_state_mutability() -> Result<()> {
-    run("FunctionType", "constant_state_mutability")
+    run(T, "constant_state_mutability")
 }
 
 #[test]
 fn pure_state_mutability() -> Result<()> {
-    run("FunctionType", "pure_state_mutability")
+    run(T, "pure_state_mutability")
 }
