@@ -166,24 +166,26 @@ impl NpmController {
 }
 
 fn publish<'a>(results: impl Iterator<Item = &'a Timing>) -> Result<()> {
+    // Outputs the timings in Bencher Metrics Format (https://bencher.dev/docs/reference/bencher-metric-format/)
+    // In particular, we can't use serde_json serializer out of the box, because the vector format is
+    // not what Bencher expects.
     let mut output = std::io::stdout();
     writeln!(output, "{{")?;
-    writeln!(output, "\t\"npm_benchmarks\": {{")?;
 
-    let mut buffer = None;
+    let mut buffer = None; // little trick to write no trailing ,
+
     for timing in results {
         if let Some(value) = buffer {
             writeln!(output, "{value}")?;
         }
-        writeln!(output, "\t\t\"{}\": {{", timing.component)?;
+        writeln!(output, "\t\"{}\": {{", timing.component)?;
+        writeln!(output, "\t\t\"Duration\": {{")?;
         writeln!(output, "\t\t\t\"value\": {}", timing.time)?;
-        write!(output, "\t\t}}")?;
-
+        writeln!(output, "\t\t}}")?;
+        write!(output, "\t}}")?;
         buffer = Some(",");
     }
-
-    writeln!(output, "\n\t}}")?;
-    writeln!(output, "}}")?;
+    writeln!(output, "\n}}")?;
     Ok(())
 }
 
