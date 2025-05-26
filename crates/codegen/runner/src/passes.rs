@@ -46,6 +46,11 @@ fn build_l1_typed_cst_model(cst_model: &IrModel) -> ModelWithBuilder {
 
     // remove fields from sequences that contain redundant terminal nodes
     for (_, sequence) in &mut l1_typed_cst_model.sequences {
+        if sequence.multiple_operators {
+            // don't remove terminals if the sequence is modelling a precedence
+            // expression with multiple variant operators
+            continue;
+        }
         sequence.fields.retain(|field| {
             field.is_optional
                 || !field.is_terminal
