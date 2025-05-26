@@ -1098,1094 +1098,1215 @@ pub trait Visitor {
 //
 
 pub fn accept_source_unit(node: &SourceUnit, visitor: &mut impl Visitor) {
-    if visitor.enter_source_unit(node) {
-        accept_source_unit_members(&node.members, visitor);
-        visitor.leave_source_unit(node);
+    if !visitor.enter_source_unit(node) {
+        return;
     }
+    accept_source_unit_members(&node.members, visitor);
+    visitor.leave_source_unit(node);
 }
 
 pub fn accept_pragma_directive(node: &PragmaDirective, visitor: &mut impl Visitor) {
-    if visitor.enter_pragma_directive(node) {
-        accept_pragma(&node.pragma, visitor);
-        visitor.leave_pragma_directive(node);
+    if !visitor.enter_pragma_directive(node) {
+        return;
     }
+    accept_pragma(&node.pragma, visitor);
+    visitor.leave_pragma_directive(node);
 }
 
 pub fn accept_abicoder_pragma(node: &AbicoderPragma, visitor: &mut impl Visitor) {
-    if visitor.enter_abicoder_pragma(node) {
-        visitor.leave_abicoder_pragma(node);
+    if !visitor.enter_abicoder_pragma(node) {
+        return;
     }
+    visitor.leave_abicoder_pragma(node);
 }
 
 pub fn accept_experimental_pragma(node: &ExperimentalPragma, visitor: &mut impl Visitor) {
-    if visitor.enter_experimental_pragma(node) {
-        accept_experimental_feature(&node.feature, visitor);
-        visitor.leave_experimental_pragma(node);
+    if !visitor.enter_experimental_pragma(node) {
+        return;
     }
+    accept_experimental_feature(&node.feature, visitor);
+    visitor.leave_experimental_pragma(node);
 }
 
 pub fn accept_version_pragma(node: &VersionPragma, visitor: &mut impl Visitor) {
-    if visitor.enter_version_pragma(node) {
-        accept_version_expression_sets(&node.sets, visitor);
-        visitor.leave_version_pragma(node);
+    if !visitor.enter_version_pragma(node) {
+        return;
     }
+    accept_version_expression_sets(&node.sets, visitor);
+    visitor.leave_version_pragma(node);
 }
 
 pub fn accept_version_range(node: &VersionRange, visitor: &mut impl Visitor) {
-    if visitor.enter_version_range(node) {
-        accept_version_literal(&node.start, visitor);
-        accept_version_literal(&node.end, visitor);
-        visitor.leave_version_range(node);
+    if !visitor.enter_version_range(node) {
+        return;
     }
+    accept_version_literal(&node.start, visitor);
+    accept_version_literal(&node.end, visitor);
+    visitor.leave_version_range(node);
 }
 
 pub fn accept_version_term(node: &VersionTerm, visitor: &mut impl Visitor) {
-    if visitor.enter_version_term(node) {
-        if let Some(ref operator) = node.operator {
-            accept_version_operator(operator, visitor);
-        }
-        accept_version_literal(&node.literal, visitor);
-        visitor.leave_version_term(node);
+    if !visitor.enter_version_term(node) {
+        return;
     }
+    if let Some(ref operator) = node.operator {
+        accept_version_operator(operator, visitor);
+    }
+    accept_version_literal(&node.literal, visitor);
+    visitor.leave_version_term(node);
 }
 
 pub fn accept_import_directive(node: &ImportDirective, visitor: &mut impl Visitor) {
-    if visitor.enter_import_directive(node) {
-        accept_import_clause(&node.clause, visitor);
-        visitor.leave_import_directive(node);
+    if !visitor.enter_import_directive(node) {
+        return;
     }
+    accept_import_clause(&node.clause, visitor);
+    visitor.leave_import_directive(node);
 }
 
 pub fn accept_path_import(node: &PathImport, visitor: &mut impl Visitor) {
-    if visitor.enter_path_import(node) {
-        accept_string_literal(&node.path, visitor);
-        if let Some(ref alias) = node.alias {
-            accept_import_alias(alias, visitor);
-        }
-        visitor.leave_path_import(node);
+    if !visitor.enter_path_import(node) {
+        return;
     }
+    accept_string_literal(&node.path, visitor);
+    if let Some(ref alias) = node.alias {
+        accept_import_alias(alias, visitor);
+    }
+    visitor.leave_path_import(node);
 }
 
 pub fn accept_named_import(node: &NamedImport, visitor: &mut impl Visitor) {
-    if visitor.enter_named_import(node) {
-        accept_import_alias(&node.alias, visitor);
-        accept_string_literal(&node.path, visitor);
-        visitor.leave_named_import(node);
+    if !visitor.enter_named_import(node) {
+        return;
     }
+    accept_import_alias(&node.alias, visitor);
+    accept_string_literal(&node.path, visitor);
+    visitor.leave_named_import(node);
 }
 
 pub fn accept_import_deconstruction(node: &ImportDeconstruction, visitor: &mut impl Visitor) {
-    if visitor.enter_import_deconstruction(node) {
-        accept_import_deconstruction_symbols(&node.symbols, visitor);
-        accept_string_literal(&node.path, visitor);
-        visitor.leave_import_deconstruction(node);
+    if !visitor.enter_import_deconstruction(node) {
+        return;
     }
+    accept_import_deconstruction_symbols(&node.symbols, visitor);
+    accept_string_literal(&node.path, visitor);
+    visitor.leave_import_deconstruction(node);
 }
 
 pub fn accept_import_deconstruction_symbol(
     node: &ImportDeconstructionSymbol,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_import_deconstruction_symbol(node) {
-        if let Some(ref alias) = node.alias {
-            accept_import_alias(alias, visitor);
-        }
-        visitor.leave_import_deconstruction_symbol(node);
+    if !visitor.enter_import_deconstruction_symbol(node) {
+        return;
     }
+    if let Some(ref alias) = node.alias {
+        accept_import_alias(alias, visitor);
+    }
+    visitor.leave_import_deconstruction_symbol(node);
 }
 
 pub fn accept_import_alias(node: &ImportAlias, visitor: &mut impl Visitor) {
-    if visitor.enter_import_alias(node) {
-        visitor.leave_import_alias(node);
+    if !visitor.enter_import_alias(node) {
+        return;
     }
+    visitor.leave_import_alias(node);
 }
 
 pub fn accept_using_directive(node: &UsingDirective, visitor: &mut impl Visitor) {
-    if visitor.enter_using_directive(node) {
-        accept_using_clause(&node.clause, visitor);
-        accept_using_target(&node.target, visitor);
-        visitor.leave_using_directive(node);
+    if !visitor.enter_using_directive(node) {
+        return;
     }
+    accept_using_clause(&node.clause, visitor);
+    accept_using_target(&node.target, visitor);
+    visitor.leave_using_directive(node);
 }
 
 pub fn accept_using_deconstruction(node: &UsingDeconstruction, visitor: &mut impl Visitor) {
-    if visitor.enter_using_deconstruction(node) {
-        accept_using_deconstruction_symbols(&node.symbols, visitor);
-        visitor.leave_using_deconstruction(node);
+    if !visitor.enter_using_deconstruction(node) {
+        return;
     }
+    accept_using_deconstruction_symbols(&node.symbols, visitor);
+    visitor.leave_using_deconstruction(node);
 }
 
 pub fn accept_using_deconstruction_symbol(
     node: &UsingDeconstructionSymbol,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_using_deconstruction_symbol(node) {
-        accept_identifier_path(&node.name, visitor);
-        if let Some(ref alias) = node.alias {
-            accept_using_alias(alias, visitor);
-        }
-        visitor.leave_using_deconstruction_symbol(node);
+    if !visitor.enter_using_deconstruction_symbol(node) {
+        return;
     }
+    accept_identifier_path(&node.name, visitor);
+    if let Some(ref alias) = node.alias {
+        accept_using_alias(alias, visitor);
+    }
+    visitor.leave_using_deconstruction_symbol(node);
 }
 
 pub fn accept_using_alias(node: &UsingAlias, visitor: &mut impl Visitor) {
-    if visitor.enter_using_alias(node) {
-        accept_using_operator(&node.operator, visitor);
-        visitor.leave_using_alias(node);
+    if !visitor.enter_using_alias(node) {
+        return;
     }
+    accept_using_operator(&node.operator, visitor);
+    visitor.leave_using_alias(node);
 }
 
 pub fn accept_contract_definition(node: &ContractDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_contract_definition(node) {
-        accept_contract_specifiers(&node.specifiers, visitor);
-        accept_contract_members(&node.members, visitor);
-        visitor.leave_contract_definition(node);
+    if !visitor.enter_contract_definition(node) {
+        return;
     }
+    accept_contract_specifiers(&node.specifiers, visitor);
+    accept_contract_members(&node.members, visitor);
+    visitor.leave_contract_definition(node);
 }
 
 pub fn accept_inheritance_specifier(node: &InheritanceSpecifier, visitor: &mut impl Visitor) {
-    if visitor.enter_inheritance_specifier(node) {
-        accept_inheritance_types(&node.types, visitor);
-        visitor.leave_inheritance_specifier(node);
+    if !visitor.enter_inheritance_specifier(node) {
+        return;
     }
+    accept_inheritance_types(&node.types, visitor);
+    visitor.leave_inheritance_specifier(node);
 }
 
 pub fn accept_inheritance_type(node: &InheritanceType, visitor: &mut impl Visitor) {
-    if visitor.enter_inheritance_type(node) {
-        accept_identifier_path(&node.type_name, visitor);
-        if let Some(ref arguments) = node.arguments {
-            accept_arguments_declaration(arguments, visitor);
-        }
-        visitor.leave_inheritance_type(node);
+    if !visitor.enter_inheritance_type(node) {
+        return;
     }
+    accept_identifier_path(&node.type_name, visitor);
+    if let Some(ref arguments) = node.arguments {
+        accept_arguments_declaration(arguments, visitor);
+    }
+    visitor.leave_inheritance_type(node);
 }
 
 pub fn accept_storage_layout_specifier(node: &StorageLayoutSpecifier, visitor: &mut impl Visitor) {
-    if visitor.enter_storage_layout_specifier(node) {
-        accept_expression(&node.expression, visitor);
-        visitor.leave_storage_layout_specifier(node);
+    if !visitor.enter_storage_layout_specifier(node) {
+        return;
     }
+    accept_expression(&node.expression, visitor);
+    visitor.leave_storage_layout_specifier(node);
 }
 
 pub fn accept_interface_definition(node: &InterfaceDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_interface_definition(node) {
-        if let Some(ref inheritance) = node.inheritance {
-            accept_inheritance_specifier(inheritance, visitor);
-        }
-        accept_interface_members(&node.members, visitor);
-        visitor.leave_interface_definition(node);
+    if !visitor.enter_interface_definition(node) {
+        return;
     }
+    if let Some(ref inheritance) = node.inheritance {
+        accept_inheritance_specifier(inheritance, visitor);
+    }
+    accept_interface_members(&node.members, visitor);
+    visitor.leave_interface_definition(node);
 }
 
 pub fn accept_library_definition(node: &LibraryDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_library_definition(node) {
-        accept_library_members(&node.members, visitor);
-        visitor.leave_library_definition(node);
+    if !visitor.enter_library_definition(node) {
+        return;
     }
+    accept_library_members(&node.members, visitor);
+    visitor.leave_library_definition(node);
 }
 
 pub fn accept_struct_definition(node: &StructDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_struct_definition(node) {
-        accept_struct_members(&node.members, visitor);
-        visitor.leave_struct_definition(node);
+    if !visitor.enter_struct_definition(node) {
+        return;
     }
+    accept_struct_members(&node.members, visitor);
+    visitor.leave_struct_definition(node);
 }
 
 pub fn accept_struct_member(node: &StructMember, visitor: &mut impl Visitor) {
-    if visitor.enter_struct_member(node) {
-        accept_type_name(&node.type_name, visitor);
-        visitor.leave_struct_member(node);
+    if !visitor.enter_struct_member(node) {
+        return;
     }
+    accept_type_name(&node.type_name, visitor);
+    visitor.leave_struct_member(node);
 }
 
 pub fn accept_enum_definition(node: &EnumDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_enum_definition(node) {
-        accept_enum_members(&node.members, visitor);
-        visitor.leave_enum_definition(node);
+    if !visitor.enter_enum_definition(node) {
+        return;
     }
+    accept_enum_members(&node.members, visitor);
+    visitor.leave_enum_definition(node);
 }
 
 pub fn accept_constant_definition(node: &ConstantDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_constant_definition(node) {
-        accept_type_name(&node.type_name, visitor);
-        accept_expression(&node.value, visitor);
-        visitor.leave_constant_definition(node);
+    if !visitor.enter_constant_definition(node) {
+        return;
     }
+    accept_type_name(&node.type_name, visitor);
+    accept_expression(&node.value, visitor);
+    visitor.leave_constant_definition(node);
 }
 
 pub fn accept_state_variable_definition(
     node: &StateVariableDefinition,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_state_variable_definition(node) {
-        accept_type_name(&node.type_name, visitor);
-        accept_state_variable_attributes(&node.attributes, visitor);
-        if let Some(ref value) = node.value {
-            accept_state_variable_definition_value(value, visitor);
-        }
-        visitor.leave_state_variable_definition(node);
+    if !visitor.enter_state_variable_definition(node) {
+        return;
     }
+    accept_type_name(&node.type_name, visitor);
+    accept_state_variable_attributes(&node.attributes, visitor);
+    if let Some(ref value) = node.value {
+        accept_state_variable_definition_value(value, visitor);
+    }
+    visitor.leave_state_variable_definition(node);
 }
 
 pub fn accept_state_variable_definition_value(
     node: &StateVariableDefinitionValue,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_state_variable_definition_value(node) {
-        accept_expression(&node.value, visitor);
-        visitor.leave_state_variable_definition_value(node);
+    if !visitor.enter_state_variable_definition_value(node) {
+        return;
     }
+    accept_expression(&node.value, visitor);
+    visitor.leave_state_variable_definition_value(node);
 }
 
 pub fn accept_function_definition(node: &FunctionDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_function_definition(node) {
-        accept_function_name(&node.name, visitor);
-        accept_parameters_declaration(&node.parameters, visitor);
-        accept_function_attributes(&node.attributes, visitor);
-        if let Some(ref returns) = node.returns {
-            accept_returns_declaration(returns, visitor);
-        }
-        accept_function_body(&node.body, visitor);
-        visitor.leave_function_definition(node);
+    if !visitor.enter_function_definition(node) {
+        return;
     }
+    accept_function_name(&node.name, visitor);
+    accept_parameters_declaration(&node.parameters, visitor);
+    accept_function_attributes(&node.attributes, visitor);
+    if let Some(ref returns) = node.returns {
+        accept_returns_declaration(returns, visitor);
+    }
+    accept_function_body(&node.body, visitor);
+    visitor.leave_function_definition(node);
 }
 
 pub fn accept_parameters_declaration(node: &ParametersDeclaration, visitor: &mut impl Visitor) {
-    if visitor.enter_parameters_declaration(node) {
-        accept_parameters(&node.parameters, visitor);
-        visitor.leave_parameters_declaration(node);
+    if !visitor.enter_parameters_declaration(node) {
+        return;
     }
+    accept_parameters(&node.parameters, visitor);
+    visitor.leave_parameters_declaration(node);
 }
 
 pub fn accept_parameter(node: &Parameter, visitor: &mut impl Visitor) {
-    if visitor.enter_parameter(node) {
-        accept_type_name(&node.type_name, visitor);
-        if let Some(ref storage_location) = node.storage_location {
-            accept_storage_location(storage_location, visitor);
-        }
-        visitor.leave_parameter(node);
+    if !visitor.enter_parameter(node) {
+        return;
     }
+    accept_type_name(&node.type_name, visitor);
+    if let Some(ref storage_location) = node.storage_location {
+        accept_storage_location(storage_location, visitor);
+    }
+    visitor.leave_parameter(node);
 }
 
 pub fn accept_override_specifier(node: &OverrideSpecifier, visitor: &mut impl Visitor) {
-    if visitor.enter_override_specifier(node) {
-        if let Some(ref overridden) = node.overridden {
-            accept_override_paths_declaration(overridden, visitor);
-        }
-        visitor.leave_override_specifier(node);
+    if !visitor.enter_override_specifier(node) {
+        return;
     }
+    if let Some(ref overridden) = node.overridden {
+        accept_override_paths_declaration(overridden, visitor);
+    }
+    visitor.leave_override_specifier(node);
 }
 
 pub fn accept_override_paths_declaration(
     node: &OverridePathsDeclaration,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_override_paths_declaration(node) {
-        accept_override_paths(&node.paths, visitor);
-        visitor.leave_override_paths_declaration(node);
+    if !visitor.enter_override_paths_declaration(node) {
+        return;
     }
+    accept_override_paths(&node.paths, visitor);
+    visitor.leave_override_paths_declaration(node);
 }
 
 pub fn accept_returns_declaration(node: &ReturnsDeclaration, visitor: &mut impl Visitor) {
-    if visitor.enter_returns_declaration(node) {
-        accept_parameters_declaration(&node.variables, visitor);
-        visitor.leave_returns_declaration(node);
+    if !visitor.enter_returns_declaration(node) {
+        return;
     }
+    accept_parameters_declaration(&node.variables, visitor);
+    visitor.leave_returns_declaration(node);
 }
 
 pub fn accept_constructor_definition(node: &ConstructorDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_constructor_definition(node) {
-        accept_parameters_declaration(&node.parameters, visitor);
-        accept_constructor_attributes(&node.attributes, visitor);
-        accept_block(&node.body, visitor);
-        visitor.leave_constructor_definition(node);
+    if !visitor.enter_constructor_definition(node) {
+        return;
     }
+    accept_parameters_declaration(&node.parameters, visitor);
+    accept_constructor_attributes(&node.attributes, visitor);
+    accept_block(&node.body, visitor);
+    visitor.leave_constructor_definition(node);
 }
 
 pub fn accept_fallback_function_definition(
     node: &FallbackFunctionDefinition,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_fallback_function_definition(node) {
-        accept_parameters_declaration(&node.parameters, visitor);
-        accept_fallback_function_attributes(&node.attributes, visitor);
-        if let Some(ref returns) = node.returns {
-            accept_returns_declaration(returns, visitor);
-        }
-        accept_function_body(&node.body, visitor);
-        visitor.leave_fallback_function_definition(node);
+    if !visitor.enter_fallback_function_definition(node) {
+        return;
     }
+    accept_parameters_declaration(&node.parameters, visitor);
+    accept_fallback_function_attributes(&node.attributes, visitor);
+    if let Some(ref returns) = node.returns {
+        accept_returns_declaration(returns, visitor);
+    }
+    accept_function_body(&node.body, visitor);
+    visitor.leave_fallback_function_definition(node);
 }
 
 pub fn accept_receive_function_definition(
     node: &ReceiveFunctionDefinition,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_receive_function_definition(node) {
-        accept_parameters_declaration(&node.parameters, visitor);
-        accept_receive_function_attributes(&node.attributes, visitor);
-        accept_function_body(&node.body, visitor);
-        visitor.leave_receive_function_definition(node);
+    if !visitor.enter_receive_function_definition(node) {
+        return;
     }
+    accept_parameters_declaration(&node.parameters, visitor);
+    accept_receive_function_attributes(&node.attributes, visitor);
+    accept_function_body(&node.body, visitor);
+    visitor.leave_receive_function_definition(node);
 }
 
 pub fn accept_modifier_definition(node: &ModifierDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_modifier_definition(node) {
-        if let Some(ref parameters) = node.parameters {
-            accept_parameters_declaration(parameters, visitor);
-        }
-        accept_modifier_attributes(&node.attributes, visitor);
-        accept_function_body(&node.body, visitor);
-        visitor.leave_modifier_definition(node);
+    if !visitor.enter_modifier_definition(node) {
+        return;
     }
+    if let Some(ref parameters) = node.parameters {
+        accept_parameters_declaration(parameters, visitor);
+    }
+    accept_modifier_attributes(&node.attributes, visitor);
+    accept_function_body(&node.body, visitor);
+    visitor.leave_modifier_definition(node);
 }
 
 pub fn accept_modifier_invocation(node: &ModifierInvocation, visitor: &mut impl Visitor) {
-    if visitor.enter_modifier_invocation(node) {
-        accept_identifier_path(&node.name, visitor);
-        if let Some(ref arguments) = node.arguments {
-            accept_arguments_declaration(arguments, visitor);
-        }
-        visitor.leave_modifier_invocation(node);
+    if !visitor.enter_modifier_invocation(node) {
+        return;
     }
+    accept_identifier_path(&node.name, visitor);
+    if let Some(ref arguments) = node.arguments {
+        accept_arguments_declaration(arguments, visitor);
+    }
+    visitor.leave_modifier_invocation(node);
 }
 
 pub fn accept_event_definition(node: &EventDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_event_definition(node) {
-        accept_event_parameters_declaration(&node.parameters, visitor);
-        visitor.leave_event_definition(node);
+    if !visitor.enter_event_definition(node) {
+        return;
     }
+    accept_event_parameters_declaration(&node.parameters, visitor);
+    visitor.leave_event_definition(node);
 }
 
 pub fn accept_event_parameters_declaration(
     node: &EventParametersDeclaration,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_event_parameters_declaration(node) {
-        accept_event_parameters(&node.parameters, visitor);
-        visitor.leave_event_parameters_declaration(node);
+    if !visitor.enter_event_parameters_declaration(node) {
+        return;
     }
+    accept_event_parameters(&node.parameters, visitor);
+    visitor.leave_event_parameters_declaration(node);
 }
 
 pub fn accept_event_parameter(node: &EventParameter, visitor: &mut impl Visitor) {
-    if visitor.enter_event_parameter(node) {
-        accept_type_name(&node.type_name, visitor);
-        visitor.leave_event_parameter(node);
+    if !visitor.enter_event_parameter(node) {
+        return;
     }
+    accept_type_name(&node.type_name, visitor);
+    visitor.leave_event_parameter(node);
 }
 
 pub fn accept_user_defined_value_type_definition(
     node: &UserDefinedValueTypeDefinition,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_user_defined_value_type_definition(node) {
-        accept_elementary_type(&node.value_type, visitor);
-        visitor.leave_user_defined_value_type_definition(node);
+    if !visitor.enter_user_defined_value_type_definition(node) {
+        return;
     }
+    accept_elementary_type(&node.value_type, visitor);
+    visitor.leave_user_defined_value_type_definition(node);
 }
 
 pub fn accept_error_definition(node: &ErrorDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_error_definition(node) {
-        accept_error_parameters_declaration(&node.members, visitor);
-        visitor.leave_error_definition(node);
+    if !visitor.enter_error_definition(node) {
+        return;
     }
+    accept_error_parameters_declaration(&node.members, visitor);
+    visitor.leave_error_definition(node);
 }
 
 pub fn accept_error_parameters_declaration(
     node: &ErrorParametersDeclaration,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_error_parameters_declaration(node) {
-        accept_error_parameters(&node.parameters, visitor);
-        visitor.leave_error_parameters_declaration(node);
+    if !visitor.enter_error_parameters_declaration(node) {
+        return;
     }
+    accept_error_parameters(&node.parameters, visitor);
+    visitor.leave_error_parameters_declaration(node);
 }
 
 pub fn accept_error_parameter(node: &ErrorParameter, visitor: &mut impl Visitor) {
-    if visitor.enter_error_parameter(node) {
-        accept_type_name(&node.type_name, visitor);
-        visitor.leave_error_parameter(node);
+    if !visitor.enter_error_parameter(node) {
+        return;
     }
+    accept_type_name(&node.type_name, visitor);
+    visitor.leave_error_parameter(node);
 }
 
 pub fn accept_array_type_name(node: &ArrayTypeName, visitor: &mut impl Visitor) {
-    if visitor.enter_array_type_name(node) {
-        accept_type_name(&node.operand, visitor);
-        if let Some(ref index) = node.index {
-            accept_expression(index, visitor);
-        }
-        visitor.leave_array_type_name(node);
+    if !visitor.enter_array_type_name(node) {
+        return;
     }
+    accept_type_name(&node.operand, visitor);
+    if let Some(ref index) = node.index {
+        accept_expression(index, visitor);
+    }
+    visitor.leave_array_type_name(node);
 }
 
 pub fn accept_function_type(node: &FunctionType, visitor: &mut impl Visitor) {
-    if visitor.enter_function_type(node) {
-        accept_parameters_declaration(&node.parameters, visitor);
-        accept_function_type_attributes(&node.attributes, visitor);
-        if let Some(ref returns) = node.returns {
-            accept_returns_declaration(returns, visitor);
-        }
-        visitor.leave_function_type(node);
+    if !visitor.enter_function_type(node) {
+        return;
     }
+    accept_parameters_declaration(&node.parameters, visitor);
+    accept_function_type_attributes(&node.attributes, visitor);
+    if let Some(ref returns) = node.returns {
+        accept_returns_declaration(returns, visitor);
+    }
+    visitor.leave_function_type(node);
 }
 
 pub fn accept_mapping_type(node: &MappingType, visitor: &mut impl Visitor) {
-    if visitor.enter_mapping_type(node) {
-        accept_mapping_key(&node.key_type, visitor);
-        accept_mapping_value(&node.value_type, visitor);
-        visitor.leave_mapping_type(node);
+    if !visitor.enter_mapping_type(node) {
+        return;
     }
+    accept_mapping_key(&node.key_type, visitor);
+    accept_mapping_value(&node.value_type, visitor);
+    visitor.leave_mapping_type(node);
 }
 
 pub fn accept_mapping_key(node: &MappingKey, visitor: &mut impl Visitor) {
-    if visitor.enter_mapping_key(node) {
-        accept_mapping_key_type(&node.key_type, visitor);
-        visitor.leave_mapping_key(node);
+    if !visitor.enter_mapping_key(node) {
+        return;
     }
+    accept_mapping_key_type(&node.key_type, visitor);
+    visitor.leave_mapping_key(node);
 }
 
 pub fn accept_mapping_value(node: &MappingValue, visitor: &mut impl Visitor) {
-    if visitor.enter_mapping_value(node) {
-        accept_type_name(&node.type_name, visitor);
-        visitor.leave_mapping_value(node);
+    if !visitor.enter_mapping_value(node) {
+        return;
     }
+    accept_type_name(&node.type_name, visitor);
+    visitor.leave_mapping_value(node);
 }
 
 pub fn accept_address_type(node: &AddressType, visitor: &mut impl Visitor) {
-    if visitor.enter_address_type(node) {
-        visitor.leave_address_type(node);
+    if !visitor.enter_address_type(node) {
+        return;
     }
+    visitor.leave_address_type(node);
 }
 
 pub fn accept_block(node: &Block, visitor: &mut impl Visitor) {
-    if visitor.enter_block(node) {
-        accept_statements(&node.statements, visitor);
-        visitor.leave_block(node);
+    if !visitor.enter_block(node) {
+        return;
     }
+    accept_statements(&node.statements, visitor);
+    visitor.leave_block(node);
 }
 
 pub fn accept_unchecked_block(node: &UncheckedBlock, visitor: &mut impl Visitor) {
-    if visitor.enter_unchecked_block(node) {
-        accept_block(&node.block, visitor);
-        visitor.leave_unchecked_block(node);
+    if !visitor.enter_unchecked_block(node) {
+        return;
     }
+    accept_block(&node.block, visitor);
+    visitor.leave_unchecked_block(node);
 }
 
 pub fn accept_expression_statement(node: &ExpressionStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_expression_statement(node) {
-        accept_expression(&node.expression, visitor);
-        visitor.leave_expression_statement(node);
+    if !visitor.enter_expression_statement(node) {
+        return;
     }
+    accept_expression(&node.expression, visitor);
+    visitor.leave_expression_statement(node);
 }
 
 pub fn accept_assembly_statement(node: &AssemblyStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_assembly_statement(node) {
-        if let Some(ref label) = node.label {
-            accept_string_literal(label, visitor);
-        }
-
-        if let Some(ref flags) = node.flags {
-            accept_assembly_flags_declaration(flags, visitor);
-        }
-        accept_yul_block(&node.body, visitor);
-        visitor.leave_assembly_statement(node);
+    if !visitor.enter_assembly_statement(node) {
+        return;
     }
+    if let Some(ref label) = node.label {
+        accept_string_literal(label, visitor);
+    }
+    if let Some(ref flags) = node.flags {
+        accept_assembly_flags_declaration(flags, visitor);
+    }
+    accept_yul_block(&node.body, visitor);
+    visitor.leave_assembly_statement(node);
 }
 
 pub fn accept_assembly_flags_declaration(
     node: &AssemblyFlagsDeclaration,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_assembly_flags_declaration(node) {
-        accept_assembly_flags(&node.flags, visitor);
-        visitor.leave_assembly_flags_declaration(node);
+    if !visitor.enter_assembly_flags_declaration(node) {
+        return;
     }
+    accept_assembly_flags(&node.flags, visitor);
+    visitor.leave_assembly_flags_declaration(node);
 }
 
 pub fn accept_tuple_deconstruction_statement(
     node: &TupleDeconstructionStatement,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_tuple_deconstruction_statement(node) {
-        accept_tuple_deconstruction_elements(&node.elements, visitor);
-        accept_expression(&node.expression, visitor);
-        visitor.leave_tuple_deconstruction_statement(node);
+    if !visitor.enter_tuple_deconstruction_statement(node) {
+        return;
     }
+    accept_tuple_deconstruction_elements(&node.elements, visitor);
+    accept_expression(&node.expression, visitor);
+    visitor.leave_tuple_deconstruction_statement(node);
 }
 
 pub fn accept_tuple_deconstruction_element(
     node: &TupleDeconstructionElement,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_tuple_deconstruction_element(node) {
-        if let Some(ref member) = node.member {
-            accept_tuple_member(member, visitor);
-        }
-        visitor.leave_tuple_deconstruction_element(node);
+    if !visitor.enter_tuple_deconstruction_element(node) {
+        return;
     }
+    if let Some(ref member) = node.member {
+        accept_tuple_member(member, visitor);
+    }
+    visitor.leave_tuple_deconstruction_element(node);
 }
 
 pub fn accept_typed_tuple_member(node: &TypedTupleMember, visitor: &mut impl Visitor) {
-    if visitor.enter_typed_tuple_member(node) {
-        accept_type_name(&node.type_name, visitor);
-        if let Some(ref storage_location) = node.storage_location {
-            accept_storage_location(storage_location, visitor);
-        }
-        visitor.leave_typed_tuple_member(node);
+    if !visitor.enter_typed_tuple_member(node) {
+        return;
     }
+    accept_type_name(&node.type_name, visitor);
+    if let Some(ref storage_location) = node.storage_location {
+        accept_storage_location(storage_location, visitor);
+    }
+    visitor.leave_typed_tuple_member(node);
 }
 
 pub fn accept_untyped_tuple_member(node: &UntypedTupleMember, visitor: &mut impl Visitor) {
-    if visitor.enter_untyped_tuple_member(node) {
-        if let Some(ref storage_location) = node.storage_location {
-            accept_storage_location(storage_location, visitor);
-        }
-        visitor.leave_untyped_tuple_member(node);
+    if !visitor.enter_untyped_tuple_member(node) {
+        return;
     }
+    if let Some(ref storage_location) = node.storage_location {
+        accept_storage_location(storage_location, visitor);
+    }
+    visitor.leave_untyped_tuple_member(node);
 }
 
 pub fn accept_variable_declaration_statement(
     node: &VariableDeclarationStatement,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_variable_declaration_statement(node) {
-        accept_variable_declaration_type(&node.variable_type, visitor);
-        if let Some(ref storage_location) = node.storage_location {
-            accept_storage_location(storage_location, visitor);
-        }
-
-        if let Some(ref value) = node.value {
-            accept_variable_declaration_value(value, visitor);
-        }
-        visitor.leave_variable_declaration_statement(node);
+    if !visitor.enter_variable_declaration_statement(node) {
+        return;
     }
+    accept_variable_declaration_type(&node.variable_type, visitor);
+    if let Some(ref storage_location) = node.storage_location {
+        accept_storage_location(storage_location, visitor);
+    }
+    if let Some(ref value) = node.value {
+        accept_variable_declaration_value(value, visitor);
+    }
+    visitor.leave_variable_declaration_statement(node);
 }
 
 pub fn accept_variable_declaration_value(
     node: &VariableDeclarationValue,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_variable_declaration_value(node) {
-        accept_expression(&node.expression, visitor);
-        visitor.leave_variable_declaration_value(node);
+    if !visitor.enter_variable_declaration_value(node) {
+        return;
     }
+    accept_expression(&node.expression, visitor);
+    visitor.leave_variable_declaration_value(node);
 }
 
 pub fn accept_if_statement(node: &IfStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_if_statement(node) {
-        accept_expression(&node.condition, visitor);
-        accept_statement(&node.body, visitor);
-        if let Some(ref else_branch) = node.else_branch {
-            accept_else_branch(else_branch, visitor);
-        }
-        visitor.leave_if_statement(node);
+    if !visitor.enter_if_statement(node) {
+        return;
     }
+    accept_expression(&node.condition, visitor);
+    accept_statement(&node.body, visitor);
+    if let Some(ref else_branch) = node.else_branch {
+        accept_else_branch(else_branch, visitor);
+    }
+    visitor.leave_if_statement(node);
 }
 
 pub fn accept_else_branch(node: &ElseBranch, visitor: &mut impl Visitor) {
-    if visitor.enter_else_branch(node) {
-        accept_statement(&node.body, visitor);
-        visitor.leave_else_branch(node);
+    if !visitor.enter_else_branch(node) {
+        return;
     }
+    accept_statement(&node.body, visitor);
+    visitor.leave_else_branch(node);
 }
 
 pub fn accept_for_statement(node: &ForStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_for_statement(node) {
-        accept_for_statement_initialization(&node.initialization, visitor);
-        accept_for_statement_condition(&node.condition, visitor);
-        if let Some(ref iterator) = node.iterator {
-            accept_expression(iterator, visitor);
-        }
-        accept_statement(&node.body, visitor);
-        visitor.leave_for_statement(node);
+    if !visitor.enter_for_statement(node) {
+        return;
     }
+    accept_for_statement_initialization(&node.initialization, visitor);
+    accept_for_statement_condition(&node.condition, visitor);
+    if let Some(ref iterator) = node.iterator {
+        accept_expression(iterator, visitor);
+    }
+    accept_statement(&node.body, visitor);
+    visitor.leave_for_statement(node);
 }
 
 pub fn accept_while_statement(node: &WhileStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_while_statement(node) {
-        accept_expression(&node.condition, visitor);
-        accept_statement(&node.body, visitor);
-        visitor.leave_while_statement(node);
+    if !visitor.enter_while_statement(node) {
+        return;
     }
+    accept_expression(&node.condition, visitor);
+    accept_statement(&node.body, visitor);
+    visitor.leave_while_statement(node);
 }
 
 pub fn accept_do_while_statement(node: &DoWhileStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_do_while_statement(node) {
-        accept_statement(&node.body, visitor);
-        accept_expression(&node.condition, visitor);
-        visitor.leave_do_while_statement(node);
+    if !visitor.enter_do_while_statement(node) {
+        return;
     }
+    accept_statement(&node.body, visitor);
+    accept_expression(&node.condition, visitor);
+    visitor.leave_do_while_statement(node);
 }
 
 pub fn accept_continue_statement(node: &ContinueStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_continue_statement(node) {
-        visitor.leave_continue_statement(node);
+    if !visitor.enter_continue_statement(node) {
+        return;
     }
+    visitor.leave_continue_statement(node);
 }
 
 pub fn accept_break_statement(node: &BreakStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_break_statement(node) {
-        visitor.leave_break_statement(node);
+    if !visitor.enter_break_statement(node) {
+        return;
     }
+    visitor.leave_break_statement(node);
 }
 
 pub fn accept_return_statement(node: &ReturnStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_return_statement(node) {
-        if let Some(ref expression) = node.expression {
-            accept_expression(expression, visitor);
-        }
-        visitor.leave_return_statement(node);
+    if !visitor.enter_return_statement(node) {
+        return;
     }
+    if let Some(ref expression) = node.expression {
+        accept_expression(expression, visitor);
+    }
+    visitor.leave_return_statement(node);
 }
 
 pub fn accept_emit_statement(node: &EmitStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_emit_statement(node) {
-        accept_identifier_path(&node.event, visitor);
-        accept_arguments_declaration(&node.arguments, visitor);
-        visitor.leave_emit_statement(node);
+    if !visitor.enter_emit_statement(node) {
+        return;
     }
+    accept_identifier_path(&node.event, visitor);
+    accept_arguments_declaration(&node.arguments, visitor);
+    visitor.leave_emit_statement(node);
 }
 
 pub fn accept_try_statement(node: &TryStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_try_statement(node) {
-        accept_expression(&node.expression, visitor);
-        if let Some(ref returns) = node.returns {
-            accept_returns_declaration(returns, visitor);
-        }
-        accept_block(&node.body, visitor);
-        accept_catch_clauses(&node.catch_clauses, visitor);
-        visitor.leave_try_statement(node);
+    if !visitor.enter_try_statement(node) {
+        return;
     }
+    accept_expression(&node.expression, visitor);
+    if let Some(ref returns) = node.returns {
+        accept_returns_declaration(returns, visitor);
+    }
+    accept_block(&node.body, visitor);
+    accept_catch_clauses(&node.catch_clauses, visitor);
+    visitor.leave_try_statement(node);
 }
 
 pub fn accept_catch_clause(node: &CatchClause, visitor: &mut impl Visitor) {
-    if visitor.enter_catch_clause(node) {
-        if let Some(ref error) = node.error {
-            accept_catch_clause_error(error, visitor);
-        }
-        accept_block(&node.body, visitor);
-        visitor.leave_catch_clause(node);
+    if !visitor.enter_catch_clause(node) {
+        return;
     }
+    if let Some(ref error) = node.error {
+        accept_catch_clause_error(error, visitor);
+    }
+    accept_block(&node.body, visitor);
+    visitor.leave_catch_clause(node);
 }
 
 pub fn accept_catch_clause_error(node: &CatchClauseError, visitor: &mut impl Visitor) {
-    if visitor.enter_catch_clause_error(node) {
-        accept_parameters_declaration(&node.parameters, visitor);
-        visitor.leave_catch_clause_error(node);
+    if !visitor.enter_catch_clause_error(node) {
+        return;
     }
+    accept_parameters_declaration(&node.parameters, visitor);
+    visitor.leave_catch_clause_error(node);
 }
 
 pub fn accept_revert_statement(node: &RevertStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_revert_statement(node) {
-        if let Some(ref error) = node.error {
-            accept_identifier_path(error, visitor);
-        }
-        accept_arguments_declaration(&node.arguments, visitor);
-        visitor.leave_revert_statement(node);
+    if !visitor.enter_revert_statement(node) {
+        return;
     }
+    if let Some(ref error) = node.error {
+        accept_identifier_path(error, visitor);
+    }
+    accept_arguments_declaration(&node.arguments, visitor);
+    visitor.leave_revert_statement(node);
 }
 
 pub fn accept_assignment_expression(node: &AssignmentExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_assignment_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_assignment_expression(node);
+    if !visitor.enter_assignment_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_assignment_expression(node);
 }
 
 pub fn accept_conditional_expression(node: &ConditionalExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_conditional_expression(node) {
-        accept_expression(&node.operand, visitor);
-        accept_expression(&node.true_expression, visitor);
-        accept_expression(&node.false_expression, visitor);
-        visitor.leave_conditional_expression(node);
+    if !visitor.enter_conditional_expression(node) {
+        return;
     }
+    accept_expression(&node.operand, visitor);
+    accept_expression(&node.true_expression, visitor);
+    accept_expression(&node.false_expression, visitor);
+    visitor.leave_conditional_expression(node);
 }
 
 pub fn accept_or_expression(node: &OrExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_or_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_or_expression(node);
+    if !visitor.enter_or_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_or_expression(node);
 }
 
 pub fn accept_and_expression(node: &AndExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_and_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_and_expression(node);
+    if !visitor.enter_and_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_and_expression(node);
 }
 
 pub fn accept_equality_expression(node: &EqualityExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_equality_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_equality_expression(node);
+    if !visitor.enter_equality_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_equality_expression(node);
 }
 
 pub fn accept_inequality_expression(node: &InequalityExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_inequality_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_inequality_expression(node);
+    if !visitor.enter_inequality_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_inequality_expression(node);
 }
 
 pub fn accept_bitwise_or_expression(node: &BitwiseOrExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_bitwise_or_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_bitwise_or_expression(node);
+    if !visitor.enter_bitwise_or_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_bitwise_or_expression(node);
 }
 
 pub fn accept_bitwise_xor_expression(node: &BitwiseXorExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_bitwise_xor_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_bitwise_xor_expression(node);
+    if !visitor.enter_bitwise_xor_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_bitwise_xor_expression(node);
 }
 
 pub fn accept_bitwise_and_expression(node: &BitwiseAndExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_bitwise_and_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_bitwise_and_expression(node);
+    if !visitor.enter_bitwise_and_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_bitwise_and_expression(node);
 }
 
 pub fn accept_shift_expression(node: &ShiftExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_shift_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_shift_expression(node);
+    if !visitor.enter_shift_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_shift_expression(node);
 }
 
 pub fn accept_additive_expression(node: &AdditiveExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_additive_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_additive_expression(node);
+    if !visitor.enter_additive_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_additive_expression(node);
 }
 
 pub fn accept_multiplicative_expression(
     node: &MultiplicativeExpression,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_multiplicative_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_multiplicative_expression(node);
+    if !visitor.enter_multiplicative_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_multiplicative_expression(node);
 }
 
 pub fn accept_exponentiation_expression(
     node: &ExponentiationExpression,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_exponentiation_expression(node) {
-        accept_expression(&node.left_operand, visitor);
-        accept_expression(&node.right_operand, visitor);
-        visitor.leave_exponentiation_expression(node);
+    if !visitor.enter_exponentiation_expression(node) {
+        return;
     }
+    accept_expression(&node.left_operand, visitor);
+    accept_expression(&node.right_operand, visitor);
+    visitor.leave_exponentiation_expression(node);
 }
 
 pub fn accept_postfix_expression(node: &PostfixExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_postfix_expression(node) {
-        accept_expression(&node.operand, visitor);
-        visitor.leave_postfix_expression(node);
+    if !visitor.enter_postfix_expression(node) {
+        return;
     }
+    accept_expression(&node.operand, visitor);
+    visitor.leave_postfix_expression(node);
 }
 
 pub fn accept_prefix_expression(node: &PrefixExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_prefix_expression(node) {
-        accept_expression(&node.operand, visitor);
-        visitor.leave_prefix_expression(node);
+    if !visitor.enter_prefix_expression(node) {
+        return;
     }
+    accept_expression(&node.operand, visitor);
+    visitor.leave_prefix_expression(node);
 }
 
 pub fn accept_function_call_expression(node: &FunctionCallExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_function_call_expression(node) {
-        accept_expression(&node.operand, visitor);
-        accept_arguments_declaration(&node.arguments, visitor);
-        visitor.leave_function_call_expression(node);
+    if !visitor.enter_function_call_expression(node) {
+        return;
     }
+    accept_expression(&node.operand, visitor);
+    accept_arguments_declaration(&node.arguments, visitor);
+    visitor.leave_function_call_expression(node);
 }
 
 pub fn accept_call_options_expression(node: &CallOptionsExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_call_options_expression(node) {
-        accept_expression(&node.operand, visitor);
-        accept_call_options(&node.options, visitor);
-        visitor.leave_call_options_expression(node);
+    if !visitor.enter_call_options_expression(node) {
+        return;
     }
+    accept_expression(&node.operand, visitor);
+    accept_call_options(&node.options, visitor);
+    visitor.leave_call_options_expression(node);
 }
 
 pub fn accept_member_access_expression(node: &MemberAccessExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_member_access_expression(node) {
-        accept_expression(&node.operand, visitor);
-        visitor.leave_member_access_expression(node);
+    if !visitor.enter_member_access_expression(node) {
+        return;
     }
+    accept_expression(&node.operand, visitor);
+    visitor.leave_member_access_expression(node);
 }
 
 pub fn accept_index_access_expression(node: &IndexAccessExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_index_access_expression(node) {
-        accept_expression(&node.operand, visitor);
-        if let Some(ref start) = node.start {
-            accept_expression(start, visitor);
-        }
-
-        if let Some(ref end) = node.end {
-            accept_index_access_end(end, visitor);
-        }
-        visitor.leave_index_access_expression(node);
+    if !visitor.enter_index_access_expression(node) {
+        return;
     }
+    accept_expression(&node.operand, visitor);
+    if let Some(ref start) = node.start {
+        accept_expression(start, visitor);
+    }
+    if let Some(ref end) = node.end {
+        accept_index_access_end(end, visitor);
+    }
+    visitor.leave_index_access_expression(node);
 }
 
 pub fn accept_index_access_end(node: &IndexAccessEnd, visitor: &mut impl Visitor) {
-    if visitor.enter_index_access_end(node) {
-        if let Some(ref end) = node.end {
-            accept_expression(end, visitor);
-        }
-        visitor.leave_index_access_end(node);
+    if !visitor.enter_index_access_end(node) {
+        return;
     }
+    if let Some(ref end) = node.end {
+        accept_expression(end, visitor);
+    }
+    visitor.leave_index_access_end(node);
 }
 
 pub fn accept_positional_arguments_declaration(
     node: &PositionalArgumentsDeclaration,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_positional_arguments_declaration(node) {
-        accept_positional_arguments(&node.arguments, visitor);
-        visitor.leave_positional_arguments_declaration(node);
+    if !visitor.enter_positional_arguments_declaration(node) {
+        return;
     }
+    accept_positional_arguments(&node.arguments, visitor);
+    visitor.leave_positional_arguments_declaration(node);
 }
 
 pub fn accept_named_arguments_declaration(
     node: &NamedArgumentsDeclaration,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_named_arguments_declaration(node) {
-        if let Some(ref arguments) = node.arguments {
-            accept_named_argument_group(arguments, visitor);
-        }
-        visitor.leave_named_arguments_declaration(node);
+    if !visitor.enter_named_arguments_declaration(node) {
+        return;
     }
+    if let Some(ref arguments) = node.arguments {
+        accept_named_argument_group(arguments, visitor);
+    }
+    visitor.leave_named_arguments_declaration(node);
 }
 
 pub fn accept_named_argument_group(node: &NamedArgumentGroup, visitor: &mut impl Visitor) {
-    if visitor.enter_named_argument_group(node) {
-        accept_named_arguments(&node.arguments, visitor);
-        visitor.leave_named_argument_group(node);
+    if !visitor.enter_named_argument_group(node) {
+        return;
     }
+    accept_named_arguments(&node.arguments, visitor);
+    visitor.leave_named_argument_group(node);
 }
 
 pub fn accept_named_argument(node: &NamedArgument, visitor: &mut impl Visitor) {
-    if visitor.enter_named_argument(node) {
-        accept_expression(&node.value, visitor);
-        visitor.leave_named_argument(node);
+    if !visitor.enter_named_argument(node) {
+        return;
     }
+    accept_expression(&node.value, visitor);
+    visitor.leave_named_argument(node);
 }
 
 pub fn accept_type_expression(node: &TypeExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_type_expression(node) {
-        accept_type_name(&node.type_name, visitor);
-        visitor.leave_type_expression(node);
+    if !visitor.enter_type_expression(node) {
+        return;
     }
+    accept_type_name(&node.type_name, visitor);
+    visitor.leave_type_expression(node);
 }
 
 pub fn accept_new_expression(node: &NewExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_new_expression(node) {
-        accept_type_name(&node.type_name, visitor);
-        visitor.leave_new_expression(node);
+    if !visitor.enter_new_expression(node) {
+        return;
     }
+    accept_type_name(&node.type_name, visitor);
+    visitor.leave_new_expression(node);
 }
 
 pub fn accept_tuple_expression(node: &TupleExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_tuple_expression(node) {
-        accept_tuple_values(&node.items, visitor);
-        visitor.leave_tuple_expression(node);
+    if !visitor.enter_tuple_expression(node) {
+        return;
     }
+    accept_tuple_values(&node.items, visitor);
+    visitor.leave_tuple_expression(node);
 }
 
 pub fn accept_tuple_value(node: &TupleValue, visitor: &mut impl Visitor) {
-    if visitor.enter_tuple_value(node) {
-        if let Some(ref expression) = node.expression {
-            accept_expression(expression, visitor);
-        }
-        visitor.leave_tuple_value(node);
+    if !visitor.enter_tuple_value(node) {
+        return;
     }
+    if let Some(ref expression) = node.expression {
+        accept_expression(expression, visitor);
+    }
+    visitor.leave_tuple_value(node);
 }
 
 pub fn accept_array_expression(node: &ArrayExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_array_expression(node) {
-        accept_array_values(&node.items, visitor);
-        visitor.leave_array_expression(node);
+    if !visitor.enter_array_expression(node) {
+        return;
     }
+    accept_array_values(&node.items, visitor);
+    visitor.leave_array_expression(node);
 }
 
 pub fn accept_hex_number_expression(node: &HexNumberExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_hex_number_expression(node) {
-        visitor.leave_hex_number_expression(node);
+    if !visitor.enter_hex_number_expression(node) {
+        return;
     }
+    visitor.leave_hex_number_expression(node);
 }
 
 pub fn accept_decimal_number_expression(
     node: &DecimalNumberExpression,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_decimal_number_expression(node) {
-        if let Some(ref unit) = node.unit {
-            accept_number_unit(unit, visitor);
-        }
-        visitor.leave_decimal_number_expression(node);
+    if !visitor.enter_decimal_number_expression(node) {
+        return;
     }
+    if let Some(ref unit) = node.unit {
+        accept_number_unit(unit, visitor);
+    }
+    visitor.leave_decimal_number_expression(node);
 }
 
 pub fn accept_yul_block(node: &YulBlock, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_block(node) {
-        accept_yul_statements(&node.statements, visitor);
-        visitor.leave_yul_block(node);
+    if !visitor.enter_yul_block(node) {
+        return;
     }
+    accept_yul_statements(&node.statements, visitor);
+    visitor.leave_yul_block(node);
 }
 
 pub fn accept_yul_function_definition(node: &YulFunctionDefinition, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_function_definition(node) {
-        accept_yul_parameters_declaration(&node.parameters, visitor);
-        if let Some(ref returns) = node.returns {
-            accept_yul_returns_declaration(returns, visitor);
-        }
-        accept_yul_block(&node.body, visitor);
-        visitor.leave_yul_function_definition(node);
+    if !visitor.enter_yul_function_definition(node) {
+        return;
     }
+    accept_yul_parameters_declaration(&node.parameters, visitor);
+    if let Some(ref returns) = node.returns {
+        accept_yul_returns_declaration(returns, visitor);
+    }
+    accept_yul_block(&node.body, visitor);
+    visitor.leave_yul_function_definition(node);
 }
 
 pub fn accept_yul_parameters_declaration(
     node: &YulParametersDeclaration,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_yul_parameters_declaration(node) {
-        accept_yul_parameters(&node.parameters, visitor);
-        visitor.leave_yul_parameters_declaration(node);
+    if !visitor.enter_yul_parameters_declaration(node) {
+        return;
     }
+    accept_yul_parameters(&node.parameters, visitor);
+    visitor.leave_yul_parameters_declaration(node);
 }
 
 pub fn accept_yul_returns_declaration(node: &YulReturnsDeclaration, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_returns_declaration(node) {
-        accept_yul_variable_names(&node.variables, visitor);
-        visitor.leave_yul_returns_declaration(node);
+    if !visitor.enter_yul_returns_declaration(node) {
+        return;
     }
+    accept_yul_variable_names(&node.variables, visitor);
+    visitor.leave_yul_returns_declaration(node);
 }
 
 pub fn accept_yul_variable_declaration_statement(
     node: &YulVariableDeclarationStatement,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_yul_variable_declaration_statement(node) {
-        accept_yul_variable_names(&node.variables, visitor);
-        if let Some(ref value) = node.value {
-            accept_yul_variable_declaration_value(value, visitor);
-        }
-        visitor.leave_yul_variable_declaration_statement(node);
+    if !visitor.enter_yul_variable_declaration_statement(node) {
+        return;
     }
+    accept_yul_variable_names(&node.variables, visitor);
+    if let Some(ref value) = node.value {
+        accept_yul_variable_declaration_value(value, visitor);
+    }
+    visitor.leave_yul_variable_declaration_statement(node);
 }
 
 pub fn accept_yul_variable_declaration_value(
     node: &YulVariableDeclarationValue,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_yul_variable_declaration_value(node) {
-        accept_yul_assignment_operator(&node.assignment, visitor);
-        accept_yul_expression(&node.expression, visitor);
-        visitor.leave_yul_variable_declaration_value(node);
+    if !visitor.enter_yul_variable_declaration_value(node) {
+        return;
     }
+    accept_yul_assignment_operator(&node.assignment, visitor);
+    accept_yul_expression(&node.expression, visitor);
+    visitor.leave_yul_variable_declaration_value(node);
 }
 
 pub fn accept_yul_variable_assignment_statement(
     node: &YulVariableAssignmentStatement,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_yul_variable_assignment_statement(node) {
-        accept_yul_paths(&node.variables, visitor);
-        accept_yul_assignment_operator(&node.assignment, visitor);
-        accept_yul_expression(&node.expression, visitor);
-        visitor.leave_yul_variable_assignment_statement(node);
+    if !visitor.enter_yul_variable_assignment_statement(node) {
+        return;
     }
+    accept_yul_paths(&node.variables, visitor);
+    accept_yul_assignment_operator(&node.assignment, visitor);
+    accept_yul_expression(&node.expression, visitor);
+    visitor.leave_yul_variable_assignment_statement(node);
 }
 
 pub fn accept_yul_if_statement(node: &YulIfStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_if_statement(node) {
-        accept_yul_expression(&node.condition, visitor);
-        accept_yul_block(&node.body, visitor);
-        visitor.leave_yul_if_statement(node);
+    if !visitor.enter_yul_if_statement(node) {
+        return;
     }
+    accept_yul_expression(&node.condition, visitor);
+    accept_yul_block(&node.body, visitor);
+    visitor.leave_yul_if_statement(node);
 }
 
 pub fn accept_yul_for_statement(node: &YulForStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_for_statement(node) {
-        accept_yul_block(&node.initialization, visitor);
-        accept_yul_expression(&node.condition, visitor);
-        accept_yul_block(&node.iterator, visitor);
-        accept_yul_block(&node.body, visitor);
-        visitor.leave_yul_for_statement(node);
+    if !visitor.enter_yul_for_statement(node) {
+        return;
     }
+    accept_yul_block(&node.initialization, visitor);
+    accept_yul_expression(&node.condition, visitor);
+    accept_yul_block(&node.iterator, visitor);
+    accept_yul_block(&node.body, visitor);
+    visitor.leave_yul_for_statement(node);
 }
 
 pub fn accept_yul_switch_statement(node: &YulSwitchStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_switch_statement(node) {
-        accept_yul_expression(&node.expression, visitor);
-        accept_yul_switch_cases(&node.cases, visitor);
-        visitor.leave_yul_switch_statement(node);
+    if !visitor.enter_yul_switch_statement(node) {
+        return;
     }
+    accept_yul_expression(&node.expression, visitor);
+    accept_yul_switch_cases(&node.cases, visitor);
+    visitor.leave_yul_switch_statement(node);
 }
 
 pub fn accept_yul_default_case(node: &YulDefaultCase, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_default_case(node) {
-        accept_yul_block(&node.body, visitor);
-        visitor.leave_yul_default_case(node);
+    if !visitor.enter_yul_default_case(node) {
+        return;
     }
+    accept_yul_block(&node.body, visitor);
+    visitor.leave_yul_default_case(node);
 }
 
 pub fn accept_yul_value_case(node: &YulValueCase, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_value_case(node) {
-        accept_yul_literal(&node.value, visitor);
-        accept_yul_block(&node.body, visitor);
-        visitor.leave_yul_value_case(node);
+    if !visitor.enter_yul_value_case(node) {
+        return;
     }
+    accept_yul_literal(&node.value, visitor);
+    accept_yul_block(&node.body, visitor);
+    visitor.leave_yul_value_case(node);
 }
 
 pub fn accept_yul_leave_statement(node: &YulLeaveStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_leave_statement(node) {
-        visitor.leave_yul_leave_statement(node);
+    if !visitor.enter_yul_leave_statement(node) {
+        return;
     }
+    visitor.leave_yul_leave_statement(node);
 }
 
 pub fn accept_yul_break_statement(node: &YulBreakStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_break_statement(node) {
-        visitor.leave_yul_break_statement(node);
+    if !visitor.enter_yul_break_statement(node) {
+        return;
     }
+    visitor.leave_yul_break_statement(node);
 }
 
 pub fn accept_yul_continue_statement(node: &YulContinueStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_continue_statement(node) {
-        visitor.leave_yul_continue_statement(node);
+    if !visitor.enter_yul_continue_statement(node) {
+        return;
     }
+    visitor.leave_yul_continue_statement(node);
 }
 
 pub fn accept_yul_function_call_expression(
     node: &YulFunctionCallExpression,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_yul_function_call_expression(node) {
-        accept_yul_expression(&node.operand, visitor);
-        accept_yul_arguments(&node.arguments, visitor);
-        visitor.leave_yul_function_call_expression(node);
+    if !visitor.enter_yul_function_call_expression(node) {
+        return;
     }
+    accept_yul_expression(&node.operand, visitor);
+    accept_yul_arguments(&node.arguments, visitor);
+    visitor.leave_yul_function_call_expression(node);
 }
 
 //
@@ -2193,482 +2314,497 @@ pub fn accept_yul_function_call_expression(
 //
 
 pub fn accept_source_unit_member(node: &SourceUnitMember, visitor: &mut impl Visitor) {
-    if visitor.enter_source_unit_member(node) {
-        match node {
-            SourceUnitMember::PragmaDirective(ref pragma_directive) => {
-                accept_pragma_directive(pragma_directive, visitor);
-            }
-            SourceUnitMember::ImportDirective(ref import_directive) => {
-                accept_import_directive(import_directive, visitor);
-            }
-            SourceUnitMember::ContractDefinition(ref contract_definition) => {
-                accept_contract_definition(contract_definition, visitor);
-            }
-            SourceUnitMember::InterfaceDefinition(ref interface_definition) => {
-                accept_interface_definition(interface_definition, visitor);
-            }
-            SourceUnitMember::LibraryDefinition(ref library_definition) => {
-                accept_library_definition(library_definition, visitor);
-            }
-            SourceUnitMember::StructDefinition(ref struct_definition) => {
-                accept_struct_definition(struct_definition, visitor);
-            }
-            SourceUnitMember::EnumDefinition(ref enum_definition) => {
-                accept_enum_definition(enum_definition, visitor);
-            }
-            SourceUnitMember::FunctionDefinition(ref function_definition) => {
-                accept_function_definition(function_definition, visitor);
-            }
-            SourceUnitMember::ErrorDefinition(ref error_definition) => {
-                accept_error_definition(error_definition, visitor);
-            }
-            SourceUnitMember::UserDefinedValueTypeDefinition(
-                ref user_defined_value_type_definition,
-            ) => {
-                accept_user_defined_value_type_definition(
-                    user_defined_value_type_definition,
-                    visitor,
-                );
-            }
-            SourceUnitMember::UsingDirective(ref using_directive) => {
-                accept_using_directive(using_directive, visitor);
-            }
-            SourceUnitMember::EventDefinition(ref event_definition) => {
-                accept_event_definition(event_definition, visitor);
-            }
-            SourceUnitMember::ConstantDefinition(ref constant_definition) => {
-                accept_constant_definition(constant_definition, visitor);
-            }
-        }
-        visitor.leave_source_unit_member(node);
+    if !visitor.enter_source_unit_member(node) {
+        return;
     }
+    match node {
+        SourceUnitMember::PragmaDirective(ref pragma_directive) => {
+            accept_pragma_directive(pragma_directive, visitor);
+        }
+        SourceUnitMember::ImportDirective(ref import_directive) => {
+            accept_import_directive(import_directive, visitor);
+        }
+        SourceUnitMember::ContractDefinition(ref contract_definition) => {
+            accept_contract_definition(contract_definition, visitor);
+        }
+        SourceUnitMember::InterfaceDefinition(ref interface_definition) => {
+            accept_interface_definition(interface_definition, visitor);
+        }
+        SourceUnitMember::LibraryDefinition(ref library_definition) => {
+            accept_library_definition(library_definition, visitor);
+        }
+        SourceUnitMember::StructDefinition(ref struct_definition) => {
+            accept_struct_definition(struct_definition, visitor);
+        }
+        SourceUnitMember::EnumDefinition(ref enum_definition) => {
+            accept_enum_definition(enum_definition, visitor);
+        }
+        SourceUnitMember::FunctionDefinition(ref function_definition) => {
+            accept_function_definition(function_definition, visitor);
+        }
+        SourceUnitMember::ErrorDefinition(ref error_definition) => {
+            accept_error_definition(error_definition, visitor);
+        }
+        SourceUnitMember::UserDefinedValueTypeDefinition(
+            ref user_defined_value_type_definition,
+        ) => {
+            accept_user_defined_value_type_definition(user_defined_value_type_definition, visitor);
+        }
+        SourceUnitMember::UsingDirective(ref using_directive) => {
+            accept_using_directive(using_directive, visitor);
+        }
+        SourceUnitMember::EventDefinition(ref event_definition) => {
+            accept_event_definition(event_definition, visitor);
+        }
+        SourceUnitMember::ConstantDefinition(ref constant_definition) => {
+            accept_constant_definition(constant_definition, visitor);
+        }
+    }
+    visitor.leave_source_unit_member(node);
 }
 
 pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
-    if visitor.enter_pragma(node) {
-        match node {
-            Pragma::AbicoderPragma(ref abicoder_pragma) => {
-                accept_abicoder_pragma(abicoder_pragma, visitor);
-            }
-            Pragma::ExperimentalPragma(ref experimental_pragma) => {
-                accept_experimental_pragma(experimental_pragma, visitor);
-            }
-            Pragma::VersionPragma(ref version_pragma) => {
-                accept_version_pragma(version_pragma, visitor);
-            }
-        }
-        visitor.leave_pragma(node);
+    if !visitor.enter_pragma(node) {
+        return;
     }
+    match node {
+        Pragma::AbicoderPragma(ref abicoder_pragma) => {
+            accept_abicoder_pragma(abicoder_pragma, visitor);
+        }
+        Pragma::ExperimentalPragma(ref experimental_pragma) => {
+            accept_experimental_pragma(experimental_pragma, visitor);
+        }
+        Pragma::VersionPragma(ref version_pragma) => {
+            accept_version_pragma(version_pragma, visitor);
+        }
+    }
+    visitor.leave_pragma(node);
 }
 
 pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut impl Visitor) {
-    if visitor.enter_experimental_feature(node) {
-        match node {
-            ExperimentalFeature::StringLiteral(ref string_literal) => {
-                accept_string_literal(string_literal, visitor);
-            }
-            ExperimentalFeature::Identifier(_) => {}
-        }
-        visitor.leave_experimental_feature(node);
+    if !visitor.enter_experimental_feature(node) {
+        return;
     }
+    match node {
+        ExperimentalFeature::StringLiteral(ref string_literal) => {
+            accept_string_literal(string_literal, visitor);
+        }
+        ExperimentalFeature::Identifier(_) => {}
+    }
+    visitor.leave_experimental_feature(node);
 }
 
 pub fn accept_version_expression(node: &VersionExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_version_expression(node) {
-        match node {
-            VersionExpression::VersionRange(ref version_range) => {
-                accept_version_range(version_range, visitor);
-            }
-            VersionExpression::VersionTerm(ref version_term) => {
-                accept_version_term(version_term, visitor);
-            }
-        }
-        visitor.leave_version_expression(node);
+    if !visitor.enter_version_expression(node) {
+        return;
     }
+    match node {
+        VersionExpression::VersionRange(ref version_range) => {
+            accept_version_range(version_range, visitor);
+        }
+        VersionExpression::VersionTerm(ref version_term) => {
+            accept_version_term(version_term, visitor);
+        }
+    }
+    visitor.leave_version_expression(node);
 }
 
 pub fn accept_version_operator(_node: &VersionOperator, _visitor: &mut impl Visitor) {}
 
 pub fn accept_version_literal(node: &VersionLiteral, visitor: &mut impl Visitor) {
-    if visitor.enter_version_literal(node) {
-        match node {
-            VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
-                accept_simple_version_literal(simple_version_literal, visitor);
-            }
-            VersionLiteral::SingleQuotedVersionLiteral(_)
-            | VersionLiteral::DoubleQuotedVersionLiteral(_) => {}
-        }
-        visitor.leave_version_literal(node);
+    if !visitor.enter_version_literal(node) {
+        return;
     }
+    match node {
+        VersionLiteral::SimpleVersionLiteral(ref simple_version_literal) => {
+            accept_simple_version_literal(simple_version_literal, visitor);
+        }
+        VersionLiteral::SingleQuotedVersionLiteral(_)
+        | VersionLiteral::DoubleQuotedVersionLiteral(_) => {}
+    }
+    visitor.leave_version_literal(node);
 }
 
 pub fn accept_import_clause(node: &ImportClause, visitor: &mut impl Visitor) {
-    if visitor.enter_import_clause(node) {
-        match node {
-            ImportClause::PathImport(ref path_import) => {
-                accept_path_import(path_import, visitor);
-            }
-            ImportClause::NamedImport(ref named_import) => {
-                accept_named_import(named_import, visitor);
-            }
-            ImportClause::ImportDeconstruction(ref import_deconstruction) => {
-                accept_import_deconstruction(import_deconstruction, visitor);
-            }
-        }
-        visitor.leave_import_clause(node);
+    if !visitor.enter_import_clause(node) {
+        return;
     }
+    match node {
+        ImportClause::PathImport(ref path_import) => {
+            accept_path_import(path_import, visitor);
+        }
+        ImportClause::NamedImport(ref named_import) => {
+            accept_named_import(named_import, visitor);
+        }
+        ImportClause::ImportDeconstruction(ref import_deconstruction) => {
+            accept_import_deconstruction(import_deconstruction, visitor);
+        }
+    }
+    visitor.leave_import_clause(node);
 }
 
 pub fn accept_using_clause(node: &UsingClause, visitor: &mut impl Visitor) {
-    if visitor.enter_using_clause(node) {
-        match node {
-            UsingClause::IdentifierPath(ref identifier_path) => {
-                accept_identifier_path(identifier_path, visitor);
-            }
-            UsingClause::UsingDeconstruction(ref using_deconstruction) => {
-                accept_using_deconstruction(using_deconstruction, visitor);
-            }
-        }
-        visitor.leave_using_clause(node);
+    if !visitor.enter_using_clause(node) {
+        return;
     }
+    match node {
+        UsingClause::IdentifierPath(ref identifier_path) => {
+            accept_identifier_path(identifier_path, visitor);
+        }
+        UsingClause::UsingDeconstruction(ref using_deconstruction) => {
+            accept_using_deconstruction(using_deconstruction, visitor);
+        }
+    }
+    visitor.leave_using_clause(node);
 }
 
 pub fn accept_using_operator(_node: &UsingOperator, _visitor: &mut impl Visitor) {}
 
 pub fn accept_using_target(node: &UsingTarget, visitor: &mut impl Visitor) {
-    if visitor.enter_using_target(node) {
-        match node {
-            UsingTarget::TypeName(ref type_name) => {
-                accept_type_name(type_name, visitor);
-            }
-            UsingTarget::Asterisk => {}
-        }
-        visitor.leave_using_target(node);
+    if !visitor.enter_using_target(node) {
+        return;
     }
+    match node {
+        UsingTarget::TypeName(ref type_name) => {
+            accept_type_name(type_name, visitor);
+        }
+        UsingTarget::Asterisk => {}
+    }
+    visitor.leave_using_target(node);
 }
 
 pub fn accept_contract_specifier(node: &ContractSpecifier, visitor: &mut impl Visitor) {
-    if visitor.enter_contract_specifier(node) {
-        match node {
-            ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
-                accept_inheritance_specifier(inheritance_specifier, visitor);
-            }
-            ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
-                accept_storage_layout_specifier(storage_layout_specifier, visitor);
-            }
-        }
-        visitor.leave_contract_specifier(node);
+    if !visitor.enter_contract_specifier(node) {
+        return;
     }
+    match node {
+        ContractSpecifier::InheritanceSpecifier(ref inheritance_specifier) => {
+            accept_inheritance_specifier(inheritance_specifier, visitor);
+        }
+        ContractSpecifier::StorageLayoutSpecifier(ref storage_layout_specifier) => {
+            accept_storage_layout_specifier(storage_layout_specifier, visitor);
+        }
+    }
+    visitor.leave_contract_specifier(node);
 }
 
 pub fn accept_contract_member(node: &ContractMember, visitor: &mut impl Visitor) {
-    if visitor.enter_contract_member(node) {
-        match node {
-            ContractMember::UsingDirective(ref using_directive) => {
-                accept_using_directive(using_directive, visitor);
-            }
-            ContractMember::FunctionDefinition(ref function_definition) => {
-                accept_function_definition(function_definition, visitor);
-            }
-            ContractMember::ConstructorDefinition(ref constructor_definition) => {
-                accept_constructor_definition(constructor_definition, visitor);
-            }
-            ContractMember::ReceiveFunctionDefinition(ref receive_function_definition) => {
-                accept_receive_function_definition(receive_function_definition, visitor);
-            }
-            ContractMember::FallbackFunctionDefinition(ref fallback_function_definition) => {
-                accept_fallback_function_definition(fallback_function_definition, visitor);
-            }
-            ContractMember::ModifierDefinition(ref modifier_definition) => {
-                accept_modifier_definition(modifier_definition, visitor);
-            }
-            ContractMember::StructDefinition(ref struct_definition) => {
-                accept_struct_definition(struct_definition, visitor);
-            }
-            ContractMember::EnumDefinition(ref enum_definition) => {
-                accept_enum_definition(enum_definition, visitor);
-            }
-            ContractMember::EventDefinition(ref event_definition) => {
-                accept_event_definition(event_definition, visitor);
-            }
-            ContractMember::ErrorDefinition(ref error_definition) => {
-                accept_error_definition(error_definition, visitor);
-            }
-            ContractMember::UserDefinedValueTypeDefinition(
-                ref user_defined_value_type_definition,
-            ) => {
-                accept_user_defined_value_type_definition(
-                    user_defined_value_type_definition,
-                    visitor,
-                );
-            }
-            ContractMember::StateVariableDefinition(ref state_variable_definition) => {
-                accept_state_variable_definition(state_variable_definition, visitor);
-            }
-        }
-        visitor.leave_contract_member(node);
+    if !visitor.enter_contract_member(node) {
+        return;
     }
+    match node {
+        ContractMember::UsingDirective(ref using_directive) => {
+            accept_using_directive(using_directive, visitor);
+        }
+        ContractMember::FunctionDefinition(ref function_definition) => {
+            accept_function_definition(function_definition, visitor);
+        }
+        ContractMember::ConstructorDefinition(ref constructor_definition) => {
+            accept_constructor_definition(constructor_definition, visitor);
+        }
+        ContractMember::ReceiveFunctionDefinition(ref receive_function_definition) => {
+            accept_receive_function_definition(receive_function_definition, visitor);
+        }
+        ContractMember::FallbackFunctionDefinition(ref fallback_function_definition) => {
+            accept_fallback_function_definition(fallback_function_definition, visitor);
+        }
+        ContractMember::ModifierDefinition(ref modifier_definition) => {
+            accept_modifier_definition(modifier_definition, visitor);
+        }
+        ContractMember::StructDefinition(ref struct_definition) => {
+            accept_struct_definition(struct_definition, visitor);
+        }
+        ContractMember::EnumDefinition(ref enum_definition) => {
+            accept_enum_definition(enum_definition, visitor);
+        }
+        ContractMember::EventDefinition(ref event_definition) => {
+            accept_event_definition(event_definition, visitor);
+        }
+        ContractMember::ErrorDefinition(ref error_definition) => {
+            accept_error_definition(error_definition, visitor);
+        }
+        ContractMember::UserDefinedValueTypeDefinition(ref user_defined_value_type_definition) => {
+            accept_user_defined_value_type_definition(user_defined_value_type_definition, visitor);
+        }
+        ContractMember::StateVariableDefinition(ref state_variable_definition) => {
+            accept_state_variable_definition(state_variable_definition, visitor);
+        }
+    }
+    visitor.leave_contract_member(node);
 }
 
 pub fn accept_state_variable_attribute(node: &StateVariableAttribute, visitor: &mut impl Visitor) {
-    if visitor.enter_state_variable_attribute(node) {
-        match node {
-            StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
-                accept_override_specifier(override_specifier, visitor);
-            }
-            StateVariableAttribute::ConstantKeyword
-            | StateVariableAttribute::InternalKeyword
-            | StateVariableAttribute::PrivateKeyword
-            | StateVariableAttribute::PublicKeyword
-            | StateVariableAttribute::ImmutableKeyword
-            | StateVariableAttribute::TransientKeyword => {}
-        }
-        visitor.leave_state_variable_attribute(node);
+    if !visitor.enter_state_variable_attribute(node) {
+        return;
     }
+    match node {
+        StateVariableAttribute::OverrideSpecifier(ref override_specifier) => {
+            accept_override_specifier(override_specifier, visitor);
+        }
+        StateVariableAttribute::ConstantKeyword
+        | StateVariableAttribute::InternalKeyword
+        | StateVariableAttribute::PrivateKeyword
+        | StateVariableAttribute::PublicKeyword
+        | StateVariableAttribute::ImmutableKeyword
+        | StateVariableAttribute::TransientKeyword => {}
+    }
+    visitor.leave_state_variable_attribute(node);
 }
 
 pub fn accept_function_name(_node: &FunctionName, _visitor: &mut impl Visitor) {}
 
 pub fn accept_function_attribute(node: &FunctionAttribute, visitor: &mut impl Visitor) {
-    if visitor.enter_function_attribute(node) {
-        match node {
-            FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                accept_modifier_invocation(modifier_invocation, visitor);
-            }
-            FunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                accept_override_specifier(override_specifier, visitor);
-            }
-            FunctionAttribute::ExternalKeyword
-            | FunctionAttribute::InternalKeyword
-            | FunctionAttribute::PayableKeyword
-            | FunctionAttribute::PrivateKeyword
-            | FunctionAttribute::PublicKeyword
-            | FunctionAttribute::PureKeyword
-            | FunctionAttribute::ViewKeyword
-            | FunctionAttribute::VirtualKeyword => {}
-        }
-        visitor.leave_function_attribute(node);
+    if !visitor.enter_function_attribute(node) {
+        return;
     }
+    match node {
+        FunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+            accept_modifier_invocation(modifier_invocation, visitor);
+        }
+        FunctionAttribute::OverrideSpecifier(ref override_specifier) => {
+            accept_override_specifier(override_specifier, visitor);
+        }
+        FunctionAttribute::ExternalKeyword
+        | FunctionAttribute::InternalKeyword
+        | FunctionAttribute::PayableKeyword
+        | FunctionAttribute::PrivateKeyword
+        | FunctionAttribute::PublicKeyword
+        | FunctionAttribute::PureKeyword
+        | FunctionAttribute::ViewKeyword
+        | FunctionAttribute::VirtualKeyword => {}
+    }
+    visitor.leave_function_attribute(node);
 }
 
 pub fn accept_function_body(node: &FunctionBody, visitor: &mut impl Visitor) {
-    if visitor.enter_function_body(node) {
-        match node {
-            FunctionBody::Block(ref block) => {
-                accept_block(block, visitor);
-            }
-            FunctionBody::Semicolon => {}
-        }
-        visitor.leave_function_body(node);
+    if !visitor.enter_function_body(node) {
+        return;
     }
+    match node {
+        FunctionBody::Block(ref block) => {
+            accept_block(block, visitor);
+        }
+        FunctionBody::Semicolon => {}
+    }
+    visitor.leave_function_body(node);
 }
 
 pub fn accept_constructor_attribute(node: &ConstructorAttribute, visitor: &mut impl Visitor) {
-    if visitor.enter_constructor_attribute(node) {
-        match node {
-            ConstructorAttribute::ModifierInvocation(ref modifier_invocation) => {
-                accept_modifier_invocation(modifier_invocation, visitor);
-            }
-            ConstructorAttribute::InternalKeyword
-            | ConstructorAttribute::PayableKeyword
-            | ConstructorAttribute::PublicKeyword => {}
-        }
-        visitor.leave_constructor_attribute(node);
+    if !visitor.enter_constructor_attribute(node) {
+        return;
     }
+    match node {
+        ConstructorAttribute::ModifierInvocation(ref modifier_invocation) => {
+            accept_modifier_invocation(modifier_invocation, visitor);
+        }
+        ConstructorAttribute::InternalKeyword
+        | ConstructorAttribute::PayableKeyword
+        | ConstructorAttribute::PublicKeyword => {}
+    }
+    visitor.leave_constructor_attribute(node);
 }
 
 pub fn accept_fallback_function_attribute(
     node: &FallbackFunctionAttribute,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_fallback_function_attribute(node) {
-        match node {
-            FallbackFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                accept_modifier_invocation(modifier_invocation, visitor);
-            }
-            FallbackFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                accept_override_specifier(override_specifier, visitor);
-            }
-            FallbackFunctionAttribute::ExternalKeyword
-            | FallbackFunctionAttribute::PayableKeyword
-            | FallbackFunctionAttribute::PureKeyword
-            | FallbackFunctionAttribute::ViewKeyword
-            | FallbackFunctionAttribute::VirtualKeyword => {}
-        }
-        visitor.leave_fallback_function_attribute(node);
+    if !visitor.enter_fallback_function_attribute(node) {
+        return;
     }
+    match node {
+        FallbackFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+            accept_modifier_invocation(modifier_invocation, visitor);
+        }
+        FallbackFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
+            accept_override_specifier(override_specifier, visitor);
+        }
+        FallbackFunctionAttribute::ExternalKeyword
+        | FallbackFunctionAttribute::PayableKeyword
+        | FallbackFunctionAttribute::PureKeyword
+        | FallbackFunctionAttribute::ViewKeyword
+        | FallbackFunctionAttribute::VirtualKeyword => {}
+    }
+    visitor.leave_fallback_function_attribute(node);
 }
 
 pub fn accept_receive_function_attribute(
     node: &ReceiveFunctionAttribute,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_receive_function_attribute(node) {
-        match node {
-            ReceiveFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
-                accept_modifier_invocation(modifier_invocation, visitor);
-            }
-            ReceiveFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
-                accept_override_specifier(override_specifier, visitor);
-            }
-            ReceiveFunctionAttribute::ExternalKeyword
-            | ReceiveFunctionAttribute::PayableKeyword
-            | ReceiveFunctionAttribute::VirtualKeyword => {}
-        }
-        visitor.leave_receive_function_attribute(node);
+    if !visitor.enter_receive_function_attribute(node) {
+        return;
     }
+    match node {
+        ReceiveFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+            accept_modifier_invocation(modifier_invocation, visitor);
+        }
+        ReceiveFunctionAttribute::OverrideSpecifier(ref override_specifier) => {
+            accept_override_specifier(override_specifier, visitor);
+        }
+        ReceiveFunctionAttribute::ExternalKeyword
+        | ReceiveFunctionAttribute::PayableKeyword
+        | ReceiveFunctionAttribute::VirtualKeyword => {}
+    }
+    visitor.leave_receive_function_attribute(node);
 }
 
 pub fn accept_modifier_attribute(node: &ModifierAttribute, visitor: &mut impl Visitor) {
-    if visitor.enter_modifier_attribute(node) {
-        match node {
-            ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
-                accept_override_specifier(override_specifier, visitor);
-            }
-            ModifierAttribute::VirtualKeyword => {}
-        }
-        visitor.leave_modifier_attribute(node);
+    if !visitor.enter_modifier_attribute(node) {
+        return;
     }
+    match node {
+        ModifierAttribute::OverrideSpecifier(ref override_specifier) => {
+            accept_override_specifier(override_specifier, visitor);
+        }
+        ModifierAttribute::VirtualKeyword => {}
+    }
+    visitor.leave_modifier_attribute(node);
 }
 
 pub fn accept_type_name(node: &TypeName, visitor: &mut impl Visitor) {
-    if visitor.enter_type_name(node) {
-        match node {
-            TypeName::ArrayTypeName(ref array_type_name) => {
-                accept_array_type_name(array_type_name, visitor);
-            }
-            TypeName::FunctionType(ref function_type) => {
-                accept_function_type(function_type, visitor);
-            }
-            TypeName::MappingType(ref mapping_type) => {
-                accept_mapping_type(mapping_type, visitor);
-            }
-            TypeName::ElementaryType(ref elementary_type) => {
-                accept_elementary_type(elementary_type, visitor);
-            }
-            TypeName::IdentifierPath(ref identifier_path) => {
-                accept_identifier_path(identifier_path, visitor);
-            }
-        }
-        visitor.leave_type_name(node);
+    if !visitor.enter_type_name(node) {
+        return;
     }
+    match node {
+        TypeName::ArrayTypeName(ref array_type_name) => {
+            accept_array_type_name(array_type_name, visitor);
+        }
+        TypeName::FunctionType(ref function_type) => {
+            accept_function_type(function_type, visitor);
+        }
+        TypeName::MappingType(ref mapping_type) => {
+            accept_mapping_type(mapping_type, visitor);
+        }
+        TypeName::ElementaryType(ref elementary_type) => {
+            accept_elementary_type(elementary_type, visitor);
+        }
+        TypeName::IdentifierPath(ref identifier_path) => {
+            accept_identifier_path(identifier_path, visitor);
+        }
+    }
+    visitor.leave_type_name(node);
 }
 
 pub fn accept_function_type_attribute(_node: &FunctionTypeAttribute, _visitor: &mut impl Visitor) {}
 
 pub fn accept_mapping_key_type(node: &MappingKeyType, visitor: &mut impl Visitor) {
-    if visitor.enter_mapping_key_type(node) {
-        match node {
-            MappingKeyType::ElementaryType(ref elementary_type) => {
-                accept_elementary_type(elementary_type, visitor);
-            }
-            MappingKeyType::IdentifierPath(ref identifier_path) => {
-                accept_identifier_path(identifier_path, visitor);
-            }
-        }
-        visitor.leave_mapping_key_type(node);
+    if !visitor.enter_mapping_key_type(node) {
+        return;
     }
+    match node {
+        MappingKeyType::ElementaryType(ref elementary_type) => {
+            accept_elementary_type(elementary_type, visitor);
+        }
+        MappingKeyType::IdentifierPath(ref identifier_path) => {
+            accept_identifier_path(identifier_path, visitor);
+        }
+    }
+    visitor.leave_mapping_key_type(node);
 }
 
 pub fn accept_elementary_type(node: &ElementaryType, visitor: &mut impl Visitor) {
-    if visitor.enter_elementary_type(node) {
-        match node {
-            ElementaryType::AddressType(ref address_type) => {
-                accept_address_type(address_type, visitor);
-            }
-            ElementaryType::BytesKeyword(_)
-            | ElementaryType::IntKeyword(_)
-            | ElementaryType::UintKeyword(_)
-            | ElementaryType::FixedKeyword(_)
-            | ElementaryType::UfixedKeyword(_) => {}
-            ElementaryType::BoolKeyword | ElementaryType::StringKeyword => {}
-        }
-        visitor.leave_elementary_type(node);
+    if !visitor.enter_elementary_type(node) {
+        return;
     }
+    match node {
+        ElementaryType::AddressType(ref address_type) => {
+            accept_address_type(address_type, visitor);
+        }
+        ElementaryType::BytesKeyword(_)
+        | ElementaryType::IntKeyword(_)
+        | ElementaryType::UintKeyword(_)
+        | ElementaryType::FixedKeyword(_)
+        | ElementaryType::UfixedKeyword(_) => {}
+        ElementaryType::BoolKeyword | ElementaryType::StringKeyword => {}
+    }
+    visitor.leave_elementary_type(node);
 }
 
 pub fn accept_statement(node: &Statement, visitor: &mut impl Visitor) {
-    if visitor.enter_statement(node) {
-        match node {
-            Statement::IfStatement(ref if_statement) => {
-                accept_if_statement(if_statement, visitor);
-            }
-            Statement::ForStatement(ref for_statement) => {
-                accept_for_statement(for_statement, visitor);
-            }
-            Statement::WhileStatement(ref while_statement) => {
-                accept_while_statement(while_statement, visitor);
-            }
-            Statement::DoWhileStatement(ref do_while_statement) => {
-                accept_do_while_statement(do_while_statement, visitor);
-            }
-            Statement::ContinueStatement(ref continue_statement) => {
-                accept_continue_statement(continue_statement, visitor);
-            }
-            Statement::BreakStatement(ref break_statement) => {
-                accept_break_statement(break_statement, visitor);
-            }
-            Statement::ReturnStatement(ref return_statement) => {
-                accept_return_statement(return_statement, visitor);
-            }
-            Statement::EmitStatement(ref emit_statement) => {
-                accept_emit_statement(emit_statement, visitor);
-            }
-            Statement::TryStatement(ref try_statement) => {
-                accept_try_statement(try_statement, visitor);
-            }
-            Statement::RevertStatement(ref revert_statement) => {
-                accept_revert_statement(revert_statement, visitor);
-            }
-            Statement::AssemblyStatement(ref assembly_statement) => {
-                accept_assembly_statement(assembly_statement, visitor);
-            }
-            Statement::Block(ref block) => {
-                accept_block(block, visitor);
-            }
-            Statement::UncheckedBlock(ref unchecked_block) => {
-                accept_unchecked_block(unchecked_block, visitor);
-            }
-            Statement::TupleDeconstructionStatement(ref tuple_deconstruction_statement) => {
-                accept_tuple_deconstruction_statement(tuple_deconstruction_statement, visitor);
-            }
-            Statement::VariableDeclarationStatement(ref variable_declaration_statement) => {
-                accept_variable_declaration_statement(variable_declaration_statement, visitor);
-            }
-            Statement::ExpressionStatement(ref expression_statement) => {
-                accept_expression_statement(expression_statement, visitor);
-            }
-        }
-        visitor.leave_statement(node);
+    if !visitor.enter_statement(node) {
+        return;
     }
+    match node {
+        Statement::IfStatement(ref if_statement) => {
+            accept_if_statement(if_statement, visitor);
+        }
+        Statement::ForStatement(ref for_statement) => {
+            accept_for_statement(for_statement, visitor);
+        }
+        Statement::WhileStatement(ref while_statement) => {
+            accept_while_statement(while_statement, visitor);
+        }
+        Statement::DoWhileStatement(ref do_while_statement) => {
+            accept_do_while_statement(do_while_statement, visitor);
+        }
+        Statement::ContinueStatement(ref continue_statement) => {
+            accept_continue_statement(continue_statement, visitor);
+        }
+        Statement::BreakStatement(ref break_statement) => {
+            accept_break_statement(break_statement, visitor);
+        }
+        Statement::ReturnStatement(ref return_statement) => {
+            accept_return_statement(return_statement, visitor);
+        }
+        Statement::EmitStatement(ref emit_statement) => {
+            accept_emit_statement(emit_statement, visitor);
+        }
+        Statement::TryStatement(ref try_statement) => {
+            accept_try_statement(try_statement, visitor);
+        }
+        Statement::RevertStatement(ref revert_statement) => {
+            accept_revert_statement(revert_statement, visitor);
+        }
+        Statement::AssemblyStatement(ref assembly_statement) => {
+            accept_assembly_statement(assembly_statement, visitor);
+        }
+        Statement::Block(ref block) => {
+            accept_block(block, visitor);
+        }
+        Statement::UncheckedBlock(ref unchecked_block) => {
+            accept_unchecked_block(unchecked_block, visitor);
+        }
+        Statement::TupleDeconstructionStatement(ref tuple_deconstruction_statement) => {
+            accept_tuple_deconstruction_statement(tuple_deconstruction_statement, visitor);
+        }
+        Statement::VariableDeclarationStatement(ref variable_declaration_statement) => {
+            accept_variable_declaration_statement(variable_declaration_statement, visitor);
+        }
+        Statement::ExpressionStatement(ref expression_statement) => {
+            accept_expression_statement(expression_statement, visitor);
+        }
+    }
+    visitor.leave_statement(node);
 }
 
 pub fn accept_tuple_member(node: &TupleMember, visitor: &mut impl Visitor) {
-    if visitor.enter_tuple_member(node) {
-        match node {
-            TupleMember::TypedTupleMember(ref typed_tuple_member) => {
-                accept_typed_tuple_member(typed_tuple_member, visitor);
-            }
-            TupleMember::UntypedTupleMember(ref untyped_tuple_member) => {
-                accept_untyped_tuple_member(untyped_tuple_member, visitor);
-            }
-        }
-        visitor.leave_tuple_member(node);
+    if !visitor.enter_tuple_member(node) {
+        return;
     }
+    match node {
+        TupleMember::TypedTupleMember(ref typed_tuple_member) => {
+            accept_typed_tuple_member(typed_tuple_member, visitor);
+        }
+        TupleMember::UntypedTupleMember(ref untyped_tuple_member) => {
+            accept_untyped_tuple_member(untyped_tuple_member, visitor);
+        }
+    }
+    visitor.leave_tuple_member(node);
 }
 
 pub fn accept_variable_declaration_type(
     node: &VariableDeclarationType,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_variable_declaration_type(node) {
-        match node {
-            VariableDeclarationType::TypeName(ref type_name) => {
-                accept_type_name(type_name, visitor);
-            }
-        }
-        visitor.leave_variable_declaration_type(node);
+    if !visitor.enter_variable_declaration_type(node) {
+        return;
     }
+    match node {
+        VariableDeclarationType::TypeName(ref type_name) => {
+            accept_type_name(type_name, visitor);
+        }
+    }
+    visitor.leave_variable_declaration_type(node);
 }
 
 pub fn accept_storage_location(_node: &StorageLocation, _visitor: &mut impl Visitor) {}
@@ -2677,167 +2813,172 @@ pub fn accept_for_statement_initialization(
     node: &ForStatementInitialization,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_for_statement_initialization(node) {
-        match node {
-            ForStatementInitialization::TupleDeconstructionStatement(
-                ref tuple_deconstruction_statement,
-            ) => {
-                accept_tuple_deconstruction_statement(tuple_deconstruction_statement, visitor);
-            }
-            ForStatementInitialization::VariableDeclarationStatement(
-                ref variable_declaration_statement,
-            ) => {
-                accept_variable_declaration_statement(variable_declaration_statement, visitor);
-            }
-            ForStatementInitialization::ExpressionStatement(ref expression_statement) => {
-                accept_expression_statement(expression_statement, visitor);
-            }
-            ForStatementInitialization::Semicolon => {}
-        }
-        visitor.leave_for_statement_initialization(node);
+    if !visitor.enter_for_statement_initialization(node) {
+        return;
     }
+    match node {
+        ForStatementInitialization::TupleDeconstructionStatement(
+            ref tuple_deconstruction_statement,
+        ) => {
+            accept_tuple_deconstruction_statement(tuple_deconstruction_statement, visitor);
+        }
+        ForStatementInitialization::VariableDeclarationStatement(
+            ref variable_declaration_statement,
+        ) => {
+            accept_variable_declaration_statement(variable_declaration_statement, visitor);
+        }
+        ForStatementInitialization::ExpressionStatement(ref expression_statement) => {
+            accept_expression_statement(expression_statement, visitor);
+        }
+        ForStatementInitialization::Semicolon => {}
+    }
+    visitor.leave_for_statement_initialization(node);
 }
 
 pub fn accept_for_statement_condition(node: &ForStatementCondition, visitor: &mut impl Visitor) {
-    if visitor.enter_for_statement_condition(node) {
-        match node {
-            ForStatementCondition::ExpressionStatement(ref expression_statement) => {
-                accept_expression_statement(expression_statement, visitor);
-            }
-            ForStatementCondition::Semicolon => {}
-        }
-        visitor.leave_for_statement_condition(node);
+    if !visitor.enter_for_statement_condition(node) {
+        return;
     }
+    match node {
+        ForStatementCondition::ExpressionStatement(ref expression_statement) => {
+            accept_expression_statement(expression_statement, visitor);
+        }
+        ForStatementCondition::Semicolon => {}
+    }
+    visitor.leave_for_statement_condition(node);
 }
 
 pub fn accept_expression(node: &Expression, visitor: &mut impl Visitor) {
-    if visitor.enter_expression(node) {
-        match node {
-            Expression::AssignmentExpression(ref assignment_expression) => {
-                accept_assignment_expression(assignment_expression, visitor);
-            }
-            Expression::ConditionalExpression(ref conditional_expression) => {
-                accept_conditional_expression(conditional_expression, visitor);
-            }
-            Expression::OrExpression(ref or_expression) => {
-                accept_or_expression(or_expression, visitor);
-            }
-            Expression::AndExpression(ref and_expression) => {
-                accept_and_expression(and_expression, visitor);
-            }
-            Expression::EqualityExpression(ref equality_expression) => {
-                accept_equality_expression(equality_expression, visitor);
-            }
-            Expression::InequalityExpression(ref inequality_expression) => {
-                accept_inequality_expression(inequality_expression, visitor);
-            }
-            Expression::BitwiseOrExpression(ref bitwise_or_expression) => {
-                accept_bitwise_or_expression(bitwise_or_expression, visitor);
-            }
-            Expression::BitwiseXorExpression(ref bitwise_xor_expression) => {
-                accept_bitwise_xor_expression(bitwise_xor_expression, visitor);
-            }
-            Expression::BitwiseAndExpression(ref bitwise_and_expression) => {
-                accept_bitwise_and_expression(bitwise_and_expression, visitor);
-            }
-            Expression::ShiftExpression(ref shift_expression) => {
-                accept_shift_expression(shift_expression, visitor);
-            }
-            Expression::AdditiveExpression(ref additive_expression) => {
-                accept_additive_expression(additive_expression, visitor);
-            }
-            Expression::MultiplicativeExpression(ref multiplicative_expression) => {
-                accept_multiplicative_expression(multiplicative_expression, visitor);
-            }
-            Expression::ExponentiationExpression(ref exponentiation_expression) => {
-                accept_exponentiation_expression(exponentiation_expression, visitor);
-            }
-            Expression::PostfixExpression(ref postfix_expression) => {
-                accept_postfix_expression(postfix_expression, visitor);
-            }
-            Expression::PrefixExpression(ref prefix_expression) => {
-                accept_prefix_expression(prefix_expression, visitor);
-            }
-            Expression::FunctionCallExpression(ref function_call_expression) => {
-                accept_function_call_expression(function_call_expression, visitor);
-            }
-            Expression::CallOptionsExpression(ref call_options_expression) => {
-                accept_call_options_expression(call_options_expression, visitor);
-            }
-            Expression::MemberAccessExpression(ref member_access_expression) => {
-                accept_member_access_expression(member_access_expression, visitor);
-            }
-            Expression::IndexAccessExpression(ref index_access_expression) => {
-                accept_index_access_expression(index_access_expression, visitor);
-            }
-            Expression::NewExpression(ref new_expression) => {
-                accept_new_expression(new_expression, visitor);
-            }
-            Expression::TupleExpression(ref tuple_expression) => {
-                accept_tuple_expression(tuple_expression, visitor);
-            }
-            Expression::TypeExpression(ref type_expression) => {
-                accept_type_expression(type_expression, visitor);
-            }
-            Expression::ArrayExpression(ref array_expression) => {
-                accept_array_expression(array_expression, visitor);
-            }
-            Expression::HexNumberExpression(ref hex_number_expression) => {
-                accept_hex_number_expression(hex_number_expression, visitor);
-            }
-            Expression::DecimalNumberExpression(ref decimal_number_expression) => {
-                accept_decimal_number_expression(decimal_number_expression, visitor);
-            }
-            Expression::StringExpression(ref string_expression) => {
-                accept_string_expression(string_expression, visitor);
-            }
-            Expression::ElementaryType(ref elementary_type) => {
-                accept_elementary_type(elementary_type, visitor);
-            }
-            Expression::Identifier(_) => {}
-            Expression::PayableKeyword
-            | Expression::ThisKeyword
-            | Expression::SuperKeyword
-            | Expression::TrueKeyword
-            | Expression::FalseKeyword => {}
-        }
-        visitor.leave_expression(node);
+    if !visitor.enter_expression(node) {
+        return;
     }
+    match node {
+        Expression::AssignmentExpression(ref assignment_expression) => {
+            accept_assignment_expression(assignment_expression, visitor);
+        }
+        Expression::ConditionalExpression(ref conditional_expression) => {
+            accept_conditional_expression(conditional_expression, visitor);
+        }
+        Expression::OrExpression(ref or_expression) => {
+            accept_or_expression(or_expression, visitor);
+        }
+        Expression::AndExpression(ref and_expression) => {
+            accept_and_expression(and_expression, visitor);
+        }
+        Expression::EqualityExpression(ref equality_expression) => {
+            accept_equality_expression(equality_expression, visitor);
+        }
+        Expression::InequalityExpression(ref inequality_expression) => {
+            accept_inequality_expression(inequality_expression, visitor);
+        }
+        Expression::BitwiseOrExpression(ref bitwise_or_expression) => {
+            accept_bitwise_or_expression(bitwise_or_expression, visitor);
+        }
+        Expression::BitwiseXorExpression(ref bitwise_xor_expression) => {
+            accept_bitwise_xor_expression(bitwise_xor_expression, visitor);
+        }
+        Expression::BitwiseAndExpression(ref bitwise_and_expression) => {
+            accept_bitwise_and_expression(bitwise_and_expression, visitor);
+        }
+        Expression::ShiftExpression(ref shift_expression) => {
+            accept_shift_expression(shift_expression, visitor);
+        }
+        Expression::AdditiveExpression(ref additive_expression) => {
+            accept_additive_expression(additive_expression, visitor);
+        }
+        Expression::MultiplicativeExpression(ref multiplicative_expression) => {
+            accept_multiplicative_expression(multiplicative_expression, visitor);
+        }
+        Expression::ExponentiationExpression(ref exponentiation_expression) => {
+            accept_exponentiation_expression(exponentiation_expression, visitor);
+        }
+        Expression::PostfixExpression(ref postfix_expression) => {
+            accept_postfix_expression(postfix_expression, visitor);
+        }
+        Expression::PrefixExpression(ref prefix_expression) => {
+            accept_prefix_expression(prefix_expression, visitor);
+        }
+        Expression::FunctionCallExpression(ref function_call_expression) => {
+            accept_function_call_expression(function_call_expression, visitor);
+        }
+        Expression::CallOptionsExpression(ref call_options_expression) => {
+            accept_call_options_expression(call_options_expression, visitor);
+        }
+        Expression::MemberAccessExpression(ref member_access_expression) => {
+            accept_member_access_expression(member_access_expression, visitor);
+        }
+        Expression::IndexAccessExpression(ref index_access_expression) => {
+            accept_index_access_expression(index_access_expression, visitor);
+        }
+        Expression::NewExpression(ref new_expression) => {
+            accept_new_expression(new_expression, visitor);
+        }
+        Expression::TupleExpression(ref tuple_expression) => {
+            accept_tuple_expression(tuple_expression, visitor);
+        }
+        Expression::TypeExpression(ref type_expression) => {
+            accept_type_expression(type_expression, visitor);
+        }
+        Expression::ArrayExpression(ref array_expression) => {
+            accept_array_expression(array_expression, visitor);
+        }
+        Expression::HexNumberExpression(ref hex_number_expression) => {
+            accept_hex_number_expression(hex_number_expression, visitor);
+        }
+        Expression::DecimalNumberExpression(ref decimal_number_expression) => {
+            accept_decimal_number_expression(decimal_number_expression, visitor);
+        }
+        Expression::StringExpression(ref string_expression) => {
+            accept_string_expression(string_expression, visitor);
+        }
+        Expression::ElementaryType(ref elementary_type) => {
+            accept_elementary_type(elementary_type, visitor);
+        }
+        Expression::Identifier(_) => {}
+        Expression::PayableKeyword
+        | Expression::ThisKeyword
+        | Expression::SuperKeyword
+        | Expression::TrueKeyword
+        | Expression::FalseKeyword => {}
+    }
+    visitor.leave_expression(node);
 }
 
 pub fn accept_arguments_declaration(node: &ArgumentsDeclaration, visitor: &mut impl Visitor) {
-    if visitor.enter_arguments_declaration(node) {
-        match node {
-            ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                ref positional_arguments_declaration,
-            ) => {
-                accept_positional_arguments_declaration(positional_arguments_declaration, visitor);
-            }
-            ArgumentsDeclaration::NamedArgumentsDeclaration(ref named_arguments_declaration) => {
-                accept_named_arguments_declaration(named_arguments_declaration, visitor);
-            }
-        }
-        visitor.leave_arguments_declaration(node);
+    if !visitor.enter_arguments_declaration(node) {
+        return;
     }
+    match node {
+        ArgumentsDeclaration::PositionalArgumentsDeclaration(
+            ref positional_arguments_declaration,
+        ) => {
+            accept_positional_arguments_declaration(positional_arguments_declaration, visitor);
+        }
+        ArgumentsDeclaration::NamedArgumentsDeclaration(ref named_arguments_declaration) => {
+            accept_named_arguments_declaration(named_arguments_declaration, visitor);
+        }
+    }
+    visitor.leave_arguments_declaration(node);
 }
 
 pub fn accept_number_unit(_node: &NumberUnit, _visitor: &mut impl Visitor) {}
 
 pub fn accept_string_expression(node: &StringExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_string_expression(node) {
-        match node {
-            StringExpression::StringLiterals(ref string_literals) => {
-                accept_string_literals(string_literals, visitor);
-            }
-            StringExpression::HexStringLiterals(ref hex_string_literals) => {
-                accept_hex_string_literals(hex_string_literals, visitor);
-            }
-            StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
-                accept_unicode_string_literals(unicode_string_literals, visitor);
-            }
-        }
-        visitor.leave_string_expression(node);
+    if !visitor.enter_string_expression(node) {
+        return;
     }
+    match node {
+        StringExpression::StringLiterals(ref string_literals) => {
+            accept_string_literals(string_literals, visitor);
+        }
+        StringExpression::HexStringLiterals(ref hex_string_literals) => {
+            accept_hex_string_literals(hex_string_literals, visitor);
+        }
+        StringExpression::UnicodeStringLiterals(ref unicode_string_literals) => {
+            accept_unicode_string_literals(unicode_string_literals, visitor);
+        }
+    }
+    visitor.leave_string_expression(node);
 }
 
 pub fn accept_string_literal(_node: &StringLiteral, _visitor: &mut impl Visitor) {}
@@ -2847,101 +2988,97 @@ pub fn accept_hex_string_literal(_node: &HexStringLiteral, _visitor: &mut impl V
 pub fn accept_unicode_string_literal(_node: &UnicodeStringLiteral, _visitor: &mut impl Visitor) {}
 
 pub fn accept_yul_statement(node: &YulStatement, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_statement(node) {
-        match node {
-            YulStatement::YulBlock(ref yul_block) => {
-                accept_yul_block(yul_block, visitor);
-            }
-            YulStatement::YulFunctionDefinition(ref yul_function_definition) => {
-                accept_yul_function_definition(yul_function_definition, visitor);
-            }
-            YulStatement::YulIfStatement(ref yul_if_statement) => {
-                accept_yul_if_statement(yul_if_statement, visitor);
-            }
-            YulStatement::YulForStatement(ref yul_for_statement) => {
-                accept_yul_for_statement(yul_for_statement, visitor);
-            }
-            YulStatement::YulSwitchStatement(ref yul_switch_statement) => {
-                accept_yul_switch_statement(yul_switch_statement, visitor);
-            }
-            YulStatement::YulLeaveStatement(ref yul_leave_statement) => {
-                accept_yul_leave_statement(yul_leave_statement, visitor);
-            }
-            YulStatement::YulBreakStatement(ref yul_break_statement) => {
-                accept_yul_break_statement(yul_break_statement, visitor);
-            }
-            YulStatement::YulContinueStatement(ref yul_continue_statement) => {
-                accept_yul_continue_statement(yul_continue_statement, visitor);
-            }
-            YulStatement::YulVariableAssignmentStatement(ref yul_variable_assignment_statement) => {
-                accept_yul_variable_assignment_statement(
-                    yul_variable_assignment_statement,
-                    visitor,
-                );
-            }
-            YulStatement::YulVariableDeclarationStatement(
-                ref yul_variable_declaration_statement,
-            ) => {
-                accept_yul_variable_declaration_statement(
-                    yul_variable_declaration_statement,
-                    visitor,
-                );
-            }
-            YulStatement::YulExpression(ref yul_expression) => {
-                accept_yul_expression(yul_expression, visitor);
-            }
-        }
-        visitor.leave_yul_statement(node);
+    if !visitor.enter_yul_statement(node) {
+        return;
     }
+    match node {
+        YulStatement::YulBlock(ref yul_block) => {
+            accept_yul_block(yul_block, visitor);
+        }
+        YulStatement::YulFunctionDefinition(ref yul_function_definition) => {
+            accept_yul_function_definition(yul_function_definition, visitor);
+        }
+        YulStatement::YulIfStatement(ref yul_if_statement) => {
+            accept_yul_if_statement(yul_if_statement, visitor);
+        }
+        YulStatement::YulForStatement(ref yul_for_statement) => {
+            accept_yul_for_statement(yul_for_statement, visitor);
+        }
+        YulStatement::YulSwitchStatement(ref yul_switch_statement) => {
+            accept_yul_switch_statement(yul_switch_statement, visitor);
+        }
+        YulStatement::YulLeaveStatement(ref yul_leave_statement) => {
+            accept_yul_leave_statement(yul_leave_statement, visitor);
+        }
+        YulStatement::YulBreakStatement(ref yul_break_statement) => {
+            accept_yul_break_statement(yul_break_statement, visitor);
+        }
+        YulStatement::YulContinueStatement(ref yul_continue_statement) => {
+            accept_yul_continue_statement(yul_continue_statement, visitor);
+        }
+        YulStatement::YulVariableAssignmentStatement(ref yul_variable_assignment_statement) => {
+            accept_yul_variable_assignment_statement(yul_variable_assignment_statement, visitor);
+        }
+        YulStatement::YulVariableDeclarationStatement(ref yul_variable_declaration_statement) => {
+            accept_yul_variable_declaration_statement(yul_variable_declaration_statement, visitor);
+        }
+        YulStatement::YulExpression(ref yul_expression) => {
+            accept_yul_expression(yul_expression, visitor);
+        }
+    }
+    visitor.leave_yul_statement(node);
 }
 
 pub fn accept_yul_assignment_operator(_node: &YulAssignmentOperator, _visitor: &mut impl Visitor) {}
 
 pub fn accept_yul_switch_case(node: &YulSwitchCase, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_switch_case(node) {
-        match node {
-            YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
-                accept_yul_default_case(yul_default_case, visitor);
-            }
-            YulSwitchCase::YulValueCase(ref yul_value_case) => {
-                accept_yul_value_case(yul_value_case, visitor);
-            }
-        }
-        visitor.leave_yul_switch_case(node);
+    if !visitor.enter_yul_switch_case(node) {
+        return;
     }
+    match node {
+        YulSwitchCase::YulDefaultCase(ref yul_default_case) => {
+            accept_yul_default_case(yul_default_case, visitor);
+        }
+        YulSwitchCase::YulValueCase(ref yul_value_case) => {
+            accept_yul_value_case(yul_value_case, visitor);
+        }
+    }
+    visitor.leave_yul_switch_case(node);
 }
 
 pub fn accept_yul_expression(node: &YulExpression, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_expression(node) {
-        match node {
-            YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
-                accept_yul_function_call_expression(yul_function_call_expression, visitor);
-            }
-            YulExpression::YulLiteral(ref yul_literal) => {
-                accept_yul_literal(yul_literal, visitor);
-            }
-            YulExpression::YulPath(ref yul_path) => {
-                accept_yul_path(yul_path, visitor);
-            }
-        }
-        visitor.leave_yul_expression(node);
+    if !visitor.enter_yul_expression(node) {
+        return;
     }
+    match node {
+        YulExpression::YulFunctionCallExpression(ref yul_function_call_expression) => {
+            accept_yul_function_call_expression(yul_function_call_expression, visitor);
+        }
+        YulExpression::YulLiteral(ref yul_literal) => {
+            accept_yul_literal(yul_literal, visitor);
+        }
+        YulExpression::YulPath(ref yul_path) => {
+            accept_yul_path(yul_path, visitor);
+        }
+    }
+    visitor.leave_yul_expression(node);
 }
 
 pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_literal(node) {
-        match node {
-            YulLiteral::HexStringLiteral(ref hex_string_literal) => {
-                accept_hex_string_literal(hex_string_literal, visitor);
-            }
-            YulLiteral::StringLiteral(ref string_literal) => {
-                accept_string_literal(string_literal, visitor);
-            }
-            YulLiteral::YulDecimalLiteral(_) | YulLiteral::YulHexLiteral(_) => {}
-            YulLiteral::YulTrueKeyword | YulLiteral::YulFalseKeyword => {}
-        }
-        visitor.leave_yul_literal(node);
+    if !visitor.enter_yul_literal(node) {
+        return;
     }
+    match node {
+        YulLiteral::HexStringLiteral(ref hex_string_literal) => {
+            accept_hex_string_literal(hex_string_literal, visitor);
+        }
+        YulLiteral::StringLiteral(ref string_literal) => {
+            accept_string_literal(string_literal, visitor);
+        }
+        YulLiteral::YulDecimalLiteral(_) | YulLiteral::YulHexLiteral(_) => {}
+        YulLiteral::YulTrueKeyword | YulLiteral::YulFalseKeyword => {}
+    }
+    visitor.leave_yul_literal(node);
 }
 
 //
@@ -2950,32 +3087,35 @@ pub fn accept_yul_literal(node: &YulLiteral, visitor: &mut impl Visitor) {
 
 #[inline]
 fn accept_source_unit_members(items: &Vec<SourceUnitMember>, visitor: &mut impl Visitor) {
-    if visitor.enter_source_unit_members(items) {
-        for item in items {
-            accept_source_unit_member(item, visitor);
-        }
-        visitor.leave_source_unit_members(items);
+    if !visitor.enter_source_unit_members(items) {
+        return;
     }
+    for item in items {
+        accept_source_unit_member(item, visitor);
+    }
+    visitor.leave_source_unit_members(items);
 }
 
 #[inline]
 fn accept_version_expression_sets(items: &Vec<VersionExpressionSet>, visitor: &mut impl Visitor) {
-    if visitor.enter_version_expression_sets(items) {
-        for item in items {
-            accept_version_expression_set(item, visitor);
-        }
-        visitor.leave_version_expression_sets(items);
+    if !visitor.enter_version_expression_sets(items) {
+        return;
     }
+    for item in items {
+        accept_version_expression_set(item, visitor);
+    }
+    visitor.leave_version_expression_sets(items);
 }
 
 #[inline]
 fn accept_version_expression_set(items: &Vec<VersionExpression>, visitor: &mut impl Visitor) {
-    if visitor.enter_version_expression_set(items) {
-        for item in items {
-            accept_version_expression(item, visitor);
-        }
-        visitor.leave_version_expression_set(items);
+    if !visitor.enter_version_expression_set(items) {
+        return;
     }
+    for item in items {
+        accept_version_expression(item, visitor);
+    }
+    visitor.leave_version_expression_set(items);
 }
 
 #[inline]
@@ -2990,12 +3130,13 @@ fn accept_import_deconstruction_symbols(
     items: &Vec<ImportDeconstructionSymbol>,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_import_deconstruction_symbols(items) {
-        for item in items {
-            accept_import_deconstruction_symbol(item, visitor);
-        }
-        visitor.leave_import_deconstruction_symbols(items);
+    if !visitor.enter_import_deconstruction_symbols(items) {
+        return;
     }
+    for item in items {
+        accept_import_deconstruction_symbol(item, visitor);
+    }
+    visitor.leave_import_deconstruction_symbols(items);
 }
 
 #[inline]
@@ -3003,72 +3144,79 @@ fn accept_using_deconstruction_symbols(
     items: &Vec<UsingDeconstructionSymbol>,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_using_deconstruction_symbols(items) {
-        for item in items {
-            accept_using_deconstruction_symbol(item, visitor);
-        }
-        visitor.leave_using_deconstruction_symbols(items);
+    if !visitor.enter_using_deconstruction_symbols(items) {
+        return;
     }
+    for item in items {
+        accept_using_deconstruction_symbol(item, visitor);
+    }
+    visitor.leave_using_deconstruction_symbols(items);
 }
 
 #[inline]
 fn accept_contract_specifiers(items: &Vec<ContractSpecifier>, visitor: &mut impl Visitor) {
-    if visitor.enter_contract_specifiers(items) {
-        for item in items {
-            accept_contract_specifier(item, visitor);
-        }
-        visitor.leave_contract_specifiers(items);
+    if !visitor.enter_contract_specifiers(items) {
+        return;
     }
+    for item in items {
+        accept_contract_specifier(item, visitor);
+    }
+    visitor.leave_contract_specifiers(items);
 }
 
 #[inline]
 fn accept_inheritance_types(items: &Vec<InheritanceType>, visitor: &mut impl Visitor) {
-    if visitor.enter_inheritance_types(items) {
-        for item in items {
-            accept_inheritance_type(item, visitor);
-        }
-        visitor.leave_inheritance_types(items);
+    if !visitor.enter_inheritance_types(items) {
+        return;
     }
+    for item in items {
+        accept_inheritance_type(item, visitor);
+    }
+    visitor.leave_inheritance_types(items);
 }
 
 #[inline]
 fn accept_contract_members(items: &Vec<ContractMember>, visitor: &mut impl Visitor) {
-    if visitor.enter_contract_members(items) {
-        for item in items {
-            accept_contract_member(item, visitor);
-        }
-        visitor.leave_contract_members(items);
+    if !visitor.enter_contract_members(items) {
+        return;
     }
+    for item in items {
+        accept_contract_member(item, visitor);
+    }
+    visitor.leave_contract_members(items);
 }
 
 #[inline]
 fn accept_interface_members(items: &Vec<ContractMember>, visitor: &mut impl Visitor) {
-    if visitor.enter_interface_members(items) {
-        for item in items {
-            accept_contract_member(item, visitor);
-        }
-        visitor.leave_interface_members(items);
+    if !visitor.enter_interface_members(items) {
+        return;
     }
+    for item in items {
+        accept_contract_member(item, visitor);
+    }
+    visitor.leave_interface_members(items);
 }
 
 #[inline]
 fn accept_library_members(items: &Vec<ContractMember>, visitor: &mut impl Visitor) {
-    if visitor.enter_library_members(items) {
-        for item in items {
-            accept_contract_member(item, visitor);
-        }
-        visitor.leave_library_members(items);
+    if !visitor.enter_library_members(items) {
+        return;
     }
+    for item in items {
+        accept_contract_member(item, visitor);
+    }
+    visitor.leave_library_members(items);
 }
 
 #[inline]
 fn accept_struct_members(items: &Vec<StructMember>, visitor: &mut impl Visitor) {
-    if visitor.enter_struct_members(items) {
-        for item in items {
-            accept_struct_member(item, visitor);
-        }
-        visitor.leave_struct_members(items);
+    if !visitor.enter_struct_members(items) {
+        return;
     }
+    for item in items {
+        accept_struct_member(item, visitor);
+    }
+    visitor.leave_struct_members(items);
 }
 
 #[inline]
@@ -3083,52 +3231,57 @@ fn accept_state_variable_attributes(
     items: &Vec<StateVariableAttribute>,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_state_variable_attributes(items) {
-        for item in items {
-            accept_state_variable_attribute(item, visitor);
-        }
-        visitor.leave_state_variable_attributes(items);
+    if !visitor.enter_state_variable_attributes(items) {
+        return;
     }
+    for item in items {
+        accept_state_variable_attribute(item, visitor);
+    }
+    visitor.leave_state_variable_attributes(items);
 }
 
 #[inline]
 fn accept_parameters(items: &Vec<Parameter>, visitor: &mut impl Visitor) {
-    if visitor.enter_parameters(items) {
-        for item in items {
-            accept_parameter(item, visitor);
-        }
-        visitor.leave_parameters(items);
+    if !visitor.enter_parameters(items) {
+        return;
     }
+    for item in items {
+        accept_parameter(item, visitor);
+    }
+    visitor.leave_parameters(items);
 }
 
 #[inline]
 fn accept_function_attributes(items: &Vec<FunctionAttribute>, visitor: &mut impl Visitor) {
-    if visitor.enter_function_attributes(items) {
-        for item in items {
-            accept_function_attribute(item, visitor);
-        }
-        visitor.leave_function_attributes(items);
+    if !visitor.enter_function_attributes(items) {
+        return;
     }
+    for item in items {
+        accept_function_attribute(item, visitor);
+    }
+    visitor.leave_function_attributes(items);
 }
 
 #[inline]
 fn accept_override_paths(items: &Vec<IdentifierPath>, visitor: &mut impl Visitor) {
-    if visitor.enter_override_paths(items) {
-        for item in items {
-            accept_identifier_path(item, visitor);
-        }
-        visitor.leave_override_paths(items);
+    if !visitor.enter_override_paths(items) {
+        return;
     }
+    for item in items {
+        accept_identifier_path(item, visitor);
+    }
+    visitor.leave_override_paths(items);
 }
 
 #[inline]
 fn accept_constructor_attributes(items: &Vec<ConstructorAttribute>, visitor: &mut impl Visitor) {
-    if visitor.enter_constructor_attributes(items) {
-        for item in items {
-            accept_constructor_attribute(item, visitor);
-        }
-        visitor.leave_constructor_attributes(items);
+    if !visitor.enter_constructor_attributes(items) {
+        return;
     }
+    for item in items {
+        accept_constructor_attribute(item, visitor);
+    }
+    visitor.leave_constructor_attributes(items);
 }
 
 #[inline]
@@ -3136,12 +3289,13 @@ fn accept_fallback_function_attributes(
     items: &Vec<FallbackFunctionAttribute>,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_fallback_function_attributes(items) {
-        for item in items {
-            accept_fallback_function_attribute(item, visitor);
-        }
-        visitor.leave_fallback_function_attributes(items);
+    if !visitor.enter_fallback_function_attributes(items) {
+        return;
     }
+    for item in items {
+        accept_fallback_function_attribute(item, visitor);
+    }
+    visitor.leave_fallback_function_attributes(items);
 }
 
 #[inline]
@@ -3149,72 +3303,79 @@ fn accept_receive_function_attributes(
     items: &Vec<ReceiveFunctionAttribute>,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_receive_function_attributes(items) {
-        for item in items {
-            accept_receive_function_attribute(item, visitor);
-        }
-        visitor.leave_receive_function_attributes(items);
+    if !visitor.enter_receive_function_attributes(items) {
+        return;
     }
+    for item in items {
+        accept_receive_function_attribute(item, visitor);
+    }
+    visitor.leave_receive_function_attributes(items);
 }
 
 #[inline]
 fn accept_modifier_attributes(items: &Vec<ModifierAttribute>, visitor: &mut impl Visitor) {
-    if visitor.enter_modifier_attributes(items) {
-        for item in items {
-            accept_modifier_attribute(item, visitor);
-        }
-        visitor.leave_modifier_attributes(items);
+    if !visitor.enter_modifier_attributes(items) {
+        return;
     }
+    for item in items {
+        accept_modifier_attribute(item, visitor);
+    }
+    visitor.leave_modifier_attributes(items);
 }
 
 #[inline]
 fn accept_event_parameters(items: &Vec<EventParameter>, visitor: &mut impl Visitor) {
-    if visitor.enter_event_parameters(items) {
-        for item in items {
-            accept_event_parameter(item, visitor);
-        }
-        visitor.leave_event_parameters(items);
+    if !visitor.enter_event_parameters(items) {
+        return;
     }
+    for item in items {
+        accept_event_parameter(item, visitor);
+    }
+    visitor.leave_event_parameters(items);
 }
 
 #[inline]
 fn accept_error_parameters(items: &Vec<ErrorParameter>, visitor: &mut impl Visitor) {
-    if visitor.enter_error_parameters(items) {
-        for item in items {
-            accept_error_parameter(item, visitor);
-        }
-        visitor.leave_error_parameters(items);
+    if !visitor.enter_error_parameters(items) {
+        return;
     }
+    for item in items {
+        accept_error_parameter(item, visitor);
+    }
+    visitor.leave_error_parameters(items);
 }
 
 #[inline]
 fn accept_function_type_attributes(items: &Vec<FunctionTypeAttribute>, visitor: &mut impl Visitor) {
-    if visitor.enter_function_type_attributes(items) {
-        for item in items {
-            accept_function_type_attribute(item, visitor);
-        }
-        visitor.leave_function_type_attributes(items);
+    if !visitor.enter_function_type_attributes(items) {
+        return;
     }
+    for item in items {
+        accept_function_type_attribute(item, visitor);
+    }
+    visitor.leave_function_type_attributes(items);
 }
 
 #[inline]
 fn accept_statements(items: &Vec<Statement>, visitor: &mut impl Visitor) {
-    if visitor.enter_statements(items) {
-        for item in items {
-            accept_statement(item, visitor);
-        }
-        visitor.leave_statements(items);
+    if !visitor.enter_statements(items) {
+        return;
     }
+    for item in items {
+        accept_statement(item, visitor);
+    }
+    visitor.leave_statements(items);
 }
 
 #[inline]
 fn accept_assembly_flags(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
-    if visitor.enter_assembly_flags(items) {
-        for item in items {
-            accept_string_literal(item, visitor);
-        }
-        visitor.leave_assembly_flags(items);
+    if !visitor.enter_assembly_flags(items) {
+        return;
     }
+    for item in items {
+        accept_string_literal(item, visitor);
+    }
+    visitor.leave_assembly_flags(items);
 }
 
 #[inline]
@@ -3222,102 +3383,112 @@ fn accept_tuple_deconstruction_elements(
     items: &Vec<TupleDeconstructionElement>,
     visitor: &mut impl Visitor,
 ) {
-    if visitor.enter_tuple_deconstruction_elements(items) {
-        for item in items {
-            accept_tuple_deconstruction_element(item, visitor);
-        }
-        visitor.leave_tuple_deconstruction_elements(items);
+    if !visitor.enter_tuple_deconstruction_elements(items) {
+        return;
     }
+    for item in items {
+        accept_tuple_deconstruction_element(item, visitor);
+    }
+    visitor.leave_tuple_deconstruction_elements(items);
 }
 
 #[inline]
 fn accept_catch_clauses(items: &Vec<CatchClause>, visitor: &mut impl Visitor) {
-    if visitor.enter_catch_clauses(items) {
-        for item in items {
-            accept_catch_clause(item, visitor);
-        }
-        visitor.leave_catch_clauses(items);
+    if !visitor.enter_catch_clauses(items) {
+        return;
     }
+    for item in items {
+        accept_catch_clause(item, visitor);
+    }
+    visitor.leave_catch_clauses(items);
 }
 
 #[inline]
 fn accept_positional_arguments(items: &Vec<Expression>, visitor: &mut impl Visitor) {
-    if visitor.enter_positional_arguments(items) {
-        for item in items {
-            accept_expression(item, visitor);
-        }
-        visitor.leave_positional_arguments(items);
+    if !visitor.enter_positional_arguments(items) {
+        return;
     }
+    for item in items {
+        accept_expression(item, visitor);
+    }
+    visitor.leave_positional_arguments(items);
 }
 
 #[inline]
 fn accept_named_arguments(items: &Vec<NamedArgument>, visitor: &mut impl Visitor) {
-    if visitor.enter_named_arguments(items) {
-        for item in items {
-            accept_named_argument(item, visitor);
-        }
-        visitor.leave_named_arguments(items);
+    if !visitor.enter_named_arguments(items) {
+        return;
     }
+    for item in items {
+        accept_named_argument(item, visitor);
+    }
+    visitor.leave_named_arguments(items);
 }
 
 #[inline]
 fn accept_call_options(items: &Vec<NamedArgument>, visitor: &mut impl Visitor) {
-    if visitor.enter_call_options(items) {
-        for item in items {
-            accept_named_argument(item, visitor);
-        }
-        visitor.leave_call_options(items);
+    if !visitor.enter_call_options(items) {
+        return;
     }
+    for item in items {
+        accept_named_argument(item, visitor);
+    }
+    visitor.leave_call_options(items);
 }
 
 #[inline]
 fn accept_tuple_values(items: &Vec<TupleValue>, visitor: &mut impl Visitor) {
-    if visitor.enter_tuple_values(items) {
-        for item in items {
-            accept_tuple_value(item, visitor);
-        }
-        visitor.leave_tuple_values(items);
+    if !visitor.enter_tuple_values(items) {
+        return;
     }
+    for item in items {
+        accept_tuple_value(item, visitor);
+    }
+    visitor.leave_tuple_values(items);
 }
 
 #[inline]
 fn accept_array_values(items: &Vec<Expression>, visitor: &mut impl Visitor) {
-    if visitor.enter_array_values(items) {
-        for item in items {
-            accept_expression(item, visitor);
-        }
-        visitor.leave_array_values(items);
+    if !visitor.enter_array_values(items) {
+        return;
     }
+    for item in items {
+        accept_expression(item, visitor);
+    }
+    visitor.leave_array_values(items);
 }
 
 #[inline]
 fn accept_string_literals(items: &Vec<StringLiteral>, visitor: &mut impl Visitor) {
-    if visitor.enter_string_literals(items) {
-        for item in items {
-            accept_string_literal(item, visitor);
-        }
-        visitor.leave_string_literals(items);
+    if !visitor.enter_string_literals(items) {
+        return;
     }
+    for item in items {
+        accept_string_literal(item, visitor);
+    }
+    visitor.leave_string_literals(items);
 }
 
 #[inline]
 fn accept_hex_string_literals(items: &Vec<HexStringLiteral>, visitor: &mut impl Visitor) {
-    if visitor.enter_hex_string_literals(items) {
-        for item in items {
-            accept_hex_string_literal(item, visitor);
-        }
-        visitor.leave_hex_string_literals(items);
+    if !visitor.enter_hex_string_literals(items) {
+        return;
     }
+    for item in items {
+        accept_hex_string_literal(item, visitor);
+    }
+    visitor.leave_hex_string_literals(items);
 }
 
 #[inline]
 fn accept_unicode_string_literals(items: &Vec<UnicodeStringLiteral>, visitor: &mut impl Visitor) {
-    if visitor.enter_unicode_string_literals(items) {
-        for item in items {
-            accept_unicode_string_literal(item, visitor);
-        }
-        visitor.leave_unicode_string_literals(items);
+    if !visitor.enter_unicode_string_literals(items) {
+        return;
     }
+    for item in items {
+        accept_unicode_string_literal(item, visitor);
+    }
+    visitor.leave_unicode_string_literals(items);
 }
 
 #[inline]
@@ -3329,12 +3500,13 @@ fn accept_identifier_path(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl Visi
 
 #[inline]
 fn accept_yul_statements(items: &Vec<YulStatement>, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_statements(items) {
-        for item in items {
-            accept_yul_statement(item, visitor);
-        }
-        visitor.leave_yul_statements(items);
+    if !visitor.enter_yul_statements(items) {
+        return;
     }
+    for item in items {
+        accept_yul_statement(item, visitor);
+    }
+    visitor.leave_yul_statements(items);
 }
 
 #[inline]
@@ -3353,32 +3525,35 @@ fn accept_yul_variable_names(items: &Vec<Rc<TerminalNode>>, visitor: &mut impl V
 
 #[inline]
 fn accept_yul_switch_cases(items: &Vec<YulSwitchCase>, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_switch_cases(items) {
-        for item in items {
-            accept_yul_switch_case(item, visitor);
-        }
-        visitor.leave_yul_switch_cases(items);
+    if !visitor.enter_yul_switch_cases(items) {
+        return;
     }
+    for item in items {
+        accept_yul_switch_case(item, visitor);
+    }
+    visitor.leave_yul_switch_cases(items);
 }
 
 #[inline]
 fn accept_yul_arguments(items: &Vec<YulExpression>, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_arguments(items) {
-        for item in items {
-            accept_yul_expression(item, visitor);
-        }
-        visitor.leave_yul_arguments(items);
+    if !visitor.enter_yul_arguments(items) {
+        return;
     }
+    for item in items {
+        accept_yul_expression(item, visitor);
+    }
+    visitor.leave_yul_arguments(items);
 }
 
 #[inline]
 fn accept_yul_paths(items: &Vec<YulPath>, visitor: &mut impl Visitor) {
-    if visitor.enter_yul_paths(items) {
-        for item in items {
-            accept_yul_path(item, visitor);
-        }
-        visitor.leave_yul_paths(items);
+    if !visitor.enter_yul_paths(items) {
+        return;
     }
+    for item in items {
+        accept_yul_path(item, visitor);
+    }
+    visitor.leave_yul_paths(items);
 }
 
 #[inline]
