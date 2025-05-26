@@ -4,12 +4,14 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "EnumDefinition";
+
 #[test]
 fn multiple_members() -> Result<()> {
-    run("EnumDefinition", "multiple_members")
+    run(T, "multiple_members")
 }
 
 #[test]
 fn no_members() -> Result<()> {
-    run("EnumDefinition", "no_members")
+    run(T, "no_members")
 }

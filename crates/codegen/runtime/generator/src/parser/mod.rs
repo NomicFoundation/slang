@@ -59,7 +59,7 @@ struct ScannerContextModel {
 }
 
 impl ParserModel {
-    pub fn from_language(language: &Rc<Language>) -> Self {
+    pub fn from_language(language: &Language) -> Self {
         // First, resolve the grammar structure from the flat list of items
         let resolved = ResolveCtx::resolve(language);
 

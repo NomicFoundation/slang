@@ -4,27 +4,29 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "MappingType";
+
 #[test]
 fn named_both() -> Result<()> {
-    run("MappingType", "named_both")
+    run(T, "named_both")
 }
 
 #[test]
 fn named_key() -> Result<()> {
-    run("MappingType", "named_key")
+    run(T, "named_key")
 }
 
 #[test]
 fn named_value() -> Result<()> {
-    run("MappingType", "named_value")
+    run(T, "named_value")
 }
 
 #[test]
 fn stray_delimiter() -> Result<()> {
-    run("MappingType", "stray_delimiter")
+    run(T, "stray_delimiter")
 }
 
 #[test]
 fn unnamed() -> Result<()> {
-    run("MappingType", "unnamed")
+    run(T, "unnamed")
 }

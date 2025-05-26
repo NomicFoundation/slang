@@ -4,12 +4,14 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "FunctionCallExpression";
+
 #[test]
 fn empty_named_arguments() -> Result<()> {
-    run("FunctionCallExpression", "empty_named_arguments")
+    run(T, "empty_named_arguments")
 }
 
 #[test]
 fn payable_conversion() -> Result<()> {
-    run("FunctionCallExpression", "payable_conversion")
+    run(T, "payable_conversion")
 }

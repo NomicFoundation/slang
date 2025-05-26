@@ -2,7 +2,7 @@
 /// Instead, they are individually picked up during runtime, and each is compiled separately, checking any errors they produce.
 /// For more info: <https://crates.io/crates/trybuild>
 use infra_utils::{cargo::CargoWorkspace, github::GitHub, paths::FileWalker};
-use rayon::prelude::*;
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 
 #[test]
 fn run_trybuild() {

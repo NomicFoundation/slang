@@ -1,81 +1,75 @@
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 
-use anyhow::Result;
+use anyhow::{ensure, Result};
 use serde::Serialize;
 
 use crate::codegen::tera::TeraWrapper;
 use crate::codegen::CodegenFileSystem;
 use crate::paths::{FileWalker, PathExtensions};
 
-pub struct CodegenRuntime {
-    input_dir: PathBuf,
-    fs: CodegenFileSystem,
-    tera: TeraWrapper,
-}
+pub struct CodegenRuntime;
 
 impl CodegenRuntime {
-    pub fn new(input_dir: impl Into<PathBuf>) -> Result<Self> {
-        let input_dir = input_dir.into();
-        let fs = CodegenFileSystem::new(&input_dir)?;
-        let tera = TeraWrapper::new(&input_dir)?;
-
-        Ok(Self {
-            input_dir,
-            fs,
-            tera,
-        })
-    }
-
-    pub fn render_stubs(&mut self, model: impl Serialize) -> Result<()> {
+    pub fn render_stubs(
+        fs: &mut CodegenFileSystem,
+        input_dir: impl Into<PathBuf>,
+        model: impl Serialize,
+    ) -> Result<()> {
+        let tera = TeraWrapper::new(input_dir)?;
         let context = tera::Context::from_serialize(model)?;
 
-        for template_path in self.tera.find_all_templates()? {
+        for template_path in tera.find_all_templates()? {
             let stub_path = Self::get_stub_path(&template_path).with_extension("");
-            let output = self.tera.render(&template_path, &context)?;
+            let output = tera.render(&template_path, &context)?;
 
-            self.fs.write_file(&stub_path, output)?;
+            fs.write_file_formatted(&stub_path, output)?;
         }
 
         Ok(())
     }
 
     pub fn render_product(
-        mut self,
-        model: impl Serialize,
+        fs: &mut CodegenFileSystem,
+        input_dir: impl Into<PathBuf>,
         output_dir: impl AsRef<Path>,
-    ) -> Result<CodegenFileSystem> {
-        let context = tera::Context::from_serialize(model)?;
+        model: impl Serialize,
+    ) -> Result<()> {
+        let input_dir = input_dir.into();
         let output_dir = output_dir.as_ref();
+
+        let tera = TeraWrapper::new(&input_dir)?;
+        let context = tera::Context::from_serialize(model)?;
 
         let mut handled = HashSet::new();
 
-        for template_path in self.tera.find_all_templates()? {
+        for template_path in tera.find_all_templates()? {
             let stub_path = Self::get_stub_path(&template_path).with_extension("");
-            let rendered_path = stub_path.replace_prefix(&self.input_dir, output_dir);
-            let rendered = self.tera.render(&template_path, &context)?;
+            let rendered_path = stub_path.replace_prefix(&input_dir, output_dir);
+            let rendered = tera.render(&template_path, &context)?;
 
-            self.fs.write_file(&rendered_path, rendered)?;
+            fs.write_file_formatted(&rendered_path, rendered)?;
 
             assert!(handled.insert(template_path));
             assert!(handled.insert(stub_path));
         }
 
-        for source_path in FileWalker::from_directory(&self.input_dir)
+        for source_path in FileWalker::from_directory(&input_dir)
             .find_all()?
             .filter(|source_path| !handled.contains(source_path))
         {
-            let output_path = source_path.replace_prefix(&self.input_dir, output_dir);
+            let contents = source_path.read_to_string()?;
+            let output_path = source_path.replace_prefix(&input_dir, output_dir);
 
-            // Preserve the source of otherwise-generated files:
-            if source_path.generated_dir().is_ok() {
-                self.fs.mark_generated_file(output_path)?;
-            } else {
-                self.fs.copy_file(source_path, output_path)?;
-            }
+            ensure!(
+                !source_path.is_generated(),
+                "Source file should not be inside a generated directory: {source_path:?}"
+            );
+
+            fs.write_file_raw(output_path, contents)?;
         }
 
-        Ok(self.fs)
+        Ok(())
     }
 
     fn get_stub_path(template_path: &Path) -> PathBuf {

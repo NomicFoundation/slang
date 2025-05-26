@@ -4,82 +4,84 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "yul";
+
 #[test]
 fn all_built_ins() -> Result<()> {
-    run("yul", "all_built_ins")
+    run(T, "all_built_ins")
 }
 
 #[test]
 fn blocks() -> Result<()> {
-    run("yul", "blocks")
+    run(T, "blocks")
 }
 
 #[test]
 fn built_ins() -> Result<()> {
-    run("yul", "built_ins")
+    run(T, "built_ins")
 }
 
 #[test]
 fn conditionals() -> Result<()> {
-    run("yul", "conditionals")
+    run(T, "conditionals")
 }
 
 #[test]
 fn constant_access_from_functions() -> Result<()> {
-    run("yul", "constant_access_from_functions")
+    run(T, "constant_access_from_functions")
 }
 
 #[test]
 fn external_variables() -> Result<()> {
-    run("yul", "external_variables")
+    run(T, "external_variables")
 }
 
 #[test]
 fn functions() -> Result<()> {
-    run("yul", "functions")
+    run(T, "functions")
 }
 
 #[test]
 fn identifiers_with_dots() -> Result<()> {
-    run("yul", "identifiers_with_dots")
+    run(T, "identifiers_with_dots")
 }
 
 #[test]
 fn labels() -> Result<()> {
-    run("yul", "labels")
+    run(T, "labels")
 }
 
 #[test]
 fn legacy_built_ins() -> Result<()> {
-    run("yul", "legacy_built_ins")
+    run(T, "legacy_built_ins")
 }
 
 #[test]
 fn loops() -> Result<()> {
-    run("yul", "loops")
+    run(T, "loops")
 }
 
 #[test]
 fn slot_offset_members() -> Result<()> {
-    run("yul", "slot_offset_members")
+    run(T, "slot_offset_members")
 }
 
 #[test]
 fn slot_suffix() -> Result<()> {
-    run("yul", "slot_suffix")
+    run(T, "slot_suffix")
 }
 
 #[test]
 fn solidity_built_in_doesn_t_bind() -> Result<()> {
-    run("yul", "solidity_built_in_doesn_t_bind")
+    run(T, "solidity_built_in_doesn_t_bind")
 }
 
 #[test]
 fn stack_assign() -> Result<()> {
-    run("yul", "stack_assign")
+    run(T, "stack_assign")
 }
 
 #[test]
 fn variables() -> Result<()> {
-    run("yul", "variables")
+    run(T, "variables")
 }
