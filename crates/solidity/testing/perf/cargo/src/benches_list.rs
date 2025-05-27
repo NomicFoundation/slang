@@ -7,4 +7,5 @@
     define_payload_tests!(uniswap, "Uniswap");
     define_payload_tests!(multicall3, "Multicall3");
     define_payload_tests!(create_x, "CreateX");
+    define_payload_tests!(ui_pool_data_provider_v3, "UiPoolDataProviderV3");
     define_payload_tests!(one_step_leverage_f, "OneStepLeverage.f");

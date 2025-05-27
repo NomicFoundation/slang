@@ -3,7 +3,6 @@
 
 mod compilation_builder;
 pub mod dataset;
-mod import_resolver;
 pub mod tests;
 
 mod __dependencies_used_in_benches__ {

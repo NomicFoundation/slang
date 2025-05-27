@@ -10,20 +10,23 @@ use iai_callgrind::{
 };
 use paste::paste;
 use slang_solidity::compilation::CompilationUnit;
-use solidity_testing_perf::dataset::SolidityProject;
-use solidity_testing_perf::tests::bindings_resolve::BuiltBindingGraph;
+use solidity_testing_perf_cargo::dataset::SolidityProject;
+use solidity_testing_perf_cargo::tests::bindings_resolve::BuiltBindingGraph;
 
 mod __dependencies_used_in_lib__ {
-    use {anyhow as _, infra_utils as _, semver as _, serde_json as _, slang_solidity as _};
+    use {
+        anyhow as _, infra_utils as _, semver as _, serde_json as _, slang_solidity as _,
+        solidity_testing_perf_utils as _,
+    };
 }
 
 macro_rules! define_payload_benchmark {
     ($name:ident, $prj: ident, $file: expr, $payload:ty) => {
         paste! {
           #[library_benchmark]
-          #[bench::first(args = ($file), setup = solidity_testing_perf::tests::$name::setup)]
+          #[bench::first(args = ($file), setup = solidity_testing_perf_cargo::tests::$name::setup)]
           pub fn [<$prj _ $name>](payload: $payload) {
-              black_box(solidity_testing_perf::tests::$name::run(payload));
+              black_box(solidity_testing_perf_cargo::tests::$name::run(payload));
           }
         }
     };
@@ -38,7 +41,7 @@ macro_rules! define_payload_tests {
          *
          * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
          */
-        define_payload_benchmark!(parser, $prj, $name, SolidityProject);
+        define_payload_benchmark!(parser, $prj, $name, &'static SolidityProject);
         define_payload_benchmark!(cursor, $prj, $name, Rc<CompilationUnit>);
         define_payload_benchmark!(query, $prj, $name, Rc<CompilationUnit>);
         define_payload_benchmark!(bindings_build, $prj, $name, Rc<CompilationUnit>);

@@ -28,6 +28,8 @@ pub fn run(dependencies: BuiltBindingGraph) {
         binding_graph,
     } = dependencies;
 
+    let mut ids = 0;
+
     for file in unit.files() {
         let mut cursor = file.create_tree_cursor();
 
@@ -35,6 +37,8 @@ pub fn run(dependencies: BuiltBindingGraph) {
             if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
                 continue;
             }
+
+            ids += 1;
 
             if matches!(
                 cursor.ancestors().next(),
@@ -59,4 +63,6 @@ pub fn run(dependencies: BuiltBindingGraph) {
             }
         }
     }
+
+    assert_ne!(ids, 0);
 }

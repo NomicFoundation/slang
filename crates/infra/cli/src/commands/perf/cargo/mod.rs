@@ -25,7 +25,7 @@ impl CargoController {
 
         // Bencher supports multiple languages/frameworks: https://bencher.dev/docs/explanation/adapters/
         // We currently only have one benchmark suite (Rust/iai), but we can add more here in the future.
-        self.run_iai_bench("solidity_testing_perf", "iai");
+        self.run_iai_bench("solidity_testing_perf_cargo", "iai");
 
         Ok(())
     }

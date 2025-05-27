@@ -2508,7 +2508,7 @@ name = "solidity_spec"
 version = "1.2.0"
 
 [[package]]
-name = "solidity_testing_perf"
+name = "solidity_testing_perf_cargo"
 version = "1.2.0"
 dependencies = [
  "anyhow",
@@ -2519,6 +2519,7 @@ dependencies = [
  "semver",
  "serde_json",
  "slang_solidity",
+ "solidity_testing_perf_utils",
 ]
 
 [[package]]
@@ -2532,8 +2533,19 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "solidity_testing_perf_utils",
  "strum",
  "strum_macros",
+]
+
+[[package]]
+name = "solidity_testing_perf_utils"
+version = "1.2.0"
+dependencies = [
+ "anyhow",
+ "infra_utils",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

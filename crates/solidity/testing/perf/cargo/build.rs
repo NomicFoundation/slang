@@ -4,11 +4,11 @@ use std::path::Path;
 
 use anyhow::Result;
 use heck::ToSnakeCase;
-use infra_utils::config::{self};
+use solidity_testing_perf_utils::config;
 
 fn main() -> Result<()> {
-    println!("cargo::rerun-if-changed={}", config::CONFIG_FILE);
-    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo::rerun-if-changed={:?}", config::config_file_path()?);
+    println!("cargo::rerun-if-changed=build.rs");
 
     let cfg = config::read_config()?;
 

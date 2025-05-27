@@ -6,13 +6,12 @@ use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use serde::Deserialize;
+use solidity_testing_perf_utils::config::{self, File, Project};
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
 
-use crate::config::{File, Project};
 use crate::fetch::fetch;
 
-mod config;
 mod fetch;
 
 #[derive(Clone, Copy, Debug, AsRefStr, EnumIter)]
@@ -136,12 +135,12 @@ impl NpmController {
         file: Option<&str>,
         sut: SubjectUT,
     ) -> Result<Vec<Timing>, anyhow::Error> {
-        let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf")?;
+        let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf_npmbenches")?;
         let mut command = Command::new("npx")
             .arg("tsx")
             .flag("--trace-uncaught")
             .flag("--expose-gc")
-            .arg(perf_crate.join("npm/src/main.mts").to_str().unwrap())
+            .arg(perf_crate.join("../npm/src/main.mts").to_str().unwrap())
             .property("--dir", path.to_string_lossy());
 
         if let Some(file) = file {

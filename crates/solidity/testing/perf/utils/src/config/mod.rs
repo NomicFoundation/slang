@@ -1,12 +1,9 @@
 use std::fs;
+use std::path::PathBuf;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
 use serde::{Deserialize, Serialize};
-
-use crate::paths::PathExtensions;
-
-pub const CONFIG_FILE: &str = "crates/infra/cli/src/commands/perf/projects.json";
 
 /*
  Reader for the configuration file that contians the projects and files to benchmark
@@ -33,10 +30,14 @@ pub struct File {
     pub file: String,
 }
 
+pub fn config_file_path() -> Result<PathBuf> {
+    let config_path = CargoWorkspace::locate_source_crate("solidity_testing_perf_cargo")?;
+    Ok(config_path.join("../projects.json"))
+}
+
 pub fn read_config() -> Result<Configuration> {
-    let config_path = CargoWorkspace::locate_source_crate("solidity_testing_perf")?;
-    let config_path = config_path.join("projects.json");
-    let config_content = fs::read_to_string(config_path)?;
+    let path = config_file_path()?;
+    let config_content = fs::read_to_string(path)?;
     let config: Configuration = serde_json::from_str(&config_content)?;
     Ok(config)
 }

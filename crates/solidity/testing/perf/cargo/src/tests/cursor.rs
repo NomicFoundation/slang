@@ -18,7 +18,7 @@ pub fn run(unit: Rc<CompilationUnit>) {
         }
     }
 
-    // Do we want to assert these? they can be added to the projects.json file if needed
+    // TODO: Do we want to assert these? they can be added to the projects.json file if needed
     assert_ne!(
         functions_count, 0,
         "Failed to fetch all function definitions"
