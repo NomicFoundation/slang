@@ -43,6 +43,8 @@ export const TerminalNode = wasm.cst.TerminalNode;
 export type TerminalNode = wasm.cst.TerminalNode;
 
 /** {@inheritDoc wasm.cst.Edge} */
+export const Edge = wasm.cst.Edge;
+/** {@inheritDoc wasm.cst.Edge} */
 export type Edge = wasm.cst.Edge;
 
 /** {@inheritDoc wasm.cst.Cursor} */
@@ -81,3 +83,12 @@ export type TextIndex = wasm.cst.TextIndex;
 
 /** {@inheritDoc wasm.cst.TextRange} */
 export type TextRange = wasm.cst.TextRange;
+
+/** Create a new `Edge` with the label `label` and node `node`. */
+export function createEdge(label: EdgeLabel, node: Node): Edge {
+  if (node.isNonterminalNode()) {
+    return Edge.createNonterminal(label, node.asNonterminalNode());
+  } else {
+    return Edge.createTerminal(label, node.asTerminalNode());
+  }
+}
