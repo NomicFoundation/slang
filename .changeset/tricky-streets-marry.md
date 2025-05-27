@@ -2,7 +2,7 @@
 "@nomicfoundation/slang": minor
 ---
 
-Add new APIs for creating nodes and edges via the Javascript API:
+Add new TypeScript APIs for creating nodes and edges:
 
 - `NonterminalNode.create(kind: NonterminalKind, children: Edge[]): NonterminalNode`
 - `TerminalNode.create(kind: TerminalKind, text: string): TerminalNode`
