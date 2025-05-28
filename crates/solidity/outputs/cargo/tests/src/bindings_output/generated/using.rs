@@ -92,6 +92,11 @@ fn mappings() -> Result<()> {
 }
 
 #[test]
+fn named_args() -> Result<()> {
+    run(T, "named_args")
+}
+
+#[test]
 fn on_interfaces_inherited() -> Result<()> {
     run(T, "on_interfaces_inherited")
 }

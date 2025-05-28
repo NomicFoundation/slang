@@ -2587,6 +2587,8 @@ inherit .star_extension
 
   node @named_arg.ref
   attr (@named_arg.ref) node_reference = @name
+  ;; Needed if the function call is for an extension function
+  attr (@named_arg.ref) parents = [@named_arg.enclosing_def]
 }
 
 @args [ArgumentsDeclaration [NamedArgumentsDeclaration
