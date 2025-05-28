@@ -8974,7 +8974,11 @@
               "fields": [
                 { "definition": "bytes data" },
                 { "definition": "uint256 gas", "enabled": { "Till": { "till": "0.5.0" } } },
-                { "definition": "address payable sender", "enabled": { "Till": { "till": "0.8.0" } } },
+                {
+                  "definition": "address payable sender",
+                  "enabled": { "Range": { "from": "0.5.0", "till": "0.8.0" } }
+                },
+                { "definition": "address sender", "enabled": { "Till": { "till": "0.5.0" } } },
                 { "definition": "address sender", "enabled": { "From": { "from": "0.8.0" } } },
                 { "definition": "bytes4 sig" },
                 { "definition": "uint value" }

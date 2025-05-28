@@ -6621,8 +6621,9 @@ codegen_language_macros::compile!(Language(
                         BuiltInField(definition = "uint256 gas", enabled = Till("0.5.0")),
                         BuiltInField(
                             definition = "address payable sender",
-                            enabled = Till("0.8.0")
+                            enabled = Range(from = "0.5.0", till = "0.8.0")
                         ),
+                        BuiltInField(definition = "address sender", enabled = Till("0.5.0")),
                         BuiltInField(definition = "address sender", enabled = From("0.8.0")),
                         BuiltInField(definition = "bytes4 sig"),
                         BuiltInField(definition = "uint value")

@@ -129,7 +129,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%MessageType");
             type_scope.define_field(builder, "data", "bytes");
             type_scope.define_field(builder, "gas", "uint256");
-            type_scope.define_field(builder, "sender", "address payable");
+            type_scope.define_field(builder, "sender", "address");
             type_scope.define_field(builder, "sig", "bytes4");
             type_scope.define_field(builder, "value", "uint256");
             let mut type_scope = scope.define_type(builder, "%StringType");
@@ -352,7 +352,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%MessageType");
             type_scope.define_field(builder, "data", "bytes");
             type_scope.define_field(builder, "gas", "uint256");
-            type_scope.define_field(builder, "sender", "address payable");
+            type_scope.define_field(builder, "sender", "address");
             type_scope.define_field(builder, "sig", "bytes4");
             type_scope.define_field(builder, "value", "uint256");
             let mut type_scope = scope.define_type(builder, "%StringType");
@@ -579,7 +579,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%MessageType");
             type_scope.define_field(builder, "data", "bytes");
             type_scope.define_field(builder, "gas", "uint256");
-            type_scope.define_field(builder, "sender", "address payable");
+            type_scope.define_field(builder, "sender", "address");
             type_scope.define_field(builder, "sig", "bytes4");
             type_scope.define_field(builder, "value", "uint256");
             let mut type_scope = scope.define_type(builder, "%StringType");
@@ -814,7 +814,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             let mut type_scope = scope.define_type(builder, "%MessageType");
             type_scope.define_field(builder, "data", "bytes");
             type_scope.define_field(builder, "gas", "uint256");
-            type_scope.define_field(builder, "sender", "address payable");
+            type_scope.define_field(builder, "sender", "address");
             type_scope.define_field(builder, "sig", "bytes4");
             type_scope.define_field(builder, "value", "uint256");
             let mut type_scope = scope.define_type(builder, "%StringType");
