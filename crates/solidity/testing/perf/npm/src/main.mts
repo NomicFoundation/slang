@@ -12,13 +12,13 @@ const runners: Map<string, Runner> = new Map([
 
 async function run(
   dir: string,
+  name: string,
   file: string | undefined,
   runner: Runner,
   cold: number,
   hot: number,
 ): Promise<Timing[]> {
   const project = SolidityProject.build(dir + ".json");
-  const project_name = project.compilation.projectName().toLowerCase();
   file = file || project.compilation.entrypoint();
 
   // cold runs
@@ -41,7 +41,7 @@ async function run(
 
   let timings = [];
   for (const time of timesMap.entries()) {
-    timings.push(new Timing(time[0] + "_" + project_name, round2(time[1] / hot)));
+    timings.push(new Timing(time[0] + "_" + name, round2(time[1] / hot)));
   }
   return timings;
 }
@@ -50,6 +50,7 @@ checkCI();
 
 const optionDefinitions = [
   { name: "dir", type: String },
+  { name: "name", type: String },
   { name: "file", type: String, defaultValue: undefined },
   { name: "runner", type: (input: string) => runners.get(input) },
   { name: "cold", type: Number, defaultValue: 2 },
@@ -59,9 +60,9 @@ const optionDefinitions = [
 
 const options = commandLineArgs(optionDefinitions);
 
-const [dir, file, runner] = [options["dir"], options["file"], options["runner"]];
+const [dir, name, file, runner] = [options["dir"], options["name"], options["file"], options["runner"]];
 
-if (!(dir && runner)) {
+if (!(dir && name && runner)) {
   const usage = commandLineUsage([
     {
       header: "Perf NPM",
@@ -75,6 +76,6 @@ if (!(dir && runner)) {
   console.log(usage);
   process.exit(-1);
 }
-const results = await run(dir, file, runner, options["cold"], options["hot"]);
+const results = await run(dir, name, file, runner, options["cold"], options["hot"]);
 
 console.log(JSON.stringify(results, null, 2));
