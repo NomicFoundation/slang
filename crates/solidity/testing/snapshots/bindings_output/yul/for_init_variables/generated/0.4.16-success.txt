@@ -1,0 +1,115 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  5 │     function copy(bytes memory data) public pure returns (bytes memory result) {
+    │              ──┬─              ──┬─                                    ───┬──  
+    │                ╰─────────────────────────────────────────────────────────────── name: 2
+    │                                  │                                        │    
+    │                                  ╰───────────────────────────────────────────── name: 3
+    │                                                                           │    
+    │                                                                           ╰──── name: 4
+  6 │         uint256 length = data.length;
+    │                 ───┬──   ──┬─ ───┬──  
+    │                    ╰────────────────── name: 5
+    │                            │     │    
+    │                            ╰────────── ref: 3
+    │                                  │    
+    │                                  ╰──── ref: built-in
+    │ 
+  9 │             result := mload(0x40)
+    │             ───┬──    ──┬──  
+    │                ╰───────────── ref: 4
+    │                         │    
+    │                         ╰──── ref: built-in
+ 10 │             mstore(0x40, add(add(result, length), 32))
+    │             ───┬──       ─┬─ ─┬─ ───┬──  ───┬──  
+    │                ╰───────────────────────────────── ref: built-in
+    │                           │   │     │       │    
+    │                           ╰────────────────────── ref: built-in
+    │                               │     │       │    
+    │                               ╰────────────────── ref: built-in
+    │                                     │       │    
+    │                                     ╰──────────── ref: 4
+    │                                             │    
+    │                                             ╰──── ref: 5
+ 11 │             mstore(result, length)
+    │             ───┬── ───┬──  ───┬──  
+    │                ╰─────────────────── ref: built-in
+    │                       │       │    
+    │                       ╰──────────── ref: 4
+    │                               │    
+    │                               ╰──── ref: 5
+    │ 
+ 14 │         for (uint256 i = 0; i < length; i += 32) {
+    │                      ┬      ┬   ───┬──  ┬  
+    │                      ╰───────────────────── name: 6
+    │                             │      │    │  
+    │                             ╰────────────── ref: 6
+    │                                    │    │  
+    │                                    ╰─────── ref: 5
+    │                                         │  
+    │                                         ╰── ref: 6
+ 15 │             bytes32 chunk;
+    │                     ──┬──  
+    │                       ╰──── name: 7
+    │ 
+ 17 │                 chunk := mload(add(data, add(i, 32)))
+    │                 ──┬──    ──┬── ─┬─ ──┬─  ─┬─ ┬  
+    │                   ╰───────────────────────────── ref: 7
+    │                            │    │    │    │  │  
+    │                            ╰──────────────────── ref: built-in
+    │                                 │    │    │  │  
+    │                                 ╰─────────────── ref: built-in
+    │                                      │    │  │  
+    │                                      ╰────────── ref: 3
+    │                                           │  │  
+    │                                           ╰───── ref: built-in
+    │                                              │  
+    │                                              ╰── ref: 6
+ 18 │                 mstore(add(result, add(i, 32)), chunk)
+    │                 ───┬── ─┬─ ───┬──  ─┬─ ┬        ──┬──  
+    │                    ╰─────────────────────────────────── ref: built-in
+    │                         │     │     │  │          │    
+    │                         ╰────────────────────────────── ref: built-in
+    │                               │     │  │          │    
+    │                               ╰──────────────────────── ref: 4
+    │                                     │  │          │    
+    │                                     ╰────────────────── ref: built-in
+    │                                        │          │    
+    │                                        ╰─────────────── ref: 6
+    │                                                   │    
+    │                                                   ╰──── ref: 7
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  3 │ ╭───▶ 
+    ┆ ┆ ┆   
+  5 │ │ ╭─▶     function copy(bytes memory data) public pure returns (bytes memory result) {
+    │ │ │                     ────────┬────────                       ─────────┬─────────  
+    │ │ │                             ╰──────────────────────────────────────────────────── definiens: 3
+    │ │ │                                                                      │           
+    │ │ │                                                                      ╰─────────── definiens: 4
+  6 │ │ │           uint256 length = data.length;
+    │ │ │   ───────────────────┬──────────────────  
+    │ │ │                      ╰──────────────────── definiens: 5
+    ┆ ┆ ┆   
+ 14 │ │ │           for (uint256 i = 0; i < length; i += 32) {
+    │ │ │                ───────┬──────  
+    │ │ │                       ╰──────── definiens: 6
+ 15 │ │ │               bytes32 chunk;
+    │ │ │   ─────────────┬─────────────  
+    │ │ │                ╰─────────────── definiens: 7
+    ┆ ┆ ┆   
+ 21 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 2
+ 22 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯
