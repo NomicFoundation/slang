@@ -57,6 +57,11 @@ fn identifiers_with_dots() -> Result<()> {
 }
 
 #[test]
+fn imported_constant() -> Result<()> {
+    run(T, "imported_constant")
+}
+
+#[test]
 fn inherited_constant() -> Result<()> {
     run(T, "inherited_constant")
 }

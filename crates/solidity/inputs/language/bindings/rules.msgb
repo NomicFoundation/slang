@@ -2891,10 +2891,19 @@ inherit .star_extension
 ;; Yul built-ins (see __SLANG_SOLIDITY_YUL_BUILT_INS_GUARD__) so constants are
 ;; in an equivalent scope to predefined built-ins. See the dual path in the rule
 ;; above.
-@constant_container ([SourceUnit] | [ContractDefinition] | [LibraryDefinition]) {
-  node @constant_container.yul_globals_guarded_scope
-  attr (@constant_container.yul_globals_guarded_scope) pop_symbol = "@yul"
-  edge @constant_container.lexical_scope -> @constant_container.yul_globals_guarded_scope
+@source_unit [SourceUnit] {
+  node @source_unit.yul_globals_guarded_scope
+  attr (@source_unit.yul_globals_guarded_scope) pop_symbol = "@yul"
+  ;; export the Yul specific scope
+  edge @source_unit.defs -> @source_unit.yul_globals_guarded_scope
+  ;; and provide it locally
+  edge @source_unit.lexical_scope -> @source_unit.yul_globals_guarded_scope
+}
+
+@contract_or_library ([ContractDefinition] | [LibraryDefinition]) {
+  node @contract_or_library.yul_globals_guarded_scope
+  attr (@contract_or_library.yul_globals_guarded_scope) pop_symbol = "@yul"
+  edge @contract_or_library.ns -> @contract_or_library.yul_globals_guarded_scope
 }
 
 ;; Make top-level constants available inside Yul functions
