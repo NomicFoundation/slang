@@ -1533,6 +1533,11 @@ inherit .star_extension
 @constructor [ConstructorDefinition] {
   node @constructor.lexical_scope
   node @constructor.def
+
+  ;; This scope provides access to local variables from Yul assembly blocks
+  node @constructor.yul_locals
+  attr (@constructor.yul_locals) pop_symbol = "@yul_locals"
+  edge @constructor.lexical_scope -> @constructor.yul_locals
 }
 
 @constructor [ConstructorDefinition @params parameters: [ParametersDeclaration]] {
@@ -1545,6 +1550,9 @@ inherit .star_extension
 
   ;; Connect to paramaters for named argument resolution
   edge @constructor.def -> @params.names
+
+  ;; Parameters should be accessible to assembly blocks
+  edge @constructor.yul_locals -> @params.defs
 }
 
 ;; Connect the constructor body's block lexical scope to the constructor
@@ -1606,6 +1614,11 @@ inherit .star_extension
 
 @fallback [FallbackFunctionDefinition] {
   node @fallback.lexical_scope
+
+  ;; This scope provides access to local variables from Yul assembly blocks
+  node @fallback.yul_locals
+  attr (@fallback.yul_locals) pop_symbol = "@yul_locals"
+  edge @fallback.lexical_scope -> @fallback.yul_locals
 }
 
 @fallback [FallbackFunctionDefinition @params parameters: [ParametersDeclaration]] {
@@ -1613,6 +1626,7 @@ inherit .star_extension
 
   ;; Input parameters are available in the fallback function scope
   edge @fallback.lexical_scope -> @params.defs
+  edge @fallback.yul_locals -> @params.defs
   attr (@fallback.lexical_scope -> @params.defs) precedence = 1
 }
 
@@ -1623,6 +1637,7 @@ inherit .star_extension
 
   ;; Return parameters are available in the fallback function scope
   edge @fallback.lexical_scope -> @return_params.defs
+  edge @fallback.yul_locals -> @return_params.defs
   attr (@fallback.lexical_scope -> @return_params.defs) precedence = 1
 }
 
@@ -1658,6 +1673,11 @@ inherit .star_extension
 @modifier [ModifierDefinition] {
   node @modifier.def
   node @modifier.lexical_scope
+
+  ;; This scope provides access to local variables from Yul assembly blocks
+  node @modifier.yul_locals
+  attr (@modifier.yul_locals) pop_symbol = "@yul_locals"
+  edge @modifier.lexical_scope -> @modifier.yul_locals
 }
 
 @modifier [ModifierDefinition
@@ -1692,6 +1712,9 @@ inherit .star_extension
   ;; Input parameters are available in the modifier scope
   edge @modifier.lexical_scope -> @params.defs
   attr (@modifier.lexical_scope -> @params.defs) precedence = 1
+
+  ;; Input parameters are also available to assembly blocks
+  edge @modifier.yul_locals -> @params.defs
 }
 
 
