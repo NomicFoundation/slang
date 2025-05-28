@@ -22,6 +22,11 @@ fn binding_enum_member() -> Result<()> {
 }
 
 #[test]
+fn built_ins_results() -> Result<()> {
+    run(T, "built_ins_results")
+}
+
+#[test]
 fn casting() -> Result<()> {
     run(T, "casting")
 }
