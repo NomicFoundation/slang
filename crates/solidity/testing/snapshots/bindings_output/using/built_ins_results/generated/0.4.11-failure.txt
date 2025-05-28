@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected CloseBrace or OpenBrace or ReturnsKeyword or Semicolon.
+   ╭─[input.sol:3:5]
+   │
+ 3 │ ╭─▶     function test(bytes memory x) public pure {
+   ┆ ┆   
+ 5 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     using Utils for bytes32;
+    │           ──┬──  
+    │             ╰──── ref: 2
+    │ 
+  8 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 2
+  9 │     function post(bytes32 x) public returns (bytes32) {
+    │              ──┬─         ┬  
+    │                ╰───────────── name: 3
+    │                           │  
+    │                           ╰── name: 4
+ 10 │         return x;
+    │                ┬  
+    │                ╰── ref: 4
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ contract Test {
+    ┆ ┆       
+  6 │ ├─│ ──▶ }
+    │ │ │         
+    │ ╰─────────── definiens: 1
+  7 │   ╭───▶ 
+    ┆   ┆ ┆   
+  9 │   │ ╭─▶     function post(bytes32 x) public returns (bytes32) {
+    │   │ │                     ────┬────  
+    │   │ │                         ╰────── definiens: 4
+    ┆   ┆ ┆   
+ 11 │   │ ├─▶     }
+    │   │ │           
+    │   │ ╰─────────── definiens: 3
+ 12 │   ├───▶ }
+    │   │         
+    │   ╰───────── definiens: 2
+────╯
