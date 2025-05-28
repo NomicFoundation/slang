@@ -26,7 +26,9 @@ pub struct Project {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct File {
     pub hash: String,
+    #[allow(clippy::struct_field_names)]
     pub file: String,
+    pub name: String,
 }
 
 pub fn read_config() -> Result<Configuration> {

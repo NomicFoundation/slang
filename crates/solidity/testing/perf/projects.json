@@ -1,50 +1,50 @@
 {
   "projects": [
     {
-      "hash": "0x01a5E3268E3987f0EE5e6Eb12fe63fa2AF992D83",
-      "name": "Darts"
-    },
-    {
       "hash": "0x01a11a5A999E57E1B177AA2fF7fEA957605adA2b",
-      "name": "Mooniswap"
+      "name": "mooniswap_flat_imports"
     },
     {
       "hash": "0x01abc00E86C7e258823b9a055Fd62cA6CF61a163",
-      "name": "WeightedPool"
-    },
-    {
-      "hash": "0x015E220901014BAE4f7e168925CD74e725e23692",
-      "name": "DoodleBears"
-    },
-    {
-      "hash": "0x0170f38fa8df1440521c8b8520BaAd0CdA132E82",
-      "name": "SeniorBond"
-    },
-    {
-      "hash": "0x01665987bC6725070e56d160d75AA19d8B73273e",
-      "name": "ERC721AContract"
+      "name": "weighted_pool_circular_imports"
     },
     {
       "hash": "0x1F98431c8aD98523631AE4a59f267346ea31F984",
-      "name": "Uniswap"
+      "name": "uniswap_lib"
     },
     {
       "hash": "0xcA11bde05977b3631167028862bE2a173976CA11",
-      "name": "Multicall3"
+      "name": "multicall3_lib"
     },
     {
       "hash": "0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed",
-      "name": "CreateX"
+      "name": "create_x_lib"
     },
     {
       "hash": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",
-      "name": "UiPoolDataProviderV3"
+      "name": "ui_pool_data_provider_v3_lib"
     }
   ],
   "files": [
     {
+      "name": "pointer_librarires_largest_file",
+      "hash": "0x0000000000d6A44FaCfBe05Faaee691aFaCC0f81",
+      "file": "lib/seaport-types/src/helpers/PointerLibraries.sol"
+    },
+    {
+      "name": "one_step_leverage_f_largest_file_with_trivia",
       "hash": "0x00aB290CC289F818a9E80eBaF18685E353DF16F0",
       "file": "contracts/OneStepLeverage.f.sol"
+    },
+    {
+      "name": "safe_math_median_file",
+      "hash": "0x01a11a5A999E57E1B177AA2fF7fEA957605adA2b",
+      "file": "@openzeppelin/contracts/math/SafeMath.sol"
+    },
+    {
+      "name": "merkle_proof_three_quarters_file",
+      "hash": "0x01665987bC6725070e56d160d75AA19d8B73273e",
+      "file": "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol"
     }
   ]
 }
