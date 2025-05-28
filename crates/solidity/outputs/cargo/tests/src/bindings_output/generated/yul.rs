@@ -22,6 +22,11 @@ fn built_ins() -> Result<()> {
 }
 
 #[test]
+fn catch_params() -> Result<()> {
+    run(T, "catch_params")
+}
+
+#[test]
 fn conditionals() -> Result<()> {
     run(T, "conditionals")
 }
@@ -87,8 +92,8 @@ fn stack_assign() -> Result<()> {
 }
 
 #[test]
-fn try_catch_params() -> Result<()> {
-    run(T, "try_catch_params")
+fn try_params() -> Result<()> {
+    run(T, "try_params")
 }
 
 #[test]

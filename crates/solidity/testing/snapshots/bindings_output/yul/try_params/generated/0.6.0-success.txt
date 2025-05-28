@@ -1,0 +1,65 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface Service { function test() external returns (uint); }
+   │           ───┬───            ──┬─  
+   │              ╰───────────────────── name: 1
+   │                                │   
+   │                                ╰─── name: 2
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 3
+ 4 │     function test(Service service) public {
+   │              ──┬─ ───┬─── ───┬───  
+   │                ╰─────────────────── name: 4
+   │                      │       │     
+   │                      ╰───────────── ref: 1
+   │                              │     
+   │                              ╰───── name: 5
+ 5 │         try service.test() returns (uint v) {
+   │             ───┬─── ──┬─                 ┬  
+   │                ╰──────────────────────────── ref: 5
+   │                       │                  │  
+   │                       ╰───────────────────── ref: 2
+   │                                          │  
+   │                                          ╰── name: 6
+   │ 
+ 7 │                 let x := add(v, 1)
+   │                     ┬    ─┬─ ┬  
+   │                     ╰─────────── name: 7
+   │                           │  │  
+   │                           ╰───── ref: built-in
+   │                              │  
+   │                              ╰── ref: 6
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ │     interface Service { function test() external returns (uint); }
+    │ │     ───────────────────────────────┬───────┬───────────────────────  
+    │ │                                    ╰───────────────────────────────── definiens: 1
+    │ │                                            │                         
+    │ │                                            ╰───────────────────────── definiens: 2
+  2 │ ╭───▶ 
+    ┆ ┆ ┆   
+  4 │ │ ╭─▶     function test(Service service) public {
+    │ │ │                     ───────┬───────  
+    │ │ │                            ╰───────── definiens: 5
+  5 │ │ │           try service.test() returns (uint v) {
+    │ │ │                                       ───┬──  
+    │ │ │                                          ╰──── definiens: 6
+    ┆ ┆ ┆   
+  7 │ │ │                   let x := add(v, 1)
+    │ │ │                       ┬  
+    │ │ │                       ╰── definiens: 7
+    ┆ ┆ ┆   
+ 11 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 4
+ 12 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 3
+────╯

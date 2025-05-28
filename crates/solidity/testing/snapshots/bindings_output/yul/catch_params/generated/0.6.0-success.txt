@@ -1,0 +1,89 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface Service { function test() external; }
+    │           ───┬───            ──┬─  
+    │              ╰───────────────────── name: 1
+    │                                │   
+    │                                ╰─── name: 2
+    │ 
+  3 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 3
+  4 │     function test(Service service) public {
+    │              ──┬─ ───┬─── ───┬───  
+    │                ╰─────────────────── name: 4
+    │                      │       │     
+    │                      ╰───────────── ref: 1
+    │                              │     
+    │                              ╰───── name: 5
+  5 │         try service.test() {
+    │             ───┬─── ──┬─  
+    │                ╰────────── ref: 5
+    │                       │   
+    │                       ╰─── ref: 2
+  6 │         } catch Error(bytes memory reason) {
+    │                 ──┬──              ───┬──  
+    │                   ╰──────────────────────── ref: built-in
+    │                                       │    
+    │                                       ╰──── name: 6
+    │ 
+  8 │                 revert(add(32, reason), mload(reason))
+    │                 ───┬── ─┬─     ───┬──   ──┬── ───┬──  
+    │                    ╰────────────────────────────────── ref: built-in
+    │                         │         │       │      │    
+    │                         ╰───────────────────────────── ref: built-in
+    │                                   │       │      │    
+    │                                   ╰─────────────────── ref: 6
+    │                                           │      │    
+    │                                           ╰─────────── ref: built-in
+    │                                                  │    
+    │                                                  ╰──── ref: 6
+    │ 
+ 10 │         } catch (bytes memory reason) {
+    │                               ───┬──  
+    │                                  ╰──── name: 7
+    │ 
+ 12 │                 revert(add(32, reason), mload(reason))
+    │                 ───┬── ─┬─     ───┬──   ──┬── ───┬──  
+    │                    ╰────────────────────────────────── ref: built-in
+    │                         │         │       │      │    
+    │                         ╰───────────────────────────── ref: built-in
+    │                                   │       │      │    
+    │                                   ╰─────────────────── ref: 7
+    │                                           │      │    
+    │                                           ╰─────────── ref: built-in
+    │                                                  │    
+    │                                                  ╰──── ref: 7
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ │     interface Service { function test() external; }
+    │ │     ────────────────────────┬───────┬───────────────  
+    │ │                             ╰───────────────────────── definiens: 1
+    │ │                                     │                 
+    │ │                                     ╰───────────────── definiens: 2
+  2 │ ╭───▶ 
+    ┆ ┆ ┆   
+  4 │ │ ╭─▶     function test(Service service) public {
+    │ │ │                     ───────┬───────  
+    │ │ │                            ╰───────── definiens: 5
+    ┆ ┆ ┆   
+  6 │ │ │           } catch Error(bytes memory reason) {
+    │ │ │                         ─────────┬─────────  
+    │ │ │                                  ╰─────────── definiens: 6
+    ┆ ┆ ┆   
+ 10 │ │ │           } catch (bytes memory reason) {
+    │ │ │                    ─────────┬─────────  
+    │ │ │                             ╰─────────── definiens: 7
+    ┆ ┆ ┆   
+ 15 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 4
+ 16 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 3
+────╯
