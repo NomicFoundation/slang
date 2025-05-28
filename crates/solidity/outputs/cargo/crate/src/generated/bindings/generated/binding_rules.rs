@@ -457,6 +457,8 @@ inherit .star_extension
   node @contract.yul_locals
   attr (@contract.yul_locals) pop_symbol = "@yul_locals"
   edge @contract.lexical_scope -> @contract.yul_locals
+  ;; Also to state variables (and constants) from base contracts
+  edge @contract.instance -> @contract.yul_locals
 }
 
 @contract [ContractDefinition
