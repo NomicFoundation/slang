@@ -107,14 +107,14 @@ main!(
 
 // manually listed because I found no way to successfully do it dynamically
 do_main!(
-    darts,
-    mooniswap,
-    weighted_pool,
-    doodled_bears,
-    senior_bond,
-    erc721a_contract,
-    uniswap,
-    multicall3,
-    create_x,
-    one_step_leverage_f,
+    mooniswap_flat_imports,
+    weighted_pool_circular_imports,
+    uniswap_lib,
+    multicall3_lib,
+    create_x_lib,
+    ui_pool_data_provider_v3_lib,
+    pointer_librarires_largest_file,
+    one_step_leverage_f_largest_file_with_trivia,
+    safe_math_median_file,
+    merkle_proof_three_quarters_file,
 );

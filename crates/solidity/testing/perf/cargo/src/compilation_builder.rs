@@ -46,8 +46,8 @@ impl CompilationBuilder {
         assert_ne!(source, "");
         let AddFileResponse { import_paths } = self.internal.add_file(filename.to_string(), source);
 
-        for import_path in import_paths {
-            let import_path = import_path.node().unparse();
+        for import_path_cursor in import_paths {
+            let import_path = import_path_cursor.node().unparse();
             let import_path = import_path
                 .strip_prefix(|c| matches!(c, '"' | '\''))
                 .unwrap()
@@ -56,6 +56,11 @@ impl CompilationBuilder {
                 .trim();
 
             let import_real_name = self.project.resolve_import(filename, import_path)?;
+            self.internal.resolve_import(
+                filename,
+                &import_path_cursor,
+                import_real_name.clone(),
+            )?;
             self.add_file(&import_real_name)?;
         }
 

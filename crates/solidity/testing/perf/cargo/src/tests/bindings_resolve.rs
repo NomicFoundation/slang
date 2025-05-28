@@ -1,11 +1,8 @@
 use std::rc::Rc;
 
-use slang_solidity::bindings::BindingGraph;
+use slang_solidity::bindings::{BindingGraph, Reference};
 use slang_solidity::compilation::CompilationUnit;
 use slang_solidity::cst::{NodeKind, NonterminalKind, TerminalKindExtensions};
-
-// TODO: These must be resolved at some point
-const ALLOWED_UNDEFINED_IDENTIFIERS: [&str; 2] = ["ABIEncoderV2", "v2"];
 
 pub struct BuiltBindingGraph {
     unit: Rc<CompilationUnit>,
@@ -50,8 +47,7 @@ pub fn run(dependencies: BuiltBindingGraph) {
             }
 
             if binding_graph.definition_at(&cursor).is_none()
-                && binding_graph.reference_at(&cursor).is_none()
-                && !ALLOWED_UNDEFINED_IDENTIFIERS.contains(&cursor.node().unparse().as_str())
+                && none_or_empty(binding_graph.reference_at(&cursor))
             {
                 panic!(
                     "Unbound identifier: '{value}' in '{file_path}:{line}:{column}'.",
@@ -63,6 +59,10 @@ pub fn run(dependencies: BuiltBindingGraph) {
             }
         }
     }
-
     assert_ne!(ids, 0);
+}
+
+fn none_or_empty(maybe_reference: Option<Reference>) -> bool {
+    maybe_reference.is_none()
+        || maybe_reference.is_some_and(|reference| reference.definitions().is_empty())
 }

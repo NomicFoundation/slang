@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
-use std::path::{absolute, Component, Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 use std::sync::OnceLock;
 
 use anyhow::{anyhow, Result};
@@ -142,12 +142,9 @@ fn load_projects_internal() -> Result<ProjectMap> {
     for file in config.files {
         let mut project =
             SolidityProject::build(&working_directory_path.join(format!("{}.json", file.hash)))?;
-        let key = Path::new(&file.file)
-            .file_stem()
-            .expect("entrypoint is a file");
         // override the entrypoint with the path given
         project.compilation.set_entrypoint(&file.file);
-        insert(key.to_os_string().into_string().unwrap(), project);
+        insert(file.name, project);
     }
 
     for project in config.projects {

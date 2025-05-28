@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::io::Write;
-use std::path::Path;
 
 use anyhow::Result;
 use heck::ToSnakeCase;
@@ -27,13 +26,7 @@ fn main() -> Result<()> {
         write_test_benches_line(&project.name)?;
     }
     for pfile in cfg.files {
-        let name = Path::new(&pfile.file)
-            .file_stem()
-            .unwrap()
-            .to_os_string()
-            .into_string()
-            .unwrap();
-        write_test_benches_line(&name)?;
+        write_test_benches_line(&pfile.name)?;
     }
 
     Ok(())
