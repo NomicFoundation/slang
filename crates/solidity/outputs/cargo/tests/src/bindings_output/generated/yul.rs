@@ -47,6 +47,11 @@ fn identifiers_with_dots() -> Result<()> {
 }
 
 #[test]
+fn inherited_constant() -> Result<()> {
+    run(T, "inherited_constant")
+}
+
+#[test]
 fn labels() -> Result<()> {
     run(T, "labels")
 }
