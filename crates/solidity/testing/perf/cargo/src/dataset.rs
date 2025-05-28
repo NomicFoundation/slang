@@ -5,7 +5,7 @@ use std::sync::OnceLock;
 
 use anyhow::{anyhow, Result};
 use infra_utils::paths::PathExtensions;
-use solidity_testing_perf_utils::config;
+use solidity_testing_perf_utils::{config, fetch};
 
 type ProjectMap = HashMap<String, SolidityProject>;
 
@@ -133,13 +133,15 @@ fn normalize_path<P: AsRef<Path>>(path: P) -> String {
 fn load_projects_internal() -> Result<ProjectMap> {
     let mut map = ProjectMap::new();
     let config = config::read_config()?;
-    let working_directory_path = Path::repo_path(config::WORKING_DIR);
+    let working_directory_path = config::working_dir_path();
 
     let mut insert = |key: String, project: SolidityProject| {
         map.insert(key, project);
     };
 
     for file in config.files {
+        fetch::fetch(&file.hash, &working_directory_path)?;
+
         let mut project =
             SolidityProject::build(&working_directory_path.join(format!("{}.json", file.hash)))?;
         // override the entrypoint with the path given
@@ -148,6 +150,8 @@ fn load_projects_internal() -> Result<ProjectMap> {
     }
 
     for project in config.projects {
+        fetch::fetch(&project.hash, &working_directory_path)?;
+
         let sol_project =
             SolidityProject::build(&working_directory_path.join(format!("{}.json", project.hash)))?;
         insert(project.name, sol_project);

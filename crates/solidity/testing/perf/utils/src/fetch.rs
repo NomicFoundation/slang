@@ -1,9 +1,12 @@
 use std::fs;
+use std::hash::BuildHasher;
 use std::path::Path;
 
 use anyhow::{Ok, Result};
 use reqwest::blocking::get;
 use serde_json::Value;
+
+use crate::config;
 
 // Given an address and a path, it downloads the json file from sourcify,
 // and stores it in the path.

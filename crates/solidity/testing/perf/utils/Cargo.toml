@@ -10,6 +10,7 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 infra_utils = { workspace = true }
 anyhow = { workspace = true }
+reqwest = { workspace = true, features = ["json"] }
 
 [lints]
 workspace = true

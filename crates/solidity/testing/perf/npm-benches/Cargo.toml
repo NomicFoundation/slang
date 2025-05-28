@@ -13,7 +13,6 @@ solidity_testing_perf_utils = { workspace = true }
 anyhow = { workspace = true }
 regex = { workspace = true }
 clap = { workspace = true }
-reqwest = { workspace = true, features = ["json"] }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 

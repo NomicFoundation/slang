@@ -7,12 +7,9 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use serde::Deserialize;
 use solidity_testing_perf_utils::config::{self, File, Project};
+use solidity_testing_perf_utils::fetch::fetch;
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
-
-use crate::fetch::fetch;
-
-mod fetch;
 
 #[derive(Clone, Copy, Debug, AsRefStr, EnumIter)]
 pub enum SubjectUT {
@@ -53,28 +50,20 @@ pub struct Timing {
 impl NpmController {
     fn execute(&self) -> Result<()> {
         let config = config::read_config()?;
-        let input_path = Path::new(&config::WORKING_DIR);
 
         if let Some(hash) = &self.hash {
-            let result =
-                self.run_benchmarks(input_path, "custom", hash, self.entrypoint.as_deref())?;
+            let result = self.run_benchmarks("custom", hash, self.entrypoint.as_deref())?;
             publish(result.iter())
         } else {
-            let file_benchmarks = self.individual_file_benchmarks(input_path, &config.files)?;
-            let project_benchmarks = self.project_benchmarks(input_path, &config.projects)?;
+            let file_benchmarks = self.individual_file_benchmarks(&config.files)?;
+            let project_benchmarks = self.project_benchmarks(&config.projects)?;
             publish(file_benchmarks.iter().chain(project_benchmarks.iter()))
         }
     }
 
-    fn run_benchmarks(
-        &self,
-        input_path: &Path,
-        name: &str,
-        hash: &str,
-        file: Option<&str>,
-    ) -> Result<Vec<Timing>> {
-        fetch(hash, input_path)?;
-        let path = input_path.join(hash);
+    fn run_benchmarks(&self, name: &str, hash: &str, file: Option<&str>) -> Result<Vec<Timing>> {
+        fetch(hash, &config::working_dir_path())?;
+        let path = Path::new(config::WORKING_DIR).join(hash);
 
         let mut results = vec![];
         for sut in SubjectUT::iter() {
@@ -93,11 +82,7 @@ impl NpmController {
         }
     }
 
-    fn individual_file_benchmarks(
-        &self,
-        input_path: &Path,
-        files: &Vec<File>,
-    ) -> Result<Vec<Timing>> {
+    fn individual_file_benchmarks(&self, files: &Vec<File>) -> Result<Vec<Timing>> {
         let mut results = vec![];
 
         let pattern_regex = self.compute_regex()?;
@@ -106,18 +91,13 @@ impl NpmController {
                 continue;
             }
 
-            let mut result =
-                self.run_benchmarks(input_path, &file.name, &file.hash, Some(&file.file))?;
+            let mut result = self.run_benchmarks(&file.name, &file.hash, Some(&file.file))?;
             results.append(&mut result);
         }
         Ok(results)
     }
 
-    fn project_benchmarks(
-        &self,
-        input_path: &Path,
-        projects: &Vec<Project>,
-    ) -> Result<Vec<Timing>> {
+    fn project_benchmarks(&self, projects: &Vec<Project>) -> Result<Vec<Timing>> {
         let mut results = vec![];
         let pattern_regex = self.compute_regex()?;
 
@@ -126,7 +106,7 @@ impl NpmController {
                 continue;
             }
 
-            let mut result = self.run_benchmarks(input_path, &project.name, &project.hash, None)?;
+            let mut result = self.run_benchmarks(&project.name, &project.hash, None)?;
             results.append(&mut result);
         }
         Ok(results)

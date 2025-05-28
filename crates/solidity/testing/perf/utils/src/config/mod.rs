@@ -1,8 +1,9 @@
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
+use infra_utils::paths::PathExtensions;
 use serde::{Deserialize, Serialize};
 
 /*
@@ -30,6 +31,10 @@ pub struct File {
     #[allow(clippy::struct_field_names)]
     pub file: String,
     pub name: String,
+}
+
+pub fn working_dir_path() -> PathBuf {
+    Path::repo_path(WORKING_DIR)
 }
 
 pub fn config_file_path() -> Result<PathBuf> {
