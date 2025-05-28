@@ -4,7 +4,6 @@ use std::path::{Component, Path, PathBuf};
 use std::sync::OnceLock;
 
 use anyhow::{anyhow, Result};
-use infra_utils::paths::PathExtensions;
 use solidity_testing_perf_utils::{config, fetch};
 
 type ProjectMap = HashMap<String, SolidityProject>;
