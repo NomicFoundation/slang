@@ -61,6 +61,9 @@ class SlangRunner implements Runner {
       files = unit.files();
     }
 
+    // We don't recognize these in `pragma experimental`, so let's ignore them
+    const allowed = ["ABIEncoderV2", "v2"];
+
     files.forEach((file) => {
       let cursor = file.createTreeCursor();
       let emptyDefList = [];
@@ -79,8 +82,6 @@ class SlangRunner implements Runner {
         }
       }
 
-      // We don't recognize `ABIEncoderV2` in `pragma experimental`, so let's ignore it
-      const allowed = ["ABIEncoderV2", "v2"];
       const neitherDefNorRefList = Array.from(neitherDefNorRefSet);
       assert.deepStrictEqual(
         neitherDefNorRefList.filter((e) => !allowed.includes(e)),
@@ -95,6 +96,7 @@ class SlangRunner implements Runner {
       new Timing("slang_parse_all_files_duration", parsedAllFilesTime - startTime),
       new Timing("slang_init_bindings_graph_duration", builtGraphTime - parsedAllFilesTime),
       new Timing("slang_resolve_all_bindings_duration", resolutionTime),
+      new Timing("slang_total", performance.now() - startTime),
     ];
     return timings;
   }

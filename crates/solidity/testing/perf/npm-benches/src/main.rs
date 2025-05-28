@@ -102,7 +102,7 @@ impl NpmController {
 
         let pattern_regex = self.compute_regex()?;
         for file in files {
-            if !pattern_regex.is_match(&file.file) {
+            if !pattern_regex.is_match(&file.name) {
                 continue;
             }
 
