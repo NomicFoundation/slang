@@ -30,13 +30,13 @@ pub fn test_single_contract(
 pub fn run_with_trace(archive: &ContractArchive, events: &Events, opts: &TestOptions) {
     for contract in archive.contracts() {
         events.trace(format!(
-            "[{version}] Starting contract {name}",
+            "[{name} {version}] Starting contract {name}",
             version = contract.version,
             name = contract.name
         ));
         run_test(&contract, events, opts);
         events.trace(format!(
-            "[{version}] Finished contract {name}",
+            "[{name} {version}] Finished contract {name}",
             version = contract.version,
             name = contract.name
         ));
@@ -102,7 +102,7 @@ fn run_parser_check(contract: &Contract, unit: &CompilationUnit, events: &Events
                     let msg =
                         slang_solidity::diagnostic::render(error, &source_name, &source, true);
                     events.parse_error(format!(
-                        "[{version}] Parse error in contract {contract_name}\n{msg}",
+                        "[{contract_name} {version}] Parse error\n{msg}",
                         contract_name = contract.name,
                         version = contract.version
                     ));
@@ -130,7 +130,7 @@ fn run_version_inference_check(
                     .get_source_id(file.id())
                     .unwrap_or(file.id().into());
                 events.version_error(format!(
-                    "[{version}] Could not infer correct version for {contract_name}:{source_name}",
+                    "[{contract_name} {version}] Could not infer correct version in file {source_name}",
                     version = contract.version,
                     contract_name = contract.name,
                 ));
@@ -178,7 +178,8 @@ fn run_bindings_check(
                 true,
             );
             events.bindings_error(format!(
-                "[{version}] Binding Error: Reference has no definitions\n{msg}",
+                "[{contract_name} {version}] Binding Error: Reference has no definitions\n{msg}",
+                contract_name = contract.name,
                 version = contract.version,
             ));
 
@@ -218,7 +219,8 @@ fn run_bindings_check(
                         true,
                     );
                     events.bindings_error(format!(
-                        "[{version}] Binding Error: No definition or reference\n{msg}",
+                        "[{contract_name} {version}] Binding Error: No definition or reference\n{msg}",
+                        contract_name = contract.name,
                         version = contract.version,
                     ));
                 }

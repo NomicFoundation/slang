@@ -66,8 +66,8 @@ pub struct TestOptions {
 pub struct ShardingOptions {
     /// Divide the dataset into a smaller number of shards. Must be a factor of 256. '`--shard-index`'
     /// must be included along with this option.
-    #[arg(long, requires = "shard_index")]
-    pub shard_count: Option<u8>,
+    #[arg(long, requires = "shard_index", value_parser = validate_shard_count)]
+    pub shard_count: Option<u16>,
 
     /// Select a single shard to test. Must be within the range [`0..shard-count`). Required if
     /// '`--shard-count`' is specified.
@@ -79,18 +79,32 @@ pub struct ShardingOptions {
     pub exclude_partial_matches: bool,
 }
 
+fn validate_shard_count(count: &str) -> Result<u16, String> {
+    let count = count.parse::<u16>().map_err(|_| "Invalid shard count")?;
+    if count > 0 && count <= 256 && (256 % count) == 0 {
+        Ok(count)
+    } else {
+        Err("Shard count must be in the range 1..=256 and must divide 256".to_owned())
+    }
+}
+
 impl ShardingOptions {
     // clippy complains about the exclusive range below, but its suggestion (change to exclusive range)
     // doesn't work because we're returning a `RangeInclusive`
     #[allow(clippy::range_minus_one)]
     pub fn get_id_range(&self) -> RangeInclusive<u8> {
         if let Some(shard_count) = self.shard_count {
-            let shard_size = u8::try_from(256 / u16::from(shard_count)).unwrap();
+            let shard_size = 256 / shard_count;
 
             let shard_index = self.shard_index.unwrap();
-            let shard_start = shard_size * shard_index;
+            let shard_start = shard_size * u16::from(shard_index);
+            let shard_end = shard_start + shard_size - 1;
 
-            shard_start..=(shard_start + shard_size - 1)
+            // at this point both ends of the range should fit in a u8
+            let shard_start = u8::try_from(shard_start).unwrap();
+            let shard_end = u8::try_from(shard_end).unwrap();
+
+            shard_start..=shard_end
         } else {
             0..=255
         }
