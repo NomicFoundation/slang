@@ -454,11 +454,11 @@ inherit .star_extension
   edge type_contract_type -> @contract.parent_scope
 
   ;; This scope provides access to state variables from Yul assembly blocks
-  node @contract.yul_locals
-  attr (@contract.yul_locals) pop_symbol = "@yul_locals"
-  edge @contract.lexical_scope -> @contract.yul_locals
+  node @contract.yul
+  attr (@contract.yul) pop_symbol = "@yul"
+  edge @contract.lexical_scope -> @contract.yul
   ;; Also to state variables (and constants) from base contracts
-  edge @contract.instance -> @contract.yul_locals
+  edge @contract.instance -> @contract.yul
 }
 
 @contract [ContractDefinition
@@ -581,7 +581,7 @@ inherit .star_extension
   edge @contract.instance -> @state_var.def
 
   ; State variables should also be available in Yul assembly blocks
-  edge @contract.yul_locals -> @state_var.def
+  edge @contract.yul -> @state_var.def
 }
 
 ;; Public state variables are also exposed as external member functions
