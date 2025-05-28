@@ -6,7 +6,7 @@ Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryK
     │
   1 │ ╭─▶ abstract contract Utils {
     ┆ ┆   
- 11 │ ├─▶ }
+ 15 │ ├─▶ }
     │ │       
     │ ╰─────── Error occurred here.
 ────╯
