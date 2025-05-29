@@ -107,14 +107,14 @@ main!(
 
 // manually listed because I found no way to successfully do it dynamically
 do_main!(
-    mooniswap_flat_imports,
-    weighted_pool_circular_imports,
-    uniswap_lib,
-    multicall3_lib,
-    create_x_lib,
-    ui_pool_data_provider_v3_lib,
-    pointer_librarires_largest_file,
-    one_step_leverage_f_largest_file_with_trivia,
-    safe_math_median_file,
-    merkle_proof_three_quarters_file,
+    flat_imports_mooniswap,
+    circular_imports_weighted_pool,
+    protocol_uniswap,
+    protocol_multicall3,
+    protocol_create_x,
+    protocol_ui_pool_data_provider_v3,
+    // pointer_librarires_largest_file,
+    largest_file_trivia_one_step_leverage_f,
+    median_file_safe_math,
+    three_quarters_file_merkle_proof,
 );
