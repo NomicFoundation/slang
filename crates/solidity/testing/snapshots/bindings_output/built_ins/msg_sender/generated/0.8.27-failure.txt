@@ -29,7 +29,7 @@ References and definitions:
    │                        │     │     │    
    │                        ╰──────────────── ref: built-in
    │                              │     │    
-   │                              ╰────────── ref: built-in
+   │                              ╰────────── unresolved
    │                                    │    
    │                                    ╰──── ref: 3
 ───╯

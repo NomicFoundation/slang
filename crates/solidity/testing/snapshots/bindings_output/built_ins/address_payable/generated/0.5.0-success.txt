@@ -1,13 +1,5 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Parse errors:
-Error: Expected CloseParen or Comma.
-   ╭─[input.sol:2:34]
-   │
- 2 │     function testPayable(address payable rcpt) public {
-   │                                  ──────┬─────  
-   │                                        ╰─────── Error occurred here.
-───╯
 References and definitions: 
    ╭─[input.sol:1:1]
    │
@@ -15,29 +7,31 @@ References and definitions:
    │          ──┬─  
    │            ╰─── name: 1
  2 │     function testPayable(address payable rcpt) public {
-   │              ─────┬─────  
-   │                   ╰─────── name: 2
+   │              ─────┬─────                 ──┬─  
+   │                   ╰──────────────────────────── name: 2
+   │                                            │   
+   │                                            ╰─── name: 3
  3 │         rcpt.transfer(1);
    │         ──┬─ ────┬───  
-   │           ╰──────────── unresolved
+   │           ╰──────────── ref: 3
    │                  │     
-   │                  ╰───── unresolved
+   │                  ╰───── ref: built-in
    │ 
  5 │     function testNonPayable(address rcpt) public {
    │              ───────┬──────         ──┬─  
-   │                     ╰───────────────────── name: 3
+   │                     ╰───────────────────── name: 4
    │                                       │   
-   │                                       ╰─── name: 4
+   │                                       ╰─── name: 5
    │ 
  7 │         rcpt.transfer(1);
    │         ──┬─ ────┬───  
-   │           ╰──────────── ref: 4
+   │           ╰──────────── ref: 5
    │                  │     
    │                  ╰───── ref: built-in
    │ 
  9 │         address(uint160(rcpt)).transfer(1);
    │                         ──┬─   ────┬───  
-   │                           ╰────────────── ref: 4
+   │                           ╰────────────── ref: 5
    │                                    │     
    │                                    ╰───── ref: built-in
 ───╯
@@ -46,17 +40,19 @@ Definiens:
     │
   1 │ ╭───│ ▶ contract Test {
   2 │ │   ╭─▶     function testPayable(address payable rcpt) public {
+    │ │   │                            ──────────┬─────────  
+    │ │   │                                      ╰─────────── definiens: 3
     ┆ ┆   ┆   
   4 │ │ │ ├─▶     }
     │ │ │ │           
     │ │ │ ╰─────────── definiens: 2
   5 │ │ ╭───▶     function testNonPayable(address rcpt) public {
     │ │ │                                 ──────┬─────  
-    │ │ │                                       ╰─────── definiens: 4
+    │ │ │                                       ╰─────── definiens: 5
     ┆ ┆ ┆     
  10 │ │ ├───▶     }
     │ │ │             
-    │ │ ╰───────────── definiens: 3
+    │ │ ╰───────────── definiens: 4
  11 │ ├─────▶ }
     │ │           
     │ ╰─────────── definiens: 1

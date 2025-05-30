@@ -6283,7 +6283,8 @@ codegen_language_macros::compile!(Language(
                         BuiltInFunction(
                             name = "send",
                             parameters = ["uint256 amount"],
-                            return_type = "bool"
+                            return_type = "bool",
+                            enabled = Till("0.8.0")
                         ),
                         BuiltInFunction(
                             name = "staticcall",
@@ -6294,7 +6295,11 @@ codegen_language_macros::compile!(Language(
                         BuiltInFunction(
                             name = "transfer",
                             parameters = ["uint256 amount"],
-                            enabled = Till("0.5.0")
+                            // `transfer` is disallowed on non-payable address
+                            // types since 0.5.0, but there's code in the wild
+                            // which uses type casting to do eg.
+                            // `address(uint160(to)).transfer(..)`.
+                            enabled = Till("0.8.0")
                         )
                     ]
                 ),
