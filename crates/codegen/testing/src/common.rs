@@ -44,7 +44,7 @@ pub(crate) fn collect_snapshot_tests(
             _ => {
                 bail!("Invalid test input. Should be in the form of '<tests-dir>/GROUP_NAME/TEST_NAME/input.sol', but found: {file:?}");
             }
-        };
+        }
     }
 
     Ok(tests)

@@ -88,7 +88,7 @@ fn check_struct(analysis: &mut Analysis, item: &SpannedStructItem, enablement: &
         fields,
     } = item;
 
-    let enablement = update_enablement(analysis, enablement, enabled);
+    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
     check_fields(analysis, Some(name), fields, &enablement);
 }
@@ -100,12 +100,12 @@ fn check_enum(analysis: &mut Analysis, item: &SpannedEnumItem, enablement: &Vers
         variants,
     } = item;
 
-    let enablement = update_enablement(analysis, enablement, enabled);
+    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
     for variant in variants {
         let SpannedEnumVariant { reference, enabled } = variant;
 
-        let enablement = update_enablement(analysis, &enablement, enabled);
+        let enablement = update_enablement(analysis, &enablement, enabled.as_ref());
 
         check_reference(
             analysis,
@@ -127,7 +127,7 @@ fn check_repeated(analysis: &mut Analysis, item: &SpannedRepeatedItem, enablemen
         enabled,
     } = item;
 
-    let enablement = update_enablement(analysis, enablement, enabled);
+    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
     check_reference(
         analysis,
@@ -149,7 +149,7 @@ fn check_separated(analysis: &mut Analysis, item: &SpannedSeparatedItem, enablem
         enabled,
     } = item;
 
-    let enablement = update_enablement(analysis, enablement, enabled);
+    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
     check_reference(
         analysis,
@@ -176,7 +176,7 @@ fn check_precedence(
         primary_expressions,
     } = item;
 
-    let enablement = update_enablement(analysis, enablement, enabled);
+    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
     for precedence_expression in precedence_expressions {
         let SpannedPrecedenceExpression { name: _, operators } = precedence_expression.as_ref();
@@ -189,7 +189,7 @@ fn check_precedence(
                 fields,
             } = operator;
 
-            let enablement = update_enablement(analysis, &enablement, enabled);
+            let enablement = update_enablement(analysis, &enablement, enabled.as_ref());
 
             check_fields(analysis, Some(name), fields, &enablement);
         }
@@ -198,7 +198,7 @@ fn check_precedence(
     for primary_expression in primary_expressions {
         let SpannedPrimaryExpression { reference, enabled } = primary_expression;
 
-        let enablement = update_enablement(analysis, &enablement, enabled);
+        let enablement = update_enablement(analysis, &enablement, enabled.as_ref());
 
         check_reference(
             analysis,
@@ -232,7 +232,7 @@ fn check_fields(
                 );
             }
             SpannedField::Optional { reference, enabled } => {
-                let enablement = update_enablement(analysis, enablement, enabled);
+                let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
                 check_reference(
                     analysis,
@@ -264,7 +264,7 @@ fn check_fields(
                     }
                 }
             }
-        };
+        }
     }
 }
 
@@ -287,7 +287,7 @@ fn check_trivia_parser(
         SpannedTriviaParser::Trivia { reference } => {
             check_reference(analysis, None, reference, enablement, &[Trivia]);
         }
-    };
+    }
 }
 
 fn check_trivia(analysis: &mut Analysis, item: &SpannedTriviaItem, enablement: &VersionSet) {
@@ -312,7 +312,7 @@ fn check_keyword(analysis: &mut Analysis, item: &SpannedKeywordItem, enablement:
             value: _,
         } = definition;
 
-        let _ = update_enablement(analysis, enablement, enabled);
+        let _ = update_enablement(analysis, enablement, enabled.as_ref());
 
         if let Some(reserved) = reserved {
             check_version_specifier(analysis, reserved);
@@ -326,7 +326,7 @@ fn check_token(analysis: &mut Analysis, item: &SpannedTokenItem, enablement: &Ve
     for definition in definitions {
         let SpannedTokenDefinition { enabled, scanner } = definition;
 
-        let enablement = update_enablement(analysis, enablement, enabled);
+        let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
         check_scanner(analysis, Some(name), scanner, &enablement);
     }
@@ -339,7 +339,7 @@ fn check_fragment(analysis: &mut Analysis, item: &SpannedFragmentItem, enablemen
         scanner,
     } = item;
 
-    let enablement = update_enablement(analysis, enablement, enabled);
+    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
     check_scanner(analysis, Some(name), scanner, &enablement);
 }
@@ -379,7 +379,7 @@ fn check_scanner(
         SpannedScanner::Fragment { reference } => {
             check_reference(analysis, source, reference, enablement, &[Fragment]);
         }
-    };
+    }
 }
 
 fn check_reference(
@@ -449,7 +449,7 @@ fn check_built_in_function(
         enabled,
     } = built_in;
 
-    let _ = update_enablement(analysis, enablement, enabled);
+    let _ = update_enablement(analysis, enablement, enabled.as_ref());
 }
 
 fn check_built_in_type(
@@ -464,7 +464,7 @@ fn check_built_in_type(
         enabled,
     } = built_in;
 
-    let enablement = update_enablement(analysis, enablement, enabled);
+    let enablement = update_enablement(analysis, enablement, enabled.as_ref());
 
     for field in fields {
         check_built_in_field(analysis, field, &enablement);
@@ -484,13 +484,13 @@ fn check_built_in_field(
         enabled,
     } = built_in;
 
-    let _ = update_enablement(analysis, enablement, enabled);
+    let _ = update_enablement(analysis, enablement, enabled.as_ref());
 }
 
 fn update_enablement(
     analysis: &mut Analysis,
     existing_enablement: &VersionSet,
-    new_specifier: &Option<Spanned<SpannedVersionSpecifier>>,
+    new_specifier: Option<&Spanned<SpannedVersionSpecifier>>,
 ) -> VersionSet {
     let Some(new_specifier) = new_specifier else {
         return existing_enablement.to_owned();

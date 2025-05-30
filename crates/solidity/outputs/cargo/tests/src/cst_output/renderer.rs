@@ -2,11 +2,11 @@ use std::cmp::{max, min};
 use std::collections::HashSet;
 use std::fmt::Write;
 use std::ops::Range;
+use std::sync::LazyLock;
 
 use anyhow::Result;
 use codegen_language_definition::model::Item;
 use inflector::Inflector;
-use once_cell::sync::Lazy;
 use slang_solidity::cst::{Cursor, Node, NonterminalKind, TextRangeExtensions};
 use solidity_language::SolidityDefinition;
 
@@ -188,7 +188,7 @@ fn render_preview(source: &str, char_range: &Range<usize>) -> String {
     }
 }
 
-static NON_INLINABLE: Lazy<HashSet<NonterminalKind>> = Lazy::new(|| {
+static NON_INLINABLE: LazyLock<HashSet<NonterminalKind>> = LazyLock::new(|| {
     let mut kinds = HashSet::new();
 
     for item in SolidityDefinition::create().items() {

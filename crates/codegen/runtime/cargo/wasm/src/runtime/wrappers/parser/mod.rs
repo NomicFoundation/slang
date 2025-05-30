@@ -56,6 +56,7 @@ define_wrapper! { Parser {
 
 impl IntoFFI<ffi::ParseError> for rust::ParseError {
     #[inline]
+    #[allow(clippy::used_underscore_items)]
     fn _into_ffi(self) -> ffi::ParseError {
         ffi::ParseError {
             message: self.message(),

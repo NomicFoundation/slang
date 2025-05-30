@@ -76,9 +76,8 @@ impl PathExtensions for Path {
     fn strip_repo_root(&self) -> Result<&Path> {
         let repo_root = Path::repo_root();
 
-        return self
-            .strip_prefix(&repo_root)
-            .with_context(|| format!("Failed to strip repo root from: {self:?}"));
+        self.strip_prefix(&repo_root)
+            .with_context(|| format!("Failed to strip repo root from: {self:?}"))
     }
 
     fn replace_prefix(
@@ -98,10 +97,9 @@ impl PathExtensions for Path {
     }
 
     fn unwrap_str(&self) -> &str {
-        return self
-            .to_str()
+        self.to_str()
             .with_context(|| format!("Failed to convert path to str: {self:?}"))
-            .unwrap();
+            .unwrap()
     }
 
     fn unwrap_string(&self) -> String {
@@ -109,29 +107,26 @@ impl PathExtensions for Path {
     }
 
     fn unwrap_name(&self) -> &str {
-        return self
-            .file_name()
+        self.file_name()
             .with_context(|| format!("Failed to extract file name of: {self:?}"))
             .unwrap()
             .to_str()
             .with_context(|| format!("Failed convert path to str: {self:?}"))
-            .unwrap();
+            .unwrap()
     }
 
     fn unwrap_parent(&self) -> &Path {
-        return self
-            .parent()
+        self.parent()
             .with_context(|| format!("Failed to extract parent directory of: {self:?}"))
-            .unwrap();
+            .unwrap()
     }
 
     fn unwrap_ext(&self) -> &str {
-        return self
-            .extension()
+        self.extension()
             .unwrap_or_default()
             .to_str()
             .with_context(|| format!("Failed to convert extension to str: {self:?}"))
-            .unwrap();
+            .unwrap()
     }
 
     fn read_to_string(&self) -> Result<String> {
@@ -139,8 +134,8 @@ impl PathExtensions for Path {
     }
 
     fn write_string(&self, contents: impl AsRef<str>) -> Result<()> {
-        return std::fs::write(self, contents.as_ref())
-            .with_context(|| format!("Failed to write file: {self:?}"));
+        std::fs::write(self, contents.as_ref())
+            .with_context(|| format!("Failed to write file: {self:?}"))
     }
 }
 

@@ -36,14 +36,12 @@ define_rc_wrapper! { BindingGraph {
     fn definition_at(&self, cursor: ffi::CursorBorrow<'_>) -> Option<ffi::Definition> {
         self._borrow_ffi()
             .definition_at(&cursor._borrow_ffi())
-            .map(rust::Definition::from)
             .map(IntoFFI::_into_ffi)
     }
 
     fn reference_at(&self,  cursor: ffi::CursorBorrow<'_>) -> Option<ffi::Reference> {
         self._borrow_ffi()
             .reference_at(&cursor._borrow_ffi())
-            .map(rust::Reference::from)
             .map(IntoFFI::_into_ffi)
     }
 } }
@@ -100,6 +98,7 @@ define_wrapper! { Reference {
 
 impl IntoFFI<ffi::BindingLocation> for rust::BindingLocation {
     #[inline]
+    #[allow(clippy::used_underscore_items)]
     fn _into_ffi(self) -> ffi::BindingLocation {
         match self {
             Self::BuiltIn(location) => ffi::BindingLocation::BuiltIn(location._into_ffi()),

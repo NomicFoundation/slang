@@ -104,7 +104,7 @@ impl AstModel {
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
                 }
-            };
+            }
         }
     }
 
@@ -138,7 +138,7 @@ impl AstModel {
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
                 }
-            };
+            }
         }
     }
 
@@ -262,7 +262,7 @@ impl AstModel {
                 fields.extend(self.convert_fields(&operator.fields));
                 fields.push(operand(PredefinedLabel::RightOperand));
             }
-        };
+        }
 
         self.sequences.push(Sequence {
             parent_type,

@@ -49,13 +49,13 @@ fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
 }
 
 fn run_prettier(file_path: &Path, contents: &str) -> Result<String> {
-    return Command::new("prettier")
+    Command::new("prettier")
         .property(
             // used to infer the language, and detect `.prettierrc` options
             "--stdin-filepath",
             file_path.unwrap_str(),
         )
-        .evaluate_with_input(contents);
+        .evaluate_with_input(contents)
 }
 
 fn run_rustfmt(contents: &str) -> Result<String> {

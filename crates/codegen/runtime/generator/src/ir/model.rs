@@ -188,7 +188,7 @@ impl IrModelBuilder {
         builder
     }
 
-    fn is_enabled_in_target_versions(&self, enabled: &Option<VersionSpecifier>) -> bool {
+    fn is_enabled_in_target_versions(&self, enabled: Option<&VersionSpecifier>) -> bool {
         match enabled {
             None | Some(VersionSpecifier::From { .. }) => true,
             Some(VersionSpecifier::Never) => false,
@@ -228,7 +228,7 @@ impl IrModelBuilder {
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
                 }
-            };
+            }
         }
     }
 
@@ -262,12 +262,12 @@ impl IrModelBuilder {
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
                 }
-            };
+            }
         }
     }
 
     fn add_struct_item(&mut self, item: &model::StructItem) {
-        if !self.is_enabled_in_target_versions(&item.enabled) {
+        if !self.is_enabled_in_target_versions(item.enabled.as_ref()) {
             return;
         }
         let parent_type = item.name.clone();
@@ -309,14 +309,14 @@ impl IrModelBuilder {
     }
 
     fn add_enum_item(&mut self, item: &model::EnumItem) {
-        if !self.is_enabled_in_target_versions(&item.enabled) {
+        if !self.is_enabled_in_target_versions(item.enabled.as_ref()) {
             return;
         }
         let parent_type = item.name.clone();
 
         let (nonterminal_types, terminal_types, unique_terminal_types) =
             self.partition_types(item.variants.iter().filter_map(|variant| {
-                if self.is_enabled_in_target_versions(&variant.enabled) {
+                if self.is_enabled_in_target_versions(variant.enabled.as_ref()) {
                     Some(variant.reference.clone())
                 } else {
                     None
@@ -334,7 +334,7 @@ impl IrModelBuilder {
     }
 
     fn add_repeated_item(&mut self, item: &model::RepeatedItem) {
-        if !self.is_enabled_in_target_versions(&item.enabled) {
+        if !self.is_enabled_in_target_versions(item.enabled.as_ref()) {
             return;
         }
         let parent_type = item.name.clone();
@@ -350,7 +350,7 @@ impl IrModelBuilder {
     }
 
     fn add_separated_item(&mut self, item: &model::SeparatedItem) {
-        if !self.is_enabled_in_target_versions(&item.enabled) {
+        if !self.is_enabled_in_target_versions(item.enabled.as_ref()) {
             return;
         }
         let parent_type = item.name.clone();
@@ -366,7 +366,7 @@ impl IrModelBuilder {
     }
 
     fn add_precedence_item(&mut self, item: &model::PrecedenceItem) {
-        if !self.is_enabled_in_target_versions(&item.enabled) {
+        if !self.is_enabled_in_target_versions(item.enabled.as_ref()) {
             return;
         }
         let parent_type = item.name.clone();
@@ -428,7 +428,7 @@ impl IrModelBuilder {
                 fields.extend(self.convert_fields(&operator.fields));
                 fields.push(operand(model::PredefinedLabel::RightOperand));
             }
-        };
+        }
         let has_nonterminals = fields.iter().any(|field| !field.is_terminal);
 
         self.sequences.insert(
@@ -447,9 +447,11 @@ impl IrModelBuilder {
         fields.iter().filter_map(|(label, field)| {
             let (reference, is_optional, is_enabled) = match field {
                 model::Field::Required { reference } => (reference, false, true),
-                model::Field::Optional { reference, enabled } => {
-                    (reference, true, self.is_enabled_in_target_versions(enabled))
-                }
+                model::Field::Optional { reference, enabled } => (
+                    reference,
+                    true,
+                    self.is_enabled_in_target_versions(enabled.as_ref()),
+                ),
             };
 
             if is_enabled {

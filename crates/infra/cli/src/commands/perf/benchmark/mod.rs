@@ -66,7 +66,7 @@ impl BenchmarkController {
                     {other:?}"
                 );
             }
-        };
+        }
     }
 
     fn run_iai_bench(&self, package_name: &str, bench_name: &str) {
