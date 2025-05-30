@@ -1,0 +1,44 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Lock {}
+   │          ──┬─  
+   │            ╰─── name: 1
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 2
+ 4 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 3
+ 5 │         Lock l = (new Lock).value(1)();
+   │         ──┬─ ┬        ──┬─  ──┬──  
+   │           ╰──────────────────────── ref: 1
+   │              │          │     │    
+   │              ╰───────────────────── name: 4
+   │                         │     │    
+   │                         ╰────────── ref: 1
+   │                               │    
+   │                               ╰──── unresolved
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ │     contract Lock {}
+   │ │     ────────┬────────  
+   │ │             ╰────────── definiens: 1
+ 2 │ ╭───▶ 
+   ┆ ┆ ┆   
+ 4 │ │ ╭─▶     function test() public {
+ 5 │ │ │           Lock l = (new Lock).value(1)();
+   │ │ │   ────────────────────┬───────────────────  
+   │ │ │                       ╰───────────────────── definiens: 4
+ 6 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 3
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 2
+───╯

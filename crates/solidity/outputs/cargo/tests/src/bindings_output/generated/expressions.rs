@@ -67,6 +67,11 @@ fn new_output() -> Result<()> {
 }
 
 #[test]
+fn new_with_legacy_call_options() -> Result<()> {
+    run(T, "new_with_legacy_call_options")
+}
+
+#[test]
 fn revert_named_args() -> Result<()> {
     run(T, "revert_named_args")
 }

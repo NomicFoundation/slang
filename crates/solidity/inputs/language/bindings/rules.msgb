@@ -2550,6 +2550,16 @@ inherit .star_extension
 @new_expr [Expression [NewExpression @type [TypeName]]] {
   edge @type.type_ref -> @new_expr.lexical_scope
   edge @new_expr.output -> @type.output
+  if (version-matches "< 0.7.0") {
+    ;; Expose a function interface to be able to use legacy call options on new expressions
+    node function
+    attr (function) push_symbol = "%ExternalFunction"
+    node typeof
+    attr (typeof) push_symbol = "@typeof"
+    edge @new_expr.output -> typeof
+    edge typeof -> function
+    edge function -> @new_expr.lexical_scope
+  }
 }
 
 
