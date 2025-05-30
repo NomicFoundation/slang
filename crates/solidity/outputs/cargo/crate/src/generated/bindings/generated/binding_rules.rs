@@ -1118,6 +1118,11 @@ inherit .star_extension
   attr (getter_call) pop_symbol = "@as_getter"
   edge typeof_input -> getter_call
   edge getter_call -> typeof_output
+  ; We also want to recurse if the value type is a nested mapping/array
+  node nested_getter_call
+  attr (nested_getter_call) push_symbol = "@as_getter"
+  edge getter_call -> nested_getter_call
+  edge nested_getter_call -> typeof_output
 
   ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
   ; This is the reverse of the pushing path above (to the `.output` node)
@@ -1209,6 +1214,11 @@ inherit .star_extension
   attr (getter_call) pop_symbol = "@as_getter"
   edge typeof_input -> getter_call
   edge getter_call -> typeof_output
+  ; We also want to recurse if the value type is a nested mapping/array
+  node nested_getter_call
+  attr (nested_getter_call) push_symbol = "@as_getter"
+  edge getter_call -> nested_getter_call
+  edge nested_getter_call -> typeof_output
 
   ; Define the special `.push()` built-in that returns the element type (for Solidity >= 0.6.0)
   if (version-matches ">= 0.6.0") {
