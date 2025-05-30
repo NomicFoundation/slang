@@ -743,10 +743,12 @@ inherit .star_extension
 }
 
 [InterfaceDefinition [InterfaceMembers [ContractMember @using [UsingDirective]]]] {
-  ; using directives are not allowed in interfaces, but the grammar allows them
-  ; so we need to create an artificial node here to connect to created edges from
-  ; the instance nodes
-  let @using.lexical_scope = (node)
+  if (version-matches ">= 0.7.1") {
+    ; using directives are not allowed in interfaces, but the grammar allows them
+    ; so we need to create an artificial node here to connect to created edges from
+    ; the instance nodes
+    let @using.lexical_scope = (node)
+  }
 }
 
 

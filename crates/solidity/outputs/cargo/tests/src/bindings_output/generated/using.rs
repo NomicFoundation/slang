@@ -67,6 +67,11 @@ fn in_contract() -> Result<()> {
 }
 
 #[test]
+fn in_interface() -> Result<()> {
+    run(T, "in_interface")
+}
+
+#[test]
 fn in_library() -> Result<()> {
     run(T, "in_library")
 }
