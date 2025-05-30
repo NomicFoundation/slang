@@ -7,6 +7,11 @@ use crate::bindings_output::runner::run;
 const T: &str = "arrays";
 
 #[test]
+fn fixed_arrays() -> Result<()> {
+    run(T, "fixed_arrays")
+}
+
+#[test]
 fn indexing() -> Result<()> {
     run(T, "indexing")
 }

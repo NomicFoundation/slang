@@ -744,9 +744,9 @@ inherit .star_extension
 
 [InterfaceDefinition [InterfaceMembers [ContractMember @using [UsingDirective]]]] {
   if (version-matches ">= 0.7.1") {
-    ; using directives are not allowed in interfaces, but the grammar allows them
-    ; so we need to create an artificial node here to connect to created edges from
-    ; the instance nodes
+    ; using directives are not allowed in interfaces after Solidity 0.7.1, but
+    ; the grammar allows them so we need to create an artificial node here to
+    ; connect to created edges from the instance nodes
     let @using.lexical_scope = (node)
   }
 }
@@ -1172,11 +1172,15 @@ inherit .star_extension
 @array [ArrayTypeName @type_name [TypeName]] {
   ; Define the pushing path of the array type
   ;   ValueType <- top of the symbol stack
+  ;   @typeof
   ;   %array / %arrayFixed <- bottom of the symbol stack
   node array
   attr (array) push_symbol = @array.type_symbol
+  node item_typeof
+  attr (item_typeof) push_symbol = "@typeof"
   edge @array.output -> array
-  edge array -> @type_name.output
+  edge array -> item_typeof
+  edge item_typeof -> @type_name.output
 
   ; Resolve the value type itself
   edge @type_name.type_ref -> @array.lexical_scope
@@ -1223,11 +1227,14 @@ inherit .star_extension
 
   ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
   ; This is essentially the reverse of the second path above
+  node pop_item_typeof
+  attr (pop_item_typeof) pop_symbol = "@typeof"
   node pop_array
   attr (pop_array) pop_symbol = @array.type_symbol
 
   let @array.pop_begin = @type_name.pop_begin
-  edge @type_name.pop_end -> pop_array
+  edge @type_name.pop_end -> pop_item_typeof
+  edge pop_item_typeof -> pop_array
   let @array.pop_end = pop_array
 }
 
@@ -2746,6 +2753,35 @@ inherit .star_extension
       edge address -> @expr.lexical_scope
     }
   }
+}
+
+
+;;; Literal array expressions
+@expr [Expression [ArrayExpression [ArrayValues . @item [Expression]]]] {
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node fixed_array
+  attr (fixed_array) push_symbol = "%FixedArray"
+
+  edge @expr.output -> typeof
+  edge typeof -> fixed_array
+  edge fixed_array -> @expr.lexical_scope
+
+  ; add the type of the first element to the %FixedArray type
+  edge fixed_array -> @item.output
+}
+
+
+;;; String expressions
+@expr [Expression [StringExpression]] {
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node string
+  attr (string) push_symbol = "string"
+
+  edge @expr.output -> typeof
+  edge typeof -> string
+  edge string -> @expr.lexical_scope
 }
 
 
