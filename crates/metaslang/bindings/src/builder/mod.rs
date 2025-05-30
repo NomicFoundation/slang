@@ -90,6 +90,7 @@ impl FileDescriptor {
         }
     }
 
+    #[cfg(feature = "__private_testing_utils")]
     pub fn is_built_ins(&self) -> bool {
         matches!(self, Self::BuiltIns(_))
     }
@@ -98,6 +99,7 @@ impl FileDescriptor {
         matches!(self, Self::User(_))
     }
 
+    #[cfg(feature = "__private_testing_utils")]
     pub fn is_user_path(&self, path: &str) -> bool {
         matches!(self, Self::User(user_path) if user_path == path)
     }

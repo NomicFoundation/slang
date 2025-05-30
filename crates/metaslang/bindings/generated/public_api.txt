@@ -61,10 +61,11 @@ pub fn metaslang_bindings::FileGraphBuilder<'a, KT>::root_node(&self) -> metasla
 pub struct metaslang_bindings::Reference<KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Reference<KT>
 pub fn metaslang_bindings::Reference<KT>::definitions(&self) -> alloc::vec::Vec<metaslang_bindings::Definition<KT>>
-pub fn metaslang_bindings::Reference<KT>::get_cursor(&self) -> &metaslang_cst::cursor::Cursor<KT>
-pub fn metaslang_bindings::Reference<KT>::get_file(&self) -> FileDescriptor
 pub fn metaslang_bindings::Reference<KT>::id(&self) -> metaslang_cst::nodes::NodeId
 pub fn metaslang_bindings::Reference<KT>::location(&self) -> metaslang_bindings::BindingLocation<KT>
+impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Reference<KT>
+pub fn metaslang_bindings::Reference<KT>::get_cursor(&self) -> &metaslang_cst::cursor::Cursor<KT>
+pub fn metaslang_bindings::Reference<KT>::get_file(&self) -> FileDescriptor
 impl<KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Reference<KT>
 pub fn metaslang_bindings::Reference<KT>::clone(&self) -> metaslang_bindings::Reference<KT>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> core::cmp::PartialEq for metaslang_bindings::Reference<KT>
