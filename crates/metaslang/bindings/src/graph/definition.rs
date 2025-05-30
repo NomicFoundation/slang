@@ -17,50 +17,66 @@ pub struct Definition<KT: KindTypes + 'static> {
 
 impl<KT: KindTypes + 'static> Definition<KT> {
     pub fn id(&self) -> NodeId {
-        self.get_definiens_cursor().node().id()
+        self.__internal_get_definiens_cursor().node().id()
     }
 
     pub fn name_location(&self) -> BindingLocation<KT> {
-        match self.get_file() {
+        match self.__internal_get_file() {
             FileDescriptor::BuiltIns(_) => BindingLocation::built_in(),
             FileDescriptor::User(file_id) => {
-                BindingLocation::user_file(file_id, self.get_cursor().to_owned())
+                BindingLocation::user_file(file_id, self.__internal_get_cursor().to_owned())
             }
         }
     }
 
     pub fn definiens_location(&self) -> BindingLocation<KT> {
-        match self.get_file() {
+        match self.__internal_get_file() {
             FileDescriptor::BuiltIns(_) => BindingLocation::built_in(),
-            FileDescriptor::User(file_id) => {
-                BindingLocation::user_file(file_id, self.get_definiens_cursor().to_owned())
-            }
+            FileDescriptor::User(file_id) => BindingLocation::user_file(
+                file_id,
+                self.__internal_get_definiens_cursor().to_owned(),
+            ),
         }
     }
 
-    pub fn get_cursor(&self) -> &Cursor<KT> {
+    pub fn references(&self) -> Vec<Reference<KT>> {
+        self.owner.resolve_definition(self.handle)
+    }
+
+    fn __internal_get_cursor(&self) -> &Cursor<KT> {
         self.owner
             .graph
             .get_cursor(self.handle)
             .expect("Definition handle is valid")
     }
 
-    pub fn get_definiens_cursor(&self) -> &Cursor<KT> {
+    fn __internal_get_definiens_cursor(&self) -> &Cursor<KT> {
         self.owner
             .graph
             .get_definiens_cursor(self.handle)
             .expect("Definition handle is valid")
     }
 
-    pub fn get_file(&self) -> FileDescriptor {
+    fn __internal_get_file(&self) -> FileDescriptor {
         self.owner
             .graph
             .get_file_descriptor(self.handle)
             .expect("Definition to have a valid file descriptor")
     }
+}
 
-    pub fn references(&self) -> Vec<Reference<KT>> {
-        self.owner.resolve_definition(self.handle)
+#[cfg(feature = "__private_testing_utils")]
+impl<KT: KindTypes + 'static> Definition<KT> {
+    pub fn get_cursor(&self) -> &Cursor<KT> {
+        self.__internal_get_cursor()
+    }
+
+    pub fn get_definiens_cursor(&self) -> &Cursor<KT> {
+        self.__internal_get_definiens_cursor()
+    }
+
+    pub fn get_file(&self) -> FileDescriptor {
+        self.__internal_get_file()
     }
 }
 
@@ -70,8 +86,8 @@ impl<KT: KindTypes + 'static> Display for Definition<KT> {
             f,
             "definition {}",
             DisplayCursor {
-                cursor: self.get_cursor(),
-                file: self.get_file()
+                cursor: self.__internal_get_cursor(),
+                file: self.__internal_get_file()
             }
         )
     }
