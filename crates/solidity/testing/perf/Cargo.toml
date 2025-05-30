@@ -9,9 +9,7 @@ publish = false
 infra_utils = { workspace = true }
 semver = { workspace = true }
 metaslang_bindings = { workspace = true }
-slang_solidity = { workspace = true, features = [
-  "__experimental_bindings_api",
-] }
+slang_solidity = { workspace = true }
 
 [dev-dependencies]
 iai-callgrind = { workspace = true }
