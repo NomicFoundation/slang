@@ -700,6 +700,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
             type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
+            type_scope.define_function(builder, "transfer", None);
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
@@ -871,6 +872,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
             type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
+            type_scope.define_function(builder, "transfer", None);
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
@@ -1044,6 +1046,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
             type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
+            type_scope.define_function(builder, "transfer", None);
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
@@ -1222,6 +1225,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
             type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
+            type_scope.define_function(builder, "transfer", None);
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
@@ -1404,6 +1408,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
             type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
+            type_scope.define_function(builder, "transfer", None);
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
@@ -1588,6 +1593,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
             type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
+            type_scope.define_function(builder, "transfer", None);
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
@@ -1774,6 +1780,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
             type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
+            type_scope.define_function(builder, "transfer", None);
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
@@ -1950,7 +1957,6 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "codehash", "bytes32");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
-            type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
@@ -2131,7 +2137,6 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "codehash", "bytes32");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
-            type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
@@ -2313,7 +2318,6 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "codehash", "bytes32");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
-            type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
@@ -2497,7 +2501,6 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "codehash", "bytes32");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
-            type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
@@ -2683,7 +2686,6 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "codehash", "bytes32");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
-            type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
@@ -2873,7 +2875,6 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "codehash", "bytes32");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
-            type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
@@ -3063,7 +3064,6 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "codehash", "bytes32");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
-            type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
@@ -3255,7 +3255,6 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "codehash", "bytes32");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
-            type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");
@@ -3454,7 +3453,6 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "codehash", "bytes32");
             type_scope.define_function(builder, "call", Some("bool, bytes"));
             type_scope.define_function(builder, "delegatecall", Some("bool, bytes"));
-            type_scope.define_function(builder, "send", Some("bool"));
             type_scope.define_function(builder, "staticcall", Some("bool, bytes"));
             let mut type_scope = scope.define_type(builder, "address payable");
             type_scope.define_field(builder, "balance", "uint256");

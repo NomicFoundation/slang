@@ -8773,14 +8773,19 @@
                   "return_type": "bool, bytes memory",
                   "enabled": { "From": { "from": "0.5.0" } }
                 },
-                { "name": "send", "parameters": ["uint256 amount"], "return_type": "bool" },
+                {
+                  "name": "send",
+                  "parameters": ["uint256 amount"],
+                  "return_type": "bool",
+                  "enabled": { "Till": { "till": "0.8.0" } }
+                },
                 {
                   "name": "staticcall",
                   "parameters": ["bytes memory"],
                   "return_type": "bool, bytes memory",
                   "enabled": { "From": { "from": "0.5.0" } }
                 },
-                { "name": "transfer", "parameters": ["uint256 amount"], "enabled": { "Till": { "till": "0.5.0" } } }
+                { "name": "transfer", "parameters": ["uint256 amount"], "enabled": { "Till": { "till": "0.8.0" } } }
               ]
             }
           }
