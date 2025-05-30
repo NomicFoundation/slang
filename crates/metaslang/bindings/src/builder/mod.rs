@@ -216,6 +216,7 @@ impl<KT: KindTypes + 'static> ExtendedStackGraph<KT> {
         self.stack_graph.get_or_create_file(&file_kind.as_string())
     }
 
+    #[cfg(feature = "__private_testing_utils")]
     pub(crate) fn iter_definitions(&self) -> impl Iterator<Item = GraphHandle> + '_ {
         self.stack_graph
             .iter_nodes()
