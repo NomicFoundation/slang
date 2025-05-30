@@ -33,6 +33,10 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
         })
     }
 
+    /// Tries to resolve the identifier terminal pointed at by the provided cursor to a definition.
+    /// If successful, returns the definition. Otherwise, returns `undefined`.
+    ///
+    /// For more information on identifier terminals, see [`TerminalKindExtensions::is_identifier`](`metaslang_cst::kinds::TerminalKindExtensions::is_identifier`).
     pub fn definition_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Definition<KT>> {
         self.graph
             .definition_by_node_id(cursor.node().id())
@@ -42,6 +46,10 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
             })
     }
 
+    /// Tries to resolve the identifier terminal pointed at by the provided cursor to a reference.
+    /// If successful, returns the reference. Otherwise, returns `undefined`.
+    ///
+    /// For more information on identifier terminals, see [`TerminalKindExtensions::is_identifier`](`metaslang_cst::kinds::TerminalKindExtensions::is_identifier`).
     pub fn reference_at(self: &Rc<Self>, cursor: &Cursor<KT>) -> Option<Reference<KT>> {
         self.graph
             .reference_by_node_id(cursor.node().id())

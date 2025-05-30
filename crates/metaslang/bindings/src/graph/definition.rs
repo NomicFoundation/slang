@@ -16,10 +16,15 @@ pub struct Definition<KT: KindTypes + 'static> {
 }
 
 impl<KT: KindTypes + 'static> Definition<KT> {
+    /// Returns a unique numerical identifier of the definition.
+    /// It is only valid for the lifetime of the binding graph.
+    /// It can change between multiple graphs, even for the same source code input.
     pub fn id(&self) -> NodeId {
         self.__internal_get_definiens_cursor().node().id()
     }
 
+    /// Returns the location of the definition's name.
+    /// For `contract X {}`, that is the location of the `X` `Identifier` node.
     pub fn name_location(&self) -> BindingLocation<KT> {
         match self.__internal_get_file() {
             FileDescriptor::BuiltIns(_) => BindingLocation::built_in(),
@@ -29,6 +34,8 @@ impl<KT: KindTypes + 'static> Definition<KT> {
         }
     }
 
+    /// Returns the location of the definition's definiens.
+    /// For `contract X {}`, that is the location of the parent `ContractDefinition` node.
     pub fn definiens_location(&self) -> BindingLocation<KT> {
         match self.__internal_get_file() {
             FileDescriptor::BuiltIns(_) => BindingLocation::built_in(),
@@ -39,6 +46,7 @@ impl<KT: KindTypes + 'static> Definition<KT> {
         }
     }
 
+    /// Returns a list of all references that bind to this definition.
     pub fn references(&self) -> Vec<Reference<KT>> {
         self.owner.resolve_definition(self.handle)
     }
