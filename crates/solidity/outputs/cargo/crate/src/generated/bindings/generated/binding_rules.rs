@@ -2427,12 +2427,14 @@ inherit .star_extension
   attr (wrap_call) pop_symbol = "()"
   node wrap_typeof
   attr (wrap_typeof) push_symbol = "@typeof"
+  node type_ref
+  attr (type_ref) push_symbol = (source-text @name)
 
   edge member_guard -> wrap
   edge wrap -> wrap_call
   edge wrap_call -> wrap_typeof
-  edge wrap_typeof -> @value_type.ref
-  edge @value_type.ref -> @user_type.lexical_scope
+  edge wrap_typeof -> type_ref
+  edge type_ref -> @user_type.lexical_scope
 
   node unwrap
   attr (unwrap) pop_symbol = "unwrap"
@@ -2440,14 +2442,12 @@ inherit .star_extension
   attr (unwrap_call) pop_symbol = "()"
   node unwrap_typeof
   attr (unwrap_typeof) push_symbol = "@typeof"
-  node type_ref
-  attr (type_ref) push_symbol = (source-text @name)
 
   edge member_guard -> unwrap
   edge unwrap -> unwrap_call
   edge unwrap_call -> unwrap_typeof
-  edge unwrap_typeof -> type_ref
-  edge type_ref -> @user_type.lexical_scope
+  edge unwrap_typeof -> @value_type.ref
+  edge @value_type.ref -> @user_type.lexical_scope
 }
 
 

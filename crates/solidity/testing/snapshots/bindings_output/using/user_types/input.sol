@@ -1,8 +1,8 @@
 type ShortString is bytes32;
 
 contract Test {
-    using Lib for ShortString;
-    using Lib for bytes32;
+    using ShortStringLib for ShortString;
+    using BytesLib for bytes32;
 
     function test(bytes32 data) public {
         ShortString s;
@@ -12,7 +12,10 @@ contract Test {
     }
 }
 
-library Lib {
+library ShortStringLib {
     function nop(ShortString x) internal {}
+}
+
+library BytesLib {
     function pon(bytes32 x) internal {}
 }
