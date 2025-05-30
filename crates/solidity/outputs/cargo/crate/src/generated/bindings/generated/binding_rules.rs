@@ -135,6 +135,8 @@ inherit .star_extension
 ]]] {
   ; global using directives are exported by this source unit
   edge @source_unit.defs -> @using.def
+  ; and should be directly accesible from the file's lexical scope
+  edge @source_unit.lexical_scope -> @using.def
 }
 
 ;; Import connections to the source unit

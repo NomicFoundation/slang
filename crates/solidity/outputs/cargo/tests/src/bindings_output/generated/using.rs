@@ -62,6 +62,11 @@ fn global() -> Result<()> {
 }
 
 #[test]
+fn global_and_local() -> Result<()> {
+    run(T, "global_and_local")
+}
+
+#[test]
 fn global_multi_file() -> Result<()> {
     run(T, "global_multi_file")
 }
