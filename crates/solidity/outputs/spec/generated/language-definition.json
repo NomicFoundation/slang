@@ -8897,13 +8897,13 @@
                 {
                   "name": "gas",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 },
                 {
                   "name": "value",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 }
               ]
@@ -8922,13 +8922,13 @@
                 {
                   "name": "gas",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 },
                 {
                   "name": "value",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 }
               ]

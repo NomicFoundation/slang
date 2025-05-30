@@ -6422,13 +6422,13 @@ codegen_language_macros::compile!(Language(
                         BuiltInFunction(
                             name = "gas",
                             parameters = ["uint amount"],
-                            return_type = "function()",
+                            return_type = "%ExternalFunction",
                             enabled = Till("0.7.0")
                         ),
                         BuiltInFunction(
                             name = "value",
                             parameters = ["uint amount"],
-                            return_type = "function()",
+                            return_type = "%ExternalFunction",
                             enabled = Till("0.7.0")
                         )
                     ]
@@ -6443,13 +6443,13 @@ codegen_language_macros::compile!(Language(
                         BuiltInFunction(
                             name = "gas",
                             parameters = ["uint amount"],
-                            return_type = "function()",
+                            return_type = "%ExternalFunction",
                             enabled = Till("0.7.0")
                         ),
                         BuiltInFunction(
                             name = "value",
                             parameters = ["uint amount"],
-                            return_type = "function()",
+                            return_type = "%ExternalFunction",
                             enabled = Till("0.7.0")
                         )
                     ]
