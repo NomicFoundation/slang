@@ -31,6 +31,7 @@ mod unit_tests {
                 define_payload_test!(query, $name);
                 define_payload_test!(bindings_build, $name);
                 define_payload_test!(bindings_resolve, $name);
+                define_payload_test!(solang, $name);
             }
         };
     }

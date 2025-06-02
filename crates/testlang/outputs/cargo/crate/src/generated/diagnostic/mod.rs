@@ -6,6 +6,7 @@ use crate::cst::TextRange;
 ///
 /// Explicitly compatible with the [LSP protocol](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnosticSeverity).
 #[repr(u8)]
+#[derive(PartialEq)]
 pub enum Severity {
     Error = 1,
     Warning = 2,
