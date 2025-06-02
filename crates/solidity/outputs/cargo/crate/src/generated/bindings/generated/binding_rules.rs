@@ -2813,6 +2813,20 @@ inherit .star_extension
 }
 
 
+;;; Literal Decimal expressions
+;;; These are treated as uint256 by default, even though in practice they are
+;;; rationals and are implicitly cast to any integer type
+@expr [Expression [DecimalNumberExpression]] {
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node address
+  attr (address) push_symbol = "uint256"
+
+  edge @expr.output -> typeof
+  edge typeof -> address
+  edge address -> @expr.lexical_scope
+}
+
 ;;; Literal Address Expressions
 @expr [Expression [HexNumberExpression @hex_literal [HexLiteral]]] {
   scan (source-text @hex_literal) {
