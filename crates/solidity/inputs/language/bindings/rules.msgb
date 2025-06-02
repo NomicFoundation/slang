@@ -422,13 +422,20 @@ inherit .star_extension
 
   if (version-matches "< 0.5.0") {
     ; For Solidity < 0.5.0 `this` also acts like an `address`
-    node address_ref
-    attr (address_ref) push_symbol = "address"
     node address_typeof
     attr (address_typeof) push_symbol = "@typeof"
+    node address_ref
+    attr (address_ref) push_symbol = "address"
     edge this -> address_typeof
     edge address_typeof -> address_ref
     edge address_ref -> @contract.lexical_scope
+
+    ; Instances of the contract can also be used as addresses
+    node member_guard_pop
+    attr (member_guard_pop) pop_symbol = "@typeof"
+
+    edge @contract.def -> member_guard_pop
+    edge member_guard_pop -> address_typeof
   }
 
   ; This is the connection point to resolve attached functions by `using for *`
@@ -711,6 +718,21 @@ inherit .star_extension
   edge @interface.def -> type
   edge type -> type_interface_type
   edge type_interface_type -> @interface.parent_scope
+
+  if (version-matches "< 0.5.0") {
+    ; For Solidity < 0.5.0 instance can also be used as addresses
+    node member_guard_pop
+    attr (member_guard_pop) pop_symbol = "@typeof"
+    node address_typeof
+    attr (address_typeof) push_symbol = "@typeof"
+    node address_ref
+    attr (address_ref) push_symbol = "address"
+
+    edge @interface.def -> member_guard_pop
+    edge member_guard_pop -> address_typeof
+    edge address_typeof -> address_ref
+    edge address_ref -> @interface.lexical_scope
+  }
 }
 
 @interface [InterfaceDefinition @specifier [InheritanceSpecifier]] {
