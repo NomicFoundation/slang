@@ -7,7 +7,7 @@ use crate::parser::ParseError;
 
 /// The result of parsing source code using [`Parser`][`crate::parser::Parser`].
 ///
-/// ```rs
+/// ```
 /// // Initialize a parser and get some source code to parse...
 /// let output = parser.parse_file_contents(&source_code);
 /// 

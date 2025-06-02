@@ -32,7 +32,7 @@ use crate::utils::LanguageFacts;
 /// language version that's supported by Slang. See [`LanguageFacts`] to determine what language
 /// versions are available.
 ///
-/// ```rs
+/// ```
 /// // Initialize parser
 /// let parser = Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
 /// // Get source code to parse

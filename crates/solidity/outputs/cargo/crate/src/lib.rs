@@ -7,7 +7,7 @@
 //!
 //! # Parsing Solidity Source Code
 //!
-//! ```rs
+//! ```
 //! use slang_solidity::parser::Parser;
 //! use slang_solidity::LanguageFacts;
 //! 
@@ -15,8 +15,20 @@
 //! let parser = Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
 //! let parse_output = parser.parse_file_contents(&source);
 //! ```
-//!
+//! # Using the Cursor: Listing Contract Names
 //! 
+//! [`Cursors`][`crate::cst::Cursor`] are the simplest way to navigate a CST. The below example shows how you might
+//! use cursors to list all of the contract names in a source file.
+//! ```
+//! // Step 1 (not shown): get a parse tree
+//! // Step 2: Get a cursor
+//! let mut cursor = tree.create_tree_cursor();
+//! 
+//! // Step 3: Use the cursor to navigate to all `ContractDefinition`'s and print out their names
+//! while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::ContractDefinition) {
+//!     println!("Contract: {}", cursor.node.unparse());
+//! }
+//! ```
 
 mod extensions;
 mod generated;
