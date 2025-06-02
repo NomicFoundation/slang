@@ -54,6 +54,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "blockhash", Some("bytes32"));
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", Some("uint256"));
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -277,6 +278,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "blockhash", Some("bytes32"));
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", Some("uint256"));
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -503,6 +505,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "blockhash", Some("bytes32"));
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", Some("uint256"));
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -738,6 +741,7 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "blockhash", Some("bytes32"));
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", Some("uint256"));
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -978,6 +982,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", Some("uint256"));
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -1214,6 +1220,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", Some("uint256"));
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -1453,6 +1461,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -1696,6 +1706,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -1943,6 +1955,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -2192,6 +2206,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -2443,6 +2459,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -2687,6 +2705,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -2931,6 +2951,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -3176,6 +3198,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -3424,6 +3448,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -3673,6 +3699,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -3926,6 +3954,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -4180,6 +4210,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -4436,6 +4468,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
@@ -4698,6 +4732,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            type_scope.define_function(builder, "push", None);
+            type_scope.define_function(builder, "pop", None);
             let mut type_scope = scope.define_type(builder, "bytes1");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes2");
