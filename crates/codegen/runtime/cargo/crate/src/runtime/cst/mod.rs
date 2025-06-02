@@ -63,8 +63,8 @@ pub type AncestorsIterator = metaslang_cst::cursor::AncestorsIterator<KindTypes>
 /// The declarative `Query` API is a convenient alternative to the [`Cursor`][`metaslang_cst::cursor::Cursor`]
 /// API for navigating the CST.
 ///
-/// The query engine performs pattern matching, and the execution semantics are closer to 
-/// unification than to regular expression matching. A query returns all possible matches, 
+/// The query engine performs pattern matching, and the execution semantics are closer to
+/// unification than to regular expression matching. A query returns all possible matches,
 /// not just the longest/shortest/first/last match.
 ///
 /// Please refer to [our documentation](https://nomicfoundation.github.io/slang/latest/user-guide/06-query-language/01-query-syntax/)

@@ -28,7 +28,7 @@ use crate::parser::scanner_macros::{
 use crate::parser::ParseOutput;
 use crate::utils::LanguageFacts;
 
-/// Parses Testlang source code. `Parser` must be initialized with a specific
+/// Parses `Testlang` source code. `Parser` must be initialized with a specific
 /// language version that's supported by Slang. See [`LanguageFacts`] to determine what language
 /// versions are available.
 ///
@@ -54,14 +54,14 @@ pub struct Parser {
 /// Errors that may occur when initializing a [`Parser`].
 #[derive(thiserror::Error, Debug)]
 pub enum ParserInitializationError {
-    /// Tried to initialize a [`Parser`] with a version that is not supported for Testlang.
+    /// Tried to initialize a [`Parser`] with a version that is not supported for `Testlang`.
     /// See [`LanguageFacts::ALL_VERSIONS`] for a complete list of supported versions.
     #[error("Unsupported language version '{0}'.")]
     UnsupportedLanguageVersion(Version),
 }
 
 impl Parser {
-    /// Create a new Testlang parser that supports the specified language version.
+    /// Create a new `Testlang` parser that supports the specified language version.
     pub fn create(
         language_version: Version,
     ) -> std::result::Result<Self, ParserInitializationError> {
@@ -80,16 +80,16 @@ impl Parser {
         }
     }
 
-    /// Returns the Testlang version that this parser supports.
+    /// Returns the `Testlang` version that this parser supports.
     pub fn language_version(&self) -> &Version {
         &self.language_version
     }
 
-    /// Parse the contents of an entire Testlang source file.
+    /// Parse the contents of an entire `Testlang` source file.
     pub fn parse_file_contents(&self, input: &str) -> ParseOutput {
         self.parse_nonterminal(NonterminalKind::SourceUnit, input)
     }
-    /// Parse the given Testlang source code as a specific [`NonterminalKind`].
+    /// Parse the given `Testlang` source code as a specific [`NonterminalKind`].
     pub fn parse_nonterminal(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
         match kind {
             NonterminalKind::AdditionExpression => {

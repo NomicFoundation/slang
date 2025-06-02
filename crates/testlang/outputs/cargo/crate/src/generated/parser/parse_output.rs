@@ -10,11 +10,11 @@ use crate::parser::ParseError;
 /// ```
 /// // Initialize a parser and get some source code to parse...
 /// let output = parser.parse_file_contents(&source_code);
-/// 
+///
 /// for err in output.errors() {
 ///     // Handle any parse errors
 /// }
-/// 
+///
 /// // Get a cursor at the root of the parse tree. You can use this to navigate the tree.
 /// let mut cursor = output.create_tree_cursor();
 /// ```

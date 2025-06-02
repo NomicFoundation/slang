@@ -35,7 +35,7 @@ pub trait TerminalKindExtensions: BaseKind {
         false
     }
 
-    /// Returns `true` if the terminal is a trivia token. i.e. whitespace, comments, etc... 
+    /// Returns `true` if the terminal is a trivia token. i.e. whitespace, comments, etc...
     fn is_trivia(self) -> bool {
         false
     }
