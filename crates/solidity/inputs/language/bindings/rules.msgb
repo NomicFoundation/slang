@@ -1331,6 +1331,11 @@ inherit .star_extension
 ;; @id_path.rightmost_identifier which corresponds to the identifier in the last
 ;; position in the path, from left to right. This is used in the using directive
 ;; rules to be able to pop the name of the attached function.
+;;
+;; They also provide a `.push_ns` node which points to the right-most 'period'
+;; separating the rightmost identifier from the "namespace" qualifying part of
+;; the path. This allows creating additional referencing paths with guards right
+;; before the unqualified identifier (eg. for modifiers).
 
 @id_path [IdentifierPath] {
   ; This node connects to all parts of the path, for popping. This allows to
@@ -1338,6 +1343,7 @@ inherit .star_extension
   ; target type is fully qualified but we want to resolve for the unqualified
   ; name.
   node @id_path.all_pop_begin
+  node @id_path.push_end
 }
 
 @id_path [IdentifierPath @name [Identifier]] {
@@ -1351,29 +1357,47 @@ inherit .star_extension
   edge @id_path.all_pop_begin -> @name.pop
 }
 
-@id_path [IdentifierPath @name [Identifier] .] {
+; Single identifier paths
+@id_path [IdentifierPath . @name [Identifier] .] {
+  let @id_path.rightmost_identifier = @name
+
+  let @id_path.push_begin = @name.ref
+  let @id_path.push_ns = (node)
+  edge @name.ref -> @id_path.push_ns
+  edge @id_path.push_ns -> @id_path.push_end
+
+  let @id_path.pop_begin = @name.pop
+  let @id_path.pop_end = @name.pop
+}
+
+; Multiple identifier paths
+@id_path [IdentifierPath [_] . @name [Identifier] .] {
   let @id_path.rightmost_identifier = @name
 
   let @id_path.push_begin = @name.ref
   let @id_path.pop_end = @name.pop
 }
 
-[IdentifierPath @left_name [Identifier] . [Period] . @right_name [Identifier]] {
-  node ref_member
-  attr (ref_member) push_symbol = "."
+[IdentifierPath @left_name [Identifier] . @period [Period] . @right_name [Identifier]] {
+  node @period.ref_member
+  attr (@period.ref_member) push_symbol = "."
 
-  edge @right_name.ref -> ref_member
-  edge ref_member -> @left_name.ref
+  edge @right_name.ref -> @period.ref_member
+  edge @period.ref_member -> @left_name.ref
 
-  node pop_member
-  attr (pop_member) pop_symbol = "."
+  node @period.pop_member
+  attr (@period.pop_member) pop_symbol = "."
 
-  edge @left_name.pop -> pop_member
-  edge pop_member -> @right_name.pop
+  edge @left_name.pop -> @period.pop_member
+  edge @period.pop_member -> @right_name.pop
 }
 
-@id_path [IdentifierPath . @name [Identifier]] {
-  let @id_path.push_end = @name.ref
+@id_path [IdentifierPath @last_period [Period] . [Identifier] . ] {
+  let @id_path.push_ns = @last_period.ref_member
+}
+
+@id_path [IdentifierPath . @name [Identifier] . [_]] {
+  edge @name.ref -> @id_path.push_end
   let @id_path.pop_begin = @name.pop
 }
 
@@ -1502,11 +1526,18 @@ inherit .star_extension
 @modifier [ModifierInvocation @name [IdentifierPath]] {
   node @modifier.lexical_scope
 
+  node guard_pop
+  attr (guard_pop) pop_symbol = (source-text @name.rightmost_identifier)
+  node guard_push
+  attr (guard_push) push_symbol = (source-text @name.rightmost_identifier)
   node modifier
   attr (modifier) push_symbol = "@modifier"
 
-  edge @name.push_end -> modifier
-  edge modifier -> @modifier.lexical_scope
+  edge @name.push_begin -> guard_pop
+  edge guard_pop -> guard_push
+  edge guard_push -> modifier
+  edge modifier -> @name.push_ns
+  edge @name.push_end -> @modifier.lexical_scope
 
   ; This allows resolving @name in the more general scope in constructors (since
   ; calling a parent constructor is parsed as a modifier invocation)
