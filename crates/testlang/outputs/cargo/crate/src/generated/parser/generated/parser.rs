@@ -28,6 +28,22 @@ use crate::parser::scanner_macros::{
 use crate::parser::ParseOutput;
 use crate::utils::LanguageFacts;
 
+/// Parses Testlang source code. `Parser` must be initialized with a specific
+/// language version that's supported by Slang. See [`LanguageFacts`] to determine what language
+/// versions are available.
+///
+/// ```rs
+/// // Initialize parser
+/// let parser = Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
+/// // Get source code to parse
+/// let source = std::fs::read_to_string(source_file).unwrap();
+///
+/// // Parse the entire file, then get a cursor to start navigating the parsed CST.
+/// // Any parse errors will be reflected by error nodes in the tree. Errors can also
+/// // be listed with `output.errors()`.
+/// let output = parser.parse_file_contents(&source);
+/// let mut cursor = output.create_tree_cursor();
+/// ```
 #[derive(Debug)]
 pub struct Parser {
     #[allow(dead_code)]
@@ -35,13 +51,17 @@ pub struct Parser {
     language_version: Version,
 }
 
+/// Errors that may occur when initializing a [`Parser`].
 #[derive(thiserror::Error, Debug)]
 pub enum ParserInitializationError {
+    /// Tried to initialize a [`Parser`] with a version that is not supported for Testlang.
+    /// See [`LanguageFacts::ALL_VERSIONS`] for a complete list of supported versions.
     #[error("Unsupported language version '{0}'.")]
     UnsupportedLanguageVersion(Version),
 }
 
 impl Parser {
+    /// Create a new Testlang parser that supports the specified language version.
     pub fn create(
         language_version: Version,
     ) -> std::result::Result<Self, ParserInitializationError> {
@@ -60,13 +80,16 @@ impl Parser {
         }
     }
 
+    /// Returns the Testlang version that this parser supports.
     pub fn language_version(&self) -> &Version {
         &self.language_version
     }
 
+    /// Parse the contents of an entire Testlang source file.
     pub fn parse_file_contents(&self, input: &str) -> ParseOutput {
         self.parse_nonterminal(NonterminalKind::SourceUnit, input)
     }
+    /// Parse the given Testlang source code as a specific [`NonterminalKind`].
     pub fn parse_nonterminal(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
         match kind {
             NonterminalKind::AdditionExpression => {

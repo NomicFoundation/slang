@@ -18,7 +18,7 @@ interface cst {
         /// This terminal is created when the parser encounters an unexpected part of the input,
         /// and it cannot recognize it as any valid syntax in this position in the grammar.
         unrecognized,
-        /// This terminal is created when the parser is expecting a certain terminal, but it cannot find it.
+        /// This terminal is created when the parser is expecting a certain terminal but does not find it.
         /// Adding the missing input in this position may allow the parser to produce a valid tree there.
         missing,
             /// Generated stub.

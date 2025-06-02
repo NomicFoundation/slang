@@ -21,7 +21,6 @@ regex = { workspace = true }
 semver = { workspace = true }
 slang_solidity = { workspace = true, features = [
   "__private_ariadne_errors",
-  "__private_backend_api",
   "__private_testing_utils",
 ] }
 solidity_language = { workspace = true }

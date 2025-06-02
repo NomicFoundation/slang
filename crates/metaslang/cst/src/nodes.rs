@@ -24,12 +24,16 @@ impl TryFrom<NodeId> for u32 {
     }
 }
 
+/// Represents a terminal node in the syntax tree.
+/// These are leaf nodes that represent actual tokens from the source code.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct TerminalNode<T: KindTypes> {
     pub kind: T::TerminalKind,
     pub text: String,
 }
 
+/// Represents a non-terminal node in the syntax tree.
+/// These nodes can have child nodes and represent language constructs.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct NonterminalNode<T: KindTypes> {
     pub kind: T::NonterminalKind,
@@ -41,6 +45,7 @@ pub struct NonterminalNode<T: KindTypes> {
     pub children: Vec<Edge<T>>,
 }
 
+/// The super type of all nodes in a tree.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[serde(untagged)]
 pub enum Node<T: KindTypes> {
@@ -48,6 +53,7 @@ pub enum Node<T: KindTypes> {
     Terminal(Rc<TerminalNode<T>>),
 }
 
+/// Represents a connection between nodes in the syntax tree.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct Edge<T: KindTypes> {
     pub label: T::EdgeLabel,

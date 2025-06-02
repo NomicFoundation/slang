@@ -28,16 +28,19 @@ where
     }
 }
 
+/// Useful extension methods for working with terminals and terminal kinds.
 pub trait TerminalKindExtensions: BaseKind {
+    /// Returns `true` if the terminal is an identifier token.
     fn is_identifier(self) -> bool {
         false
     }
 
+    /// Returns `true` if the terminal is a trivia token. i.e. whitespace, comments, etc... 
     fn is_trivia(self) -> bool {
         false
     }
 
-    /// Returns whether the terminal is valid, i.e. does not represent missing or invalid syntax.
+    /// Returns `true` if the terminal is a valid token in the language grammar.
     fn is_valid(self) -> bool {
         true
     }
@@ -55,7 +58,11 @@ pub trait KindTypes: std::fmt::Debug + Clone + PartialEq {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum NodeKind<T: KindTypes> {
+    /// Represents different kinds of nonterminal nodes in the syntax tree.
+    /// These are nodes that can have child nodes and represent higher-level language constructs.
     Nonterminal(T::NonterminalKind),
+    /// Represents different kinds of terminal nodes in the syntax tree.
+    /// These are leaf nodes that represent actual tokens in the source code.
     Terminal(T::TerminalKind),
 }
 

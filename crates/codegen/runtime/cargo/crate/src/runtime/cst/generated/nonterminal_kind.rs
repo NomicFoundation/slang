@@ -2,6 +2,9 @@
 
 #[allow(clippy::doc_markdown)]
 #[allow(clippy::doc_link_with_quotes)]
+
+/// Represents different kinds of nonterminal nodes in the syntax tree.
+/// These are nodes that can have child nodes and represent higher-level language constructs.
 #[repr(u8)]
 #[derive(
     Debug,
