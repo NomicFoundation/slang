@@ -82,6 +82,11 @@ fn type_expr() -> Result<()> {
 }
 
 #[test]
+fn type_expr_integers() -> Result<()> {
+    run(T, "type_expr_integers")
+}
+
+#[test]
 fn type_expr_minmax() -> Result<()> {
     run(T, "type_expr_minmax")
 }

@@ -2537,7 +2537,9 @@ inherit .star_extension
   edge @type.type_ref -> @type_expr.lexical_scope
 }
 
-@type_expr [Expression [TypeExpression [TypeName [ElementaryType ([IntKeyword] | [UintKeyword])]]]] {
+@type_expr [Expression [TypeExpression
+    @type [TypeName [ElementaryType ([IntKeyword] | [UintKeyword])]]
+]] {
   ; For integer types the type's type is fixed
   node typeof
   attr (typeof) push_symbol = "@typeof"
@@ -2547,6 +2549,25 @@ inherit .star_extension
   edge @type_expr.output -> typeof
   edge typeof -> type
   edge type -> @type_expr.lexical_scope
+
+  ; Resolve the type of min() and max() to the operand's type
+  if (version-matches ">= 0.6.8") {
+    node built_in_member
+    attr (built_in_member) pop_symbol = "."
+    node min_built_in
+    attr (min_built_in) pop_symbol = "min"
+    node max_built_in
+    attr (max_built_in) pop_symbol = "max"
+    node typeof_builtin
+    attr (typeof_builtin) push_symbol = "@typeof"
+
+    edge @type_expr.output -> built_in_member
+    edge built_in_member -> min_built_in
+    edge built_in_member -> max_built_in
+    edge min_built_in -> typeof_builtin
+    edge max_built_in -> typeof_builtin
+    edge typeof_builtin -> @type.output
+  }
 }
 
 @type_expr [Expression [TypeExpression [TypeName @id_path [IdentifierPath]]]] {
