@@ -2224,7 +2224,7 @@ inherit .star_extension
 
   ; Path to link min and max to the enum's scope (#1158)
   ; It resolves paths of the form `type(<enum>).min.<something>`
-  if (version-matches ">= 0.6.8") {
+  if (version-matches ">= 0.8.8") {
     node typeof
     attr (typeof) pop_symbol = "@typeof"
 

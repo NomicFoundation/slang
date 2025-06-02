@@ -43,14 +43,14 @@ References and definitions:
     │              ───┬──  ─┬─ ─┬  
     │                 ╰──────────── ref: 1
     │                       │   │  
-    │                       ╰────── unresolved
+    │                       ╰────── ref: built-in
     │                           │  
     │                           ╰── unresolved
  17 │         type(Answer).max.id();
     │              ───┬──  ─┬─ ─┬  
     │                 ╰──────────── ref: 1
     │                       │   │  
-    │                       ╰────── unresolved
+    │                       ╰────── ref: built-in
     │                           │  
     │                           ╰── unresolved
 ────╯

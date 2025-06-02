@@ -43,16 +43,16 @@ References and definitions:
     │              ───┬──  ─┬─ ─┬  
     │                 ╰──────────── ref: 1
     │                       │   │  
-    │                       ╰────── unresolved
+    │                       ╰────── ref: built-in
     │                           │  
-    │                           ╰── unresolved
+    │                           ╰── ref: 4
  17 │         type(Answer).max.id();
     │              ───┬──  ─┬─ ─┬  
     │                 ╰──────────── ref: 1
     │                       │   │  
-    │                       ╰────── unresolved
+    │                       ╰────── ref: built-in
     │                           │  
-    │                           ╰── unresolved
+    │                           ╰── ref: 4
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]
