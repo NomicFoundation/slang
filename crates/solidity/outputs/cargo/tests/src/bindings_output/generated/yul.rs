@@ -62,6 +62,11 @@ fn imported_constant() -> Result<()> {
 }
 
 #[test]
+fn imported_deconstructed_constants() -> Result<()> {
+    run(T, "imported_deconstructed_constants")
+}
+
+#[test]
 fn inherited_constant() -> Result<()> {
     run(T, "inherited_constant")
 }

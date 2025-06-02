@@ -225,6 +225,25 @@ inherit .star_extension
 }
 
 ;;; `import {<SYMBOL> [as <IDENT>] ...} from <PATH>`
+@import [ImportDeconstruction path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+]] {
+  node @import.yul_defs
+  node @import.yul_path
+
+  ;; Each imported symbol will have an alternative path to make symbols
+  ;; accessible in assembly blocks
+  node pop_yul
+  attr (pop_yul) pop_symbol = "@yul"
+  node push_yul
+  attr (push_yul) push_symbol = "@yul"
+
+  edge @import.defs -> pop_yul
+  edge pop_yul -> @import.yul_defs
+  edge @import.yul_path -> push_yul
+  edge push_yul -> @path.import
+}
+
 @import [ImportDeconstruction
   symbols: [ImportDeconstructionSymbols @symbol [ImportDeconstructionSymbol]]
   path: [StringLiteral
@@ -238,35 +257,36 @@ inherit .star_extension
 
   node @symbol.import
   edge @symbol.import -> @path.import
+
+  node @symbol.yul_def
+  edge @import.yul_defs -> @symbol.yul_def
+  node @symbol.yul_import
+  edge @symbol.yul_import -> @import.yul_path
 }
 
 @symbol [ImportDeconstructionSymbol @name name: [Identifier] .] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @symbol
-  edge @symbol.def -> def
+  attr (@symbol.def) node_definition = @name
+  attr (@symbol.def) definiens_node = @symbol
+  attr (@symbol.import) node_reference = @name
+  edge @symbol.def -> @symbol.import
 
-  node import
-  attr (import) node_reference = @name
-  edge def -> import
-
-  edge import -> @symbol.import
+  attr (@symbol.yul_def) pop_symbol = (source-text @name)
+  attr (@symbol.yul_import) push_symbol = (source-text @name)
+  edge @symbol.yul_def -> @symbol.yul_import
 }
 
 @symbol [ImportDeconstructionSymbol
     @name name: [Identifier]
     alias: [ImportAlias @alias [Identifier]]
 ] {
-  node def
-  attr (def) node_definition = @alias
-  attr (def) definiens_node = @symbol
-  edge @symbol.def -> def
+  attr (@symbol.def) node_definition = @alias
+  attr (@symbol.def) definiens_node = @symbol
+  attr (@symbol.import) node_reference = @name
+  edge @symbol.def -> @symbol.import
 
-  node import
-  attr (import) node_reference = @name
-  edge def -> import
-
-  edge import -> @symbol.import
+  attr (@symbol.yul_def) pop_symbol = (source-text @alias)
+  attr (@symbol.yul_import) push_symbol = (source-text @name)
+  edge @symbol.yul_def -> @symbol.yul_import
 }
 
 
