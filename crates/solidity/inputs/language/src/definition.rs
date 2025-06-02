@@ -6387,7 +6387,20 @@ codegen_language_macros::compile!(Language(
                 BuiltInType(
                     name = "bytes",
                     fields = [BuiltInField(definition = "uint length")],
-                    functions = []
+                    functions = [
+                        BuiltInFunction(
+                            name = "push",
+                            parameters = ["bytes1 element"],
+                            return_type = "uint",
+                            enabled = Till("0.6.0")
+                        ),
+                        BuiltInFunction(
+                            name = "push",
+                            parameters = ["bytes1 element"],
+                            enabled = From("0.6.0")
+                        ),
+                        BuiltInFunction(name = "pop", parameters = [], enabled = From("0.5.0"))
+                    ]
                 ),
                 BuiltInType(
                     name = "%BytesType",
