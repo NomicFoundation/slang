@@ -737,6 +737,22 @@ inherit .star_extension
     edge address_typeof -> address_ref
     edge address_ref -> @interface.lexical_scope
   }
+
+  ;; Modifiers are allowed in Solidity < 0.8.8
+  if (version-matches "< 0.8.8") {
+    ;; Modifiers are available as a contract type members through a special '@modifier' guard
+    node modifier
+    node @interface.modifiers
+    attr (modifier) pop_symbol = "@modifier"
+    edge @interface.ns -> modifier
+    edge modifier -> @interface.modifiers
+
+    ; We need "this" keyword is available in our lexical scope for modifier bodies to use
+    node this
+    attr (this) pop_symbol = "this"
+    edge @interface.lexical_scope -> this
+    edge this -> member
+  }
 }
 
 @interface [InterfaceDefinition @specifier [InheritanceSpecifier]] {
@@ -756,6 +772,22 @@ inherit .star_extension
 ]] {
   edge @member.lexical_scope -> @interface.lexical_scope
   edge @interface.ns -> @member.def
+}
+
+@interface [InterfaceDefinition [InterfaceMembers
+    [ContractMember @modifier [ModifierDefinition]]
+]] {
+  ;; Modifiers are allowed in Solidity < 0.8.8
+  if (version-matches "< 0.8.8") {
+    edge @modifier.lexical_scope -> @interface.lexical_scope
+
+    ; Modifiers live in their own special scope
+    edge @interface.modifiers -> @modifier.def
+
+    ;; This may prioritize this definition (when there are multiple options)
+    ;; according to the C3 linerisation ordering
+    attr (@modifier.def) parents = [@interface.def]
+  }
 }
 
 ;; Allow references (eg. variables of the interface type) to the interface to
