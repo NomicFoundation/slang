@@ -848,6 +848,22 @@ inherit .star_extension
   ; This is the connection point to resolve attached functions by `using for *`
   node @library.star_extension
   attr (@library.star_extension) push_symbol = "@*"
+
+  if (version-matches "< 0.5.0") {
+    ; For Solidity < 0.5.0 there is a `this` in the lexical scope inside
+    ; libraries that acts as an `address`
+    node this
+    attr (this) pop_symbol = "this"
+    node address_typeof
+    attr (address_typeof) push_symbol = "@typeof"
+    node address_ref
+    attr (address_ref) push_symbol = "address"
+
+    edge @library.lexical_scope -> this
+    edge this -> address_typeof
+    edge address_typeof -> address_ref
+    edge address_ref -> @library.lexical_scope
+  }
 }
 
 @library [LibraryDefinition [LibraryMembers
