@@ -10,3 +10,4 @@ Fixes to the binding rules in Solidity:
 - `msg.sender` is of `address` type (not `payable`) until 0.5.0
 - Top-level constants need to be visible from assembly blocks in files that import them
 - Resolve named arguments when calling an extension function
+- Imported symbols using deconstruction syntax can be bound in assembly blocks
