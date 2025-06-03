@@ -11,6 +11,7 @@ description = "Cargo runtime copied over by codegen"
 [features]
 default = []
 __private_ariadne_errors = ["dep:ariadne"]
+__private_wasm_apis = []
 __private_testing_utils = []
 
 [dependencies]

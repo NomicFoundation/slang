@@ -9,6 +9,7 @@ use metaslang_cst::text_index::TextIndex;
 use crate::cst::{Cursor, NonterminalNode};
 use crate::parser::{ParseError, ParseOutput};
 
+/// A single source file in the compilation unit.
 #[derive(Clone)]
 pub struct File {
     id: String,
@@ -31,18 +32,22 @@ impl File {
         }
     }
 
+    /// Returns the unique identifier of this file.
     pub fn id(&self) -> &str {
         &self.id
     }
 
+    /// Returns the syntax tree of this file.
     pub fn tree(&self) -> &Rc<NonterminalNode> {
         &self.tree
     }
 
+    /// Returns a list of all errors encountered during parsing this file.
     pub fn errors(&self) -> &Vec<ParseError> {
         &self.errors
     }
 
+    /// Creates a cursor for traversing the syntax tree of this file.
     pub fn create_tree_cursor(&self) -> Cursor {
         Rc::clone(&self.tree).create_cursor(TextIndex::ZERO)
     }
