@@ -4,3 +4,10 @@ contract Test {
         this.balance;
     }
 }
+
+library Utils {
+    function test() internal {
+        // This was valid before 0.5.0
+        this.balance;
+    }
+}
