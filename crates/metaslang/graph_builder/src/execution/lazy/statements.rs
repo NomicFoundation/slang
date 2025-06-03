@@ -184,7 +184,7 @@ impl LazyAddGraphNodeAttribute {
                     )
                         .into()
                 });
-            };
+            }
         }
         Ok(())
     }

@@ -272,7 +272,7 @@ impl<T: KindTypes> NonterminalNode<T> {
                 match &child.node {
                     Node::Nonterminal(node) => aux(node, buffer),
                     Node::Terminal(node) => buffer.push_str(&node.text),
-                };
+                }
             }
         }
 

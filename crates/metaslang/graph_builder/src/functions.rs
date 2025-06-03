@@ -226,7 +226,7 @@ pub mod stdlib {
                     Value::GraphNode(right) => return Ok((left == right).into()),
                     _ => {}
                 },
-            };
+            }
             Err(ExecutionError::FunctionFailed(
                 "eq".into(),
                 format!(

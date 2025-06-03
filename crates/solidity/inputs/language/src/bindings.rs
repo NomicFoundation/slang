@@ -61,7 +61,7 @@ fn split_type_and_name(input: &str) -> (&str, &str) {
     (&input[0..last_space_index], &input[last_space_index + 1..])
 }
 
-fn optional_type(type_name: &Option<String>) -> String {
+fn optional_type(type_name: Option<&String>) -> String {
     type_name
         .as_ref()
         .map_or(String::from("None"), |return_type| {
@@ -95,7 +95,7 @@ fn render_contexts_for_version(
                         buffer,
                         "      scope.define_function(builder, \"{name}\", {return_type});",
                         name = item.name,
-                        return_type = optional_type(&item.return_type),
+                        return_type = optional_type(item.return_type.as_ref()),
                     )?;
                 }
                 BuiltIn::BuiltInType { item } => {
@@ -124,7 +124,7 @@ fn render_contexts_for_version(
                                 buffer,
                                 "      type_scope.define_function(builder, \"{name}\", {return_type});",
                                 name = function.name,
-                                return_type = optional_type(&function.return_type),
+                                return_type = optional_type(function.return_type.as_ref()),
                             )?;
                         }
                     }

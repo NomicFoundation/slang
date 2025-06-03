@@ -36,7 +36,7 @@ fn write_source(w: &mut String, source: &str) -> Result<()> {
     let line_data = source
         .lines()
         .enumerate()
-        .map(|(index, line)| (index, line, line.bytes().len(), line.chars().count()))
+        .map(|(index, line)| (index, line, line.len(), line.chars().count()))
         .collect::<Vec<_>>();
 
     let source_width = {

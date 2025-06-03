@@ -1,6 +1,6 @@
 {# This needs to stay in sync with the wit-bindgen output #}
 /// The lexical context of the scanner.
-{% if model.kinds.lexical_contexts|length <= 256 %} #[repr(u8)] {% else %} #[repr(u16)] {% endif %}
+{%- if model.kinds.lexical_contexts|length <= 256 %} #[repr(u8)] {%- else %} #[repr(u16)] {% endif %}
 #[derive(strum_macros::FromRepr, Clone, Copy)]
 pub(crate) enum LexicalContext {
     {%- if rendering_in_stubs -%}
