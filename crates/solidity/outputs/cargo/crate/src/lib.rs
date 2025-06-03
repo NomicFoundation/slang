@@ -1,10 +1,4 @@
-#![cfg_attr(
-    not(any(
-        feature = "__private_testing_utils",
-        feature = "__private_compilation_api"
-    )),
-    deny(missing_docs)
-)]
+#![cfg_attr(not(any(feature = "__private_testing_utils",)), warn(missing_docs))]
 #![deny(rustdoc::broken_intra_doc_links)]
 //! Slang is intended to be a modular Solidity compiler, specifically targeting code analysis and developer tooling.
 //! This means servicing tools with domain-specific APIs and, in general, facilitating working with and analyzing the
