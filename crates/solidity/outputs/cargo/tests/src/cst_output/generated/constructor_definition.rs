@@ -4,17 +4,19 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "ConstructorDefinition";
+
 #[test]
 fn override_attribute() -> Result<()> {
-    run("ConstructorDefinition", "override_attribute")
+    run(T, "override_attribute")
 }
 
 #[test]
 fn simple() -> Result<()> {
-    run("ConstructorDefinition", "simple")
+    run(T, "simple")
 }
 
 #[test]
 fn virtual_attribute() -> Result<()> {
-    run("ConstructorDefinition", "virtual_attribute")
+    run(T, "virtual_attribute")
 }

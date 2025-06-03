@@ -4,12 +4,14 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "BreakStatement";
+
 #[test]
 fn error_recovery() -> Result<()> {
-    run("BreakStatement", "error_recovery")
+    run(T, "error_recovery")
 }
 
 #[test]
 fn valid() -> Result<()> {
-    run("BreakStatement", "valid")
+    run(T, "valid")
 }

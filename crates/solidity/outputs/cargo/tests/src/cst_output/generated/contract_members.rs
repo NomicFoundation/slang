@@ -4,22 +4,24 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "ContractMembers";
+
 #[test]
 fn constructor() -> Result<()> {
-    run("ContractMembers", "constructor")
+    run(T, "constructor")
 }
 
 #[test]
 fn local_expression() -> Result<()> {
-    run("ContractMembers", "local_expression")
+    run(T, "local_expression")
 }
 
 #[test]
 fn mismatched_delimiter() -> Result<()> {
-    run("ContractMembers", "mismatched_delimiter")
+    run(T, "mismatched_delimiter")
 }
 
 #[test]
 fn separated_recovery() -> Result<()> {
-    run("ContractMembers", "separated_recovery")
+    run(T, "separated_recovery")
 }

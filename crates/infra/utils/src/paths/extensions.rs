@@ -7,6 +7,8 @@ use itertools::Itertools;
 pub trait PathExtensions {
     fn collect_children(&self) -> Result<Vec<PathBuf>>;
 
+    fn is_generated(&self) -> bool;
+
     fn generated_dir(&self) -> Result<PathBuf>;
 
     fn repo_path(relative_path: impl AsRef<Path>) -> PathBuf;
@@ -46,6 +48,10 @@ impl PathExtensions for Path {
         }
 
         Ok(children)
+    }
+
+    fn is_generated(&self) -> bool {
+        self.generated_dir().is_ok()
     }
 
     fn generated_dir(&self) -> Result<PathBuf> {

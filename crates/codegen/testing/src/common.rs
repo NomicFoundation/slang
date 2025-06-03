@@ -7,6 +7,7 @@ use codegen_language_definition::model::Language;
 use inflector::Inflector;
 use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::{FileWalker, PathExtensions};
+use semver::Version;
 
 pub(crate) fn collect_snapshot_tests(
     data_dir: &Path,
@@ -61,78 +62,64 @@ pub(crate) fn generate_mod_file(
             buffer
         });
 
-    fs.write_file(mod_file_path, contents)
+    fs.write_file_raw(mod_file_path, contents)
 }
 
 pub(crate) fn generate_unit_test_file(
     runner_module: &str,
     fs: &mut CodegenFileSystem,
-    parser_name: &str,
+    test_dir_name: &str,
     test_names: &BTreeSet<String>,
     unit_test_file_path: &Path,
 ) -> Result<()> {
-    let unit_tests_str = test_names
-        .iter()
-        .fold(String::new(), |mut buffer, test_name| {
-            writeln!(
-                buffer,
-                r#"
-                    #[test]
-                    fn {test_name}() -> Result<()> {{
-                        run("{parser_name}", "{test_name}")
-                    }}
-                "#
-            )
-            .unwrap();
-            buffer
-        });
+    let mut contents = String::new();
 
-    let contents = format!(
-        "
-            use anyhow::Result;
+    writeln!(contents, "use anyhow::Result;")?;
+    writeln!(contents)?;
+    writeln!(contents, "use {runner_module}::run;")?;
+    writeln!(contents)?;
+    writeln!(contents, "const T: &str = \"{test_dir_name}\";")?;
 
-            use {runner_module}::run;
+    for test_name in test_names {
+        writeln!(contents)?;
+        writeln!(contents, "#[test]")?;
+        writeln!(contents, "fn {test_name}() -> Result<()> {{")?;
+        writeln!(contents, "    run(T, \"{test_name}\")")?;
+        writeln!(contents, "}}")?;
+    }
 
-            {unit_tests_str}
-        "
-    );
-
-    fs.write_file(unit_test_file_path, contents)
+    fs.write_file_raw(unit_test_file_path, contents)
 }
 
-pub(crate) fn generate_version_breaks(
-    language: &Language,
-    input_dir: &Path,
-    output_dir: &Path,
-) -> Result<()> {
-    let mut fs = CodegenFileSystem::new(input_dir)?;
+pub(crate) fn generate_version_breaks(language: &Language, output_dir: &Path) -> Result<()> {
+    let mut fs = CodegenFileSystem::default();
 
-    let version_breaks = language.collect_breaking_versions();
-    let version_breaks_len = version_breaks.len();
-    let version_breaks_str = version_breaks
-        .iter()
-        .fold(String::new(), |mut buffer, version| {
-            writeln!(
-                buffer,
-                "Version::new({}, {}, {}),",
-                version.major, version.minor, version.patch
-            )
-            .unwrap();
-            buffer
-        });
+    let versions = language.collect_breaking_versions();
+    let versions_len = versions.len();
 
-    let contents = format!(
-        "
-            use semver::Version;
+    let mut contents = String::new();
 
-            pub const VERSION_BREAKS: [Version; {version_breaks_len}] = [
-                {version_breaks_str}
-            ];
-        ",
-    );
+    writeln!(contents, "use semver::Version;")?;
+    writeln!(contents)?;
+    writeln!(
+        contents,
+        "pub const VERSION_BREAKS: [Version; {versions_len}] = ["
+    )?;
+
+    for Version {
+        major,
+        minor,
+        patch,
+        ..
+    } in versions
+    {
+        writeln!(contents, "    Version::new({major}, {minor}, {patch}),")?;
+    }
+
+    writeln!(contents, "];")?;
 
     let mod_file_path = output_dir.join("mod.rs");
-    fs.write_file(mod_file_path, contents)?;
+    fs.write_file_raw(mod_file_path, contents)?;
 
     Ok(())
 }
