@@ -6,7 +6,7 @@ pub mod dataset;
 pub mod tests;
 
 mod __dependencies_used_in_benches__ {
-    use {iai_callgrind as _, paste as _};
+    use {iai_callgrind as _, infra_utils as _, paste as _};
 }
 
 #[cfg(test)]
@@ -31,9 +31,26 @@ mod unit_tests {
                 define_payload_test!(query, $name);
                 define_payload_test!(bindings_build, $name);
                 define_payload_test!(bindings_resolve, $name);
-                define_payload_test!(solang, $name);
             }
         };
+    }
+
+    mod solang {
+        macro_rules! define_payload_test {
+            ($name:ident, $prj:expr) => {
+                #[test]
+                fn $name() {
+                    let payload = crate::tests::solang::setup($prj);
+                    crate::tests::solang::run(payload);
+                }
+            };
+        }
+
+        define_payload_test!(median_file_safe_math, "median_file_safe_math");
+        define_payload_test!(
+            three_quarters_file_merkle_proof,
+            "three_quarters_file_merkle_proof"
+        );
     }
 
     include!("benches_list.rs");
