@@ -2131,6 +2131,15 @@ inherit .star_extension
   edge @state_var.def -> call
   edge call -> @state_var.typeof
 
+  ; When used as a member of the container contract, the variable symbol refers
+  ; to an external function, and as such, we can obtain its address and
+  ; selector. Caveat: this will also bind in the case where the var is _not_ being
+  ; used as a function, but that's not valid Solidity.
+  node external_function
+  attr (external_function) push_symbol = "%ExternalFunction"
+  edge @state_var.typeof -> external_function
+  edge external_function -> @state_var.lexical_scope
+
   ; Some complex types generate special getters (ie. arrays and mappings index
   ; their contents, structs flatten most of their fields and return a tuple)
   node getter
