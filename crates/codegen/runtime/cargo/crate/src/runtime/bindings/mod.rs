@@ -21,7 +21,7 @@ pub type Definition = metaslang_bindings::Definition<KindTypes>;
 /// A `Reference` represents a location where a symbol definition is referenced, i.e. anywhere
 /// a symbol is 'used' in a piece of code. From this you can find more information about the location
 /// of the reference in the parse tree, or you can navigate to the [definitions][`Definition`] this
-/// is references.
+/// references.
 ///
 /// Note that most references have a single definition, but some have multiple, such as when a symbol
 /// is imported from another file, and renamed (re-defined) in the current file.
