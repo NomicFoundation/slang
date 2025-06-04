@@ -6403,6 +6403,12 @@ codegen_language_macros::compile!(Language(
                     ]
                 ),
                 BuiltInType(
+                    name = "byte",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = [],
+                    enabled = Till("0.8.0")
+                ),
+                BuiltInType(
                     name = "bytes1",
                     fields = [BuiltInField(definition = "uint length")],
                     functions = []
