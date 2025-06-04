@@ -2755,6 +2755,19 @@ inherit .star_extension
 }
 
 
+;;; Literal booleans
+@expr [Expression ([TrueKeyword] | [FalseKeyword])] {
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node bool
+  attr (bool) push_symbol = "bool"
+
+  edge @expr.output -> typeof
+  edge typeof -> bool
+  edge bool -> @expr.lexical_scope
+}
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Yul
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
