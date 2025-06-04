@@ -2084,6 +2084,8 @@ inherit .star_extension
   attr (in_yul_function_pop) pop_symbol = "@in_yul_function"
   edge @body.lexical_scope -> in_yul_function_pop
   edge in_yul_function_pop -> yul
+  ; allow popping the guard multiple times in case we have nested functions
+  edge in_yul_function_pop -> in_yul_function_pop
 
   ;; Also provide access to locals and state variables from Solidity
   node yul_locals
