@@ -97,6 +97,11 @@ fn modifier_params() -> Result<()> {
 }
 
 #[test]
+fn nested_functions() -> Result<()> {
+    run(T, "nested_functions")
+}
+
+#[test]
 fn slot_offset_members() -> Result<()> {
     run(T, "slot_offset_members")
 }
