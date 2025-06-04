@@ -54,6 +54,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_function(builder, "blockhash", Some("bytes32"));
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            let mut type_scope = scope.define_type(builder, "byte");
+            type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "%BytesType");
             type_scope.define_function(builder, "concat", Some("bytes memory"));
             let mut type_scope = scope.define_type(builder, "%Function");
@@ -212,6 +214,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             type_scope.define_function(builder, "blockhash", Some("bytes32"));
             let mut type_scope = scope.define_type(builder, "bytes");
+            type_scope.define_field(builder, "length", "uint256");
+            let mut type_scope = scope.define_type(builder, "byte");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "%BytesType");
             type_scope.define_function(builder, "concat", Some("bytes memory"));
@@ -374,6 +378,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             type_scope.define_function(builder, "blockhash", Some("bytes32"));
             let mut type_scope = scope.define_type(builder, "bytes");
+            type_scope.define_field(builder, "length", "uint256");
+            let mut type_scope = scope.define_type(builder, "byte");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "%BytesType");
             type_scope.define_function(builder, "concat", Some("bytes memory"));
@@ -545,6 +551,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             type_scope.define_function(builder, "blockhash", Some("bytes32"));
             let mut type_scope = scope.define_type(builder, "bytes");
+            type_scope.define_field(builder, "length", "uint256");
+            let mut type_scope = scope.define_type(builder, "byte");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "%BytesType");
             type_scope.define_function(builder, "concat", Some("bytes memory"));
@@ -721,6 +729,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
             type_scope.define_field(builder, "length", "uint256");
+            let mut type_scope = scope.define_type(builder, "byte");
+            type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "%BytesType");
             type_scope.define_function(builder, "concat", Some("bytes memory"));
             let mut type_scope = scope.define_type(builder, "%Function");
@@ -891,6 +901,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "number", "uint256");
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
+            type_scope.define_field(builder, "length", "uint256");
+            let mut type_scope = scope.define_type(builder, "byte");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "%BytesType");
             type_scope.define_function(builder, "concat", Some("bytes memory"));
@@ -1065,6 +1077,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "number", "uint256");
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
+            type_scope.define_field(builder, "length", "uint256");
+            let mut type_scope = scope.define_type(builder, "byte");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "%BytesType");
             type_scope.define_function(builder, "concat", Some("bytes memory"));
@@ -1243,6 +1257,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "number", "uint256");
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
+            type_scope.define_field(builder, "length", "uint256");
+            let mut type_scope = scope.define_type(builder, "byte");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "%BytesType");
             type_scope.define_function(builder, "concat", Some("bytes memory"));
@@ -1425,6 +1441,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "number", "uint256");
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
+            type_scope.define_field(builder, "length", "uint256");
+            let mut type_scope = scope.define_type(builder, "byte");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "%BytesType");
             type_scope.define_function(builder, "concat", Some("bytes memory"));
@@ -1609,6 +1627,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "number", "uint256");
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
+            type_scope.define_field(builder, "length", "uint256");
+            let mut type_scope = scope.define_type(builder, "byte");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "%BytesType");
             type_scope.define_function(builder, "concat", Some("bytes memory"));
@@ -1795,6 +1815,8 @@ pub fn define_built_ins<KT: KindTypes + 'static>(
             type_scope.define_field(builder, "number", "uint256");
             type_scope.define_field(builder, "timestamp", "uint256");
             let mut type_scope = scope.define_type(builder, "bytes");
+            type_scope.define_field(builder, "length", "uint256");
+            let mut type_scope = scope.define_type(builder, "byte");
             type_scope.define_field(builder, "length", "uint256");
             let mut type_scope = scope.define_type(builder, "%BytesType");
             type_scope.define_function(builder, "concat", Some("bytes memory"));
