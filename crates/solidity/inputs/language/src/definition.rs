@@ -6422,6 +6422,12 @@ codegen_language_macros::compile!(Language(
                     enabled = From("0.8.4")
                 ),
                 BuiltInType(
+                    name = "%EventType",
+                    fields = [BuiltInField(definition = "bytes4 selector")],
+                    functions = [],
+                    enabled = From("0.8.15")
+                ),
+                BuiltInType(
                     name = "%Function",
                     fields = [],
                     functions = [

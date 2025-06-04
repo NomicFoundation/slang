@@ -8901,6 +8901,15 @@
         {
           "BuiltInType": {
             "item": {
+              "name": "%EventType",
+              "fields": [{ "definition": "bytes4 selector" }],
+              "enabled": { "From": { "from": "0.8.15" } }
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
               "name": "%Function",
               "functions": [
                 {

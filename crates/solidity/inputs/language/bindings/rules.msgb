@@ -2300,6 +2300,15 @@ inherit .star_extension
   node @event.params
   attr (@event.params) pop_symbol = "@param_names"
   edge @event.def -> @event.params
+
+  ; Bind to built-in %EventType for accessing built-in member `.selector`
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node event_type
+  attr (event_type) push_symbol = "%EventType"
+  edge @event.def -> typeof
+  edge typeof -> event_type
+  edge event_type -> @event.lexical_scope
 }
 
 @event [EventDefinition [EventParametersDeclaration [EventParameters
