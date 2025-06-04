@@ -122,6 +122,11 @@ fn qualified_parent_call() -> Result<()> {
 }
 
 #[test]
+fn qualified_self() -> Result<()> {
+    run(T, "qualified_self")
+}
+
+#[test]
 fn storage_layout_constant() -> Result<()> {
     run(T, "storage_layout_constant")
 }

@@ -400,6 +400,12 @@ inherit .star_extension
   edge @contract.ns -> modifier
   edge modifier -> @contract.modifiers
 
+  ;; Qualified access to members of the contract itself (eg. `Foo.x` in a function body in `Foo`)
+  node self
+  attr (self) pop_symbol = (source-text @name)
+  edge @contract.lexical_scope -> self
+  edge self -> member
+
   ; There may be attached functions to our type. For the general case of
   ; variables of our type, that's already handled via normal lexical scope
   ; resolution. But for casting/`new` invocations that we resolve through the
