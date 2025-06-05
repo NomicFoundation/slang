@@ -471,6 +471,22 @@ pub trait Rewriter {
         })
     }
 
+    fn rewrite_unnamed_function_definition(
+        &mut self,
+        source: &UnnamedFunctionDefinition,
+    ) -> UnnamedFunctionDefinition {
+        let parameters = self.rewrite_parameters_declaration(&source.parameters);
+        let attributes = self.rewrite_unnamed_function_attributes(&source.attributes);
+        let body = self.rewrite_function_body(&source.body);
+
+        Rc::new(UnnamedFunctionDefinitionStruct {
+            node_id: source.node_id,
+            parameters,
+            attributes,
+            body,
+        })
+    }
+
     fn rewrite_fallback_function_definition(
         &mut self,
         source: &FallbackFunctionDefinition,
@@ -763,11 +779,13 @@ pub trait Rewriter {
         &mut self,
         source: &TupleDeconstructionStatement,
     ) -> TupleDeconstructionStatement {
+        let var_keyword = source.var_keyword.as_ref().map(Rc::clone);
         let elements = self.rewrite_tuple_deconstruction_elements(&source.elements);
         let expression = self.rewrite_expression(&source.expression);
 
         Rc::new(TupleDeconstructionStatementStruct {
             node_id: source.node_id,
+            var_keyword,
             elements,
             expression,
         })
@@ -1008,6 +1026,12 @@ pub trait Rewriter {
             node_id: source.node_id,
             error,
             arguments,
+        })
+    }
+
+    fn rewrite_throw_statement(&mut self, source: &ThrowStatement) -> ThrowStatement {
+        Rc::new(ThrowStatementStruct {
+            node_id: source.node_id,
         })
     }
 
@@ -1374,10 +1398,15 @@ pub trait Rewriter {
         source: &HexNumberExpression,
     ) -> HexNumberExpression {
         let literal = Rc::clone(&source.literal);
+        let unit = source
+            .unit
+            .as_ref()
+            .map(|value| self.rewrite_number_unit(value));
 
         Rc::new(HexNumberExpressionStruct {
             node_id: source.node_id,
             literal,
+            unit,
         })
     }
 
@@ -1499,6 +1528,32 @@ pub trait Rewriter {
         })
     }
 
+    fn rewrite_yul_colon_and_equal(&mut self, source: &YulColonAndEqual) -> YulColonAndEqual {
+        Rc::new(YulColonAndEqualStruct {
+            node_id: source.node_id,
+        })
+    }
+
+    fn rewrite_yul_stack_assignment_statement(
+        &mut self,
+        source: &YulStackAssignmentStatement,
+    ) -> YulStackAssignmentStatement {
+        let assignment = self.rewrite_yul_stack_assignment_operator(&source.assignment);
+        let variable = Rc::clone(&source.variable);
+
+        Rc::new(YulStackAssignmentStatementStruct {
+            node_id: source.node_id,
+            assignment,
+            variable,
+        })
+    }
+
+    fn rewrite_yul_equal_and_colon(&mut self, source: &YulEqualAndColon) -> YulEqualAndColon {
+        Rc::new(YulEqualAndColonStruct {
+            node_id: source.node_id,
+        })
+    }
+
     fn rewrite_yul_if_statement(&mut self, source: &YulIfStatement) -> YulIfStatement {
         let condition = self.rewrite_yul_expression(&source.condition);
         let body = self.rewrite_yul_block(&source.body);
@@ -1574,6 +1629,15 @@ pub trait Rewriter {
     ) -> YulContinueStatement {
         Rc::new(YulContinueStatementStruct {
             node_id: source.node_id,
+        })
+    }
+
+    fn rewrite_yul_label(&mut self, source: &YulLabel) -> YulLabel {
+        let label = Rc::clone(&source.label);
+
+        Rc::new(YulLabelStruct {
+            node_id: source.node_id,
+            label,
         })
     }
 
@@ -1863,6 +1927,11 @@ pub trait Rewriter {
                     self.rewrite_fallback_function_definition(fallback_function_definition),
                 )
             }
+            ContractMember::UnnamedFunctionDefinition(ref unnamed_function_definition) => {
+                ContractMember::UnnamedFunctionDefinition(
+                    self.rewrite_unnamed_function_definition(unnamed_function_definition),
+                )
+            }
             ContractMember::ModifierDefinition(ref modifier_definition) => {
                 ContractMember::ModifierDefinition(
                     self.rewrite_modifier_definition(modifier_definition),
@@ -1947,6 +2016,7 @@ pub trait Rewriter {
                     self.rewrite_override_specifier(override_specifier),
                 )
             }
+            FunctionAttribute::ConstantKeyword => FunctionAttribute::ConstantKeyword,
             FunctionAttribute::ExternalKeyword => FunctionAttribute::ExternalKeyword,
             FunctionAttribute::InternalKeyword => FunctionAttribute::InternalKeyword,
             FunctionAttribute::PayableKeyword => FunctionAttribute::PayableKeyword,
@@ -1982,8 +2052,10 @@ pub trait Rewriter {
                 )
             }
             ConstructorAttribute::InternalKeyword => ConstructorAttribute::InternalKeyword,
+            ConstructorAttribute::OverrideKeyword => ConstructorAttribute::OverrideKeyword,
             ConstructorAttribute::PayableKeyword => ConstructorAttribute::PayableKeyword,
             ConstructorAttribute::PublicKeyword => ConstructorAttribute::PublicKeyword,
+            ConstructorAttribute::VirtualKeyword => ConstructorAttribute::VirtualKeyword,
         }
     }
     fn rewrite_constructor_attribute(
@@ -1991,6 +2063,33 @@ pub trait Rewriter {
         source: &ConstructorAttribute,
     ) -> ConstructorAttribute {
         self.default_rewrite_constructor_attribute(source)
+    }
+
+    fn default_rewrite_unnamed_function_attribute(
+        &mut self,
+        source: &UnnamedFunctionAttribute,
+    ) -> UnnamedFunctionAttribute {
+        match source {
+            UnnamedFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+                UnnamedFunctionAttribute::ModifierInvocation(
+                    self.rewrite_modifier_invocation(modifier_invocation),
+                )
+            }
+            UnnamedFunctionAttribute::ConstantKeyword => UnnamedFunctionAttribute::ConstantKeyword,
+            UnnamedFunctionAttribute::ExternalKeyword => UnnamedFunctionAttribute::ExternalKeyword,
+            UnnamedFunctionAttribute::InternalKeyword => UnnamedFunctionAttribute::InternalKeyword,
+            UnnamedFunctionAttribute::PayableKeyword => UnnamedFunctionAttribute::PayableKeyword,
+            UnnamedFunctionAttribute::PrivateKeyword => UnnamedFunctionAttribute::PrivateKeyword,
+            UnnamedFunctionAttribute::PublicKeyword => UnnamedFunctionAttribute::PublicKeyword,
+            UnnamedFunctionAttribute::PureKeyword => UnnamedFunctionAttribute::PureKeyword,
+            UnnamedFunctionAttribute::ViewKeyword => UnnamedFunctionAttribute::ViewKeyword,
+        }
+    }
+    fn rewrite_unnamed_function_attribute(
+        &mut self,
+        source: &UnnamedFunctionAttribute,
+    ) -> UnnamedFunctionAttribute {
+        self.default_rewrite_unnamed_function_attribute(source)
     }
 
     fn default_rewrite_fallback_function_attribute(
@@ -2100,6 +2199,7 @@ pub trait Rewriter {
             FunctionTypeAttribute::ExternalKeyword => FunctionTypeAttribute::ExternalKeyword,
             FunctionTypeAttribute::PrivateKeyword => FunctionTypeAttribute::PrivateKeyword,
             FunctionTypeAttribute::PublicKeyword => FunctionTypeAttribute::PublicKeyword,
+            FunctionTypeAttribute::ConstantKeyword => FunctionTypeAttribute::ConstantKeyword,
             FunctionTypeAttribute::PureKeyword => FunctionTypeAttribute::PureKeyword,
             FunctionTypeAttribute::ViewKeyword => FunctionTypeAttribute::ViewKeyword,
             FunctionTypeAttribute::PayableKeyword => FunctionTypeAttribute::PayableKeyword,
@@ -2137,6 +2237,7 @@ pub trait Rewriter {
             ElementaryType::FixedKeyword(node) => ElementaryType::FixedKeyword(Rc::clone(node)),
             ElementaryType::UfixedKeyword(node) => ElementaryType::UfixedKeyword(Rc::clone(node)),
             ElementaryType::BoolKeyword => ElementaryType::BoolKeyword,
+            ElementaryType::ByteKeyword => ElementaryType::ByteKeyword,
             ElementaryType::StringKeyword => ElementaryType::StringKeyword,
         }
     }
@@ -2166,6 +2267,9 @@ pub trait Rewriter {
             }
             Statement::ReturnStatement(ref return_statement) => {
                 Statement::ReturnStatement(self.rewrite_return_statement(return_statement))
+            }
+            Statement::ThrowStatement(ref throw_statement) => {
+                Statement::ThrowStatement(self.rewrite_throw_statement(throw_statement))
             }
             Statement::EmitStatement(ref emit_statement) => {
                 Statement::EmitStatement(self.rewrite_emit_statement(emit_statement))
@@ -2228,6 +2332,7 @@ pub trait Rewriter {
             VariableDeclarationType::TypeName(ref type_name) => {
                 VariableDeclarationType::TypeName(self.rewrite_type_name(type_name))
             }
+            VariableDeclarationType::VarKeyword => VariableDeclarationType::VarKeyword,
         }
     }
     fn rewrite_variable_declaration_type(
@@ -2453,12 +2558,15 @@ pub trait Rewriter {
         match source {
             NumberUnit::WeiKeyword => NumberUnit::WeiKeyword,
             NumberUnit::GweiKeyword => NumberUnit::GweiKeyword,
+            NumberUnit::SzaboKeyword => NumberUnit::SzaboKeyword,
+            NumberUnit::FinneyKeyword => NumberUnit::FinneyKeyword,
             NumberUnit::EtherKeyword => NumberUnit::EtherKeyword,
             NumberUnit::SecondsKeyword => NumberUnit::SecondsKeyword,
             NumberUnit::MinutesKeyword => NumberUnit::MinutesKeyword,
             NumberUnit::HoursKeyword => NumberUnit::HoursKeyword,
             NumberUnit::DaysKeyword => NumberUnit::DaysKeyword,
             NumberUnit::WeeksKeyword => NumberUnit::WeeksKeyword,
+            NumberUnit::YearsKeyword => NumberUnit::YearsKeyword,
         }
     }
     fn rewrite_number_unit(&mut self, source: &NumberUnit) -> NumberUnit {
@@ -2467,8 +2575,16 @@ pub trait Rewriter {
 
     fn default_rewrite_string_expression(&mut self, source: &StringExpression) -> StringExpression {
         match source {
+            StringExpression::StringLiteral(ref string_literal) => {
+                StringExpression::StringLiteral(self.rewrite_string_literal(string_literal))
+            }
             StringExpression::StringLiterals(ref string_literals) => {
                 StringExpression::StringLiterals(self.rewrite_string_literals(string_literals))
+            }
+            StringExpression::HexStringLiteral(ref hex_string_literal) => {
+                StringExpression::HexStringLiteral(
+                    self.rewrite_hex_string_literal(hex_string_literal),
+                )
             }
             StringExpression::HexStringLiterals(ref hex_string_literals) => {
                 StringExpression::HexStringLiterals(
@@ -2547,6 +2663,11 @@ pub trait Rewriter {
                     self.rewrite_yul_function_definition(yul_function_definition),
                 )
             }
+            YulStatement::YulStackAssignmentStatement(ref yul_stack_assignment_statement) => {
+                YulStatement::YulStackAssignmentStatement(
+                    self.rewrite_yul_stack_assignment_statement(yul_stack_assignment_statement),
+                )
+            }
             YulStatement::YulIfStatement(ref yul_if_statement) => {
                 YulStatement::YulIfStatement(self.rewrite_yul_if_statement(yul_if_statement))
             }
@@ -2580,6 +2701,9 @@ pub trait Rewriter {
                     ),
                 )
             }
+            YulStatement::YulLabel(ref yul_label) => {
+                YulStatement::YulLabel(self.rewrite_yul_label(yul_label))
+            }
             YulStatement::YulVariableDeclarationStatement(
                 ref yul_variable_declaration_statement,
             ) => YulStatement::YulVariableDeclarationStatement(
@@ -2599,6 +2723,11 @@ pub trait Rewriter {
         source: &YulAssignmentOperator,
     ) -> YulAssignmentOperator {
         match source {
+            YulAssignmentOperator::YulColonAndEqual(ref yul_colon_and_equal) => {
+                YulAssignmentOperator::YulColonAndEqual(
+                    self.rewrite_yul_colon_and_equal(yul_colon_and_equal),
+                )
+            }
             YulAssignmentOperator::ColonEqual => YulAssignmentOperator::ColonEqual,
         }
     }
@@ -2607,6 +2736,26 @@ pub trait Rewriter {
         source: &YulAssignmentOperator,
     ) -> YulAssignmentOperator {
         self.default_rewrite_yul_assignment_operator(source)
+    }
+
+    fn default_rewrite_yul_stack_assignment_operator(
+        &mut self,
+        source: &YulStackAssignmentOperator,
+    ) -> YulStackAssignmentOperator {
+        match source {
+            YulStackAssignmentOperator::YulEqualAndColon(ref yul_equal_and_colon) => {
+                YulStackAssignmentOperator::YulEqualAndColon(
+                    self.rewrite_yul_equal_and_colon(yul_equal_and_colon),
+                )
+            }
+            YulStackAssignmentOperator::EqualColon => YulStackAssignmentOperator::EqualColon,
+        }
+    }
+    fn rewrite_yul_stack_assignment_operator(
+        &mut self,
+        source: &YulStackAssignmentOperator,
+    ) -> YulStackAssignmentOperator {
+        self.default_rewrite_yul_stack_assignment_operator(source)
     }
 
     fn default_rewrite_yul_switch_case(&mut self, source: &YulSwitchCase) -> YulSwitchCase {
@@ -2795,6 +2944,16 @@ pub trait Rewriter {
         source
             .iter()
             .map(|item| self.rewrite_constructor_attribute(item))
+            .collect()
+    }
+
+    fn rewrite_unnamed_function_attributes(
+        &mut self,
+        source: &UnnamedFunctionAttributes,
+    ) -> UnnamedFunctionAttributes {
+        source
+            .iter()
+            .map(|item| self.rewrite_unnamed_function_attribute(item))
             .collect()
     }
 
