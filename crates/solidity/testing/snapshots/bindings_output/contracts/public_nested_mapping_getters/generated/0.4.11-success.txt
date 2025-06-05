@@ -1,0 +1,78 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test(TokenState tokenState) public {
+    │              ──┬─ ─────┬──── ─────┬────  
+    │                ╰───────────────────────── name: 2
+    │                        │          │      
+    │                        ╰───────────────── ref: 4
+    │                                   │      
+    │                                   ╰────── name: 3
+  3 │         tokenState.nested_maps(1, 1).balance;
+    │         ─────┬──── ─────┬─────       ───┬───  
+    │              ╰──────────────────────────────── ref: 3
+    │                         │               │     
+    │                         ╰───────────────────── ref: 5
+    │                                         │     
+    │                                         ╰───── ref: built-in
+  4 │         tokenState.array_in_map(1, 1).balance;
+    │         ─────┬──── ──────┬─────       ───┬───  
+    │              ╰───────────────────────────────── ref: 3
+    │                          │               │     
+    │                          ╰───────────────────── ref: 6
+    │                                          │     
+    │                                          ╰───── ref: built-in
+  5 │         tokenState.map_in_array(1, 1).balance;
+    │         ─────┬──── ──────┬─────       ───┬───  
+    │              ╰───────────────────────────────── ref: 3
+    │                          │               │     
+    │                          ╰───────────────────── ref: 7
+    │                                          │     
+    │                                          ╰───── ref: built-in
+    │ 
+  8 │ contract TokenState {
+    │          ─────┬────  
+    │               ╰────── name: 4
+  9 │     mapping(uint => mapping(uint => address)) public nested_maps;
+    │                                                      ─────┬─────  
+    │                                                           ╰─────── name: 5
+ 10 │     mapping(uint => address[]) public array_in_map;
+    │                                       ──────┬─────  
+    │                                             ╰─────── name: 6
+ 11 │     mapping(uint => address)[] public map_in_array;
+    │                                       ──────┬─────  
+    │                                             ╰─────── name: 7
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─│ ──▶ contract Test {
+  2 │ │ ╭───▶     function test(TokenState tokenState) public {
+    │ │ │                       ──────────┬──────────  
+    │ │ │                                 ╰──────────── definiens: 3
+    ┆ ┆ ┆     
+  6 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 2
+  7 │ ├───│ ▶ }
+    │ │   │       
+    │ ╰─────────── definiens: 1
+  8 │     ╭─▶ contract TokenState {
+  9 │     │       mapping(uint => mapping(uint => address)) public nested_maps;
+    │     │   ─────────────────────────────────┬────────────────────────────────  
+    │     │                                    ╰────────────────────────────────── definiens: 5
+ 10 │     │       mapping(uint => address[]) public array_in_map;
+    │     │   ──────────────────────────┬─────────────────────────  
+    │     │                             ╰─────────────────────────── definiens: 6
+ 11 │     │       mapping(uint => address)[] public map_in_array;
+    │     │   ──────────────────────────┬─────────────────────────  
+    │     │                             ╰─────────────────────────── definiens: 7
+ 12 │     ├─▶ }
+    │     │       
+    │     ╰─────── definiens: 4
+────╯
