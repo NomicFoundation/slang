@@ -1,3 +1,6 @@
+//! Source code parsing utilities. See [`parser::Parser`] for more info on parsing
+//! source code.
+
 mod lexer;
 mod parse_error;
 mod parse_output;

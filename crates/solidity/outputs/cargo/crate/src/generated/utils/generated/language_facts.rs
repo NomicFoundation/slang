@@ -2,9 +2,11 @@
 
 use semver::Version;
 
+/// `LanguageFacts` provides metadata about Slang's `Solidity` language support.
 pub struct LanguageFacts;
 
 impl LanguageFacts {
+    /// All the versions of `Solidity` supported by Slang.
     pub const ALL_VERSIONS: &'static [Version] = &[
         Version::new(0, 4, 11),
         Version::new(0, 4, 12),
@@ -93,10 +95,15 @@ impl LanguageFacts {
         Version::new(0, 8, 30),
     ];
 
+    /// The earliest version of `Solidity` supported by Slang.
     pub const EARLIEST_VERSION: Version = Version::new(0, 4, 11);
 
+    /// The latest version of `Solidity` supported by Slang.
     pub const LATEST_VERSION: Version = Version::new(0, 8, 30);
 
+    /// Infer the language versions that are compatible with the provided `Solidity`
+    /// source code. The returned iterator will produce all compatible versions in order, starting with
+    /// the earliest one.
     pub fn infer_language_versions(input: &str) -> impl Iterator<Item = &'static Version> {
         crate::extensions::utils::infer_language_versions(input)
     }
