@@ -6385,6 +6385,12 @@ codegen_language_macros::compile!(Language(
                     functions = []
                 ),
                 BuiltInType(
+                    name = "byte",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = [],
+                    enabled = Till("0.8.0")
+                ),
+                BuiltInType(
                     name = "%BytesType",
                     fields = [],
                     functions = [BuiltInFunction(
@@ -6414,6 +6420,12 @@ codegen_language_macros::compile!(Language(
                     fields = [BuiltInField(definition = "bytes4 selector")],
                     functions = [],
                     enabled = From("0.8.4")
+                ),
+                BuiltInType(
+                    name = "%EventType",
+                    fields = [BuiltInField(definition = "bytes4 selector")],
+                    functions = [],
+                    enabled = From("0.8.15")
                 ),
                 BuiltInType(
                     name = "%Function",

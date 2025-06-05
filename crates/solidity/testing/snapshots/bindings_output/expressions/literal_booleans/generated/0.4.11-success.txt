@@ -1,0 +1,53 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Lib {
+   │         ─┬─  
+   │          ╰─── name: 1
+ 2 │     function nop(bool x) internal {}
+   │              ─┬─      ┬  
+   │               ╰────────── name: 2
+   │                       │  
+   │                       ╰── name: 3
+   │ 
+ 4 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 5 │     using Lib for bool;
+   │           ─┬─  
+   │            ╰─── ref: 1
+ 6 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 5
+ 7 │         true.nop();
+   │              ─┬─  
+   │               ╰─── ref: 2
+ 8 │         false.nop();
+   │               ─┬─  
+   │                ╰─── ref: 2
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │     ╭─▶ library Lib {
+  2 │     │       function nop(bool x) internal {}
+    │     │   ──────────────────┬─┬────────────────  
+    │     │                     ╰──────────────────── definiens: 2
+    │     │                       │                  
+    │     │                       ╰────────────────── definiens: 3
+  3 │ │   ├─▶ }
+    │ │   │       
+    │ │   ╰─────── definiens: 1
+  4 │ ╭─────▶ contract Test {
+    ┆ ┆ ┆     
+  6 │ │ ╭───▶     function test() public {
+    ┆ ┆ ┆     
+  9 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 5
+ 10 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 4
+────╯
