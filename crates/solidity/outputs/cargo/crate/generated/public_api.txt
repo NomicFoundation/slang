@@ -1422,6 +1422,7 @@ pub fn slang_solidity::backend::l1_typed_cst::AbicoderPragmaStruct::fmt(&self, f
 pub struct slang_solidity::backend::l1_typed_cst::AdditiveExpressionStruct
 pub slang_solidity::backend::l1_typed_cst::AdditiveExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l1_typed_cst::AdditiveExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l1_typed_cst::AdditiveExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1_typed_cst::AdditiveExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::AdditiveExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::AdditiveExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -1462,6 +1463,7 @@ pub fn slang_solidity::backend::l1_typed_cst::AssemblyStatementStruct::fmt(&self
 pub struct slang_solidity::backend::l1_typed_cst::AssignmentExpressionStruct
 pub slang_solidity::backend::l1_typed_cst::AssignmentExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l1_typed_cst::AssignmentExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l1_typed_cst::AssignmentExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1_typed_cst::AssignmentExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::AssignmentExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::AssignmentExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -1575,6 +1577,7 @@ pub fn slang_solidity::backend::l1_typed_cst::EnumDefinitionStruct::fmt(&self, f
 pub struct slang_solidity::backend::l1_typed_cst::EqualityExpressionStruct
 pub slang_solidity::backend::l1_typed_cst::EqualityExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l1_typed_cst::EqualityExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l1_typed_cst::EqualityExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1_typed_cst::EqualityExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::EqualityExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::EqualityExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -1622,6 +1625,7 @@ pub fn slang_solidity::backend::l1_typed_cst::ExperimentalPragmaStruct::fmt(&sel
 pub struct slang_solidity::backend::l1_typed_cst::ExponentiationExpressionStruct
 pub slang_solidity::backend::l1_typed_cst::ExponentiationExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l1_typed_cst::ExponentiationExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l1_typed_cst::ExponentiationExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1_typed_cst::ExponentiationExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::ExponentiationExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::ExponentiationExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -1717,6 +1721,7 @@ pub fn slang_solidity::backend::l1_typed_cst::IndexAccessExpressionStruct::fmt(&
 pub struct slang_solidity::backend::l1_typed_cst::InequalityExpressionStruct
 pub slang_solidity::backend::l1_typed_cst::InequalityExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l1_typed_cst::InequalityExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l1_typed_cst::InequalityExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1_typed_cst::InequalityExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::InequalityExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::InequalityExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -1785,6 +1790,7 @@ pub fn slang_solidity::backend::l1_typed_cst::ModifierInvocationStruct::fmt(&sel
 pub struct slang_solidity::backend::l1_typed_cst::MultiplicativeExpressionStruct
 pub slang_solidity::backend::l1_typed_cst::MultiplicativeExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l1_typed_cst::MultiplicativeExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l1_typed_cst::MultiplicativeExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1_typed_cst::MultiplicativeExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::MultiplicativeExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::MultiplicativeExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -1857,6 +1863,7 @@ pub fn slang_solidity::backend::l1_typed_cst::PositionalArgumentsDeclarationStru
 pub struct slang_solidity::backend::l1_typed_cst::PostfixExpressionStruct
 pub slang_solidity::backend::l1_typed_cst::PostfixExpressionStruct::node_id: metaslang_cst::nodes::NodeId
 pub slang_solidity::backend::l1_typed_cst::PostfixExpressionStruct::operand: slang_solidity::backend::l1_typed_cst::Expression
+pub slang_solidity::backend::l1_typed_cst::PostfixExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::PostfixExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::PostfixExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1_typed_cst::PragmaDirectiveStruct
@@ -1867,6 +1874,7 @@ pub fn slang_solidity::backend::l1_typed_cst::PragmaDirectiveStruct::fmt(&self, 
 pub struct slang_solidity::backend::l1_typed_cst::PrefixExpressionStruct
 pub slang_solidity::backend::l1_typed_cst::PrefixExpressionStruct::node_id: metaslang_cst::nodes::NodeId
 pub slang_solidity::backend::l1_typed_cst::PrefixExpressionStruct::operand: slang_solidity::backend::l1_typed_cst::Expression
+pub slang_solidity::backend::l1_typed_cst::PrefixExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::PrefixExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::PrefixExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1_typed_cst::ReceiveFunctionDefinitionStruct
@@ -1895,6 +1903,7 @@ pub fn slang_solidity::backend::l1_typed_cst::RevertStatementStruct::fmt(&self, 
 pub struct slang_solidity::backend::l1_typed_cst::ShiftExpressionStruct
 pub slang_solidity::backend::l1_typed_cst::ShiftExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l1_typed_cst::ShiftExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l1_typed_cst::ShiftExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l1_typed_cst::ShiftExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::ShiftExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::ShiftExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -3731,6 +3740,7 @@ pub fn slang_solidity::backend::l1_typed_cst::AbicoderPragmaStruct::fmt(&self, f
 pub struct slang_solidity::backend::l2_flat_contracts::input::AdditiveExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::input::AdditiveExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l2_flat_contracts::input::AdditiveExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::input::AdditiveExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::input::AdditiveExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::AdditiveExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::AdditiveExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -3771,6 +3781,7 @@ pub fn slang_solidity::backend::l1_typed_cst::AssemblyStatementStruct::fmt(&self
 pub struct slang_solidity::backend::l2_flat_contracts::input::AssignmentExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::input::AssignmentExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l2_flat_contracts::input::AssignmentExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::input::AssignmentExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::input::AssignmentExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::AssignmentExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::AssignmentExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -3884,6 +3895,7 @@ pub fn slang_solidity::backend::l1_typed_cst::EnumDefinitionStruct::fmt(&self, f
 pub struct slang_solidity::backend::l2_flat_contracts::input::EqualityExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::input::EqualityExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l2_flat_contracts::input::EqualityExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::input::EqualityExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::input::EqualityExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::EqualityExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::EqualityExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -3931,6 +3943,7 @@ pub fn slang_solidity::backend::l1_typed_cst::ExperimentalPragmaStruct::fmt(&sel
 pub struct slang_solidity::backend::l2_flat_contracts::input::ExponentiationExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::input::ExponentiationExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l2_flat_contracts::input::ExponentiationExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::input::ExponentiationExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::input::ExponentiationExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::ExponentiationExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::ExponentiationExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -4026,6 +4039,7 @@ pub fn slang_solidity::backend::l1_typed_cst::IndexAccessExpressionStruct::fmt(&
 pub struct slang_solidity::backend::l2_flat_contracts::input::InequalityExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::input::InequalityExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l2_flat_contracts::input::InequalityExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::input::InequalityExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::input::InequalityExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::InequalityExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::InequalityExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -4094,6 +4108,7 @@ pub fn slang_solidity::backend::l1_typed_cst::ModifierInvocationStruct::fmt(&sel
 pub struct slang_solidity::backend::l2_flat_contracts::input::MultiplicativeExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::input::MultiplicativeExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l2_flat_contracts::input::MultiplicativeExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::input::MultiplicativeExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::input::MultiplicativeExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::MultiplicativeExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::MultiplicativeExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -4166,6 +4181,7 @@ pub fn slang_solidity::backend::l1_typed_cst::PositionalArgumentsDeclarationStru
 pub struct slang_solidity::backend::l2_flat_contracts::input::PostfixExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::input::PostfixExpressionStruct::node_id: metaslang_cst::nodes::NodeId
 pub slang_solidity::backend::l2_flat_contracts::input::PostfixExpressionStruct::operand: slang_solidity::backend::l1_typed_cst::Expression
+pub slang_solidity::backend::l2_flat_contracts::input::PostfixExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::PostfixExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::PostfixExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l2_flat_contracts::input::PragmaDirectiveStruct
@@ -4176,6 +4192,7 @@ pub fn slang_solidity::backend::l1_typed_cst::PragmaDirectiveStruct::fmt(&self, 
 pub struct slang_solidity::backend::l2_flat_contracts::input::PrefixExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::input::PrefixExpressionStruct::node_id: metaslang_cst::nodes::NodeId
 pub slang_solidity::backend::l2_flat_contracts::input::PrefixExpressionStruct::operand: slang_solidity::backend::l1_typed_cst::Expression
+pub slang_solidity::backend::l2_flat_contracts::input::PrefixExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::PrefixExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::PrefixExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l2_flat_contracts::input::ReceiveFunctionDefinitionStruct
@@ -4204,6 +4221,7 @@ pub fn slang_solidity::backend::l1_typed_cst::RevertStatementStruct::fmt(&self, 
 pub struct slang_solidity::backend::l2_flat_contracts::input::ShiftExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::input::ShiftExpressionStruct::left_operand: slang_solidity::backend::l1_typed_cst::Expression
 pub slang_solidity::backend::l2_flat_contracts::input::ShiftExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::input::ShiftExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::input::ShiftExpressionStruct::right_operand: slang_solidity::backend::l1_typed_cst::Expression
 impl core::fmt::Debug for slang_solidity::backend::l1_typed_cst::ShiftExpressionStruct
 pub fn slang_solidity::backend::l1_typed_cst::ShiftExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -6075,6 +6093,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::AbicoderPragmaStruct::fmt(&se
 pub struct slang_solidity::backend::l2_flat_contracts::AdditiveExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::AdditiveExpressionStruct::left_operand: slang_solidity::backend::l2_flat_contracts::Expression
 pub slang_solidity::backend::l2_flat_contracts::AdditiveExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::AdditiveExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::AdditiveExpressionStruct::right_operand: slang_solidity::backend::l2_flat_contracts::Expression
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::AdditiveExpressionStruct
 pub fn slang_solidity::backend::l2_flat_contracts::AdditiveExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -6115,6 +6134,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::AssemblyStatementStruct::fmt(
 pub struct slang_solidity::backend::l2_flat_contracts::AssignmentExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::AssignmentExpressionStruct::left_operand: slang_solidity::backend::l2_flat_contracts::Expression
 pub slang_solidity::backend::l2_flat_contracts::AssignmentExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::AssignmentExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::AssignmentExpressionStruct::right_operand: slang_solidity::backend::l2_flat_contracts::Expression
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::AssignmentExpressionStruct
 pub fn slang_solidity::backend::l2_flat_contracts::AssignmentExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -6229,6 +6249,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::EnumDefinitionStruct::fmt(&se
 pub struct slang_solidity::backend::l2_flat_contracts::EqualityExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::EqualityExpressionStruct::left_operand: slang_solidity::backend::l2_flat_contracts::Expression
 pub slang_solidity::backend::l2_flat_contracts::EqualityExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::EqualityExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::EqualityExpressionStruct::right_operand: slang_solidity::backend::l2_flat_contracts::Expression
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::EqualityExpressionStruct
 pub fn slang_solidity::backend::l2_flat_contracts::EqualityExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -6276,6 +6297,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::ExperimentalPragmaStruct::fmt
 pub struct slang_solidity::backend::l2_flat_contracts::ExponentiationExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::ExponentiationExpressionStruct::left_operand: slang_solidity::backend::l2_flat_contracts::Expression
 pub slang_solidity::backend::l2_flat_contracts::ExponentiationExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::ExponentiationExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::ExponentiationExpressionStruct::right_operand: slang_solidity::backend::l2_flat_contracts::Expression
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::ExponentiationExpressionStruct
 pub fn slang_solidity::backend::l2_flat_contracts::ExponentiationExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -6371,6 +6393,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::IndexAccessExpressionStruct::
 pub struct slang_solidity::backend::l2_flat_contracts::InequalityExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::InequalityExpressionStruct::left_operand: slang_solidity::backend::l2_flat_contracts::Expression
 pub slang_solidity::backend::l2_flat_contracts::InequalityExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::InequalityExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::InequalityExpressionStruct::right_operand: slang_solidity::backend::l2_flat_contracts::Expression
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::InequalityExpressionStruct
 pub fn slang_solidity::backend::l2_flat_contracts::InequalityExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -6439,6 +6462,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::ModifierInvocationStruct::fmt
 pub struct slang_solidity::backend::l2_flat_contracts::MultiplicativeExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::MultiplicativeExpressionStruct::left_operand: slang_solidity::backend::l2_flat_contracts::Expression
 pub slang_solidity::backend::l2_flat_contracts::MultiplicativeExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::MultiplicativeExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::MultiplicativeExpressionStruct::right_operand: slang_solidity::backend::l2_flat_contracts::Expression
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::MultiplicativeExpressionStruct
 pub fn slang_solidity::backend::l2_flat_contracts::MultiplicativeExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -6511,6 +6535,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::PositionalArgumentsDeclaratio
 pub struct slang_solidity::backend::l2_flat_contracts::PostfixExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::PostfixExpressionStruct::node_id: metaslang_cst::nodes::NodeId
 pub slang_solidity::backend::l2_flat_contracts::PostfixExpressionStruct::operand: slang_solidity::backend::l2_flat_contracts::Expression
+pub slang_solidity::backend::l2_flat_contracts::PostfixExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::PostfixExpressionStruct
 pub fn slang_solidity::backend::l2_flat_contracts::PostfixExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l2_flat_contracts::PragmaDirectiveStruct
@@ -6521,6 +6546,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::PragmaDirectiveStruct::fmt(&s
 pub struct slang_solidity::backend::l2_flat_contracts::PrefixExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::PrefixExpressionStruct::node_id: metaslang_cst::nodes::NodeId
 pub slang_solidity::backend::l2_flat_contracts::PrefixExpressionStruct::operand: slang_solidity::backend::l2_flat_contracts::Expression
+pub slang_solidity::backend::l2_flat_contracts::PrefixExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::PrefixExpressionStruct
 pub fn slang_solidity::backend::l2_flat_contracts::PrefixExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l2_flat_contracts::ReceiveFunctionDefinitionStruct
@@ -6549,6 +6575,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::RevertStatementStruct::fmt(&s
 pub struct slang_solidity::backend::l2_flat_contracts::ShiftExpressionStruct
 pub slang_solidity::backend::l2_flat_contracts::ShiftExpressionStruct::left_operand: slang_solidity::backend::l2_flat_contracts::Expression
 pub slang_solidity::backend::l2_flat_contracts::ShiftExpressionStruct::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::l2_flat_contracts::ShiftExpressionStruct::operator: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::l2_flat_contracts::ShiftExpressionStruct::right_operand: slang_solidity::backend::l2_flat_contracts::Expression
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::ShiftExpressionStruct
 pub fn slang_solidity::backend::l2_flat_contracts::ShiftExpressionStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
