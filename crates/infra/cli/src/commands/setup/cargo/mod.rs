@@ -1,7 +1,10 @@
 use infra_utils::commands::Command;
 use infra_utils::github::GitHub;
 
+use crate::commands::setup::cargo::install_solang_dependencies::install_dependencies;
 use crate::toolchains::wasm::WASM_TARGET;
+
+mod install_solang_dependencies;
 
 pub fn setup_cargo() {
     // The bootstrap bash script defined in '$REPO_ROOT/scripts/_common.sh'
@@ -36,6 +39,9 @@ pub fn setup_cargo() {
 
     // Make sure we have the latest dependencies:
     run_cargo_fetch();
+
+    // Install solang's dependencies
+    install_dependencies().unwrap();
 }
 
 fn rustup_add_targets(toolchain: &str, targets: impl IntoIterator<Item = impl Into<String>>) {
