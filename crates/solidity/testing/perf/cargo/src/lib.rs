@@ -11,7 +11,7 @@ mod __dependencies_used_in_benches__ {
 
 #[cfg(test)]
 mod unit_tests {
-    macro_rules! define_payload_test {
+    macro_rules! slang_define_payload_test {
         ($name:ident, $prj:expr) => {
             #[test]
             fn $name() {
@@ -23,20 +23,20 @@ mod unit_tests {
     /*
      * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
      */
-    macro_rules! define_payload_tests {
+    macro_rules! slang_define_payload_tests {
         ($prj:ident, $name:tt) => {
             mod $prj {
-                define_payload_test!(parser, $name);
-                define_payload_test!(cursor, $name);
-                define_payload_test!(query, $name);
-                define_payload_test!(bindings_build, $name);
-                define_payload_test!(bindings_resolve, $name);
+                slang_define_payload_test!(parser, $name);
+                slang_define_payload_test!(cursor, $name);
+                slang_define_payload_test!(query, $name);
+                slang_define_payload_test!(bindings_build, $name);
+                slang_define_payload_test!(bindings_resolve, $name);
             }
         };
     }
 
     mod solang {
-        macro_rules! define_payload_test {
+        macro_rules! solang_define_payload_test {
             ($name:ident, $prj:expr) => {
                 #[test]
                 fn $name() {
@@ -46,11 +46,7 @@ mod unit_tests {
             };
         }
 
-        define_payload_test!(median_file_safe_math, "median_file_safe_math");
-        define_payload_test!(
-            three_quarters_file_merkle_proof,
-            "three_quarters_file_merkle_proof"
-        );
+        include!("solang_benches_list.rs");
     }
 
     include!("benches_list.rs");

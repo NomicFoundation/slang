@@ -16,15 +16,22 @@ use solidity_testing_perf_cargo::tests::bindings_resolve::BuiltBindingGraph;
 mod __dependencies_used_in_lib__ {
     use {
         anyhow as _, infra_utils as _, semver as _, serde_json as _, slang_solidity as _,
-        solidity_testing_perf_utils as _,
+        solang as _, solang_parser as _, solidity_testing_perf_utils as _,
     };
 }
 
-macro_rules! define_payload_benchmark {
-    ($name:ident, $prj: ident, $file: expr, $payload:ty) => {
+// *Note:* Unfortunately, the bencher macros doesn't allow for modularization: it creates modules that are private, so
+// they are inaccessible to the main function below when created insida a module. So we have to create here every
+// benchmark for every library.
+
+//
+// Slang benchmarks
+//
+macro_rules! slang_define_payload_benchmark {
+    ($name:ident, $prj: ident, $prj_name: expr, $payload:ty) => {
         paste! {
           #[library_benchmark]
-          #[bench::first(args = ($file), setup = solidity_testing_perf_cargo::tests::$name::setup)]
+          #[bench::first(args = ($prj_name), setup = solidity_testing_perf_cargo::tests::$name::setup)]
           pub fn [<$prj _ $name>](payload: $payload) {
               black_box(solidity_testing_perf_cargo::tests::$name::run(payload));
           }
@@ -32,8 +39,8 @@ macro_rules! define_payload_benchmark {
     };
 }
 
-macro_rules! define_payload_tests {
-    ($prj:ident, $name:tt) => {
+macro_rules! slang_define_payload_tests {
+    ($prj:ident, $prj_name:tt) => {
         /*
          * WARNING:
          * The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
@@ -41,11 +48,11 @@ macro_rules! define_payload_tests {
          *
          * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
          */
-        define_payload_benchmark!(parser, $prj, $name, &'static SolidityProject);
-        define_payload_benchmark!(cursor, $prj, $name, Rc<CompilationUnit>);
-        define_payload_benchmark!(query, $prj, $name, Rc<CompilationUnit>);
-        define_payload_benchmark!(bindings_build, $prj, $name, Rc<CompilationUnit>);
-        define_payload_benchmark!(bindings_resolve, $prj, $name, BuiltBindingGraph);
+        slang_define_payload_benchmark!(parser, $prj, $prj_name, &'static SolidityProject);
+        slang_define_payload_benchmark!(cursor, $prj, $prj_name, Rc<CompilationUnit>);
+        slang_define_payload_benchmark!(query, $prj, $prj_name, Rc<CompilationUnit>);
+        slang_define_payload_benchmark!(bindings_build, $prj, $prj_name, Rc<CompilationUnit>);
+        slang_define_payload_benchmark!(bindings_resolve, $prj, $prj_name, BuiltBindingGraph);
 
         paste! {
         library_benchmark_group!(
@@ -64,6 +71,33 @@ macro_rules! define_payload_tests {
 }
 
 include!("../../src/benches_list.rs");
+
+//
+// Solang benchmarks
+//
+macro_rules! solang_define_payload_test {
+    ($prj: ident, $prj_name: expr) => {
+        paste! {
+
+          fn [< setup_and_test_ $prj >] () {
+              let payload = solidity_testing_perf_cargo::tests::solang::setup($prj_name);
+              solidity_testing_perf_cargo::tests::solang::run(payload)
+          }
+
+          #[library_benchmark]
+          pub fn [< solang_ $prj >]() {
+              black_box([< setup_and_test_ $prj >]());
+          }
+
+          library_benchmark_group!(
+            name = [< solang_ $prj _group >];
+            benchmarks = [< solang_ $prj >]
+          );
+        }
+    };
+}
+
+include!("../../src/solang_benches_list.rs");
 
 macro_rules! do_main {
     ($($groups:ident),+ $(,)?) => {
@@ -105,7 +139,7 @@ main!(
 }
 }
 
-// manually listed because I found no way to successfully do it dynamically
+// __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
 do_main!(
     flat_imports_mooniswap,
     circular_imports_weighted_pool,
@@ -113,8 +147,9 @@ do_main!(
     protocol_multicall3,
     protocol_create_x,
     protocol_ui_pool_data_provider_v3,
-    // pointer_librarires_largest_file,
     largest_file_trivia_one_step_leverage_f,
     median_file_safe_math,
     three_quarters_file_merkle_proof,
+    solang_median_file_safe_math_group,
+    solang_three_quarters_file_merkle_proof_group,
 );

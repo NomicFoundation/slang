@@ -17,13 +17,8 @@ semver = { workspace = true }
 serde_json = { workspace = true }
 iai-callgrind = { workspace = true }
 paste = { workspace = true }
-solang = "0.3.2"
-solang-parser = { version = "=0.3.2" } # solang doesn't fix the version, and it fails to compile otherwise
-
-[build-dependencies]
-solidity_testing_perf_utils = { workspace = true }
-anyhow = { workspace = true }
-heck = { workspace = true }
+solang = "0.3.2" # __SLANG_INFRA_SOLANG_VERSION__ (keep in sync)
+solang-parser = { version = "=0.3.2" } # __SLANG_INFRA_SOLANG_VERSION__ (keep in sync: it fails to compile otherwise)
 
 [[bench]]
 name = "iai"

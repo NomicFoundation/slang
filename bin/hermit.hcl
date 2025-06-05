@@ -1,6 +1,7 @@
 env = {
   // Infra:
-  "PATH": "${HERMIT_ENV}/scripts/bin:${PATH}",
+  // _SLANG_INFRA_SOLANG_LLVM_PATH_ (keep in sync)
+  "PATH": "${HERMIT_ENV}/scripts/bin:${HERMIT_ENV}/bin/solang-llvm/bin:${PATH}",
   "REPO_ROOT": "${HERMIT_ENV}",
 
   // Rust:

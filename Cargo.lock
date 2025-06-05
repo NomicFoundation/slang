@@ -3477,7 +3477,6 @@ name = "solidity_testing_perf_cargo"
 version = "1.2.0"
 dependencies = [
  "anyhow",
- "heck 0.5.0",
  "iai-callgrind",
  "infra_utils",
  "paste",
