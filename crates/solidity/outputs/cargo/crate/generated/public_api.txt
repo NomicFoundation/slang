@@ -6965,17 +6965,7 @@ pub type slang_solidity::backend::l2_flat_contracts::YulVariableNames = alloc::v
 pub mod slang_solidity::bindings
 pub use slang_solidity::bindings::BuiltInLocation
 pub use slang_solidity::bindings::PathResolver
-pub enum slang_solidity::bindings::BindingGraphInitializationError
-pub slang_solidity::bindings::BindingGraphInitializationError::ParserInitialization(slang_solidity::parser::ParserInitializationError)
-impl core::convert::From<slang_solidity::parser::ParserInitializationError> for slang_solidity::bindings::BindingGraphInitializationError
-pub fn slang_solidity::bindings::BindingGraphInitializationError::from(source: slang_solidity::parser::ParserInitializationError) -> Self
-impl core::error::Error for slang_solidity::bindings::BindingGraphInitializationError
-pub fn slang_solidity::bindings::BindingGraphInitializationError::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
-impl core::fmt::Debug for slang_solidity::bindings::BindingGraphInitializationError
-pub fn slang_solidity::bindings::BindingGraphInitializationError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::fmt::Display for slang_solidity::bindings::BindingGraphInitializationError
-pub fn slang_solidity::bindings::BindingGraphInitializationError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, resolver: alloc::rc::Rc<dyn metaslang_bindings::builder::PathResolver<slang_solidity::cst::KindTypes>>) -> core::result::Result<slang_solidity::bindings::BindingGraphBuilder, slang_solidity::bindings::BindingGraphInitializationError>
+pub fn slang_solidity::bindings::create_with_resolver(version: semver::Version, resolver: alloc::rc::Rc<dyn metaslang_bindings::builder::PathResolver<slang_solidity::cst::KindTypes>>) -> slang_solidity::bindings::BindingGraphBuilder
 pub fn slang_solidity::bindings::get_binding_rules() -> &'static str
 pub type slang_solidity::bindings::BindingGraph = metaslang_bindings::graph::BindingGraph<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::BindingGraphBuilder = metaslang_bindings::builder::BindingGraphBuilder<slang_solidity::cst::KindTypes>
@@ -7815,8 +7805,6 @@ pub fn slang_solidity::diagnostic::render<D: slang_solidity::diagnostic::Diagnos
 pub mod slang_solidity::parser
 pub enum slang_solidity::parser::ParserInitializationError
 pub slang_solidity::parser::ParserInitializationError::UnsupportedLanguageVersion(semver::Version)
-impl core::convert::From<slang_solidity::parser::ParserInitializationError> for slang_solidity::bindings::BindingGraphInitializationError
-pub fn slang_solidity::bindings::BindingGraphInitializationError::from(source: slang_solidity::parser::ParserInitializationError) -> Self
 impl core::error::Error for slang_solidity::parser::ParserInitializationError
 impl core::fmt::Debug for slang_solidity::parser::ParserInitializationError
 pub fn slang_solidity::parser::ParserInitializationError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result

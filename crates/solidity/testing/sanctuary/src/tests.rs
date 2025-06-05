@@ -141,7 +141,7 @@ pub fn run_test(
     }
 
     if check_bindings {
-        let binding_errors = run_bindings_check(&version, source_id, &output)?;
+        let binding_errors = run_bindings_check(&version, source_id, &output);
         if !binding_errors.is_empty() {
             for error in &binding_errors {
                 let report =
@@ -217,9 +217,9 @@ fn run_bindings_check(
     version: &Version,
     source_id: &str,
     output: &ParseOutput,
-) -> Result<Vec<BindingError>> {
+) -> Vec<BindingError> {
     let mut errors = Vec::new();
-    let binding_graph = create_bindings(version, source_id, output)?;
+    let binding_graph = create_bindings(version, source_id, output);
 
     for reference in binding_graph.all_references() {
         if reference.get_file().is_built_ins() {
@@ -259,24 +259,20 @@ fn run_bindings_check(
         }
     }
 
-    Ok(errors)
+    errors
 }
 
-fn create_bindings(
-    version: &Version,
-    source_id: &str,
-    output: &ParseOutput,
-) -> Result<Rc<BindingGraph>> {
+fn create_bindings(version: &Version, source_id: &str, output: &ParseOutput) -> Rc<BindingGraph> {
     let mut builder = bindings::create_with_resolver(
         version.clone(),
         Rc::new(SingleFileResolver {
             source_id: source_id.into(),
         }),
-    )?;
+    );
 
     builder.add_user_file(source_id, output.create_tree_cursor());
 
-    Ok(builder.build())
+    builder.build()
 }
 
 /// The `PathResolver` that always resolves to the given `source_id`.

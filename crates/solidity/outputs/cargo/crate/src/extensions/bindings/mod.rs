@@ -8,15 +8,11 @@ use metaslang_bindings::ScopeGraphBuilder;
 use metaslang_cst::text_index::TextIndex;
 use semver::Version;
 
-use crate::bindings::{BindingGraphBuilder, BindingGraphInitializationError};
+use crate::bindings::BindingGraphBuilder;
 use crate::cst::{Node, NonterminalKind};
 
 #[allow(clippy::needless_pass_by_value)]
-#[allow(clippy::unnecessary_wraps)]
-pub fn add_built_ins(
-    builder: &mut BindingGraphBuilder,
-    version: Version,
-) -> Result<(), BindingGraphInitializationError> {
+pub fn add_built_ins(builder: &mut BindingGraphBuilder, version: Version) {
     let empty_node = Node::nonterminal(NonterminalKind::SourceUnit, Vec::new())
         .into_nonterminal()
         .unwrap();
@@ -29,6 +25,4 @@ pub fn add_built_ins(
     let mut globals = ScopeGraphBuilder::new(&mut file_builder, "@@built-ins@@", root_node, None);
 
     define_built_ins(&mut file_builder, &mut globals, &version);
-
-    Ok(())
 }

@@ -42,8 +42,7 @@ impl CompilationUnit {
             };
 
             let mut builder =
-                create_with_resolver(self.language_version.clone(), Rc::new(resolver))
-                    .expect("Language version is already validated by the builder");
+                create_with_resolver(self.language_version.clone(), Rc::new(resolver));
 
             for (id, file) in &self.files {
                 builder.add_user_file(id, file.create_tree_cursor());
