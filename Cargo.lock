@@ -455,7 +455,6 @@ dependencies = [
  "codegen_testing",
  "infra_utils",
  "rayon",
- "semver",
  "solidity_language",
  "testlang_language",
 ]
