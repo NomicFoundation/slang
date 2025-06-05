@@ -8187,6 +8187,9 @@ pub slang_solidity::diagnostic::Severity::Error = 1
 pub slang_solidity::diagnostic::Severity::Hint = 4
 pub slang_solidity::diagnostic::Severity::Information = 3
 pub slang_solidity::diagnostic::Severity::Warning = 2
+impl core::cmp::PartialEq for slang_solidity::diagnostic::Severity
+pub fn slang_solidity::diagnostic::Severity::eq(&self, other: &slang_solidity::diagnostic::Severity) -> bool
+impl core::marker::StructuralPartialEq for slang_solidity::diagnostic::Severity
 pub trait slang_solidity::diagnostic::Diagnostic
 pub fn slang_solidity::diagnostic::Diagnostic::message(&self) -> alloc::string::String
 pub fn slang_solidity::diagnostic::Diagnostic::severity(&self) -> slang_solidity::diagnostic::Severity
