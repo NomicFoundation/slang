@@ -40,8 +40,8 @@ impl<'c> CompilationBuilder<'c> {
 
         let AddFileResponse { import_paths } = self.internal.add_file(filename.into(), &source);
 
-        for import_path in import_paths {
-            let import_path = import_path.node().unparse();
+        for import_path_cursor in import_paths {
+            let import_path = import_path_cursor.node().unparse();
             let import_path = import_path
                 .strip_prefix(|c| matches!(c, '"' | '\''))
                 .unwrap()
@@ -56,6 +56,12 @@ impl<'c> CompilationBuilder<'c> {
                 .ok_or(Error::msg(format!(
                     "Could not resolve import path {import_path} in source file {filename}"
                 )))?;
+
+            self.internal.resolve_import(
+                filename,
+                &import_path_cursor,
+                import_real_name.clone(),
+            )?;
             self.add_file(&import_real_name)?;
         }
 
