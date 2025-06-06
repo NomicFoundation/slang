@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Result};
-use slang_solidity::backend::l1_typed_cst;
+use slang_solidity::backend::l1_structured_ast;
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
 
@@ -24,42 +24,47 @@ contract MyContract {
     );
     assert!(output.is_valid());
 
-    let ast = l1_typed_cst::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
+    let ast =
+        l1_structured_ast::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
     assert_eq!(2, ast.members.len());
     assert!(matches!(
         ast.members[0],
-        l1_typed_cst::SourceUnitMember::PragmaDirective(_)
+        l1_structured_ast::SourceUnitMember::PragmaDirective(_)
     ));
     assert!(matches!(
         ast.members[1],
-        l1_typed_cst::SourceUnitMember::ContractDefinition(_)
+        l1_structured_ast::SourceUnitMember::ContractDefinition(_)
     ));
 
-    let l1_typed_cst::SourceUnitMember::ContractDefinition(ref contract) = ast.members[1] else {
+    let l1_structured_ast::SourceUnitMember::ContractDefinition(ref contract) = ast.members[1]
+    else {
         panic!("Expected ContractDefinition");
     };
     assert_eq!("MyContract", contract.name.unparse());
     assert_eq!(3, contract.members.len());
 
-    let l1_typed_cst::ContractMember::StateVariableDefinition(ref state_var) = contract.members[0]
+    let l1_structured_ast::ContractMember::StateVariableDefinition(ref state_var) =
+        contract.members[0]
     else {
         panic!("Expected StateVariableDefinition");
     };
     assert_eq!("owner", state_var.name.unparse());
     assert!(matches!(
         state_var.type_name,
-        l1_typed_cst::TypeName::ElementaryType(_)
+        l1_structured_ast::TypeName::ElementaryType(_)
     ));
 
-    let l1_typed_cst::ContractMember::ConstructorDefinition(ref ctor) = contract.members[1] else {
+    let l1_structured_ast::ContractMember::ConstructorDefinition(ref ctor) = contract.members[1]
+    else {
         panic!("Expected ConstructorDefinition");
     };
     assert_eq!(1, ctor.body.statements.len());
 
-    let l1_typed_cst::ContractMember::FunctionDefinition(ref function) = contract.members[2] else {
+    let l1_structured_ast::ContractMember::FunctionDefinition(ref function) = contract.members[2]
+    else {
         panic!("Expected FunctionDefinition");
     };
-    let l1_typed_cst::FunctionName::Identifier(ref name) = function.name else {
+    let l1_structured_ast::FunctionName::Identifier(ref name) = function.name else {
         panic!("Expected identifier in FunctionName");
     };
     assert_eq!("test", name.unparse());
@@ -78,9 +83,9 @@ contract MyContract {
     );
     assert!(matches!(
         function.body,
-        l1_typed_cst::FunctionBody::Block(_)
+        l1_structured_ast::FunctionBody::Block(_)
     ));
-    let l1_typed_cst::FunctionBody::Block(ref block) = function.body else {
+    let l1_structured_ast::FunctionBody::Block(ref block) = function.body else {
         panic!("Expected Block");
     };
     assert_eq!(1, block.statements.len());
