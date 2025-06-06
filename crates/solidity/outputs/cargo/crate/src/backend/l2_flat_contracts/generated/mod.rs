@@ -8,4 +8,4 @@ pub mod rewriter;
 pub mod transformer;
 pub mod visitor;
 
-pub use super::l1_typed_cst as input;
+pub use super::super::l1_structured_ast as input;
