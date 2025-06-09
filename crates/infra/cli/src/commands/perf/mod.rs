@@ -1,4 +1,3 @@
-mod bencher;
 mod cargo;
 mod npm;
 

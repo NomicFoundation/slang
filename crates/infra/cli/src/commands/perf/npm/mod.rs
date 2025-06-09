@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 
-use super::bencher::run_bench;
+use crate::toolchains::bencher::run_bench;
 use crate::utils::DryRun;
 
 #[derive(Clone, Debug, Parser)]
