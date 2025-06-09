@@ -2004,6 +2004,12 @@ inherit .star_extension
     edge @stmt.defs -> @body.defs
     edge @stmt.defs -> @stmt.init_defs
   }
+
+  ;; For initialization defs are also available to Yul assembly blocks
+  node yul_locals
+  attr (yul_locals) pop_symbol = "@yul_locals"
+  edge @body.lexical_scope -> yul_locals
+  edge yul_locals -> @stmt.init_defs
 }
 
 ;; While loops
@@ -2043,6 +2049,12 @@ inherit .star_extension
   edge @body.lexical_scope -> @return_params.defs
   ;; Similar to functions, return params shadow other declarations
   attr (@body.lexical_scope -> @return_params.defs) precedence = 1
+
+  ;; Return params are also available to Yul assembly blocks
+  node yul_locals
+  attr (yul_locals) pop_symbol = "@yul_locals"
+  edge @body.lexical_scope -> yul_locals
+  edge yul_locals -> @return_params.defs
 }
 
 @stmt [Statement [TryStatement [CatchClauses [CatchClause
@@ -2059,6 +2071,12 @@ inherit .star_extension
   edge @body.lexical_scope -> @catch_params.defs
   ;; Similar to functions, catch params shadow other declarations
   attr (@body.lexical_scope -> @catch_params.defs) precedence = 1
+
+  ;; Catch params are also available to Yul assembly blocks
+  node yul_locals
+  attr (yul_locals) pop_symbol = "@yul_locals"
+  edge @body.lexical_scope -> yul_locals
+  edge yul_locals -> @catch_params.defs
 }
 
 @stmt [Statement [TryStatement [CatchClauses [CatchClause
@@ -2416,6 +2434,11 @@ inherit .star_extension
 
   edge @constant.def -> def
 
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  edge def -> typeof
+  edge typeof -> @type_name.output
   edge @type_name.type_ref -> @constant.lexical_scope
 }
 

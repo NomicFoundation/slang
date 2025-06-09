@@ -52,7 +52,7 @@ impl WasmPackage {
             "target/{WASM_TARGET}/{profile}/{wasm_crate}.optimized.wasm"
         ));
 
-        Command::new("node")
+        Command::new("submodules/jco/bin/node")
             .args(["submodules/jco/src/jco.js", "opt", wasm_binary.unwrap_str()])
             .property("--output", wasm_opt_binary.unwrap_str())
             .arg("--")
@@ -87,7 +87,7 @@ impl WasmPackage {
         let jco_config = runtime_dir.join("generated/config.json");
 
         {
-            Command::new("node")
+            Command::new("submodules/jco/bin/node")
                 .args([
                     "submodules/jco/src/jco.js",
                     "transpile",
@@ -104,7 +104,7 @@ impl WasmPackage {
 
         {
             let wit_directory = runtime_dir.join("interface/generated");
-            Command::new("node")
+            Command::new("submodules/jco/bin/node")
                 .args([
                     "submodules/jco/src/jco.js",
                     "types",

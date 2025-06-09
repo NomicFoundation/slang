@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         for (uint256 i = 0; i < 10; i += 1) {
+   │                      ┬      ┬       ┬  
+   │                      ╰───────────────── name: 3
+   │                             │       │  
+   │                             ╰────────── ref: 3
+   │                                     │  
+   │                                     ╰── ref: 3
+   │ 
+ 5 │                 let x := add(i, 1)
+   │                     ┬    ─┬─ ┬  
+   │                     ╰─────────── name: 4
+   │                           │  │  
+   │                           ╰───── ref: built-in
+   │                              │  
+   │                              ╰── ref: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public {
+ 3 │ │ │           for (uint256 i = 0; i < 10; i += 1) {
+   │ │ │                ───────┬──────  
+   │ │ │                       ╰──────── definiens: 3
+   ┆ ┆ ┆   
+ 5 │ │ │                   let x := add(i, 1)
+   │ │ │                       ┬  
+   │ │ │                       ╰── definiens: 4
+   ┆ ┆ ┆   
+ 8 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 9 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯
