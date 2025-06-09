@@ -3,87 +3,63 @@
 References and definitions: 
     ╭─[input.sol:1:1]
     │
-  1 │ interface Service { function test() external; }
-    │           ───┬───            ──┬─  
-    │              ╰───────────────────── name: 1
-    │                                │   
-    │                                ╰─── name: 2
-    │ 
-  3 │ contract Test {
+  1 │ contract Test {
     │          ──┬─  
-    │            ╰─── name: 3
-  4 │     function test(Service service) public {
-    │              ──┬─ ───┬─── ───┬───  
-    │                ╰─────────────────── name: 4
-    │                      │       │     
-    │                      ╰───────────── ref: 1
-    │                              │     
-    │                              ╰───── name: 5
-  5 │         try service.test() {
-    │             ───┬─── ──┬─  
-    │                ╰────────── ref: 5
-    │                       │   
-    │                       ╰─── ref: 2
-  6 │         } catch Error(bytes memory reason) {
-    │                 ──┬──              ───┬──  
-    │                   ╰──────────────────────── ref: built-in
-    │                                       │    
-    │                                       ╰──── name: 6
+    │            ╰─── name: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 2
+  3 │         try this.test() {
+    │                  ──┬─  
+    │                    ╰─── ref: 2
+  4 │         } catch Error(string memory reason) {
+    │                 ──┬──               ───┬──  
+    │                   ╰───────────────────────── ref: built-in
+    │                                        │    
+    │                                        ╰──── name: 3
     │ 
-  8 │                 revert(add(32, reason), mload(reason))
-    │                 ───┬── ─┬─     ───┬──   ──┬── ───┬──  
-    │                    ╰────────────────────────────────── ref: built-in
-    │                         │         │       │      │    
-    │                         ╰───────────────────────────── ref: built-in
-    │                                   │       │      │    
-    │                                   ╰─────────────────── ref: 6
-    │                                           │      │    
-    │                                           ╰─────────── ref: built-in
-    │                                                  │    
-    │                                                  ╰──── ref: 6
+  6 │                 let x := reason
+    │                     ┬    ───┬──  
+    │                     ╰──────────── name: 4
+    │                             │    
+    │                             ╰──── ref: 3
     │ 
- 10 │         } catch (bytes memory reason) {
+  8 │         } catch (bytes memory reason) {
     │                               ───┬──  
-    │                                  ╰──── name: 7
+    │                                  ╰──── name: 5
     │ 
- 12 │                 revert(add(32, reason), mload(reason))
-    │                 ───┬── ─┬─     ───┬──   ──┬── ───┬──  
-    │                    ╰────────────────────────────────── ref: built-in
-    │                         │         │       │      │    
-    │                         ╰───────────────────────────── ref: built-in
-    │                                   │       │      │    
-    │                                   ╰─────────────────── ref: 7
-    │                                           │      │    
-    │                                           ╰─────────── ref: built-in
-    │                                                  │    
-    │                                                  ╰──── ref: 7
+ 10 │                 let x := reason
+    │                     ┬    ───┬──  
+    │                     ╰──────────── name: 6
+    │                             │    
+    │                             ╰──── ref: 5
 ────╯
 Definiens: 
     ╭─[input.sol:1:1]
     │
-  1 │ │     interface Service { function test() external; }
-    │ │     ────────────────────────┬───────┬───────────────  
-    │ │                             ╰───────────────────────── definiens: 1
-    │ │                                     │                 
-    │ │                                     ╰───────────────── definiens: 2
-  2 │ ╭───▶ 
+  1 │ ╭─│ ▶ contract Test {
+  2 │ │ ╭─▶     function test() public {
     ┆ ┆ ┆   
-  4 │ │ ╭─▶     function test(Service service) public {
-    │ │ │                     ───────┬───────  
-    │ │ │                            ╰───────── definiens: 5
+  4 │ │ │           } catch Error(string memory reason) {
+    │ │ │                         ──────────┬─────────  
+    │ │ │                                   ╰─────────── definiens: 3
     ┆ ┆ ┆   
-  6 │ │ │           } catch Error(bytes memory reason) {
-    │ │ │                         ─────────┬─────────  
-    │ │ │                                  ╰─────────── definiens: 6
+  6 │ │ │                   let x := reason
+    │ │ │                       ┬  
+    │ │ │                       ╰── definiens: 4
     ┆ ┆ ┆   
- 10 │ │ │           } catch (bytes memory reason) {
+  8 │ │ │           } catch (bytes memory reason) {
     │ │ │                    ─────────┬─────────  
-    │ │ │                             ╰─────────── definiens: 7
+    │ │ │                             ╰─────────── definiens: 5
     ┆ ┆ ┆   
- 15 │ │ ├─▶     }
+ 10 │ │ │                   let x := reason
+    │ │ │                       ┬  
+    │ │ │                       ╰── definiens: 6
+    ┆ ┆ ┆   
+ 13 │ │ ├─▶     }
     │ │ │           
-    │ │ ╰─────────── definiens: 4
- 16 │ ├───▶ }
+    │ │ ╰─────────── definiens: 2
+ 14 │ ├───▶ }
     │ │         
-    │ ╰───────── definiens: 3
+    │ ╰───────── definiens: 1
 ────╯

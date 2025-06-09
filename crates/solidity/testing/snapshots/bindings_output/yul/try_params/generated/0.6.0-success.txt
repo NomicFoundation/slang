@@ -3,63 +3,35 @@
 References and definitions: 
    ╭─[input.sol:1:1]
    │
- 1 │ interface Service { function test() external returns (uint); }
-   │           ───┬───            ──┬─  
-   │              ╰───────────────────── name: 1
-   │                                │   
-   │                                ╰─── name: 2
-   │ 
- 3 │ contract Test {
+ 1 │ contract Test {
    │          ──┬─  
-   │            ╰─── name: 3
- 4 │     function test(Service service) public {
-   │              ──┬─ ───┬─── ───┬───  
-   │                ╰─────────────────── name: 4
-   │                      │       │     
-   │                      ╰───────────── ref: 1
-   │                              │     
-   │                              ╰───── name: 5
- 5 │         try service.test() returns (uint v) {
-   │             ───┬─── ──┬─                 ┬  
-   │                ╰──────────────────────────── ref: 5
-   │                       │                  │  
-   │                       ╰───────────────────── ref: 2
-   │                                          │  
-   │                                          ╰── name: 6
+   │            ╰─── name: 1
+ 2 │     function test() public returns (uint) {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         try this.test() returns (uint v) {
+   │                  ──┬─                 ┬  
+   │                    ╰───────────────────── ref: 2
+   │                                       │  
+   │                                       ╰── name: 3
    │ 
- 7 │                 let x := add(v, 1)
-   │                     ┬    ─┬─ ┬  
-   │                     ╰─────────── name: 7
-   │                           │  │  
-   │                           ╰───── ref: built-in
-   │                              │  
-   │                              ╰── ref: 6
+ 5 │                 v := 0
+   │                 ┬  
+   │                 ╰── ref: 3
 ───╯
 Definiens: 
     ╭─[input.sol:1:1]
     │
-  1 │ │     interface Service { function test() external returns (uint); }
-    │ │     ───────────────────────────────┬───────┬───────────────────────  
-    │ │                                    ╰───────────────────────────────── definiens: 1
-    │ │                                            │                         
-    │ │                                            ╰───────────────────────── definiens: 2
-  2 │ ╭───▶ 
+  1 │ ╭─│ ▶ contract Test {
+  2 │ │ ╭─▶     function test() public returns (uint) {
+  3 │ │ │           try this.test() returns (uint v) {
+    │ │ │                                    ───┬──  
+    │ │ │                                       ╰──── definiens: 3
     ┆ ┆ ┆   
-  4 │ │ ╭─▶     function test(Service service) public {
-    │ │ │                     ───────┬───────  
-    │ │ │                            ╰───────── definiens: 5
-  5 │ │ │           try service.test() returns (uint v) {
-    │ │ │                                       ───┬──  
-    │ │ │                                          ╰──── definiens: 6
-    ┆ ┆ ┆   
-  7 │ │ │                   let x := add(v, 1)
-    │ │ │                       ┬  
-    │ │ │                       ╰── definiens: 7
-    ┆ ┆ ┆   
- 11 │ │ ├─▶     }
+  9 │ │ ├─▶     }
     │ │ │           
-    │ │ ╰─────────── definiens: 4
- 12 │ ├───▶ }
+    │ │ ╰─────────── definiens: 2
+ 10 │ ├───▶ }
     │ │         
-    │ ╰───────── definiens: 3
+    │ ╰───────── definiens: 1
 ────╯
