@@ -11,17 +11,14 @@ on:
         required: true
         default: true
 
-      runCargo:
-        description: "Runs the cargo benchmarks."
-        type: "boolean"
+      target:
+        type: "choice"
         required: true
-        default: true
-
-      runNPM:
-        description: "Runs the npm benchmarks."
-        type: "boolean"
-        required: true
-        default: true
+        default: "both"
+        options:
+          - "npm"
+          - "cargo"
+          - "both"
 
       bencherProject:
         description: "Bencher project (optional):"
@@ -43,28 +40,9 @@ jobs:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
 
     # Only run on the main repo (not forks), unless it is a dry run:
-    if: "${{ github.repository == 'NomicFoundation/slang' || github.event.inputs.dryRun == true }}"
+    if: "${{ github.repository == 'NomicFoundation/slang' || inputs.dryRun == true }}"
 
     steps:
-      # Installs basic dependencies when running locally with https://github.com/nektos/act,
-      # whose Ubuntu image is bare. Note that when running with `act` you need to pass the
-      # the inputs of the workflow, or the `if`s aren't going to work (https://github.com/nektos/act/issues/2501)
-      # then you need to run it with `act --eventpath event.input -W .github/workflows/benchmarks.yml` where
-      # the `event.input` file is of the form:
-      #
-      # {
-      #   "action": "workflow_dispatch",
-      #   "inputs": {
-      #       "dryRun": true,
-      #       "runCargo": false,
-      #       "runNPM": true
-      #   }
-      # }
-      - name: "Install Act dependencies"
-        if: "${{ env.ACT }}"
-        run: |
-          apt-get update && apt-get install sudo curl build-essential git pkg-config libssl-dev -y
-
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
 
@@ -72,28 +50,28 @@ jobs:
         uses: "./.github/actions/cache/restore"
 
       - name: "Set bencher project"
-        if: "${{ github.event.inputs.bencherProject }}"
+        if: "${{ inputs.bencherProject }}"
         run: |
-          echo "SLANG_BENCHER_PROJECT=${{ github.event.inputs.bencherProject }}" >> $GITHUB_ENV
+          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
 
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
 
       - name: "infra perf cargo"
-        run: "./scripts/bin/infra perf cargo ${{ github.event.inputs.dryRun == true && '--dry-run' || '' }}"
+        run: "./scripts/bin/infra perf cargo ${{ inputs.dryRun == true && '--dry-run' || '' }}"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
-        if: "${{ github.event.inputs.runCargo }}"
+        if: "${{ inputs.target != 'npm' }}"
 
       - name: "infra check"
-        run: "./scripts/bin/infra check"
-        if: "${{ github.event.inputs.runNPM }}"
+        run: "./scripts/bin/infra check npm"
+        if: "${{ inputs.target != 'cargo' }}"
 
       - name: "infra perf npm"
-        run: "./scripts/bin/infra perf npm ${{ github.event.inputs.dryRun == true && '--dry-run' || '' }}"
+        run: "./scripts/bin/infra perf npm ${{ inputs.dryRun == true && '--dry-run' || '' }}"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
-        if: "${{ github.event.inputs.runNPM }}"
+        if: "${{ inputs.target != 'cargo' }}"
 
       - name: "Upload Benchmarking Data"
         uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
@@ -101,4 +79,4 @@ jobs:
           name: "benchmarking-data"
           path: "target/iai"
           if-no-files-found: "error"
-        if: "${{ github.event.inputs.runCargo }}"
+        if: "${{ inputs.target != 'npm' }}"
