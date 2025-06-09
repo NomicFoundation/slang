@@ -2371,6 +2371,11 @@ inherit .star_extension
 
   edge @constant.def -> def
 
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  edge def -> typeof
+  edge typeof -> @type_name.output
   edge @type_name.type_ref -> @constant.lexical_scope
 }
 
