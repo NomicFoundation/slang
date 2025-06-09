@@ -1,6 +1,7 @@
 import * as wasm from "../../../wasm/index.mjs";
 
 export * from "./assertions.mjs";
+export * from "./extensions.mjs";
 
 /** {@inheritDoc wasm.cst.NonterminalKind} */
 export const NonterminalKind = wasm.cst.NonterminalKind;
@@ -81,12 +82,3 @@ export type TextIndex = wasm.cst.TextIndex;
 
 /** {@inheritDoc wasm.cst.TextRange} */
 export type TextRange = wasm.cst.TextRange;
-
-/** Create a new `Edge` with the label `label` and node `node`. */
-export function createEdge(label: EdgeLabel, node: Node): Edge {
-  if (node.isNonterminalNode()) {
-    return Edge.createWithNonterminal(label, node.asNonterminalNode());
-  } else {
-    return Edge.createWithTerminal(label, node.asTerminalNode());
-  }
-}
