@@ -2,4 +2,4 @@
 "@nomicfoundation/slang": patch
 ---
 
-update to rust `1.86.0`.
+update to rust `1.87.0`.
