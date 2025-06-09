@@ -152,12 +152,12 @@ pub(super) enum GraphElementKey {
 }
 
 impl<KT: KindTypes> ast::Stanza<KT> {
-    fn execute_lazy<'l>(
+    fn execute_lazy(
         &self,
         mat: &QueryMatch<KT>,
         graph: &mut Graph<KT>,
         config: &ExecutionConfig<'_, '_, KT>,
-        locals: &mut VariableMap<'l, LazyValue>,
+        locals: &mut VariableMap<'_, LazyValue>,
         store: &mut LazyStore,
         scoped_store: &mut LazyScopedVariables,
         lazy_graph: &mut LazyGraph,
