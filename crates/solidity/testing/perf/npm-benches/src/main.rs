@@ -124,7 +124,12 @@ impl NpmController {
             .arg("tsx")
             .flag("--trace-uncaught")
             .flag("--expose-gc")
-            .arg(perf_crate.join("npm/src/main.mts").to_str().unwrap())
+            .arg(
+                perf_crate
+                    .join("npm/src/benchmarks/main.mts")
+                    .to_str()
+                    .unwrap(),
+            )
             .property("--dir", path.to_string_lossy())
             .property("--name", name);
 
