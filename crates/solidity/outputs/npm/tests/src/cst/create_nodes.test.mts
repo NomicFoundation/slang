@@ -28,7 +28,7 @@ test("Create NonterminalNode without children", () => {
 test("Create NonterminalNode with children", () => {
   const child = TerminalNode.create(TerminalKind.OpenBracket, "[");
 
-  const childEdge = Edge.createTerminal(EdgeLabel.OpenBracket, child);
+  const childEdge = Edge.createWithTerminal(EdgeLabel.OpenBracket, child);
 
   const nonterminalNode = NonterminalNode.create(NonterminalKind.ArrayExpression, [childEdge]);
 

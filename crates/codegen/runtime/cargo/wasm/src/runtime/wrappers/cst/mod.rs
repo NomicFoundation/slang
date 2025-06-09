@@ -214,11 +214,11 @@ define_wrapper! { Edge {
         self._borrow_ffi().node.clone()._into_ffi()
     }
 
-    fn create_terminal(label: ffi::EdgeLabel, node: ffi::TerminalNode) -> ffi::Edge {
+    fn create_with_terminal(label: ffi::EdgeLabel, node: ffi::TerminalNode) -> ffi::Edge {
         rust::Edge{ label: label._from_ffi(), node: rust::Node::Terminal(node._from_ffi()) }._into_ffi()
     }
 
-    fn create_nonterminal(label: ffi::EdgeLabel, node: ffi::NonterminalNode) -> ffi::Edge {
+    fn create_with_nonterminal(label: ffi::EdgeLabel, node: ffi::NonterminalNode) -> ffi::Edge {
         rust::Edge{ label: label._from_ffi(), node: rust::Node::Nonterminal(node._from_ffi()) }._into_ffi()
     }
 } }

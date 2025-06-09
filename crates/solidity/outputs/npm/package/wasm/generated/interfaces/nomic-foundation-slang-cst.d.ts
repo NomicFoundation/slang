@@ -5923,11 +5923,11 @@ export class Edge {
   /**
    * Creates a new edge connecting a terminal node `node` with the label `label`.
    */
-  static createTerminal(label: EdgeLabel, node: TerminalNode): Edge;
+  static createWithTerminal(label: EdgeLabel, node: TerminalNode): Edge;
   /**
    * Creates a new edge connecting a nonterminal node `node` with the label `label`.
    */
-  static createNonterminal(label: EdgeLabel, node: NonterminalNode): Edge;
+  static createWithNonterminal(label: EdgeLabel, node: NonterminalNode): Edge;
   /**
    * Describes the relationship between this node and its parent.
    */
