@@ -4,22 +4,24 @@ use anyhow::Result;
 
 use crate::bindings_output::runner::run;
 
+const T: &str = "enums";
+
 #[test]
 fn decls() -> Result<()> {
-    run("enums", "decls")
+    run(T, "decls")
 }
 
 #[test]
 fn in_params() -> Result<()> {
-    run("enums", "in_params")
+    run(T, "in_params")
 }
 
 #[test]
 fn in_state_vars() -> Result<()> {
-    run("enums", "in_state_vars")
+    run(T, "in_state_vars")
 }
 
 #[test]
 fn sample() -> Result<()> {
-    run("enums", "sample")
+    run(T, "sample")
 }

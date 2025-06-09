@@ -12,26 +12,32 @@ pub fn setup_npm() -> Result<()> {
         Command::new("npm").arg("install").run();
     }
 
-    Command::new("npm")
+    Command::new("bin/npm")
         .current_dir(Path::repo_path("submodules/jco"))
         .args(["install"])
         .run();
 
+    Command::new("bin/npm")
+        .current_dir(Path::repo_path("submodules/jco"))
+        .args(["run", "setup:slang"])
+        .run();
+
     // jco needs to be built in debug mode once before it can be built in release mode,
     // since it requires some build artifacts in order to perform an optimization step.
-    Command::new("npm")
+    Command::new("bin/npm")
         .current_dir(Path::repo_path("submodules/jco"))
         .args(["run", "build"])
         .run();
 
-    Command::new("npm")
+    Command::new("bin/npm")
         .current_dir(Path::repo_path("submodules/jco"))
         .args(["run", "build:release"])
         .run();
 
     if GitHub::is_running_in_ci() {
         // Remove debug artifacts in CI to reduce total build size
-        Command::new("cargo")
+        Command::new("bin/cargo")
+            .current_dir(Path::repo_path("submodules/jco"))
             .arg("clean")
             .args(["--target-dir", "submodules/jco/target"])
             .args(["--profile", "dev"])

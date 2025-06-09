@@ -34,7 +34,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         .join(group_name)
         .join(test_name);
 
-    let mut fs = CodegenFileSystem::new(&test_dir)?;
+    let mut fs = CodegenFileSystem::default();
 
     let input_path = test_dir.join("input.sol");
     let contents = input_path.read_to_string()?;
@@ -103,7 +103,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                     .join("generated")
                     .join(format!("{version}-{status}.txt"));
 
-                fs.write_file(snapshot_path, &bindings_output)?;
+                fs.write_file_raw(snapshot_path, &bindings_output)?;
                 last_bindings_output = Some(bindings_output);
             }
         }

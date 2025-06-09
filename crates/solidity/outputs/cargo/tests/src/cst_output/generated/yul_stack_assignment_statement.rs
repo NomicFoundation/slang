@@ -4,12 +4,14 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "YulStackAssignmentStatement";
+
 #[test]
 fn equal_colon_separated() -> Result<()> {
-    run("YulStackAssignmentStatement", "equal_colon_separated")
+    run(T, "equal_colon_separated")
 }
 
 #[test]
 fn single_variable() -> Result<()> {
-    run("YulStackAssignmentStatement", "single_variable")
+    run(T, "single_variable")
 }

@@ -52,7 +52,7 @@ impl WasmPackage {
             "target/{WASM_TARGET}/{profile}/{wasm_crate}.optimized.wasm"
         ));
 
-        Command::new("node")
+        Command::new("submodules/jco/bin/node")
             .args(["submodules/jco/src/jco.js", "opt", wasm_binary.unwrap_str()])
             .property("--output", wasm_opt_binary.unwrap_str())
             .arg("--")
@@ -87,7 +87,7 @@ impl WasmPackage {
         let jco_config = runtime_dir.join("generated/config.json");
 
         {
-            Command::new("node")
+            Command::new("submodules/jco/bin/node")
                 .args([
                     "submodules/jco/src/jco.js",
                     "transpile",
@@ -104,7 +104,7 @@ impl WasmPackage {
 
         {
             let wit_directory = runtime_dir.join("interface/generated");
-            Command::new("node")
+            Command::new("submodules/jco/bin/node")
                 .args([
                     "submodules/jco/src/jco.js",
                     "types",
@@ -119,7 +119,7 @@ impl WasmPackage {
         let npm_crate = self.npm_crate();
         let output_dir = CargoWorkspace::locate_source_crate(npm_crate)?.join("wasm/generated");
 
-        let mut fs = CodegenFileSystem::new(&output_dir)?;
+        let mut fs = CodegenFileSystem::default();
 
         for temp_path in FileWalker::from_directory(temp_dir).find_all()? {
             let output_path = temp_path.replace_prefix(temp_dir, &output_dir);
@@ -128,7 +128,7 @@ impl WasmPackage {
                 "ts" => {
                     // Copy definition files as-is:
                     let contents = temp_path.read_to_string()?;
-                    fs.write_file(output_path, contents)?;
+                    fs.write_file_formatted(output_path, contents)?;
                 }
 
                 "js" => {

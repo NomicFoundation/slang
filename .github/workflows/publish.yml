@@ -44,7 +44,7 @@ jobs:
 
       - name: "Create/Update Changesets Pull Request"
         id: "runChangesets"
-        uses: "changesets/action@06245a4e0a36c064a573d4150030f5ec548e4fcc"
+        uses: "changesets/action@e0145edc7d9d8679003495b11f87bd8ef63c0cba"
         with:
           title: "Bump Slang Version"
           commit: "Bump Slang Version"

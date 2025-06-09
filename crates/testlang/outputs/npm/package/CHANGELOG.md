@@ -1,5 +1,18 @@
 # changelog
 
+## 1.2.0
+
+### Minor Changes
+
+- [#1330](https://github.com/NomicFoundation/slang/pull/1330) [`56393d5`](https://github.com/NomicFoundation/slang/commit/56393d5677440979b0a802d289c3506ccdfeb238) Thanks [@OmarTawfik](https://github.com/OmarTawfik)! - add support for Solidity `0.8.30`
+
+### Patch Changes
+
+- [#1314](https://github.com/NomicFoundation/slang/pull/1314) [`743d6b0`](https://github.com/NomicFoundation/slang/commit/743d6b0c3271a9a2e86103dab18656650cd3f6a7) Thanks [@mjoerussell](https://github.com/mjoerussell)! - Adding missing YUL built in functions:
+
+    - `codesize()`
+    - `codecopy(f, t, s)`
+
 ## 1.1.0
 
 ### Minor Changes

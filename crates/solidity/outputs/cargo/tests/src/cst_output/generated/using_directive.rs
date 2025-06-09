@@ -4,32 +4,34 @@ use anyhow::Result;
 
 use crate::cst_output::runner::run;
 
+const T: &str = "UsingDirective";
+
 #[test]
 fn destructure_empty() -> Result<()> {
-    run("UsingDirective", "destructure_empty")
+    run(T, "destructure_empty")
 }
 
 #[test]
 fn destructure_multiple() -> Result<()> {
-    run("UsingDirective", "destructure_multiple")
+    run(T, "destructure_multiple")
 }
 
 #[test]
 fn destructure_single() -> Result<()> {
-    run("UsingDirective", "destructure_single")
+    run(T, "destructure_single")
 }
 
 #[test]
 fn path_named() -> Result<()> {
-    run("UsingDirective", "path_named")
+    run(T, "path_named")
 }
 
 #[test]
 fn path_unnamed() -> Result<()> {
-    run("UsingDirective", "path_unnamed")
+    run(T, "path_unnamed")
 }
 
 #[test]
 fn user_defined_operator() -> Result<()> {
-    run("UsingDirective", "user_defined_operator")
+    run(T, "user_defined_operator")
 }

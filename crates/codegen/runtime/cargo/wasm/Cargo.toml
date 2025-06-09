@@ -11,11 +11,6 @@ publish = false
 [lib]
 crate-type = ["cdylib"]
 
-[build-dependencies]
-anyhow = { workspace = true }
-codegen_runtime_generator = { workspace = true }
-infra_utils = { workspace = true }
-
 [dependencies]
 codegen_runtime_cargo_crate = { workspace = true, features = [
   "__experimental_bindings_api",
