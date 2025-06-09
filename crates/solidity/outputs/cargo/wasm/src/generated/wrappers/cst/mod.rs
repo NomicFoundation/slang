@@ -64,6 +64,7 @@ enum_to_enum!(TerminalKind);
 
 pub struct TerminalKindExtensionsWrapper;
 
+#[allow(clippy::used_underscore_items)]
 impl ffi::GuestTerminalKindExtensions for TerminalKindExtensionsWrapper {
     fn is_identifier(kind: ffi::TerminalKind) -> bool {
         crate::rust_crate::cst::TerminalKindExtensions::is_identifier(kind._from_ffi())
@@ -94,6 +95,7 @@ enum_to_enum!(EdgeLabel);
 
 impl IntoFFI<ffi::Node> for rust::Node {
     #[inline]
+    #[allow(clippy::used_underscore_items)]
     fn _into_ffi(self) -> ffi::Node {
         match self {
             Self::Nonterminal(node) => ffi::Node::Nonterminal(node._into_ffi()),
@@ -104,6 +106,7 @@ impl IntoFFI<ffi::Node> for rust::Node {
 
 impl FromFFI<rust::Node> for ffi::Node {
     #[inline]
+    #[allow(clippy::used_underscore_items)]
     fn _from_ffi(self) -> rust::Node {
         match self {
             ffi::Node::Nonterminal(node) => rust::Node::Nonterminal(node._from_ffi()),
@@ -196,6 +199,7 @@ define_rc_wrapper! { TerminalNode {
 
 impl IntoFFI<ffi::Edge> for rust::Edge {
     #[inline]
+    #[allow(clippy::used_underscore_items)]
     fn _into_ffi(self) -> ffi::Edge {
         ffi::Edge {
             label: self.label._into_ffi(),
@@ -206,6 +210,7 @@ impl IntoFFI<ffi::Edge> for rust::Edge {
 
 impl FromFFI<rust::Edge> for ffi::Edge {
     #[inline]
+    #[allow(clippy::used_underscore_items)]
     fn _from_ffi(self) -> rust::Edge {
         rust::Edge {
             label: self.label._from_ffi(),
@@ -392,6 +397,7 @@ define_wrapper! { Query {
 
 impl IntoFFI<ffi::QueryError> for rust::QueryError {
     #[inline]
+    #[allow(clippy::used_underscore_items)]
     fn _into_ffi(self) -> ffi::QueryError {
         ffi::QueryError {
             message: self.message,
@@ -420,6 +426,7 @@ define_refcell_wrapper! { QueryMatchIterator {
 
 impl IntoFFI<ffi::QueryMatch> for rust::QueryMatch {
     #[inline]
+    #[allow(clippy::used_underscore_items)]
     fn _into_ffi(self) -> ffi::QueryMatch {
         let rust::QueryMatch {
             queries: _,
@@ -477,6 +484,7 @@ impl FromFFI<rust::TextIndex> for &ffi::TextIndex {
 
 impl IntoFFI<ffi::TextRange> for &rust::TextRange {
     #[inline]
+    #[allow(clippy::used_underscore_items)]
     fn _into_ffi(self) -> ffi::TextRange {
         ffi::TextRange {
             start: self.start._into_ffi(),
@@ -487,6 +495,7 @@ impl IntoFFI<ffi::TextRange> for &rust::TextRange {
 
 impl FromFFI<rust::TextRange> for &ffi::TextRange {
     #[inline]
+    #[allow(clippy::used_underscore_items)]
     fn _from_ffi(self) -> rust::TextRange {
         rust::TextRange {
             start: self.start._from_ffi(),

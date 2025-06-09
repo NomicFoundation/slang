@@ -120,7 +120,7 @@ num-format = { version = "0.4.4" }
 once_cell = { version = "1.21.3" }
 paste = { version = "1.0.15" }
 proc-macro2 = { version = "1.0.94" }
-public-api = { version = "0.37.0" }
+public-api = { version = "0.47.1" }
 quote = { version = "1.0.40" }
 rayon = { version = "1.10.0" }
 regex = { version = "1.11.1" }

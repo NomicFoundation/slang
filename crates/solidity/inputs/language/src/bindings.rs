@@ -16,7 +16,7 @@ pub fn render_built_ins(language: &Language) -> Result<String, Error> {
     writeln!(buffer, "#[allow(clippy::too_many_lines)]")?;
     writeln!(
         buffer,
-        "\npub fn define_built_ins<KT: KindTypes + 'static>(builder: &mut FileGraphBuilder<'_, KT>, scope: &mut ScopeGraphBuilder, version: &Version) {{",
+        "pub fn define_built_ins<KT: KindTypes + 'static>(builder: &mut FileGraphBuilder<'_, KT>, scope: &mut ScopeGraphBuilder, version: &Version) {{",
     )?;
     let versions = language.collect_built_ins_versions();
     let versions = versions.iter().collect::<Vec<_>>();

@@ -31,7 +31,6 @@ impl SeparatedHelper {
                             {
                                 ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
-                                    continue;
                                 }
                                 _ => unreachable!("We just checked that the separator matches"),
                             }
@@ -74,7 +73,6 @@ impl SeparatedHelper {
                             {
                                 ParserResult::Match(r#match) => {
                                     accum.extend(r#match.nodes);
-                                    continue;
                                 }
                                 _ => unreachable!("We just checked that the separator matches"),
                             }

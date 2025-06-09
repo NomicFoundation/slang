@@ -86,7 +86,6 @@ impl Helper {
                 // Skip trivia:
                 EdgeLabel::LeadingTrivia | EdgeLabel::TrailingTrivia => {
                     self.index += 1;
-                    continue;
                 }
                 // Otherwise, return the edge:
                 _ => {

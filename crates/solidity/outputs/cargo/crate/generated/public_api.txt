@@ -7004,8 +7004,8 @@ pub struct slang_solidity::compilation::InternalCompilationBuilder
 impl slang_solidity::compilation::InternalCompilationBuilder
 pub fn slang_solidity::compilation::InternalCompilationBuilder::add_file(&mut self, id: alloc::string::String, contents: &str) -> slang_solidity::compilation::AddFileResponse
 pub fn slang_solidity::compilation::InternalCompilationBuilder::build(&self) -> slang_solidity::compilation::CompilationUnit
-pub fn slang_solidity::compilation::InternalCompilationBuilder::create(language_version: semver::Version) -> core::result::Result<Self, CompilationInitializationError>
-pub fn slang_solidity::compilation::InternalCompilationBuilder::resolve_import(&mut self, source_file_id: &str, import_path: &slang_solidity::cst::Cursor, destination_file_id: alloc::string::String) -> core::result::Result<(), ResolveImportError>
+pub fn slang_solidity::compilation::InternalCompilationBuilder::create(language_version: semver::Version) -> core::result::Result<Self, slang_solidity::generated::compilation::internal_builder::CompilationInitializationError>
+pub fn slang_solidity::compilation::InternalCompilationBuilder::resolve_import(&mut self, source_file_id: &str, import_path: &slang_solidity::cst::Cursor, destination_file_id: alloc::string::String) -> core::result::Result<(), slang_solidity::generated::compilation::internal_builder::ResolveImportError>
 pub mod slang_solidity::cst
 pub use slang_solidity::cst::EdgeLabelExtensions
 pub use slang_solidity::cst::NodeKind

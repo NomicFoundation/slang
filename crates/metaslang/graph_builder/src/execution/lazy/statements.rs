@@ -383,7 +383,7 @@ impl fmt::Display for LazyPrint {
             match argument {
                 LazyPrintArgument::Text(string) => write!(f, "\"{}\"", string)?,
                 LazyPrintArgument::Value(value) => write!(f, "{}", value)?,
-            };
+            }
         }
         write!(f, " at {}", self.debug_info)
     }

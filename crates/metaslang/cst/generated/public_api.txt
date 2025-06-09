@@ -146,7 +146,7 @@ pub type metaslang_cst::nodes::Edge<T>::Target = metaslang_cst::nodes::Node<T>
 pub fn metaslang_cst::nodes::Edge<T>::deref(&self) -> &Self::Target
 impl<T> serde::ser::Serialize for metaslang_cst::nodes::Edge<T> where T: serde::ser::Serialize + metaslang_cst::kinds::KindTypes, <T as metaslang_cst::kinds::KindTypes>::EdgeLabel: serde::ser::Serialize
 pub fn metaslang_cst::nodes::Edge<T>::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
-#[repr(transparent)] pub struct metaslang_cst::nodes::NodeId(_)
+pub struct metaslang_cst::nodes::NodeId(_)
 impl core::clone::Clone for metaslang_cst::nodes::NodeId
 pub fn metaslang_cst::nodes::NodeId::clone(&self) -> metaslang_cst::nodes::NodeId
 impl core::cmp::Eq for metaslang_cst::nodes::NodeId
@@ -224,7 +224,7 @@ pub fn metaslang_cst::query::CaptureQuantifier::fmt(&self, f: &mut core::fmt::Fo
 impl core::marker::Copy for metaslang_cst::query::CaptureQuantifier
 impl core::marker::StructuralPartialEq for metaslang_cst::query::CaptureQuantifier
 pub struct metaslang_cst::query::Query<T: metaslang_cst::kinds::KindTypes>
-pub metaslang_cst::query::Query::ast_node: ASTNode<T>
+pub metaslang_cst::query::Query::ast_node: metaslang_cst::query::model::ASTNode<T>
 pub metaslang_cst::query::Query::capture_quantifiers: alloc::collections::btree::map::BTreeMap<alloc::string::String, metaslang_cst::query::CaptureQuantifier>
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::query::Query<T>
 pub fn metaslang_cst::query::Query<T>::create(text: &str) -> core::result::Result<Self, metaslang_cst::query::QueryError>

@@ -114,7 +114,7 @@ impl KeywordVersioningCommand {
                     continue;
                 }
                 _ => {}
-            };
+            }
 
             for definition in &item.definitions {
                 let mut variations = definition.value.collect_variations();
@@ -142,7 +142,7 @@ impl KeywordVersioningCommand {
                             );
                         }
                     }
-                };
+                }
 
                 for variation in variations {
                     assert!(
