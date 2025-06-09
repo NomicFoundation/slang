@@ -141,13 +141,13 @@ main!(
 
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
 do_main!(
-    flat_imports_mooniswap,
-    circular_imports_weighted_pool,
-    protocol_uniswap,
-    protocol_multicall3,
-    protocol_create_x,
-    protocol_ui_pool_data_provider_v3,
-    largest_file_trivia_one_step_leverage_f,
+    // flat_imports_mooniswap,
+    // circular_imports_weighted_pool,
+    // protocol_uniswap,
+    // protocol_multicall3,
+    // protocol_create_x,
+    // protocol_ui_pool_data_provider_v3,
+    // largest_file_trivia_one_step_leverage_f,
     median_file_safe_math,
     three_quarters_file_merkle_proof,
     solang_median_file_safe_math_group,
