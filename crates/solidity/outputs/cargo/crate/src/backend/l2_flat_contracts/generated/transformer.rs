@@ -1094,11 +1094,13 @@ pub trait Transformer {
         source: &input::AssignmentExpression,
     ) -> output::AssignmentExpression {
         let left_operand = self.transform_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.transform_expression(&source.right_operand);
 
         Rc::new(output::AssignmentExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1146,11 +1148,13 @@ pub trait Transformer {
         source: &input::EqualityExpression,
     ) -> output::EqualityExpression {
         let left_operand = self.transform_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.transform_expression(&source.right_operand);
 
         Rc::new(output::EqualityExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1160,11 +1164,13 @@ pub trait Transformer {
         source: &input::InequalityExpression,
     ) -> output::InequalityExpression {
         let left_operand = self.transform_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.transform_expression(&source.right_operand);
 
         Rc::new(output::InequalityExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1216,11 +1222,13 @@ pub trait Transformer {
         source: &input::ShiftExpression,
     ) -> output::ShiftExpression {
         let left_operand = self.transform_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.transform_expression(&source.right_operand);
 
         Rc::new(output::ShiftExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1230,11 +1238,13 @@ pub trait Transformer {
         source: &input::AdditiveExpression,
     ) -> output::AdditiveExpression {
         let left_operand = self.transform_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.transform_expression(&source.right_operand);
 
         Rc::new(output::AdditiveExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1244,11 +1254,13 @@ pub trait Transformer {
         source: &input::MultiplicativeExpression,
     ) -> output::MultiplicativeExpression {
         let left_operand = self.transform_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.transform_expression(&source.right_operand);
 
         Rc::new(output::MultiplicativeExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1258,11 +1270,13 @@ pub trait Transformer {
         source: &input::ExponentiationExpression,
     ) -> output::ExponentiationExpression {
         let left_operand = self.transform_expression(&source.left_operand);
+        let operator = Rc::clone(&source.operator);
         let right_operand = self.transform_expression(&source.right_operand);
 
         Rc::new(output::ExponentiationExpressionStruct {
             node_id: source.node_id,
             left_operand,
+            operator,
             right_operand,
         })
     }
@@ -1272,10 +1286,12 @@ pub trait Transformer {
         source: &input::PostfixExpression,
     ) -> output::PostfixExpression {
         let operand = self.transform_expression(&source.operand);
+        let operator = Rc::clone(&source.operator);
 
         Rc::new(output::PostfixExpressionStruct {
             node_id: source.node_id,
             operand,
+            operator,
         })
     }
 
@@ -1283,10 +1299,12 @@ pub trait Transformer {
         &mut self,
         source: &input::PrefixExpression,
     ) -> output::PrefixExpression {
+        let operator = Rc::clone(&source.operator);
         let operand = self.transform_expression(&source.operand);
 
         Rc::new(output::PrefixExpressionStruct {
             node_id: source.node_id,
+            operator,
             operand,
         })
     }
