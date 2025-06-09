@@ -30,13 +30,13 @@ pub fn test_single_contract(
 pub fn run_with_trace(archive: &ContractArchive, events: &Events, opts: &TestOptions) {
     for contract in archive.contracts() {
         events.trace(format!(
-            "[{name} {version}] Starting contract {name}",
+            "[{name} {version}] Starting contract",
             version = contract.version,
             name = contract.name
         ));
         run_test(&contract, events, opts);
         events.trace(format!(
-            "[{name} {version}] Finished contract {name}",
+            "[{name} {version}] Finished contract",
             version = contract.version,
             name = contract.name
         ));
