@@ -1,10 +1,10 @@
 import { parse } from "@solidity-parser/parser";
-import { log, Runner, SolidityProject, Timing } from "../common.mjs";
+import { log, Runner, SolidityProject, Timings } from "../common.mjs";
 
 export class AntlrRunner implements Runner {
   public name = "solidity parser";
 
-  async test(project: SolidityProject, file: string): Promise<Timing[]> {
+  async test(project: SolidityProject, file: string): Promise<Timings> {
     const start = performance.now();
 
     let toProcess = new Array<string>(file);
@@ -37,6 +37,6 @@ export class AntlrRunner implements Runner {
       });
     }
 
-    return [new Timing("antlr_build_ast_duration", performance.now() - start)];
+    return new Map([["antlr_build_ast_duration", performance.now() - start]]);
   }
 }
