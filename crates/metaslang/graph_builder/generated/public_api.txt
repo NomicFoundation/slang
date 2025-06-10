@@ -524,8 +524,8 @@ pub mod metaslang_graph_builder::excerpt
 pub struct metaslang_graph_builder::excerpt::Excerpt<'a>
 impl<'a> metaslang_graph_builder::excerpt::Excerpt<'a>
 pub fn metaslang_graph_builder::excerpt::Excerpt<'a>::from_source(path: &'a std::path::Path, source: &'a str, row: usize, columns: core::ops::range::Range<usize>, indent: usize) -> metaslang_graph_builder::excerpt::Excerpt<'a>
-impl<'a> core::fmt::Display for metaslang_graph_builder::excerpt::Excerpt<'a>
-pub fn metaslang_graph_builder::excerpt::Excerpt<'a>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for metaslang_graph_builder::excerpt::Excerpt<'_>
+pub fn metaslang_graph_builder::excerpt::Excerpt<'_>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub mod metaslang_graph_builder::functions
 pub mod metaslang_graph_builder::functions::stdlib
 pub mod metaslang_graph_builder::functions::stdlib::bool
@@ -740,7 +740,7 @@ pub fn metaslang_graph_builder::graph::Graph<KT>::display_json(&self, path: core
 pub fn metaslang_graph_builder::graph::Graph<KT>::iter_nodes(&self) -> impl core::iter::traits::iterator::Iterator<Item = metaslang_graph_builder::graph::GraphNodeRef>
 pub fn metaslang_graph_builder::graph::Graph<KT>::new() -> metaslang_graph_builder::graph::Graph<KT>
 pub fn metaslang_graph_builder::graph::Graph<KT>::node_count(&self) -> usize
-pub fn metaslang_graph_builder::graph::Graph<KT>::pretty_print<'a>(&'a self) -> impl core::fmt::Display + 'a
+pub fn metaslang_graph_builder::graph::Graph<KT>::pretty_print(&self) -> impl core::fmt::Display + '_
 impl<KT: metaslang_cst::kinds::KindTypes> core::ops::index::Index<metaslang_graph_builder::graph::GraphNodeRef> for metaslang_graph_builder::graph::Graph<KT>
 pub type metaslang_graph_builder::graph::Graph<KT>::Output = metaslang_graph_builder::graph::GraphNode
 pub fn metaslang_graph_builder::graph::Graph<KT>::index(&self, index: metaslang_graph_builder::graph::GraphNodeRef) -> &metaslang_graph_builder::graph::GraphNode
@@ -969,7 +969,7 @@ pub fn metaslang_graph_builder::Variables<'a>::add(&mut self, name: metaslang_gr
 pub fn metaslang_graph_builder::Variables<'a>::clear(&mut self)
 pub fn metaslang_graph_builder::Variables<'a>::get(&self, name: &metaslang_graph_builder::Identifier) -> core::option::Option<&metaslang_graph_builder::graph::Value>
 pub fn metaslang_graph_builder::Variables<'a>::is_empty(&self) -> bool
-pub fn metaslang_graph_builder::Variables<'a>::iter<'b>(&'b self) -> metaslang_graph_builder::VariableIter<'b>
+pub fn metaslang_graph_builder::Variables<'a>::iter(&self) -> metaslang_graph_builder::VariableIter<'_>
 pub fn metaslang_graph_builder::Variables<'a>::nested(context: &'a metaslang_graph_builder::Variables<'a>) -> Self
 pub fn metaslang_graph_builder::Variables<'a>::new() -> Self
 pub fn metaslang_graph_builder::Variables<'a>::remove(&mut self, name: &metaslang_graph_builder::Identifier)
