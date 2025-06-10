@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::io::Write;
 use std::path::Path;
 
 use anyhow::Result;
@@ -47,6 +46,21 @@ pub struct NpmController {
 
 type Timings = HashMap<String, f64>;
 
+#[derive(serde::Serialize)]
+struct Measure {
+    name: &'static str,
+    value: f64,
+}
+
+impl Measure {
+    pub fn new(value: f64) -> Measure {
+        Measure {
+            name: "Duration",
+            value,
+        }
+    }
+}
+
 impl NpmController {
     fn execute(&self) -> Result<()> {
         let config = config::read_config()?;
@@ -55,11 +69,11 @@ impl NpmController {
         if let Some(hash) = &self.hash {
             let result =
                 self.run_benchmarks(input_path, "custom", hash, self.entrypoint.as_deref())?;
-            publish(result.iter())
+            publish(result.into_iter())
         } else {
             let file_benchmarks = self.individual_file_benchmarks(input_path, &config.files)?;
             let project_benchmarks = self.project_benchmarks(input_path, &config.projects)?;
-            publish(file_benchmarks.iter().chain(project_benchmarks.iter()))
+            publish(file_benchmarks.into_iter().chain(project_benchmarks))
         }
     }
 
@@ -163,27 +177,9 @@ impl NpmController {
     }
 }
 
-fn publish<'a>(results: impl Iterator<Item = (&'a String, &'a f64)>) -> Result<()> {
-    // Outputs the timings in Bencher Metrics Format (https://bencher.dev/docs/reference/bencher-metric-format/)
-    // In particular, we can't use serde_json serializer out of the box, because the vector format is
-    // not what Bencher expects.
-    let mut output = std::io::stdout();
-    writeln!(output, "{{")?;
-
-    let mut buffer = None; // little trick to write no trailing ,
-
-    for timing in results {
-        if let Some(value) = buffer {
-            writeln!(output, "{value}")?;
-        }
-        writeln!(output, "\t\"{}\": {{", timing.0)?;
-        writeln!(output, "\t\t\"Duration\": {{")?;
-        writeln!(output, "\t\t\t\"value\": {}", timing.1)?;
-        writeln!(output, "\t\t}}")?;
-        write!(output, "\t}}")?;
-        buffer = Some(",");
-    }
-    writeln!(output, "\n}}")?;
+fn publish(results: impl Iterator<Item = (String, f64)>) -> Result<()> {
+    let results: HashMap<String, Measure> = results.map(|(k, v)| (k, Measure::new(v))).collect();
+    println!("{}", serde_json::to_string(&results)?);
     Ok(())
 }
 
