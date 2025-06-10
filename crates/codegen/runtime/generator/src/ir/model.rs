@@ -24,6 +24,9 @@ pub struct IrModel {
 pub struct Sequence {
     pub fields: Vec<Field>,
     pub has_nonterminals: bool,
+    // if true, this sequence models a precedence expression with multiple
+    // operators and the terminals should not be elided
+    pub multiple_operators: bool,
 }
 
 #[derive(Clone, Serialize)]
@@ -279,6 +282,7 @@ impl IrModelBuilder {
             Sequence {
                 fields,
                 has_nonterminals,
+                multiple_operators: false,
             },
         );
     }
@@ -430,12 +434,14 @@ impl IrModelBuilder {
             }
         }
         let has_nonterminals = fields.iter().any(|field| !field.is_terminal);
+        let multiple_operators = expression.operators.len() > 1;
 
         self.sequences.insert(
             parent_type,
             Sequence {
                 fields,
                 has_nonterminals,
+                multiple_operators,
             },
         );
     }

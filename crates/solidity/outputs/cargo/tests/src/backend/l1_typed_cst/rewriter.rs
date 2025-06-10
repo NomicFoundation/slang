@@ -138,6 +138,7 @@ impl Rewriter for ConstantFolder {
                 l1_typed_cst::Expression::MultiplicativeExpression(Rc::new(
                     l1_typed_cst::MultiplicativeExpressionStruct {
                         node_id: multiplicative_expression.node_id,
+                        operator: Rc::clone(&multiplicative_expression.operator),
                         left_operand,
                         right_operand,
                     },
