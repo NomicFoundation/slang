@@ -23,6 +23,10 @@
     {
       "hash": "0x3F78BBD206e4D3c504Eb854232EdA7e47E9Fd8FC",
       "name": "protocol_ui_pool_data_provider_v3"
+    },
+    {
+      "hash": "0x56681458E00CafE1206313D2D033946f458FDEfD",
+      "name": "deep_nesting_cooldogs"
     }
   ],
   "files": [
