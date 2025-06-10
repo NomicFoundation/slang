@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::io::Write;
 use std::path::Path;
 
@@ -5,7 +6,6 @@ use anyhow::Result;
 use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
-use serde::Deserialize;
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
 
@@ -45,11 +45,7 @@ pub struct NpmController {
     hot: usize,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct Timing {
-    pub component: String,
-    pub time: f64,
-}
+type Timings = HashMap<String, f64>;
 
 impl NpmController {
     fn execute(&self) -> Result<()> {
@@ -73,14 +69,14 @@ impl NpmController {
         name: &str,
         hash: &str,
         file: Option<&str>,
-    ) -> Result<Vec<Timing>> {
+    ) -> Result<Timings> {
         fetch(hash, input_path)?;
         let path = input_path.join(hash);
 
-        let mut results = vec![];
+        let mut results = HashMap::new();
         for sut in SubjectUT::iter() {
-            let mut sut_result = self.run(&path, name, file, sut)?;
-            results.append(&mut sut_result);
+            let sut_result = self.run(&path, name, file, sut)?;
+            results.extend(sut_result);
         }
 
         Ok(results)
@@ -94,12 +90,8 @@ impl NpmController {
         }
     }
 
-    fn individual_file_benchmarks(
-        &self,
-        input_path: &Path,
-        files: &Vec<File>,
-    ) -> Result<Vec<Timing>> {
-        let mut results = vec![];
+    fn individual_file_benchmarks(&self, input_path: &Path, files: &Vec<File>) -> Result<Timings> {
+        let mut results = HashMap::<String, f64>::new();
 
         let pattern_regex = self.compute_regex()?;
         for file in files {
@@ -107,19 +99,15 @@ impl NpmController {
                 continue;
             }
 
-            let mut result =
+            let result =
                 self.run_benchmarks(input_path, &file.name, &file.hash, Some(&file.file))?;
-            results.append(&mut result);
+            results.extend(result);
         }
         Ok(results)
     }
 
-    fn project_benchmarks(
-        &self,
-        input_path: &Path,
-        projects: &Vec<Project>,
-    ) -> Result<Vec<Timing>> {
-        let mut results = vec![];
+    fn project_benchmarks(&self, input_path: &Path, projects: &Vec<Project>) -> Result<Timings> {
+        let mut results = HashMap::<String, f64>::new();
         let pattern_regex = self.compute_regex()?;
 
         for project in projects {
@@ -127,8 +115,8 @@ impl NpmController {
                 continue;
             }
 
-            let mut result = self.run_benchmarks(input_path, &project.name, &project.hash, None)?;
-            results.append(&mut result);
+            let result = self.run_benchmarks(input_path, &project.name, &project.hash, None)?;
+            results.extend(result);
         }
         Ok(results)
     }
@@ -139,7 +127,7 @@ impl NpmController {
         name: &str,
         file: Option<&str>,
         sut: SubjectUT,
-    ) -> Result<Vec<Timing>, anyhow::Error> {
+    ) -> Result<Timings, anyhow::Error> {
         let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf")?;
         let mut command = Command::new("npx")
             .arg("tsx")
@@ -175,7 +163,7 @@ impl NpmController {
     }
 }
 
-fn publish<'a>(results: impl Iterator<Item = &'a Timing>) -> Result<()> {
+fn publish<'a>(results: impl Iterator<Item = (&'a String, &'a f64)>) -> Result<()> {
     // Outputs the timings in Bencher Metrics Format (https://bencher.dev/docs/reference/bencher-metric-format/)
     // In particular, we can't use serde_json serializer out of the box, because the vector format is
     // not what Bencher expects.
@@ -188,9 +176,9 @@ fn publish<'a>(results: impl Iterator<Item = &'a Timing>) -> Result<()> {
         if let Some(value) = buffer {
             writeln!(output, "{value}")?;
         }
-        writeln!(output, "\t\"{}\": {{", timing.component)?;
+        writeln!(output, "\t\"{}\": {{", timing.0)?;
         writeln!(output, "\t\t\"Duration\": {{")?;
-        writeln!(output, "\t\t\t\"value\": {}", timing.time)?;
+        writeln!(output, "\t\t\t\"value\": {}", timing.1)?;
         writeln!(output, "\t\t}}")?;
         write!(output, "\t}}")?;
         buffer = Some(",");

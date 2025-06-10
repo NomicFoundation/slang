@@ -1,12 +1,12 @@
 import assert from "assert";
 import { promisify } from "node:util";
 import * as solc from "solc";
-import { log, Runner, SolidityProject, Timing } from "../common.mjs";
+import { log, Runner, SolidityProject, Timings } from "../common.mjs";
 
 export class SolcRunner implements Runner {
   public name = "solc";
 
-  async test(project: SolidityProject, file: string): Promise<Timing[]> {
+  async test(project: SolidityProject, file: string): Promise<Timings> {
     const loadRemoteVersion: (version: string) => Promise<{ compile: (input: string, options: any) => string }> =
       promisify(solc.default.loadRemoteVersion);
 
@@ -36,7 +36,7 @@ export class SolcRunner implements Runner {
           console.log(parsing_result["errors"]);
           assert(false);
         }
-        return [new Timing("solc_build_ast_duration", performance.now() - start)];
+        return new Map([["solc_build_ast_duration", performance.now() - start]]);
       })
       .catch((err) => {
         console.error(`Can't process version ${project.compilation.compilerVersion}`);

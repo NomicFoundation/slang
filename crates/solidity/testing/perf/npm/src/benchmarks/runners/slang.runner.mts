@@ -1,7 +1,7 @@
 import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
 import { TerminalKind } from "@nomicfoundation/slang/cst";
 import assert from "node:assert";
-import { Runner, SolidityProject, Timing } from "../common.mjs";
+import { Runner, SolidityProject, Timings } from "../common.mjs";
 
 function createBuilder(project: SolidityProject): CompilationBuilder {
   const builder = CompilationBuilder.create({
@@ -37,7 +37,7 @@ class SlangRunner implements Runner {
     this.target = target;
   }
 
-  async test(project: SolidityProject, file: string): Promise<Timing[]> {
+  async test(project: SolidityProject, file: string): Promise<Timings> {
     const startTime = performance.now();
     const builder = createBuilder(project);
 
@@ -92,13 +92,12 @@ class SlangRunner implements Runner {
 
     const resolutionTime = performance.now() - builtGraphTime;
 
-    const timings = [
-      new Timing("slang_parse_all_files_duration", parsedAllFilesTime - startTime),
-      new Timing("slang_init_bindings_graph_duration", builtGraphTime - parsedAllFilesTime),
-      new Timing("slang_resolve_all_bindings_duration", resolutionTime),
-      new Timing("slang_total", performance.now() - startTime),
-    ];
-    return timings;
+    return new Map([
+      ["slang_parse_all_files_duration", parsedAllFilesTime - startTime],
+      ["slang_init_bindings_graph_duration", builtGraphTime - parsedAllFilesTime],
+      ["slang_resolve_all_bindings_duration", resolutionTime],
+      ["slang_total", performance.now() - startTime],
+    ]);
   }
 }
 

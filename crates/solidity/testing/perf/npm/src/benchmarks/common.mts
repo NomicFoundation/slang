@@ -124,15 +124,10 @@ export class SolidityProject {
   }
 }
 
-export class Timing {
-  public constructor(
-    public component: string,
-    public time: number,
-  ) {}
-}
+export type Timings = Map<string, number>;
 
 export interface Runner {
   name: string;
 
-  test(project: SolidityProject, file: string): Promise<Timing[]>;
+  test(project: SolidityProject, file: string): Promise<Timings>;
 }

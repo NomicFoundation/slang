@@ -1,4 +1,4 @@
-import { checkCI, Runner, round2, Timing, SolidityProject } from "./common.mjs";
+import { checkCI, Runner, round2, Timings, SolidityProject } from "./common.mjs";
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
 import { AntlrRunner, SlangBindingsFileRunner, SlangBindingsProjectRunner, SolcRunner } from "./runners/runners.mjs";
@@ -17,7 +17,7 @@ async function run(
   runner: Runner,
   cold: number,
   hot: number,
-): Promise<Timing[]> {
+): Promise<Timings> {
   const project = SolidityProject.build(dir + ".json");
   file = file || project.compilation.entrypoint();
 
@@ -26,23 +26,24 @@ async function run(
     await runner.test(project, file);
   }
 
-  const timesMap: Map<string, number> = new Map();
+  const timesMap: Timings = new Map();
 
   // hot runs
   for (let i = 0; i < hot; i++) {
     let timings = await runner.test(project, file);
 
-    for (const timing of timings) {
-      let time = timesMap.get(timing.component) || 0;
-      time += timing.time;
-      timesMap.set(timing.component, time);
+    for (const [component, measured] of timings) {
+      const accutime = timesMap.get(component) || 0;
+      timesMap.set(component, accutime + measured);
     }
   }
 
-  let timings = [];
-  for (const time of timesMap.entries()) {
-    timings.push(new Timing(time[0] + "_" + name, round2(time[1] / hot)));
+  const timings: Timings = new Map();
+
+  for (const [component, measured] of timesMap) {
+    timings.set(component + "_" + name, round2(measured / hot));
   }
+
   return timings;
 }
 
@@ -78,4 +79,4 @@ if (!(dir && name && runner)) {
 }
 const results = await run(dir, name, file, runner, options["cold"], options["hot"]);
 
-console.log(JSON.stringify(results, null, 2));
+console.log(JSON.stringify(Object.fromEntries(results), undefined, 2));
