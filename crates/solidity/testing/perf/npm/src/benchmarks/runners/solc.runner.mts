@@ -13,23 +13,23 @@ export class SolcRunner implements Runner {
     return await loadRemoteVersion("v" + project.compilation.compilerVersion)
       .then((solcSnapshot) => {
         const start = performance.now();
-        var folderMeta = `{
-        "language": "Solidity",
-        "sources": {
-          "${file}": {
-            "urls": ["${file}"]
-          }
-        },
-        "settings": {
-          "outputSelection": {
-            "*": {
-              "": ["ast"]
-            }
-          }
-        }
-      }
-      `;
-        const parsing_result = JSON.parse(solcSnapshot.compile(folderMeta, { import: findImports(project) }));
+        const options = JSON.stringify({
+          language: "Solidity",
+          sources: {
+            [file]: {
+              urls: [file],
+            },
+          },
+          settings: {
+            outputSelection: {
+              "*": {
+                "": ["ast"],
+              },
+            },
+          },
+        });
+
+        const parsing_result = JSON.parse(solcSnapshot.compile(options, { import: findImports(project) }));
         log(parsing_result);
         assert(parsing_result["sources"] != undefined);
         if (parsing_result["errors"] && !parsing_result["errors"].every((value: any) => value["type"] == "Warning")) {

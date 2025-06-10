@@ -17,7 +17,7 @@ pub struct PerfController {
 enum PerfCommand {
     /// Run benchmark tests for the rust api, and report the results to <https://bencher.dev/console>
     Cargo(CargoController),
-    /// Run benchmark tests for the typescript api
+    /// Run benchmark tests for the typescript api, and report the results to <https://bencher.dev/console>
     Npm(NpmController),
 }
 
