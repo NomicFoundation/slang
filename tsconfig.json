@@ -47,7 +47,6 @@
     /* Modules */
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "isolatedModules": true,
 
     /* Emit */
     "noEmit": true,

@@ -31,6 +31,7 @@ export default {
     "^.+\\.m?[tj]sx?$": [
       "ts-jest",
       {
+        isolatedModules: true,
         useESM: true,
       },
     ],
