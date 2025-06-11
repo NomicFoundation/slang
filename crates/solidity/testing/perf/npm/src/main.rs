@@ -40,19 +40,17 @@ pub struct NpmController {
 
 type Timings = HashMap<String, f64>;
 
+type Measure = HashMap<&'static str, Duration>;
+
 #[derive(serde::Serialize)]
-struct Measure {
-    name: &'static str,
+struct Duration {
     value: f64,
 }
 
-impl Measure {
-    pub fn new(value: f64) -> Measure {
-        Measure {
-            name: "Duration",
-            value,
-        }
-    }
+fn new_measure(value: f64) -> Measure {
+    let mut duration = Measure::with_capacity(1);
+    duration.insert("Duration", Duration { value });
+    duration
 }
 
 impl NpmController {
@@ -163,7 +161,7 @@ impl NpmController {
 }
 
 fn publish(results: impl Iterator<Item = (String, f64)>) -> Result<()> {
-    let results: HashMap<String, Measure> = results.map(|(k, v)| (k, Measure::new(v))).collect();
+    let results: HashMap<String, Measure> = results.map(|(k, v)| (k, new_measure(v))).collect();
     println!("{}", serde_json::to_string(&results)?);
     Ok(())
 }
