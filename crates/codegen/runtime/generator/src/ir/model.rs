@@ -1,6 +1,5 @@
-use codegen_language_definition::model::{self, VersionSpecifier};
+use codegen_language_definition::model;
 use indexmap::{IndexMap, IndexSet};
-use semver::Version;
 use serde::Serialize;
 
 #[derive(Default, Serialize)]
@@ -54,8 +53,8 @@ pub struct Collection {
 
 // Construction
 impl IrModel {
-    pub fn from_language(name: &str, language: &model::Language, minimum_version: Version) -> Self {
-        let builder = IrModelBuilder::create(language, minimum_version);
+    pub fn from_language(name: &str, language: &model::Language) -> Self {
+        let builder = IrModelBuilder::create(language);
 
         Self {
             name: name.to_owned(),
@@ -154,10 +153,6 @@ impl IrModel {
 }
 
 struct IrModelBuilder {
-    // language elements not enabled on this version or above will be removed
-    // from the resulting IrModel
-    pub minimum_version: Version,
-
     // set of non-unique terminals, ie. the value depends on the node contents, eg. Identifier
     pub non_unique_terminals: IndexSet<model::Identifier>,
 
@@ -170,10 +165,8 @@ struct IrModelBuilder {
 }
 
 impl IrModelBuilder {
-    fn create(language: &model::Language, minimum_version: Version) -> Self {
+    fn create(language: &model::Language) -> Self {
         let mut builder = Self {
-            minimum_version,
-
             non_unique_terminals: IndexSet::new(),
             unique_terminals: IndexSet::new(),
 
@@ -189,16 +182,6 @@ impl IrModelBuilder {
         builder.collect_nonterminals(language);
 
         builder
-    }
-
-    fn is_enabled_in_target_versions(&self, enabled: &Option<VersionSpecifier>) -> bool {
-        match enabled {
-            None | Some(VersionSpecifier::From { .. }) => true,
-            Some(VersionSpecifier::Never) => false,
-            Some(VersionSpecifier::Till { till } | VersionSpecifier::Range { till, .. }) => {
-                till > &self.minimum_version
-            }
-        }
     }
 
     fn collect_terminals(&mut self, language: &model::Language) {
@@ -270,9 +253,6 @@ impl IrModelBuilder {
     }
 
     fn add_struct_item(&mut self, item: &model::StructItem) {
-        if !self.is_enabled_in_target_versions(&item.enabled) {
-            return;
-        }
         let parent_type = item.name.clone();
         let fields: Vec<_> = self.convert_fields(&item.fields).collect();
         let has_nonterminals = fields.iter().any(|field| !field.is_terminal);
@@ -313,19 +293,13 @@ impl IrModelBuilder {
     }
 
     fn add_enum_item(&mut self, item: &model::EnumItem) {
-        if !self.is_enabled_in_target_versions(&item.enabled) {
-            return;
-        }
         let parent_type = item.name.clone();
 
-        let (nonterminal_types, terminal_types, unique_terminal_types) =
-            self.partition_types(item.variants.iter().filter_map(|variant| {
-                if self.is_enabled_in_target_versions(&variant.enabled) {
-                    Some(variant.reference.clone())
-                } else {
-                    None
-                }
-            }));
+        let (nonterminal_types, terminal_types, unique_terminal_types) = self.partition_types(
+            item.variants
+                .iter()
+                .map(|variant| variant.reference.clone()),
+        );
 
         self.choices.insert(
             parent_type,
@@ -338,9 +312,6 @@ impl IrModelBuilder {
     }
 
     fn add_repeated_item(&mut self, item: &model::RepeatedItem) {
-        if !self.is_enabled_in_target_versions(&item.enabled) {
-            return;
-        }
         let parent_type = item.name.clone();
 
         self.collections.insert(
@@ -354,9 +325,6 @@ impl IrModelBuilder {
     }
 
     fn add_separated_item(&mut self, item: &model::SeparatedItem) {
-        if !self.is_enabled_in_target_versions(&item.enabled) {
-            return;
-        }
         let parent_type = item.name.clone();
 
         self.collections.insert(
@@ -370,9 +338,6 @@ impl IrModelBuilder {
     }
 
     fn add_precedence_item(&mut self, item: &model::PrecedenceItem) {
-        if !self.is_enabled_in_target_versions(&item.enabled) {
-            return;
-        }
         let parent_type = item.name.clone();
 
         let precedence_expressions = item
@@ -450,24 +415,18 @@ impl IrModelBuilder {
         &'a self,
         fields: &'a IndexMap<model::Identifier, model::Field>,
     ) -> impl Iterator<Item = Field> + 'a {
-        fields.iter().filter_map(|(label, field)| {
-            let (reference, is_optional, is_enabled) = match field {
-                model::Field::Required { reference } => (reference, false, true),
-                model::Field::Optional { reference, enabled } => {
-                    (reference, true, self.is_enabled_in_target_versions(enabled))
-                }
+        fields.iter().map(|(label, field)| {
+            let (reference, is_optional) = match field {
+                model::Field::Required { reference } => (reference, false),
+                model::Field::Optional { reference, .. } => (reference, true),
             };
 
-            if is_enabled {
-                Some(Field {
-                    label: label.clone(),
-                    r#type: reference.clone(),
-                    is_terminal: self.non_unique_terminals.contains(reference)
-                        || self.unique_terminals.contains(reference),
-                    is_optional,
-                })
-            } else {
-                None
+            Field {
+                label: label.clone(),
+                r#type: reference.clone(),
+                is_terminal: self.non_unique_terminals.contains(reference)
+                    || self.unique_terminals.contains(reference),
+                is_optional,
             }
         })
     }
