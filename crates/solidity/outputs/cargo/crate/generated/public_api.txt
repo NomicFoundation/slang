@@ -7356,6 +7356,11 @@ pub struct slang_solidity::backend::passes::p1_flatten_contracts::Output
 pub slang_solidity::backend::passes::p1_flatten_contracts::Output::compilation_unit: slang_solidity::compilation::CompilationUnit
 pub slang_solidity::backend::passes::p1_flatten_contracts::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
 pub fn slang_solidity::backend::passes::p1_flatten_contracts::run(input: slang_solidity::backend::passes::p0_build_ast::Output) -> slang_solidity::backend::passes::p1_flatten_contracts::Output
+pub mod slang_solidity::backend::passes::p2_collect_definitions
+pub struct slang_solidity::backend::passes::p2_collect_definitions::Output
+pub slang_solidity::backend::passes::p2_collect_definitions::Output::compilation_unit: slang_solidity::compilation::CompilationUnit
+pub slang_solidity::backend::passes::p2_collect_definitions::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
+pub fn slang_solidity::backend::passes::p2_collect_definitions::run(input: slang_solidity::backend::passes::p1_flatten_contracts::Output) -> slang_solidity::backend::passes::p2_collect_definitions::Output
 pub mod slang_solidity::bindings
 pub use slang_solidity::bindings::BuiltInLocation
 pub use slang_solidity::bindings::PathResolver
