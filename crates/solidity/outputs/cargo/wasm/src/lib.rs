@@ -1,4 +1,4 @@
-// We generate functions prefixed with `_` in order to avoid having to be forced to use them
+// We generate functions prefixed with `_` in order to avoid having to be forced to use them.
 #![allow(clippy::used_underscore_items)]
 mod generated;
 
