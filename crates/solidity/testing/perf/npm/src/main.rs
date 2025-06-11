@@ -5,6 +5,7 @@ use anyhow::Result;
 use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
+use serde_json::json;
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
 
@@ -45,19 +46,6 @@ pub struct NpmController {
 }
 
 type Timings = HashMap<String, f64>;
-
-type Measure = HashMap<&'static str, Duration>;
-
-#[derive(serde::Serialize)]
-struct Duration {
-    value: f64,
-}
-
-fn new_measure(value: f64) -> Measure {
-    let mut duration = Measure::with_capacity(1);
-    duration.insert("Duration", Duration { value });
-    duration
-}
 
 impl NpmController {
     fn execute(&self) -> Result<()> {
@@ -176,7 +164,18 @@ impl NpmController {
 }
 
 fn publish(results: impl Iterator<Item = (String, f64)>) -> Result<()> {
-    let results: HashMap<String, Measure> = results.map(|(k, v)| (k, new_measure(v))).collect();
+    let results: HashMap<String, _> = results
+        .map(|(k, v)| {
+            (
+                k,
+                json!({
+                  "Duration": {
+                    "value": v
+                  }
+                }),
+            )
+        })
+        .collect();
     println!("{}", serde_json::to_string(&results)?);
     Ok(())
 }
