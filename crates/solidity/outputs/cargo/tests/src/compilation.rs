@@ -8,35 +8,14 @@ pragma solidity ^0.8.29;
 
 import {Ownable} from "ownable.sol";
 
-contract Counter is Ownable {
-    uint _count;
-    constructor(uint initial) Ownable() {
-        _count = initial;
-    }
-    function count() public view returns (uint) {
-        return _count;
-    }
-    function increment(uint delta) public onlyOwner returns (uint) {
-        _count += delta;
-        return _count;
-    }
-}
+contract Counter is Ownable {}
 "#;
 
 const OWNABLE_SOL_CONTENTS: &str = r#"
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.29;
 
-abstract contract Ownable {
-    address _owner;
-    constructor() {
-        _owner = msg.sender;
-    }
-    modifier onlyOwner() {
-        require(msg.sender == _owner, "Only owner allowed");
-        _;
-    }
-}
+abstract contract Ownable {}
 "#;
 
 #[test]
