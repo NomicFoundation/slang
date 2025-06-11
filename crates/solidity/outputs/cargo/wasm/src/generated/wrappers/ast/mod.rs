@@ -28,7 +28,6 @@ impl ffi::Guest for crate::wasm_crate::World {
 
 pub struct SelectorsWrapper;
 
-#[allow(clippy::used_underscore_items)]
 impl ffi::GuestSelectors for SelectorsWrapper {
     fn sequence(node: ffi::NonterminalNodeBorrow<'_>) -> Result<Vec<Option<ffi::Node>>, String> {
         Ok(selectors::select_sequence(node._borrow_ffi())?

@@ -32,7 +32,6 @@ macro_rules! define_wrapper {
             // As owned argument
             impl ffi:: $name {
                 #[inline]
-                #[allow(clippy::used_underscore_items)]
                 pub fn _borrow_ffi(&self) -> &rust::$name {
                     self.get::<[<$name Wrapper>]>()._borrow_ffi()
                 }
@@ -41,7 +40,6 @@ macro_rules! define_wrapper {
             // As borrowed argument
             impl<'a> ffi:: [<$name Borrow>] <'a> {
                 #[inline]
-                #[allow(clippy::used_underscore_items)]
                 pub fn _borrow_ffi(&'a self) -> &'a rust::$name {
                     self.get::<[<$name Wrapper>]>()._borrow_ffi()
                 }
@@ -55,7 +53,6 @@ macro_rules! define_wrapper {
                 }
             }
 
-            #[allow(clippy::used_underscore_items)]
             impl ffi:: [<Guest $name>] for [<$name Wrapper>] $impl
         }
     };
@@ -105,7 +102,6 @@ macro_rules! define_rc_wrapper {
                 }
             }
 
-            #[allow(clippy::used_underscore_items)]
             impl ffi:: [<Guest $name>] for [<$name Wrapper>] $impl
         }
     };
@@ -132,7 +128,6 @@ macro_rules! define_refcell_wrapper {
             }
 
             // As owned argument
-            #[allow(clippy::used_underscore_items)]
             impl ffi:: $name {
                 #[inline]
                 pub fn _borrow_ffi(&self) -> std::cell::Ref<'_, rust::$name> {
@@ -145,7 +140,6 @@ macro_rules! define_refcell_wrapper {
             }
 
             // As borrowed argument
-            #[allow(clippy::used_underscore_items)]
             impl<'a> ffi:: [<$name Borrow>] <'a> {
                 #[inline]
                 pub fn _borrow_ffi(&self) -> std::cell::Ref<'_, rust::$name> {
@@ -169,7 +163,6 @@ macro_rules! define_refcell_wrapper {
                 }
             }
 
-            #[allow(clippy::used_underscore_items)]
             impl ffi:: [<Guest $name>] for [<$name Wrapper>] $impl
         }
     };

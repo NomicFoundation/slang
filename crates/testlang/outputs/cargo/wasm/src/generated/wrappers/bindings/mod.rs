@@ -100,7 +100,6 @@ define_wrapper! { Reference {
 
 impl IntoFFI<ffi::BindingLocation> for rust::BindingLocation {
     #[inline]
-    #[allow(clippy::used_underscore_items)]
     fn _into_ffi(self) -> ffi::BindingLocation {
         match self {
             Self::BuiltIn(location) => ffi::BindingLocation::BuiltIn(location._into_ffi()),
