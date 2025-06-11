@@ -13,8 +13,7 @@ pub fn setup() -> Vec<ParsedFile> {
 }
 
 pub fn run(files: Vec<ParsedFile>) -> Rc<BindingGraph> {
-    let mut bindings_graph_builder =
-        create_with_resolver(SOLC_VERSION, Rc::new(Resolver {})).unwrap();
+    let mut bindings_graph_builder = create_with_resolver(SOLC_VERSION, Rc::new(Resolver {}));
 
     for file in files {
         bindings_graph_builder.add_user_file(

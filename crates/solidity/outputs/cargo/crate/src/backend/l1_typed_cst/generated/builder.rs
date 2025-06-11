@@ -682,6 +682,29 @@ pub fn build_constructor_definition(node: &Rc<NonterminalNode>) -> Result<Constr
     }))
 }
 
+pub fn build_unnamed_function_definition(
+    node: &Rc<NonterminalNode>,
+) -> Result<UnnamedFunctionDefinition> {
+    expect_nonterminal_kind(node, NonterminalKind::UnnamedFunctionDefinition)?;
+    let mut helper = ChildrenHelper::new(&node.children);
+    _ = helper.accept_label(EdgeLabel::FunctionKeyword)?;
+    let parameters = build_parameters_declaration(nonterminal_node(
+        helper.accept_label(EdgeLabel::Parameters)?,
+    )?)?;
+    let attributes = build_unnamed_function_attributes(nonterminal_node(
+        helper.accept_label(EdgeLabel::Attributes)?,
+    )?)?;
+    let body = build_function_body(nonterminal_node(helper.accept_label(EdgeLabel::Body)?)?)?;
+    helper.finalize()?;
+
+    Ok(Rc::new(UnnamedFunctionDefinitionStruct {
+        node_id: node.id(),
+        parameters,
+        attributes,
+        body,
+    }))
+}
+
 pub fn build_fallback_function_definition(
     node: &Rc<NonterminalNode>,
 ) -> Result<FallbackFunctionDefinition> {
@@ -1147,6 +1170,13 @@ pub fn build_tuple_deconstruction_statement(
 ) -> Result<TupleDeconstructionStatement> {
     expect_nonterminal_kind(node, NonterminalKind::TupleDeconstructionStatement)?;
     let mut helper = ChildrenHelper::new(&node.children);
+    let var_keyword = if helper.at_label(EdgeLabel::VarKeyword) {
+        Some(terminal_node_cloned(
+            helper.accept_label(EdgeLabel::VarKeyword)?,
+        )?)
+    } else {
+        None
+    };
     _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let elements = build_tuple_deconstruction_elements(nonterminal_node(
         helper.accept_label(EdgeLabel::Elements)?,
@@ -1161,6 +1191,7 @@ pub fn build_tuple_deconstruction_statement(
 
     Ok(Rc::new(TupleDeconstructionStatementStruct {
         node_id: node.id(),
+        var_keyword,
         elements,
         expression,
     }))
@@ -1543,13 +1574,23 @@ pub fn build_revert_statement(node: &Rc<NonterminalNode>) -> Result<RevertStatem
     }))
 }
 
+pub fn build_throw_statement(node: &Rc<NonterminalNode>) -> Result<ThrowStatement> {
+    expect_nonterminal_kind(node, NonterminalKind::ThrowStatement)?;
+    let mut helper = ChildrenHelper::new(&node.children);
+    _ = helper.accept_label(EdgeLabel::ThrowKeyword)?;
+    _ = helper.accept_label(EdgeLabel::Semicolon)?;
+    helper.finalize()?;
+
+    Ok(Rc::new(ThrowStatementStruct { node_id: node.id() }))
+}
+
 pub fn build_assignment_expression(node: &Rc<NonterminalNode>) -> Result<AssignmentExpression> {
     expect_nonterminal_kind(node, NonterminalKind::AssignmentExpression)?;
     let mut helper = ChildrenHelper::new(&node.children);
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1558,6 +1599,7 @@ pub fn build_assignment_expression(node: &Rc<NonterminalNode>) -> Result<Assignm
     Ok(Rc::new(AssignmentExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1628,7 +1670,7 @@ pub fn build_equality_expression(node: &Rc<NonterminalNode>) -> Result<EqualityE
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1637,6 +1679,7 @@ pub fn build_equality_expression(node: &Rc<NonterminalNode>) -> Result<EqualityE
     Ok(Rc::new(EqualityExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1647,7 +1690,7 @@ pub fn build_inequality_expression(node: &Rc<NonterminalNode>) -> Result<Inequal
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1656,6 +1699,7 @@ pub fn build_inequality_expression(node: &Rc<NonterminalNode>) -> Result<Inequal
     Ok(Rc::new(InequalityExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1723,7 +1767,7 @@ pub fn build_shift_expression(node: &Rc<NonterminalNode>) -> Result<ShiftExpress
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1732,6 +1776,7 @@ pub fn build_shift_expression(node: &Rc<NonterminalNode>) -> Result<ShiftExpress
     Ok(Rc::new(ShiftExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1742,7 +1787,7 @@ pub fn build_additive_expression(node: &Rc<NonterminalNode>) -> Result<AdditiveE
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1751,6 +1796,7 @@ pub fn build_additive_expression(node: &Rc<NonterminalNode>) -> Result<AdditiveE
     Ok(Rc::new(AdditiveExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1763,7 +1809,7 @@ pub fn build_multiplicative_expression(
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1772,6 +1818,7 @@ pub fn build_multiplicative_expression(
     Ok(Rc::new(MultiplicativeExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1784,7 +1831,7 @@ pub fn build_exponentiation_expression(
     let left_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::LeftOperand)?,
     )?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     )?)?;
@@ -1793,6 +1840,7 @@ pub fn build_exponentiation_expression(
     Ok(Rc::new(ExponentiationExpressionStruct {
         node_id: node.id(),
         left_operand,
+        operator,
         right_operand,
     }))
 }
@@ -1801,24 +1849,26 @@ pub fn build_postfix_expression(node: &Rc<NonterminalNode>) -> Result<PostfixExp
     expect_nonterminal_kind(node, NonterminalKind::PostfixExpression)?;
     let mut helper = ChildrenHelper::new(&node.children);
     let operand = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Operand)?)?)?;
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     helper.finalize()?;
 
     Ok(Rc::new(PostfixExpressionStruct {
         node_id: node.id(),
         operand,
+        operator,
     }))
 }
 
 pub fn build_prefix_expression(node: &Rc<NonterminalNode>) -> Result<PrefixExpression> {
     expect_nonterminal_kind(node, NonterminalKind::PrefixExpression)?;
     let mut helper = ChildrenHelper::new(&node.children);
-    _ = helper.accept_label(EdgeLabel::Operator)?;
+    let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?)?;
     let operand = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Operand)?)?)?;
     helper.finalize()?;
 
     Ok(Rc::new(PrefixExpressionStruct {
         node_id: node.id(),
+        operator,
         operand,
     }))
 }
@@ -2072,11 +2122,19 @@ pub fn build_hex_number_expression(node: &Rc<NonterminalNode>) -> Result<HexNumb
     expect_nonterminal_kind(node, NonterminalKind::HexNumberExpression)?;
     let mut helper = ChildrenHelper::new(&node.children);
     let literal = terminal_node_cloned(helper.accept_label(EdgeLabel::Literal)?)?;
+    let unit = if helper.at_label(EdgeLabel::Unit) {
+        Some(build_number_unit(nonterminal_node(
+            helper.accept_label(EdgeLabel::Unit)?,
+        )?)?)
+    } else {
+        None
+    };
     helper.finalize()?;
 
     Ok(Rc::new(HexNumberExpressionStruct {
         node_id: node.id(),
         literal,
+        unit,
     }))
 }
 
@@ -2247,6 +2305,44 @@ pub fn build_yul_variable_assignment_statement(
     }))
 }
 
+pub fn build_yul_colon_and_equal(node: &Rc<NonterminalNode>) -> Result<YulColonAndEqual> {
+    expect_nonterminal_kind(node, NonterminalKind::YulColonAndEqual)?;
+    let mut helper = ChildrenHelper::new(&node.children);
+    _ = helper.accept_label(EdgeLabel::Colon)?;
+    _ = helper.accept_label(EdgeLabel::Equal)?;
+    helper.finalize()?;
+
+    Ok(Rc::new(YulColonAndEqualStruct { node_id: node.id() }))
+}
+
+pub fn build_yul_stack_assignment_statement(
+    node: &Rc<NonterminalNode>,
+) -> Result<YulStackAssignmentStatement> {
+    expect_nonterminal_kind(node, NonterminalKind::YulStackAssignmentStatement)?;
+    let mut helper = ChildrenHelper::new(&node.children);
+    let assignment = build_yul_stack_assignment_operator(nonterminal_node(
+        helper.accept_label(EdgeLabel::Assignment)?,
+    )?)?;
+    let variable = terminal_node_cloned(helper.accept_label(EdgeLabel::Variable)?)?;
+    helper.finalize()?;
+
+    Ok(Rc::new(YulStackAssignmentStatementStruct {
+        node_id: node.id(),
+        assignment,
+        variable,
+    }))
+}
+
+pub fn build_yul_equal_and_colon(node: &Rc<NonterminalNode>) -> Result<YulEqualAndColon> {
+    expect_nonterminal_kind(node, NonterminalKind::YulEqualAndColon)?;
+    let mut helper = ChildrenHelper::new(&node.children);
+    _ = helper.accept_label(EdgeLabel::Equal)?;
+    _ = helper.accept_label(EdgeLabel::Colon)?;
+    helper.finalize()?;
+
+    Ok(Rc::new(YulEqualAndColonStruct { node_id: node.id() }))
+}
+
 pub fn build_yul_if_statement(node: &Rc<NonterminalNode>) -> Result<YulIfStatement> {
     expect_nonterminal_kind(node, NonterminalKind::YulIfStatement)?;
     let mut helper = ChildrenHelper::new(&node.children);
@@ -2357,6 +2453,19 @@ pub fn build_yul_continue_statement(node: &Rc<NonterminalNode>) -> Result<YulCon
     helper.finalize()?;
 
     Ok(Rc::new(YulContinueStatementStruct { node_id: node.id() }))
+}
+
+pub fn build_yul_label(node: &Rc<NonterminalNode>) -> Result<YulLabel> {
+    expect_nonterminal_kind(node, NonterminalKind::YulLabel)?;
+    let mut helper = ChildrenHelper::new(&node.children);
+    let label = terminal_node_cloned(helper.accept_label(EdgeLabel::Label)?)?;
+    _ = helper.accept_label(EdgeLabel::Colon)?;
+    helper.finalize()?;
+
+    Ok(Rc::new(YulLabelStruct {
+        node_id: node.id(),
+        label,
+    }))
 }
 
 pub fn build_yul_function_call_expression(
@@ -2726,6 +2835,11 @@ pub fn build_contract_member(node: &Rc<NonterminalNode>) -> Result<ContractMembe
                 nonterminal_node(variant)?,
             )?)
         }
+        NodeKind::Nonterminal(NonterminalKind::UnnamedFunctionDefinition) => {
+            ContractMember::UnnamedFunctionDefinition(build_unnamed_function_definition(
+                nonterminal_node(variant)?,
+            )?)
+        }
         NodeKind::Nonterminal(NonterminalKind::ModifierDefinition) => {
             ContractMember::ModifierDefinition(build_modifier_definition(nonterminal_node(
                 variant,
@@ -2837,6 +2951,7 @@ pub fn build_function_attribute(node: &Rc<NonterminalNode>) -> Result<FunctionAt
                 variant,
             )?)?)
         }
+        NodeKind::Terminal(TerminalKind::ConstantKeyword) => FunctionAttribute::ConstantKeyword,
         NodeKind::Terminal(TerminalKind::ExternalKeyword) => FunctionAttribute::ExternalKeyword,
         NodeKind::Terminal(TerminalKind::InternalKeyword) => FunctionAttribute::InternalKeyword,
         NodeKind::Terminal(TerminalKind::PayableKeyword) => FunctionAttribute::PayableKeyword,
@@ -2887,8 +3002,51 @@ pub fn build_constructor_attribute(node: &Rc<NonterminalNode>) -> Result<Constru
             )?)?)
         }
         NodeKind::Terminal(TerminalKind::InternalKeyword) => ConstructorAttribute::InternalKeyword,
+        NodeKind::Terminal(TerminalKind::OverrideKeyword) => ConstructorAttribute::OverrideKeyword,
         NodeKind::Terminal(TerminalKind::PayableKeyword) => ConstructorAttribute::PayableKeyword,
         NodeKind::Terminal(TerminalKind::PublicKeyword) => ConstructorAttribute::PublicKeyword,
+        NodeKind::Terminal(TerminalKind::VirtualKeyword) => ConstructorAttribute::VirtualKeyword,
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                variant.kind()
+            ));
+        }
+    };
+    helper.finalize()?;
+    Ok(item)
+}
+
+pub fn build_unnamed_function_attribute(
+    node: &Rc<NonterminalNode>,
+) -> Result<UnnamedFunctionAttribute> {
+    expect_nonterminal_kind(node, NonterminalKind::UnnamedFunctionAttribute)?;
+    let mut helper = ChildrenHelper::new(&node.children);
+    let variant = helper.accept_label(EdgeLabel::Variant)?;
+    let item = match variant.kind() {
+        NodeKind::Nonterminal(NonterminalKind::ModifierInvocation) => {
+            UnnamedFunctionAttribute::ModifierInvocation(build_modifier_invocation(
+                nonterminal_node(variant)?,
+            )?)
+        }
+        NodeKind::Terminal(TerminalKind::ConstantKeyword) => {
+            UnnamedFunctionAttribute::ConstantKeyword
+        }
+        NodeKind::Terminal(TerminalKind::ExternalKeyword) => {
+            UnnamedFunctionAttribute::ExternalKeyword
+        }
+        NodeKind::Terminal(TerminalKind::InternalKeyword) => {
+            UnnamedFunctionAttribute::InternalKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PayableKeyword) => {
+            UnnamedFunctionAttribute::PayableKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PrivateKeyword) => {
+            UnnamedFunctionAttribute::PrivateKeyword
+        }
+        NodeKind::Terminal(TerminalKind::PublicKeyword) => UnnamedFunctionAttribute::PublicKeyword,
+        NodeKind::Terminal(TerminalKind::PureKeyword) => UnnamedFunctionAttribute::PureKeyword,
+        NodeKind::Terminal(TerminalKind::ViewKeyword) => UnnamedFunctionAttribute::ViewKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3038,6 +3196,7 @@ pub fn build_function_type_attribute(node: &Rc<NonterminalNode>) -> Result<Funct
         NodeKind::Terminal(TerminalKind::ExternalKeyword) => FunctionTypeAttribute::ExternalKeyword,
         NodeKind::Terminal(TerminalKind::PrivateKeyword) => FunctionTypeAttribute::PrivateKeyword,
         NodeKind::Terminal(TerminalKind::PublicKeyword) => FunctionTypeAttribute::PublicKeyword,
+        NodeKind::Terminal(TerminalKind::ConstantKeyword) => FunctionTypeAttribute::ConstantKeyword,
         NodeKind::Terminal(TerminalKind::PureKeyword) => FunctionTypeAttribute::PureKeyword,
         NodeKind::Terminal(TerminalKind::ViewKeyword) => FunctionTypeAttribute::ViewKeyword,
         NodeKind::Terminal(TerminalKind::PayableKeyword) => FunctionTypeAttribute::PayableKeyword,
@@ -3098,6 +3257,7 @@ pub fn build_elementary_type(node: &Rc<NonterminalNode>) -> Result<ElementaryTyp
             ElementaryType::UfixedKeyword(terminal_node_cloned(variant)?)
         }
         NodeKind::Terminal(TerminalKind::BoolKeyword) => ElementaryType::BoolKeyword,
+        NodeKind::Terminal(TerminalKind::ByteKeyword) => ElementaryType::ByteKeyword,
         NodeKind::Terminal(TerminalKind::StringKeyword) => ElementaryType::StringKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
@@ -3135,6 +3295,9 @@ pub fn build_statement(node: &Rc<NonterminalNode>) -> Result<Statement> {
         }
         NodeKind::Nonterminal(NonterminalKind::ReturnStatement) => {
             Statement::ReturnStatement(build_return_statement(nonterminal_node(variant)?)?)
+        }
+        NodeKind::Nonterminal(NonterminalKind::ThrowStatement) => {
+            Statement::ThrowStatement(build_throw_statement(nonterminal_node(variant)?)?)
         }
         NodeKind::Nonterminal(NonterminalKind::EmitStatement) => {
             Statement::EmitStatement(build_emit_statement(nonterminal_node(variant)?)?)
@@ -3210,6 +3373,7 @@ pub fn build_variable_declaration_type(
         NodeKind::Nonterminal(NonterminalKind::TypeName) => {
             VariableDeclarationType::TypeName(build_type_name(nonterminal_node(variant)?)?)
         }
+        NodeKind::Terminal(TerminalKind::VarKeyword) => VariableDeclarationType::VarKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3462,12 +3626,15 @@ pub fn build_number_unit(node: &Rc<NonterminalNode>) -> Result<NumberUnit> {
     let item = match variant.kind() {
         NodeKind::Terminal(TerminalKind::WeiKeyword) => NumberUnit::WeiKeyword,
         NodeKind::Terminal(TerminalKind::GweiKeyword) => NumberUnit::GweiKeyword,
+        NodeKind::Terminal(TerminalKind::SzaboKeyword) => NumberUnit::SzaboKeyword,
+        NodeKind::Terminal(TerminalKind::FinneyKeyword) => NumberUnit::FinneyKeyword,
         NodeKind::Terminal(TerminalKind::EtherKeyword) => NumberUnit::EtherKeyword,
         NodeKind::Terminal(TerminalKind::SecondsKeyword) => NumberUnit::SecondsKeyword,
         NodeKind::Terminal(TerminalKind::MinutesKeyword) => NumberUnit::MinutesKeyword,
         NodeKind::Terminal(TerminalKind::HoursKeyword) => NumberUnit::HoursKeyword,
         NodeKind::Terminal(TerminalKind::DaysKeyword) => NumberUnit::DaysKeyword,
         NodeKind::Terminal(TerminalKind::WeeksKeyword) => NumberUnit::WeeksKeyword,
+        NodeKind::Terminal(TerminalKind::YearsKeyword) => NumberUnit::YearsKeyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -3484,8 +3651,16 @@ pub fn build_string_expression(node: &Rc<NonterminalNode>) -> Result<StringExpre
     let mut helper = ChildrenHelper::new(&node.children);
     let variant = helper.accept_label(EdgeLabel::Variant)?;
     let item = match variant.kind() {
+        NodeKind::Nonterminal(NonterminalKind::StringLiteral) => {
+            StringExpression::StringLiteral(build_string_literal(nonterminal_node(variant)?)?)
+        }
         NodeKind::Nonterminal(NonterminalKind::StringLiterals) => {
             StringExpression::StringLiterals(build_string_literals(nonterminal_node(variant)?)?)
+        }
+        NodeKind::Nonterminal(NonterminalKind::HexStringLiteral) => {
+            StringExpression::HexStringLiteral(build_hex_string_literal(nonterminal_node(
+                variant,
+            )?)?)
         }
         NodeKind::Nonterminal(NonterminalKind::HexStringLiterals) => {
             StringExpression::HexStringLiterals(build_hex_string_literals(nonterminal_node(
@@ -3587,6 +3762,11 @@ pub fn build_yul_statement(node: &Rc<NonterminalNode>) -> Result<YulStatement> {
                 variant,
             )?)?)
         }
+        NodeKind::Nonterminal(NonterminalKind::YulStackAssignmentStatement) => {
+            YulStatement::YulStackAssignmentStatement(build_yul_stack_assignment_statement(
+                nonterminal_node(variant)?,
+            )?)
+        }
         NodeKind::Nonterminal(NonterminalKind::YulIfStatement) => {
             YulStatement::YulIfStatement(build_yul_if_statement(nonterminal_node(variant)?)?)
         }
@@ -3614,6 +3794,9 @@ pub fn build_yul_statement(node: &Rc<NonterminalNode>) -> Result<YulStatement> {
                 nonterminal_node(variant)?,
             )?)
         }
+        NodeKind::Nonterminal(NonterminalKind::YulLabel) => {
+            YulStatement::YulLabel(build_yul_label(nonterminal_node(variant)?)?)
+        }
         NodeKind::Nonterminal(NonterminalKind::YulVariableDeclarationStatement) => {
             YulStatement::YulVariableDeclarationStatement(build_yul_variable_declaration_statement(
                 nonterminal_node(variant)?,
@@ -3638,7 +3821,36 @@ pub fn build_yul_assignment_operator(node: &Rc<NonterminalNode>) -> Result<YulAs
     let mut helper = ChildrenHelper::new(&node.children);
     let variant = helper.accept_label(EdgeLabel::Variant)?;
     let item = match variant.kind() {
+        NodeKind::Nonterminal(NonterminalKind::YulColonAndEqual) => {
+            YulAssignmentOperator::YulColonAndEqual(build_yul_colon_and_equal(nonterminal_node(
+                variant,
+            )?)?)
+        }
         NodeKind::Terminal(TerminalKind::ColonEqual) => YulAssignmentOperator::ColonEqual,
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            return Err(format!(
+                "Unexpected variant node of kind {:?}",
+                variant.kind()
+            ));
+        }
+    };
+    helper.finalize()?;
+    Ok(item)
+}
+
+pub fn build_yul_stack_assignment_operator(
+    node: &Rc<NonterminalNode>,
+) -> Result<YulStackAssignmentOperator> {
+    expect_nonterminal_kind(node, NonterminalKind::YulStackAssignmentOperator)?;
+    let mut helper = ChildrenHelper::new(&node.children);
+    let variant = helper.accept_label(EdgeLabel::Variant)?;
+    let item = match variant.kind() {
+        NodeKind::Nonterminal(NonterminalKind::YulEqualAndColon) => {
+            YulStackAssignmentOperator::YulEqualAndColon(build_yul_equal_and_colon(
+                nonterminal_node(variant)?,
+            )?)
+        }
+        NodeKind::Terminal(TerminalKind::EqualColon) => YulStackAssignmentOperator::EqualColon,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             return Err(format!(
                 "Unexpected variant node of kind {:?}",
@@ -4018,6 +4230,24 @@ pub fn build_constructor_attributes(node: &Rc<NonterminalNode>) -> Result<Constr
     while helper.at_label(EdgeLabel::Item) {
         let child = helper.accept_label(EdgeLabel::Item)?;
         let item = build_constructor_attribute(nonterminal_node(child)?)?;
+        items.push(item);
+        if helper.at_label(EdgeLabel::Separator) {
+            _ = helper.accept_label(EdgeLabel::Separator)?;
+        }
+    }
+    helper.finalize()?;
+    Ok(items)
+}
+
+pub fn build_unnamed_function_attributes(
+    node: &Rc<NonterminalNode>,
+) -> Result<UnnamedFunctionAttributes> {
+    expect_nonterminal_kind(node, NonterminalKind::UnnamedFunctionAttributes)?;
+    let mut items = UnnamedFunctionAttributes::new();
+    let mut helper = ChildrenHelper::new(&node.children);
+    while helper.at_label(EdgeLabel::Item) {
+        let child = helper.accept_label(EdgeLabel::Item)?;
+        let item = build_unnamed_function_attribute(nonterminal_node(child)?)?;
         items.push(item);
         if helper.at_label(EdgeLabel::Separator) {
             _ = helper.accept_label(EdgeLabel::Separator)?;
