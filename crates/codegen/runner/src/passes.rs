@@ -3,7 +3,6 @@ use codegen_language_definition::model::Language;
 use codegen_runtime_generator::ir::{IrModel, ModelWithBuilder, ModelWithTransformer};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::{CodegenFileSystem, CodegenRuntime};
-use semver::Version;
 
 pub fn generate_passes(
     fs: &mut CodegenFileSystem,
@@ -15,8 +14,7 @@ pub fn generate_passes(
     let ir_output_dir = CargoWorkspace::locate_source_crate(output_crate)?.join("src/backend");
 
     // L0: CST:
-    let minimum_version = Version::parse("0.8.0").unwrap();
-    let cst_model = IrModel::from_language("cst", language, minimum_version);
+    let cst_model = IrModel::from_language("cst", language);
 
     // L1: typed CST:
     let l1_typed_cst_model = build_l1_typed_cst_model(&cst_model);
@@ -46,6 +44,11 @@ fn build_l1_typed_cst_model(cst_model: &IrModel) -> ModelWithBuilder {
 
     // remove fields from sequences that contain redundant terminal nodes
     for (_, sequence) in &mut l1_typed_cst_model.sequences {
+        if sequence.multiple_operators {
+            // don't remove terminals if the sequence is modelling a precedence
+            // expression with multiple variant operators
+            continue;
+        }
         sequence.fields.retain(|field| {
             field.is_optional
                 || !field.is_terminal

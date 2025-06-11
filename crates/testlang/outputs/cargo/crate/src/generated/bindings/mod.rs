@@ -39,32 +39,21 @@ pub type UserFileLocation = metaslang_bindings::UserFileLocation<KindTypes>;
 
 pub use metaslang_bindings::{BuiltInLocation, PathResolver};
 
-use crate::parser::ParserInitializationError;
-
-/// Errors that may occur when initializing a [`BindingGraphBuilder`].
-#[derive(thiserror::Error, Debug)]
-pub enum BindingGraphInitializationError {
-    /// Failed to initialize a [`Parser`][`crate::parser::Parser`] when initializing the
-    /// [`BindingGraphBuilder`].
-    #[error(transparent)]
-    ParserInitialization(#[from] ParserInitializationError),
-}
-
 /// Create a new `BindingGraphBuilder` with the specified language version `version` and the [`PathResolver`]
 /// `resolver`.
 pub fn create_with_resolver(
     version: Version,
     resolver: Rc<dyn PathResolver<KindTypes>>,
-) -> Result<BindingGraphBuilder, BindingGraphInitializationError> {
+) -> BindingGraphBuilder {
     let mut binding_graph = BindingGraphBuilder::create(
         version.clone(),
         binding_rules::BINDING_RULES_SOURCE,
         resolver,
     );
 
-    crate::extensions::bindings::add_built_ins(&mut binding_graph, version)?;
+    crate::extensions::bindings::add_built_ins(&mut binding_graph, version);
 
-    Ok(binding_graph)
+    binding_graph
 }
 
 #[cfg(feature = "__private_testing_utils")]

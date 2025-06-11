@@ -22,6 +22,11 @@ fn built_ins() -> Result<()> {
 }
 
 #[test]
+fn catch_params() -> Result<()> {
+    run(T, "catch_params")
+}
+
+#[test]
 fn conditionals() -> Result<()> {
     run(T, "conditionals")
 }
@@ -34,6 +39,11 @@ fn constant_access_from_functions() -> Result<()> {
 #[test]
 fn external_variables() -> Result<()> {
     run(T, "external_variables")
+}
+
+#[test]
+fn for_init_variables() -> Result<()> {
+    run(T, "for_init_variables")
 }
 
 #[test]
@@ -79,6 +89,11 @@ fn solidity_built_in_doesn_t_bind() -> Result<()> {
 #[test]
 fn stack_assign() -> Result<()> {
     run(T, "stack_assign")
+}
+
+#[test]
+fn try_params() -> Result<()> {
+    run(T, "try_params")
 }
 
 #[test]
