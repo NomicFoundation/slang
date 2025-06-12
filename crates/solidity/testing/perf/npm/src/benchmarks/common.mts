@@ -61,6 +61,8 @@ export class SolidityProject {
     const json = JSON.parse(fs.readFileSync(jsonFile, "utf8"));
     let sources = new Map<string, string>();
 
+    // TODO: we should take other information into account too, in particular, the mappings.
+    // This was not necessary for all of the projects we consider, but in the future that might be limiting.
     if (json.sources && typeof json.sources === "object") {
       for (const [file, data] of Object.entries(json.sources)) {
         if (typeof data === "object" && typeof (data as { content?: string }).content === "string") {
