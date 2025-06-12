@@ -16,8 +16,8 @@ mod config;
 mod fetch;
 
 #[derive(Clone, Copy, Debug, AsRefStr, EnumIter)]
-pub enum SubjectUT {
-    SlangProject, // resolve bindings of the entire project instead of just the main file, see the options in the npm counterpart
+pub enum Subject {
+    Slang,
     Antlr,
     Solc,
 }
@@ -74,7 +74,7 @@ impl NpmController {
         let path = input_path.join(hash);
 
         let mut results = HashMap::new();
-        for sut in SubjectUT::iter() {
+        for sut in Subject::iter() {
             let sut_result = self.run(&path, name, file, sut)?;
             results.extend(sut_result);
         }
@@ -126,7 +126,7 @@ impl NpmController {
         path: &Path,
         name: &str,
         file: Option<&str>,
-        sut: SubjectUT,
+        sut: Subject,
     ) -> Result<Timings, anyhow::Error> {
         let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf")?;
         let mut command = Command::new("npx")
@@ -147,7 +147,7 @@ impl NpmController {
         }
 
         command = command
-            .property("--runner", sut.as_ref())
+            .property("--subject", sut.as_ref())
             .property("--cold", self.cold.to_string())
             .property("--hot", self.hot.to_string());
 
