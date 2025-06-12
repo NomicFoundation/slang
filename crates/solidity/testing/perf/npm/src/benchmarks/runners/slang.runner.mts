@@ -1,5 +1,5 @@
 import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
-import { TerminalKind } from "@nomicfoundation/slang/cst";
+import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
 import assert from "node:assert";
 import { Runner, SolidityProject, Timings } from "../common.mjs";
 
@@ -61,13 +61,10 @@ class SlangRunner implements Runner {
       files = unit.files();
     }
 
-    // We don't recognize these in `pragma experimental`, so let's ignore them
-    const allowed = ["ABIEncoderV2", "v2"];
-
     files.forEach((file) => {
       let cursor = file.createTreeCursor();
       let emptyDefList = [];
-      let neitherDefNorRefSet = new Set<string>();
+      let neitherDefNorRefs = new Array<string>();
 
       while (cursor.goToNextTerminalWithKind(TerminalKind.Identifier)) {
         const definition = unit.bindingGraph.definitionAt(cursor);
@@ -78,15 +75,15 @@ class SlangRunner implements Runner {
         }
 
         if (!(definition || reference)) {
-          neitherDefNorRefSet.add(cursor.node.unparse());
+          const ancestor = cursor.ancestors().next();
+          // Ignore experimental pragma's identifiers
+          if (!ancestor || ancestor.kind != NonterminalKind.ExperimentalFeature) {
+            neitherDefNorRefs.push(cursor.node.unparse());
+          }
         }
       }
 
-      const neitherDefNorRefList = Array.from(neitherDefNorRefSet);
-      assert.deepStrictEqual(
-        neitherDefNorRefList.filter((e) => !allowed.includes(e)),
-        [],
-      );
+      assert.deepStrictEqual(neitherDefNorRefs, []);
       assert.deepStrictEqual(emptyDefList, []);
     });
 
