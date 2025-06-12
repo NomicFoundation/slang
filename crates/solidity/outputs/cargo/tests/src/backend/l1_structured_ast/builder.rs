@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use slang_solidity::backend::l1_structured_ast;
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
@@ -24,8 +24,7 @@ contract MyContract {
     );
     assert!(output.is_valid());
 
-    let ast =
-        l1_structured_ast::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
+    let ast = l1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
     assert_eq!(2, ast.members.len());
     assert!(matches!(
         ast.members[0],
