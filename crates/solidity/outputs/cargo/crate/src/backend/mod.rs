@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 #[path = "l1_typed_cst/generated/mod.rs"]
 pub mod l1_typed_cst;
 

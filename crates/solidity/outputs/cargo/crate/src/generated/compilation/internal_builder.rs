@@ -1,5 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+#![cfg(feature = "__private_wasm_apis")]
+
 use std::collections::BTreeMap;
 use std::rc::Rc;
 

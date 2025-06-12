@@ -1,9 +1,12 @@
+//! Utilities for defining error diagnostics.
+
 use crate::cst::TextRange;
 
 /// The severity of a diagnostic.
 ///
 /// Explicitly compatible with the [LSP protocol](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnosticSeverity).
 #[repr(u8)]
+#[allow(missing_docs)]
 pub enum Severity {
     Error = 1,
     Warning = 2,
