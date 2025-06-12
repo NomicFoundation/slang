@@ -1,7 +1,7 @@
 import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
 import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
 import assert from "node:assert";
-import { Runner, SolidityProject, Timings } from "../common.mjs";
+import { Subject, SolidityProject, Timings } from "../common.mjs";
 
 function createBuilder(project: SolidityProject): CompilationBuilder {
   const builder = CompilationBuilder.create({
@@ -29,7 +29,7 @@ enum BindingsTarget {
   Project,
 }
 
-class SlangRunner implements Runner {
+class SlangSubject implements Subject {
   public name = "slang";
   target: BindingsTarget;
 
@@ -98,13 +98,13 @@ class SlangRunner implements Runner {
   }
 }
 
-export class SlangBindingsFileRunner extends SlangRunner {
+export class SlangBindingsFileSubject extends SlangSubject {
   public constructor() {
     super(BindingsTarget.File);
   }
 }
 
-export class SlangBindingsProjectRunner extends SlangRunner {
+export class SlangBindingsProjectSubject extends SlangSubject {
   public constructor() {
     super(BindingsTarget.Project);
   }

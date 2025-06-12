@@ -1,9 +1,9 @@
 import assert from "assert";
 import { promisify } from "node:util";
 import * as solc from "solc";
-import { log, Runner, SolidityProject, Timings } from "../common.mjs";
+import { log, Subject, SolidityProject, Timings } from "../common.mjs";
 
-export class SolcRunner implements Runner {
+export class SolcSubject implements Subject {
   public name = "solc";
 
   async test(project: SolidityProject, file: string): Promise<Timings> {
