@@ -29,13 +29,8 @@ enum BindingsTarget {
   Project,
 }
 
-class SlangSubject implements Subject {
+export class SlangSubject implements Subject {
   public name = "slang";
-  target: BindingsTarget;
-
-  public constructor(target: BindingsTarget) {
-    this.target = target;
-  }
 
   async test(project: SolidityProject, file: string): Promise<Timings> {
     const startTime = performance.now();
@@ -55,13 +50,7 @@ class SlangSubject implements Subject {
     assert(typeof unit.bindingGraph.definitionAt == "function");
     const builtGraphTime = performance.now();
 
-    let files: File[] = [mainFile];
-
-    if (this.target == BindingsTarget.Project) {
-      files = unit.files();
-    }
-
-    files.forEach((file) => {
+    unit.files().forEach((file) => {
       let cursor = file.createTreeCursor();
       let emptyDefList = [];
       let neitherDefNorRefs = new Array<string>();
@@ -95,17 +84,5 @@ class SlangSubject implements Subject {
       ["slang_resolve_all_bindings_duration", resolutionTime],
       ["slang_total", performance.now() - startTime],
     ]);
-  }
-}
-
-export class SlangBindingsFileSubject extends SlangSubject {
-  public constructor() {
-    super(BindingsTarget.File);
-  }
-}
-
-export class SlangBindingsProjectSubject extends SlangSubject {
-  public constructor() {
-    super(BindingsTarget.Project);
   }
 }
