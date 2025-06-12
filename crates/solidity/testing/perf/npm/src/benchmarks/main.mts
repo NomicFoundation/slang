@@ -1,9 +1,9 @@
-import { checkCI, Subject, round2, Timings, SolidityProject } from "./common.mjs";
+import { checkCI, Subject, round2, Timings, SolidityProject, verboseOption } from "./common.mjs";
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
 import { AntlrSubject, SlangSubject, SolcSubject } from "./subjects/subjects.mjs";
 
-const runners: Map<string, Subject> = new Map([
+const subjects: Map<string, Subject> = new Map([
   ["Slang", new SlangSubject()],
   ["Antlr", new AntlrSubject()],
   ["Solc", new SolcSubject()],
@@ -48,21 +48,33 @@ async function run(
 
 checkCI();
 
+const dirOption = "dir";
+const nameOption = "name";
+const fileOption = "file";
+const subjectOption = "subject";
+const coldOption = "cold";
+const hotOption = "hot";
+
 const optionDefinitions = [
-  { name: "dir", type: String },
-  { name: "name", type: String },
-  { name: "file", type: String, defaultValue: undefined },
-  { name: "runner", type: (input: string) => runners.get(input) },
-  { name: "cold", type: Number, defaultValue: 2 },
-  { name: "hot", type: Number, defaultValue: 5 },
-  { name: "verbose", type: Boolean, defaultValue: false },
+  { name: dirOption, type: String },
+  { name: nameOption, type: String },
+  { name: fileOption, type: String, defaultValue: undefined },
+  { name: subjectOption, type: (input: string) => subjects.get(input) },
+  { name: coldOption, type: Number, defaultValue: 2 },
+  { name: hotOption, type: Number, defaultValue: 5 },
+  { name: verboseOption, type: Boolean, defaultValue: false },
 ];
 
 const options = commandLineArgs(optionDefinitions);
 
-const [dir, name, file, runner] = [options["dir"], options["name"], options["file"], options["runner"]];
+const [dir, name, file, subject] = [
+  options[dirOption],
+  options[nameOption],
+  options[fileOption],
+  options[subjectOption],
+];
 
-if (!(dir && name && runner)) {
+if (!(dir && name && subject)) {
   const usage = commandLineUsage([
     {
       header: "Perf NPM",
@@ -76,6 +88,6 @@ if (!(dir && name && runner)) {
   console.log(usage);
   process.exit(-1);
 }
-const results = await run(dir, name, file, runner, options["cold"], options["hot"]);
+const results = await run(dir, name, file, subject, options[coldOption], options[hotOption]);
 
 console.log(JSON.stringify(Object.fromEntries(results), undefined, 2));

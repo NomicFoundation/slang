@@ -24,7 +24,9 @@ export function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
 
-const verbose = process.argv.includes("--verbose");
+export const verboseOption = "verbose";
+
+const verbose = process.argv.includes(verboseOption);
 
 export function log(what: string) {
   if (verbose) {
