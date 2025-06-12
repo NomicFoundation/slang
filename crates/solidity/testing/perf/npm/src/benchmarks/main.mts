@@ -1,20 +1,25 @@
-import { checkCI, Runner, round2, Timings, SolidityProject } from "./common.mjs";
+import { checkCI, Subject, round2, Timings, SolidityProject } from "./common.mjs";
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
-import { AntlrRunner, SlangBindingsFileRunner, SlangBindingsProjectRunner, SolcRunner } from "./runners/runners.mjs";
+import {
+  AntlrSubject,
+  SlangBindingsFileSubject,
+  SlangBindingsProjectSubject,
+  SolcSubject,
+} from "./subjects/subjects.mjs";
 
-const runners: Map<string, Runner> = new Map([
-  ["SlangFile", new SlangBindingsFileRunner()],
-  ["SlangProject", new SlangBindingsProjectRunner()],
-  ["Antlr", new AntlrRunner()],
-  ["Solc", new SolcRunner()],
+const runners: Map<string, Subject> = new Map([
+  ["SlangFile", new SlangBindingsFileSubject()],
+  ["SlangProject", new SlangBindingsProjectSubject()],
+  ["Antlr", new AntlrSubject()],
+  ["Solc", new SolcSubject()],
 ]);
 
 async function run(
   dir: string,
   name: string,
   file: string | undefined,
-  runner: Runner,
+  runner: Subject,
   cold: number,
   hot: number,
 ): Promise<Timings> {

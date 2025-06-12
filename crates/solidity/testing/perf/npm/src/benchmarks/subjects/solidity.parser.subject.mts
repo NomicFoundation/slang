@@ -1,7 +1,7 @@
 import { parse } from "@solidity-parser/parser";
-import { log, Runner, SolidityProject, Timings } from "../common.mjs";
+import { log, Subject, SolidityProject, Timings } from "../common.mjs";
 
-export class AntlrRunner implements Runner {
+export class AntlrSubject implements Subject {
   public name = "solidity parser";
 
   async test(project: SolidityProject, file: string): Promise<Timings> {

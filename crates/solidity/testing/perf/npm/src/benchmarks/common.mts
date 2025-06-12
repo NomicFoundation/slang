@@ -128,7 +128,7 @@ export class SolidityProject {
 
 export type Timings = Map<string, number>;
 
-export interface Runner {
+export interface Subject {
   name: string;
 
   test(project: SolidityProject, file: string): Promise<Timings>;
