@@ -1,3 +1,3 @@
-export { SlangBindingsFileSubject, SlangBindingsProjectSubject } from "./slang.runner.mjs";
-export { SolcSubject } from "./solc.runner.mjs";
-export { AntlrSubject } from "./solidity.parser.runner.mjs";
+export { SlangSubject } from "./slang.subject.mjs";
+export { SolcSubject } from "./solc.subject.mjs";
+export { AntlrSubject } from "./solidity.parser.subject.mjs";

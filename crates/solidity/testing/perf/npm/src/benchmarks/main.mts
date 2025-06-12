@@ -1,16 +1,10 @@
 import { checkCI, Subject, round2, Timings, SolidityProject } from "./common.mjs";
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
-import {
-  AntlrSubject,
-  SlangBindingsFileSubject,
-  SlangBindingsProjectSubject,
-  SolcSubject,
-} from "./subjects/subjects.mjs";
+import { AntlrSubject, SlangSubject, SolcSubject } from "./subjects/subjects.mjs";
 
 const runners: Map<string, Subject> = new Map([
-  ["SlangFile", new SlangBindingsFileSubject()],
-  ["SlangProject", new SlangBindingsProjectSubject()],
+  ["Slang", new SlangSubject()],
   ["Antlr", new AntlrSubject()],
   ["Solc", new SolcSubject()],
 ]);
