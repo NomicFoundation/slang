@@ -5,6 +5,7 @@ use anyhow::Result;
 use clap::Parser;
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
+use infra_utils::paths::PathExtensions;
 use serde_json::json;
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
@@ -30,7 +31,7 @@ pub struct NpmController {
 
     #[arg(long)]
     /// A specific hash to load
-    hash: Option<String>,
+    contract: Option<String>,
 
     #[arg(long)]
     /// If hash is specified, it is possible to optionally change the entrypoint file
@@ -52,7 +53,7 @@ impl NpmController {
         let config = config::read_config()?;
         let input_path = Path::new(&config::WORKING_DIR);
 
-        if let Some(hash) = &self.hash {
+        if let Some(hash) = &self.contract {
             let result =
                 self.run_benchmarks(input_path, "custom", hash, self.entrypoint.as_deref())?;
             publish(result.into_iter())
@@ -61,25 +62,6 @@ impl NpmController {
             let project_benchmarks = self.project_benchmarks(input_path, &config.projects)?;
             publish(file_benchmarks.into_iter().chain(project_benchmarks))
         }
-    }
-
-    fn run_benchmarks(
-        &self,
-        input_path: &Path,
-        name: &str,
-        hash: &str,
-        file: Option<&str>,
-    ) -> Result<Timings> {
-        fetch(hash, input_path)?;
-        let path = input_path.join(hash);
-
-        let mut results = HashMap::new();
-        for sut in Subject::iter() {
-            let sut_result = self.run(&path, name, file, sut)?;
-            results.extend(sut_result);
-        }
-
-        Ok(results)
     }
 
     fn compute_regex(&self) -> Result<regex::Regex> {
@@ -121,6 +103,25 @@ impl NpmController {
         Ok(results)
     }
 
+    fn run_benchmarks(
+        &self,
+        input_path: &Path,
+        name: &str,
+        hash: &str,
+        file: Option<&str>,
+    ) -> Result<Timings> {
+        fetch(hash, input_path)?;
+        let path = input_path.join(hash);
+
+        let mut results = HashMap::new();
+        for sut in Subject::iter() {
+            let sut_result = self.run(&path, name, file, sut)?;
+            results.extend(sut_result);
+        }
+
+        Ok(results)
+    }
+
     fn run(
         &self,
         path: &Path,
@@ -133,12 +134,7 @@ impl NpmController {
             .arg("tsx")
             .flag("--trace-uncaught")
             .flag("--expose-gc")
-            .arg(
-                perf_crate
-                    .join("npm/src/benchmarks/main.mts")
-                    .to_str()
-                    .unwrap(),
-            )
+            .arg(perf_crate.join("npm/src/benchmarks/main.mts").unwrap_str())
             .property("--dir", path.to_string_lossy())
             .property("--name", name);
 
