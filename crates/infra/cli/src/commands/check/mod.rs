@@ -42,7 +42,7 @@ impl OrderedCommand for CheckCommand {
             CheckCommand::Cargo => check_cargo(),
             CheckCommand::Npm => check_npm(),
             CheckCommand::PublicApi => check_public_api(),
-        };
+        }
 
         Ok(())
     }

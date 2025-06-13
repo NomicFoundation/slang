@@ -4,7 +4,6 @@ use metaslang_bindings::{FileGraphBuilder, ScopeGraphBuilder};
 use metaslang_cst::kinds::KindTypes;
 use semver::Version;
 #[allow(clippy::too_many_lines)]
-
 pub fn define_built_ins<KT: KindTypes + 'static>(
     builder: &mut FileGraphBuilder<'_, KT>,
     scope: &mut ScopeGraphBuilder,

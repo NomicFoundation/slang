@@ -12,7 +12,7 @@ pub fn format_source_file(file_path: &Path, contents: &str) -> Result<String> {
             // Still write the unformatted version to disk, to be able to debug what went wrong:
             file_path.write_string(contents)?;
 
-            Err(formatter_error).context(format!("Failed to format {file_path:?}"))
+            Err(formatter_error).context(format!("Failed to format {}", file_path.display()))
         }
     }
 }
@@ -31,7 +31,10 @@ pub fn generate_header(file_path: &Path) -> Option<String> {
         // Does not support comments:
         (_, "json") => return None,
 
-        _ => panic!("Unsupported path to generate a header for: {file_path:?}"),
+        _ => panic!(
+            "Unsupported path to generate a header for: {}",
+            file_path.display()
+        ),
     })
 }
 
@@ -44,18 +47,18 @@ fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
         // No formatters available for these yet:
         (_, "wit") => Ok(contents.to_owned()),
 
-        _ => panic!("Unsupported path to format: {file_path:?}"),
+        _ => panic!("Unsupported path to format: {}", file_path.display()),
     }
 }
 
 fn run_prettier(file_path: &Path, contents: &str) -> Result<String> {
-    return Command::new("prettier")
+    Command::new("prettier")
         .property(
             // used to infer the language, and detect `.prettierrc` options
             "--stdin-filepath",
             file_path.unwrap_str(),
         )
-        .evaluate_with_input(contents);
+        .evaluate_with_input(contents)
 }
 
 fn run_rustfmt(contents: &str) -> Result<String> {

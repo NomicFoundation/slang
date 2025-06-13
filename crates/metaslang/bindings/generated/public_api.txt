@@ -36,7 +36,7 @@ impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Definiti
 pub fn metaslang_bindings::Definition<KT>::definiens_location(&self) -> metaslang_bindings::BindingLocation<KT>
 pub fn metaslang_bindings::Definition<KT>::get_cursor(&self) -> &metaslang_cst::cursor::Cursor<KT>
 pub fn metaslang_bindings::Definition<KT>::get_definiens_cursor(&self) -> &metaslang_cst::cursor::Cursor<KT>
-pub fn metaslang_bindings::Definition<KT>::get_file(&self) -> FileDescriptor
+pub fn metaslang_bindings::Definition<KT>::get_file(&self) -> metaslang_bindings::builder::FileDescriptor
 pub fn metaslang_bindings::Definition<KT>::id(&self) -> metaslang_cst::nodes::NodeId
 pub fn metaslang_bindings::Definition<KT>::name_location(&self) -> metaslang_bindings::BindingLocation<KT>
 pub fn metaslang_bindings::Definition<KT>::references(&self) -> alloc::vec::Vec<metaslang_bindings::Reference<KT>>
@@ -52,15 +52,15 @@ pub fn metaslang_bindings::Definition<KT>::fmt(&self, f: &mut core::fmt::Formatt
 pub struct metaslang_bindings::FileGraphBuilder<'a, KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<'a, KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::FileGraphBuilder<'a, KT>
 pub fn metaslang_bindings::FileGraphBuilder<'a, KT>::edge(&mut self, source: metaslang_bindings::GraphHandle, sink: metaslang_bindings::GraphHandle)
-pub fn metaslang_bindings::FileGraphBuilder<'a, KT>::new_pop_symbol_node<S: core::convert::AsRef<str> + core::marker::Sized>(&mut self, symbol: &S, is_definition: bool) -> metaslang_bindings::GraphHandle
-pub fn metaslang_bindings::FileGraphBuilder<'a, KT>::new_push_symbol_node<S: core::convert::AsRef<str> + core::marker::Sized>(&mut self, symbol: &S, is_reference: bool) -> metaslang_bindings::GraphHandle
+pub fn metaslang_bindings::FileGraphBuilder<'a, KT>::new_pop_symbol_node<S: core::convert::AsRef<str> + ?core::marker::Sized>(&mut self, symbol: &S, is_definition: bool) -> metaslang_bindings::GraphHandle
+pub fn metaslang_bindings::FileGraphBuilder<'a, KT>::new_push_symbol_node<S: core::convert::AsRef<str> + ?core::marker::Sized>(&mut self, symbol: &S, is_reference: bool) -> metaslang_bindings::GraphHandle
 pub fn metaslang_bindings::FileGraphBuilder<'a, KT>::new_scope_node(&mut self, extension_hook: bool) -> metaslang_bindings::GraphHandle
 pub fn metaslang_bindings::FileGraphBuilder<'a, KT>::root_node(&self) -> metaslang_bindings::GraphHandle
 pub struct metaslang_bindings::Reference<KT: metaslang_cst::kinds::KindTypes + 'static>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_bindings::Reference<KT>
 pub fn metaslang_bindings::Reference<KT>::definitions(&self) -> alloc::vec::Vec<metaslang_bindings::Definition<KT>>
 pub fn metaslang_bindings::Reference<KT>::get_cursor(&self) -> &metaslang_cst::cursor::Cursor<KT>
-pub fn metaslang_bindings::Reference<KT>::get_file(&self) -> FileDescriptor
+pub fn metaslang_bindings::Reference<KT>::get_file(&self) -> metaslang_bindings::builder::FileDescriptor
 pub fn metaslang_bindings::Reference<KT>::id(&self) -> metaslang_cst::nodes::NodeId
 pub fn metaslang_bindings::Reference<KT>::location(&self) -> metaslang_bindings::BindingLocation<KT>
 impl<KT: core::clone::Clone + metaslang_cst::kinds::KindTypes + 'static> core::clone::Clone for metaslang_bindings::Reference<KT>

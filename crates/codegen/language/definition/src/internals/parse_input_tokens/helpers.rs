@@ -96,7 +96,7 @@ impl ParseHelpers {
         match Self::syn::<Ident>(input) {
             Ok(key) if key == name => {}
             _ => return Error::fatal(&span, &Errors::ExpectedField(name)),
-        };
+        }
 
         Self::syn::<Token![=]>(input)?;
 

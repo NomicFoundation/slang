@@ -39,7 +39,7 @@ impl PathExtensions for Path {
 
         for entry in self
             .read_dir()
-            .with_context(|| format!("Failed to read directory: {self:?}"))?
+            .with_context(|| format!("Failed to read directory: {}", self.display()))?
         {
             let entry = entry.unwrap().file_name();
             let file_name = entry.to_str().unwrap();
@@ -76,9 +76,8 @@ impl PathExtensions for Path {
     fn strip_repo_root(&self) -> Result<&Path> {
         let repo_root = Path::repo_root();
 
-        return self
-            .strip_prefix(&repo_root)
-            .with_context(|| format!("Failed to strip repo root from: {self:?}"));
+        self.strip_prefix(&repo_root)
+            .with_context(|| format!("Failed to strip repo root from: {}", self.display()))
     }
 
     fn replace_prefix(
@@ -91,17 +90,22 @@ impl PathExtensions for Path {
 
         let suffix = self
             .strip_prefix(old_prefix)
-            .with_context(|| format!("Failed to strip prefix: {old_prefix:?} from: {self:?}"))
+            .with_context(|| {
+                format!(
+                    "Failed to strip prefix: {old_prefix} from: {self_}",
+                    old_prefix = old_prefix.display(),
+                    self_ = self.display()
+                )
+            })
             .unwrap();
 
         new_prefix.join(suffix)
     }
 
     fn unwrap_str(&self) -> &str {
-        return self
-            .to_str()
-            .with_context(|| format!("Failed to convert path to str: {self:?}"))
-            .unwrap();
+        self.to_str()
+            .with_context(|| format!("Failed to convert path to str: {}", self.display()))
+            .unwrap()
     }
 
     fn unwrap_string(&self) -> String {
@@ -109,38 +113,36 @@ impl PathExtensions for Path {
     }
 
     fn unwrap_name(&self) -> &str {
-        return self
-            .file_name()
-            .with_context(|| format!("Failed to extract file name of: {self:?}"))
+        self.file_name()
+            .with_context(|| format!("Failed to extract file name of: {}", self.display()))
             .unwrap()
             .to_str()
-            .with_context(|| format!("Failed convert path to str: {self:?}"))
-            .unwrap();
+            .with_context(|| format!("Failed convert path to str: {}", self.display()))
+            .unwrap()
     }
 
     fn unwrap_parent(&self) -> &Path {
-        return self
-            .parent()
-            .with_context(|| format!("Failed to extract parent directory of: {self:?}"))
-            .unwrap();
+        self.parent()
+            .with_context(|| format!("Failed to extract parent directory of: {}", self.display()))
+            .unwrap()
     }
 
     fn unwrap_ext(&self) -> &str {
-        return self
-            .extension()
+        self.extension()
             .unwrap_or_default()
             .to_str()
-            .with_context(|| format!("Failed to convert extension to str: {self:?}"))
-            .unwrap();
+            .with_context(|| format!("Failed to convert extension to str: {}", self.display()))
+            .unwrap()
     }
 
     fn read_to_string(&self) -> Result<String> {
-        std::fs::read_to_string(self).with_context(|| format!("Failed to read file: {self:?}"))
+        std::fs::read_to_string(self)
+            .with_context(|| format!("Failed to read file: {}", self.display()))
     }
 
     fn write_string(&self, contents: impl AsRef<str>) -> Result<()> {
-        return std::fs::write(self, contents.as_ref())
-            .with_context(|| format!("Failed to write file: {self:?}"));
+        std::fs::write(self, contents.as_ref())
+            .with_context(|| format!("Failed to write file: {}", self.display()))
     }
 }
 

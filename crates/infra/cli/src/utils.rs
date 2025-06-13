@@ -30,11 +30,10 @@ pub trait ClapExtensions {
 
 impl<T: ValueEnum> ClapExtensions for T {
     fn clap_name(&self) -> String {
-        return self
-            .to_possible_value()
+        self.to_possible_value()
             .expect("Expected Clap ValueEnum to have a name (not skipped).")
             .get_name()
-            .to_owned();
+            .to_owned()
     }
 }
 

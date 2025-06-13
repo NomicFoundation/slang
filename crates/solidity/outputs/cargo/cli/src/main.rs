@@ -21,7 +21,7 @@ enum Commands {
 fn main() {
     match Cli::parse().command {
         Commands::Parse(command) => command.execute(),
-    };
+    }
 }
 
 #[test]

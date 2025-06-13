@@ -16,7 +16,6 @@ metaslang_bindings = { workspace = true, features = [
   "__private_testing_utils",
 ] }
 metaslang_graph_builder = { workspace = true }
-once_cell = { workspace = true }
 regex = { workspace = true }
 semver = { workspace = true }
 slang_solidity = { workspace = true, features = [

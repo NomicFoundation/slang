@@ -93,7 +93,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
                     let dot_output_path = target_dir.join(format!("{version}-{status}.dot"));
                     fs::write(dot_output_path, &dot_output)?;
                 }
-            };
+            }
         }
 
         match last_bindings_output {

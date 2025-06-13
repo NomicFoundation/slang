@@ -279,6 +279,7 @@ mod cancellation;
 mod functions;
 
 use std::collections::{HashMap, HashSet};
+use std::sync::LazyLock;
 
 pub use cancellation::{CancellationFlag, NoCancellation};
 pub use functions::default_functions;
@@ -288,7 +289,6 @@ use metaslang_graph_builder::ast::File as GraphBuilderFile;
 use metaslang_graph_builder::functions::Functions;
 use metaslang_graph_builder::graph::{Edge, Graph, GraphNode, GraphNodeRef, Value};
 use metaslang_graph_builder::{ExecutionConfig, ExecutionError, Variables};
-use once_cell::sync::Lazy;
 use stack_graphs::arena::Handle;
 use stack_graphs::graph::{File, Node, NodeID, StackGraph};
 use thiserror::Error;
@@ -322,7 +322,7 @@ static SYNTAX_TYPE_ATTR: &str = "syntax_type";
 static TYPE_ATTR: &str = "type";
 
 // Expected attributes per node type
-static POP_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
+static POP_SCOPED_SYMBOL_ATTRS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     HashSet::from([
         TYPE_ATTR,
         SYMBOL_ATTR,
@@ -334,7 +334,7 @@ static POP_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         INHERIT_EXTENSIONS_ATTR,
     ])
 });
-static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
+static POP_SYMBOL_ATTRS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     HashSet::from([
         TYPE_ATTR,
         SYMBOL_ATTR,
@@ -346,7 +346,7 @@ static POP_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         INHERIT_EXTENSIONS_ATTR,
     ])
 });
-static PUSH_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
+static PUSH_SCOPED_SYMBOL_ATTRS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     HashSet::from([
         TYPE_ATTR,
         SYMBOL_ATTR,
@@ -355,9 +355,9 @@ static PUSH_SCOPED_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         PARENTS_ATTR,
     ])
 });
-static PUSH_SYMBOL_ATTRS: Lazy<HashSet<&'static str>> =
-    Lazy::new(|| HashSet::from([TYPE_ATTR, SYMBOL_ATTR, IS_REFERENCE_ATTR, PARENTS_ATTR]));
-static SCOPE_ATTRS: Lazy<HashSet<&'static str>> = Lazy::new(|| {
+static PUSH_SYMBOL_ATTRS: LazyLock<HashSet<&'static str>> =
+    LazyLock::new(|| HashSet::from([TYPE_ATTR, SYMBOL_ATTR, IS_REFERENCE_ATTR, PARENTS_ATTR]));
+static SCOPE_ATTRS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     HashSet::from([
         TYPE_ATTR,
         IS_EXPORTED_ATTR,
@@ -562,7 +562,7 @@ impl From<ExecutionError> for BuildError {
     }
 }
 
-impl<'a, KT: KindTypes + 'static> Loader<'a, KT> {
+impl<KT: KindTypes + 'static> Loader<'_, KT> {
     fn load(&mut self, cancellation_flag: &dyn CancellationFlag) -> Result<(), BuildError> {
         let cancellation_flag: &dyn stack_graphs::CancellationFlag = &cancellation_flag;
 
@@ -692,7 +692,7 @@ enum NodeType {
     Scope,
 }
 
-impl<'a, KT: KindTypes> Loader<'a, KT> {
+impl<KT: KindTypes> Loader<'_, KT> {
     /// Get the `NodeID` corresponding to a `Graph` node.
     ///
     /// By default, graph nodes get their index shifted by [`self.injected_node_count`] as their

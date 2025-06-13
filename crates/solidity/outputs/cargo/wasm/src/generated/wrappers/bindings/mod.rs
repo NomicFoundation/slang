@@ -38,14 +38,12 @@ define_rc_wrapper! { BindingGraph {
     fn definition_at(&self, cursor: ffi::CursorBorrow<'_>) -> Option<ffi::Definition> {
         self._borrow_ffi()
             .definition_at(&cursor._borrow_ffi())
-            .map(rust::Definition::from)
             .map(IntoFFI::_into_ffi)
     }
 
     fn reference_at(&self,  cursor: ffi::CursorBorrow<'_>) -> Option<ffi::Reference> {
         self._borrow_ffi()
             .reference_at(&cursor._borrow_ffi())
-            .map(rust::Reference::from)
             .map(IntoFFI::_into_ffi)
     }
 } }

@@ -93,7 +93,6 @@ fn check_precedence_items(analysis: &mut Analysis) {
             for second_op in precedence_expression.operators.iter().skip(1) {
                 if !compare_operators(analysis, first_op, second_op) {
                     analysis.errors.add(name, &Errors::OperatorMismatch);
-                    continue;
                 }
             }
         }
@@ -128,7 +127,7 @@ fn compare_operators(
             | SpannedOperatorModel::BinaryRightAssociative,
         ) => {}
         _ => return false,
-    };
+    }
 
     // Must have the same number of fields:
     if first_op.fields.len() != second_op.fields.len() {
@@ -237,7 +236,7 @@ fn calculate_defined_in(analysis: &mut Analysis, item: &SpannedItem) -> VersionS
         SpannedItem::Fragment { item } => {
             try_add_specifier(&item.enabled);
         }
-    };
+    }
 
     defined_in
 }

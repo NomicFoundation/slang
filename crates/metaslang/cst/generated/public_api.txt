@@ -224,7 +224,7 @@ pub fn metaslang_cst::query::CaptureQuantifier::fmt(&self, f: &mut core::fmt::Fo
 impl core::marker::Copy for metaslang_cst::query::CaptureQuantifier
 impl core::marker::StructuralPartialEq for metaslang_cst::query::CaptureQuantifier
 pub struct metaslang_cst::query::Query<T: metaslang_cst::kinds::KindTypes>
-pub metaslang_cst::query::Query::ast_node: ASTNode<T>
+pub metaslang_cst::query::Query::ast_node: metaslang_cst::query::model::ASTNode<T>
 pub metaslang_cst::query::Query::capture_quantifiers: alloc::collections::btree::map::BTreeMap<alloc::string::String, metaslang_cst::query::CaptureQuantifier>
 impl<T: metaslang_cst::kinds::KindTypes> metaslang_cst::query::Query<T>
 pub fn metaslang_cst::query::Query<T>::create(text: &str) -> core::result::Result<Self, metaslang_cst::query::QueryError>

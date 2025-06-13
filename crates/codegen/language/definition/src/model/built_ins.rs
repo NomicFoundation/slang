@@ -82,7 +82,7 @@ fn filter_built_in_function(
     if function
         .enabled
         .as_ref()
-        .map_or(true, |enabled| enabled.contains(version))
+        .is_none_or(|enabled| enabled.contains(version))
     {
         Some(function.clone())
     } else {
@@ -94,7 +94,7 @@ fn filter_built_in_field(field: &BuiltInField, version: &Version) -> Option<Buil
     if field
         .enabled
         .as_ref()
-        .map_or(true, |enabled| enabled.contains(version))
+        .is_none_or(|enabled| enabled.contains(version))
     {
         Some(field.clone())
     } else {
@@ -106,7 +106,7 @@ fn filter_built_in_type(typ: &BuiltInType, version: &Version) -> Option<BuiltInT
     if typ
         .enabled
         .as_ref()
-        .map_or(true, |enabled| enabled.contains(version))
+        .is_none_or(|enabled| enabled.contains(version))
     {
         let fields = typ
             .fields

@@ -266,7 +266,7 @@ impl GrammarVisitor for ScannerContextCollector {
                 delimiters.insert(open.clone(), close.clone());
             }
             _ => {}
-        };
+        }
     }
 }
 

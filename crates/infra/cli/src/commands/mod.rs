@@ -81,7 +81,7 @@ impl AppCommand {
             AppCommand::Perf(controller) => controller.execute()?,
             AppCommand::Publish(controller) => controller.execute()?,
             AppCommand::Completions(controller) => controller.execute(),
-        };
+        }
 
         Ok(())
     }

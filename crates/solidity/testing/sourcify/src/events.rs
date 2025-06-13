@@ -112,7 +112,7 @@ impl Events {
             TestOutcome::Failed => self.failed.inc(1),
             TestOutcome::Unresolved => self.unresolved.inc(1),
             TestOutcome::Incompatible => self.incompatible.inc(1),
-        };
+        }
     }
 
     fn test_error(&self, message: impl AsRef<str>) {
@@ -128,7 +128,7 @@ impl Events {
             cmp::Ordering::Greater => {
                 // Don't print any more messages...
             }
-        };
+        }
     }
 
     pub fn parse_error(&self, message: impl AsRef<str>) {

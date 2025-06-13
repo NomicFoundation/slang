@@ -18,7 +18,8 @@ pub(crate) fn collect_snapshot_tests(
         if let Ok(generated_dir) = file.generated_dir() {
             assert!(
                 generated_dir.unwrap_parent().join("input.sol").exists(),
-                "Each snapshot should have a matching input.sol test file: {file:?}",
+                "Each snapshot should have a matching input.sol test file: {file}",
+                file = file.display()
             );
 
             // skip generated files
@@ -44,7 +45,7 @@ pub(crate) fn collect_snapshot_tests(
             _ => {
                 bail!("Invalid test input. Should be in the form of '<tests-dir>/GROUP_NAME/TEST_NAME/input.sol', but found: {file:?}");
             }
-        };
+        }
     }
 
     Ok(tests)

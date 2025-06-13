@@ -28,7 +28,7 @@ impl OrderedCommand for WatchCommand {
 
         match self {
             WatchCommand::Mkdocs => Mkdocs::watch(),
-        };
+        }
 
         Ok(())
     }

@@ -25,7 +25,7 @@ impl MkdocsController {
         match self.target {
             PublishTarget::MainBranch => Mkdocs::publish_main_branch(self.dry_run),
             PublishTarget::LatestRelease => Mkdocs::publish_latest_release(self.dry_run)?,
-        };
+        }
 
         Ok(())
     }

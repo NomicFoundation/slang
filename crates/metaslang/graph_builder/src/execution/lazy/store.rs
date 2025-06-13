@@ -216,7 +216,7 @@ impl LazyScopedVariables {
                             )
                         }
                         _ => {}
-                    };
+                    }
                 }
                 Ok(values)
             }

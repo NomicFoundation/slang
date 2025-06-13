@@ -13,7 +13,6 @@ indicatif = { workspace = true }
 infra_utils = { workspace = true }
 itertools = { workspace = true }
 metaslang_bindings = { workspace = true }
-once_cell = { workspace = true }
 rayon = { workspace = true }
 regex = { workspace = true }
 semver = { workspace = true }

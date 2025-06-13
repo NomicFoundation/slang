@@ -242,7 +242,7 @@ impl DisplayExecutionErrorPretty<'_> {
                         }
                     }
                     Context::Other(msg) => writeln!(f, "{:>5}: {}", index, msg)?,
-                };
+                }
                 self.fmt_entry(f, index + 1, cause)?;
                 Ok(())
             }

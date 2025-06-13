@@ -33,7 +33,7 @@ impl OrderedCommand for TestCommand {
         match self {
             TestCommand::Cargo => test_cargo()?,
             TestCommand::Npm => test_npm(),
-        };
+        }
 
         Ok(())
     }
