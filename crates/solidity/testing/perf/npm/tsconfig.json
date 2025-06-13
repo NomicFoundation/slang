@@ -1,0 +1,16 @@
+{
+  "extends": "../../../../../tsconfig.json",
+
+  "include": ["./src/**/*.mts"],
+
+  "noImplicitAny": false,
+
+  "compilerOptions": {
+    "target": "es2017",
+    "typeRoots": ["@types", "./node_modules/@types", "../../../../../node_modules/@types"],
+    /* Projects */
+    "composite": true,
+    "incremental": true,
+    "tsBuildInfoFile": "target/tsc/.tsbuildinfo"
+  }
+}
