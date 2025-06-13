@@ -26,6 +26,7 @@ pub trait Diagnostic {
 }
 
 #[cfg(feature = "__private_ariadne_errors")]
+#[allow(missing_docs)]
 pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_color: bool) -> String {
     use ariadne::{Color, Config, Label, Report, ReportKind, Source};
 

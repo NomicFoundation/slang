@@ -68,6 +68,7 @@ pub fn create_with_resolver(
 }
 
 #[cfg(feature = "__private_testing_utils")]
+#[allow(missing_docs)]
 pub fn get_binding_rules() -> &'static str {
     binding_rules::BINDING_RULES_SOURCE
 }

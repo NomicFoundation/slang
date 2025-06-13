@@ -29,7 +29,6 @@ categories = [
 [features]
 default = []
 __private_ariadne_errors = ["dep:ariadne"]
-__private_backend_api = []
 __private_wasm_apis = []
 __private_testing_utils = ["metaslang_bindings/__private_testing_utils"]
 
