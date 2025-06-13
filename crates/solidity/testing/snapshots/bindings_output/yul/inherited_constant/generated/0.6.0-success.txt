@@ -1,0 +1,73 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ abstract contract Utils {
+    │                   ──┬──  
+    │                     ╰──── name: 1
+  2 │     uint256 internal constant _FOO = 1;
+    │                               ──┬─  
+    │                                 ╰─── name: 2
+    │ 
+  5 │ contract Test is Utils {
+    │          ──┬─    ──┬──  
+    │            ╰──────────── name: 3
+    │                    │    
+    │                    ╰──── ref: 1
+  6 │     function test() public pure {
+    │              ──┬─  
+    │                ╰─── name: 4
+    │ 
+  8 │             let x := add(1, _FOO)
+    │                 ┬    ─┬─    ──┬─  
+    │                 ╰───────────────── name: 5
+    │                       │       │   
+    │                       ╰─────────── ref: built-in
+    │                               │   
+    │                               ╰─── ref: 2
+    │ 
+ 10 │             function foo() {
+    │                      ─┬─  
+    │                       ╰─── name: 6
+ 11 │                 let x1 := add(1, _FOO)
+    │                     ─┬    ─┬─    ──┬─  
+    │                      ╰───────────────── name: 7
+    │                            │       │   
+    │                            ╰─────────── ref: built-in
+    │                                    │   
+    │                                    ╰─── ref: 2
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │       ╭─▶ abstract contract Utils {
+  2 │       │       uint256 internal constant _FOO = 1;
+    │       │   ────────────────────┬───────────────────  
+    │       │                       ╰───────────────────── definiens: 2
+  3 │ │     ├─▶ }
+    │ │     │       
+    │ │     ╰─────── definiens: 1
+  4 │ ╭───────▶ 
+    ┆ ┆ ┆       
+  6 │ │ ╭─────▶     function test() public pure {
+    ┆ ┆ ┆       
+  8 │ │ │ │                 let x := add(1, _FOO)
+    │ │ │ │                     ┬  
+    │ │ │ │                     ╰── definiens: 5
+  9 │ │ │ ╭───▶ 
+    ┆ ┆ ┆ ┆     
+ 11 │ │ │ │                     let x1 := add(1, _FOO)
+    │ │ │ │                         ─┬  
+    │ │ │ │                          ╰── definiens: 7
+ 12 │ │ │ ├───▶             }
+    │ │ │ │                     
+    │ │ │ ╰───────────────────── definiens: 6
+    ┆ ┆ ┆       
+ 14 │ │ ├─────▶     }
+    │ │ │               
+    │ │ ╰─────────────── definiens: 4
+ 15 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 3
+────╯
