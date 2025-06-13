@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-// Transformer from previous language implementation `l1_typed_cst`
+// Transformer from previous language implementation `l1_structured_ast`
 #![allow(clippy::too_many_lines)]
 
 use std::rc::Rc;
@@ -495,6 +495,22 @@ pub trait Transformer {
         })
     }
 
+    fn transform_unnamed_function_definition(
+        &mut self,
+        source: &input::UnnamedFunctionDefinition,
+    ) -> output::UnnamedFunctionDefinition {
+        let parameters = self.transform_parameters_declaration(&source.parameters);
+        let attributes = self.transform_unnamed_function_attributes(&source.attributes);
+        let body = self.transform_function_body(&source.body);
+
+        Rc::new(output::UnnamedFunctionDefinitionStruct {
+            node_id: source.node_id,
+            parameters,
+            attributes,
+            body,
+        })
+    }
+
     fn transform_fallback_function_definition(
         &mut self,
         source: &input::FallbackFunctionDefinition,
@@ -814,11 +830,13 @@ pub trait Transformer {
         &mut self,
         source: &input::TupleDeconstructionStatement,
     ) -> output::TupleDeconstructionStatement {
+        let var_keyword = source.var_keyword.as_ref().map(Rc::clone);
         let elements = self.transform_tuple_deconstruction_elements(&source.elements);
         let expression = self.transform_expression(&source.expression);
 
         Rc::new(output::TupleDeconstructionStatementStruct {
             node_id: source.node_id,
+            var_keyword,
             elements,
             expression,
         })
@@ -1086,6 +1104,15 @@ pub trait Transformer {
             node_id: source.node_id,
             error,
             arguments,
+        })
+    }
+
+    fn transform_throw_statement(
+        &mut self,
+        source: &input::ThrowStatement,
+    ) -> output::ThrowStatement {
+        Rc::new(output::ThrowStatementStruct {
+            node_id: source.node_id,
         })
     }
 
@@ -1500,10 +1527,15 @@ pub trait Transformer {
         source: &input::HexNumberExpression,
     ) -> output::HexNumberExpression {
         let literal = Rc::clone(&source.literal);
+        let unit = source
+            .unit
+            .as_ref()
+            .map(|value| self.transform_number_unit(value));
 
         Rc::new(output::HexNumberExpressionStruct {
             node_id: source.node_id,
             literal,
+            unit,
         })
     }
 
@@ -1625,6 +1657,38 @@ pub trait Transformer {
         })
     }
 
+    fn transform_yul_colon_and_equal(
+        &mut self,
+        source: &input::YulColonAndEqual,
+    ) -> output::YulColonAndEqual {
+        Rc::new(output::YulColonAndEqualStruct {
+            node_id: source.node_id,
+        })
+    }
+
+    fn transform_yul_stack_assignment_statement(
+        &mut self,
+        source: &input::YulStackAssignmentStatement,
+    ) -> output::YulStackAssignmentStatement {
+        let assignment = self.transform_yul_stack_assignment_operator(&source.assignment);
+        let variable = Rc::clone(&source.variable);
+
+        Rc::new(output::YulStackAssignmentStatementStruct {
+            node_id: source.node_id,
+            assignment,
+            variable,
+        })
+    }
+
+    fn transform_yul_equal_and_colon(
+        &mut self,
+        source: &input::YulEqualAndColon,
+    ) -> output::YulEqualAndColon {
+        Rc::new(output::YulEqualAndColonStruct {
+            node_id: source.node_id,
+        })
+    }
+
     fn transform_yul_if_statement(
         &mut self,
         source: &input::YulIfStatement,
@@ -1718,6 +1782,15 @@ pub trait Transformer {
     ) -> output::YulContinueStatement {
         Rc::new(output::YulContinueStatementStruct {
             node_id: source.node_id,
+        })
+    }
+
+    fn transform_yul_label(&mut self, source: &input::YulLabel) -> output::YulLabel {
+        let label = Rc::clone(&source.label);
+
+        Rc::new(output::YulLabelStruct {
+            node_id: source.node_id,
+            label,
         })
     }
 
@@ -2075,6 +2148,11 @@ pub trait Transformer {
                     self.transform_fallback_function_definition(fallback_function_definition),
                 )
             }
+            input::ContractMember::UnnamedFunctionDefinition(ref unnamed_function_definition) => {
+                output::ContractMember::UnnamedFunctionDefinition(
+                    self.transform_unnamed_function_definition(unnamed_function_definition),
+                )
+            }
             input::ContractMember::ModifierDefinition(ref modifier_definition) => {
                 output::ContractMember::ModifierDefinition(
                     self.transform_modifier_definition(modifier_definition),
@@ -2192,6 +2270,7 @@ pub trait Transformer {
                     self.transform_override_specifier(override_specifier),
                 )
             }
+            input::FunctionAttribute::ConstantKeyword => output::FunctionAttribute::ConstantKeyword,
             input::FunctionAttribute::ExternalKeyword => output::FunctionAttribute::ExternalKeyword,
             input::FunctionAttribute::InternalKeyword => output::FunctionAttribute::InternalKeyword,
             input::FunctionAttribute::PayableKeyword => output::FunctionAttribute::PayableKeyword,
@@ -2239,11 +2318,17 @@ pub trait Transformer {
             input::ConstructorAttribute::InternalKeyword => {
                 output::ConstructorAttribute::InternalKeyword
             }
+            input::ConstructorAttribute::OverrideKeyword => {
+                output::ConstructorAttribute::OverrideKeyword
+            }
             input::ConstructorAttribute::PayableKeyword => {
                 output::ConstructorAttribute::PayableKeyword
             }
             input::ConstructorAttribute::PublicKeyword => {
                 output::ConstructorAttribute::PublicKeyword
+            }
+            input::ConstructorAttribute::VirtualKeyword => {
+                output::ConstructorAttribute::VirtualKeyword
             }
         }
     }
@@ -2252,6 +2337,50 @@ pub trait Transformer {
         source: &input::ConstructorAttribute,
     ) -> output::ConstructorAttribute {
         self.default_transform_constructor_attribute(source)
+    }
+
+    fn default_transform_unnamed_function_attribute(
+        &mut self,
+        source: &input::UnnamedFunctionAttribute,
+    ) -> output::UnnamedFunctionAttribute {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        match source {
+            input::UnnamedFunctionAttribute::ModifierInvocation(ref modifier_invocation) => {
+                output::UnnamedFunctionAttribute::ModifierInvocation(
+                    self.transform_modifier_invocation(modifier_invocation),
+                )
+            }
+            input::UnnamedFunctionAttribute::ConstantKeyword => {
+                output::UnnamedFunctionAttribute::ConstantKeyword
+            }
+            input::UnnamedFunctionAttribute::ExternalKeyword => {
+                output::UnnamedFunctionAttribute::ExternalKeyword
+            }
+            input::UnnamedFunctionAttribute::InternalKeyword => {
+                output::UnnamedFunctionAttribute::InternalKeyword
+            }
+            input::UnnamedFunctionAttribute::PayableKeyword => {
+                output::UnnamedFunctionAttribute::PayableKeyword
+            }
+            input::UnnamedFunctionAttribute::PrivateKeyword => {
+                output::UnnamedFunctionAttribute::PrivateKeyword
+            }
+            input::UnnamedFunctionAttribute::PublicKeyword => {
+                output::UnnamedFunctionAttribute::PublicKeyword
+            }
+            input::UnnamedFunctionAttribute::PureKeyword => {
+                output::UnnamedFunctionAttribute::PureKeyword
+            }
+            input::UnnamedFunctionAttribute::ViewKeyword => {
+                output::UnnamedFunctionAttribute::ViewKeyword
+            }
+        }
+    }
+    fn transform_unnamed_function_attribute(
+        &mut self,
+        source: &input::UnnamedFunctionAttribute,
+    ) -> output::UnnamedFunctionAttribute {
+        self.default_transform_unnamed_function_attribute(source)
     }
 
     fn default_transform_fallback_function_attribute(
@@ -2391,6 +2520,9 @@ pub trait Transformer {
             input::FunctionTypeAttribute::PublicKeyword => {
                 output::FunctionTypeAttribute::PublicKeyword
             }
+            input::FunctionTypeAttribute::ConstantKeyword => {
+                output::FunctionTypeAttribute::ConstantKeyword
+            }
             input::FunctionTypeAttribute::PureKeyword => output::FunctionTypeAttribute::PureKeyword,
             input::FunctionTypeAttribute::ViewKeyword => output::FunctionTypeAttribute::ViewKeyword,
             input::FunctionTypeAttribute::PayableKeyword => {
@@ -2455,6 +2587,7 @@ pub trait Transformer {
                 output::ElementaryType::UfixedKeyword(Rc::clone(node))
             }
             input::ElementaryType::BoolKeyword => output::ElementaryType::BoolKeyword,
+            input::ElementaryType::ByteKeyword => output::ElementaryType::ByteKeyword,
             input::ElementaryType::StringKeyword => output::ElementaryType::StringKeyword,
         }
     }
@@ -2494,6 +2627,9 @@ pub trait Transformer {
                 output::Statement::ReturnStatement(
                     self.transform_return_statement(return_statement),
                 )
+            }
+            input::Statement::ThrowStatement(ref throw_statement) => {
+                output::Statement::ThrowStatement(self.transform_throw_statement(throw_statement))
             }
             input::Statement::EmitStatement(ref emit_statement) => {
                 output::Statement::EmitStatement(self.transform_emit_statement(emit_statement))
@@ -2568,6 +2704,9 @@ pub trait Transformer {
         match source {
             input::VariableDeclarationType::TypeName(ref type_name) => {
                 output::VariableDeclarationType::TypeName(self.transform_type_name(type_name))
+            }
+            input::VariableDeclarationType::VarKeyword => {
+                output::VariableDeclarationType::VarKeyword
             }
         }
     }
@@ -2820,12 +2959,15 @@ pub trait Transformer {
         match source {
             input::NumberUnit::WeiKeyword => output::NumberUnit::WeiKeyword,
             input::NumberUnit::GweiKeyword => output::NumberUnit::GweiKeyword,
+            input::NumberUnit::SzaboKeyword => output::NumberUnit::SzaboKeyword,
+            input::NumberUnit::FinneyKeyword => output::NumberUnit::FinneyKeyword,
             input::NumberUnit::EtherKeyword => output::NumberUnit::EtherKeyword,
             input::NumberUnit::SecondsKeyword => output::NumberUnit::SecondsKeyword,
             input::NumberUnit::MinutesKeyword => output::NumberUnit::MinutesKeyword,
             input::NumberUnit::HoursKeyword => output::NumberUnit::HoursKeyword,
             input::NumberUnit::DaysKeyword => output::NumberUnit::DaysKeyword,
             input::NumberUnit::WeeksKeyword => output::NumberUnit::WeeksKeyword,
+            input::NumberUnit::YearsKeyword => output::NumberUnit::YearsKeyword,
         }
     }
     fn transform_number_unit(&mut self, source: &input::NumberUnit) -> output::NumberUnit {
@@ -2838,9 +2980,19 @@ pub trait Transformer {
     ) -> output::StringExpression {
         #[allow(clippy::match_wildcard_for_single_variants)]
         match source {
+            input::StringExpression::StringLiteral(ref string_literal) => {
+                output::StringExpression::StringLiteral(
+                    self.transform_string_literal(string_literal),
+                )
+            }
             input::StringExpression::StringLiterals(ref string_literals) => {
                 output::StringExpression::StringLiterals(
                     self.transform_string_literals(string_literals),
+                )
+            }
+            input::StringExpression::HexStringLiteral(ref hex_string_literal) => {
+                output::StringExpression::HexStringLiteral(
+                    self.transform_hex_string_literal(hex_string_literal),
                 )
             }
             input::StringExpression::HexStringLiterals(ref hex_string_literals) => {
@@ -2936,6 +3088,11 @@ pub trait Transformer {
                     self.transform_yul_function_definition(yul_function_definition),
                 )
             }
+            input::YulStatement::YulStackAssignmentStatement(
+                ref yul_stack_assignment_statement,
+            ) => output::YulStatement::YulStackAssignmentStatement(
+                self.transform_yul_stack_assignment_statement(yul_stack_assignment_statement),
+            ),
             input::YulStatement::YulIfStatement(ref yul_if_statement) => {
                 output::YulStatement::YulIfStatement(
                     self.transform_yul_if_statement(yul_if_statement),
@@ -2971,6 +3128,9 @@ pub trait Transformer {
             ) => output::YulStatement::YulVariableAssignmentStatement(
                 self.transform_yul_variable_assignment_statement(yul_variable_assignment_statement),
             ),
+            input::YulStatement::YulLabel(ref yul_label) => {
+                output::YulStatement::YulLabel(self.transform_yul_label(yul_label))
+            }
             input::YulStatement::YulVariableDeclarationStatement(
                 ref yul_variable_declaration_statement,
             ) => output::YulStatement::YulVariableDeclarationStatement(
@@ -2993,6 +3153,11 @@ pub trait Transformer {
     ) -> output::YulAssignmentOperator {
         #[allow(clippy::match_wildcard_for_single_variants)]
         match source {
+            input::YulAssignmentOperator::YulColonAndEqual(ref yul_colon_and_equal) => {
+                output::YulAssignmentOperator::YulColonAndEqual(
+                    self.transform_yul_colon_and_equal(yul_colon_and_equal),
+                )
+            }
             input::YulAssignmentOperator::ColonEqual => output::YulAssignmentOperator::ColonEqual,
         }
     }
@@ -3001,6 +3166,29 @@ pub trait Transformer {
         source: &input::YulAssignmentOperator,
     ) -> output::YulAssignmentOperator {
         self.default_transform_yul_assignment_operator(source)
+    }
+
+    fn default_transform_yul_stack_assignment_operator(
+        &mut self,
+        source: &input::YulStackAssignmentOperator,
+    ) -> output::YulStackAssignmentOperator {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        match source {
+            input::YulStackAssignmentOperator::YulEqualAndColon(ref yul_equal_and_colon) => {
+                output::YulStackAssignmentOperator::YulEqualAndColon(
+                    self.transform_yul_equal_and_colon(yul_equal_and_colon),
+                )
+            }
+            input::YulStackAssignmentOperator::EqualColon => {
+                output::YulStackAssignmentOperator::EqualColon
+            }
+        }
+    }
+    fn transform_yul_stack_assignment_operator(
+        &mut self,
+        source: &input::YulStackAssignmentOperator,
+    ) -> output::YulStackAssignmentOperator {
+        self.default_transform_yul_stack_assignment_operator(source)
     }
 
     fn default_transform_yul_switch_case(
@@ -3227,6 +3415,16 @@ pub trait Transformer {
         source
             .iter()
             .map(|item| self.transform_constructor_attribute(item))
+            .collect()
+    }
+
+    fn transform_unnamed_function_attributes(
+        &mut self,
+        source: &input::UnnamedFunctionAttributes,
+    ) -> output::UnnamedFunctionAttributes {
+        source
+            .iter()
+            .map(|item| self.transform_unnamed_function_attribute(item))
             .collect()
     }
 

@@ -332,6 +332,16 @@ pub struct ConstructorDefinitionStruct {
     pub body: Block,
 }
 
+pub type UnnamedFunctionDefinition = Rc<UnnamedFunctionDefinitionStruct>;
+
+#[derive(Debug)]
+pub struct UnnamedFunctionDefinitionStruct {
+    pub node_id: NodeId,
+    pub parameters: ParametersDeclaration,
+    pub attributes: UnnamedFunctionAttributes,
+    pub body: FunctionBody,
+}
+
 pub type FallbackFunctionDefinition = Rc<FallbackFunctionDefinitionStruct>;
 
 #[derive(Debug)]
@@ -537,6 +547,7 @@ pub type TupleDeconstructionStatement = Rc<TupleDeconstructionStatementStruct>;
 #[derive(Debug)]
 pub struct TupleDeconstructionStatementStruct {
     pub node_id: NodeId,
+    pub var_keyword: Option<Rc<TerminalNode>>,
     pub elements: TupleDeconstructionElements,
     pub expression: Expression,
 }
@@ -701,6 +712,13 @@ pub struct RevertStatementStruct {
     pub node_id: NodeId,
     pub error: Option<IdentifierPath>,
     pub arguments: ArgumentsDeclaration,
+}
+
+pub type ThrowStatement = Rc<ThrowStatementStruct>;
+
+#[derive(Debug)]
+pub struct ThrowStatementStruct {
+    pub node_id: NodeId,
 }
 
 pub type AssignmentExpression = Rc<AssignmentExpressionStruct>;
@@ -970,6 +988,7 @@ pub type HexNumberExpression = Rc<HexNumberExpressionStruct>;
 pub struct HexNumberExpressionStruct {
     pub node_id: NodeId,
     pub literal: Rc<TerminalNode>,
+    pub unit: Option<NumberUnit>,
 }
 
 pub type DecimalNumberExpression = Rc<DecimalNumberExpressionStruct>;
@@ -1044,6 +1063,29 @@ pub struct YulVariableAssignmentStatementStruct {
     pub expression: YulExpression,
 }
 
+pub type YulColonAndEqual = Rc<YulColonAndEqualStruct>;
+
+#[derive(Debug)]
+pub struct YulColonAndEqualStruct {
+    pub node_id: NodeId,
+}
+
+pub type YulStackAssignmentStatement = Rc<YulStackAssignmentStatementStruct>;
+
+#[derive(Debug)]
+pub struct YulStackAssignmentStatementStruct {
+    pub node_id: NodeId,
+    pub assignment: YulStackAssignmentOperator,
+    pub variable: Rc<TerminalNode>,
+}
+
+pub type YulEqualAndColon = Rc<YulEqualAndColonStruct>;
+
+#[derive(Debug)]
+pub struct YulEqualAndColonStruct {
+    pub node_id: NodeId,
+}
+
 pub type YulIfStatement = Rc<YulIfStatementStruct>;
 
 #[derive(Debug)]
@@ -1109,6 +1151,14 @@ pub type YulContinueStatement = Rc<YulContinueStatementStruct>;
 #[derive(Debug)]
 pub struct YulContinueStatementStruct {
     pub node_id: NodeId,
+}
+
+pub type YulLabel = Rc<YulLabelStruct>;
+
+#[derive(Debug)]
+pub struct YulLabelStruct {
+    pub node_id: NodeId,
+    pub label: Rc<TerminalNode>,
 }
 
 pub type YulFunctionCallExpression = Rc<YulFunctionCallExpressionStruct>;
@@ -1229,6 +1279,7 @@ pub enum ContractMember {
     ConstructorDefinition(ConstructorDefinition),
     ReceiveFunctionDefinition(ReceiveFunctionDefinition),
     FallbackFunctionDefinition(FallbackFunctionDefinition),
+    UnnamedFunctionDefinition(UnnamedFunctionDefinition),
     ModifierDefinition(ModifierDefinition),
     StructDefinition(StructDefinition),
     EnumDefinition(EnumDefinition),
@@ -1260,6 +1311,7 @@ pub enum FunctionName {
 pub enum FunctionAttribute {
     ModifierInvocation(ModifierInvocation),
     OverrideSpecifier(OverrideSpecifier),
+    ConstantKeyword,
     ExternalKeyword,
     InternalKeyword,
     PayableKeyword,
@@ -1280,8 +1332,23 @@ pub enum FunctionBody {
 pub enum ConstructorAttribute {
     ModifierInvocation(ModifierInvocation),
     InternalKeyword,
+    OverrideKeyword,
     PayableKeyword,
     PublicKeyword,
+    VirtualKeyword,
+}
+
+#[derive(Debug)]
+pub enum UnnamedFunctionAttribute {
+    ModifierInvocation(ModifierInvocation),
+    ConstantKeyword,
+    ExternalKeyword,
+    InternalKeyword,
+    PayableKeyword,
+    PrivateKeyword,
+    PublicKeyword,
+    PureKeyword,
+    ViewKeyword,
 }
 
 #[derive(Debug)]
@@ -1325,6 +1392,7 @@ pub enum FunctionTypeAttribute {
     ExternalKeyword,
     PrivateKeyword,
     PublicKeyword,
+    ConstantKeyword,
     PureKeyword,
     ViewKeyword,
     PayableKeyword,
@@ -1345,6 +1413,7 @@ pub enum ElementaryType {
     FixedKeyword(Rc<TerminalNode>),
     UfixedKeyword(Rc<TerminalNode>),
     BoolKeyword,
+    ByteKeyword,
     StringKeyword,
 }
 
@@ -1357,6 +1426,7 @@ pub enum Statement {
     ContinueStatement(ContinueStatement),
     BreakStatement(BreakStatement),
     ReturnStatement(ReturnStatement),
+    ThrowStatement(ThrowStatement),
     EmitStatement(EmitStatement),
     TryStatement(TryStatement),
     RevertStatement(RevertStatement),
@@ -1377,6 +1447,7 @@ pub enum TupleMember {
 #[derive(Debug)]
 pub enum VariableDeclarationType {
     TypeName(TypeName),
+    VarKeyword,
 }
 
 #[derive(Debug)]
@@ -1447,17 +1518,22 @@ pub enum ArgumentsDeclaration {
 pub enum NumberUnit {
     WeiKeyword,
     GweiKeyword,
+    SzaboKeyword,
+    FinneyKeyword,
     EtherKeyword,
     SecondsKeyword,
     MinutesKeyword,
     HoursKeyword,
     DaysKeyword,
     WeeksKeyword,
+    YearsKeyword,
 }
 
 #[derive(Debug)]
 pub enum StringExpression {
+    StringLiteral(StringLiteral),
     StringLiterals(StringLiterals),
+    HexStringLiteral(HexStringLiteral),
     HexStringLiterals(HexStringLiterals),
     UnicodeStringLiterals(UnicodeStringLiterals),
 }
@@ -1484,6 +1560,7 @@ pub enum UnicodeStringLiteral {
 pub enum YulStatement {
     YulBlock(YulBlock),
     YulFunctionDefinition(YulFunctionDefinition),
+    YulStackAssignmentStatement(YulStackAssignmentStatement),
     YulIfStatement(YulIfStatement),
     YulForStatement(YulForStatement),
     YulSwitchStatement(YulSwitchStatement),
@@ -1491,13 +1568,21 @@ pub enum YulStatement {
     YulBreakStatement(YulBreakStatement),
     YulContinueStatement(YulContinueStatement),
     YulVariableAssignmentStatement(YulVariableAssignmentStatement),
+    YulLabel(YulLabel),
     YulVariableDeclarationStatement(YulVariableDeclarationStatement),
     YulExpression(YulExpression),
 }
 
 #[derive(Debug)]
 pub enum YulAssignmentOperator {
+    YulColonAndEqual(YulColonAndEqual),
     ColonEqual,
+}
+
+#[derive(Debug)]
+pub enum YulStackAssignmentOperator {
+    YulEqualAndColon(YulEqualAndColon),
+    EqualColon,
 }
 
 #[derive(Debug)]
@@ -1560,6 +1645,8 @@ pub type FunctionAttributes = Vec<FunctionAttribute>;
 pub type OverridePaths = Vec<IdentifierPath>;
 
 pub type ConstructorAttributes = Vec<ConstructorAttribute>;
+
+pub type UnnamedFunctionAttributes = Vec<UnnamedFunctionAttribute>;
 
 pub type FallbackFunctionAttributes = Vec<FallbackFunctionAttribute>;
 

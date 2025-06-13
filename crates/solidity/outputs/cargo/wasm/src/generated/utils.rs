@@ -21,7 +21,6 @@ macro_rules! define_wrapper {
                 }
             }
 
-
             impl $crate::wasm_crate::utils::FromFFI<rust::$name> for ffi::$name {
                 #[inline]
                 fn _from_ffi(self) -> rust::$name {
