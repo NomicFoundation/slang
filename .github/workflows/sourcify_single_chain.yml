@@ -54,7 +54,6 @@ jobs:
           path: "./target/release/solidity_testing_sourcify"
           overwrite: true
           retention-days: 1
-          include-hidden-files: true
 
   singleShard:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
