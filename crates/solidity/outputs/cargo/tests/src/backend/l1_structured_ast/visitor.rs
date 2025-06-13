@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Result};
-use slang_solidity::backend::l1_typed_cst;
-use slang_solidity::backend::l1_typed_cst::visitor::Visitor;
+use slang_solidity::backend::l1_structured_ast;
+use slang_solidity::backend::l1_structured_ast::visitor::Visitor;
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
 
@@ -25,20 +25,23 @@ impl CounterVisitor {
 }
 
 impl Visitor for CounterVisitor {
-    fn enter_contract_definition(&mut self, _node: &l1_typed_cst::ContractDefinition) -> bool {
+    fn enter_contract_definition(&mut self, _node: &l1_structured_ast::ContractDefinition) -> bool {
         self.contract += 1;
         self.enter_contracts
     }
-    fn leave_constructor_definition(&mut self, _node: &l1_typed_cst::ConstructorDefinition) {
+    fn leave_constructor_definition(&mut self, _node: &l1_structured_ast::ConstructorDefinition) {
         self.ctor += 1;
     }
-    fn leave_function_definition(&mut self, _node: &l1_typed_cst::FunctionDefinition) {
+    fn leave_function_definition(&mut self, _node: &l1_structured_ast::FunctionDefinition) {
         self.function += 1;
     }
-    fn leave_modifier_definition(&mut self, _node: &l1_typed_cst::ModifierDefinition) {
+    fn leave_modifier_definition(&mut self, _node: &l1_structured_ast::ModifierDefinition) {
         self.modifier += 1;
     }
-    fn leave_state_variable_definition(&mut self, _node: &l1_typed_cst::StateVariableDefinition) {
+    fn leave_state_variable_definition(
+        &mut self,
+        _node: &l1_structured_ast::StateVariableDefinition,
+    ) {
         self.state_vars += 1;
     }
 }
@@ -83,10 +86,11 @@ contract Counter is Ownable {
     );
     assert!(output.is_valid());
 
-    let ast = l1_typed_cst::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
+    let ast =
+        l1_structured_ast::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
 
     let mut visitor = CounterVisitor::new(true);
-    l1_typed_cst::visitor::accept_source_unit(&ast, &mut visitor);
+    l1_structured_ast::visitor::accept_source_unit(&ast, &mut visitor);
 
     assert_eq!(2, visitor.contract);
     assert_eq!(2, visitor.ctor);
@@ -95,7 +99,7 @@ contract Counter is Ownable {
     assert_eq!(3, visitor.function);
 
     let mut shallow_visitor = CounterVisitor::new(false);
-    l1_typed_cst::visitor::accept_source_unit(&ast, &mut shallow_visitor);
+    l1_structured_ast::visitor::accept_source_unit(&ast, &mut shallow_visitor);
 
     assert_eq!(2, shallow_visitor.contract);
     assert_eq!(0, shallow_visitor.ctor);

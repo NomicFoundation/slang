@@ -27,20 +27,21 @@
 
   {% for parent_type, sequence in target.sequences %}
     pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
-      if visitor.enter_{{ parent_type | snake_case }}(node) {
-        {% for field in sequence.fields -%}
-          {%- if not field.is_terminal -%}
-            {%- if field.is_optional %}
-              if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
-                accept_{{ field.type | snake_case }}({{ field.label }}, visitor);
-              }
-            {% else -%}
-              accept_{{ field.type | snake_case }}(&node.{{ field.label }}, visitor);
-            {%- endif -%}
-          {%- endif -%}
-        {%- endfor -%}
-        visitor.leave_{{ parent_type | snake_case }}(node);
+      if !visitor.enter_{{ parent_type | snake_case }}(node) {
+        return;
       }
+      {% for field in sequence.fields -%}
+        {%- if not field.is_terminal -%}
+          {%- if field.is_optional -%}
+            if let Some(ref {{ field.label | snake_case }}) = node.{{ field.label | snake_case }} {
+              accept_{{ field.type | snake_case }}({{ field.label }}, visitor);
+            }
+          {% else -%}
+            accept_{{ field.type | snake_case }}(&node.{{ field.label }}, visitor);
+          {%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      visitor.leave_{{ parent_type | snake_case }}(node);
     }
 
   {% endfor %}
@@ -54,6 +55,9 @@
       pub fn accept_{{ parent_type | snake_case }}(_node: &{{ parent_type }}, _visitor: &mut impl Visitor) {}
     {% else %}
       pub fn accept_{{ parent_type | snake_case }}(node: &{{ parent_type }}, visitor: &mut impl Visitor) {
+        if !visitor.enter_{{ parent_type | snake_case }}(node) {
+          return;
+        }
         match node {
           {% for nonterminal in choice.nonterminal_types -%}
             {{ parent_type }}::{{ nonterminal }}(ref {{ nonterminal | snake_case }}) => {
@@ -75,6 +79,7 @@
             => {}
           {% endif -%}
         }
+        visitor.leave_{{ parent_type | snake_case }}(node);
       }
     {% endif %}
   {% endfor %}
@@ -94,12 +99,13 @@
     {% else %}
       #[inline]
       fn accept_{{ parent_type | snake_case }}(items: &Vec<{{ collection.item_type }}>, visitor: &mut impl Visitor) {
-        if visitor.enter_{{ parent_type | snake_case }}(items) {
-          for item in items {
-            accept_{{ collection.item_type | snake_case }}(item, visitor);
-          }
-          visitor.leave_{{ parent_type | snake_case }}(items);
+        if !visitor.enter_{{ parent_type | snake_case }}(items) {
+          return;
         }
+        for item in items {
+          accept_{{ collection.item_type | snake_case }}(item, visitor);
+        }
+        visitor.leave_{{ parent_type | snake_case }}(items);
       }
     {% endif -%}
   {% endfor %}
