@@ -57,6 +57,11 @@ fn literal_address() -> Result<()> {
 }
 
 #[test]
+fn literal_booleans() -> Result<()> {
+    run(T, "literal_booleans")
+}
+
+#[test]
 fn literal_integers() -> Result<()> {
     run(T, "literal_integers")
 }
