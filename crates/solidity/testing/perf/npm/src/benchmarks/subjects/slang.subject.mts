@@ -1,4 +1,4 @@
-import { CompilationBuilder, File } from "@nomicfoundation/slang/compilation";
+import { CompilationBuilder } from "@nomicfoundation/slang/compilation";
 import { NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
 import assert from "node:assert";
 import { Subject, SolidityProject, Timings } from "../common.mjs";
@@ -24,11 +24,6 @@ function createBuilder(project: SolidityProject): CompilationBuilder {
   return builder;
 }
 
-enum BindingsTarget {
-  File,
-  Project,
-}
-
 export class SlangSubject implements Subject {
   public name = "slang";
 
@@ -39,7 +34,6 @@ export class SlangSubject implements Subject {
     await builder.addFile(file);
 
     const unit = builder.build();
-    const mainFile = unit.file(file)!;
     const parsedAllFilesTime = performance.now();
 
     // Validation: there shouldn't be any parsing errors, but if there are, let's print them nicely
