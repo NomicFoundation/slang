@@ -1,7 +1,6 @@
 {# This needs to stay in sync with the wit-bindgen output #}
 /// Represents different kinds of terminal nodes in the syntax tree.
 /// These are leaf nodes that represent actual tokens in the source code.
-{%- if model.kinds.terminal_kinds|length <= 256 %} #[repr(u8)] {% else %} #[repr(u16)] {% endif %}
 #[derive(
     Debug,
     Eq,
@@ -19,6 +18,7 @@
 #[allow(clippy::upper_case_acronyms)]
 #[allow(clippy::doc_markdown)]
 #[allow(clippy::doc_link_with_quotes)]
+{%- if model.kinds.terminal_kinds|length <= 256 %} #[repr(u8)] {% else %} #[repr(u16)] {% endif %}
 pub enum TerminalKind {
     {# Built-in: #}
     /// This terminal is created when the parser encounters an unexpected part of the input,

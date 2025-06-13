@@ -1,5 +1,3 @@
-#![cfg(feature = "__private_wasm_apis")]
-
 use std::collections::BTreeMap;
 use std::rc::Rc;
 

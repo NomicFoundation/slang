@@ -13,8 +13,21 @@ use crate::cst::KindTypes;
 
 /// A utility for building a [`BindingGraph`] for a collection of source files.
 pub type BindingGraphBuilder = metaslang_bindings::BindingGraphBuilder<KindTypes>;
-/// A `BindingGraph` is constructed from one or many source files. Once constructed,
-/// it allows the user to link symbol references to their definitions, and vice versa.
+/// A graph that contains name binding information for all source files within the compilation unit.
+/// It stores cursors to all definitions and references, and can resolve the edges between them.
+///
+/// Most cursors pointing to identifier terminals will resolve to either a definition or a reference.
+/// For example, in `contract A is B {}`, the cursor to identifier `A` will resolve to a definition,
+/// and the cursor to identifier `B` will resolve to a reference.
+///
+/// However, in some cases, cursors to identifiers can resolve to both at the same time.
+/// For example, in `import {X} from "library"`, the cursor to identifier `X` will resolve to a
+/// definition (the local import), and also to a reference (to the symbol exported from `"library"`).
+///
+/// This graph is error-tolerant, and will return `undefined` for any identifiers that cannot be resolved.
+/// For example, when there are syntactic/semantic errors, or missing source files.
+///
+/// For more information on identifier terminals, see the [`TerminalKindExtensions::is_identifier`][`crate::cst::TerminalKindExtensions::is_identifier`] API.
 pub type BindingGraph = metaslang_bindings::BindingGraph<KindTypes>;
 /// A `Definition` represents the location where a symbol is originally defined. From this you
 /// can find more information about the location of this definition in the parse tree, or navigate to
