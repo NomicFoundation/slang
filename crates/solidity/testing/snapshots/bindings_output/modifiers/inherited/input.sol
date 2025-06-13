@@ -3,6 +3,8 @@ contract Base {
 }
 
 contract Test is Base {
-    function test() public foo {
+    function testUnqualified() public foo {
+    }
+    function testQualified() public Base.foo {
     }
 }

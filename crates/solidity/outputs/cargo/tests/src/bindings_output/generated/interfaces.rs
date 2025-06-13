@@ -12,6 +12,11 @@ fn inheritance() -> Result<()> {
 }
 
 #[test]
+fn modifiers() -> Result<()> {
+    run(T, "modifiers")
+}
+
+#[test]
 fn own_types_access() -> Result<()> {
     run(T, "own_types_access")
 }

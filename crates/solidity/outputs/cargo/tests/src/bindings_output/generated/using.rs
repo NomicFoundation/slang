@@ -47,6 +47,11 @@ fn elementary_arrays() -> Result<()> {
 }
 
 #[test]
+fn for_fixed_arrays() -> Result<()> {
+    run(T, "for_fixed_arrays")
+}
+
+#[test]
 fn function_types() -> Result<()> {
     run(T, "function_types")
 }
@@ -57,6 +62,11 @@ fn global() -> Result<()> {
 }
 
 #[test]
+fn global_and_local() -> Result<()> {
+    run(T, "global_and_local")
+}
+
+#[test]
 fn global_multi_file() -> Result<()> {
     run(T, "global_multi_file")
 }
@@ -64,6 +74,11 @@ fn global_multi_file() -> Result<()> {
 #[test]
 fn in_contract() -> Result<()> {
     run(T, "in_contract")
+}
+
+#[test]
+fn in_interface() -> Result<()> {
+    run(T, "in_interface")
 }
 
 #[test]

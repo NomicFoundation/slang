@@ -107,6 +107,11 @@ fn public_mapping_getters() -> Result<()> {
 }
 
 #[test]
+fn public_nested_mapping_getters() -> Result<()> {
+    run(T, "public_nested_mapping_getters")
+}
+
+#[test]
 fn public_struct_getter() -> Result<()> {
     run(T, "public_struct_getter")
 }
