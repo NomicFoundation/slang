@@ -40,8 +40,6 @@ on:
 jobs:
   buildSlang:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-    strategy:
-      fail-fast: true
     steps:
       - name: "Checkout Repository"
         uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
