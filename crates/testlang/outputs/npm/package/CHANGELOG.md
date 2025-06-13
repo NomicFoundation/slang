@@ -1,5 +1,28 @@
 # changelog
 
+## 1.3.0
+
+### Minor Changes
+
+- [#1316](https://github.com/NomicFoundation/slang/pull/1316) [`3f1f8a8`](https://github.com/NomicFoundation/slang/commit/3f1f8a83adeb73a78e5ba04720813cace8f40925) Thanks [@mjoerussell](https://github.com/mjoerussell)! - Add new TypeScript APIs for creating nodes and edges:
+
+    - `NonterminalNode.create(kind: NonterminalKind, children: Edge[]): NonterminalNode`
+    - `TerminalNode.create(kind: TerminalKind, text: string): TerminalNode`
+    - `createEdge(label: EdgeLabel, node: Node): Edge`
+    - `Edge.createWithNonterminal(label: EdgeLabel, node: NonterminalNode): Edge`
+    - `Edge.createWithTerminal(label: EdgeLabel, node: TerminalNode): Edge`
+
+### Patch Changes
+
+- [#1335](https://github.com/NomicFoundation/slang/pull/1335) [`6c3ad5d`](https://github.com/NomicFoundation/slang/commit/6c3ad5de83536df763feb5bfa0b4835279aeb1e6) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Top-level `ConstantDefinition`s now bind to their type and resolve extension functions called on them
+
+- [#1338](https://github.com/NomicFoundation/slang/pull/1338) [`18be0bc`](https://github.com/NomicFoundation/slang/commit/18be0bc1915107dcb9f86402bd7e0b69ec5c7f53) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Make try/catch parameters and vars in for loop initialization available in Yul
+
+- [#1326](https://github.com/NomicFoundation/slang/pull/1326) [`045179b`](https://github.com/NomicFoundation/slang/commit/045179b80f18efa4a8b75e528f475da37d948077) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Fixes to binding rules:
+
+    - Update `TupleDeconstructionStatement` so that their definiens is the `TypedTupleMember`/`UntypedTupleMember` for each variable declared.
+    - Update `YulVariableDeclarationStatement` so that their definiens is the `YulIdentifier` for each variable declared.
+
 ## 1.2.0
 
 ### Minor Changes
