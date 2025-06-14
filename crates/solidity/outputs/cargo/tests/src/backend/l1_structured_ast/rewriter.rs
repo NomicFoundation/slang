@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use slang_solidity::backend::l1_structured_ast;
 use slang_solidity::backend::l1_structured_ast::rewriter::Rewriter;
 use slang_solidity::cst::{TerminalKind, TerminalNode};
@@ -32,8 +32,7 @@ contract MyContract {
     );
     assert!(output.is_valid());
 
-    let source =
-        l1_structured_ast::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
+    let source = l1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
 
     let mut cloner = Cloner {};
     let ast = cloner.rewrite_source_unit(&source);
@@ -167,8 +166,7 @@ function weeksToSeconds(uint _weeks) returns (uint) {
     );
     assert!(output.is_valid());
 
-    let source =
-        l1_structured_ast::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
+    let source = l1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
 
     let mut constant_folder = ConstantFolder {};
     let ast = constant_folder.rewrite_source_unit(&source);
