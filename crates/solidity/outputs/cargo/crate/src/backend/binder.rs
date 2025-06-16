@@ -44,6 +44,10 @@ impl Definition {
     }
 }
 
+pub struct Reference {
+    pub node_id: NodeId,
+}
+
 pub struct FileScope {
     pub definitions: HashMap<String, NodeId>,
 }
@@ -59,6 +63,7 @@ impl FileScope {
 pub struct Binder {
     pub file_scopes: HashMap<String, FileScope>,
     pub definitions: HashMap<NodeId, Definition>,
+    pub references: HashMap<NodeId, Reference>,
 }
 
 impl Binder {
@@ -66,6 +71,7 @@ impl Binder {
         Self {
             file_scopes: HashMap::new(),
             definitions: HashMap::new(),
+            references: HashMap::new(),
         }
     }
 
