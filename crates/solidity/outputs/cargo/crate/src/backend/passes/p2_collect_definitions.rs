@@ -2,6 +2,9 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use super::p1_flatten_contracts::Output as Input;
+use crate::backend::binder::{
+    Binder, ContractDefinition, Definition, FileScope, InterfaceDefinition, LibraryDefinition,
+};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::compilation::{CompilationUnit, File};
@@ -9,6 +12,7 @@ use crate::compilation::{CompilationUnit, File};
 pub struct Output {
     pub compilation_unit: CompilationUnit,
     pub files: HashMap<String, input_ir::SourceUnit>,
+    pub binder: Binder,
 }
 
 pub fn run(input: Input) -> Output {
@@ -19,20 +23,26 @@ pub fn run(input: Input) -> Output {
         let file = compilation_unit.file(file_id).unwrap();
         pass.visit_file(file, source_unit);
     }
+    let binder = pass.binder;
 
     Output {
         compilation_unit,
         files,
+        binder,
     }
 }
 
 struct Pass {
-    current_file: Option<Rc<File>>,
+    current_file: Option<Rc<File>>, // needed to resolve imports on the file
+    binder: Binder,
 }
 
 impl Pass {
     fn new() -> Self {
-        Self { current_file: None }
+        Self {
+            current_file: None,
+            binder: Binder::new(),
+        }
     }
 
     fn visit_file(&mut self, file: Rc<File>, source_unit: &input_ir::SourceUnit) {
@@ -42,6 +52,58 @@ impl Pass {
         input_ir::visitor::accept_source_unit(source_unit, self);
         self.current_file = None;
     }
+
+    fn current_file_scope(&mut self) -> &mut FileScope {
+        let Some(current_file) = &self.current_file else {
+            unreachable!("visiting SourceUnit without a current file being set");
+        };
+        self.binder.get_file_scope(current_file.id())
+    }
 }
 
-impl Visitor for Pass {}
+impl Visitor for Pass {
+    fn enter_source_unit(&mut self, _node: &input_ir::SourceUnit) -> bool {
+        let Some(current_file) = &self.current_file else {
+            unreachable!("visiting SourceUnit without a current file being set");
+        };
+        self.binder.insert_file_scope(current_file.id());
+
+        true
+    }
+
+    fn enter_contract_definition(&mut self, node: &input_ir::ContractDefinition) -> bool {
+        let definition = Definition::Contract(ContractDefinition {
+            node_id: node.node_id,
+            identifier: Rc::clone(&node.name),
+        });
+
+        self.current_file_scope().insert_definition(&definition);
+        self.binder.insert_definition(definition);
+
+        true
+    }
+
+    fn enter_library_definition(&mut self, node: &input_ir::LibraryDefinition) -> bool {
+        let definition = Definition::Library(LibraryDefinition {
+            node_id: node.node_id,
+            identifier: Rc::clone(&node.name),
+        });
+
+        self.current_file_scope().insert_definition(&definition);
+        self.binder.insert_definition(definition);
+
+        true
+    }
+
+    fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {
+        let definition = Definition::Interface(InterfaceDefinition {
+            node_id: node.node_id,
+            identifier: Rc::clone(&node.name),
+        });
+
+        self.current_file_scope().insert_definition(&definition);
+        self.binder.insert_definition(definition);
+
+        true
+    }
+}
