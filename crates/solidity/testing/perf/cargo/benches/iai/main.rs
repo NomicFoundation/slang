@@ -149,7 +149,7 @@ do_main!(
     // protocol_ui_pool_data_provider_v3,
     // largest_file_trivia_one_step_leverage_f,
     median_file_safe_math,
-    three_quarters_file_merkle_proof,
-    solang_median_file_safe_math_group,
-    solang_three_quarters_file_merkle_proof_group,
+    // three_quarters_file_merkle_proof,
+    // solang_median_file_safe_math_group,
+    // solang_three_quarters_file_merkle_proof_group,
 );
