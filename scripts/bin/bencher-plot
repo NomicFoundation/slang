@@ -3,6 +3,7 @@
 # usage: bencher-plot project branch testbed benchmarks measure title
 
 set -e
+shopt -s inherit_errexit
 
 project=$1
 branch=$2
@@ -36,4 +37,7 @@ benchmarks_uuid=$(get_benchmarks)
 measure_uuid=$(get_measure)
 
 set -xe
-bencher plot create --branches "${branch_uuid}" --measures "${measure_uuid}" --testbeds "${testbed_uuid}" --x-axis date_time --window 2419200 $benchmarks_uuid --title "${title}" ${project}
+
+# benchmarks_uuid is a list of options, so it shouldn't be quoted.
+# shellcheck disable=SC2086,SC2250
+bencher plot create --branches "${branch_uuid}" --measures "${measure_uuid}" --testbeds "${testbed_uuid}" --x-axis date_time --window 2419200 $benchmarks_uuid --title "${title}" "${project}"
