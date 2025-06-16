@@ -133,12 +133,12 @@ impl NpmController {
         file: Option<&str>,
         sut: Subject,
     ) -> Result<Timings, anyhow::Error> {
-        let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf")?;
+        let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf_npm")?;
         let mut command = Command::new("npx")
             .arg("tsx")
             .flag("--trace-uncaught")
             .flag("--expose-gc")
-            .arg(perf_crate.join("npm/src/benchmarks/main.mts").unwrap_str())
+            .arg(perf_crate.join("src/benchmarks/main.mts").unwrap_str())
             .property("--dir", path.to_string_lossy())
             .property("--name", name);
 
