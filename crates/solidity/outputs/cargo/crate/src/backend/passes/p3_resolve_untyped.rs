@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use super::p2_collect_definitions::Output as Input;
-use crate::backend::binder::{Binder, FileScope, Reference};
+use crate::backend::binder::{Binder, Reference};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::compilation::CompilationUnit;
@@ -50,11 +50,9 @@ impl<'a> Pass<'a> {
         self.current_file_id = None;
     }
 
-    fn current_file_scope(&mut self) -> &mut FileScope {
-        let Some(current_file_id) = &self.current_file_id else {
-            unreachable!("visiting SourceUnit without a current file being set");
-        };
-        self.binder.get_file_scope(current_file_id)
+    fn current_file(&self) -> &str {
+        self.current_file_id
+            .expect("visiting SourceUnit without a current file being set")
     }
 
     fn resolve_inheritance_types(&mut self, types: &input_ir::InheritanceTypes) {
@@ -63,8 +61,8 @@ impl<'a> Pass<'a> {
 
             let leftmost_identifier = &type_name.first().unwrap();
             let definition_id = self
-                .current_file_scope()
-                .resolve_symbol(&leftmost_identifier.unparse());
+                .binder
+                .resolve_in_file_scope(self.current_file(), &leftmost_identifier.unparse());
 
             let reference = Reference {
                 identifier: Rc::clone(leftmost_identifier),

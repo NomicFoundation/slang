@@ -57,7 +57,25 @@ impl Pass {
         let Some(current_file) = &self.current_file else {
             unreachable!("visiting SourceUnit without a current file being set");
         };
-        self.binder.get_file_scope(current_file.id())
+        self.binder.get_file_scope_mut(current_file.id())
+    }
+
+    fn resolve_import_path(&self, import_path: &input_ir::StringLiteral) -> Option<String> {
+        let import_path_node_id = match import_path {
+            input_ir::StringLiteral::SingleQuotedStringLiteral(single_quoted_string) => {
+                single_quoted_string.id()
+            }
+            input_ir::StringLiteral::DoubleQuotedStringLiteral(double_quoted_string) => {
+                double_quoted_string.id()
+            }
+        };
+        let current_file = self
+            .current_file
+            .as_ref()
+            .expect("import directive must be visited in the context of a current file");
+        current_file
+            .resolved_import_by_node_id(import_path_node_id)
+            .map(|file_id| file_id.to_string())
     }
 }
 
@@ -105,5 +123,17 @@ impl Visitor for Pass {
         self.binder.insert_definition(definition);
 
         true
+    }
+
+    fn enter_path_import(&mut self, node: &input_ir::PathImport) -> bool {
+        if let Some(imported_file_id) = self.resolve_import_path(&node.path) {
+            if node.alias.is_none() {
+                self.current_file_scope()
+                    .add_imported_file(imported_file_id);
+            } else {
+                // TODO: add the definition for the namespace
+            }
+        }
+        false
     }
 }
