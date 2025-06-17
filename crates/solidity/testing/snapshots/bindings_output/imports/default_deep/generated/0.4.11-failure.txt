@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[main.sol:1:1]
+   │
+ 2 │ contract Test is Base, Service {}
+   │          ──┬─    ──┬─  ───┬───  
+   │            ╰──────────────────── name: 1
+   │                    │      │     
+   │                    ╰──────────── unresolved
+   │                           │     
+   │                           ╰───── ref: 2
+───╯
+Definiens: 
+   ╭─[main.sol:1:1]
+   │
+ 2 │ contract Test is Base, Service {}
+   │ ─────────────────┬────────────────  
+   │                  ╰────────────────── definiens: 1
+───╯
+Parse errors:
+Error: Expected ContractKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword.
+   ╭─[base.sol:2:1]
+   │
+ 2 │ ╭─▶ abstract contract Base {}
+ 3 │ ├─▶ 
+   │ │      
+   │ ╰────── Error occurred here.
+───╯
+References and definitions: 
+Definiens: 
+References and definitions: 
+   ╭─[service.sol:1:1]
+   │
+ 1 │ interface Service {}
+   │           ───┬───  
+   │              ╰───── name: 2
+───╯
+Definiens: 
+   ╭─[service.sol:1:1]
+   │
+ 1 │ interface Service {}
+   │ ──────────┬──────────  
+   │           ╰──────────── definiens: 2
+───╯

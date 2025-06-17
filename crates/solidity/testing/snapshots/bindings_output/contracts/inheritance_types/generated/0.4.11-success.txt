@@ -1,0 +1,32 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Base {}
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │ interface Service {}
+   │           ───┬───  
+   │              ╰───── name: 2
+ 3 │ contract Test is Base, Service {}
+   │          ──┬─    ──┬─  ───┬───  
+   │            ╰──────────────────── name: 3
+   │                    │      │     
+   │                    ╰──────────── ref: 1
+   │                           │     
+   │                           ╰───── ref: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Base {}
+   │ ────────┬────────  
+   │         ╰────────── definiens: 1
+ 2 │ interface Service {}
+   │ ──────────┬──────────  
+   │           ╰──────────── definiens: 2
+ 3 │ contract Test is Base, Service {}
+   │ ─────────────────┬────────────────  
+   │                  ╰────────────────── definiens: 3
+───╯

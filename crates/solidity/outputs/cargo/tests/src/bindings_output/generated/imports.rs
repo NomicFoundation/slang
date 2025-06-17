@@ -22,6 +22,11 @@ fn default() -> Result<()> {
 }
 
 #[test]
+fn default_deep() -> Result<()> {
+    run(T, "default_deep")
+}
+
+#[test]
 fn named() -> Result<()> {
     run(T, "named")
 }
