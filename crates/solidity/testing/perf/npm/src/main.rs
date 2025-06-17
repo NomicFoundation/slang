@@ -7,6 +7,8 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 use serde_json::json;
+use solidity_testing_perf_utils::config::{self, File, Project};
+use solidity_testing_perf_utils::fetch::fetch;
 use strum::IntoEnumIterator;
 use strum_macros::{AsRefStr, EnumIter};
 
@@ -104,25 +106,6 @@ impl NpmController {
             let result = self.run_benchmarks(&project.name, &project.hash, None)?;
             results.extend(result);
         }
-        Ok(results)
-    }
-
-    fn run_benchmarks(
-        &self,
-        input_path: &Path,
-        name: &str,
-        hash: &str,
-        file: Option<&str>,
-    ) -> Result<Timings> {
-        fetch(hash, input_path)?;
-        let path = input_path.join(hash);
-
-        let mut results = HashMap::new();
-        for sut in Subject::iter() {
-            let sut_result = self.run(&path, name, file, sut)?;
-            results.extend(sut_result);
-        }
-
         Ok(results)
     }
 
