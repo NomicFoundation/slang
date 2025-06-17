@@ -5,21 +5,25 @@ use metaslang_cst::nodes::NodeId;
 
 use crate::cst::TerminalNode;
 
+#[derive(Debug)]
 pub struct ContractDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
 }
 
+#[derive(Debug)]
 pub struct LibraryDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
 }
 
+#[derive(Debug)]
 pub struct InterfaceDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
 }
 
+#[derive(Debug)]
 pub enum Definition {
     Contract(ContractDefinition),
     Library(LibraryDefinition),
@@ -44,6 +48,7 @@ impl Definition {
     }
 }
 
+#[derive(Debug)]
 pub struct Reference {
     pub identifier: Rc<TerminalNode>,
     pub definition_id: Option<NodeId>,

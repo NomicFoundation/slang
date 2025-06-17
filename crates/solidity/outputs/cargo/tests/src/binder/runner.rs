@@ -92,6 +92,9 @@ fn build_binder(compilation_unit: CompilationUnit) -> Output {
     passes::p3_resolve_untyped::run(data)
 }
 
+const SEPARATOR: &str =
+    "\n------------------------------------------------------------------------\n";
+
 fn binder_report(binder: &Binder, binding_graph: &Rc<BindingGraph>) -> Result<String> {
     let mut report = String::new();
 
@@ -116,10 +119,23 @@ fn binder_report(binder: &Binder, binding_graph: &Rc<BindingGraph>) -> Result<St
         report,
         "Definitions: found {found_definitions} out of {total_definitions}"
     )?;
+
+    writeln!(report)?;
+    for definition in binder.definitions.values() {
+        writeln!(report, "- {definition:?}")?;
+    }
+
+    writeln!(report, "{SEPARATOR}")?;
+
     writeln!(
         report,
         "References: found {found_references} out of {total_references}"
     )?;
+
+    writeln!(report)?;
+    for reference in binder.references.values() {
+        writeln!(report, "- {reference:?}")?;
+    }
 
     Ok(report)
 }
