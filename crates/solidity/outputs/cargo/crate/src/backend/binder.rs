@@ -45,7 +45,14 @@ impl Definition {
 }
 
 pub struct Reference {
-    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+    pub definition_id: Option<NodeId>,
+}
+
+impl Reference {
+    fn node_id(&self) -> NodeId {
+        self.identifier.id()
+    }
 }
 
 pub struct FileScope {
@@ -57,6 +64,10 @@ impl FileScope {
         let symbol = definition.identifier().unparse();
         let node_id = definition.node_id();
         self.definitions.insert(symbol, node_id);
+    }
+
+    pub(crate) fn resolve_symbol(&self, symbol: &str) -> Option<NodeId> {
+        self.definitions.get(symbol).copied()
     }
 }
 
@@ -95,5 +106,10 @@ impl Binder {
             unreachable!("attempt to insert duplicate definition on node {node_id:?}");
         }
         self.definitions.insert(node_id, definition);
+    }
+
+    pub(crate) fn insert_reference(&mut self, reference: Reference) {
+        let node_id = reference.node_id();
+        self.references.insert(node_id, reference);
     }
 }
