@@ -2,6 +2,56 @@
 
 pub mod slang_solidity
 pub mod slang_solidity::backend
+pub mod slang_solidity::backend::binder
+pub enum slang_solidity::backend::binder::Definition
+pub slang_solidity::backend::binder::Definition::Contract(slang_solidity::backend::binder::ContractDefinition)
+pub slang_solidity::backend::binder::Definition::Import(slang_solidity::backend::binder::ImportDefinition)
+pub slang_solidity::backend::binder::Definition::Interface(slang_solidity::backend::binder::InterfaceDefinition)
+pub slang_solidity::backend::binder::Definition::Library(slang_solidity::backend::binder::LibraryDefinition)
+impl slang_solidity::backend::binder::Definition
+pub fn slang_solidity::backend::binder::Definition::identifier(&self) -> &alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub fn slang_solidity::backend::binder::Definition::node_id(&self) -> metaslang_cst::nodes::NodeId
+impl core::fmt::Debug for slang_solidity::backend::binder::Definition
+pub fn slang_solidity::backend::binder::Definition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::Binder
+pub slang_solidity::backend::binder::Binder::definitions: std::collections::hash::map::HashMap<metaslang_cst::nodes::NodeId, slang_solidity::backend::binder::Definition>
+pub slang_solidity::backend::binder::Binder::file_scopes: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::binder::FileScope>
+pub slang_solidity::backend::binder::Binder::references: std::collections::hash::map::HashMap<metaslang_cst::nodes::NodeId, slang_solidity::backend::binder::Reference>
+impl slang_solidity::backend::binder::Binder
+pub fn slang_solidity::backend::binder::Binder::find_definition_by_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Definition>
+pub fn slang_solidity::backend::binder::Binder::find_definition_by_identifier_node_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Definition>
+pub fn slang_solidity::backend::binder::Binder::find_reference_by_identifier_node_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Reference>
+pub struct slang_solidity::backend::binder::ContractDefinition
+pub slang_solidity::backend::binder::ContractDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::binder::ContractDefinition::node_id: metaslang_cst::nodes::NodeId
+impl core::fmt::Debug for slang_solidity::backend::binder::ContractDefinition
+pub fn slang_solidity::backend::binder::ContractDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::FileScope
+pub slang_solidity::backend::binder::FileScope::definitions: std::collections::hash::map::HashMap<alloc::string::String, metaslang_cst::nodes::NodeId>
+pub slang_solidity::backend::binder::FileScope::imported_files: std::collections::hash::set::HashSet<alloc::string::String>
+impl slang_solidity::backend::binder::FileScope
+pub fn slang_solidity::backend::binder::FileScope::resolve_symbol(&self, symbol: &str) -> core::option::Option<metaslang_cst::nodes::NodeId>
+pub struct slang_solidity::backend::binder::ImportDefinition
+pub slang_solidity::backend::binder::ImportDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::binder::ImportDefinition::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::binder::ImportDefinition::resolved_file_id: core::option::Option<alloc::string::String>
+impl core::fmt::Debug for slang_solidity::backend::binder::ImportDefinition
+pub fn slang_solidity::backend::binder::ImportDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::InterfaceDefinition
+pub slang_solidity::backend::binder::InterfaceDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::binder::InterfaceDefinition::node_id: metaslang_cst::nodes::NodeId
+impl core::fmt::Debug for slang_solidity::backend::binder::InterfaceDefinition
+pub fn slang_solidity::backend::binder::InterfaceDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::LibraryDefinition
+pub slang_solidity::backend::binder::LibraryDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::binder::LibraryDefinition::node_id: metaslang_cst::nodes::NodeId
+impl core::fmt::Debug for slang_solidity::backend::binder::LibraryDefinition
+pub fn slang_solidity::backend::binder::LibraryDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::Reference
+pub slang_solidity::backend::binder::Reference::definition_id: core::option::Option<metaslang_cst::nodes::NodeId>
+pub slang_solidity::backend::binder::Reference::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+impl core::fmt::Debug for slang_solidity::backend::binder::Reference
+pub fn slang_solidity::backend::binder::Reference::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub mod slang_solidity::backend::l1_structured_ast
 pub mod slang_solidity::backend::l1_structured_ast::builder
 pub fn slang_solidity::backend::l1_structured_ast::builder::build_abicoder_pragma(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AbicoderPragma>
@@ -7358,9 +7408,16 @@ pub slang_solidity::backend::passes::p1_flatten_contracts::Output::files: std::c
 pub fn slang_solidity::backend::passes::p1_flatten_contracts::run(input: slang_solidity::backend::passes::p0_build_ast::Output) -> slang_solidity::backend::passes::p1_flatten_contracts::Output
 pub mod slang_solidity::backend::passes::p2_collect_definitions
 pub struct slang_solidity::backend::passes::p2_collect_definitions::Output
+pub slang_solidity::backend::passes::p2_collect_definitions::Output::binder: slang_solidity::backend::binder::Binder
 pub slang_solidity::backend::passes::p2_collect_definitions::Output::compilation_unit: slang_solidity::compilation::CompilationUnit
 pub slang_solidity::backend::passes::p2_collect_definitions::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
 pub fn slang_solidity::backend::passes::p2_collect_definitions::run(input: slang_solidity::backend::passes::p1_flatten_contracts::Output) -> slang_solidity::backend::passes::p2_collect_definitions::Output
+pub mod slang_solidity::backend::passes::p3_resolve_untyped
+pub struct slang_solidity::backend::passes::p3_resolve_untyped::Output
+pub slang_solidity::backend::passes::p3_resolve_untyped::Output::binder: slang_solidity::backend::binder::Binder
+pub slang_solidity::backend::passes::p3_resolve_untyped::Output::compilation_unit: slang_solidity::compilation::CompilationUnit
+pub slang_solidity::backend::passes::p3_resolve_untyped::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
+pub fn slang_solidity::backend::passes::p3_resolve_untyped::run(input: slang_solidity::backend::passes::p2_collect_definitions::Output) -> slang_solidity::backend::passes::p3_resolve_untyped::Output
 pub mod slang_solidity::bindings
 pub use slang_solidity::bindings::BuiltInLocation
 pub use slang_solidity::bindings::PathResolver
@@ -8180,6 +8237,7 @@ pub type slang_solidity::cst::Cursor = metaslang_cst::cursor::Cursor<slang_solid
 pub type slang_solidity::cst::CursorIterator = metaslang_cst::cursor::CursorIterator<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Edge = metaslang_cst::nodes::Edge<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Node = metaslang_cst::nodes::Node<slang_solidity::cst::KindTypes>
+pub type slang_solidity::cst::NodeId = metaslang_cst::nodes::NodeId
 pub type slang_solidity::cst::NodeKind = metaslang_cst::kinds::NodeKind<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::NonterminalNode = metaslang_cst::nodes::NonterminalNode<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Query = metaslang_cst::query::model::Query<slang_solidity::cst::KindTypes>
