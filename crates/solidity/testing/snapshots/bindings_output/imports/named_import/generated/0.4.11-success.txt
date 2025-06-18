@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import * as Lib from "lib.sol";
+   │             ─┬─  
+   │              ╰─── name: 1
+ 2 │ contract Test is Lib.Base {}
+   │          ──┬─    ─┬─ ──┬─  
+   │            ╰─────────────── name: 2
+   │                   │    │   
+   │                   ╰──────── ref: 1
+   │                        │   
+   │                        ╰─── ref: 3
+───╯
+Definiens: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import * as Lib from "lib.sol";
+   │       ────────────┬───────────  
+   │                   ╰───────────── definiens: 1
+ 2 │ contract Test is Lib.Base {}
+   │ ──────────────┬──────────────  
+   │               ╰──────────────── definiens: 2
+───╯
+References and definitions: 
+   ╭─[lib.sol:1:1]
+   │
+ 1 │ contract Base {}
+   │          ──┬─  
+   │            ╰─── name: 3
+───╯
+Definiens: 
+   ╭─[lib.sol:1:1]
+   │
+ 1 │ contract Base {}
+   │ ────────┬────────  
+   │         ╰────────── definiens: 3
+───╯

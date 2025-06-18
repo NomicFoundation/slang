@@ -12,6 +12,11 @@ fn alias_import() -> Result<()> {
 }
 
 #[test]
+fn aliased_path_import() -> Result<()> {
+    run(T, "aliased_path_import")
+}
+
+#[test]
 fn deconstruction() -> Result<()> {
     run(T, "deconstruction")
 }
@@ -29,4 +34,9 @@ fn default_deep() -> Result<()> {
 #[test]
 fn named() -> Result<()> {
     run(T, "named")
+}
+
+#[test]
+fn named_import() -> Result<()> {
+    run(T, "named_import")
 }
