@@ -24,10 +24,18 @@ pub struct InterfaceDefinition {
 }
 
 #[derive(Debug)]
+pub struct ImportDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+    pub resolved_file_id: Option<String>,
+}
+
+#[derive(Debug)]
 pub enum Definition {
     Contract(ContractDefinition),
     Library(LibraryDefinition),
     Interface(InterfaceDefinition),
+    Import(ImportDefinition),
 }
 
 impl Definition {
@@ -36,6 +44,7 @@ impl Definition {
             Definition::Contract(contract_definition) => contract_definition.node_id,
             Definition::Library(library_definition) => library_definition.node_id,
             Definition::Interface(interface_definition) => interface_definition.node_id,
+            Definition::Import(import_definition) => import_definition.node_id,
         }
     }
 
@@ -44,6 +53,7 @@ impl Definition {
             Definition::Contract(contract_definition) => &contract_definition.identifier,
             Definition::Library(library_definition) => &library_definition.identifier,
             Definition::Interface(interface_definition) => &interface_definition.identifier,
+            Definition::Import(import_definition) => &import_definition.identifier,
         }
     }
 }
