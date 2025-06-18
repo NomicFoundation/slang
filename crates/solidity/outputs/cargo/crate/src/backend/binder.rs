@@ -39,7 +39,7 @@ pub enum Definition {
 }
 
 impl Definition {
-    pub(crate) fn node_id(&self) -> NodeId {
+    pub fn node_id(&self) -> NodeId {
         match self {
             Definition::Contract(contract_definition) => contract_definition.node_id,
             Definition::Library(library_definition) => library_definition.node_id,
@@ -48,7 +48,7 @@ impl Definition {
         }
     }
 
-    pub(crate) fn identifier(&self) -> &Rc<TerminalNode> {
+    pub fn identifier(&self) -> &Rc<TerminalNode> {
         match self {
             Definition::Contract(contract_definition) => &contract_definition.identifier,
             Definition::Library(library_definition) => &library_definition.identifier,
@@ -101,6 +101,7 @@ impl FileScope {
 pub struct Binder {
     pub file_scopes: HashMap<String, FileScope>,
     pub definitions: HashMap<NodeId, Definition>,
+    definitions_by_identifier: HashMap<NodeId, NodeId>,
     pub references: HashMap<NodeId, Reference>,
 }
 
@@ -109,6 +110,7 @@ impl Binder {
         Self {
             file_scopes: HashMap::new(),
             definitions: HashMap::new(),
+            definitions_by_identifier: HashMap::new(),
             references: HashMap::new(),
         }
     }
@@ -134,6 +136,8 @@ impl Binder {
         if self.definitions.contains_key(&node_id) {
             unreachable!("attempt to insert duplicate definition on node {node_id:?}");
         }
+        self.definitions_by_identifier
+            .insert(definition.identifier().id(), node_id);
         self.definitions.insert(node_id, definition);
     }
 
@@ -159,5 +163,19 @@ impl Binder {
             files_to_search.extend(file_scope.imported_files.iter().cloned());
         }
         None
+    }
+
+    pub fn find_definition_by_id(&self, node_id: NodeId) -> Option<&Definition> {
+        self.definitions.get(&node_id)
+    }
+
+    pub fn find_definition_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Definition> {
+        self.definitions_by_identifier
+            .get(&node_id)
+            .and_then(|definition_id| self.definitions.get(definition_id))
+    }
+
+    pub fn find_reference_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Reference> {
+        self.references.get(&node_id)
     }
 }
