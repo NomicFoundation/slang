@@ -81,8 +81,8 @@ testlang_language = { path = "crates/testlang/inputs/language", version = "1.2.0
 anyhow = { version = "1.0.97", features = ["backtrace", "std"] }
 ariadne = { version = "0.2.0" }
 # Currently 'bencher' backend API is under development/unstable.
- # They recommend always running with the latest CLI version from 'main' until it is stabilized.
- bencher_cli = { git = "https://github.com/bencherdev/bencher", branch = "main" }
+# They recommend always running with the latest CLI version from 'main' until it is stabilized.
+bencher_cli = { git = "https://github.com/bencherdev/bencher", branch = "main" }
 clap = { version = "4.5.13", features = ["derive", "wrap_help"] }
 clap_complete = { version = "4.5.13" }
 console = { version = "0.15.11" }
