@@ -1,3 +1,5 @@
+use std::fs;
+
 use anyhow::{anyhow, Result};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
@@ -41,6 +43,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
             Some(ref last) if last == &report => (),
             _ => {
                 let snapshot_path = target_dir.join("generated").join(format!("{version}.txt"));
+                fs::create_dir_all(snapshot_path.parent().unwrap())?;
 
                 fs.write_file_raw(snapshot_path, &report)?;
                 last_report = Some(report);
