@@ -4816,10 +4816,7 @@ impl<'a> ChildrenHelper<'a> {
         let node = &self.children[self.index].node;
         loop {
             self.index += 1;
-            if self.index >= self.children.len() {
-                break;
-            }
-            if !self.children[self.index].is_trivia() {
+            if self.index >= self.children.len() || !self.children[self.index].is_trivia() {
                 break;
             }
         }
