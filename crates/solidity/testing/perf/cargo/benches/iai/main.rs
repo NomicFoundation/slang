@@ -35,13 +35,13 @@ mod __dependencies_used_in_lib__ {
 //
 macro_rules! slang_define_payload_benchmark {
     ($name:ident, $prj: ident, $prj_name: expr, $payload:ty) => {
-        // paste! {
-        #[library_benchmark(setup = solidity_testing_perf_cargo::tests::$name::setup)]
-        #[bench::first($prj_name)] //, setup = solidity_testing_perf_cargo::tests::$name::setup)]
-        pub fn $name(payload: $payload) {
-            black_box(solidity_testing_perf_cargo::tests::$name::run(payload));
+        paste! {
+          #[library_benchmark(setup = solidity_testing_perf_cargo::tests::$name::setup)]
+          #[bench::first($prj_name)]//, setup = solidity_testing_perf_cargo::tests::$name::setup)]
+          pub fn [<$prj _ $name>](payload: $payload) {
+              black_box(solidity_testing_perf_cargo::tests::$name::run(payload));
+          }
         }
-        // }
     };
 }
 
@@ -60,23 +60,24 @@ macro_rules! slang_define_payload_tests {
         slang_define_payload_benchmark!(bindings_build, $prj, $prj_name, Rc<CompilationUnit>);
         slang_define_payload_benchmark!(bindings_resolve, $prj, $prj_name, BuiltBindingGraph);
 
-        // paste! {
+        paste! {
         library_benchmark_group!(
-              name = benchmarks;
+            name = $prj;
 
-              // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
-              benchmarks =
-                parser,
-                cursor,
-                query,
-                bindings_build,
-                bindings_resolve,
-            );
-          // }
+            // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
+            benchmarks =
+              [< $prj _parser>],
+              [< $prj _cursor>],
+              [< $prj _query>],
+              [< $prj _bindings_build>],
+              [< $prj _bindings_resolve>],
+          );
+        }
     };
 }
 
 slang_define_payload_tests!(median_file_safe_math, "median_file_safe_math");
+
 // include!("../../src/benches_list.rs");
 
 //
@@ -106,8 +107,6 @@ slang_define_payload_tests!(median_file_safe_math, "median_file_safe_math");
 
 // include!("../../src/solang_benches_list.rs");
 
-macro_rules! do_main {
-    ($($groups:ident),+ $(,)?) => {
 main!(
     config = LibraryBenchmarkConfig::default()
         // 'valgrind' supports many tools. By default, it runs 'callgrind', which reports these metrics:
@@ -141,22 +140,20 @@ main!(
         // Let's disable this behavior to be able to execute our infra utilities:
         .env_clear(false);
 
-    library_benchmark_groups = benchmarks //$($groups,)+
+    library_benchmark_groups = median_file_safe_math
 );
-}
-}
 
-// __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-do_main!(
-    // flat_imports_mooniswap,
-    // circular_imports_weighted_pool,
-    // protocol_uniswap,
-    // protocol_multicall3,
-    // protocol_create_x,
-    // protocol_ui_pool_data_provider_v3,
-    // largest_file_trivia_one_step_leverage_f,
-    median_file_safe_math,
-    // three_quarters_file_merkle_proof,
-    // solang_median_file_safe_math_group,
-    // solang_three_quarters_file_merkle_proof_group,
-);
+// // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
+// do_main!(
+//     // flat_imports_mooniswap,
+//     // circular_imports_weighted_pool,
+//     // protocol_uniswap,
+//     // protocol_multicall3,
+//     // protocol_create_x,
+//     // protocol_ui_pool_data_provider_v3,
+//     // largest_file_trivia_one_step_leverage_f,
+//     median_file_safe_math,
+//     // three_quarters_file_merkle_proof,
+//     // solang_median_file_safe_math_group,
+//     // solang_three_quarters_file_merkle_proof_group,
+// );
