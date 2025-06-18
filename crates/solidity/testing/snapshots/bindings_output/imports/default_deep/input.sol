@@ -4,7 +4,7 @@ contract Test is Base, Service {}
 
 // ----- path: base.sol
 import "./service.sol";
-abstract contract Base {}
+contract Base {}
 
 // ----- path: service.sol
 interface Service {}
