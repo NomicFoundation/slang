@@ -1,12 +1,17 @@
 use std::collections::HashMap;
 use std::fmt::{Display, Write};
+use std::ops::Range;
 
 use anyhow::Result;
+use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity::backend::passes::p3_resolve_untyped::Output;
 use slang_solidity::cst::{Cursor, NodeId, NodeKind, NonterminalKind, TerminalKindExtensions};
 
 const SEPARATOR: &str =
     "\n------------------------------------------------------------------------\n";
+
+type Span<'a> = (&'a str, Range<usize>);
+type BuilderType<'a> = ReportBuilder<'a, Span<'a>>;
 
 pub(crate) fn binder_report(binder_data: &Output) -> Result<String> {
     let mut report = String::new();
@@ -55,6 +60,66 @@ pub(crate) fn binder_report(binder_data: &Output) -> Result<String> {
             "- {unbound_identifier}",
             unbound_identifier = unbound_identifier.display()
         )?;
+    }
+
+    for file in &binder_data.compilation_unit.files() {
+        let contents = file.tree().unparse();
+        let mut builder: BuilderType<'_> =
+            Report::build(ReportKind::Custom("Bindings", Color::Unset), file.id(), 0)
+                .with_config(Config::default().with_color(false));
+
+        let new_label = |cursor: &Cursor, message: &str| -> Label<Span<'_>> {
+            let range = {
+                let range = cursor.text_range();
+                let start = contents[..range.start.utf8].chars().count();
+                let end = contents[..range.end.utf8].chars().count();
+                start..end
+            };
+            Label::new((file.id(), range)).with_message(message)
+        };
+
+        for definition in &all_definitions {
+            if definition.file_id != file.id() {
+                continue;
+            }
+
+            let message = format!(
+                "name: {definition_id}",
+                definition_id = definition.report_id
+            );
+            builder.add_label(new_label(&definition.cursor, &message));
+        }
+
+        for reference in &all_references {
+            if reference.file_id != file.id() {
+                continue;
+            }
+
+            let message = if let Some(definition_id) = reference
+                .definition_id
+                .and_then(|node_id| definitions_by_id.get(&node_id))
+            {
+                format!("ref: {definition_id}")
+            } else {
+                "unresolved".to_string()
+            };
+            builder.add_label(new_label(&reference.cursor, &message));
+        }
+
+        for unbound_identifier in &unbound_identifiers {
+            if unbound_identifier.file_id != file.id() {
+                continue;
+            }
+
+            builder.add_label(new_label(&unbound_identifier.cursor, "???"));
+        }
+
+        writeln!(report, "{SEPARATOR}")?;
+        let mut buffer = Vec::<u8>::new();
+        builder
+            .finish()
+            .write((file.id(), Source::from(contents)), &mut buffer)?;
+        report.extend(String::from_utf8(buffer));
     }
 
     Ok(report)
