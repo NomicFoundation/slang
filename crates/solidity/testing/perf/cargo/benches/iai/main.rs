@@ -36,8 +36,8 @@ mod __dependencies_used_in_lib__ {
 macro_rules! slang_define_payload_benchmark {
     ($name:ident, $prj: ident, $prj_name: expr, $payload:ty) => {
         paste! {
-          #[library_benchmark]
-          #[bench::first(args = ($prj_name), setup = solidity_testing_perf_cargo::tests::$name::setup)]
+          #[library_benchmark(setup = solidity_testing_perf_cargo::tests::$name::setup)]
+          #[bench::first($prj_name)]//, setup = solidity_testing_perf_cargo::tests::$name::setup)]
           pub fn [<$prj _ $name>](payload: $payload) {
               black_box(solidity_testing_perf_cargo::tests::$name::run(payload));
           }
