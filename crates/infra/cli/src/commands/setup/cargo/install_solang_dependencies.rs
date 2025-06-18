@@ -6,6 +6,7 @@ use anyhow::{anyhow, Result};
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
 
+#[allow(dead_code)]
 pub fn install_dependencies() -> Result<()> {
     // Solang requires a custom build of LLVM. We fetch it and untar it.
 
