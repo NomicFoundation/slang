@@ -62,7 +62,7 @@ macro_rules! slang_define_payload_tests {
 
         // paste! {
         library_benchmark_group!(
-              name = $prj;
+              name = benchmarks;
 
               // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
               benchmarks =
@@ -141,7 +141,7 @@ main!(
         // Let's disable this behavior to be able to execute our infra utilities:
         .env_clear(false);
 
-    library_benchmark_groups = $($groups,)+
+    library_benchmark_groups = benchmarks //$($groups,)+
 );
 }
 }
