@@ -35,6 +35,8 @@ mod unit_tests {
         };
     }
 
+    include!("benches_list.rs");
+
     mod solang {
         macro_rules! solang_define_payload_test {
             ($name:ident, $prj:expr) => {
@@ -49,5 +51,17 @@ mod unit_tests {
         include!("solang_benches_list.rs");
     }
 
-    include!("benches_list.rs");
+    mod solar {
+        macro_rules! solar_define_payload_test {
+            ($name:ident, $prj:expr) => {
+                #[test]
+                fn $name() {
+                    let payload = crate::tests::solar_parser::setup($prj);
+                    crate::tests::solar_parser::run(payload);
+                }
+            };
+        }
+
+        include!("solar_benches_list.rs");
+    }
 }
