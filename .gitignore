@@ -4,3 +4,7 @@ node_modules/
 
 # Generated Artifacts
 target/
+
+# Downloaded Artifacts
+# _SLANG_INFRA_SOLANG_LLVM_PATH_ (keep in sync)
+bin/solang-llvm

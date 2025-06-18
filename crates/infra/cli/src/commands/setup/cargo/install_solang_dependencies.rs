@@ -36,7 +36,10 @@ pub fn install_dependencies() -> Result<()> {
 
         fs::create_dir_all(&bin_dir)?;
 
-        println!("Extracting {archive_path} into {bin_dir:?}");
+        println!(
+            "Extracting {archive_path} into {bin_dir}",
+            bin_dir = bin_dir.display()
+        );
         Command::new("tar")
             .args([
                 "-xJf",
