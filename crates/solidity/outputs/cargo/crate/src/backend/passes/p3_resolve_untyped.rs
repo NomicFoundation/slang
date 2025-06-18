@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use super::p2_collect_definitions::Output as Input;
-use crate::backend::binder::{Binder, Reference};
+use crate::backend::binder::{Binder, Definition, ImportDefinition, Reference};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::compilation::CompilationUnit;
@@ -57,20 +57,36 @@ impl<'a> Pass<'a> {
 
     fn resolve_inheritance_types(&mut self, types: &input_ir::InheritanceTypes) {
         for inheritance_type in types {
-            let type_name = &inheritance_type.type_name;
+            // start resolution from the current file
+            let mut resolution_file_id = Some(self.current_file());
 
-            let leftmost_identifier = &type_name.first().unwrap();
-            let definition_id = self
-                .binder
-                .resolve_in_file_scope(self.current_file(), &leftmost_identifier.unparse());
+            for identifier in &inheritance_type.type_name {
+                let definition_id = resolution_file_id.and_then(|file_id| {
+                    self.binder
+                        .resolve_in_file_scope(file_id, &identifier.unparse())
+                });
 
-            let reference = Reference {
-                identifier: Rc::clone(leftmost_identifier),
-                definition_id,
-            };
-            self.binder.insert_reference(reference);
+                let reference = Reference {
+                    identifier: Rc::clone(identifier),
+                    definition_id,
+                };
+                self.binder.insert_reference(reference);
 
-            // TODO: resolve the rest of the type name
+                // recurse into file scopes pointed by the resolved definition
+                // to resolve the next identifier in the path
+                resolution_file_id = definition_id
+                    .and_then(|node_id| self.binder.find_definition_by_id(node_id))
+                    .and_then(|definition| {
+                        if let Definition::Import(ImportDefinition {
+                            resolved_file_id, ..
+                        }) = definition
+                        {
+                            resolved_file_id.as_deref()
+                        } else {
+                            None
+                        }
+                    });
+            }
         }
     }
 }
