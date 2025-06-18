@@ -3,7 +3,8 @@ use std::rc::Rc;
 
 use super::p1_flatten_contracts::Output as Input;
 use crate::backend::binder::{
-    Binder, ContractDefinition, Definition, FileScope, InterfaceDefinition, LibraryDefinition,
+    Binder, ContractDefinition, Definition, FileScope, ImportDefinition, InterfaceDefinition,
+    LibraryDefinition,
 };
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
@@ -60,6 +61,11 @@ impl Pass {
         self.binder.get_file_scope_mut(current_file.id())
     }
 
+    fn insert_definition_in_current_file_scope(&mut self, definition: Definition) {
+        self.current_file_scope().insert_definition(&definition);
+        self.binder.insert_definition(definition);
+    }
+
     fn resolve_import_path(&self, import_path: &input_ir::StringLiteral) -> Option<String> {
         let import_path_node_id = match import_path {
             input_ir::StringLiteral::SingleQuotedStringLiteral(single_quoted_string) => {
@@ -76,6 +82,8 @@ impl Pass {
         current_file
             .resolved_import_by_node_id(import_path_node_id)
             .map(|file_id| file_id.to_string())
+
+        // TODO(validation): emit an error/warning if the file cannot be resolved
     }
 }
 
@@ -94,9 +102,7 @@ impl Visitor for Pass {
             node_id: node.node_id,
             identifier: Rc::clone(&node.name),
         });
-
-        self.current_file_scope().insert_definition(&definition);
-        self.binder.insert_definition(definition);
+        self.insert_definition_in_current_file_scope(definition);
 
         true
     }
@@ -106,9 +112,7 @@ impl Visitor for Pass {
             node_id: node.node_id,
             identifier: Rc::clone(&node.name),
         });
-
-        self.current_file_scope().insert_definition(&definition);
-        self.binder.insert_definition(definition);
+        self.insert_definition_in_current_file_scope(definition);
 
         true
     }
@@ -118,22 +122,39 @@ impl Visitor for Pass {
             node_id: node.node_id,
             identifier: Rc::clone(&node.name),
         });
-
-        self.current_file_scope().insert_definition(&definition);
-        self.binder.insert_definition(definition);
+        self.insert_definition_in_current_file_scope(definition);
 
         true
     }
 
     fn enter_path_import(&mut self, node: &input_ir::PathImport) -> bool {
-        if let Some(imported_file_id) = self.resolve_import_path(&node.path) {
-            if node.alias.is_none() {
-                self.current_file_scope()
-                    .add_imported_file(imported_file_id);
-            } else {
-                // TODO: add the definition for the namespace
-            }
+        let imported_file_id = self.resolve_import_path(&node.path);
+
+        if let Some(alias) = &node.alias {
+            let definition = Definition::Import(ImportDefinition {
+                node_id: node.node_id,
+                identifier: Rc::clone(&alias.identifier),
+                resolved_file_id: imported_file_id,
+            });
+            self.insert_definition_in_current_file_scope(definition);
+        } else if let Some(imported_file_id) = imported_file_id {
+            self.current_file_scope()
+                .add_imported_file(imported_file_id);
         }
+
+        false
+    }
+
+    fn enter_named_import(&mut self, node: &input_ir::NamedImport) -> bool {
+        let imported_file_id = self.resolve_import_path(&node.path);
+
+        let definition = Definition::Import(ImportDefinition {
+            node_id: node.node_id,
+            identifier: Rc::clone(&node.alias.identifier),
+            resolved_file_id: imported_file_id,
+        });
+        self.insert_definition_in_current_file_scope(definition);
+
         false
     }
 }
