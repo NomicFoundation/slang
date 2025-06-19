@@ -71,7 +71,7 @@ impl Reference {
 }
 
 pub struct FileScope {
-    pub definitions: HashMap<String, NodeId>,
+    pub definitions: HashMap<String, Vec<NodeId>>,
     pub imported_files: HashSet<String>,
 }
 
@@ -86,15 +86,19 @@ impl FileScope {
     pub(crate) fn insert_definition(&mut self, definition: &Definition) {
         let symbol = definition.identifier().unparse();
         let node_id = definition.node_id();
-        self.definitions.insert(symbol, node_id);
+        if let Some(definitions) = self.definitions.get_mut(&symbol) {
+            definitions.push(node_id);
+        } else {
+            self.definitions.insert(symbol, vec![node_id]);
+        }
     }
 
     pub(crate) fn add_imported_file(&mut self, file_id: String) {
         self.imported_files.insert(file_id);
     }
 
-    pub fn resolve_symbol(&self, symbol: &str) -> Option<NodeId> {
-        self.definitions.get(symbol).copied()
+    fn lookup_symbol(&self, symbol: &str) -> Vec<NodeId> {
+        self.definitions.get(symbol).cloned().unwrap_or(Vec::new())
     }
 }
 
@@ -146,7 +150,11 @@ impl Binder {
         self.references.insert(node_id, reference);
     }
 
-    pub(crate) fn resolve_in_file_scope(&self, file_id: &str, symbol: &str) -> Option<NodeId> {
+    pub(crate) fn resolve_single_in_file_scope(
+        &self,
+        file_id: &str,
+        symbol: &str,
+    ) -> Option<NodeId> {
         let mut visited_files = HashSet::new();
         let mut files_to_search = VecDeque::new();
         files_to_search.push_back(file_id.to_owned());
@@ -157,12 +165,32 @@ impl Binder {
                 continue;
             }
 
-            if let Some(definition) = file_scope.resolve_symbol(symbol) {
-                return Some(definition);
+            if let Some(definition) = file_scope.lookup_symbol(symbol).first() {
+                return Some(*definition);
             }
             files_to_search.extend(file_scope.imported_files.iter().cloned());
         }
         None
+    }
+
+    #[allow(dead_code)]
+    pub(crate) fn resolve_multi_in_file_scope(&self, file_id: &str, symbol: &str) -> Vec<NodeId> {
+        let mut result = Vec::new();
+        let mut visited_files = HashSet::new();
+        let mut files_to_search = VecDeque::new();
+        files_to_search.push_back(file_id.to_owned());
+
+        while let Some(file_id) = files_to_search.pop_front() {
+            let file_scope = self.get_file_scope(&file_id);
+            if !visited_files.insert(file_id) {
+                continue;
+            }
+
+            let definitions = file_scope.lookup_symbol(symbol);
+            result.extend(definitions.into_iter());
+            files_to_search.extend(file_scope.imported_files.iter().cloned());
+        }
+        result
     }
 
     pub fn find_definition_by_id(&self, node_id: NodeId) -> Option<&Definition> {
