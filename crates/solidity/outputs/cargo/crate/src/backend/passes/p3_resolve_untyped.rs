@@ -63,7 +63,7 @@ impl<'a> Pass<'a> {
             for identifier in &inheritance_type.type_name {
                 let definition_id = resolution_file_id.and_then(|file_id| {
                     self.binder
-                        .resolve_in_file_scope(file_id, &identifier.unparse())
+                        .resolve_single_in_file_scope(file_id, &identifier.unparse())
                 });
 
                 let reference = Reference {
