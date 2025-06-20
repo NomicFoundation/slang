@@ -2,6 +2,7 @@
   "name": "@slang-private/infra-cli",
   "private": true,
   "devDependencies": {
+    "@ignored/slang-jco": "file:../../../target/ignored-slang-jco-1.9.1-slang.1-foo.tgz",
     "@changesets/changelog-github": "0.5.1",
     "@changesets/cli": "2.29.4",
     "@types/node": "22.15.29",
