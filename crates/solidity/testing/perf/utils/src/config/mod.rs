@@ -1,17 +1,13 @@
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::paths::PathExtensions;
 use serde::{Deserialize, Serialize};
 
 /*
  Reader for the configuration file that contians the projects and files to benchmark
 */
-
-pub const WORKING_DIR: &str = "target/benchmarks-inputs";
-
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "camelCase")]
 pub struct Configuration {
@@ -33,8 +29,9 @@ pub struct File {
     pub name: String,
 }
 
-pub fn working_dir_path() -> PathBuf {
-    Path::repo_path(WORKING_DIR)
+pub fn working_dir_path() -> Result<PathBuf> {
+    let config_path = CargoWorkspace::locate_source_crate("solidity_testing_perf_utils")?;
+    Ok(config_path.join("../benchmarks-inputs.json"))
 }
 
 pub fn config_file_path() -> Result<PathBuf> {

@@ -132,7 +132,7 @@ fn normalize_path<P: AsRef<Path>>(path: P) -> String {
 fn load_projects_internal() -> Result<ProjectMap> {
     let mut map = ProjectMap::new();
     let config = config::read_config()?;
-    let working_directory_path = config::working_dir_path();
+    let working_directory_path = config::working_dir_path()?;
 
     let mut insert = |key: String, project: SolidityProject| {
         map.insert(key, project);

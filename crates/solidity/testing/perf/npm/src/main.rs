@@ -59,8 +59,9 @@ impl NpmController {
     }
 
     fn run_benchmarks(&self, name: &str, hash: &str, file: Option<&str>) -> Result<Timings> {
-        fetch(hash, &config::working_dir_path())?;
-        let path = Path::new(config::WORKING_DIR).join(hash);
+        let working_dir = config::working_dir_path()?;
+        fetch(hash, &working_dir)?;
+        let path = working_dir.join(hash);
 
         let mut results = HashMap::new();
         for sut in Subject::iter() {
