@@ -34,12 +34,12 @@ mod __dependencies_used_in_lib__ {
 // Slang benchmarks
 //
 macro_rules! slang_define_payload_benchmark {
-    ($name:ident, $prj: ident, $prj_name: expr, $payload:ty) => {
+    ($section_name:ident, $prj: ident, $prj_name: expr, $payload:ty) => {
         paste! {
-          #[library_benchmark(setup = solidity_testing_perf_cargo::tests::$name::setup)]
-          #[bench::first($prj_name)]//, setup = solidity_testing_perf_cargo::tests::$name::setup)]
-          pub fn [<$prj _ $name>](payload: $payload) {
-              black_box(solidity_testing_perf_cargo::tests::$name::run(payload));
+          #[library_benchmark(setup = solidity_testing_perf_cargo::tests::$section_name::setup)]
+          #[bench::first($prj_name)]
+          pub fn [<$prj _ $section_name>](payload: $payload) {
+              black_box(solidity_testing_perf_cargo::tests::$section_name::run(payload));
           }
         }
     };
@@ -62,7 +62,7 @@ macro_rules! slang_define_payload_tests {
 
         paste! {
         library_benchmark_group!(
-            name = $prj;
+            name = [< slang_ $prj >];
 
             // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
             benchmarks =
@@ -76,9 +76,12 @@ macro_rules! slang_define_payload_tests {
     };
 }
 
-slang_define_payload_tests!(median_file_safe_math, "median_file_safe_math");
-
-// include!("../../src/benches_list.rs");
+// __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
+slang_define_payload_tests!(protocol_uniswap, "protocol_uniswap");
+slang_define_payload_tests!(
+    largest_file_trivia_one_step_leverage_f,
+    "largest_file_trivia_one_step_leverage_f"
+);
 
 //
 // Solang benchmarks
@@ -86,7 +89,7 @@ slang_define_payload_tests!(median_file_safe_math, "median_file_safe_math");
 // macro_rules! solang_define_payload_test {
 //     ($prj: ident, $prj_name: expr) => {
 //         paste! {
-
+// TODO: This is not right, the setup shouldn't be part of the measurement
 //           fn [< setup_and_test_ $prj >] () {
 //               let payload = solidity_testing_perf_cargo::tests::solang::setup($prj_name);
 //               solidity_testing_perf_cargo::tests::solang::run(payload)
@@ -105,7 +108,31 @@ slang_define_payload_tests!(median_file_safe_math, "median_file_safe_math");
 //     };
 // }
 
-// include!("../../src/solang_benches_list.rs");
+//
+// Solar benchmarks
+//
+macro_rules! solar_define_payload_test {
+    ($prj: ident, $prj_name: expr) => {
+        paste! {
+          #[library_benchmark(setup = solidity_testing_perf_cargo::tests::setup::setup)]
+          #[bench::first($prj_name)]
+          pub fn [< solar_ $prj >](project: &SolidityProject) {
+              black_box(solidity_testing_perf_cargo::tests::solar_parser::run(project));
+          }
+
+          library_benchmark_group!(
+            name = [< solar_ $prj _group>];
+            benchmarks = [< solar_ $prj >]
+          );
+        }
+    };
+}
+
+solar_define_payload_test!(protocol_uniswap, "protocol_uniswap");
+solar_define_payload_test!(
+    largest_file_trivia_one_step_leverage_f,
+    "largest_file_trivia_one_step_leverage_f"
+);
 
 main!(
     config = LibraryBenchmarkConfig::default()
@@ -140,20 +167,5 @@ main!(
         // Let's disable this behavior to be able to execute our infra utilities:
         .env_clear(false);
 
-    library_benchmark_groups = median_file_safe_math
+    library_benchmark_groups = slang_protocol_uniswap,slang_largest_file_trivia_one_step_leverage_f,solar_protocol_uniswap_group,solar_largest_file_trivia_one_step_leverage_f_group
 );
-
-// // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-// do_main!(
-//     // flat_imports_mooniswap,
-//     // circular_imports_weighted_pool,
-//     // protocol_uniswap,
-//     // protocol_multicall3,
-//     // protocol_create_x,
-//     // protocol_ui_pool_data_provider_v3,
-//     // largest_file_trivia_one_step_leverage_f,
-//     median_file_safe_math,
-//     // three_quarters_file_merkle_proof,
-//     // solang_median_file_safe_math_group,
-//     // solang_three_quarters_file_merkle_proof_group,
-// );

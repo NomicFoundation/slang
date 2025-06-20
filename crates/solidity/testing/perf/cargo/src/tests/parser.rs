@@ -5,10 +5,10 @@ use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::parser::ParseError;
 
 use crate::compilation_builder::CompilationBuilder;
-use crate::dataset::{load_projects, SolidityProject};
+use crate::dataset::SolidityProject;
 
 pub fn setup(project: &str) -> &'static SolidityProject {
-    load_projects().get(project).unwrap()
+    super::setup::setup(project)
 }
 
 pub fn run(project: &'static SolidityProject) -> Rc<CompilationUnit> {

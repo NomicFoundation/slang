@@ -4,11 +4,7 @@ use solar::ast;
 use solar::interface::Session;
 use solar::parse::Parser;
 
-use crate::dataset::{load_projects, SolidityProject};
-
-pub fn setup(project: &str) -> &'static SolidityProject {
-    load_projects().get(project).unwrap()
-}
+use crate::dataset::SolidityProject;
 
 pub fn run(project: &SolidityProject) {
     // Create a new session with a buffer emitter.

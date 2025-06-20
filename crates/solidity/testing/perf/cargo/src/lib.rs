@@ -56,7 +56,7 @@ mod unit_tests {
             ($name:ident, $prj:expr) => {
                 #[test]
                 fn $name() {
-                    let payload = crate::tests::solar_parser::setup($prj);
+                    let payload = crate::tests::setup::setup($prj);
                     crate::tests::solar_parser::run(payload);
                 }
             };

@@ -10,7 +10,7 @@ pub struct BuiltBindingGraph {
 }
 
 pub fn setup(project: &str) -> BuiltBindingGraph {
-    let unit = super::parser::run(super::parser::setup(project));
+    let unit = super::parser::run(super::setup::setup(project));
     let binding_graph = super::bindings_build::run(Rc::clone(&unit));
 
     BuiltBindingGraph {

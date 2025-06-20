@@ -4,7 +4,7 @@ use slang_solidity::bindings::BindingGraph;
 use slang_solidity::compilation::CompilationUnit;
 
 pub fn setup(project: &str) -> Rc<CompilationUnit> {
-    super::parser::run(super::parser::setup(project))
+    super::parser::run(super::setup::setup(project))
 }
 
 pub fn run(unit: Rc<CompilationUnit>) -> Rc<BindingGraph> {
