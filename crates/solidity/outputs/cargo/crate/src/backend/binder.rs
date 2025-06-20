@@ -46,6 +46,12 @@ pub struct LibraryDefinition {
 }
 
 #[derive(Debug)]
+pub struct ParameterDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
 pub struct StructDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
@@ -59,6 +65,7 @@ pub enum Definition {
     Import(ImportDefinition),
     Interface(InterfaceDefinition),
     Library(LibraryDefinition),
+    Parameter(ParameterDefinition),
     Struct(StructDefinition),
 }
 
@@ -71,6 +78,7 @@ impl Definition {
             Self::Import(import_definition) => import_definition.node_id,
             Self::Interface(interface_definition) => interface_definition.node_id,
             Self::Library(library_definition) => library_definition.node_id,
+            Self::Parameter(parameter_definition) => parameter_definition.node_id,
             Self::Struct(struct_definition) => struct_definition.node_id,
         }
     }
@@ -83,6 +91,7 @@ impl Definition {
             Self::Import(import_definition) => &import_definition.identifier,
             Self::Interface(interface_definition) => &interface_definition.identifier,
             Self::Library(library_definition) => &library_definition.identifier,
+            Self::Parameter(parameter_definition) => &parameter_definition.identifier,
             Self::Struct(struct_definition) => &struct_definition.identifier,
         }
     }
@@ -129,6 +138,13 @@ impl Definition {
 
     pub(crate) fn new_library(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::Library(LibraryDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_parameter(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::Parameter(ParameterDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
@@ -222,9 +238,30 @@ impl ContractScope {
     }
 }
 
+pub struct ParametersScope {
+    pub node_id: NodeId,
+    pub definitions: HashMap<String, NodeId>,
+}
+
+impl ParametersScope {
+    fn new(node_id: NodeId) -> Self {
+        Self {
+            node_id,
+            definitions: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
+        let symbol = definition.identifier().unparse();
+        let node_id = definition.node_id();
+        self.definitions.insert(symbol, node_id);
+    }
+}
+
 pub enum Scope {
     Contract(ContractScope),
     File(FileScope),
+    Parameters(ParametersScope),
 }
 
 impl Scope {
@@ -232,6 +269,7 @@ impl Scope {
         match self {
             Self::Contract(contract_scope) => contract_scope.node_id,
             Self::File(file_scope) => file_scope.node_id,
+            Self::Parameters(parameters_scope) => parameters_scope.node_id,
         }
     }
 
@@ -239,15 +277,20 @@ impl Scope {
         match self {
             Self::Contract(contract_scope) => contract_scope.insert_definition(definition),
             Self::File(file_scope) => file_scope.insert_definition(definition),
+            Self::Parameters(parameters_scope) => parameters_scope.insert_definition(definition),
         }
     }
 
-    pub fn new_contract(node_id: NodeId, file_scope_id: NodeId) -> Self {
+    pub(crate) fn new_contract(node_id: NodeId, file_scope_id: NodeId) -> Self {
         Self::Contract(ContractScope::new(node_id, file_scope_id))
     }
 
-    pub fn new_file(node_id: NodeId, file_id: &str) -> Self {
+    pub(crate) fn new_file(node_id: NodeId, file_id: &str) -> Self {
         Self::File(FileScope::new(node_id, file_id))
+    }
+
+    pub(crate) fn new_parameters(node_id: NodeId) -> Self {
+        Self::Parameters(ParametersScope::new(node_id))
     }
 }
 
@@ -283,7 +326,7 @@ impl Binder {
             .and_then(|node_id| self.scopes.get_mut(node_id))
             .map(|scope| match scope {
                 Scope::File(file_scope) => file_scope,
-                Scope::Contract(_) => unreachable!("scope in file_scopes is not a file scope"),
+                _ => unreachable!("scope in file_scopes is not a file scope"),
             })
             .unwrap()
     }
@@ -293,16 +336,13 @@ impl Binder {
         if self.scopes.contains_key(&node_id) {
             unreachable!("attempt to insert duplicate file scope for node {node_id:?}");
         }
-        match scope {
-            Scope::File(ref file_scope) => {
-                let file_id = &file_scope.file_id;
-                if self.file_scopes.contains_key(file_id) {
-                    unreachable!("attempt to insert duplicate file scope for {file_id}");
-                }
-                self.file_scopes.insert(file_id.clone(), node_id);
+        if let Scope::File(ref file_scope) = scope {
+            let file_id = &file_scope.file_id;
+            if self.file_scopes.contains_key(file_id) {
+                unreachable!("attempt to insert duplicate file scope for {file_id}");
             }
-            Scope::Contract(_) => {}
-        };
+            self.file_scopes.insert(file_id.clone(), node_id);
+        }
         self.scopes.insert(node_id, scope);
     }
 
@@ -343,7 +383,7 @@ impl Binder {
             .and_then(|node_id| self.scopes.get(node_id))
             .and_then(|scope| match scope {
                 Scope::File(file_scope) => Some(file_scope),
-                Scope::Contract(_) => None,
+                _ => None,
             })
             .unwrap()
     }
