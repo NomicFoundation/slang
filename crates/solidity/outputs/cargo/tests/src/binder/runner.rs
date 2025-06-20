@@ -2,7 +2,6 @@ use std::fs;
 
 use anyhow::{anyhow, Result};
 use infra_utils::cargo::CargoWorkspace;
-use infra_utils::codegen::CodegenFileSystem;
 use infra_utils::paths::PathExtensions;
 use metaslang_bindings::PathResolver;
 use semver::Version;
@@ -28,7 +27,6 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     let input_path = test_dir.join("input.sol");
     let contents = input_path.read_to_string()?;
 
-    let mut fs = CodegenFileSystem::default();
     let mut last_report = None;
 
     for version in &VERSION_BREAKS {
@@ -44,8 +42,7 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
             _ => {
                 let snapshot_path = target_dir.join("generated").join(format!("{version}.txt"));
                 fs::create_dir_all(snapshot_path.parent().unwrap())?;
-
-                fs.write_file_raw(snapshot_path, &report)?;
+                fs::write(snapshot_path, &report)?;
                 last_report = Some(report);
             }
         }
