@@ -5,12 +5,17 @@ use std::hint::black_box;
 use std::rc::Rc;
 
 use iai_callgrind::{
-    library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
-    LibraryBenchmarkConfig, Tool, ValgrindTool,
+    library_benchmark,
+    library_benchmark_group,
+    main,
+    Direction,
+    FlamegraphConfig,
+    LibraryBenchmarkConfig, //, Tool, ValgrindTool,
 };
 use paste::paste;
 use slang_solidity::compilation::CompilationUnit;
 use solidity_testing_perf_cargo::dataset::SolidityProject;
+use solidity_testing_perf_cargo::tests;
 use solidity_testing_perf_cargo::tests::bindings_resolve::BuiltBindingGraph;
 
 mod __dependencies_used_in_lib__ {
@@ -36,10 +41,10 @@ mod __dependencies_used_in_lib__ {
 macro_rules! slang_define_payload_benchmark {
     ($section_name:ident, $prj: ident, $prj_name: expr, $payload:ty) => {
         paste! {
-          #[library_benchmark(setup = solidity_testing_perf_cargo::tests::$section_name::setup)]
+          #[library_benchmark(setup = tests::$section_name::setup)]
           #[bench::first($prj_name)]
           pub fn [<$prj _ $section_name>](payload: $payload) {
-              black_box(solidity_testing_perf_cargo::tests::$section_name::run(payload));
+              black_box(tests::$section_name::run(payload));
           }
         }
     };
@@ -79,7 +84,7 @@ macro_rules! slang_define_payload_tests {
 // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
 slang_define_payload_tests!(protocol_uniswap, "protocol_uniswap");
 slang_define_payload_tests!(
-    largest_file_trivia_one_step_leverage_f,
+    largest_file_trivia_oslf,
     "largest_file_trivia_one_step_leverage_f"
 );
 
@@ -114,10 +119,10 @@ slang_define_payload_tests!(
 macro_rules! solar_define_payload_test {
     ($prj: ident, $prj_name: expr) => {
         paste! {
-          #[library_benchmark(setup = solidity_testing_perf_cargo::tests::setup::setup)]
+          #[library_benchmark(setup = tests::setup::setup)]
           #[bench::first($prj_name)]
           pub fn [< solar_ $prj >](project: &SolidityProject) {
-              black_box(solidity_testing_perf_cargo::tests::solar_parser::run(project));
+              black_box(tests::solar_parser::run(project));
           }
 
           library_benchmark_group!(
@@ -130,7 +135,7 @@ macro_rules! solar_define_payload_test {
 
 solar_define_payload_test!(protocol_uniswap, "protocol_uniswap");
 solar_define_payload_test!(
-    largest_file_trivia_one_step_leverage_f,
+    largest_file_trivia_oslf,
     "largest_file_trivia_one_step_leverage_f"
 );
 
@@ -157,7 +162,7 @@ main!(
         // At t-end blocks:         How many heap blocks were alive at the end of execution (were not explicitly freed).
         // Reads bytes:             How many bytes within heap blocks were read during the entire execution.
         // Writes bytes:            How many bytes within heap blocks were written during the entire execution.
-        .tool(Tool::new(ValgrindTool::DHAT))
+        // .tool(Tool::new(ValgrindTool::DHAT))
 
         // This enables generating flame graphs into Cargo's 'target' directory.
         // They will be listed by 'infra perf' at the end of the run:
@@ -167,5 +172,5 @@ main!(
         // Let's disable this behavior to be able to execute our infra utilities:
         .env_clear(false);
 
-    library_benchmark_groups = slang_protocol_uniswap,slang_largest_file_trivia_one_step_leverage_f,solar_protocol_uniswap_group,solar_largest_file_trivia_one_step_leverage_f_group
+    library_benchmark_groups = slang_protocol_uniswap,slang_largest_file_trivia_oslf,solar_protocol_uniswap_group,solar_largest_file_trivia_oslf_group
 );
