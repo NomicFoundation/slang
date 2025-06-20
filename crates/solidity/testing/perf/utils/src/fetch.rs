@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::Path;
 
-use anyhow::{Ok, Result};
+use anyhow::{anyhow, Ok, Result};
 use reqwest::blocking::get;
 use serde_json::Value;
 
@@ -18,7 +18,10 @@ pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
     //TODO: generalize for any chain
     let url =
         format!("https://sourcify.dev/server/v2/contract/1/{address}/?fields=sources,compilation");
-    let project_json: Value = get(&url)?.json()?;
+    let project_json: Value = get(&url)
+        .map_err(|err| anyhow!("Failed to download {url}: {err}"))?
+        .json()
+        .map_err(|err| anyhow!("Failed to parse json in {url}: {err}"))?;
 
     let content = serde_json::to_string_pretty(&project_json)?;
     fs::create_dir_all(base_path)?;
