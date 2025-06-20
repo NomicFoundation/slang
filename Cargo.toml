@@ -70,6 +70,7 @@ metaslang_cst = { path = "crates/metaslang/cst", version = "1.2.0" }
 slang_solidity = { path = "crates/solidity/outputs/cargo/crate", version = "1.2.0" }
 solidity_language = { path = "crates/solidity/inputs/language", version = "1.2.0" }
 solidity_testing_perf_cargo = { path = "crates/solidity/testing/perf/cargo", version = "1.2.0" }
+solidity_testing_perf_npm = { path = "crates/solidity/testing/perf/npm", version = "1.2.0" }
 solidity_testing_perf_utils = { path = "crates/solidity/testing/perf/utils", version = "1.2.0" }
 
 slang_testlang = { path = "crates/testlang/outputs/cargo/crate", version = "1.2.0" }
