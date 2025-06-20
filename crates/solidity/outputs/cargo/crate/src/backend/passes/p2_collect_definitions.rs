@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 use super::p1_flatten_contracts::Output as Input;
-use crate::backend::binder::{Binder, Definition, FileScope, FunctionDefinition, Scope};
+use crate::backend::binder::{Binder, Definition, FileScope, Scope};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::compilation::{CompilationUnit, File};
@@ -202,12 +202,23 @@ impl Visitor for Pass {
 
     fn enter_function_definition(&mut self, node: &input_ir::FunctionDefinition) -> bool {
         if let input_ir::FunctionName::Identifier(name) = &node.name {
-            let definition = Definition::Function(FunctionDefinition {
-                node_id: node.node_id,
-                identifier: Rc::clone(name),
-            });
+            let definition = Definition::new_function(node.node_id, name);
             self.insert_definition_in_current_scope(definition);
         }
+
+        true
+    }
+
+    fn enter_enum_definition(&mut self, node: &input_ir::EnumDefinition) -> bool {
+        let definition = Definition::new_enum(node.node_id, &node.name);
+        self.insert_definition_in_current_scope(definition);
+
+        true
+    }
+
+    fn enter_struct_definition(&mut self, node: &input_ir::StructDefinition) -> bool {
+        let definition = Definition::new_struct(node.node_id, &node.name);
+        self.insert_definition_in_current_scope(definition);
 
         true
     }

@@ -5,16 +5,14 @@ pub mod slang_solidity::backend
 pub mod slang_solidity::backend::binder
 pub enum slang_solidity::backend::binder::Definition
 pub slang_solidity::backend::binder::Definition::Contract(slang_solidity::backend::binder::ContractDefinition)
+pub slang_solidity::backend::binder::Definition::Enum(slang_solidity::backend::binder::EnumDefinition)
 pub slang_solidity::backend::binder::Definition::Function(slang_solidity::backend::binder::FunctionDefinition)
 pub slang_solidity::backend::binder::Definition::Import(slang_solidity::backend::binder::ImportDefinition)
 pub slang_solidity::backend::binder::Definition::Interface(slang_solidity::backend::binder::InterfaceDefinition)
 pub slang_solidity::backend::binder::Definition::Library(slang_solidity::backend::binder::LibraryDefinition)
+pub slang_solidity::backend::binder::Definition::Struct(slang_solidity::backend::binder::StructDefinition)
 impl slang_solidity::backend::binder::Definition
 pub fn slang_solidity::backend::binder::Definition::identifier(&self) -> &alloc::rc::Rc<slang_solidity::cst::TerminalNode>
-pub fn slang_solidity::backend::binder::Definition::new_contract(node_id: metaslang_cst::nodes::NodeId, identifier: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> Self
-pub fn slang_solidity::backend::binder::Definition::new_import(node_id: metaslang_cst::nodes::NodeId, identifier: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>, resolved_file_id: core::option::Option<alloc::string::String>) -> Self
-pub fn slang_solidity::backend::binder::Definition::new_interface(node_id: metaslang_cst::nodes::NodeId, identifier: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> Self
-pub fn slang_solidity::backend::binder::Definition::new_library(node_id: metaslang_cst::nodes::NodeId, identifier: &alloc::rc::Rc<slang_solidity::cst::TerminalNode>) -> Self
 pub fn slang_solidity::backend::binder::Definition::node_id(&self) -> metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::binder::Definition
 pub fn slang_solidity::backend::binder::Definition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -22,7 +20,7 @@ pub enum slang_solidity::backend::binder::Scope
 pub slang_solidity::backend::binder::Scope::Contract(slang_solidity::backend::binder::ContractScope)
 pub slang_solidity::backend::binder::Scope::File(slang_solidity::backend::binder::FileScope)
 impl slang_solidity::backend::binder::Scope
-pub fn slang_solidity::backend::binder::Scope::new_contract(node_id: metaslang_cst::nodes::NodeId, parent_scope_id: metaslang_cst::nodes::NodeId) -> Self
+pub fn slang_solidity::backend::binder::Scope::new_contract(node_id: metaslang_cst::nodes::NodeId, file_scope_id: metaslang_cst::nodes::NodeId) -> Self
 pub fn slang_solidity::backend::binder::Scope::new_file(node_id: metaslang_cst::nodes::NodeId, file_id: &str) -> Self
 pub fn slang_solidity::backend::binder::Scope::node_id(&self) -> metaslang_cst::nodes::NodeId
 pub struct slang_solidity::backend::binder::Binder
@@ -39,8 +37,13 @@ impl core::fmt::Debug for slang_solidity::backend::binder::ContractDefinition
 pub fn slang_solidity::backend::binder::ContractDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::binder::ContractScope
 pub slang_solidity::backend::binder::ContractScope::definitions: std::collections::hash::map::HashMap<alloc::string::String, alloc::vec::Vec<metaslang_cst::nodes::NodeId>>
+pub slang_solidity::backend::binder::ContractScope::file_scope_id: metaslang_cst::nodes::NodeId
 pub slang_solidity::backend::binder::ContractScope::node_id: metaslang_cst::nodes::NodeId
-pub slang_solidity::backend::binder::ContractScope::parent_scope_id: metaslang_cst::nodes::NodeId
+pub struct slang_solidity::backend::binder::EnumDefinition
+pub slang_solidity::backend::binder::EnumDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::binder::EnumDefinition::node_id: metaslang_cst::nodes::NodeId
+impl core::fmt::Debug for slang_solidity::backend::binder::EnumDefinition
+pub fn slang_solidity::backend::binder::EnumDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::binder::FileScope
 pub slang_solidity::backend::binder::FileScope::definitions: std::collections::hash::map::HashMap<alloc::string::String, alloc::vec::Vec<metaslang_cst::nodes::NodeId>>
 pub slang_solidity::backend::binder::FileScope::file_id: alloc::string::String
@@ -72,6 +75,11 @@ pub slang_solidity::backend::binder::Reference::definition_id: core::option::Opt
 pub slang_solidity::backend::binder::Reference::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 impl core::fmt::Debug for slang_solidity::backend::binder::Reference
 pub fn slang_solidity::backend::binder::Reference::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::StructDefinition
+pub slang_solidity::backend::binder::StructDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::binder::StructDefinition::node_id: metaslang_cst::nodes::NodeId
+impl core::fmt::Debug for slang_solidity::backend::binder::StructDefinition
+pub fn slang_solidity::backend::binder::StructDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub mod slang_solidity::backend::l1_structured_ast
 pub mod slang_solidity::backend::l1_structured_ast::builder
 pub fn slang_solidity::backend::l1_structured_ast::builder::build_abicoder_pragma(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AbicoderPragma>
