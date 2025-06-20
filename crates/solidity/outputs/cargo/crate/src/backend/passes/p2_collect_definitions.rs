@@ -246,4 +246,40 @@ impl Visitor for Pass {
 
         true
     }
+
+    fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {
+        let definition = Definition::new_error(node.node_id, &node.name);
+        self.insert_definition_in_current_scope(definition);
+
+        let mut parameters_scope = Scope::new_parameters(node.members.node_id);
+        for parameter in &node.members.parameters {
+            if let Some(name) = &parameter.name {
+                let definition = Definition::new_parameter(parameter.node_id, name);
+                parameters_scope.insert_definition(&definition);
+                self.binder.insert_definition(definition);
+            }
+        }
+        self.binder.insert_scope(parameters_scope);
+        // TODO: we need to somehow link the parameters scope to the function scope
+
+        false
+    }
+
+    fn enter_event_definition(&mut self, node: &input_ir::EventDefinition) -> bool {
+        let definition = Definition::new_event(node.node_id, &node.name);
+        self.insert_definition_in_current_scope(definition);
+
+        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
+        for parameter in &node.parameters.parameters {
+            if let Some(name) = &parameter.name {
+                let definition = Definition::new_parameter(parameter.node_id, name);
+                parameters_scope.insert_definition(&definition);
+                self.binder.insert_definition(definition);
+            }
+        }
+        self.binder.insert_scope(parameters_scope);
+        // TODO: we need to somehow link the parameters scope to the function scope
+
+        false
+    }
 }
