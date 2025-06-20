@@ -206,6 +206,30 @@ impl Visitor for Pass {
             self.insert_definition_in_current_scope(definition);
         }
 
+        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
+        for parameter in &node.parameters.parameters {
+            if let Some(name) = &parameter.name {
+                let definition = Definition::new_parameter(parameter.node_id, name);
+                parameters_scope.insert_definition(&definition);
+                self.binder.insert_definition(definition);
+            }
+        }
+        self.binder.insert_scope(parameters_scope);
+        // TODO: we need to somehow link the parameters scope to the function scope
+
+        if let Some(returns_declaration) = &node.returns {
+            let mut returns_scope = Scope::new_parameters(returns_declaration.variables.node_id);
+            for variable in &returns_declaration.variables.parameters {
+                if let Some(name) = &variable.name {
+                    let definition = Definition::new_parameter(variable.node_id, name);
+                    returns_scope.insert_definition(&definition);
+                    self.binder.insert_definition(definition);
+                }
+            }
+            self.binder.insert_scope(returns_scope);
+            // TODO: we need to somehow link the returns scope to the function scope
+        }
+
         true
     }
 
