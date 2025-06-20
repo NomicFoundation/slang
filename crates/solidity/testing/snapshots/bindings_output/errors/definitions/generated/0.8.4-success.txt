@@ -1,0 +1,47 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ error TopLevelError(int x, int y);
+   │       ──────┬──────     ┬      ┬  
+   │             ╰───────────────────── name: 1
+   │                         │      │  
+   │                         ╰───────── name: 2
+   │                                │  
+   │                                ╰── name: 3
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 4 │     error ContractError(int x, int y);
+   │           ──────┬──────     ┬      ┬  
+   │                 ╰───────────────────── name: 5
+   │                             │      │  
+   │                             ╰───────── name: 6
+   │                                    │  
+   │                                    ╰── name: 7
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ │   error TopLevelError(int x, int y);
+   │ │   ─────────────────┬────┬──────┬─────  
+   │ │                    ╰─────────────────── definiens: 1
+   │ │                         │      │       
+   │ │                         ╰────────────── definiens: 2
+   │ │                                │       
+   │ │                                ╰─────── definiens: 3
+ 2 │ ╭─▶ 
+   ┆ ┆   
+ 4 │ │       error ContractError(int x, int y);
+   │ │   ───────────────────┬──────┬──────┬─────  
+   │ │                      ╰───────────────────── definiens: 5
+   │ │                             │      │       
+   │ │                             ╰────────────── definiens: 6
+   │ │                                    │       
+   │ │                                    ╰─────── definiens: 7
+ 5 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 4
+───╯

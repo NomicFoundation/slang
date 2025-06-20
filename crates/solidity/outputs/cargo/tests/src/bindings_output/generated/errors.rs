@@ -12,6 +12,11 @@ fn custom_types() -> Result<()> {
 }
 
 #[test]
+fn definitions() -> Result<()> {
+    run(T, "definitions")
+}
+
+#[test]
 fn named_args() -> Result<()> {
     run(T, "named_args")
 }
