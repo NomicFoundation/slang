@@ -51,17 +51,29 @@ type Timings = HashMap<String, f64>;
 impl NpmController {
     fn execute(&self) -> Result<()> {
         let config = config::read_config()?;
-        let input_path = Path::new(&config::WORKING_DIR);
 
         if let Some(hash) = &self.contract {
-            let result =
-                self.run_benchmarks(input_path, "custom", hash, self.entrypoint.as_deref())?;
+            let result = self.run_benchmarks("custom", hash, self.entrypoint.as_deref())?;
             publish(result.into_iter())
         } else {
-            let file_benchmarks = self.individual_file_benchmarks(input_path, &config.files)?;
-            let project_benchmarks = self.project_benchmarks(input_path, &config.projects)?;
+            let file_benchmarks = self.individual_file_benchmarks(&config.files)?;
+            let project_benchmarks = self.project_benchmarks(&config.projects)?;
             publish(file_benchmarks.into_iter().chain(project_benchmarks))
         }
+    }
+
+    fn run_benchmarks(&self, name: &str, hash: &str, file: Option<&str>) -> Result<Timings> {
+        let working_dir = config::working_dir_path()?;
+        fetch(hash, &working_dir)?;
+        let path = working_dir.join(hash);
+
+        let mut results = HashMap::new();
+        for sut in Subject::iter() {
+            let sut_result = self.run(&path, name, file, sut)?;
+            results.extend(sut_result);
+        }
+
+        Ok(results)
     }
 
     fn compute_regex(&self) -> Result<regex::Regex> {
@@ -72,7 +84,7 @@ impl NpmController {
         }
     }
 
-    fn individual_file_benchmarks(&self, input_path: &Path, files: &Vec<File>) -> Result<Timings> {
+    fn individual_file_benchmarks(&self, files: &Vec<File>) -> Result<Timings> {
         let mut results = HashMap::<String, f64>::new();
 
         let pattern_regex = self.compute_regex()?;
@@ -81,14 +93,13 @@ impl NpmController {
                 continue;
             }
 
-            let result =
-                self.run_benchmarks(input_path, &file.name, &file.hash, Some(&file.file))?;
+            let result = self.run_benchmarks(&file.name, &file.hash, Some(&file.file))?;
             results.extend(result);
         }
         Ok(results)
     }
 
-    fn project_benchmarks(&self, input_path: &Path, projects: &Vec<Project>) -> Result<Timings> {
+    fn project_benchmarks(&self, projects: &Vec<Project>) -> Result<Timings> {
         let mut results = HashMap::<String, f64>::new();
         let pattern_regex = self.compute_regex()?;
 
@@ -97,28 +108,9 @@ impl NpmController {
                 continue;
             }
 
-            let result = self.run_benchmarks(input_path, &project.name, &project.hash, None)?;
+            let result = self.run_benchmarks(&project.name, &project.hash, None)?;
             results.extend(result);
         }
-        Ok(results)
-    }
-
-    fn run_benchmarks(
-        &self,
-        input_path: &Path,
-        name: &str,
-        hash: &str,
-        file: Option<&str>,
-    ) -> Result<Timings> {
-        fetch(hash, input_path)?;
-        let path = input_path.join(hash);
-
-        let mut results = HashMap::new();
-        for sut in Subject::iter() {
-            let sut_result = self.run(&path, name, file, sut)?;
-            results.extend(sut_result);
-        }
-
         Ok(results)
     }
 
