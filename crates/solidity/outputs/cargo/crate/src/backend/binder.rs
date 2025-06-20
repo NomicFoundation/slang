@@ -21,6 +21,18 @@ pub struct EnumDefinition {
 }
 
 #[derive(Debug)]
+pub struct ErrorDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
+pub struct EventDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
 pub struct FunctionDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
@@ -61,6 +73,8 @@ pub struct StructDefinition {
 pub enum Definition {
     Contract(ContractDefinition),
     Enum(EnumDefinition),
+    Error(ErrorDefinition),
+    Event(EventDefinition),
     Function(FunctionDefinition),
     Import(ImportDefinition),
     Interface(InterfaceDefinition),
@@ -74,6 +88,8 @@ impl Definition {
         match self {
             Self::Contract(contract_definition) => contract_definition.node_id,
             Self::Enum(enum_definition) => enum_definition.node_id,
+            Self::Error(error_definition) => error_definition.node_id,
+            Self::Event(event_definition) => event_definition.node_id,
             Self::Function(function_definition) => function_definition.node_id,
             Self::Import(import_definition) => import_definition.node_id,
             Self::Interface(interface_definition) => interface_definition.node_id,
@@ -87,6 +103,8 @@ impl Definition {
         match self {
             Self::Contract(contract_definition) => &contract_definition.identifier,
             Self::Enum(enum_definition) => &enum_definition.identifier,
+            Self::Error(error_definition) => &error_definition.identifier,
+            Self::Event(event_definition) => &event_definition.identifier,
             Self::Function(function_definition) => &function_definition.identifier,
             Self::Import(import_definition) => &import_definition.identifier,
             Self::Interface(interface_definition) => &interface_definition.identifier,
@@ -105,6 +123,20 @@ impl Definition {
 
     pub(crate) fn new_enum(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::Enum(EnumDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_error(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::Error(ErrorDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_event(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::Event(EventDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
