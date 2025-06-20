@@ -15,13 +15,13 @@ pub struct ContractDefinition {
 }
 
 #[derive(Debug)]
-pub struct LibraryDefinition {
+pub struct EnumDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
 }
 
 #[derive(Debug)]
-pub struct InterfaceDefinition {
+pub struct FunctionDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
 }
@@ -34,7 +34,19 @@ pub struct ImportDefinition {
 }
 
 #[derive(Debug)]
-pub struct FunctionDefinition {
+pub struct InterfaceDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
+pub struct LibraryDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
+pub struct StructDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
 }
@@ -42,55 +54,61 @@ pub struct FunctionDefinition {
 #[derive(Debug)]
 pub enum Definition {
     Contract(ContractDefinition),
-    Library(LibraryDefinition),
-    Interface(InterfaceDefinition),
-    Import(ImportDefinition),
+    Enum(EnumDefinition),
     Function(FunctionDefinition),
+    Import(ImportDefinition),
+    Interface(InterfaceDefinition),
+    Library(LibraryDefinition),
+    Struct(StructDefinition),
 }
 
 impl Definition {
     pub fn node_id(&self) -> NodeId {
         match self {
             Self::Contract(contract_definition) => contract_definition.node_id,
-            Self::Library(library_definition) => library_definition.node_id,
-            Self::Interface(interface_definition) => interface_definition.node_id,
-            Self::Import(import_definition) => import_definition.node_id,
+            Self::Enum(enum_definition) => enum_definition.node_id,
             Self::Function(function_definition) => function_definition.node_id,
+            Self::Import(import_definition) => import_definition.node_id,
+            Self::Interface(interface_definition) => interface_definition.node_id,
+            Self::Library(library_definition) => library_definition.node_id,
+            Self::Struct(struct_definition) => struct_definition.node_id,
         }
     }
 
     pub fn identifier(&self) -> &Rc<TerminalNode> {
         match self {
             Self::Contract(contract_definition) => &contract_definition.identifier,
-            Self::Library(library_definition) => &library_definition.identifier,
-            Self::Interface(interface_definition) => &interface_definition.identifier,
-            Self::Import(import_definition) => &import_definition.identifier,
+            Self::Enum(enum_definition) => &enum_definition.identifier,
             Self::Function(function_definition) => &function_definition.identifier,
+            Self::Import(import_definition) => &import_definition.identifier,
+            Self::Interface(interface_definition) => &interface_definition.identifier,
+            Self::Library(library_definition) => &library_definition.identifier,
+            Self::Struct(struct_definition) => &struct_definition.identifier,
         }
     }
 
-    pub fn new_contract(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_contract(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::Contract(ContractDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub fn new_library(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
-        Self::Library(LibraryDefinition {
+    pub(crate) fn new_enum(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::Enum(EnumDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub fn new_interface(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
-        Self::Interface(InterfaceDefinition {
+    pub(crate) fn new_function(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::Function(FunctionDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
     }
 
-    pub fn new_import(
+    pub(crate) fn new_import(
         node_id: NodeId,
         identifier: &Rc<TerminalNode>,
         resolved_file_id: Option<String>,
@@ -99,6 +117,27 @@ impl Definition {
             node_id,
             identifier: Rc::clone(identifier),
             resolved_file_id,
+        })
+    }
+
+    pub(crate) fn new_interface(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::Interface(InterfaceDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_library(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::Library(LibraryDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_struct(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::Struct(StructDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
         })
     }
 }
@@ -159,15 +198,15 @@ impl FileScope {
 
 pub struct ContractScope {
     pub node_id: NodeId,
-    pub parent_scope_id: NodeId,
+    pub file_scope_id: NodeId,
     pub definitions: HashMap<String, Vec<NodeId>>,
 }
 
 impl ContractScope {
-    fn new(node_id: NodeId, parent_scope_id: NodeId) -> Self {
+    fn new(node_id: NodeId, file_scope_id: NodeId) -> Self {
         Self {
             node_id,
-            parent_scope_id,
+            file_scope_id,
             definitions: HashMap::new(),
         }
     }
@@ -184,31 +223,31 @@ impl ContractScope {
 }
 
 pub enum Scope {
-    File(FileScope),
     Contract(ContractScope),
+    File(FileScope),
 }
 
 impl Scope {
     pub fn node_id(&self) -> NodeId {
         match self {
-            Self::File(file_scope) => file_scope.node_id,
             Self::Contract(contract_scope) => contract_scope.node_id,
+            Self::File(file_scope) => file_scope.node_id,
         }
     }
 
     pub(crate) fn insert_definition(&mut self, definition: &Definition) {
         match self {
-            Self::File(file_scope) => file_scope.insert_definition(definition),
             Self::Contract(contract_scope) => contract_scope.insert_definition(definition),
+            Self::File(file_scope) => file_scope.insert_definition(definition),
         }
+    }
+
+    pub fn new_contract(node_id: NodeId, file_scope_id: NodeId) -> Self {
+        Self::Contract(ContractScope::new(node_id, file_scope_id))
     }
 
     pub fn new_file(node_id: NodeId, file_id: &str) -> Self {
         Self::File(FileScope::new(node_id, file_id))
-    }
-
-    pub fn new_contract(node_id: NodeId, parent_scope_id: NodeId) -> Self {
-        Self::Contract(ContractScope::new(node_id, parent_scope_id))
     }
 }
 
