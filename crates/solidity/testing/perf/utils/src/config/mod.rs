@@ -31,7 +31,7 @@ pub struct File {
 
 pub fn working_dir_path() -> Result<PathBuf> {
     let config_path = CargoWorkspace::locate_source_crate("solidity_testing_perf_utils")?;
-    Ok(config_path.join("../benchmarks-inputs.json"))
+    Ok(config_path.join("../benchmarks-inputs"))
 }
 
 pub fn config_file_path() -> Result<PathBuf> {
