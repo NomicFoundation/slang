@@ -348,6 +348,21 @@ impl Binder {
         }
     }
 
+    pub(crate) fn lookup_scope(&self, scope_id: NodeId) -> Option<&Scope> {
+        self.scopes.get(&scope_id)
+    }
+
+    pub(crate) fn get_scope(&self, scope_id: NodeId) -> &Scope {
+        self.scopes.get(&scope_id).unwrap()
+    }
+
+    pub(crate) fn get_scope_by_file_id(&self, file_id: &str) -> &Scope {
+        self.file_scopes
+            .get(file_id)
+            .and_then(|node_id| self.scopes.get(node_id))
+            .unwrap()
+    }
+
     pub(crate) fn get_scope_mut(&mut self, node_id: NodeId) -> &mut Scope {
         self.scopes.get_mut(&node_id).unwrap()
     }
@@ -443,6 +458,8 @@ impl Binder {
         None
     }
 
+    // can resolve to multiple definitions and it's useful for eg. functions
+    // that can have multiple overloads
     #[allow(dead_code)]
     pub(crate) fn resolve_multi_in_file_scope(&self, file_id: &str, symbol: &str) -> Vec<NodeId> {
         let mut result = Vec::new();
@@ -461,5 +478,22 @@ impl Binder {
             files_to_search.extend(file_scope.imported_files.iter().cloned());
         }
         result
+    }
+
+    pub(crate) fn resolve_single_in_scope(&self, scope_id: NodeId, symbol: &str) -> Option<NodeId> {
+        let scope = self.get_scope(scope_id);
+        match scope {
+            Scope::File(file_scope) => {
+                self.resolve_single_in_file_scope(&file_scope.file_id, symbol)
+            }
+            Scope::Contract(contract_scope) => contract_scope
+                .definitions
+                .get(symbol)
+                .and_then(|definitions| definitions.first().copied())
+                .or_else(|| self.resolve_single_in_scope(contract_scope.file_scope_id, symbol)),
+            Scope::Parameters(parameters_scope) => {
+                parameters_scope.definitions.get(symbol).copied()
+            }
+        }
     }
 }
