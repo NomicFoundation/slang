@@ -139,8 +139,12 @@ solar_define_payload_test!(
     "largest_file_trivia_one_step_leverage_f"
 );
 
+fn dummy_base() {}
+
 #[library_benchmark]
-pub fn dummy() {}
+pub fn dummy() {
+    black_box(dummy_base());
+}
 
 library_benchmark_group!(
   name = dummy_group;
