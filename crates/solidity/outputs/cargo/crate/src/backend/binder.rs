@@ -208,6 +208,9 @@ impl Reference {
 //////////////////////////////////////////////////////////////////////////////
 // Scopes
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ScopeId(usize);
+
 pub struct FileScope {
     pub node_id: NodeId,
     pub file_id: String,
@@ -246,12 +249,12 @@ impl FileScope {
 
 pub struct ContractScope {
     pub node_id: NodeId,
-    pub file_scope_id: NodeId,
+    pub file_scope_id: ScopeId,
     pub definitions: HashMap<String, Vec<NodeId>>,
 }
 
 impl ContractScope {
-    fn new(node_id: NodeId, file_scope_id: NodeId) -> Self {
+    fn new(node_id: NodeId, file_scope_id: ScopeId) -> Self {
         Self {
             node_id,
             file_scope_id,
@@ -313,7 +316,7 @@ impl Scope {
         }
     }
 
-    pub(crate) fn new_contract(node_id: NodeId, file_scope_id: NodeId) -> Self {
+    pub(crate) fn new_contract(node_id: NodeId, file_scope_id: ScopeId) -> Self {
         Self::Contract(ContractScope::new(node_id, file_scope_id))
     }
 
@@ -330,67 +333,62 @@ impl Scope {
 // Binder
 
 pub struct Binder {
-    scopes: HashMap<NodeId, Scope>,
-    file_scopes: HashMap<String, NodeId>,
+    scopes: Vec<Scope>,
+    scopes_by_node_id: HashMap<NodeId, ScopeId>,
+    scopes_by_file_id: HashMap<String, ScopeId>,
+
+    // definitions indexed by definiens node
     pub definitions: HashMap<NodeId, Definition>,
+    // mapping from definition identifier to definiens
     definitions_by_identifier: HashMap<NodeId, NodeId>,
+    // references indexed by identifier node
     pub references: HashMap<NodeId, Reference>,
 }
 
 impl Binder {
     pub(crate) fn new() -> Self {
         Self {
-            scopes: HashMap::new(),
-            file_scopes: HashMap::new(),
+            scopes: Vec::new(),
+            scopes_by_node_id: HashMap::new(),
+            scopes_by_file_id: HashMap::new(),
             definitions: HashMap::new(),
             definitions_by_identifier: HashMap::new(),
             references: HashMap::new(),
         }
     }
 
-    pub(crate) fn lookup_scope(&self, scope_id: NodeId) -> Option<&Scope> {
-        self.scopes.get(&scope_id)
+    pub(crate) fn get_scope_by_id(&self, scope_id: ScopeId) -> &Scope {
+        self.scopes.get(scope_id.0).unwrap()
     }
 
-    pub(crate) fn get_scope(&self, scope_id: NodeId) -> &Scope {
-        self.scopes.get(&scope_id).unwrap()
+    pub(crate) fn get_scope_mut(&mut self, scope_id: ScopeId) -> &mut Scope {
+        self.scopes.get_mut(scope_id.0).unwrap()
     }
 
-    pub(crate) fn get_scope_by_file_id(&self, file_id: &str) -> &Scope {
-        self.file_scopes
-            .get(file_id)
-            .and_then(|node_id| self.scopes.get(node_id))
-            .unwrap()
+    pub(crate) fn scope_id_for_node_id(&self, node_id: NodeId) -> Option<ScopeId> {
+        self.scopes_by_node_id.get(&node_id).copied()
     }
 
-    pub(crate) fn get_scope_mut(&mut self, node_id: NodeId) -> &mut Scope {
-        self.scopes.get_mut(&node_id).unwrap()
+    pub(crate) fn scope_id_for_file_id(&self, file_id: &str) -> Option<ScopeId> {
+        self.scopes_by_file_id.get(file_id).copied()
     }
 
-    pub(crate) fn get_file_scope_mut(&mut self, file_id: &str) -> &mut FileScope {
-        self.file_scopes
-            .get(file_id)
-            .and_then(|node_id| self.scopes.get_mut(node_id))
-            .map(|scope| match scope {
-                Scope::File(file_scope) => file_scope,
-                _ => unreachable!("scope in file_scopes is not a file scope"),
-            })
-            .unwrap()
-    }
-
-    pub(crate) fn insert_scope(&mut self, scope: Scope) {
+    pub(crate) fn insert_scope(&mut self, scope: Scope) -> ScopeId {
         let node_id = scope.node_id();
-        if self.scopes.contains_key(&node_id) {
+        let scope_id = ScopeId(self.scopes.len());
+        if self.scopes_by_node_id.contains_key(&node_id) {
             unreachable!("attempt to insert duplicate file scope for node {node_id:?}");
         }
         if let Scope::File(ref file_scope) = scope {
             let file_id = &file_scope.file_id;
-            if self.file_scopes.contains_key(file_id) {
+            if self.scopes_by_file_id.contains_key(file_id) {
                 unreachable!("attempt to insert duplicate file scope for {file_id}");
             }
-            self.file_scopes.insert(file_id.clone(), node_id);
+            self.scopes_by_file_id.insert(file_id.clone(), scope_id);
         }
-        self.scopes.insert(node_id, scope);
+        self.scopes_by_node_id.insert(node_id, scope_id);
+        self.scopes.push(scope);
+        scope_id
     }
 
     pub(crate) fn insert_definition(&mut self, definition: Definition) {
@@ -425,9 +423,9 @@ impl Binder {
     // File scope resolution context
 
     fn get_file_scope(&self, file_id: &str) -> &FileScope {
-        self.file_scopes
+        self.scopes_by_file_id
             .get(file_id)
-            .and_then(|node_id| self.scopes.get(node_id))
+            .and_then(|scope_id| self.scopes.get(scope_id.0))
             .and_then(|scope| match scope {
                 Scope::File(file_scope) => Some(file_scope),
                 _ => None,
@@ -435,11 +433,8 @@ impl Binder {
             .unwrap()
     }
 
-    pub(crate) fn resolve_single_in_file_scope(
-        &self,
-        file_id: &str,
-        symbol: &str,
-    ) -> Option<NodeId> {
+    // resolving a symbol in a file scope is special because of default imports
+    fn resolve_single_in_file_scope(&self, file_id: &str, symbol: &str) -> Option<NodeId> {
         let mut visited_files = HashSet::new();
         let mut files_to_search = VecDeque::new();
         files_to_search.push_back(file_id.to_owned());
@@ -450,6 +445,7 @@ impl Binder {
                 continue;
             }
 
+            // TODO: should we verify that there is a single definition for the symbol?
             if let Some(definition) = file_scope.lookup_symbol(symbol).first() {
                 return Some(*definition);
             }
@@ -458,30 +454,12 @@ impl Binder {
         None
     }
 
-    // can resolve to multiple definitions and it's useful for eg. functions
-    // that can have multiple overloads
-    #[allow(dead_code)]
-    pub(crate) fn resolve_multi_in_file_scope(&self, file_id: &str, symbol: &str) -> Vec<NodeId> {
-        let mut result = Vec::new();
-        let mut visited_files = HashSet::new();
-        let mut files_to_search = VecDeque::new();
-        files_to_search.push_back(file_id.to_owned());
-
-        while let Some(file_id) = files_to_search.pop_front() {
-            let file_scope = self.get_file_scope(&file_id);
-            if !visited_files.insert(file_id) {
-                continue;
-            }
-
-            let definitions = file_scope.lookup_symbol(symbol);
-            result.extend(definitions.into_iter());
-            files_to_search.extend(file_scope.imported_files.iter().cloned());
-        }
-        result
-    }
-
-    pub(crate) fn resolve_single_in_scope(&self, scope_id: NodeId, symbol: &str) -> Option<NodeId> {
-        let scope = self.get_scope(scope_id);
+    pub(crate) fn resolve_single_in_scope(
+        &self,
+        scope_id: ScopeId,
+        symbol: &str,
+    ) -> Option<NodeId> {
+        let scope = self.get_scope_by_id(scope_id);
         match scope {
             Scope::File(file_scope) => {
                 self.resolve_single_in_file_scope(&file_scope.file_id, symbol)

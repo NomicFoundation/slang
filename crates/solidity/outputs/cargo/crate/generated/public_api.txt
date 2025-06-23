@@ -39,7 +39,7 @@ impl core::fmt::Debug for slang_solidity::backend::binder::ContractDefinition
 pub fn slang_solidity::backend::binder::ContractDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::binder::ContractScope
 pub slang_solidity::backend::binder::ContractScope::definitions: std::collections::hash::map::HashMap<alloc::string::String, alloc::vec::Vec<metaslang_cst::nodes::NodeId>>
-pub slang_solidity::backend::binder::ContractScope::file_scope_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::binder::ContractScope::file_scope_id: slang_solidity::backend::binder::ScopeId
 pub slang_solidity::backend::binder::ContractScope::node_id: metaslang_cst::nodes::NodeId
 pub struct slang_solidity::backend::binder::EnumDefinition
 pub slang_solidity::backend::binder::EnumDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
@@ -95,6 +95,16 @@ pub slang_solidity::backend::binder::Reference::definition_id: core::option::Opt
 pub slang_solidity::backend::binder::Reference::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 impl core::fmt::Debug for slang_solidity::backend::binder::Reference
 pub fn slang_solidity::backend::binder::Reference::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::ScopeId(_)
+impl core::clone::Clone for slang_solidity::backend::binder::ScopeId
+pub fn slang_solidity::backend::binder::ScopeId::clone(&self) -> slang_solidity::backend::binder::ScopeId
+impl core::cmp::Eq for slang_solidity::backend::binder::ScopeId
+impl core::cmp::PartialEq for slang_solidity::backend::binder::ScopeId
+pub fn slang_solidity::backend::binder::ScopeId::eq(&self, other: &slang_solidity::backend::binder::ScopeId) -> bool
+impl core::fmt::Debug for slang_solidity::backend::binder::ScopeId
+pub fn slang_solidity::backend::binder::ScopeId::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for slang_solidity::backend::binder::ScopeId
+impl core::marker::StructuralPartialEq for slang_solidity::backend::binder::ScopeId
 pub struct slang_solidity::backend::binder::StructDefinition
 pub slang_solidity::backend::binder::StructDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::binder::StructDefinition::node_id: metaslang_cst::nodes::NodeId
