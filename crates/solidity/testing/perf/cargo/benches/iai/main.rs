@@ -5,12 +5,8 @@ use std::hint::black_box;
 use std::rc::Rc;
 
 use iai_callgrind::{
-    library_benchmark,
-    library_benchmark_group,
-    main,
-    Direction,
-    FlamegraphConfig,
-    LibraryBenchmarkConfig, //, Tool, ValgrindTool,
+    library_benchmark, library_benchmark_group, main, Direction, FlamegraphConfig,
+    LibraryBenchmarkConfig, Tool, ValgrindTool,
 };
 use paste::paste;
 use slang_solidity::compilation::CompilationUnit;
@@ -162,7 +158,7 @@ main!(
         // At t-end blocks:         How many heap blocks were alive at the end of execution (were not explicitly freed).
         // Reads bytes:             How many bytes within heap blocks were read during the entire execution.
         // Writes bytes:            How many bytes within heap blocks were written during the entire execution.
-        // .tool(Tool::new(ValgrindTool::DHAT))
+        .tool(Tool::new(ValgrindTool::DHAT))
 
         // This enables generating flame graphs into Cargo's 'target' directory.
         // They will be listed by 'infra perf' at the end of the run:
@@ -172,5 +168,6 @@ main!(
         // Let's disable this behavior to be able to execute our infra utilities:
         .env_clear(false);
 
+    // Note: the trailing comma is required: without it, it won't test the last one
     library_benchmark_groups = slang_protocol_uniswap,slang_largest_file_trivia_oslf,solar_protocol_uniswap_group,solar_largest_file_trivia_oslf_group,
 );
