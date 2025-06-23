@@ -139,6 +139,14 @@ solar_define_payload_test!(
     "largest_file_trivia_one_step_leverage_f"
 );
 
+#[library_benchmark]
+pub fn dummy() {}
+
+library_benchmark_group!(
+  name = dummy_group;
+  benchmarks = dummy
+);
+
 main!(
     config = LibraryBenchmarkConfig::default()
         // 'valgrind' supports many tools. By default, it runs 'callgrind', which reports these metrics:
@@ -172,5 +180,5 @@ main!(
         // Let's disable this behavior to be able to execute our infra utilities:
         .env_clear(false);
 
-    library_benchmark_groups = slang_protocol_uniswap,slang_largest_file_trivia_oslf,solar_protocol_uniswap_group,solar_largest_file_trivia_oslf_group
+    library_benchmark_groups = slang_protocol_uniswap,slang_largest_file_trivia_oslf,solar_protocol_uniswap_group,solar_largest_file_trivia_oslf_group,dummy_group
 );
