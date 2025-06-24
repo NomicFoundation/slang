@@ -145,6 +145,9 @@ fn load_projects_internal() -> Result<ProjectMap> {
             SolidityProject::build(&working_directory_path.join(format!("{}.json", file.hash)))?;
         // override the entrypoint with the path given
         project.compilation.set_entrypoint(&file.file);
+        // Solar doesn't support easy crawling of imports like Slang does, so we remove all the files
+        // that are not the entrypoint. That means that the files must be self-contained.
+        project.sources.retain(|k, _| k == &file.file);
         insert(file.name, project);
     }
 

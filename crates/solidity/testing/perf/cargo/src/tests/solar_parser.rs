@@ -23,19 +23,18 @@ pub fn run(project: &SolidityProject) {
 
     // Enter the context and parse the file.
     let _ = sess.enter(|| -> solar::interface::Result<()> {
-        // Set up the parser.
+        // Use one arena for the entire parsing
         let arena = ast::Arena::new();
 
         for fname in project.sources.keys() {
             let mut parser = Parser::from_file(&sess, &arena, &PathBuf::from(fname))?;
 
-            // Parse the file.
             let _ast = parser.parse_file().map_err(|e| e.emit())?;
         }
+
         Ok(())
     });
 
-    // Return the emitted diagnostics as a `Result<(), _>`.
-    // If any errors were emitted, this returns `Err(_)`, otherwise `Ok(())`.
+    // There shouldn't be any error (or panic)
     sess.emitted_errors().unwrap().unwrap();
 }

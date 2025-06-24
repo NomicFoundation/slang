@@ -21,8 +21,7 @@ solar_define_payload_test!(
     largest_file_trivia_one_step_leverage_f,
     "largest_file_trivia_one_step_leverage_f"
 );
-// fails with parsing error
-// solar_define_payload_test!(median_file_safe_math, "median_file_safe_math");
+solar_define_payload_test!(median_file_safe_math, "median_file_safe_math");
 solar_define_payload_test!(
     three_quarters_file_merkle_proof,
     "three_quarters_file_merkle_proof"

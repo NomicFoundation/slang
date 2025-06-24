@@ -26,8 +26,7 @@ impl CompilationBuilder {
     }
 
     pub fn build(&mut self) -> Result<CompilationUnit> {
-        let entrypoint = self.project.compilation.entrypoint.clone();
-        self.add_file(&entrypoint)?;
+        self.add_file(&self.project.compilation.entrypoint)?;
 
         let unit = self.internal.build();
         for file in unit.files() {
