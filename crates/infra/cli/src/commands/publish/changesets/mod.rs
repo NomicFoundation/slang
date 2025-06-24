@@ -85,6 +85,8 @@ impl ChangesetsController {
         }
 
         Command::new("git")
+            .property("-c", "user.name=github-actions")
+            .property("-c", "user.email=github-actions@users.noreply.github.com")
             .args(["stash", "push"])
             .flag("--include-untracked")
             .property("--message", "applied changesets")
