@@ -63,7 +63,7 @@ macro_rules! slang_define_payload_tests {
 
         paste! {
         library_benchmark_group!(
-            name = [< slang_ $prj >];
+            name = [< slang_ $prj _group>];
 
             // __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
             benchmarks =
@@ -160,5 +160,6 @@ main!(
         .env_clear(false);
 
     // Note: the trailing comma is required: without it, it won't test the last one
-    library_benchmark_groups = slang_protocol_uniswap,slang_largest_file_trivia_oslf,solar_protocol_uniswap_group,solar_largest_file_trivia_oslf_group,
+    // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
+    library_benchmark_groups = slang_circular_imports_weighted_pool_group,slang_protocol_uniswap_group,slang_protocol_multicall3_group,slang_protocol_create_x_group,slang_protocol_ui_pool_data_provider_v3_group,slang_deep_nesting_cooldogs_group,slang_largest_file_trivia_oslf_group,slang_median_file_safe_math_group,slang_three_quarters_file_merkle_proof_group,solar_circular_imports_weighted_pool_group,solar_protocol_uniswap_group,solar_protocol_multicall3_group,solar_protocol_create_x_group,solar_protocol_ui_pool_data_provider_v3_group,solar_deep_nesting_cooldogs_group,solar_largest_file_trivia_oslf_group,solar_median_file_safe_math_group,solar_three_quarters_file_merkle_proof_group,
 );
