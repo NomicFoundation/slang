@@ -56,6 +56,14 @@ pub struct ImportDefinition {
 }
 
 #[derive(Debug)]
+pub struct ImportedSymbolDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+    pub symbol: String,
+    pub resolved_file_id: Option<String>,
+}
+
+#[derive(Debug)]
 pub struct InterfaceDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
@@ -92,6 +100,12 @@ pub struct UserDefinedValueTypeDefinition {
 }
 
 #[derive(Debug)]
+pub struct VariableDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
 pub enum Definition {
     Constant(ConstantDefinition),
     Contract(ContractDefinition),
@@ -100,12 +114,14 @@ pub enum Definition {
     Event(EventDefinition),
     Function(FunctionDefinition),
     Import(ImportDefinition),
+    ImportedSymbol(ImportedSymbolDefinition),
     Interface(InterfaceDefinition),
     Library(LibraryDefinition),
     Parameter(ParameterDefinition),
     StateVariable(StateVariableDefinition),
     Struct(StructDefinition),
     UserDefinedValueType(UserDefinedValueTypeDefinition),
+    Variable(VariableDefinition),
 }
 
 impl Definition {
@@ -118,12 +134,14 @@ impl Definition {
             Self::Event(event_definition) => event_definition.node_id,
             Self::Function(function_definition) => function_definition.node_id,
             Self::Import(import_definition) => import_definition.node_id,
+            Self::ImportedSymbol(imported_symbol_definition) => imported_symbol_definition.node_id,
             Self::Interface(interface_definition) => interface_definition.node_id,
             Self::Library(library_definition) => library_definition.node_id,
             Self::Parameter(parameter_definition) => parameter_definition.node_id,
             Self::StateVariable(state_variable_definition) => state_variable_definition.node_id,
             Self::Struct(struct_definition) => struct_definition.node_id,
             Self::UserDefinedValueType(udvt_definition) => udvt_definition.node_id,
+            Self::Variable(variable_definition) => variable_definition.node_id,
         }
     }
 
@@ -136,12 +154,16 @@ impl Definition {
             Self::Event(event_definition) => &event_definition.identifier,
             Self::Function(function_definition) => &function_definition.identifier,
             Self::Import(import_definition) => &import_definition.identifier,
+            Self::ImportedSymbol(imported_symbol_definition) => {
+                &imported_symbol_definition.identifier
+            }
             Self::Interface(interface_definition) => &interface_definition.identifier,
             Self::Library(library_definition) => &library_definition.identifier,
             Self::Parameter(parameter_definition) => &parameter_definition.identifier,
             Self::StateVariable(state_variable_definition) => &state_variable_definition.identifier,
             Self::Struct(struct_definition) => &struct_definition.identifier,
             Self::UserDefinedValueType(udvt_definition) => &udvt_definition.identifier,
+            Self::Variable(variable_definition) => &variable_definition.identifier,
         }
     }
 
@@ -216,6 +238,20 @@ impl Definition {
         })
     }
 
+    pub(crate) fn new_imported_symbol(
+        node_id: NodeId,
+        identifier: &Rc<TerminalNode>,
+        symbol: String,
+        resolved_file_id: Option<String>,
+    ) -> Self {
+        Self::ImportedSymbol(ImportedSymbolDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+            symbol,
+            resolved_file_id,
+        })
+    }
+
     pub(crate) fn new_interface(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::Interface(InterfaceDefinition {
             node_id,
@@ -256,6 +292,13 @@ impl Definition {
         identifier: &Rc<TerminalNode>,
     ) -> Self {
         Self::UserDefinedValueType(UserDefinedValueTypeDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_variable(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::Variable(VariableDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })

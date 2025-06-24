@@ -198,6 +198,27 @@ impl Visitor for Pass {
         false
     }
 
+    fn enter_import_deconstruction(&mut self, node: &input_ir::ImportDeconstruction) -> bool {
+        let imported_file_id = self.resolve_import_path(&node.path);
+
+        for symbol in &node.symbols {
+            let identifier = if let Some(alias) = &symbol.alias {
+                &alias.identifier
+            } else {
+                &symbol.name
+            };
+            let definition = Definition::new_imported_symbol(
+                symbol.node_id,
+                identifier,
+                symbol.name.unparse(),
+                imported_file_id.clone(),
+            );
+            self.insert_definition_in_current_scope(definition);
+        }
+
+        false
+    }
+
     fn enter_function_definition(&mut self, node: &input_ir::FunctionDefinition) -> bool {
         let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
         for parameter in &node.parameters.parameters {
@@ -314,6 +335,43 @@ impl Visitor for Pass {
     ) -> bool {
         let definition = Definition::new_user_defined_value_type(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
+
+        false
+    }
+
+    fn enter_variable_declaration_statement(
+        &mut self,
+        node: &input_ir::VariableDeclarationStatement,
+    ) -> bool {
+        // TODO: for Solidity >= 0.5.0 this should create a new scope
+        let definition = Definition::new_variable(node.node_id, &node.name);
+        self.insert_definition_in_current_scope(definition);
+
+        false
+    }
+
+    fn enter_tuple_deconstruction_statement(
+        &mut self,
+        node: &input_ir::TupleDeconstructionStatement,
+    ) -> bool {
+        // TODO: for Solidity >= 0.5.0 this should create a new scope
+        for element in &node.elements {
+            let Some(tuple_member) = &element.member else {
+                continue;
+            };
+            let definition = match tuple_member {
+                input_ir::TupleMember::TypedTupleMember(type_tuple_member) => {
+                    Definition::new_variable(type_tuple_member.node_id, &type_tuple_member.name)
+                }
+                input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
+                    Definition::new_variable(
+                        untyped_tuple_member.node_id,
+                        &untyped_tuple_member.name,
+                    )
+                }
+            };
+            self.insert_definition_in_current_scope(definition);
+        }
 
         false
     }
