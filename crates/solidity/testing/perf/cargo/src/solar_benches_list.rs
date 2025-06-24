@@ -17,8 +17,9 @@ solar_define_payload_test!(
     protocol_ui_pool_data_provider_v3,
     "protocol_ui_pool_data_provider_v3"
 );
+solar_define_payload_test!(deep_nesting_cooldogs, "deep_nesting_cooldogs");
 solar_define_payload_test!(
-    largest_file_trivia_one_step_leverage_f,
+    largest_file_trivia_oslf,
     "largest_file_trivia_one_step_leverage_f"
 );
 solar_define_payload_test!(median_file_safe_math, "median_file_safe_math");

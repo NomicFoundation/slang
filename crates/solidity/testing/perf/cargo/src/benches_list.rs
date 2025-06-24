@@ -4,7 +4,8 @@
 
   __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
 */
-slang_define_payload_tests!(flat_imports_mooniswap, "flat_imports_mooniswap");
+// Solar can't cope with this file, so we exclude it for now
+// slang_define_payload_tests!(flat_imports_mooniswap, "flat_imports_mooniswap");
 slang_define_payload_tests!(
     circular_imports_weighted_pool,
     "circular_imports_weighted_pool"
@@ -16,8 +17,9 @@ slang_define_payload_tests!(
     protocol_ui_pool_data_provider_v3,
     "protocol_ui_pool_data_provider_v3"
 );
+slang_define_payload_tests!(deep_nesting_cooldogs, "deep_nesting_cooldogs");
 slang_define_payload_tests!(
-    largest_file_trivia_one_step_leverage_f,
+    largest_file_trivia_oslf,
     "largest_file_trivia_one_step_leverage_f"
 );
 slang_define_payload_tests!(median_file_safe_math, "median_file_safe_math");
