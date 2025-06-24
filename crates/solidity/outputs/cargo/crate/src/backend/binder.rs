@@ -9,6 +9,12 @@ use crate::cst::TerminalNode;
 // Definitions
 
 #[derive(Debug)]
+pub struct ConstantDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
 pub struct ContractDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
@@ -24,18 +30,22 @@ pub struct EnumDefinition {
 pub struct ErrorDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
+    pub parameters_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
 pub struct EventDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
+    pub parameters_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
 pub struct FunctionDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
+    pub function_scope_id: ScopeId,
+    pub parameters_scope_id: ScopeId,
 }
 
 #[derive(Debug)]
@@ -64,13 +74,26 @@ pub struct ParameterDefinition {
 }
 
 #[derive(Debug)]
+pub struct StateVariableDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
 pub struct StructDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
 }
 
 #[derive(Debug)]
+pub struct UserDefinedValueTypeDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
 pub enum Definition {
+    Constant(ConstantDefinition),
     Contract(ContractDefinition),
     Enum(EnumDefinition),
     Error(ErrorDefinition),
@@ -80,12 +103,15 @@ pub enum Definition {
     Interface(InterfaceDefinition),
     Library(LibraryDefinition),
     Parameter(ParameterDefinition),
+    StateVariable(StateVariableDefinition),
     Struct(StructDefinition),
+    UserDefinedValueType(UserDefinedValueTypeDefinition),
 }
 
 impl Definition {
     pub fn node_id(&self) -> NodeId {
         match self {
+            Self::Constant(constant_definition) => constant_definition.node_id,
             Self::Contract(contract_definition) => contract_definition.node_id,
             Self::Enum(enum_definition) => enum_definition.node_id,
             Self::Error(error_definition) => error_definition.node_id,
@@ -95,12 +121,15 @@ impl Definition {
             Self::Interface(interface_definition) => interface_definition.node_id,
             Self::Library(library_definition) => library_definition.node_id,
             Self::Parameter(parameter_definition) => parameter_definition.node_id,
+            Self::StateVariable(state_variable_definition) => state_variable_definition.node_id,
             Self::Struct(struct_definition) => struct_definition.node_id,
+            Self::UserDefinedValueType(udvt_definition) => udvt_definition.node_id,
         }
     }
 
     pub fn identifier(&self) -> &Rc<TerminalNode> {
         match self {
+            Self::Constant(constant_definition) => &constant_definition.identifier,
             Self::Contract(contract_definition) => &contract_definition.identifier,
             Self::Enum(enum_definition) => &enum_definition.identifier,
             Self::Error(error_definition) => &error_definition.identifier,
@@ -110,8 +139,17 @@ impl Definition {
             Self::Interface(interface_definition) => &interface_definition.identifier,
             Self::Library(library_definition) => &library_definition.identifier,
             Self::Parameter(parameter_definition) => &parameter_definition.identifier,
+            Self::StateVariable(state_variable_definition) => &state_variable_definition.identifier,
             Self::Struct(struct_definition) => &struct_definition.identifier,
+            Self::UserDefinedValueType(udvt_definition) => &udvt_definition.identifier,
         }
+    }
+
+    pub(crate) fn new_constant(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::Constant(ConstantDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
     }
 
     pub(crate) fn new_contract(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
@@ -128,24 +166,41 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_error(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_error(
+        node_id: NodeId,
+        identifier: &Rc<TerminalNode>,
+        parameters_scope_id: ScopeId,
+    ) -> Self {
         Self::Error(ErrorDefinition {
             node_id,
             identifier: Rc::clone(identifier),
+            parameters_scope_id,
         })
     }
 
-    pub(crate) fn new_event(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_event(
+        node_id: NodeId,
+        identifier: &Rc<TerminalNode>,
+        parameters_scope_id: ScopeId,
+    ) -> Self {
         Self::Event(EventDefinition {
             node_id,
             identifier: Rc::clone(identifier),
+            parameters_scope_id,
         })
     }
 
-    pub(crate) fn new_function(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+    pub(crate) fn new_function(
+        node_id: NodeId,
+        identifier: &Rc<TerminalNode>,
+        function_scope_id: ScopeId,
+        parameters_scope_id: ScopeId,
+    ) -> Self {
         Self::Function(FunctionDefinition {
             node_id,
             identifier: Rc::clone(identifier),
+            function_scope_id,
+            parameters_scope_id,
         })
     }
 
@@ -182,8 +237,25 @@ impl Definition {
         })
     }
 
+    pub(crate) fn new_state_variable(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::StateVariable(StateVariableDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
     pub(crate) fn new_struct(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::Struct(StructDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_user_defined_value_type(
+        node_id: NodeId,
+        identifier: &Rc<TerminalNode>,
+    ) -> Self {
+        Self::UserDefinedValueType(UserDefinedValueTypeDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
@@ -293,9 +365,34 @@ impl ParametersScope {
     }
 }
 
+pub struct FunctionScope {
+    pub node_id: NodeId,
+    pub parent_scope_id: ScopeId,
+    pub parameters_scope_id: ScopeId,
+    pub definitions: HashMap<String, NodeId>,
+}
+
+impl FunctionScope {
+    fn new(node_id: NodeId, parent_scope_id: ScopeId, parameters_scope_id: ScopeId) -> Self {
+        Self {
+            node_id,
+            parent_scope_id,
+            parameters_scope_id,
+            definitions: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
+        let symbol = definition.identifier().unparse();
+        let node_id = definition.node_id();
+        self.definitions.insert(symbol, node_id);
+    }
+}
+
 pub enum Scope {
     Contract(ContractScope),
     File(FileScope),
+    Function(FunctionScope),
     Parameters(ParametersScope),
 }
 
@@ -304,6 +401,7 @@ impl Scope {
         match self {
             Self::Contract(contract_scope) => contract_scope.node_id,
             Self::File(file_scope) => file_scope.node_id,
+            Self::Function(function_scope) => function_scope.node_id,
             Self::Parameters(parameters_scope) => parameters_scope.node_id,
         }
     }
@@ -312,6 +410,7 @@ impl Scope {
         match self {
             Self::Contract(contract_scope) => contract_scope.insert_definition(definition),
             Self::File(file_scope) => file_scope.insert_definition(definition),
+            Self::Function(function_scope) => function_scope.insert_definition(definition),
             Self::Parameters(parameters_scope) => parameters_scope.insert_definition(definition),
         }
     }
@@ -322,6 +421,18 @@ impl Scope {
 
     pub(crate) fn new_file(node_id: NodeId, file_id: &str) -> Self {
         Self::File(FileScope::new(node_id, file_id))
+    }
+
+    pub(crate) fn new_function(
+        node_id: NodeId,
+        parent_scope_id: ScopeId,
+        parameters_scope_id: ScopeId,
+    ) -> Self {
+        Self::Function(FunctionScope::new(
+            node_id,
+            parent_scope_id,
+            parameters_scope_id,
+        ))
     }
 
     pub(crate) fn new_parameters(node_id: NodeId) -> Self {
@@ -469,6 +580,14 @@ impl Binder {
                 .get(symbol)
                 .and_then(|definitions| definitions.first().copied())
                 .or_else(|| self.resolve_single_in_scope(contract_scope.file_scope_id, symbol)),
+            Scope::Function(function_scope) => function_scope
+                .definitions
+                .get(symbol)
+                .copied()
+                .or_else(|| {
+                    self.resolve_single_in_scope(function_scope.parameters_scope_id, symbol)
+                })
+                .or_else(|| self.resolve_single_in_scope(function_scope.parent_scope_id, symbol)),
             Scope::Parameters(parameters_scope) => {
                 parameters_scope.definitions.get(symbol).copied()
             }

@@ -199,11 +199,6 @@ impl Visitor for Pass {
     }
 
     fn enter_function_definition(&mut self, node: &input_ir::FunctionDefinition) -> bool {
-        if let input_ir::FunctionName::Identifier(name) = &node.name {
-            let definition = Definition::new_function(node.node_id, name);
-            self.insert_definition_in_current_scope(definition);
-        }
-
         let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
         for parameter in &node.parameters.parameters {
             if let Some(name) = &parameter.name {
@@ -212,20 +207,30 @@ impl Visitor for Pass {
                 self.binder.insert_definition(definition);
             }
         }
-        self.binder.insert_scope(parameters_scope);
-        // TODO: we need to somehow link the parameters scope to the function scope
+        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+
+        let mut function_scope =
+            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
 
         if let Some(returns_declaration) = &node.returns {
-            let mut returns_scope = Scope::new_parameters(returns_declaration.variables.node_id);
             for variable in &returns_declaration.variables.parameters {
                 if let Some(name) = &variable.name {
                     let definition = Definition::new_parameter(variable.node_id, name);
-                    returns_scope.insert_definition(&definition);
+                    function_scope.insert_definition(&definition);
                     self.binder.insert_definition(definition);
                 }
             }
-            self.binder.insert_scope(returns_scope);
-            // TODO: we need to somehow link the returns scope to the function scope
+        }
+        let function_scope_id = self.binder.insert_scope(function_scope);
+
+        if let input_ir::FunctionName::Identifier(name) = &node.name {
+            let definition = Definition::new_function(
+                node.node_id,
+                name,
+                function_scope_id,
+                parameters_scope_id,
+            );
+            self.insert_definition_in_current_scope(definition);
         }
 
         true
@@ -246,9 +251,6 @@ impl Visitor for Pass {
     }
 
     fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {
-        let definition = Definition::new_error(node.node_id, &node.name);
-        self.insert_definition_in_current_scope(definition);
-
         let mut parameters_scope = Scope::new_parameters(node.members.node_id);
         for parameter in &node.members.parameters {
             if let Some(name) = &parameter.name {
@@ -257,16 +259,15 @@ impl Visitor for Pass {
                 self.binder.insert_definition(definition);
             }
         }
-        self.binder.insert_scope(parameters_scope);
-        // TODO: we need to somehow link the parameters scope to the function scope
+        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+
+        let definition = Definition::new_error(node.node_id, &node.name, parameters_scope_id);
+        self.insert_definition_in_current_scope(definition);
 
         false
     }
 
     fn enter_event_definition(&mut self, node: &input_ir::EventDefinition) -> bool {
-        let definition = Definition::new_event(node.node_id, &node.name);
-        self.insert_definition_in_current_scope(definition);
-
         let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
         for parameter in &node.parameters.parameters {
             if let Some(name) = &parameter.name {
@@ -275,8 +276,44 @@ impl Visitor for Pass {
                 self.binder.insert_definition(definition);
             }
         }
-        self.binder.insert_scope(parameters_scope);
-        // TODO: we need to somehow link the parameters scope to the function scope
+        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+
+        let definition = Definition::new_event(node.node_id, &node.name, parameters_scope_id);
+        self.insert_definition_in_current_scope(definition);
+
+        false
+    }
+
+    fn enter_state_variable_definition(
+        &mut self,
+        node: &input_ir::StateVariableDefinition,
+    ) -> bool {
+        let is_constant = node.attributes.iter().any(|attribute| {
+            matches!(attribute, input_ir::StateVariableAttribute::ConstantKeyword)
+        });
+        let definition = if is_constant {
+            Definition::new_constant(node.node_id, &node.name)
+        } else {
+            Definition::new_state_variable(node.node_id, &node.name)
+        };
+        self.insert_definition_in_current_scope(definition);
+
+        false
+    }
+
+    fn enter_constant_definition(&mut self, node: &input_ir::ConstantDefinition) -> bool {
+        let definition = Definition::new_constant(node.node_id, &node.name);
+        self.insert_definition_in_current_scope(definition);
+
+        false
+    }
+
+    fn enter_user_defined_value_type_definition(
+        &mut self,
+        node: &input_ir::UserDefinedValueTypeDefinition,
+    ) -> bool {
+        let definition = Definition::new_user_defined_value_type(node.node_id, &node.name);
+        self.insert_definition_in_current_scope(definition);
 
         false
     }
