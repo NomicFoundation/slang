@@ -77,12 +77,7 @@ macro_rules! slang_define_payload_tests {
     };
 }
 
-// __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-slang_define_payload_tests!(protocol_uniswap, "protocol_uniswap");
-slang_define_payload_tests!(
-    largest_file_trivia_oslf,
-    "largest_file_trivia_one_step_leverage_f"
-);
+include!("../../src/slang_benches_list.rs");
 
 //
 // Solang benchmarks
@@ -129,11 +124,7 @@ macro_rules! solar_define_payload_test {
     };
 }
 
-solar_define_payload_test!(protocol_uniswap, "protocol_uniswap");
-solar_define_payload_test!(
-    largest_file_trivia_oslf,
-    "largest_file_trivia_one_step_leverage_f"
-);
+include!("../../src/solar_benches_list.rs");
 
 main!(
     config = LibraryBenchmarkConfig::default()

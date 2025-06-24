@@ -35,7 +35,7 @@ mod unit_tests {
         };
     }
 
-    include!("benches_list.rs");
+    include!("slang_benches_list.rs");
 
     // mod solang {
     //     macro_rules! solang_define_payload_test {
