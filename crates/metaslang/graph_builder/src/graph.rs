@@ -73,10 +73,10 @@ impl<KT: KindTypes> Graph<KT> {
     }
 
     /// Pretty-prints the contents of this graph.
-    pub fn pretty_print(&self) -> impl fmt::Display + '_ {
+    pub fn pretty_print<'a>(&'a self) -> impl fmt::Display + 'a {
         struct DisplayGraph<'a, KT: KindTypes>(&'a Graph<KT>);
 
-        impl<KT: KindTypes> fmt::Display for DisplayGraph<'_, KT> {
+        impl<'a, KT: KindTypes> fmt::Display for DisplayGraph<'a, KT> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 let graph = self.0;
                 for (node_index, node) in graph.graph_nodes.iter().enumerate() {
@@ -205,7 +205,7 @@ impl GraphNode {
 
 struct SerializeGraphNode<'a>(usize, &'a GraphNode);
 
-impl Serialize for SerializeGraphNode<'_> {
+impl<'a> Serialize for SerializeGraphNode<'a> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let node_index = self.0;
         let node = self.1;
@@ -220,7 +220,7 @@ impl Serialize for SerializeGraphNode<'_> {
 
 struct SerializeGraphNodeEdges<'a>(&'a SmallVec<[(GraphNodeID, Edge); 8]>);
 
-impl Serialize for SerializeGraphNodeEdges<'_> {
+impl<'a> Serialize for SerializeGraphNodeEdges<'a> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let edges = self.0;
         let mut seq = serializer.serialize_seq(Some(edges.len()))?;
@@ -233,7 +233,7 @@ impl Serialize for SerializeGraphNodeEdges<'_> {
 
 struct SerializeGraphNodeEdge<'a>(&'a (GraphNodeID, Edge));
 
-impl Serialize for SerializeGraphNodeEdge<'_> {
+impl<'a> Serialize for SerializeGraphNodeEdge<'a> {
     fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
         let wrapped = &self.0;
         let sink = &wrapped.0;
