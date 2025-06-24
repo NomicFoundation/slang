@@ -44,7 +44,6 @@ pub struct EventDefinition {
 pub struct FunctionDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
-    pub function_scope_id: ScopeId,
     pub parameters_scope_id: ScopeId,
 }
 
@@ -76,6 +75,12 @@ pub struct LibraryDefinition {
 }
 
 #[derive(Debug)]
+pub struct ModifierDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
 pub struct ParameterDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
@@ -89,6 +94,12 @@ pub struct StateVariableDefinition {
 
 #[derive(Debug)]
 pub struct StructDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
+pub struct TypeParameterDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
 }
@@ -117,9 +128,11 @@ pub enum Definition {
     ImportedSymbol(ImportedSymbolDefinition),
     Interface(InterfaceDefinition),
     Library(LibraryDefinition),
+    Modifier(ModifierDefinition),
     Parameter(ParameterDefinition),
     StateVariable(StateVariableDefinition),
     Struct(StructDefinition),
+    TypeParameter(TypeParameterDefinition),
     UserDefinedValueType(UserDefinedValueTypeDefinition),
     Variable(VariableDefinition),
 }
@@ -137,9 +150,11 @@ impl Definition {
             Self::ImportedSymbol(imported_symbol_definition) => imported_symbol_definition.node_id,
             Self::Interface(interface_definition) => interface_definition.node_id,
             Self::Library(library_definition) => library_definition.node_id,
+            Self::Modifier(modifier_definition) => modifier_definition.node_id,
             Self::Parameter(parameter_definition) => parameter_definition.node_id,
             Self::StateVariable(state_variable_definition) => state_variable_definition.node_id,
             Self::Struct(struct_definition) => struct_definition.node_id,
+            Self::TypeParameter(parameter_definition) => parameter_definition.node_id,
             Self::UserDefinedValueType(udvt_definition) => udvt_definition.node_id,
             Self::Variable(variable_definition) => variable_definition.node_id,
         }
@@ -154,14 +169,14 @@ impl Definition {
             Self::Event(event_definition) => &event_definition.identifier,
             Self::Function(function_definition) => &function_definition.identifier,
             Self::Import(import_definition) => &import_definition.identifier,
-            Self::ImportedSymbol(imported_symbol_definition) => {
-                &imported_symbol_definition.identifier
-            }
+            Self::ImportedSymbol(symbol_definition) => &symbol_definition.identifier,
             Self::Interface(interface_definition) => &interface_definition.identifier,
             Self::Library(library_definition) => &library_definition.identifier,
+            Self::Modifier(modifier_definition) => &modifier_definition.identifier,
             Self::Parameter(parameter_definition) => &parameter_definition.identifier,
             Self::StateVariable(state_variable_definition) => &state_variable_definition.identifier,
             Self::Struct(struct_definition) => &struct_definition.identifier,
+            Self::TypeParameter(parameter_definition) => &parameter_definition.identifier,
             Self::UserDefinedValueType(udvt_definition) => &udvt_definition.identifier,
             Self::Variable(variable_definition) => &variable_definition.identifier,
         }
@@ -215,13 +230,11 @@ impl Definition {
     pub(crate) fn new_function(
         node_id: NodeId,
         identifier: &Rc<TerminalNode>,
-        function_scope_id: ScopeId,
         parameters_scope_id: ScopeId,
     ) -> Self {
         Self::Function(FunctionDefinition {
             node_id,
             identifier: Rc::clone(identifier),
-            function_scope_id,
             parameters_scope_id,
         })
     }
@@ -266,6 +279,13 @@ impl Definition {
         })
     }
 
+    pub(crate) fn new_modifier(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::Modifier(ModifierDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
     pub(crate) fn new_parameter(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::Parameter(ParameterDefinition {
             node_id,
@@ -282,6 +302,13 @@ impl Definition {
 
     pub(crate) fn new_struct(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::Struct(StructDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_type_parameter(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::TypeParameter(TypeParameterDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
@@ -432,10 +459,33 @@ impl FunctionScope {
     }
 }
 
+pub struct ModifierScope {
+    pub node_id: NodeId,
+    pub parent_scope_id: ScopeId,
+    pub definitions: HashMap<String, NodeId>,
+}
+
+impl ModifierScope {
+    fn new(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+        Self {
+            node_id,
+            parent_scope_id,
+            definitions: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
+        let symbol = definition.identifier().unparse();
+        let node_id = definition.node_id();
+        self.definitions.insert(symbol, node_id);
+    }
+}
+
 pub enum Scope {
     Contract(ContractScope),
     File(FileScope),
     Function(FunctionScope),
+    Modifier(ModifierScope),
     Parameters(ParametersScope),
 }
 
@@ -445,6 +495,7 @@ impl Scope {
             Self::Contract(contract_scope) => contract_scope.node_id,
             Self::File(file_scope) => file_scope.node_id,
             Self::Function(function_scope) => function_scope.node_id,
+            Self::Modifier(modifier_scope) => modifier_scope.node_id,
             Self::Parameters(parameters_scope) => parameters_scope.node_id,
         }
     }
@@ -454,6 +505,7 @@ impl Scope {
             Self::Contract(contract_scope) => contract_scope.insert_definition(definition),
             Self::File(file_scope) => file_scope.insert_definition(definition),
             Self::Function(function_scope) => function_scope.insert_definition(definition),
+            Self::Modifier(modifier_scope) => modifier_scope.insert_definition(definition),
             Self::Parameters(parameters_scope) => parameters_scope.insert_definition(definition),
         }
     }
@@ -476,6 +528,10 @@ impl Scope {
             parent_scope_id,
             parameters_scope_id,
         ))
+    }
+
+    pub(crate) fn new_modifier(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+        Self::Modifier(ModifierScope::new(node_id, parent_scope_id))
     }
 
     pub(crate) fn new_parameters(node_id: NodeId) -> Self {
@@ -631,6 +687,11 @@ impl Binder {
                     self.resolve_single_in_scope(function_scope.parameters_scope_id, symbol)
                 })
                 .or_else(|| self.resolve_single_in_scope(function_scope.parent_scope_id, symbol)),
+            Scope::Modifier(modifier_scope) => {
+                modifier_scope.definitions.get(symbol).copied().or_else(|| {
+                    self.resolve_single_in_scope(modifier_scope.parent_scope_id, symbol)
+                })
+            }
             Scope::Parameters(parameters_scope) => {
                 parameters_scope.definitions.get(symbol).copied()
             }

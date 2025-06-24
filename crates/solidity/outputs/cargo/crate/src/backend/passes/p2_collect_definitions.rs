@@ -242,17 +242,31 @@ impl Visitor for Pass {
                 }
             }
         }
-        let function_scope_id = self.binder.insert_scope(function_scope);
+        self.binder.insert_scope(function_scope);
 
         if let input_ir::FunctionName::Identifier(name) = &node.name {
-            let definition = Definition::new_function(
-                node.node_id,
-                name,
-                function_scope_id,
-                parameters_scope_id,
-            );
+            let definition = Definition::new_function(node.node_id, name, parameters_scope_id);
             self.insert_definition_in_current_scope(definition);
         }
+
+        true
+    }
+
+    fn enter_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) -> bool {
+        let mut modifier_scope = Scope::new_modifier(node.node_id, self.current_scope_id());
+        if let Some(parameters) = &node.parameters {
+            for parameter in &parameters.parameters {
+                if let Some(name) = &parameter.name {
+                    let definition = Definition::new_parameter(parameter.node_id, name);
+                    modifier_scope.insert_definition(&definition);
+                    self.binder.insert_definition(definition);
+                }
+            }
+        }
+        self.binder.insert_scope(modifier_scope);
+
+        let definition = Definition::new_modifier(node.node_id, &node.name);
+        self.insert_definition_in_current_scope(definition);
 
         true
     }
@@ -371,6 +385,38 @@ impl Visitor for Pass {
                 }
             };
             self.insert_definition_in_current_scope(definition);
+        }
+
+        false
+    }
+
+    fn enter_mapping_type(&mut self, node: &input_ir::MappingType) -> bool {
+        if let Some(name) = &node.key_type.name {
+            let definition = Definition::new_type_parameter(node.key_type.node_id, name);
+            self.binder.insert_definition(definition);
+        }
+        if let Some(name) = &node.value_type.name {
+            let definition = Definition::new_type_parameter(node.value_type.node_id, name);
+            self.binder.insert_definition(definition);
+        }
+
+        false
+    }
+
+    fn enter_function_type(&mut self, node: &input_ir::FunctionType) -> bool {
+        for parameter in &node.parameters.parameters {
+            if let Some(name) = &parameter.name {
+                let definition = Definition::new_type_parameter(parameter.node_id, name);
+                self.binder.insert_definition(definition);
+            }
+        }
+        if let Some(returns) = &node.returns {
+            for parameter in &returns.variables.parameters {
+                if let Some(name) = &parameter.name {
+                    let definition = Definition::new_type_parameter(parameter.node_id, name);
+                    self.binder.insert_definition(definition);
+                }
+            }
         }
 
         false
