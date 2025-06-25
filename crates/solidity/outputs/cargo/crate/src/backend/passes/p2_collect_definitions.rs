@@ -296,6 +296,85 @@ impl Visitor for Pass {
         self.leave_scope_for_node_id(node.node_id);
     }
 
+    fn enter_fallback_function_definition(
+        &mut self,
+        node: &input_ir::FallbackFunctionDefinition,
+    ) -> bool {
+        // TODO: we don't need a separate scope for the parameters here since
+        // the fallback function cannot be invoked with named arguments. Then
+        // again, the function scope requires a parameters scope. Maybe make
+        // that optional?
+        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
+        self.collect_parameters(&node.parameters.parameters, &mut parameters_scope);
+        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+
+        let mut function_scope =
+            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
+
+        if let Some(returns_declaration) = &node.returns {
+            self.collect_parameters(
+                &returns_declaration.variables.parameters,
+                &mut function_scope,
+            );
+        }
+
+        self.enter_scope(function_scope);
+
+        true
+    }
+
+    fn leave_fallback_function_definition(&mut self, node: &input_ir::FallbackFunctionDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_receive_function_definition(
+        &mut self,
+        node: &input_ir::ReceiveFunctionDefinition,
+    ) -> bool {
+        // TODO: we don't need a separate scope for the parameters here since
+        // the receive function cannot be invoked with named arguments. Then
+        // again, the function scope requires a parameters scope. Maybe make
+        // that optional?
+        // TODO: a receive function does not accept parameters. Should we update
+        // the language definition?
+        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
+        self.collect_parameters(&node.parameters.parameters, &mut parameters_scope);
+        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+
+        let function_scope =
+            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
+        self.enter_scope(function_scope);
+
+        true
+    }
+
+    fn leave_receive_function_definition(&mut self, node: &input_ir::ReceiveFunctionDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_unnamed_function_definition(
+        &mut self,
+        node: &input_ir::UnnamedFunctionDefinition,
+    ) -> bool {
+        // TODO: we don't need a separate scope for the parameters here since
+        // the unnamed function cannot be invoked with named arguments. Then
+        // again, the function scope requires a parameters scope. Maybe make
+        // that optional?
+        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
+        self.collect_parameters(&node.parameters.parameters, &mut parameters_scope);
+        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+
+        let function_scope =
+            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
+        self.enter_scope(function_scope);
+
+        true
+    }
+
+    fn leave_unnamed_function_definition(&mut self, node: &input_ir::UnnamedFunctionDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
     fn enter_enum_definition(&mut self, node: &input_ir::EnumDefinition) -> bool {
         let definition = Definition::new_enum(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
