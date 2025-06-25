@@ -7,6 +7,7 @@ pub enum slang_solidity::backend::binder::Definition
 pub slang_solidity::backend::binder::Definition::Constant(slang_solidity::backend::binder::ConstantDefinition)
 pub slang_solidity::backend::binder::Definition::Contract(slang_solidity::backend::binder::ContractDefinition)
 pub slang_solidity::backend::binder::Definition::Enum(slang_solidity::backend::binder::EnumDefinition)
+pub slang_solidity::backend::binder::Definition::EnumMember(slang_solidity::backend::binder::EnumMemberDefinition)
 pub slang_solidity::backend::binder::Definition::Error(slang_solidity::backend::binder::ErrorDefinition)
 pub slang_solidity::backend::binder::Definition::Event(slang_solidity::backend::binder::EventDefinition)
 pub slang_solidity::backend::binder::Definition::Function(slang_solidity::backend::binder::FunctionDefinition)
@@ -28,6 +29,7 @@ impl core::fmt::Debug for slang_solidity::backend::binder::Definition
 pub fn slang_solidity::backend::binder::Definition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::binder::Scope
 pub slang_solidity::backend::binder::Scope::Contract(slang_solidity::backend::binder::ContractScope)
+pub slang_solidity::backend::binder::Scope::Enum(slang_solidity::backend::binder::EnumScope)
 pub slang_solidity::backend::binder::Scope::File(slang_solidity::backend::binder::FileScope)
 pub slang_solidity::backend::binder::Scope::Function(slang_solidity::backend::binder::FunctionScope)
 pub slang_solidity::backend::binder::Scope::Modifier(slang_solidity::backend::binder::ModifierScope)
@@ -60,6 +62,14 @@ pub slang_solidity::backend::binder::EnumDefinition::identifier: alloc::rc::Rc<s
 pub slang_solidity::backend::binder::EnumDefinition::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::binder::EnumDefinition
 pub fn slang_solidity::backend::binder::EnumDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::EnumMemberDefinition
+pub slang_solidity::backend::binder::EnumMemberDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::binder::EnumMemberDefinition::node_id: metaslang_cst::nodes::NodeId
+impl core::fmt::Debug for slang_solidity::backend::binder::EnumMemberDefinition
+pub fn slang_solidity::backend::binder::EnumMemberDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::EnumScope
+pub slang_solidity::backend::binder::EnumScope::definitions: std::collections::hash::map::HashMap<alloc::string::String, metaslang_cst::nodes::NodeId>
+pub slang_solidity::backend::binder::EnumScope::node_id: metaslang_cst::nodes::NodeId
 pub struct slang_solidity::backend::binder::ErrorDefinition
 pub slang_solidity::backend::binder::ErrorDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::binder::ErrorDefinition::node_id: metaslang_cst::nodes::NodeId

@@ -275,7 +275,15 @@ impl Visitor for Pass {
         let definition = Definition::new_enum(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
 
-        true
+        let mut enum_scope = Scope::new_enum(node.node_id);
+        for member in &node.members {
+            let definition = Definition::new_enum_member(member.id(), member);
+            enum_scope.insert_definition(&definition);
+            self.binder.insert_definition(definition);
+        }
+        self.binder.insert_scope(enum_scope);
+
+        false
     }
 
     fn enter_struct_definition(&mut self, node: &input_ir::StructDefinition) -> bool {

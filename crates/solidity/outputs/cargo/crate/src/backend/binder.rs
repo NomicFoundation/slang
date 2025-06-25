@@ -27,6 +27,12 @@ pub struct EnumDefinition {
 }
 
 #[derive(Debug)]
+pub struct EnumMemberDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
 pub struct ErrorDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
@@ -121,6 +127,7 @@ pub enum Definition {
     Constant(ConstantDefinition),
     Contract(ContractDefinition),
     Enum(EnumDefinition),
+    EnumMember(EnumMemberDefinition),
     Error(ErrorDefinition),
     Event(EventDefinition),
     Function(FunctionDefinition),
@@ -143,6 +150,7 @@ impl Definition {
             Self::Constant(constant_definition) => constant_definition.node_id,
             Self::Contract(contract_definition) => contract_definition.node_id,
             Self::Enum(enum_definition) => enum_definition.node_id,
+            Self::EnumMember(enum_member_definition) => enum_member_definition.node_id,
             Self::Error(error_definition) => error_definition.node_id,
             Self::Event(event_definition) => event_definition.node_id,
             Self::Function(function_definition) => function_definition.node_id,
@@ -165,6 +173,7 @@ impl Definition {
             Self::Constant(constant_definition) => &constant_definition.identifier,
             Self::Contract(contract_definition) => &contract_definition.identifier,
             Self::Enum(enum_definition) => &enum_definition.identifier,
+            Self::EnumMember(enum_member_definition) => &enum_member_definition.identifier,
             Self::Error(error_definition) => &error_definition.identifier,
             Self::Event(event_definition) => &event_definition.identifier,
             Self::Function(function_definition) => &function_definition.identifier,
@@ -198,6 +207,13 @@ impl Definition {
 
     pub(crate) fn new_enum(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::Enum(EnumDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_enum_member(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::EnumMember(EnumMemberDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
@@ -353,6 +369,52 @@ impl Reference {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ScopeId(usize);
 
+pub struct ContractScope {
+    pub node_id: NodeId,
+    pub file_scope_id: ScopeId,
+    pub definitions: HashMap<String, Vec<NodeId>>,
+}
+
+impl ContractScope {
+    fn new(node_id: NodeId, file_scope_id: ScopeId) -> Self {
+        Self {
+            node_id,
+            file_scope_id,
+            definitions: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
+        let symbol = definition.identifier().unparse();
+        let node_id = definition.node_id();
+        if let Some(definitions) = self.definitions.get_mut(&symbol) {
+            definitions.push(node_id);
+        } else {
+            self.definitions.insert(symbol, vec![node_id]);
+        }
+    }
+}
+
+pub struct EnumScope {
+    pub node_id: NodeId,
+    pub definitions: HashMap<String, NodeId>,
+}
+
+impl EnumScope {
+    fn new(node_id: NodeId) -> Self {
+        Self {
+            node_id,
+            definitions: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
+        let symbol = definition.identifier().unparse();
+        let node_id = definition.node_id();
+        self.definitions.insert(symbol, node_id);
+    }
+}
+
 pub struct FileScope {
     pub node_id: NodeId,
     pub file_id: String,
@@ -386,52 +448,6 @@ impl FileScope {
 
     fn lookup_symbol(&self, symbol: &str) -> Vec<NodeId> {
         self.definitions.get(symbol).cloned().unwrap_or(Vec::new())
-    }
-}
-
-pub struct ContractScope {
-    pub node_id: NodeId,
-    pub file_scope_id: ScopeId,
-    pub definitions: HashMap<String, Vec<NodeId>>,
-}
-
-impl ContractScope {
-    fn new(node_id: NodeId, file_scope_id: ScopeId) -> Self {
-        Self {
-            node_id,
-            file_scope_id,
-            definitions: HashMap::new(),
-        }
-    }
-
-    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
-        let symbol = definition.identifier().unparse();
-        let node_id = definition.node_id();
-        if let Some(definitions) = self.definitions.get_mut(&symbol) {
-            definitions.push(node_id);
-        } else {
-            self.definitions.insert(symbol, vec![node_id]);
-        }
-    }
-}
-
-pub struct ParametersScope {
-    pub node_id: NodeId,
-    pub definitions: HashMap<String, NodeId>,
-}
-
-impl ParametersScope {
-    fn new(node_id: NodeId) -> Self {
-        Self {
-            node_id,
-            definitions: HashMap::new(),
-        }
-    }
-
-    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
-        let symbol = definition.identifier().unparse();
-        let node_id = definition.node_id();
-        self.definitions.insert(symbol, node_id);
     }
 }
 
@@ -481,8 +497,29 @@ impl ModifierScope {
     }
 }
 
+pub struct ParametersScope {
+    pub node_id: NodeId,
+    pub definitions: HashMap<String, NodeId>,
+}
+
+impl ParametersScope {
+    fn new(node_id: NodeId) -> Self {
+        Self {
+            node_id,
+            definitions: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
+        let symbol = definition.identifier().unparse();
+        let node_id = definition.node_id();
+        self.definitions.insert(symbol, node_id);
+    }
+}
+
 pub enum Scope {
     Contract(ContractScope),
+    Enum(EnumScope),
     File(FileScope),
     Function(FunctionScope),
     Modifier(ModifierScope),
@@ -493,6 +530,7 @@ impl Scope {
     pub fn node_id(&self) -> NodeId {
         match self {
             Self::Contract(contract_scope) => contract_scope.node_id,
+            Self::Enum(enum_scope) => enum_scope.node_id,
             Self::File(file_scope) => file_scope.node_id,
             Self::Function(function_scope) => function_scope.node_id,
             Self::Modifier(modifier_scope) => modifier_scope.node_id,
@@ -503,6 +541,7 @@ impl Scope {
     pub(crate) fn insert_definition(&mut self, definition: &Definition) {
         match self {
             Self::Contract(contract_scope) => contract_scope.insert_definition(definition),
+            Self::Enum(enum_scope) => enum_scope.insert_definition(definition),
             Self::File(file_scope) => file_scope.insert_definition(definition),
             Self::Function(function_scope) => function_scope.insert_definition(definition),
             Self::Modifier(modifier_scope) => modifier_scope.insert_definition(definition),
@@ -512,6 +551,10 @@ impl Scope {
 
     pub(crate) fn new_contract(node_id: NodeId, file_scope_id: ScopeId) -> Self {
         Self::Contract(ContractScope::new(node_id, file_scope_id))
+    }
+
+    pub(crate) fn new_enum(node_id: NodeId) -> Self {
+        Self::Enum(EnumScope::new(node_id))
     }
 
     pub(crate) fn new_file(node_id: NodeId, file_id: &str) -> Self {
@@ -671,14 +714,15 @@ impl Binder {
     ) -> Option<NodeId> {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
-            Scope::File(file_scope) => {
-                self.resolve_single_in_file_scope(&file_scope.file_id, symbol)
-            }
             Scope::Contract(contract_scope) => contract_scope
                 .definitions
                 .get(symbol)
                 .and_then(|definitions| definitions.first().copied())
                 .or_else(|| self.resolve_single_in_scope(contract_scope.file_scope_id, symbol)),
+            Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).copied(),
+            Scope::File(file_scope) => {
+                self.resolve_single_in_file_scope(&file_scope.file_id, symbol)
+            }
             Scope::Function(function_scope) => function_scope
                 .definitions
                 .get(symbol)
