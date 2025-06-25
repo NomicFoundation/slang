@@ -90,6 +90,17 @@ impl Pass {
         file_scope
     }
 
+    fn current_non_yul_scope_id(&self) -> ScopeId {
+        // look for the first non-yul scope in the stack
+        for scope_id in self.scope_stack.iter().rev() {
+            match self.binder.get_scope_by_id(*scope_id) {
+                Scope::YulBlock(_) | Scope::YulFunction(_) => continue,
+                _ => return *scope_id,
+            }
+        }
+        unreachable!("cannot find a non Yul scope in the current scope stack");
+    }
+
     fn insert_definition_in_current_scope(&mut self, definition: Definition) {
         self.current_scope().insert_definition(&definition);
         self.binder.insert_definition(definition);
@@ -592,6 +603,68 @@ impl Visitor for Pass {
                 }
             }
         }
+
+        false
+    }
+
+    fn enter_yul_block(&mut self, node: &input_ir::YulBlock) -> bool {
+        let scope = Scope::new_yul_block(node.node_id, self.current_scope_id());
+        self.enter_scope(scope);
+
+        true
+    }
+
+    fn leave_yul_block(&mut self, node: &input_ir::YulBlock) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_yul_function_definition(&mut self, node: &input_ir::YulFunctionDefinition) -> bool {
+        let definition = Definition::new_yul_function(node.node_id, &node.name);
+        self.insert_definition_in_current_scope(definition);
+
+        let enclosing_scope_id = self.current_non_yul_scope_id();
+        let mut scope = Scope::new_yul_function(node.node_id, enclosing_scope_id);
+        for parameter in &node.parameters.parameters {
+            let definition = Definition::new_parameter(parameter.id(), parameter);
+            scope.insert_definition(&definition);
+            self.binder.insert_definition(definition);
+        }
+        if let Some(returns) = &node.returns {
+            for parameter in &returns.variables {
+                let definition = Definition::new_parameter(parameter.id(), parameter);
+                scope.insert_definition(&definition);
+                self.binder.insert_definition(definition);
+            }
+        }
+        self.enter_scope(scope);
+
+        true
+    }
+
+    fn leave_yul_function_definition(&mut self, node: &input_ir::YulFunctionDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_yul_label(&mut self, node: &input_ir::YulLabel) -> bool {
+        let definition = Definition::new_yul_label(node.node_id, &node.label);
+        self.insert_definition_in_current_scope(definition);
+
+        false
+    }
+
+    fn enter_yul_variable_declaration_statement(
+        &mut self,
+        node: &input_ir::YulVariableDeclarationStatement,
+    ) -> bool {
+        for variable in &node.variables {
+            let definition = Definition::new_variable(variable.id(), variable);
+            self.insert_definition_in_current_scope(definition);
+        }
+        // TODO: we maybe want to enter a new scope here, but that should be
+        // only relevant for validation (ie. to avoid referencing a variable
+        // before declaring it). If we do that, we need to take special care of
+        // where we insert label and function definitions, since those are
+        // hoisted in the block.
 
         false
     }
