@@ -510,6 +510,60 @@ impl Visitor for Pass {
         false
     }
 
+    fn enter_block(&mut self, _node: &input_ir::Block) -> bool {
+        // TODO: For Solidity >= 0.5.0 we should create and enter a new scope.
+        // Possibly want to handle this by implementing
+        // `enter_statement`/`leave_statement` instead, since a `Block` is used
+        // in other circumstances.
+        true
+    }
+
+    fn leave_block(&mut self, _node: &input_ir::Block) {
+        // TODO: For Solidity >= 0.5.0 we should leave the current scope
+    }
+
+    fn enter_for_statement(&mut self, _node: &input_ir::ForStatement) -> bool {
+        // TODO: Solidity >= 0.5.0 needs special treatment for the declarations
+        // in the initialization clause of the for statement, ie. they need to
+        // be available in the condition and in the increment expression, as
+        // well as the body.
+        true
+    }
+
+    fn leave_for_statement(&mut self, _node: &input_ir::ForStatement) {
+        // TODO: For Solidity >= 0.5.0, possibly handle leaving the current scope
+    }
+
+    fn enter_try_statement(&mut self, node: &input_ir::TryStatement) -> bool {
+        if let Some(returns) = &node.returns {
+            // TODO: fix the scope here when implementing the correct handling of
+            // C99 scopes for Solidity >= 0.5.0. For now we want to collect the
+            // parameters in the returns declaration of the try statement, but
+            // the parameters need to be available in the block. Maybe do this
+            // in leave_try_statement instead, once we have a scope declared for
+            // the block?
+            let mut parameters_scope = Scope::new_parameters(returns.node_id);
+            self.collect_parameters(&returns.variables.parameters, &mut parameters_scope);
+            self.binder.insert_scope(parameters_scope);
+        }
+
+        true
+    }
+
+    fn enter_catch_clause(&mut self, node: &input_ir::CatchClause) -> bool {
+        if let Some(error) = &node.error {
+            // TODO: fix the scope here when implementing the correct handling
+            // of C99 scopes for Solidity >= 0.5.0. For now we want to collect
+            // the parameters in the catch clause, but the parameters need to be
+            // available in the block.
+            let mut parameters_scope = Scope::new_parameters(error.node_id);
+            self.collect_parameters(&error.parameters.parameters, &mut parameters_scope);
+            self.binder.insert_scope(parameters_scope);
+        }
+
+        true
+    }
+
     fn enter_mapping_type(&mut self, node: &input_ir::MappingType) -> bool {
         if let Some(name) = &node.key_type.name {
             let definition = Definition::new_type_parameter(node.key_type.node_id, name);
