@@ -129,6 +129,18 @@ pub struct VariableDefinition {
 }
 
 #[derive(Debug)]
+pub struct YulLabelDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
+pub struct YulFunctionDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
 pub enum Definition {
     Constant(ConstantDefinition),
     Contract(ContractDefinition),
@@ -149,6 +161,8 @@ pub enum Definition {
     TypeParameter(TypeParameterDefinition),
     UserDefinedValueType(UserDefinedValueTypeDefinition),
     Variable(VariableDefinition),
+    YulLabel(YulLabelDefinition),
+    YulFunction(YulFunctionDefinition),
 }
 
 impl Definition {
@@ -173,6 +187,8 @@ impl Definition {
             Self::TypeParameter(parameter_definition) => parameter_definition.node_id,
             Self::UserDefinedValueType(udvt_definition) => udvt_definition.node_id,
             Self::Variable(variable_definition) => variable_definition.node_id,
+            Self::YulLabel(label_definition) => label_definition.node_id,
+            Self::YulFunction(function_definition) => function_definition.node_id,
         }
     }
 
@@ -197,6 +213,8 @@ impl Definition {
             Self::TypeParameter(parameter_definition) => &parameter_definition.identifier,
             Self::UserDefinedValueType(udvt_definition) => &udvt_definition.identifier,
             Self::Variable(variable_definition) => &variable_definition.identifier,
+            Self::YulLabel(label_definition) => &label_definition.identifier,
+            Self::YulFunction(function_definition) => &function_definition.identifier,
         }
     }
 
@@ -358,6 +376,20 @@ impl Definition {
 
     pub(crate) fn new_variable(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::Variable(VariableDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_yul_label(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::YulLabel(YulLabelDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_yul_function(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::YulFunction(YulFunctionDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
@@ -559,6 +591,50 @@ impl StructScope {
     }
 }
 
+pub struct YulBlockScope {
+    pub node_id: NodeId,
+    pub parent_scope_id: ScopeId,
+    pub definitions: HashMap<String, NodeId>,
+}
+
+impl YulBlockScope {
+    fn new(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+        Self {
+            node_id,
+            parent_scope_id,
+            definitions: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
+        let symbol = definition.identifier().unparse();
+        let node_id = definition.node_id();
+        self.definitions.insert(symbol, node_id);
+    }
+}
+
+pub struct YulFunctionScope {
+    pub node_id: NodeId,
+    pub enclosing_scope_id: ScopeId,
+    pub definitions: HashMap<String, NodeId>,
+}
+
+impl YulFunctionScope {
+    fn new(node_id: NodeId, enclosing_scope_id: ScopeId) -> Self {
+        Self {
+            node_id,
+            enclosing_scope_id,
+            definitions: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
+        let symbol = definition.identifier().unparse();
+        let node_id = definition.node_id();
+        self.definitions.insert(symbol, node_id);
+    }
+}
+
 pub enum Scope {
     Contract(ContractScope),
     Enum(EnumScope),
@@ -567,6 +643,8 @@ pub enum Scope {
     Modifier(ModifierScope),
     Parameters(ParametersScope),
     Struct(StructScope),
+    YulBlock(YulBlockScope),
+    YulFunction(YulFunctionScope),
 }
 
 impl Scope {
@@ -579,6 +657,8 @@ impl Scope {
             Self::Modifier(modifier_scope) => modifier_scope.node_id,
             Self::Parameters(parameters_scope) => parameters_scope.node_id,
             Self::Struct(struct_scope) => struct_scope.node_id,
+            Self::YulBlock(yul_block_scope) => yul_block_scope.node_id,
+            Self::YulFunction(yul_function_scope) => yul_function_scope.node_id,
         }
     }
 
@@ -591,6 +671,8 @@ impl Scope {
             Self::Modifier(modifier_scope) => modifier_scope.insert_definition(definition),
             Self::Parameters(parameters_scope) => parameters_scope.insert_definition(definition),
             Self::Struct(struct_scope) => struct_scope.insert_definition(definition),
+            Self::YulBlock(yul_block_scope) => yul_block_scope.insert_definition(definition),
+            Self::YulFunction(function_scope) => function_scope.insert_definition(definition),
         }
     }
 
@@ -628,6 +710,14 @@ impl Scope {
 
     pub(crate) fn new_struct(node_id: NodeId) -> Self {
         Self::Struct(StructScope::new(node_id))
+    }
+
+    pub(crate) fn new_yul_block(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+        Self::YulBlock(YulBlockScope::new(node_id, parent_scope_id))
+    }
+
+    pub(crate) fn new_yul_function(node_id: NodeId, enclosing_scope_id: ScopeId) -> Self {
+        Self::YulFunction(YulFunctionScope::new(node_id, enclosing_scope_id))
     }
 }
 
@@ -789,6 +879,18 @@ impl Binder {
                 parameters_scope.definitions.get(symbol).copied()
             }
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).copied(),
+            Scope::YulBlock(yul_block_scope) => yul_block_scope
+                .definitions
+                .get(symbol)
+                .copied()
+                .or_else(|| self.resolve_single_in_scope(yul_block_scope.parent_scope_id, symbol)),
+            Scope::YulFunction(yul_function_scope) => yul_function_scope
+                .definitions
+                .get(symbol)
+                .copied()
+                .or_else(|| {
+                    self.resolve_single_in_scope(yul_function_scope.enclosing_scope_id, symbol)
+                }),
         }
     }
 }
