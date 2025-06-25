@@ -16,18 +16,18 @@ pub fn generate_passes(
     // L0: CST:
     let cst_model = IrModel::from_language("cst", language);
 
-    // L1: typed CST:
-    let l1_typed_cst_model = build_l1_typed_cst_model(&cst_model);
-    let l1_typed_cst_output_dir = ir_output_dir.join(&l1_typed_cst_model.target.name);
+    // L1: structured AST:
+    let l1_structured_ast_model = build_l1_structured_ast_model(&cst_model);
+    let l1_structured_ast_output_dir = ir_output_dir.join(&l1_structured_ast_model.target.name);
     CodegenRuntime::render_product(
         fs,
         &ir_input_dir,
-        &l1_typed_cst_output_dir,
-        &l1_typed_cst_model,
+        &l1_structured_ast_output_dir,
+        &l1_structured_ast_model,
     )?;
 
     // L2: flat contract specifiers:
-    let l2_flat_contracts_model = build_l2_flat_contracts_model(&l1_typed_cst_model.target);
+    let l2_flat_contracts_model = build_l2_flat_contracts_model(&l1_structured_ast_model.target);
     let l2_flat_contracts_output_dir = ir_output_dir.join(&l2_flat_contracts_model.target.name);
     CodegenRuntime::render_product(
         fs,
@@ -39,11 +39,11 @@ pub fn generate_passes(
     Ok(())
 }
 
-fn build_l1_typed_cst_model(cst_model: &IrModel) -> ModelWithBuilder {
-    let mut l1_typed_cst_model = IrModel::from_model("l1_typed_cst", cst_model);
+fn build_l1_structured_ast_model(cst_model: &IrModel) -> ModelWithBuilder {
+    let mut l1_structured_ast_model = IrModel::from_model("l1_structured_ast", cst_model);
 
     // remove fields from sequences that contain redundant terminal nodes
-    for (_, sequence) in &mut l1_typed_cst_model.sequences {
+    for (_, sequence) in &mut l1_structured_ast_model.sequences {
         if sequence.multiple_operators {
             // don't remove terminals if the sequence is modelling a precedence
             // expression with multiple variant operators
@@ -52,15 +52,18 @@ fn build_l1_typed_cst_model(cst_model: &IrModel) -> ModelWithBuilder {
         sequence.fields.retain(|field| {
             field.is_optional
                 || !field.is_terminal
-                || !l1_typed_cst_model.unique_terminals.contains(&field.r#type)
+                || !l1_structured_ast_model
+                    .unique_terminals
+                    .contains(&field.r#type)
         });
     }
 
-    ModelWithBuilder::new(cst_model, l1_typed_cst_model)
+    ModelWithBuilder::new(cst_model, l1_structured_ast_model)
 }
 
-fn build_l2_flat_contracts_model(typed_cst_model: &IrModel) -> ModelWithTransformer {
-    let mut l2_flat_contracts_model = IrModel::from_model("l2_flat_contracts", typed_cst_model);
+fn build_l2_flat_contracts_model(structured_ast_model: &IrModel) -> ModelWithTransformer {
+    let mut l2_flat_contracts_model =
+        IrModel::from_model("l2_flat_contracts", structured_ast_model);
 
     // L2 is for now only a proof of concept for rendering transfomation code
     // from previous trees. Therefore, the following modifications are (a
@@ -82,5 +85,5 @@ fn build_l2_flat_contracts_model(typed_cst_model: &IrModel) -> ModelWithTransfor
         true,
     );
 
-    ModelWithTransformer::new(typed_cst_model, l2_flat_contracts_model)
+    ModelWithTransformer::new(structured_ast_model, l2_flat_contracts_model)
 }
