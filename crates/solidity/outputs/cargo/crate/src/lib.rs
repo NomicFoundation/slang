@@ -9,7 +9,7 @@
 //!
 //! ```
 //! use slang_solidity::parser::Parser;
-//! use slang_solidity::LanguageFacts;
+//! use slang_solidity::utils::LanguageFacts;
 //!
 //! let source = "contract Foo {}";
 //! let parser = Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
@@ -20,13 +20,20 @@
 //! [`Cursors`][`crate::cst::Cursor`] are the simplest way to navigate a CST. The below example shows how you might
 //! use cursors to list all of the contract names in a source file.
 //! ```
-//! // Step 1 (not shown): get a parse tree
+//! // Step 1 (not shown): get a parse tree, for instance with the code above.
+//! # use slang_solidity::cst::NonterminalKind;
+//! # use slang_solidity::parser::Parser;
+//! # use slang_solidity::utils::LanguageFacts;
+//! #
+//! # let source = "contract Foo {}";
+//! # let parser = Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
+//! # let parse_output = parser.parse_file_contents(&source);
 //! // Step 2: Get a cursor
-//! let mut cursor = tree.create_tree_cursor();
+//! let mut cursor = parse_output.create_tree_cursor();
 //!
 //! // Step 3: Use the cursor to navigate to all `ContractDefinition`'s and print out their names
 //! while cursor.go_to_next_nonterminal_with_kind(NonterminalKind::ContractDefinition) {
-//!     println!("Contract: {}", cursor.node.unparse());
+//!     println!("Contract: {}", cursor.node().unparse());
 //! }
 //! ```
 

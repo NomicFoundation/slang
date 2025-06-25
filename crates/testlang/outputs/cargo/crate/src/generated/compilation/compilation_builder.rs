@@ -13,7 +13,44 @@ use crate::compilation::internal_builder::{
 use crate::compilation::CompilationUnit;
 use crate::cst::Cursor;
 
-/// User-provided options and callbacks necessary for the `CompilationBuilder` to perform its job.
+/// A `CompilationBuilder` is a convenient utility to build a `CompilationUnit` for a multi-file project.
+/// In order to do its job, the user must provide the necessary callbacks to obtain each file.
+/// Example:
+///
+/// ```
+/// struct MyProjectConfig {
+/// }
+///
+/// impl CompilationBuilderConfig<String> for MyProjectConfig {
+///   fn read_file(&self, file_id: &str) -> std::result::Result<Option<String>, String> {
+///       match file_id {
+///         "b.sol" => Ok(Some("require 'a.sol'; contract B is A { }".into())),
+///         "a.sol" => Ok(Some("contract A { }".into())),
+///         _ => Err(format!("Unknown file: {file_id}"))
+///       }
+///   }
+///
+///   fn resolve_import(
+///       &self,
+///       source_file_id: &str,
+///       import_path_cursor: &slang_solidity::cst::Cursor,
+///   ) -> std::result::Result<Option<String>, String> {
+///       let import_path = import_path_cursor.node().unparse();
+///       let import_path = import_path[1..-1]; // strip off the quotes
+///
+///       Ok(import_path)
+///   }
+/// }
+///
+/// # use slang_solidity::utils::LanguageFacts;
+/// let config = MyProjectConfig { };
+/// let builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, &config);
+/// builder.add_file("b.sol")?;
+/// let unit = builder.build();
+/// assert_eq!(unit.files().len(), 2);
+/// ```
+
+/// User-provided callbacks necessary for the `CompilationBuilder` to perform its job.
 pub trait CompilationBuilderConfig<E> {
     /// Callback used by this builder to load the contents of a file.
     ///
@@ -68,7 +105,7 @@ impl<E: Error + 'static> Error for AddFileError<E> {
 }
 
 impl<'b, E> CompilationBuilder<'b, E> {
-    /// Creates a new compilation builder for the specified language version.
+    /// Creates a new compilation builder for the specified language version and callbacks.
     pub fn new(
         version: Version,
         config: &'b dyn CompilationBuilderConfig<E>,

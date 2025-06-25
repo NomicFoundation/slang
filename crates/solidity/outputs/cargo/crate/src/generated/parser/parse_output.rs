@@ -8,8 +8,13 @@ use crate::parser::ParseError;
 /// The result of parsing source code using [`Parser`][`crate::parser::Parser`].
 ///
 /// ```
+/// # use slang_solidity::parser::Parser;
+/// # use slang_solidity::utils::LanguageFacts;
+/// #
+/// # let source = "contract Foo {}";
+/// # let parser = Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
 /// // Initialize a parser and get some source code to parse...
-/// let output = parser.parse_file_contents(&source_code);
+/// let output = parser.parse_file_contents(&source);
 ///
 /// for err in output.errors() {
 ///     // Handle any parse errors
