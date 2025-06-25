@@ -105,6 +105,12 @@ pub struct StructDefinition {
 }
 
 #[derive(Debug)]
+pub struct StructMemberDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
 pub struct TypeParameterDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
@@ -139,6 +145,7 @@ pub enum Definition {
     Parameter(ParameterDefinition),
     StateVariable(StateVariableDefinition),
     Struct(StructDefinition),
+    StructMember(StructMemberDefinition),
     TypeParameter(TypeParameterDefinition),
     UserDefinedValueType(UserDefinedValueTypeDefinition),
     Variable(VariableDefinition),
@@ -162,6 +169,7 @@ impl Definition {
             Self::Parameter(parameter_definition) => parameter_definition.node_id,
             Self::StateVariable(state_variable_definition) => state_variable_definition.node_id,
             Self::Struct(struct_definition) => struct_definition.node_id,
+            Self::StructMember(struct_member_definition) => struct_member_definition.node_id,
             Self::TypeParameter(parameter_definition) => parameter_definition.node_id,
             Self::UserDefinedValueType(udvt_definition) => udvt_definition.node_id,
             Self::Variable(variable_definition) => variable_definition.node_id,
@@ -185,6 +193,7 @@ impl Definition {
             Self::Parameter(parameter_definition) => &parameter_definition.identifier,
             Self::StateVariable(state_variable_definition) => &state_variable_definition.identifier,
             Self::Struct(struct_definition) => &struct_definition.identifier,
+            Self::StructMember(struct_member_definition) => &struct_member_definition.identifier,
             Self::TypeParameter(parameter_definition) => &parameter_definition.identifier,
             Self::UserDefinedValueType(udvt_definition) => &udvt_definition.identifier,
             Self::Variable(variable_definition) => &variable_definition.identifier,
@@ -318,6 +327,13 @@ impl Definition {
 
     pub(crate) fn new_struct(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::Struct(StructDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
+    pub(crate) fn new_struct_member(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::StructMember(StructMemberDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
@@ -517,6 +533,26 @@ impl ParametersScope {
     }
 }
 
+pub struct StructScope {
+    pub node_id: NodeId,
+    pub definitions: HashMap<String, NodeId>,
+}
+
+impl StructScope {
+    fn new(node_id: NodeId) -> Self {
+        Self {
+            node_id,
+            definitions: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
+        let symbol = definition.identifier().unparse();
+        let node_id = definition.node_id();
+        self.definitions.insert(symbol, node_id);
+    }
+}
+
 pub enum Scope {
     Contract(ContractScope),
     Enum(EnumScope),
@@ -524,6 +560,7 @@ pub enum Scope {
     Function(FunctionScope),
     Modifier(ModifierScope),
     Parameters(ParametersScope),
+    Struct(StructScope),
 }
 
 impl Scope {
@@ -535,6 +572,7 @@ impl Scope {
             Self::Function(function_scope) => function_scope.node_id,
             Self::Modifier(modifier_scope) => modifier_scope.node_id,
             Self::Parameters(parameters_scope) => parameters_scope.node_id,
+            Self::Struct(struct_scope) => struct_scope.node_id,
         }
     }
 
@@ -546,6 +584,7 @@ impl Scope {
             Self::Function(function_scope) => function_scope.insert_definition(definition),
             Self::Modifier(modifier_scope) => modifier_scope.insert_definition(definition),
             Self::Parameters(parameters_scope) => parameters_scope.insert_definition(definition),
+            Self::Struct(struct_scope) => struct_scope.insert_definition(definition),
         }
     }
 
@@ -579,6 +618,10 @@ impl Scope {
 
     pub(crate) fn new_parameters(node_id: NodeId) -> Self {
         Self::Parameters(ParametersScope::new(node_id))
+    }
+
+    pub(crate) fn new_struct(node_id: NodeId) -> Self {
+        Self::Struct(StructScope::new(node_id))
     }
 }
 
@@ -739,6 +782,7 @@ impl Binder {
             Scope::Parameters(parameters_scope) => {
                 parameters_scope.definitions.get(symbol).copied()
             }
+            Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).copied(),
         }
     }
 }

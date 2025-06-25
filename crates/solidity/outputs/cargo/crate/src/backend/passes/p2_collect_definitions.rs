@@ -290,7 +290,15 @@ impl Visitor for Pass {
         let definition = Definition::new_struct(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
 
-        true
+        let mut struct_scope = Scope::new_struct(node.node_id);
+        for member in &node.members {
+            let definition = Definition::new_struct_member(member.node_id, &member.name);
+            struct_scope.insert_definition(&definition);
+            self.binder.insert_definition(definition);
+        }
+        self.binder.insert_scope(struct_scope);
+
+        false
     }
 
     fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {

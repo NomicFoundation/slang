@@ -19,6 +19,7 @@ pub slang_solidity::backend::binder::Definition::Modifier(slang_solidity::backen
 pub slang_solidity::backend::binder::Definition::Parameter(slang_solidity::backend::binder::ParameterDefinition)
 pub slang_solidity::backend::binder::Definition::StateVariable(slang_solidity::backend::binder::StateVariableDefinition)
 pub slang_solidity::backend::binder::Definition::Struct(slang_solidity::backend::binder::StructDefinition)
+pub slang_solidity::backend::binder::Definition::StructMember(slang_solidity::backend::binder::StructMemberDefinition)
 pub slang_solidity::backend::binder::Definition::TypeParameter(slang_solidity::backend::binder::TypeParameterDefinition)
 pub slang_solidity::backend::binder::Definition::UserDefinedValueType(slang_solidity::backend::binder::UserDefinedValueTypeDefinition)
 pub slang_solidity::backend::binder::Definition::Variable(slang_solidity::backend::binder::VariableDefinition)
@@ -34,6 +35,7 @@ pub slang_solidity::backend::binder::Scope::File(slang_solidity::backend::binder
 pub slang_solidity::backend::binder::Scope::Function(slang_solidity::backend::binder::FunctionScope)
 pub slang_solidity::backend::binder::Scope::Modifier(slang_solidity::backend::binder::ModifierScope)
 pub slang_solidity::backend::binder::Scope::Parameters(slang_solidity::backend::binder::ParametersScope)
+pub slang_solidity::backend::binder::Scope::Struct(slang_solidity::backend::binder::StructScope)
 impl slang_solidity::backend::binder::Scope
 pub fn slang_solidity::backend::binder::Scope::node_id(&self) -> metaslang_cst::nodes::NodeId
 pub struct slang_solidity::backend::binder::Binder
@@ -163,6 +165,14 @@ pub slang_solidity::backend::binder::StructDefinition::identifier: alloc::rc::Rc
 pub slang_solidity::backend::binder::StructDefinition::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::binder::StructDefinition
 pub fn slang_solidity::backend::binder::StructDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::StructMemberDefinition
+pub slang_solidity::backend::binder::StructMemberDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::binder::StructMemberDefinition::node_id: metaslang_cst::nodes::NodeId
+impl core::fmt::Debug for slang_solidity::backend::binder::StructMemberDefinition
+pub fn slang_solidity::backend::binder::StructMemberDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::StructScope
+pub slang_solidity::backend::binder::StructScope::definitions: std::collections::hash::map::HashMap<alloc::string::String, metaslang_cst::nodes::NodeId>
+pub slang_solidity::backend::binder::StructScope::node_id: metaslang_cst::nodes::NodeId
 pub struct slang_solidity::backend::binder::TypeParameterDefinition
 pub slang_solidity::backend::binder::TypeParameterDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::binder::TypeParameterDefinition::node_id: metaslang_cst::nodes::NodeId
