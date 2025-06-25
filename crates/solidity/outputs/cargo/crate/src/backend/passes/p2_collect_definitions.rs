@@ -114,6 +114,16 @@ impl Pass {
 
         // TODO(validation): emit an error/warning if the file cannot be resolved
     }
+
+    fn collect_parameters(&mut self, parameters: &input_ir::Parameters, scope: &mut Scope) {
+        for parameter in parameters {
+            if let Some(name) = &parameter.name {
+                let definition = Definition::new_parameter(parameter.node_id, name);
+                scope.insert_definition(&definition);
+                self.binder.insert_definition(definition);
+            }
+        }
+    }
 }
 
 impl Visitor for Pass {
@@ -221,54 +231,69 @@ impl Visitor for Pass {
 
     fn enter_function_definition(&mut self, node: &input_ir::FunctionDefinition) -> bool {
         let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        for parameter in &node.parameters.parameters {
-            if let Some(name) = &parameter.name {
-                let definition = Definition::new_parameter(parameter.node_id, name);
-                parameters_scope.insert_definition(&definition);
-                self.binder.insert_definition(definition);
-            }
-        }
+        self.collect_parameters(&node.parameters.parameters, &mut parameters_scope);
         let parameters_scope_id = self.binder.insert_scope(parameters_scope);
 
         let mut function_scope =
             Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
 
         if let Some(returns_declaration) = &node.returns {
-            for variable in &returns_declaration.variables.parameters {
-                if let Some(name) = &variable.name {
-                    let definition = Definition::new_parameter(variable.node_id, name);
-                    function_scope.insert_definition(&definition);
-                    self.binder.insert_definition(definition);
-                }
-            }
+            self.collect_parameters(
+                &returns_declaration.variables.parameters,
+                &mut function_scope,
+            );
         }
-        self.binder.insert_scope(function_scope);
 
         if let input_ir::FunctionName::Identifier(name) = &node.name {
             let definition = Definition::new_function(node.node_id, name, parameters_scope_id);
             self.insert_definition_in_current_scope(definition);
         }
 
+        self.enter_scope(function_scope);
+
         true
+    }
+
+    fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
     }
 
     fn enter_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) -> bool {
         let mut modifier_scope = Scope::new_modifier(node.node_id, self.current_scope_id());
         if let Some(parameters) = &node.parameters {
-            for parameter in &parameters.parameters {
-                if let Some(name) = &parameter.name {
-                    let definition = Definition::new_parameter(parameter.node_id, name);
-                    modifier_scope.insert_definition(&definition);
-                    self.binder.insert_definition(definition);
-                }
-            }
+            self.collect_parameters(&parameters.parameters, &mut modifier_scope);
         }
-        self.binder.insert_scope(modifier_scope);
 
         let definition = Definition::new_modifier(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
 
+        self.enter_scope(modifier_scope);
+
         true
+    }
+
+    fn leave_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) -> bool {
+        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
+        self.collect_parameters(&node.parameters.parameters, &mut parameters_scope);
+        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+
+        // TODO: register the constructor to resolve named parameters when
+        // constructing this contract. Also, for Solidity < 0.5.0, register the
+        // constructor which is the function with the same name as the contract.
+
+        let function_scope =
+            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
+        self.enter_scope(function_scope);
+
+        true
+    }
+
+    fn leave_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
     }
 
     fn enter_enum_definition(&mut self, node: &input_ir::EnumDefinition) -> bool {
