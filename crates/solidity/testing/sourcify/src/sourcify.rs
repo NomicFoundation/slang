@@ -2,16 +2,15 @@ use std::fs;
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
 
-use anyhow::{bail, Error, Result};
+use anyhow::{anyhow, bail, Error, Result};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::paths::PathExtensions;
 use reqwest::blocking::Client;
 use semver::{BuildMetadata, Prerelease, Version};
-use slang_solidity::compilation::CompilationUnit;
+use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use tar::Archive;
 
 use crate::command::{ChainId, ShardingOptions};
-use crate::compilation_builder::CompilationBuilder;
 use crate::import_resolver::ImportResolver;
 
 pub struct Manifest {
@@ -306,18 +305,46 @@ impl Contract {
     /// imports, accounting for file remapping/renaming. The resulting `CompilationUnit` is ready to check for
     /// errors.
     pub fn create_compilation_unit(&self) -> Result<CompilationUnit> {
-        CompilationBuilder::new(self)?.build()
+        let mut builder = CompilationBuilder::new(self.version.clone(), self)?;
+        let entrypoint = self.entrypoint().ok_or(Error::msg(format!(
+            "Entrypoint not found in contract {name}",
+            name = self.name
+        )))?;
+
+        builder.add_file(&entrypoint).map_err(|e| anyhow!(e))?;
+        Ok(builder.build())
     }
 
     pub fn entrypoint(&self) -> Option<String> {
         self.import_resolver.get_source_id(&self.target)
     }
 
-    pub fn read_file(&self, name: &str) -> Result<String> {
-        self.sources_path.join(name).read_to_string()
-    }
-
     pub fn sources_count(&self) -> usize {
         self.import_resolver.sources_count()
+    }
+}
+
+impl CompilationBuilderConfig<anyhow::Error> for Contract {
+    fn read_file(&self, file_id: &str) -> std::result::Result<Option<String>, anyhow::Error> {
+        let source = self.sources_path.join(file_id).read_to_string()?;
+        Ok(Some(source))
+    }
+
+    fn resolve_import(
+        &self,
+        source_file_id: &str,
+        import_path_cursor: &slang_solidity::cst::Cursor,
+    ) -> std::result::Result<Option<String>, anyhow::Error> {
+        let import_path = import_path_cursor.node().unparse();
+        let import_path = import_path
+            .strip_prefix(|c| matches!(c, '"' | '\''))
+            .unwrap()
+            .strip_suffix(|c| matches!(c, '"' | '\''))
+            .unwrap()
+            .trim();
+
+        Ok(self
+            .import_resolver
+            .resolve_import(source_file_id, import_path))
     }
 }

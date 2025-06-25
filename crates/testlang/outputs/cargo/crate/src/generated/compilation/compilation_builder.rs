@@ -2,12 +2,15 @@
 
 use std::collections::HashSet;
 use std::error::Error;
-use std::rc::Rc;
+use std::fmt::Debug;
 
 use semver::Version;
+use strum_macros::Display;
 
-use crate::compilation::internal_builder::{CompilationInitializationError, ResolveImportError};
-use crate::compilation::{AddFileResponse, CompilationUnit, InternalCompilationBuilder};
+use crate::compilation::internal_builder::{
+    AddFileResponse, CompilationInitializationError, InternalCompilationBuilder, ResolveImportError,
+};
+use crate::compilation::CompilationUnit;
 use crate::cst::Cursor;
 
 /// User-provided options and callbacks necessary for the `CompilationBuilder` to perform its job.
@@ -34,32 +37,42 @@ pub trait CompilationBuilderConfig<E> {
     fn resolve_import(
         &self,
         source_file_id: &str,
-        import_path: &Cursor,
+        import_path_cursor: &Cursor,
     ) -> Result<Option<String>, E>;
 }
 
 /// A builder for creating compilation units.
 /// Allows incrementally building a list of all files and their imports.
-pub struct CompilationBuilder<E> {
+pub struct CompilationBuilder<'b, E> {
     /// The user-supplied configuration.
-    pub config: Rc<dyn CompilationBuilderConfig<E>>,
+    pub config: &'b dyn CompilationBuilderConfig<E>,
 
     internal: InternalCompilationBuilder,
     seen_files: HashSet<String>,
 }
 
 /// Possible errors for `CompilationBuilder::add_file`.
+#[derive(Debug, Display)]
 pub enum AddFileError<E> {
     ResolveImportError(ResolveImportError),
     UserError(E),
 }
 
-impl<E> CompilationBuilder<E> {
+impl<E: Error + 'static> Error for AddFileError<E> {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        match self {
+            AddFileError::ResolveImportError(e) => Some(e),
+            AddFileError::UserError(e) => Some(e),
+        }
+    }
+}
+
+impl<'b, E> CompilationBuilder<'b, E> {
     /// Creates a new compilation builder for the specified language version.
     pub fn new(
         version: Version,
-        config: Rc<dyn CompilationBuilderConfig<E>>,
-    ) -> Result<CompilationBuilder<E>, CompilationInitializationError> {
+        config: &'b dyn CompilationBuilderConfig<E>,
+    ) -> Result<CompilationBuilder<'b, E>, CompilationInitializationError> {
         Ok(CompilationBuilder {
             config,
             internal: InternalCompilationBuilder::create(version)?,

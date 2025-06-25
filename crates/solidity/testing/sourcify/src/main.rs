@@ -1,5 +1,4 @@
 mod command;
-mod compilation_builder;
 mod events;
 mod import_resolver;
 mod reporting;
