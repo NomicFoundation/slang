@@ -491,6 +491,12 @@ impl FunctionScope {
     }
 }
 
+// TODO: this is similar to a function scope, but it doesn't have a separate
+// parameters scope; it also should bind the special `_` symbol to the built-in.
+// There are other functions that don't need a separate parameters scope (eg.
+// receive/fallback/unnamed), but they don't need to bind `_`. Should we
+// refactor? Or remove this and make the parameters optional in FunctionScope?
+// Probably the latter as we can control resolution in the relevant pass.
 pub struct ModifierScope {
     pub node_id: NodeId,
     pub parent_scope_id: ScopeId,
