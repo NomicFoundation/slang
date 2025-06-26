@@ -8773,14 +8773,19 @@
                   "return_type": "bool, bytes memory",
                   "enabled": { "From": { "from": "0.5.0" } }
                 },
-                { "name": "send", "parameters": ["uint256 amount"], "return_type": "bool" },
+                {
+                  "name": "send",
+                  "parameters": ["uint256 amount"],
+                  "return_type": "bool",
+                  "enabled": { "Till": { "till": "0.8.0" } }
+                },
                 {
                   "name": "staticcall",
                   "parameters": ["bytes memory"],
                   "return_type": "bool, bytes memory",
                   "enabled": { "From": { "from": "0.5.0" } }
                 },
-                { "name": "transfer", "parameters": ["uint256 amount"], "enabled": { "Till": { "till": "0.5.0" } } }
+                { "name": "transfer", "parameters": ["uint256 amount"], "enabled": { "Till": { "till": "0.8.0" } } }
               ]
             }
           }
@@ -8851,7 +8856,24 @@
             }
           }
         },
-        { "BuiltInType": { "item": { "name": "bytes", "fields": [{ "definition": "uint length" }] } } },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "bytes",
+              "fields": [{ "definition": "uint length" }],
+              "functions": [
+                {
+                  "name": "push",
+                  "parameters": ["bytes1 element"],
+                  "return_type": "uint",
+                  "enabled": { "Till": { "till": "0.6.0" } }
+                },
+                { "name": "push", "parameters": ["bytes1 element"], "enabled": { "From": { "from": "0.6.0" } } },
+                { "name": "pop", "enabled": { "From": { "from": "0.5.0" } } }
+              ]
+            }
+          }
+        },
         { "BuiltInType": { "item": { "name": "bytes1", "fields": [{ "definition": "uint length" }] } } },
         { "BuiltInType": { "item": { "name": "bytes2", "fields": [{ "definition": "uint length" }] } } },
         { "BuiltInType": { "item": { "name": "bytes3", "fields": [{ "definition": "uint length" }] } } },
@@ -8929,13 +8951,13 @@
                 {
                   "name": "gas",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 },
                 {
                   "name": "value",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 }
               ]
@@ -8954,13 +8976,13 @@
                 {
                   "name": "gas",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 },
                 {
                   "name": "value",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 }
               ]

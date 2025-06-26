@@ -47,6 +47,11 @@ fn global_properties() -> Result<()> {
 }
 
 #[test]
+fn instance_as_address() -> Result<()> {
+    run(T, "instance_as_address")
+}
+
+#[test]
 fn msg_sender() -> Result<()> {
     run(T, "msg_sender")
 }
