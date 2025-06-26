@@ -18,10 +18,7 @@ slang_define_payload_tests!(
     "protocol_ui_pool_data_provider_v3"
 );
 slang_define_payload_tests!(deep_nesting_cooldogs, "deep_nesting_cooldogs");
-slang_define_payload_tests!(
-    largest_file_trivia_oslf,
-    "largest_file_trivia_one_step_leverage_f"
-);
+slang_define_payload_tests!(largest_file_trivia_oslf, "largest_file_trivia_oslf");
 slang_define_payload_tests!(median_file_safe_math, "median_file_safe_math");
 slang_define_payload_tests!(
     three_quarters_file_merkle_proof,
