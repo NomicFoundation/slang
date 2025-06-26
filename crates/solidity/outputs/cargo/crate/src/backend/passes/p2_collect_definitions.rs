@@ -464,7 +464,9 @@ impl Visitor for Pass {
         };
         self.insert_definition_in_current_scope(definition);
 
-        false
+        // there may be more definitions in the type of the state variable (eg.
+        // key/value names in mappings)
+        true
     }
 
     fn enter_constant_definition(&mut self, node: &input_ir::ConstantDefinition) -> bool {

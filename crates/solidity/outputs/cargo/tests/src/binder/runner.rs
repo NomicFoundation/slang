@@ -22,7 +22,11 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     let target_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
         .join("target/binder")
         .join(group_name)
-        .join(test_name);
+        .join(test_name)
+        .join("generated");
+    fs::create_dir_all(&target_dir)?;
+
+    let compare_with_binding_graph = std::env::var("__SLANG_NEW_BINDER_COMPARE__").is_ok();
 
     let input_path = test_dir.join("input.sol");
     let contents = input_path.read_to_string()?;
@@ -35,13 +39,12 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         let compilation_unit = build_compilation_unit(version, &multi_part)?;
         let binder_data = build_binder(compilation_unit);
 
-        let report = binder_report(&binder_data)?;
+        let report = binder_report(&binder_data, compare_with_binding_graph)?;
 
         match last_report {
             Some(ref last) if last == &report => (),
             _ => {
-                let snapshot_path = target_dir.join("generated").join(format!("{version}.txt"));
-                fs::create_dir_all(snapshot_path.parent().unwrap())?;
+                let snapshot_path = target_dir.join(format!("{version}.txt"));
                 fs::write(snapshot_path, &report)?;
                 last_report = Some(report);
             }
