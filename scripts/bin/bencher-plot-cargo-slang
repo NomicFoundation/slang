@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: bencher-plot-cargo project branch testbed benchmarks title
+# usage: bencher-plot-cargo-slang project branch testbed benchmarks title
 
 set -e
 shopt -s inherit_errexit
@@ -13,7 +13,7 @@ title=$5
 
 if [[ $# -ne 5 ]]
 then
-  echo "Usage: bencher-plot-cargo project branch testbed benchmarks title";
+  echo "Usage: bencher-plot-cargo-slang project branch testbed benchmarks title";
   exit 1;
 fi
 
@@ -29,8 +29,8 @@ function get_testbed() {
 
 function get_benchmarks() {
   details=$(bencher benchmark list --search "${benchmarks}" --per-page 255 "${project}")
-  # filter to let only the relevant benchmarks: only parser and solar
-  echo "${details}" | jq -r 'map(select(.name | contains("iai::") and (contains("parse") and (contains("group") | not)) or contains("solar"))) | map("--benchmarks " + .uuid) | join(" ")'
+  # filter to let only the relevant benchmarks: 
+  echo "${details}" | jq -r 'map(select(.name | contains("iai::") and contains("group") and contains("slang"))) | map("--benchmarks " + .uuid) | join(" ")'
 }
 
 function get_measure() {

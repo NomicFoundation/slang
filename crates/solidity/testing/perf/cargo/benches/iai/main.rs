@@ -46,7 +46,7 @@ macro_rules! slang_define_payload_benchmark {
     };
 }
 
-macro_rules! slang_define_payload_tests {
+macro_rules! slang_define_payload_full_tests {
     ($prj:ident, $prj_name:tt) => {
         /*
          * WARNING:
@@ -55,7 +55,10 @@ macro_rules! slang_define_payload_tests {
          *
          * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
          */
-        slang_define_payload_benchmark!(parser, $prj, $prj_name, &'static SolidityProject);
+        paste! {
+        // HACK: we use a different name for parsing, so it doesn't clash with the tests defined below
+        slang_define_payload_benchmark!(parser, [< $prj _files >], $prj_name, &'static SolidityProject);
+        }
         slang_define_payload_benchmark!(cursor, $prj, $prj_name, Rc<CompilationUnit>);
         slang_define_payload_benchmark!(query, $prj, $prj_name, Rc<CompilationUnit>);
         slang_define_payload_benchmark!(bindings_build, $prj, $prj_name, Rc<CompilationUnit>);
@@ -72,6 +75,35 @@ macro_rules! slang_define_payload_tests {
               [< $prj _query>],
               [< $prj _bindings_build>],
               [< $prj _bindings_resolve>],
+          );
+        }
+    };
+}
+
+slang_define_payload_full_tests!(
+    circular_imports_weighted_pool,
+    "circular_imports_weighted_pool"
+);
+slang_define_payload_full_tests!(
+    three_quarters_file_merkle_proof,
+    "three_quarters_file_merkle_proof"
+);
+
+// For comparing with other libraries, we only test what can be compared
+macro_rules! slang_define_payload_tests {
+    ($prj:ident, $prj_name:tt) => {
+        /*
+         * WARNING:
+         * The reported `iai` benchmark ID is constructed from: `{file_name}::{group_name}::{function_name}`
+         * Changing any of the above would change the resulting benchmark ID, and disconnect it from previous results.
+         */
+        slang_define_payload_benchmark!(parser, $prj, $prj_name, &'static SolidityProject);
+
+        paste! {
+        library_benchmark_group!(
+            name = [< slang_ $prj >];
+
+            benchmarks = [< $prj _parser>],
           );
         }
     };
@@ -161,5 +193,5 @@ main!(
 
     // Note: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-    library_benchmark_groups = slang_circular_imports_weighted_pool_group,slang_protocol_uniswap_group,slang_protocol_multicall3_group,slang_protocol_create_x_group,slang_protocol_ui_pool_data_provider_v3_group,slang_deep_nesting_cooldogs_group,slang_largest_file_trivia_oslf_group,slang_median_file_safe_math_group,slang_three_quarters_file_merkle_proof_group,solar_circular_imports_weighted_pool_group,solar_protocol_uniswap_group,solar_protocol_multicall3_group,solar_protocol_create_x_group,solar_protocol_ui_pool_data_provider_v3_group,solar_deep_nesting_cooldogs_group,solar_largest_file_trivia_oslf_group,solar_median_file_safe_math_group,solar_three_quarters_file_merkle_proof_group,
+    library_benchmark_groups = slang_circular_imports_weighted_pool_group,slang_three_quarters_file_merkle_proof_group,slang_circular_imports_weighted_pool,slang_protocol_uniswap,slang_protocol_multicall3,slang_protocol_create_x,slang_protocol_ui_pool_data_provider_v3,slang_deep_nesting_cooldogs,slang_largest_file_trivia_oslf,slang_median_file_safe_math,slang_three_quarters_file_merkle_proof,solar_circular_imports_weighted_pool_group,solar_protocol_uniswap_group,solar_protocol_multicall3_group,solar_protocol_create_x_group,solar_protocol_ui_pool_data_provider_v3_group,solar_deep_nesting_cooldogs_group,solar_largest_file_trivia_oslf_group,solar_median_file_safe_math_group,solar_three_quarters_file_merkle_proof_group,
 );
