@@ -26,9 +26,9 @@ References and definitions:
     │                     ┬    ─┬─ ─┬─  
     │                     ╰───────────── ref: 6
     │                           │   │   
-    │                           ╰─────── unresolved
+    │                           ╰─────── ref: built-in
     │                               │   
-    │                               ╰─── unresolved
+    │                               ╰─── ref: 2
     │ 
  10 │                 let x := inner1()
     │                     ┬    ───┬──  

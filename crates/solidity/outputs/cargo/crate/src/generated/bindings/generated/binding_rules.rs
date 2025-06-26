@@ -2269,8 +2269,6 @@ inherit .star_extension
   attr (in_yul_function_pop) pop_symbol = "@in_yul_function"
   edge @body.lexical_scope -> in_yul_function_pop
   edge in_yul_function_pop -> yul
-  ; allow popping the guard multiple times in case we have nested functions
-  edge in_yul_function_pop -> in_yul_function_pop
 
   ;; Also provide access to locals and state variables from Solidity
   node yul_locals
@@ -3165,7 +3163,13 @@ inherit .star_extension
   ; assembly statement to link to constants and built-ins.
   node yul_function_guard
   attr (yul_function_guard) push_symbol = "@in_yul_function"
+  node yul_function_pop
+  attr (yul_function_pop) pop_symbol = "@in_yul_function"
   edge @fundef.lexical_scope -> yul_function_guard
+  edge @fundef.lexical_scope -> yul_function_pop
+  ; pops an existing guard to avoid duplicating it if we're resolving from a
+  ; nested Yul function
+  edge yul_function_pop -> yul_function_guard
   edge yul_function_guard -> @block.lexical_scope
 }
 
