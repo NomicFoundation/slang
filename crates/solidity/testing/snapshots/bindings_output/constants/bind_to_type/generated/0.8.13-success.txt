@@ -1,0 +1,90 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ type MemoryPointer is uint256;
+    │      ──────┬──────  
+    │            ╰──────── name: 1
+    │ 
+  6 │ using MemoryReaders for MemoryPointer;
+    │       ──────┬──────     ──────┬──────  
+    │             ╰────────────────────────── ref: 5
+    │                               │        
+    │                               ╰──────── ref: 1
+    │ 
+  8 │ MemoryPointer constant FreeMemoryPPtr = MemoryPointer.wrap(0x40);
+    │ ──────┬──────          ───────┬──────   ──────┬────── ──┬─  
+    │       ╰───────────────────────────────────────────────────── ref: 1
+    │                               │               │         │   
+    │                               ╰───────────────────────────── name: 2
+    │                                               │         │   
+    │                                               ╰───────────── ref: 1
+    │                                                         │   
+    │                                                         ╰─── ref: built-in
+    │ 
+ 10 │ function getFreeMemoryPointer() pure returns (MemoryPointer mPtr) {
+    │          ──────────┬─────────                 ──────┬────── ──┬─  
+    │                    ╰────────────────────────────────────────────── name: 3
+    │                                                     │         │   
+    │                                                     ╰───────────── ref: 1
+    │                                                               │   
+    │                                                               ╰─── name: 4
+    │ 
+ 12 │     mPtr = FreeMemoryPPtr.readMemoryPointer();
+    │     ──┬─   ───────┬────── ────────┬────────  
+    │       ╰────────────────────────────────────── ref: 4
+    │                   │               │          
+    │                   ╰────────────────────────── ref: 2
+    │                                   │          
+    │                                   ╰────────── ref: 6
+    │ 
+ 15 │ library MemoryReaders {
+    │         ──────┬──────  
+    │               ╰──────── name: 5
+ 16 │     function readMemoryPointer(MemoryPointer mPtr) internal pure returns (MemoryPointer value) {
+    │              ────────┬──────── ──────┬────── ──┬─                         ──────┬────── ──┬──  
+    │                      ╰───────────────────────────────────────────────────────────────────────── name: 6
+    │                                      │         │                                │         │    
+    │                                      ╰───────────────────────────────────────────────────────── ref: 1
+    │                                                │                                │         │    
+    │                                                ╰─────────────────────────────────────────────── name: 7
+    │                                                                                 │         │    
+    │                                                                                 ╰────────────── ref: 1
+    │                                                                                           │    
+    │                                                                                           ╰──── name: 8
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  3 │         ╭─▶ 
+  4 │         ├─▶ type MemoryPointer is uint256;
+    │         │                                    
+    │         ╰──────────────────────────────────── definiens: 1
+    │ 
+  7 │       ╭───▶ 
+  8 │ │     ├───▶ MemoryPointer constant FreeMemoryPPtr = MemoryPointer.wrap(0x40);
+    │ │     │                                                                         
+    │ │     ╰───────────────────────────────────────────────────────────────────────── definiens: 2
+  9 │ ╭─────────▶ 
+ 10 │ │           function getFreeMemoryPointer() pure returns (MemoryPointer mPtr) {
+    │ │                                                         ─────────┬────────  
+    │ │                                                                  ╰────────── definiens: 4
+    ┆ ┆           
+ 13 │ ├─│ ──────▶ }
+    │ │ │             
+    │ ╰─────────────── definiens: 3
+ 14 │   ╭───────▶ 
+    ┆   ┆ ┆       
+ 16 │   │ ╭─────▶     function readMemoryPointer(MemoryPointer mPtr) internal pure returns (MemoryPointer value) {
+    │   │ │                                      ─────────┬────────                         ─────────┬─────────  
+    │   │ │                                               ╰────────────────────────────────────────────────────── definiens: 7
+    │   │ │                                                                                          │           
+    │   │ │                                                                                          ╰─────────── definiens: 8
+ 17 │   │ ├─────▶     }
+    │   │ │               
+    │   │ ╰─────────────── definiens: 6
+ 18 │   ├───────▶ }
+    │   │             
+    │   ╰───────────── definiens: 5
+────╯

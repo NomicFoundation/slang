@@ -52,8 +52,8 @@ impl WasmPackage {
             "target/{WASM_TARGET}/{profile}/{wasm_crate}.optimized.wasm"
         ));
 
-        Command::new("node")
-            .args(["submodules/jco/src/jco.js", "opt", wasm_binary.unwrap_str()])
+        Command::new("slang-jco")
+            .args(["opt", wasm_binary.unwrap_str()])
             .property("--output", wasm_opt_binary.unwrap_str())
             .arg("--")
             .property("--optimize-level", "4")
@@ -62,8 +62,9 @@ impl WasmPackage {
 
         CargoWorkspace::install_binary("wasm-tools")?;
 
-        let wasm_adapter =
-            Path::repo_path("submodules/jco/lib/wasi_snapshot_preview1.reactor.wasm");
+        let wasm_adapter = Path::repo_path(
+            "node_modules/@ignored/slang-jco/lib/wasi_snapshot_preview1.reactor.wasm",
+        );
 
         let wasm_component = Path::repo_path(format!(
             "target/{WASM_TARGET}/{profile}/{wasm_crate}.component.wasm"
@@ -87,12 +88,8 @@ impl WasmPackage {
         let jco_config = runtime_dir.join("generated/config.json");
 
         {
-            Command::new("node")
-                .args([
-                    "submodules/jco/src/jco.js",
-                    "transpile",
-                    wasm_component.unwrap_str(),
-                ])
+            Command::new("slang-jco")
+                .args(["transpile", wasm_component.unwrap_str()])
                 .property("--configuration-file", jco_config.unwrap_str())
                 .property("--out-dir", temp_dir.unwrap_str())
                 .property("--base64-cutoff", "0") // disable inlining core Wasm binaries as base64
@@ -104,12 +101,8 @@ impl WasmPackage {
 
         {
             let wit_directory = runtime_dir.join("interface/generated");
-            Command::new("node")
-                .args([
-                    "submodules/jco/src/jco.js",
-                    "types",
-                    wit_directory.unwrap_str(),
-                ])
+            Command::new("slang-jco")
+                .args(["types", wit_directory.unwrap_str()])
                 .property("--name", format!("{wasm_crate}.component"))
                 .property("--configuration-file", jco_config.unwrap_str())
                 .property("--out-dir", temp_dir.unwrap_str())

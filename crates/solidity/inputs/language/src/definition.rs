@@ -6403,6 +6403,166 @@ codegen_language_macros::compile!(Language(
                     ]
                 ),
                 BuiltInType(
+                    name = "bytes1",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes2",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes3",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes4",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes5",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes6",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes7",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes8",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes9",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes10",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes11",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes12",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes13",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes14",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes15",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes16",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes17",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes18",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes19",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes20",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes21",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes22",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes23",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes24",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes25",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes26",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes27",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes28",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes29",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes30",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes31",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
+                    name = "bytes32",
+                    fields = [BuiltInField(definition = "uint length")],
+                    functions = []
+                ),
+                BuiltInType(
                     name = "%BytesType",
                     fields = [],
                     functions = [BuiltInFunction(
@@ -6479,8 +6639,9 @@ codegen_language_macros::compile!(Language(
                         BuiltInField(definition = "uint256 gas", enabled = Till("0.5.0")),
                         BuiltInField(
                             definition = "address payable sender",
-                            enabled = Till("0.8.0")
+                            enabled = Range(from = "0.5.0", till = "0.8.0")
                         ),
+                        BuiltInField(definition = "address sender", enabled = Till("0.5.0")),
                         BuiltInField(definition = "address sender", enabled = From("0.8.0")),
                         BuiltInField(definition = "bytes4 sig"),
                         BuiltInField(definition = "uint value")

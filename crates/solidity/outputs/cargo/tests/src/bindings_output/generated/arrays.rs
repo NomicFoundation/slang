@@ -25,3 +25,8 @@ fn indexing() -> Result<()> {
 fn length() -> Result<()> {
     run(T, "length")
 }
+
+#[test]
+fn static_length() -> Result<()> {
+    run(T, "static_length")
+}

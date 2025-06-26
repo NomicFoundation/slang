@@ -52,6 +52,11 @@ fn instance_as_address() -> Result<()> {
 }
 
 #[test]
+fn msg_sender() -> Result<()> {
+    run(T, "msg_sender")
+}
+
+#[test]
 fn shadowing() -> Result<()> {
     run(T, "shadowing")
 }

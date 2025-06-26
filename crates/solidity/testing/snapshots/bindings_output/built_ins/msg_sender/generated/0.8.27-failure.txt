@@ -1,0 +1,50 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test(uint amount) public {
+   │              ──┬─      ───┬──  
+   │                ╰─────────────── name: 2
+   │                           │    
+   │                           ╰──── name: 3
+   │ 
+ 4 │         msg.sender.transfer(amount);
+   │         ─┬─ ───┬── ────┬─── ───┬──  
+   │          ╰────────────────────────── ref: built-in
+   │                │       │       │    
+   │                ╰──────────────────── ref: built-in
+   │                        │       │    
+   │                        ╰──────────── unresolved
+   │                                │    
+   │                                ╰──── ref: 3
+ 5 │         require(msg.sender.send(amount));
+   │         ───┬─── ─┬─ ───┬── ──┬─ ───┬──  
+   │            ╰──────────────────────────── refs: built-in, built-in, built-in
+   │                  │     │     │     │    
+   │                  ╰────────────────────── ref: built-in
+   │                        │     │     │    
+   │                        ╰──────────────── ref: built-in
+   │                              │     │    
+   │                              ╰────────── unresolved
+   │                                    │    
+   │                                    ╰──── ref: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test(uint amount) public {
+   │ │ │                     ─────┬─────  
+   │ │ │                          ╰─────── definiens: 3
+   ┆ ┆ ┆   
+ 6 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

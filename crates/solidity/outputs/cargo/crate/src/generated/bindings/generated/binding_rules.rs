@@ -231,6 +231,25 @@ inherit .star_extension
 }
 
 ;;; `import {<SYMBOL> [as <IDENT>] ...} from <PATH>`
+@import [ImportDeconstruction path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+]] {
+  node @import.yul_defs
+  node @import.yul_path
+
+  ;; Each imported symbol will have an alternative path to make symbols
+  ;; accessible in assembly blocks
+  node pop_yul
+  attr (pop_yul) pop_symbol = "@yul"
+  node push_yul
+  attr (push_yul) push_symbol = "@yul"
+
+  edge @import.defs -> pop_yul
+  edge pop_yul -> @import.yul_defs
+  edge @import.yul_path -> push_yul
+  edge push_yul -> @path.import
+}
+
 @import [ImportDeconstruction
   symbols: [ImportDeconstructionSymbols @symbol [ImportDeconstructionSymbol]]
   path: [StringLiteral
@@ -244,35 +263,36 @@ inherit .star_extension
 
   node @symbol.import
   edge @symbol.import -> @path.import
+
+  node @symbol.yul_def
+  edge @import.yul_defs -> @symbol.yul_def
+  node @symbol.yul_import
+  edge @symbol.yul_import -> @import.yul_path
 }
 
 @symbol [ImportDeconstructionSymbol @name name: [Identifier] .] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @symbol
-  edge @symbol.def -> def
+  attr (@symbol.def) node_definition = @name
+  attr (@symbol.def) definiens_node = @symbol
+  attr (@symbol.import) node_reference = @name
+  edge @symbol.def -> @symbol.import
 
-  node import
-  attr (import) node_reference = @name
-  edge def -> import
-
-  edge import -> @symbol.import
+  attr (@symbol.yul_def) pop_symbol = (source-text @name)
+  attr (@symbol.yul_import) push_symbol = (source-text @name)
+  edge @symbol.yul_def -> @symbol.yul_import
 }
 
 @symbol [ImportDeconstructionSymbol
     @name name: [Identifier]
     alias: [ImportAlias @alias [Identifier]]
 ] {
-  node def
-  attr (def) node_definition = @alias
-  attr (def) definiens_node = @symbol
-  edge @symbol.def -> def
+  attr (@symbol.def) node_definition = @alias
+  attr (@symbol.def) definiens_node = @symbol
+  attr (@symbol.import) node_reference = @name
+  edge @symbol.def -> @symbol.import
 
-  node import
-  attr (import) node_reference = @name
-  edge def -> import
-
-  edge import -> @symbol.import
+  attr (@symbol.yul_def) pop_symbol = (source-text @alias)
+  attr (@symbol.yul_import) push_symbol = (source-text @name)
+  edge @symbol.yul_def -> @symbol.yul_import
 }
 
 
@@ -463,9 +483,11 @@ inherit .star_extension
   edge type_contract_type -> @contract.parent_scope
 
   ;; This scope provides access to state variables from Yul assembly blocks
-  node @contract.yul_locals
-  attr (@contract.yul_locals) pop_symbol = "@yul_locals"
-  edge @contract.lexical_scope -> @contract.yul_locals
+  node @contract.yul
+  attr (@contract.yul) pop_symbol = "@yul"
+  edge @contract.lexical_scope -> @contract.yul
+  ;; Also to state variables (and constants) from base contracts
+  edge @contract.instance -> @contract.yul
 }
 
 @contract [ContractDefinition
@@ -588,7 +610,7 @@ inherit .star_extension
   edge @contract.instance -> @state_var.def
 
   ; State variables should also be available in Yul assembly blocks
-  edge @contract.yul_locals -> @state_var.def
+  edge @contract.yul -> @state_var.def
 }
 
 ;; Public state variables are also exposed as external member functions
@@ -1653,6 +1675,11 @@ inherit .star_extension
 @constructor [ConstructorDefinition] {
   node @constructor.lexical_scope
   node @constructor.def
+
+  ;; This scope provides access to local variables from Yul assembly blocks
+  node @constructor.yul_locals
+  attr (@constructor.yul_locals) pop_symbol = "@yul_locals"
+  edge @constructor.lexical_scope -> @constructor.yul_locals
 }
 
 @constructor [ConstructorDefinition @params parameters: [ParametersDeclaration]] {
@@ -1665,6 +1692,9 @@ inherit .star_extension
 
   ;; Connect to paramaters for named argument resolution
   edge @constructor.def -> @params.names
+
+  ;; Parameters should be accessible to assembly blocks
+  edge @constructor.yul_locals -> @params.defs
 }
 
 ;; Connect the constructor body's block lexical scope to the constructor
@@ -1726,6 +1756,11 @@ inherit .star_extension
 
 @fallback [FallbackFunctionDefinition] {
   node @fallback.lexical_scope
+
+  ;; This scope provides access to local variables from Yul assembly blocks
+  node @fallback.yul_locals
+  attr (@fallback.yul_locals) pop_symbol = "@yul_locals"
+  edge @fallback.lexical_scope -> @fallback.yul_locals
 }
 
 @fallback [FallbackFunctionDefinition @params parameters: [ParametersDeclaration]] {
@@ -1733,6 +1768,7 @@ inherit .star_extension
 
   ;; Input parameters are available in the fallback function scope
   edge @fallback.lexical_scope -> @params.defs
+  edge @fallback.yul_locals -> @params.defs
   attr (@fallback.lexical_scope -> @params.defs) precedence = 1
 }
 
@@ -1743,6 +1779,7 @@ inherit .star_extension
 
   ;; Return parameters are available in the fallback function scope
   edge @fallback.lexical_scope -> @return_params.defs
+  edge @fallback.yul_locals -> @return_params.defs
   attr (@fallback.lexical_scope -> @return_params.defs) precedence = 1
 }
 
@@ -1778,6 +1815,11 @@ inherit .star_extension
 @modifier [ModifierDefinition] {
   node @modifier.def
   node @modifier.lexical_scope
+
+  ;; This scope provides access to local variables from Yul assembly blocks
+  node @modifier.yul_locals
+  attr (@modifier.yul_locals) pop_symbol = "@yul_locals"
+  edge @modifier.lexical_scope -> @modifier.yul_locals
 }
 
 @modifier [ModifierDefinition
@@ -1812,6 +1854,9 @@ inherit .star_extension
   ;; Input parameters are available in the modifier scope
   edge @modifier.lexical_scope -> @params.defs
   attr (@modifier.lexical_scope -> @params.defs) precedence = 1
+
+  ;; Input parameters are also available to assembly blocks
+  edge @modifier.yul_locals -> @params.defs
 }
 
 
@@ -2081,6 +2126,12 @@ inherit .star_extension
     edge @stmt.defs -> @body.defs
     edge @stmt.defs -> @stmt.init_defs
   }
+
+  ;; For initialization defs are also available to Yul assembly blocks
+  node yul_locals
+  attr (yul_locals) pop_symbol = "@yul_locals"
+  edge @body.lexical_scope -> yul_locals
+  edge yul_locals -> @stmt.init_defs
 }
 
 ;; While loops
@@ -2120,6 +2171,12 @@ inherit .star_extension
   edge @body.lexical_scope -> @return_params.defs
   ;; Similar to functions, return params shadow other declarations
   attr (@body.lexical_scope -> @return_params.defs) precedence = 1
+
+  ;; Return params are also available to Yul assembly blocks
+  node yul_locals
+  attr (yul_locals) pop_symbol = "@yul_locals"
+  edge @body.lexical_scope -> yul_locals
+  edge yul_locals -> @return_params.defs
 }
 
 @stmt [Statement [TryStatement [CatchClauses [CatchClause
@@ -2136,6 +2193,12 @@ inherit .star_extension
   edge @body.lexical_scope -> @catch_params.defs
   ;; Similar to functions, catch params shadow other declarations
   attr (@body.lexical_scope -> @catch_params.defs) precedence = 1
+
+  ;; Catch params are also available to Yul assembly blocks
+  node yul_locals
+  attr (yul_locals) pop_symbol = "@yul_locals"
+  edge @body.lexical_scope -> yul_locals
+  edge yul_locals -> @catch_params.defs
 }
 
 @stmt [Statement [TryStatement [CatchClauses [CatchClause
@@ -2493,6 +2556,11 @@ inherit .star_extension
 
   edge @constant.def -> def
 
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+
+  edge def -> typeof
+  edge typeof -> @type_name.output
   edge @type_name.type_ref -> @constant.lexical_scope
 }
 
@@ -2715,6 +2783,8 @@ inherit .star_extension
 
   node @named_arg.ref
   attr (@named_arg.ref) node_reference = @name
+  ;; Needed if the function call is for an extension function
+  attr (@named_arg.ref) parents = [@named_arg.enclosing_def]
 }
 
 @args [ArgumentsDeclaration [NamedArgumentsDeclaration
@@ -3066,10 +3136,19 @@ inherit .star_extension
 ;; Yul built-ins (see __SLANG_SOLIDITY_YUL_BUILT_INS_GUARD__) so constants are
 ;; in an equivalent scope to predefined built-ins. See the dual path in the rule
 ;; above.
-@constant_container ([SourceUnit] | [ContractDefinition] | [LibraryDefinition]) {
-  node @constant_container.yul_globals_guarded_scope
-  attr (@constant_container.yul_globals_guarded_scope) pop_symbol = "@yul"
-  edge @constant_container.lexical_scope -> @constant_container.yul_globals_guarded_scope
+@source_unit [SourceUnit] {
+  node @source_unit.yul_globals_guarded_scope
+  attr (@source_unit.yul_globals_guarded_scope) pop_symbol = "@yul"
+  ;; export the Yul specific scope
+  edge @source_unit.defs -> @source_unit.yul_globals_guarded_scope
+  ;; and provide it locally
+  edge @source_unit.lexical_scope -> @source_unit.yul_globals_guarded_scope
+}
+
+@contract_or_library ([ContractDefinition] | [LibraryDefinition]) {
+  node @contract_or_library.yul_globals_guarded_scope
+  attr (@contract_or_library.yul_globals_guarded_scope) pop_symbol = "@yul"
+  edge @contract_or_library.ns -> @contract_or_library.yul_globals_guarded_scope
 }
 
 ;; Make top-level constants available inside Yul functions
