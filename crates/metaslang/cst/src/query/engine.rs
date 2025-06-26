@@ -142,6 +142,7 @@ impl<T: KindTypes + 'static> ASTNode<T> {
     }
 }
 
+/// Represents a match found by executing queries on a cursor.
 pub struct QueryMatch<T: KindTypes> {
     pub queries: Rc<Vec<Query<T>>>,
     pub query_index: usize,
@@ -151,14 +152,19 @@ pub struct QueryMatch<T: KindTypes> {
 }
 
 impl<T: KindTypes> QueryMatch<T> {
+    /// Returns the query that was matched.
     pub fn query(&self) -> &Query<T> {
         &self.queries[self.query_index]
     }
 
+    /// Returns an iterator over all of the capture names matched by this query.
     pub fn capture_names(&self) -> impl Iterator<Item = &String> {
         self.query().capture_quantifiers.keys()
     }
 
+    /// Returns an iterator over all of the captures matched by this query. The iterator item
+    /// is a 3-tuple containing the capture name, a [`CaptureQuantifier`], and an iterator yielding
+    /// a [`Cursor`] to the location of each capture in the parse tree.
     pub fn captures(
         &self,
     ) -> impl Iterator<Item = (&String, CaptureQuantifier, impl Iterator<Item = Cursor<T>>)> {
@@ -174,6 +180,9 @@ impl<T: KindTypes> QueryMatch<T> {
         })
     }
 
+    /// Try to find a single capture matched by this query. If no captures exist with the name `name`,
+    /// this will return `None`. If captures do exist, then this will return a tuple containing a [`CaptureQuantifier`]
+    /// and an iterator yielding a [`Cursor`] to the location of each capture in the parse tree.
     pub fn capture(
         &self,
         name: &str,
@@ -191,6 +200,7 @@ impl<T: KindTypes> QueryMatch<T> {
     }
 }
 
+/// Iterator over query matches in the syntax tree.
 pub struct QueryMatchIterator<T: KindTypes> {
     queries: Rc<Vec<Query<T>>>,
     cursor: Cursor<T>,
@@ -228,6 +238,7 @@ impl<T: KindTypes + 'static> QueryMatchIterator<T> {
 impl<T: KindTypes + 'static> Iterator for QueryMatchIterator<T> {
     type Item = QueryMatch<T>;
 
+    /// Returns the next match or `None` if there are no more matches.
     fn next(&mut self) -> Option<Self::Item> {
         while !self.cursor.is_completed() {
             if let Some(matcher) = self.matcher.as_mut() {

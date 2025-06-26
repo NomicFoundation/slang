@@ -1,6 +1,6 @@
 use anyhow::{bail, Result};
 use rayon::iter::{ParallelBridge, ParallelIterator};
-use slang_solidity::compilation::CompilationUnit;
+use slang_solidity::compilation::{CompilationBuilderConfig, CompilationUnit};
 use slang_solidity::cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::utils::LanguageFacts;
@@ -92,7 +92,7 @@ fn run_parser_check(contract: &Contract, unit: &CompilationUnit, events: &Events
     let mut test_outcome = TestOutcome::Passed;
     for file in unit.files() {
         if !file.errors().is_empty() {
-            if let Ok(source) = contract.read_file(file.id()) {
+            if let Ok(Some(source)) = contract.read_file(file.id()) {
                 let source_name = contract
                     .import_resolver
                     .get_virtual_path(file.id())
@@ -123,7 +123,7 @@ fn run_version_inference_check(
 ) -> TestOutcome {
     let mut did_fail = false;
     for file in unit.files() {
-        if let Ok(source) = contract.read_file(file.id()) {
+        if let Ok(Some(source)) = contract.read_file(file.id()) {
             if !LanguageFacts::infer_language_versions(&source).any(|v| *v == contract.version) {
                 let source_name = contract
                     .import_resolver
@@ -168,7 +168,10 @@ fn run_bindings_check(
         if reference.definitions().is_empty() {
             let cursor = reference.get_cursor().to_owned();
 
-            let source = contract.read_file(ref_file.get_path()).unwrap_or_default();
+            let source = contract
+                .read_file(ref_file.get_path())
+                .unwrap_or_default()
+                .unwrap_or_default();
 
             let binding_error = BindingError::UnresolvedReference(cursor);
             let msg = slang_solidity::diagnostic::render(
@@ -211,7 +214,7 @@ fn run_bindings_check(
             {
                 let binding_error = BindingError::UnboundIdentifier(cursor.clone());
 
-                if let Ok(source) = contract.read_file(file.id()) {
+                if let Ok(Some(source)) = contract.read_file(file.id()) {
                     let msg = slang_solidity::diagnostic::render(
                         &binding_error,
                         file.id(),

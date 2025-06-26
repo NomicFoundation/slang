@@ -1,11 +1,14 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+//! Utilities for defining error diagnostics.
+
 use crate::cst::TextRange;
 
 /// The severity of a diagnostic.
 ///
 /// Explicitly compatible with the [LSP protocol](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnosticSeverity).
 #[repr(u8)]
+#[allow(missing_docs)]
 pub enum Severity {
     Error = 1,
     Warning = 2,
@@ -25,6 +28,7 @@ pub trait Diagnostic {
 }
 
 #[cfg(feature = "__private_ariadne_errors")]
+#[allow(missing_docs)]
 pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_color: bool) -> String {
     use ariadne::{Color, Config, Label, Report, ReportKind, Source};
 

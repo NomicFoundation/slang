@@ -1,9 +1,6 @@
-#[cfg(feature = "__experimental_bindings_api")]
 pub mod bindings;
-#[cfg(all(
-    feature = "__experimental_bindings_api",
-    feature = "__private_compilation_api"
-))]
+#[cfg(feature = "__private_wasm_apis")]
+#[allow(missing_docs)]
 pub mod compilation;
 pub mod cst;
 pub mod diagnostic;
