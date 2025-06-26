@@ -22,6 +22,11 @@ fn built_ins() -> Result<()> {
 }
 
 #[test]
+fn catch_params() -> Result<()> {
+    run(T, "catch_params")
+}
+
+#[test]
 fn conditionals() -> Result<()> {
     run(T, "conditionals")
 }
@@ -32,8 +37,23 @@ fn constant_access_from_functions() -> Result<()> {
 }
 
 #[test]
+fn constructor_params() -> Result<()> {
+    run(T, "constructor_params")
+}
+
+#[test]
 fn external_variables() -> Result<()> {
     run(T, "external_variables")
+}
+
+#[test]
+fn fallback_params() -> Result<()> {
+    run(T, "fallback_params")
+}
+
+#[test]
+fn for_init_variables() -> Result<()> {
+    run(T, "for_init_variables")
 }
 
 #[test]
@@ -44,6 +64,21 @@ fn functions() -> Result<()> {
 #[test]
 fn identifiers_with_dots() -> Result<()> {
     run(T, "identifiers_with_dots")
+}
+
+#[test]
+fn imported_constant() -> Result<()> {
+    run(T, "imported_constant")
+}
+
+#[test]
+fn imported_deconstructed_constants() -> Result<()> {
+    run(T, "imported_deconstructed_constants")
+}
+
+#[test]
+fn inherited_constant() -> Result<()> {
+    run(T, "inherited_constant")
 }
 
 #[test]
@@ -59,6 +94,11 @@ fn legacy_built_ins() -> Result<()> {
 #[test]
 fn loops() -> Result<()> {
     run(T, "loops")
+}
+
+#[test]
+fn modifier_params() -> Result<()> {
+    run(T, "modifier_params")
 }
 
 #[test]
@@ -84,6 +124,11 @@ fn solidity_built_in_doesn_t_bind() -> Result<()> {
 #[test]
 fn stack_assign() -> Result<()> {
     run(T, "stack_assign")
+}
+
+#[test]
+fn try_params() -> Result<()> {
+    run(T, "try_params")
 }
 
 #[test]

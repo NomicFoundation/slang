@@ -12,6 +12,16 @@ fn byte_length() -> Result<()> {
 }
 
 #[test]
+fn bytes_as_arrays() -> Result<()> {
+    run(T, "bytes_as_arrays")
+}
+
+#[test]
+fn fixed_arrays() -> Result<()> {
+    run(T, "fixed_arrays")
+}
+
+#[test]
 fn indexing() -> Result<()> {
     run(T, "indexing")
 }
@@ -19,4 +29,9 @@ fn indexing() -> Result<()> {
 #[test]
 fn length() -> Result<()> {
     run(T, "length")
+}
+
+#[test]
+fn static_length() -> Result<()> {
+    run(T, "static_length")
 }

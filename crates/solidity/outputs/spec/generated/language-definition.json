@@ -8773,14 +8773,19 @@
                   "return_type": "bool, bytes memory",
                   "enabled": { "From": { "from": "0.5.0" } }
                 },
-                { "name": "send", "parameters": ["uint256 amount"], "return_type": "bool" },
+                {
+                  "name": "send",
+                  "parameters": ["uint256 amount"],
+                  "return_type": "bool",
+                  "enabled": { "Till": { "till": "0.8.0" } }
+                },
                 {
                   "name": "staticcall",
                   "parameters": ["bytes memory"],
                   "return_type": "bool, bytes memory",
                   "enabled": { "From": { "from": "0.5.0" } }
                 },
-                { "name": "transfer", "parameters": ["uint256 amount"], "enabled": { "Till": { "till": "0.5.0" } } }
+                { "name": "transfer", "parameters": ["uint256 amount"], "enabled": { "Till": { "till": "0.8.0" } } }
               ]
             }
           }
@@ -8851,7 +8856,56 @@
             }
           }
         },
-        { "BuiltInType": { "item": { "name": "bytes", "fields": [{ "definition": "uint length" }] } } },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "bytes",
+              "fields": [{ "definition": "uint length" }],
+              "functions": [
+                {
+                  "name": "push",
+                  "parameters": ["bytes1 element"],
+                  "return_type": "uint",
+                  "enabled": { "Till": { "till": "0.6.0" } }
+                },
+                { "name": "push", "parameters": ["bytes1 element"], "enabled": { "From": { "from": "0.6.0" } } },
+                { "name": "pop", "enabled": { "From": { "from": "0.5.0" } } }
+              ]
+            }
+          }
+        },
+        { "BuiltInType": { "item": { "name": "bytes1", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes2", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes3", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes4", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes5", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes6", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes7", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes8", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes9", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes10", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes11", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes12", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes13", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes14", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes15", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes16", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes17", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes18", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes19", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes20", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes21", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes22", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes23", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes24", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes25", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes26", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes27", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes28", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes29", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes30", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes31", "fields": [{ "definition": "uint length" }] } } },
+        { "BuiltInType": { "item": { "name": "bytes32", "fields": [{ "definition": "uint length" }] } } },
         {
           "BuiltInType": {
             "item": {
@@ -8915,13 +8969,13 @@
                 {
                   "name": "gas",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 },
                 {
                   "name": "value",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 }
               ]
@@ -8940,13 +8994,13 @@
                 {
                   "name": "gas",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 },
                 {
                   "name": "value",
                   "parameters": ["uint amount"],
-                  "return_type": "function()",
+                  "return_type": "%ExternalFunction",
                   "enabled": { "Till": { "till": "0.7.0" } }
                 }
               ]
@@ -8960,7 +9014,11 @@
               "fields": [
                 { "definition": "bytes data" },
                 { "definition": "uint256 gas", "enabled": { "Till": { "till": "0.5.0" } } },
-                { "definition": "address payable sender", "enabled": { "Till": { "till": "0.8.0" } } },
+                {
+                  "definition": "address payable sender",
+                  "enabled": { "Range": { "from": "0.5.0", "till": "0.8.0" } }
+                },
+                { "definition": "address sender", "enabled": { "Till": { "till": "0.5.0" } } },
                 { "definition": "address sender", "enabled": { "From": { "from": "0.8.0" } } },
                 { "definition": "bytes4 sig" },
                 { "definition": "uint value" }

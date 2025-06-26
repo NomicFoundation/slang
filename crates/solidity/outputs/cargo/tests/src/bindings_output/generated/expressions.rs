@@ -72,6 +72,11 @@ fn new_output() -> Result<()> {
 }
 
 #[test]
+fn new_with_legacy_call_options() -> Result<()> {
+    run(T, "new_with_legacy_call_options")
+}
+
+#[test]
 fn revert_named_args() -> Result<()> {
     run(T, "revert_named_args")
 }
@@ -79,6 +84,11 @@ fn revert_named_args() -> Result<()> {
 #[test]
 fn type_expr() -> Result<()> {
     run(T, "type_expr")
+}
+
+#[test]
+fn type_expr_integers() -> Result<()> {
+    run(T, "type_expr_integers")
 }
 
 #[test]
