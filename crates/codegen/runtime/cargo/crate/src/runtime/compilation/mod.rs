@@ -7,7 +7,7 @@ mod file;
 mod internal_builder;
 mod unit;
 
-pub use compilation_builder::{AddFileError, CompilationBuilder, CompilationBuilderConfig};
+pub use compilation_builder::{CompilationBuilder, CompilationBuilderConfig};
 pub use file::File;
 pub use internal_builder::{AddFileResponse, InternalCompilationBuilder};
 pub use unit::CompilationUnit;

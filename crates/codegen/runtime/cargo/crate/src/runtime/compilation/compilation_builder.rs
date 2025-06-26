@@ -1,12 +1,10 @@
 use std::collections::HashSet;
-use std::error::Error;
-use std::fmt::Debug;
 
 use semver::Version;
 use strum_macros::Display;
 
 use crate::compilation::internal_builder::{
-    AddFileResponse, CompilationInitializationError, InternalCompilationBuilder, ResolveImportError,
+    AddFileResponse, CompilationInitializationError, InternalCompilationBuilder,
 };
 use crate::compilation::CompilationUnit;
 use crate::cst::Cursor;
@@ -86,22 +84,6 @@ pub struct CompilationBuilder<'b, E> {
     seen_files: HashSet<String>,
 }
 
-/// Possible errors for `CompilationBuilder::add_file`.
-#[derive(Debug, Display)]
-pub enum AddFileError<E> {
-    ResolveImportError(ResolveImportError),
-    UserError(E),
-}
-
-impl<E: Error + 'static> Error for AddFileError<E> {
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        match self {
-            AddFileError::ResolveImportError(e) => Some(e),
-            AddFileError::UserError(e) => Some(e),
-        }
-    }
-}
-
 impl<'b, E> CompilationBuilder<'b, E> {
     /// Creates a new compilation builder for the specified language version and callbacks.
     pub fn new(
@@ -123,29 +105,23 @@ impl<'b, E> CompilationBuilder<'b, E> {
     /// regardless of whether they are imported or not, to be able to query the definitions there.
     ///
     /// Adding a file that has already been added is a no-op.
-    pub fn add_file(&mut self, filename: &str) -> Result<(), AddFileError<E>> {
+    pub fn add_file(&mut self, filename: &str) -> Result<(), E> {
         if !self.seen_files.insert(filename.into()) {
             return Ok(());
         }
 
-        let source = self
-            .config
-            .read_file(filename)
-            .map_err(|e| AddFileError::UserError(e))?;
+        let source = self.config.read_file(filename)?;
 
         if let Some(source) = source {
             let AddFileResponse { import_paths } = self.internal.add_file(filename.into(), &source);
 
             for import_path_cursor in import_paths {
-                let import_id = self
-                    .config
-                    .resolve_import(filename, &import_path_cursor)
-                    .map_err(|e| AddFileError::UserError(e))?;
+                let import_id = self.config.resolve_import(filename, &import_path_cursor)?;
 
                 if let Some(import_id) = &import_id {
                     self.internal
                         .resolve_import(filename, &import_path_cursor, import_id.clone())
-                        .map_err(|e| AddFileError::ResolveImportError(e))?;
+                        .unwrap_or_else(|_| panic!("{filename} should have been added"));
                     self.add_file(import_id)?;
                 }
             }
