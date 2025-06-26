@@ -27,7 +27,7 @@
           {%- if field.is_removed -%}
             _ = helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?;
           {%- elif field.is_optional -%}
-            let {{ field.label }} = if helper.at_label(EdgeLabel::{{ field.label | pascal_case }}) {
+            let {{ field.label }} =
               {%- if field.is_terminal -%}
                 helper.accept_label(EdgeLabel::{{ field.label | pascal_case }}).map(terminal_node_cloned)
               {%- else -%}
@@ -35,9 +35,7 @@
                   build_{{ field.type | snake_case }}(nonterminal_node(node))
                 )
               {%- endif -%}
-            } else {
-              None
-            };
+            ;
           {%- else -%}
             let {{ field.label }} =
             {%- if field.is_terminal -%}
@@ -108,19 +106,15 @@
       assert_nonterminal_kind(node, NonterminalKind::{{ parent_type }});
       let mut items = {{ parent_type }}::new();
       let mut helper = ChildrenHelper::new(&node.children);
-      while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-          {%- if collection.is_terminal -%}
-            items.push(terminal_node_cloned(child));
-          {%- else -%}
-            if let Some(item) = build_{{ collection.item_type | snake_case }}(nonterminal_node(child)) {
-              items.push(item);
-            }
-          {%- endif -%}
-        }
-        if helper.at_label(EdgeLabel::Separator) {
-          _ = helper.accept_label(EdgeLabel::Separator);
-        }
+      while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        {%- if collection.is_terminal -%}
+          items.push(terminal_node_cloned(child));
+        {%- else -%}
+          if let Some(item) = build_{{ collection.item_type | snake_case }}(nonterminal_node(child)) {
+            items.push(item);
+          }
+        {%- endif -%}
+        _ = helper.accept_label(EdgeLabel::Separator);
       }
       helper.finalize();
       Some(items)
@@ -158,7 +152,7 @@
     fn new(children: &'a Vec<Edge>) -> Self {
       let mut index = 0;
       while index < children.len() {
-        if !children[index].is_trivia() {
+        if !children[index].is_trivia() && children[index].is_valid() {
           break;
         }
         index += 1;
@@ -166,40 +160,16 @@
       Self { children, index }
     }
 
-    fn at_label(&self, label: EdgeLabel) -> bool {
-      self.index < self.children.len() && self.children[self.index].label == label
-    }
-
     fn accept_label(&mut self, label: EdgeLabel) -> Option<&Node> {
-      if self.index >= self.children.len() {
-        // we may end up in this case if the parser generates an incomplete CST
-        // node because of a parser error
+      if self.index >= self.children.len() || self.children[self.index].label != label {
         return None;
       }
-      if !self.children[self.index].is_valid() {
-        // attempt to recover from an unrecognized/missing node
-        loop {
-          self.index += 1;
-          if self.index >= self.children.len() {
-            return None;
-          }
-          if !self.children[self.index].is_trivia() {
-            break;
-          }
-        }
-        if self.children[self.index].label != label {
-          return None;
-        }
-      }
-      assert!(
-        self.children[self.index].label == label,
-        "expected node with label {label}, instead got {edge:?}", edge = self.children[self.index],
-      );
 
       let node = &self.children[self.index].node;
       loop {
         self.index += 1;
-        if self.index >= self.children.len() || !self.children[self.index].is_trivia() {
+        if self.index >= self.children.len() ||
+          (!self.children[self.index].is_trivia() && self.children[self.index].is_valid()) {
           break;
         }
       }

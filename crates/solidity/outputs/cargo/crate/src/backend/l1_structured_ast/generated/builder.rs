@@ -100,13 +100,9 @@ pub fn build_version_range(node: &Rc<NonterminalNode>) -> Option<VersionRange> {
 pub fn build_version_term(node: &Rc<NonterminalNode>) -> Option<VersionTerm> {
     assert_nonterminal_kind(node, NonterminalKind::VersionTerm);
     let mut helper = ChildrenHelper::new(&node.children);
-    let operator = if helper.at_label(EdgeLabel::Operator) {
-        helper
-            .accept_label(EdgeLabel::Operator)
-            .and_then(|node| build_version_operator(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let operator = helper
+        .accept_label(EdgeLabel::Operator)
+        .and_then(|node| build_version_operator(nonterminal_node(node)));
     let literal =
         build_version_literal(nonterminal_node(helper.accept_label(EdgeLabel::Literal)?))?;
     helper.finalize();
@@ -136,13 +132,9 @@ pub fn build_path_import(node: &Rc<NonterminalNode>) -> Option<PathImport> {
     assert_nonterminal_kind(node, NonterminalKind::PathImport);
     let mut helper = ChildrenHelper::new(&node.children);
     let path = build_string_literal(nonterminal_node(helper.accept_label(EdgeLabel::Path)?))?;
-    let alias = if helper.at_label(EdgeLabel::Alias) {
-        helper
-            .accept_label(EdgeLabel::Alias)
-            .and_then(|node| build_import_alias(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let alias = helper
+        .accept_label(EdgeLabel::Alias)
+        .and_then(|node| build_import_alias(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(PathImportStruct {
@@ -193,13 +185,9 @@ pub fn build_import_deconstruction_symbol(
     assert_nonterminal_kind(node, NonterminalKind::ImportDeconstructionSymbol);
     let mut helper = ChildrenHelper::new(&node.children);
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
-    let alias = if helper.at_label(EdgeLabel::Alias) {
-        helper
-            .accept_label(EdgeLabel::Alias)
-            .and_then(|node| build_import_alias(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let alias = helper
+        .accept_label(EdgeLabel::Alias)
+        .and_then(|node| build_import_alias(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(ImportDeconstructionSymbolStruct {
@@ -229,13 +217,9 @@ pub fn build_using_directive(node: &Rc<NonterminalNode>) -> Option<UsingDirectiv
     let clause = build_using_clause(nonterminal_node(helper.accept_label(EdgeLabel::Clause)?))?;
     _ = helper.accept_label(EdgeLabel::ForKeyword)?;
     let target = build_using_target(nonterminal_node(helper.accept_label(EdgeLabel::Target)?))?;
-    let global_keyword = if helper.at_label(EdgeLabel::GlobalKeyword) {
-        helper
-            .accept_label(EdgeLabel::GlobalKeyword)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
+    let global_keyword = helper
+        .accept_label(EdgeLabel::GlobalKeyword)
+        .map(terminal_node_cloned);
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize();
 
@@ -269,13 +253,9 @@ pub fn build_using_deconstruction_symbol(
     assert_nonterminal_kind(node, NonterminalKind::UsingDeconstructionSymbol);
     let mut helper = ChildrenHelper::new(&node.children);
     let name = build_identifier_path(nonterminal_node(helper.accept_label(EdgeLabel::Name)?))?;
-    let alias = if helper.at_label(EdgeLabel::Alias) {
-        helper
-            .accept_label(EdgeLabel::Alias)
-            .and_then(|node| build_using_alias(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let alias = helper
+        .accept_label(EdgeLabel::Alias)
+        .and_then(|node| build_using_alias(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(UsingDeconstructionSymbolStruct {
@@ -302,13 +282,9 @@ pub fn build_using_alias(node: &Rc<NonterminalNode>) -> Option<UsingAlias> {
 pub fn build_contract_definition(node: &Rc<NonterminalNode>) -> Option<ContractDefinition> {
     assert_nonterminal_kind(node, NonterminalKind::ContractDefinition);
     let mut helper = ChildrenHelper::new(&node.children);
-    let abstract_keyword = if helper.at_label(EdgeLabel::AbstractKeyword) {
-        helper
-            .accept_label(EdgeLabel::AbstractKeyword)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
+    let abstract_keyword = helper
+        .accept_label(EdgeLabel::AbstractKeyword)
+        .map(terminal_node_cloned);
     _ = helper.accept_label(EdgeLabel::ContractKeyword)?;
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
     let specifiers = build_contract_specifiers(nonterminal_node(
@@ -347,13 +323,9 @@ pub fn build_inheritance_type(node: &Rc<NonterminalNode>) -> Option<InheritanceT
     let mut helper = ChildrenHelper::new(&node.children);
     let type_name =
         build_identifier_path(nonterminal_node(helper.accept_label(EdgeLabel::TypeName)?))?;
-    let arguments = if helper.at_label(EdgeLabel::Arguments) {
-        helper
-            .accept_label(EdgeLabel::Arguments)
-            .and_then(|node| build_arguments_declaration(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let arguments = helper
+        .accept_label(EdgeLabel::Arguments)
+        .and_then(|node| build_arguments_declaration(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(InheritanceTypeStruct {
@@ -386,13 +358,9 @@ pub fn build_interface_definition(node: &Rc<NonterminalNode>) -> Option<Interfac
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::InterfaceKeyword)?;
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
-    let inheritance = if helper.at_label(EdgeLabel::Inheritance) {
-        helper
-            .accept_label(EdgeLabel::Inheritance)
-            .and_then(|node| build_inheritance_specifier(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let inheritance = helper
+        .accept_label(EdgeLabel::Inheritance)
+        .and_then(|node| build_inheritance_specifier(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let members =
         build_interface_members(nonterminal_node(helper.accept_label(EdgeLabel::Members)?))?;
@@ -503,13 +471,9 @@ pub fn build_state_variable_definition(
         helper.accept_label(EdgeLabel::Attributes)?,
     ))?;
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
-    let value = if helper.at_label(EdgeLabel::Value) {
-        helper
-            .accept_label(EdgeLabel::Value)
-            .and_then(|node| build_state_variable_definition_value(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let value = helper
+        .accept_label(EdgeLabel::Value)
+        .and_then(|node| build_state_variable_definition_value(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize();
 
@@ -548,13 +512,9 @@ pub fn build_function_definition(node: &Rc<NonterminalNode>) -> Option<FunctionD
     let attributes = build_function_attributes(nonterminal_node(
         helper.accept_label(EdgeLabel::Attributes)?,
     ))?;
-    let returns = if helper.at_label(EdgeLabel::Returns) {
-        helper
-            .accept_label(EdgeLabel::Returns)
-            .and_then(|node| build_returns_declaration(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let returns = helper
+        .accept_label(EdgeLabel::Returns)
+        .and_then(|node| build_returns_declaration(nonterminal_node(node)));
     let body = build_function_body(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
     helper.finalize();
 
@@ -588,20 +548,12 @@ pub fn build_parameter(node: &Rc<NonterminalNode>) -> Option<Parameter> {
     assert_nonterminal_kind(node, NonterminalKind::Parameter);
     let mut helper = ChildrenHelper::new(&node.children);
     let type_name = build_type_name(nonterminal_node(helper.accept_label(EdgeLabel::TypeName)?))?;
-    let storage_location = if helper.at_label(EdgeLabel::StorageLocation) {
-        helper
-            .accept_label(EdgeLabel::StorageLocation)
-            .and_then(|node| build_storage_location(nonterminal_node(node)))
-    } else {
-        None
-    };
-    let name = if helper.at_label(EdgeLabel::Name) {
-        helper
-            .accept_label(EdgeLabel::Name)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
+    let storage_location = helper
+        .accept_label(EdgeLabel::StorageLocation)
+        .and_then(|node| build_storage_location(nonterminal_node(node)));
+    let name = helper
+        .accept_label(EdgeLabel::Name)
+        .map(terminal_node_cloned);
     helper.finalize();
 
     Some(Rc::new(ParameterStruct {
@@ -616,13 +568,9 @@ pub fn build_override_specifier(node: &Rc<NonterminalNode>) -> Option<OverrideSp
     assert_nonterminal_kind(node, NonterminalKind::OverrideSpecifier);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::OverrideKeyword)?;
-    let overridden = if helper.at_label(EdgeLabel::Overridden) {
-        helper
-            .accept_label(EdgeLabel::Overridden)
-            .and_then(|node| build_override_paths_declaration(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let overridden = helper
+        .accept_label(EdgeLabel::Overridden)
+        .and_then(|node| build_override_paths_declaration(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(OverrideSpecifierStruct {
@@ -717,13 +665,9 @@ pub fn build_fallback_function_definition(
     let attributes = build_fallback_function_attributes(nonterminal_node(
         helper.accept_label(EdgeLabel::Attributes)?,
     ))?;
-    let returns = if helper.at_label(EdgeLabel::Returns) {
-        helper
-            .accept_label(EdgeLabel::Returns)
-            .and_then(|node| build_returns_declaration(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let returns = helper
+        .accept_label(EdgeLabel::Returns)
+        .and_then(|node| build_returns_declaration(nonterminal_node(node)));
     let body = build_function_body(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
     helper.finalize();
 
@@ -764,13 +708,9 @@ pub fn build_modifier_definition(node: &Rc<NonterminalNode>) -> Option<ModifierD
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::ModifierKeyword)?;
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
-    let parameters = if helper.at_label(EdgeLabel::Parameters) {
-        helper
-            .accept_label(EdgeLabel::Parameters)
-            .and_then(|node| build_parameters_declaration(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let parameters = helper
+        .accept_label(EdgeLabel::Parameters)
+        .and_then(|node| build_parameters_declaration(nonterminal_node(node)));
     let attributes = build_modifier_attributes(nonterminal_node(
         helper.accept_label(EdgeLabel::Attributes)?,
     ))?;
@@ -790,13 +730,9 @@ pub fn build_modifier_invocation(node: &Rc<NonterminalNode>) -> Option<ModifierI
     assert_nonterminal_kind(node, NonterminalKind::ModifierInvocation);
     let mut helper = ChildrenHelper::new(&node.children);
     let name = build_identifier_path(nonterminal_node(helper.accept_label(EdgeLabel::Name)?))?;
-    let arguments = if helper.at_label(EdgeLabel::Arguments) {
-        helper
-            .accept_label(EdgeLabel::Arguments)
-            .and_then(|node| build_arguments_declaration(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let arguments = helper
+        .accept_label(EdgeLabel::Arguments)
+        .and_then(|node| build_arguments_declaration(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(ModifierInvocationStruct {
@@ -814,13 +750,9 @@ pub fn build_event_definition(node: &Rc<NonterminalNode>) -> Option<EventDefinit
     let parameters = build_event_parameters_declaration(nonterminal_node(
         helper.accept_label(EdgeLabel::Parameters)?,
     ))?;
-    let anonymous_keyword = if helper.at_label(EdgeLabel::AnonymousKeyword) {
-        helper
-            .accept_label(EdgeLabel::AnonymousKeyword)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
+    let anonymous_keyword = helper
+        .accept_label(EdgeLabel::AnonymousKeyword)
+        .map(terminal_node_cloned);
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize();
 
@@ -854,20 +786,12 @@ pub fn build_event_parameter(node: &Rc<NonterminalNode>) -> Option<EventParamete
     assert_nonterminal_kind(node, NonterminalKind::EventParameter);
     let mut helper = ChildrenHelper::new(&node.children);
     let type_name = build_type_name(nonterminal_node(helper.accept_label(EdgeLabel::TypeName)?))?;
-    let indexed_keyword = if helper.at_label(EdgeLabel::IndexedKeyword) {
-        helper
-            .accept_label(EdgeLabel::IndexedKeyword)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
-    let name = if helper.at_label(EdgeLabel::Name) {
-        helper
-            .accept_label(EdgeLabel::Name)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
+    let indexed_keyword = helper
+        .accept_label(EdgeLabel::IndexedKeyword)
+        .map(terminal_node_cloned);
+    let name = helper
+        .accept_label(EdgeLabel::Name)
+        .map(terminal_node_cloned);
     helper.finalize();
 
     Some(Rc::new(EventParameterStruct {
@@ -938,13 +862,9 @@ pub fn build_error_parameter(node: &Rc<NonterminalNode>) -> Option<ErrorParamete
     assert_nonterminal_kind(node, NonterminalKind::ErrorParameter);
     let mut helper = ChildrenHelper::new(&node.children);
     let type_name = build_type_name(nonterminal_node(helper.accept_label(EdgeLabel::TypeName)?))?;
-    let name = if helper.at_label(EdgeLabel::Name) {
-        helper
-            .accept_label(EdgeLabel::Name)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
+    let name = helper
+        .accept_label(EdgeLabel::Name)
+        .map(terminal_node_cloned);
     helper.finalize();
 
     Some(Rc::new(ErrorParameterStruct {
@@ -959,13 +879,9 @@ pub fn build_array_type_name(node: &Rc<NonterminalNode>) -> Option<ArrayTypeName
     let mut helper = ChildrenHelper::new(&node.children);
     let operand = build_type_name(nonterminal_node(helper.accept_label(EdgeLabel::Operand)?))?;
     _ = helper.accept_label(EdgeLabel::OpenBracket)?;
-    let index = if helper.at_label(EdgeLabel::Index) {
-        helper
-            .accept_label(EdgeLabel::Index)
-            .and_then(|node| build_expression(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let index = helper
+        .accept_label(EdgeLabel::Index)
+        .and_then(|node| build_expression(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::CloseBracket)?;
     helper.finalize();
 
@@ -986,13 +902,9 @@ pub fn build_function_type(node: &Rc<NonterminalNode>) -> Option<FunctionType> {
     let attributes = build_function_type_attributes(nonterminal_node(
         helper.accept_label(EdgeLabel::Attributes)?,
     ))?;
-    let returns = if helper.at_label(EdgeLabel::Returns) {
-        helper
-            .accept_label(EdgeLabel::Returns)
-            .and_then(|node| build_returns_declaration(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let returns = helper
+        .accept_label(EdgeLabel::Returns)
+        .and_then(|node| build_returns_declaration(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(FunctionTypeStruct {
@@ -1027,13 +939,9 @@ pub fn build_mapping_key(node: &Rc<NonterminalNode>) -> Option<MappingKey> {
     let mut helper = ChildrenHelper::new(&node.children);
     let key_type =
         build_mapping_key_type(nonterminal_node(helper.accept_label(EdgeLabel::KeyType)?))?;
-    let name = if helper.at_label(EdgeLabel::Name) {
-        helper
-            .accept_label(EdgeLabel::Name)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
+    let name = helper
+        .accept_label(EdgeLabel::Name)
+        .map(terminal_node_cloned);
     helper.finalize();
 
     Some(Rc::new(MappingKeyStruct {
@@ -1047,13 +955,9 @@ pub fn build_mapping_value(node: &Rc<NonterminalNode>) -> Option<MappingValue> {
     assert_nonterminal_kind(node, NonterminalKind::MappingValue);
     let mut helper = ChildrenHelper::new(&node.children);
     let type_name = build_type_name(nonterminal_node(helper.accept_label(EdgeLabel::TypeName)?))?;
-    let name = if helper.at_label(EdgeLabel::Name) {
-        helper
-            .accept_label(EdgeLabel::Name)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
+    let name = helper
+        .accept_label(EdgeLabel::Name)
+        .map(terminal_node_cloned);
     helper.finalize();
 
     Some(Rc::new(MappingValueStruct {
@@ -1067,13 +971,9 @@ pub fn build_address_type(node: &Rc<NonterminalNode>) -> Option<AddressType> {
     assert_nonterminal_kind(node, NonterminalKind::AddressType);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::AddressKeyword)?;
-    let payable_keyword = if helper.at_label(EdgeLabel::PayableKeyword) {
-        helper
-            .accept_label(EdgeLabel::PayableKeyword)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
+    let payable_keyword = helper
+        .accept_label(EdgeLabel::PayableKeyword)
+        .map(terminal_node_cloned);
     helper.finalize();
 
     Some(Rc::new(AddressTypeStruct {
@@ -1130,20 +1030,12 @@ pub fn build_assembly_statement(node: &Rc<NonterminalNode>) -> Option<AssemblySt
     assert_nonterminal_kind(node, NonterminalKind::AssemblyStatement);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::AssemblyKeyword)?;
-    let label = if helper.at_label(EdgeLabel::Label) {
-        helper
-            .accept_label(EdgeLabel::Label)
-            .and_then(|node| build_string_literal(nonterminal_node(node)))
-    } else {
-        None
-    };
-    let flags = if helper.at_label(EdgeLabel::Flags) {
-        helper
-            .accept_label(EdgeLabel::Flags)
-            .and_then(|node| build_assembly_flags_declaration(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let label = helper
+        .accept_label(EdgeLabel::Label)
+        .and_then(|node| build_string_literal(nonterminal_node(node)));
+    let flags = helper
+        .accept_label(EdgeLabel::Flags)
+        .and_then(|node| build_assembly_flags_declaration(nonterminal_node(node)));
     let body = build_yul_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
     helper.finalize();
 
@@ -1176,13 +1068,9 @@ pub fn build_tuple_deconstruction_statement(
 ) -> Option<TupleDeconstructionStatement> {
     assert_nonterminal_kind(node, NonterminalKind::TupleDeconstructionStatement);
     let mut helper = ChildrenHelper::new(&node.children);
-    let var_keyword = if helper.at_label(EdgeLabel::VarKeyword) {
-        helper
-            .accept_label(EdgeLabel::VarKeyword)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
+    let var_keyword = helper
+        .accept_label(EdgeLabel::VarKeyword)
+        .map(terminal_node_cloned);
     _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let elements = build_tuple_deconstruction_elements(nonterminal_node(
         helper.accept_label(EdgeLabel::Elements)?,
@@ -1208,13 +1096,9 @@ pub fn build_tuple_deconstruction_element(
 ) -> Option<TupleDeconstructionElement> {
     assert_nonterminal_kind(node, NonterminalKind::TupleDeconstructionElement);
     let mut helper = ChildrenHelper::new(&node.children);
-    let member = if helper.at_label(EdgeLabel::Member) {
-        helper
-            .accept_label(EdgeLabel::Member)
-            .and_then(|node| build_tuple_member(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let member = helper
+        .accept_label(EdgeLabel::Member)
+        .and_then(|node| build_tuple_member(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(TupleDeconstructionElementStruct {
@@ -1227,13 +1111,9 @@ pub fn build_typed_tuple_member(node: &Rc<NonterminalNode>) -> Option<TypedTuple
     assert_nonterminal_kind(node, NonterminalKind::TypedTupleMember);
     let mut helper = ChildrenHelper::new(&node.children);
     let type_name = build_type_name(nonterminal_node(helper.accept_label(EdgeLabel::TypeName)?))?;
-    let storage_location = if helper.at_label(EdgeLabel::StorageLocation) {
-        helper
-            .accept_label(EdgeLabel::StorageLocation)
-            .and_then(|node| build_storage_location(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let storage_location = helper
+        .accept_label(EdgeLabel::StorageLocation)
+        .and_then(|node| build_storage_location(nonterminal_node(node)));
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
     helper.finalize();
 
@@ -1248,13 +1128,9 @@ pub fn build_typed_tuple_member(node: &Rc<NonterminalNode>) -> Option<TypedTuple
 pub fn build_untyped_tuple_member(node: &Rc<NonterminalNode>) -> Option<UntypedTupleMember> {
     assert_nonterminal_kind(node, NonterminalKind::UntypedTupleMember);
     let mut helper = ChildrenHelper::new(&node.children);
-    let storage_location = if helper.at_label(EdgeLabel::StorageLocation) {
-        helper
-            .accept_label(EdgeLabel::StorageLocation)
-            .and_then(|node| build_storage_location(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let storage_location = helper
+        .accept_label(EdgeLabel::StorageLocation)
+        .and_then(|node| build_storage_location(nonterminal_node(node)));
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
     helper.finalize();
 
@@ -1273,21 +1149,13 @@ pub fn build_variable_declaration_statement(
     let variable_type = build_variable_declaration_type(nonterminal_node(
         helper.accept_label(EdgeLabel::VariableType)?,
     ))?;
-    let storage_location = if helper.at_label(EdgeLabel::StorageLocation) {
-        helper
-            .accept_label(EdgeLabel::StorageLocation)
-            .and_then(|node| build_storage_location(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let storage_location = helper
+        .accept_label(EdgeLabel::StorageLocation)
+        .and_then(|node| build_storage_location(nonterminal_node(node)));
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
-    let value = if helper.at_label(EdgeLabel::Value) {
-        helper
-            .accept_label(EdgeLabel::Value)
-            .and_then(|node| build_variable_declaration_value(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let value = helper
+        .accept_label(EdgeLabel::Value)
+        .and_then(|node| build_variable_declaration_value(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize();
 
@@ -1325,13 +1193,9 @@ pub fn build_if_statement(node: &Rc<NonterminalNode>) -> Option<IfStatement> {
     let condition = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Condition)?))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
     let body = build_statement(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    let else_branch = if helper.at_label(EdgeLabel::ElseBranch) {
-        helper
-            .accept_label(EdgeLabel::ElseBranch)
-            .and_then(|node| build_else_branch(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let else_branch = helper
+        .accept_label(EdgeLabel::ElseBranch)
+        .and_then(|node| build_else_branch(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(IfStatementStruct {
@@ -1366,13 +1230,9 @@ pub fn build_for_statement(node: &Rc<NonterminalNode>) -> Option<ForStatement> {
     let condition = build_for_statement_condition(nonterminal_node(
         helper.accept_label(EdgeLabel::Condition)?,
     ))?;
-    let iterator = if helper.at_label(EdgeLabel::Iterator) {
-        helper
-            .accept_label(EdgeLabel::Iterator)
-            .and_then(|node| build_expression(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let iterator = helper
+        .accept_label(EdgeLabel::Iterator)
+        .and_then(|node| build_expression(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
     let body = build_statement(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
     helper.finalize();
@@ -1446,13 +1306,9 @@ pub fn build_return_statement(node: &Rc<NonterminalNode>) -> Option<ReturnStatem
     assert_nonterminal_kind(node, NonterminalKind::ReturnStatement);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::ReturnKeyword)?;
-    let expression = if helper.at_label(EdgeLabel::Expression) {
-        helper
-            .accept_label(EdgeLabel::Expression)
-            .and_then(|node| build_expression(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let expression = helper
+        .accept_label(EdgeLabel::Expression)
+        .and_then(|node| build_expression(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
     helper.finalize();
 
@@ -1486,13 +1342,9 @@ pub fn build_try_statement(node: &Rc<NonterminalNode>) -> Option<TryStatement> {
     let expression = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::Expression)?,
     ))?;
-    let returns = if helper.at_label(EdgeLabel::Returns) {
-        helper
-            .accept_label(EdgeLabel::Returns)
-            .and_then(|node| build_returns_declaration(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let returns = helper
+        .accept_label(EdgeLabel::Returns)
+        .and_then(|node| build_returns_declaration(nonterminal_node(node)));
     let body = build_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
     let catch_clauses = build_catch_clauses(nonterminal_node(
         helper.accept_label(EdgeLabel::CatchClauses)?,
@@ -1512,13 +1364,9 @@ pub fn build_catch_clause(node: &Rc<NonterminalNode>) -> Option<CatchClause> {
     assert_nonterminal_kind(node, NonterminalKind::CatchClause);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::CatchKeyword)?;
-    let error = if helper.at_label(EdgeLabel::Error) {
-        helper
-            .accept_label(EdgeLabel::Error)
-            .and_then(|node| build_catch_clause_error(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let error = helper
+        .accept_label(EdgeLabel::Error)
+        .and_then(|node| build_catch_clause_error(nonterminal_node(node)));
     let body = build_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
     helper.finalize();
 
@@ -1532,13 +1380,9 @@ pub fn build_catch_clause(node: &Rc<NonterminalNode>) -> Option<CatchClause> {
 pub fn build_catch_clause_error(node: &Rc<NonterminalNode>) -> Option<CatchClauseError> {
     assert_nonterminal_kind(node, NonterminalKind::CatchClauseError);
     let mut helper = ChildrenHelper::new(&node.children);
-    let name = if helper.at_label(EdgeLabel::Name) {
-        helper
-            .accept_label(EdgeLabel::Name)
-            .map(terminal_node_cloned)
-    } else {
-        None
-    };
+    let name = helper
+        .accept_label(EdgeLabel::Name)
+        .map(terminal_node_cloned);
     let parameters = build_parameters_declaration(nonterminal_node(
         helper.accept_label(EdgeLabel::Parameters)?,
     ))?;
@@ -1555,13 +1399,9 @@ pub fn build_revert_statement(node: &Rc<NonterminalNode>) -> Option<RevertStatem
     assert_nonterminal_kind(node, NonterminalKind::RevertStatement);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::RevertKeyword)?;
-    let error = if helper.at_label(EdgeLabel::Error) {
-        helper
-            .accept_label(EdgeLabel::Error)
-            .and_then(|node| build_identifier_path(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let error = helper
+        .accept_label(EdgeLabel::Error)
+        .and_then(|node| build_identifier_path(nonterminal_node(node)));
     let arguments =
         build_arguments_declaration(nonterminal_node(helper.accept_label(EdgeLabel::Arguments)?))?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
@@ -1928,20 +1768,12 @@ pub fn build_index_access_expression(node: &Rc<NonterminalNode>) -> Option<Index
     let mut helper = ChildrenHelper::new(&node.children);
     let operand = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Operand)?))?;
     _ = helper.accept_label(EdgeLabel::OpenBracket)?;
-    let start = if helper.at_label(EdgeLabel::Start) {
-        helper
-            .accept_label(EdgeLabel::Start)
-            .and_then(|node| build_expression(nonterminal_node(node)))
-    } else {
-        None
-    };
-    let end = if helper.at_label(EdgeLabel::End) {
-        helper
-            .accept_label(EdgeLabel::End)
-            .and_then(|node| build_index_access_end(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let start = helper
+        .accept_label(EdgeLabel::Start)
+        .and_then(|node| build_expression(nonterminal_node(node)));
+    let end = helper
+        .accept_label(EdgeLabel::End)
+        .and_then(|node| build_index_access_end(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::CloseBracket)?;
     helper.finalize();
 
@@ -1957,13 +1789,9 @@ pub fn build_index_access_end(node: &Rc<NonterminalNode>) -> Option<IndexAccessE
     assert_nonterminal_kind(node, NonterminalKind::IndexAccessEnd);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::Colon)?;
-    let end = if helper.at_label(EdgeLabel::End) {
-        helper
-            .accept_label(EdgeLabel::End)
-            .and_then(|node| build_expression(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let end = helper
+        .accept_label(EdgeLabel::End)
+        .and_then(|node| build_expression(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(IndexAccessEndStruct {
@@ -1995,13 +1823,9 @@ pub fn build_named_arguments_declaration(
     assert_nonterminal_kind(node, NonterminalKind::NamedArgumentsDeclaration);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::OpenParen)?;
-    let arguments = if helper.at_label(EdgeLabel::Arguments) {
-        helper
-            .accept_label(EdgeLabel::Arguments)
-            .and_then(|node| build_named_argument_group(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let arguments = helper
+        .accept_label(EdgeLabel::Arguments)
+        .and_then(|node| build_named_argument_group(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
     helper.finalize();
 
@@ -2086,13 +1910,9 @@ pub fn build_tuple_expression(node: &Rc<NonterminalNode>) -> Option<TupleExpress
 pub fn build_tuple_value(node: &Rc<NonterminalNode>) -> Option<TupleValue> {
     assert_nonterminal_kind(node, NonterminalKind::TupleValue);
     let mut helper = ChildrenHelper::new(&node.children);
-    let expression = if helper.at_label(EdgeLabel::Expression) {
-        helper
-            .accept_label(EdgeLabel::Expression)
-            .and_then(|node| build_expression(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let expression = helper
+        .accept_label(EdgeLabel::Expression)
+        .and_then(|node| build_expression(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(TupleValueStruct {
@@ -2119,13 +1939,9 @@ pub fn build_hex_number_expression(node: &Rc<NonterminalNode>) -> Option<HexNumb
     assert_nonterminal_kind(node, NonterminalKind::HexNumberExpression);
     let mut helper = ChildrenHelper::new(&node.children);
     let literal = terminal_node_cloned(helper.accept_label(EdgeLabel::Literal)?);
-    let unit = if helper.at_label(EdgeLabel::Unit) {
-        helper
-            .accept_label(EdgeLabel::Unit)
-            .and_then(|node| build_number_unit(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let unit = helper
+        .accept_label(EdgeLabel::Unit)
+        .and_then(|node| build_number_unit(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(HexNumberExpressionStruct {
@@ -2141,13 +1957,9 @@ pub fn build_decimal_number_expression(
     assert_nonterminal_kind(node, NonterminalKind::DecimalNumberExpression);
     let mut helper = ChildrenHelper::new(&node.children);
     let literal = terminal_node_cloned(helper.accept_label(EdgeLabel::Literal)?);
-    let unit = if helper.at_label(EdgeLabel::Unit) {
-        helper
-            .accept_label(EdgeLabel::Unit)
-            .and_then(|node| build_number_unit(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let unit = helper
+        .accept_label(EdgeLabel::Unit)
+        .and_then(|node| build_number_unit(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(DecimalNumberExpressionStruct {
@@ -2181,13 +1993,9 @@ pub fn build_yul_function_definition(node: &Rc<NonterminalNode>) -> Option<YulFu
     let parameters = build_yul_parameters_declaration(nonterminal_node(
         helper.accept_label(EdgeLabel::Parameters)?,
     ))?;
-    let returns = if helper.at_label(EdgeLabel::Returns) {
-        helper
-            .accept_label(EdgeLabel::Returns)
-            .and_then(|node| build_yul_returns_declaration(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let returns = helper
+        .accept_label(EdgeLabel::Returns)
+        .and_then(|node| build_yul_returns_declaration(nonterminal_node(node)));
     let body = build_yul_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
     helper.finalize();
 
@@ -2240,13 +2048,9 @@ pub fn build_yul_variable_declaration_statement(
     _ = helper.accept_label(EdgeLabel::LetKeyword)?;
     let variables =
         build_yul_variable_names(nonterminal_node(helper.accept_label(EdgeLabel::Variables)?))?;
-    let value = if helper.at_label(EdgeLabel::Value) {
-        helper
-            .accept_label(EdgeLabel::Value)
-            .and_then(|node| build_yul_variable_declaration_value(nonterminal_node(node)))
-    } else {
-        None
-    };
+    let value = helper
+        .accept_label(EdgeLabel::Value)
+        .and_then(|node| build_yul_variable_declaration_value(nonterminal_node(node)));
     helper.finalize();
 
     Some(Rc::new(YulVariableDeclarationStatementStruct {
@@ -3928,15 +3732,11 @@ pub fn build_source_unit_members(node: &Rc<NonterminalNode>) -> Option<SourceUni
     assert_nonterminal_kind(node, NonterminalKind::SourceUnitMembers);
     let mut items = SourceUnitMembers::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_source_unit_member(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_source_unit_member(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -3946,15 +3746,11 @@ pub fn build_version_expression_sets(node: &Rc<NonterminalNode>) -> Option<Versi
     assert_nonterminal_kind(node, NonterminalKind::VersionExpressionSets);
     let mut items = VersionExpressionSets::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_version_expression_set(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_version_expression_set(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -3964,15 +3760,11 @@ pub fn build_version_expression_set(node: &Rc<NonterminalNode>) -> Option<Versio
     assert_nonterminal_kind(node, NonterminalKind::VersionExpressionSet);
     let mut items = VersionExpressionSet::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_version_expression(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_version_expression(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -3982,13 +3774,9 @@ pub fn build_simple_version_literal(node: &Rc<NonterminalNode>) -> Option<Simple
     assert_nonterminal_kind(node, NonterminalKind::SimpleVersionLiteral);
     let mut items = SimpleVersionLiteral::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            items.push(terminal_node_cloned(child));
-        }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        items.push(terminal_node_cloned(child));
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4000,15 +3788,11 @@ pub fn build_import_deconstruction_symbols(
     assert_nonterminal_kind(node, NonterminalKind::ImportDeconstructionSymbols);
     let mut items = ImportDeconstructionSymbols::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_import_deconstruction_symbol(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_import_deconstruction_symbol(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4020,15 +3804,11 @@ pub fn build_using_deconstruction_symbols(
     assert_nonterminal_kind(node, NonterminalKind::UsingDeconstructionSymbols);
     let mut items = UsingDeconstructionSymbols::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_using_deconstruction_symbol(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_using_deconstruction_symbol(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4038,15 +3818,11 @@ pub fn build_contract_specifiers(node: &Rc<NonterminalNode>) -> Option<ContractS
     assert_nonterminal_kind(node, NonterminalKind::ContractSpecifiers);
     let mut items = ContractSpecifiers::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_contract_specifier(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_contract_specifier(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4056,15 +3832,11 @@ pub fn build_inheritance_types(node: &Rc<NonterminalNode>) -> Option<Inheritance
     assert_nonterminal_kind(node, NonterminalKind::InheritanceTypes);
     let mut items = InheritanceTypes::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_inheritance_type(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_inheritance_type(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4074,15 +3846,11 @@ pub fn build_contract_members(node: &Rc<NonterminalNode>) -> Option<ContractMemb
     assert_nonterminal_kind(node, NonterminalKind::ContractMembers);
     let mut items = ContractMembers::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_contract_member(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_contract_member(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4092,15 +3860,11 @@ pub fn build_interface_members(node: &Rc<NonterminalNode>) -> Option<InterfaceMe
     assert_nonterminal_kind(node, NonterminalKind::InterfaceMembers);
     let mut items = InterfaceMembers::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_contract_member(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_contract_member(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4110,15 +3874,11 @@ pub fn build_library_members(node: &Rc<NonterminalNode>) -> Option<LibraryMember
     assert_nonterminal_kind(node, NonterminalKind::LibraryMembers);
     let mut items = LibraryMembers::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_contract_member(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_contract_member(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4128,15 +3888,11 @@ pub fn build_struct_members(node: &Rc<NonterminalNode>) -> Option<StructMembers>
     assert_nonterminal_kind(node, NonterminalKind::StructMembers);
     let mut items = StructMembers::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_struct_member(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_struct_member(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4146,13 +3902,9 @@ pub fn build_enum_members(node: &Rc<NonterminalNode>) -> Option<EnumMembers> {
     assert_nonterminal_kind(node, NonterminalKind::EnumMembers);
     let mut items = EnumMembers::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            items.push(terminal_node_cloned(child));
-        }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        items.push(terminal_node_cloned(child));
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4164,15 +3916,11 @@ pub fn build_state_variable_attributes(
     assert_nonterminal_kind(node, NonterminalKind::StateVariableAttributes);
     let mut items = StateVariableAttributes::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_state_variable_attribute(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_state_variable_attribute(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4182,15 +3930,11 @@ pub fn build_parameters(node: &Rc<NonterminalNode>) -> Option<Parameters> {
     assert_nonterminal_kind(node, NonterminalKind::Parameters);
     let mut items = Parameters::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_parameter(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_parameter(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4200,15 +3944,11 @@ pub fn build_function_attributes(node: &Rc<NonterminalNode>) -> Option<FunctionA
     assert_nonterminal_kind(node, NonterminalKind::FunctionAttributes);
     let mut items = FunctionAttributes::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_function_attribute(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_function_attribute(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4218,15 +3958,11 @@ pub fn build_override_paths(node: &Rc<NonterminalNode>) -> Option<OverridePaths>
     assert_nonterminal_kind(node, NonterminalKind::OverridePaths);
     let mut items = OverridePaths::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_identifier_path(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_identifier_path(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4236,15 +3972,11 @@ pub fn build_constructor_attributes(node: &Rc<NonterminalNode>) -> Option<Constr
     assert_nonterminal_kind(node, NonterminalKind::ConstructorAttributes);
     let mut items = ConstructorAttributes::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_constructor_attribute(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_constructor_attribute(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4256,15 +3988,11 @@ pub fn build_unnamed_function_attributes(
     assert_nonterminal_kind(node, NonterminalKind::UnnamedFunctionAttributes);
     let mut items = UnnamedFunctionAttributes::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_unnamed_function_attribute(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_unnamed_function_attribute(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4276,15 +4004,11 @@ pub fn build_fallback_function_attributes(
     assert_nonterminal_kind(node, NonterminalKind::FallbackFunctionAttributes);
     let mut items = FallbackFunctionAttributes::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_fallback_function_attribute(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_fallback_function_attribute(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4296,15 +4020,11 @@ pub fn build_receive_function_attributes(
     assert_nonterminal_kind(node, NonterminalKind::ReceiveFunctionAttributes);
     let mut items = ReceiveFunctionAttributes::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_receive_function_attribute(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_receive_function_attribute(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4314,15 +4034,11 @@ pub fn build_modifier_attributes(node: &Rc<NonterminalNode>) -> Option<ModifierA
     assert_nonterminal_kind(node, NonterminalKind::ModifierAttributes);
     let mut items = ModifierAttributes::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_modifier_attribute(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_modifier_attribute(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4332,15 +4048,11 @@ pub fn build_event_parameters(node: &Rc<NonterminalNode>) -> Option<EventParamet
     assert_nonterminal_kind(node, NonterminalKind::EventParameters);
     let mut items = EventParameters::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_event_parameter(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_event_parameter(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4350,15 +4062,11 @@ pub fn build_error_parameters(node: &Rc<NonterminalNode>) -> Option<ErrorParamet
     assert_nonterminal_kind(node, NonterminalKind::ErrorParameters);
     let mut items = ErrorParameters::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_error_parameter(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_error_parameter(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4370,15 +4078,11 @@ pub fn build_function_type_attributes(
     assert_nonterminal_kind(node, NonterminalKind::FunctionTypeAttributes);
     let mut items = FunctionTypeAttributes::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_function_type_attribute(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_function_type_attribute(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4388,15 +4092,11 @@ pub fn build_statements(node: &Rc<NonterminalNode>) -> Option<Statements> {
     assert_nonterminal_kind(node, NonterminalKind::Statements);
     let mut items = Statements::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_statement(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_statement(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4406,15 +4106,11 @@ pub fn build_assembly_flags(node: &Rc<NonterminalNode>) -> Option<AssemblyFlags>
     assert_nonterminal_kind(node, NonterminalKind::AssemblyFlags);
     let mut items = AssemblyFlags::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_string_literal(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_string_literal(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4426,15 +4122,11 @@ pub fn build_tuple_deconstruction_elements(
     assert_nonterminal_kind(node, NonterminalKind::TupleDeconstructionElements);
     let mut items = TupleDeconstructionElements::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_tuple_deconstruction_element(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_tuple_deconstruction_element(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4444,15 +4136,11 @@ pub fn build_catch_clauses(node: &Rc<NonterminalNode>) -> Option<CatchClauses> {
     assert_nonterminal_kind(node, NonterminalKind::CatchClauses);
     let mut items = CatchClauses::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_catch_clause(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_catch_clause(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4462,15 +4150,11 @@ pub fn build_positional_arguments(node: &Rc<NonterminalNode>) -> Option<Position
     assert_nonterminal_kind(node, NonterminalKind::PositionalArguments);
     let mut items = PositionalArguments::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_expression(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_expression(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4480,15 +4164,11 @@ pub fn build_named_arguments(node: &Rc<NonterminalNode>) -> Option<NamedArgument
     assert_nonterminal_kind(node, NonterminalKind::NamedArguments);
     let mut items = NamedArguments::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_named_argument(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_named_argument(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4498,15 +4178,11 @@ pub fn build_call_options(node: &Rc<NonterminalNode>) -> Option<CallOptions> {
     assert_nonterminal_kind(node, NonterminalKind::CallOptions);
     let mut items = CallOptions::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_named_argument(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_named_argument(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4516,15 +4192,11 @@ pub fn build_tuple_values(node: &Rc<NonterminalNode>) -> Option<TupleValues> {
     assert_nonterminal_kind(node, NonterminalKind::TupleValues);
     let mut items = TupleValues::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_tuple_value(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_tuple_value(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4534,15 +4206,11 @@ pub fn build_array_values(node: &Rc<NonterminalNode>) -> Option<ArrayValues> {
     assert_nonterminal_kind(node, NonterminalKind::ArrayValues);
     let mut items = ArrayValues::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_expression(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_expression(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4552,15 +4220,11 @@ pub fn build_string_literals(node: &Rc<NonterminalNode>) -> Option<StringLiteral
     assert_nonterminal_kind(node, NonterminalKind::StringLiterals);
     let mut items = StringLiterals::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_string_literal(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_string_literal(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4570,15 +4234,11 @@ pub fn build_hex_string_literals(node: &Rc<NonterminalNode>) -> Option<HexString
     assert_nonterminal_kind(node, NonterminalKind::HexStringLiterals);
     let mut items = HexStringLiterals::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_hex_string_literal(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_hex_string_literal(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4588,15 +4248,11 @@ pub fn build_unicode_string_literals(node: &Rc<NonterminalNode>) -> Option<Unico
     assert_nonterminal_kind(node, NonterminalKind::UnicodeStringLiterals);
     let mut items = UnicodeStringLiterals::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_unicode_string_literal(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_unicode_string_literal(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4606,13 +4262,9 @@ pub fn build_identifier_path(node: &Rc<NonterminalNode>) -> Option<IdentifierPat
     assert_nonterminal_kind(node, NonterminalKind::IdentifierPath);
     let mut items = IdentifierPath::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            items.push(terminal_node_cloned(child));
-        }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        items.push(terminal_node_cloned(child));
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4622,15 +4274,11 @@ pub fn build_yul_statements(node: &Rc<NonterminalNode>) -> Option<YulStatements>
     assert_nonterminal_kind(node, NonterminalKind::YulStatements);
     let mut items = YulStatements::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_yul_statement(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_yul_statement(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4640,13 +4288,9 @@ pub fn build_yul_parameters(node: &Rc<NonterminalNode>) -> Option<YulParameters>
     assert_nonterminal_kind(node, NonterminalKind::YulParameters);
     let mut items = YulParameters::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            items.push(terminal_node_cloned(child));
-        }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        items.push(terminal_node_cloned(child));
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4656,13 +4300,9 @@ pub fn build_yul_variable_names(node: &Rc<NonterminalNode>) -> Option<YulVariabl
     assert_nonterminal_kind(node, NonterminalKind::YulVariableNames);
     let mut items = YulVariableNames::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            items.push(terminal_node_cloned(child));
-        }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        items.push(terminal_node_cloned(child));
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4672,15 +4312,11 @@ pub fn build_yul_switch_cases(node: &Rc<NonterminalNode>) -> Option<YulSwitchCas
     assert_nonterminal_kind(node, NonterminalKind::YulSwitchCases);
     let mut items = YulSwitchCases::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_yul_switch_case(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_yul_switch_case(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4690,15 +4326,11 @@ pub fn build_yul_arguments(node: &Rc<NonterminalNode>) -> Option<YulArguments> {
     assert_nonterminal_kind(node, NonterminalKind::YulArguments);
     let mut items = YulArguments::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_yul_expression(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_yul_expression(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4708,15 +4340,11 @@ pub fn build_yul_paths(node: &Rc<NonterminalNode>) -> Option<YulPaths> {
     assert_nonterminal_kind(node, NonterminalKind::YulPaths);
     let mut items = YulPaths::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            if let Some(item) = build_yul_path(nonterminal_node(child)) {
-                items.push(item);
-            }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        if let Some(item) = build_yul_path(nonterminal_node(child)) {
+            items.push(item);
         }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4726,13 +4354,9 @@ pub fn build_yul_path(node: &Rc<NonterminalNode>) -> Option<YulPath> {
     assert_nonterminal_kind(node, NonterminalKind::YulPath);
     let mut items = YulPath::new();
     let mut helper = ChildrenHelper::new(&node.children);
-    while helper.at_label(EdgeLabel::Item) {
-        if let Some(child) = helper.accept_label(EdgeLabel::Item) {
-            items.push(terminal_node_cloned(child));
-        }
-        if helper.at_label(EdgeLabel::Separator) {
-            _ = helper.accept_label(EdgeLabel::Separator);
-        }
+    while let Some(child) = helper.accept_label(EdgeLabel::Item) {
+        items.push(terminal_node_cloned(child));
+        _ = helper.accept_label(EdgeLabel::Separator);
     }
     helper.finalize();
     Some(items)
@@ -4774,7 +4398,7 @@ impl<'a> ChildrenHelper<'a> {
     fn new(children: &'a Vec<Edge>) -> Self {
         let mut index = 0;
         while index < children.len() {
-            if !children[index].is_trivia() {
+            if !children[index].is_trivia() && children[index].is_valid() {
                 break;
             }
             index += 1;
@@ -4782,41 +4406,17 @@ impl<'a> ChildrenHelper<'a> {
         Self { children, index }
     }
 
-    fn at_label(&self, label: EdgeLabel) -> bool {
-        self.index < self.children.len() && self.children[self.index].label == label
-    }
-
     fn accept_label(&mut self, label: EdgeLabel) -> Option<&Node> {
-        if self.index >= self.children.len() {
-            // we may end up in this case if the parser generates an incomplete CST
-            // node because of a parser error
+        if self.index >= self.children.len() || self.children[self.index].label != label {
             return None;
         }
-        if !self.children[self.index].is_valid() {
-            // attempt to recover from an unrecognized/missing node
-            loop {
-                self.index += 1;
-                if self.index >= self.children.len() {
-                    return None;
-                }
-                if !self.children[self.index].is_trivia() {
-                    break;
-                }
-            }
-            if self.children[self.index].label != label {
-                return None;
-            }
-        }
-        assert!(
-            self.children[self.index].label == label,
-            "expected node with label {label}, instead got {edge:?}",
-            edge = self.children[self.index],
-        );
 
         let node = &self.children[self.index].node;
         loop {
             self.index += 1;
-            if self.index >= self.children.len() || !self.children[self.index].is_trivia() {
+            if self.index >= self.children.len()
+                || (!self.children[self.index].is_trivia() && self.children[self.index].is_valid())
+            {
                 break;
             }
         }
