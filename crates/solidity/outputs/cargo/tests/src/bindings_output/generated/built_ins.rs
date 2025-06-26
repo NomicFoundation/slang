@@ -47,6 +47,11 @@ fn global_properties() -> Result<()> {
 }
 
 #[test]
+fn msg_sender() -> Result<()> {
+    run(T, "msg_sender")
+}
+
+#[test]
 fn shadowing() -> Result<()> {
     run(T, "shadowing")
 }
