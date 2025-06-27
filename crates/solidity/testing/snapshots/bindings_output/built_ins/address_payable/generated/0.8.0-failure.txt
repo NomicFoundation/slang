@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function testPayable(address payable rcpt) public {
+   │              ─────┬─────                 ──┬─  
+   │                   ╰──────────────────────────── name: 2
+   │                                            │   
+   │                                            ╰─── name: 3
+ 3 │         rcpt.transfer(1);
+   │         ──┬─ ────┬───  
+   │           ╰──────────── ref: 3
+   │                  │     
+   │                  ╰───── ref: built-in
+   │ 
+ 5 │     function testNonPayable(address rcpt) public {
+   │              ───────┬──────         ──┬─  
+   │                     ╰───────────────────── name: 4
+   │                                       │   
+   │                                       ╰─── name: 5
+   │ 
+ 7 │         rcpt.transfer(1);
+   │         ──┬─ ────┬───  
+   │           ╰──────────── ref: 5
+   │                  │     
+   │                  ╰───── unresolved
+   │ 
+ 9 │         address(uint160(rcpt)).transfer(1);
+   │                         ──┬─   ────┬───  
+   │                           ╰────────────── ref: 5
+   │                                    │     
+   │                                    ╰───── unresolved
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───│ ▶ contract Test {
+  2 │ │   ╭─▶     function testPayable(address payable rcpt) public {
+    │ │   │                            ──────────┬─────────  
+    │ │   │                                      ╰─────────── definiens: 3
+    ┆ ┆   ┆   
+  4 │ │ │ ├─▶     }
+    │ │ │ │           
+    │ │ │ ╰─────────── definiens: 2
+  5 │ │ ╭───▶     function testNonPayable(address rcpt) public {
+    │ │ │                                 ──────┬─────  
+    │ │ │                                       ╰─────── definiens: 5
+    ┆ ┆ ┆     
+ 10 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 4
+ 11 │ ├─────▶ }
+    │ │           
+    │ ╰─────────── definiens: 1
+────╯

@@ -1,0 +1,70 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 2
+    │ 
+  4 │         Foo foo;
+    │         ─┬─ ─┬─  
+    │          ╰─────── ref: 5
+    │              │   
+    │              ╰─── name: 3
+  5 │         foo.balance;
+    │         ─┬─ ───┬───  
+    │          ╰─────────── ref: 3
+    │                │     
+    │                ╰───── ref: built-in
+    │ 
+  7 │         Bar bar;
+    │         ─┬─ ─┬─  
+    │          ╰─────── ref: 6
+    │              │   
+    │              ╰─── name: 4
+  8 │         bar.balance;
+    │         ─┬─ ───┬───  
+    │          ╰─────────── ref: 4
+    │                │     
+    │                ╰───── ref: built-in
+    │ 
+ 12 │ contract Foo {}
+    │          ─┬─  
+    │           ╰─── name: 5
+ 13 │ interface Bar {}
+    │           ─┬─  
+    │            ╰─── name: 6
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─│ ──────▶ contract Test {
+  2 │ │ ╭─│ ────▶     function test() public {
+  3 │ │ │ ╭─────▶         // This was valid before 0.5.0
+  4 │ │ │ ├─────▶         Foo foo;
+    │ │ │ │                          
+    │ │ │ ╰────────────────────────── definiens: 3
+    ┆ ┆ ┆   ┆     
+  6 │ │ │   ╭───▶ 
+  7 │ │ │   ├───▶         Bar bar;
+    │ │ │   │                        
+    │ │ │   ╰──────────────────────── definiens: 4
+    ┆ ┆ ┆         
+  9 │ │ ├───────▶     }
+    │ │ │                 
+    │ │ ╰───────────────── definiens: 2
+ 10 │ ├───────│ ▶ }
+    │ │       │       
+    │ ╰─────────────── definiens: 1
+ 11 │         ╭─▶ 
+ 12 │         ├─▶ contract Foo {}
+    │         │                     
+    │         ╰───────────────────── definiens: 5
+ 13 │             interface Bar {}
+    │             ────────┬────────  
+    │                     ╰────────── definiens: 6
+────╯

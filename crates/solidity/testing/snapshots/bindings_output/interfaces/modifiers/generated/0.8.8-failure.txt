@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IOwnable {
+    │           ────┬───  
+    │               ╰───── name: 1
+  2 │     function owner() external returns (address);
+    │              ──┬──  
+    │                ╰──── name: 2
+    │ 
+  5 │     modifier onlyOwner() {
+    │              ────┬────  
+    │                  ╰────── name: 3
+  6 │         require(this.owner() == msg.sender, "not owner");
+    │         ───┬───      ──┬──      ─┬─ ───┬──  
+    │            ╰──────────────────────────────── unresolved
+    │                        │         │     │    
+    │                        ╰──────────────────── unresolved
+    │                                  │     │    
+    │                                  ╰────────── unresolved
+    │                                        │    
+    │                                        ╰──── unresolved
+  7 │         _;
+    │         ┬  
+    │         ╰── unresolved
+    │ 
+ 11 │ contract Test is IOwnable {
+    │          ──┬─    ────┬───  
+    │            ╰─────────────── name: 4
+    │                      │     
+    │                      ╰───── ref: 1
+ 12 │     function test() public onlyOwner {}
+    │              ──┬─          ────┬────  
+    │                ╰────────────────────── name: 5
+    │                                │      
+    │                                ╰────── unresolved
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭─────▶ interface IOwnable {
+  2 │ │ │         function owner() external returns (address);
+    │ │ │     ────────────────────────┬────────────────────────  
+    │ │ │                             ╰────────────────────────── definiens: 2
+  3 │ │ ╭───▶ 
+    ┆ ┆ ┆     
+  8 │ │ ├───▶     }
+    │ │ │             
+    │ │ ╰───────────── definiens: 3
+  9 │ ├───│ ▶ }
+    │ │   │       
+    │ ╰─────────── definiens: 1
+ 10 │     ╭─▶ 
+    ┆     ┆   
+ 12 │     │       function test() public onlyOwner {}
+    │     │   ────────────────────┬───────────────────  
+    │     │                       ╰───────────────────── definiens: 5
+ 13 │     ├─▶ }
+    │     │       
+    │     ╰─────── definiens: 4
+────╯

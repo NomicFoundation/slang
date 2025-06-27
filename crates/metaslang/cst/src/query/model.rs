@@ -144,7 +144,7 @@ impl<T: KindTypes> fmt::Display for ASTNode<T> {
                         write!(f, " | ")?;
                     } else {
                         done_first = true;
-                    };
+                    }
                     a.fmt(f)?;
                 }
                 write!(f, ")")?;
@@ -157,7 +157,7 @@ impl<T: KindTypes> fmt::Display for ASTNode<T> {
                         write!(f, " ")?;
                     } else {
                         done_first = true;
-                    };
+                    }
                     a.fmt(f)?;
                 }
                 Ok(())

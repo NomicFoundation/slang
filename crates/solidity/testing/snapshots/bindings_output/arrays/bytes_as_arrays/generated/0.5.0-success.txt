@@ -1,0 +1,55 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test(string storage a) internal {
+   │              ──┬─                ┬  
+   │                ╰──────────────────── name: 2
+   │                                  │  
+   │                                  ╰── name: 3
+ 3 │         bytes storage x = bytes(a);
+   │                       ┬         ┬  
+   │                       ╰──────────── name: 4
+   │                                 │  
+   │                                 ╰── ref: 3
+ 4 │         bytes1 b;
+   │                ┬  
+   │                ╰── name: 5
+ 5 │         x.push(b);
+   │         ┬ ──┬─ ┬  
+   │         ╰───────── ref: 4
+   │             │  │  
+   │             ╰───── ref: built-in
+   │                │  
+   │                ╰── ref: 5
+ 6 │         x.pop();
+   │         ┬ ─┬─  
+   │         ╰────── ref: 4
+   │            │   
+   │            ╰─── ref: built-in
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test(string storage a) internal {
+   │ │ │                     ────────┬───────  
+   │ │ │                             ╰───────── definiens: 3
+ 3 │ │ │           bytes storage x = bytes(a);
+   │ │ │   ──────────────────┬─────────────────  
+   │ │ │                     ╰─────────────────── definiens: 4
+ 4 │ │ │           bytes1 b;
+   │ │ │   ─────────┬────────  
+   │ │ │            ╰────────── definiens: 5
+   ┆ ┆ ┆   
+ 7 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 8 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

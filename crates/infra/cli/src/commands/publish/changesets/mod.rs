@@ -79,12 +79,14 @@ impl ChangesetsController {
 
         for destination_changelog in FileWalker::from_repo_root().find(["**/CHANGELOG.md"])? {
             if source_changelog != destination_changelog {
-                println!("Updating: {destination_changelog:?}");
+                println!("Updating: {}", destination_changelog.display());
                 std::fs::copy(&source_changelog, &destination_changelog)?;
             }
         }
 
         Command::new("git")
+            .property("-c", "user.name=github-actions")
+            .property("-c", "user.email=github-actions@users.noreply.github.com")
             .args(["stash", "push"])
             .flag("--include-untracked")
             .property("--message", "applied changesets")

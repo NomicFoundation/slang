@@ -1,5 +1,7 @@
-[submodule "submodules/jco"]
-	path = "submodules/jco"
-	url = "https://github.com/NomicFoundation/jco"
-	branch = "nomic"
-	shallow = true
+# No submodules currently used in this repository. To add a new one:
+#
+# [submodule "submodules/{REPO_NAME}"]
+# 	path = "submodules/{REPO_NAME}"
+# 	url = "https://github.com/{ORG_NAME}/{REPO_NAME}"
+# 	branch = "{BRANCH_NAME}"
+# 	shallow = true

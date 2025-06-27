@@ -68,7 +68,7 @@ fn collect_trivia<'l>(parser: &'l SpannedTriviaParser, acc: &mut Vec<&'l Identif
         SpannedTriviaParser::Trivia { reference } => {
             acc.push(reference);
         }
-    };
+    }
 }
 
 #[derive(thiserror::Error, Debug)]

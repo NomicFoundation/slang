@@ -1,0 +1,65 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[main.sol:1:1]
+   │
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 4 │     using AmountLib for Amount;
+   │           ────┬────     ───┬──  
+   │               ╰───────────────── unresolved
+   │                            │    
+   │                            ╰──── unresolved
+   │ 
+ 6 │     function test() public pure {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 7 │         Amount x;
+   │         ───┬── ┬  
+   │            ╰────── unresolved
+   │                │  
+   │                ╰── name: 3
+ 8 │         x.nop().min();
+   │         ┬ ─┬─   ─┬─  
+   │         ╰──────────── ref: 3
+   │            │     │   
+   │            ╰───────── unresolved
+   │                  │   
+   │                  ╰─── unresolved
+ 9 │         x.min();
+   │         ┬ ─┬─  
+   │         ╰────── ref: 3
+   │            │   
+   │            ╰─── unresolved
+───╯
+Definiens: 
+    ╭─[main.sol:1:1]
+    │
+  2 │ ╭───▶ 
+    ┆ ┆     
+  5 │ │ ╭─▶ 
+    ┆ ┆ ┆   
+  7 │ │ │           Amount x;
+    │ │ │   ─────────┬────────  
+    │ │ │            ╰────────── definiens: 3
+    ┆ ┆ ┆   
+ 10 │ │ ├─▶     }
+    │ │ │           
+    │ │ ╰─────────── definiens: 2
+ 11 │ ├───▶ }
+    │ │         
+    │ ╰───────── definiens: 1
+────╯
+Parse errors:
+Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.
+    ╭─[lib.sol:1:1]
+    │
+  1 │ ╭─▶ type Amount is uint64;
+    ┆ ┆   
+ 13 │ ├─▶ }
+    │ │       
+    │ ╰─────── Error occurred here.
+────╯
+References and definitions: 
+Definiens: 

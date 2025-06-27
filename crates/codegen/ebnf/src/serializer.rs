@@ -162,7 +162,7 @@ impl<'s, W: EbnfWriter> Serializer<'s, W> {
                 }
                 self.serialize_identifier(reference)?;
             }
-        };
+        }
 
         Ok(())
     }

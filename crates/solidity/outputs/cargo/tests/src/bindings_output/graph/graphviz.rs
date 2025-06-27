@@ -51,7 +51,7 @@ fn special_node(node: GraphNodeRef) -> bool {
     node.index() <= 1
 }
 
-impl<'a> DotSubGraph<'a> {
+impl DotSubGraph<'_> {
     fn node_id(&self, node: GraphNodeRef) -> String {
         let index = node.index();
         if index == 0 {
@@ -96,7 +96,7 @@ impl<'a> DotSubGraph<'a> {
     }
 }
 
-impl<'a> fmt::Display for DotSubGraph<'a> {
+impl fmt::Display for DotSubGraph<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         // we need to print edges connecting to the special nodes outside of the subgraph
         for node in self.graph.iter_nodes() {
