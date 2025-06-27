@@ -41,7 +41,7 @@ struct MermaidSubGraph<'a> {
     title: String,
 }
 
-impl<'a> MermaidSubGraph<'a> {
+impl MermaidSubGraph<'_> {
     fn root_node(&self) -> GraphNodeRef {
         self.graph
             .iter_nodes()
@@ -63,7 +63,7 @@ impl<'a> MermaidSubGraph<'a> {
     }
 }
 
-impl<'a> fmt::Display for MermaidSubGraph<'a> {
+impl fmt::Display for MermaidSubGraph<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let root = self.root_node();
 

@@ -216,7 +216,7 @@ impl<T: KindTypes + 'static> QueryMatchIterator<T> {
                     // The first matcher in the query should allow implicit matches
                     self.matcher = Some(ast_node.create_matcher(self.cursor.clone(), false));
                     return;
-                };
+                }
                 self.query_index += 1;
             }
             self.cursor.go_to_next();

@@ -41,7 +41,7 @@ impl Builder {
                         Item::Keyword { item } => builder.add_keyword_item(item),
                         Item::Token { item } => builder.add_token_item(item),
                         Item::Fragment { item } => builder.add_fragment_item(item),
-                    };
+                    }
                 }
 
                 all_entries.extend(builder.entries);
@@ -111,7 +111,7 @@ impl Builder {
 
         self.add_definition(
             name,
-            Self::build_enabled_comment(enabled),
+            Self::build_enabled_comment(enabled.as_ref()),
             Self::build_fields(fields),
             DefinitionKind::Sequence,
         );
@@ -129,13 +129,13 @@ impl Builder {
         let variants = variants.iter().map(|EnumVariant { reference, enabled }| {
             Value::new(
                 Self::build_ref(Some(PredefinedLabel::Variant.as_ref()), reference),
-                Self::build_enabled_comment(enabled),
+                Self::build_enabled_comment(enabled.as_ref()),
             )
         });
 
         self.add_definition(
             name,
-            Self::build_enabled_comment(enabled),
+            Self::build_enabled_comment(enabled.as_ref()),
             variants,
             DefinitionKind::Choice,
         );
@@ -160,7 +160,7 @@ impl Builder {
 
         self.add_definition(
             name,
-            Self::build_enabled_comment(enabled),
+            Self::build_enabled_comment(enabled.as_ref()),
             Some(Value::new(expression, None)),
             DefinitionKind::Sequence,
         );
@@ -194,7 +194,7 @@ impl Builder {
 
         self.add_definition(
             name,
-            Self::build_enabled_comment(enabled),
+            Self::build_enabled_comment(enabled.as_ref()),
             Some(Value::new(expression, None)),
             DefinitionKind::Sequence,
         );
@@ -232,13 +232,13 @@ impl Builder {
 
             values.push(Value::new(
                 Self::build_ref(Some(PredefinedLabel::Variant.as_ref()), reference),
-                Self::build_enabled_comment(enabled),
+                Self::build_enabled_comment(enabled.as_ref()),
             ));
         }
 
         self.add_definition(
             base_name,
-            Self::build_enabled_comment(enabled),
+            Self::build_enabled_comment(enabled.as_ref()),
             values,
             DefinitionKind::Choice,
         );
@@ -310,9 +310,9 @@ impl Builder {
                     None,
                 ));
             }
-        };
+        }
 
-        leading_comments.extend(Self::build_enabled_comment(enabled));
+        leading_comments.extend(Self::build_enabled_comment(enabled.as_ref()));
 
         self.add_definition(name, leading_comments, values, DefinitionKind::Sequence);
     }
@@ -326,7 +326,7 @@ impl Builder {
                 }
                 Field::Optional { reference, enabled } => Value::new(
                     Expression::new_optional(Self::build_ref(Some(identifier), reference).into()),
-                    Self::build_enabled_comment(enabled),
+                    Self::build_enabled_comment(enabled.as_ref()),
                 ),
             })
             .collect()
@@ -362,8 +362,8 @@ impl Builder {
         {
             let mut leading_comments = vec![];
 
-            leading_comments.extend(Self::build_enabled_comment(enabled));
-            leading_comments.extend(Self::build_reserved_comment(reserved));
+            leading_comments.extend(Self::build_enabled_comment(enabled.as_ref()));
+            leading_comments.extend(Self::build_reserved_comment(reserved.as_ref()));
 
             self.add_definition(
                 name,
@@ -382,7 +382,7 @@ impl Builder {
         for TokenDefinition { enabled, scanner } in definitions {
             self.add_definition(
                 name,
-                Self::build_enabled_comment(enabled),
+                Self::build_enabled_comment(enabled.as_ref()),
                 Some(Value::new(Self::build_scanner(scanner), None)),
                 DefinitionKind::Sequence,
             );
@@ -400,7 +400,7 @@ impl Builder {
 
         self.add_definition(
             name,
-            Self::build_enabled_comment(enabled),
+            Self::build_enabled_comment(enabled.as_ref()),
             Some(Value::new(Self::build_scanner(scanner), None)),
             DefinitionKind::Sequence,
         );
@@ -421,7 +421,7 @@ impl Builder {
         }
     }
 
-    fn build_reserved_comment(reserved: &Option<VersionSpecifier>) -> Option<String> {
+    fn build_reserved_comment(reserved: Option<&VersionSpecifier>) -> Option<String> {
         match reserved {
             None => None,
             Some(VersionSpecifier::Never) => Some("Never reserved".to_string()),
@@ -433,7 +433,7 @@ impl Builder {
         }
     }
 
-    fn build_enabled_comment(enabled: &Option<VersionSpecifier>) -> Option<String> {
+    fn build_enabled_comment(enabled: Option<&VersionSpecifier>) -> Option<String> {
         match enabled {
             None => None,
             Some(VersionSpecifier::Never) => None,

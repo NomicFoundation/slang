@@ -83,7 +83,7 @@ impl Dissector {
                 self.flush()?;
                 self.snapshot = Some(new_snapshot);
             }
-        };
+        }
 
         self.versions_so_far.push(binary.version.clone());
 

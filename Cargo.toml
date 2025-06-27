@@ -1,6 +1,6 @@
 [workspace.package]
 version = "1.2.0"
-rust-version = "1.82.0" # __RUST_STABLE_VERSION_MARKER__ (keep in sync)
+rust-version = "1.87.0" # __RUST_STABLE_VERSION_MARKER__ (keep in sync)
 edition = "2021"
 publish = false
 
@@ -117,10 +117,9 @@ log = { version = "0.4.27" }
 markdown = { version = "0.3.0" }
 nom = { version = "7.1.3" }
 num-format = { version = "0.4.4" }
-once_cell = { version = "1.21.3" }
 paste = { version = "1.0.15" }
 proc-macro2 = { version = "1.0.94" }
-public-api = { version = "0.37.0" }
+public-api = { version = "0.47.1" }
 quote = { version = "1.0.40" }
 rayon = { version = "1.10.0" }
 regex = { version = "1.11.1" }
@@ -185,6 +184,7 @@ missing_errors_doc = { level = "allow", priority = 1 }                 # Most of
 missing_panics_doc = { level = "allow", priority = 1 }                 # ... we care about the public documentation in our shipped crates
 module_name_repetitions = { level = "allow", priority = 1 }            # It seems we prefer it this way; we'd need to discuss that
 must_use_candidate = { level = "allow", priority = 1 }                 # Overzealous, we'd have to `[must_use]` a lot of things
+needless_continue = { level = "allow", priority = 1 }                  # The `continue` keyword serves to communicate intention, let's keep them
 needless_raw_string_hashes = { level = "allow", priority = 1 }         # It is easier to use hashes consistently on all tests/examples in a file
 redundant_closure_for_method_calls = { level = "allow", priority = 1 } # Not always clearer, let's not pepper `allow`s whenever needed
 # Nursery

@@ -21,7 +21,7 @@ impl NpmController {
 
         package.build()?;
 
-        println!("Publishing: {package_dir:?}");
+        println!("Publishing: {}", package_dir.display());
 
         let local_version = Npm::local_version(&package_dir)?;
         println!("Local version: {local_version}");

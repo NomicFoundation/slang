@@ -69,7 +69,7 @@ impl OrderedCommand for LintCommand {
             LintCommand::Tsc => run_tsc(),
             LintCommand::Yamllint => run_yamllint()?,
             LintCommand::Typedoc => run_typedoc()?,
-        };
+        }
 
         Ok(())
     }

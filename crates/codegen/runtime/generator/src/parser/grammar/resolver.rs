@@ -4,12 +4,12 @@ use std::cell::OnceCell;
 use std::collections::{BTreeMap, HashMap};
 use std::ops::Deref;
 use std::rc::Rc;
+use std::sync::LazyLock;
 
 use codegen_language_definition::model::{
     self, FieldsErrorRecovery, Identifier, Item, Language, PredefinedLabel,
 };
 use indexmap::IndexMap;
-use once_cell::sync::Lazy;
 
 use crate::parser::grammar::{
     DelimitedRecoveryTerminalThreshold, Grammar, GrammarElement, Labeled, ParserDefinition,
@@ -17,7 +17,7 @@ use crate::parser::grammar::{
     TriviaParserDefinition,
 };
 
-static DEFAULT_LEX_CTXT: Lazy<Identifier> = Lazy::new(|| Identifier::from("Default"));
+static DEFAULT_LEX_CTXT: LazyLock<Identifier> = LazyLock::new(|| Identifier::from("Default"));
 
 #[derive(Debug)]
 struct NamedTriviaParser {
@@ -276,7 +276,7 @@ fn resolve_grammar_element(ident: &Identifier, ctx: &mut ResolveCtx) -> GrammarE
                         .unwrap();
                 }
                 _ => unreachable!("{ident}: Only nonterminals can be resolved here"),
-            };
+            }
 
             ctx.resolved.get(ident).cloned().unwrap()
         }

@@ -154,7 +154,7 @@ impl PrecedenceHelper {
                         i, elements
                     )
                 }
-            };
+            }
 
             // 2. Reduce the operator and it's child expressions to a new expression
 
