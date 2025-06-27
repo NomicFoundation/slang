@@ -47,7 +47,9 @@
             {%- endif -%}
           {%- endif -%}
         {%- endfor %}
-        helper.finalize();
+        if !helper.finalize() {
+          return None;
+        }
 
         Some(Rc::new({{ parent_type }}Struct {
           node_id: node.id(),
@@ -91,7 +93,9 @@
           unreachable!("unexpected variant node of kind {kind}", kind = variant.kind());
         }
       };
-      helper.finalize();
+      if !helper.finalize() {
+        return None;
+      }
       Some(item)
     }
 
@@ -116,7 +120,9 @@
         {%- endif -%}
         _ = helper.accept_label(EdgeLabel::Separator);
       }
-      helper.finalize();
+      if !helper.finalize() {
+        return None;
+      }
       Some(items)
     }
   {% endfor %}
@@ -176,13 +182,15 @@
       Some(node)
     }
 
-    fn finalize(mut self) {
+    fn finalize(mut self) -> bool {
       // skip over trailing trivia and unrecognized nodes
       while self.index < self.children.len() {
-        let child = &self.children[self.index];
-        assert!(child.is_trivia() || !child.is_valid(), "unexpected trailing node {child:?}");
+        if !self.children[self.index].is_trivia() && self.children[self.index].is_valid() {
+          return false;
+        }
         self.index += 1;
       }
+      true
     }
   }
 

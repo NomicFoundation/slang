@@ -19,7 +19,9 @@ pub fn build_source_unit(node: &Rc<NonterminalNode>) -> Option<SourceUnit> {
     let mut helper = ChildrenHelper::new(&node.children);
     let members =
         build_source_unit_members(nonterminal_node(helper.accept_label(EdgeLabel::Members)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(SourceUnitStruct {
         node_id: node.id(),
@@ -33,7 +35,9 @@ pub fn build_pragma_directive(node: &Rc<NonterminalNode>) -> Option<PragmaDirect
     _ = helper.accept_label(EdgeLabel::PragmaKeyword)?;
     let pragma = build_pragma(nonterminal_node(helper.accept_label(EdgeLabel::Pragma)?))?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(PragmaDirectiveStruct {
         node_id: node.id(),
@@ -46,7 +50,9 @@ pub fn build_abicoder_pragma(node: &Rc<NonterminalNode>) -> Option<AbicoderPragm
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::AbicoderKeyword)?;
     let version = terminal_node_cloned(helper.accept_label(EdgeLabel::Version)?);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(AbicoderPragmaStruct {
         node_id: node.id(),
@@ -60,7 +66,9 @@ pub fn build_experimental_pragma(node: &Rc<NonterminalNode>) -> Option<Experimen
     _ = helper.accept_label(EdgeLabel::ExperimentalKeyword)?;
     let feature =
         build_experimental_feature(nonterminal_node(helper.accept_label(EdgeLabel::Feature)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ExperimentalPragmaStruct {
         node_id: node.id(),
@@ -74,7 +82,9 @@ pub fn build_version_pragma(node: &Rc<NonterminalNode>) -> Option<VersionPragma>
     _ = helper.accept_label(EdgeLabel::SolidityKeyword)?;
     let sets =
         build_version_expression_sets(nonterminal_node(helper.accept_label(EdgeLabel::Sets)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(VersionPragmaStruct {
         node_id: node.id(),
@@ -88,7 +98,9 @@ pub fn build_version_range(node: &Rc<NonterminalNode>) -> Option<VersionRange> {
     let start = build_version_literal(nonterminal_node(helper.accept_label(EdgeLabel::Start)?))?;
     _ = helper.accept_label(EdgeLabel::Minus)?;
     let end = build_version_literal(nonterminal_node(helper.accept_label(EdgeLabel::End)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(VersionRangeStruct {
         node_id: node.id(),
@@ -105,7 +117,9 @@ pub fn build_version_term(node: &Rc<NonterminalNode>) -> Option<VersionTerm> {
         .and_then(|node| build_version_operator(nonterminal_node(node)));
     let literal =
         build_version_literal(nonterminal_node(helper.accept_label(EdgeLabel::Literal)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(VersionTermStruct {
         node_id: node.id(),
@@ -120,7 +134,9 @@ pub fn build_import_directive(node: &Rc<NonterminalNode>) -> Option<ImportDirect
     _ = helper.accept_label(EdgeLabel::ImportKeyword)?;
     let clause = build_import_clause(nonterminal_node(helper.accept_label(EdgeLabel::Clause)?))?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ImportDirectiveStruct {
         node_id: node.id(),
@@ -135,7 +151,9 @@ pub fn build_path_import(node: &Rc<NonterminalNode>) -> Option<PathImport> {
     let alias = helper
         .accept_label(EdgeLabel::Alias)
         .and_then(|node| build_import_alias(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(PathImportStruct {
         node_id: node.id(),
@@ -151,7 +169,9 @@ pub fn build_named_import(node: &Rc<NonterminalNode>) -> Option<NamedImport> {
     let alias = build_import_alias(nonterminal_node(helper.accept_label(EdgeLabel::Alias)?))?;
     _ = helper.accept_label(EdgeLabel::FromKeyword)?;
     let path = build_string_literal(nonterminal_node(helper.accept_label(EdgeLabel::Path)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(NamedImportStruct {
         node_id: node.id(),
@@ -170,7 +190,9 @@ pub fn build_import_deconstruction(node: &Rc<NonterminalNode>) -> Option<ImportD
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
     _ = helper.accept_label(EdgeLabel::FromKeyword)?;
     let path = build_string_literal(nonterminal_node(helper.accept_label(EdgeLabel::Path)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ImportDeconstructionStruct {
         node_id: node.id(),
@@ -188,7 +210,9 @@ pub fn build_import_deconstruction_symbol(
     let alias = helper
         .accept_label(EdgeLabel::Alias)
         .and_then(|node| build_import_alias(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ImportDeconstructionSymbolStruct {
         node_id: node.id(),
@@ -202,7 +226,9 @@ pub fn build_import_alias(node: &Rc<NonterminalNode>) -> Option<ImportAlias> {
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::AsKeyword)?;
     let identifier = terminal_node_cloned(helper.accept_label(EdgeLabel::Identifier)?);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ImportAliasStruct {
         node_id: node.id(),
@@ -221,7 +247,9 @@ pub fn build_using_directive(node: &Rc<NonterminalNode>) -> Option<UsingDirectiv
         .accept_label(EdgeLabel::GlobalKeyword)
         .map(terminal_node_cloned);
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(UsingDirectiveStruct {
         node_id: node.id(),
@@ -239,7 +267,9 @@ pub fn build_using_deconstruction(node: &Rc<NonterminalNode>) -> Option<UsingDec
         helper.accept_label(EdgeLabel::Symbols)?,
     ))?;
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(UsingDeconstructionStruct {
         node_id: node.id(),
@@ -256,7 +286,9 @@ pub fn build_using_deconstruction_symbol(
     let alias = helper
         .accept_label(EdgeLabel::Alias)
         .and_then(|node| build_using_alias(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(UsingDeconstructionSymbolStruct {
         node_id: node.id(),
@@ -271,7 +303,9 @@ pub fn build_using_alias(node: &Rc<NonterminalNode>) -> Option<UsingAlias> {
     _ = helper.accept_label(EdgeLabel::AsKeyword)?;
     let operator =
         build_using_operator(nonterminal_node(helper.accept_label(EdgeLabel::Operator)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(UsingAliasStruct {
         node_id: node.id(),
@@ -294,7 +328,9 @@ pub fn build_contract_definition(node: &Rc<NonterminalNode>) -> Option<ContractD
     let members =
         build_contract_members(nonterminal_node(helper.accept_label(EdgeLabel::Members)?))?;
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ContractDefinitionStruct {
         node_id: node.id(),
@@ -310,7 +346,9 @@ pub fn build_inheritance_specifier(node: &Rc<NonterminalNode>) -> Option<Inherit
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::IsKeyword)?;
     let types = build_inheritance_types(nonterminal_node(helper.accept_label(EdgeLabel::Types)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(InheritanceSpecifierStruct {
         node_id: node.id(),
@@ -326,7 +364,9 @@ pub fn build_inheritance_type(node: &Rc<NonterminalNode>) -> Option<InheritanceT
     let arguments = helper
         .accept_label(EdgeLabel::Arguments)
         .and_then(|node| build_arguments_declaration(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(InheritanceTypeStruct {
         node_id: node.id(),
@@ -345,7 +385,9 @@ pub fn build_storage_layout_specifier(
     let expression = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::Expression)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(StorageLayoutSpecifierStruct {
         node_id: node.id(),
@@ -365,7 +407,9 @@ pub fn build_interface_definition(node: &Rc<NonterminalNode>) -> Option<Interfac
     let members =
         build_interface_members(nonterminal_node(helper.accept_label(EdgeLabel::Members)?))?;
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(InterfaceDefinitionStruct {
         node_id: node.id(),
@@ -384,7 +428,9 @@ pub fn build_library_definition(node: &Rc<NonterminalNode>) -> Option<LibraryDef
     let members =
         build_library_members(nonterminal_node(helper.accept_label(EdgeLabel::Members)?))?;
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(LibraryDefinitionStruct {
         node_id: node.id(),
@@ -401,7 +447,9 @@ pub fn build_struct_definition(node: &Rc<NonterminalNode>) -> Option<StructDefin
     _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let members = build_struct_members(nonterminal_node(helper.accept_label(EdgeLabel::Members)?))?;
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(StructDefinitionStruct {
         node_id: node.id(),
@@ -416,7 +464,9 @@ pub fn build_struct_member(node: &Rc<NonterminalNode>) -> Option<StructMember> {
     let type_name = build_type_name(nonterminal_node(helper.accept_label(EdgeLabel::TypeName)?))?;
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(StructMemberStruct {
         node_id: node.id(),
@@ -433,7 +483,9 @@ pub fn build_enum_definition(node: &Rc<NonterminalNode>) -> Option<EnumDefinitio
     _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let members = build_enum_members(nonterminal_node(helper.accept_label(EdgeLabel::Members)?))?;
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(EnumDefinitionStruct {
         node_id: node.id(),
@@ -451,7 +503,9 @@ pub fn build_constant_definition(node: &Rc<NonterminalNode>) -> Option<ConstantD
     _ = helper.accept_label(EdgeLabel::Equal)?;
     let value = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Value)?))?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ConstantDefinitionStruct {
         node_id: node.id(),
@@ -475,7 +529,9 @@ pub fn build_state_variable_definition(
         .accept_label(EdgeLabel::Value)
         .and_then(|node| build_state_variable_definition_value(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(StateVariableDefinitionStruct {
         node_id: node.id(),
@@ -493,7 +549,9 @@ pub fn build_state_variable_definition_value(
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::Equal)?;
     let value = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Value)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(StateVariableDefinitionValueStruct {
         node_id: node.id(),
@@ -516,7 +574,9 @@ pub fn build_function_definition(node: &Rc<NonterminalNode>) -> Option<FunctionD
         .accept_label(EdgeLabel::Returns)
         .and_then(|node| build_returns_declaration(nonterminal_node(node)));
     let body = build_function_body(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(FunctionDefinitionStruct {
         node_id: node.id(),
@@ -536,7 +596,9 @@ pub fn build_parameters_declaration(node: &Rc<NonterminalNode>) -> Option<Parame
         helper.accept_label(EdgeLabel::Parameters)?,
     ))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ParametersDeclarationStruct {
         node_id: node.id(),
@@ -554,7 +616,9 @@ pub fn build_parameter(node: &Rc<NonterminalNode>) -> Option<Parameter> {
     let name = helper
         .accept_label(EdgeLabel::Name)
         .map(terminal_node_cloned);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ParameterStruct {
         node_id: node.id(),
@@ -571,7 +635,9 @@ pub fn build_override_specifier(node: &Rc<NonterminalNode>) -> Option<OverrideSp
     let overridden = helper
         .accept_label(EdgeLabel::Overridden)
         .and_then(|node| build_override_paths_declaration(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(OverrideSpecifierStruct {
         node_id: node.id(),
@@ -587,7 +653,9 @@ pub fn build_override_paths_declaration(
     _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let paths = build_override_paths(nonterminal_node(helper.accept_label(EdgeLabel::Paths)?))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(OverridePathsDeclarationStruct {
         node_id: node.id(),
@@ -601,7 +669,9 @@ pub fn build_returns_declaration(node: &Rc<NonterminalNode>) -> Option<ReturnsDe
     _ = helper.accept_label(EdgeLabel::ReturnsKeyword)?;
     let variables =
         build_parameters_declaration(nonterminal_node(helper.accept_label(EdgeLabel::Variables)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ReturnsDeclarationStruct {
         node_id: node.id(),
@@ -620,7 +690,9 @@ pub fn build_constructor_definition(node: &Rc<NonterminalNode>) -> Option<Constr
         helper.accept_label(EdgeLabel::Attributes)?,
     ))?;
     let body = build_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ConstructorDefinitionStruct {
         node_id: node.id(),
@@ -643,7 +715,9 @@ pub fn build_unnamed_function_definition(
         helper.accept_label(EdgeLabel::Attributes)?,
     ))?;
     let body = build_function_body(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(UnnamedFunctionDefinitionStruct {
         node_id: node.id(),
@@ -669,7 +743,9 @@ pub fn build_fallback_function_definition(
         .accept_label(EdgeLabel::Returns)
         .and_then(|node| build_returns_declaration(nonterminal_node(node)));
     let body = build_function_body(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(FallbackFunctionDefinitionStruct {
         node_id: node.id(),
@@ -693,7 +769,9 @@ pub fn build_receive_function_definition(
         helper.accept_label(EdgeLabel::Attributes)?,
     ))?;
     let body = build_function_body(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ReceiveFunctionDefinitionStruct {
         node_id: node.id(),
@@ -715,7 +793,9 @@ pub fn build_modifier_definition(node: &Rc<NonterminalNode>) -> Option<ModifierD
         helper.accept_label(EdgeLabel::Attributes)?,
     ))?;
     let body = build_function_body(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ModifierDefinitionStruct {
         node_id: node.id(),
@@ -733,7 +813,9 @@ pub fn build_modifier_invocation(node: &Rc<NonterminalNode>) -> Option<ModifierI
     let arguments = helper
         .accept_label(EdgeLabel::Arguments)
         .and_then(|node| build_arguments_declaration(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ModifierInvocationStruct {
         node_id: node.id(),
@@ -754,7 +836,9 @@ pub fn build_event_definition(node: &Rc<NonterminalNode>) -> Option<EventDefinit
         .accept_label(EdgeLabel::AnonymousKeyword)
         .map(terminal_node_cloned);
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(EventDefinitionStruct {
         node_id: node.id(),
@@ -774,7 +858,9 @@ pub fn build_event_parameters_declaration(
         helper.accept_label(EdgeLabel::Parameters)?,
     ))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(EventParametersDeclarationStruct {
         node_id: node.id(),
@@ -792,7 +878,9 @@ pub fn build_event_parameter(node: &Rc<NonterminalNode>) -> Option<EventParamete
     let name = helper
         .accept_label(EdgeLabel::Name)
         .map(terminal_node_cloned);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(EventParameterStruct {
         node_id: node.id(),
@@ -813,7 +901,9 @@ pub fn build_user_defined_value_type_definition(
     let value_type =
         build_elementary_type(nonterminal_node(helper.accept_label(EdgeLabel::ValueType)?))?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(UserDefinedValueTypeDefinitionStruct {
         node_id: node.id(),
@@ -831,7 +921,9 @@ pub fn build_error_definition(node: &Rc<NonterminalNode>) -> Option<ErrorDefinit
         helper.accept_label(EdgeLabel::Members)?,
     ))?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ErrorDefinitionStruct {
         node_id: node.id(),
@@ -850,7 +942,9 @@ pub fn build_error_parameters_declaration(
         helper.accept_label(EdgeLabel::Parameters)?,
     ))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ErrorParametersDeclarationStruct {
         node_id: node.id(),
@@ -865,7 +959,9 @@ pub fn build_error_parameter(node: &Rc<NonterminalNode>) -> Option<ErrorParamete
     let name = helper
         .accept_label(EdgeLabel::Name)
         .map(terminal_node_cloned);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ErrorParameterStruct {
         node_id: node.id(),
@@ -883,7 +979,9 @@ pub fn build_array_type_name(node: &Rc<NonterminalNode>) -> Option<ArrayTypeName
         .accept_label(EdgeLabel::Index)
         .and_then(|node| build_expression(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::CloseBracket)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ArrayTypeNameStruct {
         node_id: node.id(),
@@ -905,7 +1003,9 @@ pub fn build_function_type(node: &Rc<NonterminalNode>) -> Option<FunctionType> {
     let returns = helper
         .accept_label(EdgeLabel::Returns)
         .and_then(|node| build_returns_declaration(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(FunctionTypeStruct {
         node_id: node.id(),
@@ -925,7 +1025,9 @@ pub fn build_mapping_type(node: &Rc<NonterminalNode>) -> Option<MappingType> {
     let value_type =
         build_mapping_value(nonterminal_node(helper.accept_label(EdgeLabel::ValueType)?))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(MappingTypeStruct {
         node_id: node.id(),
@@ -942,7 +1044,9 @@ pub fn build_mapping_key(node: &Rc<NonterminalNode>) -> Option<MappingKey> {
     let name = helper
         .accept_label(EdgeLabel::Name)
         .map(terminal_node_cloned);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(MappingKeyStruct {
         node_id: node.id(),
@@ -958,7 +1062,9 @@ pub fn build_mapping_value(node: &Rc<NonterminalNode>) -> Option<MappingValue> {
     let name = helper
         .accept_label(EdgeLabel::Name)
         .map(terminal_node_cloned);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(MappingValueStruct {
         node_id: node.id(),
@@ -974,7 +1080,9 @@ pub fn build_address_type(node: &Rc<NonterminalNode>) -> Option<AddressType> {
     let payable_keyword = helper
         .accept_label(EdgeLabel::PayableKeyword)
         .map(terminal_node_cloned);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(AddressTypeStruct {
         node_id: node.id(),
@@ -990,7 +1098,9 @@ pub fn build_block(node: &Rc<NonterminalNode>) -> Option<Block> {
         helper.accept_label(EdgeLabel::Statements)?,
     ))?;
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(BlockStruct {
         node_id: node.id(),
@@ -1003,7 +1113,9 @@ pub fn build_unchecked_block(node: &Rc<NonterminalNode>) -> Option<UncheckedBloc
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::UncheckedKeyword)?;
     let block = build_block(nonterminal_node(helper.accept_label(EdgeLabel::Block)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(UncheckedBlockStruct {
         node_id: node.id(),
@@ -1018,7 +1130,9 @@ pub fn build_expression_statement(node: &Rc<NonterminalNode>) -> Option<Expressi
         helper.accept_label(EdgeLabel::Expression)?,
     ))?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ExpressionStatementStruct {
         node_id: node.id(),
@@ -1037,7 +1151,9 @@ pub fn build_assembly_statement(node: &Rc<NonterminalNode>) -> Option<AssemblySt
         .accept_label(EdgeLabel::Flags)
         .and_then(|node| build_assembly_flags_declaration(nonterminal_node(node)));
     let body = build_yul_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(AssemblyStatementStruct {
         node_id: node.id(),
@@ -1055,7 +1171,9 @@ pub fn build_assembly_flags_declaration(
     _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let flags = build_assembly_flags(nonterminal_node(helper.accept_label(EdgeLabel::Flags)?))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(AssemblyFlagsDeclarationStruct {
         node_id: node.id(),
@@ -1081,7 +1199,9 @@ pub fn build_tuple_deconstruction_statement(
         helper.accept_label(EdgeLabel::Expression)?,
     ))?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(TupleDeconstructionStatementStruct {
         node_id: node.id(),
@@ -1099,7 +1219,9 @@ pub fn build_tuple_deconstruction_element(
     let member = helper
         .accept_label(EdgeLabel::Member)
         .and_then(|node| build_tuple_member(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(TupleDeconstructionElementStruct {
         node_id: node.id(),
@@ -1115,7 +1237,9 @@ pub fn build_typed_tuple_member(node: &Rc<NonterminalNode>) -> Option<TypedTuple
         .accept_label(EdgeLabel::StorageLocation)
         .and_then(|node| build_storage_location(nonterminal_node(node)));
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(TypedTupleMemberStruct {
         node_id: node.id(),
@@ -1132,7 +1256,9 @@ pub fn build_untyped_tuple_member(node: &Rc<NonterminalNode>) -> Option<UntypedT
         .accept_label(EdgeLabel::StorageLocation)
         .and_then(|node| build_storage_location(nonterminal_node(node)));
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(UntypedTupleMemberStruct {
         node_id: node.id(),
@@ -1157,7 +1283,9 @@ pub fn build_variable_declaration_statement(
         .accept_label(EdgeLabel::Value)
         .and_then(|node| build_variable_declaration_value(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(VariableDeclarationStatementStruct {
         node_id: node.id(),
@@ -1177,7 +1305,9 @@ pub fn build_variable_declaration_value(
     let expression = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::Expression)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(VariableDeclarationValueStruct {
         node_id: node.id(),
@@ -1196,7 +1326,9 @@ pub fn build_if_statement(node: &Rc<NonterminalNode>) -> Option<IfStatement> {
     let else_branch = helper
         .accept_label(EdgeLabel::ElseBranch)
         .and_then(|node| build_else_branch(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(IfStatementStruct {
         node_id: node.id(),
@@ -1211,7 +1343,9 @@ pub fn build_else_branch(node: &Rc<NonterminalNode>) -> Option<ElseBranch> {
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::ElseKeyword)?;
     let body = build_statement(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ElseBranchStruct {
         node_id: node.id(),
@@ -1235,7 +1369,9 @@ pub fn build_for_statement(node: &Rc<NonterminalNode>) -> Option<ForStatement> {
         .and_then(|node| build_expression(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
     let body = build_statement(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ForStatementStruct {
         node_id: node.id(),
@@ -1254,7 +1390,9 @@ pub fn build_while_statement(node: &Rc<NonterminalNode>) -> Option<WhileStatemen
     let condition = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Condition)?))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
     let body = build_statement(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(WhileStatementStruct {
         node_id: node.id(),
@@ -1273,7 +1411,9 @@ pub fn build_do_while_statement(node: &Rc<NonterminalNode>) -> Option<DoWhileSta
     let condition = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Condition)?))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(DoWhileStatementStruct {
         node_id: node.id(),
@@ -1287,7 +1427,9 @@ pub fn build_continue_statement(node: &Rc<NonterminalNode>) -> Option<ContinueSt
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::ContinueKeyword)?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ContinueStatementStruct { node_id: node.id() }))
 }
@@ -1297,7 +1439,9 @@ pub fn build_break_statement(node: &Rc<NonterminalNode>) -> Option<BreakStatemen
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::BreakKeyword)?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(BreakStatementStruct { node_id: node.id() }))
 }
@@ -1310,7 +1454,9 @@ pub fn build_return_statement(node: &Rc<NonterminalNode>) -> Option<ReturnStatem
         .accept_label(EdgeLabel::Expression)
         .and_then(|node| build_expression(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ReturnStatementStruct {
         node_id: node.id(),
@@ -1326,7 +1472,9 @@ pub fn build_emit_statement(node: &Rc<NonterminalNode>) -> Option<EmitStatement>
     let arguments =
         build_arguments_declaration(nonterminal_node(helper.accept_label(EdgeLabel::Arguments)?))?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(EmitStatementStruct {
         node_id: node.id(),
@@ -1349,7 +1497,9 @@ pub fn build_try_statement(node: &Rc<NonterminalNode>) -> Option<TryStatement> {
     let catch_clauses = build_catch_clauses(nonterminal_node(
         helper.accept_label(EdgeLabel::CatchClauses)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(TryStatementStruct {
         node_id: node.id(),
@@ -1368,7 +1518,9 @@ pub fn build_catch_clause(node: &Rc<NonterminalNode>) -> Option<CatchClause> {
         .accept_label(EdgeLabel::Error)
         .and_then(|node| build_catch_clause_error(nonterminal_node(node)));
     let body = build_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(CatchClauseStruct {
         node_id: node.id(),
@@ -1386,7 +1538,9 @@ pub fn build_catch_clause_error(node: &Rc<NonterminalNode>) -> Option<CatchClaus
     let parameters = build_parameters_declaration(nonterminal_node(
         helper.accept_label(EdgeLabel::Parameters)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(CatchClauseErrorStruct {
         node_id: node.id(),
@@ -1405,7 +1559,9 @@ pub fn build_revert_statement(node: &Rc<NonterminalNode>) -> Option<RevertStatem
     let arguments =
         build_arguments_declaration(nonterminal_node(helper.accept_label(EdgeLabel::Arguments)?))?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(RevertStatementStruct {
         node_id: node.id(),
@@ -1419,7 +1575,9 @@ pub fn build_throw_statement(node: &Rc<NonterminalNode>) -> Option<ThrowStatemen
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::ThrowKeyword)?;
     _ = helper.accept_label(EdgeLabel::Semicolon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ThrowStatementStruct { node_id: node.id() }))
 }
@@ -1434,7 +1592,9 @@ pub fn build_assignment_expression(node: &Rc<NonterminalNode>) -> Option<Assignm
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(AssignmentExpressionStruct {
         node_id: node.id(),
@@ -1456,7 +1616,9 @@ pub fn build_conditional_expression(node: &Rc<NonterminalNode>) -> Option<Condit
     let false_expression = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::FalseExpression)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ConditionalExpressionStruct {
         node_id: node.id(),
@@ -1476,7 +1638,9 @@ pub fn build_or_expression(node: &Rc<NonterminalNode>) -> Option<OrExpression> {
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(OrExpressionStruct {
         node_id: node.id(),
@@ -1495,7 +1659,9 @@ pub fn build_and_expression(node: &Rc<NonterminalNode>) -> Option<AndExpression>
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(AndExpressionStruct {
         node_id: node.id(),
@@ -1514,7 +1680,9 @@ pub fn build_equality_expression(node: &Rc<NonterminalNode>) -> Option<EqualityE
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(EqualityExpressionStruct {
         node_id: node.id(),
@@ -1534,7 +1702,9 @@ pub fn build_inequality_expression(node: &Rc<NonterminalNode>) -> Option<Inequal
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(InequalityExpressionStruct {
         node_id: node.id(),
@@ -1554,7 +1724,9 @@ pub fn build_bitwise_or_expression(node: &Rc<NonterminalNode>) -> Option<Bitwise
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(BitwiseOrExpressionStruct {
         node_id: node.id(),
@@ -1573,7 +1745,9 @@ pub fn build_bitwise_xor_expression(node: &Rc<NonterminalNode>) -> Option<Bitwis
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(BitwiseXorExpressionStruct {
         node_id: node.id(),
@@ -1592,7 +1766,9 @@ pub fn build_bitwise_and_expression(node: &Rc<NonterminalNode>) -> Option<Bitwis
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(BitwiseAndExpressionStruct {
         node_id: node.id(),
@@ -1611,7 +1787,9 @@ pub fn build_shift_expression(node: &Rc<NonterminalNode>) -> Option<ShiftExpress
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ShiftExpressionStruct {
         node_id: node.id(),
@@ -1631,7 +1809,9 @@ pub fn build_additive_expression(node: &Rc<NonterminalNode>) -> Option<AdditiveE
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(AdditiveExpressionStruct {
         node_id: node.id(),
@@ -1653,7 +1833,9 @@ pub fn build_multiplicative_expression(
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(MultiplicativeExpressionStruct {
         node_id: node.id(),
@@ -1675,7 +1857,9 @@ pub fn build_exponentiation_expression(
     let right_operand = build_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::RightOperand)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ExponentiationExpressionStruct {
         node_id: node.id(),
@@ -1690,7 +1874,9 @@ pub fn build_postfix_expression(node: &Rc<NonterminalNode>) -> Option<PostfixExp
     let mut helper = ChildrenHelper::new(&node.children);
     let operand = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Operand)?))?;
     let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(PostfixExpressionStruct {
         node_id: node.id(),
@@ -1704,7 +1890,9 @@ pub fn build_prefix_expression(node: &Rc<NonterminalNode>) -> Option<PrefixExpre
     let mut helper = ChildrenHelper::new(&node.children);
     let operator = terminal_node_cloned(helper.accept_label(EdgeLabel::Operator)?);
     let operand = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Operand)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(PrefixExpressionStruct {
         node_id: node.id(),
@@ -1721,7 +1909,9 @@ pub fn build_function_call_expression(
     let operand = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Operand)?))?;
     let arguments =
         build_arguments_declaration(nonterminal_node(helper.accept_label(EdgeLabel::Arguments)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(FunctionCallExpressionStruct {
         node_id: node.id(),
@@ -1737,7 +1927,9 @@ pub fn build_call_options_expression(node: &Rc<NonterminalNode>) -> Option<CallO
     _ = helper.accept_label(EdgeLabel::OpenBrace)?;
     let options = build_call_options(nonterminal_node(helper.accept_label(EdgeLabel::Options)?))?;
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(CallOptionsExpressionStruct {
         node_id: node.id(),
@@ -1754,7 +1946,9 @@ pub fn build_member_access_expression(
     let operand = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Operand)?))?;
     _ = helper.accept_label(EdgeLabel::Period)?;
     let member = terminal_node_cloned(helper.accept_label(EdgeLabel::Member)?);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(MemberAccessExpressionStruct {
         node_id: node.id(),
@@ -1775,7 +1969,9 @@ pub fn build_index_access_expression(node: &Rc<NonterminalNode>) -> Option<Index
         .accept_label(EdgeLabel::End)
         .and_then(|node| build_index_access_end(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::CloseBracket)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(IndexAccessExpressionStruct {
         node_id: node.id(),
@@ -1792,7 +1988,9 @@ pub fn build_index_access_end(node: &Rc<NonterminalNode>) -> Option<IndexAccessE
     let end = helper
         .accept_label(EdgeLabel::End)
         .and_then(|node| build_expression(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(IndexAccessEndStruct {
         node_id: node.id(),
@@ -1809,7 +2007,9 @@ pub fn build_positional_arguments_declaration(
     let arguments =
         build_positional_arguments(nonterminal_node(helper.accept_label(EdgeLabel::Arguments)?))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(PositionalArgumentsDeclarationStruct {
         node_id: node.id(),
@@ -1827,7 +2027,9 @@ pub fn build_named_arguments_declaration(
         .accept_label(EdgeLabel::Arguments)
         .and_then(|node| build_named_argument_group(nonterminal_node(node)));
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(NamedArgumentsDeclarationStruct {
         node_id: node.id(),
@@ -1842,7 +2044,9 @@ pub fn build_named_argument_group(node: &Rc<NonterminalNode>) -> Option<NamedArg
     let arguments =
         build_named_arguments(nonterminal_node(helper.accept_label(EdgeLabel::Arguments)?))?;
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(NamedArgumentGroupStruct {
         node_id: node.id(),
@@ -1856,7 +2060,9 @@ pub fn build_named_argument(node: &Rc<NonterminalNode>) -> Option<NamedArgument>
     let name = terminal_node_cloned(helper.accept_label(EdgeLabel::Name)?);
     _ = helper.accept_label(EdgeLabel::Colon)?;
     let value = build_expression(nonterminal_node(helper.accept_label(EdgeLabel::Value)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(NamedArgumentStruct {
         node_id: node.id(),
@@ -1872,7 +2078,9 @@ pub fn build_type_expression(node: &Rc<NonterminalNode>) -> Option<TypeExpressio
     _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let type_name = build_type_name(nonterminal_node(helper.accept_label(EdgeLabel::TypeName)?))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(TypeExpressionStruct {
         node_id: node.id(),
@@ -1885,7 +2093,9 @@ pub fn build_new_expression(node: &Rc<NonterminalNode>) -> Option<NewExpression>
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::NewKeyword)?;
     let type_name = build_type_name(nonterminal_node(helper.accept_label(EdgeLabel::TypeName)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(NewExpressionStruct {
         node_id: node.id(),
@@ -1899,7 +2109,9 @@ pub fn build_tuple_expression(node: &Rc<NonterminalNode>) -> Option<TupleExpress
     _ = helper.accept_label(EdgeLabel::OpenParen)?;
     let items = build_tuple_values(nonterminal_node(helper.accept_label(EdgeLabel::Items)?))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(TupleExpressionStruct {
         node_id: node.id(),
@@ -1913,7 +2125,9 @@ pub fn build_tuple_value(node: &Rc<NonterminalNode>) -> Option<TupleValue> {
     let expression = helper
         .accept_label(EdgeLabel::Expression)
         .and_then(|node| build_expression(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(TupleValueStruct {
         node_id: node.id(),
@@ -1927,7 +2141,9 @@ pub fn build_array_expression(node: &Rc<NonterminalNode>) -> Option<ArrayExpress
     _ = helper.accept_label(EdgeLabel::OpenBracket)?;
     let items = build_array_values(nonterminal_node(helper.accept_label(EdgeLabel::Items)?))?;
     _ = helper.accept_label(EdgeLabel::CloseBracket)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(ArrayExpressionStruct {
         node_id: node.id(),
@@ -1942,7 +2158,9 @@ pub fn build_hex_number_expression(node: &Rc<NonterminalNode>) -> Option<HexNumb
     let unit = helper
         .accept_label(EdgeLabel::Unit)
         .and_then(|node| build_number_unit(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(HexNumberExpressionStruct {
         node_id: node.id(),
@@ -1960,7 +2178,9 @@ pub fn build_decimal_number_expression(
     let unit = helper
         .accept_label(EdgeLabel::Unit)
         .and_then(|node| build_number_unit(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(DecimalNumberExpressionStruct {
         node_id: node.id(),
@@ -1977,7 +2197,9 @@ pub fn build_yul_block(node: &Rc<NonterminalNode>) -> Option<YulBlock> {
         helper.accept_label(EdgeLabel::Statements)?,
     ))?;
     _ = helper.accept_label(EdgeLabel::CloseBrace)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulBlockStruct {
         node_id: node.id(),
@@ -1997,7 +2219,9 @@ pub fn build_yul_function_definition(node: &Rc<NonterminalNode>) -> Option<YulFu
         .accept_label(EdgeLabel::Returns)
         .and_then(|node| build_yul_returns_declaration(nonterminal_node(node)));
     let body = build_yul_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulFunctionDefinitionStruct {
         node_id: node.id(),
@@ -2018,7 +2242,9 @@ pub fn build_yul_parameters_declaration(
         helper.accept_label(EdgeLabel::Parameters)?,
     ))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulParametersDeclarationStruct {
         node_id: node.id(),
@@ -2032,7 +2258,9 @@ pub fn build_yul_returns_declaration(node: &Rc<NonterminalNode>) -> Option<YulRe
     _ = helper.accept_label(EdgeLabel::MinusGreaterThan)?;
     let variables =
         build_yul_variable_names(nonterminal_node(helper.accept_label(EdgeLabel::Variables)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulReturnsDeclarationStruct {
         node_id: node.id(),
@@ -2051,7 +2279,9 @@ pub fn build_yul_variable_declaration_statement(
     let value = helper
         .accept_label(EdgeLabel::Value)
         .and_then(|node| build_yul_variable_declaration_value(nonterminal_node(node)));
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulVariableDeclarationStatementStruct {
         node_id: node.id(),
@@ -2071,7 +2301,9 @@ pub fn build_yul_variable_declaration_value(
     let expression = build_yul_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::Expression)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulVariableDeclarationValueStruct {
         node_id: node.id(),
@@ -2092,7 +2324,9 @@ pub fn build_yul_variable_assignment_statement(
     let expression = build_yul_expression(nonterminal_node(
         helper.accept_label(EdgeLabel::Expression)?,
     ))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulVariableAssignmentStatementStruct {
         node_id: node.id(),
@@ -2107,7 +2341,9 @@ pub fn build_yul_colon_and_equal(node: &Rc<NonterminalNode>) -> Option<YulColonA
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::Colon)?;
     _ = helper.accept_label(EdgeLabel::Equal)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulColonAndEqualStruct { node_id: node.id() }))
 }
@@ -2121,7 +2357,9 @@ pub fn build_yul_stack_assignment_statement(
         helper.accept_label(EdgeLabel::Assignment)?,
     ))?;
     let variable = terminal_node_cloned(helper.accept_label(EdgeLabel::Variable)?);
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulStackAssignmentStatementStruct {
         node_id: node.id(),
@@ -2135,7 +2373,9 @@ pub fn build_yul_equal_and_colon(node: &Rc<NonterminalNode>) -> Option<YulEqualA
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::Equal)?;
     _ = helper.accept_label(EdgeLabel::Colon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulEqualAndColonStruct { node_id: node.id() }))
 }
@@ -2147,7 +2387,9 @@ pub fn build_yul_if_statement(node: &Rc<NonterminalNode>) -> Option<YulIfStateme
     let condition =
         build_yul_expression(nonterminal_node(helper.accept_label(EdgeLabel::Condition)?))?;
     let body = build_yul_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulIfStatementStruct {
         node_id: node.id(),
@@ -2167,7 +2409,9 @@ pub fn build_yul_for_statement(node: &Rc<NonterminalNode>) -> Option<YulForState
         build_yul_expression(nonterminal_node(helper.accept_label(EdgeLabel::Condition)?))?;
     let iterator = build_yul_block(nonterminal_node(helper.accept_label(EdgeLabel::Iterator)?))?;
     let body = build_yul_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulForStatementStruct {
         node_id: node.id(),
@@ -2186,7 +2430,9 @@ pub fn build_yul_switch_statement(node: &Rc<NonterminalNode>) -> Option<YulSwitc
         helper.accept_label(EdgeLabel::Expression)?,
     ))?;
     let cases = build_yul_switch_cases(nonterminal_node(helper.accept_label(EdgeLabel::Cases)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulSwitchStatementStruct {
         node_id: node.id(),
@@ -2200,7 +2446,9 @@ pub fn build_yul_default_case(node: &Rc<NonterminalNode>) -> Option<YulDefaultCa
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::DefaultKeyword)?;
     let body = build_yul_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulDefaultCaseStruct {
         node_id: node.id(),
@@ -2214,7 +2462,9 @@ pub fn build_yul_value_case(node: &Rc<NonterminalNode>) -> Option<YulValueCase> 
     _ = helper.accept_label(EdgeLabel::CaseKeyword)?;
     let value = build_yul_literal(nonterminal_node(helper.accept_label(EdgeLabel::Value)?))?;
     let body = build_yul_block(nonterminal_node(helper.accept_label(EdgeLabel::Body)?))?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulValueCaseStruct {
         node_id: node.id(),
@@ -2227,7 +2477,9 @@ pub fn build_yul_leave_statement(node: &Rc<NonterminalNode>) -> Option<YulLeaveS
     assert_nonterminal_kind(node, NonterminalKind::YulLeaveStatement);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::LeaveKeyword)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulLeaveStatementStruct { node_id: node.id() }))
 }
@@ -2236,7 +2488,9 @@ pub fn build_yul_break_statement(node: &Rc<NonterminalNode>) -> Option<YulBreakS
     assert_nonterminal_kind(node, NonterminalKind::YulBreakStatement);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::BreakKeyword)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulBreakStatementStruct { node_id: node.id() }))
 }
@@ -2245,7 +2499,9 @@ pub fn build_yul_continue_statement(node: &Rc<NonterminalNode>) -> Option<YulCon
     assert_nonterminal_kind(node, NonterminalKind::YulContinueStatement);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::ContinueKeyword)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulContinueStatementStruct { node_id: node.id() }))
 }
@@ -2255,7 +2511,9 @@ pub fn build_yul_label(node: &Rc<NonterminalNode>) -> Option<YulLabel> {
     let mut helper = ChildrenHelper::new(&node.children);
     let label = terminal_node_cloned(helper.accept_label(EdgeLabel::Label)?);
     _ = helper.accept_label(EdgeLabel::Colon)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulLabelStruct {
         node_id: node.id(),
@@ -2273,7 +2531,9 @@ pub fn build_yul_function_call_expression(
     let arguments =
         build_yul_arguments(nonterminal_node(helper.accept_label(EdgeLabel::Arguments)?))?;
     _ = helper.accept_label(EdgeLabel::CloseParen)?;
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
 
     Some(Rc::new(YulFunctionCallExpressionStruct {
         node_id: node.id(),
@@ -2349,7 +2609,9 @@ pub fn build_source_unit_member(node: &Rc<NonterminalNode>) -> Option<SourceUnit
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2374,7 +2636,9 @@ pub fn build_pragma(node: &Rc<NonterminalNode>) -> Option<Pragma> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2396,7 +2660,9 @@ pub fn build_experimental_feature(node: &Rc<NonterminalNode>) -> Option<Experime
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2418,7 +2684,9 @@ pub fn build_version_expression(node: &Rc<NonterminalNode>) -> Option<VersionExp
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2441,7 +2709,9 @@ pub fn build_version_operator(node: &Rc<NonterminalNode>) -> Option<VersionOpera
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2468,7 +2738,9 @@ pub fn build_version_literal(node: &Rc<NonterminalNode>) -> Option<VersionLitera
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2495,7 +2767,9 @@ pub fn build_import_clause(node: &Rc<NonterminalNode>) -> Option<ImportClause> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2517,7 +2791,9 @@ pub fn build_using_clause(node: &Rc<NonterminalNode>) -> Option<UsingClause> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2548,7 +2824,9 @@ pub fn build_using_operator(node: &Rc<NonterminalNode>) -> Option<UsingOperator>
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2568,7 +2846,9 @@ pub fn build_using_target(node: &Rc<NonterminalNode>) -> Option<UsingTarget> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2594,7 +2874,9 @@ pub fn build_contract_specifier(node: &Rc<NonterminalNode>) -> Option<ContractSp
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2665,7 +2947,9 @@ pub fn build_contract_member(node: &Rc<NonterminalNode>) -> Option<ContractMembe
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2702,7 +2986,9 @@ pub fn build_state_variable_attribute(
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2723,7 +3009,9 @@ pub fn build_function_name(node: &Rc<NonterminalNode>) -> Option<FunctionName> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2758,7 +3046,9 @@ pub fn build_function_attribute(node: &Rc<NonterminalNode>) -> Option<FunctionAt
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2778,7 +3068,9 @@ pub fn build_function_body(node: &Rc<NonterminalNode>) -> Option<FunctionBody> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2804,7 +3096,9 @@ pub fn build_constructor_attribute(node: &Rc<NonterminalNode>) -> Option<Constru
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2845,7 +3139,9 @@ pub fn build_unnamed_function_attribute(
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2884,7 +3180,9 @@ pub fn build_fallback_function_attribute(
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2921,7 +3219,9 @@ pub fn build_receive_function_attribute(
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2943,7 +3243,9 @@ pub fn build_modifier_attribute(node: &Rc<NonterminalNode>) -> Option<ModifierAt
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2974,7 +3276,9 @@ pub fn build_type_name(node: &Rc<NonterminalNode>) -> Option<TypeName> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -2998,7 +3302,9 @@ pub fn build_function_type_attribute(node: &Rc<NonterminalNode>) -> Option<Funct
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3020,7 +3326,9 @@ pub fn build_mapping_key_type(node: &Rc<NonterminalNode>) -> Option<MappingKeyTy
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3057,7 +3365,9 @@ pub fn build_elementary_type(node: &Rc<NonterminalNode>) -> Option<ElementaryTyp
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3128,7 +3438,9 @@ pub fn build_statement(node: &Rc<NonterminalNode>) -> Option<Statement> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3150,7 +3462,9 @@ pub fn build_tuple_member(node: &Rc<NonterminalNode>) -> Option<TupleMember> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3172,7 +3486,9 @@ pub fn build_variable_declaration_type(
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3191,7 +3507,9 @@ pub fn build_storage_location(node: &Rc<NonterminalNode>) -> Option<StorageLocat
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3225,7 +3543,9 @@ pub fn build_for_statement_initialization(
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3247,7 +3567,9 @@ pub fn build_for_statement_condition(node: &Rc<NonterminalNode>) -> Option<ForSt
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3376,7 +3698,9 @@ pub fn build_expression(node: &Rc<NonterminalNode>) -> Option<Expression> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3402,7 +3726,9 @@ pub fn build_arguments_declaration(node: &Rc<NonterminalNode>) -> Option<Argumen
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3429,7 +3755,9 @@ pub fn build_number_unit(node: &Rc<NonterminalNode>) -> Option<NumberUnit> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3464,7 +3792,9 @@ pub fn build_string_expression(node: &Rc<NonterminalNode>) -> Option<StringExpre
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3486,7 +3816,9 @@ pub fn build_string_literal(node: &Rc<NonterminalNode>) -> Option<StringLiteral>
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3508,7 +3840,9 @@ pub fn build_hex_string_literal(node: &Rc<NonterminalNode>) -> Option<HexStringL
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3530,7 +3864,9 @@ pub fn build_unicode_string_literal(node: &Rc<NonterminalNode>) -> Option<Unicod
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3595,7 +3931,9 @@ pub fn build_yul_statement(node: &Rc<NonterminalNode>) -> Option<YulStatement> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3617,7 +3955,9 @@ pub fn build_yul_assignment_operator(node: &Rc<NonterminalNode>) -> Option<YulAs
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3641,7 +3981,9 @@ pub fn build_yul_stack_assignment_operator(
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3663,7 +4005,9 @@ pub fn build_yul_switch_case(node: &Rc<NonterminalNode>) -> Option<YulSwitchCase
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3690,7 +4034,9 @@ pub fn build_yul_expression(node: &Rc<NonterminalNode>) -> Option<YulExpression>
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3720,7 +4066,9 @@ pub fn build_yul_literal(node: &Rc<NonterminalNode>) -> Option<YulLiteral> {
             );
         }
     };
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(item)
 }
 
@@ -3738,7 +4086,9 @@ pub fn build_source_unit_members(node: &Rc<NonterminalNode>) -> Option<SourceUni
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3752,7 +4102,9 @@ pub fn build_version_expression_sets(node: &Rc<NonterminalNode>) -> Option<Versi
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3766,7 +4118,9 @@ pub fn build_version_expression_set(node: &Rc<NonterminalNode>) -> Option<Versio
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3778,7 +4132,9 @@ pub fn build_simple_version_literal(node: &Rc<NonterminalNode>) -> Option<Simple
         items.push(terminal_node_cloned(child));
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3794,7 +4150,9 @@ pub fn build_import_deconstruction_symbols(
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3810,7 +4168,9 @@ pub fn build_using_deconstruction_symbols(
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3824,7 +4184,9 @@ pub fn build_contract_specifiers(node: &Rc<NonterminalNode>) -> Option<ContractS
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3838,7 +4200,9 @@ pub fn build_inheritance_types(node: &Rc<NonterminalNode>) -> Option<Inheritance
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3852,7 +4216,9 @@ pub fn build_contract_members(node: &Rc<NonterminalNode>) -> Option<ContractMemb
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3866,7 +4232,9 @@ pub fn build_interface_members(node: &Rc<NonterminalNode>) -> Option<InterfaceMe
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3880,7 +4248,9 @@ pub fn build_library_members(node: &Rc<NonterminalNode>) -> Option<LibraryMember
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3894,7 +4264,9 @@ pub fn build_struct_members(node: &Rc<NonterminalNode>) -> Option<StructMembers>
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3906,7 +4278,9 @@ pub fn build_enum_members(node: &Rc<NonterminalNode>) -> Option<EnumMembers> {
         items.push(terminal_node_cloned(child));
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3922,7 +4296,9 @@ pub fn build_state_variable_attributes(
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3936,7 +4312,9 @@ pub fn build_parameters(node: &Rc<NonterminalNode>) -> Option<Parameters> {
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3950,7 +4328,9 @@ pub fn build_function_attributes(node: &Rc<NonterminalNode>) -> Option<FunctionA
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3964,7 +4344,9 @@ pub fn build_override_paths(node: &Rc<NonterminalNode>) -> Option<OverridePaths>
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3978,7 +4360,9 @@ pub fn build_constructor_attributes(node: &Rc<NonterminalNode>) -> Option<Constr
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -3994,7 +4378,9 @@ pub fn build_unnamed_function_attributes(
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4010,7 +4396,9 @@ pub fn build_fallback_function_attributes(
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4026,7 +4414,9 @@ pub fn build_receive_function_attributes(
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4040,7 +4430,9 @@ pub fn build_modifier_attributes(node: &Rc<NonterminalNode>) -> Option<ModifierA
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4054,7 +4446,9 @@ pub fn build_event_parameters(node: &Rc<NonterminalNode>) -> Option<EventParamet
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4068,7 +4462,9 @@ pub fn build_error_parameters(node: &Rc<NonterminalNode>) -> Option<ErrorParamet
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4084,7 +4480,9 @@ pub fn build_function_type_attributes(
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4098,7 +4496,9 @@ pub fn build_statements(node: &Rc<NonterminalNode>) -> Option<Statements> {
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4112,7 +4512,9 @@ pub fn build_assembly_flags(node: &Rc<NonterminalNode>) -> Option<AssemblyFlags>
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4128,7 +4530,9 @@ pub fn build_tuple_deconstruction_elements(
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4142,7 +4546,9 @@ pub fn build_catch_clauses(node: &Rc<NonterminalNode>) -> Option<CatchClauses> {
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4156,7 +4562,9 @@ pub fn build_positional_arguments(node: &Rc<NonterminalNode>) -> Option<Position
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4170,7 +4578,9 @@ pub fn build_named_arguments(node: &Rc<NonterminalNode>) -> Option<NamedArgument
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4184,7 +4594,9 @@ pub fn build_call_options(node: &Rc<NonterminalNode>) -> Option<CallOptions> {
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4198,7 +4610,9 @@ pub fn build_tuple_values(node: &Rc<NonterminalNode>) -> Option<TupleValues> {
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4212,7 +4626,9 @@ pub fn build_array_values(node: &Rc<NonterminalNode>) -> Option<ArrayValues> {
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4226,7 +4642,9 @@ pub fn build_string_literals(node: &Rc<NonterminalNode>) -> Option<StringLiteral
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4240,7 +4658,9 @@ pub fn build_hex_string_literals(node: &Rc<NonterminalNode>) -> Option<HexString
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4254,7 +4674,9 @@ pub fn build_unicode_string_literals(node: &Rc<NonterminalNode>) -> Option<Unico
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4266,7 +4688,9 @@ pub fn build_identifier_path(node: &Rc<NonterminalNode>) -> Option<IdentifierPat
         items.push(terminal_node_cloned(child));
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4280,7 +4704,9 @@ pub fn build_yul_statements(node: &Rc<NonterminalNode>) -> Option<YulStatements>
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4292,7 +4718,9 @@ pub fn build_yul_parameters(node: &Rc<NonterminalNode>) -> Option<YulParameters>
         items.push(terminal_node_cloned(child));
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4304,7 +4732,9 @@ pub fn build_yul_variable_names(node: &Rc<NonterminalNode>) -> Option<YulVariabl
         items.push(terminal_node_cloned(child));
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4318,7 +4748,9 @@ pub fn build_yul_switch_cases(node: &Rc<NonterminalNode>) -> Option<YulSwitchCas
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4332,7 +4764,9 @@ pub fn build_yul_arguments(node: &Rc<NonterminalNode>) -> Option<YulArguments> {
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4346,7 +4780,9 @@ pub fn build_yul_paths(node: &Rc<NonterminalNode>) -> Option<YulPaths> {
         }
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4358,7 +4794,9 @@ pub fn build_yul_path(node: &Rc<NonterminalNode>) -> Option<YulPath> {
         items.push(terminal_node_cloned(child));
         _ = helper.accept_label(EdgeLabel::Separator);
     }
-    helper.finalize();
+    if !helper.finalize() {
+        return None;
+    }
     Some(items)
 }
 
@@ -4423,15 +4861,14 @@ impl<'a> ChildrenHelper<'a> {
         Some(node)
     }
 
-    fn finalize(mut self) {
+    fn finalize(mut self) -> bool {
         // skip over trailing trivia and unrecognized nodes
         while self.index < self.children.len() {
-            let child = &self.children[self.index];
-            assert!(
-                child.is_trivia() || !child.is_valid(),
-                "unexpected trailing node {child:?}"
-            );
+            if !self.children[self.index].is_trivia() && self.children[self.index].is_valid() {
+                return false;
+            }
             self.index += 1;
         }
+        true
     }
 }
