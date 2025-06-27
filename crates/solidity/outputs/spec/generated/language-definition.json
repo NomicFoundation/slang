@@ -8909,6 +8909,15 @@
         {
           "BuiltInType": {
             "item": {
+              "name": "byte",
+              "fields": [{ "definition": "uint length" }],
+              "enabled": { "Till": { "till": "0.8.0" } }
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
               "name": "%BytesType",
               "functions": [
                 { "name": "concat", "parameters": ["bytes[] bytesToConcatenate"], "return_type": "bytes memory" }
@@ -8940,6 +8949,15 @@
               "name": "%ErrorType",
               "fields": [{ "definition": "bytes4 selector" }],
               "enabled": { "From": { "from": "0.8.4" } }
+            }
+          }
+        },
+        {
+          "BuiltInType": {
+            "item": {
+              "name": "%EventType",
+              "fields": [{ "definition": "bytes4 selector" }],
+              "enabled": { "From": { "from": "0.8.15" } }
             }
           }
         },

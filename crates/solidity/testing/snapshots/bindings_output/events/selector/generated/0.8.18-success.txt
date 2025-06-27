@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Utils {
+   │         ──┬──  
+   │           ╰──── name: 1
+ 2 │     event Foo(uint x);
+   │           ─┬─      ┬  
+   │            ╰────────── name: 2
+   │                    │  
+   │                    ╰── name: 3
+   │ 
+ 4 │     function test() internal pure {
+   │              ──┬─  
+   │                ╰─── name: 4
+ 5 │         Foo.selector;
+   │         ─┬─ ────┬───  
+   │          ╰──────────── ref: 2
+   │                 │     
+   │                 ╰───── ref: built-in
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭───▶ library Utils {
+ 2 │ │ │       event Foo(uint x);
+   │ │ │   ───────────┬─────┬─────  
+   │ │ │              ╰───────────── definiens: 2
+   │ │ │                    │       
+   │ │ │                    ╰─────── definiens: 3
+ 3 │ │ ╭─▶ 
+   ┆ ┆ ┆   
+ 6 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 4
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯
