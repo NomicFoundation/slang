@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use semver::Version;
+
 use super::p1_flatten_contracts::Output as Input;
 use crate::backend::binder::{Binder, Definition, FileScope, Scope, ScopeId};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
@@ -17,7 +19,7 @@ pub struct Output {
 pub fn run(input: Input) -> Output {
     let files = input.files;
     let compilation_unit = input.compilation_unit;
-    let mut pass = Pass::new();
+    let mut pass = Pass::new(compilation_unit.language_version());
     for (file_id, source_unit) in &files {
         let file = compilation_unit.file(file_id).unwrap();
         pass.visit_file(file, source_unit);
@@ -31,15 +33,19 @@ pub fn run(input: Input) -> Output {
     }
 }
 
+const VERSION_0_5_0: Version = Version::new(0, 5, 0);
+
 struct Pass {
+    language_version: Version,
     current_file: Option<Rc<File>>, // needed to resolve imports on the file
     scope_stack: Vec<ScopeId>,
     binder: Binder,
 }
 
 impl Pass {
-    fn new() -> Self {
+    fn new(language_version: &Version) -> Self {
         Self {
+            language_version: language_version.clone(),
             current_file: None,
             scope_stack: Vec::new(),
             binder: Binder::new(),
@@ -56,9 +62,10 @@ impl Pass {
         assert!(self.scope_stack.is_empty());
     }
 
-    fn enter_scope(&mut self, scope: Scope) {
+    fn enter_scope(&mut self, scope: Scope) -> ScopeId {
         let scope_id = self.binder.insert_scope(scope);
         self.scope_stack.push(scope_id);
+        scope_id
     }
 
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
@@ -102,8 +109,8 @@ impl Pass {
     }
 
     fn insert_definition_in_current_scope(&mut self, definition: Definition) {
-        self.current_scope().insert_definition(&definition);
-        self.binder.insert_definition(definition);
+        self.binder
+            .insert_definition_in_scope(definition, self.current_scope_id());
     }
 
     fn resolve_import_path(&self, import_path: &input_ir::StringLiteral) -> Option<String> {
@@ -126,12 +133,11 @@ impl Pass {
         // TODO(validation): emit an error/warning if the file cannot be resolved
     }
 
-    fn collect_parameters(&mut self, parameters: &input_ir::Parameters, scope: &mut Scope) {
+    fn collect_parameters(&mut self, parameters: &input_ir::Parameters, scope_id: ScopeId) {
         for parameter in parameters {
             if let Some(name) = &parameter.name {
                 let definition = Definition::new_parameter(parameter.node_id, name);
-                scope.insert_definition(&definition);
-                self.binder.insert_definition(definition);
+                self.binder.insert_definition_in_scope(definition, scope_id);
             }
         }
     }
@@ -241,26 +247,22 @@ impl Visitor for Pass {
     }
 
     fn enter_function_definition(&mut self, node: &input_ir::FunctionDefinition) -> bool {
-        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        self.collect_parameters(&node.parameters.parameters, &mut parameters_scope);
+        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
         let parameters_scope_id = self.binder.insert_scope(parameters_scope);
-
-        let mut function_scope =
-            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
-
-        if let Some(returns_declaration) = &node.returns {
-            self.collect_parameters(
-                &returns_declaration.variables.parameters,
-                &mut function_scope,
-            );
-        }
+        self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
 
         if let input_ir::FunctionName::Identifier(name) = &node.name {
             let definition = Definition::new_function(node.node_id, name, parameters_scope_id);
             self.insert_definition_in_current_scope(definition);
         }
 
-        self.enter_scope(function_scope);
+        let function_scope =
+            Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
+        let function_scope_id = self.enter_scope(function_scope);
+
+        if let Some(returns_declaration) = &node.returns {
+            self.collect_parameters(&returns_declaration.variables.parameters, function_scope_id);
+        }
 
         true
     }
@@ -270,15 +272,14 @@ impl Visitor for Pass {
     }
 
     fn enter_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) -> bool {
-        let mut modifier_scope = Scope::new_modifier(node.node_id, self.current_scope_id());
-        if let Some(parameters) = &node.parameters {
-            self.collect_parameters(&parameters.parameters, &mut modifier_scope);
-        }
-
         let definition = Definition::new_modifier(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
 
-        self.enter_scope(modifier_scope);
+        let modifier_scope = Scope::new_modifier(node.node_id, self.current_scope_id());
+        let modifier_scope_id = self.enter_scope(modifier_scope);
+        if let Some(parameters) = &node.parameters {
+            self.collect_parameters(&parameters.parameters, modifier_scope_id);
+        }
 
         true
     }
@@ -288,9 +289,9 @@ impl Visitor for Pass {
     }
 
     fn enter_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) -> bool {
-        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        self.collect_parameters(&node.parameters.parameters, &mut parameters_scope);
+        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
         let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+        self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
 
         // TODO: register the constructor to resolve named parameters when
         // constructing this contract. Also, for Solidity < 0.5.0, register the
@@ -315,21 +316,17 @@ impl Visitor for Pass {
         // the fallback function cannot be invoked with named arguments. Then
         // again, the function scope requires a parameters scope. Maybe make
         // that optional?
-        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        self.collect_parameters(&node.parameters.parameters, &mut parameters_scope);
+        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
         let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+        self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
 
-        let mut function_scope =
+        let function_scope =
             Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
+        let function_scope_id = self.enter_scope(function_scope);
 
         if let Some(returns_declaration) = &node.returns {
-            self.collect_parameters(
-                &returns_declaration.variables.parameters,
-                &mut function_scope,
-            );
+            self.collect_parameters(&returns_declaration.variables.parameters, function_scope_id);
         }
-
-        self.enter_scope(function_scope);
 
         true
     }
@@ -348,9 +345,9 @@ impl Visitor for Pass {
         // that optional?
         // TODO: a receive function does not accept parameters. Should we update
         // the language definition?
-        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        self.collect_parameters(&node.parameters.parameters, &mut parameters_scope);
+        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
         let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+        self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
 
         let function_scope =
             Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
@@ -371,9 +368,9 @@ impl Visitor for Pass {
         // the unnamed function cannot be invoked with named arguments. Then
         // again, the function scope requires a parameters scope. Maybe make
         // that optional?
-        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
-        self.collect_parameters(&node.parameters.parameters, &mut parameters_scope);
+        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
         let parameters_scope_id = self.binder.insert_scope(parameters_scope);
+        self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
 
         let function_scope =
             Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
@@ -390,13 +387,13 @@ impl Visitor for Pass {
         let definition = Definition::new_enum(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
 
-        let mut enum_scope = Scope::new_enum(node.node_id);
+        let enum_scope = Scope::new_enum(node.node_id);
+        let enum_scope_id = self.binder.insert_scope(enum_scope);
         for member in &node.members {
             let definition = Definition::new_enum_member(member.id(), member);
-            enum_scope.insert_definition(&definition);
-            self.binder.insert_definition(definition);
+            self.binder
+                .insert_definition_in_scope(definition, enum_scope_id);
         }
-        self.binder.insert_scope(enum_scope);
 
         false
     }
@@ -405,27 +402,27 @@ impl Visitor for Pass {
         let definition = Definition::new_struct(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
 
-        let mut struct_scope = Scope::new_struct(node.node_id);
+        let struct_scope = Scope::new_struct(node.node_id);
+        let struct_scope_id = self.binder.insert_scope(struct_scope);
         for member in &node.members {
             let definition = Definition::new_struct_member(member.node_id, &member.name);
-            struct_scope.insert_definition(&definition);
-            self.binder.insert_definition(definition);
+            self.binder
+                .insert_definition_in_scope(definition, struct_scope_id);
         }
-        self.binder.insert_scope(struct_scope);
 
         false
     }
 
     fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {
-        let mut parameters_scope = Scope::new_parameters(node.members.node_id);
+        let parameters_scope = Scope::new_parameters(node.members.node_id);
+        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
         for parameter in &node.members.parameters {
             if let Some(name) = &parameter.name {
                 let definition = Definition::new_parameter(parameter.node_id, name);
-                parameters_scope.insert_definition(&definition);
-                self.binder.insert_definition(definition);
+                self.binder
+                    .insert_definition_in_scope(definition, parameters_scope_id);
             }
         }
-        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
 
         let definition = Definition::new_error(node.node_id, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
@@ -434,15 +431,15 @@ impl Visitor for Pass {
     }
 
     fn enter_event_definition(&mut self, node: &input_ir::EventDefinition) -> bool {
-        let mut parameters_scope = Scope::new_parameters(node.parameters.node_id);
+        let parameters_scope = Scope::new_parameters(node.parameters.node_id);
+        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
         for parameter in &node.parameters.parameters {
             if let Some(name) = &parameter.name {
                 let definition = Definition::new_parameter(parameter.node_id, name);
-                parameters_scope.insert_definition(&definition);
-                self.binder.insert_definition(definition);
+                self.binder
+                    .insert_definition_in_scope(definition, parameters_scope_id);
             }
         }
-        let parameters_scope_id = self.binder.insert_scope(parameters_scope);
 
         let definition = Definition::new_event(node.node_id, &node.name, parameters_scope_id);
         self.insert_definition_in_current_scope(definition);
@@ -490,7 +487,8 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::VariableDeclarationStatement,
     ) -> bool {
-        // TODO: for Solidity >= 0.5.0 this should create a new scope
+        // TODO(validation): for Solidity >= 0.5.0 this definition should only
+        // be available for statements after this one
         let definition = Definition::new_variable(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
 
@@ -501,7 +499,8 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
     ) -> bool {
-        // TODO: for Solidity >= 0.5.0 this should create a new scope
+        // TODO(validation): for Solidity >= 0.5.0 this definition should only
+        // be available for statements after this one
         for element in &node.elements {
             let Some(tuple_member) = &element.member else {
                 continue;
@@ -523,68 +522,66 @@ impl Visitor for Pass {
         false
     }
 
-    fn enter_block(&mut self, _node: &input_ir::Block) -> bool {
-        // TODO: For Solidity >= 0.5.0 we should create and enter a new scope.
-        // Possibly want to handle this by implementing
-        // `enter_statement`/`leave_statement` instead, since a `Block` is used
-        // in other circumstances.
+    fn enter_block(&mut self, node: &input_ir::Block) -> bool {
+        if self.language_version >= VERSION_0_5_0 {
+            let scope = Scope::new_block(node.node_id, self.current_scope_id());
+            self.enter_scope(scope);
+        }
         true
     }
 
-    fn leave_block(&mut self, _node: &input_ir::Block) {
-        // TODO: For Solidity >= 0.5.0 we should leave the current scope
+    fn leave_block(&mut self, node: &input_ir::Block) {
+        if self.language_version >= VERSION_0_5_0 {
+            self.leave_scope_for_node_id(node.node_id);
+        }
     }
 
-    fn enter_for_statement(&mut self, _node: &input_ir::ForStatement) -> bool {
-        // TODO: Solidity >= 0.5.0 needs special treatment for the declarations
-        // in the initialization clause of the for statement, ie. they need to
-        // be available in the condition and in the increment expression, as
-        // well as the body.
+    fn enter_for_statement(&mut self, node: &input_ir::ForStatement) -> bool {
+        if self.language_version >= VERSION_0_5_0 {
+            // For Solidity >= 0.5.0 open a new block here to hold declarations
+            // in the initialization clause.
+            let scope = Scope::new_block(node.node_id, self.current_scope_id());
+            self.enter_scope(scope);
+        }
         true
     }
 
-    fn leave_for_statement(&mut self, _node: &input_ir::ForStatement) {
-        // TODO: For Solidity >= 0.5.0, possibly handle leaving the current scope
+    fn leave_for_statement(&mut self, node: &input_ir::ForStatement) {
+        if self.language_version >= VERSION_0_5_0 {
+            self.leave_scope_for_node_id(node.node_id);
+        }
     }
 
-    fn enter_try_statement(&mut self, node: &input_ir::TryStatement) -> bool {
+    fn leave_try_statement(&mut self, node: &input_ir::TryStatement) {
+        if self.language_version < VERSION_0_5_0 {
+            return;
+        }
         if let Some(returns) = &node.returns {
-            // TODO: fix the scope here when implementing the correct handling of
-            // C99 scopes for Solidity >= 0.5.0. For now we want to collect the
-            // parameters in the returns declaration of the try statement, but
-            // the parameters need to be available in the block. Maybe do this
-            // in leave_try_statement instead, once we have a scope declared for
-            // the block?
-            let mut parameters_scope = Scope::new_parameters(returns.node_id);
-            self.collect_parameters(&returns.variables.parameters, &mut parameters_scope);
-            self.binder.insert_scope(parameters_scope);
+            // For Solidity >= 0.5.0, collect the parameters in the returns
+            // declaration of the try statement and make them available in the
+            // body block.
+            let body_scope_id = self.binder.scope_id_for_node_id(node.body.node_id).unwrap();
+            self.collect_parameters(&returns.variables.parameters, body_scope_id);
         }
-
-        true
     }
 
-    fn enter_catch_clause(&mut self, node: &input_ir::CatchClause) -> bool {
+    fn leave_catch_clause(&mut self, node: &input_ir::CatchClause) {
         if let Some(error) = &node.error {
-            // TODO: fix the scope here when implementing the correct handling
-            // of C99 scopes for Solidity >= 0.5.0. For now we want to collect
-            // the parameters in the catch clause, but the parameters need to be
-            // available in the block.
-            let mut parameters_scope = Scope::new_parameters(error.node_id);
-            self.collect_parameters(&error.parameters.parameters, &mut parameters_scope);
-            self.binder.insert_scope(parameters_scope);
+            // For Solidity >= 0.5.0, collect the parameters in the catch
+            // declaration and make them available in the body block.
+            let body_scope_id = self.binder.scope_id_for_node_id(node.body.node_id).unwrap();
+            self.collect_parameters(&error.parameters.parameters, body_scope_id);
         }
-
-        true
     }
 
     fn enter_mapping_type(&mut self, node: &input_ir::MappingType) -> bool {
         if let Some(name) = &node.key_type.name {
             let definition = Definition::new_type_parameter(node.key_type.node_id, name);
-            self.binder.insert_definition(definition);
+            self.binder.insert_definition_no_scope(definition);
         }
         if let Some(name) = &node.value_type.name {
             let definition = Definition::new_type_parameter(node.value_type.node_id, name);
-            self.binder.insert_definition(definition);
+            self.binder.insert_definition_no_scope(definition);
         }
 
         false
@@ -594,14 +591,14 @@ impl Visitor for Pass {
         for parameter in &node.parameters.parameters {
             if let Some(name) = &parameter.name {
                 let definition = Definition::new_type_parameter(parameter.node_id, name);
-                self.binder.insert_definition(definition);
+                self.binder.insert_definition_no_scope(definition);
             }
         }
         if let Some(returns) = &node.returns {
             for parameter in &returns.variables.parameters {
                 if let Some(name) = &parameter.name {
                     let definition = Definition::new_type_parameter(parameter.node_id, name);
-                    self.binder.insert_definition(definition);
+                    self.binder.insert_definition_no_scope(definition);
                 }
             }
         }
@@ -625,20 +622,19 @@ impl Visitor for Pass {
         self.insert_definition_in_current_scope(definition);
 
         let enclosing_scope_id = self.current_non_yul_scope_id();
-        let mut scope = Scope::new_yul_function(node.node_id, enclosing_scope_id);
+        let scope = Scope::new_yul_function(node.node_id, enclosing_scope_id);
+        let scope_id = self.enter_scope(scope);
+
         for parameter in &node.parameters.parameters {
             let definition = Definition::new_parameter(parameter.id(), parameter);
-            scope.insert_definition(&definition);
-            self.binder.insert_definition(definition);
+            self.binder.insert_definition_in_scope(definition, scope_id);
         }
         if let Some(returns) = &node.returns {
             for parameter in &returns.variables {
                 let definition = Definition::new_parameter(parameter.id(), parameter);
-                scope.insert_definition(&definition);
-                self.binder.insert_definition(definition);
+                self.binder.insert_definition_in_scope(definition, scope_id);
             }
         }
-        self.enter_scope(scope);
 
         true
     }

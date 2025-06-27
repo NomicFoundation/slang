@@ -417,6 +417,28 @@ impl Reference {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ScopeId(usize);
 
+pub struct BlockScope {
+    pub node_id: NodeId,
+    pub parent_scope_id: ScopeId,
+    pub definitions: HashMap<String, NodeId>,
+}
+
+impl BlockScope {
+    fn new(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+        Self {
+            node_id,
+            parent_scope_id,
+            definitions: HashMap::new(),
+        }
+    }
+
+    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
+        let symbol = definition.identifier().unparse();
+        let node_id = definition.node_id();
+        self.definitions.insert(symbol, node_id);
+    }
+}
+
 pub struct ContractScope {
     pub node_id: NodeId,
     pub file_scope_id: ScopeId,
@@ -636,6 +658,7 @@ impl YulFunctionScope {
 }
 
 pub enum Scope {
+    Block(BlockScope),
     Contract(ContractScope),
     Enum(EnumScope),
     File(FileScope),
@@ -650,6 +673,7 @@ pub enum Scope {
 impl Scope {
     pub fn node_id(&self) -> NodeId {
         match self {
+            Self::Block(block_scope) => block_scope.node_id,
             Self::Contract(contract_scope) => contract_scope.node_id,
             Self::Enum(enum_scope) => enum_scope.node_id,
             Self::File(file_scope) => file_scope.node_id,
@@ -662,8 +686,9 @@ impl Scope {
         }
     }
 
-    pub(crate) fn insert_definition(&mut self, definition: &Definition) {
+    fn insert_definition(&mut self, definition: &Definition) {
         match self {
+            Self::Block(block_scope) => block_scope.insert_definition(definition),
             Self::Contract(contract_scope) => contract_scope.insert_definition(definition),
             Self::Enum(enum_scope) => enum_scope.insert_definition(definition),
             Self::File(file_scope) => file_scope.insert_definition(definition),
@@ -674,6 +699,10 @@ impl Scope {
             Self::YulBlock(yul_block_scope) => yul_block_scope.insert_definition(definition),
             Self::YulFunction(function_scope) => function_scope.insert_definition(definition),
         }
+    }
+
+    pub(crate) fn new_block(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
+        Self::Block(BlockScope::new(node_id, parent_scope_id))
     }
 
     pub(crate) fn new_contract(node_id: NodeId, file_scope_id: ScopeId) -> Self {
@@ -783,7 +812,7 @@ impl Binder {
         scope_id
     }
 
-    pub(crate) fn insert_definition(&mut self, definition: Definition) {
+    pub(crate) fn insert_definition_no_scope(&mut self, definition: Definition) {
         let node_id = definition.node_id();
         if self.definitions.contains_key(&node_id) {
             unreachable!("attempt to insert duplicate definition on node {node_id:?}");
@@ -791,6 +820,12 @@ impl Binder {
         self.definitions_by_identifier
             .insert(definition.identifier().id(), node_id);
         self.definitions.insert(node_id, definition);
+    }
+
+    pub(crate) fn insert_definition_in_scope(&mut self, definition: Definition, scope_id: ScopeId) {
+        let scope = self.get_scope_mut(scope_id);
+        scope.insert_definition(&definition);
+        self.insert_definition_no_scope(definition);
     }
 
     pub fn find_definition_by_id(&self, node_id: NodeId) -> Option<&Definition> {
@@ -853,6 +888,11 @@ impl Binder {
     ) -> Option<NodeId> {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
+            Scope::Block(block_scope) => block_scope
+                .definitions
+                .get(symbol)
+                .copied()
+                .or_else(|| self.resolve_single_in_scope(block_scope.parent_scope_id, symbol)),
             Scope::Contract(contract_scope) => contract_scope
                 .definitions
                 .get(symbol)
