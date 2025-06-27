@@ -1,7 +1,8 @@
+// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
 use std::collections::HashSet;
 
 use semver::Version;
-use strum_macros::Display;
 
 use crate::compilation::internal_builder::{
     AddFileResponse, CompilationInitializationError, InternalCompilationBuilder,

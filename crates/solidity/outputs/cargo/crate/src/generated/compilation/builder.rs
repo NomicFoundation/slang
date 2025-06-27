@@ -3,7 +3,6 @@
 use std::collections::HashSet;
 
 use semver::Version;
-use strum_macros::Display;
 
 use crate::compilation::internal_builder::{
     AddFileResponse, CompilationInitializationError, InternalCompilationBuilder,
