@@ -1,4 +1,5 @@
-use anyhow::{anyhow, Result};
+use anyhow::Result;
+use semver::Version;
 use slang_solidity::backend::l1_structured_ast;
 use slang_solidity::parser::Parser;
 use slang_solidity::utils::LanguageFacts;
@@ -24,8 +25,7 @@ contract MyContract {
     );
     assert!(output.is_valid());
 
-    let ast =
-        l1_structured_ast::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
+    let ast = l1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
     assert_eq!(2, ast.members.len());
     assert!(matches!(
         ast.members[0],
@@ -89,6 +89,77 @@ contract MyContract {
         panic!("Expected Block");
     };
     assert_eq!(1, block.statements.len());
+
+    Ok(())
+}
+
+#[test]
+fn test_can_handle_unrecognized() -> Result<()> {
+    let parser = Parser::create(Version::parse("0.4.11")?)?;
+    let output = parser.parse_file_contents(
+        r###"
+contract Test {
+    function test(address payable to) public {}
+}
+    "###,
+    );
+    assert!(!output.is_valid());
+    assert_eq!(output.errors().len(), 1);
+
+    let ast = l1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
+    assert_eq!(1, ast.members.len());
+    assert!(matches!(
+        ast.members[0],
+        l1_structured_ast::SourceUnitMember::ContractDefinition(_)
+    ));
+
+    let l1_structured_ast::SourceUnitMember::ContractDefinition(ref contract) = ast.members[0]
+    else {
+        panic!("Expected ContractDefinition");
+    };
+    assert_eq!(1, contract.members.len());
+    assert!(matches!(
+        contract.members[0],
+        l1_structured_ast::ContractMember::FunctionDefinition(_)
+    ));
+
+    let l1_structured_ast::ContractMember::FunctionDefinition(ref function) = contract.members[0]
+    else {
+        panic!("Expected FunctionDefinition");
+    };
+    assert_eq!(1, function.parameters.parameters.len());
+
+    let parameter = &function.parameters.parameters[0];
+    // parameter name cannot be parsed
+    assert!(parameter.name.is_none());
+
+    // but the parameter type can
+    let l1_structured_ast::TypeName::ElementaryType(ref parameter_type) = parameter.type_name
+    else {
+        panic!("Expected ElementaryType");
+    };
+    let l1_structured_ast::ElementaryType::AddressType(ref address_type) = parameter_type else {
+        panic!("Expected AddressType");
+    };
+    assert!(address_type.payable_keyword.is_none());
+
+    Ok(())
+}
+
+#[test]
+fn test_can_handle_missing() -> Result<()> {
+    let parser = Parser::create(LanguageFacts::LATEST_VERSION)?;
+    let output = parser.parse_file_contents(
+        r###"
+contract Test {
+    "###,
+    );
+    assert!(!output.is_valid());
+    assert_eq!(output.errors().len(), 1);
+
+    let ast = l1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
+    // the contract definition cannot be parsed fully
+    assert_eq!(0, ast.members.len());
 
     Ok(())
 }
