@@ -6,7 +6,7 @@ Error: Expected ContractKeyword or EnumKeyword or ImportKeyword or InterfaceKeyw
     │
   1 │ ╭─▶ type ShortString is bytes32;
     ┆ ┆   
- 18 │ ├─▶ }
+ 21 │ ├─▶ }
     │ │       
     │ ╰─────── Error occurred here.
 ────╯

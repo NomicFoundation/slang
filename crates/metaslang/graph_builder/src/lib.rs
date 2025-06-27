@@ -78,6 +78,8 @@
 #![allow(clippy::explicit_iter_loop)]
 #![allow(clippy::single_char_pattern)]
 #![allow(clippy::unused_unit)]
+#![allow(clippy::elidable_lifetime_names)]
+#![allow(clippy::unnecessary_semicolon)]
 
 #[cfg(test)]
 use {env_logger as _, indoc as _, string_interner as _, strum as _, strum_macros as _};

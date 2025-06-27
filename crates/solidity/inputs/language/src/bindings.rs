@@ -50,7 +50,7 @@ fn canonicalize_type(input: &str) -> String {
     match input {
         "int" => "int256".into(),
         "uint" => "uint256".into(),
-        _ => input.to_string(),
+        _ => input.replace(" memory", ""),
     }
 }
 

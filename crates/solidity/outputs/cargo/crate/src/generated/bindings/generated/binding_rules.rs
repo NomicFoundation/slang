@@ -135,6 +135,8 @@ inherit .star_extension
 ]]] {
   ; global using directives are exported by this source unit
   edge @source_unit.defs -> @using.def
+  ; and should be directly accesible from the file's lexical scope
+  edge @source_unit.lexical_scope -> @using.def
 }
 
 ;; Import connections to the source unit
@@ -229,6 +231,25 @@ inherit .star_extension
 }
 
 ;;; `import {<SYMBOL> [as <IDENT>] ...} from <PATH>`
+@import [ImportDeconstruction path: [StringLiteral
+    @path ([DoubleQuotedStringLiteral] | [SingleQuotedStringLiteral])
+]] {
+  node @import.yul_defs
+  node @import.yul_path
+
+  ;; Each imported symbol will have an alternative path to make symbols
+  ;; accessible in assembly blocks
+  node pop_yul
+  attr (pop_yul) pop_symbol = "@yul"
+  node push_yul
+  attr (push_yul) push_symbol = "@yul"
+
+  edge @import.defs -> pop_yul
+  edge pop_yul -> @import.yul_defs
+  edge @import.yul_path -> push_yul
+  edge push_yul -> @path.import
+}
+
 @import [ImportDeconstruction
   symbols: [ImportDeconstructionSymbols @symbol [ImportDeconstructionSymbol]]
   path: [StringLiteral
@@ -242,35 +263,36 @@ inherit .star_extension
 
   node @symbol.import
   edge @symbol.import -> @path.import
+
+  node @symbol.yul_def
+  edge @import.yul_defs -> @symbol.yul_def
+  node @symbol.yul_import
+  edge @symbol.yul_import -> @import.yul_path
 }
 
 @symbol [ImportDeconstructionSymbol @name name: [Identifier] .] {
-  node def
-  attr (def) node_definition = @name
-  attr (def) definiens_node = @symbol
-  edge @symbol.def -> def
+  attr (@symbol.def) node_definition = @name
+  attr (@symbol.def) definiens_node = @symbol
+  attr (@symbol.import) node_reference = @name
+  edge @symbol.def -> @symbol.import
 
-  node import
-  attr (import) node_reference = @name
-  edge def -> import
-
-  edge import -> @symbol.import
+  attr (@symbol.yul_def) pop_symbol = (source-text @name)
+  attr (@symbol.yul_import) push_symbol = (source-text @name)
+  edge @symbol.yul_def -> @symbol.yul_import
 }
 
 @symbol [ImportDeconstructionSymbol
     @name name: [Identifier]
     alias: [ImportAlias @alias [Identifier]]
 ] {
-  node def
-  attr (def) node_definition = @alias
-  attr (def) definiens_node = @symbol
-  edge @symbol.def -> def
+  attr (@symbol.def) node_definition = @alias
+  attr (@symbol.def) definiens_node = @symbol
+  attr (@symbol.import) node_reference = @name
+  edge @symbol.def -> @symbol.import
 
-  node import
-  attr (import) node_reference = @name
-  edge def -> import
-
-  edge import -> @symbol.import
+  attr (@symbol.yul_def) pop_symbol = (source-text @alias)
+  attr (@symbol.yul_import) push_symbol = (source-text @name)
+  edge @symbol.yul_def -> @symbol.yul_import
 }
 
 
@@ -424,13 +446,20 @@ inherit .star_extension
 
   if (version-matches "< 0.5.0") {
     ; For Solidity < 0.5.0 `this` also acts like an `address`
-    node address_ref
-    attr (address_ref) push_symbol = "address"
     node address_typeof
     attr (address_typeof) push_symbol = "@typeof"
+    node address_ref
+    attr (address_ref) push_symbol = "address"
     edge this -> address_typeof
     edge address_typeof -> address_ref
     edge address_ref -> @contract.lexical_scope
+
+    ; Instances of the contract can also be used as addresses
+    node member_guard_pop
+    attr (member_guard_pop) pop_symbol = "@typeof"
+
+    edge @contract.def -> member_guard_pop
+    edge member_guard_pop -> address_typeof
   }
 
   ; This is the connection point to resolve attached functions by `using for *`
@@ -454,9 +483,11 @@ inherit .star_extension
   edge type_contract_type -> @contract.parent_scope
 
   ;; This scope provides access to state variables from Yul assembly blocks
-  node @contract.yul_locals
-  attr (@contract.yul_locals) pop_symbol = "@yul_locals"
-  edge @contract.lexical_scope -> @contract.yul_locals
+  node @contract.yul
+  attr (@contract.yul) pop_symbol = "@yul"
+  edge @contract.lexical_scope -> @contract.yul
+  ;; Also to state variables (and constants) from base contracts
+  edge @contract.instance -> @contract.yul
 }
 
 @contract [ContractDefinition
@@ -579,7 +610,7 @@ inherit .star_extension
   edge @contract.instance -> @state_var.def
 
   ; State variables should also be available in Yul assembly blocks
-  edge @contract.yul_locals -> @state_var.def
+  edge @contract.yul -> @state_var.def
 }
 
 ;; Public state variables are also exposed as external member functions
@@ -713,6 +744,37 @@ inherit .star_extension
   edge @interface.def -> type
   edge type -> type_interface_type
   edge type_interface_type -> @interface.parent_scope
+
+  if (version-matches "< 0.5.0") {
+    ; For Solidity < 0.5.0 instance can also be used as addresses
+    node member_guard_pop
+    attr (member_guard_pop) pop_symbol = "@typeof"
+    node address_typeof
+    attr (address_typeof) push_symbol = "@typeof"
+    node address_ref
+    attr (address_ref) push_symbol = "address"
+
+    edge @interface.def -> member_guard_pop
+    edge member_guard_pop -> address_typeof
+    edge address_typeof -> address_ref
+    edge address_ref -> @interface.lexical_scope
+  }
+
+  ;; Modifiers are allowed in Solidity < 0.8.8
+  if (version-matches "< 0.8.8") {
+    ;; Modifiers are available as a contract type members through a special '@modifier' guard
+    node modifier
+    node @interface.modifiers
+    attr (modifier) pop_symbol = "@modifier"
+    edge @interface.ns -> modifier
+    edge modifier -> @interface.modifiers
+
+    ; We need "this" keyword is available in our lexical scope for modifier bodies to use
+    node this
+    attr (this) pop_symbol = "this"
+    edge @interface.lexical_scope -> this
+    edge this -> member
+  }
 }
 
 @interface [InterfaceDefinition @specifier [InheritanceSpecifier]] {
@@ -734,6 +796,22 @@ inherit .star_extension
   edge @interface.ns -> @member.def
 }
 
+@interface [InterfaceDefinition [InterfaceMembers
+    [ContractMember @modifier [ModifierDefinition]]
+]] {
+  ;; Modifiers are allowed in Solidity < 0.8.8
+  if (version-matches "< 0.8.8") {
+    edge @modifier.lexical_scope -> @interface.lexical_scope
+
+    ; Modifiers live in their own special scope
+    edge @interface.modifiers -> @modifier.def
+
+    ;; This may prioritize this definition (when there are multiple options)
+    ;; according to the C3 linerisation ordering
+    attr (@modifier.def) parents = [@interface.def]
+  }
+}
+
 ;; Allow references (eg. variables of the interface type) to the interface to
 ;; access functions
 @interface [InterfaceDefinition members: [InterfaceMembers
@@ -743,10 +821,12 @@ inherit .star_extension
 }
 
 [InterfaceDefinition [InterfaceMembers [ContractMember @using [UsingDirective]]]] {
-  ; using directives are not allowed in interfaces, but the grammar allows them
-  ; so we need to create an artificial node here to connect to created edges from
-  ; the instance nodes
-  let @using.lexical_scope = (node)
+  if (version-matches ">= 0.7.1") {
+    ; using directives are not allowed in interfaces after Solidity 0.7.1, but
+    ; the grammar allows them so we need to create an artificial node here to
+    ; connect to created edges from the instance nodes
+    let @using.lexical_scope = (node)
+  }
 }
 
 
@@ -794,6 +874,22 @@ inherit .star_extension
   ; This is the connection point to resolve attached functions by `using for *`
   node @library.star_extension
   attr (@library.star_extension) push_symbol = "@*"
+
+  if (version-matches "< 0.5.0") {
+    ; For Solidity < 0.5.0 there is a `this` in the lexical scope inside
+    ; libraries that acts as an `address`
+    node this
+    attr (this) pop_symbol = "this"
+    node address_typeof
+    attr (address_typeof) push_symbol = "@typeof"
+    node address_ref
+    attr (address_ref) push_symbol = "address"
+
+    edge @library.lexical_scope -> this
+    edge this -> address_typeof
+    edge address_typeof -> address_ref
+    edge address_ref -> @library.lexical_scope
+  }
 }
 
 @library [LibraryDefinition [LibraryMembers
@@ -1116,6 +1212,11 @@ inherit .star_extension
   attr (getter_call) pop_symbol = "@as_getter"
   edge typeof_input -> getter_call
   edge getter_call -> typeof_output
+  ; We also want to recurse if the value type is a nested mapping/array
+  node nested_getter_call
+  attr (nested_getter_call) push_symbol = "@as_getter"
+  edge getter_call -> nested_getter_call
+  edge nested_getter_call -> typeof_output
 
   ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
   ; This is the reverse of the pushing path above (to the `.output` node)
@@ -1170,11 +1271,15 @@ inherit .star_extension
 @array [ArrayTypeName @type_name [TypeName]] {
   ; Define the pushing path of the array type
   ;   ValueType <- top of the symbol stack
+  ;   @typeof
   ;   %array / %arrayFixed <- bottom of the symbol stack
   node array
   attr (array) push_symbol = @array.type_symbol
+  node item_typeof
+  attr (item_typeof) push_symbol = "@typeof"
   edge @array.output -> array
-  edge array -> @type_name.output
+  edge array -> item_typeof
+  edge item_typeof -> @type_name.output
 
   ; Resolve the value type itself
   edge @type_name.type_ref -> @array.lexical_scope
@@ -1203,6 +1308,11 @@ inherit .star_extension
   attr (getter_call) pop_symbol = "@as_getter"
   edge typeof_input -> getter_call
   edge getter_call -> typeof_output
+  ; We also want to recurse if the value type is a nested mapping/array
+  node nested_getter_call
+  attr (nested_getter_call) push_symbol = "@as_getter"
+  edge getter_call -> nested_getter_call
+  edge nested_getter_call -> typeof_output
 
   ; Define the special `.push()` built-in that returns the element type (for Solidity >= 0.6.0)
   if (version-matches ">= 0.6.0") {
@@ -1221,11 +1331,14 @@ inherit .star_extension
 
   ; Now we define the "definition" route (aka. the pop route), to use in `using` directives only
   ; This is essentially the reverse of the second path above
+  node pop_item_typeof
+  attr (pop_item_typeof) pop_symbol = "@typeof"
   node pop_array
   attr (pop_array) pop_symbol = @array.type_symbol
 
   let @array.pop_begin = @type_name.pop_begin
-  edge @type_name.pop_end -> pop_array
+  edge @type_name.pop_end -> pop_item_typeof
+  edge pop_item_typeof -> pop_array
   let @array.pop_end = pop_array
 }
 
@@ -1314,6 +1427,11 @@ inherit .star_extension
 ;; @id_path.rightmost_identifier which corresponds to the identifier in the last
 ;; position in the path, from left to right. This is used in the using directive
 ;; rules to be able to pop the name of the attached function.
+;;
+;; They also provide a `.push_ns` node which points to the right-most 'period'
+;; separating the rightmost identifier from the "namespace" qualifying part of
+;; the path. This allows creating additional referencing paths with guards right
+;; before the unqualified identifier (eg. for modifiers).
 
 @id_path [IdentifierPath] {
   ; This node connects to all parts of the path, for popping. This allows to
@@ -1321,6 +1439,7 @@ inherit .star_extension
   ; target type is fully qualified but we want to resolve for the unqualified
   ; name.
   node @id_path.all_pop_begin
+  node @id_path.push_end
 }
 
 @id_path [IdentifierPath @name [Identifier]] {
@@ -1334,29 +1453,47 @@ inherit .star_extension
   edge @id_path.all_pop_begin -> @name.pop
 }
 
-@id_path [IdentifierPath @name [Identifier] .] {
+; Single identifier paths
+@id_path [IdentifierPath . @name [Identifier] .] {
+  let @id_path.rightmost_identifier = @name
+
+  let @id_path.push_begin = @name.ref
+  let @id_path.push_ns = (node)
+  edge @name.ref -> @id_path.push_ns
+  edge @id_path.push_ns -> @id_path.push_end
+
+  let @id_path.pop_begin = @name.pop
+  let @id_path.pop_end = @name.pop
+}
+
+; Multiple identifier paths
+@id_path [IdentifierPath [_] . @name [Identifier] .] {
   let @id_path.rightmost_identifier = @name
 
   let @id_path.push_begin = @name.ref
   let @id_path.pop_end = @name.pop
 }
 
-[IdentifierPath @left_name [Identifier] . [Period] . @right_name [Identifier]] {
-  node ref_member
-  attr (ref_member) push_symbol = "."
+[IdentifierPath @left_name [Identifier] . @period [Period] . @right_name [Identifier]] {
+  node @period.ref_member
+  attr (@period.ref_member) push_symbol = "."
 
-  edge @right_name.ref -> ref_member
-  edge ref_member -> @left_name.ref
+  edge @right_name.ref -> @period.ref_member
+  edge @period.ref_member -> @left_name.ref
 
-  node pop_member
-  attr (pop_member) pop_symbol = "."
+  node @period.pop_member
+  attr (@period.pop_member) pop_symbol = "."
 
-  edge @left_name.pop -> pop_member
-  edge pop_member -> @right_name.pop
+  edge @left_name.pop -> @period.pop_member
+  edge @period.pop_member -> @right_name.pop
 }
 
-@id_path [IdentifierPath . @name [Identifier]] {
-  let @id_path.push_end = @name.ref
+@id_path [IdentifierPath @last_period [Period] . [Identifier] . ] {
+  let @id_path.push_ns = @last_period.ref_member
+}
+
+@id_path [IdentifierPath . @name [Identifier] . [_]] {
+  edge @name.ref -> @id_path.push_end
   let @id_path.pop_begin = @name.pop
 }
 
@@ -1485,11 +1622,18 @@ inherit .star_extension
 @modifier [ModifierInvocation @name [IdentifierPath]] {
   node @modifier.lexical_scope
 
+  node guard_pop
+  attr (guard_pop) pop_symbol = (source-text @name.rightmost_identifier)
+  node guard_push
+  attr (guard_push) push_symbol = (source-text @name.rightmost_identifier)
   node modifier
   attr (modifier) push_symbol = "@modifier"
 
-  edge @name.push_end -> modifier
-  edge modifier -> @modifier.lexical_scope
+  edge @name.push_begin -> guard_pop
+  edge guard_pop -> guard_push
+  edge guard_push -> modifier
+  edge modifier -> @name.push_ns
+  edge @name.push_end -> @modifier.lexical_scope
 
   ; This allows resolving @name in the more general scope in constructors (since
   ; calling a parent constructor is parsed as a modifier invocation)
@@ -1531,6 +1675,11 @@ inherit .star_extension
 @constructor [ConstructorDefinition] {
   node @constructor.lexical_scope
   node @constructor.def
+
+  ;; This scope provides access to local variables from Yul assembly blocks
+  node @constructor.yul_locals
+  attr (@constructor.yul_locals) pop_symbol = "@yul_locals"
+  edge @constructor.lexical_scope -> @constructor.yul_locals
 }
 
 @constructor [ConstructorDefinition @params parameters: [ParametersDeclaration]] {
@@ -1543,6 +1692,9 @@ inherit .star_extension
 
   ;; Connect to paramaters for named argument resolution
   edge @constructor.def -> @params.names
+
+  ;; Parameters should be accessible to assembly blocks
+  edge @constructor.yul_locals -> @params.defs
 }
 
 ;; Connect the constructor body's block lexical scope to the constructor
@@ -1604,6 +1756,11 @@ inherit .star_extension
 
 @fallback [FallbackFunctionDefinition] {
   node @fallback.lexical_scope
+
+  ;; This scope provides access to local variables from Yul assembly blocks
+  node @fallback.yul_locals
+  attr (@fallback.yul_locals) pop_symbol = "@yul_locals"
+  edge @fallback.lexical_scope -> @fallback.yul_locals
 }
 
 @fallback [FallbackFunctionDefinition @params parameters: [ParametersDeclaration]] {
@@ -1611,6 +1768,7 @@ inherit .star_extension
 
   ;; Input parameters are available in the fallback function scope
   edge @fallback.lexical_scope -> @params.defs
+  edge @fallback.yul_locals -> @params.defs
   attr (@fallback.lexical_scope -> @params.defs) precedence = 1
 }
 
@@ -1621,6 +1779,7 @@ inherit .star_extension
 
   ;; Return parameters are available in the fallback function scope
   edge @fallback.lexical_scope -> @return_params.defs
+  edge @fallback.yul_locals -> @return_params.defs
   attr (@fallback.lexical_scope -> @return_params.defs) precedence = 1
 }
 
@@ -1656,6 +1815,11 @@ inherit .star_extension
 @modifier [ModifierDefinition] {
   node @modifier.def
   node @modifier.lexical_scope
+
+  ;; This scope provides access to local variables from Yul assembly blocks
+  node @modifier.yul_locals
+  attr (@modifier.yul_locals) pop_symbol = "@yul_locals"
+  edge @modifier.lexical_scope -> @modifier.yul_locals
 }
 
 @modifier [ModifierDefinition
@@ -1690,6 +1854,9 @@ inherit .star_extension
   ;; Input parameters are available in the modifier scope
   edge @modifier.lexical_scope -> @params.defs
   attr (@modifier.lexical_scope -> @params.defs) precedence = 1
+
+  ;; Input parameters are also available to assembly blocks
+  edge @modifier.yul_locals -> @params.defs
 }
 
 
@@ -2194,7 +2361,7 @@ inherit .star_extension
 
   ; Path to link min and max to the enum's scope (#1158)
   ; It resolves paths of the form `type(<enum>).min.<something>`
-  if (version-matches ">= 0.6.8") {
+  if (version-matches ">= 0.8.8") {
     node typeof
     attr (typeof) pop_symbol = "@typeof"
 
@@ -2429,12 +2596,14 @@ inherit .star_extension
   attr (wrap_call) pop_symbol = "()"
   node wrap_typeof
   attr (wrap_typeof) push_symbol = "@typeof"
+  node type_ref
+  attr (type_ref) push_symbol = (source-text @name)
 
   edge member_guard -> wrap
   edge wrap -> wrap_call
   edge wrap_call -> wrap_typeof
-  edge wrap_typeof -> @value_type.ref
-  edge @value_type.ref -> @user_type.lexical_scope
+  edge wrap_typeof -> type_ref
+  edge type_ref -> @user_type.lexical_scope
 
   node unwrap
   attr (unwrap) pop_symbol = "unwrap"
@@ -2442,14 +2611,12 @@ inherit .star_extension
   attr (unwrap_call) pop_symbol = "()"
   node unwrap_typeof
   attr (unwrap_typeof) push_symbol = "@typeof"
-  node type_ref
-  attr (type_ref) push_symbol = (source-text @name)
 
   edge member_guard -> unwrap
   edge unwrap -> unwrap_call
   edge unwrap_call -> unwrap_typeof
-  edge unwrap_typeof -> type_ref
-  edge type_ref -> @user_type.lexical_scope
+  edge unwrap_typeof -> @value_type.ref
+  edge @value_type.ref -> @user_type.lexical_scope
 }
 
 
@@ -2539,7 +2706,9 @@ inherit .star_extension
   edge @type.type_ref -> @type_expr.lexical_scope
 }
 
-@type_expr [Expression [TypeExpression [TypeName [ElementaryType ([IntKeyword] | [UintKeyword])]]]] {
+@type_expr [Expression [TypeExpression
+    @type [TypeName [ElementaryType ([IntKeyword] | [UintKeyword])]]
+]] {
   ; For integer types the type's type is fixed
   node typeof
   attr (typeof) push_symbol = "@typeof"
@@ -2549,6 +2718,25 @@ inherit .star_extension
   edge @type_expr.output -> typeof
   edge typeof -> type
   edge type -> @type_expr.lexical_scope
+
+  ; Resolve the type of min() and max() to the operand's type
+  if (version-matches ">= 0.6.8") {
+    node built_in_member
+    attr (built_in_member) pop_symbol = "."
+    node min_built_in
+    attr (min_built_in) pop_symbol = "min"
+    node max_built_in
+    attr (max_built_in) pop_symbol = "max"
+    node typeof_builtin
+    attr (typeof_builtin) push_symbol = "@typeof"
+
+    edge @type_expr.output -> built_in_member
+    edge built_in_member -> min_built_in
+    edge built_in_member -> max_built_in
+    edge min_built_in -> typeof_builtin
+    edge max_built_in -> typeof_builtin
+    edge typeof_builtin -> @type.output
+  }
 }
 
 @type_expr [Expression [TypeExpression [TypeName @id_path [IdentifierPath]]]] {
@@ -2568,6 +2756,16 @@ inherit .star_extension
 @new_expr [Expression [NewExpression @type [TypeName]]] {
   edge @type.type_ref -> @new_expr.lexical_scope
   edge @new_expr.output -> @type.output
+  if (version-matches "< 0.7.0") {
+    ;; Expose a function interface to be able to use legacy call options on new expressions
+    node function
+    attr (function) push_symbol = "%ExternalFunction"
+    node typeof
+    attr (typeof) push_symbol = "@typeof"
+    edge @new_expr.output -> typeof
+    edge typeof -> function
+    edge function -> @new_expr.lexical_scope
+  }
 }
 
 
@@ -2585,6 +2783,8 @@ inherit .star_extension
 
   node @named_arg.ref
   attr (@named_arg.ref) node_reference = @name
+  ;; Needed if the function call is for an extension function
+  attr (@named_arg.ref) parents = [@named_arg.enclosing_def]
 }
 
 @args [ArgumentsDeclaration [NamedArgumentsDeclaration
@@ -2753,6 +2953,20 @@ inherit .star_extension
 }
 
 
+;;; Literal Decimal expressions
+;;; These are treated as uint256 by default, even though in practice they are
+;;; rationals and are implicitly cast to any integer type
+@expr [Expression [DecimalNumberExpression]] {
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node address
+  attr (address) push_symbol = "uint256"
+
+  edge @expr.output -> typeof
+  edge typeof -> address
+  edge address -> @expr.lexical_scope
+}
+
 ;;; Literal Address Expressions
 @expr [Expression [HexNumberExpression @hex_literal [HexLiteral]]] {
   scan (source-text @hex_literal) {
@@ -2767,6 +2981,35 @@ inherit .star_extension
       edge address -> @expr.lexical_scope
     }
   }
+}
+
+
+;;; Literal array expressions
+@expr [Expression [ArrayExpression [ArrayValues . @item [Expression]]]] {
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node fixed_array
+  attr (fixed_array) push_symbol = "%FixedArray"
+
+  edge @expr.output -> typeof
+  edge typeof -> fixed_array
+  edge fixed_array -> @expr.lexical_scope
+
+  ; add the type of the first element to the %FixedArray type
+  edge fixed_array -> @item.output
+}
+
+
+;;; String expressions
+@expr [Expression [StringExpression]] {
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node string
+  attr (string) push_symbol = "string"
+
+  edge @expr.output -> typeof
+  edge typeof -> string
+  edge string -> @expr.lexical_scope
 }
 
 
@@ -2893,10 +3136,19 @@ inherit .star_extension
 ;; Yul built-ins (see __SLANG_SOLIDITY_YUL_BUILT_INS_GUARD__) so constants are
 ;; in an equivalent scope to predefined built-ins. See the dual path in the rule
 ;; above.
-@constant_container ([SourceUnit] | [ContractDefinition] | [LibraryDefinition]) {
-  node @constant_container.yul_globals_guarded_scope
-  attr (@constant_container.yul_globals_guarded_scope) pop_symbol = "@yul"
-  edge @constant_container.lexical_scope -> @constant_container.yul_globals_guarded_scope
+@source_unit [SourceUnit] {
+  node @source_unit.yul_globals_guarded_scope
+  attr (@source_unit.yul_globals_guarded_scope) pop_symbol = "@yul"
+  ;; export the Yul specific scope
+  edge @source_unit.defs -> @source_unit.yul_globals_guarded_scope
+  ;; and provide it locally
+  edge @source_unit.lexical_scope -> @source_unit.yul_globals_guarded_scope
+}
+
+@contract_or_library ([ContractDefinition] | [LibraryDefinition]) {
+  node @contract_or_library.yul_globals_guarded_scope
+  attr (@contract_or_library.yul_globals_guarded_scope) pop_symbol = "@yul"
+  edge @contract_or_library.ns -> @contract_or_library.yul_globals_guarded_scope
 }
 
 ;; Make top-level constants available inside Yul functions
