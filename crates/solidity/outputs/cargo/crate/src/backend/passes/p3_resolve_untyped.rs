@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use semver::Version;
+
 use super::p2_collect_definitions::Output as Input;
 use crate::backend::binder::{
     Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
@@ -20,7 +22,7 @@ pub struct Output {
 pub fn run(input: Input) -> Output {
     let files = input.files;
     let compilation_unit = input.compilation_unit;
-    let mut pass = Pass::new(input.binder);
+    let mut pass = Pass::new(input.binder, compilation_unit.language_version());
     for source_unit in files.values() {
         pass.visit_file(source_unit);
     }
@@ -33,14 +35,18 @@ pub fn run(input: Input) -> Output {
     }
 }
 
+const VERSION_0_5_0: Version = Version::new(0, 5, 0);
+
 struct Pass {
+    language_version: Version,
     scope_stack: Vec<ScopeId>,
     binder: Binder,
 }
 
 impl Pass {
-    fn new(binder: Binder) -> Self {
+    fn new(binder: Binder, language_version: &Version) -> Self {
         Self {
+            language_version: language_version.clone(),
             scope_stack: Vec::new(),
             binder,
         }
@@ -75,6 +81,10 @@ impl Pass {
             }
         }
         unreachable!("attempt to get the current contract scope without a contract or file scope in the stack");
+    }
+
+    fn current_scope_id(&self) -> ScopeId {
+        self.scope_stack.last().copied().unwrap()
     }
 
     fn current_file_scope_id(&self) -> ScopeId {
@@ -219,6 +229,113 @@ impl Visitor for Pass {
         self.leave_scope_for_node_id(node.node_id);
     }
 
+    fn enter_function_definition(&mut self, node: &input_ir::FunctionDefinition) -> bool {
+        self.enter_scope_for_node_id(node.node_id);
+        true
+    }
+
+    fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) -> bool {
+        self.enter_scope_for_node_id(node.node_id);
+        true
+    }
+
+    fn leave_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) -> bool {
+        self.enter_scope_for_node_id(node.node_id);
+        true
+    }
+
+    fn leave_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_fallback_function_definition(
+        &mut self,
+        node: &input_ir::FallbackFunctionDefinition,
+    ) -> bool {
+        self.enter_scope_for_node_id(node.node_id);
+        true
+    }
+
+    fn leave_fallback_function_definition(&mut self, node: &input_ir::FallbackFunctionDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_receive_function_definition(
+        &mut self,
+        node: &input_ir::ReceiveFunctionDefinition,
+    ) -> bool {
+        self.enter_scope_for_node_id(node.node_id);
+        true
+    }
+
+    fn leave_receive_function_definition(&mut self, node: &input_ir::ReceiveFunctionDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_unnamed_function_definition(
+        &mut self,
+        node: &input_ir::UnnamedFunctionDefinition,
+    ) -> bool {
+        self.enter_scope_for_node_id(node.node_id);
+        true
+    }
+
+    fn leave_unnamed_function_definition(&mut self, node: &input_ir::UnnamedFunctionDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_block(&mut self, node: &input_ir::Block) -> bool {
+        if self.language_version >= VERSION_0_5_0 {
+            self.enter_scope_for_node_id(node.node_id);
+        }
+        true
+    }
+
+    fn leave_block(&mut self, node: &input_ir::Block) {
+        if self.language_version >= VERSION_0_5_0 {
+            self.leave_scope_for_node_id(node.node_id);
+        }
+    }
+
+    fn enter_for_statement(&mut self, node: &input_ir::ForStatement) -> bool {
+        if self.language_version >= VERSION_0_5_0 {
+            self.enter_scope_for_node_id(node.node_id);
+        }
+        true
+    }
+
+    fn leave_for_statement(&mut self, node: &input_ir::ForStatement) {
+        if self.language_version >= VERSION_0_5_0 {
+            self.leave_scope_for_node_id(node.node_id);
+        }
+    }
+
+    fn enter_yul_block(&mut self, node: &input_ir::YulBlock) -> bool {
+        self.enter_scope_for_node_id(node.node_id);
+        true
+    }
+
+    fn leave_yul_block(&mut self, node: &input_ir::YulBlock) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
+    fn enter_yul_function_definition(&mut self, node: &input_ir::YulFunctionDefinition) -> bool {
+        self.enter_scope_for_node_id(node.node_id);
+        true
+    }
+
+    fn leave_yul_function_definition(&mut self, node: &input_ir::YulFunctionDefinition) {
+        self.leave_scope_for_node_id(node.node_id);
+    }
+
     fn enter_type_name(&mut self, node: &input_ir::TypeName) -> bool {
         match node {
             input_ir::TypeName::IdentifierPath(identifier_path) => {
@@ -227,5 +344,45 @@ impl Visitor for Pass {
             }
             _ => true,
         }
+    }
+
+    fn enter_expression(&mut self, node: &input_ir::Expression) -> bool {
+        if let input_ir::Expression::Identifier(identifier) = node {
+            let scope_id = self.current_scope_id();
+            // TODO: we cannot resolve function overloads yet, so that will
+            // need to be paused; in any case, we cannot use resolve_single
+            // here, as potentially there are multiple definitions to choose
+            // from.
+            // TODO: we also need to alter the scope id for resolution,
+            // depending on the context
+            let definition_id = self
+                .binder
+                .resolve_single_in_scope(scope_id, &identifier.unparse());
+            let reference = Reference {
+                identifier: Rc::clone(identifier),
+                definition_id,
+            };
+            self.binder.insert_reference(reference);
+        }
+        true
+    }
+
+    fn enter_yul_path(&mut self, items: &input_ir::YulPath) -> bool {
+        // resolve the first item in the path
+        if let Some(identifier) = items.first() {
+            let scope_id = self.current_scope_id();
+            let definition_id = self
+                .binder
+                .resolve_single_in_scope(scope_id, &identifier.unparse());
+            let reference = Reference {
+                identifier: Rc::clone(identifier),
+                definition_id,
+            };
+            self.binder.insert_reference(reference);
+        }
+
+        // TODO: resolve the rest of the items
+
+        false
     }
 }
