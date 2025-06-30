@@ -7,6 +7,11 @@ use crate::bindings_output::runner::run;
 const T: &str = "arrays";
 
 #[test]
+fn byte_length() -> Result<()> {
+    run(T, "byte_length")
+}
+
+#[test]
 fn bytes_as_arrays() -> Result<()> {
     run(T, "bytes_as_arrays")
 }

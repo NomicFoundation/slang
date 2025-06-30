@@ -87,6 +87,11 @@ fn public_array_getters() -> Result<()> {
 }
 
 #[test]
+fn public_getter_functions() -> Result<()> {
+    run(T, "public_getter_functions")
+}
+
+#[test]
 fn public_getter_members() -> Result<()> {
     run(T, "public_getter_members")
 }
@@ -124,6 +129,11 @@ fn qualified_inherited() -> Result<()> {
 #[test]
 fn qualified_parent_call() -> Result<()> {
     run(T, "qualified_parent_call")
+}
+
+#[test]
+fn qualified_self() -> Result<()> {
+    run(T, "qualified_self")
 }
 
 #[test]
