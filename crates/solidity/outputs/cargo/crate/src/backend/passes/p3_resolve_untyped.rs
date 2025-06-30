@@ -10,6 +10,7 @@ use crate::backend::binder::{
 };
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
+use crate::backend::types::TypeRegistry;
 use crate::compilation::CompilationUnit;
 use crate::cst::NodeId;
 
@@ -17,6 +18,7 @@ pub struct Output {
     pub compilation_unit: CompilationUnit,
     pub files: HashMap<String, input_ir::SourceUnit>,
     pub binder: Binder,
+    pub types: TypeRegistry,
 }
 
 pub fn run(input: Input) -> Output {
@@ -27,11 +29,13 @@ pub fn run(input: Input) -> Output {
         pass.visit_file(source_unit);
     }
     let binder = pass.binder;
+    let types = pass.types;
 
     Output {
         compilation_unit,
         files,
         binder,
+        types,
     }
 }
 
@@ -41,6 +45,7 @@ struct Pass {
     language_version: Version,
     scope_stack: Vec<ScopeId>,
     binder: Binder,
+    types: TypeRegistry,
 }
 
 impl Pass {
@@ -49,6 +54,7 @@ impl Pass {
             language_version: language_version.clone(),
             scope_stack: Vec::new(),
             binder,
+            types: TypeRegistry::default(),
         }
     }
 
