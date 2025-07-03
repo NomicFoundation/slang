@@ -4807,8 +4807,8 @@ pub fn build_yul_path(node: &Rc<NonterminalNode>) -> Option<YulPath> {
 #[allow(dead_code)]
 #[inline]
 fn assert_nonterminal_kind(node: &Rc<NonterminalNode>, kind: NonterminalKind) {
-    assert!(
-        node.kind == kind,
+    assert_eq!(
+        node.kind, kind,
         "expected non-terminal of kind {kind}, got {node:?}"
     );
 }
