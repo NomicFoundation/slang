@@ -134,7 +134,7 @@
   #[allow(dead_code)]
   #[inline]
   fn assert_nonterminal_kind(node: &Rc<NonterminalNode>, kind: NonterminalKind) {
-    assert!(node.kind == kind, "expected non-terminal of kind {kind}, got {node:?}");
+    assert_eq!(node.kind, kind, "expected non-terminal of kind {kind}, got {node:?}");
   }
 
   #[allow(dead_code)]
