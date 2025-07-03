@@ -505,18 +505,11 @@ impl Visitor for Pass {
             let Some(tuple_member) = &element.member else {
                 continue;
             };
-            let definition = match tuple_member {
-                input_ir::TupleMember::TypedTupleMember(type_tuple_member) => {
-                    Definition::new_variable(type_tuple_member.node_id, &type_tuple_member.name)
-                }
-                input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
-                    Definition::new_variable(
-                        untyped_tuple_member.node_id,
-                        &untyped_tuple_member.name,
-                    )
-                }
-            };
-            self.insert_definition_in_current_scope(definition);
+            if let input_ir::TupleMember::TypedTupleMember(type_tuple_member) = tuple_member {
+                let definition =
+                    Definition::new_variable(type_tuple_member.node_id, &type_tuple_member.name);
+                self.insert_definition_in_current_scope(definition);
+            }
         }
 
         false
@@ -655,7 +648,7 @@ impl Visitor for Pass {
         node: &input_ir::YulVariableDeclarationStatement,
     ) -> bool {
         for variable in &node.variables {
-            let definition = Definition::new_variable(variable.id(), variable);
+            let definition = Definition::new_yul_variable(variable.id(), variable);
             self.insert_definition_in_current_scope(definition);
         }
         // TODO: we maybe want to enter a new scope here, but that should be

@@ -310,31 +310,19 @@ impl Pass {
     ) -> Option<TypeId> {
         if let Some(definition) = self.binder.find_definition_by_id(definition_id) {
             match definition {
-                Definition::Constant(_) => todo!(),
                 Definition::Contract(_) => {
                     Some(self.types.register_type(Type::Contract { definition_id }))
                 }
                 Definition::Enum(_) => Some(self.types.register_type(Type::Enum { definition_id })),
-                Definition::EnumMember(_) => todo!(),
-                Definition::Error(_) => todo!(),
-                Definition::Event(_) => todo!(),
-                Definition::Function(_) => todo!(),
-                Definition::Import(_) => todo!(),
-                Definition::ImportedSymbol(_) => todo!(),
                 Definition::Interface(_) => {
                     Some(self.types.register_type(Type::Interface { definition_id }))
                 }
-                Definition::Library(_) => todo!(),
-                Definition::Modifier(_) => todo!(),
-                Definition::Parameter(_) => todo!(),
-                Definition::StateVariable(_) => todo!(),
                 Definition::Struct(_) => data_location.map(|data_location| {
                     self.types.register_type(Type::Struct {
                         definition_id,
                         location: data_location,
                     })
                 }),
-                Definition::StructMember(_) => todo!(),
                 Definition::TypeParameter(_) => {
                     unreachable!("type parameter names don't have a type")
                 }
@@ -342,9 +330,23 @@ impl Pass {
                     self.types
                         .register_type(Type::UserDefinedValue { definition_id }),
                 ),
-                Definition::Variable(_) => todo!(),
-                Definition::YulLabel(_) => unreachable!("yul labels don't have a type"),
-                Definition::YulFunction(_) => todo!(),
+
+                Definition::Constant(_)
+                | Definition::EnumMember(_)
+                | Definition::Error(_)
+                | Definition::Event(_)
+                | Definition::Function(_)
+                | Definition::Import(_)
+                | Definition::ImportedSymbol(_)
+                | Definition::Library(_)
+                | Definition::Modifier(_)
+                | Definition::Parameter(_)
+                | Definition::StateVariable(_)
+                | Definition::StructMember(_)
+                | Definition::Variable(_)
+                | Definition::YulFunction(_)
+                | Definition::YulLabel(_)
+                | Definition::YulVariable(_) => None,
             }
         } else {
             None
@@ -443,6 +445,45 @@ impl Pass {
             }),
         }
     }
+
+    fn type_of_function_definition(
+        &mut self,
+        function_definition: &input_ir::FunctionDefinition,
+    ) -> Option<TypeId> {
+        let parameter_types =
+            self.resolve_parameter_types(&function_definition.parameters.parameters)?;
+        let return_type = if let Some(returns) = &function_definition.returns {
+            let return_types = self.resolve_parameter_types(&returns.variables.parameters)?;
+            self.types.register_type(Type::Tuple {
+                types: return_types,
+            })
+        } else {
+            self.types.void()
+        };
+        let mut kind = FunctionTypeKind::Pure;
+        let mut external = false;
+        for attribute in &function_definition.attributes {
+            match attribute {
+                input_ir::FunctionAttribute::ExternalKeyword => external = true,
+                input_ir::FunctionAttribute::PureKeyword => {
+                    kind = FunctionTypeKind::Pure;
+                }
+                input_ir::FunctionAttribute::ViewKeyword => {
+                    kind = FunctionTypeKind::View;
+                }
+                input_ir::FunctionAttribute::PayableKeyword => {
+                    kind = FunctionTypeKind::Payable;
+                }
+                _ => {}
+            }
+        }
+        Some(self.types.register_type(Type::Function {
+            parameter_types,
+            return_type,
+            external,
+            kind,
+        }))
+    }
 }
 
 impl Visitor for Pass {
@@ -497,6 +538,9 @@ impl Visitor for Pass {
 
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
         self.leave_scope_for_node_id(node.node_id);
+
+        let type_id = self.type_of_function_definition(node);
+        self.binder.insert_node_type(node.node_id, type_id);
     }
 
     fn enter_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) -> bool {
@@ -598,12 +642,20 @@ impl Visitor for Pass {
     }
 
     fn enter_type_name(&mut self, node: &input_ir::TypeName) -> bool {
-        match node {
-            input_ir::TypeName::IdentifierPath(identifier_path) => {
-                self.resolve_type_identifier_path(identifier_path);
-                false
-            }
-            _ => true,
+        if let input_ir::TypeName::IdentifierPath(identifier_path) = node {
+            self.resolve_type_identifier_path(identifier_path);
+            false
+        } else {
+            true
+        }
+    }
+
+    fn enter_mapping_key_type(&mut self, node: &input_ir::MappingKeyType) -> bool {
+        if let input_ir::MappingKeyType::IdentifierPath(identifier_path) = node {
+            self.resolve_type_identifier_path(identifier_path);
+            false
+        } else {
+            true
         }
     }
 
@@ -614,6 +666,84 @@ impl Visitor for Pass {
                 .as_ref()
                 .map(storage_location_to_data_location),
         );
+        self.binder.insert_node_type(node.node_id, type_id);
+    }
+
+    fn leave_event_parameter(&mut self, node: &input_ir::EventParameter) {
+        // TODO: the data location is not strictly correct, but strings, bytes
+        // and structs are allowed as event parameters and they won't type if we
+        // pass None here
+        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
+        self.binder.insert_node_type(node.node_id, type_id);
+    }
+
+    fn leave_error_parameter(&mut self, node: &input_ir::ErrorParameter) {
+        // TODO: the data location is not strictly correct, but strings, bytes
+        // and structs are allowed as error parameters and they won't type if we
+        // pass None here
+        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
+        self.binder.insert_node_type(node.node_id, type_id);
+    }
+
+    fn leave_state_variable_definition(&mut self, node: &input_ir::StateVariableDefinition) {
+        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Storage));
+        self.binder.insert_node_type(node.node_id, type_id);
+    }
+
+    fn leave_constant_definition(&mut self, node: &input_ir::ConstantDefinition) {
+        let type_id = self.resolve_type_name(&node.type_name, None);
+        self.binder.insert_node_type(node.node_id, type_id);
+    }
+
+    fn leave_variable_declaration_statement(
+        &mut self,
+        node: &input_ir::VariableDeclarationStatement,
+    ) {
+        let type_id =
+            if let input_ir::VariableDeclarationType::TypeName(type_name) = &node.variable_type {
+                self.resolve_type_name(
+                    type_name,
+                    node.storage_location
+                        .as_ref()
+                        .map(storage_location_to_data_location),
+                )
+            } else {
+                // this is for `var` variables (in Solidity < 0.5.0)
+                // we cannot resolve the type at this point
+                None
+            };
+        self.binder.insert_node_type(node.node_id, type_id);
+    }
+
+    fn leave_typed_tuple_member(&mut self, node: &input_ir::TypedTupleMember) {
+        let type_id = self.resolve_type_name(
+            &node.type_name,
+            node.storage_location
+                .as_ref()
+                .map(storage_location_to_data_location),
+        );
+        self.binder.insert_node_type(node.node_id, type_id);
+    }
+
+    fn leave_struct_member(&mut self, node: &input_ir::StructMember) {
+        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Inherited));
+        self.binder.insert_node_type(node.node_id, type_id);
+    }
+
+    fn leave_enum_definition(&mut self, node: &input_ir::EnumDefinition) {
+        let type_id = self.types.register_type(Type::Enum {
+            definition_id: node.node_id,
+        });
+        for member in &node.members {
+            self.binder.insert_node_type(member.id(), Some(type_id));
+        }
+    }
+
+    fn leave_user_defined_value_type_definition(
+        &mut self,
+        node: &input_ir::UserDefinedValueTypeDefinition,
+    ) {
+        let type_id = self.type_of_elementary_type(&node.value_type, None);
         self.binder.insert_node_type(node.node_id, type_id);
     }
 

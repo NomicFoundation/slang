@@ -142,6 +142,12 @@ pub struct YulFunctionDefinition {
 }
 
 #[derive(Debug)]
+pub struct YulVariableDefinition {
+    pub node_id: NodeId,
+    pub identifier: Rc<TerminalNode>,
+}
+
+#[derive(Debug)]
 pub enum Definition {
     Constant(ConstantDefinition),
     Contract(ContractDefinition),
@@ -162,8 +168,9 @@ pub enum Definition {
     TypeParameter(TypeParameterDefinition),
     UserDefinedValueType(UserDefinedValueTypeDefinition),
     Variable(VariableDefinition),
-    YulLabel(YulLabelDefinition),
     YulFunction(YulFunctionDefinition),
+    YulLabel(YulLabelDefinition),
+    YulVariable(YulVariableDefinition),
 }
 
 impl Definition {
@@ -188,8 +195,9 @@ impl Definition {
             Self::TypeParameter(parameter_definition) => parameter_definition.node_id,
             Self::UserDefinedValueType(udvt_definition) => udvt_definition.node_id,
             Self::Variable(variable_definition) => variable_definition.node_id,
-            Self::YulLabel(label_definition) => label_definition.node_id,
             Self::YulFunction(function_definition) => function_definition.node_id,
+            Self::YulLabel(label_definition) => label_definition.node_id,
+            Self::YulVariable(variable_definition) => variable_definition.node_id,
         }
     }
 
@@ -214,8 +222,9 @@ impl Definition {
             Self::TypeParameter(parameter_definition) => &parameter_definition.identifier,
             Self::UserDefinedValueType(udvt_definition) => &udvt_definition.identifier,
             Self::Variable(variable_definition) => &variable_definition.identifier,
-            Self::YulLabel(label_definition) => &label_definition.identifier,
             Self::YulFunction(function_definition) => &function_definition.identifier,
+            Self::YulLabel(label_definition) => &label_definition.identifier,
+            Self::YulVariable(variable_definition) => &variable_definition.identifier,
         }
     }
 
@@ -382,6 +391,13 @@ impl Definition {
         })
     }
 
+    pub(crate) fn new_yul_function(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::YulFunction(YulFunctionDefinition {
+            node_id,
+            identifier: Rc::clone(identifier),
+        })
+    }
+
     pub(crate) fn new_yul_label(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
         Self::YulLabel(YulLabelDefinition {
             node_id,
@@ -389,8 +405,8 @@ impl Definition {
         })
     }
 
-    pub(crate) fn new_yul_function(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
-        Self::YulFunction(YulFunctionDefinition {
+    pub(crate) fn new_yul_variable(node_id: NodeId, identifier: &Rc<TerminalNode>) -> Self {
+        Self::YulVariable(YulVariableDefinition {
             node_id,
             identifier: Rc::clone(identifier),
         })
