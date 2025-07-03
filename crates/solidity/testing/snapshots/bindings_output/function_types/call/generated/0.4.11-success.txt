@@ -13,13 +13,13 @@ References and definitions:
    │             ┬  
    │             ╰── name: 3
    │ 
- 5 │     function test(function() returns (Value) f) public {
-   │              ──┬─                     ──┬──  ┬  
-   │                ╰──────────────────────────────── name: 4
-   │                                         │    │  
-   │                                         ╰─────── ref: 2
-   │                                              │  
-   │                                              ╰── name: 5
+ 5 │     function test(function() returns (Value memory) f) internal {
+   │              ──┬─                     ──┬──         ┬  
+   │                ╰─────────────────────────────────────── name: 4
+   │                                         │           │  
+   │                                         ╰────────────── ref: 2
+   │                                                     │  
+   │                                                     ╰── name: 5
  6 │         f().x;
    │         ┬   ┬  
    │         ╰────── ref: 5
@@ -37,9 +37,9 @@ Definiens:
  4 │ │ │ ├─▶     }
    │ │ │ │           
    │ │ │ ╰─────────── definiens: 2
- 5 │ │ ╭───▶     function test(function() returns (Value) f) public {
-   │ │ │                       ──────────────┬─────────────  
-   │ │ │                                     ╰─────────────── definiens: 5
+ 5 │ │ ╭───▶     function test(function() returns (Value memory) f) internal {
+   │ │ │                       ─────────────────┬─────────────────  
+   │ │ │                                        ╰─────────────────── definiens: 5
    ┆ ┆ ┆     
  7 │ │ ├───▶     }
    │ │ │             
