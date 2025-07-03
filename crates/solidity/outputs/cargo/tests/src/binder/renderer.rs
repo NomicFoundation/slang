@@ -4,7 +4,9 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
+use slang_solidity::backend::binder::Definition;
 use slang_solidity::backend::passes::p3_resolve_untyped::Output;
+use slang_solidity::backend::types::{DataLocation, Type, TypeId};
 use slang_solidity::compilation::File;
 use slang_solidity::cst::{Cursor, NodeId, NodeKind, NonterminalKind, TerminalKindExtensions};
 
@@ -27,7 +29,7 @@ pub(crate) fn binder_report(
         .map(|definition| (definition.definition_id, definition.report_id))
         .collect::<HashMap<NodeId, usize>>();
 
-    report_all_definitions(&mut report, &all_definitions)?;
+    report_all_definitions(&mut report, binder_data, &all_definitions)?;
 
     writeln!(report, "{SEPARATOR}")?;
 
@@ -66,6 +68,7 @@ pub(crate) fn binder_report(
 
 fn report_all_definitions(
     report: &mut String,
+    binder_data: &Output,
     all_definitions: &[CollectedDefinition],
 ) -> Result<()> {
     writeln!(
@@ -74,7 +77,11 @@ fn report_all_definitions(
         definitions_count = all_definitions.len(),
     )?;
     for definition in all_definitions {
-        writeln!(report, "- {definition}", definition = definition.display())?;
+        writeln!(
+            report,
+            "- {definition}",
+            definition = definition.display(binder_data)
+        )?;
     }
     Ok(())
 }
@@ -218,7 +225,7 @@ fn report_binding_graph_differences(
         writeln!(
             report,
             "{definition} not found in new stack graph output",
-            definition = definition.display(),
+            definition = definition.display(binder_data),
         )?;
         has_diff = true;
     }
@@ -240,6 +247,15 @@ fn report_binding_graph_differences(
 
 // Collection of definitions, references and unbound identifiers
 
+fn data_location_display(location: DataLocation) -> &'static str {
+    match location {
+        DataLocation::Memory => "memory",
+        DataLocation::Storage => "storage",
+        DataLocation::Calldata => "calldata",
+        DataLocation::Inherited => "(inherited)",
+    }
+}
+
 struct CollectedDefinition {
     report_id: usize,
     cursor: Cursor,
@@ -248,24 +264,196 @@ struct CollectedDefinition {
 }
 
 impl CollectedDefinition {
-    fn display(&self) -> CollectedDefinitionDisplay<'_> {
-        CollectedDefinitionDisplay(self)
+    fn display<'a>(&'a self, binder_data: &'a Output) -> CollectedDefinitionDisplay<'a> {
+        CollectedDefinitionDisplay {
+            definition: self,
+            binder_data,
+        }
     }
 }
 
-struct CollectedDefinitionDisplay<'a>(&'a CollectedDefinition);
+struct CollectedDefinitionDisplay<'a> {
+    definition: &'a CollectedDefinition,
+    binder_data: &'a Output,
+}
 
 impl Display for CollectedDefinitionDisplay<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let line = self.0.cursor.text_offset().line + 1;
-        let column = self.0.cursor.text_offset().column + 1;
+        let line = self.definition.cursor.text_offset().line + 1;
+        let column = self.definition.cursor.text_offset().column + 1;
         write!(
             f,
-            "Def: #{id} [\"{identifier}\" @ {file_id}:{line}:{column}]",
-            id = self.0.report_id,
-            identifier = self.0.cursor.node().unparse(),
-            file_id = self.0.file_id,
+            "Def: #{id} [\"{identifier}\" @ {file_id}:{line}:{column}] ({def_type})",
+            id = self.definition.report_id,
+            identifier = self.definition.cursor.node().unparse(),
+            file_id = self.definition.file_id,
+            def_type = self.definition_type(),
         )
+    }
+}
+
+impl CollectedDefinitionDisplay<'_> {
+    fn definition_type(&self) -> String {
+        if let Some(definition) = self
+            .binder_data
+            .binder
+            .find_definition_by_id(self.definition.definition_id)
+        {
+            match definition {
+                Definition::Constant(_) => "constant".to_string(),
+                Definition::Contract(_) => "contract".to_string(),
+                Definition::Enum(_) => "enum".to_string(),
+                Definition::EnumMember(_) => "enum member".to_string(),
+                Definition::Error(_) => "error".to_string(),
+                Definition::Event(_) => "event".to_string(),
+                Definition::Function(_) => "function".to_string(),
+                Definition::Import(_) => "import".to_string(),
+                Definition::ImportedSymbol(_) => "imported symbol".to_string(),
+                Definition::Interface(_) => "interface".to_string(),
+                Definition::Library(_) => "library".to_string(),
+                Definition::Modifier(_) => "modifier".to_string(),
+                Definition::Parameter(_) => {
+                    format!("parameter, type: {}", self.definition_type_display())
+                }
+                Definition::StateVariable(_) => "state var".to_string(),
+                Definition::Struct(_) => "struct".to_string(),
+                Definition::StructMember(_) => "struct member".to_string(),
+                Definition::TypeParameter(_) => "type param".to_string(),
+                Definition::UserDefinedValueType(_) => "udvt".to_string(),
+                Definition::Variable(_) => "variable".to_string(),
+                Definition::YulLabel(_) => "yul label".to_string(),
+                Definition::YulFunction(_) => "yul function".to_string(),
+            }
+        } else {
+            "(unknown)".to_string()
+        }
+    }
+
+    fn definition_type_display(&self) -> String {
+        let node_id = self.definition.definition_id;
+        if !self.binder_data.binder.node_has_type(node_id) {
+            return "UNTYPED".to_string();
+        }
+        let type_id = self.binder_data.binder.get_node_type(node_id);
+        let Some(type_id) = type_id else {
+            return "unresolved".to_string();
+        };
+        self.type_display(type_id)
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn type_display(&self, type_id: TypeId) -> String {
+        match self.binder_data.types.get_type_by_id(type_id).unwrap() {
+            Type::Address { payable } => {
+                if *payable {
+                    "address payable".to_string()
+                } else {
+                    "address".to_string()
+                }
+            }
+            Type::Array {
+                element_type,
+                location,
+            } => format!(
+                "{element_type}[] {location}",
+                element_type = self.type_display(*element_type),
+                location = data_location_display(*location),
+            ),
+            Type::Boolean => "bool".to_string(),
+            Type::ByteArray { width } => format!("bytes{width}"),
+            Type::Bytes { location } => {
+                format!(
+                    "bytes {location}",
+                    location = data_location_display(*location)
+                )
+            }
+            Type::Contract { definition_id } => self.definition_name(*definition_id),
+            Type::Enum { definition_id } => self.definition_name(*definition_id),
+            Type::Error { definition_id } => {
+                if let Some(definition_id) = definition_id {
+                    self.definition_name(*definition_id)
+                } else {
+                    "Error".to_string()
+                }
+            }
+            Type::FixedPointNumber {
+                signed,
+                bits,
+                precision_bits,
+            } => {
+                format!(
+                    "{signed}fixed{bits}x{precision_bits}",
+                    signed = if *signed { "" } else { "u" }
+                )
+            }
+            Type::Function {
+                parameter_types,
+                return_type,
+                ..
+            } => {
+                format!(
+                    "function ({parameters}) returns {returns}",
+                    parameters = parameter_types
+                        .iter()
+                        .map(|type_id| self.type_display(*type_id))
+                        .collect::<Vec<_>>()
+                        .join(", "),
+                    returns = self.type_display(*return_type),
+                )
+            }
+            Type::Integer { signed, bits } => {
+                format!("{signed}int{bits}", signed = if *signed { "" } else { "u" })
+            }
+            Type::Interface { definition_id } => self.definition_name(*definition_id),
+            Type::Mapping {
+                key_type_id,
+                value_type_id,
+            } => {
+                format!(
+                    "{key} => {value}",
+                    key = self.type_display(*key_type_id),
+                    value = self.type_display(*value_type_id)
+                )
+            }
+            Type::Rational => "rational".to_string(),
+            Type::String { location } => {
+                format!(
+                    "string {location}",
+                    location = data_location_display(*location)
+                )
+            }
+            Type::Struct {
+                definition_id,
+                location,
+            } => {
+                format!(
+                    "{name} {location}",
+                    name = self.definition_name(*definition_id),
+                    location = data_location_display(*location)
+                )
+            }
+            Type::Tuple { types } => {
+                format!(
+                    "({types})",
+                    types = types
+                        .iter()
+                        .map(|type_id| self.type_display(*type_id))
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                )
+            }
+            Type::UserDefinedValue { definition_id } => self.definition_name(*definition_id),
+            Type::Void => "void".to_string(),
+        }
+    }
+
+    fn definition_name(&self, definition_id: NodeId) -> String {
+        self.binder_data
+            .binder
+            .find_definition_by_id(definition_id)
+            .unwrap()
+            .identifier()
+            .unparse()
     }
 }
 

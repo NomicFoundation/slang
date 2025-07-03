@@ -10,7 +10,7 @@ use crate::backend::binder::{
 };
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
-use crate::backend::types::TypeRegistry;
+use crate::backend::types::{DataLocation, FunctionTypeKind, Type, TypeId, TypeRegistry};
 use crate::compilation::CompilationUnit;
 use crate::cst::NodeId;
 
@@ -36,6 +36,14 @@ pub fn run(input: Input) -> Output {
         files,
         binder,
         types,
+    }
+}
+
+fn storage_location_to_data_location(storage_location: &input_ir::StorageLocation) -> DataLocation {
+    match storage_location {
+        input_ir::StorageLocation::MemoryKeyword => DataLocation::Memory,
+        input_ir::StorageLocation::StorageKeyword => DataLocation::Storage,
+        input_ir::StorageLocation::CallDataKeyword => DataLocation::Calldata,
     }
 }
 
@@ -160,7 +168,7 @@ impl Pass {
         for identifier in identifier_path {
             let definition_id = scope_id.and_then(|scope_id| {
                 self.binder
-                    .resolve_single_in_scope(scope_id, &identifier.unparse())
+                    .resolve_single_in_scope_recursively(scope_id, &identifier.unparse())
             });
 
             let reference = Reference {
@@ -186,6 +194,253 @@ impl Pass {
                     }
                     _ => None,
                 });
+        }
+    }
+
+    fn resolve_parameter_types(
+        &mut self,
+        parameters: &input_ir::Parameters,
+    ) -> Option<Vec<TypeId>> {
+        let mut parameter_types = Vec::new();
+        for parameter in parameters {
+            let parameter_type_id = self.binder.get_node_type(parameter.node_id);
+            parameter_types.push(parameter_type_id?);
+        }
+        Some(parameter_types)
+    }
+
+    fn resolve_type_name(
+        &mut self,
+        type_name: &input_ir::TypeName,
+        data_location: Option<DataLocation>,
+    ) -> Option<TypeId> {
+        match type_name {
+            input_ir::TypeName::ArrayTypeName(array_type_name) => {
+                data_location.and_then(|data_location| {
+                    self.resolve_type_name(&array_type_name.operand, Some(data_location))
+                        .map(|element_type| {
+                            self.types.register_type(Type::Array {
+                                element_type,
+                                location: data_location,
+                            })
+                        })
+                })
+            }
+            input_ir::TypeName::FunctionType(function_type) => {
+                let parameter_types =
+                    self.resolve_parameter_types(&function_type.parameters.parameters)?;
+                let return_type = if let Some(returns) = &function_type.returns {
+                    let return_types =
+                        self.resolve_parameter_types(&returns.variables.parameters)?;
+                    self.types.register_type(Type::Tuple {
+                        types: return_types,
+                    })
+                } else {
+                    self.types.void()
+                };
+                let mut kind = FunctionTypeKind::Pure;
+                let mut external = false;
+                for attribute in &function_type.attributes {
+                    match attribute {
+                        input_ir::FunctionTypeAttribute::ExternalKeyword => external = true,
+                        input_ir::FunctionTypeAttribute::PureKeyword => {
+                            kind = FunctionTypeKind::Pure;
+                        }
+                        input_ir::FunctionTypeAttribute::ViewKeyword => {
+                            kind = FunctionTypeKind::View;
+                        }
+                        input_ir::FunctionTypeAttribute::PayableKeyword => {
+                            kind = FunctionTypeKind::Payable;
+                        }
+                        _ => {}
+                    }
+                }
+                Some(self.types.register_type(Type::Function {
+                    parameter_types,
+                    return_type,
+                    external,
+                    kind,
+                }))
+            }
+            input_ir::TypeName::MappingType(mapping_type) => {
+                let data_location = Some(DataLocation::Storage);
+                let key_type_id = match &mapping_type.key_type.key_type {
+                    input_ir::MappingKeyType::ElementaryType(elementary_type) => {
+                        self.type_of_elementary_type(elementary_type, data_location)
+                    }
+                    input_ir::MappingKeyType::IdentifierPath(identifier_path) => {
+                        self.type_of_identifier_path(identifier_path, data_location)
+                    }
+                }?;
+                let value_type_id =
+                    self.resolve_type_name(&mapping_type.value_type.type_name, data_location)?;
+                Some(self.types.register_type(Type::Mapping {
+                    key_type_id,
+                    value_type_id,
+                }))
+            }
+            input_ir::TypeName::ElementaryType(elementary_type) => {
+                self.type_of_elementary_type(elementary_type, data_location)
+            }
+            input_ir::TypeName::IdentifierPath(identifier_path) => {
+                self.type_of_identifier_path(identifier_path, data_location)
+            }
+        }
+    }
+
+    fn type_of_identifier_path(
+        &mut self,
+        identifier_path: &input_ir::IdentifierPath,
+        data_location: Option<DataLocation>,
+    ) -> Option<TypeId> {
+        identifier_path
+            .last()
+            .and_then(|identifier| {
+                self.binder
+                    .find_reference_by_identifier_node_id(identifier.id())
+            })
+            .and_then(|reference| reference.definition_id)
+            .and_then(|node_id| self.type_of_definition(node_id, data_location))
+    }
+
+    fn type_of_definition(
+        &mut self,
+        definition_id: NodeId,
+        data_location: Option<DataLocation>,
+    ) -> Option<TypeId> {
+        if let Some(definition) = self.binder.find_definition_by_id(definition_id) {
+            match definition {
+                Definition::Constant(_) => todo!(),
+                Definition::Contract(_) => {
+                    Some(self.types.register_type(Type::Contract { definition_id }))
+                }
+                Definition::Enum(_) => Some(self.types.register_type(Type::Enum { definition_id })),
+                Definition::EnumMember(_) => todo!(),
+                Definition::Error(_) => todo!(),
+                Definition::Event(_) => todo!(),
+                Definition::Function(_) => todo!(),
+                Definition::Import(_) => todo!(),
+                Definition::ImportedSymbol(_) => todo!(),
+                Definition::Interface(_) => {
+                    Some(self.types.register_type(Type::Interface { definition_id }))
+                }
+                Definition::Library(_) => todo!(),
+                Definition::Modifier(_) => todo!(),
+                Definition::Parameter(_) => todo!(),
+                Definition::StateVariable(_) => todo!(),
+                Definition::Struct(_) => data_location.map(|data_location| {
+                    self.types.register_type(Type::Struct {
+                        definition_id,
+                        location: data_location,
+                    })
+                }),
+                Definition::StructMember(_) => todo!(),
+                Definition::TypeParameter(_) => {
+                    unreachable!("type parameter names don't have a type")
+                }
+                Definition::UserDefinedValueType(_) => Some(
+                    self.types
+                        .register_type(Type::UserDefinedValue { definition_id }),
+                ),
+                Definition::Variable(_) => todo!(),
+                Definition::YulLabel(_) => unreachable!("yul labels don't have a type"),
+                Definition::YulFunction(_) => todo!(),
+            }
+        } else {
+            None
+        }
+    }
+
+    fn type_of_elementary_type(
+        &mut self,
+        elementary_type: &input_ir::ElementaryType,
+        data_location: Option<DataLocation>,
+    ) -> Option<TypeId> {
+        match elementary_type {
+            input_ir::ElementaryType::AddressType(address_type) => {
+                Some(self.types.register_type(Type::Address {
+                    payable: address_type.payable_keyword.is_some(),
+                }))
+            }
+            input_ir::ElementaryType::BytesKeyword(bytes_keyword) => {
+                let width = bytes_keyword
+                    .unparse()
+                    .strip_prefix("bytes")
+                    .unwrap()
+                    .parse::<u32>();
+                if let Ok(width) = width {
+                    Some(self.types.register_type(Type::ByteArray { width }))
+                } else {
+                    data_location.map(|data_location| {
+                        self.types.register_type(Type::Bytes {
+                            location: data_location,
+                        })
+                    })
+                }
+            }
+            input_ir::ElementaryType::IntKeyword(int_keyword) => {
+                let bits = int_keyword
+                    .unparse()
+                    .strip_prefix("int")
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap_or(256);
+                Some(
+                    self.types
+                        .register_type(Type::Integer { signed: true, bits }),
+                )
+            }
+            input_ir::ElementaryType::UintKeyword(uint_keyword) => {
+                let bits = uint_keyword
+                    .unparse()
+                    .strip_prefix("uint")
+                    .unwrap()
+                    .parse::<u32>()
+                    .unwrap_or(256);
+                Some(self.types.register_type(Type::Integer {
+                    signed: false,
+                    bits,
+                }))
+            }
+            input_ir::ElementaryType::FixedKeyword(fixed_keyword) => {
+                let fixed_keyword = fixed_keyword.unparse();
+                let mut parts = fixed_keyword
+                    .strip_prefix("fixed")
+                    .unwrap()
+                    .split('x')
+                    .map(|part| part.parse::<u32>().unwrap());
+                let bits = parts.next().unwrap();
+                let precision_bits = parts.next().unwrap_or(0);
+                Some(self.types.register_type(Type::FixedPointNumber {
+                    signed: true,
+                    bits,
+                    precision_bits,
+                }))
+            }
+            input_ir::ElementaryType::UfixedKeyword(ufixed_keyword) => {
+                let ufixed_keyword = ufixed_keyword.unparse();
+                let mut parts = ufixed_keyword
+                    .strip_prefix("ufixed")
+                    .unwrap()
+                    .split('x')
+                    .map(|part| part.parse::<u32>().unwrap());
+                let bits = parts.next().unwrap();
+                let precision_bits = parts.next().unwrap_or(0);
+                Some(self.types.register_type(Type::FixedPointNumber {
+                    signed: false,
+                    bits,
+                    precision_bits,
+                }))
+            }
+            input_ir::ElementaryType::BoolKeyword => Some(self.types.boolean()),
+            input_ir::ElementaryType::ByteKeyword => {
+                Some(self.types.register_type(Type::ByteArray { width: 1 }))
+            }
+            input_ir::ElementaryType::StringKeyword => data_location.map(|data_location| {
+                self.types.register_type(Type::String {
+                    location: data_location,
+                })
+            }),
         }
     }
 }
@@ -352,6 +607,17 @@ impl Visitor for Pass {
         }
     }
 
+    fn leave_parameter(&mut self, node: &input_ir::Parameter) {
+        let type_id = self.resolve_type_name(
+            &node.type_name,
+            node.storage_location
+                .as_ref()
+                .map(storage_location_to_data_location),
+        );
+        self.binder.insert_node_type(node.node_id, type_id);
+    }
+
+    // TODO: for more generality, this belongs in the next pass
     fn enter_expression(&mut self, node: &input_ir::Expression) -> bool {
         if let input_ir::Expression::Identifier(identifier) = node {
             let scope_id = self.current_scope_id();
@@ -373,6 +639,7 @@ impl Visitor for Pass {
         true
     }
 
+    // TODO: for more generality, this belongs in the next pass
     fn enter_yul_path(&mut self, items: &input_ir::YulPath) -> bool {
         // resolve the first item in the path
         if let Some(identifier) = items.first() {

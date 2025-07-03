@@ -3,6 +3,7 @@ use std::rc::Rc;
 
 use metaslang_cst::nodes::NodeId;
 
+use super::types::TypeId;
 use crate::cst::TerminalNode;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -764,6 +765,8 @@ pub struct Binder {
     definitions_by_identifier: HashMap<NodeId, NodeId>,
     // references indexed by identifier node
     pub references: HashMap<NodeId, Reference>,
+
+    node_types: HashMap<NodeId, Option<TypeId>>,
 }
 
 impl Binder {
@@ -775,6 +778,7 @@ impl Binder {
             definitions: HashMap::new(),
             definitions_by_identifier: HashMap::new(),
             references: HashMap::new(),
+            node_types: HashMap::new(),
         }
     }
 
@@ -845,6 +849,21 @@ impl Binder {
 
     pub fn find_reference_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Reference> {
         self.references.get(&node_id)
+    }
+
+    pub fn node_has_type(&self, node_id: NodeId) -> bool {
+        self.node_types.contains_key(&node_id)
+    }
+
+    pub fn get_node_type(&self, node_id: NodeId) -> Option<TypeId> {
+        self.node_types
+            .get(&node_id)
+            .copied()
+            .expect("expected node {node_id} to be typed")
+    }
+
+    pub(crate) fn insert_node_type(&mut self, node_id: NodeId, type_id: Option<TypeId>) {
+        self.node_types.insert(node_id, type_id);
     }
 
     // File scope resolution context
@@ -932,5 +951,25 @@ impl Binder {
                     self.resolve_single_in_scope(yul_function_scope.enclosing_scope_id, symbol)
                 }),
         }
+    }
+
+    // like `resolve_single_in_scope` above, but if the found definition is an
+    // imported symbol, follow it to the imported file, recursively
+    pub(crate) fn resolve_single_in_scope_recursively(
+        &self,
+        scope_id: ScopeId,
+        symbol: &str,
+    ) -> Option<NodeId> {
+        self.resolve_single_in_scope(scope_id, symbol)
+            .and_then(|definition_id| {
+                let definition = self.definitions.get(&definition_id);
+                if let Some(Definition::ImportedSymbol(imported_symbol)) = definition {
+                    let scope_id =
+                        self.scope_id_for_file_id(imported_symbol.resolved_file_id.as_ref()?)?;
+                    self.resolve_single_in_scope_recursively(scope_id, &imported_symbol.symbol)
+                } else {
+                    Some(definition_id)
+                }
+            })
     }
 }

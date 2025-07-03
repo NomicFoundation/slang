@@ -187,9 +187,7 @@ pub enum Type {
         definition_id: NodeId,
     },
     Mapping {
-        key_name: Option<String>,
         key_type_id: TypeId,
-        value_name: Option<String>,
         value_type_id: TypeId,
     },
     Rational,
