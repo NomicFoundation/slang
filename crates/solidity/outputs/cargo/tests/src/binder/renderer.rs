@@ -300,13 +300,19 @@ impl CollectedDefinitionDisplay<'_> {
             .find_definition_by_id(self.definition.definition_id)
         {
             match definition {
-                Definition::Constant(_) => "constant".to_string(),
+                Definition::Constant(_) => {
+                    format!("constant, type: {}", self.definition_type_display())
+                }
                 Definition::Contract(_) => "contract".to_string(),
                 Definition::Enum(_) => "enum".to_string(),
-                Definition::EnumMember(_) => "enum member".to_string(),
+                Definition::EnumMember(_) => {
+                    format!("enum member of {}", self.definition_type_display())
+                }
                 Definition::Error(_) => "error".to_string(),
                 Definition::Event(_) => "event".to_string(),
-                Definition::Function(_) => "function".to_string(),
+                Definition::Function(_) => {
+                    format!("function, type: {}", self.definition_type_display())
+                }
                 Definition::Import(_) => "import".to_string(),
                 Definition::ImportedSymbol(_) => "imported symbol".to_string(),
                 Definition::Interface(_) => "interface".to_string(),
@@ -315,14 +321,23 @@ impl CollectedDefinitionDisplay<'_> {
                 Definition::Parameter(_) => {
                     format!("parameter, type: {}", self.definition_type_display())
                 }
-                Definition::StateVariable(_) => "state var".to_string(),
+                Definition::StateVariable(_) => {
+                    format!("state var, type: {}", self.definition_type_display())
+                }
                 Definition::Struct(_) => "struct".to_string(),
-                Definition::StructMember(_) => "struct member".to_string(),
+                Definition::StructMember(_) => {
+                    format!("struct member, type: {}", self.definition_type_display())
+                }
                 Definition::TypeParameter(_) => "type param".to_string(),
-                Definition::UserDefinedValueType(_) => "udvt".to_string(),
-                Definition::Variable(_) => "variable".to_string(),
-                Definition::YulLabel(_) => "yul label".to_string(),
+                Definition::UserDefinedValueType(_) => {
+                    format!("udvt, type: {}", self.definition_type_display())
+                }
+                Definition::Variable(_) => {
+                    format!("variable, type: {}", self.definition_type_display())
+                }
                 Definition::YulFunction(_) => "yul function".to_string(),
+                Definition::YulLabel(_) => "yul label".to_string(),
+                Definition::YulVariable(_) => "yul variable".to_string(),
             }
         } else {
             "(unknown)".to_string()
@@ -332,7 +347,7 @@ impl CollectedDefinitionDisplay<'_> {
     fn definition_type_display(&self) -> String {
         let node_id = self.definition.definition_id;
         if !self.binder_data.binder.node_has_type(node_id) {
-            return "UNTYPED".to_string();
+            return "???".to_string();
         }
         let type_id = self.binder_data.binder.get_node_type(node_id);
         let Some(type_id) = type_id else {

@@ -25,6 +25,7 @@ pub slang_solidity::backend::binder::Definition::UserDefinedValueType(slang_soli
 pub slang_solidity::backend::binder::Definition::Variable(slang_solidity::backend::binder::VariableDefinition)
 pub slang_solidity::backend::binder::Definition::YulFunction(slang_solidity::backend::binder::YulFunctionDefinition)
 pub slang_solidity::backend::binder::Definition::YulLabel(slang_solidity::backend::binder::YulLabelDefinition)
+pub slang_solidity::backend::binder::Definition::YulVariable(slang_solidity::backend::binder::YulVariableDefinition)
 impl slang_solidity::backend::binder::Definition
 pub fn slang_solidity::backend::binder::Definition::identifier(&self) -> &alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub fn slang_solidity::backend::binder::Definition::node_id(&self) -> metaslang_cst::nodes::NodeId
@@ -217,6 +218,11 @@ pub slang_solidity::backend::binder::YulLabelDefinition::identifier: alloc::rc::
 pub slang_solidity::backend::binder::YulLabelDefinition::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::binder::YulLabelDefinition
 pub fn slang_solidity::backend::binder::YulLabelDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub struct slang_solidity::backend::binder::YulVariableDefinition
+pub slang_solidity::backend::binder::YulVariableDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::binder::YulVariableDefinition::node_id: metaslang_cst::nodes::NodeId
+impl core::fmt::Debug for slang_solidity::backend::binder::YulVariableDefinition
+pub fn slang_solidity::backend::binder::YulVariableDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub mod slang_solidity::backend::l1_structured_ast
 pub mod slang_solidity::backend::l1_structured_ast::builder
 pub fn slang_solidity::backend::l1_structured_ast::builder::build_abicoder_pragma(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AbicoderPragma>
