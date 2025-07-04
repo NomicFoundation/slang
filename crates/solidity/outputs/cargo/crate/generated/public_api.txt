@@ -7590,6 +7590,13 @@ pub slang_solidity::backend::passes::p3_type_definitions::Output::compilation_un
 pub slang_solidity::backend::passes::p3_type_definitions::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
 pub slang_solidity::backend::passes::p3_type_definitions::Output::types: slang_solidity::backend::types::TypeRegistry
 pub fn slang_solidity::backend::passes::p3_type_definitions::run(input: slang_solidity::backend::passes::p2_collect_definitions::Output) -> slang_solidity::backend::passes::p3_type_definitions::Output
+pub mod slang_solidity::backend::passes::p4_resolve_references
+pub struct slang_solidity::backend::passes::p4_resolve_references::Output
+pub slang_solidity::backend::passes::p4_resolve_references::Output::binder: slang_solidity::backend::binder::Binder
+pub slang_solidity::backend::passes::p4_resolve_references::Output::compilation_unit: slang_solidity::compilation::CompilationUnit
+pub slang_solidity::backend::passes::p4_resolve_references::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
+pub slang_solidity::backend::passes::p4_resolve_references::Output::types: slang_solidity::backend::types::TypeRegistry
+pub fn slang_solidity::backend::passes::p4_resolve_references::run(input: slang_solidity::backend::passes::p3_type_definitions::Output) -> slang_solidity::backend::passes::p4_resolve_references::Output
 pub mod slang_solidity::backend::types
 pub enum slang_solidity::backend::types::DataLocation
 pub slang_solidity::backend::types::DataLocation::Calldata
