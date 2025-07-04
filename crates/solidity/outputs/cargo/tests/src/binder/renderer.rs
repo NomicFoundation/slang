@@ -5,7 +5,7 @@ use std::ops::Range;
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
 use slang_solidity::backend::binder::Definition;
-use slang_solidity::backend::passes::p3_type_definitions::Output;
+use slang_solidity::backend::passes::p4_resolve_references::Output;
 use slang_solidity::backend::types::{DataLocation, Type, TypeId};
 use slang_solidity::compilation::File;
 use slang_solidity::cst::{Cursor, NodeId, NodeKind, NonterminalKind, TerminalKindExtensions};
