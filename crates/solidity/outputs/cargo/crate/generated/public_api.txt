@@ -7583,13 +7583,13 @@ pub slang_solidity::backend::passes::p2_collect_definitions::Output::binder: sla
 pub slang_solidity::backend::passes::p2_collect_definitions::Output::compilation_unit: slang_solidity::compilation::CompilationUnit
 pub slang_solidity::backend::passes::p2_collect_definitions::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
 pub fn slang_solidity::backend::passes::p2_collect_definitions::run(input: slang_solidity::backend::passes::p1_flatten_contracts::Output) -> slang_solidity::backend::passes::p2_collect_definitions::Output
-pub mod slang_solidity::backend::passes::p3_resolve_untyped
-pub struct slang_solidity::backend::passes::p3_resolve_untyped::Output
-pub slang_solidity::backend::passes::p3_resolve_untyped::Output::binder: slang_solidity::backend::binder::Binder
-pub slang_solidity::backend::passes::p3_resolve_untyped::Output::compilation_unit: slang_solidity::compilation::CompilationUnit
-pub slang_solidity::backend::passes::p3_resolve_untyped::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
-pub slang_solidity::backend::passes::p3_resolve_untyped::Output::types: slang_solidity::backend::types::TypeRegistry
-pub fn slang_solidity::backend::passes::p3_resolve_untyped::run(input: slang_solidity::backend::passes::p2_collect_definitions::Output) -> slang_solidity::backend::passes::p3_resolve_untyped::Output
+pub mod slang_solidity::backend::passes::p3_type_definitions
+pub struct slang_solidity::backend::passes::p3_type_definitions::Output
+pub slang_solidity::backend::passes::p3_type_definitions::Output::binder: slang_solidity::backend::binder::Binder
+pub slang_solidity::backend::passes::p3_type_definitions::Output::compilation_unit: slang_solidity::compilation::CompilationUnit
+pub slang_solidity::backend::passes::p3_type_definitions::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
+pub slang_solidity::backend::passes::p3_type_definitions::Output::types: slang_solidity::backend::types::TypeRegistry
+pub fn slang_solidity::backend::passes::p3_type_definitions::run(input: slang_solidity::backend::passes::p2_collect_definitions::Output) -> slang_solidity::backend::passes::p3_type_definitions::Output
 pub mod slang_solidity::backend::types
 pub enum slang_solidity::backend::types::DataLocation
 pub slang_solidity::backend::types::DataLocation::Calldata
