@@ -112,7 +112,7 @@ impl Pass {
         for identifier in identifier_path {
             let definition_id = resolution_scope_id.and_then(|scope_id| {
                 self.binder
-                    .resolve_single_in_scope(scope_id, &identifier.unparse())
+                    .resolve_single_in_scope_recursively(scope_id, &identifier.unparse())
             });
 
             let reference = Reference {

@@ -240,7 +240,7 @@ impl Visitor for Pass {
             // depending on the context
             let definition_id = self
                 .binder
-                .resolve_single_in_scope(scope_id, &identifier.unparse());
+                .resolve_single_in_scope_recursively(scope_id, &identifier.unparse());
             let reference = Reference {
                 identifier: Rc::clone(identifier),
                 definition_id,
@@ -256,7 +256,7 @@ impl Visitor for Pass {
             let scope_id = self.current_scope_id();
             let definition_id = self
                 .binder
-                .resolve_single_in_scope(scope_id, &identifier.unparse());
+                .resolve_single_in_scope_recursively(scope_id, &identifier.unparse());
             let reference = Reference {
                 identifier: Rc::clone(identifier),
                 definition_id,

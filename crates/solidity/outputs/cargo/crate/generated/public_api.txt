@@ -166,6 +166,8 @@ impl core::cmp::PartialEq for slang_solidity::backend::binder::ScopeId
 pub fn slang_solidity::backend::binder::ScopeId::eq(&self, other: &slang_solidity::backend::binder::ScopeId) -> bool
 impl core::fmt::Debug for slang_solidity::backend::binder::ScopeId
 pub fn slang_solidity::backend::binder::ScopeId::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::hash::Hash for slang_solidity::backend::binder::ScopeId
+pub fn slang_solidity::backend::binder::ScopeId::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::Copy for slang_solidity::backend::binder::ScopeId
 impl core::marker::StructuralPartialEq for slang_solidity::backend::binder::ScopeId
 pub struct slang_solidity::backend::binder::StateVariableDefinition
