@@ -336,6 +336,7 @@ impl Pass {
                 | Definition::Variable(_)
                 | Definition::YulFunction(_)
                 | Definition::YulLabel(_)
+                | Definition::YulParameter(_)
                 | Definition::YulVariable(_) => None,
             }
         } else {

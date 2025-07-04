@@ -619,12 +619,12 @@ impl Visitor for Pass {
         let scope_id = self.enter_scope(scope);
 
         for parameter in &node.parameters.parameters {
-            let definition = Definition::new_parameter(parameter.id(), parameter);
+            let definition = Definition::new_yul_parameter(parameter.id(), parameter);
             self.binder.insert_definition_in_scope(definition, scope_id);
         }
         if let Some(returns) = &node.returns {
             for parameter in &returns.variables {
-                let definition = Definition::new_parameter(parameter.id(), parameter);
+                let definition = Definition::new_yul_variable(parameter.id(), parameter);
                 self.binder.insert_definition_in_scope(definition, scope_id);
             }
         }
