@@ -54,7 +54,7 @@ fn extract_latest_changelogs(
 
     let mut all_blocks = markdown::tokenize(&changelog_contents).into_iter();
 
-    // Asser that first block contains title '# changelog'
+    // Assert that first block contains title '# changelog'
     assert_eq!(
         all_blocks.next().unwrap(),
         Block::Header(vec![Span::Text("changelog".to_string())], 1),
