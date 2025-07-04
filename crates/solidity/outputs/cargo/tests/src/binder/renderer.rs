@@ -4,7 +4,7 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
-use slang_solidity::backend::binder::Definition;
+use slang_solidity::backend::binder::{Resolution, Definition};
 use slang_solidity::backend::passes::p4_resolve_references::Output;
 use slang_solidity::backend::types::{DataLocation, Type, TypeId};
 use slang_solidity::compilation::File;
@@ -165,13 +165,15 @@ fn render_bindings_for_file(
             continue;
         }
 
-        let message = if let Some(definition_id) = reference
-            .definition_id
-            .and_then(|node_id| definitions_by_id.get(&node_id))
-        {
-            format!("ref: {definition_id}")
-        } else {
-            "unresolved".to_string()
+        let message = match reference.definition {
+            Resolution::Unresolved => "unresolved".to_string(),
+            Resolution::BuiltIn(_) => "built-in".to_string(),
+            Resolution::Definition(definition_id) => {
+                format!(
+                    "ref: {definition_id}",
+                    definition_id = definitions_by_id.get(&definition_id).unwrap()
+                )
+            }
         };
         builder.add_label(new_label(&reference.cursor, &message));
     }
@@ -476,20 +478,19 @@ impl CollectedDefinitionDisplay<'_> {
 struct CollectedReference {
     cursor: Cursor,
     file_id: String,
-    definition_id: Option<NodeId>,
+    definition: Resolution,
 }
 
 impl CollectedReference {
-    fn display(&self, definitions_by_id: &HashMap<NodeId, usize>) -> CollectedReferenceDisplay<'_> {
-        CollectedReferenceDisplay(
-            self,
-            self.definition_id
-                .and_then(|node_id| definitions_by_id.get(&node_id).copied()),
-        )
+    fn display<'a>(
+        &'a self,
+        definitions_by_id: &'a HashMap<NodeId, usize>,
+    ) -> CollectedReferenceDisplay<'a> {
+        CollectedReferenceDisplay(self, definitions_by_id)
     }
 }
 
-struct CollectedReferenceDisplay<'a>(&'a CollectedReference, Option<usize>);
+struct CollectedReferenceDisplay<'a>(&'a CollectedReference, &'a HashMap<NodeId, usize>);
 
 impl Display for CollectedReferenceDisplay<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -500,9 +501,13 @@ impl Display for CollectedReferenceDisplay<'_> {
             "Ref: [\"{identifier}\" @ {file_id}:{line}:{column}] -> {definition}",
             identifier = self.0.cursor.node().unparse(),
             file_id = self.0.file_id,
-            definition = self
-                .1
-                .map_or("unresolved".to_string(), |id| format!("#{id}")),
+            definition = match self.0.definition {
+                Resolution::Unresolved => "unresolved".to_string(),
+                Resolution::BuiltIn(_) => "built-in".to_string(),
+                Resolution::Definition(definition_id) => {
+                    format!("#{id}", id = self.1.get(&definition_id).unwrap())
+                }
+            }
         )
     }
 }
@@ -581,7 +586,7 @@ fn collect_all_definitions_and_references(
                 all_references.push(CollectedReference {
                     cursor: cursor.clone(),
                     file_id: file.id().to_string(),
-                    definition_id: reference.definition_id,
+                    definition: reference.resolution,
                 });
                 bound = true;
             }

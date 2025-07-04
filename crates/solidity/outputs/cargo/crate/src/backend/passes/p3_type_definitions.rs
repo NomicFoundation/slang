@@ -4,7 +4,7 @@ use std::rc::Rc;
 use super::p2_collect_definitions::Output as Input;
 use crate::backend::binder::{
     Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
-    LibraryDefinition, Reference, Scope, ScopeId,
+    LibraryDefinition, Reference, Resolution, Scope, ScopeId,
 };
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
@@ -110,20 +110,20 @@ impl Pass {
         let mut resolution_scope_id = Some(self.current_file_scope_id());
 
         for identifier in identifier_path {
-            let definition_id = resolution_scope_id.and_then(|scope_id| {
+            let resolution = if let Some(scope_id) = resolution_scope_id {
                 self.binder
                     .resolve_single_in_scope_recursively(scope_id, &identifier.unparse())
-            });
-
-            let reference = Reference {
-                identifier: Rc::clone(identifier),
-                definition_id,
+            } else {
+                Resolution::Unresolved
             };
+
+            let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
 
             // recurse into file scopes pointed by the resolved definition to
             // resolve the next identifier in the path
-            resolution_scope_id = definition_id
+            resolution_scope_id = resolution
+                .as_definition_id()
                 .and_then(|node_id| self.binder.find_definition_by_id(node_id))
                 .and_then(|definition| {
                     if let Definition::Import(ImportDefinition {
@@ -156,20 +156,20 @@ impl Pass {
         let mut scope_id = Some(self.current_contract_or_file_scope_id());
 
         for identifier in identifier_path {
-            let definition_id = scope_id.and_then(|scope_id| {
+            let resolution = if let Some(scope_id) = scope_id {
                 self.binder
                     .resolve_single_in_scope_recursively(scope_id, &identifier.unparse())
-            });
-
-            let reference = Reference {
-                identifier: Rc::clone(identifier),
-                definition_id,
+            } else {
+                Resolution::Unresolved
             };
+
+            let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
 
             // recurse into file scopes pointed by the resolved definition
             // to resolve the next identifier in the path
-            scope_id = definition_id
+            scope_id = resolution
+                .as_definition_id()
                 .and_then(|node_id| self.binder.find_definition_by_id(node_id))
                 .and_then(|definition| match definition {
                     Definition::Import(ImportDefinition {
@@ -289,7 +289,7 @@ impl Pass {
                 self.binder
                     .find_reference_by_identifier_node_id(identifier.id())
             })
-            .and_then(|reference| reference.definition_id)
+            .and_then(|reference| reference.resolution.as_definition_id())
             .and_then(|node_id| self.type_of_definition(node_id, data_location))
     }
 
