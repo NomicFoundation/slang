@@ -337,6 +337,7 @@ impl CollectedDefinitionDisplay<'_> {
                 }
                 Definition::YulFunction(_) => "yul function".to_string(),
                 Definition::YulLabel(_) => "yul label".to_string(),
+                Definition::YulParameter(_) => "yul parameter".to_string(),
                 Definition::YulVariable(_) => "yul variable".to_string(),
             }
         } else {
