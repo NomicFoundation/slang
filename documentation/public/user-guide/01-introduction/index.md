@@ -18,7 +18,7 @@ The Solidity programming language has evolved quite a bit since its inception. S
 
 While it's good for a programming language to evolve and better serve the needs of its users, not being able to easily upgrade or re-deploy existing contracts poses a unique challenge. Developer tooling must be able to understand and consume older contracts that are still being used on the blockchain, written in older versions of Solidity.
 
-Because of that, Slang must be able to reason about different versions of Solidity; how the language grammar, name capture rules, and semantics have changed [across different versions](../../solidity-grammar/supported-versions.md). One of our goals is to document differences as part of our [Solidity Grammar](../../solidity-grammar/index.md).
+Because of that, Slang must be able to reason about different versions of Solidity; how the language grammar, name capture rules, and semantics have changed [across different versions](../../../crates/solidity/outputs/spec/generated/public/supported-versions.md). One of our goals is to document differences as part of our [Solidity Grammar](../../../crates/solidity/outputs/spec/generated/public/index.md).
 
 This is why, instead of having to download separate versions of the tool for each Solidity version, you can access the Slang language APIs by simply specifying the Solidity version that you want to work with.
 
