@@ -447,7 +447,7 @@ impl Reference {
 //////////////////////////////////////////////////////////////////////////////
 // Scopes
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ScopeId(usize);
 
 pub struct BlockScope {
@@ -932,11 +932,7 @@ impl Binder {
         None
     }
 
-    pub(crate) fn resolve_single_in_scope(
-        &self,
-        scope_id: ScopeId,
-        symbol: &str,
-    ) -> Option<NodeId> {
+    fn resolve_single_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Option<NodeId> {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
             Scope::Block(block_scope) => block_scope
@@ -985,23 +981,27 @@ impl Binder {
         }
     }
 
-    // like `resolve_single_in_scope` above, but if the found definition is an
-    // imported symbol, follow it to the imported file, recursively
+    // Like `resolve_single_in_scope` above, but if the definition found is an
+    // imported symbol, follow it to the imported file, recursively.
     pub(crate) fn resolve_single_in_scope_recursively(
         &self,
         scope_id: ScopeId,
         symbol: &str,
     ) -> Option<NodeId> {
-        self.resolve_single_in_scope(scope_id, symbol)
-            .and_then(|definition_id| {
-                let definition = self.definitions.get(&definition_id);
-                if let Some(Definition::ImportedSymbol(imported_symbol)) = definition {
-                    let scope_id =
-                        self.scope_id_for_file_id(imported_symbol.resolved_file_id.as_ref()?)?;
-                    self.resolve_single_in_scope_recursively(scope_id, &imported_symbol.symbol)
-                } else {
-                    Some(definition_id)
-                }
-            })
+        let mut scope_id = scope_id;
+        let mut symbol = symbol;
+        let mut visited = HashSet::new();
+        while visited.insert((scope_id, symbol)) {
+            let definition_id = self.resolve_single_in_scope(scope_id, symbol)?;
+            let definition = self.definitions.get(&definition_id);
+            let Some(Definition::ImportedSymbol(imported_symbol)) = definition else {
+                return Some(definition_id);
+            };
+            scope_id = self.scope_id_for_file_id(imported_symbol.resolved_file_id.as_ref()?)?;
+            symbol = &imported_symbol.symbol;
+        }
+        // We found a circular dependency: an imported symbol that points back
+        // to an already looked up imported symbol.
+        None
     }
 }
