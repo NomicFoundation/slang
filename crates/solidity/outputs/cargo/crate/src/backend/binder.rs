@@ -429,18 +429,81 @@ impl Definition {
     }
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum BuiltIn {
+    ArrayPush,
+    Length,
+}
+
 //////////////////////////////////////////////////////////////////////////////
 // References
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Resolution {
+    Unresolved,
+    Definition(NodeId),
+    BuiltIn(BuiltIn),
+}
+
+impl Resolution {
+    fn or_else<F>(self, f: F) -> Self
+    where
+        F: FnOnce() -> Self,
+    {
+        if self == Self::Unresolved {
+            f()
+        } else {
+            self
+        }
+    }
+}
+
+impl From<Option<NodeId>> for Resolution {
+    fn from(value: Option<NodeId>) -> Self {
+        if let Some(definition_id) = value {
+            Self::Definition(definition_id)
+        } else {
+            Self::Unresolved
+        }
+    }
+}
+
+impl From<Option<&NodeId>> for Resolution {
+    fn from(value: Option<&NodeId>) -> Self {
+        if let Some(definition_id) = value {
+            Self::Definition(*definition_id)
+        } else {
+            Self::Unresolved
+        }
+    }
+}
+
+impl Resolution {
+    pub fn as_definition_id(&self) -> Option<NodeId> {
+        if let Resolution::Definition(definition_id) = self {
+            Some(*definition_id)
+        } else {
+            None
+        }
+    }
+}
 
 #[derive(Debug)]
 pub struct Reference {
     pub identifier: Rc<TerminalNode>,
-    pub definition_id: Option<NodeId>,
+    pub resolution: Resolution,
 }
 
 impl Reference {
     fn node_id(&self) -> NodeId {
         self.identifier.id()
+    }
+
+    pub(crate) fn new(identifier: Rc<TerminalNode>, resolution: Resolution) -> Self {
+        Self {
+            identifier,
+            resolution,
+        }
     }
 }
 
@@ -912,7 +975,7 @@ impl Binder {
     }
 
     // resolving a symbol in a file scope is special because of default imports
-    fn resolve_single_in_file_scope(&self, file_id: &str, symbol: &str) -> Option<NodeId> {
+    fn resolve_single_in_file_scope(&self, file_id: &str, symbol: &str) -> Resolution {
         let mut visited_files = HashSet::new();
         let mut files_to_search = VecDeque::new();
         files_to_search.push_back(file_id.to_owned());
@@ -925,27 +988,30 @@ impl Binder {
 
             // TODO: should we verify that there is a single definition for the symbol?
             if let Some(definition) = file_scope.lookup_symbol(symbol).first() {
-                return Some(*definition);
+                return Resolution::Definition(*definition);
             }
             files_to_search.extend(file_scope.imported_files.iter().cloned());
         }
-        None
+        Resolution::Unresolved
     }
 
-    fn resolve_single_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Option<NodeId> {
+    fn resolve_single_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
-            Scope::Block(block_scope) => block_scope
-                .definitions
-                .get(symbol)
-                .copied()
-                .or_else(|| self.resolve_single_in_scope(block_scope.parent_scope_id, symbol)),
+            Scope::Block(block_scope) => block_scope.definitions.get(symbol).copied().map_or_else(
+                || self.resolve_single_in_scope(block_scope.parent_scope_id, symbol),
+                Resolution::Definition,
+            ),
             Scope::Contract(contract_scope) => contract_scope
                 .definitions
                 .get(symbol)
-                .and_then(|definitions| definitions.first().copied())
-                .or_else(|| self.resolve_single_in_scope(contract_scope.file_scope_id, symbol)),
-            Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).copied(),
+                .and_then(|definitions| definitions.first())
+                .copied()
+                .map_or_else(
+                    || self.resolve_single_in_scope(contract_scope.file_scope_id, symbol),
+                    Resolution::Definition,
+                ),
+            Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
             Scope::File(file_scope) => {
                 self.resolve_single_in_file_scope(&file_scope.file_id, symbol)
             }
@@ -953,31 +1019,35 @@ impl Binder {
                 .definitions
                 .get(symbol)
                 .copied()
-                .or_else(|| {
-                    self.resolve_single_in_scope(function_scope.parameters_scope_id, symbol)
-                })
+                .map_or_else(
+                    || self.resolve_single_in_scope(function_scope.parameters_scope_id, symbol),
+                    Resolution::Definition,
+                )
                 .or_else(|| self.resolve_single_in_scope(function_scope.parent_scope_id, symbol)),
             Scope::Modifier(modifier_scope) => {
-                modifier_scope.definitions.get(symbol).copied().or_else(|| {
-                    self.resolve_single_in_scope(modifier_scope.parent_scope_id, symbol)
-                })
+                modifier_scope.definitions.get(symbol).copied().map_or_else(
+                    || self.resolve_single_in_scope(modifier_scope.parent_scope_id, symbol),
+                    Resolution::Definition,
+                )
             }
-            Scope::Parameters(parameters_scope) => {
-                parameters_scope.definitions.get(symbol).copied()
-            }
-            Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).copied(),
+            Scope::Parameters(parameters_scope) => parameters_scope.definitions.get(symbol).into(),
+            Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
             Scope::YulBlock(yul_block_scope) => yul_block_scope
                 .definitions
                 .get(symbol)
                 .copied()
-                .or_else(|| self.resolve_single_in_scope(yul_block_scope.parent_scope_id, symbol)),
+                .map_or_else(
+                    || self.resolve_single_in_scope(yul_block_scope.parent_scope_id, symbol),
+                    Resolution::Definition,
+                ),
             Scope::YulFunction(yul_function_scope) => yul_function_scope
                 .definitions
                 .get(symbol)
                 .copied()
-                .or_else(|| {
-                    self.resolve_single_in_scope(yul_function_scope.enclosing_scope_id, symbol)
-                }),
+                .map_or_else(
+                    || self.resolve_single_in_scope(yul_function_scope.enclosing_scope_id, symbol),
+                    Resolution::Definition,
+                ),
         }
     }
 
@@ -987,21 +1057,31 @@ impl Binder {
         &self,
         scope_id: ScopeId,
         symbol: &str,
-    ) -> Option<NodeId> {
+    ) -> Resolution {
         let mut scope_id = scope_id;
         let mut symbol = symbol;
         let mut visited = HashSet::new();
         while visited.insert((scope_id, symbol)) {
-            let definition_id = self.resolve_single_in_scope(scope_id, symbol)?;
+            let resolution = self.resolve_single_in_scope(scope_id, symbol);
+            let Resolution::Definition(definition_id) = resolution else {
+                return resolution;
+            };
             let definition = self.definitions.get(&definition_id);
             let Some(Definition::ImportedSymbol(imported_symbol)) = definition else {
-                return Some(definition_id);
+                return resolution;
             };
-            scope_id = self.scope_id_for_file_id(imported_symbol.resolved_file_id.as_ref()?)?;
+            let Some(file_id) = imported_symbol.resolved_file_id.as_ref() else {
+                break;
+            };
+            scope_id = if let Some(scope_id) = self.scope_id_for_file_id(file_id) {
+                scope_id
+            } else {
+                break;
+            };
             symbol = &imported_symbol.symbol;
         }
-        // We found a circular dependency: an imported symbol that points back
-        // to an already looked up imported symbol.
-        None
+        // We either found a circular dependency in imported symbols, or an
+        // imported file cannot be found
+        Resolution::Unresolved
     }
 }
