@@ -7,7 +7,7 @@ use solar::parse::Parser;
 use crate::dataset::SolidityProject;
 
 pub fn run(project: &SolidityProject) {
-    // Create a new session with a buffer emitter.
+    // From Solar's docs: Create a new session with a buffer emitter.
     // This is required to capture the emitted diagnostics and to return them at the end.
     let sess = Session::builder()
         .with_buffer_emitter(solar::interface::ColorChoice::Auto)
