@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# usage: bencher-plot-cargo project branch testbed benchmarks title
+# usage: bencher-plot-cargo project branch testbed benchmarks title type
 
 set -e
 shopt -s inherit_errexit
@@ -10,10 +10,11 @@ branch=$2
 testbed=$3
 benchmarks=$4
 title=$5
+type=$6
 
-if [[ $# -ne 5 ]]
+if [[ $# -ne 6 ]]
 then
-  echo "Usage: bencher-plot-cargo project branch testbed benchmarks title";
+  echo "Usage: bencher-plot-cargo project branch testbed benchmarks title type";
   exit 1;
 fi
 
@@ -29,8 +30,15 @@ function get_testbed() {
 
 function get_benchmarks() {
   details=$(bencher benchmark list --search "${benchmarks}" --per-page 255 "${project}")
-  # filter to let only the relevant benchmarks: only parser and solar
-  echo "${details}" | jq -r 'map(select(.name | contains("iai::") and (contains("parse") and (contains("group") | not)) or contains("solar"))) | map("--benchmarks " + .uuid) | join(" ")'
+
+  if [[ ${type} = "slang" ]]
+  then
+    # filter to let only the relevant benchmarks: anything that is from iai and slang group
+    echo "${details}" | jq -r 'map(select(.name | contains("iai::") and contains("group") and contains("slang"))) | map("--benchmarks " + .uuid) | join(" ")'
+  else
+    # filter to let only the relevant benchmarks: only parser and solar
+    echo "${details}" | jq -r 'map(select(.name | contains("iai::") and (contains("parse") and (contains("group") | not)) or contains("solar"))) | map("--benchmarks " + .uuid) | join(" ")'
+  fi
 }
 
 function get_measure() {
