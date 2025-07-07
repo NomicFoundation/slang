@@ -1,11 +1,11 @@
 use std::collections::{BTreeMap, HashSet};
 use std::path::{Path, PathBuf};
+use std::sync::LazyLock;
 
 use anyhow::{Context, Result};
 use infra_utils::cargo::CargoWorkspace;
 use infra_utils::commands::Command;
 use infra_utils::paths::PathExtensions;
-use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::Deserialize;
 
@@ -202,7 +202,7 @@ fn patch_possibly_buggy_version_from_etherscan(network: &str, address: &str, ver
 
     #[allow(clippy::items_after_statements)]
     // These all use `pure`/`view`, which was introduced in 0.4.16:
-    static PURE_VIEW_CONTRACTS: Lazy<HashSet<&str>> = Lazy::new(|| {
+    static PURE_VIEW_CONTRACTS: LazyLock<HashSet<&str>> = LazyLock::new(|| {
         HashSet::from_iter([
             /* 0.4.11 */ "0ff7599a9e2c9eb63ddb42a0e8b475b579a13e08",
             /* 0.4.13 */ "123ab195dd38b1b40510d467a6a359b201af056f",

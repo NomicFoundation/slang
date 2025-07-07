@@ -1,7 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 /// The lexical context of the scanner.
-
 #[repr(u8)]
 #[derive(strum_macros::FromRepr, Clone, Copy)]
 pub(crate) enum LexicalContext {

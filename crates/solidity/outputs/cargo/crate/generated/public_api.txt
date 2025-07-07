@@ -7368,21 +7368,10 @@ pub type slang_solidity::bindings::Definition = metaslang_bindings::graph::defin
 pub type slang_solidity::bindings::Reference = metaslang_bindings::graph::reference::Reference<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::UserFileLocation = metaslang_bindings::graph::location::UserFileLocation<slang_solidity::cst::KindTypes>
 pub mod slang_solidity::compilation
-pub enum slang_solidity::compilation::AddFileError<E>
-pub slang_solidity::compilation::AddFileError::ResolveImportError(crate::compilation::internal_builder::ResolveImportError)
-pub slang_solidity::compilation::AddFileError::UserError(E)
-impl<E: core::error::Error + 'static> core::error::Error for slang_solidity::compilation::AddFileError<E>
-pub fn slang_solidity::compilation::AddFileError<E>::source(&self) -> core::option::Option<&(dyn core::error::Error + 'static)>
-impl<E: core::fmt::Debug> core::fmt::Debug for slang_solidity::compilation::AddFileError<E>
-pub fn slang_solidity::compilation::AddFileError<E>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl<E> core::fmt::Display for slang_solidity::compilation::AddFileError<E>
-pub fn slang_solidity::compilation::AddFileError<E>::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::result::Result<(), core::fmt::Error>
-pub struct slang_solidity::compilation::AddFileResponse
-pub slang_solidity::compilation::AddFileResponse::import_paths: alloc::vec::Vec<slang_solidity::cst::Cursor>
 pub struct slang_solidity::compilation::CompilationBuilder<'b, E>
 pub slang_solidity::compilation::CompilationBuilder::config: &'b dyn slang_solidity::compilation::CompilationBuilderConfig<E>
 impl<'b, E> slang_solidity::compilation::CompilationBuilder<'b, E>
-pub fn slang_solidity::compilation::CompilationBuilder<'b, E>::add_file(&mut self, filename: &str) -> core::result::Result<(), slang_solidity::compilation::AddFileError<E>>
+pub fn slang_solidity::compilation::CompilationBuilder<'b, E>::add_file(&mut self, filename: &str) -> core::result::Result<(), E>
 pub fn slang_solidity::compilation::CompilationBuilder<'b, E>::build(&self) -> slang_solidity::compilation::CompilationUnit
 pub fn slang_solidity::compilation::CompilationBuilder<'b, E>::new(version: semver::Version, config: &'b dyn slang_solidity::compilation::CompilationBuilderConfig<E>) -> core::result::Result<slang_solidity::compilation::CompilationBuilder<'b, E>, CompilationInitializationError>
 pub struct slang_solidity::compilation::CompilationUnit
@@ -7399,12 +7388,6 @@ pub fn slang_solidity::compilation::File::id(&self) -> &str
 pub fn slang_solidity::compilation::File::tree(&self) -> &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>
 impl core::clone::Clone for slang_solidity::compilation::File
 pub fn slang_solidity::compilation::File::clone(&self) -> slang_solidity::compilation::File
-pub struct slang_solidity::compilation::InternalCompilationBuilder
-impl slang_solidity::compilation::InternalCompilationBuilder
-pub fn slang_solidity::compilation::InternalCompilationBuilder::add_file(&mut self, id: alloc::string::String, contents: &str) -> slang_solidity::compilation::AddFileResponse
-pub fn slang_solidity::compilation::InternalCompilationBuilder::build(&self) -> slang_solidity::compilation::CompilationUnit
-pub fn slang_solidity::compilation::InternalCompilationBuilder::create(language_version: semver::Version) -> core::result::Result<Self, CompilationInitializationError>
-pub fn slang_solidity::compilation::InternalCompilationBuilder::resolve_import(&mut self, source_file_id: &str, import_path: &slang_solidity::cst::Cursor, destination_file_id: alloc::string::String) -> core::result::Result<(), ResolveImportError>
 pub trait slang_solidity::compilation::CompilationBuilderConfig<E>
 pub fn slang_solidity::compilation::CompilationBuilderConfig::read_file(&self, file_id: &str) -> core::result::Result<core::option::Option<alloc::string::String>, E>
 pub fn slang_solidity::compilation::CompilationBuilderConfig::resolve_import(&self, source_file_id: &str, import_path_cursor: &slang_solidity::cst::Cursor) -> core::result::Result<core::option::Option<alloc::string::String>, E>

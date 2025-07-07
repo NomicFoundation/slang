@@ -66,8 +66,8 @@ pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_colo
         .write((source_id, Source::from(&source)), &mut result)
         .expect("Failed to write report");
 
-    return String::from_utf8(result)
+    String::from_utf8(result)
         .expect("Failed to convert report to utf8")
         .trim()
-        .to_string();
+        .to_string()
 }

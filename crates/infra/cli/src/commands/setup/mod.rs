@@ -51,7 +51,7 @@ impl OrderedCommand for SetupCommand {
             SetupCommand::Npm => setup_npm(),
             SetupCommand::Pipenv => setup_pipenv()?,
             SetupCommand::ShellCompletions => setup_shell_completions()?,
-        };
+        }
 
         Ok(())
     }

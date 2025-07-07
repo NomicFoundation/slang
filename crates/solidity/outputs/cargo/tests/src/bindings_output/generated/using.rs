@@ -22,6 +22,11 @@ fn binding_enum_member() -> Result<()> {
 }
 
 #[test]
+fn built_ins_results() -> Result<()> {
+    run(T, "built_ins_results")
+}
+
+#[test]
 fn casting() -> Result<()> {
     run(T, "casting")
 }
@@ -47,6 +52,11 @@ fn elementary_arrays() -> Result<()> {
 }
 
 #[test]
+fn for_fixed_arrays() -> Result<()> {
+    run(T, "for_fixed_arrays")
+}
+
+#[test]
 fn function_types() -> Result<()> {
     run(T, "function_types")
 }
@@ -57,6 +67,11 @@ fn global() -> Result<()> {
 }
 
 #[test]
+fn global_and_local() -> Result<()> {
+    run(T, "global_and_local")
+}
+
+#[test]
 fn global_multi_file() -> Result<()> {
     run(T, "global_multi_file")
 }
@@ -64,6 +79,11 @@ fn global_multi_file() -> Result<()> {
 #[test]
 fn in_contract() -> Result<()> {
     run(T, "in_contract")
+}
+
+#[test]
+fn in_interface() -> Result<()> {
+    run(T, "in_interface")
 }
 
 #[test]
@@ -84,6 +104,11 @@ fn inherited_types() -> Result<()> {
 #[test]
 fn mappings() -> Result<()> {
     run(T, "mappings")
+}
+
+#[test]
+fn named_args() -> Result<()> {
+    run(T, "named_args")
 }
 
 #[test]

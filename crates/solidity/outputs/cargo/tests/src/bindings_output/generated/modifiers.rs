@@ -17,6 +17,11 @@ fn function_named_underscore() -> Result<()> {
 }
 
 #[test]
+fn imported() -> Result<()> {
+    run(T, "imported")
+}
+
+#[test]
 fn inherited() -> Result<()> {
     run(T, "inherited")
 }

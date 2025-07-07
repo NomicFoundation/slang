@@ -125,7 +125,7 @@ struct DisplayCursor<'a, KT: KindTypes + 'static> {
     file: FileDescriptor,
 }
 
-impl<'a, KT: KindTypes + 'static> fmt::Display for DisplayCursor<'a, KT> {
+impl<KT: KindTypes + 'static> fmt::Display for DisplayCursor<'_, KT> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let offset = self.cursor.text_offset();
         write!(

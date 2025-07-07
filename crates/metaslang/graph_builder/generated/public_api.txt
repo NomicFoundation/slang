@@ -297,7 +297,7 @@ pub fn metaslang_graph_builder::ast::File<KT>::execute<'tree>(&self, tree: &'tre
 pub fn metaslang_graph_builder::ast::File<KT>::execute_into<'tree>(&self, graph: &mut metaslang_graph_builder::graph::Graph<KT>, tree: &'tree metaslang_cst::cursor::Cursor<KT>, config: &metaslang_graph_builder::ExecutionConfig<'_, '_, KT>, cancellation_flag: &dyn metaslang_graph_builder::CancellationFlag) -> core::result::Result<(), metaslang_graph_builder::ExecutionError>
 pub fn metaslang_graph_builder::ast::File<KT>::try_visit_matches<'tree, E, F>(&self, tree: &'tree metaslang_cst::cursor::Cursor<KT>, lazy: bool, visit: F) -> core::result::Result<(), E> where F: core::ops::function::FnMut(metaslang_graph_builder::Match<KT>) -> core::result::Result<(), E>
 impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::ast::File<KT>
-pub fn metaslang_graph_builder::ast::File<KT>::check(&mut self) -> core::result::Result<(), CheckError>
+pub fn metaslang_graph_builder::ast::File<KT>::check(&mut self) -> core::result::Result<(), metaslang_graph_builder::checker::CheckError>
 impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::ast::File<KT>
 pub fn metaslang_graph_builder::ast::File<KT>::from_str(source: &str) -> core::result::Result<Self, metaslang_graph_builder::ParseError>
 impl<KT: metaslang_cst::kinds::KindTypes> metaslang_graph_builder::ast::File<KT>
@@ -487,7 +487,7 @@ pub fn metaslang_graph_builder::ast::SetLiteral::fmt(&self, f: &mut core::fmt::F
 impl core::marker::StructuralPartialEq for metaslang_graph_builder::ast::SetLiteral
 pub struct metaslang_graph_builder::ast::Stanza<KT: metaslang_cst::kinds::KindTypes>
 pub metaslang_graph_builder::ast::Stanza::query: metaslang_cst::query::model::Query<KT>
-pub metaslang_graph_builder::ast::Stanza::range: crate::parser::Range
+pub metaslang_graph_builder::ast::Stanza::range: metaslang_graph_builder::parser::Range
 pub metaslang_graph_builder::ast::Stanza::statements: alloc::vec::Vec<metaslang_graph_builder::ast::Statement>
 impl<KT: metaslang_cst::kinds::KindTypes + 'static> metaslang_graph_builder::ast::Stanza<KT>
 pub fn metaslang_graph_builder::ast::Stanza<KT>::try_visit_matches<'tree, E, F>(&self, tree: &'tree metaslang_cst::cursor::Cursor<KT>, visit: F) -> core::result::Result<(), E> where F: core::ops::function::FnMut(metaslang_graph_builder::Match<KT>) -> core::result::Result<(), E>
@@ -719,7 +719,7 @@ pub fn metaslang_graph_builder::graph::Value::serialize<S: serde::ser::Serialize
 pub struct metaslang_graph_builder::graph::Attributes
 impl metaslang_graph_builder::graph::Attributes
 pub fn metaslang_graph_builder::graph::Attributes::add<V: core::convert::Into<metaslang_graph_builder::graph::Value>>(&mut self, name: metaslang_graph_builder::Identifier, value: V) -> core::result::Result<(), metaslang_graph_builder::graph::Value>
-pub fn metaslang_graph_builder::graph::Attributes::get<Q>(&self, name: &Q) -> core::option::Option<&metaslang_graph_builder::graph::Value> where Q: core::marker::Sized + core::cmp::Eq + core::hash::Hash, metaslang_graph_builder::Identifier: core::borrow::Borrow<Q>
+pub fn metaslang_graph_builder::graph::Attributes::get<Q>(&self, name: &Q) -> core::option::Option<&metaslang_graph_builder::graph::Value> where Q: ?core::marker::Sized + core::cmp::Eq + core::hash::Hash, metaslang_graph_builder::Identifier: core::borrow::Borrow<Q>
 pub fn metaslang_graph_builder::graph::Attributes::iter(&self) -> impl core::iter::traits::iterator::Iterator<Item = (&metaslang_graph_builder::Identifier, &metaslang_graph_builder::graph::Value)>
 pub fn metaslang_graph_builder::graph::Attributes::new() -> metaslang_graph_builder::graph::Attributes
 impl core::clone::Clone for metaslang_graph_builder::graph::Attributes
@@ -829,7 +829,7 @@ pub metaslang_graph_builder::ExecutionError::ExpectedList(alloc::string::String)
 pub metaslang_graph_builder::ExecutionError::ExpectedString(alloc::string::String)
 pub metaslang_graph_builder::ExecutionError::ExpectedSyntaxNode(alloc::string::String)
 pub metaslang_graph_builder::ExecutionError::FunctionFailed(alloc::string::String, alloc::string::String)
-pub metaslang_graph_builder::ExecutionError::InContext(Context, alloc::boxed::Box<metaslang_graph_builder::ExecutionError>)
+pub metaslang_graph_builder::ExecutionError::InContext(metaslang_graph_builder::execution::error::Context, alloc::boxed::Box<metaslang_graph_builder::ExecutionError>)
 pub metaslang_graph_builder::ExecutionError::InvalidParameters(alloc::string::String)
 pub metaslang_graph_builder::ExecutionError::InvalidVariableScope(alloc::string::String)
 pub metaslang_graph_builder::ExecutionError::MissingGlobalVariable(alloc::string::String)
@@ -853,7 +853,7 @@ pub fn metaslang_graph_builder::ExecutionError::fmt(&self, f: &mut core::fmt::Fo
 impl core::fmt::Display for metaslang_graph_builder::ExecutionError
 pub fn metaslang_graph_builder::ExecutionError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum metaslang_graph_builder::ParseError
-pub metaslang_graph_builder::ParseError::Check(crate::checker::CheckError)
+pub metaslang_graph_builder::ParseError::Check(metaslang_graph_builder::checker::CheckError)
 pub metaslang_graph_builder::ParseError::ExpectedQuantifier(metaslang_graph_builder::Location)
 pub metaslang_graph_builder::ParseError::ExpectedToken(&'static str, metaslang_graph_builder::Location)
 pub metaslang_graph_builder::ParseError::ExpectedUnscopedVariable(metaslang_graph_builder::Location)

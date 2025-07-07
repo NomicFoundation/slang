@@ -95,7 +95,7 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
 
         std::fs::create_dir_all(output_path.parent().unwrap())?;
         output_path.write_string(value)?;
-        println!("Wrote results to {output_path:?}");
+        println!("Wrote results to {}", output_path.display());
     }
 
     let failure_count = events.failure_count();

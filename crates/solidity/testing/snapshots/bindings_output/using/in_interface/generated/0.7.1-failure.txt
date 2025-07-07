@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface Bar {}
+   │           ─┬─  
+   │            ╰─── name: 1
+   │ 
+ 3 │ interface Foo {
+   │           ─┬─  
+   │            ╰─── name: 2
+   │ 
+ 5 │     using Utils for Bar;
+   │           ──┬──     ─┬─  
+   │             ╰──────────── unresolved
+   │                      │   
+   │                      ╰─── unresolved
+   │ 
+ 8 │ library Utils {
+   │         ──┬──  
+   │           ╰──── name: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ │     interface Bar {}
+   │ │     ────────┬────────  
+   │ │             ╰────────── definiens: 1
+ 2 │ ╭───▶ 
+   ┆ ┆     
+ 6 │ ├─│ ▶ }
+   │ │ │       
+   │ ╰───────── definiens: 2
+ 7 │   ╭─▶ 
+   ┆   ┆   
+ 9 │   ├─▶ }
+   │   │       
+   │   ╰─────── definiens: 3
+───╯

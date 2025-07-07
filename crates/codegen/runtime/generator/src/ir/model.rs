@@ -214,7 +214,7 @@ impl IrModelBuilder {
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
                 }
-            };
+            }
         }
     }
 
@@ -248,7 +248,7 @@ impl IrModelBuilder {
                 model::Item::Fragment { .. } => {
                     // These items are inlined.
                 }
-            };
+            }
         }
     }
 
@@ -397,7 +397,7 @@ impl IrModelBuilder {
                 fields.extend(self.convert_fields(&operator.fields));
                 fields.push(operand(model::PredefinedLabel::RightOperand));
             }
-        };
+        }
         let has_nonterminals = fields.iter().any(|field| !field.is_terminal);
         let multiple_operators = expression.operators.len() > 1;
 
