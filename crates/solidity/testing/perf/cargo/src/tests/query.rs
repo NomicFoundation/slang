@@ -27,7 +27,7 @@ pub fn run(unit: Rc<CompilationUnit>) {
         }
     }
 
-    // TODO: ref cursor::run.
+    // Sanity check: at least there's a function.
     assert_ne!(
         functions_count, 0,
         "Failed to fetch all function definitions"
