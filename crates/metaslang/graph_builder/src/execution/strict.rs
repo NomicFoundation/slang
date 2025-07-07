@@ -122,13 +122,13 @@ impl<'a> ScopedVariables<'a> {
 }
 
 impl<KT: KindTypes + 'static> Stanza<KT> {
-    fn execute(
+    fn execute<'g, 'l, 's>(
         &self,
         mat: &QueryMatch<KT>,
         graph: &mut Graph<KT>,
-        config: &ExecutionConfig<'_, '_, KT>,
-        locals: &mut VariableMap<'_, Value>,
-        scoped: &mut ScopedVariables<'_>,
+        config: &ExecutionConfig<'_, 'g, KT>,
+        locals: &mut VariableMap<'l, Value>,
+        scoped: &mut ScopedVariables<'s>,
         current_regex_captures: &Vec<String>,
         function_parameters: &mut Vec<Value>,
         inherited_variables: &HashSet<Identifier>,

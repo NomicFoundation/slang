@@ -45,7 +45,7 @@ impl<'a> Excerpt<'a> {
     }
 }
 
-impl std::fmt::Display for Excerpt<'_> {
+impl<'a> std::fmt::Display for Excerpt<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         // path and line/col
         writeln!(
@@ -85,14 +85,14 @@ impl std::fmt::Display for Excerpt<'_> {
 
 // coloring functions
 
-fn blue(str: &str) -> impl std::fmt::Display + '_ {
+fn blue<'a>(str: &'a str) -> impl std::fmt::Display + 'a {
     str
 }
 
-fn green_bold(str: &str) -> impl std::fmt::Display + '_ {
+fn green_bold<'a>(str: &'a str) -> impl std::fmt::Display + 'a {
     str
 }
 
-fn white_bold(str: &str) -> impl std::fmt::Display + '_ {
+fn white_bold<'a>(str: &'a str) -> impl std::fmt::Display + 'a {
     str
 }

@@ -170,7 +170,7 @@ impl<'a> Globals<'a> {
         self.values.is_empty()
     }
 
-    pub fn iter(&self) -> Iter<'_> {
+    pub fn iter<'b>(&'b self) -> Iter<'b> {
         Iter(self.values.iter())
     }
 
