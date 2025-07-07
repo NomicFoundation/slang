@@ -16,14 +16,8 @@ use solidity_testing_perf_cargo::tests::bindings_resolve::BuiltBindingGraph;
 
 mod __dependencies_used_in_lib__ {
     use {
-        anyhow as _,
-        infra_utils as _,
-        semver as _,
-        serde_json as _,
-        slang_solidity as _,
-        // solang as _, solang_parser as _,
-        solar as _,
-        solidity_testing_perf_utils as _,
+        anyhow as _, infra_utils as _, semver as _, serde_json as _, slang_solidity as _,
+        solar as _, solidity_testing_perf_utils as _,
     };
 }
 
@@ -110,31 +104,6 @@ macro_rules! slang_define_payload_tests {
 }
 
 include!("../../src/slang_benches_list.rs");
-
-//
-// Solang benchmarks
-//
-// macro_rules! solang_define_payload_test {
-//     ($prj: ident, $prj_name: expr) => {
-//         paste! {
-// TODO: This is not right, the setup shouldn't be part of the measurement
-//           fn [< setup_and_test_ $prj >] () {
-//               let payload = solidity_testing_perf_cargo::tests::solang::setup($prj_name);
-//               solidity_testing_perf_cargo::tests::solang::run(payload)
-//           }
-
-//           #[library_benchmark]
-//           pub fn [< solang_ $prj >]() {
-//               black_box([< setup_and_test_ $prj >]());
-//           }
-
-//           library_benchmark_group!(
-//             name = [< solang_ $prj _group >];
-//             benchmarks = [< solang_ $prj >]
-//           );
-//         }
-//     };
-// }
 
 //
 // Solar benchmarks

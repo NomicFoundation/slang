@@ -17,8 +17,6 @@ semver = { workspace = true }
 serde_json = { workspace = true }
 iai-callgrind = { workspace = true }
 paste = { workspace = true }
-# solang = "0.3.2" # __SLANG_INFRA_SOLANG_VERSION__ (keep in sync)
-# solang-parser = { version = "=0.3.2" } # __SLANG_INFRA_SOLANG_VERSION__ (keep in sync: it fails to compile otherwise)
 solar = { version = "=0.1.3", package = "solar-compiler" }
 
 [[bench]]

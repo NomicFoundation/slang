@@ -37,20 +37,6 @@ mod unit_tests {
 
     include!("slang_benches_list.rs");
 
-    // mod solang {
-    //     macro_rules! solang_define_payload_test {
-    //         ($name:ident, $prj:expr) => {
-    //             #[test]
-    //             fn $name() {
-    //                 let payload = crate::tests::solang::setup($prj);
-    //                 crate::tests::solang::run(payload);
-    //             }
-    //         };
-    //     }
-
-    //     include!("solang_benches_list.rs");
-    // }
-
     mod solar {
         macro_rules! solar_define_payload_test {
             ($name:ident, $prj:expr) => {
