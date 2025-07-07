@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     uint foo;
+   │          ─┬─  
+   │           ╰─── name: 2
+ 3 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 3
+ 4 │         Test.foo;
+   │         ──┬─ ─┬─  
+   │           ╰─────── ref: 1
+   │               │   
+   │               ╰─── ref: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭───▶ contract Test {
+ 2 │ │ │       uint foo;
+   │ │ │   ───────┬──────  
+   │ │ │          ╰──────── definiens: 2
+ 3 │ │ ╭─▶     function test() public {
+   ┆ ┆ ┆   
+ 5 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 3
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

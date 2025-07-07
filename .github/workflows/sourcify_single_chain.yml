@@ -38,8 +38,26 @@ on:
         required: false
         default: false
 jobs:
+  buildSlang:
+    runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    steps:
+      - name: "Checkout Repository"
+        uses: "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"
+      - name: "Restore Cache"
+        uses: "./.github/actions/cache/restore"
+      - name: "Build Test Binary"
+        run: "./scripts/bin/with-hermit cargo build --bin solidity_testing_sourcify --release"
+      - name: "Save Test Binary"
+        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+        with:
+          name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
+          path: "./target/release/solidity_testing_sourcify"
+          overwrite: true
+          retention-days: 1
+
   singleShard:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
+    needs: "buildSlang"
     outputs:
       __SLANG_SOURCIFY_SHARD_RESULTS__0: "${{ steps.output-shard-results.outputs.__SLANG_SOURCIFY_SHARD_RESULTS__0 }}"
       __SLANG_SOURCIFY_SHARD_RESULTS__1: "${{ steps.output-shard-results.outputs.__SLANG_SOURCIFY_SHARD_RESULTS__1 }}"
@@ -121,11 +139,20 @@ jobs:
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
 
-      - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+      - name: "Restore Test Binary"
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093"
+        with:
+          name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
 
-      - name: "infra run solidity_testing_sourcify"
-        run: "./scripts/bin/infra run --release --bin solidity_testing_sourcify -- test --shard-count ${{ env.SHARD_COUNT }} --shard-index ${{ matrix.shard_index }} ${{ inputs.check_bindings == true && '--check-bindings' || '' }} ${{ inputs.check_infer_version == true && '--check-infer-version' || '' }} --chain-id ${{ inputs.chain_id }} ${{ inputs.network }}"
+      - name: "Run Tests"
+        run: |
+          chmod +x solidity_testing_sourcify
+          ./scripts/bin/with-hermit ./solidity_testing_sourcify test \
+              --chain-id ${{ inputs.chain_id }} \
+              --shard-count ${{ env.SHARD_COUNT }} \
+              --shard-index ${{ matrix.shard_index }} \
+              ${{ inputs.check_bindings == true && '--check-bindings' || '' }} \
+              ${{ inputs.check_infer_version == true && '--check-infer-version' || '' }}
 
       - name: "Write shard results to output"
         if: "!cancelled()"
@@ -134,7 +161,9 @@ jobs:
 
   combinedResults:
     runs-on: "ubuntu-22.04" # _SLANG_DEV_CONTAINER_BASE_IMAGE_ (keep in sync)
-    needs: "singleShard"
+    needs:
+      - "buildSlang"
+      - "singleShard"
     if: "!cancelled()"
     steps:
       - name: "Checkout Repository"
@@ -143,11 +172,15 @@ jobs:
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
 
-      - name: "infra setup"
-        run: "./scripts/bin/infra setup"
+      - name: "Restore Test Binary"
+        uses: "actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093"
+        with:
+          name: "solidity_testing_sourcify_${{ inputs.chain_id }}"
 
       - name: "Output shards results"
         run: "echo '${{ toJSON(needs.singleShard.outputs) }}' > __SLANG_SOURCIFY_MATRIX_RESULTS__.json"
 
       - name: "Show combined results"
-        run: "./scripts/bin/infra run --bin solidity_testing_sourcify -- show-combined-results __SLANG_SOURCIFY_MATRIX_RESULTS__.json"
+        run: |
+          chmod +x solidity_testing_sourcify
+          ./scripts/bin/with-hermit ./solidity_testing_sourcify show-combined-results __SLANG_SOURCIFY_MATRIX_RESULTS__.json

@@ -16,7 +16,7 @@ mod terminal_kind;
 pub use edge_label::EdgeLabel;
 pub(crate) use lexical_context::{IsLexicalContext, LexicalContext, LexicalContextType};
 pub use metaslang_cst::kinds::{
-    EdgeLabelExtensions, NodeKind, NonterminalKindExtensions, TerminalKindExtensions,
+    EdgeLabelExtensions, NonterminalKindExtensions, TerminalKindExtensions,
 };
 pub use nonterminal_kind::NonterminalKind;
 pub use terminal_kind::TerminalKind;
@@ -41,6 +41,9 @@ impl metaslang_cst::kinds::KindTypes for KindTypes {
     type TerminalKind = TerminalKind;
     type EdgeLabel = EdgeLabel;
 }
+
+/// The super type of terminal and non-terminal kinds.
+pub type NodeKind = metaslang_cst::kinds::NodeKind<KindTypes>;
 
 /// The super type of all nodes in a tree.
 pub type Node = metaslang_cst::nodes::Node<KindTypes>;

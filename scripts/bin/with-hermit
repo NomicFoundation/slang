@@ -1,0 +1,13 @@
+#!/bin/bash
+set -euo pipefail
+
+# Helper script for running a command with a hermit context, mostly useful for Github workflows.
+#
+# This was created for running the sourcify tests. The sourcify tests don't require the whole `infra` 
+# harness to compile/run. Setting that up is a bit of a waste. It gets way worse when running in 
+# workflows because it can take well over 5 minutes to compile everything, even though all we _really_ 
+# need from scripts/bin/infra is setting up the Hermit env.
+
+source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
+
+"$@"

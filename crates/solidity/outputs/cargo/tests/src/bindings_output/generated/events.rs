@@ -20,3 +20,8 @@ fn emit_stmt() -> Result<()> {
 fn named_args() -> Result<()> {
     run(T, "named_args")
 }
+
+#[test]
+fn selector() -> Result<()> {
+    run(T, "selector")
+}
