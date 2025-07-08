@@ -33,10 +33,13 @@ use crate::utils::LanguageFacts;
 /// versions are available.
 ///
 /// ```
+/// use slang_solidity::parser::Parser;
+/// use slang_solidity::utils::LanguageFacts;
+///
 /// // Initialize parser
 /// let parser = Parser::create(LanguageFacts::LATEST_VERSION).unwrap();
 /// // Get source code to parse
-/// let source = std::fs::read_to_string(source_file).unwrap();
+/// let source = "contract AContract { }";
 ///
 /// // Parse the entire file, then get a cursor to start navigating the parsed CST.
 /// // Any parse errors will be reflected by error nodes in the tree. Errors can also
