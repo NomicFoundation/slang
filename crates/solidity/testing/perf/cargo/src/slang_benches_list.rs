@@ -4,8 +4,7 @@
 
   __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
 */
-// Solar can't cope with this file, so we exclude it for now
-// slang_define_payload_tests!(flat_imports_mooniswap, "flat_imports_mooniswap");
+slang_define_payload_tests!(flat_imports_mooniswap, "flat_imports_mooniswap");
 slang_define_payload_tests!(
     circular_imports_weighted_pool,
     "circular_imports_weighted_pool"

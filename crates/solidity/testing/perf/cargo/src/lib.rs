@@ -50,4 +50,18 @@ mod unit_tests {
 
         include!("solar_benches_list.rs");
     }
+
+    mod tree_sitter {
+        macro_rules! tree_sitter_define_payload_test {
+            ($name:ident, $prj:expr) => {
+                #[test]
+                fn $name() {
+                    let payload = crate::tests::setup::setup($prj);
+                    crate::tests::tree_sitter_parser::run(payload);
+                }
+            };
+        }
+
+        include!("tree_sitter_benches_list.rs");
+    }
 }

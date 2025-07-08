@@ -17,7 +17,7 @@ use solidity_testing_perf_cargo::tests::bindings_resolve::BuiltBindingGraph;
 mod __dependencies_used_in_lib__ {
     use {
         anyhow as _, infra_utils as _, semver as _, serde_json as _, slang_solidity as _,
-        solar as _, solidity_testing_perf_utils as _,
+        solar as _, solidity_testing_perf_utils as _, tree_sitter as _, tree_sitter_solidity as _,
     };
 }
 
@@ -74,6 +74,8 @@ macro_rules! slang_define_payload_full_tests {
     };
 }
 
+// We test a few projects in full for slang-only benchmarks
+// __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
 slang_define_payload_full_tests!(
     circular_imports_weighted_pool,
     "circular_imports_weighted_pool"
@@ -127,6 +129,28 @@ macro_rules! solar_define_payload_test {
 
 include!("../../src/solar_benches_list.rs");
 
+//
+// Tree-sitter benchmarks
+//
+macro_rules! tree_sitter_define_payload_test {
+    ($prj: ident, $prj_name: expr) => {
+        paste! {
+          #[library_benchmark(setup = tests::setup::setup)]
+          #[bench::first($prj_name)]
+          pub fn [< tree_sitter_ $prj >](project: &SolidityProject) {
+              black_box(tests::tree_sitter_parser::run(project));
+          }
+
+          library_benchmark_group!(
+            name = [< tree_sitter_ $prj _group>];
+            benchmarks = [< tree_sitter_ $prj >]
+          );
+        }
+    };
+}
+
+include!("../../src/tree_sitter_benches_list.rs");
+
 main!(
     config = LibraryBenchmarkConfig::default()
         // 'valgrind' supports many tools. By default, it runs 'callgrind', which reports these metrics:
@@ -162,5 +186,5 @@ main!(
 
     // Note: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
-    library_benchmark_groups = slang_circular_imports_weighted_pool_group,slang_three_quarters_file_merkle_proof_group,slang_circular_imports_weighted_pool,slang_protocol_uniswap,slang_protocol_multicall3,slang_protocol_create_x,slang_protocol_ui_pool_data_provider_v3,slang_deep_nesting_cooldogs,slang_largest_file_trivia_oslf,slang_median_file_safe_math,slang_three_quarters_file_merkle_proof,solar_circular_imports_weighted_pool_group,solar_protocol_uniswap_group,solar_protocol_multicall3_group,solar_protocol_create_x_group,solar_protocol_ui_pool_data_provider_v3_group,solar_deep_nesting_cooldogs_group,solar_largest_file_trivia_oslf_group,solar_median_file_safe_math_group,solar_three_quarters_file_merkle_proof_group,
+    library_benchmark_groups = slang_circular_imports_weighted_pool_group,slang_three_quarters_file_merkle_proof_group,slang_flat_imports_mooniswap,slang_circular_imports_weighted_pool,slang_protocol_uniswap,slang_protocol_multicall3,slang_protocol_create_x,slang_protocol_ui_pool_data_provider_v3,slang_deep_nesting_cooldogs,slang_largest_file_trivia_oslf,slang_median_file_safe_math,slang_three_quarters_file_merkle_proof,solar_circular_imports_weighted_pool_group,solar_protocol_uniswap_group,solar_protocol_multicall3_group,solar_protocol_create_x_group,solar_protocol_ui_pool_data_provider_v3_group,solar_deep_nesting_cooldogs_group,solar_largest_file_trivia_oslf_group,solar_median_file_safe_math_group,solar_three_quarters_file_merkle_proof_group,tree_sitter_flat_imports_mooniswap_group,tree_sitter_circular_imports_weighted_pool_group,tree_sitter_protocol_uniswap_group,tree_sitter_protocol_multicall3_group,tree_sitter_protocol_ui_pool_data_provider_v3_group,tree_sitter_deep_nesting_cooldogs_group,tree_sitter_largest_file_trivia_oslf_group,tree_sitter_median_file_safe_math_group,tree_sitter_three_quarters_file_merkle_proof_group,
 );
