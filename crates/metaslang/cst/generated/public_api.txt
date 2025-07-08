@@ -108,6 +108,7 @@ pub fn metaslang_cst::nodes::Node<T>::is_terminal(&self) -> bool
 pub fn metaslang_cst::nodes::Node<T>::is_terminal_with_kind(&self, kind: <T as metaslang_cst::kinds::KindTypes>::TerminalKind) -> bool
 pub fn metaslang_cst::nodes::Node<T>::is_terminal_with_kinds(&self, kinds: &[<T as metaslang_cst::kinds::KindTypes>::TerminalKind]) -> bool
 pub fn metaslang_cst::nodes::Node<T>::is_trivia(&self) -> bool
+pub fn metaslang_cst::nodes::Node<T>::is_valid(&self) -> bool
 pub fn metaslang_cst::nodes::Node<T>::kind(&self) -> metaslang_cst::kinds::NodeKind<T>
 pub fn metaslang_cst::nodes::Node<T>::nonterminal(kind: <T as metaslang_cst::kinds::KindTypes>::NonterminalKind, children: alloc::vec::Vec<metaslang_cst::nodes::Edge<T>>) -> Self
 pub fn metaslang_cst::nodes::Node<T>::terminal(kind: <T as metaslang_cst::kinds::KindTypes>::TerminalKind, text: alloc::string::String) -> Self

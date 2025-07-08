@@ -219,6 +219,13 @@ impl<T: KindTypes> Node<T> {
             Self::Terminal(terminal) => terminal.kind.is_trivia(),
         }
     }
+
+    pub fn is_valid(&self) -> bool {
+        match self {
+            Self::Nonterminal(_) => true,
+            Self::Terminal(terminal) => terminal.kind.is_valid(),
+        }
+    }
 }
 
 impl<T: KindTypes> From<Rc<NonterminalNode<T>>> for Node<T> {

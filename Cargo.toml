@@ -102,16 +102,16 @@ ariadne = { version = "0.2.0" }
 bencher_cli = { git = "https://github.com/bencherdev/bencher", branch = "main" }
 cargo-edit = { version = "0.12.3" }
 cargo-nextest = { version = "0.9.72" }
-clap = { version = "4.5.13", features = ["derive", "wrap_help"] }
-clap_complete = { version = "4.5.13" }
+clap = { version = "4.5.40", features = ["derive", "wrap_help"] }
+clap_complete = { version = "4.5.54" }
 console = { version = "0.15.11" }
 derive-new = { version = "0.6.0" }
 env_logger = { version = "0.11.6" }
 iai-callgrind = { version = "0.12.3" }
 iai-callgrind-runner = { version = "0.12.3" }
 ignore = { version = "0.4.23" }
-indexmap = { version = "2.9.0", features = ["serde"] }
-indicatif = { version = "0.17.11", features = ["in_memory"] }
+indexmap = { version = "2.10.0", features = ["serde"] }
+indicatif = { version = "0.17.12", features = ["in_memory"] }
 indoc = { version = "2.0.6" }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.13.0" }
@@ -125,7 +125,7 @@ public-api = { version = "0.47.1" }
 quote = { version = "1.0.40" }
 rayon = { version = "1.10.0" }
 regex = { version = "1.11.1" }
-reqwest = { version = "0.12.15", features = ["blocking"] }
+reqwest = { version = "0.12.21", features = ["blocking"] }
 rustdoc-json = { version = "0.9.5" }
 semver = { version = "1.0.26", features = ["serde"] }
 serde = { version = "1.0.219", features = ["derive", "rc"] }
@@ -140,7 +140,7 @@ string-interner = { version = "0.17.0", features = [
 ] }
 strum = { version = "0.26.3" }
 strum_macros = { version = "0.26.4" }
-syn = { version = "2.0.100", features = [
+syn = { version = "2.0.104", features = [
     "fold",
     "full",
     "extra-traits",
