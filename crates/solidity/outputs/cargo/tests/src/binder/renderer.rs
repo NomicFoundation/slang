@@ -393,13 +393,6 @@ impl CollectedDefinitionDisplay<'_> {
             }
             Type::Contract { definition_id } => self.definition_name(*definition_id),
             Type::Enum { definition_id } => self.definition_name(*definition_id),
-            Type::Error { definition_id } => {
-                if let Some(definition_id) = definition_id {
-                    self.definition_name(*definition_id)
-                } else {
-                    "Error".to_string()
-                }
-            }
             Type::FixedPointNumber {
                 signed,
                 bits,
