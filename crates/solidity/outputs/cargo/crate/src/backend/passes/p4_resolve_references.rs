@@ -4,10 +4,10 @@ use std::rc::Rc;
 use semver::Version;
 
 use super::p3_type_definitions::Output as Input;
-use crate::backend::binder::{Binder, Reference, Resolution, ScopeId};
+use crate::backend::binder::{Binder, BuiltIn, Reference, Resolution, ScopeId, Typing};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
-use crate::backend::types::{Type, TypeId, TypeRegistry};
+use crate::backend::types::{FunctionTypeKind, Type, TypeId, TypeRegistry};
 use crate::compilation::CompilationUnit;
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
@@ -93,12 +93,20 @@ impl Pass {
         let type_ = self.types.get_type_by_id(type_id).unwrap();
         match type_ {
             Type::Address { .. } => todo!(),
-            Type::Array { .. } => {
-                todo!()
-            }
+            Type::Array { .. } => match symbol {
+                "push" => Resolution::BuiltIn(BuiltIn::ArrayPush),
+                _ => Resolution::Unresolved,
+            },
             Type::Boolean => todo!(),
-            Type::ByteArray { .. } => todo!(),
-            Type::Bytes { .. } => todo!(),
+            Type::ByteArray { .. } => match symbol {
+                "length" => Resolution::BuiltIn(BuiltIn::Length),
+                _ => Resolution::Unresolved,
+            },
+            Type::Bytes { .. } => match symbol {
+                "push" => Resolution::BuiltIn(BuiltIn::ArrayPush),
+                "pop" => Resolution::BuiltIn(BuiltIn::ArrayPop),
+                _ => Resolution::Unresolved,
+            },
             Type::Contract { .. } => todo!(),
             Type::Enum { .. } => todo!(),
             Type::Error { .. } => todo!(),
@@ -119,82 +127,86 @@ impl Pass {
         }
     }
 
-    fn type_of_expression(&self, node: &input_ir::Expression) -> Option<TypeId> {
+    fn typing_of_expression(&self, node: &input_ir::Expression) -> Typing {
         match node {
             input_ir::Expression::AssignmentExpression(assignment_expression) => {
-                self.binder.get_node_type(assignment_expression.node_id)
+                self.binder.node_typing(assignment_expression.node_id)
             }
             input_ir::Expression::ConditionalExpression(conditional_expression) => {
-                self.binder.get_node_type(conditional_expression.node_id)
+                self.binder.node_typing(conditional_expression.node_id)
             }
             input_ir::Expression::OrExpression(_)
             | input_ir::Expression::AndExpression(_)
             | input_ir::Expression::EqualityExpression(_)
             | input_ir::Expression::InequalityExpression(_)
             | input_ir::Expression::TrueKeyword
-            | input_ir::Expression::FalseKeyword => Some(self.types.boolean()),
+            | input_ir::Expression::FalseKeyword => Typing::Resolved(self.types.boolean()),
             input_ir::Expression::BitwiseOrExpression(bitwise_or_expression) => {
-                self.binder.get_node_type(bitwise_or_expression.node_id)
+                self.binder.node_typing(bitwise_or_expression.node_id)
             }
             input_ir::Expression::BitwiseXorExpression(bitwise_xor_expression) => {
-                self.binder.get_node_type(bitwise_xor_expression.node_id)
+                self.binder.node_typing(bitwise_xor_expression.node_id)
             }
             input_ir::Expression::BitwiseAndExpression(bitwise_and_expression) => {
-                self.binder.get_node_type(bitwise_and_expression.node_id)
+                self.binder.node_typing(bitwise_and_expression.node_id)
             }
             input_ir::Expression::ShiftExpression(shift_expression) => {
-                self.binder.get_node_type(shift_expression.node_id)
+                self.binder.node_typing(shift_expression.node_id)
             }
             input_ir::Expression::AdditiveExpression(additive_expression) => {
-                self.binder.get_node_type(additive_expression.node_id)
+                self.binder.node_typing(additive_expression.node_id)
             }
             input_ir::Expression::MultiplicativeExpression(multiplicative_expression) => {
-                self.binder.get_node_type(multiplicative_expression.node_id)
+                self.binder.node_typing(multiplicative_expression.node_id)
             }
             input_ir::Expression::ExponentiationExpression(exponentiation_expression) => {
-                self.binder.get_node_type(exponentiation_expression.node_id)
+                self.binder.node_typing(exponentiation_expression.node_id)
             }
             input_ir::Expression::PostfixExpression(postfix_expression) => {
-                self.binder.get_node_type(postfix_expression.node_id)
+                self.binder.node_typing(postfix_expression.node_id)
             }
             input_ir::Expression::PrefixExpression(prefix_expression) => {
-                self.binder.get_node_type(prefix_expression.node_id)
+                self.binder.node_typing(prefix_expression.node_id)
             }
             input_ir::Expression::FunctionCallExpression(_) => todo!(),
             input_ir::Expression::CallOptionsExpression(_) => todo!(),
             input_ir::Expression::MemberAccessExpression(member_access_expression) => {
-                self.binder.get_node_type(member_access_expression.node_id)
+                self.binder.node_typing(member_access_expression.node_id)
             }
-            input_ir::Expression::IndexAccessExpression(_) => todo!(),
+            input_ir::Expression::IndexAccessExpression(index_access_expression) => {
+                self.binder.node_typing(index_access_expression.node_id)
+            }
             input_ir::Expression::NewExpression(_) => todo!(),
             input_ir::Expression::TupleExpression(tuple_expression) => {
-                self.binder.get_node_type(tuple_expression.node_id)
+                self.binder.node_typing(tuple_expression.node_id)
             }
             input_ir::Expression::TypeExpression(_) => todo!(),
             input_ir::Expression::ArrayExpression(_) => todo!(),
             input_ir::Expression::HexNumberExpression(_)
-            | input_ir::Expression::DecimalNumberExpression(_) => Some(self.types.rational()),
-            input_ir::Expression::StringExpression(_) => Some(self.types.string()),
+            | input_ir::Expression::DecimalNumberExpression(_) => {
+                Typing::Resolved(self.types.rational())
+            }
+            input_ir::Expression::StringExpression(_) => Typing::Resolved(self.types.string()),
             input_ir::Expression::ElementaryType(_) => todo!(),
-            input_ir::Expression::Identifier(identifier) => self.type_of_identifier(identifier),
+            input_ir::Expression::Identifier(identifier) => self.typing_of_identifier(identifier),
             input_ir::Expression::PayableKeyword => todo!(),
             input_ir::Expression::ThisKeyword => todo!(),
             input_ir::Expression::SuperKeyword => todo!(),
         }
     }
 
-    fn type_of_identifier(&self, identifier: &Rc<TerminalNode>) -> Option<TypeId> {
+    fn typing_of_identifier(&self, identifier: &Rc<TerminalNode>) -> Typing {
         // TODO: handle built-ins
-        let definition_id = self
+        let Some(definition_id) = self
             .binder
             .find_reference_by_identifier_node_id(identifier.id())
             .unwrap()
             .resolution
-            .as_definition_id()?;
-        if !self.binder.node_has_type(definition_id) {
-            return None;
-        }
-        self.binder.get_node_type(definition_id)
+            .as_definition_id()
+        else {
+            return Typing::Unresolved;
+        };
+        self.binder.node_typing(definition_id)
     }
 
     fn type_of_integer_binary_expression(
@@ -202,8 +214,8 @@ impl Pass {
         left_operand: &input_ir::Expression,
         right_operand: &input_ir::Expression,
     ) -> Option<TypeId> {
-        let left_type_id = self.type_of_expression(left_operand);
-        let right_type_id = self.type_of_expression(right_operand);
+        let left_type_id = self.typing_of_expression(left_operand).as_type_id();
+        let right_type_id = self.typing_of_expression(right_operand).as_type_id();
         // TODO(validation): check that both operands are indeed integers
         if let (Some(left_type_id), Some(right_type_id)) = (left_type_id, right_type_id) {
             if self
@@ -229,22 +241,30 @@ impl Pass {
     fn types_of_tuple(&self, items: &[input_ir::TupleValue]) -> Option<Vec<TypeId>> {
         let mut result = Vec::new();
         for item in items {
-            result.push(self.type_of_expression(item.expression.as_ref()?)?);
+            let expression = item.expression.as_ref()?;
+            let type_id = self.typing_of_expression(expression).as_type_id()?;
+            result.push(type_id);
         }
         Some(result)
     }
 
-    fn type_of_resolution(&self, resolution: Resolution) -> Option<TypeId> {
+    fn typing_of_resolution(&mut self, resolution: Resolution) -> Typing {
         match resolution {
-            Resolution::Unresolved => None,
-            Resolution::BuiltIn(_) => todo!(),
-            Resolution::Definition(definition_id) => {
-                if self.binder.node_has_type(definition_id) {
-                    self.binder.get_node_type(definition_id)
-                } else {
-                    None
+            Resolution::Unresolved => Typing::Unresolved,
+            Resolution::BuiltIn(built_in) => match built_in {
+                BuiltIn::ArrayPush => {
+                    // TODO: the return type depends on the arity and the array type
+                    todo!()
                 }
-            }
+                BuiltIn::ArrayPop => Typing::Resolved(self.types.register_type(Type::Function {
+                    parameter_types: vec![],
+                    return_type: self.types.void(),
+                    external: false,
+                    kind: FunctionTypeKind::Pure,
+                })),
+                BuiltIn::Length => Typing::Resolved(self.types.uint256()),
+            },
+            Resolution::Definition(definition_id) => self.binder.node_typing(definition_id),
         }
     }
 }
@@ -406,17 +426,19 @@ impl Visitor for Pass {
     }
 
     fn leave_assignment_expression(&mut self, node: &input_ir::AssignmentExpression) {
-        let type_id = self.type_of_expression(&node.left_operand);
+        let type_id = self.typing_of_expression(&node.left_operand).as_type_id();
         // TODO(validation): check that the type of right_operand can be applied
         // to the left by means of the operator
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_conditional_expression(&mut self, node: &input_ir::ConditionalExpression) {
-        let type_id = self.type_of_expression(&node.true_expression);
+        let type_id = self
+            .typing_of_expression(&node.true_expression)
+            .as_type_id();
         // TODO(validation): both true_expression and false_expression should
         // have the same type
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_or_expression(&mut self, _node: &input_ir::OrExpression) {
@@ -438,51 +460,51 @@ impl Visitor for Pass {
     fn leave_bitwise_or_expression(&mut self, node: &input_ir::BitwiseOrExpression) {
         let type_id =
             self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_bitwise_xor_expression(&mut self, node: &input_ir::BitwiseXorExpression) {
         let type_id =
             self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_bitwise_and_expression(&mut self, node: &input_ir::BitwiseAndExpression) {
         let type_id =
             self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_shift_expression(&mut self, node: &input_ir::ShiftExpression) {
-        let type_id = self.type_of_expression(&node.left_operand);
+        let type_id = self.typing_of_expression(&node.left_operand).as_type_id();
         // TODO(validation): check that the left operand is an integer and the
         // right operand is an _unsigned_ integer
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_additive_expression(&mut self, node: &input_ir::AdditiveExpression) {
         let type_id =
             self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_multiplicative_expression(&mut self, node: &input_ir::MultiplicativeExpression) {
         let type_id =
             self.type_of_integer_binary_expression(&node.left_operand, &node.right_operand);
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_exponentiation_expression(&mut self, node: &input_ir::ExponentiationExpression) {
-        let type_id = self.type_of_expression(&node.left_operand);
+        let type_id = self.typing_of_expression(&node.left_operand).as_type_id();
         // TODO(validation): check that the left operand is an integer and the
         // right operand is an _unsigned_ integer
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_postfix_expression(&mut self, node: &input_ir::PostfixExpression) {
         // TODO(validation): check that the operand is an integer
-        let type_id = self.type_of_expression(&node.operand);
-        self.binder.insert_node_type(node.node_id, type_id);
+        let type_id = self.typing_of_expression(&node.operand).as_type_id();
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_prefix_expression(&mut self, node: &input_ir::PrefixExpression) {
@@ -493,7 +515,7 @@ impl Visitor for Pass {
             | TerminalKind::Minus
             | TerminalKind::Tilde => {
                 // TODO(validation): check that the operand is integer
-                self.type_of_expression(&node.operand)
+                self.typing_of_expression(&node.operand).as_type_id()
             }
             TerminalKind::Bang => {
                 // TODO(validation): check that the operand is boolean
@@ -502,7 +524,7 @@ impl Visitor for Pass {
             TerminalKind::DeleteKeyword => Some(self.types.void()),
             _ => None,
         };
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_tuple_expression(&mut self, node: &input_ir::TupleExpression) {
@@ -514,13 +536,13 @@ impl Visitor for Pass {
                 self.types.register_type(Type::Tuple { types })
             }
         });
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_member_access_expression(&mut self, node: &input_ir::MemberAccessExpression) {
         // we need to resolve the identifier at this point that we already have
         // typing information of the operand expression
-        let parent_type_id = self.type_of_expression(&node.operand);
+        let parent_type_id = self.typing_of_expression(&node.operand).as_type_id();
         let resolution = if let Some(parent_type_id) = parent_type_id {
             self.resolve_symbol_in_type(parent_type_id, &node.member.unparse())
         } else {
@@ -530,8 +552,26 @@ impl Visitor for Pass {
         let reference = Reference::new(Rc::clone(&node.member), resolution);
         self.binder.insert_reference(reference);
 
-        let type_id = self.type_of_resolution(resolution);
-        self.binder.insert_node_type(node.node_id, type_id);
+        let typing = self.typing_of_resolution(resolution);
+        self.binder.set_node_typing(node.node_id, typing);
+    }
+
+    fn leave_index_access_expression(&mut self, node: &input_ir::IndexAccessExpression) {
+        let typing =
+            if let Some(operand_type_id) = self.typing_of_expression(&node.operand).as_type_id() {
+                let operand_type = self.types.get_type_by_id(operand_type_id);
+                match operand_type {
+                    Some(Type::Array { element_type, .. }) => Typing::Resolved(*element_type),
+                    Some(Type::Mapping { value_type_id, .. }) => Typing::Resolved(*value_type_id),
+                    _ => {
+                        // TODO(validation): the operand is not indexable
+                        Typing::Unresolved
+                    }
+                }
+            } else {
+                Typing::Unresolved
+            };
+        self.binder.set_node_typing(node.node_id, typing);
     }
 
     fn enter_yul_path(&mut self, items: &input_ir::YulPath) -> bool {

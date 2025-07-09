@@ -223,28 +223,3 @@ pub enum FunctionTypeKind {
     View,
     Payable,
 }
-
-impl Type {
-    pub fn definition_id(&self) -> Option<NodeId> {
-        match self {
-            Self::Contract { definition_id, .. }
-            | Self::Enum { definition_id, .. }
-            | Self::Interface { definition_id, .. }
-            | Self::Struct { definition_id, .. }
-            | Self::UserDefinedValue { definition_id, .. } => Some(*definition_id),
-            Self::Error { definition_id, .. } => *definition_id,
-            _ => None,
-        }
-    }
-
-    pub fn data_location(&self) -> Option<DataLocation> {
-        match self {
-            Self::Mapping { .. } => Some(DataLocation::Storage),
-            Self::Array { location, .. } => Some(*location),
-            Self::Bytes { location } => Some(*location),
-            Self::String { location } => Some(*location),
-            Self::Struct { location, .. } => Some(*location),
-            _ => None,
-        }
-    }
-}

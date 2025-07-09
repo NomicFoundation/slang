@@ -4,7 +4,7 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
-use slang_solidity::backend::binder::{Resolution, Definition};
+use slang_solidity::backend::binder::{Definition, Resolution};
 use slang_solidity::backend::passes::p4_resolve_references::Output;
 use slang_solidity::backend::types::{DataLocation, Type, TypeId};
 use slang_solidity::compilation::File;
@@ -349,14 +349,20 @@ impl CollectedDefinitionDisplay<'_> {
 
     fn definition_type_display(&self) -> String {
         let node_id = self.definition.definition_id;
-        if !self.binder_data.binder.node_has_type(node_id) {
-            return "???".to_string();
+        let typing = self.binder_data.binder.node_typing(node_id);
+        match typing {
+            slang_solidity::backend::binder::Typing::Unresolved => "unresolved".to_string(),
+            slang_solidity::backend::binder::Typing::Resolved(type_id) => {
+                self.type_display(type_id)
+            }
+            slang_solidity::backend::binder::Typing::Undetermined(type_ids) => {
+                format!("unresolved {count} overloads", count = type_ids.len())
+            }
+            slang_solidity::backend::binder::Typing::PseudoType => {
+                // TODO: this is unreachable, so maybe we should panic?
+                "pseudo-type".to_string()
+            }
         }
-        let type_id = self.binder_data.binder.get_node_type(node_id);
-        let Some(type_id) = type_id else {
-            return "unresolved".to_string();
-        };
-        self.type_display(type_id)
     }
 
     #[allow(clippy::too_many_lines)]

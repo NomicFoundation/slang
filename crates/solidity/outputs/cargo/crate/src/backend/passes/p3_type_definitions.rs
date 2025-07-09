@@ -193,8 +193,8 @@ impl Pass {
     ) -> Option<Vec<TypeId>> {
         let mut parameter_types = Vec::new();
         for parameter in parameters {
-            let parameter_type_id = self.binder.get_node_type(parameter.node_id);
-            parameter_types.push(parameter_type_id?);
+            let parameter_type_id = self.binder.node_typing(parameter.node_id).as_type_id()?;
+            parameter_types.push(parameter_type_id);
         }
         Some(parameter_types)
     }
@@ -497,6 +497,8 @@ impl Visitor for Pass {
 
     fn leave_contract_definition(&mut self, node: &input_ir::ContractDefinition) {
         self.leave_scope_for_node_id(node.node_id);
+
+        self.binder.mark_pseudo_type_node(node.node_id);
     }
 
     fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {
@@ -511,6 +513,8 @@ impl Visitor for Pass {
 
     fn leave_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) {
         self.leave_scope_for_node_id(node.node_id);
+
+        self.binder.mark_pseudo_type_node(node.node_id);
     }
 
     fn enter_library_definition(&mut self, node: &input_ir::LibraryDefinition) -> bool {
@@ -520,11 +524,13 @@ impl Visitor for Pass {
 
     fn leave_library_definition(&mut self, node: &input_ir::LibraryDefinition) {
         self.leave_scope_for_node_id(node.node_id);
+
+        self.binder.mark_pseudo_type_node(node.node_id);
     }
 
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
         let type_id = self.type_of_function_definition(node);
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn enter_type_name(&mut self, node: &input_ir::TypeName) -> bool {
@@ -552,7 +558,11 @@ impl Visitor for Pass {
                 .as_ref()
                 .map(storage_location_to_data_location),
         );
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
+    }
+
+    fn leave_event_definition(&mut self, node: &input_ir::EventDefinition) {
+        self.binder.mark_pseudo_type_node(node.node_id);
     }
 
     fn leave_event_parameter(&mut self, node: &input_ir::EventParameter) {
@@ -560,7 +570,11 @@ impl Visitor for Pass {
         // and structs are allowed as event parameters and they won't type if we
         // pass None here
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
+    }
+
+    fn leave_error_definition(&mut self, node: &input_ir::ErrorDefinition) {
+        self.binder.mark_pseudo_type_node(node.node_id);
     }
 
     fn leave_error_parameter(&mut self, node: &input_ir::ErrorParameter) {
@@ -568,17 +582,17 @@ impl Visitor for Pass {
         // and structs are allowed as error parameters and they won't type if we
         // pass None here
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_state_variable_definition(&mut self, node: &input_ir::StateVariableDefinition) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Storage));
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_constant_definition(&mut self, node: &input_ir::ConstantDefinition) {
         let type_id = self.resolve_type_name(&node.type_name, None);
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_variable_declaration_statement(
@@ -598,7 +612,7 @@ impl Visitor for Pass {
                 // we cannot resolve the type at this point
                 None
             };
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_typed_tuple_member(&mut self, node: &input_ir::TypedTupleMember) {
@@ -608,12 +622,16 @@ impl Visitor for Pass {
                 .as_ref()
                 .map(storage_location_to_data_location),
         );
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
+    }
+
+    fn leave_struct_definition(&mut self, node: &input_ir::StructDefinition) {
+        self.binder.mark_pseudo_type_node(node.node_id);
     }
 
     fn leave_struct_member(&mut self, node: &input_ir::StructMember) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Inherited));
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_enum_definition(&mut self, node: &input_ir::EnumDefinition) {
@@ -621,8 +639,10 @@ impl Visitor for Pass {
             definition_id: node.node_id,
         });
         for member in &node.members {
-            self.binder.insert_node_type(member.id(), Some(type_id));
+            self.binder.set_node_type(member.id(), Some(type_id));
         }
+
+        self.binder.mark_pseudo_type_node(node.node_id);
     }
 
     fn leave_user_defined_value_type_definition(
@@ -630,6 +650,6 @@ impl Visitor for Pass {
         node: &input_ir::UserDefinedValueTypeDefinition,
     ) {
         let type_id = self.type_of_elementary_type(&node.value_type, None);
-        self.binder.insert_node_type(node.node_id, type_id);
+        self.binder.set_node_type(node.node_id, type_id);
     }
 }
