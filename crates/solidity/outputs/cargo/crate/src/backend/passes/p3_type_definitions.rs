@@ -528,6 +528,16 @@ impl Visitor for Pass {
         self.binder.mark_pseudo_type_node(node.node_id);
     }
 
+    fn leave_path_import(&mut self, node: &input_ir::PathImport) {
+        if node.alias.is_some() {
+            self.binder.mark_pseudo_type_node(node.node_id);
+        }
+    }
+
+    fn leave_named_import(&mut self, node: &input_ir::NamedImport) {
+        self.binder.mark_pseudo_type_node(node.node_id);
+    }
+
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
         let type_id = self.type_of_function_definition(node);
         self.binder.set_node_type(node.node_id, type_id);

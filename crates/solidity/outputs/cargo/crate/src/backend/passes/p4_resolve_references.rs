@@ -7,7 +7,7 @@ use super::p3_type_definitions::Output as Input;
 use crate::backend::binder::{Binder, BuiltIn, Reference, Resolution, ScopeId, Typing};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
-use crate::backend::types::{FunctionTypeKind, Type, TypeId, TypeRegistry};
+use crate::backend::types::{Type, TypeId, TypeRegistry};
 use crate::compilation::CompilationUnit;
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
@@ -85,44 +85,66 @@ impl Pass {
     }
 
     fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
+        // TODO: we need to do hierarchy lookups for contracts and interfaces
         self.binder
             .resolve_single_in_scope_recursively(scope_id, symbol)
     }
 
     fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: &str) -> Resolution {
+        // TODO: we need to consider active `using` directives at this point
         let type_ = self.types.get_type_by_id(type_id).unwrap();
         match type_ {
-            Type::Address { .. } => todo!(),
-            Type::Array { .. } => match symbol {
-                "push" => Resolution::BuiltIn(BuiltIn::ArrayPush),
+            Type::Address { .. } => match symbol {
+                "balance" => Resolution::BuiltIn(BuiltIn::Balance),
+                // TODO: add the rest of the address (payable) built-ins
                 _ => Resolution::Unresolved,
             },
-            Type::Boolean => todo!(),
+            Type::Array { element_type, .. } => match symbol {
+                "length" => Resolution::BuiltIn(BuiltIn::Length),
+                "push" => Resolution::BuiltIn(BuiltIn::ArrayPush(*element_type)),
+                _ => Resolution::Unresolved,
+            },
+            Type::Boolean => Resolution::Unresolved,
             Type::ByteArray { .. } => match symbol {
                 "length" => Resolution::BuiltIn(BuiltIn::Length),
                 _ => Resolution::Unresolved,
             },
             Type::Bytes { .. } => match symbol {
-                "push" => Resolution::BuiltIn(BuiltIn::ArrayPush),
+                "push" => Resolution::BuiltIn(BuiltIn::ArrayPush(self.types.byte())),
                 "pop" => Resolution::BuiltIn(BuiltIn::ArrayPop),
                 _ => Resolution::Unresolved,
             },
-            Type::Contract { .. } => todo!(),
-            Type::Enum { .. } => todo!(),
-            Type::Error { .. } => todo!(),
-            Type::FixedPointNumber { .. } => todo!(),
-            Type::Function { .. } => todo!(),
-            Type::Integer { .. } => todo!(),
-            Type::Interface { .. } => todo!(),
-            Type::Mapping { .. } => todo!(),
-            Type::Rational => todo!(),
-            Type::String { .. } => todo!(),
+            Type::Contract { .. } => {
+                // TODO: expose the public contract methods
+                Resolution::Unresolved
+            }
+            Type::Enum { .. } => Resolution::Unresolved,
+            Type::FixedPointNumber { .. } => Resolution::Unresolved,
+            Type::Function { .. } => {
+                // TODO: for external functions, expose `selector`, `address`, etc
+                Resolution::Unresolved
+            }
+            Type::Integer { .. } => Resolution::Unresolved,
+            Type::Interface { .. } => {
+                // TODO: expose the public interface methods
+                Resolution::Unresolved
+            }
+            Type::Mapping { .. } => Resolution::Unresolved,
+            Type::Rational => {
+                // TODO: we should probably force cast the rational number to
+                // the tighest integer type that can represent it
+                Resolution::Unresolved
+            }
+            Type::String { .. } => match symbol {
+                "length" => Resolution::BuiltIn(BuiltIn::Length),
+                _ => Resolution::Unresolved,
+            },
             Type::Struct { definition_id, .. } => {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.resolve_symbol_in_scope(scope_id, symbol)
             }
-            Type::Tuple { .. } => todo!(),
-            Type::UserDefinedValue { .. } => todo!(),
+            Type::Tuple { .. } => Resolution::Unresolved,
+            Type::UserDefinedValue { .. } => Resolution::Unresolved,
             Type::Void => Resolution::Unresolved,
         }
     }
@@ -168,30 +190,55 @@ impl Pass {
             input_ir::Expression::PrefixExpression(prefix_expression) => {
                 self.binder.node_typing(prefix_expression.node_id)
             }
-            input_ir::Expression::FunctionCallExpression(_) => todo!(),
-            input_ir::Expression::CallOptionsExpression(_) => todo!(),
+            input_ir::Expression::FunctionCallExpression(function_call_expression) => {
+                self.binder.node_typing(function_call_expression.node_id)
+            }
+            input_ir::Expression::CallOptionsExpression(call_options_expression) => {
+                self.binder.node_typing(call_options_expression.node_id)
+            }
             input_ir::Expression::MemberAccessExpression(member_access_expression) => {
                 self.binder.node_typing(member_access_expression.node_id)
             }
             input_ir::Expression::IndexAccessExpression(index_access_expression) => {
                 self.binder.node_typing(index_access_expression.node_id)
             }
-            input_ir::Expression::NewExpression(_) => todo!(),
+            input_ir::Expression::NewExpression(new_expression) => {
+                self.binder.node_typing(new_expression.node_id)
+            }
             input_ir::Expression::TupleExpression(tuple_expression) => {
                 self.binder.node_typing(tuple_expression.node_id)
             }
-            input_ir::Expression::TypeExpression(_) => todo!(),
-            input_ir::Expression::ArrayExpression(_) => todo!(),
+            input_ir::Expression::TypeExpression(_) => {
+                // TODO
+                Typing::Unresolved
+            }
+            input_ir::Expression::ArrayExpression(array_expression) => {
+                self.binder.node_typing(array_expression.node_id)
+            }
             input_ir::Expression::HexNumberExpression(_)
             | input_ir::Expression::DecimalNumberExpression(_) => {
                 Typing::Resolved(self.types.rational())
             }
             input_ir::Expression::StringExpression(_) => Typing::Resolved(self.types.string()),
-            input_ir::Expression::ElementaryType(_) => todo!(),
+            input_ir::Expression::ElementaryType(_) => {
+                // TODO: We need to support two things here:
+                // - bytes/string for the `concat` member
+                // - all types for casting
+                Typing::Unresolved
+            }
             input_ir::Expression::Identifier(identifier) => self.typing_of_identifier(identifier),
-            input_ir::Expression::PayableKeyword => todo!(),
-            input_ir::Expression::ThisKeyword => todo!(),
-            input_ir::Expression::SuperKeyword => todo!(),
+            input_ir::Expression::PayableKeyword => {
+                // TODO
+                Typing::Unresolved
+            }
+            input_ir::Expression::ThisKeyword => {
+                // TODO
+                Typing::Unresolved
+            }
+            input_ir::Expression::SuperKeyword => {
+                // TODO
+                Typing::Unresolved
+            }
         }
     }
 
@@ -252,16 +299,17 @@ impl Pass {
         match resolution {
             Resolution::Unresolved => Typing::Unresolved,
             Resolution::BuiltIn(built_in) => match built_in {
-                BuiltIn::ArrayPush => {
-                    // TODO: the return type depends on the arity and the array type
-                    todo!()
-                }
-                BuiltIn::ArrayPop => Typing::Resolved(self.types.register_type(Type::Function {
-                    parameter_types: vec![],
-                    return_type: self.types.void(),
-                    external: false,
-                    kind: FunctionTypeKind::Pure,
-                })),
+                BuiltIn::ArrayPush(type_id) => Typing::Undetermined(vec![
+                    self.types
+                        .register_type(Type::built_in_function(vec![type_id], self.types.void())),
+                    self.types
+                        .register_type(Type::built_in_function(vec![], type_id)),
+                ]),
+                BuiltIn::ArrayPop => Typing::Resolved(
+                    self.types
+                        .register_type(Type::built_in_function(vec![], self.types.void())),
+                ),
+                BuiltIn::Balance => Typing::Resolved(self.types.uint256()),
                 BuiltIn::Length => Typing::Resolved(self.types.uint256()),
             },
             Resolution::Definition(definition_id) => self.binder.node_typing(definition_id),
@@ -571,6 +619,54 @@ impl Visitor for Pass {
             } else {
                 Typing::Unresolved
             };
+        self.binder.set_node_typing(node.node_id, typing);
+    }
+
+    fn leave_array_expression(&mut self, node: &input_ir::ArrayExpression) {
+        let typing = if node.items.is_empty() {
+            Typing::Unresolved
+        } else {
+            self.typing_of_expression(node.items.first().unwrap())
+        };
+        self.binder.set_node_typing(node.node_id, typing);
+    }
+
+    fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {
+        let operand_typing = self.typing_of_expression(&node.operand);
+        let typing = match operand_typing {
+            Typing::Unresolved => Typing::Unresolved,
+            Typing::Resolved(type_id) => {
+                let operand_type = self.types.get_type_by_id(type_id).unwrap();
+                match operand_type {
+                    Type::Function { return_type, .. } => Typing::Resolved(*return_type),
+                    // TODO: support other types that can be called
+                    _ => {
+                        // TODO(validation): the operand did not resolve to a function
+                        Typing::Unresolved
+                    }
+                }
+            }
+            Typing::Undetermined(_type_ids) => {
+                // TODO: resolve argument types and match best overload
+                // TODO: maybe update the typing of the operand?
+                Typing::Unresolved
+            }
+            Typing::PseudoType => {
+                // TODO: maybe this should be an error?
+                Typing::Unresolved
+            }
+        };
+        self.binder.set_node_typing(node.node_id, typing);
+    }
+
+    fn leave_new_expression(&mut self, node: &input_ir::NewExpression) {
+        // TODO: this should type to the constructor signature of the given type name
+        let typing = Typing::Unresolved;
+        self.binder.set_node_typing(node.node_id, typing);
+    }
+
+    fn leave_call_options_expression(&mut self, node: &input_ir::CallOptionsExpression) {
+        let typing = self.typing_of_expression(&node.operand);
         self.binder.set_node_typing(node.node_id, typing);
     }
 

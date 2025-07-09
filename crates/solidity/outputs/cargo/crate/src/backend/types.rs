@@ -11,7 +11,7 @@ pub struct TypeRegistry {
     // Pre-defined core types
     address_type_id: TypeId,
     boolean_type_id: TypeId,
-    error_type_id: TypeId,
+    byte_type_id: TypeId,
     rational_type_id: TypeId,
     string_type_id: TypeId,
     uint256_type_id: TypeId,
@@ -23,8 +23,9 @@ impl TypeRegistry {
         let mut types = IndexSet::new();
         let (address_type, _) = types.insert_full(Type::Address { payable: false });
         let (boolean_type, _) = types.insert_full(Type::Boolean);
-        let (error_type, _) = types.insert_full(Type::Error {
-            definition_id: None,
+        let (byte_type, _) = types.insert_full(Type::Integer {
+            signed: false,
+            bits: 8,
         });
         let (rational_type, _) = types.insert_full(Type::Rational);
         let (string_type, _) = types.insert_full(Type::String {
@@ -41,7 +42,7 @@ impl TypeRegistry {
 
             address_type_id: TypeId(address_type),
             boolean_type_id: TypeId(boolean_type),
-            error_type_id: TypeId(error_type),
+            byte_type_id: TypeId(byte_type),
             rational_type_id: TypeId(rational_type),
             string_type_id: TypeId(string_type),
             uint256_type_id: TypeId(uint256_type),
@@ -113,8 +114,8 @@ impl TypeRegistry {
     pub fn boolean(&self) -> TypeId {
         self.boolean_type_id
     }
-    pub fn error(&self) -> TypeId {
-        self.error_type_id
+    pub fn byte(&self) -> TypeId {
+        self.byte_type_id
     }
     pub fn rational(&self) -> TypeId {
         self.rational_type_id
@@ -165,9 +166,6 @@ pub enum Type {
     Enum {
         definition_id: NodeId,
     },
-    Error {
-        definition_id: Option<NodeId>,
-    },
     FixedPointNumber {
         signed: bool,
         bits: u32,
@@ -205,6 +203,17 @@ pub enum Type {
         definition_id: NodeId,
     },
     Void,
+}
+
+impl Type {
+    pub(crate) fn built_in_function(parameter_types: Vec<TypeId>, return_type: TypeId) -> Self {
+        Self::Function {
+            parameter_types,
+            return_type,
+            external: false,
+            kind: FunctionTypeKind::Pure,
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]

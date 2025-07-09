@@ -431,9 +431,10 @@ impl Definition {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum BuiltIn {
-    ArrayPush,
-    Length,
     ArrayPop,
+    ArrayPush(TypeId),
+    Balance,
+    Length,
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -968,7 +969,7 @@ impl Binder {
         self.node_typing
             .get(&node_id)
             .cloned()
-            .expect("expected node {node_id} to have typing information")
+            .expect("expected node to have typing information")
     }
 
     pub(crate) fn mark_pseudo_type_node(&mut self, node_id: NodeId) {
