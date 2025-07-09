@@ -433,6 +433,7 @@ impl Definition {
 pub enum BuiltIn {
     ArrayPush,
     Length,
+    ArrayPop,
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -849,6 +850,23 @@ impl Scope {
 //////////////////////////////////////////////////////////////////////////////
 // Binder
 
+#[derive(Clone, Debug)]
+pub enum Typing {
+    Unresolved,
+    Resolved(TypeId),
+    Undetermined(Vec<TypeId>),
+    PseudoType,
+}
+
+impl Typing {
+    pub(crate) fn as_type_id(&self) -> Option<TypeId> {
+        match self {
+            Self::Resolved(type_id) => Some(*type_id),
+            _ => None,
+        }
+    }
+}
+
 pub struct Binder {
     scopes: Vec<Scope>,
     scopes_by_node_id: HashMap<NodeId, ScopeId>,
@@ -861,7 +879,7 @@ pub struct Binder {
     // references indexed by identifier node
     pub references: HashMap<NodeId, Reference>,
 
-    node_types: HashMap<NodeId, Option<TypeId>>,
+    node_typing: HashMap<NodeId, Typing>,
 }
 
 impl Binder {
@@ -873,7 +891,7 @@ impl Binder {
             definitions: HashMap::new(),
             definitions_by_identifier: HashMap::new(),
             references: HashMap::new(),
-            node_types: HashMap::new(),
+            node_typing: HashMap::new(),
         }
     }
 
@@ -946,19 +964,31 @@ impl Binder {
         self.references.get(&node_id)
     }
 
-    pub fn node_has_type(&self, node_id: NodeId) -> bool {
-        self.node_types.contains_key(&node_id)
-    }
-
-    pub fn get_node_type(&self, node_id: NodeId) -> Option<TypeId> {
-        self.node_types
+    pub fn node_typing(&self, node_id: NodeId) -> Typing {
+        self.node_typing
             .get(&node_id)
-            .copied()
-            .expect("expected node {node_id} to be typed")
+            .cloned()
+            .expect("expected node {node_id} to have typing information")
     }
 
-    pub(crate) fn insert_node_type(&mut self, node_id: NodeId, type_id: Option<TypeId>) {
-        self.node_types.insert(node_id, type_id);
+    pub(crate) fn mark_pseudo_type_node(&mut self, node_id: NodeId) {
+        self.node_typing.insert(node_id, Typing::PseudoType);
+    }
+
+    pub(crate) fn set_node_type(&mut self, node_id: NodeId, type_id: Option<TypeId>) {
+        let typing = if let Some(type_id) = type_id {
+            Typing::Resolved(type_id)
+        } else {
+            Typing::Unresolved
+        };
+        self.set_node_typing(node_id, typing);
+    }
+
+    pub(crate) fn set_node_typing(&mut self, node_id: NodeId, typing: Typing) {
+        let previous_typing = self.node_typing.insert(node_id, typing);
+        if previous_typing.is_some() {
+            unreachable!("typing information for node {node_id:?} already set");
+        }
     }
 
     // File scope resolution context
