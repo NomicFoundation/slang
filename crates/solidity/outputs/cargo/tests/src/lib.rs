@@ -10,5 +10,6 @@ mod compilation;
 mod cst_output;
 mod generated;
 mod multi_part_file;
+mod queries;
 mod resolver;
 mod trivia;
