@@ -85,7 +85,9 @@ impl Pass {
     }
 
     fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
-        // TODO: we need to do hierarchy lookups for contracts and interfaces
+        // TODO: this is the "top-level" (ie. non member access) resolution
+        // method, and so we need to do hierarchy lookups for contracts and
+        // interfaces if we're in the scope of a contract/interface/library
         self.binder
             .resolve_single_in_scope_recursively(scope_id, symbol)
     }
@@ -93,7 +95,18 @@ impl Pass {
     fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
         match typing {
             Typing::Unresolved | Typing::Undetermined(_) => Resolution::Unresolved,
-            Typing::Resolved(type_id) => self.resolve_symbol_in_type(*type_id, symbol),
+            Typing::Resolved(type_id) => {
+                // TODO: we need to consider active `using` directives at this
+                // point (which also means we need to track what directives are
+                // active at any node in the tree)
+                self.resolve_symbol_in_type(*type_id, symbol)
+            }
+            Typing::This | Typing::Super => {
+                // TODO: restrict lookup to the scope of the enclosing contract,
+                // but extend the search to the bases contracts/interfaces using
+                // the linearisation information
+                Resolution::Unresolved
+            }
             Typing::MetaType(node_id) => {
                 let Some(definition) = self.binder.find_definition_by_id(*node_id) else {
                     return Resolution::Unresolved;
@@ -132,7 +145,6 @@ impl Pass {
     }
 
     fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: &str) -> Resolution {
-        // TODO: we need to consider active `using` directives at this point
         let type_ = self.types.get_type_by_id(type_id).unwrap();
         match type_ {
             Type::Address { .. } => match symbol {
@@ -271,18 +283,8 @@ impl Pass {
                 // TODO: we need to support casting here
                 Typing::Unresolved
             }
-            input_ir::Expression::ThisKeyword => {
-                // FIXME: this probably needs a special value to signal the
-                // resolution algorithm that we need special lookup rules to
-                // resolve member accesses
-                Typing::Unresolved
-            }
-            input_ir::Expression::SuperKeyword => {
-                // FIXME: this probably needs a special value to signal the
-                // resolution algorithm that we need special lookup rules to
-                // resolve member accesses
-                Typing::Unresolved
-            }
+            input_ir::Expression::ThisKeyword => Typing::This,
+            input_ir::Expression::SuperKeyword => Typing::Super,
         }
     }
 
@@ -702,7 +704,7 @@ impl Visitor for Pass {
     fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {
         let operand_typing = self.typing_of_expression(&node.operand);
         let typing = match operand_typing {
-            Typing::Unresolved => Typing::Unresolved,
+            Typing::Unresolved | Typing::This | Typing::Super => Typing::Unresolved,
             Typing::Resolved(type_id) => {
                 let operand_type = self.types.get_type_by_id(type_id).unwrap();
                 match operand_type {

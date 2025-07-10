@@ -84,6 +84,8 @@ pub fn slang_solidity::backend::binder::Scope::node_id(&self) -> metaslang_cst::
 pub enum slang_solidity::backend::binder::Typing
 pub slang_solidity::backend::binder::Typing::MetaType(metaslang_cst::nodes::NodeId)
 pub slang_solidity::backend::binder::Typing::Resolved(slang_solidity::backend::types::TypeId)
+pub slang_solidity::backend::binder::Typing::Super
+pub slang_solidity::backend::binder::Typing::This
 pub slang_solidity::backend::binder::Typing::Undetermined(alloc::vec::Vec<slang_solidity::backend::types::TypeId>)
 pub slang_solidity::backend::binder::Typing::Unresolved
 impl core::clone::Clone for slang_solidity::backend::binder::Typing

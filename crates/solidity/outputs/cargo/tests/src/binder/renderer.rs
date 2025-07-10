@@ -4,7 +4,7 @@ use std::ops::Range;
 
 use anyhow::Result;
 use ariadne::{Color, Config, Label, Report, ReportBuilder, ReportKind, Source};
-use slang_solidity::backend::binder::{Definition, Resolution};
+use slang_solidity::backend::binder::{Definition, Resolution, Typing};
 use slang_solidity::backend::passes::p4_resolve_references::Output;
 use slang_solidity::backend::types::{DataLocation, Type, TypeId};
 use slang_solidity::compilation::File;
@@ -357,14 +357,14 @@ impl CollectedDefinitionDisplay<'_> {
         let node_id = self.definition.definition_id;
         let typing = self.binder_data.binder.node_typing(node_id);
         match typing {
-            slang_solidity::backend::binder::Typing::Unresolved => "unresolved".to_string(),
-            slang_solidity::backend::binder::Typing::Resolved(type_id) => {
-                self.type_display(type_id)
-            }
-            slang_solidity::backend::binder::Typing::Undetermined(type_ids) => {
+            Typing::Unresolved => "unresolved".to_string(),
+            Typing::Resolved(type_id) => self.type_display(type_id),
+            Typing::This => "this".to_string(),
+            Typing::Super => "super".to_string(),
+            Typing::Undetermined(type_ids) => {
                 format!("unresolved {count} overloads", count = type_ids.len())
             }
-            slang_solidity::backend::binder::Typing::MetaType(node_id) => {
+            Typing::MetaType(node_id) => {
                 assert_eq!(node_id, self.definition.definition_id);
                 "meta-type".to_string()
             }
