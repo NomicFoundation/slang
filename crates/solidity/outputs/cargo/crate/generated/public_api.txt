@@ -7,6 +7,8 @@ pub enum slang_solidity::backend::binder::BuiltIn
 pub slang_solidity::backend::binder::BuiltIn::ArrayPop
 pub slang_solidity::backend::binder::BuiltIn::ArrayPush(slang_solidity::backend::types::TypeId)
 pub slang_solidity::backend::binder::BuiltIn::Balance
+pub slang_solidity::backend::binder::BuiltIn::ErrorType
+pub slang_solidity::backend::binder::BuiltIn::EventType
 pub slang_solidity::backend::binder::BuiltIn::Length
 impl core::clone::Clone for slang_solidity::backend::binder::BuiltIn
 pub fn slang_solidity::backend::binder::BuiltIn::clone(&self) -> slang_solidity::backend::binder::BuiltIn
@@ -47,11 +49,13 @@ pub fn slang_solidity::backend::binder::Definition::node_id(&self) -> metaslang_
 impl core::fmt::Debug for slang_solidity::backend::binder::Definition
 pub fn slang_solidity::backend::binder::Definition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::binder::Resolution
+pub slang_solidity::backend::binder::Resolution::Ambiguous(alloc::vec::Vec<metaslang_cst::nodes::NodeId>)
 pub slang_solidity::backend::binder::Resolution::BuiltIn(slang_solidity::backend::binder::BuiltIn)
 pub slang_solidity::backend::binder::Resolution::Definition(metaslang_cst::nodes::NodeId)
 pub slang_solidity::backend::binder::Resolution::Unresolved
 impl slang_solidity::backend::binder::Resolution
 pub fn slang_solidity::backend::binder::Resolution::as_definition_id(&self) -> core::option::Option<metaslang_cst::nodes::NodeId>
+pub fn slang_solidity::backend::binder::Resolution::non_ambiguous(self) -> Self
 impl core::clone::Clone for slang_solidity::backend::binder::Resolution
 pub fn slang_solidity::backend::binder::Resolution::clone(&self) -> slang_solidity::backend::binder::Resolution
 impl core::cmp::Eq for slang_solidity::backend::binder::Resolution
@@ -63,7 +67,6 @@ impl core::convert::From<core::option::Option<metaslang_cst::nodes::NodeId>> for
 pub fn slang_solidity::backend::binder::Resolution::from(value: core::option::Option<metaslang_cst::nodes::NodeId>) -> Self
 impl core::fmt::Debug for slang_solidity::backend::binder::Resolution
 pub fn slang_solidity::backend::binder::Resolution::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::Copy for slang_solidity::backend::binder::Resolution
 impl core::marker::StructuralPartialEq for slang_solidity::backend::binder::Resolution
 pub enum slang_solidity::backend::binder::Scope
 pub slang_solidity::backend::binder::Scope::Block(slang_solidity::backend::binder::BlockScope)
@@ -79,7 +82,7 @@ pub slang_solidity::backend::binder::Scope::YulFunction(slang_solidity::backend:
 impl slang_solidity::backend::binder::Scope
 pub fn slang_solidity::backend::binder::Scope::node_id(&self) -> metaslang_cst::nodes::NodeId
 pub enum slang_solidity::backend::binder::Typing
-pub slang_solidity::backend::binder::Typing::PseudoType
+pub slang_solidity::backend::binder::Typing::MetaType(metaslang_cst::nodes::NodeId)
 pub slang_solidity::backend::binder::Typing::Resolved(slang_solidity::backend::types::TypeId)
 pub slang_solidity::backend::binder::Typing::Undetermined(alloc::vec::Vec<slang_solidity::backend::types::TypeId>)
 pub slang_solidity::backend::binder::Typing::Unresolved
