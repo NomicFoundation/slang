@@ -1,4 +1,4 @@
-import { NonterminalKind, TerminalKind, Query, assertTerminalNode, QueryError } from "@nomicfoundation/slang/cst";
+import { NonterminalKind, Query, QueryError, assertNonterminalNode } from "@nomicfoundation/slang/cst";
 import { Parser } from "@nomicfoundation/slang/parser";
 import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
@@ -6,21 +6,24 @@ test("simple query", () => {
   const parser = Parser.create(LanguageFacts.latestVersion());
   const treeSource = `function a(){} function b(){} function c(){}`;
   const parseOutput = parser.parseNonterminal(NonterminalKind.ContractMembers, treeSource);
+  expect(parseOutput.isValid()).toBeTruthy();
 
-  const querySource = `[FunctionDefinition @id [Identifier]]`;
+  const querySource = `[FunctionDefinition @id name: [FunctionName]]`;
   const query = Query.create(querySource);
 
   const matches = parseOutput.createTreeCursor().query([query]);
 
   const expectNextMatch = (name: string) => {
-    const match = matches.next()!;
-    expect(Object.keys(match.captures)).toStrictEqual(["id"]);
+    const match = matches.next();
+    expect(match).toBeDefined();
+    expect(Object.keys(match!.captures)).toStrictEqual(["id"]);
 
-    const cursors = match.captures["id"];
+    const cursors = match!.captures["id"];
     expect(cursors).toHaveLength(1);
 
     const node = cursors[0].node;
-    assertTerminalNode(node, TerminalKind.Identifier, name);
+    assertNonterminalNode(node, NonterminalKind.FunctionName);
+    expect(node.unparse().trim()).toBe(name);
   };
 
   expectNextMatch("a");
@@ -32,7 +35,7 @@ test("simple query", () => {
 
 test("query syntax error", () => {
   // there is no terminating ']' at the end of this query:
-  const source = `[FunctionDefinition @id [Identifier]`;
+  const source = `[FunctionDefinition @id [FunctionName]`;
 
   try {
     Query.create(source);
@@ -41,20 +44,20 @@ test("query syntax error", () => {
     expect(error).toEqual({
       message: `Parse error:
 expected ']' at: 
-Alt at: [FunctionDefinition @id [Identifier]
+Alt at: [FunctionDefinition @id [FunctionName]
 `,
       textRange: {
         start: {
-          utf8: 36,
-          utf16: 36,
+          utf8: 38,
+          utf16: 38,
           line: 0,
-          column: 36,
+          column: 38,
         },
         end: {
-          utf8: 36,
-          utf16: 36,
+          utf8: 38,
+          utf16: 38,
           line: 0,
-          column: 36,
+          column: 38,
         },
       },
     } satisfies QueryError);
