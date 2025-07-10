@@ -6,24 +6,13 @@ import {
   MemberAccessExpression,
   PrefixExpression,
   SourceUnit,
-  SourceUnitMembers,
   ContractDefinition,
-  Parameters,
   FunctionDefinition,
   Block,
-  VariableDeclarationStatement,
   StateVariableDefinition,
-  InheritanceSpecifier,
-  InheritanceType,
   IdentifierPath,
 } from "@nomicfoundation/slang/ast";
-import {
-  assertNonterminalNode,
-  assertTerminalNode,
-  NonterminalKind,
-  TerminalKind,
-  TerminalNode,
-} from "@nomicfoundation/slang/cst";
+import { assertNonterminalNode, assertTerminalNode, NonterminalKind, TerminalKind } from "@nomicfoundation/slang/cst";
 import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 test("create and use sequence types", () => {
