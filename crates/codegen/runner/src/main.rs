@@ -9,7 +9,6 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use solidity_language::SolidityDefinition;
-use testlang_language::TestlangDefinition;
 
 use crate::passes::generate_passes;
 
@@ -61,30 +60,6 @@ fn main() {
                 &SolidityDefinition::create(),
                 "codegen_runtime_npm_package",
                 "solidity_npm_package",
-            )
-        },
-        || {
-            generate_product(
-                &mut CodegenFileSystem::default(),
-                &TestlangDefinition::create(),
-                "codegen_runtime_cargo_crate",
-                "slang_testlang",
-            )
-        },
-        || {
-            generate_product(
-                &mut CodegenFileSystem::default(),
-                &TestlangDefinition::create(),
-                "codegen_runtime_cargo_wasm",
-                "testlang_cargo_wasm",
-            )
-        },
-        || {
-            generate_product(
-                &mut CodegenFileSystem::default(),
-                &TestlangDefinition::create(),
-                "codegen_runtime_npm_package",
-                "testlang_npm_package",
             )
         },
     ]
