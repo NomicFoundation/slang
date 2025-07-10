@@ -868,6 +868,8 @@ pub enum Typing {
     Resolved(TypeId),
     Undetermined(Vec<TypeId>),
     MetaType(NodeId),
+    This,
+    Super,
 }
 
 impl Typing {
