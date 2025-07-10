@@ -113,17 +113,18 @@ impl Pass {
             let resolution = if let Some(scope_id) = resolution_scope_id {
                 self.binder
                     .resolve_single_in_scope_recursively(scope_id, &identifier.unparse())
+                    .non_ambiguous()
             } else {
                 Resolution::Unresolved
             };
+            let definition_id = resolution.as_definition_id();
 
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
 
             // recurse into file scopes pointed by the resolved definition to
             // resolve the next identifier in the path
-            resolution_scope_id = resolution
-                .as_definition_id()
+            resolution_scope_id = definition_id
                 .and_then(|node_id| self.binder.find_definition_by_id(node_id))
                 .and_then(|definition| {
                     if let Definition::Import(ImportDefinition {
@@ -159,17 +160,18 @@ impl Pass {
             let resolution = if let Some(scope_id) = scope_id {
                 self.binder
                     .resolve_single_in_scope_recursively(scope_id, &identifier.unparse())
+                    .non_ambiguous()
             } else {
                 Resolution::Unresolved
             };
+            let definition_id = resolution.as_definition_id();
 
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
 
             // recurse into file scopes pointed by the resolved definition
             // to resolve the next identifier in the path
-            scope_id = resolution
-                .as_definition_id()
+            scope_id = definition_id
                 .and_then(|node_id| self.binder.find_definition_by_id(node_id))
                 .and_then(|definition| match definition {
                     Definition::Import(ImportDefinition {
@@ -498,7 +500,7 @@ impl Visitor for Pass {
     fn leave_contract_definition(&mut self, node: &input_ir::ContractDefinition) {
         self.leave_scope_for_node_id(node.node_id);
 
-        self.binder.mark_pseudo_type_node(node.node_id);
+        self.binder.mark_meta_type_node(node.node_id);
     }
 
     fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {
@@ -514,7 +516,7 @@ impl Visitor for Pass {
     fn leave_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) {
         self.leave_scope_for_node_id(node.node_id);
 
-        self.binder.mark_pseudo_type_node(node.node_id);
+        self.binder.mark_meta_type_node(node.node_id);
     }
 
     fn enter_library_definition(&mut self, node: &input_ir::LibraryDefinition) -> bool {
@@ -525,17 +527,17 @@ impl Visitor for Pass {
     fn leave_library_definition(&mut self, node: &input_ir::LibraryDefinition) {
         self.leave_scope_for_node_id(node.node_id);
 
-        self.binder.mark_pseudo_type_node(node.node_id);
+        self.binder.mark_meta_type_node(node.node_id);
     }
 
     fn leave_path_import(&mut self, node: &input_ir::PathImport) {
         if node.alias.is_some() {
-            self.binder.mark_pseudo_type_node(node.node_id);
+            self.binder.mark_meta_type_node(node.node_id);
         }
     }
 
     fn leave_named_import(&mut self, node: &input_ir::NamedImport) {
-        self.binder.mark_pseudo_type_node(node.node_id);
+        self.binder.mark_meta_type_node(node.node_id);
     }
 
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
@@ -572,7 +574,7 @@ impl Visitor for Pass {
     }
 
     fn leave_event_definition(&mut self, node: &input_ir::EventDefinition) {
-        self.binder.mark_pseudo_type_node(node.node_id);
+        self.binder.mark_meta_type_node(node.node_id);
     }
 
     fn leave_event_parameter(&mut self, node: &input_ir::EventParameter) {
@@ -584,7 +586,7 @@ impl Visitor for Pass {
     }
 
     fn leave_error_definition(&mut self, node: &input_ir::ErrorDefinition) {
-        self.binder.mark_pseudo_type_node(node.node_id);
+        self.binder.mark_meta_type_node(node.node_id);
     }
 
     fn leave_error_parameter(&mut self, node: &input_ir::ErrorParameter) {
@@ -636,7 +638,7 @@ impl Visitor for Pass {
     }
 
     fn leave_struct_definition(&mut self, node: &input_ir::StructDefinition) {
-        self.binder.mark_pseudo_type_node(node.node_id);
+        self.binder.mark_meta_type_node(node.node_id);
     }
 
     fn leave_struct_member(&mut self, node: &input_ir::StructMember) {
@@ -652,7 +654,7 @@ impl Visitor for Pass {
             self.binder.set_node_type(member.id(), Some(type_id));
         }
 
-        self.binder.mark_pseudo_type_node(node.node_id);
+        self.binder.mark_meta_type_node(node.node_id);
     }
 
     fn leave_user_defined_value_type_definition(

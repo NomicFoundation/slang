@@ -4,10 +4,10 @@ use std::rc::Rc;
 use semver::Version;
 
 use super::p3_type_definitions::Output as Input;
-use crate::backend::binder::{Binder, BuiltIn, Reference, Resolution, ScopeId, Typing};
+use crate::backend::binder::{Binder, BuiltIn, Definition, Reference, Resolution, ScopeId, Typing};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
-use crate::backend::types::{Type, TypeId, TypeRegistry};
+use crate::backend::types::{DataLocation, Type, TypeId, TypeRegistry};
 use crate::compilation::CompilationUnit;
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
@@ -88,6 +88,47 @@ impl Pass {
         // TODO: we need to do hierarchy lookups for contracts and interfaces
         self.binder
             .resolve_single_in_scope_recursively(scope_id, symbol)
+    }
+
+    fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
+        match typing {
+            Typing::Unresolved | Typing::Undetermined(_) => Resolution::Unresolved,
+            Typing::Resolved(type_id) => self.resolve_symbol_in_type(*type_id, symbol),
+            Typing::MetaType(node_id) => {
+                let Some(definition) = self.binder.find_definition_by_id(*node_id) else {
+                    return Resolution::Unresolved;
+                };
+                match definition {
+                    Definition::Error(_) => Resolution::BuiltIn(BuiltIn::ErrorType),
+                    Definition::Event(_) => Resolution::BuiltIn(BuiltIn::EventType),
+                    Definition::Import(import_definition) => {
+                        if let Some(scope_id) = import_definition
+                            .resolved_file_id
+                            .as_ref()
+                            .and_then(|file_id| self.binder.scope_id_for_file_id(file_id))
+                        {
+                            self.binder
+                                .resolve_single_in_scope_recursively(scope_id, symbol)
+                        } else {
+                            Resolution::Unresolved
+                        }
+                    }
+                    Definition::Contract(_)
+                    | Definition::Enum(_)
+                    | Definition::Interface(_)
+                    | Definition::Library(_) => {
+                        // this is a "namespace" lookup
+                        if let Some(scope_id) = self.binder.scope_id_for_node_id(*node_id) {
+                            self.binder
+                                .resolve_single_in_scope_recursively(scope_id, symbol)
+                        } else {
+                            Resolution::Unresolved
+                        }
+                    }
+                    _ => Resolution::Unresolved,
+                }
+            }
+        }
     }
 
     fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: &str) -> Resolution {
@@ -208,9 +249,8 @@ impl Pass {
             input_ir::Expression::TupleExpression(tuple_expression) => {
                 self.binder.node_typing(tuple_expression.node_id)
             }
-            input_ir::Expression::TypeExpression(_) => {
-                // TODO
-                Typing::Unresolved
+            input_ir::Expression::TypeExpression(type_expression) => {
+                self.binder.node_typing(type_expression.node_id)
             }
             input_ir::Expression::ArrayExpression(array_expression) => {
                 self.binder.node_typing(array_expression.node_id)
@@ -228,22 +268,28 @@ impl Pass {
             }
             input_ir::Expression::Identifier(identifier) => self.typing_of_identifier(identifier),
             input_ir::Expression::PayableKeyword => {
-                // TODO
+                // TODO: we need to support casting here
                 Typing::Unresolved
             }
             input_ir::Expression::ThisKeyword => {
-                // TODO
+                // FIXME: this probably needs a special value to signal the
+                // resolution algorithm that we need special lookup rules to
+                // resolve member accesses
                 Typing::Unresolved
             }
             input_ir::Expression::SuperKeyword => {
-                // TODO
+                // FIXME: this probably needs a special value to signal the
+                // resolution algorithm that we need special lookup rules to
+                // resolve member accesses
                 Typing::Unresolved
             }
         }
     }
 
     fn typing_of_identifier(&self, identifier: &Rc<TerminalNode>) -> Typing {
-        // TODO: handle built-ins
+        // TODO: handle built-ins as possible definition types
+        // TODO: handle whatever representation we choose for the ambiguity on
+        // overloads and transform into `Typing::Undetermined`
         let Some(definition_id) = self
             .binder
             .find_reference_by_identifier_node_id(identifier.id())
@@ -295,24 +341,47 @@ impl Pass {
         Some(result)
     }
 
-    fn typing_of_resolution(&mut self, resolution: Resolution) -> Typing {
+    fn typing_of_resolution(&mut self, resolution: &Resolution) -> Typing {
         match resolution {
             Resolution::Unresolved => Typing::Unresolved,
             Resolution::BuiltIn(built_in) => match built_in {
                 BuiltIn::ArrayPush(type_id) => Typing::Undetermined(vec![
                     self.types
-                        .register_type(Type::built_in_function(vec![type_id], self.types.void())),
+                        .register_type(Type::built_in_function(vec![*type_id], self.types.void())),
                     self.types
-                        .register_type(Type::built_in_function(vec![], type_id)),
+                        .register_type(Type::built_in_function(vec![], *type_id)),
                 ]),
                 BuiltIn::ArrayPop => Typing::Resolved(
                     self.types
                         .register_type(Type::built_in_function(vec![], self.types.void())),
                 ),
                 BuiltIn::Balance => Typing::Resolved(self.types.uint256()),
+                BuiltIn::ErrorType => {
+                    // TODO: this types to a "struct" that has a `selector` field
+                    // https://docs.soliditylang.org/en/latest/contracts.html#members-of-errors
+                    Typing::Unresolved
+                }
+                BuiltIn::EventType => {
+                    // TODO: this types to a "struct" that has a `selector` field
+                    // https://docs.soliditylang.org/en/latest/contracts.html#members-of-events
+                    Typing::Unresolved
+                }
                 BuiltIn::Length => Typing::Resolved(self.types.uint256()),
             },
-            Resolution::Definition(definition_id) => self.binder.node_typing(definition_id),
+            Resolution::Definition(definition_id) => self.binder.node_typing(*definition_id),
+            Resolution::Ambiguous(definitions) => {
+                // TODO: the resulting vector of possible types does not
+                // necessarily match the resolutions (we can have untyped items,
+                // or, potentially, nested ambiguous items)
+                Typing::Undetermined(
+                    definitions
+                        .iter()
+                        .filter_map(|definition_id| {
+                            self.binder.node_typing(*definition_id).as_type_id()
+                        })
+                        .collect(),
+                )
+            }
         }
     }
 }
@@ -466,6 +535,9 @@ impl Visitor for Pass {
             let scope_id = self.current_scope_id();
             // TODO: we need to use a multi resolution method here, to be able
             // to select function overloads
+            // FIXME: we need the `Resolution` to be able to represent the
+            // ambiguity, which then gets transformed into
+            // `Typing::Undetermined`
             let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
@@ -590,18 +662,14 @@ impl Visitor for Pass {
     fn leave_member_access_expression(&mut self, node: &input_ir::MemberAccessExpression) {
         // we need to resolve the identifier at this point that we already have
         // typing information of the operand expression
-        let parent_type_id = self.typing_of_expression(&node.operand).as_type_id();
-        let resolution = if let Some(parent_type_id) = parent_type_id {
-            self.resolve_symbol_in_type(parent_type_id, &node.member.unparse())
-        } else {
-            Resolution::Unresolved
-        };
+        let operand_typing = self.typing_of_expression(&node.operand);
+        let resolution = self.resolve_symbol_in_typing(&operand_typing, &node.member.unparse());
+
+        let typing = self.typing_of_resolution(&resolution);
+        self.binder.set_node_typing(node.node_id, typing);
 
         let reference = Reference::new(Rc::clone(&node.member), resolution);
         self.binder.insert_reference(reference);
-
-        let typing = self.typing_of_resolution(resolution);
-        self.binder.set_node_typing(node.node_id, typing);
     }
 
     fn leave_index_access_expression(&mut self, node: &input_ir::IndexAccessExpression) {
@@ -651,16 +719,33 @@ impl Visitor for Pass {
                 // TODO: maybe update the typing of the operand?
                 Typing::Unresolved
             }
-            Typing::PseudoType => {
-                // TODO: maybe this should be an error?
-                Typing::Unresolved
+            Typing::MetaType(node_id) => {
+                if let Some(definition) = self.binder.find_definition_by_id(node_id) {
+                    match definition {
+                        Definition::Contract(_) => {
+                            // TODO: we may want to use to follow up on new() expression
+                            Typing::Unresolved
+                        }
+                        Definition::Struct(_) => {
+                            // struct constructor
+                            Typing::Resolved(self.types.register_type(Type::Struct {
+                                definition_id: node_id,
+                                location: DataLocation::Memory,
+                            }))
+                        }
+                        _ => Typing::Unresolved,
+                    }
+                } else {
+                    Typing::Unresolved
+                }
             }
         };
         self.binder.set_node_typing(node.node_id, typing);
     }
 
     fn leave_new_expression(&mut self, node: &input_ir::NewExpression) {
-        // TODO: this should type to the constructor signature of the given type name
+        // TODO: this should type to the constructor signature of the given type
+        // name to be able to type a function call expression
         let typing = Typing::Unresolved;
         self.binder.set_node_typing(node.node_id, typing);
     }
@@ -670,7 +755,15 @@ impl Visitor for Pass {
         self.binder.set_node_typing(node.node_id, typing);
     }
 
+    fn leave_type_expression(&mut self, node: &input_ir::TypeExpression) {
+        // FIXME: this probably needs a special value to represent the
+        // meta-type
+        let typing = Typing::Unresolved;
+        self.binder.set_node_typing(node.node_id, typing);
+    }
+
     fn enter_yul_path(&mut self, items: &input_ir::YulPath) -> bool {
+        // TODO: on old Solidity versions, handle the `_offset` and `_slot` suffixes
         // resolve the first item in the path
         if let Some(identifier) = items.first() {
             let scope_id = self.current_scope_id();
@@ -680,6 +773,8 @@ impl Visitor for Pass {
         }
 
         // TODO: resolve the rest of the items
+        // TODO: introduce special handling for the `.offset`, `.slot` and
+        // `.selector` members
 
         false
     }

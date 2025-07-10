@@ -434,20 +434,41 @@ pub enum BuiltIn {
     ArrayPop,
     ArrayPush(TypeId),
     Balance,
+    ErrorType,
+    EventType,
     Length,
+    // TODO: complete this list
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // References
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Resolution {
     Unresolved,
     Definition(NodeId),
+    Ambiguous(Vec<NodeId>),
     BuiltIn(BuiltIn),
 }
 
 impl Resolution {
+    pub fn as_definition_id(&self) -> Option<NodeId> {
+        if let Resolution::Definition(definition_id) = self {
+            Some(*definition_id)
+        } else {
+            None
+        }
+    }
+
+    #[must_use]
+    pub fn non_ambiguous(self) -> Self {
+        if matches!(self, Self::Ambiguous(_)) {
+            Self::Unresolved
+        } else {
+            self
+        }
+    }
+
     fn or_else<F>(self, f: F) -> Self
     where
         F: FnOnce() -> Self,
@@ -476,16 +497,6 @@ impl From<Option<&NodeId>> for Resolution {
             Self::Definition(*definition_id)
         } else {
             Self::Unresolved
-        }
-    }
-}
-
-impl Resolution {
-    pub fn as_definition_id(&self) -> Option<NodeId> {
-        if let Resolution::Definition(definition_id) = self {
-            Some(*definition_id)
-        } else {
-            None
         }
     }
 }
@@ -856,7 +867,7 @@ pub enum Typing {
     Unresolved,
     Resolved(TypeId),
     Undetermined(Vec<TypeId>),
-    PseudoType,
+    MetaType(NodeId),
 }
 
 impl Typing {
@@ -972,8 +983,8 @@ impl Binder {
             .expect("expected node to have typing information")
     }
 
-    pub(crate) fn mark_pseudo_type_node(&mut self, node_id: NodeId) {
-        self.node_typing.insert(node_id, Typing::PseudoType);
+    pub(crate) fn mark_meta_type_node(&mut self, node_id: NodeId) {
+        self.node_typing.insert(node_id, Typing::MetaType(node_id));
     }
 
     pub(crate) fn set_node_type(&mut self, node_id: NodeId, type_id: Option<TypeId>) {

@@ -165,13 +165,19 @@ fn render_bindings_for_file(
             continue;
         }
 
-        let message = match reference.definition {
+        let message = match &reference.definition {
             Resolution::Unresolved => "unresolved".to_string(),
             Resolution::BuiltIn(_) => "built-in".to_string(),
             Resolution::Definition(definition_id) => {
                 format!(
                     "ref: {definition_id}",
-                    definition_id = definitions_by_id.get(&definition_id).unwrap()
+                    definition_id = definitions_by_id.get(definition_id).unwrap()
+                )
+            }
+            Resolution::Ambiguous(definitions) => {
+                format!(
+                    "refs: {ids:?}",
+                    ids = definitions.iter().map(|id| definitions_by_id.get(id))
                 )
             }
         };
@@ -358,9 +364,9 @@ impl CollectedDefinitionDisplay<'_> {
             slang_solidity::backend::binder::Typing::Undetermined(type_ids) => {
                 format!("unresolved {count} overloads", count = type_ids.len())
             }
-            slang_solidity::backend::binder::Typing::PseudoType => {
-                // TODO: this is unreachable, so maybe we should panic?
-                "pseudo-type".to_string()
+            slang_solidity::backend::binder::Typing::MetaType(node_id) => {
+                assert_eq!(node_id, self.definition.definition_id);
+                "meta-type".to_string()
             }
         }
     }
@@ -500,11 +506,17 @@ impl Display for CollectedReferenceDisplay<'_> {
             "Ref: [\"{identifier}\" @ {file_id}:{line}:{column}] -> {definition}",
             identifier = self.0.cursor.node().unparse(),
             file_id = self.0.file_id,
-            definition = match self.0.definition {
+            definition = match &self.0.definition {
                 Resolution::Unresolved => "unresolved".to_string(),
                 Resolution::BuiltIn(_) => "built-in".to_string(),
                 Resolution::Definition(definition_id) => {
-                    format!("#{id}", id = self.1.get(&definition_id).unwrap())
+                    format!("#{id}", id = self.1.get(definition_id).unwrap())
+                }
+                Resolution::Ambiguous(definitions) => {
+                    format!(
+                        "refs: {ids:?}",
+                        ids = definitions.iter().map(|id| self.1.get(id))
+                    )
                 }
             }
         )
@@ -585,7 +597,7 @@ fn collect_all_definitions_and_references(
                 all_references.push(CollectedReference {
                     cursor: cursor.clone(),
                     file_id: file.id().to_string(),
-                    definition: reference.resolution,
+                    definition: reference.resolution.clone(),
                 });
                 bound = true;
             }
