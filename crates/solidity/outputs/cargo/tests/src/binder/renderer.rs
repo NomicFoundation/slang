@@ -368,6 +368,11 @@ impl CollectedDefinitionDisplay<'_> {
                 assert_eq!(node_id, self.definition.definition_id);
                 "meta-type".to_string()
             }
+            Typing::BuiltIn(_built_in) => {
+                // TODO: this should be unreachable because there should be no
+                // definitions that type to a built-in
+                "built-in".to_string()
+            }
         }
     }
 

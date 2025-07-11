@@ -141,6 +141,17 @@ impl Pass {
                     _ => Resolution::Unresolved,
                 }
             }
+            Typing::BuiltIn(built_in) => match built_in {
+                BuiltIn::ErrorType => match symbol {
+                    "selector" => Resolution::BuiltIn(BuiltIn::Selector),
+                    _ => Resolution::Unresolved,
+                },
+                BuiltIn::EventType => match symbol {
+                    "selector" => Resolution::BuiltIn(BuiltIn::Selector),
+                    _ => Resolution::Unresolved,
+                },
+                _ => Resolution::Unresolved,
+            },
         }
     }
 
@@ -289,19 +300,13 @@ impl Pass {
     }
 
     fn typing_of_identifier(&self, identifier: &Rc<TerminalNode>) -> Typing {
-        // TODO: handle built-ins as possible definition types
-        // TODO: handle whatever representation we choose for the ambiguity on
-        // overloads and transform into `Typing::Undetermined`
-        let Some(definition_id) = self
+        let resolution = self
             .binder
             .find_reference_by_identifier_node_id(identifier.id())
             .unwrap()
             .resolution
-            .as_definition_id()
-        else {
-            return Typing::Unresolved;
-        };
-        self.binder.node_typing(definition_id)
+            .clone();
+        self.typing_of_resolution(&resolution)
     }
 
     fn type_of_integer_binary_expression(
@@ -343,46 +348,28 @@ impl Pass {
         Some(result)
     }
 
-    fn typing_of_resolution(&mut self, resolution: &Resolution) -> Typing {
+    fn typing_of_resolution(&self, resolution: &Resolution) -> Typing {
         match resolution {
             Resolution::Unresolved => Typing::Unresolved,
             Resolution::BuiltIn(built_in) => match built_in {
-                BuiltIn::ArrayPush(type_id) => Typing::Undetermined(vec![
-                    self.types
-                        .register_type(Type::built_in_function(vec![*type_id], self.types.void())),
-                    self.types
-                        .register_type(Type::built_in_function(vec![], *type_id)),
-                ]),
-                BuiltIn::ArrayPop => Typing::Resolved(
-                    self.types
-                        .register_type(Type::built_in_function(vec![], self.types.void())),
-                ),
                 BuiltIn::Balance => Typing::Resolved(self.types.uint256()),
-                BuiltIn::ErrorType => {
-                    // TODO: this types to a "struct" that has a `selector` field
-                    // https://docs.soliditylang.org/en/latest/contracts.html#members-of-errors
-                    Typing::Unresolved
-                }
-                BuiltIn::EventType => {
-                    // TODO: this types to a "struct" that has a `selector` field
-                    // https://docs.soliditylang.org/en/latest/contracts.html#members-of-events
-                    Typing::Unresolved
-                }
                 BuiltIn::Length => Typing::Resolved(self.types.uint256()),
+                BuiltIn::Selector => Typing::Resolved(self.types.bytes4()),
+                BuiltIn::ArrayPop
+                | BuiltIn::ArrayPush(_)
+                | BuiltIn::ErrorType
+                | BuiltIn::EventType => Typing::BuiltIn(*built_in),
             },
             Resolution::Definition(definition_id) => self.binder.node_typing(*definition_id),
             Resolution::Ambiguous(definitions) => {
-                // TODO: the resulting vector of possible types does not
-                // necessarily match the resolutions (we can have untyped items,
-                // or, potentially, nested ambiguous items)
-                Typing::Undetermined(
-                    definitions
-                        .iter()
-                        .filter_map(|definition_id| {
-                            self.binder.node_typing(*definition_id).as_type_id()
-                        })
-                        .collect(),
-                )
+                // TODO: we need some sort of link between the definition_id and the resulting type
+                let mut type_ids = Vec::new();
+                for definition_id in definitions {
+                    if let Typing::Resolved(type_id) = self.binder.node_typing(*definition_id) {
+                        type_ids.push(type_id);
+                    }
+                }
+                Typing::Undetermined(type_ids)
             }
         }
     }
@@ -703,45 +690,70 @@ impl Visitor for Pass {
 
     fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {
         let operand_typing = self.typing_of_expression(&node.operand);
-        let typing = match operand_typing {
-            Typing::Unresolved | Typing::This | Typing::Super => Typing::Unresolved,
-            Typing::Resolved(type_id) => {
-                let operand_type = self.types.get_type_by_id(type_id).unwrap();
-                match operand_type {
-                    Type::Function { return_type, .. } => Typing::Resolved(*return_type),
-                    // TODO: support other types that can be called
-                    _ => {
-                        // TODO(validation): the operand did not resolve to a function
+        let typing =
+            match operand_typing {
+                Typing::Unresolved | Typing::This | Typing::Super => Typing::Unresolved,
+                Typing::Resolved(type_id) => {
+                    let operand_type = self.types.get_type_by_id(type_id).unwrap();
+                    match operand_type {
+                        Type::Function { return_type, .. } => Typing::Resolved(*return_type),
+                        // TODO: support other types that can be called
+                        _ => {
+                            // TODO(validation): the operand did not resolve to a function
+                            Typing::Unresolved
+                        }
+                    }
+                }
+                Typing::Undetermined(_type_ids) => {
+                    // TODO: resolve argument types and match best overload
+                    // TODO: maybe update the typing of the operand?
+                    Typing::Unresolved
+                }
+                Typing::MetaType(node_id) => {
+                    if let Some(definition) = self.binder.find_definition_by_id(node_id) {
+                        match definition {
+                            Definition::Contract(_) => {
+                                // TODO: we may want to use to follow up on new() expression
+                                Typing::Unresolved
+                            }
+                            Definition::Struct(_) => {
+                                // struct constructor
+                                Typing::Resolved(self.types.register_type(Type::Struct {
+                                    definition_id: node_id,
+                                    location: DataLocation::Memory,
+                                }))
+                            }
+                            _ => Typing::Unresolved,
+                        }
+                    } else {
                         Typing::Unresolved
                     }
                 }
-            }
-            Typing::Undetermined(_type_ids) => {
-                // TODO: resolve argument types and match best overload
-                // TODO: maybe update the typing of the operand?
-                Typing::Unresolved
-            }
-            Typing::MetaType(node_id) => {
-                if let Some(definition) = self.binder.find_definition_by_id(node_id) {
-                    match definition {
-                        Definition::Contract(_) => {
-                            // TODO: we may want to use to follow up on new() expression
+                Typing::BuiltIn(built_in) => {
+                    match built_in {
+                        BuiltIn::ArrayPush(type_id) => match &node.arguments {
+                            input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(named)
+                                if named.arguments.is_none()
+                                    || named
+                                        .arguments
+                                        .as_ref()
+                                        .is_some_and(|args| args.arguments.is_empty()) =>
+                            {
+                                Typing::Resolved(type_id)
+                            }
+                            input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(
+                                args,
+                            ) if args.arguments.is_empty() => Typing::Resolved(type_id),
+                            _ => Typing::Resolved(self.types.void()),
+                        },
+                        BuiltIn::ArrayPop => Typing::Resolved(self.types.void()),
+                        _ => {
+                            // none of these built-ins can be called
                             Typing::Unresolved
                         }
-                        Definition::Struct(_) => {
-                            // struct constructor
-                            Typing::Resolved(self.types.register_type(Type::Struct {
-                                definition_id: node_id,
-                                location: DataLocation::Memory,
-                            }))
-                        }
-                        _ => Typing::Unresolved,
                     }
-                } else {
-                    Typing::Unresolved
                 }
-            }
-        };
+            };
         self.binder.set_node_typing(node.node_id, typing);
     }
 

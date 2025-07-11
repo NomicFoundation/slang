@@ -10,6 +10,7 @@ pub slang_solidity::backend::binder::BuiltIn::Balance
 pub slang_solidity::backend::binder::BuiltIn::ErrorType
 pub slang_solidity::backend::binder::BuiltIn::EventType
 pub slang_solidity::backend::binder::BuiltIn::Length
+pub slang_solidity::backend::binder::BuiltIn::Selector
 impl core::clone::Clone for slang_solidity::backend::binder::BuiltIn
 pub fn slang_solidity::backend::binder::BuiltIn::clone(&self) -> slang_solidity::backend::binder::BuiltIn
 impl core::cmp::Eq for slang_solidity::backend::binder::BuiltIn
@@ -82,6 +83,7 @@ pub slang_solidity::backend::binder::Scope::YulFunction(slang_solidity::backend:
 impl slang_solidity::backend::binder::Scope
 pub fn slang_solidity::backend::binder::Scope::node_id(&self) -> metaslang_cst::nodes::NodeId
 pub enum slang_solidity::backend::binder::Typing
+pub slang_solidity::backend::binder::Typing::BuiltIn(slang_solidity::backend::binder::BuiltIn)
 pub slang_solidity::backend::binder::Typing::MetaType(metaslang_cst::nodes::NodeId)
 pub slang_solidity::backend::binder::Typing::Resolved(slang_solidity::backend::types::TypeId)
 pub slang_solidity::backend::binder::Typing::Super
@@ -7748,6 +7750,7 @@ impl slang_solidity::backend::types::TypeRegistry
 pub fn slang_solidity::backend::types::TypeRegistry::address(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::boolean(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::byte(&self) -> slang_solidity::backend::types::TypeId
+pub fn slang_solidity::backend::types::TypeRegistry::bytes4(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::rational(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::string(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::uint256(&self) -> slang_solidity::backend::types::TypeId

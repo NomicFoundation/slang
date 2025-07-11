@@ -12,6 +12,7 @@ pub struct TypeRegistry {
     address_type_id: TypeId,
     boolean_type_id: TypeId,
     byte_type_id: TypeId,
+    bytes4_type_id: TypeId,
     rational_type_id: TypeId,
     string_type_id: TypeId,
     uint256_type_id: TypeId,
@@ -27,6 +28,7 @@ impl TypeRegistry {
             signed: false,
             bits: 8,
         });
+        let (bytes4_type, _) = types.insert_full(Type::ByteArray { width: 4 });
         let (rational_type, _) = types.insert_full(Type::Rational);
         let (string_type, _) = types.insert_full(Type::String {
             location: DataLocation::Memory,
@@ -43,6 +45,7 @@ impl TypeRegistry {
             address_type_id: TypeId(address_type),
             boolean_type_id: TypeId(boolean_type),
             byte_type_id: TypeId(byte_type),
+            bytes4_type_id: TypeId(bytes4_type),
             rational_type_id: TypeId(rational_type),
             string_type_id: TypeId(string_type),
             uint256_type_id: TypeId(uint256_type),
@@ -116,6 +119,9 @@ impl TypeRegistry {
     }
     pub fn byte(&self) -> TypeId {
         self.byte_type_id
+    }
+    pub fn bytes4(&self) -> TypeId {
+        self.bytes4_type_id
     }
     pub fn rational(&self) -> TypeId {
         self.rational_type_id
@@ -203,17 +209,6 @@ pub enum Type {
         definition_id: NodeId,
     },
     Void,
-}
-
-impl Type {
-    pub(crate) fn built_in_function(parameter_types: Vec<TypeId>, return_type: TypeId) -> Self {
-        Self::Function {
-            parameter_types,
-            return_type,
-            external: false,
-            kind: FunctionTypeKind::Pure,
-        }
-    }
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]

@@ -437,6 +437,7 @@ pub enum BuiltIn {
     ErrorType,
     EventType,
     Length,
+    Selector,
     // TODO: complete this list
 }
 
@@ -868,6 +869,7 @@ pub enum Typing {
     Resolved(TypeId),
     Undetermined(Vec<TypeId>),
     MetaType(NodeId),
+    BuiltIn(BuiltIn),
     This,
     Super,
 }
