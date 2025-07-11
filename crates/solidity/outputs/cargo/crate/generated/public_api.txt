@@ -11,6 +11,9 @@ pub slang_solidity::backend::binder::BuiltIn::ErrorType
 pub slang_solidity::backend::binder::BuiltIn::EventType
 pub slang_solidity::backend::binder::BuiltIn::Length
 pub slang_solidity::backend::binder::BuiltIn::Selector
+pub slang_solidity::backend::binder::BuiltIn::Tx
+pub slang_solidity::backend::binder::BuiltIn::TxGasPrice
+pub slang_solidity::backend::binder::BuiltIn::TxOrigin
 impl core::clone::Clone for slang_solidity::backend::binder::BuiltIn
 pub fn slang_solidity::backend::binder::BuiltIn::clone(&self) -> slang_solidity::backend::binder::BuiltIn
 impl core::cmp::Eq for slang_solidity::backend::binder::BuiltIn

@@ -438,6 +438,9 @@ pub enum BuiltIn {
     EventType,
     Length,
     Selector,
+    Tx,
+    TxGasPrice,
+    TxOrigin,
     // TODO: complete this list
 }
 

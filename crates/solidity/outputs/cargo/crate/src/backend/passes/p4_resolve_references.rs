@@ -84,12 +84,30 @@ impl Pass {
         self.scope_stack.last().copied().unwrap()
     }
 
+    fn lookup_global_built_in(symbol: &str) -> Option<BuiltIn> {
+        match symbol {
+            "tx" => Some(BuiltIn::Tx),
+            // TODO: add the rest of the built-ins
+            _ => None,
+        }
+    }
+
     fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         // TODO: this is the "top-level" (ie. non member access) resolution
         // method, and so we need to do hierarchy lookups for contracts and
         // interfaces if we're in the scope of a contract/interface/library
-        self.binder
-            .resolve_single_in_scope_recursively(scope_id, symbol)
+        let resolution = self
+            .binder
+            .resolve_single_in_scope_recursively(scope_id, symbol);
+        if resolution == Resolution::Unresolved {
+            if let Some(built_in) = Self::lookup_global_built_in(symbol) {
+                Resolution::BuiltIn(built_in)
+            } else {
+                Resolution::Unresolved
+            }
+        } else {
+            resolution
+        }
     }
 
     fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
@@ -148,6 +166,11 @@ impl Pass {
                 },
                 BuiltIn::EventType => match symbol {
                     "selector" => Resolution::BuiltIn(BuiltIn::Selector),
+                    _ => Resolution::Unresolved,
+                },
+                BuiltIn::Tx => match symbol {
+                    "gasprice" => Resolution::BuiltIn(BuiltIn::TxGasPrice),
+                    "origin" => Resolution::BuiltIn(BuiltIn::TxOrigin),
                     _ => Resolution::Unresolved,
                 },
                 _ => Resolution::Unresolved,
@@ -355,10 +378,13 @@ impl Pass {
                 BuiltIn::Balance => Typing::Resolved(self.types.uint256()),
                 BuiltIn::Length => Typing::Resolved(self.types.uint256()),
                 BuiltIn::Selector => Typing::Resolved(self.types.bytes4()),
+                BuiltIn::TxGasPrice => Typing::Resolved(self.types.uint256()),
+                BuiltIn::TxOrigin => Typing::Resolved(self.types.address()),
                 BuiltIn::ArrayPop
                 | BuiltIn::ArrayPush(_)
                 | BuiltIn::ErrorType
-                | BuiltIn::EventType => Typing::BuiltIn(*built_in),
+                | BuiltIn::EventType
+                | BuiltIn::Tx => Typing::BuiltIn(*built_in),
             },
             Resolution::Definition(definition_id) => self.binder.node_typing(*definition_id),
             Resolution::Ambiguous(definitions) => {
