@@ -112,7 +112,7 @@ impl Pass {
         for identifier in identifier_path {
             let resolution = if let Some(scope_id) = resolution_scope_id {
                 self.binder
-                    .resolve_single_in_scope_recursively(scope_id, &identifier.unparse())
+                    .resolve_in_scope_recursively(scope_id, &identifier.unparse())
                     .non_ambiguous()
             } else {
                 Resolution::Unresolved
@@ -159,7 +159,7 @@ impl Pass {
         for identifier in identifier_path {
             let resolution = if let Some(scope_id) = scope_id {
                 self.binder
-                    .resolve_single_in_scope_recursively(scope_id, &identifier.unparse())
+                    .resolve_in_scope_recursively(scope_id, &identifier.unparse())
                     .non_ambiguous()
             } else {
                 Resolution::Unresolved

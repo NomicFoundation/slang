@@ -96,9 +96,7 @@ impl Pass {
         // TODO: this is the "top-level" (ie. non member access) resolution
         // method, and so we need to do hierarchy lookups for contracts and
         // interfaces if we're in the scope of a contract/interface/library
-        let resolution = self
-            .binder
-            .resolve_single_in_scope_recursively(scope_id, symbol);
+        let resolution = self.binder.resolve_in_scope_recursively(scope_id, symbol);
         if resolution == Resolution::Unresolved {
             if let Some(built_in) = Self::lookup_global_built_in(symbol) {
                 Resolution::BuiltIn(built_in)
@@ -138,8 +136,7 @@ impl Pass {
                             .as_ref()
                             .and_then(|file_id| self.binder.scope_id_for_file_id(file_id))
                         {
-                            self.binder
-                                .resolve_single_in_scope_recursively(scope_id, symbol)
+                            self.binder.resolve_in_scope_recursively(scope_id, symbol)
                         } else {
                             Resolution::Unresolved
                         }
@@ -150,8 +147,7 @@ impl Pass {
                     | Definition::Library(_) => {
                         // this is a "namespace" lookup
                         if let Some(scope_id) = self.binder.scope_id_for_node_id(*node_id) {
-                            self.binder
-                                .resolve_single_in_scope_recursively(scope_id, symbol)
+                            self.binder.resolve_in_scope_recursively(scope_id, symbol)
                         } else {
                             Resolution::Unresolved
                         }

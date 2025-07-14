@@ -464,6 +464,14 @@ impl Resolution {
         }
     }
 
+    fn get_definition_ids(&self) -> Vec<NodeId> {
+        match self {
+            Resolution::Definition(id) => vec![*id],
+            Resolution::Ambiguous(ids) => ids.clone(),
+            _ => Vec::new(),
+        }
+    }
+
     #[must_use]
     pub fn non_ambiguous(self) -> Self {
         if matches!(self, Self::Ambiguous(_)) {
@@ -501,6 +509,16 @@ impl From<Option<&NodeId>> for Resolution {
             Self::Definition(*definition_id)
         } else {
             Self::Unresolved
+        }
+    }
+}
+
+impl From<Vec<NodeId>> for Resolution {
+    fn from(mut value: Vec<NodeId>) -> Self {
+        match value.len() {
+            0 => Resolution::Unresolved,
+            1 => Resolution::Definition(value.swap_remove(0)),
+            _ => Resolution::Ambiguous(value),
         }
     }
 }
@@ -1023,8 +1041,11 @@ impl Binder {
             .unwrap()
     }
 
-    // resolving a symbol in a file scope is special because of default imports
-    fn resolve_single_in_file_scope(&self, file_id: &str, symbol: &str) -> Resolution {
+    // Resolving a symbol in a file scope is special because of default imports.
+    // We want to find *all* definitions with the given symbol reachable from
+    // the file.
+    fn resolve_in_file_scope(&self, file_id: &str, symbol: &str) -> Resolution {
+        let mut found_definitions = Vec::new();
         let mut visited_files = HashSet::new();
         let mut files_to_search = VecDeque::new();
         files_to_search.push_back(file_id.to_owned());
@@ -1035,47 +1056,40 @@ impl Binder {
                 continue;
             }
 
-            // TODO: should we verify that there is a single definition for the symbol?
-            if let Some(definition) = file_scope.lookup_symbol(symbol).first() {
-                return Resolution::Definition(*definition);
-            }
+            found_definitions.extend(file_scope.lookup_symbol(symbol));
             files_to_search.extend(file_scope.imported_files.iter().cloned());
         }
-        Resolution::Unresolved
+
+        Resolution::from(found_definitions)
     }
 
-    fn resolve_single_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
+    fn resolve_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
             Scope::Block(block_scope) => block_scope.definitions.get(symbol).copied().map_or_else(
-                || self.resolve_single_in_scope(block_scope.parent_scope_id, symbol),
+                || self.resolve_in_scope(block_scope.parent_scope_id, symbol),
                 Resolution::Definition,
             ),
-            Scope::Contract(contract_scope) => contract_scope
-                .definitions
-                .get(symbol)
-                .and_then(|definitions| definitions.first())
-                .copied()
-                .map_or_else(
-                    || self.resolve_single_in_scope(contract_scope.file_scope_id, symbol),
-                    Resolution::Definition,
-                ),
-            Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
-            Scope::File(file_scope) => {
-                self.resolve_single_in_file_scope(&file_scope.file_id, symbol)
+            Scope::Contract(contract_scope) => {
+                contract_scope.definitions.get(symbol).cloned().map_or_else(
+                    || self.resolve_in_scope(contract_scope.file_scope_id, symbol),
+                    Resolution::from,
+                )
             }
+            Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
+            Scope::File(file_scope) => self.resolve_in_file_scope(&file_scope.file_id, symbol),
             Scope::Function(function_scope) => function_scope
                 .definitions
                 .get(symbol)
                 .copied()
                 .map_or_else(
-                    || self.resolve_single_in_scope(function_scope.parameters_scope_id, symbol),
+                    || self.resolve_in_scope(function_scope.parameters_scope_id, symbol),
                     Resolution::Definition,
                 )
-                .or_else(|| self.resolve_single_in_scope(function_scope.parent_scope_id, symbol)),
+                .or_else(|| self.resolve_in_scope(function_scope.parent_scope_id, symbol)),
             Scope::Modifier(modifier_scope) => {
                 modifier_scope.definitions.get(symbol).copied().map_or_else(
-                    || self.resolve_single_in_scope(modifier_scope.parent_scope_id, symbol),
+                    || self.resolve_in_scope(modifier_scope.parent_scope_id, symbol),
                     Resolution::Definition,
                 )
             }
@@ -1086,7 +1100,7 @@ impl Binder {
                 .get(symbol)
                 .copied()
                 .map_or_else(
-                    || self.resolve_single_in_scope(yul_block_scope.parent_scope_id, symbol),
+                    || self.resolve_in_scope(yul_block_scope.parent_scope_id, symbol),
                     Resolution::Definition,
                 ),
             Scope::YulFunction(yul_function_scope) => yul_function_scope
@@ -1094,43 +1108,56 @@ impl Binder {
                 .get(symbol)
                 .copied()
                 .map_or_else(
-                    || self.resolve_single_in_scope(yul_function_scope.enclosing_scope_id, symbol),
+                    || self.resolve_in_scope(yul_function_scope.enclosing_scope_id, symbol),
                     Resolution::Definition,
                 ),
         }
     }
 
-    // Like `resolve_single_in_scope` above, but if the definition found is an
-    // imported symbol, follow it to the imported file, recursively.
-    pub(crate) fn resolve_single_in_scope_recursively(
+    // Like `resolve_in_scope` above, but follow imported symbols recursively.
+    pub(crate) fn resolve_in_scope_recursively(
         &self,
         scope_id: ScopeId,
         symbol: &str,
     ) -> Resolution {
-        let mut scope_id = scope_id;
-        let mut symbol = symbol;
-        let mut visited = HashSet::new();
-        while visited.insert((scope_id, symbol)) {
-            let resolution = self.resolve_single_in_scope(scope_id, symbol);
-            let Resolution::Definition(definition_id) = resolution else {
-                return resolution;
+        let mut found_ids = Vec::new();
+        let mut working_set = Vec::new();
+        let mut seen_ids = HashSet::new();
+
+        working_set.extend(
+            self.resolve_in_scope(scope_id, symbol)
+                .get_definition_ids()
+                .iter()
+                .rev(),
+        );
+        while let Some(definition_id) = working_set.pop() {
+            if !seen_ids.insert(definition_id) {
+                // we already processed this definition
+                continue;
+            }
+            let Some(definition) = self.find_definition_by_id(definition_id) else {
+                unreachable!("Definition {definition_id:?} does not exist");
             };
-            let definition = self.definitions.get(&definition_id);
-            let Some(Definition::ImportedSymbol(imported_symbol)) = definition else {
-                return resolution;
-            };
-            let Some(file_id) = imported_symbol.resolved_file_id.as_ref() else {
-                break;
-            };
-            scope_id = if let Some(scope_id) = self.scope_id_for_file_id(file_id) {
-                scope_id
+            if let Definition::ImportedSymbol(imported_symbol) = definition {
+                // follow the imported symbol and expand the working set
+                let Some(scope_id) = imported_symbol
+                    .resolved_file_id
+                    .as_ref()
+                    .and_then(|file_id| self.scope_id_for_file_id(file_id))
+                else {
+                    continue;
+                };
+                working_set.extend(
+                    self.resolve_in_scope(scope_id, &imported_symbol.symbol)
+                        .get_definition_ids()
+                        .iter()
+                        .rev(),
+                );
             } else {
-                break;
-            };
-            symbol = &imported_symbol.symbol;
+                found_ids.push(definition_id);
+            }
         }
-        // We either found a circular dependency in imported symbols, or an
-        // imported file cannot be found
-        Resolution::Unresolved
+
+        Resolution::from(found_ids)
     }
 }

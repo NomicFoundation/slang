@@ -65,6 +65,8 @@ pub fn slang_solidity::backend::binder::Resolution::clone(&self) -> slang_solidi
 impl core::cmp::Eq for slang_solidity::backend::binder::Resolution
 impl core::cmp::PartialEq for slang_solidity::backend::binder::Resolution
 pub fn slang_solidity::backend::binder::Resolution::eq(&self, other: &slang_solidity::backend::binder::Resolution) -> bool
+impl core::convert::From<alloc::vec::Vec<metaslang_cst::nodes::NodeId>> for slang_solidity::backend::binder::Resolution
+pub fn slang_solidity::backend::binder::Resolution::from(value: alloc::vec::Vec<metaslang_cst::nodes::NodeId>) -> Self
 impl core::convert::From<core::option::Option<&metaslang_cst::nodes::NodeId>> for slang_solidity::backend::binder::Resolution
 pub fn slang_solidity::backend::binder::Resolution::from(value: core::option::Option<&metaslang_cst::nodes::NodeId>) -> Self
 impl core::convert::From<core::option::Option<metaslang_cst::nodes::NodeId>> for slang_solidity::backend::binder::Resolution
