@@ -27,6 +27,16 @@ fn state_vars() -> Result<()> {
 }
 
 #[test]
+fn tuple_assignment() -> Result<()> {
+    run(T, "tuple_assignment")
+}
+
+#[test]
 fn var_declaration() -> Result<()> {
     run(T, "var_declaration")
+}
+
+#[test]
+fn var_tuple_declaration() -> Result<()> {
+    run(T, "var_tuple_declaration")
 }
