@@ -2024,6 +2024,8 @@ inherit .star_extension
   node @tuple_decon.defs
 }
 
+;; Tuple deconstruction statements with no types and a `var` keyword are
+;; declarations (only valid in Solidity < 0.5.0)
 @tuple_decon [TupleDeconstructionStatement [VarKeyword] [TupleDeconstructionElements
     [TupleDeconstructionElement
         [TupleMember @tuple_member variant: [UntypedTupleMember
@@ -2038,7 +2040,7 @@ inherit .star_extension
   edge @tuple_decon.defs -> def
 }
 
-;; Tuple deconstruction statements with no types and no var keyword are assignments
+;; Tuple deconstruction statements with no types and no `var` keyword are assignments
 @tuple_decon [TupleDeconstructionStatement . [OpenParen] [TupleDeconstructionElements
     [TupleDeconstructionElement
         [TupleMember variant: [UntypedTupleMember
