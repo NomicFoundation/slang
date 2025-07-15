@@ -1,6 +1,6 @@
 contract Test {
     function test() public {
-        var v = 1;
-        v;
+        var (x, y) = (1, 2);
+        x + y;
     }
 }
