@@ -2,9 +2,7 @@ use std::collections::HashSet;
 
 use semver::Version;
 
-use crate::compilation::internal_builder::{
-    AddFileResponse, CompilationInitializationError, InternalCompilationBuilder,
-};
+use crate::compilation::internal_builder::{AddFileResponse, InternalCompilationBuilder};
 use crate::compilation::CompilationUnit;
 use crate::cst::Cursor;
 
@@ -49,15 +47,26 @@ pub struct CompilationBuilder<'b, E> {
     seen_files: HashSet<String>,
 }
 
+/// Possible errors that might occur during the initialization of the [`CompilationBuilder`].
+#[derive(thiserror::Error, Debug)]
+pub enum CompilationInitializationError {
+    /// Tried to initialize a [`CompilationBuilder`] with a version that is not supported for `Solidity`.
+    /// See [`LanguageFacts::ALL_VERSIONS`] for a complete list of supported versions.
+    #[error("Unsupported language version '{0}'.")]
+    UnsupportedLanguageVersion(Version),
+}
+
 impl<'b, E> CompilationBuilder<'b, E> {
     /// Creates a new compilation builder for the specified language version and callbacks.
     pub fn new(
         version: Version,
         config: &'b dyn CompilationBuilderConfig<Error = E>,
     ) -> Result<CompilationBuilder<'b, E>, CompilationInitializationError> {
+        let internal = InternalCompilationBuilder::create(version.clone())
+            .map_err(|_| CompilationInitializationError::UnsupportedLanguageVersion(version))?;
         Ok(CompilationBuilder {
             config,
-            internal: InternalCompilationBuilder::create(version)?,
+            internal,
             seen_files: HashSet::new(),
         })
     }

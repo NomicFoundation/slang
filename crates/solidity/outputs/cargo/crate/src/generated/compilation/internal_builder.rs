@@ -17,15 +17,8 @@ pub struct InternalCompilationBuilder {
     files: BTreeMap<String, File>,
 }
 
-#[derive(thiserror::Error, Debug)]
-#[doc(hidden)]
-pub enum CompilationInitializationError {
-    #[error(transparent)]
-    ParserInitialization(#[from] ParserInitializationError),
-}
-
 impl InternalCompilationBuilder {
-    pub fn create(language_version: Version) -> Result<Self, CompilationInitializationError> {
+    pub fn create(language_version: Version) -> Result<Self, ParserInitializationError> {
         let parser = Parser::create(language_version)?;
 
         Ok(Self {
