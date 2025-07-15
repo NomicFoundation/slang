@@ -21,10 +21,13 @@
 //! impl CompilationBuilderConfig<String> for MyProjectConfig {
 //!   fn read_file(&self, file_id: &str) -> std::result::Result<Option<String>, String> {
 //!       match file_id {
+//!         // Loading these files successfully from memory or file system:
 //!         "b.sol" => Ok(Some("import 'a.sol'; contract B is A { }".into())),
 //!         "a.sol" => Ok(Some("import 'c.sol'; contract A { }".into())),
-//!         "c.sol" => Ok(None), // we don't load this one
-//!         _ => Err(format!("Unknown file: {file_id}")) // any other is an error
+//!         // If a file is not found, Slang can still partially compile the rest of the files:
+//!         "c.sol" => Ok(None),
+//!         // Reporting custom errors to caller:
+//!         _ => Err(format!("Unknown file: {file_id}"))
 //!       }
 //!   }
 //!
