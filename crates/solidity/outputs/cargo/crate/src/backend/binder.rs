@@ -19,6 +19,7 @@ pub struct ConstantDefinition {
 pub struct ContractDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
+    pub flat_hierarchy: Option<Vec<Reference>>,
 }
 
 #[derive(Debug)]
@@ -248,6 +249,7 @@ impl Definition {
         Self::Contract(ContractDefinition {
             node_id,
             identifier: Rc::clone(identifier),
+            flat_hierarchy: None,
         })
     }
 
