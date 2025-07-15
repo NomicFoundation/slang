@@ -69,23 +69,23 @@ impl<'b, E> CompilationBuilder<'b, E> {
     /// regardless of whether they are imported or not, to be able to query the definitions there.
     ///
     /// Adding a file that has already been added is a no-op.
-    pub fn add_file(&mut self, filename: &str) -> Result<(), E> {
-        if !self.seen_files.insert(filename.into()) {
+    pub fn add_file(&mut self, file_id: &str) -> Result<(), E> {
+        if !self.seen_files.insert(file_id.into()) {
             return Ok(());
         }
 
-        let source = self.config.read_file(filename)?;
+        let source = self.config.read_file(file_id)?;
 
         if let Some(source) = source {
-            let AddFileResponse { import_paths } = self.internal.add_file(filename.into(), &source);
+            let AddFileResponse { import_paths } = self.internal.add_file(file_id.into(), &source);
 
             for import_path_cursor in import_paths {
-                let import_id = self.config.resolve_import(filename, &import_path_cursor)?;
+                let import_id = self.config.resolve_import(file_id, &import_path_cursor)?;
 
                 if let Some(import_id) = &import_id {
                     self.internal
-                        .resolve_import(filename, &import_path_cursor, import_id.clone())
-                        .unwrap_or_else(|_| panic!("{filename} should have been added"));
+                        .resolve_import(file_id, &import_path_cursor, import_id.clone())
+                        .unwrap_or_else(|_| panic!("{file_id} should have been added"));
                     self.add_file(import_id)?;
                 }
             }

@@ -57,5 +57,6 @@ mod unit;
 
 pub use builder::{CompilationBuilder, CompilationBuilderConfig};
 pub use file::File;
+#[cfg(feature = "__private_wasm_apis")]
 pub use internal_builder::{AddFileResponse, InternalCompilationBuilder};
 pub use unit::CompilationUnit;
