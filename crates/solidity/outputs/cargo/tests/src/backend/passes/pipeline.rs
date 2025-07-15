@@ -99,6 +99,7 @@ fn test_backend_pipeline() -> Result<()> {
     let data = passes::p1_flatten_contracts::run(data);
     let data = passes::p2_collect_definitions::run(data);
     let data = passes::p3_type_definitions::run(data);
+    let data = passes::p3_x_flatten_hierarchy::run(data);
     let data = passes::p4_resolve_references::run(data);
     assert_eq!(2, data.files.len());
 

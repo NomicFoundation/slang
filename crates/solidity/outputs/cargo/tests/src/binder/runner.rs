@@ -92,5 +92,6 @@ fn build_binder(compilation_unit: CompilationUnit) -> Output {
     let data = passes::p1_flatten_contracts::run(data);
     let data = passes::p2_collect_definitions::run(data);
     let data = passes::p3_type_definitions::run(data);
+    let data = passes::p3_x_flatten_hierarchy::run(data);
     passes::p4_resolve_references::run(data)
 }

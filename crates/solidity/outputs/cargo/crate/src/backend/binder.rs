@@ -20,6 +20,7 @@ pub struct ConstantDefinition {
 pub struct ContractDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
+    pub bases: Option<Vec<NodeId>>,
     pub constructor_parameters_scope_id: Option<ScopeId>,
 }
 
@@ -75,6 +76,7 @@ pub struct ImportedSymbolDefinition {
 pub struct InterfaceDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
+    pub bases: Option<Vec<NodeId>>,
 }
 
 #[derive(Debug)]
@@ -251,6 +253,7 @@ impl Definition {
         Self::Contract(ContractDefinition {
             node_id,
             identifier: Rc::clone(identifier),
+            bases: None,
             constructor_parameters_scope_id: None,
         })
     }
@@ -335,6 +338,7 @@ impl Definition {
         Self::Interface(InterfaceDefinition {
             node_id,
             identifier: Rc::clone(identifier),
+            bases: None,
         })
     }
 
@@ -1001,13 +1005,16 @@ pub struct Binder {
     global_using_directives: Vec<UsingDirective>,
 
     // definitions indexed by definiens node
-    pub definitions: HashMap<NodeId, Definition>,
+    definitions: HashMap<NodeId, Definition>,
     // mapping from definition identifier to definiens
     definitions_by_identifier: HashMap<NodeId, NodeId>,
     // references indexed by identifier node
-    pub references: HashMap<NodeId, Reference>,
+    references: HashMap<NodeId, Reference>,
 
     node_typing: HashMap<NodeId, Typing>,
+
+    // linearised bases of each contract or interface
+    linearisations: HashMap<NodeId, Vec<NodeId>>,
 }
 
 impl Binder {
@@ -1021,6 +1028,7 @@ impl Binder {
             definitions_by_identifier: HashMap::new(),
             references: HashMap::new(),
             node_typing: HashMap::new(),
+            linearisations: HashMap::new(),
         }
     }
 
@@ -1342,5 +1350,21 @@ impl Binder {
             Definition::Struct(_) => self.scope_id_for_node_id(definition_id),
             _ => None,
         }
+    }
+
+    pub(crate) fn insert_linearised_bases(
+        &mut self,
+        object_id: NodeId,
+        linearised_bases: Vec<NodeId>,
+    ) {
+        let _ = self
+            .linearisations
+            .insert(object_id, linearised_bases)
+            .is_none_or(|_| unreachable!("Trying to linearised twice {object_id:?}"));
+    }
+
+    #[cfg(feature = "__private_backend_api")]
+    pub fn linearisations(&self) -> &HashMap<NodeId, Vec<NodeId>> {
+        &self.linearisations
     }
 }

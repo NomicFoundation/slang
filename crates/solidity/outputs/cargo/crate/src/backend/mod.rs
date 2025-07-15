@@ -1,5 +1,7 @@
 #![allow(missing_docs)]
 
+mod c3;
+
 pub mod l1_structured_ast;
 pub mod l2_flat_contracts;
 
