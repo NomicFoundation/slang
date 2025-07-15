@@ -164,6 +164,8 @@ pub type u32::Error = <u32 as core::convert::TryFrom<usize>>::Error
 pub fn u32::try_from(value: metaslang_cst::nodes::NodeId) -> core::result::Result<Self, Self::Error>
 impl core::fmt::Debug for metaslang_cst::nodes::NodeId
 pub fn metaslang_cst::nodes::NodeId::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for metaslang_cst::nodes::NodeId
+pub fn metaslang_cst::nodes::NodeId::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::hash::Hash for metaslang_cst::nodes::NodeId
 pub fn metaslang_cst::nodes::NodeId::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
 impl core::marker::Copy for metaslang_cst::nodes::NodeId

@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use std::rc::Rc;
 
 use serde::Serialize;
@@ -9,6 +10,12 @@ use crate::text_index::TextIndex;
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
 pub struct NodeId(usize);
+
+impl Display for NodeId {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
 
 impl From<NodeId> for usize {
     fn from(value: NodeId) -> Self {

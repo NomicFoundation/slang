@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use semver::Version;
 
-use super::p3_type_definitions::Output as Input;
+use super::p3_x_flatten_hierarchy::Output as Input;
 use crate::backend::binder::{
     Binder, Definition, Reference, Resolution, Scope, ScopeId, Typing, UsingDirective,
 };
