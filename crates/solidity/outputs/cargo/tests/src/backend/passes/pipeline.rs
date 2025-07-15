@@ -62,7 +62,9 @@ abstract contract Ownable {
 
 struct Config {}
 
-impl CompilationBuilderConfig<Error> for Config {
+impl CompilationBuilderConfig for Config {
+    type Error = anyhow::Error;
+
     fn read_file(&self, file_id: &str) -> Result<Option<String>> {
         match file_id {
             MAIN_ID => Ok(Some(MAIN_SOL_CONTENTS.to_owned())),

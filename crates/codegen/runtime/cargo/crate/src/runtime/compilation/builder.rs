@@ -9,13 +9,16 @@ use crate::compilation::CompilationUnit;
 use crate::cst::Cursor;
 
 /// User-provided callbacks necessary for the `CompilationBuilder` to perform its job.
-pub trait CompilationBuilderConfig<E> {
+pub trait CompilationBuilderConfig {
+    /// User-configurable error type.
+    type Error;
+
     /// Callback used by this builder to load the contents of a file.
     ///
     /// The user is responsible for fetching the file from the filesystem.
     /// If the file is not found, the callback should return `None`.
     /// Any errors returned by the callback will be propagated to the caller.
-    fn read_file(&self, file_id: &str) -> Result<Option<String>, E>;
+    fn read_file(&self, file_id: &str) -> Result<Option<String>, Self::Error>;
 
     /// Callback used by this builder to resolve an import path.
     /// For example, if a source file contains the following statement:
@@ -33,14 +36,14 @@ pub trait CompilationBuilderConfig<E> {
         &self,
         source_file_id: &str,
         import_path_cursor: &Cursor,
-    ) -> Result<Option<String>, E>;
+    ) -> Result<Option<String>, Self::Error>;
 }
 
 /// A builder for creating compilation units.
 /// Allows incrementally building a list of all files and their imports.
 pub struct CompilationBuilder<'b, E> {
     /// The user-supplied configuration.
-    pub config: &'b dyn CompilationBuilderConfig<E>,
+    pub config: &'b dyn CompilationBuilderConfig<Error = E>,
 
     internal: InternalCompilationBuilder,
     seen_files: HashSet<String>,
@@ -50,7 +53,7 @@ impl<'b, E> CompilationBuilder<'b, E> {
     /// Creates a new compilation builder for the specified language version and callbacks.
     pub fn new(
         version: Version,
-        config: &'b dyn CompilationBuilderConfig<E>,
+        config: &'b dyn CompilationBuilderConfig<Error = E>,
     ) -> Result<CompilationBuilder<'b, E>, CompilationInitializationError> {
         Ok(CompilationBuilder {
             config,

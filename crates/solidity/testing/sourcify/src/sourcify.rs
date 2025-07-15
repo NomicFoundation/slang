@@ -324,8 +324,10 @@ impl Contract {
     }
 }
 
-impl CompilationBuilderConfig<anyhow::Error> for Contract {
-    fn read_file(&self, file_id: &str) -> std::result::Result<Option<String>, anyhow::Error> {
+impl CompilationBuilderConfig for Contract {
+    type Error = anyhow::Error;
+
+    fn read_file(&self, file_id: &str) -> Result<Option<String>> {
         let source = self.sources_path.join(file_id).read_to_string()?;
         Ok(Some(source))
     }
@@ -334,7 +336,7 @@ impl CompilationBuilderConfig<anyhow::Error> for Contract {
         &self,
         source_file_id: &str,
         import_path_cursor: &slang_solidity::cst::Cursor,
-    ) -> std::result::Result<Option<String>, anyhow::Error> {
+    ) -> Result<Option<String>> {
         let import_path = import_path_cursor.node().unparse();
         let import_path = import_path
             .strip_prefix(|c| matches!(c, '"' | '\''))

@@ -22,8 +22,10 @@ abstract contract Ownable {}
 
 struct Config {}
 
-impl CompilationBuilderConfig<()> for Config {
-    fn read_file(&self, file_id: &str) -> std::result::Result<Option<String>, ()> {
+impl CompilationBuilderConfig for Config {
+    type Error = ();
+
+    fn read_file(&self, file_id: &str) -> std::result::Result<Option<String>, Self::Error> {
         match file_id {
             MAIN_ID => Ok(Some(MAIN_SOL_CONTENTS.to_owned())),
             OWNABLE_ID => Ok(Some(OWNABLE_SOL_CONTENTS.to_owned())),
@@ -35,7 +37,7 @@ impl CompilationBuilderConfig<()> for Config {
         &self,
         source_file_id: &str,
         import_path_cursor: &slang_solidity::cst::Cursor,
-    ) -> std::result::Result<Option<String>, ()> {
+    ) -> std::result::Result<Option<String>, Self::Error> {
         assert_eq!(source_file_id, MAIN_ID);
         assert_eq!(import_path_cursor.node().unparse(), "\"ownable.sol\"");
         Ok(Some(OWNABLE_ID.to_owned()))
