@@ -464,7 +464,7 @@ impl Resolution {
         }
     }
 
-    fn get_definition_ids(&self) -> Vec<NodeId> {
+    pub(crate) fn get_definition_ids(&self) -> Vec<NodeId> {
         match self {
             Resolution::Definition(id) => vec![*id],
             Resolution::Ambiguous(ids) => ids.clone(),
@@ -548,10 +548,10 @@ impl Reference {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ScopeId(usize);
 
-pub struct BlockScope {
-    pub node_id: NodeId,
-    pub parent_scope_id: ScopeId,
-    pub definitions: HashMap<String, NodeId>,
+pub(crate) struct BlockScope {
+    node_id: NodeId,
+    parent_scope_id: ScopeId,
+    definitions: HashMap<String, NodeId>,
 }
 
 impl BlockScope {
@@ -570,10 +570,10 @@ impl BlockScope {
     }
 }
 
-pub struct ContractScope {
-    pub node_id: NodeId,
-    pub file_scope_id: ScopeId,
-    pub definitions: HashMap<String, Vec<NodeId>>,
+pub(crate) struct ContractScope {
+    node_id: NodeId,
+    file_scope_id: ScopeId,
+    definitions: HashMap<String, Vec<NodeId>>,
 }
 
 impl ContractScope {
@@ -596,7 +596,7 @@ impl ContractScope {
     }
 }
 
-pub struct EnumScope {
+pub(crate) struct EnumScope {
     pub node_id: NodeId,
     pub definitions: HashMap<String, NodeId>,
 }
@@ -616,11 +616,11 @@ impl EnumScope {
     }
 }
 
-pub struct FileScope {
-    pub node_id: NodeId,
-    pub file_id: String,
-    pub definitions: HashMap<String, Vec<NodeId>>,
-    pub imported_files: HashSet<String>,
+pub(crate) struct FileScope {
+    node_id: NodeId,
+    file_id: String,
+    definitions: HashMap<String, Vec<NodeId>>,
+    imported_files: HashSet<String>,
 }
 
 impl FileScope {
@@ -652,7 +652,7 @@ impl FileScope {
     }
 }
 
-pub struct FunctionScope {
+pub(crate) struct FunctionScope {
     pub node_id: NodeId,
     pub parent_scope_id: ScopeId,
     pub parameters_scope_id: ScopeId,
@@ -682,7 +682,7 @@ impl FunctionScope {
 // receive/fallback/unnamed), but they don't need to bind `_`. Should we
 // refactor? Or remove this and make the parameters optional in FunctionScope?
 // Probably the latter as we can control resolution in the relevant pass.
-pub struct ModifierScope {
+pub(crate) struct ModifierScope {
     pub node_id: NodeId,
     pub parent_scope_id: ScopeId,
     pub definitions: HashMap<String, NodeId>,
@@ -704,7 +704,7 @@ impl ModifierScope {
     }
 }
 
-pub struct ParametersScope {
+pub(crate) struct ParametersScope {
     pub node_id: NodeId,
     pub definitions: HashMap<String, NodeId>,
 }
@@ -724,7 +724,7 @@ impl ParametersScope {
     }
 }
 
-pub struct StructScope {
+pub(crate) struct StructScope {
     pub node_id: NodeId,
     pub definitions: HashMap<String, NodeId>,
 }
@@ -744,7 +744,7 @@ impl StructScope {
     }
 }
 
-pub struct YulBlockScope {
+pub(crate) struct YulBlockScope {
     pub node_id: NodeId,
     pub parent_scope_id: ScopeId,
     pub definitions: HashMap<String, NodeId>,
@@ -766,7 +766,7 @@ impl YulBlockScope {
     }
 }
 
-pub struct YulFunctionScope {
+pub(crate) struct YulFunctionScope {
     pub node_id: NodeId,
     pub enclosing_scope_id: ScopeId,
     pub definitions: HashMap<String, NodeId>,
@@ -788,7 +788,7 @@ impl YulFunctionScope {
     }
 }
 
-pub enum Scope {
+pub(crate) enum Scope {
     Block(BlockScope),
     Contract(ContractScope),
     Enum(EnumScope),
@@ -802,7 +802,7 @@ pub enum Scope {
 }
 
 impl Scope {
-    pub fn node_id(&self) -> NodeId {
+    pub(crate) fn node_id(&self) -> NodeId {
         match self {
             Self::Block(block_scope) => block_scope.node_id,
             Self::Contract(contract_scope) => contract_scope.node_id,
