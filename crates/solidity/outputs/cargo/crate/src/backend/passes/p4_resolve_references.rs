@@ -600,11 +600,6 @@ impl Visitor for Pass {
     fn enter_expression(&mut self, node: &input_ir::Expression) -> bool {
         if let input_ir::Expression::Identifier(identifier) = node {
             let scope_id = self.current_scope_id();
-            // TODO: we need to use a multi resolution method here, to be able
-            // to select function overloads
-            // FIXME: we need the `Resolution` to be able to represent the
-            // ambiguity, which then gets transformed into
-            // `Typing::Undetermined`
             let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
@@ -869,5 +864,35 @@ impl Visitor for Pass {
         // `.selector` members
 
         false
+    }
+
+    fn enter_tuple_deconstruction_statement(
+        &mut self,
+        node: &input_ir::TupleDeconstructionStatement,
+    ) -> bool {
+        if node.var_keyword.is_some() {
+            // this is a (deprecated) variable declaration, not assignment
+            return true;
+        }
+
+        for element in &node.elements {
+            let Some(member) = &element.member else {
+                continue;
+            };
+            match member {
+                input_ir::TupleMember::TypedTupleMember(_) => {
+                    // this is a declaration, not a reference, so nothing left to do in this pass
+                }
+                input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
+                    let identifier = &untyped_tuple_member.name;
+                    let scope_id = self.current_scope_id();
+                    let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
+                    let reference = Reference::new(Rc::clone(identifier), resolution);
+                    self.binder.insert_reference(reference);
+                }
+            }
+        }
+
+        true
     }
 }
