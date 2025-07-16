@@ -92,11 +92,12 @@ impl Pass {
         }
     }
 
+    // This is a "top-level" (ie. not a member access) resolution method
     fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
-        // TODO: this is the "top-level" (ie. non member access) resolution
-        // method, and so we need to do hierarchy lookups for contracts and
-        // interfaces if we're in the scope of a contract/interface/library
-        let resolution = self.binder.resolve_in_scope_recursively(scope_id, symbol);
+        // TODO: we need to do hierarchy lookups for contracts and interfaces if
+        // we're in the scope of a contract/interface/library. This we probably
+        // cannot delegate to the binder.
+        let resolution = self.binder.resolve_in_scope(scope_id, symbol);
         if resolution == Resolution::Unresolved {
             if let Some(built_in) = Self::lookup_global_built_in(symbol) {
                 Resolution::BuiltIn(built_in)
@@ -124,6 +125,8 @@ impl Pass {
                 Resolution::Unresolved
             }
             Typing::MetaType(node_id) => {
+                // We're trying to resolve a member access expression into a
+                // type name, ie. this is a meta-type member access
                 let Some(definition) = self.binder.find_definition_by_id(*node_id) else {
                     return Resolution::Unresolved;
                 };
@@ -136,7 +139,7 @@ impl Pass {
                             .as_ref()
                             .and_then(|file_id| self.binder.scope_id_for_file_id(file_id))
                         {
-                            self.binder.resolve_in_scope_recursively(scope_id, symbol)
+                            self.binder.resolve_in_scope(scope_id, symbol)
                         } else {
                             Resolution::Unresolved
                         }
@@ -147,7 +150,7 @@ impl Pass {
                     | Definition::Library(_) => {
                         // this is a "namespace" lookup
                         if let Some(scope_id) = self.binder.scope_id_for_node_id(*node_id) {
-                            self.binder.resolve_in_scope_recursively(scope_id, symbol)
+                            self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
                         } else {
                             Resolution::Unresolved
                         }
@@ -224,7 +227,7 @@ impl Pass {
             },
             Type::Struct { definition_id, .. } => {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
-                self.resolve_symbol_in_scope(scope_id, symbol)
+                self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
             }
             Type::Tuple { .. } => Resolution::Unresolved,
             Type::UserDefinedValue { .. } => Resolution::Unresolved,

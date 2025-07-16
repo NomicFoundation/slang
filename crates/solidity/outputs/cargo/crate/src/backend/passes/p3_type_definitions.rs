@@ -91,76 +91,24 @@ impl Pass {
         unreachable!("attempt to get the current contract scope without a contract or file scope in the stack");
     }
 
-    fn current_file_scope_id(&self) -> ScopeId {
-        // we assume the file scope is the first scope in the stack
-        let Some(scope_id) = self.scope_stack.first() else {
-            unreachable!("attempt to get the current file scope with an empty scope stack");
-        };
-        let Scope::File(_) = self.binder.get_scope_by_id(*scope_id) else {
-            unreachable!("top of the scope stack is not a file scope");
-        };
-        *scope_id
-    }
-
-    // Resolves an IdentifierPath that should be a top-level contract-like type,
-    // ie. a contract, a library or an interface. As such, it starts resolution
-    // at the file scope level.
-    fn resolve_top_level_identifier_path(&mut self, identifier_path: &input_ir::IdentifierPath) {
-        // start resolution from the current file
-        let mut resolution_scope_id = Some(self.current_file_scope_id());
-
-        for identifier in identifier_path {
-            let resolution = if let Some(scope_id) = resolution_scope_id {
-                self.binder
-                    .resolve_in_scope_recursively(scope_id, &identifier.unparse())
-                    .non_ambiguous()
-            } else {
-                Resolution::Unresolved
-            };
-            let definition_id = resolution.as_definition_id();
-
-            let reference = Reference::new(Rc::clone(identifier), resolution);
-            self.binder.insert_reference(reference);
-
-            // recurse into file scopes pointed by the resolved definition to
-            // resolve the next identifier in the path
-            resolution_scope_id = definition_id
-                .and_then(|node_id| self.binder.find_definition_by_id(node_id))
-                .and_then(|definition| {
-                    if let Definition::Import(ImportDefinition {
-                        resolved_file_id: Some(resolved_file_id),
-                        ..
-                    }) = definition
-                    {
-                        self.binder.scope_id_for_file_id(resolved_file_id)
-                    } else {
-                        None
-                    }
-                });
-        }
-    }
-
-    fn resolve_inheritance_types(&mut self, types: &input_ir::InheritanceTypes) {
-        for inheritance_type in types {
-            self.resolve_top_level_identifier_path(&inheritance_type.type_name);
-        }
-        // TODO: return the resolved types (ie. the definition for the last
-        // identifier in each path)?
-    }
-
-    // Resolves an IdentifierPath that works as type name. It starts resolution
-    // at the "contract" scope level, or at the file level if there's no
-    // contract scope open.
-    fn resolve_type_identifier_path(&mut self, identifier_path: &input_ir::IdentifierPath) {
+    // Resolves an IdentifierPath. It starts resolution at the "contract" scope
+    // level, or at the file level if there's no contract scope open. It will
+    // follow through in contracts/intrefaces/libraries as well as imports and
+    // treat them as namespaces.
+    fn resolve_identifier_path(&mut self, identifier_path: &input_ir::IdentifierPath) {
         // start resolution from the current contract (or file if there's no
         // contract scope open)
         let mut scope_id = Some(self.current_contract_or_file_scope_id());
+        let mut use_lexical_resolution = true;
 
         for identifier in identifier_path {
+            let symbol = identifier.unparse();
             let resolution = if let Some(scope_id) = scope_id {
-                self.binder
-                    .resolve_in_scope_recursively(scope_id, &identifier.unparse())
-                    .non_ambiguous()
+                if use_lexical_resolution {
+                    self.binder.resolve_in_scope(scope_id, &symbol)
+                } else {
+                    self.binder.resolve_in_scope_as_namespace(scope_id, &symbol)
+                }
             } else {
                 Resolution::Unresolved
             };
@@ -182,11 +130,20 @@ impl Pass {
                     Definition::Contract(ContractDefinition { node_id, .. })
                     | Definition::Interface(InterfaceDefinition { node_id, .. })
                     | Definition::Library(LibraryDefinition { node_id, .. }) => {
+                        use_lexical_resolution = false;
                         self.binder.scope_id_for_node_id(*node_id)
                     }
                     _ => None,
                 });
         }
+    }
+
+    fn resolve_inheritance_types(&mut self, types: &input_ir::InheritanceTypes) {
+        for inheritance_type in types {
+            self.resolve_identifier_path(&inheritance_type.type_name);
+        }
+        // TODO: return the resolved types (ie. the definition for the last
+        // identifier in each path)?
     }
 
     fn resolve_parameter_types(
@@ -560,7 +517,7 @@ impl Visitor for Pass {
 
     fn enter_type_name(&mut self, node: &input_ir::TypeName) -> bool {
         if let input_ir::TypeName::IdentifierPath(identifier_path) = node {
-            self.resolve_type_identifier_path(identifier_path);
+            self.resolve_identifier_path(identifier_path);
             false
         } else {
             true
@@ -569,7 +526,7 @@ impl Visitor for Pass {
 
     fn enter_mapping_key_type(&mut self, node: &input_ir::MappingKeyType) -> bool {
         if let input_ir::MappingKeyType::IdentifierPath(identifier_path) = node {
-            self.resolve_type_identifier_path(identifier_path);
+            self.resolve_identifier_path(identifier_path);
             false
         } else {
             true
