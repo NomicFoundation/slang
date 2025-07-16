@@ -18,7 +18,7 @@ pub trait CompilationBuilderConfig {
     /// The user is responsible for fetching the file from the filesystem.
     /// If the file is not found, the callback should return `None`.
     /// Any errors returned by the callback will be propagated to the caller.
-    fn read_file(&self, file_id: &str) -> Result<Option<String>, Self::Error>;
+    fn read_file(&mut self, file_id: &str) -> Result<Option<String>, Self::Error>;
 
     /// Callback used by this builder to resolve an import path.
     /// For example, if a source file contains the following statement:
@@ -33,7 +33,7 @@ pub trait CompilationBuilderConfig {
     /// If the callback returns `None`, the import will stay unresolved.
     /// Any errors returned by the callback will be propagated to the caller.
     fn resolve_import(
-        &self,
+        &mut self,
         source_file_id: &str,
         import_path_cursor: &Cursor,
     ) -> Result<Option<String>, Self::Error>;
@@ -41,14 +41,15 @@ pub trait CompilationBuilderConfig {
 
 /// A builder for creating compilation units.
 /// Allows incrementally building a list of all files and their imports.
-pub struct CompilationBuilder<'b, E> {
+pub struct CompilationBuilder<E, C: CompilationBuilderConfig<Error = E>> {
     /// The user-supplied configuration.
-    pub config: &'b dyn CompilationBuilderConfig<Error = E>,
+    pub config: C,
 
     internal: InternalCompilationBuilder,
     seen_files: HashSet<String>,
 }
 
+/// Possible errors that might occur during the initialization of the [`CompilationBuilder`].
 #[derive(thiserror::Error, Debug)]
 pub enum CompilationInitializationError {
     /// Tried to initialize a [`CompilationBuilder`] with a version that is not supported for `Solidity`.
@@ -57,12 +58,12 @@ pub enum CompilationInitializationError {
     UnsupportedLanguageVersion(Version),
 }
 
-impl<'b, E> CompilationBuilder<'b, E> {
+impl<E, C: CompilationBuilderConfig<Error = E>> CompilationBuilder<E, C> {
     /// Creates a new compilation builder for the specified language version and callbacks.
     pub fn new(
         version: Version,
-        config: &'b dyn CompilationBuilderConfig<Error = E>,
-    ) -> Result<CompilationBuilder<'b, E>, CompilationInitializationError> {
+        config: C,
+    ) -> Result<CompilationBuilder<E, C>, CompilationInitializationError> {
         let internal = InternalCompilationBuilder::create(version.clone())
             .map_err(|_| CompilationInitializationError::UnsupportedLanguageVersion(version))?;
         Ok(CompilationBuilder {

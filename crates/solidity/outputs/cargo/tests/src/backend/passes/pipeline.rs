@@ -65,7 +65,7 @@ struct Config {}
 impl CompilationBuilderConfig for Config {
     type Error = anyhow::Error;
 
-    fn read_file(&self, file_id: &str) -> Result<Option<String>> {
+    fn read_file(&mut self, file_id: &str) -> Result<Option<String>> {
         match file_id {
             MAIN_ID => Ok(Some(MAIN_SOL_CONTENTS.to_owned())),
             OWNABLE_ID => Ok(Some(OWNABLE_SOL_CONTENTS.to_owned())),
@@ -74,7 +74,7 @@ impl CompilationBuilderConfig for Config {
     }
 
     fn resolve_import(
-        &self,
+        &mut self,
         source_file_id: &str,
         import_path_cursor: &slang_solidity::cst::Cursor,
     ) -> Result<Option<String>> {
@@ -85,7 +85,7 @@ impl CompilationBuilderConfig for Config {
 }
 
 fn build_compilation_unit() -> Result<CompilationUnit> {
-    let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, &Config {})?;
+    let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, Config {})?;
 
     builder.add_file(MAIN_ID)?;
 

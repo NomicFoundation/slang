@@ -305,11 +305,13 @@ impl Contract {
     /// imports, accounting for file remapping/renaming. The resulting `CompilationUnit` is ready to check for
     /// errors.
     pub fn create_compilation_unit(&self) -> Result<CompilationUnit> {
-        let mut builder = CompilationBuilder::new(self.version.clone(), self)?;
+        let name = self.name.clone();
         let entrypoint = self.entrypoint().ok_or(Error::msg(format!(
-            "Entrypoint not found in contract {name}",
-            name = self.name
+            "Entrypoint not found in contract {name}"
         )))?;
+
+        let mut builder =
+            CompilationBuilder::new(self.version.clone(), ContractConfig { contract: self })?;
 
         builder.add_file(&entrypoint).map_err(|e| anyhow!(e))?;
         Ok(builder.build())
@@ -322,18 +324,26 @@ impl Contract {
     pub fn sources_count(&self) -> usize {
         self.import_resolver.sources_count()
     }
+
+    pub fn read_file(&self, file_id: &str) -> Result<String> {
+        let source = self.sources_path.join(file_id).read_to_string()?;
+        Ok(source)
+    }
 }
 
-impl CompilationBuilderConfig for Contract {
+struct ContractConfig<'a> {
+    contract: &'a Contract,
+}
+
+impl CompilationBuilderConfig for ContractConfig<'_> {
     type Error = anyhow::Error;
 
-    fn read_file(&self, file_id: &str) -> Result<Option<String>> {
-        let source = self.sources_path.join(file_id).read_to_string()?;
-        Ok(Some(source))
+    fn read_file(&mut self, file_id: &str) -> Result<Option<String>> {
+        self.contract.read_file(file_id).map(Some)
     }
 
     fn resolve_import(
-        &self,
+        &mut self,
         source_file_id: &str,
         import_path_cursor: &slang_solidity::cst::Cursor,
     ) -> Result<Option<String>> {
@@ -346,6 +356,7 @@ impl CompilationBuilderConfig for Contract {
             .trim();
 
         Ok(self
+            .contract
             .import_resolver
             .resolve_import(source_file_id, import_path))
     }

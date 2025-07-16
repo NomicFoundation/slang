@@ -15,12 +15,15 @@ contract Test is Base layout at 0 {}
     impl CompilationBuilderConfig for Config {
         type Error = ();
 
-        fn read_file(&self, _file_id: &str) -> std::result::Result<Option<String>, Self::Error> {
+        fn read_file(
+            &mut self,
+            _file_id: &str,
+        ) -> std::result::Result<Option<String>, Self::Error> {
             Ok(Some(CONTENTS.to_owned()))
         }
 
         fn resolve_import(
-            &self,
+            &mut self,
             _source_file_id: &str,
             _import_path_cursor: &slang_solidity::cst::Cursor,
         ) -> std::result::Result<Option<String>, Self::Error> {
@@ -28,7 +31,7 @@ contract Test is Base layout at 0 {}
         }
     }
 
-    let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, &Config {})?;
+    let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, Config {})?;
     assert!(builder.add_file("main.sol").is_ok());
     let compilation_unit = builder.build();
 
