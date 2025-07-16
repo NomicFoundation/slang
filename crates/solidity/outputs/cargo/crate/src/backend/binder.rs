@@ -4,7 +4,7 @@ use std::rc::Rc;
 use metaslang_cst::nodes::NodeId;
 
 use super::types::TypeId;
-use crate::cst::TerminalNode;
+use crate::cst::{TerminalKind, TerminalNode};
 
 //////////////////////////////////////////////////////////////////////////////
 // Definitions
@@ -545,6 +545,61 @@ impl Reference {
 //////////////////////////////////////////////////////////////////////////////
 // Scopes
 
+#[allow(dead_code)]
+pub(crate) enum UsingDirective {
+    AllTypes {
+        scope_id: ScopeId,
+    },
+    SingleType {
+        scope_id: ScopeId,
+        type_id: TypeId,
+    },
+    SingleTypeOperator {
+        scope_id: ScopeId,
+        operator_mapping: HashMap<TerminalKind, String>,
+        type_id: TypeId,
+    },
+}
+
+impl UsingDirective {
+    pub(crate) fn new_all(scope_id: ScopeId) -> Self {
+        Self::AllTypes { scope_id }
+    }
+
+    pub(crate) fn new_single_type(scope_id: ScopeId, type_id: TypeId) -> Self {
+        Self::SingleType { scope_id, type_id }
+    }
+
+    pub(crate) fn new_single_type_with_operators(
+        scope_id: ScopeId,
+        type_id: TypeId,
+        operator_mapping: HashMap<TerminalKind, String>,
+    ) -> Self {
+        Self::SingleTypeOperator {
+            scope_id,
+            operator_mapping,
+            type_id,
+        }
+    }
+
+    pub fn applies_to(&self, filter_type_id: TypeId) -> bool {
+        match self {
+            Self::AllTypes { .. } => true,
+            Self::SingleType { type_id, .. } | Self::SingleTypeOperator { type_id, .. } => {
+                *type_id == filter_type_id
+            }
+        }
+    }
+
+    pub fn get_scope_id(&self) -> ScopeId {
+        match self {
+            UsingDirective::AllTypes { scope_id }
+            | UsingDirective::SingleType { scope_id, .. }
+            | UsingDirective::SingleTypeOperator { scope_id, .. } => *scope_id,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct ScopeId(usize);
 
@@ -574,6 +629,7 @@ pub(crate) struct ContractScope {
     node_id: NodeId,
     file_scope_id: ScopeId,
     definitions: HashMap<String, Vec<NodeId>>,
+    using_directives: Vec<UsingDirective>,
 }
 
 impl ContractScope {
@@ -582,6 +638,7 @@ impl ContractScope {
             node_id,
             file_scope_id,
             definitions: HashMap::new(),
+            using_directives: Vec::new(),
         }
     }
 
@@ -621,6 +678,7 @@ pub(crate) struct FileScope {
     file_id: String,
     definitions: HashMap<String, Vec<NodeId>>,
     imported_files: HashSet<String>,
+    using_directives: Vec<UsingDirective>,
 }
 
 impl FileScope {
@@ -630,6 +688,7 @@ impl FileScope {
             file_id: file_id.to_string(),
             definitions: HashMap::new(),
             imported_files: HashSet::new(),
+            using_directives: Vec::new(),
         }
     }
 
@@ -744,6 +803,17 @@ impl StructScope {
     }
 }
 
+pub(crate) struct UsingScope {
+    pub node_id: NodeId,
+    pub symbols: HashMap<String, Vec<NodeId>>,
+}
+
+impl UsingScope {
+    fn new(node_id: NodeId, symbols: HashMap<String, Vec<NodeId>>) -> Self {
+        Self { node_id, symbols }
+    }
+}
+
 pub(crate) struct YulBlockScope {
     pub node_id: NodeId,
     pub parent_scope_id: ScopeId,
@@ -797,6 +867,7 @@ pub(crate) enum Scope {
     Modifier(ModifierScope),
     Parameters(ParametersScope),
     Struct(StructScope),
+    Using(UsingScope),
     YulBlock(YulBlockScope),
     YulFunction(YulFunctionScope),
 }
@@ -812,6 +883,7 @@ impl Scope {
             Self::Modifier(modifier_scope) => modifier_scope.node_id,
             Self::Parameters(parameters_scope) => parameters_scope.node_id,
             Self::Struct(struct_scope) => struct_scope.node_id,
+            Self::Using(using_scope) => using_scope.node_id,
             Self::YulBlock(yul_block_scope) => yul_block_scope.node_id,
             Self::YulFunction(yul_function_scope) => yul_function_scope.node_id,
         }
@@ -827,8 +899,17 @@ impl Scope {
             Self::Modifier(modifier_scope) => modifier_scope.insert_definition(definition),
             Self::Parameters(parameters_scope) => parameters_scope.insert_definition(definition),
             Self::Struct(struct_scope) => struct_scope.insert_definition(definition),
+            Self::Using(_) => unreachable!("cannot insert a definition into a using clause scope"),
             Self::YulBlock(yul_block_scope) => yul_block_scope.insert_definition(definition),
             Self::YulFunction(function_scope) => function_scope.insert_definition(definition),
+        }
+    }
+
+    pub(crate) fn get_using_directives(&self) -> Vec<&UsingDirective> {
+        match self {
+            Self::Contract(contract_scope) => contract_scope.using_directives.iter().collect(),
+            Self::File(file_scope) => file_scope.using_directives.iter().collect(),
+            _ => Vec::new(),
         }
     }
 
@@ -872,6 +953,10 @@ impl Scope {
         Self::Struct(StructScope::new(node_id))
     }
 
+    pub(crate) fn new_using(node_id: NodeId, symbols: HashMap<String, Vec<NodeId>>) -> Self {
+        Self::Using(UsingScope::new(node_id, symbols))
+    }
+
     pub(crate) fn new_yul_block(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
         Self::YulBlock(YulBlockScope::new(node_id, parent_scope_id))
     }
@@ -908,6 +993,7 @@ pub struct Binder {
     scopes: Vec<Scope>,
     scopes_by_node_id: HashMap<NodeId, ScopeId>,
     scopes_by_file_id: HashMap<String, ScopeId>,
+    global_using_directives: Vec<UsingDirective>,
 
     // definitions indexed by definiens node
     pub definitions: HashMap<NodeId, Definition>,
@@ -925,6 +1011,7 @@ impl Binder {
             scopes: Vec::new(),
             scopes_by_node_id: HashMap::new(),
             scopes_by_file_id: HashMap::new(),
+            global_using_directives: Vec::new(),
             definitions: HashMap::new(),
             definitions_by_identifier: HashMap::new(),
             references: HashMap::new(),
@@ -999,6 +1086,27 @@ impl Binder {
 
     pub fn find_reference_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Reference> {
         self.references.get(&node_id)
+    }
+
+    pub(crate) fn insert_using_directive_in_scope(
+        &mut self,
+        directive: UsingDirective,
+        scope_id: ScopeId,
+    ) {
+        let scope = self.get_scope_mut(scope_id);
+        match scope {
+            Scope::Contract(contract_scope) => contract_scope.using_directives.push(directive),
+            Scope::File(file_scope) => file_scope.using_directives.push(directive),
+            _ => unreachable!("cannot insert a using directive in scope {scope_id:?}"),
+        }
+    }
+
+    pub(crate) fn insert_global_using_directive(&mut self, directive: UsingDirective) {
+        self.global_using_directives.push(directive);
+    }
+
+    pub(crate) fn get_global_using_directives(&self) -> Vec<&UsingDirective> {
+        self.global_using_directives.iter().collect()
     }
 
     pub fn node_typing(&self, node_id: NodeId) -> Typing {
@@ -1095,6 +1203,11 @@ impl Binder {
             }
             Scope::Parameters(parameters_scope) => parameters_scope.definitions.get(symbol).into(),
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
+            Scope::Using(using_scope) => using_scope
+                .symbols
+                .get(symbol)
+                .cloned()
+                .map_or(Resolution::Unresolved, Resolution::from),
             Scope::YulBlock(yul_block_scope) => yul_block_scope
                 .definitions
                 .get(symbol)
@@ -1179,6 +1292,11 @@ impl Binder {
                 .map_or(Resolution::Unresolved, Resolution::from),
             Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
+            Scope::Using(using_scope) => using_scope
+                .symbols
+                .get(symbol)
+                .cloned()
+                .map_or(Resolution::Unresolved, Resolution::from),
             Scope::Block(_)
             | Scope::File(_)
             | Scope::Function(_)

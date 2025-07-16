@@ -4,13 +4,13 @@ use std::rc::Rc;
 use super::p2_collect_definitions::Output as Input;
 use crate::backend::binder::{
     Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
-    LibraryDefinition, Reference, Resolution, Scope, ScopeId,
+    LibraryDefinition, Reference, Resolution, Scope, ScopeId, UsingDirective,
 };
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionTypeKind, Type, TypeId, TypeRegistry};
 use crate::compilation::CompilationUnit;
-use crate::cst::NodeId;
+use crate::cst::{NodeId, TerminalKind};
 
 pub struct Output {
     pub compilation_unit: CompilationUnit,
@@ -447,6 +447,25 @@ impl Pass {
             kind,
         }))
     }
+
+    fn find_library_scope_id_for_identifier_path(
+        &self,
+        identifier_path: &input_ir::IdentifierPath,
+    ) -> Option<ScopeId> {
+        let definition_id = identifier_path
+            .last()
+            .and_then(|identifier| {
+                self.binder
+                    .find_reference_by_identifier_node_id(identifier.id())
+            })
+            .and_then(|reference| reference.resolution.as_definition_id())?;
+
+        let Some(Definition::Library(_)) = self.binder.find_definition_by_id(definition_id) else {
+            // the referenced definition is not a library
+            return None;
+        };
+        self.binder.scope_id_for_node_id(definition_id)
+    }
 }
 
 impl Visitor for Pass {
@@ -633,5 +652,121 @@ impl Visitor for Pass {
     ) {
         let type_id = self.type_of_elementary_type(&node.value_type, None);
         self.binder.set_node_type(node.node_id, type_id);
+    }
+
+    fn enter_using_directive(&mut self, node: &input_ir::UsingDirective) -> bool {
+        match &node.clause {
+            input_ir::UsingClause::IdentifierPath(identifier_path) => {
+                self.resolve_identifier_path(identifier_path);
+            }
+            input_ir::UsingClause::UsingDeconstruction(using_deconstruction) => {
+                for symbol in &using_deconstruction.symbols {
+                    self.resolve_identifier_path(&symbol.name);
+                }
+            }
+        }
+        // target's TypeName is resolved when entering it
+        true
+    }
+
+    fn leave_using_directive(&mut self, node: &input_ir::UsingDirective) {
+        let directive = match &node.target {
+            input_ir::UsingTarget::TypeName(type_name) => {
+                let Some(type_id) =
+                    // TODO: not sure we should be using DataLocation::Inherited
+                    // here, but if we don't provide one we can't register
+                    // reference types and hence we cannot get a type_id
+                    self.resolve_type_name(type_name, Some(DataLocation::Inherited))
+                else {
+                    return;
+                };
+                match &node.clause {
+                    input_ir::UsingClause::IdentifierPath(identifier_path) => {
+                        let Some(scope_id) =
+                            self.find_library_scope_id_for_identifier_path(identifier_path)
+                        else {
+                            return;
+                        };
+                        UsingDirective::new_single_type(scope_id, type_id)
+                    }
+                    input_ir::UsingClause::UsingDeconstruction(using_deconstruction) => {
+                        let mut symbols = HashMap::new();
+                        let mut operators = HashMap::new();
+
+                        for symbol in &using_deconstruction.symbols {
+                            let symbol_name = symbol.name.last().unwrap();
+                            let definition_ids = self
+                                .binder
+                                .find_reference_by_identifier_node_id(symbol_name.id())
+                                .map_or(Vec::new(), |reference| {
+                                    reference.resolution.get_definition_ids()
+                                });
+                            // TODO(validation): *all* definitions should point to functions
+
+                            symbols.insert(symbol_name.unparse(), definition_ids);
+
+                            if let Some(alias) = &symbol.alias {
+                                let terminal = match alias.operator {
+                                    input_ir::UsingOperator::Ampersand => TerminalKind::Ampersand,
+                                    input_ir::UsingOperator::Asterisk => TerminalKind::Asterisk,
+                                    input_ir::UsingOperator::BangEqual => TerminalKind::BangEqual,
+                                    input_ir::UsingOperator::Bar => TerminalKind::Bar,
+                                    input_ir::UsingOperator::Caret => TerminalKind::Caret,
+                                    input_ir::UsingOperator::EqualEqual => TerminalKind::EqualEqual,
+                                    input_ir::UsingOperator::GreaterThan => {
+                                        TerminalKind::GreaterThan
+                                    }
+                                    input_ir::UsingOperator::GreaterThanEqual => {
+                                        TerminalKind::GreaterThanEqual
+                                    }
+                                    input_ir::UsingOperator::LessThan => TerminalKind::LessThan,
+                                    input_ir::UsingOperator::LessThanEqual => {
+                                        TerminalKind::LessThanEqual
+                                    }
+                                    input_ir::UsingOperator::Minus => TerminalKind::Minus,
+                                    input_ir::UsingOperator::Percent => TerminalKind::Percent,
+                                    input_ir::UsingOperator::Plus => TerminalKind::Plus,
+                                    input_ir::UsingOperator::Slash => TerminalKind::Slash,
+                                    input_ir::UsingOperator::Tilde => TerminalKind::Tilde,
+                                };
+                                operators.insert(terminal, symbol_name.unparse());
+                            }
+                        }
+
+                        let scope = Scope::new_using(node.node_id, symbols);
+                        let scope_id = self.binder.insert_scope(scope);
+
+                        if operators.is_empty() {
+                            UsingDirective::new_single_type(scope_id, type_id)
+                        } else {
+                            UsingDirective::new_single_type_with_operators(
+                                scope_id, type_id, operators,
+                            )
+                        }
+                    }
+                }
+            }
+            input_ir::UsingTarget::Asterisk => {
+                let input_ir::UsingClause::IdentifierPath(identifier_path) = &node.clause else {
+                    // only libraries can be attached to all types
+                    return;
+                };
+                let Some(scope_id) =
+                    self.find_library_scope_id_for_identifier_path(identifier_path)
+                else {
+                    // the identifier path does not point to a valid library
+                    return;
+                };
+                UsingDirective::new_all(scope_id)
+            }
+        };
+
+        if node.global_keyword.is_some() {
+            self.binder.insert_global_using_directive(directive);
+        } else {
+            let current_scope_id = self.current_contract_or_file_scope_id();
+            self.binder
+                .insert_using_directive_in_scope(directive, current_scope_id);
+        }
     }
 }

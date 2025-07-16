@@ -4,7 +4,9 @@ use std::rc::Rc;
 use semver::Version;
 
 use super::p3_type_definitions::Output as Input;
-use crate::backend::binder::{Binder, BuiltIn, Definition, Reference, Resolution, ScopeId, Typing};
+use crate::backend::binder::{
+    Binder, BuiltIn, Definition, Reference, Resolution, ScopeId, Typing, UsingDirective,
+};
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, Type, TypeId, TypeRegistry};
@@ -109,14 +111,52 @@ impl Pass {
         }
     }
 
+    fn active_using_directives_for_type(&self, type_id: TypeId) -> Vec<&UsingDirective> {
+        // TODO: if the type is a reference type, we need to compute the id of
+        // the location independent type (using DataLocation::Inherited)
+        let mut directives = Vec::new();
+        for scope_id in self.scope_stack.iter().rev() {
+            let scope = self.binder.get_scope_by_id(*scope_id);
+            let scope_directives = scope.get_using_directives();
+            directives.extend(
+                scope_directives
+                    .iter()
+                    .filter(|directive| directive.applies_to(type_id)),
+            );
+        }
+        let global_directives = self.binder.get_global_using_directives();
+        directives.extend(
+            global_directives
+                .iter()
+                .filter(|directive| directive.applies_to(type_id)),
+        );
+        directives
+    }
+
     fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
         match typing {
             Typing::Unresolved | Typing::Undetermined(_) => Resolution::Unresolved,
             Typing::Resolved(type_id) => {
-                // TODO: we need to consider active `using` directives at this
-                // point (which also means we need to track what directives are
-                // active at any node in the tree)
-                self.resolve_symbol_in_type(*type_id, symbol)
+                let resolution = self.resolve_symbol_in_type(*type_id, symbol);
+                if resolution == Resolution::Unresolved {
+                    // Consider active `using` directives in the current context
+                    let active_directives = self.active_using_directives_for_type(*type_id);
+                    let mut definition_ids = Vec::new();
+                    for directive in &active_directives {
+                        let scope_id = directive.get_scope_id();
+                        let ids = self
+                            .binder
+                            .resolve_in_scope_as_namespace(scope_id, symbol)
+                            .get_definition_ids();
+                        // TODO: filter the resolved definitions to only include
+                        // functions whose first parameter is of our type (or
+                        // implicitly convertible to it)
+                        definition_ids.extend(ids);
+                    }
+                    Resolution::from(definition_ids)
+                } else {
+                    resolution
+                }
             }
             Typing::This | Typing::Super => {
                 // TODO: restrict lookup to the scope of the enclosing contract,
