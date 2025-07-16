@@ -2389,6 +2389,7 @@ dependencies = [
  "strum",
  "strum_macros",
  "thiserror 2.0.12",
+ "visibility",
 ]
 
 [[package]]
@@ -2413,6 +2414,7 @@ dependencies = [
  "strum",
  "strum_macros",
  "thiserror 2.0.12",
+ "visibility",
 ]
 
 [[package]]
