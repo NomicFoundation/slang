@@ -219,14 +219,19 @@ impl Pass {
                 })
             }
             input_ir::TypeName::FunctionType(function_type) => {
+                // NOTE: Keep in sync with `type_of_function_definition`
                 let parameter_types =
                     self.resolve_parameter_types(&function_type.parameters.parameters)?;
                 let return_type = if let Some(returns) = &function_type.returns {
                     let return_types =
                         self.resolve_parameter_types(&returns.variables.parameters)?;
-                    self.types.register_type(Type::Tuple {
-                        types: return_types,
-                    })
+                    if return_types.len() == 1 {
+                        return_types.first().copied().unwrap()
+                    } else {
+                        self.types.register_type(Type::Tuple {
+                            types: return_types,
+                        })
+                    }
                 } else {
                     self.types.void()
                 };
@@ -443,13 +448,21 @@ impl Pass {
         &mut self,
         function_definition: &input_ir::FunctionDefinition,
     ) -> Option<TypeId> {
+        // NOTE: Keep in sync with function types in `resolve_type_name` above
         let parameter_types =
             self.resolve_parameter_types(&function_definition.parameters.parameters)?;
         let return_type = if let Some(returns) = &function_definition.returns {
             let return_types = self.resolve_parameter_types(&returns.variables.parameters)?;
-            self.types.register_type(Type::Tuple {
-                types: return_types,
-            })
+            if return_types.len() == 1 {
+                // TODO: I think this is more correct, but we may decide to
+                // always return a tuple instead; this will require changing the
+                // typing of function call expressions
+                return_types.first().copied().unwrap()
+            } else {
+                self.types.register_type(Type::Tuple {
+                    types: return_types,
+                })
+            }
         } else {
             self.types.void()
         };
