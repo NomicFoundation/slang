@@ -7368,12 +7368,12 @@ pub type slang_solidity::bindings::Definition = metaslang_bindings::graph::defin
 pub type slang_solidity::bindings::Reference = metaslang_bindings::graph::reference::Reference<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::UserFileLocation = metaslang_bindings::graph::location::UserFileLocation<slang_solidity::cst::KindTypes>
 pub mod slang_solidity::compilation
-pub struct slang_solidity::compilation::CompilationBuilder<'b, E>
-pub slang_solidity::compilation::CompilationBuilder::config: &'b dyn slang_solidity::compilation::CompilationBuilderConfig<E>
-impl<'b, E> slang_solidity::compilation::CompilationBuilder<'b, E>
-pub fn slang_solidity::compilation::CompilationBuilder<'b, E>::add_file(&mut self, file_id: &str) -> core::result::Result<(), E>
-pub fn slang_solidity::compilation::CompilationBuilder<'b, E>::build(&self) -> slang_solidity::compilation::CompilationUnit
-pub fn slang_solidity::compilation::CompilationBuilder<'b, E>::new(version: semver::Version, config: &'b dyn slang_solidity::compilation::CompilationBuilderConfig<E>) -> core::result::Result<slang_solidity::compilation::CompilationBuilder<'b, E>, CompilationInitializationError>
+pub struct slang_solidity::compilation::CompilationBuilder<E, C: slang_solidity::compilation::CompilationBuilderConfig<Error = E>>
+pub slang_solidity::compilation::CompilationBuilder::config: C
+impl<E, C: slang_solidity::compilation::CompilationBuilderConfig<Error = E>> slang_solidity::compilation::CompilationBuilder<E, C>
+pub fn slang_solidity::compilation::CompilationBuilder<E, C>::add_file(&mut self, file_id: &str) -> core::result::Result<(), E>
+pub fn slang_solidity::compilation::CompilationBuilder<E, C>::build(&self) -> slang_solidity::compilation::CompilationUnit
+pub fn slang_solidity::compilation::CompilationBuilder<E, C>::new(version: semver::Version, config: C) -> core::result::Result<slang_solidity::compilation::CompilationBuilder<E, C>, slang_solidity::generated::compilation::builder::CompilationInitializationError>
 pub struct slang_solidity::compilation::CompilationUnit
 impl slang_solidity::compilation::CompilationUnit
 pub fn slang_solidity::compilation::CompilationUnit::binding_graph(&self) -> &alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
@@ -7388,9 +7388,10 @@ pub fn slang_solidity::compilation::File::id(&self) -> &str
 pub fn slang_solidity::compilation::File::tree(&self) -> &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>
 impl core::clone::Clone for slang_solidity::compilation::File
 pub fn slang_solidity::compilation::File::clone(&self) -> slang_solidity::compilation::File
-pub trait slang_solidity::compilation::CompilationBuilderConfig<E>
-pub fn slang_solidity::compilation::CompilationBuilderConfig::read_file(&self, file_id: &str) -> core::result::Result<core::option::Option<alloc::string::String>, E>
-pub fn slang_solidity::compilation::CompilationBuilderConfig::resolve_import(&self, source_file_id: &str, import_path_cursor: &slang_solidity::cst::Cursor) -> core::result::Result<core::option::Option<alloc::string::String>, E>
+pub trait slang_solidity::compilation::CompilationBuilderConfig
+pub type slang_solidity::compilation::CompilationBuilderConfig::Error
+pub fn slang_solidity::compilation::CompilationBuilderConfig::read_file(&mut self, file_id: &str) -> core::result::Result<core::option::Option<alloc::string::String>, Self::Error>
+pub fn slang_solidity::compilation::CompilationBuilderConfig::resolve_import(&mut self, source_file_id: &str, import_path_cursor: &slang_solidity::cst::Cursor) -> core::result::Result<core::option::Option<alloc::string::String>, Self::Error>
 pub mod slang_solidity::cst
 pub use slang_solidity::cst::EdgeLabelExtensions
 pub use slang_solidity::cst::NonterminalKindExtensions
