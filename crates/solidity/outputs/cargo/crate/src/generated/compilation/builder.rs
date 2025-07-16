@@ -53,7 +53,7 @@ pub struct CompilationBuilder<E, C: CompilationBuilderConfig<Error = E>> {
 #[derive(thiserror::Error, Debug)]
 pub enum CompilationInitializationError {
     /// Tried to initialize a [`CompilationBuilder`] with a version that is not supported for `Solidity`.
-    /// See [`LanguageFacts::ALL_VERSIONS`] for a complete list of supported versions.
+    /// See [`crate::utils::LanguageFacts::ALL_VERSIONS`] for a complete list of supported versions.
     #[error("Unsupported language version '{0}'.")]
     UnsupportedLanguageVersion(Version),
 }
