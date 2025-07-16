@@ -149,7 +149,7 @@ impl Default for TypeRegistry {
     }
 }
 
-#[derive(Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub enum Type {
     Address {
         payable: bool,
@@ -221,9 +221,42 @@ pub enum DataLocation {
     Inherited,
 }
 
-#[derive(Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum FunctionTypeKind {
     Pure,
     View,
     Payable,
+}
+
+impl Type {
+    #[must_use]
+    pub fn with_location(&self, location: DataLocation) -> Self {
+        match self {
+            Type::Array { element_type, .. } => Type::Array {
+                element_type: *element_type,
+                location,
+            },
+            Type::Bytes { .. } => Type::Bytes { location },
+            Type::String { .. } => Type::String { location },
+            Type::Struct { definition_id, .. } => Type::Struct {
+                definition_id: *definition_id,
+                location,
+            },
+
+            Type::Address { .. }
+            | Type::Boolean
+            | Type::ByteArray { .. }
+            | Type::Contract { .. }
+            | Type::Enum { .. }
+            | Type::FixedPointNumber { .. }
+            | Type::Function { .. }
+            | Type::Integer { .. }
+            | Type::Interface { .. }
+            | Type::Mapping { .. }
+            | Type::Rational
+            | Type::Tuple { .. }
+            | Type::UserDefinedValue { .. }
+            | Type::Void => self.clone(),
+        }
+    }
 }

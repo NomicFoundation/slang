@@ -7627,6 +7627,8 @@ pub enum slang_solidity::backend::types::FunctionTypeKind
 pub slang_solidity::backend::types::FunctionTypeKind::Payable
 pub slang_solidity::backend::types::FunctionTypeKind::Pure
 pub slang_solidity::backend::types::FunctionTypeKind::View
+impl core::clone::Clone for slang_solidity::backend::types::FunctionTypeKind
+pub fn slang_solidity::backend::types::FunctionTypeKind::clone(&self) -> slang_solidity::backend::types::FunctionTypeKind
 impl core::cmp::Eq for slang_solidity::backend::types::FunctionTypeKind
 impl core::cmp::PartialEq for slang_solidity::backend::types::FunctionTypeKind
 pub fn slang_solidity::backend::types::FunctionTypeKind::eq(&self, other: &slang_solidity::backend::types::FunctionTypeKind) -> bool
@@ -7634,6 +7636,7 @@ impl core::fmt::Debug for slang_solidity::backend::types::FunctionTypeKind
 pub fn slang_solidity::backend::types::FunctionTypeKind::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::hash::Hash for slang_solidity::backend::types::FunctionTypeKind
 pub fn slang_solidity::backend::types::FunctionTypeKind::hash<__H: core::hash::Hasher>(&self, state: &mut __H)
+impl core::marker::Copy for slang_solidity::backend::types::FunctionTypeKind
 impl core::marker::StructuralPartialEq for slang_solidity::backend::types::FunctionTypeKind
 pub enum slang_solidity::backend::types::Type
 pub slang_solidity::backend::types::Type::Address
@@ -7678,6 +7681,10 @@ pub slang_solidity::backend::types::Type::Tuple::types: alloc::vec::Vec<slang_so
 pub slang_solidity::backend::types::Type::UserDefinedValue
 pub slang_solidity::backend::types::Type::UserDefinedValue::definition_id: slang_solidity::cst::NodeId
 pub slang_solidity::backend::types::Type::Void
+impl slang_solidity::backend::types::Type
+pub fn slang_solidity::backend::types::Type::with_location(&self, location: slang_solidity::backend::types::DataLocation) -> Self
+impl core::clone::Clone for slang_solidity::backend::types::Type
+pub fn slang_solidity::backend::types::Type::clone(&self) -> slang_solidity::backend::types::Type
 impl core::cmp::Eq for slang_solidity::backend::types::Type
 impl core::cmp::PartialEq for slang_solidity::backend::types::Type
 pub fn slang_solidity::backend::types::Type::eq(&self, other: &slang_solidity::backend::types::Type) -> bool

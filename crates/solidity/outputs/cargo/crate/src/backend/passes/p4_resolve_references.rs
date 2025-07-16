@@ -112,8 +112,21 @@ impl Pass {
     }
 
     fn active_using_directives_for_type(&self, type_id: TypeId) -> Vec<&UsingDirective> {
-        // TODO: if the type is a reference type, we need to compute the id of
-        // the location independent type (using DataLocation::Inherited)
+        // If the type is a reference type, we need to compute the id of the
+        // location independent type (using DataLocation::Inherited). If it
+        // doesn't exist, proceed with the given value, but we won't find any
+        // type-specific directives, only those applicable to all types (ie.
+        // `using L for *`)
+        let location_independent_type = self
+            .types
+            .get_type_by_id(type_id)
+            .unwrap()
+            .with_location(DataLocation::Inherited);
+        let type_id = self
+            .types
+            .find_type(&location_independent_type)
+            .unwrap_or(type_id);
+
         let mut directives = Vec::new();
         for scope_id in self.scope_stack.iter().rev() {
             let scope = self.binder.get_scope_by_id(*scope_id);
