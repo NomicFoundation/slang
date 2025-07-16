@@ -137,7 +137,7 @@ fn run_test_command(command: TestCommand) -> Result<()> {
 
         std::fs::create_dir_all(output_path.parent().unwrap())?;
         output_path.write_string(value)?;
-        println!("Wrote results to {}", output_path.display());
+        println!("Wrote results to {output_path:?}");
     }
 
     let failure_count = events.failure_count();
@@ -166,11 +166,11 @@ fn run_with_traces(
         let compiler = &file.compiler;
         let path = file.path.strip_repo_root()?;
 
-        events.trace(format!("[{compiler}] Starting: {}", path.display()));
+        events.trace(format!("[{compiler}] Starting: {path:?}"));
 
         run_test(file, events, check_bindings, check_infer_version)?;
 
-        events.trace(format!("[{compiler}] Finished: {}", path.display()));
+        events.trace(format!("[{compiler}] Finished: {path:?}"));
     }
 
     Ok(())
