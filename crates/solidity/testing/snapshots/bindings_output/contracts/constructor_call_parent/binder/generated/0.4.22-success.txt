@@ -1,26 +1,25 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Definitions (3):
+Definitions (2):
 - Def: #1 ["Base" @ input.sol:1:10] (contract)
 - Def: #2 ["Test" @ input.sol:3:10] (contract)
-- Def: #3 ["Test" @ input.sol:4:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
-References (1):
+References (2):
 - Ref: ["Base" @ input.sol:3:18] -> #1
+- Ref: ["Base" @ input.sol:4:19] -> #1
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (1):
-- ???: ["Base" @ input.sol:4:28]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
 Bindings: 
    ╭─[input.sol:1:1]
    │
- 1 │ contract Base {
+ 1 │ contract Base {}
    │          ──┬─  
    │            ╰─── name: 1
    │ 
@@ -29,9 +28,7 @@ Bindings:
    │            ╰─────────── name: 2
    │                    │   
    │                    ╰─── ref: 1
- 4 │     function Test() public Base() {}
-   │              ──┬─          ──┬─  
-   │                ╰───────────────── name: 3
-   │                              │   
-   │                              ╰─── ???
+ 4 │     constructor() Base() {
+   │                   ──┬─  
+   │                     ╰─── ref: 1
 ───╯

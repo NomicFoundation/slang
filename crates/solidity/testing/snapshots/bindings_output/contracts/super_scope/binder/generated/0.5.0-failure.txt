@@ -7,13 +7,13 @@ Definitions (3):
 
 ------------------------------------------------------------------------
 
-References (1):
+References (2):
+- Ref: ["virtual" @ input.sol:5:32] -> unresolved
 - Ref: ["A" @ input.sol:10:15] -> #1
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (3):
-- ???: ["virtual" @ input.sol:5:32]
+Unbound identifiers (2):
 - ???: ["foo" @ input.sol:12:14]
 - ???: ["virtual" @ input.sol:12:32]
 
@@ -29,7 +29,7 @@ Bindings:
     │              ─┬─               ───┬───  
     │               ╰───────────────────────── name: 2
     │                                   │     
-    │                                   ╰───── ???
+    │                                   ╰───── unresolved
     │ 
  10 │ contract B is A {
     │          ┬    ┬  

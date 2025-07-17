@@ -12,25 +12,25 @@ Definitions (8):
 
 ------------------------------------------------------------------------
 
-References (8):
+References (14):
+- Ref: ["virtual" @ input.sol:5:32] -> unresolved
 - Ref: ["A" @ input.sol:10:15] -> #1
+- Ref: ["virtual" @ input.sol:11:32] -> unresolved
+- Ref: ["override" @ input.sol:11:40] -> unresolved
 - Ref: ["A" @ input.sol:11:49] -> #1
 - Ref: ["A" @ input.sol:16:15] -> #1
+- Ref: ["virtual" @ input.sol:17:32] -> unresolved
+- Ref: ["override" @ input.sol:17:40] -> unresolved
 - Ref: ["B" @ input.sol:22:15] -> #3
 - Ref: ["C" @ input.sol:22:18] -> #5
+- Ref: ["override" @ input.sol:24:32] -> unresolved
 - Ref: ["B" @ input.sol:24:41] -> #3
 - Ref: ["C" @ input.sol:24:44] -> #5
 - Ref: ["foo" @ input.sol:25:22] -> unresolved
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (6):
-- ???: ["virtual" @ input.sol:5:32]
-- ???: ["virtual" @ input.sol:11:32]
-- ???: ["override" @ input.sol:11:40]
-- ???: ["virtual" @ input.sol:17:32]
-- ???: ["override" @ input.sol:17:40]
-- ???: ["override" @ input.sol:24:32]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ Bindings:
     │              ─┬─               ───┬───  
     │               ╰───────────────────────── name: 2
     │                                   │     
-    │                                   ╰───── ???
+    │                                   ╰───── unresolved
     │ 
  10 │ contract B is A {
     │          ┬    ┬  
@@ -55,9 +55,9 @@ Bindings:
     │              ─┬─               ───┬─── ────┬─── ┬  
     │               ╰──────────────────────────────────── name: 4
     │                                   │        │    │  
-    │                                   ╰──────────────── ???
+    │                                   ╰──────────────── unresolved
     │                                            │    │  
-    │                                            ╰─────── ???
+    │                                            ╰─────── unresolved
     │                                                 │  
     │                                                 ╰── ref: 1
     │ 
@@ -70,9 +70,9 @@ Bindings:
     │              ─┬─               ───┬─── ────┬───  
     │               ╰────────────────────────────────── name: 6
     │                                   │        │     
-    │                                   ╰────────────── ???
+    │                                   ╰────────────── unresolved
     │                                            │     
-    │                                            ╰───── ???
+    │                                            ╰───── unresolved
     │ 
  22 │ contract D is B, C {
     │          ┬    ┬  ┬  
@@ -86,7 +86,7 @@ Bindings:
     │              ─┬─               ────┬─── ┬  ┬  
     │               ╰─────────────────────────────── name: 8
     │                                    │    │  │  
-    │                                    ╰────────── ???
+    │                                    ╰────────── unresolved
     │                                         │  │  
     │                                         ╰───── ref: 3
     │                                            │  

@@ -12,7 +12,7 @@ Definitions (8):
 
 ------------------------------------------------------------------------
 
-References (7):
+References (8):
 - Ref: ["_" @ input.sol:2:28] -> unresolved
 - Ref: ["Base" @ input.sol:5:15] -> #1
 - Ref: ["_" @ input.sol:6:37] -> unresolved
@@ -20,11 +20,11 @@ References (7):
 - Ref: ["_" @ input.sol:10:37] -> unresolved
 - Ref: ["B" @ input.sol:13:18] -> #5
 - Ref: ["A" @ input.sol:13:21] -> #3
+- Ref: ["foo" @ input.sol:14:28] -> unresolved
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (1):
-- ???: ["foo" @ input.sol:14:28]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -73,5 +73,5 @@ Bindings:
     │              ──┬─          ─┬─  
     │                ╰──────────────── name: 8
     │                             │   
-    │                             ╰─── ???
+    │                             ╰─── unresolved
 ────╯

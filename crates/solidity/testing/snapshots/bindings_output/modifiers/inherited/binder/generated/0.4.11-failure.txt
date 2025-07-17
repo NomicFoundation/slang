@@ -9,16 +9,16 @@ Definitions (5):
 
 ------------------------------------------------------------------------
 
-References (2):
+References (5):
 - Ref: ["_" @ input.sol:2:20] -> unresolved
 - Ref: ["Base" @ input.sol:5:18] -> #1
+- Ref: ["foo" @ input.sol:6:39] -> unresolved
+- Ref: ["Base" @ input.sol:8:37] -> #1
+- Ref: ["foo" @ input.sol:8:42] -> #2
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (3):
-- ???: ["foo" @ input.sol:6:39]
-- ???: ["Base" @ input.sol:8:37]
-- ???: ["foo" @ input.sol:8:42]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -43,13 +43,13 @@ Bindings:
    │              ───────┬───────          ─┬─  
    │                     ╰────────────────────── name: 4
    │                                        │   
-   │                                        ╰─── ???
+   │                                        ╰─── unresolved
    │ 
  8 │     function testQualified() public Base.foo {
    │              ──────┬──────          ──┬─ ─┬─  
    │                    ╰────────────────────────── name: 5
    │                                       │   │   
-   │                                       ╰─────── ???
+   │                                       ╰─────── ref: 1
    │                                           │   
-   │                                           ╰─── ???
+   │                                           ╰─── ref: 2
 ───╯

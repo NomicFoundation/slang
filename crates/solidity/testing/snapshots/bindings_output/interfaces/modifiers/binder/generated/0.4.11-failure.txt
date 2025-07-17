@@ -9,18 +9,18 @@ Definitions (5):
 
 ------------------------------------------------------------------------
 
-References (6):
+References (7):
 - Ref: ["require" @ input.sol:6:9] -> unresolved
 - Ref: ["owner" @ input.sol:6:22] -> unresolved
 - Ref: ["msg" @ input.sol:6:33] -> unresolved
 - Ref: ["sender" @ input.sol:6:37] -> unresolved
 - Ref: ["_" @ input.sol:7:9] -> unresolved
 - Ref: ["IOwnable" @ input.sol:11:18] -> #1
+- Ref: ["onlyOwner" @ input.sol:12:28] -> unresolved
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (1):
-- ???: ["onlyOwner" @ input.sol:12:28]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -59,5 +59,5 @@ Bindings:
     │              ──┬─          ────┬────  
     │                ╰────────────────────── name: 5
     │                                │      
-    │                                ╰────── ???
+    │                                ╰────── unresolved
 ────╯

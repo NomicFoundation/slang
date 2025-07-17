@@ -9,19 +9,19 @@ Definitions (5):
 
 ------------------------------------------------------------------------
 
-References (4):
+References (5):
 - Ref: ["Base" @ input.sol:5:15] -> #1
 - Ref: ["Base" @ input.sol:9:15] -> #1
 - Ref: ["B" @ input.sol:13:18] -> #3
 - Ref: ["A" @ input.sol:13:21] -> #2
+- Ref: ["foo" @ input.sol:14:28] -> unresolved
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (4):
+Unbound identifiers (3):
 - ???: ["foo" @ input.sol:2:14]
 - ???: ["foo" @ input.sol:6:14]
 - ???: ["foo" @ input.sol:10:14]
-- ???: ["foo" @ input.sol:14:28]
 
 ------------------------------------------------------------------------
 
@@ -64,5 +64,5 @@ Bindings:
     │              ──┬─          ─┬─  
     │                ╰──────────────── name: 5
     │                             │   
-    │                             ╰─── ???
+    │                             ╰─── unresolved
 ────╯

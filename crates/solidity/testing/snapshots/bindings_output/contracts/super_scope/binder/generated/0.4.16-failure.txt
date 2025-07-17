@@ -8,17 +8,17 @@ Definitions (4):
 
 ------------------------------------------------------------------------
 
-References (3):
+References (6):
+- Ref: ["virtual" @ input.sol:5:32] -> unresolved
 - Ref: ["A" @ input.sol:10:15] -> #1
+- Ref: ["virtual" @ input.sol:12:32] -> unresolved
+- Ref: ["override" @ input.sol:12:40] -> unresolved
 - Ref: ["A" @ input.sol:12:49] -> #1
 - Ref: ["foo" @ input.sol:13:22] -> unresolved
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (3):
-- ???: ["virtual" @ input.sol:5:32]
-- ???: ["virtual" @ input.sol:12:32]
-- ???: ["override" @ input.sol:12:40]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ Bindings:
     │              ─┬─               ───┬───  
     │               ╰───────────────────────── name: 2
     │                                   │     
-    │                                   ╰───── ???
+    │                                   ╰───── unresolved
     │ 
  10 │ contract B is A {
     │          ┬    ┬  
@@ -44,9 +44,9 @@ Bindings:
     │              ─┬─               ───┬─── ────┬─── ┬  
     │               ╰──────────────────────────────────── name: 4
     │                                   │        │    │  
-    │                                   ╰──────────────── ???
+    │                                   ╰──────────────── unresolved
     │                                            │    │  
-    │                                            ╰─────── ???
+    │                                            ╰─────── unresolved
     │                                                 │  
     │                                                 ╰── ref: 1
  13 │         return super.foo();

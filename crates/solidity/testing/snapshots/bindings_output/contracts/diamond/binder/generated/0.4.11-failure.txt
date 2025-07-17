@@ -11,21 +11,21 @@ Definitions (7):
 
 ------------------------------------------------------------------------
 
-References (5):
+References (10):
+- Ref: ["virtual" @ input.sol:2:27] -> unresolved
 - Ref: ["A" @ input.sol:6:15] -> #1
+- Ref: ["virtual" @ input.sol:7:27] -> unresolved
+- Ref: ["override" @ input.sol:7:35] -> unresolved
 - Ref: ["A" @ input.sol:11:15] -> #1
 - Ref: ["B" @ input.sol:14:15] -> #3
 - Ref: ["C" @ input.sol:14:18] -> #5
+- Ref: ["virtual" @ input.sol:15:27] -> unresolved
+- Ref: ["override" @ input.sol:15:35] -> unresolved
 - Ref: ["foo" @ input.sol:16:15] -> unresolved
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (5):
-- ???: ["virtual" @ input.sol:2:27]
-- ???: ["virtual" @ input.sol:7:27]
-- ???: ["override" @ input.sol:7:35]
-- ???: ["virtual" @ input.sol:15:27]
-- ???: ["override" @ input.sol:15:35]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ Bindings:
     │              ─┬─          ───┬───  
     │               ╰──────────────────── name: 2
     │                              │     
-    │                              ╰───── ???
+    │                              ╰───── unresolved
     │ 
   6 │ contract B is A {
     │          ┬    ┬  
@@ -50,9 +50,9 @@ Bindings:
     │              ─┬─          ───┬─── ────┬───  
     │               ╰───────────────────────────── name: 4
     │                              │        │     
-    │                              ╰────────────── ???
+    │                              ╰────────────── unresolved
     │                                       │     
-    │                                       ╰───── ???
+    │                                       ╰───── unresolved
     │ 
  11 │ contract C is A {
     │          ┬    ┬  
@@ -71,9 +71,9 @@ Bindings:
     │              ─┬─          ───┬─── ────┬───  
     │               ╰───────────────────────────── name: 7
     │                              │        │     
-    │                              ╰────────────── ???
+    │                              ╰────────────── unresolved
     │                                       │     
-    │                                       ╰───── ???
+    │                                       ╰───── unresolved
  16 │         super.foo();
     │               ─┬─  
     │                ╰─── unresolved

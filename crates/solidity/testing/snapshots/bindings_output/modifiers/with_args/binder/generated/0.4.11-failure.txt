@@ -10,18 +10,18 @@ Definitions (6):
 
 ------------------------------------------------------------------------
 
-References (6):
+References (7):
 - Ref: ["assert" @ input.sol:5:9] -> unresolved
 - Ref: ["_addr" @ input.sol:5:16] -> #4
 - Ref: ["_" @ input.sol:6:9] -> unresolved
+- Ref: ["validAddress" @ input.sol:11:9] -> #3
 - Ref: ["_newOwner" @ input.sol:11:22] -> #6
 - Ref: ["owner" @ input.sol:13:9] -> #2
 - Ref: ["_newOwner" @ input.sol:13:17] -> #6
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (1):
-- ???: ["validAddress" @ input.sol:11:9]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ Bindings:
     │ 
  11 │         validAddress(_newOwner)
     │         ──────┬───── ────┬────  
-    │               ╰───────────────── ???
+    │               ╰───────────────── ref: 3
     │                          │      
     │                          ╰────── ref: 6
     │ 

@@ -8,17 +8,17 @@ Definitions (4):
 
 ------------------------------------------------------------------------
 
-References (5):
+References (6):
 - Ref: ["assert" @ input.sol:5:9] -> unresolved
 - Ref: ["locked" @ input.sol:5:17] -> #2
 - Ref: ["locked" @ input.sol:7:9] -> #2
 - Ref: ["_" @ input.sol:8:9] -> unresolved
 - Ref: ["locked" @ input.sol:9:9] -> #2
+- Ref: ["noReentrancy" @ input.sol:12:33] -> #3
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (1):
-- ???: ["noReentrancy" @ input.sol:12:33]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -55,5 +55,5 @@ Bindings:
     │              ────┬────          ──────┬─────  
     │                  ╰──────────────────────────── name: 4
     │                                       │       
-    │                                       ╰─────── ???
+    │                                       ╰─────── ref: 3
 ────╯

@@ -8,16 +8,16 @@ Definitions (4):
 
 ------------------------------------------------------------------------
 
-References (4):
+References (5):
 - Ref: ["assert" @ input.sol:3:9] -> unresolved
 - Ref: ["_addr" @ input.sol:3:16] -> #3
 - Ref: ["_" @ input.sol:4:9] -> unresolved
+- Ref: ["validAddress" @ input.sol:7:33] -> #2
 - Ref: ["_addr" @ input.sol:7:46] -> #4
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (1):
-- ???: ["validAddress" @ input.sol:7:33]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ Bindings:
    │                          ──┬──  ──────┬───── ──┬──  
    │                            ╰──────────────────────── name: 4
    │                                       │        │    
-   │                                       ╰───────────── ???
+   │                                       ╰───────────── ref: 2
    │                                                │    
    │                                                ╰──── ref: 4
 ───╯
