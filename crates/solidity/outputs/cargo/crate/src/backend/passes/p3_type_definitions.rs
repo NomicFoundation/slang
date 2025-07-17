@@ -552,6 +552,13 @@ impl Visitor for Pass {
         }
     }
 
+    fn enter_override_paths(&mut self, items: &input_ir::OverridePaths) -> bool {
+        for identifier_path in items {
+            self.resolve_identifier_path(identifier_path);
+        }
+        false
+    }
+
     fn leave_parameter(&mut self, node: &input_ir::Parameter) {
         let type_id = self.resolve_type_name(
             &node.type_name,

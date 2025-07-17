@@ -5,7 +5,7 @@ use semver::Version;
 
 use super::p3_type_definitions::Output as Input;
 use crate::backend::binder::{
-    Binder, BuiltIn, Definition, Reference, Resolution, ScopeId, Typing, UsingDirective,
+    Binder, BuiltIn, Definition, Reference, Resolution, Scope, ScopeId, Typing, UsingDirective,
 };
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
@@ -451,6 +451,47 @@ impl Pass {
             }
         }
     }
+
+    fn current_contract_scope_id(&self) -> ScopeId {
+        for scope_id in self.scope_stack.iter().rev() {
+            let scope = self.binder.get_scope_by_id(*scope_id);
+            if matches!(scope, Scope::Contract(_)) {
+                return *scope_id;
+            }
+        }
+        unreachable!("no contract scope found in the stack");
+    }
+
+    fn resolve_modifier_invocation(&mut self, modifier_invocation: &input_ir::ModifierInvocation) {
+        let identifier_path = &modifier_invocation.name;
+        let mut scope_id = Some(self.current_contract_scope_id());
+        let mut use_contract_lookup = true;
+        for identifier in identifier_path {
+            let resolution = if let Some(scope_id) = scope_id {
+                let symbol = identifier.unparse();
+                if use_contract_lookup {
+                    use_contract_lookup = false;
+                    self.resolve_symbol_in_scope(scope_id, &symbol)
+                } else {
+                    self.binder.resolve_in_scope_as_namespace(scope_id, &symbol)
+                }
+            } else {
+                Resolution::Unresolved
+            };
+            // TODO(validation): the found definition(s) must be modifiers
+            // and be in the current contract hierarchy. We could potentially
+            // verify that the initial symbol lookup is reachable from the
+            // contract only (ie. it's a contract modifier, a modifier in a
+            // base, or it's the identifier of a base of the current contract)
+
+            scope_id = resolution
+                .as_definition_id()
+                .and_then(|definition_id| self.binder.scope_id_for_node_id(definition_id));
+
+            let reference = Reference::new(Rc::clone(identifier), resolution);
+            self.binder.insert_reference(reference);
+        }
+    }
 }
 
 impl Visitor for Pass {
@@ -491,6 +532,13 @@ impl Visitor for Pass {
     }
 
     fn enter_function_definition(&mut self, node: &input_ir::FunctionDefinition) -> bool {
+        for attribute in &node.attributes {
+            if let input_ir::FunctionAttribute::ModifierInvocation(modifier_invocation) = attribute
+            {
+                self.resolve_modifier_invocation(modifier_invocation);
+            }
+        }
+
         self.enter_scope_for_node_id(node.node_id);
         true
     }
@@ -509,6 +557,14 @@ impl Visitor for Pass {
     }
 
     fn enter_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) -> bool {
+        for attribute in &node.attributes {
+            if let input_ir::ConstructorAttribute::ModifierInvocation(modifier_invocation) =
+                attribute
+            {
+                self.resolve_modifier_invocation(modifier_invocation);
+            }
+        }
+
         self.enter_scope_for_node_id(node.node_id);
         true
     }
@@ -521,6 +577,14 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::FallbackFunctionDefinition,
     ) -> bool {
+        for attribute in &node.attributes {
+            if let input_ir::FallbackFunctionAttribute::ModifierInvocation(modifier_invocation) =
+                attribute
+            {
+                self.resolve_modifier_invocation(modifier_invocation);
+            }
+        }
+
         self.enter_scope_for_node_id(node.node_id);
         true
     }
@@ -533,6 +597,14 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::ReceiveFunctionDefinition,
     ) -> bool {
+        for attribute in &node.attributes {
+            if let input_ir::ReceiveFunctionAttribute::ModifierInvocation(modifier_invocation) =
+                attribute
+            {
+                self.resolve_modifier_invocation(modifier_invocation);
+            }
+        }
+
         self.enter_scope_for_node_id(node.node_id);
         true
     }
@@ -545,6 +617,14 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::UnnamedFunctionDefinition,
     ) -> bool {
+        for attribute in &node.attributes {
+            if let input_ir::UnnamedFunctionAttribute::ModifierInvocation(modifier_invocation) =
+                attribute
+            {
+                self.resolve_modifier_invocation(modifier_invocation);
+            }
+        }
+
         self.enter_scope_for_node_id(node.node_id);
         true
     }
