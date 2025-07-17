@@ -501,15 +501,26 @@ impl Visitor for Pass {
     ) -> bool {
         // TODO(validation): for Solidity >= 0.5.0 this definition should only
         // be available for statements after this one
+        let is_untyped_declaration = node.var_keyword.is_some();
         for element in &node.elements {
             let Some(tuple_member) = &element.member else {
                 continue;
             };
-            if let input_ir::TupleMember::TypedTupleMember(type_tuple_member) = tuple_member {
-                let definition =
-                    Definition::new_variable(type_tuple_member.node_id, &type_tuple_member.name);
-                self.insert_definition_in_current_scope(definition);
-            }
+            let definition = match tuple_member {
+                input_ir::TupleMember::TypedTupleMember(typed_tuple_member) => {
+                    Definition::new_variable(typed_tuple_member.node_id, &typed_tuple_member.name)
+                }
+                input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) => {
+                    if !is_untyped_declaration {
+                        continue;
+                    }
+                    Definition::new_variable(
+                        untyped_tuple_member.node_id,
+                        &untyped_tuple_member.name,
+                    )
+                }
+            };
+            self.insert_definition_in_current_scope(definition);
         }
 
         false
