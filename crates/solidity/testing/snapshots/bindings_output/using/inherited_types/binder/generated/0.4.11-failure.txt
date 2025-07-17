@@ -1,0 +1,81 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (10):
+- Def: #1 ["IPool" @ input.sol:1:11] (interface)
+- Def: #2 ["Info" @ input.sol:2:12] (struct)
+- Def: #3 ["amount" @ input.sol:3:17] (struct member, type: uint256)
+- Def: #4 ["Math" @ input.sol:6:9] (library)
+- Def: #5 ["nop" @ input.sol:7:14] (function, type: function (uint256) returns void)
+- Def: #6 ["x" @ input.sol:7:26] (parameter, type: uint256)
+- Def: #7 ["Test" @ input.sol:9:10] (contract)
+- Def: #8 ["infos" @ input.sol:10:30] (state var, type: unresolved)
+- Def: #9 ["test" @ input.sol:12:14] (function, type: function (uint256) returns void)
+- Def: #10 ["x" @ input.sol:12:27] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["IPool" @ input.sol:9:18] -> #1
+- Ref: ["Info" @ input.sol:10:24] -> unresolved
+- Ref: ["Math" @ input.sol:11:11] -> #4
+- Ref: ["infos" @ input.sol:13:9] -> #8
+- Ref: ["x" @ input.sol:13:15] -> #10
+- Ref: ["amount" @ input.sol:13:18] -> unresolved
+- Ref: ["nop" @ input.sol:13:25] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IPool {
+    │           ──┬──  
+    │             ╰──── name: 1
+  2 │     struct Info {
+    │            ──┬─  
+    │              ╰─── name: 2
+  3 │         uint256 amount;
+    │                 ───┬──  
+    │                    ╰──── name: 3
+    │ 
+  6 │ library Math {
+    │         ──┬─  
+    │           ╰─── name: 4
+  7 │     function nop(uint256 x) public {}
+    │              ─┬─         ┬  
+    │               ╰───────────── name: 5
+    │                          │  
+    │                          ╰── name: 6
+    │ 
+  9 │ contract Test is IPool {
+    │          ──┬─    ──┬──  
+    │            ╰──────────── name: 7
+    │                    │    
+    │                    ╰──── ref: 1
+ 10 │     mapping(uint256 => Info) infos;
+    │                        ──┬─  ──┬──  
+    │                          ╰────────── unresolved
+    │                                │    
+    │                                ╰──── name: 8
+ 11 │     using Math for uint256;
+    │           ──┬─  
+    │             ╰─── ref: 4
+ 12 │     function test(uint256 x) public {
+    │              ──┬─         ┬  
+    │                ╰───────────── name: 9
+    │                           │  
+    │                           ╰── name: 10
+ 13 │         infos[x].amount.nop();
+    │         ──┬── ┬  ───┬── ─┬─  
+    │           ╰────────────────── ref: 8
+    │               │     │    │   
+    │               ╰────────────── ref: 10
+    │                     │    │   
+    │                     ╰──────── unresolved
+    │                          │   
+    │                          ╰─── unresolved
+────╯

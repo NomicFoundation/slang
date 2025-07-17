@@ -1,0 +1,57 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Foo" @ input.sol:1:10] (contract)
+- Def: #2 ["Test" @ input.sol:3:10] (contract)
+- Def: #3 ["test" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #4 ["code" @ input.sol:6:28] (parameter, type: uint256)
+- Def: #5 ["message" @ input.sol:8:37] (parameter, type: string memory)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Foo" @ input.sol:5:17] -> #1
+- Ref: ["code" @ input.sol:7:13] -> #4
+- Ref: ["message" @ input.sol:9:13] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (2):
+- ???: ["Panic" @ input.sol:6:17]
+- ???: ["Error" @ input.sol:8:17]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Foo {}
+   │          ─┬─  
+   │           ╰─── name: 1
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 2
+ 4 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 3
+ 5 │         try new Foo() {
+   │                 ─┬─  
+   │                  ╰─── ref: 1
+ 6 │         } catch Panic(uint code) {
+   │                 ──┬──      ──┬─  
+   │                   ╰────────────── ???
+   │                              │   
+   │                              ╰─── name: 4
+ 7 │             code;
+   │             ──┬─  
+   │               ╰─── ref: 4
+ 8 │         } catch Error(string memory message) {
+   │                 ──┬──               ───┬───  
+   │                   ╰────────────────────────── ???
+   │                                        │     
+   │                                        ╰───── name: 5
+ 9 │             message;
+   │             ───┬───  
+   │                ╰───── ref: 5
+───╯

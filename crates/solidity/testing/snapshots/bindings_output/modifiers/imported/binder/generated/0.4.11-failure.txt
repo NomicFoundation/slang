@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Base" @ lib.sol:1:10] (contract)
+- Def: #2 ["beforeRun" @ lib.sol:2:14] (modifier)
+- Def: #3 ["Base" @ main.sol:1:9] (imported symbol)
+- Def: #4 ["Test" @ main.sol:3:10] (contract)
+- Def: #5 ["test" @ main.sol:4:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["_" @ lib.sol:3:9] -> unresolved
+- Ref: ["Base" @ main.sol:3:18] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (2):
+- ???: ["Base" @ main.sol:4:28]
+- ???: ["beforeRun" @ main.sol:4:33]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[lib.sol:1:1]
+   │
+ 1 │ contract Base {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     modifier beforeRun() {
+   │              ────┬────  
+   │                  ╰────── name: 2
+ 3 │         _;
+   │         ┬  
+   │         ╰── unresolved
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import {Base} from "./lib.sol";
+   │         ──┬─  
+   │           ╰─── name: 3
+   │ 
+ 3 │ contract Test is Base {
+   │          ──┬─    ──┬─  
+   │            ╰─────────── name: 4
+   │                    │   
+   │                    ╰─── ref: 1
+ 4 │     function test() public Base.beforeRun {
+   │              ──┬─          ──┬─ ────┬────  
+   │                ╰─────────────────────────── name: 5
+   │                              │      │      
+   │                              ╰───────────── ???
+   │                                     │      
+   │                                     ╰────── ???
+───╯

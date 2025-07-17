@@ -1,0 +1,53 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["someFunc" @ input.sol:2:14] (function, type: function (int256) returns int256)
+- Def: #3 ["x" @ input.sol:2:27] (parameter, type: int256)
+- Def: #4 ["divide" @ input.sol:5:14] (function, type: function (int256, int256) returns int256)
+- Def: #5 ["dividend" @ input.sol:5:25] (parameter, type: int256)
+- Def: #6 ["divisor" @ input.sol:5:39] (parameter, type: int256)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["divide" @ input.sol:3:16] -> #4
+- Ref: ["x" @ input.sol:3:35] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (2):
+- ???: ["dividend" @ input.sol:3:25]
+- ???: ["divisor" @ input.sol:3:38]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function someFunc(int x) returns (int) {
+   │              ────┬───     ┬  
+   │                  ╰─────────── name: 2
+   │                           │  
+   │                           ╰── name: 3
+ 3 │         return divide({ dividend: x, divisor: 3 });
+   │                ───┬──   ────┬───  ┬  ───┬───  
+   │                   ╰─────────────────────────── ref: 4
+   │                             │     │     │     
+   │                             ╰───────────────── ???
+   │                                   │     │     
+   │                                   ╰─────────── ref: 3
+   │                                         │     
+   │                                         ╰───── ???
+   │ 
+ 5 │     function divide(int dividend, int divisor) returns (int);
+   │              ───┬──     ────┬───      ───┬───  
+   │                 ╰────────────────────────────── name: 4
+   │                             │            │     
+   │                             ╰────────────────── name: 5
+   │                                          │     
+   │                                          ╰───── name: 6
+───╯

@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Counter" @ main.sol:1:9] (imported symbol)
+- Def: #2 ["Test" @ main.sol:3:10] (contract)
+- Def: #3 ["test" @ main.sol:4:14] (function, type: unresolved)
+- Def: #4 ["c" @ main.sol:4:34] (parameter, type: unresolved)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Counter" @ main.sol:4:19] -> unresolved
+- Ref: ["c" @ main.sol:5:9] -> #4
+- Ref: ["increment" @ main.sol:5:11] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import {Counter} from "counter.sol";
+   │         ───┬───  
+   │            ╰───── name: 1
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 2
+ 4 │     function test(Counter memory c) public {
+   │              ──┬─ ───┬───        ┬  
+   │                ╰──────────────────── name: 3
+   │                      │           │  
+   │                      ╰────────────── unresolved
+   │                                  │  
+   │                                  ╰── name: 4
+ 5 │         c.increment();
+   │         ┬ ────┬────  
+   │         ╰──────────── ref: 4
+   │               │      
+   │               ╰────── unresolved
+───╯

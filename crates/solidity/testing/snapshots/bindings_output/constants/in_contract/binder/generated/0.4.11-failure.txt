@@ -1,0 +1,98 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (10):
+- Def: #1 ["Constants" @ input.sol:1:10] (contract)
+- Def: #2 ["Direction" @ input.sol:2:10] (enum)
+- Def: #3 ["NORTH" @ input.sol:2:22] (enum member of Direction)
+- Def: #4 ["SOUTH" @ input.sol:2:29] (enum member of Direction)
+- Def: #5 ["EAST" @ input.sol:2:36] (enum member of Direction)
+- Def: #6 ["WEST" @ input.sol:2:42] (enum member of Direction)
+- Def: #7 ["MY_ADDRESS" @ input.sol:4:29] (constant, type: address)
+- Def: #8 ["MY_UINT" @ input.sol:5:29] (constant, type: uint256)
+- Def: #9 ["MY_DIRECTION" @ input.sol:6:31] (constant, type: Direction)
+- Def: #10 ["test" @ input.sol:8:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (13):
+- Ref: ["Direction" @ input.sol:6:5] -> #2
+- Ref: ["Direction" @ input.sol:6:46] -> #2
+- Ref: ["EAST" @ input.sol:6:56] -> #5
+- Ref: ["assert" @ input.sol:9:9] -> unresolved
+- Ref: ["MY_DIRECTION" @ input.sol:9:16] -> #9
+- Ref: ["Direction" @ input.sol:9:32] -> #2
+- Ref: ["NORTH" @ input.sol:9:42] -> #3
+- Ref: ["assert" @ input.sol:10:9] -> unresolved
+- Ref: ["MY_UINT" @ input.sol:10:16] -> #8
+- Ref: ["require" @ input.sol:11:9] -> unresolved
+- Ref: ["msg" @ input.sol:11:17] -> unresolved
+- Ref: ["sender" @ input.sol:11:21] -> unresolved
+- Ref: ["MY_ADDRESS" @ input.sol:11:31] -> #7
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Constants {
+    │          ────┬────  
+    │              ╰────── name: 1
+  2 │     enum Direction { NORTH, SOUTH, EAST, WEST }
+    │          ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+    │              ╰───────────────────────────────── name: 2
+    │                        │      │      │     │   
+    │                        ╰─────────────────────── name: 3
+    │                               │      │     │   
+    │                               ╰──────────────── name: 4
+    │                                      │     │   
+    │                                      ╰───────── name: 5
+    │                                            │   
+    │                                            ╰─── name: 6
+    │ 
+  4 │     address public constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
+    │                             ─────┬────  
+    │                                  ╰────── name: 7
+  5 │     uint256 public constant MY_UINT = 123;
+    │                             ───┬───  
+    │                                ╰───── name: 8
+  6 │     Direction public constant MY_DIRECTION = Direction.EAST;
+    │     ────┬────                 ──────┬─────   ────┬──── ──┬─  
+    │         ╰──────────────────────────────────────────────────── ref: 2
+    │                                     │            │       │   
+    │                                     ╰──────────────────────── name: 9
+    │                                                  │       │   
+    │                                                  ╰─────────── ref: 2
+    │                                                          │   
+    │                                                          ╰─── ref: 5
+    │ 
+  8 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 10
+  9 │         assert(MY_DIRECTION != Direction.NORTH);
+    │         ───┬── ──────┬─────    ────┬──── ──┬──  
+    │            ╰──────────────────────────────────── unresolved
+    │                      │             │       │    
+    │                      ╰────────────────────────── ref: 9
+    │                                    │       │    
+    │                                    ╰──────────── ref: 2
+    │                                            │    
+    │                                            ╰──── ref: 3
+ 10 │         assert(MY_UINT > 100);
+    │         ───┬── ───┬───  
+    │            ╰──────────── unresolved
+    │                   │     
+    │                   ╰───── ref: 8
+ 11 │         require(msg.sender == MY_ADDRESS);
+    │         ───┬─── ─┬─ ───┬──    ─────┬────  
+    │            ╰────────────────────────────── unresolved
+    │                  │     │           │      
+    │                  ╰──────────────────────── unresolved
+    │                        │           │      
+    │                        ╰────────────────── unresolved
+    │                                    │      
+    │                                    ╰────── ref: 7
+────╯

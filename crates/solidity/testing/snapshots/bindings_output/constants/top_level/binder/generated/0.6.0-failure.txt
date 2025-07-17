@@ -1,0 +1,76 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Constants" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["Direction" @ input.sol:9:6] (enum)
+- Def: #4 ["NORTH" @ input.sol:9:18] (enum member of Direction)
+- Def: #5 ["SOUTH" @ input.sol:9:25] (enum member of Direction)
+- Def: #6 ["EAST" @ input.sol:9:32] (enum member of Direction)
+- Def: #7 ["WEST" @ input.sol:9:38] (enum member of Direction)
+
+------------------------------------------------------------------------
+
+References (10):
+- Ref: ["assert" @ input.sol:3:9] -> unresolved
+- Ref: ["MY_DIRECTION" @ input.sol:3:16] -> unresolved
+- Ref: ["Direction" @ input.sol:3:32] -> #3
+- Ref: ["NORTH" @ input.sol:3:42] -> #4
+- Ref: ["assert" @ input.sol:4:9] -> unresolved
+- Ref: ["MY_UINT" @ input.sol:4:16] -> unresolved
+- Ref: ["require" @ input.sol:5:9] -> unresolved
+- Ref: ["msg" @ input.sol:5:17] -> unresolved
+- Ref: ["sender" @ input.sol:5:21] -> unresolved
+- Ref: ["MY_ADDRESS" @ input.sol:5:31] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Constants {
+   │          ────┬────  
+   │              ╰────── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         assert(MY_DIRECTION != Direction.NORTH);
+   │         ───┬── ──────┬─────    ────┬──── ──┬──  
+   │            ╰──────────────────────────────────── unresolved
+   │                      │             │       │    
+   │                      ╰────────────────────────── unresolved
+   │                                    │       │    
+   │                                    ╰──────────── ref: 3
+   │                                            │    
+   │                                            ╰──── ref: 4
+ 4 │         assert(MY_UINT > 100);
+   │         ───┬── ───┬───  
+   │            ╰──────────── unresolved
+   │                   │     
+   │                   ╰───── unresolved
+ 5 │         require(msg.sender == MY_ADDRESS);
+   │         ───┬─── ─┬─ ───┬──    ─────┬────  
+   │            ╰────────────────────────────── unresolved
+   │                  │     │           │      
+   │                  ╰──────────────────────── unresolved
+   │                        │           │      
+   │                        ╰────────────────── unresolved
+   │                                    │      
+   │                                    ╰────── unresolved
+   │ 
+ 9 │ enum Direction { NORTH, SOUTH, EAST, WEST }
+   │      ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+   │          ╰───────────────────────────────── name: 3
+   │                    │      │      │     │   
+   │                    ╰─────────────────────── name: 4
+   │                           │      │     │   
+   │                           ╰──────────────── name: 5
+   │                                  │     │   
+   │                                  ╰───────── name: 6
+   │                                        │   
+   │                                        ╰─── name: 7
+───╯

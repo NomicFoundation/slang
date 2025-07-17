@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["A" @ input.sol:5:10] (contract)
+- Def: #3 ["B" @ input.sol:9:10] (contract)
+- Def: #4 ["Test" @ input.sol:13:10] (contract)
+- Def: #5 ["test" @ input.sol:14:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Base" @ input.sol:5:15] -> #1
+- Ref: ["Base" @ input.sol:9:15] -> #1
+- Ref: ["B" @ input.sol:13:18] -> #3
+- Ref: ["A" @ input.sol:13:21] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (4):
+- ???: ["foo" @ input.sol:2:14]
+- ???: ["foo" @ input.sol:6:14]
+- ???: ["foo" @ input.sol:10:14]
+- ???: ["foo" @ input.sol:14:28]
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     modifier foo virtual { _; }
+    │              ─┬─  
+    │               ╰─── ???
+    │ 
+  5 │ contract A is Base {
+    │          ┬    ──┬─  
+    │          ╰────────── name: 2
+    │                 │   
+    │                 ╰─── ref: 1
+  6 │     modifier foo virtual override { _; }
+    │              ─┬─  
+    │               ╰─── ???
+    │ 
+  9 │ contract B is Base {
+    │          ┬    ──┬─  
+    │          ╰────────── name: 3
+    │                 │   
+    │                 ╰─── ref: 1
+ 10 │     modifier foo virtual override { _; }
+    │              ─┬─  
+    │               ╰─── ???
+    │ 
+ 13 │ contract Test is B, A {
+    │          ──┬─    ┬  ┬  
+    │            ╰─────────── name: 4
+    │                  │  │  
+    │                  ╰───── ref: 3
+    │                     │  
+    │                     ╰── ref: 2
+ 14 │     function test() public foo {}
+    │              ──┬─          ─┬─  
+    │                ╰──────────────── name: 5
+    │                             │   
+    │                             ╰─── ???
+────╯

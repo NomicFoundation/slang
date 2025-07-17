@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns int32)
+- Def: #3 ["MyLib" @ input.sol:7:9] (library)
+- Def: #4 ["LibType" @ input.sol:8:10] (udvt, type: int32)
+- Def: #5 ["create" @ input.sol:10:14] (function, type: function () returns LibType)
+
+------------------------------------------------------------------------
+
+References (8):
+- Ref: ["MyLib" @ input.sol:3:16] -> #3
+- Ref: ["LibType" @ input.sol:3:22] -> #4
+- Ref: ["unwrap" @ input.sol:3:30] -> unresolved
+- Ref: ["MyLib" @ input.sol:3:37] -> #3
+- Ref: ["create" @ input.sol:3:43] -> #5
+- Ref: ["LibType" @ input.sol:10:39] -> #4
+- Ref: ["LibType" @ input.sol:11:16] -> #4
+- Ref: ["wrap" @ input.sol:11:24] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test() public returns (int32) {
+    │              ──┬─  
+    │                ╰─── name: 2
+  3 │         return MyLib.LibType.unwrap(MyLib.create());
+    │                ──┬── ───┬─── ───┬── ──┬── ───┬──  
+    │                  ╰──────────────────────────────── ref: 3
+    │                         │       │     │      │    
+    │                         ╰───────────────────────── ref: 4
+    │                                 │     │      │    
+    │                                 ╰───────────────── unresolved
+    │                                       │      │    
+    │                                       ╰─────────── ref: 3
+    │                                              │    
+    │                                              ╰──── ref: 5
+    │ 
+  7 │ library MyLib {
+    │         ──┬──  
+    │           ╰──── name: 3
+  8 │     type LibType is int32;
+    │          ───┬───  
+    │             ╰───── name: 4
+    │ 
+ 10 │     function create() public returns (LibType) {
+    │              ───┬──                   ───┬───  
+    │                 ╰────────────────────────────── name: 5
+    │                                          │     
+    │                                          ╰───── ref: 4
+ 11 │         return LibType.wrap(30);
+    │                ───┬─── ──┬─  
+    │                   ╰────────── ref: 4
+    │                          │   
+    │                          ╰─── unresolved
+────╯

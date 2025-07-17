@@ -1,0 +1,77 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["IERC20Upgradable" @ input.sol:1:11] (interface)
+- Def: #2 ["allowance" @ input.sol:2:14] (function, type: function (address) returns uint256)
+- Def: #3 ["owner" @ input.sol:2:32] (parameter, type: address)
+- Def: #4 ["Math" @ input.sol:4:9] (library)
+- Def: #5 ["nop" @ input.sol:5:14] (function, type: function (uint256) returns void)
+- Def: #6 ["x" @ input.sol:5:26] (parameter, type: uint256)
+- Def: #7 ["Test" @ input.sol:7:9] (library)
+- Def: #8 ["test" @ input.sol:10:14] (function, type: function (IERC20Upgradable) returns void)
+- Def: #9 ["token" @ input.sol:10:36] (parameter, type: IERC20Upgradable)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["Math" @ input.sol:8:11] -> #4
+- Ref: ["IERC20Upgradable" @ input.sol:10:19] -> #1
+- Ref: ["token" @ input.sol:11:9] -> #9
+- Ref: ["allowance" @ input.sol:11:15] -> unresolved
+- Ref: ["msg" @ input.sol:11:25] -> unresolved
+- Ref: ["sender" @ input.sol:11:29] -> unresolved
+- Ref: ["nop" @ input.sol:11:37] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IERC20Upgradable {
+    │           ────────┬───────  
+    │                   ╰───────── name: 1
+  2 │     function allowance(address owner) external returns (uint256);
+    │              ────┬────         ──┬──  
+    │                  ╰──────────────────── name: 2
+    │                                  │    
+    │                                  ╰──── name: 3
+    │ 
+  4 │ library Math {
+    │         ──┬─  
+    │           ╰─── name: 4
+  5 │     function nop(uint256 x) public {}
+    │              ─┬─         ┬  
+    │               ╰───────────── name: 5
+    │                          │  
+    │                          ╰── name: 6
+    │ 
+  7 │ library Test {
+    │         ──┬─  
+    │           ╰─── name: 7
+  8 │     using Math for uint256;
+    │           ──┬─  
+    │             ╰─── ref: 4
+    │ 
+ 10 │     function test(IERC20Upgradable token) internal {
+    │              ──┬─ ────────┬─────── ──┬──  
+    │                ╰────────────────────────── name: 8
+    │                           │          │    
+    │                           ╰─────────────── ref: 1
+    │                                      │    
+    │                                      ╰──── name: 9
+ 11 │         token.allowance(msg.sender).nop();
+    │         ──┬── ────┬──── ─┬─ ───┬──  ─┬─  
+    │           ╰────────────────────────────── ref: 9
+    │                   │      │     │     │   
+    │                   ╰────────────────────── unresolved
+    │                          │     │     │   
+    │                          ╰─────────────── unresolved
+    │                                │     │   
+    │                                ╰───────── unresolved
+    │                                      │   
+    │                                      ╰─── unresolved
+────╯

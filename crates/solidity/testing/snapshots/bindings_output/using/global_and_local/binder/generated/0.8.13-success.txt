@@ -1,0 +1,117 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["Amount" @ lib.sol:1:6] (udvt, type: uint64)
+- Def: #2 ["min" @ lib.sol:5:10] (function, type: function (Amount) returns Amount)
+- Def: #3 ["x" @ lib.sol:5:21] (parameter, type: Amount)
+- Def: #4 ["AmountLib" @ lib.sol:9:9] (library)
+- Def: #5 ["nop" @ lib.sol:10:14] (function, type: function (Amount) returns Amount)
+- Def: #6 ["x" @ lib.sol:10:25] (parameter, type: Amount)
+- Def: #7 ["Test" @ main.sol:3:10] (contract)
+- Def: #8 ["test" @ main.sol:6:14] (function, type: function () returns void)
+- Def: #9 ["x" @ main.sol:7:16] (variable, type: Amount)
+
+------------------------------------------------------------------------
+
+References (16):
+- Ref: ["min" @ lib.sol:3:8] -> #2
+- Ref: ["Amount" @ lib.sol:3:17] -> #1
+- Ref: ["Amount" @ lib.sol:5:14] -> #1
+- Ref: ["Amount" @ lib.sol:5:38] -> #1
+- Ref: ["x" @ lib.sol:6:12] -> #3
+- Ref: ["Amount" @ lib.sol:10:18] -> #1
+- Ref: ["Amount" @ lib.sol:10:51] -> #1
+- Ref: ["x" @ lib.sol:11:16] -> #6
+- Ref: ["AmountLib" @ main.sol:4:11] -> #4
+- Ref: ["Amount" @ main.sol:4:25] -> #1
+- Ref: ["Amount" @ main.sol:7:9] -> #1
+- Ref: ["x" @ main.sol:8:9] -> #9
+- Ref: ["nop" @ main.sol:8:11] -> #5
+- Ref: ["min" @ main.sol:8:17] -> #2
+- Ref: ["x" @ main.sol:9:9] -> #9
+- Ref: ["min" @ main.sol:9:11] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[lib.sol:1:1]
+    │
+  1 │ type Amount is uint64;
+    │      ───┬──  
+    │         ╰──── name: 1
+    │ 
+  3 │ using {min} for Amount global;
+    │        ─┬─      ───┬──  
+    │         ╰─────────────── ref: 2
+    │                    │    
+    │                    ╰──── ref: 1
+    │ 
+  5 │ function min(Amount x) pure returns (Amount) {
+    │          ─┬─ ───┬── ┬                ───┬──  
+    │           ╰────────────────────────────────── name: 2
+    │                 │   │                   │    
+    │                 ╰──────────────────────────── ref: 1
+    │                     │                   │    
+    │                     ╰──────────────────────── name: 3
+    │                                         │    
+    │                                         ╰──── ref: 1
+  6 │     return x;
+    │            ┬  
+    │            ╰── ref: 3
+    │ 
+  9 │ library AmountLib {
+    │         ────┬────  
+    │             ╰────── name: 4
+ 10 │     function nop(Amount x) internal pure returns (Amount) {
+    │              ─┬─ ───┬── ┬                         ───┬──  
+    │               ╰─────────────────────────────────────────── name: 5
+    │                     │   │                            │    
+    │                     ╰───────────────────────────────────── ref: 1
+    │                         │                            │    
+    │                         ╰───────────────────────────────── name: 6
+    │                                                      │    
+    │                                                      ╰──── ref: 1
+ 11 │         return x;
+    │                ┬  
+    │                ╰── ref: 6
+────╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 7
+ 4 │     using AmountLib for Amount;
+   │           ────┬────     ───┬──  
+   │               ╰───────────────── ref: 4
+   │                            │    
+   │                            ╰──── ref: 1
+   │ 
+ 6 │     function test() public pure {
+   │              ──┬─  
+   │                ╰─── name: 8
+ 7 │         Amount x;
+   │         ───┬── ┬  
+   │            ╰────── ref: 1
+   │                │  
+   │                ╰── name: 9
+ 8 │         x.nop().min();
+   │         ┬ ─┬─   ─┬─  
+   │         ╰──────────── ref: 9
+   │            │     │   
+   │            ╰───────── ref: 5
+   │                  │   
+   │                  ╰─── ref: 2
+ 9 │         x.min();
+   │         ┬ ─┬─  
+   │         ╰────── ref: 9
+   │            │   
+   │            ╰─── ref: 2
+───╯

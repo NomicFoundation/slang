@@ -1,0 +1,79 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["A" @ input.sol:4:10] (contract)
+- Def: #2 ["foo" @ input.sol:5:14] (function, type: function () returns string memory)
+- Def: #3 ["B" @ input.sol:10:10] (contract)
+- Def: #4 ["foo" @ input.sol:11:14] (function, type: function () returns string memory)
+- Def: #5 ["C" @ input.sol:16:10] (contract)
+- Def: #6 ["foo" @ input.sol:17:14] (function, type: function () returns string memory)
+- Def: #7 ["D" @ input.sol:22:10] (contract)
+- Def: #8 ["foo" @ input.sol:24:14] (function, type: function () returns string memory)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["A" @ input.sol:10:15] -> #1
+- Ref: ["A" @ input.sol:16:15] -> #1
+- Ref: ["B" @ input.sol:22:15] -> #3
+- Ref: ["C" @ input.sol:22:18] -> #5
+- Ref: ["foo" @ input.sol:25:22] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (3):
+- ???: ["A" @ input.sol:11:49]
+- ???: ["B" @ input.sol:24:41]
+- ???: ["C" @ input.sol:24:44]
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  4 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  5 │     function foo() public pure virtual returns (string memory) {
+    │              ─┬─  
+    │               ╰─── name: 2
+    │ 
+ 10 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 3
+    │               │  
+    │               ╰── ref: 1
+ 11 │     function foo() public pure virtual override(A) returns (string memory) {
+    │              ─┬─                                ┬  
+    │               ╰──────────────────────────────────── name: 4
+    │                                                 │  
+    │                                                 ╰── ???
+    │ 
+ 16 │ contract C is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 5
+    │               │  
+    │               ╰── ref: 1
+ 17 │     function foo() public pure virtual override returns (string memory) {
+    │              ─┬─  
+    │               ╰─── name: 6
+    │ 
+ 22 │ contract D is B, C {
+    │          ┬    ┬  ┬  
+    │          ╰────────── name: 7
+    │               │  │  
+    │               ╰───── ref: 3
+    │                  │  
+    │                  ╰── ref: 5
+    │ 
+ 24 │     function foo() public pure override(B, C) returns (string memory) {
+    │              ─┬─                        ┬  ┬  
+    │               ╰─────────────────────────────── name: 8
+    │                                         │  │  
+    │                                         ╰───── ???
+    │                                            │  
+    │                                            ╰── ???
+ 25 │         return super.foo();
+    │                      ─┬─  
+    │                       ╰─── unresolved
+────╯

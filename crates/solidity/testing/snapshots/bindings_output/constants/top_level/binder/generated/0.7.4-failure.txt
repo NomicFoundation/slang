@@ -1,0 +1,98 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (10):
+- Def: #1 ["Constants" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["Direction" @ input.sol:9:6] (enum)
+- Def: #4 ["NORTH" @ input.sol:9:18] (enum member of Direction)
+- Def: #5 ["SOUTH" @ input.sol:9:25] (enum member of Direction)
+- Def: #6 ["EAST" @ input.sol:9:32] (enum member of Direction)
+- Def: #7 ["WEST" @ input.sol:9:38] (enum member of Direction)
+- Def: #8 ["MY_ADDRESS" @ input.sol:11:18] (constant, type: address)
+- Def: #9 ["MY_UINT" @ input.sol:12:18] (constant, type: uint256)
+- Def: #10 ["MY_DIRECTION" @ input.sol:13:20] (constant, type: Direction)
+
+------------------------------------------------------------------------
+
+References (13):
+- Ref: ["assert" @ input.sol:3:9] -> unresolved
+- Ref: ["MY_DIRECTION" @ input.sol:3:16] -> #10
+- Ref: ["Direction" @ input.sol:3:32] -> #3
+- Ref: ["NORTH" @ input.sol:3:42] -> #4
+- Ref: ["assert" @ input.sol:4:9] -> unresolved
+- Ref: ["MY_UINT" @ input.sol:4:16] -> #9
+- Ref: ["require" @ input.sol:5:9] -> unresolved
+- Ref: ["msg" @ input.sol:5:17] -> unresolved
+- Ref: ["sender" @ input.sol:5:21] -> unresolved
+- Ref: ["MY_ADDRESS" @ input.sol:5:31] -> #8
+- Ref: ["Direction" @ input.sol:13:1] -> #3
+- Ref: ["Direction" @ input.sol:13:35] -> #3
+- Ref: ["EAST" @ input.sol:13:45] -> #6
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Constants {
+    │          ────┬────  
+    │              ╰────── name: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 2
+  3 │         assert(MY_DIRECTION != Direction.NORTH);
+    │         ───┬── ──────┬─────    ────┬──── ──┬──  
+    │            ╰──────────────────────────────────── unresolved
+    │                      │             │       │    
+    │                      ╰────────────────────────── ref: 10
+    │                                    │       │    
+    │                                    ╰──────────── ref: 3
+    │                                            │    
+    │                                            ╰──── ref: 4
+  4 │         assert(MY_UINT > 100);
+    │         ───┬── ───┬───  
+    │            ╰──────────── unresolved
+    │                   │     
+    │                   ╰───── ref: 9
+  5 │         require(msg.sender == MY_ADDRESS);
+    │         ───┬─── ─┬─ ───┬──    ─────┬────  
+    │            ╰────────────────────────────── unresolved
+    │                  │     │           │      
+    │                  ╰──────────────────────── unresolved
+    │                        │           │      
+    │                        ╰────────────────── unresolved
+    │                                    │      
+    │                                    ╰────── ref: 8
+    │ 
+  9 │ enum Direction { NORTH, SOUTH, EAST, WEST }
+    │      ────┬────   ──┬──  ──┬──  ──┬─  ──┬─  
+    │          ╰───────────────────────────────── name: 3
+    │                    │      │      │     │   
+    │                    ╰─────────────────────── name: 4
+    │                           │      │     │   
+    │                           ╰──────────────── name: 5
+    │                                  │     │   
+    │                                  ╰───────── name: 6
+    │                                        │   
+    │                                        ╰─── name: 7
+    │ 
+ 11 │ address constant MY_ADDRESS = 0x777788889999AaAAbBbbCcccddDdeeeEfFFfCcCc;
+    │                  ─────┬────  
+    │                       ╰────── name: 8
+ 12 │ uint256 constant MY_UINT = 123;
+    │                  ───┬───  
+    │                     ╰───── name: 9
+ 13 │ Direction constant MY_DIRECTION = Direction.EAST;
+    │ ────┬────          ──────┬─────   ────┬──── ──┬─  
+    │     ╰───────────────────────────────────────────── ref: 3
+    │                          │            │       │   
+    │                          ╰──────────────────────── name: 10
+    │                                       │       │   
+    │                                       ╰─────────── ref: 3
+    │                                               │   
+    │                                               ╰─── ref: 6
+────╯

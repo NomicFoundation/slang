@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["FOO" @ constants.sol:1:18] (constant, type: uint256)
+- Def: #2 ["Test" @ main.sol:3:10] (contract)
+- Def: #3 ["test" @ main.sol:4:14] (function, type: function () returns void)
+- Def: #4 ["x" @ main.sol:6:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["add" @ main.sol:6:22] -> unresolved
+- Ref: ["FOO" @ main.sol:6:26] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[constants.sol:1:1]
+   │
+ 1 │ uint256 constant FOO = 1;
+   │                  ─┬─  
+   │                   ╰─── name: 1
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 2
+ 4 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 3
+   │ 
+ 6 │             let x := add(FOO, 1)
+   │                 ┬    ─┬─ ─┬─  
+   │                 ╰───────────── name: 4
+   │                       │   │   
+   │                       ╰─────── unresolved
+   │                           │   
+   │                           ╰─── ref: 1
+───╯

@@ -1,0 +1,57 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["RegistrarAccess" @ input.sol:1:10] (contract)
+- Def: #2 ["root" @ input.sol:2:10] (state var, type: Root)
+- Def: #3 ["test" @ input.sol:3:14] (function, type: function () returns void)
+- Def: #4 ["Root" @ input.sol:8:10] (contract)
+- Def: #5 ["Controllable" @ input.sol:10:10] (contract)
+- Def: #6 ["controllers" @ input.sol:11:38] (state var, type: address => bool)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Root" @ input.sol:2:5] -> #4
+- Ref: ["root" @ input.sol:4:9] -> #2
+- Ref: ["controllers" @ input.sol:4:14] -> unresolved
+- Ref: ["Controllable" @ input.sol:8:18] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract RegistrarAccess {
+    │          ───────┬───────  
+    │                 ╰───────── name: 1
+  2 │     Root root;
+    │     ──┬─ ──┬─  
+    │       ╰──────── ref: 4
+    │            │   
+    │            ╰─── name: 2
+  3 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 3
+  4 │         root.controllers;
+    │         ──┬─ ─────┬─────  
+    │           ╰─────────────── ref: 2
+    │                   │       
+    │                   ╰─────── unresolved
+    │ 
+  8 │ contract Root is Controllable {}
+    │          ──┬─    ──────┬─────  
+    │            ╰─────────────────── name: 4
+    │                        │       
+    │                        ╰─────── ref: 5
+    │ 
+ 10 │ contract Controllable {
+    │          ──────┬─────  
+    │                ╰─────── name: 5
+ 11 │     mapping (address => bool) public controllers;
+    │                                      ─────┬─────  
+    │                                           ╰─────── name: 6
+────╯

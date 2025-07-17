@@ -19,7 +19,7 @@ type BuilderType<'a> = ReportBuilder<'a, Span<'a>>;
 pub(crate) fn binder_report(
     binder_data: &Output,
     compare_with_stack_graphs: bool,
-) -> Result<String> {
+) -> Result<(String, bool)> {
     let mut report = String::new();
 
     let (all_definitions, all_references, unbound_identifiers) =
@@ -52,6 +52,11 @@ pub(crate) fn binder_report(
         )?;
     }
 
+    let all_resolved = unbound_identifiers.is_empty()
+        && all_references
+            .iter()
+            .all(|reference| reference.resolution != Resolution::Unresolved);
+
     if compare_with_stack_graphs {
         writeln!(report, "{SEPARATOR}")?;
 
@@ -63,7 +68,7 @@ pub(crate) fn binder_report(
         )?;
     }
 
-    Ok(report)
+    Ok((report, all_resolved))
 }
 
 fn report_all_definitions(
@@ -165,7 +170,7 @@ fn render_bindings_for_file(
             continue;
         }
 
-        let message = match &reference.definition {
+        let message = match &reference.resolution {
             Resolution::Unresolved => "unresolved".to_string(),
             Resolution::BuiltIn(_) => "built-in".to_string(),
             Resolution::Definition(definition_id) => {
@@ -488,7 +493,7 @@ impl CollectedDefinitionDisplay<'_> {
 struct CollectedReference {
     cursor: Cursor,
     file_id: String,
-    definition: Resolution,
+    resolution: Resolution,
 }
 
 impl CollectedReference {
@@ -511,7 +516,7 @@ impl Display for CollectedReferenceDisplay<'_> {
             "Ref: [\"{identifier}\" @ {file_id}:{line}:{column}] -> {definition}",
             identifier = self.0.cursor.node().unparse(),
             file_id = self.0.file_id,
-            definition = match &self.0.definition {
+            definition = match &self.0.resolution {
                 Resolution::Unresolved => "unresolved".to_string(),
                 Resolution::BuiltIn(_) => "built-in".to_string(),
                 Resolution::Definition(definition_id) => {
@@ -593,7 +598,7 @@ fn collect_all_definitions_and_references(
                 all_references.push(CollectedReference {
                     cursor: cursor.clone(),
                     file_id: file.id().to_string(),
-                    definition: reference.resolution.clone(),
+                    resolution: reference.resolution.clone(),
                 });
                 bound = true;
             }

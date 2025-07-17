@@ -1,0 +1,71 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["AssemblyConditionals" @ input.sol:1:10] (contract)
+- Def: #2 ["yul_if" @ input.sol:2:14] (function, type: function (uint256) returns uint256)
+- Def: #3 ["x" @ input.sol:2:29] (parameter, type: uint256)
+- Def: #4 ["z" @ input.sol:2:56] (parameter, type: uint256)
+- Def: #5 ["yul_switch" @ input.sol:8:14] (function, type: function (uint256) returns uint256)
+- Def: #6 ["x" @ input.sol:8:33] (parameter, type: uint256)
+- Def: #7 ["z" @ input.sol:8:60] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["lt" @ input.sol:4:16] -> unresolved
+- Ref: ["x" @ input.sol:4:19] -> #3
+- Ref: ["z" @ input.sol:4:28] -> #4
+- Ref: ["x" @ input.sol:10:20] -> #6
+- Ref: ["z" @ input.sol:11:22] -> #7
+- Ref: ["z" @ input.sol:12:22] -> #7
+- Ref: ["z" @ input.sol:13:23] -> #7
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract AssemblyConditionals {
+    │          ──────────┬─────────  
+    │                    ╰─────────── name: 1
+  2 │     function yul_if(uint256 x) public returns (uint256 z) {
+    │              ───┬──         ┬                          ┬  
+    │                 ╰───────────────────────────────────────── name: 2
+    │                             │                          │  
+    │                             ╰───────────────────────────── name: 3
+    │                                                        │  
+    │                                                        ╰── name: 4
+    │ 
+  4 │             if lt(x, 10) { z := 99 }
+    │                ─┬ ┬        ┬  
+    │                 ╰───────────── unresolved
+    │                   │        │  
+    │                   ╰─────────── ref: 3
+    │                            │  
+    │                            ╰── ref: 4
+    │ 
+  8 │     function yul_switch(uint256 x) public returns (uint256 z) {
+    │              ─────┬────         ┬                          ┬  
+    │                   ╰─────────────────────────────────────────── name: 5
+    │                                 │                          │  
+    │                                 ╰───────────────────────────── name: 6
+    │                                                            │  
+    │                                                            ╰── name: 7
+    │ 
+ 10 │             switch x
+    │                    ┬  
+    │                    ╰── ref: 6
+ 11 │             case 1 { z := 10 }
+    │                      ┬  
+    │                      ╰── ref: 7
+ 12 │             case 2 { z := 20 }
+    │                      ┬  
+    │                      ╰── ref: 7
+ 13 │             default { z := 0 }
+    │                       ┬  
+    │                       ╰── ref: 7
+────╯

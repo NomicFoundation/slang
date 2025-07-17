@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Address" @ input.sol:1:9] (library)
+- Def: #2 ["sendValue" @ input.sol:2:14] (function, type: function (address) returns void)
+- Def: #3 ["Test" @ input.sol:4:10] (contract)
+- Def: #4 ["test" @ input.sol:6:14] (function, type: function (address) returns void)
+- Def: #5 ["_rcpt" @ input.sol:6:27] (parameter, type: address)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["Address" @ input.sol:5:11] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Address {
+   │         ───┬───  
+   │            ╰───── name: 1
+ 2 │     function sendValue(address payable recipient) internal {}
+   │              ────┬────  
+   │                  ╰────── name: 2
+   │ 
+ 4 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 3
+ 5 │     using Address for address payable;
+   │           ───┬───  
+   │              ╰───── ref: 1
+ 6 │     function test(address _rcpt) public {
+   │              ──┬─         ──┬──  
+   │                ╰───────────────── name: 4
+   │                             │    
+   │                             ╰──── name: 5
+───╯

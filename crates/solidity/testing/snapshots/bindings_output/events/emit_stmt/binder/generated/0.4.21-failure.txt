@@ -1,0 +1,68 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["TestEvent" @ input.sol:2:11] (event)
+- Def: #3 ["id" @ input.sol:2:25] (parameter, type: int256)
+- Def: #4 ["test_emit" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #5 ["x" @ input.sol:5:13] (variable, type: int256)
+- Def: #6 ["Utils" @ input.sol:12:9] (library)
+- Def: #7 ["Debug" @ input.sol:13:11] (event)
+- Def: #8 ["subject" @ input.sol:13:21] (parameter, type: int256)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["x" @ input.sol:7:24] -> #5
+- Ref: ["x" @ input.sol:8:26] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (3):
+- ???: ["TestEvent" @ input.sol:7:14]
+- ???: ["Utils" @ input.sol:8:14]
+- ???: ["Debug" @ input.sol:8:20]
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     event TestEvent(int id);
+    │           ────┬────     ─┬  
+    │               ╰───────────── name: 2
+    │                          │  
+    │                          ╰── name: 3
+    │ 
+  4 │     function test_emit() public {
+    │              ────┬────  
+    │                  ╰────── name: 4
+  5 │         int x = 1;
+    │             ┬  
+    │             ╰── name: 5
+    │ 
+  7 │         emit TestEvent(x);
+    │              ────┬──── ┬  
+    │                  ╰──────── ???
+    │                        │  
+    │                        ╰── ref: 5
+  8 │         emit Utils.Debug(x);
+    │              ──┬── ──┬── ┬  
+    │                ╰──────────── ???
+    │                      │   │  
+    │                      ╰────── ???
+    │                          │  
+    │                          ╰── ref: 5
+    │ 
+ 12 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 6
+ 13 │     event Debug(int subject);
+    │           ──┬──     ───┬───  
+    │             ╰──────────────── name: 7
+    │                        │     
+    │                        ╰───── name: 8
+────╯

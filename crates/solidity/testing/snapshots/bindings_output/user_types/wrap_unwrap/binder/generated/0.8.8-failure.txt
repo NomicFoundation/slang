@@ -1,0 +1,60 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["ShortString" @ input.sol:1:6] (udvt, type: bytes32)
+- Def: #2 ["Test" @ input.sol:3:10] (contract)
+- Def: #3 ["test" @ input.sol:4:14] (function, type: function (bytes32) returns void)
+- Def: #4 ["data" @ input.sol:4:27] (parameter, type: bytes32)
+- Def: #5 ["s" @ input.sol:5:21] (variable, type: ShortString)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["ShortString" @ input.sol:5:9] -> #1
+- Ref: ["ShortString" @ input.sol:5:25] -> #1
+- Ref: ["wrap" @ input.sol:5:37] -> unresolved
+- Ref: ["data" @ input.sol:5:42] -> #4
+- Ref: ["ShortString" @ input.sol:6:9] -> #1
+- Ref: ["unwrap" @ input.sol:6:21] -> unresolved
+- Ref: ["s" @ input.sol:6:28] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ type ShortString is bytes32;
+   │      ─────┬─────  
+   │           ╰─────── name: 1
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 2
+ 4 │     function test(bytes32 data) public {
+   │              ──┬─         ──┬─  
+   │                ╰──────────────── name: 3
+   │                             │   
+   │                             ╰─── name: 4
+ 5 │         ShortString s = ShortString.wrap(data);
+   │         ─────┬───── ┬   ─────┬───── ──┬─ ──┬─  
+   │              ╰───────────────────────────────── ref: 1
+   │                     │        │        │    │   
+   │                     ╰────────────────────────── name: 5
+   │                              │        │    │   
+   │                              ╰───────────────── ref: 1
+   │                                       │    │   
+   │                                       ╰──────── unresolved
+   │                                            │   
+   │                                            ╰─── ref: 4
+ 6 │         ShortString.unwrap(s);
+   │         ─────┬───── ───┬── ┬  
+   │              ╰──────────────── ref: 1
+   │                        │   │  
+   │                        ╰────── unresolved
+   │                            │  
+   │                            ╰── ref: 5
+───╯

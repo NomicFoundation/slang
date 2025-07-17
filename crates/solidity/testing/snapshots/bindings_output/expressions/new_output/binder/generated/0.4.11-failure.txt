@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test_new" @ input.sol:2:14] (function, type: function () returns uint256)
+- Def: #3 ["Container" @ input.sol:7:10] (contract)
+- Def: #4 ["Resource" @ input.sol:8:12] (struct)
+- Def: #5 ["value" @ input.sol:9:14] (struct member, type: uint256)
+- Def: #6 ["cell" @ input.sol:12:14] (function, type: function () returns Resource memory)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Container" @ input.sol:3:20] -> #3
+- Ref: ["cell" @ input.sol:3:32] -> unresolved
+- Ref: ["value" @ input.sol:3:39] -> unresolved
+- Ref: ["Resource" @ input.sol:12:37] -> #4
+- Ref: ["Resource" @ input.sol:13:16] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test_new() public returns (uint) {
+    │              ────┬───  
+    │                  ╰───── name: 2
+  3 │         return new Container().cell().value;
+    │                    ────┬────   ──┬─   ──┬──  
+    │                        ╰───────────────────── ref: 3
+    │                                  │      │    
+    │                                  ╰─────────── unresolved
+    │                                         │    
+    │                                         ╰──── unresolved
+    │ 
+  7 │ contract Container {
+    │          ────┬────  
+    │              ╰────── name: 3
+  8 │     struct Resource {
+    │            ────┬───  
+    │                ╰───── name: 4
+  9 │         uint value;
+    │              ──┬──  
+    │                ╰──── name: 5
+    │ 
+ 12 │     function cell() public returns (Resource memory) {
+    │              ──┬─                   ────┬───  
+    │                ╰────────────────────────────── name: 6
+    │                                         │     
+    │                                         ╰───── ref: 4
+ 13 │         return Resource(1);
+    │                ────┬───  
+    │                    ╰───── ref: 4
+────╯

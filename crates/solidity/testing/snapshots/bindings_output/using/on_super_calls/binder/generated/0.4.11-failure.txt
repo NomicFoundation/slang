@@ -1,0 +1,61 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["A" @ input.sol:1:10] (contract)
+- Def: #2 ["total" @ input.sol:2:14] (function, type: function () returns uint256)
+- Def: #3 ["B" @ input.sol:4:10] (contract)
+- Def: #4 ["total" @ input.sol:6:14] (function, type: function () returns uint256)
+- Def: #5 ["Lib" @ input.sol:10:9] (library)
+- Def: #6 ["nop" @ input.sol:11:14] (function, type: function (uint256) returns uint256)
+- Def: #7 ["x" @ input.sol:11:26] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["A" @ input.sol:4:15] -> #1
+- Ref: ["Lib" @ input.sol:5:11] -> #5
+- Ref: ["total" @ input.sol:7:22] -> unresolved
+- Ref: ["nop" @ input.sol:7:30] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract A {
+    │          ┬  
+    │          ╰── name: 1
+  2 │     function total() public returns (uint256) {}
+    │              ──┬──  
+    │                ╰──── name: 2
+    │ 
+  4 │ contract B is A {
+    │          ┬    ┬  
+    │          ╰─────── name: 3
+    │               │  
+    │               ╰── ref: 1
+  5 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 5
+  6 │     function total() public returns (uint256) {
+    │              ──┬──  
+    │                ╰──── name: 4
+  7 │         return super.total().nop();
+    │                      ──┬──   ─┬─  
+    │                        ╰────────── unresolved
+    │                               │   
+    │                               ╰─── unresolved
+    │ 
+ 10 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 5
+ 11 │     function nop(uint256 x) internal returns (uint256) {}
+    │              ─┬─         ┬  
+    │               ╰───────────── name: 6
+    │                          │  
+    │                          ╰── name: 7
+────╯

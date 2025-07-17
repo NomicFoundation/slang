@@ -1,0 +1,77 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["foo" @ input.sol:2:14] (modifier)
+- Def: #3 ["A" @ input.sol:5:10] (contract)
+- Def: #4 ["foo" @ input.sol:6:14] (modifier)
+- Def: #5 ["B" @ input.sol:9:10] (contract)
+- Def: #6 ["foo" @ input.sol:10:14] (modifier)
+- Def: #7 ["Test" @ input.sol:13:10] (contract)
+- Def: #8 ["test" @ input.sol:14:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["_" @ input.sol:2:28] -> unresolved
+- Ref: ["Base" @ input.sol:5:15] -> #1
+- Ref: ["_" @ input.sol:6:37] -> unresolved
+- Ref: ["Base" @ input.sol:9:15] -> #1
+- Ref: ["_" @ input.sol:10:37] -> unresolved
+- Ref: ["B" @ input.sol:13:18] -> #5
+- Ref: ["A" @ input.sol:13:21] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["foo" @ input.sol:14:28]
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     modifier foo virtual { _; }
+    │              ─┬─           ┬  
+    │               ╰─────────────── name: 2
+    │                            │  
+    │                            ╰── unresolved
+    │ 
+  5 │ contract A is Base {
+    │          ┬    ──┬─  
+    │          ╰────────── name: 3
+    │                 │   
+    │                 ╰─── ref: 1
+  6 │     modifier foo virtual override { _; }
+    │              ─┬─                    ┬  
+    │               ╰──────────────────────── name: 4
+    │                                     │  
+    │                                     ╰── unresolved
+    │ 
+  9 │ contract B is Base {
+    │          ┬    ──┬─  
+    │          ╰────────── name: 5
+    │                 │   
+    │                 ╰─── ref: 1
+ 10 │     modifier foo virtual override { _; }
+    │              ─┬─                    ┬  
+    │               ╰──────────────────────── name: 6
+    │                                     │  
+    │                                     ╰── unresolved
+    │ 
+ 13 │ contract Test is B, A {
+    │          ──┬─    ┬  ┬  
+    │            ╰─────────── name: 7
+    │                  │  │  
+    │                  ╰───── ref: 5
+    │                     │  
+    │                     ╰── ref: 3
+ 14 │     function test() public foo {}
+    │              ──┬─          ─┬─  
+    │                ╰──────────────── name: 8
+    │                             │   
+    │                             ╰─── ???
+────╯

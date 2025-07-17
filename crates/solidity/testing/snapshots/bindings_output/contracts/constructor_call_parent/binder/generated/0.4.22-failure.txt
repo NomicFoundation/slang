@@ -1,0 +1,34 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (2):
+- Def: #1 ["Base" @ input.sol:1:10] (contract)
+- Def: #2 ["Test" @ input.sol:3:10] (contract)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["Base" @ input.sol:3:18] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["Base" @ input.sol:4:19]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Base {}
+   │          ──┬─  
+   │            ╰─── name: 1
+   │ 
+ 3 │ contract Test is Base {
+   │          ──┬─    ──┬─  
+   │            ╰─────────── name: 2
+   │                    │   
+   │                    ╰─── ref: 1
+ 4 │     constructor() Base() {
+   │                   ──┬─  
+   │                     ╰─── ???
+───╯

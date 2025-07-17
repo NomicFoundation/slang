@@ -1,0 +1,46 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["TestEvent" @ input.sol:2:11] (event)
+- Def: #3 ["id" @ input.sol:2:25] (parameter, type: int256)
+- Def: #4 ["test_emit" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #5 ["x" @ input.sol:5:13] (variable, type: int256)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["x" @ input.sol:7:24] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["TestEvent" @ input.sol:7:14]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     event TestEvent(int id);
+   │           ────┬────     ─┬  
+   │               ╰───────────── name: 2
+   │                          │  
+   │                          ╰── name: 3
+   │ 
+ 4 │     function test_emit() public {
+   │              ────┬────  
+   │                  ╰────── name: 4
+ 5 │         int x = 1;
+   │             ┬  
+   │             ╰── name: 5
+   │ 
+ 7 │         emit TestEvent(x);
+   │              ────┬──── ┬  
+   │                  ╰──────── ???
+   │                        │  
+   │                        ╰── ref: 5
+───╯

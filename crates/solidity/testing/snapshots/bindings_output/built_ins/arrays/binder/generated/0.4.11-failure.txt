@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["a" @ input.sol:2:12] (state var, type: uint256[] storage)
+- Def: #3 ["testArray" @ input.sol:3:14] (function, type: function () returns void)
+- Def: #4 ["b" @ input.sol:4:24] (variable, type: uint256[] storage)
+
+------------------------------------------------------------------------
+
+References (9):
+- Ref: ["assert" @ input.sol:5:9] -> unresolved
+- Ref: ["b" @ input.sol:5:16] -> #4
+- Ref: ["length" @ input.sol:5:18] -> built-in
+- Ref: ["a" @ input.sol:7:9] -> #2
+- Ref: ["push" @ input.sol:7:11] -> built-in
+- Ref: ["a" @ input.sol:8:9] -> #2
+- Ref: ["push" @ input.sol:8:11] -> built-in
+- Ref: ["a" @ input.sol:9:9] -> #2
+- Ref: ["pop" @ input.sol:9:11] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     uint[] a;
+   │            ┬  
+   │            ╰── name: 2
+ 3 │     function testArray() public {
+   │              ────┬────  
+   │                  ╰────── name: 3
+ 4 │         uint[] storage b = new uint[](5);
+   │                        ┬  
+   │                        ╰── name: 4
+ 5 │         assert(b.length == 5);
+   │         ───┬── ┬ ───┬──  
+   │            ╰───────────── unresolved
+   │                │    │    
+   │                ╰───────── ref: 4
+   │                     │    
+   │                     ╰──── built-in
+   │ 
+ 7 │         a.push();
+   │         ┬ ──┬─  
+   │         ╰─────── ref: 2
+   │             │   
+   │             ╰─── built-in
+ 8 │         a.push(1);
+   │         ┬ ──┬─  
+   │         ╰─────── ref: 2
+   │             │   
+   │             ╰─── built-in
+ 9 │         a.pop();
+   │         ┬ ─┬─  
+   │         ╰────── ref: 2
+   │            │   
+   │            ╰─── unresolved
+───╯

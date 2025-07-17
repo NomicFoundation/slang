@@ -1,0 +1,41 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["x.y.z" @ input.sol:4:17] (yul variable)
+- Def: #4 ["r" @ input.sol:5:17] (yul variable)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["add" @ input.sol:5:22] -> unresolved
+- Ref: ["x.y.z" @ input.sol:5:26] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+   │ 
+ 4 │             let x.y.z := 0
+   │                 ──┬──  
+   │                   ╰──── name: 3
+ 5 │             let r := add(x.y.z, 20)
+   │                 ┬    ─┬─ ──┬──  
+   │                 ╰─────────────── name: 4
+   │                       │    │    
+   │                       ╰───────── unresolved
+   │                            │    
+   │                            ╰──── ref: 3
+───╯

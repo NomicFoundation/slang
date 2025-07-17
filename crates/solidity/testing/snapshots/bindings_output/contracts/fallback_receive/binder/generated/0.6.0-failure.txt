@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Fallback" @ input.sol:1:10] (contract)
+- Def: #2 ["Log" @ input.sol:2:11] (event)
+- Def: #3 ["func" @ input.sol:2:22] (parameter, type: string memory)
+- Def: #4 ["gas" @ input.sol:2:36] (parameter, type: uint256)
+- Def: #5 ["status" @ input.sol:3:10] (state var, type: uint256)
+- Def: #6 ["input" @ input.sol:5:29] (parameter, type: bytes calldata)
+- Def: #7 ["output" @ input.sol:5:75] (parameter, type: bytes memory)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["status" @ input.sol:6:30] -> #5
+- Ref: ["output" @ input.sol:7:9] -> #7
+- Ref: ["input" @ input.sol:7:18] -> #6
+- Ref: ["status" @ input.sol:11:29] -> #5
+
+------------------------------------------------------------------------
+
+Unbound identifiers (2):
+- ???: ["Log" @ input.sol:6:14]
+- ???: ["Log" @ input.sol:11:14]
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Fallback {
+    │          ────┬───  
+    │              ╰───── name: 1
+  2 │     event Log(string func, uint256 gas);
+    │           ─┬─        ──┬─          ─┬─  
+    │            ╰──────────────────────────── name: 2
+    │                        │            │   
+    │                        ╰──────────────── name: 3
+    │                                     │   
+    │                                     ╰─── name: 4
+  3 │     uint status;
+    │          ───┬──  
+    │             ╰──── name: 5
+    │ 
+  5 │     fallback(bytes calldata input) external payable returns (bytes memory output) {
+    │                             ──┬──                                         ───┬──  
+    │                               ╰─────────────────────────────────────────────────── name: 6
+    │                                                                              │    
+    │                                                                              ╰──── name: 7
+  6 │         emit Log("fallback", status);
+    │              ─┬─             ───┬──  
+    │               ╰────────────────────── ???
+    │                                 │    
+    │                                 ╰──── ref: 5
+  7 │         output = input;
+    │         ───┬──   ──┬──  
+    │            ╰──────────── ref: 7
+    │                    │    
+    │                    ╰──── ref: 6
+    │ 
+ 11 │         emit Log("receive", status);
+    │              ─┬─            ───┬──  
+    │               ╰───────────────────── ???
+    │                                │    
+    │                                ╰──── ref: 5
+────╯

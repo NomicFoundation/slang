@@ -1,0 +1,67 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["External" @ input.sol:1:11] (interface)
+- Def: #2 ["Data" @ input.sol:2:12] (struct)
+- Def: #3 ["value" @ input.sol:2:24] (struct member, type: uint256)
+- Def: #4 ["sample" @ input.sol:3:14] (function, type: function () returns Data memory)
+- Def: #5 ["Test" @ input.sol:6:10] (contract)
+- Def: #6 ["test" @ input.sol:7:14] (function, type: function (External) returns uint256)
+- Def: #7 ["ext" @ input.sol:7:28] (parameter, type: External)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Data" @ input.sol:3:49] -> #2
+- Ref: ["External" @ input.sol:7:19] -> #1
+- Ref: ["ext" @ input.sol:8:16] -> #7
+- Ref: ["sample" @ input.sol:8:20] -> unresolved
+- Ref: ["value" @ input.sol:8:51] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (2):
+- ???: ["value" @ input.sol:8:28]
+- ???: ["gas" @ input.sol:8:39]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface External {
+   │           ────┬───  
+   │               ╰───── name: 1
+ 2 │     struct Data { uint value; }
+   │            ──┬─        ──┬──  
+   │              ╰──────────────── name: 2
+   │                          │    
+   │                          ╰──── name: 3
+ 3 │     function sample() external payable returns (Data memory);
+   │              ───┬──                             ──┬─  
+   │                 ╰───────────────────────────────────── name: 4
+   │                                                   │   
+   │                                                   ╰─── ref: 2
+   │ 
+ 6 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 5
+ 7 │     function test(External ext) public returns (uint) {
+   │              ──┬─ ────┬─── ─┬─  
+   │                ╰──────────────── name: 6
+   │                       │     │   
+   │                       ╰───────── ref: 1
+   │                             │   
+   │                             ╰─── name: 7
+ 8 │         return ext.sample{ value: 10, gas: 20 }().value;
+   │                ─┬─ ───┬──  ──┬──      ─┬─         ──┬──  
+   │                 ╰──────────────────────────────────────── ref: 7
+   │                       │      │         │            │    
+   │                       ╰────────────────────────────────── unresolved
+   │                              │         │            │    
+   │                              ╰─────────────────────────── ???
+   │                                        │            │    
+   │                                        ╰───────────────── ???
+   │                                                     │    
+   │                                                     ╰──── unresolved
+───╯

@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (1):
+- Def: #1 ["other" @ main.sol:1:25] (import)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import "./other.sol" as other;
+   │                         ──┬──  
+   │                           ╰──── name: 1
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 

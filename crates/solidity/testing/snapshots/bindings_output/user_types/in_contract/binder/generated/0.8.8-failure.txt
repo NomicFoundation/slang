@@ -1,0 +1,54 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Internal" @ input.sol:2:10] (udvt, type: uint256)
+- Def: #3 ["test" @ input.sol:4:14] (function, type: function () returns uint256)
+- Def: #4 ["inter" @ input.sol:5:18] (variable, type: Internal)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["Internal" @ input.sol:5:9] -> #2
+- Ref: ["Internal" @ input.sol:5:26] -> #2
+- Ref: ["wrap" @ input.sol:5:35] -> unresolved
+- Ref: ["Internal" @ input.sol:6:16] -> #2
+- Ref: ["unwrap" @ input.sol:6:25] -> unresolved
+- Ref: ["inter" @ input.sol:6:32] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     type Internal is uint;
+   │          ────┬───  
+   │              ╰───── name: 2
+   │ 
+ 4 │     function test() public returns (uint) {
+   │              ──┬─  
+   │                ╰─── name: 3
+ 5 │         Internal inter = Internal.wrap(10);
+   │         ────┬─── ──┬──   ────┬─── ──┬─  
+   │             ╰─────────────────────────── ref: 2
+   │                    │         │      │   
+   │                    ╰──────────────────── name: 4
+   │                              │      │   
+   │                              ╰────────── ref: 2
+   │                                     │   
+   │                                     ╰─── unresolved
+ 6 │         return Internal.unwrap(inter);
+   │                ────┬─── ───┬── ──┬──  
+   │                    ╰────────────────── ref: 2
+   │                            │     │    
+   │                            ╰────────── unresolved
+   │                                  │    
+   │                                  ╰──── ref: 4
+───╯

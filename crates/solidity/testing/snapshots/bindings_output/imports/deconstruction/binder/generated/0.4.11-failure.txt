@@ -1,0 +1,81 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (8):
+- Def: #1 ["Bar" @ lib/bar.sol:1:9] (library)
+- Def: #2 ["bar" @ lib/bar.sol:2:14] (function, type: function () returns int256)
+- Def: #3 ["Foo" @ lib/foo.sol:1:9] (library)
+- Def: #4 ["foo" @ lib/foo.sol:2:14] (function, type: function () returns int256)
+- Def: #5 ["Foo" @ main.sol:1:9] (imported symbol)
+- Def: #6 ["LocalBar" @ main.sol:2:16] (imported symbol)
+- Def: #7 ["Sample" @ main.sol:4:10] (contract)
+- Def: #8 ["test" @ main.sol:5:14] (function, type: function () returns int256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Foo" @ main.sol:6:16] -> #3
+- Ref: ["foo" @ main.sol:6:20] -> #4
+- Ref: ["LocalBar" @ main.sol:6:28] -> #1
+- Ref: ["bar" @ main.sol:6:37] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["Bar" @ main.sol:2:9]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[lib/bar.sol:1:1]
+   │
+ 1 │ library Bar {
+   │         ─┬─  
+   │          ╰─── name: 1
+ 2 │     function bar() returns (int) {
+   │              ─┬─  
+   │               ╰─── name: 2
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[lib/foo.sol:1:1]
+   │
+ 1 │ library Foo {
+   │         ─┬─  
+   │          ╰─── name: 3
+ 2 │     function foo() returns (int) {
+   │              ─┬─  
+   │               ╰─── name: 4
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import {Foo} from "lib/foo.sol";
+   │         ─┬─  
+   │          ╰─── name: 5
+ 2 │ import {Bar as LocalBar} from "lib/bar.sol";
+   │         ─┬─    ────┬───  
+   │          ╰─────────────── ???
+   │                    │     
+   │                    ╰───── name: 6
+   │ 
+ 4 │ contract Sample {
+   │          ───┬──  
+   │             ╰──── name: 7
+ 5 │     function test() returns (int) {
+   │              ──┬─  
+   │                ╰─── name: 8
+ 6 │         return Foo.foo() + LocalBar.bar();
+   │                ─┬─ ─┬─     ────┬─── ─┬─  
+   │                 ╰──────────────────────── ref: 3
+   │                     │          │     │   
+   │                     ╰──────────────────── ref: 4
+   │                                │     │   
+   │                                ╰───────── ref: 1
+   │                                      │   
+   │                                      ╰─── ref: 2
+───╯

@@ -1,0 +1,63 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["IOwnable" @ input.sol:1:11] (interface)
+- Def: #2 ["owner" @ input.sol:2:14] (function, type: function () returns address)
+- Def: #3 ["onlyOwner" @ input.sol:5:14] (modifier)
+- Def: #4 ["Test" @ input.sol:11:10] (contract)
+- Def: #5 ["test" @ input.sol:12:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["require" @ input.sol:6:9] -> unresolved
+- Ref: ["owner" @ input.sol:6:22] -> unresolved
+- Ref: ["msg" @ input.sol:6:33] -> unresolved
+- Ref: ["sender" @ input.sol:6:37] -> unresolved
+- Ref: ["_" @ input.sol:7:9] -> unresolved
+- Ref: ["IOwnable" @ input.sol:11:18] -> #1
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["onlyOwner" @ input.sol:12:28]
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ interface IOwnable {
+    │           ────┬───  
+    │               ╰───── name: 1
+  2 │     function owner() external returns (address);
+    │              ──┬──  
+    │                ╰──── name: 2
+    │ 
+  5 │     modifier onlyOwner() {
+    │              ────┬────  
+    │                  ╰────── name: 3
+  6 │         require(this.owner() == msg.sender, "not owner");
+    │         ───┬───      ──┬──      ─┬─ ───┬──  
+    │            ╰──────────────────────────────── unresolved
+    │                        │         │     │    
+    │                        ╰──────────────────── unresolved
+    │                                  │     │    
+    │                                  ╰────────── unresolved
+    │                                        │    
+    │                                        ╰──── unresolved
+  7 │         _;
+    │         ┬  
+    │         ╰── unresolved
+    │ 
+ 11 │ contract Test is IOwnable {
+    │          ──┬─    ────┬───  
+    │            ╰─────────────── name: 4
+    │                      │     
+    │                      ╰───── ref: 1
+ 12 │     function test() public onlyOwner {}
+    │              ──┬─          ────┬────  
+    │                ╰────────────────────── name: 5
+    │                                │      
+    │                                ╰────── ???
+────╯

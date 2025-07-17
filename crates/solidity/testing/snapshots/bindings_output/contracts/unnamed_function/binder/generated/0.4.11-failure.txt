@@ -1,0 +1,27 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (1):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+
+------------------------------------------------------------------------
+
+References (1):
+- Ref: ["revert" @ input.sol:3:9] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+   │ 
+ 3 │         revert();
+   │         ───┬──  
+   │            ╰──── unresolved
+───╯

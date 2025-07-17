@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Answer" @ input.sol:2:10] (enum)
+- Def: #3 ["Yes" @ input.sol:2:19] (enum member of Answer)
+- Def: #4 ["No" @ input.sol:2:24] (enum member of Answer)
+- Def: #5 ["testFunc" @ input.sol:3:14] (function, type: function () returns void)
+- Def: #6 ["name" @ input.sol:4:16] (variable, type: unresolved)
+- Def: #7 ["first" @ input.sol:5:16] (variable, type: Answer)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Test" @ input.sol:4:28] -> #1
+- Ref: ["name" @ input.sol:4:34] -> unresolved
+- Ref: ["Answer" @ input.sol:5:9] -> #2
+- Ref: ["Answer" @ input.sol:5:29] -> #2
+- Ref: ["min" @ input.sol:5:37] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     enum Answer { Yes, No }
+   │          ───┬──   ─┬─  ─┬  
+   │             ╰────────────── name: 2
+   │                    │    │  
+   │                    ╰─────── name: 3
+   │                         │  
+   │                         ╰── name: 4
+ 3 │     function testFunc() {
+   │              ────┬───  
+   │                  ╰───── name: 5
+ 4 │         string name = type(Test).name;
+   │                ──┬─        ──┬─  ──┬─  
+   │                  ╰───────────────────── name: 6
+   │                              │     │   
+   │                              ╰───────── ref: 1
+   │                                    │   
+   │                                    ╰─── unresolved
+ 5 │         Answer first = type(Answer).min;
+   │         ───┬── ──┬──        ───┬──  ─┬─  
+   │            ╰───────────────────────────── ref: 2
+   │                  │             │     │   
+   │                  ╰─────────────────────── name: 7
+   │                                │     │   
+   │                                ╰───────── ref: 2
+   │                                      │   
+   │                                      ╰─── unresolved
+───╯

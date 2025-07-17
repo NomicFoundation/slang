@@ -1,0 +1,51 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function (TokenState) returns void)
+- Def: #3 ["tokenState" @ input.sol:2:30] (parameter, type: TokenState)
+- Def: #4 ["TokenState" @ input.sol:6:10] (contract)
+- Def: #5 ["owners" @ input.sol:7:22] (state var, type: address[] storage)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["TokenState" @ input.sol:2:19] -> #4
+- Ref: ["tokenState" @ input.sol:3:9] -> #3
+- Ref: ["owners" @ input.sol:3:20] -> unresolved
+- Ref: ["balance" @ input.sol:3:30] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test(TokenState tokenState) public {
+   │              ──┬─ ─────┬──── ─────┬────  
+   │                ╰───────────────────────── name: 2
+   │                        │          │      
+   │                        ╰───────────────── ref: 4
+   │                                   │      
+   │                                   ╰────── name: 3
+ 3 │         tokenState.owners(1).balance;
+   │         ─────┬──── ───┬──    ───┬───  
+   │              ╰──────────────────────── ref: 3
+   │                       │         │     
+   │                       ╰─────────────── unresolved
+   │                                 │     
+   │                                 ╰───── unresolved
+   │ 
+ 6 │ contract TokenState {
+   │          ─────┬────  
+   │               ╰────── name: 4
+ 7 │     address[] public owners;
+   │                      ───┬──  
+   │                         ╰──── name: 5
+───╯

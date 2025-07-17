@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:3:14] (function, type: function (bytes memory) returns void)
+- Def: #3 ["x" @ input.sol:3:32] (parameter, type: bytes memory)
+- Def: #4 ["Utils" @ input.sol:8:9] (library)
+- Def: #5 ["post" @ input.sol:9:14] (function, type: function (bytes32) returns bytes32)
+- Def: #6 ["x" @ input.sol:9:27] (parameter, type: bytes32)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Utils" @ input.sol:2:11] -> #4
+- Ref: ["keccak256" @ input.sol:4:9] -> unresolved
+- Ref: ["x" @ input.sol:4:19] -> #3
+- Ref: ["post" @ input.sol:4:22] -> unresolved
+- Ref: ["x" @ input.sol:10:16] -> #6
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     using Utils for bytes32;
+    │           ──┬──  
+    │             ╰──── ref: 4
+  3 │     function test(bytes memory x) public pure {
+    │              ──┬─              ┬  
+    │                ╰────────────────── name: 2
+    │                                │  
+    │                                ╰── name: 3
+  4 │         keccak256(x).post();
+    │         ────┬──── ┬  ──┬─  
+    │             ╰────────────── unresolved
+    │                   │    │   
+    │                   ╰──────── ref: 3
+    │                        │   
+    │                        ╰─── unresolved
+    │ 
+  8 │ library Utils {
+    │         ──┬──  
+    │           ╰──── name: 4
+  9 │     function post(bytes32 x) public returns (bytes32) {
+    │              ──┬─         ┬  
+    │                ╰───────────── name: 5
+    │                           │  
+    │                           ╰── name: 6
+ 10 │         return x;
+    │                ┬  
+    │                ╰── ref: 6
+────╯

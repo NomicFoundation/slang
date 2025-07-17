@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (1):
+- Def: #1 ["C1" @ input.sol:1:18] (constant, type: uint256)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ uint256 constant C1 = 0;
+   │                  ─┬  
+   │                   ╰── name: 1
+───╯

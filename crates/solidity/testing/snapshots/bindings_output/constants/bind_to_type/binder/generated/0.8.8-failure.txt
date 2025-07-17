@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (1):
+- Def: #1 ["MemoryPointer" @ input.sol:4:6] (udvt, type: uint256)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 4 │ type MemoryPointer is uint256;
+   │      ──────┬──────  
+   │            ╰──────── name: 1
+───╯

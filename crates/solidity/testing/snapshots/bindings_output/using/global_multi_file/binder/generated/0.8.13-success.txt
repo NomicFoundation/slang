@@ -1,0 +1,111 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (11):
+- Def: #1 ["foo" @ main.sol:1:9] (imported symbol)
+- Def: #2 ["Lib" @ main.sol:3:9] (library)
+- Def: #3 ["nop" @ main.sol:4:14] (function, type: function (uint256) returns void)
+- Def: #4 ["x" @ main.sol:4:23] (parameter, type: uint256)
+- Def: #5 ["Test" @ main.sol:9:10] (contract)
+- Def: #6 ["test" @ main.sol:10:14] (function, type: function (uint256) returns void)
+- Def: #7 ["a" @ main.sol:10:24] (parameter, type: uint256)
+- Def: #8 ["bar" @ main.sol:16:10] (function, type: function (uint256) returns void)
+- Def: #9 ["a" @ main.sol:16:19] (parameter, type: uint256)
+- Def: #10 ["foo" @ other.sol:1:10] (function, type: function (uint256) returns uint256)
+- Def: #11 ["a" @ other.sol:1:19] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (12):
+- Ref: ["Lib" @ main.sol:7:7] -> #2
+- Ref: ["a" @ main.sol:11:9] -> #7
+- Ref: ["nop" @ main.sol:11:11] -> #3
+- Ref: ["foo" @ main.sol:12:9] -> #10
+- Ref: ["a" @ main.sol:12:13] -> #7
+- Ref: ["nop" @ main.sol:12:16] -> #3
+- Ref: ["a" @ main.sol:17:5] -> #9
+- Ref: ["nop" @ main.sol:17:7] -> #3
+- Ref: ["foo" @ main.sol:18:5] -> #10
+- Ref: ["a" @ main.sol:18:9] -> #9
+- Ref: ["nop" @ main.sol:18:12] -> #3
+- Ref: ["a" @ other.sol:2:12] -> #11
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[main.sol:1:1]
+    │
+  1 │ import {foo} from "other.sol";
+    │         ─┬─  
+    │          ╰─── name: 1
+    │ 
+  3 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 2
+  4 │     function nop(uint x) public {}
+    │              ─┬─      ┬  
+    │               ╰────────── name: 3
+    │                       │  
+    │                       ╰── name: 4
+    │ 
+  7 │ using Lib for uint;
+    │       ─┬─  
+    │        ╰─── ref: 2
+    │ 
+  9 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 5
+ 10 │     function test(uint a) public {
+    │              ──┬─      ┬  
+    │                ╰────────── name: 6
+    │                        │  
+    │                        ╰── name: 7
+ 11 │         a.nop();
+    │         ┬ ─┬─  
+    │         ╰────── ref: 7
+    │            │   
+    │            ╰─── ref: 3
+ 12 │         foo(a).nop();
+    │         ─┬─ ┬  ─┬─  
+    │          ╰────────── ref: 10
+    │             │   │   
+    │             ╰─────── ref: 7
+    │                 │   
+    │                 ╰─── ref: 3
+    │ 
+ 16 │ function bar(uint a) {
+    │          ─┬─      ┬  
+    │           ╰────────── name: 8
+    │                   │  
+    │                   ╰── name: 9
+ 17 │     a.nop();
+    │     ┬ ─┬─  
+    │     ╰────── ref: 9
+    │        │   
+    │        ╰─── ref: 3
+ 18 │     foo(a).nop();
+    │     ─┬─ ┬  ─┬─  
+    │      ╰────────── ref: 10
+    │         │   │   
+    │         ╰─────── ref: 9
+    │             │   
+    │             ╰─── ref: 3
+────╯
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[other.sol:1:1]
+   │
+ 1 │ function foo(uint a) pure returns (uint) {
+   │          ─┬─      ┬  
+   │           ╰────────── name: 10
+   │                   │  
+   │                   ╰── name: 11
+ 2 │     return a;
+   │            ┬  
+   │            ╰── ref: 11
+───╯

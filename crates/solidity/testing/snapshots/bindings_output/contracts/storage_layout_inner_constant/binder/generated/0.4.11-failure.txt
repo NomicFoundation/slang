@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (0):
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["X2" @ input.sol:1:10]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract X2 layout at C2 { // should not bind to a constant defined in the contract
+   │          ─┬  
+   │           ╰── ???
+───╯

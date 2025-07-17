@@ -1,0 +1,66 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (7):
+- Def: #1 ["IERC20" @ input.sol:1:11] (interface)
+- Def: #2 ["SafeERC20" @ input.sol:3:9] (library)
+- Def: #3 ["safeApprove" @ input.sol:4:14] (function, type: function (IERC20) returns void)
+- Def: #4 ["token" @ input.sol:4:33] (parameter, type: IERC20)
+- Def: #5 ["Test" @ input.sol:6:10] (contract)
+- Def: #6 ["test" @ input.sol:8:14] (function, type: function (address) returns void)
+- Def: #7 ["token" @ input.sol:8:27] (parameter, type: address)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["IERC20" @ input.sol:4:26] -> #1
+- Ref: ["SafeERC20" @ input.sol:7:11] -> #2
+- Ref: ["IERC20" @ input.sol:7:25] -> #1
+- Ref: ["IERC20" @ input.sol:9:9] -> #1
+- Ref: ["token" @ input.sol:9:16] -> #7
+- Ref: ["safeApprove" @ input.sol:9:23] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface IERC20 {
+   │           ───┬──  
+   │              ╰──── name: 1
+   │ 
+ 3 │ library SafeERC20 {
+   │         ────┬────  
+   │             ╰────── name: 2
+ 4 │     function safeApprove(IERC20 token) internal {}
+   │              ─────┬───── ───┬── ──┬──  
+   │                   ╰──────────────────── name: 3
+   │                             │     │    
+   │                             ╰────────── ref: 1
+   │                                   │    
+   │                                   ╰──── name: 4
+   │ 
+ 6 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 5
+ 7 │     using SafeERC20 for IERC20;
+   │           ────┬────     ───┬──  
+   │               ╰───────────────── ref: 2
+   │                            │    
+   │                            ╰──── ref: 1
+ 8 │     function test(address token) public {
+   │              ──┬─         ──┬──  
+   │                ╰───────────────── name: 6
+   │                             │    
+   │                             ╰──── name: 7
+ 9 │         IERC20(token).safeApprove();
+   │         ───┬── ──┬──  ─────┬─────  
+   │            ╰─────────────────────── ref: 1
+   │                  │         │       
+   │                  ╰───────────────── ref: 7
+   │                            │       
+   │                            ╰─────── unresolved
+───╯

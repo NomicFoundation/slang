@@ -1,0 +1,60 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Base1" @ input.sol:1:10] (contract)
+- Def: #2 ["base1" @ input.sol:2:14] (function, type: function () returns int256)
+- Def: #3 ["Base2" @ input.sol:5:10] (contract)
+- Def: #4 ["base2" @ input.sol:6:14] (function, type: function () returns int256)
+- Def: #5 ["Derived" @ input.sol:9:10] (contract)
+- Def: #6 ["test" @ input.sol:13:14] (function, type: function () returns int256)
+
+------------------------------------------------------------------------
+
+References (4):
+- Ref: ["Base1" @ input.sol:10:5] -> #1
+- Ref: ["Base2" @ input.sol:11:5] -> #3
+- Ref: ["base1" @ input.sol:14:16] -> unresolved
+- Ref: ["base2" @ input.sol:14:26] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Base1 {
+    │          ──┬──  
+    │            ╰──── name: 1
+  2 │     function base1() returns (int) { return 1; }
+    │              ──┬──  
+    │                ╰──── name: 2
+    │ 
+  5 │ contract Base2 {
+    │          ──┬──  
+    │            ╰──── name: 3
+  6 │     function base2() returns (int) { return 2; }
+    │              ──┬──  
+    │                ╰──── name: 4
+    │ 
+  9 │ contract Derived is
+    │          ───┬───  
+    │             ╰───── name: 5
+ 10 │     Base1,
+    │     ──┬──  
+    │       ╰──── ref: 1
+ 11 │     Base2
+    │     ──┬──  
+    │       ╰──── ref: 3
+    │ 
+ 13 │     function test() returns (int) {
+    │              ──┬─  
+    │                ╰─── name: 6
+ 14 │         return base1() + base2();
+    │                ──┬──     ──┬──  
+    │                  ╰────────────── unresolved
+    │                            │    
+    │                            ╰──── unresolved
+────╯

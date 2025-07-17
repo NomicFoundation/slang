@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (3):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function (bytes memory) returns void)
+- Def: #3 ["data" @ input.sol:2:32] (parameter, type: bytes memory)
+
+------------------------------------------------------------------------
+
+References (2):
+- Ref: ["delegatecall" @ input.sol:3:52] -> unresolved
+- Ref: ["data" @ input.sol:3:65] -> #3
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test(bytes memory data) public {
+   │              ──┬─              ──┬─  
+   │                ╰───────────────────── name: 2
+   │                                  │   
+   │                                  ╰─── name: 3
+ 3 │         0x2d3fC875de7Fe7Da43AD0afa0E7023c9B91D06b1.delegatecall(data);
+   │                                                    ──────┬───── ──┬─  
+   │                                                          ╰──────────── unresolved
+   │                                                                   │   
+   │                                                                   ╰─── ref: 3
+───╯

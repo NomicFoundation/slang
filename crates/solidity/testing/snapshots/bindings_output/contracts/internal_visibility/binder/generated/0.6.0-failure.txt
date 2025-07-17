@@ -1,0 +1,65 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Ownable" @ input.sol:1:19] (contract)
+- Def: #2 ["owner" @ input.sol:2:22] (state var, type: address)
+- Def: #3 ["default_visibility" @ input.sol:3:13] (state var, type: address)
+- Def: #4 ["_internal_only" @ input.sol:4:14] (function, type: function () returns void)
+- Def: #5 ["Test" @ input.sol:6:10] (contract)
+- Def: #6 ["test" @ input.sol:7:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["Ownable" @ input.sol:6:18] -> #1
+- Ref: ["owner" @ input.sol:8:9] -> unresolved
+- Ref: ["default_visibility" @ input.sol:9:9] -> unresolved
+- Ref: ["_internal_only" @ input.sol:10:9] -> unresolved
+- Ref: ["Ownable" @ input.sol:11:9] -> #1
+- Ref: ["_internal_only" @ input.sol:11:17] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ abstract contract Ownable {
+    │                   ───┬───  
+    │                      ╰───── name: 1
+  2 │     address internal owner;
+    │                      ──┬──  
+    │                        ╰──── name: 2
+  3 │     address default_visibility;
+    │             ─────────┬────────  
+    │                      ╰────────── name: 3
+  4 │     function _internal_only() internal {}
+    │              ───────┬──────  
+    │                     ╰──────── name: 4
+    │ 
+  6 │ contract Test is Ownable {
+    │          ──┬─    ───┬───  
+    │            ╰────────────── name: 5
+    │                     │     
+    │                     ╰───── ref: 1
+  7 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 6
+  8 │         owner;
+    │         ──┬──  
+    │           ╰──── unresolved
+  9 │         default_visibility;
+    │         ─────────┬────────  
+    │                  ╰────────── unresolved
+ 10 │         _internal_only();
+    │         ───────┬──────  
+    │                ╰──────── unresolved
+ 11 │         Ownable._internal_only();
+    │         ───┬─── ───────┬──────  
+    │            ╰──────────────────── ref: 1
+    │                        │        
+    │                        ╰──────── ref: 4
+────╯

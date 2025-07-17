@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (4):
+- Def: #1 ["foo" @ main.sol:1:9] (imported symbol)
+- Def: #2 ["Lib" @ main.sol:3:9] (library)
+- Def: #3 ["nop" @ main.sol:4:14] (function, type: function (uint256) returns void)
+- Def: #4 ["x" @ main.sol:4:23] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[main.sol:1:1]
+   │
+ 1 │ import {foo} from "other.sol";
+   │         ─┬─  
+   │          ╰─── name: 1
+   │ 
+ 3 │ library Lib {
+   │         ─┬─  
+   │          ╰─── name: 2
+ 4 │     function nop(uint x) public {}
+   │              ─┬─      ┬  
+   │               ╰────────── name: 3
+   │                       │  
+   │                       ╰── name: 4
+───╯
+
+------------------------------------------------------------------------
+
+Bindings: 

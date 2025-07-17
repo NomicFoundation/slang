@@ -1,0 +1,48 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (5):
+- Def: #1 ["Counter" @ input.sol:1:11] (interface)
+- Def: #2 ["count" @ input.sol:2:14] (function, type: function () returns uint256)
+- Def: #3 ["Test" @ input.sol:5:10] (contract)
+- Def: #4 ["test" @ input.sol:6:14] (function, type: function (address) returns uint256)
+- Def: #5 ["_counter" @ input.sol:6:27] (parameter, type: address)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Counter" @ input.sol:7:16] -> #1
+- Ref: ["_counter" @ input.sol:7:24] -> #5
+- Ref: ["count" @ input.sol:7:34] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ interface Counter {
+   │           ───┬───  
+   │              ╰───── name: 1
+ 2 │     function count() external returns (uint);
+   │              ──┬──  
+   │                ╰──── name: 2
+   │ 
+ 5 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 3
+ 6 │     function test(address _counter) public returns (uint) {
+   │              ──┬─         ────┬───  
+   │                ╰──────────────────── name: 4
+   │                               │     
+   │                               ╰───── name: 5
+ 7 │         return Counter(_counter).count();
+   │                ───┬─── ────┬───  ──┬──  
+   │                   ╰───────────────────── ref: 1
+   │                            │       │    
+   │                            ╰──────────── ref: 5
+   │                                    │    
+   │                                    ╰──── unresolved
+───╯

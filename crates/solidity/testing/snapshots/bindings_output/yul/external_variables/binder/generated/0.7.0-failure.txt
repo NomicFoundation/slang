@@ -1,0 +1,65 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (6):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["d" @ input.sol:2:10] (state var, type: uint256)
+- Def: #3 ["test" @ input.sol:3:14] (function, type: function (uint256) returns uint256)
+- Def: #4 ["a" @ input.sol:3:24] (parameter, type: uint256)
+- Def: #5 ["b" @ input.sol:3:48] (parameter, type: uint256)
+- Def: #6 ["c" @ input.sol:4:14] (variable, type: uint256)
+
+------------------------------------------------------------------------
+
+References (6):
+- Ref: ["c" @ input.sol:6:13] -> #6
+- Ref: ["a" @ input.sol:6:18] -> #4
+- Ref: ["b" @ input.sol:7:13] -> #5
+- Ref: ["c" @ input.sol:7:18] -> #6
+- Ref: ["c" @ input.sol:8:13] -> #6
+- Ref: ["d" @ input.sol:8:18] -> #2
+
+------------------------------------------------------------------------
+
+Unbound identifiers (1):
+- ???: ["slot" @ input.sol:8:20]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     uint d;
+   │          ┬  
+   │          ╰── name: 2
+ 3 │     function test(uint a) public returns (uint b) {
+   │              ──┬─      ┬                       ┬  
+   │                ╰────────────────────────────────── name: 3
+   │                        │                       │  
+   │                        ╰────────────────────────── name: 4
+   │                                                │  
+   │                                                ╰── name: 5
+ 4 │         uint c;
+   │              ┬  
+   │              ╰── name: 6
+   │ 
+ 6 │             c := a
+   │             ┬    ┬  
+   │             ╰─────── ref: 6
+   │                  │  
+   │                  ╰── ref: 4
+ 7 │             b := c
+   │             ┬    ┬  
+   │             ╰─────── ref: 5
+   │                  │  
+   │                  ╰── ref: 6
+ 8 │             c := d.slot
+   │             ┬    ┬ ──┬─  
+   │             ╰──────────── ref: 6
+   │                  │   │   
+   │                  ╰─────── ref: 2
+   │                      │   
+   │                      ╰─── ???
+───╯

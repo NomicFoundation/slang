@@ -1,0 +1,29 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (3):
+- Def: #1 ["Utils" @ input.sol:1:9] (library)
+- Def: #2 ["Foo" @ input.sol:2:11] (event)
+- Def: #3 ["x" @ input.sol:2:20] (parameter, type: uint256)
+
+------------------------------------------------------------------------
+
+References (0):
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Utils {
+   │         ──┬──  
+   │           ╰──── name: 1
+ 2 │     event Foo(uint x);
+   │           ─┬─      ┬  
+   │            ╰────────── name: 2
+   │                    │  
+   │                    ╰── name: 3
+───╯

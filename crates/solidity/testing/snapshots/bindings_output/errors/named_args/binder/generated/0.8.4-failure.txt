@@ -1,0 +1,71 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["Cause" @ input.sol:2:10] (enum)
+- Def: #3 ["InsuficientFunds" @ input.sol:2:18] (enum member of Cause)
+- Def: #4 ["NotAuthorized" @ input.sol:2:36] (enum member of Cause)
+- Def: #5 ["InvalidDate" @ input.sol:2:51] (enum member of Cause)
+- Def: #6 ["Failure" @ input.sol:3:11] (error)
+- Def: #7 ["cause" @ input.sol:4:15] (parameter, type: Cause)
+- Def: #8 ["details" @ input.sol:5:16] (parameter, type: string memory)
+- Def: #9 ["test" @ input.sol:7:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (3):
+- Ref: ["Cause" @ input.sol:4:9] -> #2
+- Ref: ["Cause" @ input.sol:8:32] -> #2
+- Ref: ["NotAuthorized" @ input.sol:8:38] -> #4
+
+------------------------------------------------------------------------
+
+Unbound identifiers (3):
+- ???: ["Failure" @ input.sol:8:16]
+- ???: ["cause" @ input.sol:8:25]
+- ???: ["details" @ input.sol:8:53]
+
+------------------------------------------------------------------------
+
+Bindings: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     enum Cause { InsuficientFunds, NotAuthorized, InvalidDate }
+   │          ──┬──   ────────┬───────  ──────┬──────  ─────┬─────  
+   │            ╰─────────────────────────────────────────────────── name: 2
+   │                          │               │             │       
+   │                          ╰───────────────────────────────────── name: 3
+   │                                          │             │       
+   │                                          ╰───────────────────── name: 4
+   │                                                        │       
+   │                                                        ╰─────── name: 5
+ 3 │     error Failure (
+   │           ───┬───  
+   │              ╰───── name: 6
+ 4 │         Cause cause,
+   │         ──┬── ──┬──  
+   │           ╰────────── ref: 2
+   │                 │    
+   │                 ╰──── name: 7
+ 5 │         string details
+   │                ───┬───  
+   │                   ╰───── name: 8
+   │ 
+ 7 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 9
+ 8 │         revert Failure({cause: Cause.NotAuthorized, details: "not owner"});
+   │                ───┬───  ──┬──  ──┬── ──────┬──────  ───┬───  
+   │                   ╰────────────────────────────────────────── ???
+   │                           │      │         │           │     
+   │                           ╰────────────────────────────────── ???
+   │                                  │         │           │     
+   │                                  ╰─────────────────────────── ref: 2
+   │                                            │           │     
+   │                                            ╰───────────────── ref: 4
+   │                                                        │     
+   │                                                        ╰───── ???
+───╯
