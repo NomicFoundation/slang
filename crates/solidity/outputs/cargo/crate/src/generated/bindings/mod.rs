@@ -8,6 +8,7 @@ mod binding_rules;
 use std::rc::Rc;
 
 use semver::Version;
+use visibility as _;
 
 use crate::cst::KindTypes;
 

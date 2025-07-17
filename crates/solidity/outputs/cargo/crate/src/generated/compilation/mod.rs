@@ -18,8 +18,10 @@
 //! struct MyProjectConfig {
 //! }
 //!
-//! impl CompilationBuilderConfig<String> for MyProjectConfig {
-//!   fn read_file(&self, file_id: &str) -> std::result::Result<Option<String>, String> {
+//! impl CompilationBuilderConfig for MyProjectConfig {
+//!   type Error = String;
+//!
+//!   fn read_file(&mut self, file_id: &str) -> Result<Option<String>, Self::Error> {
 //!       match file_id {
 //!         // Loading these files successfully from memory or file system:
 //!         "b.sol" => Ok(Some("import 'a.sol'; contract B is A { }".into())),
@@ -32,10 +34,10 @@
 //!   }
 //!
 //!   fn resolve_import(
-//!       &self,
+//!       &mut self,
 //!       source_file_id: &str,
 //!       import_path_cursor: &slang_solidity::cst::Cursor,
-//!   ) -> std::result::Result<Option<String>, String> {
+//!   ) -> Result<Option<String>, Self::Error> {
 //!       let import_path = import_path_cursor.node().unparse();
 //!       let import_path = &import_path[1..import_path.len()-1]; // strip off the quotes
 //!       Ok(Some(import_path.to_owned())) // as the id, we return the import name as is
@@ -43,7 +45,7 @@
 //! }
 //!
 //! let config = MyProjectConfig::default();
-//! let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, &config).unwrap();
+//! let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, config).unwrap();
 //! builder.add_file("b.sol").unwrap();
 //! let unit = builder.build();
 //!
