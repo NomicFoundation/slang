@@ -626,6 +626,28 @@ impl Visitor for Pass {
         self.binder.set_node_type(node.node_id, type_id);
     }
 
+    fn leave_tuple_deconstruction_statement(
+        &mut self,
+        node: &input_ir::TupleDeconstructionStatement,
+    ) {
+        if node.var_keyword.is_none() {
+            return;
+        }
+        // this handles adding type information to the `var` declarations in Solidity < 0.5.0
+        for element in &node.elements {
+            let Some(member) = &element.member else {
+                continue;
+            };
+            if let input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) = member {
+                // TODO: the variables cannot be typed at this point, but we
+                // should be able to infer their type in p4 after computing the
+                // value type
+                self.binder
+                    .set_node_type(untyped_tuple_member.node_id, None);
+            }
+        }
+    }
+
     fn leave_struct_definition(&mut self, node: &input_ir::StructDefinition) {
         self.binder.mark_meta_type_node(node.node_id);
     }
