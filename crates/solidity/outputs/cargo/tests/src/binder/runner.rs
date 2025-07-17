@@ -37,6 +37,11 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         let multi_part = split_multi_file(&contents);
 
         let compilation_unit = build_compilation_unit(version, &multi_part)?;
+        let has_parse_errors = compilation_unit
+            .files()
+            .iter()
+            .any(|file| !file.errors().is_empty());
+
         let binder_data = build_binder(compilation_unit);
 
         let report = binder_report(&binder_data, compare_with_binding_graph)?;
@@ -44,7 +49,14 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
         match last_report {
             Some(ref last) if last == &report => (),
             _ => {
-                let snapshot_path = target_dir.join(format!("{version}.txt"));
+                let snapshot_path = target_dir.join(format!(
+                    "{version}-{status}.txt",
+                    status = if has_parse_errors {
+                        "failure"
+                    } else {
+                        "success"
+                    }
+                ));
                 fs::write(snapshot_path, &report)?;
                 last_report = Some(report);
             }
