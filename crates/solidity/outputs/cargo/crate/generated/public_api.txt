@@ -100,6 +100,7 @@ pub slang_solidity::backend::binder::ConstantDefinition::node_id: metaslang_cst:
 impl core::fmt::Debug for slang_solidity::backend::binder::ConstantDefinition
 pub fn slang_solidity::backend::binder::ConstantDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::binder::ContractDefinition
+pub slang_solidity::backend::binder::ContractDefinition::constructor_parameters_scope_id: core::option::Option<slang_solidity::backend::binder::ScopeId>
 pub slang_solidity::backend::binder::ContractDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::binder::ContractDefinition::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::binder::ContractDefinition

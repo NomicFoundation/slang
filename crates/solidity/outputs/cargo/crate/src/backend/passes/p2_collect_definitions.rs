@@ -141,6 +141,18 @@ impl Pass {
             }
         }
     }
+
+    fn register_constructor_parameters(&mut self, constructor_parameters_scope_id: ScopeId) {
+        let current_scope_node_id = self.current_scope().node_id();
+        let Definition::Contract(contract_definition) =
+            self.binder.get_definition_mut(current_scope_node_id)
+        else {
+            unreachable!("the current scope is not a contract");
+        };
+        // TODO(validation): there should be a single constructor, so the
+        // current value should be None
+        contract_definition.constructor_parameters_scope_id = Some(constructor_parameters_scope_id);
+    }
 }
 
 impl Visitor for Pass {
@@ -254,6 +266,21 @@ impl Visitor for Pass {
         if let input_ir::FunctionName::Identifier(name) = &node.name {
             let definition = Definition::new_function(node.node_id, name, parameters_scope_id);
             self.insert_definition_in_current_scope(definition);
+
+            // For Solidity < 0.5.0, check if we need to register the
+            // constructor parameters scope
+            if self.language_version < VERSION_0_5_0 {
+                let current_scope_node_id = self.current_scope().node_id();
+                let contract_name = self
+                    .binder
+                    .find_definition_by_id(current_scope_node_id)
+                    .unwrap()
+                    .identifier()
+                    .unparse();
+                if contract_name == name.unparse() {
+                    self.register_constructor_parameters(parameters_scope_id);
+                }
+            }
         }
 
         let function_scope =
@@ -293,9 +320,9 @@ impl Visitor for Pass {
         let parameters_scope_id = self.binder.insert_scope(parameters_scope);
         self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
 
-        // TODO: register the constructor to resolve named parameters when
-        // constructing this contract. Also, for Solidity < 0.5.0, register the
-        // constructor which is the function with the same name as the contract.
+        // Register the constructor to resolve named parameters when
+        // constructing this contract
+        self.register_constructor_parameters(parameters_scope_id);
 
         let function_scope =
             Scope::new_function(node.node_id, self.current_scope_id(), parameters_scope_id);
