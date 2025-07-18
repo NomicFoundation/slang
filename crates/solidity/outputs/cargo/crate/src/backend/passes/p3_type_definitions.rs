@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use super::p2_collect_definitions::Output as Input;
 use crate::backend::binder::{
-    Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
+    Binder, BuiltIn, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
     LibraryDefinition, Reference, Resolution, Scope, ScopeId, UsingDirective,
 };
 use crate::backend::l2_flat_contracts::visitor::Visitor;
@@ -839,5 +839,17 @@ impl Visitor for Pass {
     fn leave_emit_statement(&mut self, node: &input_ir::EmitStatement) {
         let type_id = self.type_of_identifier_path(&node.event, None);
         self.binder.set_node_type(node.node_id, type_id);
+    }
+
+    fn enter_catch_clause_error(&mut self, node: &input_ir::CatchClauseError) -> bool {
+        if let Some(name) = &node.name {
+            let resolution = match name.unparse().as_str() {
+                "Error" | "Panic" => Resolution::BuiltIn(BuiltIn::ErrorType),
+                _ => Resolution::Unresolved,
+            };
+            let reference = Reference::new(Rc::clone(name), resolution);
+            self.binder.insert_reference(reference);
+        }
+        true
     }
 }
