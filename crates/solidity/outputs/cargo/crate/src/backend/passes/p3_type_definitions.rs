@@ -529,6 +529,24 @@ impl Visitor for Pass {
         self.binder.mark_meta_type_node(node.node_id);
     }
 
+    fn enter_import_deconstruction(&mut self, node: &input_ir::ImportDeconstruction) -> bool {
+        for symbol in &node.symbols {
+            let target_symbol = if let Some(alias) = &symbol.alias {
+                &alias.identifier
+            } else {
+                &symbol.name
+            };
+            let resolution = self.binder.resolve_in_scope(
+                self.current_contract_or_file_scope_id(),
+                &target_symbol.unparse(),
+            );
+            let reference = Reference::new(Rc::clone(&symbol.name), resolution);
+            self.binder.insert_reference(reference);
+        }
+
+        false
+    }
+
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
         let type_id = self.type_of_function_definition(node);
         self.binder.set_node_type(node.node_id, type_id);
