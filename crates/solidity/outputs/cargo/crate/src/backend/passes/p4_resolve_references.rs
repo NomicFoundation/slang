@@ -492,9 +492,16 @@ impl Pass {
 
     fn resolve_named_arguments(
         &mut self,
-        named_arguments: &input_ir::NamedArguments,
+        named_arguments_declaration: &input_ir::NamedArgumentsDeclaration,
         definition_id: Option<NodeId>,
     ) {
+        let Some(named_arguments) = named_arguments_declaration
+            .arguments
+            .as_ref()
+            .map(|arguments| &arguments.arguments)
+        else {
+            return;
+        };
         let parameters_scope_id = definition_id.and_then(|definition_id| {
             self.binder
                 .get_parameters_scope_for_definition(definition_id)
@@ -862,17 +869,6 @@ impl Visitor for Pass {
 
     fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {
         let operand_typing = self.typing_of_expression(&node.operand);
-        let named_arguments = if let input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(
-            named_arguments_declaration,
-        ) = &node.arguments
-        {
-            named_arguments_declaration
-                .arguments
-                .as_ref()
-                .map(|arguments| &arguments.arguments)
-        } else {
-            None
-        };
 
         let (typing, definition_id) = match operand_typing {
             Typing::Unresolved | Typing::This | Typing::Super => {
@@ -954,8 +950,11 @@ impl Visitor for Pass {
         self.binder.set_node_typing(node.node_id, typing);
 
         // Reference and resolve named arguments
-        if let Some(named_arguments) = named_arguments {
-            self.resolve_named_arguments(named_arguments, definition_id);
+        if let input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(
+            named_arguments_declaration,
+        ) = &node.arguments
+        {
+            self.resolve_named_arguments(named_arguments_declaration, definition_id);
         }
     }
 
@@ -1023,5 +1022,35 @@ impl Visitor for Pass {
         }
 
         true
+    }
+
+    fn leave_emit_statement(&mut self, node: &input_ir::EmitStatement) {
+        if let input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(
+            named_arguments_declaration,
+        ) = &node.arguments
+        {
+            let definition_id = self
+                .binder
+                .find_reference_by_identifier_node_id(node.event.last().unwrap().id())
+                .and_then(|reference| reference.resolution.as_definition_id());
+            self.resolve_named_arguments(named_arguments_declaration, definition_id);
+        }
+    }
+
+    fn leave_revert_statement(&mut self, node: &input_ir::RevertStatement) {
+        if let input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(
+            named_arguments_declaration,
+        ) = &node.arguments
+        {
+            let definition_id = node
+                .error
+                .as_ref()
+                .and_then(|error| {
+                    self.binder
+                        .find_reference_by_identifier_node_id(error.last().unwrap().id())
+                })
+                .and_then(|reference| reference.resolution.as_definition_id());
+            self.resolve_named_arguments(named_arguments_declaration, definition_id);
+        }
     }
 }
