@@ -1278,6 +1278,9 @@ impl Binder {
         Resolution::from(found_ids)
     }
 
+    // Resolution in this function is strictly limited to the given scope, and
+    // will only work in scope types that can work as a namespace only (eg.
+    // block scopes and other lexical scopes don't)
     pub(crate) fn resolve_in_scope_as_namespace(
         &self,
         scope_id: ScopeId,
@@ -1297,13 +1300,33 @@ impl Binder {
                 .get(symbol)
                 .cloned()
                 .map_or(Resolution::Unresolved, Resolution::from),
+            Scope::Parameters(parameters_scope) => parameters_scope.definitions.get(symbol).into(),
+
             Scope::Block(_)
             | Scope::File(_)
             | Scope::Function(_)
             | Scope::Modifier(_)
-            | Scope::Parameters(_)
             | Scope::YulBlock(_)
             | Scope::YulFunction(_) => Resolution::Unresolved,
+        }
+    }
+
+    pub(crate) fn get_parameters_scope_for_definition(
+        &self,
+        definition_id: NodeId,
+    ) -> Option<ScopeId> {
+        match self.find_definition_by_id(definition_id)? {
+            Definition::Contract(_contract_definition) => {
+                // TODO: find the constructor and return its parameters scope
+                None
+            }
+            Definition::Error(error_definition) => Some(error_definition.parameters_scope_id),
+            Definition::Event(event_definition) => Some(event_definition.parameters_scope_id),
+            Definition::Function(function_definition) => {
+                Some(function_definition.parameters_scope_id)
+            }
+            Definition::Struct(_) => self.scope_id_for_node_id(definition_id),
+            _ => None,
         }
     }
 }

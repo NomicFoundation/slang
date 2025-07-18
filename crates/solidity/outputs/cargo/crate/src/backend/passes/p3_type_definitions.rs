@@ -210,6 +210,7 @@ impl Pass {
                     }
                 }
                 Some(self.types.register_type(Type::Function {
+                    definition_id: None,
                     parameter_types,
                     return_type,
                     external,
@@ -441,6 +442,7 @@ impl Pass {
             }
         }
         Some(self.types.register_type(Type::Function {
+            definition_id: Some(function_definition.node_id),
             parameter_types,
             return_type,
             external,

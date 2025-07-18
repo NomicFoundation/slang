@@ -178,6 +178,7 @@ pub enum Type {
         precision_bits: u32,
     },
     Function {
+        definition_id: Option<NodeId>, // this may point to a FunctionDefinition
         parameter_types: Vec<TypeId>,
         return_type: TypeId,
         external: bool,
@@ -230,17 +231,34 @@ pub enum FunctionTypeKind {
 
 impl Type {
     #[must_use]
-    pub fn with_location(&self, location: DataLocation) -> Self {
+    pub fn canonicalize(&self) -> Self {
         match self {
             Type::Array { element_type, .. } => Type::Array {
                 element_type: *element_type,
-                location,
+                location: DataLocation::Inherited,
             },
-            Type::Bytes { .. } => Type::Bytes { location },
-            Type::String { .. } => Type::String { location },
+            Type::Bytes { .. } => Type::Bytes {
+                location: DataLocation::Inherited,
+            },
+            Type::String { .. } => Type::String {
+                location: DataLocation::Inherited,
+            },
             Type::Struct { definition_id, .. } => Type::Struct {
                 definition_id: *definition_id,
-                location,
+                location: DataLocation::Inherited,
+            },
+            Type::Function {
+                parameter_types,
+                return_type,
+                external,
+                kind,
+                ..
+            } => Type::Function {
+                definition_id: None,
+                parameter_types: parameter_types.clone(),
+                return_type: *return_type,
+                external: *external,
+                kind: *kind,
             },
 
             Type::Address { .. }
@@ -249,7 +267,6 @@ impl Type {
             | Type::Contract { .. }
             | Type::Enum { .. }
             | Type::FixedPointNumber { .. }
-            | Type::Function { .. }
             | Type::Integer { .. }
             | Type::Interface { .. }
             | Type::Mapping { .. }

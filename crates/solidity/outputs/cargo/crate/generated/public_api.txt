@@ -7658,6 +7658,7 @@ pub slang_solidity::backend::types::Type::FixedPointNumber::bits: u32
 pub slang_solidity::backend::types::Type::FixedPointNumber::precision_bits: u32
 pub slang_solidity::backend::types::Type::FixedPointNumber::signed: bool
 pub slang_solidity::backend::types::Type::Function
+pub slang_solidity::backend::types::Type::Function::definition_id: core::option::Option<slang_solidity::cst::NodeId>
 pub slang_solidity::backend::types::Type::Function::external: bool
 pub slang_solidity::backend::types::Type::Function::kind: slang_solidity::backend::types::FunctionTypeKind
 pub slang_solidity::backend::types::Type::Function::parameter_types: alloc::vec::Vec<slang_solidity::backend::types::TypeId>
@@ -7682,7 +7683,7 @@ pub slang_solidity::backend::types::Type::UserDefinedValue
 pub slang_solidity::backend::types::Type::UserDefinedValue::definition_id: slang_solidity::cst::NodeId
 pub slang_solidity::backend::types::Type::Void
 impl slang_solidity::backend::types::Type
-pub fn slang_solidity::backend::types::Type::with_location(&self, location: slang_solidity::backend::types::DataLocation) -> Self
+pub fn slang_solidity::backend::types::Type::canonicalize(&self) -> Self
 impl core::clone::Clone for slang_solidity::backend::types::Type
 pub fn slang_solidity::backend::types::Type::clone(&self) -> slang_solidity::backend::types::Type
 impl core::cmp::Eq for slang_solidity::backend::types::Type
