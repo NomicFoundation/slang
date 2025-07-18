@@ -8,7 +8,8 @@ Definitions (4):
 
 ------------------------------------------------------------------------
 
-References (3):
+References (4):
+- Ref: ["Counter" @ main.sol:1:9] -> unresolved
 - Ref: ["Counter" @ main.sol:4:19] -> unresolved
 - Ref: ["c" @ main.sol:5:9] -> #4
 - Ref: ["increment" @ main.sol:5:11] -> unresolved
@@ -29,6 +30,8 @@ Bindings:
  1 │ import {Counter} from "counter.sol";
    │         ───┬───  
    │            ╰───── name: 1
+   │            │     
+   │            ╰───── unresolved
    │ 
  3 │ contract Test {
    │          ──┬─  

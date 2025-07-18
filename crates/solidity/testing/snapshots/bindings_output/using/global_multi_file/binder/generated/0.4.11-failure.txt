@@ -8,7 +8,8 @@ Definitions (4):
 
 ------------------------------------------------------------------------
 
-References (0):
+References (1):
+- Ref: ["foo" @ main.sol:1:9] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -22,6 +23,8 @@ Bindings:
  1 │ import {foo} from "other.sol";
    │         ─┬─  
    │          ╰─── name: 1
+   │          │   
+   │          ╰─── unresolved
    │ 
  3 │ library Lib {
    │         ─┬─  

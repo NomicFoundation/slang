@@ -15,7 +15,8 @@ Definitions (11):
 
 ------------------------------------------------------------------------
 
-References (12):
+References (13):
+- Ref: ["foo" @ main.sol:1:9] -> #10
 - Ref: ["Lib" @ main.sol:7:7] -> #2
 - Ref: ["a" @ main.sol:11:9] -> #7
 - Ref: ["nop" @ main.sol:11:11] -> #3
@@ -41,6 +42,8 @@ Bindings:
   1 │ import {foo} from "other.sol";
     │         ─┬─  
     │          ╰─── name: 1
+    │          │   
+    │          ╰─── ref: 10
     │ 
   3 │ library Lib {
     │         ─┬─  

@@ -12,7 +12,9 @@ Definitions (8):
 
 ------------------------------------------------------------------------
 
-References (4):
+References (6):
+- Ref: ["Foo" @ main.sol:1:9] -> #3
+- Ref: ["Bar" @ main.sol:2:9] -> #1
 - Ref: ["Foo" @ main.sol:6:16] -> #3
 - Ref: ["foo" @ main.sol:6:20] -> #4
 - Ref: ["LocalBar" @ main.sol:6:28] -> #1
@@ -20,8 +22,7 @@ References (4):
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (1):
-- ???: ["Bar" @ main.sol:2:9]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -57,9 +58,11 @@ Bindings:
  1 │ import {Foo} from "lib/foo.sol";
    │         ─┬─  
    │          ╰─── name: 5
+   │          │   
+   │          ╰─── ref: 3
  2 │ import {Bar as LocalBar} from "lib/bar.sol";
    │         ─┬─    ────┬───  
-   │          ╰─────────────── ???
+   │          ╰─────────────── ref: 1
    │                    │     
    │                    ╰───── name: 6
    │ 

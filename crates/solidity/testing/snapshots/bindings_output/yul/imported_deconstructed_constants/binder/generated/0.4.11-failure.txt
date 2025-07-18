@@ -8,7 +8,8 @@ Definitions (4):
 
 ------------------------------------------------------------------------
 
-References (2):
+References (3):
+- Ref: ["FOO" @ main.sol:1:9] -> unresolved
 - Ref: ["add" @ main.sol:6:22] -> unresolved
 - Ref: ["FOO" @ main.sol:6:26] -> unresolved
 
@@ -28,6 +29,8 @@ Bindings:
  1 │ import {FOO} from "./constants.sol";
    │         ─┬─  
    │          ╰─── name: 1
+   │          │   
+   │          ╰─── unresolved
    │ 
  3 │ contract Test {
    │          ──┬─  
