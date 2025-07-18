@@ -798,4 +798,28 @@ impl Visitor for Pass {
                 .insert_using_directive_in_scope(directive, current_scope_id);
         }
     }
+
+    fn enter_revert_statement(&mut self, node: &input_ir::RevertStatement) -> bool {
+        if let Some(identifier_path) = &node.error {
+            self.resolve_identifier_path(identifier_path);
+        }
+        true
+    }
+
+    fn leave_revert_statement(&mut self, node: &input_ir::RevertStatement) {
+        if let Some(identifier_path) = &node.error {
+            let type_id = self.type_of_identifier_path(identifier_path, None);
+            self.binder.set_node_type(node.node_id, type_id);
+        }
+    }
+
+    fn enter_emit_statement(&mut self, node: &input_ir::EmitStatement) -> bool {
+        self.resolve_identifier_path(&node.event);
+        true
+    }
+
+    fn leave_emit_statement(&mut self, node: &input_ir::EmitStatement) {
+        let type_id = self.type_of_identifier_path(&node.event, None);
+        self.binder.set_node_type(node.node_id, type_id);
+    }
 }
