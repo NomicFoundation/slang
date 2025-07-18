@@ -112,20 +112,17 @@ impl Pass {
     }
 
     fn active_using_directives_for_type(&self, type_id: TypeId) -> Vec<&UsingDirective> {
-        // If the type is a reference type, we need to compute the id of the
+        // Compute the canonical type: this handles cases where the given type
+        // is context dependent:
+        // - If the type is a reference type, we need to compute the id of the
         // location independent type (using DataLocation::Inherited). If it
         // doesn't exist, proceed with the given value, but we won't find any
         // type-specific directives, only those applicable to all types (ie.
         // `using L for *`)
-        let location_independent_type = self
-            .types
-            .get_type_by_id(type_id)
-            .unwrap()
-            .with_location(DataLocation::Inherited);
-        let type_id = self
-            .types
-            .find_type(&location_independent_type)
-            .unwrap_or(type_id);
+        // - If the type is a function type, it may have an associated
+        // definition ID from the function definition where it is derived from.
+        let canonical_type = self.types.get_type_by_id(type_id).unwrap().canonicalize();
+        let type_id = self.types.find_type(&canonical_type).unwrap_or(type_id);
 
         let mut directives = Vec::new();
         for scope_id in self.scope_stack.iter().rev() {
@@ -492,6 +489,28 @@ impl Pass {
             self.binder.insert_reference(reference);
         }
     }
+
+    fn resolve_named_arguments(
+        &mut self,
+        named_arguments: &input_ir::NamedArguments,
+        definition_id: Option<NodeId>,
+    ) {
+        let parameters_scope_id = definition_id.and_then(|definition_id| {
+            self.binder
+                .get_parameters_scope_for_definition(definition_id)
+        });
+
+        for named_argument in named_arguments {
+            let identifier = &named_argument.name;
+            let resolution =
+                parameters_scope_id.map_or(Resolution::Unresolved, |parameters_scope_id| {
+                    self.binder
+                        .resolve_in_scope_as_namespace(parameters_scope_id, &identifier.unparse())
+                });
+            let reference = Reference::new(Rc::clone(identifier), resolution);
+            self.binder.insert_reference(reference);
+        }
+    }
 }
 
 impl Visitor for Pass {
@@ -843,46 +862,66 @@ impl Visitor for Pass {
 
     fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {
         let operand_typing = self.typing_of_expression(&node.operand);
-        let typing =
-            match operand_typing {
-                Typing::Unresolved | Typing::This | Typing::Super => Typing::Unresolved,
-                Typing::Resolved(type_id) => {
-                    let operand_type = self.types.get_type_by_id(type_id).unwrap();
-                    match operand_type {
-                        Type::Function { return_type, .. } => Typing::Resolved(*return_type),
-                        // TODO: support other types that can be called
-                        _ => {
-                            // TODO(validation): the operand did not resolve to a function
-                            Typing::Unresolved
-                        }
+        let named_arguments = if let input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(
+            named_arguments_declaration,
+        ) = &node.arguments
+        {
+            named_arguments_declaration
+                .arguments
+                .as_ref()
+                .map(|arguments| &arguments.arguments)
+        } else {
+            None
+        };
+
+        let (typing, definition_id) = match operand_typing {
+            Typing::Unresolved | Typing::This | Typing::Super => (Typing::Unresolved, None),
+            Typing::Resolved(type_id) => {
+                let operand_type = self.types.get_type_by_id(type_id).unwrap();
+                match operand_type {
+                    Type::Function {
+                        definition_id,
+                        return_type,
+                        ..
+                    } => (Typing::Resolved(*return_type), *definition_id),
+                    // TODO: support other types that can be called
+                    _ => {
+                        // TODO(validation): the operand did not resolve to a function
+                        (Typing::Unresolved, None)
                     }
                 }
-                Typing::Undetermined(_type_ids) => {
-                    // TODO: resolve argument types and match best overload
-                    // TODO: maybe update the typing of the operand?
-                    Typing::Unresolved
-                }
-                Typing::MetaType(node_id) => {
-                    if let Some(definition) = self.binder.find_definition_by_id(node_id) {
-                        match definition {
-                            Definition::Contract(_) => {
-                                // TODO: we may want to use to follow up on new() expression
-                                Typing::Unresolved
-                            }
-                            Definition::Struct(_) => {
-                                // struct constructor
+            }
+            Typing::Undetermined(_type_ids) => {
+                // TODO: resolve argument types and match best overload
+                // TODO: maybe update the typing of the operand?
+                // TODO: return the definition_id used to later resolve named arguments
+                (Typing::Unresolved, None)
+            }
+            Typing::MetaType(node_id) => {
+                if let Some(definition) = self.binder.find_definition_by_id(node_id) {
+                    match definition {
+                        Definition::Contract(_) => {
+                            // TODO: we may want to use to follow up on new() expression
+                            (Typing::Unresolved, Some(node_id))
+                        }
+                        Definition::Struct(_) => {
+                            // struct constructor
+                            (
                                 Typing::Resolved(self.types.register_type(Type::Struct {
                                     definition_id: node_id,
                                     location: DataLocation::Memory,
-                                }))
-                            }
-                            _ => Typing::Unresolved,
+                                })),
+                                Some(node_id),
+                            )
                         }
-                    } else {
-                        Typing::Unresolved
+                        _ => (Typing::Unresolved, None),
                     }
+                } else {
+                    (Typing::Unresolved, None)
                 }
-                Typing::BuiltIn(built_in) => {
+            }
+            Typing::BuiltIn(built_in) => {
+                let typing =
                     match built_in {
                         BuiltIn::ArrayPush(type_id) => match &node.arguments {
                             input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(named)
@@ -904,10 +943,17 @@ impl Visitor for Pass {
                             // none of these built-ins can be called
                             Typing::Unresolved
                         }
-                    }
-                }
-            };
+                    };
+                // built-ins cannot be called with named arguments
+                (typing, None)
+            }
+        };
         self.binder.set_node_typing(node.node_id, typing);
+
+        // Reference and resolve named arguments
+        if let Some(named_arguments) = named_arguments {
+            self.resolve_named_arguments(named_arguments, definition_id);
+        }
     }
 
     fn leave_new_expression(&mut self, node: &input_ir::NewExpression) {

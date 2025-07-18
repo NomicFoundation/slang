@@ -29,7 +29,7 @@ Definitions (25):
 
 ------------------------------------------------------------------------
 
-References (44):
+References (46):
 - Ref: ["Funder" @ input.sol:12:25] -> #1
 - Ref: ["Campaign" @ input.sol:16:21] -> #5
 - Ref: ["campaignID" @ input.sol:19:9] -> #16
@@ -51,8 +51,10 @@ References (44):
 - Ref: ["c" @ input.sol:27:19] -> #20
 - Ref: ["numFunders" @ input.sol:27:21] -> #8
 - Ref: ["Funder" @ input.sol:27:37] -> #1
+- Ref: ["addr" @ input.sol:27:45] -> #2
 - Ref: ["msg" @ input.sol:27:51] -> unresolved
 - Ref: ["sender" @ input.sol:27:55] -> unresolved
+- Ref: ["amount" @ input.sol:27:63] -> #3
 - Ref: ["msg" @ input.sol:27:71] -> unresolved
 - Ref: ["value" @ input.sol:27:75] -> unresolved
 - Ref: ["c" @ input.sol:28:9] -> #20
@@ -77,9 +79,7 @@ References (44):
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (2):
-- ???: ["addr" @ input.sol:27:45]
-- ???: ["amount" @ input.sol:27:63]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -193,13 +193,13 @@ Bindings:
     │                                        │      │    │     │       │     │    │    
     │                                        ╰───────────────────────────────────────── ref: 1
     │                                               │    │     │       │     │    │    
-    │                                               ╰────────────────────────────────── ???
+    │                                               ╰────────────────────────────────── ref: 2
     │                                                    │     │       │     │    │    
     │                                                    ╰───────────────────────────── unresolved
     │                                                          │       │     │    │    
     │                                                          ╰─────────────────────── unresolved
     │                                                                  │     │    │    
-    │                                                                  ╰─────────────── ???
+    │                                                                  ╰─────────────── ref: 3
     │                                                                        │    │    
     │                                                                        ╰───────── unresolved
     │                                                                             │    
