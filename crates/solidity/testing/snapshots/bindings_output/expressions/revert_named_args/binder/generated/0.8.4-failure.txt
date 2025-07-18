@@ -9,12 +9,12 @@ Definitions (5):
 
 ------------------------------------------------------------------------
 
-References (0):
+References (1):
+- Ref: ["Failure" @ input.sol:8:16] -> #2
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (3):
-- ???: ["Failure" @ input.sol:8:16]
+Unbound identifiers (2):
 - ???: ["severity" @ input.sol:8:25]
 - ???: ["cause" @ input.sol:8:40]
 
@@ -41,7 +41,7 @@ Bindings:
    │                ╰─── name: 5
  8 │         revert Failure({severity: 100, cause: "Testing"});
    │                ───┬───  ────┬───       ──┬──  
-   │                   ╰─────────────────────────── ???
+   │                   ╰─────────────────────────── ref: 2
    │                             │            │    
    │                             ╰───────────────── ???
    │                                          │    

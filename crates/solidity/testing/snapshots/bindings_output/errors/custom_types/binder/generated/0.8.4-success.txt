@@ -12,15 +12,15 @@ Definitions (8):
 
 ------------------------------------------------------------------------
 
-References (3):
+References (4):
 - Ref: ["Severity" @ input.sol:8:9] -> #2
+- Ref: ["Failure" @ input.sol:13:16] -> #5
 - Ref: ["Severity" @ input.sol:13:24] -> #2
 - Ref: ["ERROR" @ input.sol:13:33] -> #4
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (1):
-- ???: ["Failure" @ input.sol:13:16]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ Bindings:
     │                ╰─── name: 8
  13 │         revert Failure(Severity.ERROR, "Testing");
     │                ───┬─── ────┬─── ──┬──  
-    │                   ╰──────────────────── ???
+    │                   ╰──────────────────── ref: 5
     │                            │      │    
     │                            ╰─────────── ref: 2
     │                                   │    

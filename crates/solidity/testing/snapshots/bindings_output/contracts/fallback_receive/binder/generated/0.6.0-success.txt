@@ -11,17 +11,17 @@ Definitions (7):
 
 ------------------------------------------------------------------------
 
-References (4):
+References (6):
+- Ref: ["Log" @ input.sol:6:14] -> #2
 - Ref: ["status" @ input.sol:6:30] -> #5
 - Ref: ["output" @ input.sol:7:9] -> #7
 - Ref: ["input" @ input.sol:7:18] -> #6
+- Ref: ["Log" @ input.sol:11:14] -> #2
 - Ref: ["status" @ input.sol:11:29] -> #5
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (2):
-- ???: ["Log" @ input.sol:6:14]
-- ???: ["Log" @ input.sol:11:14]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ Bindings:
     │                                                                              ╰──── name: 7
   6 │         emit Log("fallback", status);
     │              ─┬─             ───┬──  
-    │               ╰────────────────────── ???
+    │               ╰────────────────────── ref: 2
     │                                 │    
     │                                 ╰──── ref: 5
   7 │         output = input;
@@ -60,7 +60,7 @@ Bindings:
     │ 
  11 │         emit Log("receive", status);
     │              ─┬─            ───┬──  
-    │               ╰───────────────────── ???
+    │               ╰───────────────────── ref: 2
     │                                │    
     │                                ╰──── ref: 5
 ────╯

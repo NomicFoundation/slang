@@ -12,15 +12,15 @@ Definitions (8):
 
 ------------------------------------------------------------------------
 
-References (1):
+References (4):
+- Ref: ["InvalidState" @ input.sol:5:16] -> #2
+- Ref: ["Utils" @ input.sol:10:16] -> #6
+- Ref: ["GenericError" @ input.sol:10:22] -> #7
 - Ref: ["code" @ input.sol:10:35] -> #5
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (3):
-- ???: ["InvalidState" @ input.sol:5:16]
-- ???: ["Utils" @ input.sol:10:16]
-- ???: ["GenericError" @ input.sol:10:22]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ Bindings:
     │                   ╰────── name: 3
   5 │         revert InvalidState();
     │                ──────┬─────  
-    │                      ╰─────── ???
+    │                      ╰─────── ref: 2
     │ 
   8 │     function testOtherRevert() public {
     │              ───────┬───────  
@@ -49,9 +49,9 @@ Bindings:
     │               ╰─── name: 5
  10 │         revert Utils.GenericError(code);
     │                ──┬── ──────┬───── ──┬─  
-    │                  ╰────────────────────── ???
+    │                  ╰────────────────────── ref: 6
     │                            │        │   
-    │                            ╰──────────── ???
+    │                            ╰──────────── ref: 7
     │                                     │   
     │                                     ╰─── ref: 5
     │ 

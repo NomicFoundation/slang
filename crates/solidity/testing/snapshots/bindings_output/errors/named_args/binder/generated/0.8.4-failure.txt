@@ -13,15 +13,15 @@ Definitions (9):
 
 ------------------------------------------------------------------------
 
-References (3):
+References (4):
 - Ref: ["Cause" @ input.sol:4:9] -> #2
+- Ref: ["Failure" @ input.sol:8:16] -> #6
 - Ref: ["Cause" @ input.sol:8:32] -> #2
 - Ref: ["NotAuthorized" @ input.sol:8:38] -> #4
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (3):
-- ???: ["Failure" @ input.sol:8:16]
+Unbound identifiers (2):
 - ???: ["cause" @ input.sol:8:25]
 - ???: ["details" @ input.sol:8:53]
 
@@ -59,7 +59,7 @@ Bindings:
    │                ╰─── name: 9
  8 │         revert Failure({cause: Cause.NotAuthorized, details: "not owner"});
    │                ───┬───  ──┬──  ──┬── ──────┬──────  ───┬───  
-   │                   ╰────────────────────────────────────────── ???
+   │                   ╰────────────────────────────────────────── ref: 6
    │                           │      │         │           │     
    │                           ╰────────────────────────────────── ???
    │                                  │         │           │     

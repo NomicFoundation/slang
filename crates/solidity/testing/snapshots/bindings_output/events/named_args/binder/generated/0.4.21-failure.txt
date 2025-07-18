@@ -12,15 +12,15 @@ Definitions (8):
 
 ------------------------------------------------------------------------
 
-References (3):
+References (4):
 - Ref: ["Severity" @ input.sol:5:9] -> #2
+- Ref: ["Log" @ input.sol:10:14] -> #5
 - Ref: ["Severity" @ input.sol:10:46] -> #2
 - Ref: ["Info" @ input.sol:10:55] -> #3
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (3):
-- ???: ["Log" @ input.sol:10:14]
+Unbound identifiers (2):
 - ???: ["message" @ input.sol:10:19]
 - ???: ["level" @ input.sol:10:39]
 
@@ -57,7 +57,7 @@ Bindings:
     │                ╰─── name: 8
  10 │         emit Log({message: "testing", level: Severity.Info});
     │              ─┬─  ───┬───             ──┬──  ────┬─── ──┬─  
-    │               ╰───────────────────────────────────────────── ???
+    │               ╰───────────────────────────────────────────── ref: 5
     │                      │                  │        │      │   
     │                      ╰────────────────────────────────────── ???
     │                                         │        │      │   

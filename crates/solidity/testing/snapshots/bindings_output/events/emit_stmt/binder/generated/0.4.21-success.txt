@@ -12,16 +12,16 @@ Definitions (8):
 
 ------------------------------------------------------------------------
 
-References (2):
+References (5):
+- Ref: ["TestEvent" @ input.sol:7:14] -> #2
 - Ref: ["x" @ input.sol:7:24] -> #5
+- Ref: ["Utils" @ input.sol:8:14] -> #6
+- Ref: ["Debug" @ input.sol:8:20] -> #7
 - Ref: ["x" @ input.sol:8:26] -> #5
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (3):
-- ???: ["TestEvent" @ input.sol:7:14]
-- ???: ["Utils" @ input.sol:8:14]
-- ???: ["Debug" @ input.sol:8:20]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -46,14 +46,14 @@ Bindings:
     │ 
   7 │         emit TestEvent(x);
     │              ────┬──── ┬  
-    │                  ╰──────── ???
+    │                  ╰──────── ref: 2
     │                        │  
     │                        ╰── ref: 5
   8 │         emit Utils.Debug(x);
     │              ──┬── ──┬── ┬  
-    │                ╰──────────── ???
+    │                ╰──────────── ref: 6
     │                      │   │  
-    │                      ╰────── ???
+    │                      ╰────── ref: 7
     │                          │  
     │                          ╰── ref: 5
     │ 
