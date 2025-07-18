@@ -271,14 +271,12 @@ impl Visitor for Pass {
             // constructor parameters scope
             if self.language_version < VERSION_0_5_0 {
                 let current_scope_node_id = self.current_scope().node_id();
-                let contract_name = self
-                    .binder
-                    .find_definition_by_id(current_scope_node_id)
-                    .unwrap()
-                    .identifier()
-                    .unparse();
-                if contract_name == name.unparse() {
-                    self.register_constructor_parameters(parameters_scope_id);
+                let current_definition = self.binder.find_definition_by_id(current_scope_node_id);
+                if let Some(Definition::Contract(contract_definition)) = current_definition {
+                    let contract_name = contract_definition.identifier.unparse();
+                    if contract_name == name.unparse() {
+                        self.register_constructor_parameters(parameters_scope_id);
+                    }
                 }
             }
         }
