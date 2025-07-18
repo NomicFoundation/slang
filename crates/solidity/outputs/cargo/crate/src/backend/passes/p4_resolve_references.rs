@@ -875,7 +875,10 @@ impl Visitor for Pass {
         };
 
         let (typing, definition_id) = match operand_typing {
-            Typing::Unresolved | Typing::This | Typing::Super => (Typing::Unresolved, None),
+            Typing::Unresolved | Typing::This | Typing::Super => {
+                // `this` and `super` are not callable
+                (Typing::Unresolved, None)
+            }
             Typing::Resolved(type_id) => {
                 let operand_type = self.types.get_type_by_id(type_id).unwrap();
                 match operand_type {

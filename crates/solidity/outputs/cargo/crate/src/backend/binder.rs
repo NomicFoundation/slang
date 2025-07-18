@@ -19,6 +19,7 @@ pub struct ConstantDefinition {
 pub struct ContractDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
+    pub constructor_parameters_scope_id: Option<ScopeId>,
 }
 
 #[derive(Debug)]
@@ -248,6 +249,7 @@ impl Definition {
         Self::Contract(ContractDefinition {
             node_id,
             identifier: Rc::clone(identifier),
+            constructor_parameters_scope_id: None,
         })
     }
 
@@ -1079,6 +1081,10 @@ impl Binder {
             .and_then(|definition_id| self.definitions.get(definition_id))
     }
 
+    pub(crate) fn get_definition_mut(&mut self, node_id: NodeId) -> &mut Definition {
+        self.definitions.get_mut(&node_id).unwrap()
+    }
+
     pub(crate) fn insert_reference(&mut self, reference: Reference) {
         let node_id = reference.node_id();
         self.references.insert(node_id, reference);
@@ -1316,9 +1322,8 @@ impl Binder {
         definition_id: NodeId,
     ) -> Option<ScopeId> {
         match self.find_definition_by_id(definition_id)? {
-            Definition::Contract(_contract_definition) => {
-                // TODO: find the constructor and return its parameters scope
-                None
+            Definition::Contract(contract_definition) => {
+                contract_definition.constructor_parameters_scope_id
             }
             Definition::Error(error_definition) => Some(error_definition.parameters_scope_id),
             Definition::Event(event_definition) => Some(event_definition.parameters_scope_id),
