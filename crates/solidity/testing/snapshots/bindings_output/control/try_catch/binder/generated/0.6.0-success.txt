@@ -9,16 +9,16 @@ Definitions (5):
 
 ------------------------------------------------------------------------
 
-References (3):
+References (5):
 - Ref: ["Foo" @ input.sol:5:17] -> #1
+- Ref: ["Panic" @ input.sol:6:17] -> built-in
 - Ref: ["code" @ input.sol:7:13] -> #4
+- Ref: ["Error" @ input.sol:8:17] -> built-in
 - Ref: ["message" @ input.sol:9:13] -> #5
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (2):
-- ???: ["Panic" @ input.sol:6:17]
-- ???: ["Error" @ input.sol:8:17]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ Bindings:
    │                  ╰─── ref: 1
  6 │         } catch Panic(uint code) {
    │                 ──┬──      ──┬─  
-   │                   ╰────────────── ???
+   │                   ╰────────────── built-in
    │                              │   
    │                              ╰─── name: 4
  7 │             code;
@@ -48,7 +48,7 @@ Bindings:
    │               ╰─── ref: 4
  8 │         } catch Error(string memory message) {
    │                 ──┬──               ───┬───  
-   │                   ╰────────────────────────── ???
+   │                   ╰────────────────────────── built-in
    │                                        │     
    │                                        ╰───── name: 5
  9 │             message;

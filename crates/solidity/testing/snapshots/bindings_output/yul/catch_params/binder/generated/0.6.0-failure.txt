@@ -10,15 +10,15 @@ Definitions (6):
 
 ------------------------------------------------------------------------
 
-References (3):
+References (4):
 - Ref: ["test" @ input.sol:3:18] -> unresolved
+- Ref: ["Error" @ input.sol:4:17] -> built-in
 - Ref: ["reason" @ input.sol:6:26] -> #3
 - Ref: ["reason" @ input.sol:10:26] -> #5
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (1):
-- ???: ["Error" @ input.sol:4:17]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ Bindings:
     │                    ╰─── unresolved
   4 │         } catch Error(string memory reason) {
     │                 ──┬──               ───┬──  
-    │                   ╰───────────────────────── ???
+    │                   ╰───────────────────────── built-in
     │                                        │    
     │                                        ╰──── name: 3
     │ 

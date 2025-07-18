@@ -19,7 +19,7 @@ Definitions (15):
 
 ------------------------------------------------------------------------
 
-References (11):
+References (12):
 - Ref: ["DataFeed" @ input.sol:4:5] -> #1
 - Ref: ["feed" @ input.sol:9:13] -> #6
 - Ref: ["getData" @ input.sol:9:18] -> unresolved
@@ -27,6 +27,7 @@ References (11):
 - Ref: ["lastValue" @ input.sol:10:13] -> #8
 - Ref: ["v" @ input.sol:10:25] -> #14
 - Ref: ["v" @ input.sol:11:21] -> #14
+- Ref: ["Error" @ input.sol:12:17] -> built-in
 - Ref: ["last_reason" @ input.sol:13:13] -> #13
 - Ref: ["reason" @ input.sol:13:27] -> #15
 - Ref: ["errorCount" @ input.sol:14:13] -> #7
@@ -34,8 +35,7 @@ References (11):
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (1):
-- ???: ["Error" @ input.sol:12:17]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -97,7 +97,7 @@ Bindings:
     │                     ╰── ref: 14
  12 │         } catch Error(string memory reason) {
     │                 ──┬──               ───┬──  
-    │                   ╰───────────────────────── ???
+    │                   ╰───────────────────────── built-in
     │                                        │    
     │                                        ╰──── name: 15
  13 │             last_reason = reason;
