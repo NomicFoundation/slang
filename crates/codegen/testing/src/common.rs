@@ -92,7 +92,7 @@ pub(crate) fn generate_unit_test_file(
 }
 
 pub(crate) fn generate_version_breaks(language: &Language, output_dir: &Path) -> Result<()> {
-    let mut fs = CodegenFileSystem::default();
+    let mut fs = CodegenFileSystem::new(file!());
 
     let versions = language.collect_breaking_versions();
     let versions_len = versions.len();

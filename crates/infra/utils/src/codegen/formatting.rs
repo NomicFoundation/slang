@@ -17,9 +17,9 @@ pub fn format_source_file(file_path: &Path, contents: &str) -> Result<String> {
     }
 }
 
-pub fn generate_header(file_path: &Path) -> Option<String> {
+pub fn generate_header(origin: &str, file_path: &Path) -> Option<String> {
     let warning_line =
-        "This file is generated automatically by infrastructure scripts. Please don't edit by hand.";
+        format!("This file is generated automatically by infrastructure scripts ({origin}). Please don't edit by hand.");
 
     Some(match (file_path.unwrap_name(), file_path.unwrap_ext()) {
         (_, "ebnf") => format!("(* {warning_line} *)"),

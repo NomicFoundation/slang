@@ -43,7 +43,7 @@ fn generate_public_api(crate_name: UserFacingCrate) -> Result<()> {
 
     let output_path = crate_dir.join("generated/public_api.txt");
 
-    let mut fs = CodegenFileSystem::default();
+    let mut fs = CodegenFileSystem::new(file!());
 
     fs.write_file_raw(output_path, public_api.to_string())
 }

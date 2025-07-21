@@ -26,7 +26,7 @@ fn main() {
         || generate_stubs("codegen_runtime_cargo_wasm"),
         || generate_stubs("codegen_runtime_npm_package"),
         || {
-            let mut fs = CodegenFileSystem::default();
+            let mut fs = CodegenFileSystem::new(file!());
             let language = SolidityDefinition::create();
 
             generate_product(
@@ -49,7 +49,7 @@ fn main() {
         },
         || {
             generate_product(
-                &mut CodegenFileSystem::default(),
+                &mut CodegenFileSystem::new(file!()),
                 &SolidityDefinition::create(),
                 "codegen_runtime_cargo_wasm",
                 "solidity_cargo_wasm",
@@ -57,7 +57,7 @@ fn main() {
         },
         || {
             generate_product(
-                &mut CodegenFileSystem::default(),
+                &mut CodegenFileSystem::new(file!()),
                 &SolidityDefinition::create(),
                 "codegen_runtime_npm_package",
                 "solidity_npm_package",
@@ -65,7 +65,7 @@ fn main() {
         },
         || {
             generate_product(
-                &mut CodegenFileSystem::default(),
+                &mut CodegenFileSystem::new(file!()),
                 &TestlangDefinition::create(),
                 "codegen_runtime_cargo_crate",
                 "slang_testlang",
@@ -73,7 +73,7 @@ fn main() {
         },
         || {
             generate_product(
-                &mut CodegenFileSystem::default(),
+                &mut CodegenFileSystem::new(file!()),
                 &TestlangDefinition::create(),
                 "codegen_runtime_cargo_wasm",
                 "testlang_cargo_wasm",
@@ -81,7 +81,7 @@ fn main() {
         },
         || {
             generate_product(
-                &mut CodegenFileSystem::default(),
+                &mut CodegenFileSystem::new(file!()),
                 &TestlangDefinition::create(),
                 "codegen_runtime_npm_package",
                 "testlang_npm_package",
@@ -121,7 +121,7 @@ fn generate_solidity_tests() -> Result<()> {
 }
 
 fn generate_stubs(crate_name: &str) -> Result<()> {
-    let mut fs = CodegenFileSystem::default();
+    let mut fs = CodegenFileSystem::new(file!());
     let source_dir = CargoWorkspace::locate_source_crate(crate_name)?;
 
     RuntimeGenerator::generate_stubs(&mut fs, &source_dir)

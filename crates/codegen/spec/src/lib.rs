@@ -26,7 +26,7 @@ pub struct Spec;
 
 impl Spec {
     pub fn generate(language: Rc<Language>, output_dir: &Path) -> Result<()> {
-        let mut fs = CodegenFileSystem::default();
+        let mut fs = CodegenFileSystem::new(file!());
 
         fs.write_file_formatted(
             output_dir.join("language-definition.json"),

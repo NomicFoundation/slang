@@ -9,7 +9,7 @@ use crate::common::{collect_snapshot_tests, generate_mod_file, generate_unit_tes
 pub fn generate_cst_output_tests(data_dir: &Path, output_dir: &Path) -> Result<()> {
     let parser_tests = collect_snapshot_tests(data_dir)?;
 
-    let mut fs = CodegenFileSystem::default();
+    let mut fs = CodegenFileSystem::new(file!());
 
     generate_mod_file(&mut fs, &output_dir.join("mod.rs"), &parser_tests)?;
 
