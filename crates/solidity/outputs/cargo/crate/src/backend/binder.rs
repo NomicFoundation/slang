@@ -445,6 +445,11 @@ pub enum BuiltIn {
     Tx,
     TxGasPrice,
     TxOrigin,
+    YulAddress,
+    YulOffset,
+    YulLength,
+    YulSelector,
+    YulSlot,
     // TODO: complete this list
 }
 
