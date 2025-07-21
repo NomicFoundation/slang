@@ -12,7 +12,7 @@ pub fn format_source_file(file_path: &Path, contents: &str) -> Result<String> {
             // Still write the unformatted version to disk, to be able to debug what went wrong:
             file_path.write_string(contents)?;
 
-            Err(formatter_error).context(format!("Failed to format {}", file_path.display()))
+            Err(formatter_error).context(format!("Failed to format {file_path:?}"))
         }
     }
 }
@@ -31,10 +31,7 @@ pub fn generate_header(file_path: &Path) -> Option<String> {
         // Does not support comments:
         (_, "json") => return None,
 
-        _ => panic!(
-            "Unsupported path to generate a header for: {}",
-            file_path.display()
-        ),
+        _ => panic!("Unsupported path to generate a header for: {file_path:?}"),
     })
 }
 
@@ -47,7 +44,7 @@ fn run_formatter(file_path: &Path, contents: &str) -> Result<String> {
         // No formatters available for these yet:
         (_, "wit") => Ok(contents.to_owned()),
 
-        _ => panic!("Unsupported path to format: {}", file_path.display()),
+        _ => panic!("Unsupported path to format: {file_path:?}"),
     }
 }
 

@@ -79,7 +79,7 @@ impl ChangesetsController {
 
         for destination_changelog in FileWalker::from_repo_root().find(["**/CHANGELOG.md"])? {
             if source_changelog != destination_changelog {
-                println!("Updating: {}", destination_changelog.display());
+                println!("Updating: {destination_changelog:?}");
                 std::fs::copy(&source_changelog, &destination_changelog)?;
             }
         }

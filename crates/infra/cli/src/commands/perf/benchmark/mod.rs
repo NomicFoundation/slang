@@ -113,10 +113,10 @@ impl BenchmarkController {
 Bencher Run is complete...
 Test Results: [https://bencher.dev/console/projects/slang/reports]
 
-Reports/Logs: {reports_dir}
+Reports/Logs: {reports_dir:?}
 - Callgrind flamegraphs (callgrind.*.svg) can be viewed directly in the browser.
 - DHAT traces (dhat.*.out) can be viewed using the [dhat/dh_view.html] tool from the Valgrind release [https://valgrind.org/downloads/].
 
-", reports_dir = reports_dir.display());
+");
     }
 }
