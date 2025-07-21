@@ -441,6 +441,7 @@ pub enum BuiltIn {
     ErrorType,
     EventType,
     Length,
+    ModifierUnderscore,
     Selector,
     Tx,
     TxGasPrice,
@@ -1209,10 +1210,14 @@ impl Binder {
                 )
                 .or_else(|| self.resolve_in_scope_internal(function_scope.parent_scope_id, symbol)),
             Scope::Modifier(modifier_scope) => {
-                modifier_scope.definitions.get(symbol).copied().map_or_else(
-                    || self.resolve_in_scope_internal(modifier_scope.parent_scope_id, symbol),
-                    Resolution::Definition,
-                )
+                if symbol == "_" {
+                    Resolution::BuiltIn(BuiltIn::ModifierUnderscore)
+                } else {
+                    modifier_scope.definitions.get(symbol).copied().map_or_else(
+                        || self.resolve_in_scope_internal(modifier_scope.parent_scope_id, symbol),
+                        Resolution::Definition,
+                    )
+                }
             }
             Scope::Parameters(parameters_scope) => parameters_scope.definitions.get(symbol).into(),
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
@@ -1254,12 +1259,13 @@ impl Binder {
         let mut working_set = Vec::new();
         let mut seen_ids = HashSet::new();
 
-        working_set.extend(
-            self.resolve_in_scope_internal(scope_id, symbol)
-                .get_definition_ids()
-                .iter()
-                .rev(),
-        );
+        let initial_resolution = self.resolve_in_scope_internal(scope_id, symbol);
+        match initial_resolution {
+            Resolution::Unresolved | Resolution::BuiltIn(_) => return initial_resolution,
+            _ => {}
+        }
+
+        working_set.extend(initial_resolution.get_definition_ids().iter().rev());
         while let Some(definition_id) = working_set.pop() {
             if !seen_ids.insert(definition_id) {
                 // we already processed this definition

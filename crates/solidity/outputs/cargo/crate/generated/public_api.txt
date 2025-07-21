@@ -12,6 +12,7 @@ pub slang_solidity::backend::binder::BuiltIn::CallOptionValue
 pub slang_solidity::backend::binder::BuiltIn::ErrorType
 pub slang_solidity::backend::binder::BuiltIn::EventType
 pub slang_solidity::backend::binder::BuiltIn::Length
+pub slang_solidity::backend::binder::BuiltIn::ModifierUnderscore
 pub slang_solidity::backend::binder::BuiltIn::Selector
 pub slang_solidity::backend::binder::BuiltIn::Tx
 pub slang_solidity::backend::binder::BuiltIn::TxGasPrice

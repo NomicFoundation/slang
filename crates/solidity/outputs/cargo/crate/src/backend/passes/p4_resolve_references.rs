@@ -436,6 +436,7 @@ impl Pass {
                 | BuiltIn::CallOptionValue
                 | BuiltIn::ErrorType
                 | BuiltIn::EventType
+                | BuiltIn::ModifierUnderscore
                 | BuiltIn::Tx => Typing::BuiltIn(*built_in),
                 BuiltIn::YulAddress
                 | BuiltIn::YulLength
