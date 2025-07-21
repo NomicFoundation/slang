@@ -1,4 +1,4 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+// This file is generated automatically by infrastructure scripts (crates/codegen/runner/src/main.rs). Please don't edit by hand.
 
 use crate::cst::{Edge, EdgeLabel, Node, NonterminalKind};
 use crate::parser::parser_support::parser_result::PrattElement::{

@@ -1,4 +1,4 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+# This file is generated automatically by infrastructure scripts (crates/solidity/outputs/cargo/tests/src/cst_output/runner.rs). Please don't edit by hand.
 
 Source: >
   1  │ // Makes sure that `newB:` is not parsed as a label here, and that we continue parsing to get a whole assignment statement. │ 0..123

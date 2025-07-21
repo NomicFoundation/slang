@@ -1,4 +1,4 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+// This file is generated automatically by infrastructure scripts (crates/infra/cli/src/toolchains/wasm/mod.rs). Please don't edit by hand.
 
 export namespace NomicFoundationSlangAst {
   export { Selectors };

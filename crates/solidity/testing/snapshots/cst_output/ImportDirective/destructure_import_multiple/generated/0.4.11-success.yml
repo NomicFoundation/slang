@@ -1,4 +1,4 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+# This file is generated automatically by infrastructure scripts (crates/solidity/outputs/cargo/tests/src/cst_output/runner.rs). Please don't edit by hand.
 
 Source: >
   1  │ import { A1 as A2, B1, C1 as C2 } from "foo";                                    │ 0..45

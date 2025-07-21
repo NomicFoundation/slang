@@ -1,4 +1,4 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+// This file is generated automatically by infrastructure scripts (crates/codegen/testing/src/bindings_output.rs). Please don't edit by hand.
 
 mod arrays;
 mod built_ins;

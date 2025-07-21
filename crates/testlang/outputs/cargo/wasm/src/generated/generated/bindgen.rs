@@ -1,4 +1,4 @@
-// This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+// This file is generated automatically by infrastructure scripts (crates/codegen/runner/src/main.rs). Please don't edit by hand.
 
 // The `generate!()` macro below expands into the Rust bindings to be implemented by our wrappers.
 // You can use 'cargo expand' to see its output, or run the 'wit-bindgen rust' command.
