@@ -994,6 +994,19 @@ impl Visitor for Pass {
         false
     }
 
+    fn enter_yul_stack_assignment_statement(
+        &mut self,
+        node: &input_ir::YulStackAssignmentStatement,
+    ) -> bool {
+        let identifier = &node.variable;
+        let scope_id = self.current_scope_id();
+        let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
+        let reference = Reference::new(Rc::clone(identifier), resolution);
+        self.binder.insert_reference(reference);
+
+        false
+    }
+
     fn enter_tuple_deconstruction_statement(
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
