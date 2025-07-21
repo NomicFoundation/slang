@@ -1,4 +1,4 @@
-// This file is generated automatically by infrastructure scripts (crates/infra/cli/src/toolchains/wasm/mod.rs). Please don't edit by hand.
+// This file is generated automatically by infrastructure scripts (crates/infra/cli/src/toolchains/wasm/mod.rs:115:22). Please don't edit by hand.
 
 import { NomicFoundationSlangCst } from "./interfaces/nomic-foundation-slang-cst.js";
 import { NomicFoundationSlangAst } from "./interfaces/nomic-foundation-slang-ast.js";

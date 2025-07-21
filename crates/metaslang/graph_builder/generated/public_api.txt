@@ -1,4 +1,4 @@
-# This file is generated automatically by infrastructure scripts (crates/infra/cli/src/toolchains/public_api/mod.rs). Please don't edit by hand.
+# This file is generated automatically by infrastructure scripts (crates/infra/cli/src/toolchains/public_api/mod.rs:46:18). Please don't edit by hand.
 
 pub mod metaslang_graph_builder
 pub mod metaslang_graph_builder::ast
