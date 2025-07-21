@@ -34,7 +34,7 @@ pub fn run(group_name: &str, test_name: &str) -> Result<()> {
         .join(group_name)
         .join(test_name);
 
-    let mut fs = CodegenFileSystem::new(file!());
+    let mut fs = CodegenFileSystem::default();
 
     let input_path = test_dir.join("input.sol");
     let contents = input_path.read_to_string()?;

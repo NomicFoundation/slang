@@ -112,7 +112,7 @@ impl WasmPackage {
         let npm_crate = self.npm_crate();
         let output_dir = CargoWorkspace::locate_source_crate(npm_crate)?.join("wasm/generated");
 
-        let mut fs = CodegenFileSystem::new(file!());
+        let mut fs = CodegenFileSystem::default();
 
         for temp_path in FileWalker::from_directory(temp_dir).find_all()? {
             let output_path = temp_path.replace_prefix(temp_dir, &output_dir);

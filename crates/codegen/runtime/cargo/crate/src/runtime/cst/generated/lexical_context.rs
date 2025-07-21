@@ -1,4 +1,4 @@
-// This file is generated automatically by infrastructure scripts (crates/codegen/runner/src/main.rs). Please don't edit by hand.
+// This file is generated automatically by infrastructure scripts (crates/codegen/runner/src/main.rs:124:18). Please don't edit by hand.
 
 /// The lexical context of the scanner.
 #[repr(u8)]

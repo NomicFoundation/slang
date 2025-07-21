@@ -1,4 +1,4 @@
-# This file is generated automatically by infrastructure scripts (crates/solidity/outputs/cargo/tests/src/bindings_output/runner.rs). Please don't edit by hand.
+# This file is generated automatically by infrastructure scripts (crates/solidity/outputs/cargo/tests/src/bindings_output/runner.rs:37:18). Please don't edit by hand.
 
 Parse errors:
 Error: Expected ContractKeyword or EnumKeyword or FunctionKeyword or ImportKeyword or InterfaceKeyword or LibraryKeyword or PragmaKeyword or StructKeyword.

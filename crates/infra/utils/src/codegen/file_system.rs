@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::panic::Location;
 use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Context, Result};
@@ -13,15 +14,24 @@ pub struct CodegenFileSystem {
     generated_files: HashSet<PathBuf>,
 }
 
-impl CodegenFileSystem {
-    pub fn new(origin: &str) -> CodegenFileSystem {
+impl Default for CodegenFileSystem {
+    #[track_caller]
+    fn default() -> CodegenFileSystem {
+        let location = Location::caller();
         CodegenFileSystem {
-            origin: origin.to_owned(),
+            origin: format!(
+                "{file}:{line}:{column}",
+                file = location.file(),
+                line = location.line(),
+                column = location.column()
+            ),
             generated_dirs: HashSet::default(),
             generated_files: HashSet::default(),
         }
     }
+}
 
+impl CodegenFileSystem {
     pub fn write_file_formatted(
         &mut self,
         file_path: impl AsRef<Path>,

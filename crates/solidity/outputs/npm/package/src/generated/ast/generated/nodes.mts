@@ -1,4 +1,4 @@
-// This file is generated automatically by infrastructure scripts (crates/codegen/runner/src/main.rs). Please don't edit by hand.
+// This file is generated automatically by infrastructure scripts (crates/codegen/runner/src/main.rs:60:22). Please don't edit by hand.
 
 import * as wasm from "../../../../wasm/index.mjs";
 import { NonterminalKind, NonterminalNode, TerminalNode } from "../../cst/index.mjs";

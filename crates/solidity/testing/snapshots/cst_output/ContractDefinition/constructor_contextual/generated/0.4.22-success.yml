@@ -1,4 +1,4 @@
-# This file is generated automatically by infrastructure scripts (crates/solidity/outputs/cargo/tests/src/cst_output/runner.rs). Please don't edit by hand.
+# This file is generated automatically by infrastructure scripts (crates/solidity/outputs/cargo/tests/src/cst_output/runner.rs:27:18). Please don't edit by hand.
 
 Source: >
   1  │ // Constructors introduced in 0.4.22 but `constructor` was usable as identifier until 0.5.0 │ 0..91
