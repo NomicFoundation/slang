@@ -7,6 +7,8 @@ pub enum slang_solidity::backend::binder::BuiltIn
 pub slang_solidity::backend::binder::BuiltIn::ArrayPop
 pub slang_solidity::backend::binder::BuiltIn::ArrayPush(slang_solidity::backend::types::TypeId)
 pub slang_solidity::backend::binder::BuiltIn::Balance
+pub slang_solidity::backend::binder::BuiltIn::CallOptionGas
+pub slang_solidity::backend::binder::BuiltIn::CallOptionValue
 pub slang_solidity::backend::binder::BuiltIn::ErrorType
 pub slang_solidity::backend::binder::BuiltIn::EventType
 pub slang_solidity::backend::binder::BuiltIn::Length

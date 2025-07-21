@@ -431,6 +431,8 @@ impl Pass {
                 BuiltIn::TxOrigin => Typing::Resolved(self.types.address()),
                 BuiltIn::ArrayPop
                 | BuiltIn::ArrayPush(_)
+                | BuiltIn::CallOptionGas
+                | BuiltIn::CallOptionValue
                 | BuiltIn::ErrorType
                 | BuiltIn::EventType
                 | BuiltIn::Tx => Typing::BuiltIn(*built_in),
@@ -963,6 +965,20 @@ impl Visitor for Pass {
         // name to be able to type a function call expression
         let typing = Typing::Unresolved;
         self.binder.set_node_typing(node.node_id, typing);
+    }
+
+    fn enter_call_options_expression(&mut self, node: &input_ir::CallOptionsExpression) -> bool {
+        for option in &node.options {
+            let identifier = &option.name;
+            let resolution = match identifier.unparse().as_str() {
+                "value" => Resolution::BuiltIn(BuiltIn::CallOptionValue),
+                "gas" => Resolution::BuiltIn(BuiltIn::CallOptionGas),
+                _ => Resolution::Unresolved,
+            };
+            let reference = Reference::new(Rc::clone(identifier), resolution);
+            self.binder.insert_reference(reference);
+        }
+        true
     }
 
     fn leave_call_options_expression(&mut self, node: &input_ir::CallOptionsExpression) {
