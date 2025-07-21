@@ -826,19 +826,6 @@ pub type slang_solidity::cst::QueryMatch = metaslang_cst::query::engine::QueryMa
 pub type slang_solidity::cst::QueryMatchIterator = metaslang_cst::query::engine::QueryMatchIterator<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::TerminalNode = metaslang_cst::nodes::TerminalNode<slang_solidity::cst::KindTypes>
 pub mod slang_solidity::diagnostic
-#[repr(u8)] pub enum slang_solidity::diagnostic::Severity
-pub slang_solidity::diagnostic::Severity::Error = 1
-pub slang_solidity::diagnostic::Severity::Hint = 4
-pub slang_solidity::diagnostic::Severity::Information = 3
-pub slang_solidity::diagnostic::Severity::Warning = 2
-pub trait slang_solidity::diagnostic::Diagnostic
-pub fn slang_solidity::diagnostic::Diagnostic::message(&self) -> alloc::string::String
-pub fn slang_solidity::diagnostic::Diagnostic::severity(&self) -> slang_solidity::diagnostic::Severity
-pub fn slang_solidity::diagnostic::Diagnostic::text_range(&self) -> metaslang_cst::text_index::TextRange
-impl slang_solidity::diagnostic::Diagnostic for slang_solidity::parser::ParseError
-pub fn slang_solidity::parser::ParseError::message(&self) -> alloc::string::String
-pub fn slang_solidity::parser::ParseError::severity(&self) -> slang_solidity::diagnostic::Severity
-pub fn slang_solidity::parser::ParseError::text_range(&self) -> metaslang_cst::text_index::TextRange
 pub mod slang_solidity::parser
 pub enum slang_solidity::parser::ParserInitializationError
 pub slang_solidity::parser::ParserInitializationError::UnsupportedLanguageVersion(semver::Version)
@@ -861,10 +848,6 @@ pub fn slang_solidity::parser::ParseError::fmt(&self, f: &mut core::fmt::Formatt
 impl core::fmt::Display for slang_solidity::parser::ParseError
 pub fn slang_solidity::parser::ParseError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity::parser::ParseError
-impl slang_solidity::diagnostic::Diagnostic for slang_solidity::parser::ParseError
-pub fn slang_solidity::parser::ParseError::message(&self) -> alloc::string::String
-pub fn slang_solidity::parser::ParseError::severity(&self) -> slang_solidity::diagnostic::Severity
-pub fn slang_solidity::parser::ParseError::text_range(&self) -> metaslang_cst::text_index::TextRange
 pub struct slang_solidity::parser::ParseOutput
 impl slang_solidity::parser::ParseOutput
 pub fn slang_solidity::parser::ParseOutput::create_tree_cursor(&self) -> slang_solidity::cst::Cursor

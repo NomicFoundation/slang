@@ -5,9 +5,9 @@ use crate::cst::TextRange;
 /// The severity of a diagnostic.
 ///
 /// Explicitly compatible with the [LSP protocol](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnosticSeverity).
+#[cfg_attr(feature = "__private_ariadne_errors", visibility::make(pub))]
 #[repr(u8)]
-#[allow(missing_docs)]
-pub enum Severity {
+pub(crate) enum Severity {
     Error = 1,
     Warning = 2,
     Information = 3,
@@ -15,7 +15,8 @@ pub enum Severity {
 }
 
 /// A compiler diagnostic that can be rendered to a user.
-pub trait Diagnostic {
+#[cfg_attr(feature = "__private_ariadne_errors", visibility::make(pub))]
+pub(crate) trait Diagnostic {
     /// The character range of the source that this diagnostic applies to.
     /// at the moment.
     fn text_range(&self) -> TextRange;
@@ -26,7 +27,6 @@ pub trait Diagnostic {
 }
 
 #[cfg(feature = "__private_ariadne_errors")]
-#[allow(missing_docs)]
 pub fn render<D: Diagnostic>(error: &D, source_id: &str, source: &str, with_color: bool) -> String {
     use ariadne::{Color, Config, Label, Report, ReportKind, Source};
 

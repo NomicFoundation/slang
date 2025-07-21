@@ -3,6 +3,7 @@
 pub mod bindings;
 pub mod compilation;
 pub mod cst;
+#[allow(missing_docs)]
 pub mod diagnostic;
 pub mod parser;
 pub mod utils;
