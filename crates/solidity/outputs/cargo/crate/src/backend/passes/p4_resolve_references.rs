@@ -43,6 +43,7 @@ pub fn run(input: Input) -> Output {
 }
 
 const VERSION_0_5_0: Version = Version::new(0, 5, 0);
+const VERSION_0_7_0: Version = Version::new(0, 7, 0);
 
 struct Pass {
     language_version: Version,
@@ -436,6 +437,11 @@ impl Pass {
                 | BuiltIn::ErrorType
                 | BuiltIn::EventType
                 | BuiltIn::Tx => Typing::BuiltIn(*built_in),
+                BuiltIn::YulAddress
+                | BuiltIn::YulLength
+                | BuiltIn::YulOffset
+                | BuiltIn::YulSelector
+                | BuiltIn::YulSlot => Typing::Unresolved,
             },
             Resolution::Definition(definition_id) => self.binder.node_typing(*definition_id),
             Resolution::Ambiguous(definitions) => {
@@ -518,6 +524,35 @@ impl Pass {
                 });
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
+        }
+    }
+
+    fn resolve_yul_suffix(&self, symbol: &str, parent_resolution: &Resolution) -> Resolution {
+        match parent_resolution {
+            Resolution::Definition(node_id) => {
+                if let Some(definition) = self.binder.find_definition_by_id(*node_id) {
+                    match definition {
+                        Definition::StateVariable(_) => match symbol {
+                            "offset" => Resolution::BuiltIn(BuiltIn::YulOffset),
+                            "slot" => Resolution::BuiltIn(BuiltIn::YulSlot),
+                            _ => Resolution::Unresolved,
+                        },
+                        Definition::Parameter(_) | Definition::Variable(_) => match symbol {
+                            "address" => Resolution::BuiltIn(BuiltIn::YulAddress),
+                            "length" => Resolution::BuiltIn(BuiltIn::YulLength),
+                            "offset" => Resolution::BuiltIn(BuiltIn::YulOffset),
+                            "selector" => Resolution::BuiltIn(BuiltIn::YulSelector),
+                            _ => Resolution::Unresolved,
+                        },
+                        _ => Resolution::Unresolved,
+                    }
+                } else {
+                    Resolution::Unresolved
+                }
+            }
+            Resolution::Unresolved | Resolution::Ambiguous(_) | Resolution::BuiltIn(_) => {
+                Resolution::Unresolved
+            }
         }
     }
 }
@@ -994,18 +1029,56 @@ impl Visitor for Pass {
     }
 
     fn enter_yul_path(&mut self, items: &input_ir::YulPath) -> bool {
-        // TODO: on old Solidity versions, handle the `_offset` and `_slot` suffixes
-        // resolve the first item in the path
-        if let Some(identifier) = items.first() {
-            let scope_id = self.current_scope_id();
-            let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
-            let reference = Reference::new(Rc::clone(identifier), resolution);
-            self.binder.insert_reference(reference);
+        if items.is_empty() {
+            return false;
         }
 
-        // TODO: resolve the rest of the items
-        // TODO: introduce special handling for the `.offset`, `.slot` and
-        // `.selector` members
+        let scope_id = self.current_scope_id();
+        let consumed_identifiers = if self.language_version >= VERSION_0_7_0 {
+            let identifier = &items[0];
+            let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
+            let reference = Reference::new(Rc::clone(identifier), resolution.clone());
+            self.binder.insert_reference(reference);
+
+            if items.len() > 1 {
+                let suffix = &items[1];
+                let resolution = self.resolve_yul_suffix(&suffix.unparse(), &resolution);
+                let reference = Reference::new(Rc::clone(suffix), resolution);
+                self.binder.insert_reference(reference);
+            }
+
+            2
+        } else {
+            let identifier = &items[0];
+            let identifier_text = identifier.unparse();
+            let resolution = self.resolve_symbol_in_scope(scope_id, &identifier_text);
+            let resolution = if resolution == Resolution::Unresolved {
+                // if the identifier cannot be resolved as-is, try to extract a
+                // suffix (ie. `_slot`, `_offset`, etc.) and resolve for it
+                if let Some((prefix, suffix)) = identifier_text.rsplit_once('_') {
+                    let resolution = self.resolve_symbol_in_scope(scope_id, prefix);
+                    self.resolve_yul_suffix(suffix, &resolution)
+                } else {
+                    resolution
+                }
+            } else {
+                resolution
+            };
+
+            let reference = Reference::new(Rc::clone(identifier), resolution);
+            self.binder.insert_reference(reference);
+
+            1
+        };
+
+        // any remaining identifiers cannot be resolved, but we still want to
+        // emit a reference for each of them
+        for identifier in items.iter().skip(consumed_identifiers) {
+            self.binder.insert_reference(Reference::new(
+                Rc::clone(identifier),
+                Resolution::Unresolved,
+            ));
+        }
 
         false
     }

@@ -10,18 +10,18 @@ Definitions (6):
 
 ------------------------------------------------------------------------
 
-References (6):
+References (7):
 - Ref: ["c" @ input.sol:6:13] -> #6
 - Ref: ["a" @ input.sol:6:18] -> #4
 - Ref: ["b" @ input.sol:7:13] -> #5
 - Ref: ["c" @ input.sol:7:18] -> #6
 - Ref: ["c" @ input.sol:8:13] -> #6
 - Ref: ["d" @ input.sol:8:18] -> #2
+- Ref: ["slot" @ input.sol:8:20] -> unresolved
 
 ------------------------------------------------------------------------
 
-Unbound identifiers (1):
-- ???: ["slot" @ input.sol:8:20]
+Unbound identifiers (0):
 
 ------------------------------------------------------------------------
 
@@ -61,5 +61,5 @@ Bindings:
    │                  │   │   
    │                  ╰─────── ref: 2
    │                      │   
-   │                      ╰─── ???
+   │                      ╰─── unresolved
 ───╯
