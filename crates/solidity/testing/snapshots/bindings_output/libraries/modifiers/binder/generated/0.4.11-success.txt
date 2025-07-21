@@ -8,7 +8,7 @@ Definitions (3):
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["_" @ input.sol:3:9] -> unresolved
+- Ref: ["_" @ input.sol:3:9] -> built-in
 - Ref: ["withinRange" @ input.sol:5:30] -> #2
 
 ------------------------------------------------------------------------
@@ -28,7 +28,7 @@ Bindings:
    │                   ╰─────── name: 2
  3 │         _;
    │         ┬  
-   │         ╰── unresolved
+   │         ╰── built-in
    │ 
  5 │     function test() internal withinRange() {}
    │              ──┬─            ─────┬─────  

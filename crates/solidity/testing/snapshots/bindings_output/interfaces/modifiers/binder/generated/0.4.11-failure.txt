@@ -14,7 +14,7 @@ References (7):
 - Ref: ["owner" @ input.sol:6:22] -> unresolved
 - Ref: ["msg" @ input.sol:6:33] -> unresolved
 - Ref: ["sender" @ input.sol:6:37] -> unresolved
-- Ref: ["_" @ input.sol:7:9] -> unresolved
+- Ref: ["_" @ input.sol:7:9] -> built-in
 - Ref: ["IOwnable" @ input.sol:11:18] -> #1
 - Ref: ["onlyOwner" @ input.sol:12:28] -> unresolved
 
@@ -48,7 +48,7 @@ Bindings:
     │                                        ╰──── unresolved
   7 │         _;
     │         ┬  
-    │         ╰── unresolved
+    │         ╰── built-in
     │ 
  11 │ contract Test is IOwnable {
     │          ──┬─    ────┬───  

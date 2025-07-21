@@ -10,7 +10,7 @@ Definitions (4):
 
 References (2):
 - Ref: ["x" @ input.sol:4:22] -> #3
-- Ref: ["_" @ input.sol:6:9] -> unresolved
+- Ref: ["_" @ input.sol:6:9] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -38,5 +38,5 @@ Bindings:
    │ 
  6 │         _;
    │         ┬  
-   │         ╰── unresolved
+   │         ╰── built-in
 ───╯

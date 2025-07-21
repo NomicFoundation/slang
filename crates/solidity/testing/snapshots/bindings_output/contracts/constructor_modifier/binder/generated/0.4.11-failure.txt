@@ -10,7 +10,7 @@ Definitions (3):
 References (3):
 - Ref: ["assert" @ input.sol:3:9] -> unresolved
 - Ref: ["_addr" @ input.sol:3:16] -> #3
-- Ref: ["_" @ input.sol:4:9] -> unresolved
+- Ref: ["_" @ input.sol:4:9] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ Bindings:
    │                  ╰──── ref: 3
  4 │         _;
    │         ┬  
-   │         ╰── unresolved
+   │         ╰── built-in
    │ 
  7 │     constructor (address _addr) validAddress(_addr) {}
    │     ─────┬─────  

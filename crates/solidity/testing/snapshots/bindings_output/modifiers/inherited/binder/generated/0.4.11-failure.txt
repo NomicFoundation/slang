@@ -10,7 +10,7 @@ Definitions (5):
 ------------------------------------------------------------------------
 
 References (5):
-- Ref: ["_" @ input.sol:2:20] -> unresolved
+- Ref: ["_" @ input.sol:2:20] -> built-in
 - Ref: ["Base" @ input.sol:5:18] -> #1
 - Ref: ["foo" @ input.sol:6:39] -> unresolved
 - Ref: ["Base" @ input.sol:8:37] -> #1
@@ -32,7 +32,7 @@ Bindings:
    │              ─┬─   ┬  
    │               ╰─────── name: 2
    │                    │  
-   │                    ╰── unresolved
+   │                    ╰── built-in
    │ 
  5 │ contract Test is Base {
    │          ──┬─    ──┬─  

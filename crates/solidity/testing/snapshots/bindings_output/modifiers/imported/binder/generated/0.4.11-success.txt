@@ -10,7 +10,7 @@ Definitions (5):
 ------------------------------------------------------------------------
 
 References (5):
-- Ref: ["_" @ lib.sol:3:9] -> unresolved
+- Ref: ["_" @ lib.sol:3:9] -> built-in
 - Ref: ["Base" @ main.sol:1:9] -> #1
 - Ref: ["Base" @ main.sol:3:18] -> #1
 - Ref: ["Base" @ main.sol:4:28] -> #1
@@ -33,7 +33,7 @@ Bindings:
    │                  ╰────── name: 2
  3 │         _;
    │         ┬  
-   │         ╰── unresolved
+   │         ╰── built-in
 ───╯
 
 ------------------------------------------------------------------------
