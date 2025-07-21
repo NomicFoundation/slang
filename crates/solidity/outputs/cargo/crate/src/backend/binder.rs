@@ -436,6 +436,8 @@ pub enum BuiltIn {
     ArrayPop,
     ArrayPush(TypeId),
     Balance,
+    CallOptionValue,
+    CallOptionGas,
     ErrorType,
     EventType,
     Length,
