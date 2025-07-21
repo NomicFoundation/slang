@@ -556,7 +556,7 @@ fn resolve_precedence(
                     ParserDefinitionNode::Choice(Labeled::anonymous(defs))
                 }
                 [_] => defs.into_iter().next().unwrap(),
-                // NOTE: We give empty names to not ovewrite the names of the flattened fields of the operators
+                // NOTE: We give empty names to not overwrite the names of the flattened fields of the operators
                 _ => ParserDefinitionNode::Choice(Labeled::anonymous(defs)),
             };
 
