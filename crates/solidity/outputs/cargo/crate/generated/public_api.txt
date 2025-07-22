@@ -17,6 +17,8 @@ pub slang_solidity::backend::binder::BuiltIn::Selector
 pub slang_solidity::backend::binder::BuiltIn::Tx
 pub slang_solidity::backend::binder::BuiltIn::TxGasPrice
 pub slang_solidity::backend::binder::BuiltIn::TxOrigin
+pub slang_solidity::backend::binder::BuiltIn::Unwrap(metaslang_cst::nodes::NodeId)
+pub slang_solidity::backend::binder::BuiltIn::Wrap(metaslang_cst::nodes::NodeId)
 pub slang_solidity::backend::binder::BuiltIn::YulAddress
 pub slang_solidity::backend::binder::BuiltIn::YulLength
 pub slang_solidity::backend::binder::BuiltIn::YulOffset
@@ -214,6 +216,7 @@ pub fn slang_solidity::backend::binder::TypeParameterDefinition::fmt(&self, f: &
 pub struct slang_solidity::backend::binder::UserDefinedValueTypeDefinition
 pub slang_solidity::backend::binder::UserDefinedValueTypeDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::binder::UserDefinedValueTypeDefinition::node_id: metaslang_cst::nodes::NodeId
+pub slang_solidity::backend::binder::UserDefinedValueTypeDefinition::target_type_id: core::option::Option<slang_solidity::backend::types::TypeId>
 impl core::fmt::Debug for slang_solidity::backend::binder::UserDefinedValueTypeDefinition
 pub fn slang_solidity::backend::binder::UserDefinedValueTypeDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::binder::VariableDefinition
