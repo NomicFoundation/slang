@@ -68,11 +68,11 @@ pub(crate) fn lookup_built_in_member_of_meta_type(
 }
 
 pub(crate) fn lookup_built_in_member_of_type(
-    type_: &Type,
+    parent_type: &Type,
     symbol: &str,
     types: &TypeRegistry,
 ) -> Option<BuiltIn> {
-    match type_ {
+    match parent_type {
         Type::Address { .. } => match symbol {
             "balance" => Some(BuiltIn::Balance),
             // TODO: add the rest of the address (payable) built-ins
