@@ -3,6 +3,7 @@ use std::rc::Rc;
 
 use metaslang_cst::nodes::NodeId;
 
+use super::built_ins::BuiltIn;
 use super::types::TypeId;
 use crate::cst::{TerminalKind, TerminalNode};
 
@@ -433,31 +434,6 @@ impl Definition {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub enum BuiltIn {
-    ArrayPop,
-    ArrayPush(TypeId),
-    Balance,
-    CallOptionValue,
-    CallOptionGas,
-    ErrorType,
-    EventType,
-    Length,
-    ModifierUnderscore,
-    Selector,
-    Tx,
-    TxGasPrice,
-    TxOrigin,
-    Unwrap(NodeId),
-    YulAddress,
-    YulOffset,
-    YulLength,
-    YulSelector,
-    YulSlot,
-    Wrap(NodeId),
-    // TODO: complete this list
-}
-
 //////////////////////////////////////////////////////////////////////////////
 // References
 
@@ -533,6 +509,16 @@ impl From<Vec<NodeId>> for Resolution {
             0 => Resolution::Unresolved,
             1 => Resolution::Definition(value.swap_remove(0)),
             _ => Resolution::Ambiguous(value),
+        }
+    }
+}
+
+impl From<Option<BuiltIn>> for Resolution {
+    fn from(value: Option<BuiltIn>) -> Self {
+        if let Some(built_in) = value {
+            Self::BuiltIn(built_in)
+        } else {
+            Self::Unresolved
         }
     }
 }

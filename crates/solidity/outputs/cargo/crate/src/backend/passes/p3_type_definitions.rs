@@ -3,9 +3,10 @@ use std::rc::Rc;
 
 use super::p2_collect_definitions::Output as Input;
 use crate::backend::binder::{
-    Binder, BuiltIn, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
+    Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
     LibraryDefinition, Reference, Resolution, Scope, ScopeId, UsingDirective,
 };
+use crate::backend::built_ins::BuiltIn;
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionTypeKind, Type, TypeId, TypeRegistry};
@@ -852,7 +853,7 @@ impl Visitor for Pass {
     fn enter_catch_clause_error(&mut self, node: &input_ir::CatchClauseError) -> bool {
         if let Some(name) = &node.name {
             let resolution = match name.unparse().as_str() {
-                "Error" | "Panic" => Resolution::BuiltIn(BuiltIn::ErrorType),
+                "Error" | "Panic" => Resolution::BuiltIn(BuiltIn::ErrorOrPanic),
                 _ => Resolution::Unresolved,
             };
             let reference = Reference::new(Rc::clone(name), resolution);
