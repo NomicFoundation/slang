@@ -87,10 +87,9 @@ pub fn slang_solidity::backend::binder::Typing::clone(&self) -> slang_solidity::
 impl core::fmt::Debug for slang_solidity::backend::binder::Typing
 pub fn slang_solidity::backend::binder::Typing::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::binder::Binder
-pub slang_solidity::backend::binder::Binder::definitions: std::collections::hash::map::HashMap<metaslang_cst::nodes::NodeId, slang_solidity::backend::binder::Definition>
-pub slang_solidity::backend::binder::Binder::references: std::collections::hash::map::HashMap<metaslang_cst::nodes::NodeId, slang_solidity::backend::binder::Reference>
 impl slang_solidity::backend::binder::Binder
 pub fn slang_solidity::backend::binder::Binder::find_definition_by_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Definition>
+pub fn slang_solidity::backend::binder::Binder::find_definition_by_id_mut(&mut self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&mut slang_solidity::backend::binder::Definition>
 pub fn slang_solidity::backend::binder::Binder::find_definition_by_identifier_node_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Definition>
 pub fn slang_solidity::backend::binder::Binder::find_reference_by_identifier_node_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Reference>
 pub fn slang_solidity::backend::binder::Binder::node_typing(&self, node_id: metaslang_cst::nodes::NodeId) -> slang_solidity::backend::binder::Typing
@@ -100,6 +99,7 @@ pub slang_solidity::backend::binder::ConstantDefinition::node_id: metaslang_cst:
 impl core::fmt::Debug for slang_solidity::backend::binder::ConstantDefinition
 pub fn slang_solidity::backend::binder::ConstantDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::binder::ContractDefinition
+pub slang_solidity::backend::binder::ContractDefinition::bases: core::option::Option<alloc::vec::Vec<slang_solidity::backend::binder::Reference>>
 pub slang_solidity::backend::binder::ContractDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::binder::ContractDefinition::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::binder::ContractDefinition
@@ -146,6 +146,7 @@ pub slang_solidity::backend::binder::ImportedSymbolDefinition::symbol: alloc::st
 impl core::fmt::Debug for slang_solidity::backend::binder::ImportedSymbolDefinition
 pub fn slang_solidity::backend::binder::ImportedSymbolDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::binder::InterfaceDefinition
+pub slang_solidity::backend::binder::InterfaceDefinition::bases: core::option::Option<alloc::vec::Vec<slang_solidity::backend::binder::Reference>>
 pub slang_solidity::backend::binder::InterfaceDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::binder::InterfaceDefinition::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::binder::InterfaceDefinition
@@ -168,6 +169,8 @@ pub fn slang_solidity::backend::binder::ParameterDefinition::fmt(&self, f: &mut 
 pub struct slang_solidity::backend::binder::Reference
 pub slang_solidity::backend::binder::Reference::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
 pub slang_solidity::backend::binder::Reference::resolution: slang_solidity::backend::binder::Resolution
+impl core::clone::Clone for slang_solidity::backend::binder::Reference
+pub fn slang_solidity::backend::binder::Reference::clone(&self) -> slang_solidity::backend::binder::Reference
 impl core::fmt::Debug for slang_solidity::backend::binder::Reference
 pub fn slang_solidity::backend::binder::Reference::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::binder::ScopeId(_)
@@ -6068,6 +6071,9 @@ pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_yul_v
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationStatement)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValue)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::l2_flat_contracts::YulVariableNames)
+impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor for slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass
+pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l2_flat_contracts::ContractDefinition)
+pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::leave_interface_definition(&mut self, target: &slang_solidity::backend::l2_flat_contracts::InterfaceDefinition)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::l2_flat_contracts::AbicoderPragma, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_additive_expression(node: &slang_solidity::backend::l2_flat_contracts::AdditiveExpression, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_address_type(node: &slang_solidity::backend::l2_flat_contracts::AddressType, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
@@ -7599,13 +7605,31 @@ pub slang_solidity::backend::passes::p3_type_definitions::Output::compilation_un
 pub slang_solidity::backend::passes::p3_type_definitions::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
 pub slang_solidity::backend::passes::p3_type_definitions::Output::types: slang_solidity::backend::types::TypeRegistry
 pub fn slang_solidity::backend::passes::p3_type_definitions::run(input: slang_solidity::backend::passes::p2_collect_definitions::Output) -> slang_solidity::backend::passes::p3_type_definitions::Output
+pub mod slang_solidity::backend::passes::p3_x_flatten_hierarchy
+pub struct slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output
+pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output::binder: slang_solidity::backend::binder::Binder
+pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output::compilation_unit: slang_solidity::compilation::CompilationUnit
+pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
+pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output::linearisations: std::collections::hash::map::HashMap<slang_solidity::cst::NodeId, alloc::vec::Vec<slang_solidity::cst::NodeId>>
+pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output::types: slang_solidity::backend::types::TypeRegistry
+pub struct slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass
+pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::binder: slang_solidity::backend::binder::Binder
+pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::compilation_unit: slang_solidity::compilation::CompilationUnit
+pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::linearisations: std::collections::hash::map::HashMap<slang_solidity::cst::NodeId, alloc::vec::Vec<slang_solidity::cst::NodeId>>
+pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::types: slang_solidity::backend::types::TypeRegistry
+impl slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass
+pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::new(compilation_unit: slang_solidity::compilation::CompilationUnit, binder: slang_solidity::backend::binder::Binder, types: slang_solidity::backend::types::TypeRegistry) -> Self
+impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor for slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass
+pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l2_flat_contracts::ContractDefinition)
+pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::leave_interface_definition(&mut self, target: &slang_solidity::backend::l2_flat_contracts::InterfaceDefinition)
+pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::run(input: slang_solidity::backend::passes::p3_type_definitions::Output) -> slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output
 pub mod slang_solidity::backend::passes::p4_resolve_references
 pub struct slang_solidity::backend::passes::p4_resolve_references::Output
 pub slang_solidity::backend::passes::p4_resolve_references::Output::binder: slang_solidity::backend::binder::Binder
 pub slang_solidity::backend::passes::p4_resolve_references::Output::compilation_unit: slang_solidity::compilation::CompilationUnit
 pub slang_solidity::backend::passes::p4_resolve_references::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
 pub slang_solidity::backend::passes::p4_resolve_references::Output::types: slang_solidity::backend::types::TypeRegistry
-pub fn slang_solidity::backend::passes::p4_resolve_references::run(input: slang_solidity::backend::passes::p3_type_definitions::Output) -> slang_solidity::backend::passes::p4_resolve_references::Output
+pub fn slang_solidity::backend::passes::p4_resolve_references::run(input: slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output) -> slang_solidity::backend::passes::p4_resolve_references::Output
 pub mod slang_solidity::backend::types
 pub enum slang_solidity::backend::types::DataLocation
 pub slang_solidity::backend::types::DataLocation::Calldata
