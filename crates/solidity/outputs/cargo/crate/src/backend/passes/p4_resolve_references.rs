@@ -5,7 +5,12 @@ use semver::Version;
 
 use super::p3_type_definitions::Output as Input;
 use crate::backend::binder::{
-    Binder, BuiltIn, Definition, Reference, Resolution, Scope, ScopeId, Typing, UsingDirective,
+    Binder, Definition, Reference, Resolution, Scope, ScopeId, Typing, UsingDirective,
+};
+use crate::backend::built_ins::{
+    lookup_built_in_member_of_meta_type, lookup_built_in_member_of_type,
+    lookup_call_option_built_in, lookup_global_built_in, lookup_member_of_built_in,
+    lookup_yul_built_in_suffix, typing_of_built_in, typing_of_built_in_function_call,
 };
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
@@ -87,14 +92,6 @@ impl Pass {
         self.scope_stack.last().copied().unwrap()
     }
 
-    fn lookup_global_built_in(symbol: &str) -> Option<BuiltIn> {
-        match symbol {
-            "tx" => Some(BuiltIn::Tx),
-            // TODO: add the rest of the built-ins
-            _ => None,
-        }
-    }
-
     // This is a "top-level" (ie. not a member access) resolution method
     fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         // TODO: we need to do hierarchy lookups for contracts and interfaces if
@@ -102,11 +99,7 @@ impl Pass {
         // cannot delegate to the binder.
         let resolution = self.binder.resolve_in_scope(scope_id, symbol);
         if resolution == Resolution::Unresolved {
-            if let Some(built_in) = Self::lookup_global_built_in(symbol) {
-                Resolution::BuiltIn(built_in)
-            } else {
-                Resolution::Unresolved
-            }
+            lookup_global_built_in(symbol).into()
         } else {
             resolution
         }
@@ -182,8 +175,6 @@ impl Pass {
                     return Resolution::Unresolved;
                 };
                 match definition {
-                    Definition::Error(_) => Resolution::BuiltIn(BuiltIn::ErrorType),
-                    Definition::Event(_) => Resolution::BuiltIn(BuiltIn::EventType),
                     Definition::Import(import_definition) => {
                         if let Some(scope_id) = import_definition
                             .resolved_file_id
@@ -206,88 +197,29 @@ impl Pass {
                             Resolution::Unresolved
                         }
                     }
-                    Definition::UserDefinedValueType(_) => match symbol {
-                        "wrap" => Resolution::BuiltIn(BuiltIn::Wrap(*node_id)),
-                        "unwrap" => Resolution::BuiltIn(BuiltIn::Unwrap(*node_id)),
-                        _ => Resolution::Unresolved,
-                    },
-                    _ => Resolution::Unresolved,
+                    _ => lookup_built_in_member_of_meta_type(definition, symbol).into(),
                 }
             }
-            Typing::BuiltIn(built_in) => match built_in {
-                BuiltIn::ErrorType => match symbol {
-                    "selector" => Resolution::BuiltIn(BuiltIn::Selector),
-                    _ => Resolution::Unresolved,
-                },
-                BuiltIn::EventType => match symbol {
-                    "selector" => Resolution::BuiltIn(BuiltIn::Selector),
-                    _ => Resolution::Unresolved,
-                },
-                BuiltIn::Tx => match symbol {
-                    "gasprice" => Resolution::BuiltIn(BuiltIn::TxGasPrice),
-                    "origin" => Resolution::BuiltIn(BuiltIn::TxOrigin),
-                    _ => Resolution::Unresolved,
-                },
-                _ => Resolution::Unresolved,
-            },
+            Typing::BuiltIn(built_in) => lookup_member_of_built_in(built_in, symbol).into(),
         }
     }
 
     fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: &str) -> Resolution {
         let type_ = self.types.get_type_by_id(type_id).unwrap();
         match type_ {
-            Type::Address { .. } => match symbol {
-                "balance" => Resolution::BuiltIn(BuiltIn::Balance),
-                // TODO: add the rest of the address (payable) built-ins
-                _ => Resolution::Unresolved,
-            },
-            Type::Array { element_type, .. } => match symbol {
-                "length" => Resolution::BuiltIn(BuiltIn::Length),
-                "push" => Resolution::BuiltIn(BuiltIn::ArrayPush(*element_type)),
-                _ => Resolution::Unresolved,
-            },
-            Type::Boolean => Resolution::Unresolved,
-            Type::ByteArray { .. } => match symbol {
-                "length" => Resolution::BuiltIn(BuiltIn::Length),
-                _ => Resolution::Unresolved,
-            },
-            Type::Bytes { .. } => match symbol {
-                "push" => Resolution::BuiltIn(BuiltIn::ArrayPush(self.types.byte())),
-                "pop" => Resolution::BuiltIn(BuiltIn::ArrayPop),
-                _ => Resolution::Unresolved,
-            },
             Type::Contract { .. } => {
                 // TODO: expose the public contract methods
                 Resolution::Unresolved
             }
-            Type::Enum { .. } => Resolution::Unresolved,
-            Type::FixedPointNumber { .. } => Resolution::Unresolved,
-            Type::Function { .. } => {
-                // TODO: for external functions, expose `selector`, `address`, etc
-                Resolution::Unresolved
-            }
-            Type::Integer { .. } => Resolution::Unresolved,
             Type::Interface { .. } => {
                 // TODO: expose the public interface methods
                 Resolution::Unresolved
             }
-            Type::Mapping { .. } => Resolution::Unresolved,
-            Type::Rational => {
-                // TODO: we should probably force cast the rational number to
-                // the tighest integer type that can represent it
-                Resolution::Unresolved
-            }
-            Type::String { .. } => match symbol {
-                "length" => Resolution::BuiltIn(BuiltIn::Length),
-                _ => Resolution::Unresolved,
-            },
             Type::Struct { definition_id, .. } => {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
             }
-            Type::Tuple { .. } => Resolution::Unresolved,
-            Type::UserDefinedValue { .. } => Resolution::Unresolved,
-            Type::Void => Resolution::Unresolved,
+            _ => lookup_built_in_member_of_type(type_, symbol, &self.types).into(),
         }
     }
 
@@ -429,28 +361,7 @@ impl Pass {
     fn typing_of_resolution(&self, resolution: &Resolution) -> Typing {
         match resolution {
             Resolution::Unresolved => Typing::Unresolved,
-            Resolution::BuiltIn(built_in) => match built_in {
-                BuiltIn::Balance => Typing::Resolved(self.types.uint256()),
-                BuiltIn::Length => Typing::Resolved(self.types.uint256()),
-                BuiltIn::Selector => Typing::Resolved(self.types.bytes4()),
-                BuiltIn::TxGasPrice => Typing::Resolved(self.types.uint256()),
-                BuiltIn::TxOrigin => Typing::Resolved(self.types.address()),
-                BuiltIn::ArrayPop
-                | BuiltIn::ArrayPush(_)
-                | BuiltIn::CallOptionGas
-                | BuiltIn::CallOptionValue
-                | BuiltIn::ErrorType
-                | BuiltIn::EventType
-                | BuiltIn::ModifierUnderscore
-                | BuiltIn::Tx
-                | BuiltIn::Wrap(_)
-                | BuiltIn::Unwrap(_) => Typing::BuiltIn(*built_in),
-                BuiltIn::YulAddress
-                | BuiltIn::YulLength
-                | BuiltIn::YulOffset
-                | BuiltIn::YulSelector
-                | BuiltIn::YulSlot => Typing::Unresolved,
-            },
+            Resolution::BuiltIn(built_in) => typing_of_built_in(built_in, &self.types),
             Resolution::Definition(definition_id) => self.binder.node_typing(*definition_id),
             Resolution::Ambiguous(definitions) => {
                 // TODO: we need some sort of link between the definition_id and the resulting type
@@ -539,21 +450,7 @@ impl Pass {
         match parent_resolution {
             Resolution::Definition(node_id) => {
                 if let Some(definition) = self.binder.find_definition_by_id(*node_id) {
-                    match definition {
-                        Definition::StateVariable(_) => match symbol {
-                            "offset" => Resolution::BuiltIn(BuiltIn::YulOffset),
-                            "slot" => Resolution::BuiltIn(BuiltIn::YulSlot),
-                            _ => Resolution::Unresolved,
-                        },
-                        Definition::Parameter(_) | Definition::Variable(_) => match symbol {
-                            "address" => Resolution::BuiltIn(BuiltIn::YulAddress),
-                            "length" => Resolution::BuiltIn(BuiltIn::YulLength),
-                            "offset" => Resolution::BuiltIn(BuiltIn::YulOffset),
-                            "selector" => Resolution::BuiltIn(BuiltIn::YulSelector),
-                            _ => Resolution::Unresolved,
-                        },
-                        _ => Resolution::Unresolved,
-                    }
+                    lookup_yul_built_in_suffix(definition, symbol).into()
                 } else {
                     Resolution::Unresolved
                 }
@@ -914,6 +811,20 @@ impl Visitor for Pass {
 
     fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {
         let operand_typing = self.typing_of_expression(&node.operand);
+        let positional_argument_typings =
+            if let input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(arguments) =
+                &node.arguments
+            {
+                Some(
+                    arguments
+                        .arguments
+                        .iter()
+                        .map(|argument| self.typing_of_expression(argument))
+                        .collect::<Vec<_>>(),
+                )
+            } else {
+                None
+            };
 
         let (typing, definition_id) = match operand_typing {
             Typing::Unresolved | Typing::This | Typing::Super => {
@@ -965,54 +876,18 @@ impl Visitor for Pass {
                 }
             }
             Typing::BuiltIn(built_in) => {
-                let typing =
-                    match built_in {
-                        BuiltIn::ArrayPush(type_id) => match &node.arguments {
-                            input_ir::ArgumentsDeclaration::NamedArgumentsDeclaration(named)
-                                if named.arguments.is_none()
-                                    || named
-                                        .arguments
-                                        .as_ref()
-                                        .is_some_and(|args| args.arguments.is_empty()) =>
-                            {
-                                Typing::Resolved(type_id)
-                            }
-                            input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(
-                                args,
-                            ) if args.arguments.is_empty() => Typing::Resolved(type_id),
-                            _ => Typing::Resolved(self.types.void()),
-                        },
-                        BuiltIn::ArrayPop => Typing::Resolved(self.types.void()),
-                        BuiltIn::Unwrap(definition_id) => {
-                            let Some(Definition::UserDefinedValueType(udvt)) =
-                                self.binder.find_definition_by_id(definition_id)
-                            else {
-                                unreachable!("definition bound to unwrap built-in is not a UDVT");
-                            };
-                            if let Some(target_type_id) = udvt.target_type_id {
-                                Typing::Resolved(target_type_id)
-                            } else {
-                                Typing::Unresolved
-                            }
-                        }
-                        BuiltIn::Wrap(definition_id) => {
-                            let Some(Definition::UserDefinedValueType(_)) =
-                                self.binder.find_definition_by_id(definition_id)
-                            else {
-                                unreachable!("definition bound to wrap built-in is not a UDVT");
-                            };
-                            Typing::Resolved(
-                                self.types
-                                    .find_type(&Type::UserDefinedValue { definition_id })
-                                    .unwrap(),
-                            )
-                        }
-                        _ => {
-                            // none of these built-ins can be called
-                            Typing::Unresolved
-                        }
-                    };
-                // built-ins cannot be called with named arguments
+                let typing = if let Some(positional_argument_typings) = positional_argument_typings
+                {
+                    typing_of_built_in_function_call(
+                        &built_in,
+                        &positional_argument_typings,
+                        &self.types,
+                        &self.binder,
+                    )
+                } else {
+                    // built-ins cannot be called with named arguments
+                    Typing::Unresolved
+                };
                 (typing, None)
             }
         };
@@ -1037,11 +912,7 @@ impl Visitor for Pass {
     fn enter_call_options_expression(&mut self, node: &input_ir::CallOptionsExpression) -> bool {
         for option in &node.options {
             let identifier = &option.name;
-            let resolution = match identifier.unparse().as_str() {
-                "value" => Resolution::BuiltIn(BuiltIn::CallOptionValue),
-                "gas" => Resolution::BuiltIn(BuiltIn::CallOptionGas),
-                _ => Resolution::Unresolved,
-            };
+            let resolution = lookup_call_option_built_in(identifier.unparse().as_str()).into();
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }

@@ -3,36 +3,6 @@
 pub mod slang_solidity
 pub mod slang_solidity::backend
 pub mod slang_solidity::backend::binder
-pub enum slang_solidity::backend::binder::BuiltIn
-pub slang_solidity::backend::binder::BuiltIn::ArrayPop
-pub slang_solidity::backend::binder::BuiltIn::ArrayPush(slang_solidity::backend::types::TypeId)
-pub slang_solidity::backend::binder::BuiltIn::Balance
-pub slang_solidity::backend::binder::BuiltIn::CallOptionGas
-pub slang_solidity::backend::binder::BuiltIn::CallOptionValue
-pub slang_solidity::backend::binder::BuiltIn::ErrorType
-pub slang_solidity::backend::binder::BuiltIn::EventType
-pub slang_solidity::backend::binder::BuiltIn::Length
-pub slang_solidity::backend::binder::BuiltIn::ModifierUnderscore
-pub slang_solidity::backend::binder::BuiltIn::Selector
-pub slang_solidity::backend::binder::BuiltIn::Tx
-pub slang_solidity::backend::binder::BuiltIn::TxGasPrice
-pub slang_solidity::backend::binder::BuiltIn::TxOrigin
-pub slang_solidity::backend::binder::BuiltIn::Unwrap(metaslang_cst::nodes::NodeId)
-pub slang_solidity::backend::binder::BuiltIn::Wrap(metaslang_cst::nodes::NodeId)
-pub slang_solidity::backend::binder::BuiltIn::YulAddress
-pub slang_solidity::backend::binder::BuiltIn::YulLength
-pub slang_solidity::backend::binder::BuiltIn::YulOffset
-pub slang_solidity::backend::binder::BuiltIn::YulSelector
-pub slang_solidity::backend::binder::BuiltIn::YulSlot
-impl core::clone::Clone for slang_solidity::backend::binder::BuiltIn
-pub fn slang_solidity::backend::binder::BuiltIn::clone(&self) -> slang_solidity::backend::binder::BuiltIn
-impl core::cmp::Eq for slang_solidity::backend::binder::BuiltIn
-impl core::cmp::PartialEq for slang_solidity::backend::binder::BuiltIn
-pub fn slang_solidity::backend::binder::BuiltIn::eq(&self, other: &slang_solidity::backend::binder::BuiltIn) -> bool
-impl core::fmt::Debug for slang_solidity::backend::binder::BuiltIn
-pub fn slang_solidity::backend::binder::BuiltIn::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
-impl core::marker::Copy for slang_solidity::backend::binder::BuiltIn
-impl core::marker::StructuralPartialEq for slang_solidity::backend::binder::BuiltIn
 pub enum slang_solidity::backend::binder::Definition
 pub slang_solidity::backend::binder::Definition::Constant(slang_solidity::backend::binder::ConstantDefinition)
 pub slang_solidity::backend::binder::Definition::Contract(slang_solidity::backend::binder::ContractDefinition)
@@ -64,7 +34,7 @@ impl core::fmt::Debug for slang_solidity::backend::binder::Definition
 pub fn slang_solidity::backend::binder::Definition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::binder::Resolution
 pub slang_solidity::backend::binder::Resolution::Ambiguous(alloc::vec::Vec<metaslang_cst::nodes::NodeId>)
-pub slang_solidity::backend::binder::Resolution::BuiltIn(slang_solidity::backend::binder::BuiltIn)
+pub slang_solidity::backend::binder::Resolution::BuiltIn(slang_solidity::backend::built_ins::BuiltIn)
 pub slang_solidity::backend::binder::Resolution::Definition(metaslang_cst::nodes::NodeId)
 pub slang_solidity::backend::binder::Resolution::Unresolved
 impl slang_solidity::backend::binder::Resolution
@@ -81,11 +51,13 @@ impl core::convert::From<core::option::Option<&metaslang_cst::nodes::NodeId>> fo
 pub fn slang_solidity::backend::binder::Resolution::from(value: core::option::Option<&metaslang_cst::nodes::NodeId>) -> Self
 impl core::convert::From<core::option::Option<metaslang_cst::nodes::NodeId>> for slang_solidity::backend::binder::Resolution
 pub fn slang_solidity::backend::binder::Resolution::from(value: core::option::Option<metaslang_cst::nodes::NodeId>) -> Self
+impl core::convert::From<core::option::Option<slang_solidity::backend::built_ins::BuiltIn>> for slang_solidity::backend::binder::Resolution
+pub fn slang_solidity::backend::binder::Resolution::from(value: core::option::Option<slang_solidity::backend::built_ins::BuiltIn>) -> Self
 impl core::fmt::Debug for slang_solidity::backend::binder::Resolution
 pub fn slang_solidity::backend::binder::Resolution::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 impl core::marker::StructuralPartialEq for slang_solidity::backend::binder::Resolution
 pub enum slang_solidity::backend::binder::Typing
-pub slang_solidity::backend::binder::Typing::BuiltIn(slang_solidity::backend::binder::BuiltIn)
+pub slang_solidity::backend::binder::Typing::BuiltIn(slang_solidity::backend::built_ins::BuiltIn)
 pub slang_solidity::backend::binder::Typing::MetaType(metaslang_cst::nodes::NodeId)
 pub slang_solidity::backend::binder::Typing::Resolved(slang_solidity::backend::types::TypeId)
 pub slang_solidity::backend::binder::Typing::Super
@@ -244,6 +216,36 @@ pub slang_solidity::backend::binder::YulVariableDefinition::identifier: alloc::r
 pub slang_solidity::backend::binder::YulVariableDefinition::node_id: metaslang_cst::nodes::NodeId
 impl core::fmt::Debug for slang_solidity::backend::binder::YulVariableDefinition
 pub fn slang_solidity::backend::binder::YulVariableDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+pub mod slang_solidity::backend::built_ins
+pub enum slang_solidity::backend::built_ins::BuiltIn
+pub slang_solidity::backend::built_ins::BuiltIn::ArrayPop
+pub slang_solidity::backend::built_ins::BuiltIn::ArrayPush(slang_solidity::backend::types::TypeId)
+pub slang_solidity::backend::built_ins::BuiltIn::Balance
+pub slang_solidity::backend::built_ins::BuiltIn::CallOptionGas
+pub slang_solidity::backend::built_ins::BuiltIn::CallOptionValue
+pub slang_solidity::backend::built_ins::BuiltIn::ErrorOrPanic
+pub slang_solidity::backend::built_ins::BuiltIn::Length
+pub slang_solidity::backend::built_ins::BuiltIn::ModifierUnderscore
+pub slang_solidity::backend::built_ins::BuiltIn::Selector
+pub slang_solidity::backend::built_ins::BuiltIn::Tx
+pub slang_solidity::backend::built_ins::BuiltIn::TxGasPrice
+pub slang_solidity::backend::built_ins::BuiltIn::TxOrigin
+pub slang_solidity::backend::built_ins::BuiltIn::Unwrap(slang_solidity::cst::NodeId)
+pub slang_solidity::backend::built_ins::BuiltIn::Wrap(slang_solidity::cst::NodeId)
+pub slang_solidity::backend::built_ins::BuiltIn::YulAddress
+pub slang_solidity::backend::built_ins::BuiltIn::YulLength
+pub slang_solidity::backend::built_ins::BuiltIn::YulOffset
+pub slang_solidity::backend::built_ins::BuiltIn::YulSelector
+pub slang_solidity::backend::built_ins::BuiltIn::YulSlot
+impl core::clone::Clone for slang_solidity::backend::built_ins::BuiltIn
+pub fn slang_solidity::backend::built_ins::BuiltIn::clone(&self) -> slang_solidity::backend::built_ins::BuiltIn
+impl core::cmp::Eq for slang_solidity::backend::built_ins::BuiltIn
+impl core::cmp::PartialEq for slang_solidity::backend::built_ins::BuiltIn
+pub fn slang_solidity::backend::built_ins::BuiltIn::eq(&self, other: &slang_solidity::backend::built_ins::BuiltIn) -> bool
+impl core::fmt::Debug for slang_solidity::backend::built_ins::BuiltIn
+pub fn slang_solidity::backend::built_ins::BuiltIn::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::marker::Copy for slang_solidity::backend::built_ins::BuiltIn
+impl core::marker::StructuralPartialEq for slang_solidity::backend::built_ins::BuiltIn
 pub mod slang_solidity::backend::l1_structured_ast
 pub mod slang_solidity::backend::l1_structured_ast::builder
 pub fn slang_solidity::backend::l1_structured_ast::builder::build_abicoder_pragma(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AbicoderPragma>
