@@ -19,7 +19,7 @@ pub struct ConstantDefinition {
 pub struct ContractDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
-    pub flat_hierarchy: Option<Vec<Reference>>,
+    pub bases: Option<Vec<Reference>>,
 }
 
 #[derive(Debug)]
@@ -74,6 +74,7 @@ pub struct ImportedSymbolDefinition {
 pub struct InterfaceDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
+    pub bases: Option<Vec<Reference>>,
 }
 
 #[derive(Debug)]
@@ -249,7 +250,7 @@ impl Definition {
         Self::Contract(ContractDefinition {
             node_id,
             identifier: Rc::clone(identifier),
-            flat_hierarchy: None,
+            bases: None,
         })
     }
 
@@ -333,6 +334,7 @@ impl Definition {
         Self::Interface(InterfaceDefinition {
             node_id,
             identifier: Rc::clone(identifier),
+            bases: None,
         })
     }
 
@@ -525,7 +527,7 @@ impl From<Vec<NodeId>> for Resolution {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Reference {
     pub identifier: Rc<TerminalNode>,
     pub resolution: Resolution,
@@ -998,11 +1000,11 @@ pub struct Binder {
     global_using_directives: Vec<UsingDirective>,
 
     // definitions indexed by definiens node
-    pub definitions: HashMap<NodeId, Definition>,
+    definitions: HashMap<NodeId, Definition>,
     // mapping from definition identifier to definiens
     definitions_by_identifier: HashMap<NodeId, NodeId>,
     // references indexed by identifier node
-    pub references: HashMap<NodeId, Reference>,
+    references: HashMap<NodeId, Reference>,
 
     node_typing: HashMap<NodeId, Typing>,
 }
@@ -1073,6 +1075,10 @@ impl Binder {
 
     pub fn find_definition_by_id(&self, node_id: NodeId) -> Option<&Definition> {
         self.definitions.get(&node_id)
+    }
+
+    pub fn find_definition_by_id_mut(&mut self, node_id: NodeId) -> Option<&mut Definition> {
+        self.definitions.get_mut(&node_id)
     }
 
     pub fn find_definition_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Definition> {

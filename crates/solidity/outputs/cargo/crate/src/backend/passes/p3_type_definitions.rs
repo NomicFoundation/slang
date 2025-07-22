@@ -1,3 +1,4 @@
+use core::panic;
 use std::collections::HashMap;
 use std::rc::Rc;
 
@@ -95,11 +96,16 @@ impl Pass {
     // level, or at the file level if there's no contract scope open. It will
     // follow through in contracts/intrefaces/libraries as well as imports and
     // treat them as namespaces.
-    fn resolve_identifier_path(&mut self, identifier_path: &input_ir::IdentifierPath) {
+    // Returns the last reference.
+    fn resolve_identifier_path(
+        &mut self,
+        identifier_path: &input_ir::IdentifierPath,
+    ) -> Option<Reference> {
         // start resolution from the current contract (or file if there's no
         // contract scope open)
         let mut scope_id = Some(self.current_contract_or_file_scope_id());
         let mut use_lexical_resolution = true;
+        let mut last_reference: Option<Reference> = None;
 
         for identifier in identifier_path {
             let symbol = identifier.unparse();
@@ -115,7 +121,8 @@ impl Pass {
             let definition_id = resolution.as_definition_id();
 
             let reference = Reference::new(Rc::clone(identifier), resolution);
-            self.binder.insert_reference(reference);
+            self.binder.insert_reference(reference.clone());
+            last_reference = Some(reference);
 
             // recurse into file scopes pointed by the resolved definition
             // to resolve the next identifier in the path
@@ -136,14 +143,18 @@ impl Pass {
                     _ => None,
                 });
         }
+        last_reference
     }
 
-    fn resolve_inheritance_types(&mut self, types: &input_ir::InheritanceTypes) {
-        for inheritance_type in types {
-            self.resolve_identifier_path(&inheritance_type.type_name);
-        }
-        // TODO: return the resolved types (ie. the definition for the last
-        // identifier in each path)?
+    fn resolve_inheritance_types(&mut self, types: &input_ir::InheritanceTypes) -> Vec<Reference> {
+        let referenced_types =
+            types
+                .iter()
+                .filter_map(|inheritance_type: &Rc<input_ir::InheritanceTypeStruct>| {
+                    self.resolve_identifier_path(&inheritance_type.type_name)
+                });
+
+        referenced_types.collect()
     }
 
     fn resolve_parameter_types(
@@ -479,8 +490,19 @@ impl Visitor for Pass {
     }
 
     fn enter_contract_definition(&mut self, node: &input_ir::ContractDefinition) -> bool {
-        self.resolve_inheritance_types(&node.inheritance_types);
-        // TODO: save the resolved types as bases of the contract
+        let resolved_bases = self.resolve_inheritance_types(&node.inheritance_types);
+
+        let definition = self
+            .binder
+            .find_definition_by_id_mut(node.node_id)
+            .unwrap_or_else(|| {
+                panic!("{node_id:?} should be a definition", node_id = node.node_id)
+            });
+        let Definition::Contract(definition) = definition else {
+            panic!("{node_id:?} should be a contract", node_id = node.node_id);
+        };
+        definition.bases = Some(resolved_bases);
+
         self.enter_scope_for_node_id(node.node_id);
 
         true
@@ -493,10 +515,22 @@ impl Visitor for Pass {
     }
 
     fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {
+        let mut resolved_bases = vec![];
         if let Some(inheritance) = &node.inheritance {
-            self.resolve_inheritance_types(&inheritance.types);
-            // TODO: save the resolved types as bases of the interface
+            resolved_bases = self.resolve_inheritance_types(&inheritance.types);
         }
+
+        let definition = self
+            .binder
+            .find_definition_by_id_mut(node.node_id)
+            .unwrap_or_else(|| {
+                panic!("{node_id:?} should be a definition", node_id = node.node_id)
+            });
+        let Definition::Interface(definition) = definition else {
+            panic!("{node_id:?} should be an interface", node_id = node.node_id);
+        };
+        definition.bases = Some(resolved_bases);
+
         self.enter_scope_for_node_id(node.node_id);
 
         true
