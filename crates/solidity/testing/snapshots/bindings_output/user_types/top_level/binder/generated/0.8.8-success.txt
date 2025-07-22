@@ -4,16 +4,16 @@ Definitions (4):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
 - Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns uint256)
 - Def: #3 ["tl" @ input.sol:3:18] (variable, type: TopLevel)
-- Def: #4 ["TopLevel" @ input.sol:8:6] (udvt, type: uint256)
+- Def: #4 ["TopLevel" @ input.sol:8:6] (udvt, type: meta-type)
 
 ------------------------------------------------------------------------
 
 References (6):
 - Ref: ["TopLevel" @ input.sol:3:9] -> #4
 - Ref: ["TopLevel" @ input.sol:3:23] -> #4
-- Ref: ["wrap" @ input.sol:3:32] -> unresolved
+- Ref: ["wrap" @ input.sol:3:32] -> built-in
 - Ref: ["TopLevel" @ input.sol:4:16] -> #4
-- Ref: ["unwrap" @ input.sol:4:25] -> unresolved
+- Ref: ["unwrap" @ input.sol:4:25] -> built-in
 - Ref: ["tl" @ input.sol:4:32] -> #3
 
 ------------------------------------------------------------------------
@@ -39,12 +39,12 @@ Bindings:
    │                           │      │   
    │                           ╰────────── ref: 4
    │                                  │   
-   │                                  ╰─── unresolved
+   │                                  ╰─── built-in
  4 │         return TopLevel.unwrap(tl);
    │                ────┬─── ───┬── ─┬  
    │                    ╰─────────────── ref: 4
    │                            │    │  
-   │                            ╰─────── unresolved
+   │                            ╰─────── built-in
    │                                 │  
    │                                 ╰── ref: 3
    │ 

@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (1):
-- Def: #1 ["MemoryPointer" @ input.sol:4:6] (udvt, type: uint256)
+- Def: #1 ["MemoryPointer" @ input.sol:4:6] (udvt, type: meta-type)
 
 ------------------------------------------------------------------------
 

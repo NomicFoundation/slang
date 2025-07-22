@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (4):
-- Def: #1 ["Amount" @ lib.sol:1:6] (udvt, type: uint64)
+- Def: #1 ["Amount" @ lib.sol:1:6] (udvt, type: meta-type)
 - Def: #2 ["Test" @ main.sol:3:10] (contract)
 - Def: #3 ["test" @ main.sol:6:14] (function, type: function () returns void)
 - Def: #4 ["x" @ main.sol:7:16] (variable, type: Amount)

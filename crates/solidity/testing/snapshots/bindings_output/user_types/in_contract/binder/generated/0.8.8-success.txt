@@ -2,7 +2,7 @@
 
 Definitions (4):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
-- Def: #2 ["Internal" @ input.sol:2:10] (udvt, type: uint256)
+- Def: #2 ["Internal" @ input.sol:2:10] (udvt, type: meta-type)
 - Def: #3 ["test" @ input.sol:4:14] (function, type: function () returns uint256)
 - Def: #4 ["inter" @ input.sol:5:18] (variable, type: Internal)
 
@@ -11,9 +11,9 @@ Definitions (4):
 References (6):
 - Ref: ["Internal" @ input.sol:5:9] -> #2
 - Ref: ["Internal" @ input.sol:5:26] -> #2
-- Ref: ["wrap" @ input.sol:5:35] -> unresolved
+- Ref: ["wrap" @ input.sol:5:35] -> built-in
 - Ref: ["Internal" @ input.sol:6:16] -> #2
-- Ref: ["unwrap" @ input.sol:6:25] -> unresolved
+- Ref: ["unwrap" @ input.sol:6:25] -> built-in
 - Ref: ["inter" @ input.sol:6:32] -> #4
 
 ------------------------------------------------------------------------
@@ -43,12 +43,12 @@ Bindings:
    │                              │      │   
    │                              ╰────────── ref: 2
    │                                     │   
-   │                                     ╰─── unresolved
+   │                                     ╰─── built-in
  6 │         return Internal.unwrap(inter);
    │                ────┬─── ───┬── ──┬──  
    │                    ╰────────────────── ref: 2
    │                            │     │    
-   │                            ╰────────── unresolved
+   │                            ╰────────── built-in
    │                                  │    
    │                                  ╰──── ref: 4
 ───╯

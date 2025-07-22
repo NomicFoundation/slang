@@ -206,6 +206,11 @@ impl Pass {
                             Resolution::Unresolved
                         }
                     }
+                    Definition::UserDefinedValueType(_) => match symbol {
+                        "wrap" => Resolution::BuiltIn(BuiltIn::Wrap(*node_id)),
+                        "unwrap" => Resolution::BuiltIn(BuiltIn::Unwrap(*node_id)),
+                        _ => Resolution::Unresolved,
+                    },
                     _ => Resolution::Unresolved,
                 }
             }
@@ -437,7 +442,9 @@ impl Pass {
                 | BuiltIn::ErrorType
                 | BuiltIn::EventType
                 | BuiltIn::ModifierUnderscore
-                | BuiltIn::Tx => Typing::BuiltIn(*built_in),
+                | BuiltIn::Tx
+                | BuiltIn::Wrap(_)
+                | BuiltIn::Unwrap(_) => Typing::BuiltIn(*built_in),
                 BuiltIn::YulAddress
                 | BuiltIn::YulLength
                 | BuiltIn::YulOffset
@@ -976,6 +983,30 @@ impl Visitor for Pass {
                             _ => Typing::Resolved(self.types.void()),
                         },
                         BuiltIn::ArrayPop => Typing::Resolved(self.types.void()),
+                        BuiltIn::Unwrap(definition_id) => {
+                            let Some(Definition::UserDefinedValueType(udvt)) =
+                                self.binder.find_definition_by_id(definition_id)
+                            else {
+                                unreachable!("definition bound to unwrap built-in is not a UDVT");
+                            };
+                            if let Some(target_type_id) = udvt.target_type_id {
+                                Typing::Resolved(target_type_id)
+                            } else {
+                                Typing::Unresolved
+                            }
+                        }
+                        BuiltIn::Wrap(definition_id) => {
+                            let Some(Definition::UserDefinedValueType(_)) =
+                                self.binder.find_definition_by_id(definition_id)
+                            else {
+                                unreachable!("definition bound to wrap built-in is not a UDVT");
+                            };
+                            Typing::Resolved(
+                                self.types
+                                    .find_type(&Type::UserDefinedValue { definition_id })
+                                    .unwrap(),
+                            )
+                        }
                         _ => {
                             // none of these built-ins can be called
                             Typing::Unresolved

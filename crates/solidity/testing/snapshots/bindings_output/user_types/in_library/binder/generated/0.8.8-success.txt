@@ -4,7 +4,7 @@ Definitions (5):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
 - Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns int32)
 - Def: #3 ["MyLib" @ input.sol:7:9] (library)
-- Def: #4 ["LibType" @ input.sol:8:10] (udvt, type: int32)
+- Def: #4 ["LibType" @ input.sol:8:10] (udvt, type: meta-type)
 - Def: #5 ["create" @ input.sol:10:14] (function, type: function () returns LibType)
 
 ------------------------------------------------------------------------
@@ -12,12 +12,12 @@ Definitions (5):
 References (8):
 - Ref: ["MyLib" @ input.sol:3:16] -> #3
 - Ref: ["LibType" @ input.sol:3:22] -> #4
-- Ref: ["unwrap" @ input.sol:3:30] -> unresolved
+- Ref: ["unwrap" @ input.sol:3:30] -> built-in
 - Ref: ["MyLib" @ input.sol:3:37] -> #3
 - Ref: ["create" @ input.sol:3:43] -> #5
 - Ref: ["LibType" @ input.sol:10:39] -> #4
 - Ref: ["LibType" @ input.sol:11:16] -> #4
-- Ref: ["wrap" @ input.sol:11:24] -> unresolved
+- Ref: ["wrap" @ input.sol:11:24] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ Bindings:
     │                         │       │     │      │    
     │                         ╰───────────────────────── ref: 4
     │                                 │     │      │    
-    │                                 ╰───────────────── unresolved
+    │                                 ╰───────────────── built-in
     │                                       │      │    
     │                                       ╰─────────── ref: 3
     │                                              │    
@@ -62,5 +62,5 @@ Bindings:
     │                ───┬─── ──┬─  
     │                   ╰────────── ref: 4
     │                          │   
-    │                          ╰─── unresolved
+    │                          ╰─── built-in
 ────╯

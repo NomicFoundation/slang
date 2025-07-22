@@ -122,6 +122,7 @@ pub struct TypeParameterDefinition {
 pub struct UserDefinedValueTypeDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
+    pub target_type_id: Option<TypeId>,
 }
 
 #[derive(Debug)]
@@ -392,6 +393,7 @@ impl Definition {
         Self::UserDefinedValueType(UserDefinedValueTypeDefinition {
             node_id,
             identifier: Rc::clone(identifier),
+            target_type_id: None,
         })
     }
 
@@ -446,11 +448,13 @@ pub enum BuiltIn {
     Tx,
     TxGasPrice,
     TxOrigin,
+    Unwrap(NodeId),
     YulAddress,
     YulOffset,
     YulLength,
     YulSelector,
     YulSlot,
+    Wrap(NodeId),
     // TODO: complete this list
 }
 

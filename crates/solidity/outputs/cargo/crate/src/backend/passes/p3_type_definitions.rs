@@ -699,8 +699,14 @@ impl Visitor for Pass {
         &mut self,
         node: &input_ir::UserDefinedValueTypeDefinition,
     ) {
-        let type_id = self.type_of_elementary_type(&node.value_type, None);
-        self.binder.set_node_type(node.node_id, type_id);
+        self.binder.mark_meta_type_node(node.node_id);
+
+        let target_type_id = self.type_of_elementary_type(&node.value_type, None);
+        let Definition::UserDefinedValueType(udvt) = self.binder.get_definition_mut(node.node_id)
+        else {
+            unreachable!("definition in UDVT node is not a UDVT");
+        };
+        udvt.target_type_id = target_type_id;
     }
 
     fn enter_using_directive(&mut self, node: &input_ir::UsingDirective) -> bool {

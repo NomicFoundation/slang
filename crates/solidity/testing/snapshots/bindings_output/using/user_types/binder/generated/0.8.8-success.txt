@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (11):
-- Def: #1 ["ShortString" @ input.sol:1:6] (udvt, type: bytes32)
+- Def: #1 ["ShortString" @ input.sol:1:6] (udvt, type: meta-type)
 - Def: #2 ["Test" @ input.sol:3:10] (contract)
 - Def: #3 ["test" @ input.sol:7:14] (function, type: function (bytes32) returns void)
 - Def: #4 ["data" @ input.sol:7:27] (parameter, type: bytes32)
@@ -21,13 +21,13 @@ References (13):
 - Ref: ["BytesLib" @ input.sol:5:11] -> #9
 - Ref: ["ShortString" @ input.sol:8:9] -> #1
 - Ref: ["ShortString" @ input.sol:10:9] -> #1
-- Ref: ["wrap" @ input.sol:10:21] -> unresolved
+- Ref: ["wrap" @ input.sol:10:21] -> built-in
 - Ref: ["data" @ input.sol:10:26] -> #4
-- Ref: ["nop" @ input.sol:10:32] -> unresolved
+- Ref: ["nop" @ input.sol:10:32] -> #7
 - Ref: ["ShortString" @ input.sol:11:9] -> #1
-- Ref: ["unwrap" @ input.sol:11:21] -> unresolved
+- Ref: ["unwrap" @ input.sol:11:21] -> built-in
 - Ref: ["s" @ input.sol:11:28] -> #5
-- Ref: ["pon" @ input.sol:11:31] -> unresolved
+- Ref: ["pon" @ input.sol:11:31] -> #10
 - Ref: ["ShortString" @ input.sol:16:18] -> #1
 
 ------------------------------------------------------------------------
@@ -70,20 +70,20 @@ Bindings:
     │         ─────┬───── ──┬─ ──┬─  ─┬─  
     │              ╰────────────────────── ref: 1
     │                       │    │    │   
-    │                       ╰───────────── unresolved
+    │                       ╰───────────── built-in
     │                            │    │   
     │                            ╰──────── ref: 4
     │                                 │   
-    │                                 ╰─── unresolved
+    │                                 ╰─── ref: 7
  11 │         ShortString.unwrap(s).pon();
     │         ─────┬───── ───┬── ┬  ─┬─  
     │              ╰───────────────────── ref: 1
     │                        │   │   │   
-    │                        ╰─────────── unresolved
+    │                        ╰─────────── built-in
     │                            │   │   
     │                            ╰─────── ref: 5
     │                                │   
-    │                                ╰─── unresolved
+    │                                ╰─── ref: 10
     │ 
  15 │ library ShortStringLib {
     │         ───────┬──────  

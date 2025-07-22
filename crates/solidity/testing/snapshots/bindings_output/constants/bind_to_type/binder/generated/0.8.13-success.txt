@@ -1,7 +1,7 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Definitions (8):
-- Def: #1 ["MemoryPointer" @ input.sol:4:6] (udvt, type: uint256)
+- Def: #1 ["MemoryPointer" @ input.sol:4:6] (udvt, type: meta-type)
 - Def: #2 ["FreeMemoryPPtr" @ input.sol:8:24] (constant, type: MemoryPointer)
 - Def: #3 ["getFreeMemoryPointer" @ input.sol:10:10] (function, type: function () returns MemoryPointer)
 - Def: #4 ["mPtr" @ input.sol:10:61] (parameter, type: MemoryPointer)
@@ -17,7 +17,7 @@ References (11):
 - Ref: ["MemoryPointer" @ input.sol:6:25] -> #1
 - Ref: ["MemoryPointer" @ input.sol:8:1] -> #1
 - Ref: ["MemoryPointer" @ input.sol:8:41] -> #1
-- Ref: ["wrap" @ input.sol:8:55] -> unresolved
+- Ref: ["wrap" @ input.sol:8:55] -> built-in
 - Ref: ["MemoryPointer" @ input.sol:10:47] -> #1
 - Ref: ["mPtr" @ input.sol:12:5] -> #4
 - Ref: ["FreeMemoryPPtr" @ input.sol:12:12] -> #2
@@ -52,7 +52,7 @@ Bindings:
     │                                               │         │   
     │                                               ╰───────────── ref: 1
     │                                                         │   
-    │                                                         ╰─── unresolved
+    │                                                         ╰─── built-in
     │ 
  10 │ function getFreeMemoryPointer() pure returns (MemoryPointer mPtr) {
     │          ──────────┬─────────                 ──────┬────── ──┬─  
