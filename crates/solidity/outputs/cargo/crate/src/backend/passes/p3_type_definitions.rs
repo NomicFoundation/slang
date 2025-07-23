@@ -493,13 +493,7 @@ impl Visitor for Pass {
     fn enter_contract_definition(&mut self, node: &input_ir::ContractDefinition) -> bool {
         let resolved_bases = self.resolve_inheritance_types(&node.inheritance_types);
 
-        let definition = self
-            .binder
-            .find_definition_by_id_mut(node.node_id)
-            .unwrap_or_else(|| {
-                unreachable!("{node_id:?} should be a definition", node_id = node.node_id)
-            });
-        let Definition::Contract(definition) = definition else {
+        let Definition::Contract(definition) = self.binder.get_definition_mut(node.node_id) else {
             unreachable!("{node_id:?} should be a contract", node_id = node.node_id);
         };
         definition.bases = Some(resolved_bases);
@@ -521,13 +515,7 @@ impl Visitor for Pass {
             resolved_bases = self.resolve_inheritance_types(&inheritance.types);
         }
 
-        let definition = self
-            .binder
-            .find_definition_by_id_mut(node.node_id)
-            .unwrap_or_else(|| {
-                unreachable!("{node_id:?} should be a definition", node_id = node.node_id)
-            });
-        let Definition::Interface(definition) = definition else {
+        let Definition::Interface(definition) = self.binder.get_definition_mut(node.node_id) else {
             unreachable!("{node_id:?} should be an interface", node_id = node.node_id);
         };
         definition.bases = Some(resolved_bases);

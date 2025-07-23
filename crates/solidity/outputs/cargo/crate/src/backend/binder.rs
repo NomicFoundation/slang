@@ -1077,8 +1077,8 @@ impl Binder {
         self.definitions.get(&node_id)
     }
 
-    pub fn find_definition_by_id_mut(&mut self, node_id: NodeId) -> Option<&mut Definition> {
-        self.definitions.get_mut(&node_id)
+    pub(crate) fn get_definition_mut(&mut self, node_id: NodeId) -> &mut Definition {
+        self.definitions.get_mut(&node_id).unwrap()
     }
 
     pub fn find_definition_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Definition> {
