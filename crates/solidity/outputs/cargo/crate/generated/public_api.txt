@@ -87,11 +87,11 @@ pub fn slang_solidity::backend::binder::Typing::clone(&self) -> slang_solidity::
 impl core::fmt::Debug for slang_solidity::backend::binder::Typing
 pub fn slang_solidity::backend::binder::Typing::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::binder::Binder
-pub slang_solidity::backend::binder::Binder::linearisations: std::collections::hash::map::HashMap<metaslang_cst::nodes::NodeId, alloc::vec::Vec<metaslang_cst::nodes::NodeId>>
 impl slang_solidity::backend::binder::Binder
 pub fn slang_solidity::backend::binder::Binder::find_definition_by_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Definition>
 pub fn slang_solidity::backend::binder::Binder::find_definition_by_identifier_node_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Definition>
 pub fn slang_solidity::backend::binder::Binder::find_reference_by_identifier_node_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Reference>
+pub fn slang_solidity::backend::binder::Binder::linearisations(&self) -> &std::collections::hash::map::HashMap<metaslang_cst::nodes::NodeId, alloc::vec::Vec<metaslang_cst::nodes::NodeId>>
 pub fn slang_solidity::backend::binder::Binder::node_typing(&self, node_id: metaslang_cst::nodes::NodeId) -> slang_solidity::backend::binder::Typing
 pub struct slang_solidity::backend::binder::ConstantDefinition
 pub slang_solidity::backend::binder::ConstantDefinition::identifier: alloc::rc::Rc<slang_solidity::cst::TerminalNode>

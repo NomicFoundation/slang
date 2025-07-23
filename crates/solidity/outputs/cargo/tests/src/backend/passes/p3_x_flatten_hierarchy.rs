@@ -38,7 +38,7 @@ fn test_backend_pipeline() -> Result<()> {
 
     // Create a map relating each contract with its linearised bases (Vec<String>)
     let mut contract_to_bases = std::collections::HashMap::new();
-    for (key, values) in &data.binder.linearisations {
+    for (key, values) in data.binder.linearisations() {
         let contract_name = data
             .binder
             .find_definition_by_id(*key)

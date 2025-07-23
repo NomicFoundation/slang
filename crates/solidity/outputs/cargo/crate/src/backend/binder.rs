@@ -1009,9 +1009,7 @@ pub struct Binder {
     node_typing: HashMap<NodeId, Typing>,
 
     // linearised bases of each contract or interface
-    // TODO: public for testing purposes. Once the rust API PR is merged,
-    // we can feature-flagged its visibility.
-    pub linearisations: HashMap<NodeId, Vec<NodeId>>,
+    linearisations: HashMap<NodeId, Vec<NodeId>>,
 }
 
 impl Binder {
@@ -1330,5 +1328,10 @@ impl Binder {
             .linearisations
             .insert(object_id, linearised_bases)
             .is_none_or(|_| unreachable!("Trying to linearised twice {object_id}"));
+    }
+
+    #[cfg(feature = "__private_backend_api")]
+    pub fn linearisations(&self) -> &HashMap<NodeId, Vec<NodeId>> {
+        &self.linearisations
     }
 }
