@@ -1,4 +1,3 @@
-use core::panic;
 use std::collections::HashMap;
 use std::rc::Rc;
 
@@ -498,10 +497,10 @@ impl Visitor for Pass {
             .binder
             .find_definition_by_id_mut(node.node_id)
             .unwrap_or_else(|| {
-                panic!("{node_id:?} should be a definition", node_id = node.node_id)
+                unreachable!("{node_id:?} should be a definition", node_id = node.node_id)
             });
         let Definition::Contract(definition) = definition else {
-            panic!("{node_id:?} should be a contract", node_id = node.node_id);
+            unreachable!("{node_id:?} should be a contract", node_id = node.node_id);
         };
         definition.bases = Some(resolved_bases);
 
@@ -526,10 +525,10 @@ impl Visitor for Pass {
             .binder
             .find_definition_by_id_mut(node.node_id)
             .unwrap_or_else(|| {
-                panic!("{node_id:?} should be a definition", node_id = node.node_id)
+                unreachable!("{node_id:?} should be a definition", node_id = node.node_id)
             });
         let Definition::Interface(definition) = definition else {
-            panic!("{node_id:?} should be an interface", node_id = node.node_id);
+            unreachable!("{node_id:?} should be an interface", node_id = node.node_id);
         };
         definition.bases = Some(resolved_bases);
 
