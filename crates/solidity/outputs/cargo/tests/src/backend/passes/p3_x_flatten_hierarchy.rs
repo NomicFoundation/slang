@@ -1,80 +1,30 @@
-use anyhow::{anyhow, Ok, Result};
+use anyhow::{Ok, Result};
 use slang_solidity::backend::passes;
-use slang_solidity::compilation::CompilationUnit;
+use slang_solidity::compilation::{CompilationUnit, InternalCompilationBuilder};
 use slang_solidity::utils::LanguageFacts;
 
-use crate::backend::passes::compilation_builder::{CompilationBuilder, CompilationBuilderConfig};
-
-const D_CONTENTS: &str = r#"
+const CONTENTS: &str = r#"
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.29;
-
-import {A} from "a.sol";
-import {B} from "b.sol";
 
 contract D is A, B {
 }
-"#;
-
-const C_CONTENTS: &str = r#"
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.29;
 
 interface C {
 }
-"#;
-
-const B_CONTENTS: &str = r#"
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.29;
-
-import {C} from "c.sol";
 
 abstract contract B is C {
 }
-"#;
-
-const A_CONTENTS: &str = r#"
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.29;
-
-import {C} from "c.sol";
 
 interface A is C {
 }
 "#;
 
-#[derive(Default)]
-struct Config {}
-
-impl CompilationBuilderConfig for Config {
-    type Error = anyhow::Error;
-
-    fn read_file(&mut self, file_id: &str) -> std::result::Result<Option<String>, Self::Error> {
-        match file_id {
-            "a.sol" => Ok(Some(A_CONTENTS.to_string())),
-            "b.sol" => Ok(Some(B_CONTENTS.to_string())),
-            "c.sol" => Ok(Some(C_CONTENTS.to_string())),
-            "d.sol" => Ok(Some(D_CONTENTS.to_string())),
-            _ => Err(anyhow!("Incorrect file_id: {file_id}")),
-        }
-    }
-
-    fn resolve_import(
-        &mut self,
-        _source_file_id: &str,
-        import_path_cursor: &slang_solidity::cst::Cursor,
-    ) -> std::result::Result<Option<String>, Self::Error> {
-        let import_string = import_path_cursor.node().unparse();
-        let import_string = &import_string[1..import_string.len() - 1];
-        Ok(Some(import_string.to_string()))
-    }
-}
-
 fn build_compilation_unit() -> Result<CompilationUnit> {
-    let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, Config::default())?;
-    builder.add_file("d.sol")?;
-    Ok(builder.build())
+    let mut internal_builder = InternalCompilationBuilder::create(LanguageFacts::LATEST_VERSION)?;
+    _ = internal_builder.add_file("main.sol".into(), CONTENTS);
+    let compilation_unit = internal_builder.build();
+    Ok(compilation_unit)
 }
 
 #[test]
