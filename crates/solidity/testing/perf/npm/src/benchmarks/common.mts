@@ -24,6 +24,20 @@ export class SolidityCompilation {
   }
 }
 
+/* Interfaces for JSON deserealization */
+interface CompilationMetadata {
+  compilerVersion: string;
+  fullyQualifiedName: string;
+}
+
+interface SourceMetadata {
+  content: string;
+}
+interface ContractMetadata {
+  sources: Record<string, SourceMetadata>;
+  compilation: CompilationMetadata;
+}
+
 export class SolidityProject {
   constructor(
     public sources: Map<string, string>,
@@ -31,42 +45,18 @@ export class SolidityProject {
   ) {}
 
   public static build(jsonFile: string): SolidityProject {
-    const json = JSON.parse(fs.readFileSync(jsonFile, "utf8"));
-    let sources = new Map<string, string>();
+    const metadata = JSON.parse(fs.readFileSync(jsonFile, "utf8")) as ContractMetadata;
 
     // NOTE: we should take other information into account too, in particular, the mappings.
     // This was not necessary for all of the projects we consider, but in the future that might be limiting.
-    if (json.sources && typeof json.sources === "object") {
-      for (const [file, data] of Object.entries(json.sources)) {
-        if (typeof data === "object" && typeof (data as { content?: string }).content === "string") {
-          sources.set(file, (data as { content: string }).content);
-        } else {
-          throw new Error("Invalid source in json");
-        }
-      }
-    } else {
-      throw new Error("No sources in json");
-    }
+    let compilation = new SolidityCompilation(
+      metadata.compilation.compilerVersion,
+      metadata.compilation.fullyQualifiedName,
+    );
 
-    let compilation;
-    if (json.compilation && typeof json.compilation === "object") {
-      let compilerVersion;
-      if (json.compilation.compilerVersion && typeof json.compilation.compilerVersion === "string") {
-        compilerVersion = json.compilation.compilerVersion;
-      } else {
-        throw new Error("No proper version in json");
-      }
-
-      let fullyQualifiedName;
-      if (json.compilation.fullyQualifiedName && typeof json.compilation.fullyQualifiedName === "string") {
-        fullyQualifiedName = json.compilation.fullyQualifiedName;
-      } else {
-        throw new Error("No proper fullyQualifiedName in json");
-      }
-
-      compilation = new SolidityCompilation(compilerVersion, fullyQualifiedName);
-    } else {
-      throw new Error("No compilation data in json");
+    let sources = new Map<string, string>();
+    for (const key in metadata.sources) {
+      sources.set(key, metadata.sources[key].content);
     }
 
     return new SolidityProject(sources, compilation);
