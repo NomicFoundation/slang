@@ -19,7 +19,7 @@ pub struct ConstantDefinition {
 pub struct ContractDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
-    pub bases: Option<Vec<Reference>>,
+    pub bases: Option<Vec<NodeId>>,
 }
 
 #[derive(Debug)]
@@ -74,7 +74,7 @@ pub struct ImportedSymbolDefinition {
 pub struct InterfaceDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
-    pub bases: Option<Vec<Reference>>,
+    pub bases: Option<Vec<NodeId>>,
 }
 
 #[derive(Debug)]

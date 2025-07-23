@@ -81,17 +81,7 @@ impl Pass {
                 .as_ref()
                 .unwrap_or_else(|| panic!("Contract {identifier:?} hasn't got the bases resolved"));
 
-            // Resolve parents recursively
-            let bases: Vec<NodeId> = bases
-                .iter()
-                .map(|reference| {
-                    reference
-                        .resolution
-                        .as_definition_id()
-                        .unwrap_or_else(|| panic!("Contract {identifier:?} has a base unresolved"))
-                })
-                .collect();
-            queue.extend(&bases);
+            queue.extend(bases);
 
             // Solidity uses a modified version of the traditional C3 algorithm
             // where the order of parents is reversed, so we provide them in the

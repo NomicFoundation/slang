@@ -146,12 +146,13 @@ impl Pass {
         last_reference
     }
 
-    fn resolve_inheritance_types(&mut self, types: &input_ir::InheritanceTypes) -> Vec<Reference> {
+    fn resolve_inheritance_types(&mut self, types: &input_ir::InheritanceTypes) -> Vec<NodeId> {
         let referenced_types =
             types
                 .iter()
                 .filter_map(|inheritance_type: &Rc<input_ir::InheritanceTypeStruct>| {
                     self.resolve_identifier_path(&inheritance_type.type_name)
+                        .and_then(|reference| reference.resolution.as_definition_id())
                 });
 
         referenced_types.collect()
