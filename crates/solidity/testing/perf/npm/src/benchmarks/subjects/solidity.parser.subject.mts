@@ -1,5 +1,5 @@
 import { parse } from "@solidity-parser/parser";
-import { log, Subject, SolidityProject, Timings } from "../common.mjs";
+import { Subject, SolidityProject, Timings } from "../common.mjs";
 
 export class AntlrSubject implements Subject {
   public name = "solidity parser";
@@ -10,8 +10,6 @@ export class AntlrSubject implements Subject {
     let toProcess = new Array<string>(file);
     let processed = new Set<string>();
 
-    log("Start");
-
     while (toProcess.length > 0) {
       const filePath = toProcess.pop()!;
 
@@ -19,7 +17,6 @@ export class AntlrSubject implements Subject {
         continue;
       }
 
-      log(`To process ${filePath}`);
       processed.add(filePath);
 
       const content = project.fileContents(filePath);

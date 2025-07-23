@@ -1,31 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 
-export const hasGC = typeof global.gc == "function";
-
-export async function runGC() {
-  if (hasGC) {
-    global.gc!();
-    await sleep(100);
-  }
-}
-
 export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function round2(n: number): number {
   return Math.round(n * 100) / 100;
-}
-
-export const verboseOption = "verbose";
-
-const verbose = process.argv.includes(verboseOption);
-
-export function log(what: string) {
-  if (verbose) {
-    console.log(what);
-  }
 }
 
 export class SolidityCompilation {

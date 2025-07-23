@@ -1,4 +1,4 @@
-import { Subject, round2, Timings, SolidityProject, verboseOption } from "./common.mjs";
+import { Subject, round2, Timings, SolidityProject } from "./common.mjs";
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
 import { AntlrSubject, SlangSubject, SolcSubject } from "./subjects/subjects.mjs";
@@ -60,7 +60,6 @@ const optionDefinitions = [
   { name: subjectOption, type: (input: string) => subjects.get(input) },
   { name: coldOption, type: Number, defaultValue: 2 },
   { name: hotOption, type: Number, defaultValue: 5 },
-  { name: verboseOption, type: Boolean, defaultValue: false },
 ];
 
 const options = commandLineArgs(optionDefinitions);
