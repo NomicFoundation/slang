@@ -527,7 +527,7 @@ impl From<Vec<NodeId>> for Resolution {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Reference {
     pub identifier: Rc<TerminalNode>,
     pub resolution: Resolution,

@@ -100,12 +100,12 @@ impl Pass {
     fn resolve_identifier_path(
         &mut self,
         identifier_path: &input_ir::IdentifierPath,
-    ) -> Option<Reference> {
+    ) -> Resolution {
         // start resolution from the current contract (or file if there's no
         // contract scope open)
         let mut scope_id = Some(self.current_contract_or_file_scope_id());
         let mut use_lexical_resolution = true;
-        let mut last_reference: Option<Reference> = None;
+        let mut last_resolution: Resolution = Resolution::Unresolved;
 
         for identifier in identifier_path {
             let symbol = identifier.unparse();
@@ -120,9 +120,8 @@ impl Pass {
             };
             let definition_id = resolution.as_definition_id();
 
-            let reference = Reference::new(Rc::clone(identifier), resolution);
-            self.binder.insert_reference(reference.clone());
-            last_reference = Some(reference);
+            let reference = Reference::new(Rc::clone(identifier), resolution.clone());
+            self.binder.insert_reference(reference);
 
             // recurse into file scopes pointed by the resolved definition
             // to resolve the next identifier in the path
@@ -142,17 +141,27 @@ impl Pass {
                     }
                     _ => None,
                 });
+
+            last_resolution = resolution;
         }
-        last_reference
+        last_resolution
     }
 
     fn resolve_inheritance_types(&mut self, types: &input_ir::InheritanceTypes) -> Vec<NodeId> {
         let referenced_types =
             types
                 .iter()
-                .filter_map(|inheritance_type: &Rc<input_ir::InheritanceTypeStruct>| {
-                    self.resolve_identifier_path(&inheritance_type.type_name)
-                        .and_then(|reference| reference.resolution.as_definition_id())
+                .map(|inheritance_type: &Rc<input_ir::InheritanceTypeStruct>| {
+                    let Resolution::Definition(node_id) =
+                        self.resolve_identifier_path(&inheritance_type.type_name)
+                    else {
+                        // TODO: return the error
+                        panic!(
+                            "Can't solve {type_name:?}",
+                            type_name = inheritance_type.type_name
+                        )
+                    };
+                    node_id
                 });
 
         referenced_types.collect()
