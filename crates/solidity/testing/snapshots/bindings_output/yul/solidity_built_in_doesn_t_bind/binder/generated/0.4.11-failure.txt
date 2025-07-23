@@ -7,7 +7,7 @@ Definitions (2):
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["ripemd160" @ input.sol:3:9] -> unresolved
+- Ref: ["ripemd160" @ input.sol:3:9] -> built-in
 - Ref: ["ripemd160" @ input.sol:5:13] -> unresolved
 
 ------------------------------------------------------------------------
@@ -27,7 +27,7 @@ Bindings:
    │                ╰─── name: 2
  3 │         ripemd160(); // should bind correctly (Solidity context)
    │         ────┬────  
-   │             ╰────── unresolved
+   │             ╰────── built-in
    │ 
  5 │             ripemd160() // should not bind (Yul context)
    │             ────┬────  

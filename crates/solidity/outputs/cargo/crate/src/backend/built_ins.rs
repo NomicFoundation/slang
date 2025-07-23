@@ -6,15 +6,21 @@ use crate::cst::NodeId;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum BuiltIn {
+    Addmod,
     ArrayPop,
     ArrayPush(TypeId),
     Assert,
     Balance,
+    Blobhash,
     Blockhash,
     CallOptionValue,
     CallOptionGas,
+    Ecrecover,
     ErrorOrPanic,
+    Gasleft,
+    Keccak256,
     Length,
+    Log(u8),
     ModifierUnderscore,
     Msg,
     MsgData,
@@ -22,8 +28,15 @@ pub enum BuiltIn {
     MsgSender,
     MsgSig,
     MsgValue,
+    Mulmod,
     Require,
+    Revert,
+    Ripemd160,
     Selector,
+    Selfdestruct,
+    Sha256,
+    Sha3,
+    Suicide,
     Tx,
     TxGasPrice,
     TxOrigin,
@@ -42,7 +55,9 @@ pub enum BuiltIn {
 const VERSION_0_4_12: Version = Version::new(0, 4, 12);
 const VERSION_0_4_22: Version = Version::new(0, 4, 22);
 const VERSION_0_5_0: Version = Version::new(0, 5, 0);
+const VERSION_0_8_0: Version = Version::new(0, 8, 0);
 const VERSION_0_8_8: Version = Version::new(0, 8, 8);
+const VERSION_0_8_24: Version = Version::new(0, 8, 24);
 
 pub(crate) struct BuiltInsResolver<'a> {
     language_version: Version,
@@ -65,7 +80,15 @@ impl<'a> BuiltInsResolver<'a> {
 
     pub(crate) fn lookup_global(&self, symbol: &str) -> Option<BuiltIn> {
         match symbol {
+            "addmod" => Some(BuiltIn::Addmod),
             "assert" => Some(BuiltIn::Assert),
+            "blobhash" => {
+                if self.language_version >= VERSION_0_8_24 {
+                    Some(BuiltIn::Blobhash)
+                } else {
+                    None
+                }
+            }
             "blockhash" => {
                 if self.language_version >= VERSION_0_4_22 {
                     Some(BuiltIn::Blockhash)
@@ -73,8 +96,38 @@ impl<'a> BuiltInsResolver<'a> {
                     None
                 }
             }
+            "ecrecover" => Some(BuiltIn::Ecrecover),
+            "gasleft" => Some(BuiltIn::Gasleft),
+            "keccak256" => Some(BuiltIn::Keccak256),
+            "log0" | "log1" | "log2" | "log3" | "log4" => {
+                if self.language_version < VERSION_0_8_0 {
+                    let arity = symbol.as_bytes()[3] - b'0';
+                    Some(BuiltIn::Log(arity))
+                } else {
+                    None
+                }
+            }
             "msg" => Some(BuiltIn::Msg),
+            "mulmod" => Some(BuiltIn::Mulmod),
             "require" => Some(BuiltIn::Require),
+            "revert" => Some(BuiltIn::Revert),
+            "ripemd160" => Some(BuiltIn::Ripemd160),
+            "selfdestruct" => Some(BuiltIn::Selfdestruct),
+            "sha256" => Some(BuiltIn::Sha256),
+            "sha3" => {
+                if self.language_version < VERSION_0_5_0 {
+                    Some(BuiltIn::Sha3)
+                } else {
+                    None
+                }
+            }
+            "suicide" => {
+                if self.language_version < VERSION_0_5_0 {
+                    Some(BuiltIn::Suicide)
+                } else {
+                    None
+                }
+            }
             "tx" => Some(BuiltIn::Tx),
             // TODO: add the rest of the built-ins
             _ => None,
@@ -245,13 +298,26 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::TxOrigin => Typing::Resolved(self.types.address()),
 
             // built-in functions
-            BuiltIn::ArrayPop
+            BuiltIn::Addmod
+            | BuiltIn::ArrayPop
             | BuiltIn::ArrayPush(_)
             | BuiltIn::Assert
+            | BuiltIn::Blobhash
             | BuiltIn::Blockhash
+            | BuiltIn::Ecrecover
+            | BuiltIn::Gasleft
+            | BuiltIn::Keccak256
+            | BuiltIn::Log(_)
             | BuiltIn::ModifierUnderscore
+            | BuiltIn::Mulmod
             | BuiltIn::Msg
             | BuiltIn::Require
+            | BuiltIn::Revert
+            | BuiltIn::Ripemd160
+            | BuiltIn::Selfdestruct
+            | BuiltIn::Sha256
+            | BuiltIn::Sha3
+            | BuiltIn::Suicide
             | BuiltIn::Tx
             | BuiltIn::Wrap(_)
             | BuiltIn::Unwrap(_) => Typing::BuiltIn(*built_in),
@@ -267,6 +333,7 @@ impl<'a> BuiltInsResolver<'a> {
         argument_typings: &[Typing],
     ) -> Typing {
         match built_in {
+            BuiltIn::Addmod => Typing::Resolved(self.types.uint256()),
             BuiltIn::ArrayPush(type_id) => {
                 if argument_typings.is_empty() {
                     Typing::Resolved(*type_id)
@@ -275,8 +342,21 @@ impl<'a> BuiltInsResolver<'a> {
                 }
             }
             BuiltIn::ArrayPop => Typing::Resolved(self.types.void()),
-            BuiltIn::Assert | BuiltIn::Require => Typing::Resolved(self.types.void()),
+            BuiltIn::Assert => Typing::Resolved(self.types.void()),
+            BuiltIn::Blobhash => Typing::Resolved(self.types.bytes32()),
             BuiltIn::Blockhash => Typing::Resolved(self.types.bytes32()),
+            BuiltIn::Ecrecover => Typing::Resolved(self.types.address()),
+            BuiltIn::Gasleft => Typing::Resolved(self.types.uint256()),
+            BuiltIn::Keccak256 => Typing::Resolved(self.types.bytes32()),
+            BuiltIn::Log(_) => Typing::Resolved(self.types.void()),
+            BuiltIn::Mulmod => Typing::Resolved(self.types.uint256()),
+            BuiltIn::Require => Typing::Resolved(self.types.void()),
+            BuiltIn::Revert => Typing::Resolved(self.types.void()),
+            BuiltIn::Ripemd160 => Typing::Resolved(self.types.bytes20()),
+            BuiltIn::Selfdestruct => Typing::Resolved(self.types.void()),
+            BuiltIn::Sha256 => Typing::Resolved(self.types.bytes32()),
+            BuiltIn::Sha3 => Typing::Resolved(self.types.bytes32()),
+            BuiltIn::Suicide => Typing::Resolved(self.types.void()),
             BuiltIn::Unwrap(definition_id) => {
                 let Some(Definition::UserDefinedValueType(udvt)) =
                     self.binder.find_definition_by_id(*definition_id)

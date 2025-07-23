@@ -29,13 +29,12 @@ Definitions (25):
 
 ------------------------------------------------------------------------
 
-References (37):
+References (36):
 - Ref: ["require" @ input.sol:3:9] -> built-in
-- Ref: ["revert" @ input.sol:7:9] -> built-in
 - Ref: ["assert" @ input.sol:11:9] -> built-in
 - Ref: ["addmod" @ input.sol:17:19] -> built-in
-- Ref: ["blockhash" @ input.sol:18:22] -> unresolved
-- Ref: ["blobhash" @ input.sol:19:22] -> unresolved
+- Ref: ["blockhash" @ input.sol:18:22] -> built-in
+- Ref: ["blobhash" @ input.sol:19:22] -> built-in
 - Ref: ["ecrecover" @ input.sol:20:22] -> built-in
 - Ref: ["v2" @ input.sol:20:32] -> #8
 - Ref: ["v2" @ input.sol:20:39] -> #8
@@ -90,9 +89,6 @@ Bindings:
   6 │     function testRevert() public {
     │              ─────┬────  
     │                   ╰────── name: 3
-  7 │         revert("testing revert");
-    │         ───┬──  
-    │            ╰──── built-in
     │ 
  10 │     function testAssert() public {
     │              ─────┬────  
@@ -117,12 +113,12 @@ Bindings:
     │                 ─┬   ────┬────  
     │                  ╰────────────── name: 8
     │                          │      
-    │                          ╰────── unresolved
+    │                          ╰────── built-in
  19 │         bytes32 v3 = blobhash(2);
     │                 ─┬   ────┬───  
     │                  ╰───────────── name: 9
     │                          │     
-    │                          ╰───── unresolved
+    │                          ╰───── built-in
  20 │         address v4 = ecrecover(v2, 1, v2, v2);
     │                 ─┬   ────┬──── ─┬     ─┬  ─┬  
     │                  ╰──────────────────────────── name: 10

@@ -32,22 +32,22 @@ Definitions (25):
 References (36):
 - Ref: ["require" @ input.sol:3:9] -> built-in
 - Ref: ["assert" @ input.sol:11:9] -> built-in
-- Ref: ["addmod" @ input.sol:17:19] -> unresolved
+- Ref: ["addmod" @ input.sol:17:19] -> built-in
 - Ref: ["blockhash" @ input.sol:18:22] -> built-in
 - Ref: ["blobhash" @ input.sol:19:22] -> unresolved
-- Ref: ["ecrecover" @ input.sol:20:22] -> unresolved
+- Ref: ["ecrecover" @ input.sol:20:22] -> built-in
 - Ref: ["v2" @ input.sol:20:32] -> #8
 - Ref: ["v2" @ input.sol:20:39] -> #8
 - Ref: ["v2" @ input.sol:20:43] -> #8
-- Ref: ["gasleft" @ input.sol:21:22] -> unresolved
-- Ref: ["keccak256" @ input.sol:22:22] -> unresolved
+- Ref: ["gasleft" @ input.sol:21:22] -> built-in
+- Ref: ["keccak256" @ input.sol:22:22] -> built-in
 - Ref: ["x1" @ input.sol:22:32] -> #6
-- Ref: ["mulmod" @ input.sol:23:19] -> unresolved
-- Ref: ["ripemd160" @ input.sol:24:22] -> unresolved
+- Ref: ["mulmod" @ input.sol:23:19] -> built-in
+- Ref: ["ripemd160" @ input.sol:24:22] -> built-in
 - Ref: ["x1" @ input.sol:24:32] -> #6
-- Ref: ["sha256" @ input.sol:25:22] -> unresolved
+- Ref: ["sha256" @ input.sol:25:22] -> built-in
 - Ref: ["x1" @ input.sol:25:29] -> #6
-- Ref: ["selfdestruct" @ input.sol:29:9] -> unresolved
+- Ref: ["selfdestruct" @ input.sol:29:9] -> built-in
 - Ref: ["abi" @ input.sol:34:19] -> unresolved
 - Ref: ["decode" @ input.sol:34:23] -> unresolved
 - Ref: ["x1" @ input.sol:34:30] -> #18
@@ -108,7 +108,7 @@ Bindings:
     │              ─┬   ───┬──  
     │               ╰─────────── name: 7
     │                      │    
-    │                      ╰──── unresolved
+    │                      ╰──── built-in
  18 │         bytes32 v2 = blockhash(1);
     │                 ─┬   ────┬────  
     │                  ╰────────────── name: 8
@@ -123,7 +123,7 @@ Bindings:
     │                 ─┬   ────┬──── ─┬     ─┬  ─┬  
     │                  ╰──────────────────────────── name: 10
     │                          │      │      │   │  
-    │                          ╰──────────────────── unresolved
+    │                          ╰──────────────────── built-in
     │                                 │      │   │  
     │                                 ╰───────────── ref: 8
     │                                        │   │  
@@ -134,31 +134,31 @@ Bindings:
     │                 ─┬   ───┬───  
     │                  ╰──────────── name: 11
     │                         │     
-    │                         ╰───── unresolved
+    │                         ╰───── built-in
  22 │         bytes32 v6 = keccak256(x1);
     │                 ─┬   ────┬──── ─┬  
     │                  ╰───────────────── name: 12
     │                          │      │  
-    │                          ╰───────── unresolved
+    │                          ╰───────── built-in
     │                                 │  
     │                                 ╰── ref: 6
  23 │         uint v7 = mulmod(1, 2, 3);
     │              ─┬   ───┬──  
     │               ╰─────────── name: 13
     │                      │    
-    │                      ╰──── unresolved
+    │                      ╰──── built-in
  24 │         bytes20 v8 = ripemd160(x1);
     │                 ─┬   ────┬──── ─┬  
     │                  ╰───────────────── name: 14
     │                          │      │  
-    │                          ╰───────── unresolved
+    │                          ╰───────── built-in
     │                                 │  
     │                                 ╰── ref: 6
  25 │         bytes32 v9 = sha256(x1);
     │                 ─┬   ───┬── ─┬  
     │                  ╰────────────── name: 15
     │                         │    │  
-    │                         ╰─────── unresolved
+    │                         ╰─────── built-in
     │                              │  
     │                              ╰── ref: 6
     │ 
@@ -167,7 +167,7 @@ Bindings:
     │                      ╰───────── name: 16
  29 │         selfdestruct(address(0x0));
     │         ──────┬─────  
-    │               ╰─────── unresolved
+    │               ╰─────── built-in
     │ 
  32 │     function testAbiFunctions() public {
     │              ────────┬───────  

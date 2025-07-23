@@ -12,9 +12,9 @@ Definitions (6):
 
 References (5):
 - Ref: ["Utils" @ input.sol:2:11] -> #4
-- Ref: ["keccak256" @ input.sol:4:9] -> unresolved
+- Ref: ["keccak256" @ input.sol:4:9] -> built-in
 - Ref: ["x" @ input.sol:4:19] -> #3
-- Ref: ["post" @ input.sol:4:22] -> unresolved
+- Ref: ["post" @ input.sol:4:22] -> #5
 - Ref: ["x" @ input.sol:10:16] -> #6
 
 ------------------------------------------------------------------------
@@ -39,11 +39,11 @@ Bindings:
     │                                ╰── name: 3
   4 │         keccak256(x).post();
     │         ────┬──── ┬  ──┬─  
-    │             ╰────────────── unresolved
+    │             ╰────────────── built-in
     │                   │    │   
     │                   ╰──────── ref: 3
     │                        │   
-    │                        ╰─── unresolved
+    │                        ╰─── ref: 5
     │ 
   8 │ library Utils {
     │         ──┬──  
