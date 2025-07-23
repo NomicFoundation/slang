@@ -13,6 +13,7 @@ pub struct TypeRegistry {
     boolean_type_id: TypeId,
     byte_type_id: TypeId,
     bytes_type_id: TypeId,
+    bytes20_type_id: TypeId,
     bytes32_type_id: TypeId,
     bytes4_type_id: TypeId,
     rational_type_id: TypeId,
@@ -34,6 +35,7 @@ impl TypeRegistry {
         let (bytes_type, _) = types.insert_full(Type::Bytes {
             location: DataLocation::Memory,
         });
+        let (bytes20_type, _) = types.insert_full(Type::ByteArray { width: 20 });
         let (bytes32_type, _) = types.insert_full(Type::ByteArray { width: 32 });
         let (bytes4_type, _) = types.insert_full(Type::ByteArray { width: 4 });
         let (rational_type, _) = types.insert_full(Type::Rational);
@@ -53,6 +55,7 @@ impl TypeRegistry {
             boolean_type_id: TypeId(boolean_type),
             byte_type_id: TypeId(byte_type),
             bytes_type_id: TypeId(bytes_type),
+            bytes20_type_id: TypeId(bytes20_type),
             bytes32_type_id: TypeId(bytes32_type),
             bytes4_type_id: TypeId(bytes4_type),
             rational_type_id: TypeId(rational_type),
@@ -131,6 +134,9 @@ impl TypeRegistry {
     }
     pub fn bytes(&self) -> TypeId {
         self.bytes_type_id
+    }
+    pub fn bytes20(&self) -> TypeId {
+        self.bytes20_type_id
     }
     pub fn bytes32(&self) -> TypeId {
         self.bytes32_type_id
