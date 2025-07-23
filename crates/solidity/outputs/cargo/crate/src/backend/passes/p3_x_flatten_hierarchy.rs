@@ -61,7 +61,7 @@ impl Pass {
                 continue;
             }
             let Some(definition) = self.binder.find_definition_by_id(node_id) else {
-                panic!("Unable to resolve the definition for node {node_id:?}");
+                unreachable!("Unable to resolve the definition for node {node_id:?}");
             };
             let (Definition::Contract(ContractDefinition {
                 identifier, bases, ..
@@ -70,11 +70,11 @@ impl Pass {
                 identifier, bases, ..
             })) = definition
             else {
-                panic!("Node {node_id:?} isn't the identifier of a contract");
+                unreachable!("Node {node_id:?} isn't the identifier of a contract");
             };
-            let bases = bases
-                .as_ref()
-                .unwrap_or_else(|| panic!("Contract {identifier:?} hasn't got the bases resolved"));
+            let bases = bases.as_ref().unwrap_or_else(|| {
+                unreachable!("Contract {identifier:?} hasn't got the bases resolved")
+            });
 
             queue.extend(bases);
 
