@@ -13,7 +13,7 @@ async function run(
   dir: string,
   name: string,
   file: string | undefined,
-  runner: Subject,
+  subject: Subject,
   cold: number,
   hot: number,
 ): Promise<Timings> {
@@ -22,14 +22,14 @@ async function run(
 
   // cold runs
   for (let i = 0; i < cold; i++) {
-    await runner.test(project, file);
+    await subject.test(project, file);
   }
 
   const timesMap: Timings = new Map();
 
   // hot runs
   for (let i = 0; i < hot; i++) {
-    let timings = await runner.test(project, file);
+    let timings = await subject.test(project, file);
 
     for (const [component, measured] of timings) {
       const accutime = timesMap.get(component) || 0;
