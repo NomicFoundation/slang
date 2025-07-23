@@ -14,7 +14,6 @@ pub struct Output {
     pub files: HashMap<String, input_ir::SourceUnit>,
     pub binder: Binder,
     pub types: TypeRegistry,
-    pub linearisations: HashMap<NodeId, Vec<NodeId>>,
 }
 
 pub fn run(input: Input) -> Output {
@@ -27,19 +26,16 @@ pub fn run(input: Input) -> Output {
     let compilation_unit = pass.compilation_unit;
     let binder = pass.binder;
     let types = pass.types;
-    let linearisations = pass.linearisations;
     Output {
         compilation_unit,
         files,
         binder,
         types,
-        linearisations,
     }
 }
 
 pub struct Pass {
     pub compilation_unit: CompilationUnit,
-    pub linearisations: HashMap<NodeId, Vec<NodeId>>,
     pub binder: Binder,
     pub types: TypeRegistry,
 }
@@ -48,7 +44,6 @@ impl Pass {
     pub fn new(compilation_unit: CompilationUnit, binder: Binder, types: TypeRegistry) -> Self {
         Self {
             compilation_unit,
-            linearisations: HashMap::new(),
             binder,
             types,
         }
@@ -99,7 +94,7 @@ impl Visitor for Pass {
         let node_id = target.node_id;
         let parents = self.find_contract_bases_recursively(node_id);
         if let Some(linearisation) = c3::linearise(&node_id, &parents) {
-            self.linearisations.insert(node_id, linearisation);
+            self.binder.insert_linearised_bases(node_id, linearisation);
         }
     }
 
@@ -107,7 +102,7 @@ impl Visitor for Pass {
         let node_id = target.node_id;
         let parents = self.find_contract_bases_recursively(node_id);
         if let Some(linearisation) = c3::linearise(&node_id, &parents) {
-            self.linearisations.insert(node_id, linearisation);
+            self.binder.insert_linearised_bases(node_id, linearisation);
         }
     }
 }

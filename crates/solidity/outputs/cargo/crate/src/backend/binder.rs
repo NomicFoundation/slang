@@ -1007,6 +1007,11 @@ pub struct Binder {
     references: HashMap<NodeId, Reference>,
 
     node_typing: HashMap<NodeId, Typing>,
+
+    // linearised bases of each contract or interface
+    // TODO: public for testing purposes. Once the rust API PR is merged,
+    // we can feature-flagged its visibility.
+    pub linearisations: HashMap<NodeId, Vec<NodeId>>,
 }
 
 impl Binder {
@@ -1020,6 +1025,7 @@ impl Binder {
             definitions_by_identifier: HashMap::new(),
             references: HashMap::new(),
             node_typing: HashMap::new(),
+            linearisations: HashMap::new(),
         }
     }
 
@@ -1313,5 +1319,16 @@ impl Binder {
             | Scope::YulBlock(_)
             | Scope::YulFunction(_) => Resolution::Unresolved,
         }
+    }
+
+    pub(crate) fn insert_linearised_bases(
+        &mut self,
+        object_id: NodeId,
+        linearised_bases: Vec<NodeId>,
+    ) {
+        let _ = self
+            .linearisations
+            .insert(object_id, linearised_bases)
+            .is_none_or(|_| unreachable!("Trying to linearised twice {object_id}"));
     }
 }
