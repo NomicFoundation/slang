@@ -151,17 +151,9 @@ impl Pass {
         let referenced_types =
             types
                 .iter()
-                .map(|inheritance_type: &Rc<input_ir::InheritanceTypeStruct>| {
-                    let Resolution::Definition(node_id) =
-                        self.resolve_identifier_path(&inheritance_type.type_name)
-                    else {
-                        // TODO: return the error
-                        panic!(
-                            "Can't solve {type_name:?}",
-                            type_name = inheritance_type.type_name
-                        )
-                    };
-                    node_id
+                .filter_map(|inheritance_type: &Rc<input_ir::InheritanceTypeStruct>| {
+                    self.resolve_identifier_path(&inheritance_type.type_name)
+                        .as_definition_id()
                 });
 
         referenced_types.collect()
