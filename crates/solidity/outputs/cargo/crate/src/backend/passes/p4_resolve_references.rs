@@ -7,11 +7,7 @@ use super::p3_type_definitions::Output as Input;
 use crate::backend::binder::{
     Binder, Definition, Reference, Resolution, Scope, ScopeId, Typing, UsingDirective,
 };
-use crate::backend::built_ins::{
-    lookup_built_in_member_of_meta_type, lookup_built_in_member_of_type,
-    lookup_call_option_built_in, lookup_global_built_in, lookup_member_of_built_in,
-    lookup_yul_built_in_suffix, typing_of_built_in, typing_of_built_in_function_call,
-};
+use crate::backend::built_ins::BuiltInsResolver;
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, Type, TypeId, TypeRegistry};
@@ -67,6 +63,10 @@ impl Pass {
         }
     }
 
+    fn built_ins_resolver(&self) -> BuiltInsResolver<'_> {
+        BuiltInsResolver::new(self.language_version.clone(), &self.binder, &self.types)
+    }
+
     fn visit_file(&mut self, source_unit: &input_ir::SourceUnit) {
         assert!(self.scope_stack.is_empty());
         input_ir::visitor::accept_source_unit(source_unit, self);
@@ -99,7 +99,7 @@ impl Pass {
         // cannot delegate to the binder.
         let resolution = self.binder.resolve_in_scope(scope_id, symbol);
         if resolution == Resolution::Unresolved {
-            lookup_global_built_in(symbol).into()
+            self.built_ins_resolver().lookup_global(symbol).into()
         } else {
             resolution
         }
@@ -197,10 +197,16 @@ impl Pass {
                             Resolution::Unresolved
                         }
                     }
-                    _ => lookup_built_in_member_of_meta_type(definition, symbol).into(),
+                    _ => self
+                        .built_ins_resolver()
+                        .lookup_member_of_meta_type(definition, symbol)
+                        .into(),
                 }
             }
-            Typing::BuiltIn(built_in) => lookup_member_of_built_in(built_in, symbol).into(),
+            Typing::BuiltIn(built_in) => self
+                .built_ins_resolver()
+                .lookup_member_of(built_in, symbol)
+                .into(),
         }
     }
 
@@ -219,7 +225,10 @@ impl Pass {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder.resolve_in_scope_as_namespace(scope_id, symbol)
             }
-            _ => lookup_built_in_member_of_type(type_, symbol, &self.types).into(),
+            _ => self
+                .built_ins_resolver()
+                .lookup_member_of_type(type_, symbol)
+                .into(),
         }
     }
 
@@ -361,7 +370,7 @@ impl Pass {
     fn typing_of_resolution(&self, resolution: &Resolution) -> Typing {
         match resolution {
             Resolution::Unresolved => Typing::Unresolved,
-            Resolution::BuiltIn(built_in) => typing_of_built_in(built_in, &self.types),
+            Resolution::BuiltIn(built_in) => self.built_ins_resolver().typing_of(built_in),
             Resolution::Definition(definition_id) => self.binder.node_typing(*definition_id),
             Resolution::Ambiguous(definitions) => {
                 // TODO: we need some sort of link between the definition_id and the resulting type
@@ -446,11 +455,26 @@ impl Pass {
         }
     }
 
+    // This is a "top-level" resolution method for symbols in s Yul context
+    fn resolve_symbol_in_yul_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
+        // TODO: we need to do hierarchy lookups for contracts and interfaces if
+        // we're in the scope of a contract/interface/library. This we probably
+        // cannot delegate to the binder.
+        let resolution = self.binder.resolve_in_scope(scope_id, symbol);
+        if resolution == Resolution::Unresolved {
+            self.built_ins_resolver().lookup_yul_global(symbol).into()
+        } else {
+            resolution
+        }
+    }
+
     fn resolve_yul_suffix(&self, symbol: &str, parent_resolution: &Resolution) -> Resolution {
         match parent_resolution {
             Resolution::Definition(node_id) => {
                 if let Some(definition) = self.binder.find_definition_by_id(*node_id) {
-                    lookup_yul_built_in_suffix(definition, symbol).into()
+                    self.built_ins_resolver()
+                        .lookup_yul_suffix(definition, symbol)
+                        .into()
                 } else {
                     Resolution::Unresolved
                 }
@@ -878,12 +902,8 @@ impl Visitor for Pass {
             Typing::BuiltIn(built_in) => {
                 let typing = if let Some(positional_argument_typings) = positional_argument_typings
                 {
-                    typing_of_built_in_function_call(
-                        &built_in,
-                        &positional_argument_typings,
-                        &self.types,
-                        &self.binder,
-                    )
+                    self.built_ins_resolver()
+                        .typing_of_function_call(&built_in, &positional_argument_typings)
                 } else {
                     // built-ins cannot be called with named arguments
                     Typing::Unresolved
@@ -912,7 +932,10 @@ impl Visitor for Pass {
     fn enter_call_options_expression(&mut self, node: &input_ir::CallOptionsExpression) -> bool {
         for option in &node.options {
             let identifier = &option.name;
-            let resolution = lookup_call_option_built_in(identifier.unparse().as_str()).into();
+            let resolution = self
+                .built_ins_resolver()
+                .lookup_call_option(identifier.unparse().as_str())
+                .into();
             let reference = Reference::new(Rc::clone(identifier), resolution);
             self.binder.insert_reference(reference);
         }
@@ -939,7 +962,7 @@ impl Visitor for Pass {
         let scope_id = self.current_scope_id();
         let consumed_identifiers = if self.language_version >= VERSION_0_7_0 {
             let identifier = &items[0];
-            let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
+            let resolution = self.resolve_symbol_in_yul_scope(scope_id, &identifier.unparse());
             let reference = Reference::new(Rc::clone(identifier), resolution.clone());
             self.binder.insert_reference(reference);
 
@@ -954,12 +977,12 @@ impl Visitor for Pass {
         } else {
             let identifier = &items[0];
             let identifier_text = identifier.unparse();
-            let resolution = self.resolve_symbol_in_scope(scope_id, &identifier_text);
+            let resolution = self.resolve_symbol_in_yul_scope(scope_id, &identifier_text);
             let resolution = if resolution == Resolution::Unresolved {
                 // if the identifier cannot be resolved as-is, try to extract a
                 // suffix (ie. `_slot`, `_offset`, etc.) and resolve for it
                 if let Some((prefix, suffix)) = identifier_text.rsplit_once('_') {
-                    let resolution = self.resolve_symbol_in_scope(scope_id, prefix);
+                    let resolution = self.resolve_symbol_in_yul_scope(scope_id, prefix);
                     self.resolve_yul_suffix(suffix, &resolution)
                 } else {
                     resolution
@@ -992,7 +1015,7 @@ impl Visitor for Pass {
     ) -> bool {
         let identifier = &node.variable;
         let scope_id = self.current_scope_id();
-        let resolution = self.resolve_symbol_in_scope(scope_id, &identifier.unparse());
+        let resolution = self.resolve_symbol_in_yul_scope(scope_id, &identifier.unparse());
         let reference = Reference::new(Rc::clone(identifier), resolution);
         self.binder.insert_reference(reference);
 

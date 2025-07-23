@@ -222,6 +222,7 @@ pub slang_solidity::backend::built_ins::BuiltIn::ArrayPop
 pub slang_solidity::backend::built_ins::BuiltIn::ArrayPush(slang_solidity::backend::types::TypeId)
 pub slang_solidity::backend::built_ins::BuiltIn::Assert
 pub slang_solidity::backend::built_ins::BuiltIn::Balance
+pub slang_solidity::backend::built_ins::BuiltIn::Blockhash
 pub slang_solidity::backend::built_ins::BuiltIn::CallOptionGas
 pub slang_solidity::backend::built_ins::BuiltIn::CallOptionValue
 pub slang_solidity::backend::built_ins::BuiltIn::ErrorOrPanic
@@ -229,6 +230,7 @@ pub slang_solidity::backend::built_ins::BuiltIn::Length
 pub slang_solidity::backend::built_ins::BuiltIn::ModifierUnderscore
 pub slang_solidity::backend::built_ins::BuiltIn::Msg
 pub slang_solidity::backend::built_ins::BuiltIn::MsgData
+pub slang_solidity::backend::built_ins::BuiltIn::MsgGas
 pub slang_solidity::backend::built_ins::BuiltIn::MsgSender
 pub slang_solidity::backend::built_ins::BuiltIn::MsgSig
 pub slang_solidity::backend::built_ins::BuiltIn::MsgValue
@@ -240,6 +242,7 @@ pub slang_solidity::backend::built_ins::BuiltIn::TxOrigin
 pub slang_solidity::backend::built_ins::BuiltIn::Unwrap(slang_solidity::cst::NodeId)
 pub slang_solidity::backend::built_ins::BuiltIn::Wrap(slang_solidity::cst::NodeId)
 pub slang_solidity::backend::built_ins::BuiltIn::YulAddress
+pub slang_solidity::backend::built_ins::BuiltIn::YulKeccak256
 pub slang_solidity::backend::built_ins::BuiltIn::YulLength
 pub slang_solidity::backend::built_ins::BuiltIn::YulOffset
 pub slang_solidity::backend::built_ins::BuiltIn::YulSelector
@@ -7733,6 +7736,7 @@ pub fn slang_solidity::backend::types::TypeRegistry::address(&self) -> slang_sol
 pub fn slang_solidity::backend::types::TypeRegistry::boolean(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::byte(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::bytes(&self) -> slang_solidity::backend::types::TypeId
+pub fn slang_solidity::backend::types::TypeRegistry::bytes32(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::bytes4(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::rational(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::string(&self) -> slang_solidity::backend::types::TypeId
