@@ -87,9 +87,9 @@ pub fn slang_solidity::backend::binder::Typing::clone(&self) -> slang_solidity::
 impl core::fmt::Debug for slang_solidity::backend::binder::Typing
 pub fn slang_solidity::backend::binder::Typing::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::binder::Binder
+pub slang_solidity::backend::binder::Binder::linearisations: std::collections::hash::map::HashMap<metaslang_cst::nodes::NodeId, alloc::vec::Vec<metaslang_cst::nodes::NodeId>>
 impl slang_solidity::backend::binder::Binder
 pub fn slang_solidity::backend::binder::Binder::find_definition_by_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Definition>
-pub fn slang_solidity::backend::binder::Binder::find_definition_by_id_mut(&mut self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&mut slang_solidity::backend::binder::Definition>
 pub fn slang_solidity::backend::binder::Binder::find_definition_by_identifier_node_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Definition>
 pub fn slang_solidity::backend::binder::Binder::find_reference_by_identifier_node_id(&self, node_id: metaslang_cst::nodes::NodeId) -> core::option::Option<&slang_solidity::backend::binder::Reference>
 pub fn slang_solidity::backend::binder::Binder::node_typing(&self, node_id: metaslang_cst::nodes::NodeId) -> slang_solidity::backend::binder::Typing
@@ -7608,12 +7608,10 @@ pub struct slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output
 pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output::binder: slang_solidity::backend::binder::Binder
 pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output::compilation_unit: slang_solidity::compilation::CompilationUnit
 pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output::files: std::collections::hash::map::HashMap<alloc::string::String, slang_solidity::backend::l2_flat_contracts::SourceUnit>
-pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output::linearisations: std::collections::hash::map::HashMap<slang_solidity::cst::NodeId, alloc::vec::Vec<slang_solidity::cst::NodeId>>
 pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output::types: slang_solidity::backend::types::TypeRegistry
 pub struct slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass
 pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::binder: slang_solidity::backend::binder::Binder
 pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::compilation_unit: slang_solidity::compilation::CompilationUnit
-pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::linearisations: std::collections::hash::map::HashMap<slang_solidity::cst::NodeId, alloc::vec::Vec<slang_solidity::cst::NodeId>>
 pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::types: slang_solidity::backend::types::TypeRegistry
 impl slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass
 pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::new(compilation_unit: slang_solidity::compilation::CompilationUnit, binder: slang_solidity::backend::binder::Binder, types: slang_solidity::backend::types::TypeRegistry) -> Self
