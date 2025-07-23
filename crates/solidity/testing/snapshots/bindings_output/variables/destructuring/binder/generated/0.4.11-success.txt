@@ -15,10 +15,10 @@ Definitions (10):
 ------------------------------------------------------------------------
 
 References (15):
-- Ref: ["assert" @ input.sol:7:9] -> unresolved
+- Ref: ["assert" @ input.sol:7:9] -> built-in
 - Ref: ["x" @ input.sol:7:16] -> #6
 - Ref: ["z" @ input.sol:7:21] -> #8
-- Ref: ["assert" @ input.sol:8:9] -> unresolved
+- Ref: ["assert" @ input.sol:8:9] -> built-in
 - Ref: ["y" @ input.sol:8:16] -> #7
 - Ref: ["w" @ input.sol:8:20] -> #9
 - Ref: ["Choice" @ input.sol:9:12] -> #2
@@ -26,7 +26,7 @@ References (15):
 - Ref: ["Yes" @ input.sol:9:32] -> #3
 - Ref: ["Choice" @ input.sol:9:37] -> #2
 - Ref: ["No" @ input.sol:9:44] -> #4
-- Ref: ["assert" @ input.sol:11:9] -> unresolved
+- Ref: ["assert" @ input.sol:11:9] -> built-in
 - Ref: ["c" @ input.sol:11:16] -> #10
 - Ref: ["Choice" @ input.sol:11:21] -> #2
 - Ref: ["No" @ input.sol:11:28] -> #4
@@ -66,14 +66,14 @@ Bindings:
     │                       ╰── name: 9
   7 │         assert(x == z);
     │         ───┬── ┬    ┬  
-    │            ╰─────────── unresolved
+    │            ╰─────────── built-in
     │                │    │  
     │                ╰─────── ref: 6
     │                     │  
     │                     ╰── ref: 8
   8 │         assert(y < w);
     │         ───┬── ┬   ┬  
-    │            ╰────────── unresolved
+    │            ╰────────── built-in
     │                │   │  
     │                ╰────── ref: 7
     │                    │  
@@ -94,7 +94,7 @@ Bindings:
     │ 
  11 │         assert(c == Choice.No);
     │         ───┬── ┬    ───┬── ─┬  
-    │            ╰─────────────────── unresolved
+    │            ╰─────────────────── built-in
     │                │       │    │  
     │                ╰─────────────── ref: 10
     │                        │    │  

@@ -12,6 +12,7 @@ pub struct TypeRegistry {
     address_type_id: TypeId,
     boolean_type_id: TypeId,
     byte_type_id: TypeId,
+    bytes_type_id: TypeId,
     bytes4_type_id: TypeId,
     rational_type_id: TypeId,
     string_type_id: TypeId,
@@ -20,6 +21,7 @@ pub struct TypeRegistry {
 }
 
 impl TypeRegistry {
+    #[allow(clippy::similar_names)]
     fn new() -> Self {
         let mut types = IndexSet::new();
         let (address_type, _) = types.insert_full(Type::Address { payable: false });
@@ -27,6 +29,9 @@ impl TypeRegistry {
         let (byte_type, _) = types.insert_full(Type::Integer {
             signed: false,
             bits: 8,
+        });
+        let (bytes_type, _) = types.insert_full(Type::Bytes {
+            location: DataLocation::Memory,
         });
         let (bytes4_type, _) = types.insert_full(Type::ByteArray { width: 4 });
         let (rational_type, _) = types.insert_full(Type::Rational);
@@ -45,6 +50,7 @@ impl TypeRegistry {
             address_type_id: TypeId(address_type),
             boolean_type_id: TypeId(boolean_type),
             byte_type_id: TypeId(byte_type),
+            bytes_type_id: TypeId(bytes_type),
             bytes4_type_id: TypeId(bytes4_type),
             rational_type_id: TypeId(rational_type),
             string_type_id: TypeId(string_type),
@@ -119,6 +125,9 @@ impl TypeRegistry {
     }
     pub fn byte(&self) -> TypeId {
         self.byte_type_id
+    }
+    pub fn bytes(&self) -> TypeId {
+        self.bytes_type_id
     }
     pub fn bytes4(&self) -> TypeId {
         self.bytes4_type_id

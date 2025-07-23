@@ -14,8 +14,8 @@ References (6):
 - Ref: ["vault" @ input.sol:7:9] -> #4
 - Ref: ["deposit" @ input.sol:7:15] -> unresolved
 - Ref: ["value" @ input.sol:7:23] -> unresolved
-- Ref: ["msg" @ input.sol:7:29] -> unresolved
-- Ref: ["value" @ input.sol:7:33] -> unresolved
+- Ref: ["msg" @ input.sol:7:29] -> built-in
+- Ref: ["value" @ input.sol:7:33] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -52,7 +52,7 @@ Bindings:
    │                         │    │    │    
    │                         ╰────────────── unresolved
    │                              │    │    
-   │                              ╰───────── unresolved
+   │                              ╰───────── built-in
    │                                   │    
-   │                                   ╰──── unresolved
+   │                                   ╰──── built-in
 ───╯

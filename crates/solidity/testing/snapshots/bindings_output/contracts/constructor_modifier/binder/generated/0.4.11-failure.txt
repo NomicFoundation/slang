@@ -8,7 +8,7 @@ Definitions (3):
 ------------------------------------------------------------------------
 
 References (3):
-- Ref: ["assert" @ input.sol:3:9] -> unresolved
+- Ref: ["assert" @ input.sol:3:9] -> built-in
 - Ref: ["_addr" @ input.sol:3:16] -> #3
 - Ref: ["_" @ input.sol:4:9] -> built-in
 
@@ -32,7 +32,7 @@ Bindings:
    │                                     ╰──── name: 3
  3 │         assert(_addr != address(0));
    │         ───┬── ──┬──  
-   │            ╰────────── unresolved
+   │            ╰────────── built-in
    │                  │    
    │                  ╰──── ref: 3
  4 │         _;

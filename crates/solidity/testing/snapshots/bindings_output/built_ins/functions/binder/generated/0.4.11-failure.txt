@@ -30,9 +30,9 @@ Definitions (25):
 ------------------------------------------------------------------------
 
 References (37):
-- Ref: ["require" @ input.sol:3:9] -> unresolved
+- Ref: ["require" @ input.sol:3:9] -> built-in
 - Ref: ["revert" @ input.sol:7:9] -> unresolved
-- Ref: ["assert" @ input.sol:11:9] -> unresolved
+- Ref: ["assert" @ input.sol:11:9] -> built-in
 - Ref: ["addmod" @ input.sol:17:19] -> unresolved
 - Ref: ["blockhash" @ input.sol:18:22] -> unresolved
 - Ref: ["blobhash" @ input.sol:19:22] -> unresolved
@@ -85,7 +85,7 @@ Bindings:
     │                   ╰─────── name: 2
   3 │         require(true, "should always succeed");
     │         ───┬───  
-    │            ╰───── unresolved
+    │            ╰───── built-in
     │ 
   6 │     function testRevert() public {
     │              ─────┬────  
@@ -99,7 +99,7 @@ Bindings:
     │                   ╰────── name: 4
  11 │         assert(2 + 2 == 4);
     │         ───┬──  
-    │            ╰──── unresolved
+    │            ╰──── built-in
     │ 
  14 │     function testMath() public {
     │              ────┬───  

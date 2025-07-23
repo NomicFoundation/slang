@@ -11,7 +11,7 @@ Definitions (6):
 ------------------------------------------------------------------------
 
 References (7):
-- Ref: ["assert" @ input.sol:5:9] -> unresolved
+- Ref: ["assert" @ input.sol:5:9] -> built-in
 - Ref: ["_addr" @ input.sol:5:16] -> #4
 - Ref: ["_" @ input.sol:6:9] -> built-in
 - Ref: ["validAddress" @ input.sol:11:9] -> #3
@@ -42,7 +42,7 @@ Bindings:
     │                                     ╰──── name: 4
   5 │         assert(_addr != address(0));
     │         ───┬── ──┬──  
-    │            ╰────────── unresolved
+    │            ╰────────── built-in
     │                  │    
     │                  ╰──── ref: 4
   6 │         _;

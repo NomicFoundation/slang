@@ -10,10 +10,10 @@ Definitions (5):
 ------------------------------------------------------------------------
 
 References (7):
-- Ref: ["require" @ input.sol:6:9] -> unresolved
+- Ref: ["require" @ input.sol:6:9] -> built-in
 - Ref: ["owner" @ input.sol:6:22] -> unresolved
-- Ref: ["msg" @ input.sol:6:33] -> unresolved
-- Ref: ["sender" @ input.sol:6:37] -> unresolved
+- Ref: ["msg" @ input.sol:6:33] -> built-in
+- Ref: ["sender" @ input.sol:6:37] -> built-in
 - Ref: ["_" @ input.sol:7:9] -> built-in
 - Ref: ["IOwnable" @ input.sol:11:18] -> #1
 - Ref: ["onlyOwner" @ input.sol:12:28] -> unresolved
@@ -39,13 +39,13 @@ Bindings:
     │                  ╰────── name: 3
   6 │         require(this.owner() == msg.sender, "not owner");
     │         ───┬───      ──┬──      ─┬─ ───┬──  
-    │            ╰──────────────────────────────── unresolved
+    │            ╰──────────────────────────────── built-in
     │                        │         │     │    
     │                        ╰──────────────────── unresolved
     │                                  │     │    
-    │                                  ╰────────── unresolved
+    │                                  ╰────────── built-in
     │                                        │    
-    │                                        ╰──── unresolved
+    │                                        ╰──── built-in
   7 │         _;
     │         ┬  
     │         ╰── built-in

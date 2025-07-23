@@ -7,15 +7,15 @@ Definitions (2):
 ------------------------------------------------------------------------
 
 References (10):
-- Ref: ["assert" @ input.sol:3:9] -> unresolved
+- Ref: ["assert" @ input.sol:3:9] -> built-in
 - Ref: ["MY_DIRECTION" @ input.sol:3:16] -> unresolved
 - Ref: ["Direction" @ input.sol:3:32] -> unresolved
 - Ref: ["NORTH" @ input.sol:3:42] -> unresolved
-- Ref: ["assert" @ input.sol:4:9] -> unresolved
+- Ref: ["assert" @ input.sol:4:9] -> built-in
 - Ref: ["MY_UINT" @ input.sol:4:16] -> unresolved
-- Ref: ["require" @ input.sol:5:9] -> unresolved
-- Ref: ["msg" @ input.sol:5:17] -> unresolved
-- Ref: ["sender" @ input.sol:5:21] -> unresolved
+- Ref: ["require" @ input.sol:5:9] -> built-in
+- Ref: ["msg" @ input.sol:5:17] -> built-in
+- Ref: ["sender" @ input.sol:5:21] -> built-in
 - Ref: ["MY_ADDRESS" @ input.sol:5:31] -> unresolved
 
 ------------------------------------------------------------------------
@@ -35,7 +35,7 @@ Bindings:
    │                ╰─── name: 2
  3 │         assert(MY_DIRECTION != Direction.NORTH);
    │         ───┬── ──────┬─────    ────┬──── ──┬──  
-   │            ╰──────────────────────────────────── unresolved
+   │            ╰──────────────────────────────────── built-in
    │                      │             │       │    
    │                      ╰────────────────────────── unresolved
    │                                    │       │    
@@ -44,16 +44,16 @@ Bindings:
    │                                            ╰──── unresolved
  4 │         assert(MY_UINT > 100);
    │         ───┬── ───┬───  
-   │            ╰──────────── unresolved
+   │            ╰──────────── built-in
    │                   │     
    │                   ╰───── unresolved
  5 │         require(msg.sender == MY_ADDRESS);
    │         ───┬─── ─┬─ ───┬──    ─────┬────  
-   │            ╰────────────────────────────── unresolved
+   │            ╰────────────────────────────── built-in
    │                  │     │           │      
-   │                  ╰──────────────────────── unresolved
+   │                  ╰──────────────────────── built-in
    │                        │           │      
-   │                        ╰────────────────── unresolved
+   │                        ╰────────────────── built-in
    │                                    │      
    │                                    ╰────── unresolved
 ───╯

@@ -8,13 +8,13 @@ Definitions (3):
 ------------------------------------------------------------------------
 
 References (9):
-- Ref: ["msg" @ input.sol:4:9] -> unresolved
-- Ref: ["sender" @ input.sol:4:13] -> unresolved
+- Ref: ["msg" @ input.sol:4:9] -> built-in
+- Ref: ["sender" @ input.sol:4:13] -> built-in
 - Ref: ["transfer" @ input.sol:4:20] -> unresolved
 - Ref: ["amount" @ input.sol:4:29] -> #3
-- Ref: ["require" @ input.sol:5:9] -> unresolved
-- Ref: ["msg" @ input.sol:5:17] -> unresolved
-- Ref: ["sender" @ input.sol:5:21] -> unresolved
+- Ref: ["require" @ input.sol:5:9] -> built-in
+- Ref: ["msg" @ input.sol:5:17] -> built-in
+- Ref: ["sender" @ input.sol:5:21] -> built-in
 - Ref: ["send" @ input.sol:5:28] -> unresolved
 - Ref: ["amount" @ input.sol:5:33] -> #3
 
@@ -38,20 +38,20 @@ Bindings:
    │ 
  4 │         msg.sender.transfer(amount);
    │         ─┬─ ───┬── ────┬─── ───┬──  
-   │          ╰────────────────────────── unresolved
+   │          ╰────────────────────────── built-in
    │                │       │       │    
-   │                ╰──────────────────── unresolved
+   │                ╰──────────────────── built-in
    │                        │       │    
    │                        ╰──────────── unresolved
    │                                │    
    │                                ╰──── ref: 3
  5 │         require(msg.sender.send(amount));
    │         ───┬─── ─┬─ ───┬── ──┬─ ───┬──  
-   │            ╰──────────────────────────── unresolved
+   │            ╰──────────────────────────── built-in
    │                  │     │     │     │    
-   │                  ╰────────────────────── unresolved
+   │                  ╰────────────────────── built-in
    │                        │     │     │    
-   │                        ╰──────────────── unresolved
+   │                        ╰──────────────── built-in
    │                              │     │    
    │                              ╰────────── unresolved
    │                                    │    

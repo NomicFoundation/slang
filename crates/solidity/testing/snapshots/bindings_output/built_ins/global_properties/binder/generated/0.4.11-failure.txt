@@ -46,14 +46,14 @@ References (30):
 - Ref: ["prevrandao" @ input.sol:15:25] -> unresolved
 - Ref: ["block" @ input.sol:16:19] -> unresolved
 - Ref: ["timestamp" @ input.sol:16:25] -> unresolved
-- Ref: ["msg" @ input.sol:20:20] -> unresolved
-- Ref: ["data" @ input.sol:20:24] -> unresolved
-- Ref: ["msg" @ input.sol:21:22] -> unresolved
-- Ref: ["sender" @ input.sol:21:26] -> unresolved
-- Ref: ["msg" @ input.sol:22:21] -> unresolved
-- Ref: ["sig" @ input.sol:22:25] -> unresolved
-- Ref: ["msg" @ input.sol:23:19] -> unresolved
-- Ref: ["value" @ input.sol:23:23] -> unresolved
+- Ref: ["msg" @ input.sol:20:20] -> built-in
+- Ref: ["data" @ input.sol:20:24] -> built-in
+- Ref: ["msg" @ input.sol:21:22] -> built-in
+- Ref: ["sender" @ input.sol:21:26] -> built-in
+- Ref: ["msg" @ input.sol:22:21] -> built-in
+- Ref: ["sig" @ input.sol:22:25] -> built-in
+- Ref: ["msg" @ input.sol:23:19] -> built-in
+- Ref: ["value" @ input.sol:23:23] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -159,28 +159,28 @@ Bindings:
     │               ─┬   ─┬─ ──┬─  
     │                ╰───────────── name: 16
     │                     │    │   
-    │                     ╰──────── unresolved
+    │                     ╰──────── built-in
     │                          │   
-    │                          ╰─── unresolved
+    │                          ╰─── built-in
  21 │         address v2 = msg.sender;
     │                 ─┬   ─┬─ ───┬──  
     │                  ╰─────────────── name: 17
     │                       │     │    
-    │                       ╰────────── unresolved
+    │                       ╰────────── built-in
     │                             │    
-    │                             ╰──── unresolved
+    │                             ╰──── built-in
  22 │         bytes4 v3 = msg.sig;
     │                ─┬   ─┬─ ─┬─  
     │                 ╰──────────── name: 18
     │                      │   │   
-    │                      ╰─────── unresolved
+    │                      ╰─────── built-in
     │                          │   
-    │                          ╰─── unresolved
+    │                          ╰─── built-in
  23 │         uint v4 = msg.value;
     │              ─┬   ─┬─ ──┬──  
     │               ╰────────────── name: 19
     │                    │    │    
-    │                    ╰───────── unresolved
+    │                    ╰───────── built-in
     │                         │    
-    │                         ╰──── unresolved
+    │                         ╰──── built-in
 ────╯

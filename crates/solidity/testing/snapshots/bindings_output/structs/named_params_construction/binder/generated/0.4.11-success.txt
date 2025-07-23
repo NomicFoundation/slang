@@ -13,11 +13,11 @@ References (8):
 - Ref: ["Funder" @ input.sol:7:52] -> #2
 - Ref: ["Funder" @ input.sol:8:16] -> #2
 - Ref: ["addr" @ input.sol:8:24] -> #3
-- Ref: ["msg" @ input.sol:8:30] -> unresolved
-- Ref: ["sender" @ input.sol:8:34] -> unresolved
+- Ref: ["msg" @ input.sol:8:30] -> built-in
+- Ref: ["sender" @ input.sol:8:34] -> built-in
 - Ref: ["amount" @ input.sol:8:42] -> #4
-- Ref: ["msg" @ input.sol:8:50] -> unresolved
-- Ref: ["value" @ input.sol:8:54] -> unresolved
+- Ref: ["msg" @ input.sol:8:50] -> built-in
+- Ref: ["value" @ input.sol:8:54] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -52,13 +52,13 @@ Bindings:
    │                          │    │     │       │     │    │    
    │                          ╰────────────────────────────────── ref: 3
    │                               │     │       │     │    │    
-   │                               ╰───────────────────────────── unresolved
+   │                               ╰───────────────────────────── built-in
    │                                     │       │     │    │    
-   │                                     ╰─────────────────────── unresolved
+   │                                     ╰─────────────────────── built-in
    │                                             │     │    │    
    │                                             ╰─────────────── ref: 4
    │                                                   │    │    
-   │                                                   ╰───────── unresolved
+   │                                                   ╰───────── built-in
    │                                                        │    
-   │                                                        ╰──── unresolved
+   │                                                        ╰──── built-in
 ───╯

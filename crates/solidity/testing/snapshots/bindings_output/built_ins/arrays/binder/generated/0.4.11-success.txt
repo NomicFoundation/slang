@@ -9,7 +9,7 @@ Definitions (4):
 ------------------------------------------------------------------------
 
 References (9):
-- Ref: ["assert" @ input.sol:5:9] -> unresolved
+- Ref: ["assert" @ input.sol:5:9] -> built-in
 - Ref: ["b" @ input.sol:5:16] -> #4
 - Ref: ["length" @ input.sol:5:18] -> built-in
 - Ref: ["a" @ input.sol:7:9] -> #2
@@ -17,7 +17,7 @@ References (9):
 - Ref: ["a" @ input.sol:8:9] -> #2
 - Ref: ["push" @ input.sol:8:11] -> built-in
 - Ref: ["a" @ input.sol:9:9] -> #2
-- Ref: ["pop" @ input.sol:9:11] -> unresolved
+- Ref: ["pop" @ input.sol:9:11] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -42,7 +42,7 @@ Bindings:
    │                        ╰── name: 4
  5 │         assert(b.length == 5);
    │         ───┬── ┬ ───┬──  
-   │            ╰───────────── unresolved
+   │            ╰───────────── built-in
    │                │    │    
    │                ╰───────── ref: 4
    │                     │    
@@ -62,5 +62,5 @@ Bindings:
    │         ┬ ─┬─  
    │         ╰────── ref: 2
    │            │   
-   │            ╰─── unresolved
+   │            ╰─── built-in
 ───╯

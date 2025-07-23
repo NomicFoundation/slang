@@ -18,8 +18,8 @@ References (7):
 - Ref: ["IERC20Upgradable" @ input.sol:10:19] -> #1
 - Ref: ["token" @ input.sol:11:9] -> #9
 - Ref: ["allowance" @ input.sol:11:15] -> unresolved
-- Ref: ["msg" @ input.sol:11:25] -> unresolved
-- Ref: ["sender" @ input.sol:11:29] -> unresolved
+- Ref: ["msg" @ input.sol:11:25] -> built-in
+- Ref: ["sender" @ input.sol:11:29] -> built-in
 - Ref: ["nop" @ input.sol:11:37] -> unresolved
 
 ------------------------------------------------------------------------
@@ -69,9 +69,9 @@ Bindings:
     │                   │      │     │     │   
     │                   ╰────────────────────── unresolved
     │                          │     │     │   
-    │                          ╰─────────────── unresolved
+    │                          ╰─────────────── built-in
     │                                │     │   
-    │                                ╰───────── unresolved
+    │                                ╰───────── built-in
     │                                      │   
     │                                      ╰─── unresolved
 ────╯

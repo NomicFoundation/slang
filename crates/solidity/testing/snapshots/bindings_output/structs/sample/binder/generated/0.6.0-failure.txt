@@ -52,15 +52,15 @@ References (46):
 - Ref: ["numFunders" @ input.sol:27:21] -> #8
 - Ref: ["Funder" @ input.sol:27:37] -> #1
 - Ref: ["addr" @ input.sol:27:45] -> #2
-- Ref: ["msg" @ input.sol:27:51] -> unresolved
-- Ref: ["sender" @ input.sol:27:55] -> unresolved
+- Ref: ["msg" @ input.sol:27:51] -> built-in
+- Ref: ["sender" @ input.sol:27:55] -> built-in
 - Ref: ["amount" @ input.sol:27:63] -> #3
-- Ref: ["msg" @ input.sol:27:71] -> unresolved
-- Ref: ["value" @ input.sol:27:75] -> unresolved
+- Ref: ["msg" @ input.sol:27:71] -> built-in
+- Ref: ["value" @ input.sol:27:75] -> built-in
 - Ref: ["c" @ input.sol:28:9] -> #20
 - Ref: ["amount" @ input.sol:28:11] -> #9
-- Ref: ["msg" @ input.sol:28:21] -> unresolved
-- Ref: ["value" @ input.sol:28:25] -> unresolved
+- Ref: ["msg" @ input.sol:28:21] -> built-in
+- Ref: ["value" @ input.sol:28:25] -> built-in
 - Ref: ["Campaign" @ input.sol:32:9] -> #5
 - Ref: ["campaigns" @ input.sol:32:30] -> #12
 - Ref: ["campaignID" @ input.sol:32:40] -> #22
@@ -195,24 +195,24 @@ Bindings:
     │                                               │    │     │       │     │    │    
     │                                               ╰────────────────────────────────── ref: 2
     │                                                    │     │       │     │    │    
-    │                                                    ╰───────────────────────────── unresolved
+    │                                                    ╰───────────────────────────── built-in
     │                                                          │       │     │    │    
-    │                                                          ╰─────────────────────── unresolved
+    │                                                          ╰─────────────────────── built-in
     │                                                                  │     │    │    
     │                                                                  ╰─────────────── ref: 3
     │                                                                        │    │    
-    │                                                                        ╰───────── unresolved
+    │                                                                        ╰───────── built-in
     │                                                                             │    
-    │                                                                             ╰──── unresolved
+    │                                                                             ╰──── built-in
  28 │         c.amount += msg.value;
     │         ┬ ───┬──    ─┬─ ──┬──  
     │         ╰────────────────────── ref: 20
     │              │       │    │    
     │              ╰───────────────── ref: 9
     │                      │    │    
-    │                      ╰───────── unresolved
+    │                      ╰───────── built-in
     │                           │    
-    │                           ╰──── unresolved
+    │                           ╰──── built-in
     │ 
  31 │     function checkGoalReached(uint campaignID) public returns (bool reached) {
     │              ────────┬───────      ─────┬────                       ───┬───  

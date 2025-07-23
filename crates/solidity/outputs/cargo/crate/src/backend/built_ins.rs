@@ -6,12 +6,19 @@ use crate::cst::NodeId;
 pub enum BuiltIn {
     ArrayPop,
     ArrayPush(TypeId),
+    Assert,
     Balance,
     CallOptionValue,
     CallOptionGas,
     ErrorOrPanic,
     Length,
     ModifierUnderscore,
+    Msg,
+    MsgData,
+    MsgSender,
+    MsgSig,
+    MsgValue,
+    Require,
     Selector,
     Tx,
     TxGasPrice,
@@ -28,6 +35,9 @@ pub enum BuiltIn {
 
 pub(crate) fn lookup_global_built_in(symbol: &str) -> Option<BuiltIn> {
     match symbol {
+        "assert" => Some(BuiltIn::Assert),
+        "msg" => Some(BuiltIn::Msg),
+        "require" => Some(BuiltIn::Require),
         "tx" => Some(BuiltIn::Tx),
         // TODO: add the rest of the built-ins
         _ => None,
@@ -39,6 +49,13 @@ pub(crate) fn lookup_member_of_built_in(built_in: &BuiltIn, symbol: &str) -> Opt
         BuiltIn::Tx => match symbol {
             "gasprice" => Some(BuiltIn::TxGasPrice),
             "origin" => Some(BuiltIn::TxOrigin),
+            _ => None,
+        },
+        BuiltIn::Msg => match symbol {
+            "data" => Some(BuiltIn::MsgData),
+            "sender" => Some(BuiltIn::MsgSender),
+            "sig" => Some(BuiltIn::MsgSig),
+            "value" => Some(BuiltIn::MsgValue),
             _ => None,
         },
         _ => None,
@@ -80,6 +97,7 @@ pub(crate) fn lookup_built_in_member_of_type(
         },
         Type::Array { element_type, .. } => match symbol {
             "length" => Some(BuiltIn::Length),
+            "pop" => Some(BuiltIn::ArrayPop),
             "push" => Some(BuiltIn::ArrayPush(*element_type)),
             _ => None,
         },
@@ -89,8 +107,8 @@ pub(crate) fn lookup_built_in_member_of_type(
             _ => None,
         },
         Type::Bytes { .. } => match symbol {
-            "push" => Some(BuiltIn::ArrayPush(types.byte())),
             "pop" => Some(BuiltIn::ArrayPop),
+            "push" => Some(BuiltIn::ArrayPush(types.byte())),
             _ => None,
         },
         Type::Contract { .. } => None,
@@ -145,19 +163,26 @@ pub(crate) fn typing_of_built_in(built_in: &BuiltIn, types: &TypeRegistry) -> Ty
     match built_in {
         BuiltIn::Balance => Typing::Resolved(types.uint256()),
         BuiltIn::Length => Typing::Resolved(types.uint256()),
+        BuiltIn::MsgData => Typing::Resolved(types.bytes()),
+        BuiltIn::MsgSender => Typing::Resolved(types.address()),
+        BuiltIn::MsgSig => Typing::Resolved(types.bytes4()),
+        BuiltIn::MsgValue => Typing::Resolved(types.uint256()),
         BuiltIn::Selector => Typing::Resolved(types.bytes4()),
         BuiltIn::TxGasPrice => Typing::Resolved(types.uint256()),
         BuiltIn::TxOrigin => Typing::Resolved(types.address()),
         BuiltIn::ArrayPop
         | BuiltIn::ArrayPush(_)
-        | BuiltIn::CallOptionGas
-        | BuiltIn::CallOptionValue
-        | BuiltIn::ErrorOrPanic
+        | BuiltIn::Assert
         | BuiltIn::ModifierUnderscore
+        | BuiltIn::Msg
+        | BuiltIn::Require
         | BuiltIn::Tx
         | BuiltIn::Wrap(_)
         | BuiltIn::Unwrap(_) => Typing::BuiltIn(*built_in),
-        BuiltIn::YulAddress
+        BuiltIn::CallOptionGas
+        | BuiltIn::CallOptionValue
+        | BuiltIn::ErrorOrPanic
+        | BuiltIn::YulAddress
         | BuiltIn::YulLength
         | BuiltIn::YulOffset
         | BuiltIn::YulSelector
@@ -180,6 +205,7 @@ pub(crate) fn typing_of_built_in_function_call(
             }
         }
         BuiltIn::ArrayPop => Typing::Resolved(types.void()),
+        BuiltIn::Assert | BuiltIn::Require => Typing::Resolved(types.void()),
         BuiltIn::Unwrap(definition_id) => {
             let Some(Definition::UserDefinedValueType(udvt)) =
                 binder.find_definition_by_id(*definition_id)
