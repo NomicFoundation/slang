@@ -6,7 +6,7 @@ Definitions (12):
 - Def: #3 ["value" @ input.sol:3:14] (struct member, type: uint256)
 - Def: #4 ["noop" @ input.sol:5:14] (function, type: function (uint256) returns uint256)
 - Def: #5 ["x" @ input.sol:5:24] (parameter, type: uint256)
-- Def: #6 ["bar" @ input.sol:6:14] (function, type: unresolved)
+- Def: #6 ["bar" @ input.sol:6:14] (function, type: function (uint256) returns Bar memory)
 - Def: #7 ["x" @ input.sol:6:23] (parameter, type: uint256)
 - Def: #8 ["Test" @ input.sol:9:10] (contract)
 - Def: #9 ["test" @ input.sol:11:14] (function, type: function (uint256, Bar memory) returns void)
@@ -29,8 +29,8 @@ References (17):
 - Ref: ["value" @ input.sol:14:11] -> #3
 - Ref: ["noop" @ input.sol:14:17] -> #4
 - Ref: ["bar" @ input.sol:14:24] -> #6
-- Ref: ["value" @ input.sol:14:30] -> unresolved
-- Ref: ["noop" @ input.sol:14:36] -> unresolved
+- Ref: ["value" @ input.sol:14:30] -> #3
+- Ref: ["noop" @ input.sol:14:36] -> #4
 - Ref: ["xs" @ input.sol:15:9] -> #12
 - Ref: ["noop" @ input.sol:15:15] -> #4
 - Ref: ["noop" @ input.sol:15:22] -> #4
@@ -59,7 +59,7 @@ Bindings:
     │                ╰────────── name: 4
     │                        │  
     │                        ╰── name: 5
-  6 │     function bar(uint x) public returns (Bar) {}
+  6 │     function bar(uint x) public returns (Bar memory) {}
     │              ─┬─      ┬                  ─┬─  
     │               ╰─────────────────────────────── name: 6
     │                       │                   │   
@@ -106,9 +106,9 @@ Bindings:
     │                         │      │     │   
     │                         ╰──────────────── ref: 6
     │                                │     │   
-    │                                ╰───────── unresolved
+    │                                ╰───────── ref: 3
     │                                      │   
-    │                                      ╰─── unresolved
+    │                                      ╰─── ref: 4
  15 │         xs[5].noop().noop();
     │         ─┬    ──┬─   ──┬─  
     │          ╰───────────────── ref: 12
