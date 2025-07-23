@@ -16,7 +16,7 @@ pub fn fetch(address: &str, base_path: &Path) -> Result<()> {
         return Ok(());
     }
 
-    //TODO: generalize for any chain
+    //NOTE: This only fetches projects from mainnet (1). In the future we might want to make it generic.
     let url =
         format!("https://sourcify.dev/server/v2/contract/1/{address}/?fields=sources,compilation");
 

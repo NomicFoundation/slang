@@ -4,6 +4,7 @@
   "include": ["./src/**/*.mts"],
 
   "compilerOptions": {
+    "target": "es2017", // for top-level awaits
     "typeRoots": ["./node_modules/@types", "../../../../../node_modules/@types"],
     /* Projects */
     "composite": true,

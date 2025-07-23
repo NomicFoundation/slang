@@ -1,4 +1,4 @@
-import { checkCI, Subject, round2, Timings, SolidityProject, verboseOption } from "./common.mjs";
+import { Subject, round2, Timings, SolidityProject, verboseOption } from "./common.mjs";
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
 import { AntlrSubject, SlangSubject, SolcSubject } from "./subjects/subjects.mjs";
@@ -45,8 +45,6 @@ async function run(
 
   return timings;
 }
-
-checkCI();
 
 const dirOption = "dir";
 const nameOption = "name";
