@@ -1,0 +1,347 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (2):
+- Def: #1 ["Test" @ input.sol:1:10] (contract)
+- Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
+
+------------------------------------------------------------------------
+
+References (80):
+- Ref: ["add" @ input.sol:4:13] -> unresolved
+- Ref: ["addmod" @ input.sol:5:13] -> unresolved
+- Ref: ["address" @ input.sol:6:13] -> unresolved
+- Ref: ["and" @ input.sol:7:13] -> unresolved
+- Ref: ["balance" @ input.sol:8:13] -> unresolved
+- Ref: ["basefee" @ input.sol:9:13] -> unresolved
+- Ref: ["blobbasefee" @ input.sol:10:13] -> unresolved
+- Ref: ["blobhash" @ input.sol:11:13] -> unresolved
+- Ref: ["blockhash" @ input.sol:12:13] -> unresolved
+- Ref: ["byte" @ input.sol:13:13] -> unresolved
+- Ref: ["call" @ input.sol:14:13] -> unresolved
+- Ref: ["callcode" @ input.sol:15:13] -> unresolved
+- Ref: ["calldatacopy" @ input.sol:16:13] -> unresolved
+- Ref: ["calldataload" @ input.sol:17:13] -> unresolved
+- Ref: ["calldatasize" @ input.sol:18:13] -> unresolved
+- Ref: ["caller" @ input.sol:19:13] -> unresolved
+- Ref: ["callvalue" @ input.sol:20:13] -> unresolved
+- Ref: ["chainid" @ input.sol:21:13] -> unresolved
+- Ref: ["codecopy" @ input.sol:22:13] -> unresolved
+- Ref: ["codesize" @ input.sol:23:13] -> unresolved
+- Ref: ["coinbase" @ input.sol:24:13] -> unresolved
+- Ref: ["create" @ input.sol:25:13] -> unresolved
+- Ref: ["create2" @ input.sol:26:13] -> unresolved
+- Ref: ["delegatecall" @ input.sol:27:13] -> unresolved
+- Ref: ["div" @ input.sol:28:13] -> unresolved
+- Ref: ["eq" @ input.sol:29:13] -> unresolved
+- Ref: ["exp" @ input.sol:30:13] -> unresolved
+- Ref: ["extcodecopy" @ input.sol:31:13] -> unresolved
+- Ref: ["extcodehash" @ input.sol:32:13] -> unresolved
+- Ref: ["extcodesize" @ input.sol:33:13] -> unresolved
+- Ref: ["gas" @ input.sol:34:13] -> unresolved
+- Ref: ["gaslimit" @ input.sol:35:13] -> unresolved
+- Ref: ["gasprice" @ input.sol:36:13] -> unresolved
+- Ref: ["gt" @ input.sol:37:13] -> unresolved
+- Ref: ["invalid" @ input.sol:38:13] -> unresolved
+- Ref: ["iszero" @ input.sol:39:13] -> unresolved
+- Ref: ["keccak256" @ input.sol:40:13] -> built-in
+- Ref: ["log0" @ input.sol:41:13] -> unresolved
+- Ref: ["log1" @ input.sol:42:13] -> unresolved
+- Ref: ["log2" @ input.sol:43:13] -> unresolved
+- Ref: ["log3" @ input.sol:44:13] -> unresolved
+- Ref: ["log4" @ input.sol:45:13] -> unresolved
+- Ref: ["lt" @ input.sol:46:13] -> unresolved
+- Ref: ["mcopy" @ input.sol:47:13] -> unresolved
+- Ref: ["mload" @ input.sol:48:13] -> unresolved
+- Ref: ["mod" @ input.sol:49:13] -> unresolved
+- Ref: ["msize" @ input.sol:50:13] -> unresolved
+- Ref: ["mstore" @ input.sol:51:13] -> unresolved
+- Ref: ["mstore8" @ input.sol:52:13] -> unresolved
+- Ref: ["mul" @ input.sol:53:13] -> unresolved
+- Ref: ["mulmod" @ input.sol:54:13] -> unresolved
+- Ref: ["not" @ input.sol:55:13] -> unresolved
+- Ref: ["number" @ input.sol:56:13] -> unresolved
+- Ref: ["or" @ input.sol:57:13] -> unresolved
+- Ref: ["origin" @ input.sol:58:13] -> unresolved
+- Ref: ["pop" @ input.sol:59:13] -> unresolved
+- Ref: ["prevrandao" @ input.sol:60:13] -> unresolved
+- Ref: ["return" @ input.sol:61:13] -> unresolved
+- Ref: ["returndatacopy" @ input.sol:62:13] -> unresolved
+- Ref: ["returndatasize" @ input.sol:63:13] -> unresolved
+- Ref: ["revert" @ input.sol:64:13] -> unresolved
+- Ref: ["sar" @ input.sol:65:13] -> unresolved
+- Ref: ["sdiv" @ input.sol:66:13] -> unresolved
+- Ref: ["selfbalance" @ input.sol:67:13] -> unresolved
+- Ref: ["selfdestruct" @ input.sol:68:13] -> unresolved
+- Ref: ["sgt" @ input.sol:69:13] -> unresolved
+- Ref: ["shl" @ input.sol:70:13] -> unresolved
+- Ref: ["shr" @ input.sol:71:13] -> unresolved
+- Ref: ["signextend" @ input.sol:72:13] -> unresolved
+- Ref: ["sload" @ input.sol:73:13] -> unresolved
+- Ref: ["slt" @ input.sol:74:13] -> unresolved
+- Ref: ["smod" @ input.sol:75:13] -> unresolved
+- Ref: ["sstore" @ input.sol:76:13] -> unresolved
+- Ref: ["staticcall" @ input.sol:77:13] -> unresolved
+- Ref: ["stop" @ input.sol:78:13] -> unresolved
+- Ref: ["sub" @ input.sol:79:13] -> unresolved
+- Ref: ["timestamp" @ input.sol:80:13] -> unresolved
+- Ref: ["tload" @ input.sol:81:13] -> unresolved
+- Ref: ["tstore" @ input.sol:82:13] -> unresolved
+- Ref: ["xor" @ input.sol:83:13] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │     function test() public {
+    │              ──┬─  
+    │                ╰─── name: 2
+    │ 
+  4 │             add()
+    │             ─┬─  
+    │              ╰─── unresolved
+  5 │             addmod()
+    │             ───┬──  
+    │                ╰──── unresolved
+  6 │             address()
+    │             ───┬───  
+    │                ╰───── unresolved
+  7 │             and()
+    │             ─┬─  
+    │              ╰─── unresolved
+  8 │             balance()
+    │             ───┬───  
+    │                ╰───── unresolved
+  9 │             basefee()
+    │             ───┬───  
+    │                ╰───── unresolved
+ 10 │             blobbasefee()
+    │             ─────┬─────  
+    │                  ╰─────── unresolved
+ 11 │             blobhash()
+    │             ────┬───  
+    │                 ╰───── unresolved
+ 12 │             blockhash()
+    │             ────┬────  
+    │                 ╰────── unresolved
+ 13 │             byte()
+    │             ──┬─  
+    │               ╰─── unresolved
+ 14 │             call()
+    │             ──┬─  
+    │               ╰─── unresolved
+ 15 │             callcode()
+    │             ────┬───  
+    │                 ╰───── unresolved
+ 16 │             calldatacopy()
+    │             ──────┬─────  
+    │                   ╰─────── unresolved
+ 17 │             calldataload()
+    │             ──────┬─────  
+    │                   ╰─────── unresolved
+ 18 │             calldatasize()
+    │             ──────┬─────  
+    │                   ╰─────── unresolved
+ 19 │             caller()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 20 │             callvalue()
+    │             ────┬────  
+    │                 ╰────── unresolved
+ 21 │             chainid()
+    │             ───┬───  
+    │                ╰───── unresolved
+ 22 │             codecopy()
+    │             ────┬───  
+    │                 ╰───── unresolved
+ 23 │             codesize()
+    │             ────┬───  
+    │                 ╰───── unresolved
+ 24 │             coinbase()
+    │             ────┬───  
+    │                 ╰───── unresolved
+ 25 │             create()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 26 │             create2()
+    │             ───┬───  
+    │                ╰───── unresolved
+ 27 │             delegatecall()
+    │             ──────┬─────  
+    │                   ╰─────── unresolved
+ 28 │             div()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 29 │             eq()
+    │             ─┬  
+    │              ╰── unresolved
+ 30 │             exp()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 31 │             extcodecopy()
+    │             ─────┬─────  
+    │                  ╰─────── unresolved
+ 32 │             extcodehash()
+    │             ─────┬─────  
+    │                  ╰─────── unresolved
+ 33 │             extcodesize()
+    │             ─────┬─────  
+    │                  ╰─────── unresolved
+ 34 │             gas()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 35 │             gaslimit()
+    │             ────┬───  
+    │                 ╰───── unresolved
+ 36 │             gasprice()
+    │             ────┬───  
+    │                 ╰───── unresolved
+ 37 │             gt()
+    │             ─┬  
+    │              ╰── unresolved
+ 38 │             invalid()
+    │             ───┬───  
+    │                ╰───── unresolved
+ 39 │             iszero()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 40 │             keccak256()
+    │             ────┬────  
+    │                 ╰────── built-in
+ 41 │             log0()
+    │             ──┬─  
+    │               ╰─── unresolved
+ 42 │             log1()
+    │             ──┬─  
+    │               ╰─── unresolved
+ 43 │             log2()
+    │             ──┬─  
+    │               ╰─── unresolved
+ 44 │             log3()
+    │             ──┬─  
+    │               ╰─── unresolved
+ 45 │             log4()
+    │             ──┬─  
+    │               ╰─── unresolved
+ 46 │             lt()
+    │             ─┬  
+    │              ╰── unresolved
+ 47 │             mcopy()
+    │             ──┬──  
+    │               ╰──── unresolved
+ 48 │             mload()
+    │             ──┬──  
+    │               ╰──── unresolved
+ 49 │             mod()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 50 │             msize()
+    │             ──┬──  
+    │               ╰──── unresolved
+ 51 │             mstore()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 52 │             mstore8()
+    │             ───┬───  
+    │                ╰───── unresolved
+ 53 │             mul()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 54 │             mulmod()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 55 │             not()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 56 │             number()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 57 │             or()
+    │             ─┬  
+    │              ╰── unresolved
+ 58 │             origin()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 59 │             pop()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 60 │             prevrandao()
+    │             ─────┬────  
+    │                  ╰────── unresolved
+ 61 │             return()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 62 │             returndatacopy()
+    │             ───────┬──────  
+    │                    ╰──────── unresolved
+ 63 │             returndatasize()
+    │             ───────┬──────  
+    │                    ╰──────── unresolved
+ 64 │             revert()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 65 │             sar()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 66 │             sdiv()
+    │             ──┬─  
+    │               ╰─── unresolved
+ 67 │             selfbalance()
+    │             ─────┬─────  
+    │                  ╰─────── unresolved
+ 68 │             selfdestruct()
+    │             ──────┬─────  
+    │                   ╰─────── unresolved
+ 69 │             sgt()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 70 │             shl()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 71 │             shr()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 72 │             signextend()
+    │             ─────┬────  
+    │                  ╰────── unresolved
+ 73 │             sload()
+    │             ──┬──  
+    │               ╰──── unresolved
+ 74 │             slt()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 75 │             smod()
+    │             ──┬─  
+    │               ╰─── unresolved
+ 76 │             sstore()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 77 │             staticcall()
+    │             ─────┬────  
+    │                  ╰────── unresolved
+ 78 │             stop()
+    │             ──┬─  
+    │               ╰─── unresolved
+ 79 │             sub()
+    │             ─┬─  
+    │              ╰─── unresolved
+ 80 │             timestamp()
+    │             ────┬────  
+    │                 ╰────── unresolved
+ 81 │             tload()
+    │             ──┬──  
+    │               ╰──── unresolved
+ 82 │             tstore()
+    │             ───┬──  
+    │                ╰──── unresolved
+ 83 │             xor()
+    │             ─┬─  
+    │              ╰─── unresolved
+────╯
