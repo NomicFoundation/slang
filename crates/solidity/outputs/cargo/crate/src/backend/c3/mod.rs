@@ -50,11 +50,7 @@ pub(crate) fn linearise<Item: Clone + Debug + Display + Eq + Hash + PartialEq>(
         }
         if merge_set.len() == item_parents.len() {
             merge_set.push(item_parents.clone());
-            let Some(merge_result) = merge(merge_set) else {
-                // Failed to linearise the current item; linearisation is not possible.
-                eprintln!("Linearisation of {item} failed");
-                return None;
-            };
+            let merge_result = merge(merge_set)?;
 
             let mut result = Vec::new();
             result.push(item.clone());
@@ -75,7 +71,6 @@ pub(crate) fn linearise<Item: Clone + Debug + Display + Eq + Hash + PartialEq>(
                     if *check_item == item {
                         if items_linearised == linearisations.len() {
                             // no progress since last checkpoint; this indicates a cycle
-                            eprintln!("Linearisation of {item} failed: cycle detected");
                             return None;
                         }
                         // Update progress and re-try

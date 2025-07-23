@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use super::p3_type_definitions::Output as Input;
 use crate::backend::binder::{Binder, ContractDefinition, Definition, InterfaceDefinition};
+use crate::backend::c3;
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
-use crate::backend::passes::c3;
 use crate::backend::types::TypeRegistry;
 use crate::compilation::CompilationUnit;
 use crate::cst::NodeId;
@@ -100,11 +100,6 @@ impl Visitor for Pass {
         let parents = self.find_contract_bases_recursively(node_id);
         if let Some(linearisation) = c3::linearise(&node_id, &parents) {
             self.linearisations.insert(node_id, linearisation);
-        } else {
-            panic!(
-                "Failed to linearise contract {name}",
-                name = target.name.unparse()
-            );
         }
     }
 
@@ -113,11 +108,6 @@ impl Visitor for Pass {
         let parents = self.find_contract_bases_recursively(node_id);
         if let Some(linearisation) = c3::linearise(&node_id, &parents) {
             self.linearisations.insert(node_id, linearisation);
-        } else {
-            panic!(
-                "Failed to linearise contract {name}",
-                name = target.name.unparse()
-            );
         }
     }
 }
