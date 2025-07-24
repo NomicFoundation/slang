@@ -30,16 +30,18 @@ PragmaDirective = (* pragma_keyword: *) PRAGMA_KEYWORD
                   (* pragma: *) Pragma
                   (* semicolon: *) SEMICOLON;
 
-Pragma = (* variant: *) AbicoderPragma
+Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
        | (* variant: *) ExperimentalPragma
        | (* variant: *) VersionPragma;
 
+(* Introduced in 0.7.5 *)
 AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
                  (* version: *) AbicoderVersion;
 
 ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
                      (* feature: *) ExperimentalFeature;
 
+(* Introduced in 0.7.5 *)
 AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
                 | (* variant: *) ABICODERV_2_KEYWORD;
 
@@ -86,12 +88,15 @@ DOUBLE_QUOTED_VERSION_LITERAL = '"' «VERSION_SPECIFIER_FRAGMENT» ("." «VERSIO
 
 «VERSION_SPECIFIER_FRAGMENT» = ("0"…"9" | "x" | "X" | "*")+;
 
+(* Introduced in 0.7.5 *)
 (* Never reserved *)
 ABICODER_KEYWORD = "abicoder";
 
+(* Introduced in 0.7.5 *)
 (* Never reserved *)
 ABICODERV_1_KEYWORD = "v1";
 
+(* Introduced in 0.7.5 *)
 (* Never reserved *)
 ABICODERV_2_KEYWORD = "v2";
 

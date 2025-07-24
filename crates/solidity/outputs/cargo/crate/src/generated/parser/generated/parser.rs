@@ -52,6 +52,7 @@ pub struct Parser {
     pub(crate) version_is_at_least_0_7_0: bool,
     pub(crate) version_is_at_least_0_7_1: bool,
     pub(crate) version_is_at_least_0_7_4: bool,
+    pub(crate) version_is_at_least_0_7_5: bool,
     pub(crate) version_is_at_least_0_8_0: bool,
     pub(crate) version_is_at_least_0_8_4: bool,
     pub(crate) version_is_at_least_0_8_8: bool,
@@ -100,6 +101,7 @@ impl Parser {
                 version_is_at_least_0_7_0: Version::new(0, 7, 0) <= language_version,
                 version_is_at_least_0_7_1: Version::new(0, 7, 1) <= language_version,
                 version_is_at_least_0_7_4: Version::new(0, 7, 4) <= language_version,
+                version_is_at_least_0_7_5: Version::new(0, 7, 5) <= language_version,
                 version_is_at_least_0_8_0: Version::new(0, 8, 0) <= language_version,
                 version_is_at_least_0_8_4: Version::new(0, 8, 4) <= language_version,
                 version_is_at_least_0_8_8: Version::new(0, 8, 8) <= language_version,
@@ -548,36 +550,44 @@ impl Parser {
 
     #[allow(unused_assignments, unused_parens)]
     fn abicoder_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(
-                EdgeLabel::AbicoderKeyword,
-                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TerminalKind::AbicoderKeyword,
-                ),
-            )?;
-            seq.elem_labeled(EdgeLabel::Version, self.abicoder_version(input))?;
-            seq.finish()
-        })
+        if self.version_is_at_least_0_7_5 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::AbicoderKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                        input,
+                        TerminalKind::AbicoderKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(EdgeLabel::Version, self.abicoder_version(input))?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::no_match(vec![])
+        }
         .with_kind(NonterminalKind::AbicoderPragma)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn abicoder_version(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                input,
-                TerminalKind::Abicoderv1Keyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                input,
-                TerminalKind::Abicoderv2Keyword,
-            );
-            choice.consider(input, result)?;
-            choice.finish(input)
-        })
-        .with_label(EdgeLabel::Variant)
+        if self.version_is_at_least_0_7_5 {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TerminalKind::Abicoderv1Keyword,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TerminalKind::Abicoderv2Keyword,
+                );
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+            .with_label(EdgeLabel::Variant)
+        } else {
+            ParserResult::no_match(vec![])
+        }
         .with_kind(NonterminalKind::AbicoderVersion)
     }
 
@@ -4404,8 +4414,10 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.abicoder_pragma(input);
-            choice.consider(input, result)?;
+            if self.version_is_at_least_0_7_5 {
+                let result = self.abicoder_pragma(input);
+                choice.consider(input, result)?;
+            }
             let result = self.experimental_pragma(input);
             choice.consider(input, result)?;
             let result = self.version_pragma(input);
@@ -10748,7 +10760,11 @@ impl Lexer for Parser {
                         }
                         Some('a') => {
                             if scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
-                                KeywordScan::Present(TerminalKind::AbicoderKeyword)
+                                if self.version_is_at_least_0_7_5 {
+                                    KeywordScan::Present(TerminalKind::AbicoderKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
                             } else {
                                 KeywordScan::Absent
                             }
@@ -10777,8 +10793,20 @@ impl Lexer for Parser {
                             }
                         }
                         Some('v') => match input.next() {
-                            Some('1') => KeywordScan::Present(TerminalKind::Abicoderv1Keyword),
-                            Some('2') => KeywordScan::Present(TerminalKind::Abicoderv2Keyword),
+                            Some('1') => {
+                                if self.version_is_at_least_0_7_5 {
+                                    KeywordScan::Present(TerminalKind::Abicoderv1Keyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('2') => {
+                                if self.version_is_at_least_0_7_5 {
+                                    KeywordScan::Present(TerminalKind::Abicoderv2Keyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent

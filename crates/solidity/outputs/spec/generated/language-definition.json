@@ -180,7 +180,7 @@
                 "item": {
                   "name": "Pragma",
                   "variants": [
-                    { "reference": "AbicoderPragma" },
+                    { "reference": "AbicoderPragma", "enabled": { "From": { "from": "0.7.5" } } },
                     { "reference": "ExperimentalPragma" },
                     { "reference": "VersionPragma" }
                   ]
@@ -191,6 +191,7 @@
               "Struct": {
                 "item": {
                   "name": "AbicoderPragma",
+                  "enabled": { "From": { "from": "0.7.5" } },
                   "fields": [
                     ["abicoder_keyword", { "Required": { "reference": "AbicoderKeyword" } }],
                     ["version", { "Required": { "reference": "AbicoderVersion" } }]
@@ -213,6 +214,7 @@
               "Enum": {
                 "item": {
                   "name": "AbicoderVersion",
+                  "enabled": { "From": { "from": "0.7.5" } },
                   "variants": [{ "reference": "Abicoderv1Keyword" }, { "reference": "Abicoderv2Keyword" }]
                 }
               }
@@ -408,7 +410,13 @@
                 "item": {
                   "name": "AbicoderKeyword",
                   "identifier": "Identifier",
-                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "abicoder" } } }]
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.7.5" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "abicoder" } }
+                    }
+                  ]
                 }
               }
             },
@@ -417,7 +425,13 @@
                 "item": {
                   "name": "Abicoderv1Keyword",
                   "identifier": "Identifier",
-                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "v1" } } }]
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.7.5" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "v1" } }
+                    }
+                  ]
                 }
               }
             },
@@ -426,7 +440,13 @@
                 "item": {
                   "name": "Abicoderv2Keyword",
                   "identifier": "Identifier",
-                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "v2" } } }]
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.7.5" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "v2" } }
+                    }
+                  ]
                 }
               }
             },

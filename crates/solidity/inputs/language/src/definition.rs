@@ -90,13 +90,14 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = Pragma,
                             variants = [
-                                EnumVariant(reference = AbicoderPragma),
+                                EnumVariant(reference = AbicoderPragma, enabled = From("0.7.5")),
                                 EnumVariant(reference = ExperimentalPragma),
                                 EnumVariant(reference = VersionPragma)
                             ]
                         ),
                         Struct(
                             name = AbicoderPragma,
+                            enabled = From("0.7.5"),
                             fields = (
                                 abicoder_keyword = Required(AbicoderKeyword),
                                 version = Required(AbicoderVersion)
@@ -111,6 +112,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = AbicoderVersion,
+                            enabled = From("0.7.5"),
                             variants = [
                                 EnumVariant(reference = Abicoderv1Keyword),
                                 EnumVariant(reference = Abicoderv2Keyword)
@@ -235,6 +237,7 @@ codegen_language_macros::compile!(Language(
                             name = AbicoderKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
+                                enabled = From("0.7.5"),
                                 reserved = Never,
                                 value = Atom("abicoder")
                             )]
@@ -242,12 +245,20 @@ codegen_language_macros::compile!(Language(
                         Keyword(
                             name = Abicoderv1Keyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(reserved = Never, value = Atom("v1"))]
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.7.5"),
+                                reserved = Never,
+                                value = Atom("v1")
+                            )]
                         ),
                         Keyword(
                             name = Abicoderv2Keyword,
                             identifier = Identifier,
-                            definitions = [KeywordDefinition(reserved = Never, value = Atom("v2"))]
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.7.5"),
+                                reserved = Never,
+                                value = Atom("v2")
+                            )]
                         ),
                         Keyword(
                             name = AbiencoderV2Keyword,

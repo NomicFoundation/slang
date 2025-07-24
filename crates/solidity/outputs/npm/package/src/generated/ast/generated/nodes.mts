@@ -101,6 +101,7 @@ export class PragmaDirective {
  * This node represents a `AbicoderPragma` nonterminal, with the following structure:
  *
  * ```ebnf
+ * (* Introduced in 0.7.5 *)
  * AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
  *                  (* version: *) AbicoderVersion;
  * ```
@@ -7562,7 +7563,7 @@ export class SourceUnitMember {
  * This node represents a `Pragma` nonterminal, with the following structure:
  *
  * ```ebnf
- * Pragma = (* variant: *) AbicoderPragma
+ * Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
  *        | (* variant: *) ExperimentalPragma
  *        | (* variant: *) VersionPragma;
  * ```
@@ -7608,6 +7609,7 @@ export class Pragma {
  * This node represents a `AbicoderVersion` nonterminal, with the following structure:
  *
  * ```ebnf
+ * (* Introduced in 0.7.5 *)
  * AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
  *                 | (* variant: *) ABICODERV_2_KEYWORD;
  * ```

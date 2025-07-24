@@ -7,6 +7,7 @@ interface cst {
                 /// Represents a node with kind `AbicoderPragma`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Introduced in 0.7.5 *)
                 /// AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
                 ///                  (* version: *) AbicoderVersion;
                 /// ```
@@ -14,6 +15,7 @@ interface cst {
                 /// Represents a node with kind `AbicoderVersion`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Introduced in 0.7.5 *)
                 /// AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
                 ///                 | (* variant: *) ABICODERV_2_KEYWORD;
                 /// ```
@@ -1147,7 +1149,7 @@ interface cst {
                 /// Represents a node with kind `Pragma`, having the following structure:
                 ///
                 /// ```ebnf
-                /// Pragma = (* variant: *) AbicoderPragma
+                /// Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
                 ///        | (* variant: *) ExperimentalPragma
                 ///        | (* variant: *) VersionPragma;
                 /// ```
@@ -2046,6 +2048,7 @@ interface cst {
                 /// Represents a node with kind `AbicoderKeyword`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Introduced in 0.7.5 *)
                 /// (* Never reserved *)
                 /// ABICODER_KEYWORD = "abicoder";
                 /// ```
@@ -2053,6 +2056,7 @@ interface cst {
                 /// Represents a node with kind `Abicoderv1Keyword`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Introduced in 0.7.5 *)
                 /// (* Never reserved *)
                 /// ABICODERV_1_KEYWORD = "v1";
                 /// ```
@@ -2060,6 +2064,7 @@ interface cst {
                 /// Represents a node with kind `Abicoderv2Keyword`, having the following structure:
                 ///
                 /// ```ebnf
+                /// (* Introduced in 0.7.5 *)
                 /// (* Never reserved *)
                 /// ABICODERV_2_KEYWORD = "v2";
                 /// ```

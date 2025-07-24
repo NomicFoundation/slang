@@ -12,13 +12,13 @@
 
 ```
 
-<pre ebnf-snippet="Pragma" style="display: none;"><a href="#Pragma"><span class="k">Pragma</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#AbicoderPragma"><span class="k">AbicoderPragma</span></a><br /><span class="o">       | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#ExperimentalPragma"><span class="k">ExperimentalPragma</span></a><br /><span class="o">       | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#VersionPragma"><span class="k">VersionPragma</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="Pragma" style="display: none;"><a href="#Pragma"><span class="k">Pragma</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#AbicoderPragma"><span class="k">AbicoderPragma</span></a><span class="o"> </span><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="o">       | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#ExperimentalPragma"><span class="k">ExperimentalPragma</span></a><br /><span class="o">       | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#VersionPragma"><span class="k">VersionPragma</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #AbicoderPragma }
 
 ```
 
-<pre ebnf-snippet="AbicoderPragma" style="display: none;"><a href="#AbicoderPragma"><span class="k">AbicoderPragma</span></a><span class="o"> = </span><span class="cm">(* abicoder_keyword: *)</span><span class="o"> </span><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><br /><span class="o">                 </span><span class="cm">(* version: *)</span><span class="o"> </span><a href="#AbicoderVersion"><span class="k">AbicoderVersion</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="AbicoderPragma" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><a href="#AbicoderPragma"><span class="k">AbicoderPragma</span></a><span class="o"> = </span><span class="cm">(* abicoder_keyword: *)</span><span class="o"> </span><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><br /><span class="o">                 </span><span class="cm">(* version: *)</span><span class="o"> </span><a href="#AbicoderVersion"><span class="k">AbicoderVersion</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ExperimentalPragma }
 
@@ -30,7 +30,7 @@
 
 ```
 
-<pre ebnf-snippet="AbicoderVersion" style="display: none;"><a href="#AbicoderVersion"><span class="k">AbicoderVersion</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#Abicoderv1Keyword"><span class="k">ABICODERV_1_KEYWORD</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#Abicoderv2Keyword"><span class="k">ABICODERV_2_KEYWORD</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="AbicoderVersion" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><a href="#AbicoderVersion"><span class="k">AbicoderVersion</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#Abicoderv1Keyword"><span class="k">ABICODERV_1_KEYWORD</span></a><br /><span class="o">                | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#Abicoderv2Keyword"><span class="k">ABICODERV_2_KEYWORD</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #ExperimentalFeature }
 
@@ -120,19 +120,19 @@
 
 ```
 
-<pre ebnf-snippet="AbicoderKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"abicoder"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="AbicoderKeyword" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"abicoder"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #Abicoderv1Keyword }
 
 ```
 
-<pre ebnf-snippet="Abicoderv1Keyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#Abicoderv1Keyword"><span class="k">ABICODERV_1_KEYWORD</span></a><span class="o"> = </span><span class="s2">"v1"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="Abicoderv1Keyword" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#Abicoderv1Keyword"><span class="k">ABICODERV_1_KEYWORD</span></a><span class="o"> = </span><span class="s2">"v1"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #Abicoderv2Keyword }
 
 ```
 
-<pre ebnf-snippet="Abicoderv2Keyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#Abicoderv2Keyword"><span class="k">ABICODERV_2_KEYWORD</span></a><span class="o"> = </span><span class="s2">"v2"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="Abicoderv2Keyword" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#Abicoderv2Keyword"><span class="k">ABICODERV_2_KEYWORD</span></a><span class="o"> = </span><span class="s2">"v2"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #AbiencoderV2Keyword }
 

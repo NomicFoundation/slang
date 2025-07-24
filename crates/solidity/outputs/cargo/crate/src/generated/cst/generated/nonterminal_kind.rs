@@ -22,6 +22,7 @@ pub enum NonterminalKind {
     /// Represents a node with kind `AbicoderPragma`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.7.5 *)
     /// AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
     ///                  (* version: *) AbicoderVersion;
     /// ```
@@ -29,6 +30,7 @@ pub enum NonterminalKind {
     /// Represents a node with kind `AbicoderVersion`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.7.5 *)
     /// AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
     ///                 | (* variant: *) ABICODERV_2_KEYWORD;
     /// ```
@@ -1162,7 +1164,7 @@ pub enum NonterminalKind {
     /// Represents a node with kind `Pragma`, having the following structure:
     ///
     /// ```ebnf
-    /// Pragma = (* variant: *) AbicoderPragma
+    /// Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
     ///        | (* variant: *) ExperimentalPragma
     ///        | (* variant: *) VersionPragma;
     /// ```
