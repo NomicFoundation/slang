@@ -59,6 +59,7 @@ impl core::marker::StructuralPartialEq for slang_solidity::backend::binder::Reso
 pub enum slang_solidity::backend::binder::Typing
 pub slang_solidity::backend::binder::Typing::BuiltIn(slang_solidity::backend::built_ins::BuiltIn)
 pub slang_solidity::backend::binder::Typing::MetaType(slang_solidity::backend::types::Type)
+pub slang_solidity::backend::binder::Typing::New(slang_solidity::backend::types::TypeId)
 pub slang_solidity::backend::binder::Typing::Resolved(slang_solidity::backend::types::TypeId)
 pub slang_solidity::backend::binder::Typing::Super
 pub slang_solidity::backend::binder::Typing::This
@@ -281,6 +282,13 @@ pub slang_solidity::backend::built_ins::BuiltIn::Suicide
 pub slang_solidity::backend::built_ins::BuiltIn::Tx
 pub slang_solidity::backend::built_ins::BuiltIn::TxGasPrice
 pub slang_solidity::backend::built_ins::BuiltIn::TxOrigin
+pub slang_solidity::backend::built_ins::BuiltIn::Type(slang_solidity::backend::types::TypeId)
+pub slang_solidity::backend::built_ins::BuiltIn::TypeCreationCode
+pub slang_solidity::backend::built_ins::BuiltIn::TypeInterfaceId
+pub slang_solidity::backend::built_ins::BuiltIn::TypeMax(slang_solidity::backend::types::TypeId)
+pub slang_solidity::backend::built_ins::BuiltIn::TypeMin(slang_solidity::backend::types::TypeId)
+pub slang_solidity::backend::built_ins::BuiltIn::TypeName
+pub slang_solidity::backend::built_ins::BuiltIn::TypeRuntimeCode
 pub slang_solidity::backend::built_ins::BuiltIn::Unwrap(slang_solidity::cst::NodeId)
 pub slang_solidity::backend::built_ins::BuiltIn::Wrap(slang_solidity::cst::NodeId)
 pub slang_solidity::backend::built_ins::BuiltIn::YulAddress

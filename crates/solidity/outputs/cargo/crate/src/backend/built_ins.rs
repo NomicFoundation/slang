@@ -68,6 +68,13 @@ pub enum BuiltIn {
     Tx,
     TxGasPrice,
     TxOrigin,
+    Type(TypeId),
+    TypeName,
+    TypeCreationCode,
+    TypeRuntimeCode,
+    TypeInterfaceId,
+    TypeMin(TypeId),
+    TypeMax(TypeId),
     Unwrap(NodeId),
     Wrap(NodeId),
 
@@ -83,11 +90,16 @@ pub enum BuiltIn {
 const VERSION_0_4_12: Version = Version::new(0, 4, 12);
 const VERSION_0_4_22: Version = Version::new(0, 4, 22);
 const VERSION_0_5_0: Version = Version::new(0, 5, 0);
+const VERSION_0_5_3: Version = Version::new(0, 5, 3);
 const VERSION_0_6_0: Version = Version::new(0, 6, 0);
+const VERSION_0_6_7: Version = Version::new(0, 6, 7);
+const VERSION_0_6_8: Version = Version::new(0, 6, 8);
 const VERSION_0_8_0: Version = Version::new(0, 8, 0);
+const VERSION_0_8_4: Version = Version::new(0, 8, 4);
 const VERSION_0_8_7: Version = Version::new(0, 8, 7);
 const VERSION_0_8_8: Version = Version::new(0, 8, 8);
 const VERSION_0_8_11: Version = Version::new(0, 8, 11);
+const VERSION_0_8_15: Version = Version::new(0, 8, 15);
 const VERSION_0_8_18: Version = Version::new(0, 8, 18);
 const VERSION_0_8_24: Version = Version::new(0, 8, 24);
 
@@ -188,6 +200,39 @@ impl<'a> BuiltInsResolver<'a> {
                 "origin" => Some(BuiltIn::TxOrigin),
                 _ => None,
             },
+            BuiltIn::Type(type_id) => match self.types.get_type_by_id(*type_id) {
+                Type::Contract { .. } => match symbol {
+                    "name" => Some(BuiltIn::TypeName),
+                    "creationCode" if self.language_version >= VERSION_0_5_3 => {
+                        Some(BuiltIn::TypeCreationCode)
+                    }
+                    "runtimeCode" if self.language_version >= VERSION_0_5_3 => {
+                        Some(BuiltIn::TypeRuntimeCode)
+                    }
+                    "interfaceId" if self.language_version >= VERSION_0_6_7 => {
+                        Some(BuiltIn::TypeInterfaceId)
+                    }
+                    _ => None,
+                },
+                Type::Interface { .. } => match symbol {
+                    "name" => Some(BuiltIn::TypeName),
+                    "interfaceId" if self.language_version >= VERSION_0_6_7 => {
+                        Some(BuiltIn::TypeInterfaceId)
+                    }
+                    _ => None,
+                },
+                Type::Enum { .. } if self.language_version >= VERSION_0_8_8 => match symbol {
+                    "min" => Some(BuiltIn::TypeMin(*type_id)),
+                    "max" => Some(BuiltIn::TypeMax(*type_id)),
+                    _ => None,
+                },
+                Type::Integer { .. } if self.language_version >= VERSION_0_6_8 => match symbol {
+                    "min" => Some(BuiltIn::TypeMin(*type_id)),
+                    "max" => Some(BuiltIn::TypeMax(*type_id)),
+                    _ => None,
+                },
+                _ => None,
+            },
             BuiltIn::Msg => match symbol {
                 "data" => Some(BuiltIn::MsgData),
                 "gas" if self.language_version < VERSION_0_5_0 => Some(BuiltIn::MsgGas),
@@ -207,11 +252,11 @@ impl<'a> BuiltInsResolver<'a> {
     ) -> Option<BuiltIn> {
         match definition {
             Definition::Error(_) => match symbol {
-                "selector" => Some(BuiltIn::Selector),
+                "selector" if self.language_version >= VERSION_0_8_4 => Some(BuiltIn::Selector),
                 _ => None,
             },
             Definition::Event(_) => match symbol {
-                "selector" => Some(BuiltIn::Selector),
+                "selector" if self.language_version >= VERSION_0_8_15 => Some(BuiltIn::Selector),
                 _ => None,
             },
             Definition::UserDefinedValueType(udvt) if self.language_version >= VERSION_0_8_8 => {
@@ -362,12 +407,30 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Length => Typing::Resolved(self.types.uint256()),
             BuiltIn::MsgGas => Typing::Resolved(self.types.uint256()),
             BuiltIn::MsgData => Typing::Resolved(self.types.bytes()),
-            BuiltIn::MsgSender => Typing::Resolved(self.types.address()),
+            BuiltIn::MsgSender => {
+                if self.language_version >= VERSION_0_5_0 && self.language_version < VERSION_0_8_0 {
+                    Typing::Resolved(self.types.address_payable())
+                } else {
+                    Typing::Resolved(self.types.address())
+                }
+            }
             BuiltIn::MsgSig => Typing::Resolved(self.types.bytes4()),
             BuiltIn::MsgValue => Typing::Resolved(self.types.uint256()),
             BuiltIn::Selector => Typing::Resolved(self.types.bytes4()),
             BuiltIn::TxGasPrice => Typing::Resolved(self.types.uint256()),
-            BuiltIn::TxOrigin => Typing::Resolved(self.types.address()),
+            BuiltIn::TxOrigin => {
+                if self.language_version >= VERSION_0_8_0 {
+                    Typing::Resolved(self.types.address())
+                } else {
+                    Typing::Resolved(self.types.address_payable())
+                }
+            }
+            BuiltIn::TypeName => Typing::Resolved(self.types.string()),
+            BuiltIn::TypeCreationCode => Typing::Resolved(self.types.bytes()),
+            BuiltIn::TypeRuntimeCode => Typing::Resolved(self.types.bytes()),
+            BuiltIn::TypeInterfaceId => Typing::Resolved(self.types.bytes4()),
+            BuiltIn::TypeMin(type_id) => Typing::Resolved(*type_id),
+            BuiltIn::TypeMax(type_id) => Typing::Resolved(*type_id),
 
             // built-in functions and types
             BuiltIn::Abi

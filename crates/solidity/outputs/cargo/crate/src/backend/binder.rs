@@ -980,6 +980,7 @@ pub enum Typing {
     UserMetaType(NodeId),
     MetaType(Type),
     BuiltIn(BuiltIn),
+    New(TypeId),
     This,
     Super,
 }
