@@ -13,7 +13,6 @@ pub struct TypeRegistry {
     address_payable_type_id: TypeId,
     boolean_type_id: TypeId,
     boolean_bytes_tuple_type_id: TypeId,
-    byte_type_id: TypeId,
     bytes_type_id: TypeId,
     bytes20_type_id: TypeId,
     bytes32_type_id: TypeId,
@@ -21,6 +20,7 @@ pub struct TypeRegistry {
     rational_type_id: TypeId,
     string_type_id: TypeId,
     uint256_type_id: TypeId,
+    uint8_type_id: TypeId,
     void_type_id: TypeId,
 }
 
@@ -31,10 +31,6 @@ impl TypeRegistry {
         let (address_type, _) = types.insert_full(Type::Address { payable: false });
         let (address_payable_type, _) = types.insert_full(Type::Address { payable: true });
         let (boolean_type, _) = types.insert_full(Type::Boolean);
-        let (byte_type, _) = types.insert_full(Type::Integer {
-            signed: false,
-            bits: 8,
-        });
         let (bytes_type, _) = types.insert_full(Type::Bytes {
             location: DataLocation::Memory,
         });
@@ -49,6 +45,10 @@ impl TypeRegistry {
             signed: false,
             bits: 256,
         });
+        let (uint8_type, _) = types.insert_full(Type::Integer {
+            signed: false,
+            bits: 8,
+        });
         let (void_type, _) = types.insert_full(Type::Void);
 
         let (boolean_bytes_tuple_type, _) = types.insert_full(Type::Tuple {
@@ -62,7 +62,6 @@ impl TypeRegistry {
             address_payable_type_id: TypeId(address_payable_type),
             boolean_type_id: TypeId(boolean_type),
             boolean_bytes_tuple_type_id: TypeId(boolean_bytes_tuple_type),
-            byte_type_id: TypeId(byte_type),
             bytes_type_id: TypeId(bytes_type),
             bytes20_type_id: TypeId(bytes20_type),
             bytes32_type_id: TypeId(bytes32_type),
@@ -70,6 +69,7 @@ impl TypeRegistry {
             rational_type_id: TypeId(rational_type),
             string_type_id: TypeId(string_type),
             uint256_type_id: TypeId(uint256_type),
+            uint8_type_id: TypeId(uint8_type),
             void_type_id: TypeId(void_type),
         }
     }
@@ -83,16 +83,16 @@ impl TypeRegistry {
         TypeId(index)
     }
 
-    pub fn get_type_by_id(&self, type_id: TypeId) -> Option<&Type> {
-        self.types.get_index(type_id.0)
+    pub fn get_type_by_id(&self, type_id: TypeId) -> &Type {
+        self.types.get_index(type_id.0).unwrap()
     }
 
     pub fn implicitly_convertible_to(&self, from_type_id: TypeId, to_type_id: TypeId) -> bool {
         if from_type_id == to_type_id {
             return true;
         }
-        let from_type = self.get_type_by_id(from_type_id).unwrap();
-        let to_type = self.get_type_by_id(to_type_id).unwrap();
+        let from_type = self.get_type_by_id(from_type_id);
+        let to_type = self.get_type_by_id(to_type_id);
 
         match (from_type, to_type) {
             (
@@ -144,9 +144,6 @@ impl TypeRegistry {
     pub fn boolean_bytes_tuple(&self) -> TypeId {
         self.boolean_bytes_tuple_type_id
     }
-    pub fn byte(&self) -> TypeId {
-        self.byte_type_id
-    }
     pub fn bytes(&self) -> TypeId {
         self.bytes_type_id
     }
@@ -167,6 +164,9 @@ impl TypeRegistry {
     }
     pub fn uint256(&self) -> TypeId {
         self.uint256_type_id
+    }
+    pub fn uint8(&self) -> TypeId {
+        self.uint8_type_id
     }
     pub fn void(&self) -> TypeId {
         self.void_type_id
@@ -266,6 +266,44 @@ pub enum FunctionTypeKind {
 }
 
 impl Type {
+    pub fn data_location(&self) -> Option<DataLocation> {
+        match self {
+            Self::Array { location, .. }
+            | Self::Bytes { location }
+            | Self::String { location }
+            | Self::Struct { location, .. } => Some(*location),
+            Self::Mapping { .. } => Some(DataLocation::Storage),
+            _ => None,
+        }
+    }
+
+    #[must_use]
+    pub fn with_data_location(&self, data_location: Option<DataLocation>) -> Self {
+        match self {
+            Self::Array {
+                element_type,
+                location,
+            } => Self::Array {
+                element_type: *element_type,
+                location: data_location.unwrap_or(*location),
+            },
+            Self::Bytes { location } => Self::Bytes {
+                location: data_location.unwrap_or(*location),
+            },
+            Self::String { location } => Self::String {
+                location: data_location.unwrap_or(*location),
+            },
+            Self::Struct {
+                definition_id,
+                location,
+            } => Self::Struct {
+                definition_id: *definition_id,
+                location: data_location.unwrap_or(*location),
+            },
+            _ => self.clone(),
+        }
+    }
+
     #[must_use]
     pub fn canonicalize(&self) -> Self {
         match self {
@@ -310,6 +348,70 @@ impl Type {
             | Type::Tuple { .. }
             | Type::UserDefinedValue { .. }
             | Type::Void => self.clone(),
+        }
+    }
+}
+
+impl Type {
+    pub fn from_bytes_keyword(keyword: &str, data_location: Option<DataLocation>) -> Option<Self> {
+        let width = keyword.strip_prefix("bytes").unwrap().parse::<u32>();
+        if let Ok(width) = width {
+            Some(Self::ByteArray { width })
+        } else {
+            data_location.map(|data_location| Self::Bytes {
+                location: data_location,
+            })
+        }
+    }
+
+    pub fn from_int_keyword(keyword: &str) -> Self {
+        let bits = keyword
+            .strip_prefix("int")
+            .unwrap()
+            .parse::<u32>()
+            .unwrap_or(256);
+        Self::Integer { signed: true, bits }
+    }
+
+    pub fn from_uint_keyword(keyword: &str) -> Self {
+        let bits = keyword
+            .strip_prefix("uint")
+            .unwrap()
+            .parse::<u32>()
+            .unwrap_or(256);
+        Self::Integer {
+            signed: false,
+            bits,
+        }
+    }
+
+    pub fn from_fixed_keyword(keyword: &str) -> Self {
+        let mut parts = keyword
+            .strip_prefix("fixed")
+            .unwrap()
+            .split('x')
+            .map(|part| part.parse::<u32>().unwrap());
+        let bits = parts.next().unwrap();
+        let precision_bits = parts.next().unwrap_or(0);
+        Self::FixedPointNumber {
+            signed: true,
+            bits,
+            precision_bits,
+        }
+    }
+
+    pub fn from_ufixed_keyword(keyword: &str) -> Self {
+        let mut parts = keyword
+            .strip_prefix("ufixed")
+            .unwrap()
+            .split('x')
+            .map(|part| part.parse::<u32>().unwrap());
+        let bits = parts.next().unwrap();
+        let precision_bits = parts.next().unwrap_or(0);
+        Self::FixedPointNumber {
+            signed: false,
+            bits,
+            precision_bits,
         }
     }
 }

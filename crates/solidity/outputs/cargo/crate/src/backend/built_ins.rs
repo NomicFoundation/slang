@@ -38,6 +38,7 @@ pub enum BuiltIn {
     BlockPrevrandao,
     BlockTimestamp,
     Blockhash,
+    BytesConcat,
     CallOptionGas,
     CallOptionSalt,
     CallOptionValue,
@@ -62,6 +63,7 @@ pub enum BuiltIn {
     Selfdestruct,
     Sha256,
     Sha3,
+    StringConcat,
     Suicide,
     Tx,
     TxGasPrice,
@@ -198,7 +200,7 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
-    pub(crate) fn lookup_member_of_meta_type(
+    pub(crate) fn lookup_member_of_user_definition(
         &self,
         definition: &Definition,
         symbol: &str,
@@ -219,6 +221,25 @@ impl<'a> BuiltInsResolver<'a> {
                     _ => None,
                 }
             }
+            _ => None,
+        }
+    }
+
+    #[allow(clippy::unused_self)]
+    pub(crate) fn lookup_member_of_meta_type(
+        &self,
+        parent_type: &Type,
+        symbol: &str,
+    ) -> Option<BuiltIn> {
+        match parent_type {
+            Type::Bytes { .. } => match symbol {
+                "concat" => Some(BuiltIn::BytesConcat),
+                _ => None,
+            },
+            Type::String { .. } => match symbol {
+                "concat" => Some(BuiltIn::StringConcat),
+                _ => None,
+            },
             _ => None,
         }
     }
@@ -265,7 +286,7 @@ impl<'a> BuiltInsResolver<'a> {
             Type::Bytes { .. } => match symbol {
                 "length" => Some(BuiltIn::Length),
                 "pop" if self.language_version >= VERSION_0_5_0 => Some(BuiltIn::ArrayPop),
-                "push" => Some(BuiltIn::ArrayPush(self.types.byte())),
+                "push" => Some(BuiltIn::ArrayPush(self.types.uint8())),
                 _ => None,
             },
             Type::Contract { .. } => None,
@@ -369,6 +390,7 @@ impl<'a> BuiltInsResolver<'a> {
             | BuiltIn::Blobhash
             | BuiltIn::Block
             | BuiltIn::Blockhash
+            | BuiltIn::BytesConcat
             | BuiltIn::Ecrecover
             | BuiltIn::Gasleft
             | BuiltIn::Keccak256
@@ -382,6 +404,7 @@ impl<'a> BuiltInsResolver<'a> {
             | BuiltIn::Selfdestruct
             | BuiltIn::Sha256
             | BuiltIn::Sha3
+            | BuiltIn::StringConcat
             | BuiltIn::Suicide
             | BuiltIn::Tx
             | BuiltIn::Wrap(_)
@@ -452,6 +475,7 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Assert => Typing::Resolved(self.types.void()),
             BuiltIn::Blobhash => Typing::Resolved(self.types.bytes32()),
             BuiltIn::Blockhash => Typing::Resolved(self.types.bytes32()),
+            BuiltIn::BytesConcat => Typing::Resolved(self.types.bytes()),
             BuiltIn::Ecrecover => Typing::Resolved(self.types.address()),
             BuiltIn::Gasleft => Typing::Resolved(self.types.uint256()),
             BuiltIn::Keccak256 => Typing::Resolved(self.types.bytes32()),
@@ -463,6 +487,7 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Selfdestruct => Typing::Resolved(self.types.void()),
             BuiltIn::Sha256 => Typing::Resolved(self.types.bytes32()),
             BuiltIn::Sha3 => Typing::Resolved(self.types.bytes32()),
+            BuiltIn::StringConcat => Typing::Resolved(self.types.string()),
             BuiltIn::Suicide => Typing::Resolved(self.types.void()),
             BuiltIn::Unwrap(definition_id) => {
                 let Some(Definition::UserDefinedValueType(udvt)) =

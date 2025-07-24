@@ -4,7 +4,7 @@ use std::rc::Rc;
 use metaslang_cst::nodes::NodeId;
 
 use super::built_ins::BuiltIn;
-use super::types::TypeId;
+use super::types::{Type, TypeId};
 use crate::cst::{TerminalKind, TerminalNode};
 
 //////////////////////////////////////////////////////////////////////////////
@@ -969,12 +969,16 @@ impl Scope {
 //////////////////////////////////////////////////////////////////////////////
 // Binder
 
+// TODO: do we want to move tuples (which are not a real Solidity type) into
+// here, as a typing variant? That has the additional benefit of not requiring
+// us to register every tuple combination.
 #[derive(Clone, Debug)]
 pub enum Typing {
     Unresolved,
     Resolved(TypeId),
     Undetermined(Vec<TypeId>),
-    MetaType(NodeId),
+    UserMetaType(NodeId),
+    MetaType(Type),
     BuiltIn(BuiltIn),
     This,
     Super,
@@ -1120,8 +1124,9 @@ impl Binder {
             .expect("expected node to have typing information")
     }
 
-    pub(crate) fn mark_meta_type_node(&mut self, node_id: NodeId) {
-        self.node_typing.insert(node_id, Typing::MetaType(node_id));
+    pub(crate) fn mark_user_meta_type_node(&mut self, node_id: NodeId) {
+        self.node_typing
+            .insert(node_id, Typing::UserMetaType(node_id));
     }
 
     pub(crate) fn set_node_type(&mut self, node_id: NodeId, type_id: Option<TypeId>) {

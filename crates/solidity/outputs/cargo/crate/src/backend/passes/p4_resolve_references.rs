@@ -115,7 +115,7 @@ impl Pass {
         // `using L for *`)
         // - If the type is a function type, it may have an associated
         // definition ID from the function definition where it is derived from.
-        let canonical_type = self.types.get_type_by_id(type_id).unwrap().canonicalize();
+        let canonical_type = self.types.get_type_by_id(type_id).canonicalize();
         let type_id = self.types.find_type(&canonical_type).unwrap_or(type_id);
 
         let mut directives = Vec::new();
@@ -168,7 +168,17 @@ impl Pass {
                 // the linearisation information
                 Resolution::Unresolved
             }
-            Typing::MetaType(node_id) => {
+            Typing::MetaType(type_) => {
+                if let Some(built_in) = self
+                    .built_ins_resolver()
+                    .lookup_member_of_meta_type(type_, symbol)
+                {
+                    Resolution::BuiltIn(built_in)
+                } else {
+                    Resolution::Unresolved
+                }
+            }
+            Typing::UserMetaType(node_id) => {
                 // We're trying to resolve a member access expression into a
                 // type name, ie. this is a meta-type member access
                 let Some(definition) = self.binder.find_definition_by_id(*node_id) else {
@@ -199,7 +209,7 @@ impl Pass {
                     }
                     _ => self
                         .built_ins_resolver()
-                        .lookup_member_of_meta_type(definition, symbol)
+                        .lookup_member_of_user_definition(definition, symbol)
                         .into(),
                 }
             }
@@ -211,7 +221,7 @@ impl Pass {
     }
 
     fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: &str) -> Resolution {
-        let type_ = self.types.get_type_by_id(type_id).unwrap();
+        let type_ = self.types.get_type_by_id(type_id);
         match type_ {
             Type::Contract { .. } => {
                 // TODO: expose the public contract methods
@@ -302,19 +312,44 @@ impl Pass {
                 Typing::Resolved(self.types.rational())
             }
             input_ir::Expression::StringExpression(_) => Typing::Resolved(self.types.string()),
-            input_ir::Expression::ElementaryType(_) => {
-                // TODO: We need to support two things here:
-                // - bytes/string for the `concat` member
-                // - all types for casting
-                Typing::Unresolved
+            input_ir::Expression::ElementaryType(elementary_type) => {
+                Typing::MetaType(Self::type_of_elementary_type(elementary_type))
             }
             input_ir::Expression::Identifier(identifier) => self.typing_of_identifier(identifier),
             input_ir::Expression::PayableKeyword => {
-                // TODO: we need to support casting here
-                Typing::Unresolved
+                Typing::MetaType(Type::Address { payable: true })
             }
             input_ir::Expression::ThisKeyword => Typing::This,
             input_ir::Expression::SuperKeyword => Typing::Super,
+        }
+    }
+
+    fn type_of_elementary_type(elementary_type: &input_ir::ElementaryType) -> Type {
+        match elementary_type {
+            input_ir::ElementaryType::AddressType(address_type) => Type::Address {
+                payable: address_type.payable_keyword.is_some(),
+            },
+            input_ir::ElementaryType::BytesKeyword(terminal) => {
+                Type::from_bytes_keyword(&terminal.unparse(), Some(DataLocation::Inherited))
+                    .unwrap()
+            }
+            input_ir::ElementaryType::IntKeyword(terminal) => {
+                Type::from_int_keyword(&terminal.unparse())
+            }
+            input_ir::ElementaryType::UintKeyword(terminal) => {
+                Type::from_uint_keyword(&terminal.unparse())
+            }
+            input_ir::ElementaryType::FixedKeyword(terminal) => {
+                Type::from_fixed_keyword(&terminal.unparse())
+            }
+            input_ir::ElementaryType::UfixedKeyword(terminal) => {
+                Type::from_ufixed_keyword(&terminal.unparse())
+            }
+            input_ir::ElementaryType::BoolKeyword => Type::Boolean,
+            input_ir::ElementaryType::ByteKeyword => Type::ByteArray { width: 1 },
+            input_ir::ElementaryType::StringKeyword => Type::String {
+                location: DataLocation::Inherited,
+            },
         }
     }
 
@@ -811,8 +846,8 @@ impl Visitor for Pass {
             if let Some(operand_type_id) = self.typing_of_expression(&node.operand).as_type_id() {
                 let operand_type = self.types.get_type_by_id(operand_type_id);
                 match operand_type {
-                    Some(Type::Array { element_type, .. }) => Typing::Resolved(*element_type),
-                    Some(Type::Mapping { value_type_id, .. }) => Typing::Resolved(*value_type_id),
+                    Type::Array { element_type, .. } => Typing::Resolved(*element_type),
+                    Type::Mapping { value_type_id, .. } => Typing::Resolved(*value_type_id),
                     _ => {
                         // TODO(validation): the operand is not indexable
                         Typing::Unresolved
@@ -856,7 +891,7 @@ impl Visitor for Pass {
                 (Typing::Unresolved, None)
             }
             Typing::Resolved(type_id) => {
-                let operand_type = self.types.get_type_by_id(type_id).unwrap();
+                let operand_type = self.types.get_type_by_id(type_id);
                 match operand_type {
                     Type::Function {
                         definition_id,
@@ -876,7 +911,26 @@ impl Visitor for Pass {
                 // TODO: return the definition_id used to later resolve named arguments
                 (Typing::Unresolved, None)
             }
-            Typing::MetaType(node_id) => {
+            Typing::MetaType(type_) => {
+                // TODO(validation): this is a cast to the given type, but we
+                // need to verify that the (single) argument is convertible
+                if let Some(type_id_of_first_argument) = positional_argument_typings
+                    .and_then(|arguments| arguments.first().cloned())
+                    .and_then(|typing| typing.as_type_id())
+                {
+                    let data_location = self
+                        .types
+                        .get_type_by_id(type_id_of_first_argument)
+                        .data_location();
+                    let type_id = self
+                        .types
+                        .register_type(type_.with_data_location(data_location));
+                    (Typing::Resolved(type_id), None)
+                } else {
+                    (Typing::Unresolved, None)
+                }
+            }
+            Typing::UserMetaType(node_id) => {
                 if let Some(definition) = self.binder.find_definition_by_id(node_id) {
                     match definition {
                         Definition::Contract(_) => {

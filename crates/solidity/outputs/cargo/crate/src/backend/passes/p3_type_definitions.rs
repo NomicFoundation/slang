@@ -322,75 +322,25 @@ impl Pass {
                 }))
             }
             input_ir::ElementaryType::BytesKeyword(bytes_keyword) => {
-                let width = bytes_keyword
-                    .unparse()
-                    .strip_prefix("bytes")
-                    .unwrap()
-                    .parse::<u32>();
-                if let Ok(width) = width {
-                    Some(self.types.register_type(Type::ByteArray { width }))
-                } else {
-                    data_location.map(|data_location| {
-                        self.types.register_type(Type::Bytes {
-                            location: data_location,
-                        })
-                    })
-                }
+                Type::from_bytes_keyword(&bytes_keyword.unparse(), data_location)
+                    .map(|type_| self.types.register_type(type_))
             }
-            input_ir::ElementaryType::IntKeyword(int_keyword) => {
-                let bits = int_keyword
-                    .unparse()
-                    .strip_prefix("int")
-                    .unwrap()
-                    .parse::<u32>()
-                    .unwrap_or(256);
-                Some(
-                    self.types
-                        .register_type(Type::Integer { signed: true, bits }),
-                )
-            }
-            input_ir::ElementaryType::UintKeyword(uint_keyword) => {
-                let bits = uint_keyword
-                    .unparse()
-                    .strip_prefix("uint")
-                    .unwrap()
-                    .parse::<u32>()
-                    .unwrap_or(256);
-                Some(self.types.register_type(Type::Integer {
-                    signed: false,
-                    bits,
-                }))
-            }
-            input_ir::ElementaryType::FixedKeyword(fixed_keyword) => {
-                let fixed_keyword = fixed_keyword.unparse();
-                let mut parts = fixed_keyword
-                    .strip_prefix("fixed")
-                    .unwrap()
-                    .split('x')
-                    .map(|part| part.parse::<u32>().unwrap());
-                let bits = parts.next().unwrap();
-                let precision_bits = parts.next().unwrap_or(0);
-                Some(self.types.register_type(Type::FixedPointNumber {
-                    signed: true,
-                    bits,
-                    precision_bits,
-                }))
-            }
-            input_ir::ElementaryType::UfixedKeyword(ufixed_keyword) => {
-                let ufixed_keyword = ufixed_keyword.unparse();
-                let mut parts = ufixed_keyword
-                    .strip_prefix("ufixed")
-                    .unwrap()
-                    .split('x')
-                    .map(|part| part.parse::<u32>().unwrap());
-                let bits = parts.next().unwrap();
-                let precision_bits = parts.next().unwrap_or(0);
-                Some(self.types.register_type(Type::FixedPointNumber {
-                    signed: false,
-                    bits,
-                    precision_bits,
-                }))
-            }
+            input_ir::ElementaryType::IntKeyword(int_keyword) => Some(
+                self.types
+                    .register_type(Type::from_int_keyword(&int_keyword.unparse())),
+            ),
+            input_ir::ElementaryType::UintKeyword(uint_keyword) => Some(
+                self.types
+                    .register_type(Type::from_uint_keyword(&uint_keyword.unparse())),
+            ),
+            input_ir::ElementaryType::FixedKeyword(fixed_keyword) => Some(
+                self.types
+                    .register_type(Type::from_fixed_keyword(&fixed_keyword.unparse())),
+            ),
+            input_ir::ElementaryType::UfixedKeyword(ufixed_keyword) => Some(
+                self.types
+                    .register_type(Type::from_ufixed_keyword(&ufixed_keyword.unparse())),
+            ),
             input_ir::ElementaryType::BoolKeyword => Some(self.types.boolean()),
             input_ir::ElementaryType::ByteKeyword => {
                 Some(self.types.register_type(Type::ByteArray { width: 1 }))
@@ -492,7 +442,7 @@ impl Visitor for Pass {
     fn leave_contract_definition(&mut self, node: &input_ir::ContractDefinition) {
         self.leave_scope_for_node_id(node.node_id);
 
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {
@@ -508,7 +458,7 @@ impl Visitor for Pass {
     fn leave_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) {
         self.leave_scope_for_node_id(node.node_id);
 
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn enter_library_definition(&mut self, node: &input_ir::LibraryDefinition) -> bool {
@@ -519,17 +469,17 @@ impl Visitor for Pass {
     fn leave_library_definition(&mut self, node: &input_ir::LibraryDefinition) {
         self.leave_scope_for_node_id(node.node_id);
 
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn leave_path_import(&mut self, node: &input_ir::PathImport) {
         if node.alias.is_some() {
-            self.binder.mark_meta_type_node(node.node_id);
+            self.binder.mark_user_meta_type_node(node.node_id);
         }
     }
 
     fn leave_named_import(&mut self, node: &input_ir::NamedImport) {
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn enter_import_deconstruction(&mut self, node: &input_ir::ImportDeconstruction) -> bool {
@@ -591,7 +541,7 @@ impl Visitor for Pass {
     }
 
     fn leave_event_definition(&mut self, node: &input_ir::EventDefinition) {
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn leave_event_parameter(&mut self, node: &input_ir::EventParameter) {
@@ -603,7 +553,7 @@ impl Visitor for Pass {
     }
 
     fn leave_error_definition(&mut self, node: &input_ir::ErrorDefinition) {
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn leave_error_parameter(&mut self, node: &input_ir::ErrorParameter) {
@@ -677,7 +627,7 @@ impl Visitor for Pass {
     }
 
     fn leave_struct_definition(&mut self, node: &input_ir::StructDefinition) {
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn leave_struct_member(&mut self, node: &input_ir::StructMember) {
@@ -693,14 +643,14 @@ impl Visitor for Pass {
             self.binder.set_node_type(member.id(), Some(type_id));
         }
 
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn leave_user_defined_value_type_definition(
         &mut self,
         node: &input_ir::UserDefinedValueTypeDefinition,
     ) {
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
 
         let target_type_id = self.type_of_elementary_type(&node.value_type, None);
         let Definition::UserDefinedValueType(udvt) = self.binder.get_definition_mut(node.node_id)
