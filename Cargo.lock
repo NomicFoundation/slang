@@ -2499,27 +2499,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "solidity_testing_sanctuary"
-version = "1.2.1"
-dependencies = [
- "anyhow",
- "clap",
- "console 0.15.11",
- "indicatif",
- "infra_utils",
- "itertools 0.13.0",
- "metaslang_bindings",
- "rayon",
- "regex",
- "semver",
- "serde",
- "serde_json",
- "slang_solidity",
- "strum_macros",
- "url",
-]
-
-[[package]]
 name = "solidity_testing_snapshots"
 version = "1.2.1"
 
