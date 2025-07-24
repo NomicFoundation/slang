@@ -218,6 +218,13 @@ impl core::fmt::Debug for slang_solidity::backend::binder::YulVariableDefinition
 pub fn slang_solidity::backend::binder::YulVariableDefinition::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub mod slang_solidity::backend::built_ins
 pub enum slang_solidity::backend::built_ins::BuiltIn
+pub slang_solidity::backend::built_ins::BuiltIn::Abi
+pub slang_solidity::backend::built_ins::BuiltIn::AbiDecode
+pub slang_solidity::backend::built_ins::BuiltIn::AbiEncode
+pub slang_solidity::backend::built_ins::BuiltIn::AbiEncodeCall
+pub slang_solidity::backend::built_ins::BuiltIn::AbiEncodePacked
+pub slang_solidity::backend::built_ins::BuiltIn::AbiEncodeWithSelector
+pub slang_solidity::backend::built_ins::BuiltIn::AbiEncodeWithSignature
 pub slang_solidity::backend::built_ins::BuiltIn::Addmod
 pub slang_solidity::backend::built_ins::BuiltIn::ArrayPop
 pub slang_solidity::backend::built_ins::BuiltIn::ArrayPush(slang_solidity::backend::types::TypeId)

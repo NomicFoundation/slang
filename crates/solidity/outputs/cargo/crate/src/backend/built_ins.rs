@@ -6,6 +6,13 @@ use crate::cst::NodeId;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum BuiltIn {
+    Abi,
+    AbiDecode,
+    AbiEncode,
+    AbiEncodeCall,
+    AbiEncodePacked,
+    AbiEncodeWithSelector,
+    AbiEncodeWithSignature,
     Addmod,
     ArrayPop,
     ArrayPush(TypeId),
@@ -57,6 +64,7 @@ const VERSION_0_4_22: Version = Version::new(0, 4, 22);
 const VERSION_0_5_0: Version = Version::new(0, 5, 0);
 const VERSION_0_8_0: Version = Version::new(0, 8, 0);
 const VERSION_0_8_8: Version = Version::new(0, 8, 8);
+const VERSION_0_8_11: Version = Version::new(0, 8, 11);
 const VERSION_0_8_24: Version = Version::new(0, 8, 24);
 
 pub(crate) struct BuiltInsResolver<'a> {
@@ -80,32 +88,17 @@ impl<'a> BuiltInsResolver<'a> {
 
     pub(crate) fn lookup_global(&self, symbol: &str) -> Option<BuiltIn> {
         match symbol {
+            "abi" => Some(BuiltIn::Abi),
             "addmod" => Some(BuiltIn::Addmod),
             "assert" => Some(BuiltIn::Assert),
-            "blobhash" => {
-                if self.language_version >= VERSION_0_8_24 {
-                    Some(BuiltIn::Blobhash)
-                } else {
-                    None
-                }
-            }
-            "blockhash" => {
-                if self.language_version >= VERSION_0_4_22 {
-                    Some(BuiltIn::Blockhash)
-                } else {
-                    None
-                }
-            }
+            "blobhash" if self.language_version >= VERSION_0_8_24 => Some(BuiltIn::Blobhash),
+            "blockhash" if self.language_version >= VERSION_0_4_22 => Some(BuiltIn::Blockhash),
             "ecrecover" => Some(BuiltIn::Ecrecover),
             "gasleft" => Some(BuiltIn::Gasleft),
             "keccak256" => Some(BuiltIn::Keccak256),
-            "log0" | "log1" | "log2" | "log3" | "log4" => {
-                if self.language_version < VERSION_0_8_0 {
-                    let arity = symbol.as_bytes()[3] - b'0';
-                    Some(BuiltIn::Log(arity))
-                } else {
-                    None
-                }
+            "log0" | "log1" | "log2" | "log3" | "log4" if self.language_version < VERSION_0_8_0 => {
+                let arity = symbol.as_bytes()[3] - b'0';
+                Some(BuiltIn::Log(arity))
             }
             "msg" => Some(BuiltIn::Msg),
             "mulmod" => Some(BuiltIn::Mulmod),
@@ -114,20 +107,8 @@ impl<'a> BuiltInsResolver<'a> {
             "ripemd160" => Some(BuiltIn::Ripemd160),
             "selfdestruct" => Some(BuiltIn::Selfdestruct),
             "sha256" => Some(BuiltIn::Sha256),
-            "sha3" => {
-                if self.language_version < VERSION_0_5_0 {
-                    Some(BuiltIn::Sha3)
-                } else {
-                    None
-                }
-            }
-            "suicide" => {
-                if self.language_version < VERSION_0_5_0 {
-                    Some(BuiltIn::Suicide)
-                } else {
-                    None
-                }
-            }
+            "sha3" if self.language_version < VERSION_0_5_0 => Some(BuiltIn::Sha3),
+            "suicide" if self.language_version < VERSION_0_5_0 => Some(BuiltIn::Suicide),
             "tx" => Some(BuiltIn::Tx),
             // TODO: add the rest of the built-ins
             _ => None,
@@ -136,13 +117,7 @@ impl<'a> BuiltInsResolver<'a> {
 
     pub(crate) fn lookup_yul_global(&self, symbol: &str) -> Option<BuiltIn> {
         match symbol {
-            "keccak256" => {
-                if self.language_version >= VERSION_0_4_12 {
-                    Some(BuiltIn::YulKeccak256)
-                } else {
-                    None
-                }
-            }
+            "keccak256" if self.language_version >= VERSION_0_4_12 => Some(BuiltIn::YulKeccak256),
             // TODO: add the rest of the built-ins
             _ => None,
         }
@@ -150,6 +125,23 @@ impl<'a> BuiltInsResolver<'a> {
 
     pub(crate) fn lookup_member_of(&self, built_in: &BuiltIn, symbol: &str) -> Option<BuiltIn> {
         match built_in {
+            BuiltIn::Abi => match symbol {
+                "decode" if self.language_version >= VERSION_0_5_0 => Some(BuiltIn::AbiDecode),
+                "encode" if self.language_version >= VERSION_0_4_22 => Some(BuiltIn::AbiEncode),
+                "encodeCall" if self.language_version >= VERSION_0_8_11 => {
+                    Some(BuiltIn::AbiEncodeCall)
+                }
+                "encodePacked" if self.language_version >= VERSION_0_4_22 => {
+                    Some(BuiltIn::AbiEncodePacked)
+                }
+                "encodeWithSelector" if self.language_version >= VERSION_0_4_22 => {
+                    Some(BuiltIn::AbiEncodeWithSelector)
+                }
+                "encodeWithSignature" if self.language_version >= VERSION_0_4_22 => {
+                    Some(BuiltIn::AbiEncodeWithSignature)
+                }
+                _ => None,
+            },
             BuiltIn::Tx => match symbol {
                 "gasprice" => Some(BuiltIn::TxGasPrice),
                 "origin" => Some(BuiltIn::TxOrigin),
@@ -157,13 +149,7 @@ impl<'a> BuiltInsResolver<'a> {
             },
             BuiltIn::Msg => match symbol {
                 "data" => Some(BuiltIn::MsgData),
-                "gas" => {
-                    if self.language_version < VERSION_0_5_0 {
-                        Some(BuiltIn::MsgGas)
-                    } else {
-                        None
-                    }
-                }
+                "gas" if self.language_version < VERSION_0_5_0 => Some(BuiltIn::MsgGas),
                 "sender" => Some(BuiltIn::MsgSender),
                 "sig" => Some(BuiltIn::MsgSig),
                 "value" => Some(BuiltIn::MsgValue),
@@ -187,15 +173,11 @@ impl<'a> BuiltInsResolver<'a> {
                 "selector" => Some(BuiltIn::Selector),
                 _ => None,
             },
-            Definition::UserDefinedValueType(udvt) => {
-                if self.language_version >= VERSION_0_8_8 {
-                    match symbol {
-                        "wrap" => Some(BuiltIn::Wrap(udvt.node_id)),
-                        "unwrap" => Some(BuiltIn::Unwrap(udvt.node_id)),
-                        _ => None,
-                    }
-                } else {
-                    None
+            Definition::UserDefinedValueType(udvt) if self.language_version >= VERSION_0_8_8 => {
+                match symbol {
+                    "wrap" => Some(BuiltIn::Wrap(udvt.node_id)),
+                    "unwrap" => Some(BuiltIn::Unwrap(udvt.node_id)),
+                    _ => None,
                 }
             }
             _ => None,
@@ -297,8 +279,15 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::TxGasPrice => Typing::Resolved(self.types.uint256()),
             BuiltIn::TxOrigin => Typing::Resolved(self.types.address()),
 
-            // built-in functions
-            BuiltIn::Addmod
+            // built-in functions and types
+            BuiltIn::Abi
+            | BuiltIn::AbiDecode
+            | BuiltIn::AbiEncode
+            | BuiltIn::AbiEncodeCall
+            | BuiltIn::AbiEncodePacked
+            | BuiltIn::AbiEncodeWithSelector
+            | BuiltIn::AbiEncodeWithSignature
+            | BuiltIn::Addmod
             | BuiltIn::ArrayPop
             | BuiltIn::ArrayPush(_)
             | BuiltIn::Assert
@@ -333,6 +322,16 @@ impl<'a> BuiltInsResolver<'a> {
         argument_typings: &[Typing],
     ) -> Typing {
         match built_in {
+            BuiltIn::AbiDecode => {
+                // TODO: the return type is a tuple of the types given in the
+                // arguments
+                Typing::Unresolved
+            }
+            BuiltIn::AbiEncode => Typing::Resolved(self.types.bytes()),
+            BuiltIn::AbiEncodeCall => Typing::Resolved(self.types.bytes()),
+            BuiltIn::AbiEncodePacked => Typing::Resolved(self.types.bytes()),
+            BuiltIn::AbiEncodeWithSelector => Typing::Resolved(self.types.bytes()),
+            BuiltIn::AbiEncodeWithSignature => Typing::Resolved(self.types.bytes()),
             BuiltIn::Addmod => Typing::Resolved(self.types.uint256()),
             BuiltIn::ArrayPush(type_id) => {
                 if argument_typings.is_empty() {
