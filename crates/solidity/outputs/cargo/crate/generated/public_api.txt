@@ -226,10 +226,18 @@ pub slang_solidity::backend::built_ins::BuiltIn::AbiEncodePacked
 pub slang_solidity::backend::built_ins::BuiltIn::AbiEncodeWithSelector
 pub slang_solidity::backend::built_ins::BuiltIn::AbiEncodeWithSignature
 pub slang_solidity::backend::built_ins::BuiltIn::Addmod
+pub slang_solidity::backend::built_ins::BuiltIn::AddressBalance
+pub slang_solidity::backend::built_ins::BuiltIn::AddressCall
+pub slang_solidity::backend::built_ins::BuiltIn::AddressCallcode
+pub slang_solidity::backend::built_ins::BuiltIn::AddressCode
+pub slang_solidity::backend::built_ins::BuiltIn::AddressCodehash
+pub slang_solidity::backend::built_ins::BuiltIn::AddressDelegatecall
+pub slang_solidity::backend::built_ins::BuiltIn::AddressSend
+pub slang_solidity::backend::built_ins::BuiltIn::AddressStaticcall
+pub slang_solidity::backend::built_ins::BuiltIn::AddressTransfer
 pub slang_solidity::backend::built_ins::BuiltIn::ArrayPop
 pub slang_solidity::backend::built_ins::BuiltIn::ArrayPush(slang_solidity::backend::types::TypeId)
 pub slang_solidity::backend::built_ins::BuiltIn::Assert
-pub slang_solidity::backend::built_ins::BuiltIn::Balance
 pub slang_solidity::backend::built_ins::BuiltIn::Blobhash
 pub slang_solidity::backend::built_ins::BuiltIn::Blockhash
 pub slang_solidity::backend::built_ins::BuiltIn::CallOptionGas
@@ -7754,6 +7762,7 @@ pub struct slang_solidity::backend::types::TypeRegistry
 impl slang_solidity::backend::types::TypeRegistry
 pub fn slang_solidity::backend::types::TypeRegistry::address(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::boolean(&self) -> slang_solidity::backend::types::TypeId
+pub fn slang_solidity::backend::types::TypeRegistry::boolean_bytes_tuple(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::byte(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::bytes(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::bytes20(&self) -> slang_solidity::backend::types::TypeId
