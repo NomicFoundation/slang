@@ -24,6 +24,7 @@ export declare enum NonterminalKind {
    * Represents a node with kind `AbicoderPragma`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.7.5 *)
    * AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
    *                  (* version: *) AbicoderVersion;
    * ```
@@ -33,6 +34,7 @@ export declare enum NonterminalKind {
    * Represents a node with kind `AbicoderVersion`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.7.5 *)
    * AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
    *                 | (* variant: *) ABICODERV_2_KEYWORD;
    * ```
@@ -626,6 +628,7 @@ export declare enum NonterminalKind {
    * Represents a node with kind `ExperimentalFeature`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.4.16 *)
    * ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
    *                     | (* variant: *) SMTCHECKER_KEYWORD
    *                     | (* variant: *) StringLiteral;
@@ -636,6 +639,7 @@ export declare enum NonterminalKind {
    * Represents a node with kind `ExperimentalPragma`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.4.16 *)
    * ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
    *                      (* feature: *) ExperimentalFeature;
    * ```
@@ -1402,8 +1406,8 @@ export declare enum NonterminalKind {
    * Represents a node with kind `Pragma`, having the following structure:
    *
    * ```ebnf
-   * Pragma = (* variant: *) AbicoderPragma
-   *        | (* variant: *) ExperimentalPragma
+   * Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
+   *        | (* variant: *) ExperimentalPragma (* Introduced in 0.4.16 *)
    *        | (* variant: *) VersionPragma;
    * ```
    */
@@ -2508,6 +2512,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `AbicoderKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.7.5 *)
    * (* Never reserved *)
    * ABICODER_KEYWORD = "abicoder";
    * ```
@@ -2517,6 +2522,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `Abicoderv1Keyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.7.5 *)
    * (* Never reserved *)
    * ABICODERV_1_KEYWORD = "v1";
    * ```
@@ -2526,6 +2532,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `Abicoderv2Keyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.7.5 *)
    * (* Never reserved *)
    * ABICODERV_2_KEYWORD = "v2";
    * ```
@@ -2535,6 +2542,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.4.16 *)
    * (* Never reserved *)
    * ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
    * ```
@@ -3078,6 +3086,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `ExperimentalKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.4.16 *)
    * (* Never reserved *)
    * EXPERIMENTAL_KEYWORD = "experimental";
    * ```
@@ -3861,6 +3870,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `SmtcheckerKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.4.16 *)
    * (* Never reserved *)
    * SMTCHECKER_KEYWORD = "SMTChecker";
    * ```

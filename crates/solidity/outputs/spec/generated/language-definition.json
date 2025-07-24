@@ -181,7 +181,7 @@
                   "name": "Pragma",
                   "variants": [
                     { "reference": "AbicoderPragma", "enabled": { "From": { "from": "0.7.5" } } },
-                    { "reference": "ExperimentalPragma" },
+                    { "reference": "ExperimentalPragma", "enabled": { "From": { "from": "0.4.16" } } },
                     { "reference": "VersionPragma" }
                   ]
                 }
@@ -203,6 +203,7 @@
               "Struct": {
                 "item": {
                   "name": "ExperimentalPragma",
+                  "enabled": { "From": { "from": "0.4.16" } },
                   "fields": [
                     ["experimental_keyword", { "Required": { "reference": "ExperimentalKeyword" } }],
                     ["feature", { "Required": { "reference": "ExperimentalFeature" } }]
@@ -223,6 +224,7 @@
               "Enum": {
                 "item": {
                   "name": "ExperimentalFeature",
+                  "enabled": { "From": { "from": "0.4.16" } },
                   "variants": [
                     { "reference": "AbiencoderV2Keyword" },
                     { "reference": "SmtcheckerKeyword" },
@@ -455,7 +457,13 @@
                 "item": {
                   "name": "AbiencoderV2Keyword",
                   "identifier": "Identifier",
-                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "ABIEncoderV2" } } }]
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.4.16" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "ABIEncoderV2" } }
+                    }
+                  ]
                 }
               }
             },
@@ -464,7 +472,13 @@
                 "item": {
                   "name": "ExperimentalKeyword",
                   "identifier": "Identifier",
-                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "experimental" } } }]
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.4.16" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "experimental" } }
+                    }
+                  ]
                 }
               }
             },
@@ -482,7 +496,13 @@
                 "item": {
                   "name": "SmtcheckerKeyword",
                   "identifier": "Identifier",
-                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "SMTChecker" } } }]
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.4.16" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "SMTChecker" } }
+                    }
+                  ]
                 }
               }
             }

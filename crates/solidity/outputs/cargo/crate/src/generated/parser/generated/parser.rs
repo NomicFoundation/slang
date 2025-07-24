@@ -1948,38 +1948,46 @@ impl Parser {
 
     #[allow(unused_assignments, unused_parens)]
     fn experimental_feature(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        ChoiceHelper::run(input, |mut choice, input| {
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                input,
-                TerminalKind::AbiencoderV2Keyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                input,
-                TerminalKind::SmtcheckerKeyword,
-            );
-            choice.consider(input, result)?;
-            let result = self.string_literal(input);
-            choice.consider(input, result)?;
-            choice.finish(input)
-        })
-        .with_label(EdgeLabel::Variant)
+        if self.version_is_at_least_0_4_16 {
+            ChoiceHelper::run(input, |mut choice, input| {
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TerminalKind::AbiencoderV2Keyword,
+                );
+                choice.consider(input, result)?;
+                let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                    input,
+                    TerminalKind::SmtcheckerKeyword,
+                );
+                choice.consider(input, result)?;
+                let result = self.string_literal(input);
+                choice.consider(input, result)?;
+                choice.finish(input)
+            })
+            .with_label(EdgeLabel::Variant)
+        } else {
+            ParserResult::no_match(vec![])
+        }
         .with_kind(NonterminalKind::ExperimentalFeature)
     }
 
     #[allow(unused_assignments, unused_parens)]
     fn experimental_pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
-        SequenceHelper::run(|mut seq| {
-            seq.elem_labeled(
-                EdgeLabel::ExperimentalKeyword,
-                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TerminalKind::ExperimentalKeyword,
-                ),
-            )?;
-            seq.elem_labeled(EdgeLabel::Feature, self.experimental_feature(input))?;
-            seq.finish()
-        })
+        if self.version_is_at_least_0_4_16 {
+            SequenceHelper::run(|mut seq| {
+                seq.elem_labeled(
+                    EdgeLabel::ExperimentalKeyword,
+                    self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                        input,
+                        TerminalKind::ExperimentalKeyword,
+                    ),
+                )?;
+                seq.elem_labeled(EdgeLabel::Feature, self.experimental_feature(input))?;
+                seq.finish()
+            })
+        } else {
+            ParserResult::no_match(vec![])
+        }
         .with_kind(NonterminalKind::ExperimentalPragma)
     }
 
@@ -4418,8 +4426,10 @@ impl Parser {
                 let result = self.abicoder_pragma(input);
                 choice.consider(input, result)?;
             }
-            let result = self.experimental_pragma(input);
-            choice.consider(input, result)?;
+            if self.version_is_at_least_0_4_16 {
+                let result = self.experimental_pragma(input);
+                choice.consider(input, result)?;
+            }
             let result = self.version_pragma(input);
             choice.consider(input, result)?;
             choice.finish(input)
@@ -10746,14 +10756,22 @@ impl Lexer for Parser {
                             if scan_chars!(
                                 input, 'B', 'I', 'E', 'n', 'c', 'o', 'd', 'e', 'r', 'V', '2'
                             ) {
-                                KeywordScan::Present(TerminalKind::AbiencoderV2Keyword)
+                                if self.version_is_at_least_0_4_16 {
+                                    KeywordScan::Present(TerminalKind::AbiencoderV2Keyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
                             } else {
                                 KeywordScan::Absent
                             }
                         }
                         Some('S') => {
                             if scan_chars!(input, 'M', 'T', 'C', 'h', 'e', 'c', 'k', 'e', 'r') {
-                                KeywordScan::Present(TerminalKind::SmtcheckerKeyword)
+                                if self.version_is_at_least_0_4_16 {
+                                    KeywordScan::Present(TerminalKind::SmtcheckerKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
                             } else {
                                 KeywordScan::Absent
                             }
@@ -10773,7 +10791,11 @@ impl Lexer for Parser {
                             if scan_chars!(
                                 input, 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
                             ) {
-                                KeywordScan::Present(TerminalKind::ExperimentalKeyword)
+                                if self.version_is_at_least_0_4_16 {
+                                    KeywordScan::Present(TerminalKind::ExperimentalKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
                             } else {
                                 KeywordScan::Absent
                             }

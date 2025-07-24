@@ -147,6 +147,7 @@ export class AbicoderPragma {
  * This node represents a `ExperimentalPragma` nonterminal, with the following structure:
  *
  * ```ebnf
+ * (* Introduced in 0.4.16 *)
  * ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
  *                      (* feature: *) ExperimentalFeature;
  * ```
@@ -7564,7 +7565,7 @@ export class SourceUnitMember {
  *
  * ```ebnf
  * Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
- *        | (* variant: *) ExperimentalPragma
+ *        | (* variant: *) ExperimentalPragma (* Introduced in 0.4.16 *)
  *        | (* variant: *) VersionPragma;
  * ```
  */
@@ -7645,6 +7646,7 @@ export class AbicoderVersion {
  * This node represents a `ExperimentalFeature` nonterminal, with the following structure:
  *
  * ```ebnf
+ * (* Introduced in 0.4.16 *)
  * ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
  *                     | (* variant: *) SMTCHECKER_KEYWORD
  *                     | (* variant: *) StringLiteral;

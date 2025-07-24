@@ -91,7 +91,10 @@ codegen_language_macros::compile!(Language(
                             name = Pragma,
                             variants = [
                                 EnumVariant(reference = AbicoderPragma, enabled = From("0.7.5")),
-                                EnumVariant(reference = ExperimentalPragma),
+                                EnumVariant(
+                                    reference = ExperimentalPragma,
+                                    enabled = From("0.4.16")
+                                ),
                                 EnumVariant(reference = VersionPragma)
                             ]
                         ),
@@ -105,6 +108,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Struct(
                             name = ExperimentalPragma,
+                            enabled = From("0.4.16"),
                             fields = (
                                 experimental_keyword = Required(ExperimentalKeyword),
                                 feature = Required(ExperimentalFeature)
@@ -120,6 +124,7 @@ codegen_language_macros::compile!(Language(
                         ),
                         Enum(
                             name = ExperimentalFeature,
+                            enabled = From("0.4.16"),
                             variants = [
                                 EnumVariant(reference = AbiencoderV2Keyword),
                                 EnumVariant(reference = SmtcheckerKeyword),
@@ -264,6 +269,7 @@ codegen_language_macros::compile!(Language(
                             name = AbiencoderV2Keyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
+                                enabled = From("0.4.16"),
                                 reserved = Never,
                                 value = Atom("ABIEncoderV2")
                             )]
@@ -272,6 +278,7 @@ codegen_language_macros::compile!(Language(
                             name = ExperimentalKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
+                                enabled = From("0.4.16"),
                                 reserved = Never,
                                 value = Atom("experimental")
                             )]
@@ -288,6 +295,7 @@ codegen_language_macros::compile!(Language(
                             name = SmtcheckerKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
+                                enabled = From("0.4.16"),
                                 reserved = Never,
                                 value = Atom("SMTChecker")
                             )]

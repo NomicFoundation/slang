@@ -526,6 +526,7 @@ pub enum NonterminalKind {
     /// Represents a node with kind `ExperimentalFeature`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.4.16 *)
     /// ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
     ///                     | (* variant: *) SMTCHECKER_KEYWORD
     ///                     | (* variant: *) StringLiteral;
@@ -534,6 +535,7 @@ pub enum NonterminalKind {
     /// Represents a node with kind `ExperimentalPragma`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.4.16 *)
     /// ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
     ///                      (* feature: *) ExperimentalFeature;
     /// ```
@@ -1165,7 +1167,7 @@ pub enum NonterminalKind {
     ///
     /// ```ebnf
     /// Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
-    ///        | (* variant: *) ExperimentalPragma
+    ///        | (* variant: *) ExperimentalPragma (* Introduced in 0.4.16 *)
     ///        | (* variant: *) VersionPragma;
     /// ```
     Pragma,

@@ -50,6 +50,7 @@ pub enum TerminalKind {
     /// Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.4.16 *)
     /// (* Never reserved *)
     /// ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
     /// ```
@@ -467,6 +468,7 @@ pub enum TerminalKind {
     /// Represents a node with kind `ExperimentalKeyword`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.4.16 *)
     /// (* Never reserved *)
     /// EXPERIMENTAL_KEYWORD = "experimental";
     /// ```
@@ -1066,6 +1068,7 @@ pub enum TerminalKind {
     /// Represents a node with kind `SmtcheckerKeyword`, having the following structure:
     ///
     /// ```ebnf
+    /// (* Introduced in 0.4.16 *)
     /// (* Never reserved *)
     /// SMTCHECKER_KEYWORD = "SMTChecker";
     /// ```
