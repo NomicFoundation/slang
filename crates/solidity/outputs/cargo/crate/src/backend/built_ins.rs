@@ -38,8 +38,9 @@ pub enum BuiltIn {
     BlockPrevrandao,
     BlockTimestamp,
     Blockhash,
-    CallOptionValue,
     CallOptionGas,
+    CallOptionSalt,
+    CallOptionValue,
     Ecrecover,
     ErrorOrPanic,
     Gasleft,
@@ -80,6 +81,7 @@ pub enum BuiltIn {
 const VERSION_0_4_12: Version = Version::new(0, 4, 12);
 const VERSION_0_4_22: Version = Version::new(0, 4, 22);
 const VERSION_0_5_0: Version = Version::new(0, 5, 0);
+const VERSION_0_6_0: Version = Version::new(0, 6, 0);
 const VERSION_0_8_0: Version = Version::new(0, 8, 0);
 const VERSION_0_8_7: Version = Version::new(0, 8, 7);
 const VERSION_0_8_8: Version = Version::new(0, 8, 8);
@@ -131,7 +133,6 @@ impl<'a> BuiltInsResolver<'a> {
             "sha3" if self.language_version < VERSION_0_5_0 => Some(BuiltIn::Sha3),
             "suicide" if self.language_version < VERSION_0_5_0 => Some(BuiltIn::Suicide),
             "tx" => Some(BuiltIn::Tx),
-            // TODO: add the rest of the built-ins
             _ => None,
         }
     }
@@ -263,7 +264,7 @@ impl<'a> BuiltInsResolver<'a> {
             },
             Type::Bytes { .. } => match symbol {
                 "length" => Some(BuiltIn::Length),
-                "pop" => Some(BuiltIn::ArrayPop),
+                "pop" if self.language_version >= VERSION_0_5_0 => Some(BuiltIn::ArrayPop),
                 "push" => Some(BuiltIn::ArrayPush(self.types.byte())),
                 _ => None,
             },
@@ -315,8 +316,9 @@ impl<'a> BuiltInsResolver<'a> {
     #[allow(clippy::unused_self)]
     pub(crate) fn lookup_call_option(&self, symbol: &str) -> Option<BuiltIn> {
         match symbol {
-            "value" => Some(BuiltIn::CallOptionValue),
             "gas" => Some(BuiltIn::CallOptionGas),
+            "salt" => Some(BuiltIn::CallOptionSalt),
+            "value" => Some(BuiltIn::CallOptionValue),
             _ => None,
         }
     }
@@ -435,9 +437,15 @@ impl<'a> BuiltInsResolver<'a> {
             }
             BuiltIn::ArrayPush(type_id) => {
                 if argument_typings.is_empty() {
-                    Typing::Resolved(*type_id)
-                } else {
+                    if self.language_version >= VERSION_0_6_0 {
+                        Typing::Resolved(*type_id)
+                    } else {
+                        Typing::Unresolved
+                    }
+                } else if self.language_version >= VERSION_0_6_0 {
                     Typing::Resolved(self.types.void())
+                } else {
+                    Typing::Resolved(self.types.uint256())
                 }
             }
             BuiltIn::ArrayPop => Typing::Resolved(self.types.void()),
