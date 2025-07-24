@@ -48,23 +48,23 @@ References (36):
 - Ref: ["sha256" @ input.sol:25:22] -> built-in
 - Ref: ["x1" @ input.sol:25:29] -> #6
 - Ref: ["selfdestruct" @ input.sol:29:9] -> built-in
-- Ref: ["abi" @ input.sol:34:19] -> unresolved
-- Ref: ["decode" @ input.sol:34:23] -> unresolved
+- Ref: ["abi" @ input.sol:34:19] -> built-in
+- Ref: ["decode" @ input.sol:34:23] -> built-in
 - Ref: ["x1" @ input.sol:34:30] -> #18
-- Ref: ["abi" @ input.sol:35:27] -> unresolved
-- Ref: ["encode" @ input.sol:35:31] -> unresolved
+- Ref: ["abi" @ input.sol:35:27] -> built-in
+- Ref: ["encode" @ input.sol:35:31] -> built-in
 - Ref: ["v1" @ input.sol:35:38] -> #19
-- Ref: ["abi" @ input.sol:36:27] -> unresolved
-- Ref: ["encodeCall" @ input.sol:36:31] -> unresolved
+- Ref: ["abi" @ input.sol:36:27] -> built-in
+- Ref: ["encodeCall" @ input.sol:36:31] -> built-in
 - Ref: ["testMath" @ input.sol:36:47] -> unresolved
-- Ref: ["abi" @ input.sol:37:27] -> unresolved
-- Ref: ["encodePacked" @ input.sol:37:31] -> unresolved
-- Ref: ["abi" @ input.sol:38:27] -> unresolved
-- Ref: ["encodeWithSelector" @ input.sol:38:31] -> unresolved
+- Ref: ["abi" @ input.sol:37:27] -> built-in
+- Ref: ["encodePacked" @ input.sol:37:31] -> built-in
+- Ref: ["abi" @ input.sol:38:27] -> built-in
+- Ref: ["encodeWithSelector" @ input.sol:38:31] -> built-in
 - Ref: ["testMath" @ input.sol:38:55] -> unresolved
 - Ref: ["selector" @ input.sol:38:64] -> unresolved
-- Ref: ["abi" @ input.sol:40:27] -> unresolved
-- Ref: ["encodeWithSignature" @ input.sol:40:31] -> unresolved
+- Ref: ["abi" @ input.sol:40:27] -> built-in
+- Ref: ["encodeWithSignature" @ input.sol:40:31] -> built-in
 - Ref: ["x2" @ input.sol:40:51] -> #24
 
 ------------------------------------------------------------------------
@@ -179,43 +179,43 @@ Bindings:
     │              ─┬   ─┬─ ───┬── ─┬  
     │               ╰────────────────── name: 19
     │                    │     │    │  
-    │                    ╰───────────── unresolved
+    │                    ╰───────────── built-in
     │                          │    │  
-    │                          ╰─────── unresolved
+    │                          ╰─────── built-in
     │                               │  
     │                               ╰── ref: 18
  35 │         bytes memory v2 = abi.encode(v1);
     │                      ─┬   ─┬─ ───┬── ─┬  
     │                       ╰────────────────── name: 20
     │                            │     │    │  
-    │                            ╰───────────── unresolved
+    │                            ╰───────────── built-in
     │                                  │    │  
-    │                                  ╰─────── unresolved
+    │                                  ╰─────── built-in
     │                                       │  
     │                                       ╰── ref: 19
  36 │         bytes memory v3 = abi.encodeCall(this.testMath, (1, 2, 3));
     │                      ─┬   ─┬─ ─────┬────      ────┬───  
     │                       ╰───────────────────────────────── name: 21
     │                            │       │              │     
-    │                            ╰──────────────────────────── unresolved
+    │                            ╰──────────────────────────── built-in
     │                                    │              │     
-    │                                    ╰──────────────────── unresolved
+    │                                    ╰──────────────────── built-in
     │                                                   │     
     │                                                   ╰───── unresolved
  37 │         bytes memory v4 = abi.encodePacked(10, 20);
     │                      ─┬   ─┬─ ──────┬─────  
     │                       ╰───────────────────── name: 22
     │                            │        │       
-    │                            ╰──────────────── unresolved
+    │                            ╰──────────────── built-in
     │                                     │       
-    │                                     ╰─────── unresolved
+    │                                     ╰─────── built-in
  38 │         bytes memory v5 = abi.encodeWithSelector(this.testMath.selector, (1, 2, 3));
     │                      ─┬   ─┬─ ─────────┬────────      ────┬─── ────┬───  
     │                       ╰────────────────────────────────────────────────── name: 23
     │                            │           │                  │        │     
-    │                            ╰───────────────────────────────────────────── unresolved
+    │                            ╰───────────────────────────────────────────── built-in
     │                                        │                  │        │     
-    │                                        ╰───────────────────────────────── unresolved
+    │                                        ╰───────────────────────────────── built-in
     │                                                           │        │     
     │                                                           ╰────────────── unresolved
     │                                                                    │     
@@ -227,9 +227,9 @@ Bindings:
     │                      ─┬   ─┬─ ─────────┬───────── ─┬  
     │                       ╰─────────────────────────────── name: 25
     │                            │           │           │  
-    │                            ╰────────────────────────── unresolved
+    │                            ╰────────────────────────── built-in
     │                                        │           │  
-    │                                        ╰────────────── unresolved
+    │                                        ╰────────────── built-in
     │                                                    │  
     │                                                    ╰── ref: 24
 ────╯

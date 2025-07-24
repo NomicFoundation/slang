@@ -55,7 +55,7 @@ References (36):
 - Ref: ["encode" @ input.sol:35:31] -> built-in
 - Ref: ["v1" @ input.sol:35:38] -> #19
 - Ref: ["abi" @ input.sol:36:27] -> built-in
-- Ref: ["encodeCall" @ input.sol:36:31] -> unresolved
+- Ref: ["encodeCall" @ input.sol:36:31] -> built-in
 - Ref: ["testMath" @ input.sol:36:47] -> unresolved
 - Ref: ["abi" @ input.sol:37:27] -> built-in
 - Ref: ["encodePacked" @ input.sol:37:31] -> built-in
@@ -199,7 +199,7 @@ Bindings:
     │                            │       │              │     
     │                            ╰──────────────────────────── built-in
     │                                    │              │     
-    │                                    ╰──────────────────── unresolved
+    │                                    ╰──────────────────── built-in
     │                                                   │     
     │                                                   ╰───── unresolved
  37 │         bytes memory v4 = abi.encodePacked(10, 20);
