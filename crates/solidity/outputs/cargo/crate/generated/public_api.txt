@@ -5,6 +5,7 @@ pub mod slang_solidity::backend
 pub mod slang_solidity::backend::l1_structured_ast
 pub mod slang_solidity::backend::l1_structured_ast::builder
 pub fn slang_solidity::backend::l1_structured_ast::builder::build_abicoder_pragma(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AbicoderPragma>
+pub fn slang_solidity::backend::l1_structured_ast::builder::build_abicoder_version(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AbicoderVersion>
 pub fn slang_solidity::backend::l1_structured_ast::builder::build_additive_expression(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AdditiveExpression>
 pub fn slang_solidity::backend::l1_structured_ast::builder::build_address_type(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AddressType>
 pub fn slang_solidity::backend::l1_structured_ast::builder::build_and_expression(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AndExpression>
@@ -225,6 +226,7 @@ pub fn slang_solidity::backend::l1_structured_ast::builder::build_yul_variable_d
 pub fn slang_solidity::backend::l1_structured_ast::builder::build_yul_variable_names(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::YulVariableNames>
 pub mod slang_solidity::backend::l1_structured_ast::rewriter
 pub trait slang_solidity::backend::l1_structured_ast::rewriter::Rewriter
+pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::default_rewrite_abicoder_version(&mut self, source: &slang_solidity::backend::l1_structured_ast::AbicoderVersion) -> slang_solidity::backend::l1_structured_ast::AbicoderVersion
 pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::default_rewrite_arguments_declaration(&mut self, source: &slang_solidity::backend::l1_structured_ast::ArgumentsDeclaration) -> slang_solidity::backend::l1_structured_ast::ArgumentsDeclaration
 pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::default_rewrite_constructor_attribute(&mut self, source: &slang_solidity::backend::l1_structured_ast::ConstructorAttribute) -> slang_solidity::backend::l1_structured_ast::ConstructorAttribute
 pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::default_rewrite_contract_member(&mut self, source: &slang_solidity::backend::l1_structured_ast::ContractMember) -> slang_solidity::backend::l1_structured_ast::ContractMember
@@ -270,6 +272,7 @@ pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::default_r
 pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::default_rewrite_yul_statement(&mut self, source: &slang_solidity::backend::l1_structured_ast::YulStatement) -> slang_solidity::backend::l1_structured_ast::YulStatement
 pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::default_rewrite_yul_switch_case(&mut self, source: &slang_solidity::backend::l1_structured_ast::YulSwitchCase) -> slang_solidity::backend::l1_structured_ast::YulSwitchCase
 pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::rewrite_abicoder_pragma(&mut self, source: &slang_solidity::backend::l1_structured_ast::AbicoderPragma) -> slang_solidity::backend::l1_structured_ast::AbicoderPragma
+pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::rewrite_abicoder_version(&mut self, source: &slang_solidity::backend::l1_structured_ast::AbicoderVersion) -> slang_solidity::backend::l1_structured_ast::AbicoderVersion
 pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::rewrite_additive_expression(&mut self, source: &slang_solidity::backend::l1_structured_ast::AdditiveExpression) -> slang_solidity::backend::l1_structured_ast::AdditiveExpression
 pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::rewrite_address_type(&mut self, source: &slang_solidity::backend::l1_structured_ast::AddressType) -> slang_solidity::backend::l1_structured_ast::AddressType
 pub fn slang_solidity::backend::l1_structured_ast::rewriter::Rewriter::rewrite_and_expression(&mut self, source: &slang_solidity::backend::l1_structured_ast::AndExpression) -> slang_solidity::backend::l1_structured_ast::AndExpression
@@ -492,6 +495,7 @@ pub mod slang_solidity::backend::l1_structured_ast::transformer
 pub mod slang_solidity::backend::l1_structured_ast::visitor
 pub trait slang_solidity::backend::l1_structured_ast::visitor::Visitor
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::enter_abicoder_pragma(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AbicoderPragma) -> bool
+pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::enter_abicoder_version(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AbicoderVersion) -> bool
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::enter_additive_expression(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AdditiveExpression) -> bool
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::enter_address_type(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AddressType) -> bool
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::enter_and_expression(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AndExpression) -> bool
@@ -711,6 +715,7 @@ pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::enter_yul_v
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::enter_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationValue) -> bool
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::enter_yul_variable_names(&mut self, _items: &slang_solidity::backend::l1_structured_ast::YulVariableNames) -> bool
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::leave_abicoder_pragma(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AbicoderPragma)
+pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::leave_abicoder_version(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AbicoderVersion)
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::leave_additive_expression(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AdditiveExpression)
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::leave_address_type(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AddressType)
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::leave_and_expression(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AndExpression)
@@ -930,6 +935,7 @@ pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::leave_yul_v
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationValue)
 pub fn slang_solidity::backend::l1_structured_ast::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::l1_structured_ast::YulVariableNames)
 pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::l1_structured_ast::AbicoderPragma, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
+pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_abicoder_version(_node: &slang_solidity::backend::l1_structured_ast::AbicoderVersion, _visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_additive_expression(node: &slang_solidity::backend::l1_structured_ast::AdditiveExpression, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_address_type(node: &slang_solidity::backend::l1_structured_ast::AddressType, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_and_expression(node: &slang_solidity::backend::l1_structured_ast::AndExpression, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
@@ -1103,6 +1109,11 @@ pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_yul_value_cas
 pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_yul_variable_assignment_statement(node: &slang_solidity::backend::l1_structured_ast::YulVariableAssignmentStatement, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_yul_variable_declaration_statement(node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationStatement, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_yul_variable_declaration_value(node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationValue, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
+pub enum slang_solidity::backend::l1_structured_ast::AbicoderVersion
+pub slang_solidity::backend::l1_structured_ast::AbicoderVersion::Abicoderv1Keyword
+pub slang_solidity::backend::l1_structured_ast::AbicoderVersion::Abicoderv2Keyword
+impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::AbicoderVersion
+pub fn slang_solidity::backend::l1_structured_ast::AbicoderVersion::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1_structured_ast::ArgumentsDeclaration
 pub slang_solidity::backend::l1_structured_ast::ArgumentsDeclaration::NamedArgumentsDeclaration(slang_solidity::backend::l1_structured_ast::NamedArgumentsDeclaration)
 pub slang_solidity::backend::l1_structured_ast::ArgumentsDeclaration::PositionalArgumentsDeclaration(slang_solidity::backend::l1_structured_ast::PositionalArgumentsDeclaration)
@@ -1496,7 +1507,7 @@ impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::YulSwitchC
 pub fn slang_solidity::backend::l1_structured_ast::YulSwitchCase::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1_structured_ast::AbicoderPragmaStruct
 pub slang_solidity::backend::l1_structured_ast::AbicoderPragmaStruct::node_id: metaslang_cst::nodes::NodeId
-pub slang_solidity::backend::l1_structured_ast::AbicoderPragmaStruct::version: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::l1_structured_ast::AbicoderPragmaStruct::version: slang_solidity::backend::l1_structured_ast::AbicoderVersion
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::AbicoderPragmaStruct
 pub fn slang_solidity::backend::l1_structured_ast::AbicoderPragmaStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l1_structured_ast::AdditiveExpressionStruct
@@ -2442,6 +2453,7 @@ pub mod slang_solidity::backend::l2_flat_contracts::builder
 pub mod slang_solidity::backend::l2_flat_contracts::input
 pub mod slang_solidity::backend::l2_flat_contracts::input::builder
 pub fn slang_solidity::backend::l2_flat_contracts::input::builder::build_abicoder_pragma(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AbicoderPragma>
+pub fn slang_solidity::backend::l2_flat_contracts::input::builder::build_abicoder_version(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AbicoderVersion>
 pub fn slang_solidity::backend::l2_flat_contracts::input::builder::build_additive_expression(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AdditiveExpression>
 pub fn slang_solidity::backend::l2_flat_contracts::input::builder::build_address_type(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AddressType>
 pub fn slang_solidity::backend::l2_flat_contracts::input::builder::build_and_expression(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::AndExpression>
@@ -2662,6 +2674,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::input::builder::build_yul_var
 pub fn slang_solidity::backend::l2_flat_contracts::input::builder::build_yul_variable_names(node: &alloc::rc::Rc<slang_solidity::cst::NonterminalNode>) -> core::option::Option<slang_solidity::backend::l1_structured_ast::YulVariableNames>
 pub mod slang_solidity::backend::l2_flat_contracts::input::rewriter
 pub trait slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter
+pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::default_rewrite_abicoder_version(&mut self, source: &slang_solidity::backend::l1_structured_ast::AbicoderVersion) -> slang_solidity::backend::l1_structured_ast::AbicoderVersion
 pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::default_rewrite_arguments_declaration(&mut self, source: &slang_solidity::backend::l1_structured_ast::ArgumentsDeclaration) -> slang_solidity::backend::l1_structured_ast::ArgumentsDeclaration
 pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::default_rewrite_constructor_attribute(&mut self, source: &slang_solidity::backend::l1_structured_ast::ConstructorAttribute) -> slang_solidity::backend::l1_structured_ast::ConstructorAttribute
 pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::default_rewrite_contract_member(&mut self, source: &slang_solidity::backend::l1_structured_ast::ContractMember) -> slang_solidity::backend::l1_structured_ast::ContractMember
@@ -2707,6 +2720,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::de
 pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::default_rewrite_yul_statement(&mut self, source: &slang_solidity::backend::l1_structured_ast::YulStatement) -> slang_solidity::backend::l1_structured_ast::YulStatement
 pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::default_rewrite_yul_switch_case(&mut self, source: &slang_solidity::backend::l1_structured_ast::YulSwitchCase) -> slang_solidity::backend::l1_structured_ast::YulSwitchCase
 pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::rewrite_abicoder_pragma(&mut self, source: &slang_solidity::backend::l1_structured_ast::AbicoderPragma) -> slang_solidity::backend::l1_structured_ast::AbicoderPragma
+pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::rewrite_abicoder_version(&mut self, source: &slang_solidity::backend::l1_structured_ast::AbicoderVersion) -> slang_solidity::backend::l1_structured_ast::AbicoderVersion
 pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::rewrite_additive_expression(&mut self, source: &slang_solidity::backend::l1_structured_ast::AdditiveExpression) -> slang_solidity::backend::l1_structured_ast::AdditiveExpression
 pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::rewrite_address_type(&mut self, source: &slang_solidity::backend::l1_structured_ast::AddressType) -> slang_solidity::backend::l1_structured_ast::AddressType
 pub fn slang_solidity::backend::l2_flat_contracts::input::rewriter::Rewriter::rewrite_and_expression(&mut self, source: &slang_solidity::backend::l1_structured_ast::AndExpression) -> slang_solidity::backend::l1_structured_ast::AndExpression
@@ -2929,6 +2943,7 @@ pub mod slang_solidity::backend::l2_flat_contracts::input::transformer
 pub mod slang_solidity::backend::l2_flat_contracts::input::visitor
 pub trait slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::enter_abicoder_pragma(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AbicoderPragma) -> bool
+pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::enter_abicoder_version(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AbicoderVersion) -> bool
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::enter_additive_expression(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AdditiveExpression) -> bool
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::enter_address_type(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AddressType) -> bool
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::enter_and_expression(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AndExpression) -> bool
@@ -3148,6 +3163,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::ente
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::enter_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationValue) -> bool
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::enter_yul_variable_names(&mut self, _items: &slang_solidity::backend::l1_structured_ast::YulVariableNames) -> bool
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_abicoder_pragma(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AbicoderPragma)
+pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_abicoder_version(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AbicoderVersion)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_additive_expression(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AdditiveExpression)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_address_type(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AddressType)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_and_expression(&mut self, _node: &slang_solidity::backend::l1_structured_ast::AndExpression)
@@ -3367,6 +3383,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leav
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationValue)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::l1_structured_ast::YulVariableNames)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::l1_structured_ast::AbicoderPragma, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
+pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_abicoder_version(_node: &slang_solidity::backend::l1_structured_ast::AbicoderVersion, _visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_additive_expression(node: &slang_solidity::backend::l1_structured_ast::AdditiveExpression, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_address_type(node: &slang_solidity::backend::l1_structured_ast::AddressType, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_and_expression(node: &slang_solidity::backend::l1_structured_ast::AndExpression, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
@@ -3540,6 +3557,11 @@ pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_yul_va
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_yul_variable_assignment_statement(node: &slang_solidity::backend::l1_structured_ast::YulVariableAssignmentStatement, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_yul_variable_declaration_statement(node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationStatement, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_yul_variable_declaration_value(node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationValue, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
+pub enum slang_solidity::backend::l2_flat_contracts::input::AbicoderVersion
+pub slang_solidity::backend::l2_flat_contracts::input::AbicoderVersion::Abicoderv1Keyword
+pub slang_solidity::backend::l2_flat_contracts::input::AbicoderVersion::Abicoderv2Keyword
+impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::AbicoderVersion
+pub fn slang_solidity::backend::l1_structured_ast::AbicoderVersion::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::input::ArgumentsDeclaration
 pub slang_solidity::backend::l2_flat_contracts::input::ArgumentsDeclaration::NamedArgumentsDeclaration(slang_solidity::backend::l1_structured_ast::NamedArgumentsDeclaration)
 pub slang_solidity::backend::l2_flat_contracts::input::ArgumentsDeclaration::PositionalArgumentsDeclaration(slang_solidity::backend::l1_structured_ast::PositionalArgumentsDeclaration)
@@ -3933,7 +3955,7 @@ impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::YulSwitchC
 pub fn slang_solidity::backend::l1_structured_ast::YulSwitchCase::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l2_flat_contracts::input::AbicoderPragmaStruct
 pub slang_solidity::backend::l2_flat_contracts::input::AbicoderPragmaStruct::node_id: metaslang_cst::nodes::NodeId
-pub slang_solidity::backend::l2_flat_contracts::input::AbicoderPragmaStruct::version: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::l2_flat_contracts::input::AbicoderPragmaStruct::version: slang_solidity::backend::l1_structured_ast::AbicoderVersion
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::AbicoderPragmaStruct
 pub fn slang_solidity::backend::l1_structured_ast::AbicoderPragmaStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l2_flat_contracts::input::AdditiveExpressionStruct
@@ -4876,6 +4898,7 @@ pub type slang_solidity::backend::l2_flat_contracts::input::YulVariableDeclarati
 pub type slang_solidity::backend::l2_flat_contracts::input::YulVariableNames = alloc::vec::Vec<alloc::rc::Rc<slang_solidity::cst::TerminalNode>>
 pub mod slang_solidity::backend::l2_flat_contracts::rewriter
 pub trait slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter
+pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::default_rewrite_abicoder_version(&mut self, source: &slang_solidity::backend::l2_flat_contracts::AbicoderVersion) -> slang_solidity::backend::l2_flat_contracts::AbicoderVersion
 pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::default_rewrite_arguments_declaration(&mut self, source: &slang_solidity::backend::l2_flat_contracts::ArgumentsDeclaration) -> slang_solidity::backend::l2_flat_contracts::ArgumentsDeclaration
 pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::default_rewrite_constructor_attribute(&mut self, source: &slang_solidity::backend::l2_flat_contracts::ConstructorAttribute) -> slang_solidity::backend::l2_flat_contracts::ConstructorAttribute
 pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::default_rewrite_contract_member(&mut self, source: &slang_solidity::backend::l2_flat_contracts::ContractMember) -> slang_solidity::backend::l2_flat_contracts::ContractMember
@@ -4921,6 +4944,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::default_r
 pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::default_rewrite_yul_statement(&mut self, source: &slang_solidity::backend::l2_flat_contracts::YulStatement) -> slang_solidity::backend::l2_flat_contracts::YulStatement
 pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::default_rewrite_yul_switch_case(&mut self, source: &slang_solidity::backend::l2_flat_contracts::YulSwitchCase) -> slang_solidity::backend::l2_flat_contracts::YulSwitchCase
 pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::rewrite_abicoder_pragma(&mut self, source: &slang_solidity::backend::l2_flat_contracts::AbicoderPragma) -> slang_solidity::backend::l2_flat_contracts::AbicoderPragma
+pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::rewrite_abicoder_version(&mut self, source: &slang_solidity::backend::l2_flat_contracts::AbicoderVersion) -> slang_solidity::backend::l2_flat_contracts::AbicoderVersion
 pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::rewrite_additive_expression(&mut self, source: &slang_solidity::backend::l2_flat_contracts::AdditiveExpression) -> slang_solidity::backend::l2_flat_contracts::AdditiveExpression
 pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::rewrite_address_type(&mut self, source: &slang_solidity::backend::l2_flat_contracts::AddressType) -> slang_solidity::backend::l2_flat_contracts::AddressType
 pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::rewrite_and_expression(&mut self, source: &slang_solidity::backend::l2_flat_contracts::AndExpression) -> slang_solidity::backend::l2_flat_contracts::AndExpression
@@ -5140,6 +5164,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::rewrite_y
 pub fn slang_solidity::backend::l2_flat_contracts::rewriter::Rewriter::rewrite_yul_variable_names(&mut self, source: &slang_solidity::backend::l2_flat_contracts::YulVariableNames) -> slang_solidity::backend::l2_flat_contracts::YulVariableNames
 pub mod slang_solidity::backend::l2_flat_contracts::transformer
 pub trait slang_solidity::backend::l2_flat_contracts::transformer::Transformer
+pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::default_transform_abicoder_version(&mut self, source: &slang_solidity::backend::l1_structured_ast::AbicoderVersion) -> slang_solidity::backend::l2_flat_contracts::AbicoderVersion
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::default_transform_arguments_declaration(&mut self, source: &slang_solidity::backend::l1_structured_ast::ArgumentsDeclaration) -> slang_solidity::backend::l2_flat_contracts::ArgumentsDeclaration
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::default_transform_constructor_attribute(&mut self, source: &slang_solidity::backend::l1_structured_ast::ConstructorAttribute) -> slang_solidity::backend::l2_flat_contracts::ConstructorAttribute
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::default_transform_contract_member(&mut self, source: &slang_solidity::backend::l1_structured_ast::ContractMember) -> slang_solidity::backend::l2_flat_contracts::ContractMember
@@ -5185,6 +5210,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::def
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::default_transform_yul_statement(&mut self, source: &slang_solidity::backend::l1_structured_ast::YulStatement) -> slang_solidity::backend::l2_flat_contracts::YulStatement
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::default_transform_yul_switch_case(&mut self, source: &slang_solidity::backend::l1_structured_ast::YulSwitchCase) -> slang_solidity::backend::l2_flat_contracts::YulSwitchCase
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::transform_abicoder_pragma(&mut self, source: &slang_solidity::backend::l1_structured_ast::AbicoderPragma) -> slang_solidity::backend::l2_flat_contracts::AbicoderPragma
+pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::transform_abicoder_version(&mut self, source: &slang_solidity::backend::l1_structured_ast::AbicoderVersion) -> slang_solidity::backend::l2_flat_contracts::AbicoderVersion
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::transform_additive_expression(&mut self, source: &slang_solidity::backend::l1_structured_ast::AdditiveExpression) -> slang_solidity::backend::l2_flat_contracts::AdditiveExpression
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::transform_address_type(&mut self, source: &slang_solidity::backend::l1_structured_ast::AddressType) -> slang_solidity::backend::l2_flat_contracts::AddressType
 pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::transform_and_expression(&mut self, source: &slang_solidity::backend::l1_structured_ast::AndExpression) -> slang_solidity::backend::l2_flat_contracts::AndExpression
@@ -5405,6 +5431,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::transformer::Transformer::tra
 pub mod slang_solidity::backend::l2_flat_contracts::visitor
 pub trait slang_solidity::backend::l2_flat_contracts::visitor::Visitor
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::enter_abicoder_pragma(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AbicoderPragma) -> bool
+pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::enter_abicoder_version(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AbicoderVersion) -> bool
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::enter_additive_expression(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AdditiveExpression) -> bool
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::enter_address_type(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AddressType) -> bool
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::enter_and_expression(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AndExpression) -> bool
@@ -5623,6 +5650,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::enter_yul_v
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::enter_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValue) -> bool
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::enter_yul_variable_names(&mut self, _items: &slang_solidity::backend::l2_flat_contracts::YulVariableNames) -> bool
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_abicoder_pragma(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AbicoderPragma)
+pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_abicoder_version(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AbicoderVersion)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_additive_expression(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AdditiveExpression)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_address_type(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AddressType)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_and_expression(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::AndExpression)
@@ -5841,6 +5869,7 @@ pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_yul_v
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValue)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::l2_flat_contracts::YulVariableNames)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::l2_flat_contracts::AbicoderPragma, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
+pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_abicoder_version(_node: &slang_solidity::backend::l2_flat_contracts::AbicoderVersion, _visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_additive_expression(node: &slang_solidity::backend::l2_flat_contracts::AdditiveExpression, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_address_type(node: &slang_solidity::backend::l2_flat_contracts::AddressType, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_and_expression(node: &slang_solidity::backend::l2_flat_contracts::AndExpression, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
@@ -6014,6 +6043,11 @@ pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_yul_value_cas
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_yul_variable_assignment_statement(node: &slang_solidity::backend::l2_flat_contracts::YulVariableAssignmentStatement, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_yul_variable_declaration_statement(node: &slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationStatement, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_yul_variable_declaration_value(node: &slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValue, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
+pub enum slang_solidity::backend::l2_flat_contracts::AbicoderVersion
+pub slang_solidity::backend::l2_flat_contracts::AbicoderVersion::Abicoderv1Keyword
+pub slang_solidity::backend::l2_flat_contracts::AbicoderVersion::Abicoderv2Keyword
+impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::AbicoderVersion
+pub fn slang_solidity::backend::l2_flat_contracts::AbicoderVersion::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::ArgumentsDeclaration
 pub slang_solidity::backend::l2_flat_contracts::ArgumentsDeclaration::NamedArgumentsDeclaration(slang_solidity::backend::l2_flat_contracts::NamedArgumentsDeclaration)
 pub slang_solidity::backend::l2_flat_contracts::ArgumentsDeclaration::PositionalArgumentsDeclaration(slang_solidity::backend::l2_flat_contracts::PositionalArgumentsDeclaration)
@@ -6407,7 +6441,7 @@ impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::YulSwitchC
 pub fn slang_solidity::backend::l2_flat_contracts::YulSwitchCase::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l2_flat_contracts::AbicoderPragmaStruct
 pub slang_solidity::backend::l2_flat_contracts::AbicoderPragmaStruct::node_id: metaslang_cst::nodes::NodeId
-pub slang_solidity::backend::l2_flat_contracts::AbicoderPragmaStruct::version: alloc::rc::Rc<slang_solidity::cst::TerminalNode>
+pub slang_solidity::backend::l2_flat_contracts::AbicoderPragmaStruct::version: slang_solidity::backend::l2_flat_contracts::AbicoderVersion
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::AbicoderPragmaStruct
 pub fn slang_solidity::backend::l2_flat_contracts::AbicoderPragmaStruct::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::backend::l2_flat_contracts::AdditiveExpressionStruct
@@ -7591,6 +7625,7 @@ impl serde::ser::Serialize for slang_solidity::cst::KindTypes
 pub fn slang_solidity::cst::KindTypes::serialize<__S>(&self, __serializer: __S) -> core::result::Result<<__S as serde::ser::Serializer>::Ok, <__S as serde::ser::Serializer>::Error> where __S: serde::ser::Serializer
 #[repr(u8)] pub enum slang_solidity::cst::NonterminalKind
 pub slang_solidity::cst::NonterminalKind::AbicoderPragma
+pub slang_solidity::cst::NonterminalKind::AbicoderVersion
 pub slang_solidity::cst::NonterminalKind::AdditiveExpression
 pub slang_solidity::cst::NonterminalKind::AddressType
 pub slang_solidity::cst::NonterminalKind::AndExpression
@@ -7843,6 +7878,8 @@ impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity:
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::cst::NonterminalKind) -> &'static str
 #[repr(u16)] pub enum slang_solidity::cst::TerminalKind
 pub slang_solidity::cst::TerminalKind::AbicoderKeyword
+pub slang_solidity::cst::TerminalKind::Abicoderv1Keyword
+pub slang_solidity::cst::TerminalKind::Abicoderv2Keyword
 pub slang_solidity::cst::TerminalKind::AbiencoderV2Keyword
 pub slang_solidity::cst::TerminalKind::AbstractKeyword
 pub slang_solidity::cst::TerminalKind::AddressKeyword

@@ -23,9 +23,16 @@ pub enum NonterminalKind {
     ///
     /// ```ebnf
     /// AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
-    ///                  (* version: *) IDENTIFIER;
+    ///                  (* version: *) AbicoderVersion;
     /// ```
     AbicoderPragma,
+    /// Represents a node with kind `AbicoderVersion`, having the following structure:
+    ///
+    /// ```ebnf
+    /// AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
+    ///                 | (* variant: *) ABICODERV_2_KEYWORD;
+    /// ```
+    AbicoderVersion,
     /// Represents a node with kind `AdditiveExpression`, having the following structure:
     ///
     /// ```ebnf

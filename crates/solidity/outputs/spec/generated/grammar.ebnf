@@ -35,10 +35,13 @@ Pragma = (* variant: *) AbicoderPragma
        | (* variant: *) VersionPragma;
 
 AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
-                 (* version: *) IDENTIFIER;
+                 (* version: *) AbicoderVersion;
 
 ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
                      (* feature: *) ExperimentalFeature;
+
+AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
+                | (* variant: *) ABICODERV_2_KEYWORD;
 
 ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
                     | (* variant: *) SMTCHECKER_KEYWORD
@@ -85,6 +88,12 @@ DOUBLE_QUOTED_VERSION_LITERAL = '"' «VERSION_SPECIFIER_FRAGMENT» ("." «VERSIO
 
 (* Never reserved *)
 ABICODER_KEYWORD = "abicoder";
+
+(* Never reserved *)
+ABICODERV_1_KEYWORD = "v1";
+
+(* Never reserved *)
+ABICODERV_2_KEYWORD = "v2";
 
 (* Never reserved *)
 ABIENCODER_V2_KEYWORD = "ABIEncoderV2";

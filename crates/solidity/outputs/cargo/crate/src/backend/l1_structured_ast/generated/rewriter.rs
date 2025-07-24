@@ -31,7 +31,7 @@ pub trait Rewriter {
     }
 
     fn rewrite_abicoder_pragma(&mut self, source: &AbicoderPragma) -> AbicoderPragma {
-        let version = Rc::clone(&source.version);
+        let version = self.rewrite_abicoder_version(&source.version);
 
         Rc::new(AbicoderPragmaStruct {
             node_id: source.node_id,
@@ -1751,6 +1751,16 @@ pub trait Rewriter {
     }
     fn rewrite_pragma(&mut self, source: &Pragma) -> Pragma {
         self.default_rewrite_pragma(source)
+    }
+
+    fn default_rewrite_abicoder_version(&mut self, source: &AbicoderVersion) -> AbicoderVersion {
+        match source {
+            AbicoderVersion::Abicoderv1Keyword => AbicoderVersion::Abicoderv1Keyword,
+            AbicoderVersion::Abicoderv2Keyword => AbicoderVersion::Abicoderv2Keyword,
+        }
+    }
+    fn rewrite_abicoder_version(&mut self, source: &AbicoderVersion) -> AbicoderVersion {
+        self.default_rewrite_abicoder_version(source)
     }
 
     fn default_rewrite_experimental_feature(

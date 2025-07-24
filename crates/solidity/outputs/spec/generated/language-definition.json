@@ -193,7 +193,7 @@
                   "name": "AbicoderPragma",
                   "fields": [
                     ["abicoder_keyword", { "Required": { "reference": "AbicoderKeyword" } }],
-                    ["version", { "Required": { "reference": "Identifier" } }]
+                    ["version", { "Required": { "reference": "AbicoderVersion" } }]
                   ]
                 }
               }
@@ -206,6 +206,14 @@
                     ["experimental_keyword", { "Required": { "reference": "ExperimentalKeyword" } }],
                     ["feature", { "Required": { "reference": "ExperimentalFeature" } }]
                   ]
+                }
+              }
+            },
+            {
+              "Enum": {
+                "item": {
+                  "name": "AbicoderVersion",
+                  "variants": [{ "reference": "Abicoderv1Keyword" }, { "reference": "Abicoderv2Keyword" }]
                 }
               }
             },
@@ -401,6 +409,24 @@
                   "name": "AbicoderKeyword",
                   "identifier": "Identifier",
                   "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "abicoder" } } }]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
+                  "name": "Abicoderv1Keyword",
+                  "identifier": "Identifier",
+                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "v1" } } }]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
+                  "name": "Abicoderv2Keyword",
+                  "identifier": "Identifier",
+                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "v2" } } }]
                 }
               }
             },

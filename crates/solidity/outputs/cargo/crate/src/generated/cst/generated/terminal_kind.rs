@@ -30,6 +30,20 @@ pub enum TerminalKind {
     /// ABICODER_KEYWORD = "abicoder";
     /// ```
     AbicoderKeyword,
+    /// Represents a node with kind `Abicoderv1Keyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Never reserved *)
+    /// ABICODERV_1_KEYWORD = "v1";
+    /// ```
+    Abicoderv1Keyword,
+    /// Represents a node with kind `Abicoderv2Keyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Never reserved *)
+    /// ABICODERV_2_KEYWORD = "v2";
+    /// ```
+    Abicoderv2Keyword,
     /// Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
     ///
     /// ```ebnf

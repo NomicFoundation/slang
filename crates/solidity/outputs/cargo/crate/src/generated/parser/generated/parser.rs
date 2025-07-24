@@ -128,6 +128,7 @@ impl Parser {
     pub fn parse_nonterminal(&self, kind: NonterminalKind, input: &str) -> ParseOutput {
         match kind {
             NonterminalKind::AbicoderPragma => Self::abicoder_pragma.parse(self, input, kind),
+            NonterminalKind::AbicoderVersion => Self::abicoder_version.parse(self, input, kind),
             NonterminalKind::AdditiveExpression => {
                 Self::additive_expression.parse(self, input, kind)
             }
@@ -555,16 +556,29 @@ impl Parser {
                     TerminalKind::AbicoderKeyword,
                 ),
             )?;
-            seq.elem_labeled(
-                EdgeLabel::Version,
-                self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
-                    input,
-                    TerminalKind::Identifier,
-                ),
-            )?;
+            seq.elem_labeled(EdgeLabel::Version, self.abicoder_version(input))?;
             seq.finish()
         })
         .with_kind(NonterminalKind::AbicoderPragma)
+    }
+
+    #[allow(unused_assignments, unused_parens)]
+    fn abicoder_version(&self, input: &mut ParserContext<'_>) -> ParserResult {
+        ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::Abicoderv1Keyword,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::Abicoderv2Keyword,
+            );
+            choice.consider(input, result)?;
+            choice.finish(input)
+        })
+        .with_label(EdgeLabel::Variant)
+        .with_kind(NonterminalKind::AbicoderVersion)
     }
 
     #[allow(unused_assignments, unused_parens)]
@@ -10762,6 +10776,15 @@ impl Lexer for Parser {
                                 KeywordScan::Absent
                             }
                         }
+                        Some('v') => match input.next() {
+                            Some('1') => KeywordScan::Present(TerminalKind::Abicoderv1Keyword),
+                            Some('2') => KeywordScan::Present(TerminalKind::Abicoderv2Keyword),
+                            Some(_) => {
+                                input.undo();
+                                KeywordScan::Absent
+                            }
+                            None => KeywordScan::Absent,
+                        },
                         Some(_) => {
                             input.undo();
                             KeywordScan::Absent

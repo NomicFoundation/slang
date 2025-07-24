@@ -99,7 +99,7 @@ codegen_language_macros::compile!(Language(
                             name = AbicoderPragma,
                             fields = (
                                 abicoder_keyword = Required(AbicoderKeyword),
-                                version = Required(Identifier)
+                                version = Required(AbicoderVersion)
                             )
                         ),
                         Struct(
@@ -108,6 +108,13 @@ codegen_language_macros::compile!(Language(
                                 experimental_keyword = Required(ExperimentalKeyword),
                                 feature = Required(ExperimentalFeature)
                             )
+                        ),
+                        Enum(
+                            name = AbicoderVersion,
+                            variants = [
+                                EnumVariant(reference = Abicoderv1Keyword),
+                                EnumVariant(reference = Abicoderv2Keyword)
+                            ]
                         ),
                         Enum(
                             name = ExperimentalFeature,
@@ -231,6 +238,16 @@ codegen_language_macros::compile!(Language(
                                 reserved = Never,
                                 value = Atom("abicoder")
                             )]
+                        ),
+                        Keyword(
+                            name = Abicoderv1Keyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(reserved = Never, value = Atom("v1"))]
+                        ),
+                        Keyword(
+                            name = Abicoderv2Keyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(reserved = Never, value = Atom("v2"))]
                         ),
                         Keyword(
                             name = AbiencoderV2Keyword,

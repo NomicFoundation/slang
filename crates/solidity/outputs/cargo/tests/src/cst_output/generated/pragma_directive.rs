@@ -7,8 +7,18 @@ use crate::cst_output::runner::run;
 const T: &str = "PragmaDirective";
 
 #[test]
-fn abi_coder() -> Result<()> {
-    run(T, "abi_coder")
+fn abi_coder_unkown_identifier() -> Result<()> {
+    run(T, "abi_coder_unkown_identifier")
+}
+
+#[test]
+fn abi_coder_v1() -> Result<()> {
+    run(T, "abi_coder_v1")
+}
+
+#[test]
+fn abi_coder_v2() -> Result<()> {
+    run(T, "abi_coder_v2")
 }
 
 #[test]

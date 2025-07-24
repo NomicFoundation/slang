@@ -102,7 +102,7 @@ export class PragmaDirective {
  *
  * ```ebnf
  * AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
- *                  (* version: *) IDENTIFIER;
+ *                  (* version: *) AbicoderVersion;
  * ```
  */
 export class AbicoderPragma {
@@ -111,7 +111,7 @@ export class AbicoderPragma {
 
     return {
       abicoderKeyword: $abicoderKeyword as TerminalNode,
-      version: $version as TerminalNode,
+      version: new AbicoderVersion($version as NonterminalNode),
     };
   });
 
@@ -137,7 +137,7 @@ export class AbicoderPragma {
   /**
    * Returns the child node that has the label `version`.
    */
-  public get version(): TerminalNode {
+  public get version(): AbicoderVersion {
     return this.fetch().version;
   }
 }
@@ -7600,6 +7600,41 @@ export class Pragma {
    * Returns the child node that has the label `variant`.
    */
   public get variant(): AbicoderPragma | ExperimentalPragma | VersionPragma {
+    return this.fetch();
+  }
+}
+
+/**
+ * This node represents a `AbicoderVersion` nonterminal, with the following structure:
+ *
+ * ```ebnf
+ * AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
+ *                 | (* variant: *) ABICODERV_2_KEYWORD;
+ * ```
+ */
+export class AbicoderVersion {
+  private readonly fetch: () => TerminalNode = once(() => {
+    const variant = wasm.ast.Selectors.choice(this.cst);
+
+    return variant as TerminalNode;
+  });
+
+  /**
+   * Constructs a new AST node of type `AbicoderVersion`, given a nonterminal CST node of the same kind.
+   */
+  public constructor(
+    /**
+     * The underlying nonterminal CST node of kind `AbicoderVersion`.
+     */
+    public readonly cst: NonterminalNode,
+  ) {
+    assertKind(this.cst.kind, NonterminalKind.AbicoderVersion);
+  }
+
+  /**
+   * Returns the child node that has the label `variant`.
+   */
+  public get variant(): TerminalNode {
     return this.fetch();
   }
 }

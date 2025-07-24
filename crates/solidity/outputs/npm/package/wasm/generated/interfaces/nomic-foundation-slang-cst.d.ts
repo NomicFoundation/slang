@@ -25,10 +25,19 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
-   *                  (* version: *) IDENTIFIER;
+   *                  (* version: *) AbicoderVersion;
    * ```
    */
   AbicoderPragma = "AbicoderPragma",
+  /**
+   * Represents a node with kind `AbicoderVersion`, having the following structure:
+   *
+   * ```ebnf
+   * AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
+   *                 | (* variant: *) ABICODERV_2_KEYWORD;
+   * ```
+   */
+  AbicoderVersion = "AbicoderVersion",
   /**
    * Represents a node with kind `AdditiveExpression`, having the following structure:
    *
@@ -2504,6 +2513,24 @@ export declare enum TerminalKind {
    * ```
    */
   AbicoderKeyword = "AbicoderKeyword",
+  /**
+   * Represents a node with kind `Abicoderv1Keyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Never reserved *)
+   * ABICODERV_1_KEYWORD = "v1";
+   * ```
+   */
+  Abicoderv1Keyword = "Abicoderv1Keyword",
+  /**
+   * Represents a node with kind `Abicoderv2Keyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Never reserved *)
+   * ABICODERV_2_KEYWORD = "v2";
+   * ```
+   */
+  Abicoderv2Keyword = "Abicoderv2Keyword",
   /**
    * Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
    *
