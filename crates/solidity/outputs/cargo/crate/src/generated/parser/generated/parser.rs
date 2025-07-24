@@ -1927,7 +1927,12 @@ impl Parser {
         ChoiceHelper::run(input, |mut choice, input| {
             let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                 input,
-                TerminalKind::Identifier,
+                TerminalKind::AbiencoderV2Keyword,
+            );
+            choice.consider(input, result)?;
+            let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
+                input,
+                TerminalKind::SmtcheckerKeyword,
             );
             choice.consider(input, result)?;
             let result = self.string_literal(input);
@@ -10711,6 +10716,22 @@ impl Lexer for Parser {
                     longest_terminal.filter(|tok| [TerminalKind::Identifier].contains(tok))
                 {
                     let kw_scan = match input.next() {
+                        Some('A') => {
+                            if scan_chars!(
+                                input, 'B', 'I', 'E', 'n', 'c', 'o', 'd', 'e', 'r', 'V', '2'
+                            ) {
+                                KeywordScan::Present(TerminalKind::AbiencoderV2Keyword)
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
+                        Some('S') => {
+                            if scan_chars!(input, 'M', 'T', 'C', 'h', 'e', 'c', 'k', 'e', 'r') {
+                                KeywordScan::Present(TerminalKind::SmtcheckerKeyword)
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
                         Some('a') => {
                             if scan_chars!(input, 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
                                 KeywordScan::Present(TerminalKind::AbicoderKeyword)

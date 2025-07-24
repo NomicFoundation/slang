@@ -1200,7 +1200,8 @@ pub enum Pragma {
 #[derive(Debug)]
 pub enum ExperimentalFeature {
     StringLiteral(StringLiteral),
-    Identifier(Rc<TerminalNode>),
+    AbiencoderV2Keyword,
+    SmtcheckerKeyword,
 }
 
 #[derive(Debug)]

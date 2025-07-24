@@ -617,7 +617,8 @@ export declare enum NonterminalKind {
    * Represents a node with kind `ExperimentalFeature`, having the following structure:
    *
    * ```ebnf
-   * ExperimentalFeature = (* variant: *) IDENTIFIER
+   * ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
+   *                     | (* variant: *) SMTCHECKER_KEYWORD
    *                     | (* variant: *) StringLiteral;
    * ```
    */
@@ -2504,6 +2505,15 @@ export declare enum TerminalKind {
    */
   AbicoderKeyword = "AbicoderKeyword",
   /**
+   * Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Never reserved *)
+   * ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
+   * ```
+   */
+  AbiencoderV2Keyword = "AbiencoderV2Keyword",
+  /**
    * Represents a node with kind `AbstractKeyword`, having the following structure:
    *
    * ```ebnf
@@ -3820,6 +3830,15 @@ export declare enum TerminalKind {
    * ```
    */
   SlashEqual = "SlashEqual",
+  /**
+   * Represents a node with kind `SmtcheckerKeyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Never reserved *)
+   * SMTCHECKER_KEYWORD = "SMTChecker";
+   * ```
+   */
+  SmtcheckerKeyword = "SmtcheckerKeyword",
   /**
    * Represents a node with kind `SolidityKeyword`, having the following structure:
    *

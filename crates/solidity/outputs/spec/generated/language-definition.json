@@ -213,7 +213,11 @@
               "Enum": {
                 "item": {
                   "name": "ExperimentalFeature",
-                  "variants": [{ "reference": "Identifier" }, { "reference": "StringLiteral" }]
+                  "variants": [
+                    { "reference": "AbiencoderV2Keyword" },
+                    { "reference": "SmtcheckerKeyword" },
+                    { "reference": "StringLiteral" }
+                  ]
                 }
               }
             },
@@ -403,6 +407,15 @@
             {
               "Keyword": {
                 "item": {
+                  "name": "AbiencoderV2Keyword",
+                  "identifier": "Identifier",
+                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "ABIEncoderV2" } } }]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
                   "name": "ExperimentalKeyword",
                   "identifier": "Identifier",
                   "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "experimental" } } }]
@@ -415,6 +428,15 @@
                   "name": "SolidityKeyword",
                   "identifier": "Identifier",
                   "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "solidity" } } }]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
+                  "name": "SmtcheckerKeyword",
+                  "identifier": "Identifier",
+                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "SMTChecker" } } }]
                 }
               }
             }

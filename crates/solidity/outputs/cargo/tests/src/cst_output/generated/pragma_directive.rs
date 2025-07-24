@@ -12,13 +12,23 @@ fn abi_coder() -> Result<()> {
 }
 
 #[test]
-fn experimental() -> Result<()> {
-    run(T, "experimental")
+fn experimental_abiencoderv2() -> Result<()> {
+    run(T, "experimental_abiencoderv2")
+}
+
+#[test]
+fn experimental_smtchecker() -> Result<()> {
+    run(T, "experimental_smtchecker")
 }
 
 #[test]
 fn experimental_string() -> Result<()> {
     run(T, "experimental_string")
+}
+
+#[test]
+fn experimental_unknown_identifier() -> Result<()> {
+    run(T, "experimental_unknown_identifier")
 }
 
 #[test]

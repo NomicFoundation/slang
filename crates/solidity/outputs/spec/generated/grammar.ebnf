@@ -40,7 +40,8 @@ AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
 ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
                      (* feature: *) ExperimentalFeature;
 
-ExperimentalFeature = (* variant: *) IDENTIFIER
+ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
+                    | (* variant: *) SMTCHECKER_KEYWORD
                     | (* variant: *) StringLiteral;
 
 VersionPragma = (* solidity_keyword: *) SOLIDITY_KEYWORD
@@ -86,10 +87,16 @@ DOUBLE_QUOTED_VERSION_LITERAL = '"' «VERSION_SPECIFIER_FRAGMENT» ("." «VERSIO
 ABICODER_KEYWORD = "abicoder";
 
 (* Never reserved *)
+ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
+
+(* Never reserved *)
 EXPERIMENTAL_KEYWORD = "experimental";
 
 (* Never reserved *)
 SOLIDITY_KEYWORD = "solidity";
+
+(* Never reserved *)
+SMTCHECKER_KEYWORD = "SMTChecker";
 
 (* 1.3. Import Directives: *)
 

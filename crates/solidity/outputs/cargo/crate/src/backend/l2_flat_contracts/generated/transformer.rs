@@ -1925,8 +1925,11 @@ pub trait Transformer {
                     self.transform_string_literal(string_literal),
                 )
             }
-            input::ExperimentalFeature::Identifier(node) => {
-                output::ExperimentalFeature::Identifier(Rc::clone(node))
+            input::ExperimentalFeature::AbiencoderV2Keyword => {
+                output::ExperimentalFeature::AbiencoderV2Keyword
+            }
+            input::ExperimentalFeature::SmtcheckerKeyword => {
+                output::ExperimentalFeature::SmtcheckerKeyword
             }
         }
     }

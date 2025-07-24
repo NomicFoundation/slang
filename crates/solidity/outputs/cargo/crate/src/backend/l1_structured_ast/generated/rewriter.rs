@@ -1761,9 +1761,8 @@ pub trait Rewriter {
             ExperimentalFeature::StringLiteral(ref string_literal) => {
                 ExperimentalFeature::StringLiteral(self.rewrite_string_literal(string_literal))
             }
-            ExperimentalFeature::Identifier(node) => {
-                ExperimentalFeature::Identifier(Rc::clone(node))
-            }
+            ExperimentalFeature::AbiencoderV2Keyword => ExperimentalFeature::AbiencoderV2Keyword,
+            ExperimentalFeature::SmtcheckerKeyword => ExperimentalFeature::SmtcheckerKeyword,
         }
     }
     fn rewrite_experimental_feature(

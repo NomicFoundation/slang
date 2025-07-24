@@ -112,7 +112,8 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = ExperimentalFeature,
                             variants = [
-                                EnumVariant(reference = Identifier),
+                                EnumVariant(reference = AbiencoderV2Keyword),
+                                EnumVariant(reference = SmtcheckerKeyword),
                                 EnumVariant(reference = StringLiteral)
                             ]
                         ),
@@ -232,6 +233,14 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
+                            name = AbiencoderV2Keyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                reserved = Never,
+                                value = Atom("ABIEncoderV2")
+                            )]
+                        ),
+                        Keyword(
                             name = ExperimentalKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
@@ -245,6 +254,14 @@ codegen_language_macros::compile!(Language(
                             definitions = [KeywordDefinition(
                                 reserved = Never,
                                 value = Atom("solidity")
+                            )]
+                        ),
+                        Keyword(
+                            name = SmtcheckerKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                reserved = Never,
+                                value = Atom("SMTChecker")
                             )]
                         )
                     ]

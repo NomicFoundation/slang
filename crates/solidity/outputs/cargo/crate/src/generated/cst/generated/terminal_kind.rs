@@ -30,6 +30,13 @@ pub enum TerminalKind {
     /// ABICODER_KEYWORD = "abicoder";
     /// ```
     AbicoderKeyword,
+    /// Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Never reserved *)
+    /// ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
+    /// ```
+    AbiencoderV2Keyword,
     /// Represents a node with kind `AbstractKeyword`, having the following structure:
     ///
     /// ```ebnf
@@ -1039,6 +1046,13 @@ pub enum TerminalKind {
     /// SLASH_EQUAL = "/=";
     /// ```
     SlashEqual,
+    /// Represents a node with kind `SmtcheckerKeyword`, having the following structure:
+    ///
+    /// ```ebnf
+    /// (* Never reserved *)
+    /// SMTCHECKER_KEYWORD = "SMTChecker";
+    /// ```
+    SmtcheckerKeyword,
     /// Represents a node with kind `SolidityKeyword`, having the following structure:
     ///
     /// ```ebnf

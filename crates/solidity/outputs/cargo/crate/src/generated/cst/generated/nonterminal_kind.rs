@@ -517,7 +517,8 @@ pub enum NonterminalKind {
     /// Represents a node with kind `ExperimentalFeature`, having the following structure:
     ///
     /// ```ebnf
-    /// ExperimentalFeature = (* variant: *) IDENTIFIER
+    /// ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
+    ///                     | (* variant: *) SMTCHECKER_KEYWORD
     ///                     | (* variant: *) StringLiteral;
     /// ```
     ExperimentalFeature,

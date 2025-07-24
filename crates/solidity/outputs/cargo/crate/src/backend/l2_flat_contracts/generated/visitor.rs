@@ -2490,7 +2490,7 @@ pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut imp
         ExperimentalFeature::StringLiteral(ref string_literal) => {
             accept_string_literal(string_literal, visitor);
         }
-        ExperimentalFeature::Identifier(_) => {}
+        ExperimentalFeature::AbiencoderV2Keyword | ExperimentalFeature::SmtcheckerKeyword => {}
     }
     visitor.leave_experimental_feature(node);
 }

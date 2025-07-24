@@ -30,7 +30,7 @@
 
 ```
 
-<pre ebnf-snippet="ExperimentalFeature" style="display: none;"><a href="#ExperimentalFeature"><span class="k">ExperimentalFeature</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../../05-expressions/06-identifiers#Identifier"><span class="k">IDENTIFIER</span></a><br /><span class="o">                    | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">;</span></pre>
+<pre ebnf-snippet="ExperimentalFeature" style="display: none;"><a href="#ExperimentalFeature"><span class="k">ExperimentalFeature</span></a><span class="o"> = </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#AbiencoderV2Keyword"><span class="k">ABIENCODER_V2_KEYWORD</span></a><br /><span class="o">                    | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="#SmtcheckerKeyword"><span class="k">SMTCHECKER_KEYWORD</span></a><br /><span class="o">                    | </span><span class="cm">(* variant: *)</span><span class="o"> </span><a href="../../05-expressions/05-strings#StringLiteral"><span class="k">StringLiteral</span></a><span class="o">;</span></pre>
 
 ```{ .ebnf #VersionPragma }
 
@@ -116,6 +116,12 @@
 
 <pre ebnf-snippet="AbicoderKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"abicoder"</span><span class="o">;</span></pre>
 
+```{ .ebnf #AbiencoderV2Keyword }
+
+```
+
+<pre ebnf-snippet="AbiencoderV2Keyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#AbiencoderV2Keyword"><span class="k">ABIENCODER_V2_KEYWORD</span></a><span class="o"> = </span><span class="s2">"ABIEncoderV2"</span><span class="o">;</span></pre>
+
 ```{ .ebnf #ExperimentalKeyword }
 
 ```
@@ -127,3 +133,9 @@
 ```
 
 <pre ebnf-snippet="SolidityKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#SolidityKeyword"><span class="k">SOLIDITY_KEYWORD</span></a><span class="o"> = </span><span class="s2">"solidity"</span><span class="o">;</span></pre>
+
+```{ .ebnf #SmtcheckerKeyword }
+
+```
+
+<pre ebnf-snippet="SmtcheckerKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#SmtcheckerKeyword"><span class="k">SMTCHECKER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"SMTChecker"</span><span class="o">;</span></pre>

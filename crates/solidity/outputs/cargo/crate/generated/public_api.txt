@@ -1151,7 +1151,8 @@ pub slang_solidity::backend::l1_structured_ast::ElementaryType::UintKeyword(allo
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::ElementaryType
 pub fn slang_solidity::backend::l1_structured_ast::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1_structured_ast::ExperimentalFeature
-pub slang_solidity::backend::l1_structured_ast::ExperimentalFeature::Identifier(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::backend::l1_structured_ast::ExperimentalFeature::AbiencoderV2Keyword
+pub slang_solidity::backend::l1_structured_ast::ExperimentalFeature::SmtcheckerKeyword
 pub slang_solidity::backend::l1_structured_ast::ExperimentalFeature::StringLiteral(slang_solidity::backend::l1_structured_ast::StringLiteral)
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::ExperimentalFeature
 pub fn slang_solidity::backend::l1_structured_ast::ExperimentalFeature::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -3587,7 +3588,8 @@ pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::UintKeywo
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::ElementaryType
 pub fn slang_solidity::backend::l1_structured_ast::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature
-pub slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature::Identifier(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature::AbiencoderV2Keyword
+pub slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature::SmtcheckerKeyword
 pub slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature::StringLiteral(slang_solidity::backend::l1_structured_ast::StringLiteral)
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::ExperimentalFeature
 pub fn slang_solidity::backend::l1_structured_ast::ExperimentalFeature::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -6060,7 +6062,8 @@ pub slang_solidity::backend::l2_flat_contracts::ElementaryType::UintKeyword(allo
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::ElementaryType
 pub fn slang_solidity::backend::l2_flat_contracts::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::ExperimentalFeature
-pub slang_solidity::backend::l2_flat_contracts::ExperimentalFeature::Identifier(alloc::rc::Rc<slang_solidity::cst::TerminalNode>)
+pub slang_solidity::backend::l2_flat_contracts::ExperimentalFeature::AbiencoderV2Keyword
+pub slang_solidity::backend::l2_flat_contracts::ExperimentalFeature::SmtcheckerKeyword
 pub slang_solidity::backend::l2_flat_contracts::ExperimentalFeature::StringLiteral(slang_solidity::backend::l2_flat_contracts::StringLiteral)
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::ExperimentalFeature
 pub fn slang_solidity::backend::l2_flat_contracts::ExperimentalFeature::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -7840,6 +7843,7 @@ impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity:
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::cst::NonterminalKind) -> &'static str
 #[repr(u16)] pub enum slang_solidity::cst::TerminalKind
 pub slang_solidity::cst::TerminalKind::AbicoderKeyword
+pub slang_solidity::cst::TerminalKind::AbiencoderV2Keyword
 pub slang_solidity::cst::TerminalKind::AbstractKeyword
 pub slang_solidity::cst::TerminalKind::AddressKeyword
 pub slang_solidity::cst::TerminalKind::AfterKeyword
@@ -7995,6 +7999,7 @@ pub slang_solidity::cst::TerminalKind::SingleQuotedVersionLiteral
 pub slang_solidity::cst::TerminalKind::SizeOfKeyword
 pub slang_solidity::cst::TerminalKind::Slash
 pub slang_solidity::cst::TerminalKind::SlashEqual
+pub slang_solidity::cst::TerminalKind::SmtcheckerKeyword
 pub slang_solidity::cst::TerminalKind::SolidityKeyword
 pub slang_solidity::cst::TerminalKind::StaticKeyword
 pub slang_solidity::cst::TerminalKind::StorageKeyword
