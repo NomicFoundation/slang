@@ -14,12 +14,12 @@ Definitions (9):
 ------------------------------------------------------------------------
 
 References (8):
-- Ref: ["concat" @ input.sol:5:33] -> unresolved
+- Ref: ["concat" @ input.sol:5:33] -> built-in
 - Ref: ["b1" @ input.sol:5:40] -> #3
 - Ref: ["b2" @ input.sol:5:44] -> #4
 - Ref: ["b1" @ input.sol:6:9] -> #3
 - Ref: ["length" @ input.sol:6:12] -> built-in
-- Ref: ["concat" @ input.sol:12:35] -> unresolved
+- Ref: ["concat" @ input.sol:12:35] -> built-in
 - Ref: ["s1" @ input.sol:12:42] -> #7
 - Ref: ["s2" @ input.sol:12:46] -> #8
 
@@ -48,7 +48,7 @@ Bindings:
     │                      ─┬         ───┬── ─┬  ─┬  
     │                       ╰──────────────────────── name: 5
     │                                    │    │   │  
-    │                                    ╰─────────── unresolved
+    │                                    ╰─────────── built-in
     │                                         │   │  
     │                                         ╰────── ref: 3
     │                                             │  
@@ -72,7 +72,7 @@ Bindings:
     │                       ─┬          ───┬── ─┬  ─┬  
     │                        ╰───────────────────────── name: 9
     │                                      │    │   │  
-    │                                      ╰─────────── unresolved
+    │                                      ╰─────────── built-in
     │                                           │   │  
     │                                           ╰────── ref: 7
     │                                               │  

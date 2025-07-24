@@ -14,8 +14,8 @@ References (5):
 - Ref: ["Lib" @ input.sol:2:11] -> #4
 - Ref: ["balance" @ input.sol:5:23] -> unresolved
 - Ref: ["a" @ input.sol:6:17] -> #3
-- Ref: ["call" @ input.sol:6:20] -> unresolved
-- Ref: ["noop" @ input.sol:7:18] -> unresolved
+- Ref: ["call" @ input.sol:6:20] -> built-in
+- Ref: ["noop" @ input.sol:7:18] -> #5
 
 ------------------------------------------------------------------------
 
@@ -45,10 +45,10 @@ Bindings:
     │                 ┬  ──┬─  
     │                 ╰──────── ref: 3
     │                      │   
-    │                      ╰─── unresolved
+    │                      ╰─── built-in
   7 │         uint(10).noop();
     │                  ──┬─  
-    │                    ╰─── unresolved
+    │                    ╰─── ref: 5
     │ 
  11 │ library Lib {
     │         ─┬─  

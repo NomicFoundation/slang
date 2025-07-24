@@ -369,21 +369,19 @@ impl CollectedDefinitionDisplay<'_> {
             Typing::Undetermined(type_ids) => {
                 format!("unresolved {count} overloads", count = type_ids.len())
             }
-            Typing::MetaType(node_id) => {
+            Typing::UserMetaType(node_id) => {
                 assert_eq!(node_id, self.definition.definition_id);
                 "meta-type".to_string()
             }
-            Typing::BuiltIn(_built_in) => {
-                // TODO: this should be unreachable because there should be no
-                // definitions that type to a built-in
-                "built-in".to_string()
+            Typing::MetaType(_) | Typing::BuiltIn(_) => {
+                unreachable!("unexpected typing of user definition");
             }
         }
     }
 
     #[allow(clippy::too_many_lines)]
     fn type_display(&self, type_id: TypeId) -> String {
-        match self.binder_data.types.get_type_by_id(type_id).unwrap() {
+        match self.binder_data.types.get_type_by_id(type_id) {
             Type::Address { payable } => {
                 if *payable {
                     "address payable".to_string()

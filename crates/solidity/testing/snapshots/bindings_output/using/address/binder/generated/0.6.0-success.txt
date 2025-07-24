@@ -13,7 +13,7 @@ Definitions (6):
 References (3):
 - Ref: ["Address" @ input.sol:5:11] -> #1
 - Ref: ["_rcpt" @ input.sol:7:17] -> #6
-- Ref: ["sendValue" @ input.sol:7:24] -> unresolved
+- Ref: ["sendValue" @ input.sol:7:24] -> #2
 
 ------------------------------------------------------------------------
 
@@ -48,5 +48,5 @@ Bindings:
    │                 ──┬──  ────┬────  
    │                   ╰─────────────── ref: 6
    │                            │      
-   │                            ╰────── unresolved
+   │                            ╰────── ref: 2
 ───╯

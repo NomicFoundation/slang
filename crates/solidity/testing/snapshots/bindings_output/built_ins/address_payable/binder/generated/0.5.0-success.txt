@@ -15,7 +15,7 @@ References (6):
 - Ref: ["rcpt" @ input.sol:7:9] -> #5
 - Ref: ["transfer" @ input.sol:7:14] -> built-in
 - Ref: ["rcpt" @ input.sol:9:25] -> #5
-- Ref: ["transfer" @ input.sol:9:32] -> unresolved
+- Ref: ["transfer" @ input.sol:9:32] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -56,5 +56,5 @@ Bindings:
    │                         ──┬─   ────┬───  
    │                           ╰────────────── ref: 5
    │                                    │     
-   │                                    ╰───── unresolved
+   │                                    ╰───── built-in
 ───╯
