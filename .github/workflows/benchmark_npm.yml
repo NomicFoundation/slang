@@ -19,8 +19,8 @@ on:
 
   # Run on pushes to 'main' branch:
   push:
-    branches:
-      - "main"
+    # branches:
+    #  - "main"
 
 # Queue up benchmark workflows for the same branch, so that results are reported in order:
 concurrency:
