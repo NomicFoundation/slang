@@ -33,7 +33,7 @@ References (30):
 - Ref: ["block" @ input.sol:9:19] -> built-in
 - Ref: ["blobbasefee" @ input.sol:9:25] -> unresolved
 - Ref: ["block" @ input.sol:10:19] -> built-in
-- Ref: ["chainid" @ input.sol:10:25] -> unresolved
+- Ref: ["chainid" @ input.sol:10:25] -> built-in
 - Ref: ["block" @ input.sol:11:22] -> built-in
 - Ref: ["coinbase" @ input.sol:11:28] -> built-in
 - Ref: ["block" @ input.sol:12:19] -> built-in
@@ -108,7 +108,7 @@ Bindings:
     │                     │      │     
     │                     ╰──────────── built-in
     │                            │     
-    │                            ╰───── unresolved
+    │                            ╰───── built-in
  11 │         address v4 = block.coinbase;
     │                 ─┬   ──┬── ────┬───  
     │                  ╰─────────────────── name: 9

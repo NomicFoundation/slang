@@ -18,7 +18,7 @@ References (8):
 - Ref: ["b1" @ input.sol:5:40] -> #3
 - Ref: ["b2" @ input.sol:5:44] -> #4
 - Ref: ["b1" @ input.sol:6:9] -> #3
-- Ref: ["length" @ input.sol:6:12] -> unresolved
+- Ref: ["length" @ input.sol:6:12] -> built-in
 - Ref: ["concat" @ input.sol:12:35] -> unresolved
 - Ref: ["s1" @ input.sol:12:42] -> #7
 - Ref: ["s2" @ input.sol:12:46] -> #8
@@ -57,7 +57,7 @@ Bindings:
     │         ─┬ ───┬──  
     │          ╰───────── ref: 3
     │               │    
-    │               ╰──── unresolved
+    │               ╰──── built-in
     │ 
   9 │     function testString() public {
     │              ─────┬────  
