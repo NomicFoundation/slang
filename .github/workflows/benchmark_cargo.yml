@@ -12,9 +12,8 @@ on:
         default: true
 
       bencherProject:
-        description: "Bencher project (optional):"
+        description: "Bencher project:"
         type: "string"
-        required: false
         default: "slang-dashboard-cargo"
 
   # Run on pushes to 'main' branch:
@@ -42,7 +41,6 @@ jobs:
         uses: "./.github/actions/cache/restore"
 
       - name: "Set bencher project"
-        if: "${{ inputs.bencherProject }}"
         run: |
           echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
 
