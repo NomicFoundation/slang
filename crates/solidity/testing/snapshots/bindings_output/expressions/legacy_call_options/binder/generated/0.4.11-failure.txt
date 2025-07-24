@@ -10,15 +10,15 @@ Definitions (4):
 
 References (13):
 - Ref: ["rcpt" @ input.sol:4:9] -> #3
-- Ref: ["call" @ input.sol:4:14] -> unresolved
+- Ref: ["call" @ input.sol:4:14] -> built-in
 - Ref: ["value" @ input.sol:4:19] -> unresolved
 - Ref: ["data" @ input.sol:4:28] -> #4
 - Ref: ["rcpt" @ input.sol:5:9] -> #3
-- Ref: ["call" @ input.sol:5:14] -> unresolved
+- Ref: ["call" @ input.sol:5:14] -> built-in
 - Ref: ["gas" @ input.sol:5:19] -> unresolved
 - Ref: ["data" @ input.sol:5:26] -> #4
 - Ref: ["rcpt" @ input.sol:6:9] -> #3
-- Ref: ["call" @ input.sol:6:14] -> unresolved
+- Ref: ["call" @ input.sol:6:14] -> built-in
 - Ref: ["value" @ input.sol:6:19] -> unresolved
 - Ref: ["gas" @ input.sol:6:28] -> unresolved
 - Ref: ["data" @ input.sol:6:35] -> #4
@@ -47,7 +47,7 @@ Bindings:
    │         ──┬─ ──┬─ ──┬──    ──┬─  
    │           ╰────────────────────── ref: 3
    │                │    │        │   
-   │                ╰───────────────── unresolved
+   │                ╰───────────────── built-in
    │                     │        │   
    │                     ╰──────────── unresolved
    │                              │   
@@ -56,7 +56,7 @@ Bindings:
    │         ──┬─ ──┬─ ─┬─    ──┬─  
    │           ╰──────────────────── ref: 3
    │                │   │       │   
-   │                ╰─────────────── unresolved
+   │                ╰─────────────── built-in
    │                    │       │   
    │                    ╰─────────── unresolved
    │                            │   
@@ -65,7 +65,7 @@ Bindings:
    │         ──┬─ ──┬─ ──┬──    ─┬─    ──┬─  
    │           ╰───────────────────────────── ref: 3
    │                │    │       │       │   
-   │                ╰──────────────────────── unresolved
+   │                ╰──────────────────────── built-in
    │                     │       │       │   
    │                     ╰─────────────────── unresolved
    │                             │       │   

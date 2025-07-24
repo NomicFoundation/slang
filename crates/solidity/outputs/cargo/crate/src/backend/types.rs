@@ -11,6 +11,7 @@ pub struct TypeRegistry {
     // Pre-defined core types
     address_type_id: TypeId,
     boolean_type_id: TypeId,
+    boolean_bytes_tuple_type_id: TypeId,
     byte_type_id: TypeId,
     bytes_type_id: TypeId,
     bytes20_type_id: TypeId,
@@ -48,11 +49,16 @@ impl TypeRegistry {
         });
         let (void_type, _) = types.insert_full(Type::Void);
 
+        let (boolean_bytes_tuple_type, _) = types.insert_full(Type::Tuple {
+            types: vec![TypeId(boolean_type), TypeId(bytes_type)],
+        });
+
         Self {
             types,
 
             address_type_id: TypeId(address_type),
             boolean_type_id: TypeId(boolean_type),
+            boolean_bytes_tuple_type_id: TypeId(boolean_bytes_tuple_type),
             byte_type_id: TypeId(byte_type),
             bytes_type_id: TypeId(bytes_type),
             bytes20_type_id: TypeId(bytes20_type),
@@ -128,6 +134,9 @@ impl TypeRegistry {
     }
     pub fn boolean(&self) -> TypeId {
         self.boolean_type_id
+    }
+    pub fn boolean_bytes_tuple(&self) -> TypeId {
+        self.boolean_bytes_tuple_type_id
     }
     pub fn byte(&self) -> TypeId {
         self.byte_type_id

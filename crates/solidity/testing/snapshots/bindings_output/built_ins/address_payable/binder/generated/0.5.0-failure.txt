@@ -11,9 +11,9 @@ Definitions (5):
 
 References (6):
 - Ref: ["rcpt" @ input.sol:3:9] -> #3
-- Ref: ["transfer" @ input.sol:3:14] -> unresolved
+- Ref: ["transfer" @ input.sol:3:14] -> built-in
 - Ref: ["rcpt" @ input.sol:7:9] -> #5
-- Ref: ["transfer" @ input.sol:7:14] -> unresolved
+- Ref: ["transfer" @ input.sol:7:14] -> built-in
 - Ref: ["rcpt" @ input.sol:9:25] -> #5
 - Ref: ["transfer" @ input.sol:9:32] -> unresolved
 
@@ -38,7 +38,7 @@ Bindings:
    │         ──┬─ ────┬───  
    │           ╰──────────── ref: 3
    │                  │     
-   │                  ╰───── unresolved
+   │                  ╰───── built-in
    │ 
  5 │     function testNonPayable(address rcpt) public {
    │              ───────┬──────         ──┬─  
@@ -50,7 +50,7 @@ Bindings:
    │         ──┬─ ────┬───  
    │           ╰──────────── ref: 5
    │                  │     
-   │                  ╰───── unresolved
+   │                  ╰───── built-in
    │ 
  9 │         address(uint160(rcpt)).transfer(1);
    │                         ──┬─   ────┬───  

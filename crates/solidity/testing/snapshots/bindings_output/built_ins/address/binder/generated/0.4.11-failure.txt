@@ -18,16 +18,16 @@ Definitions (12):
 
 References (12):
 - Ref: ["recipient" @ input.sol:4:38] -> #3
-- Ref: ["call" @ input.sol:4:48] -> unresolved
+- Ref: ["call" @ input.sol:4:48] -> built-in
 - Ref: ["x1" @ input.sol:4:53] -> #4
 - Ref: ["recipient" @ input.sol:5:38] -> #3
-- Ref: ["delegatecall" @ input.sol:5:48] -> unresolved
+- Ref: ["delegatecall" @ input.sol:5:48] -> built-in
 - Ref: ["x1" @ input.sol:5:61] -> #4
 - Ref: ["recipient" @ input.sol:6:38] -> #3
-- Ref: ["staticcall" @ input.sol:6:48] -> unresolved
+- Ref: ["staticcall" @ input.sol:6:48] -> built-in
 - Ref: ["x1" @ input.sol:6:59] -> #4
 - Ref: ["recipient" @ input.sol:8:19] -> #3
-- Ref: ["send" @ input.sol:8:29] -> unresolved
+- Ref: ["send" @ input.sol:8:29] -> built-in
 - Ref: ["balance" @ input.sol:9:37] -> unresolved
 
 ------------------------------------------------------------------------
@@ -58,7 +58,7 @@ Bindings:
    │                                          │       │   │  
    │                                          ╰────────────── ref: 3
    │                                                  │   │  
-   │                                                  ╰────── unresolved
+   │                                                  ╰────── built-in
    │                                                      │  
    │                                                      ╰── ref: 4
  5 │         (bool v5, bytes memory v6) = recipient.delegatecall(x1);
@@ -69,7 +69,7 @@ Bindings:
    │                                          │           │       │  
    │                                          ╰────────────────────── ref: 3
    │                                                      │       │  
-   │                                                      ╰────────── unresolved
+   │                                                      ╰────────── built-in
    │                                                              │  
    │                                                              ╰── ref: 4
  6 │         (bool v7, bytes memory v8) = recipient.staticcall(x1);
@@ -80,7 +80,7 @@ Bindings:
    │                                          │          │      │  
    │                                          ╰──────────────────── ref: 3
    │                                                     │      │  
-   │                                                     ╰───────── unresolved
+   │                                                     ╰───────── built-in
    │                                                            │  
    │                                                            ╰── ref: 4
    │ 
@@ -90,7 +90,7 @@ Bindings:
    │                       │       │   
    │                       ╰─────────── ref: 3
    │                               │   
-   │                               ╰─── unresolved
+   │                               ╰─── built-in
  9 │         uint256 v10 = address(this).balance;
    │                 ─┬─                 ───┬───  
    │                  ╰─────────────────────────── name: 12

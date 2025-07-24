@@ -74,7 +74,7 @@ References (46):
 - Ref: ["amount" @ input.sol:36:11] -> #9
 - Ref: ["c" @ input.sol:37:9] -> #24
 - Ref: ["beneficiary" @ input.sol:37:11] -> #6
-- Ref: ["transfer" @ input.sol:37:23] -> unresolved
+- Ref: ["transfer" @ input.sol:37:23] -> built-in
 - Ref: ["amount" @ input.sol:37:32] -> #25
 
 ------------------------------------------------------------------------
@@ -258,7 +258,7 @@ Bindings:
     │                │          │       │    
     │                ╰─────────────────────── ref: 6
     │                           │       │    
-    │                           ╰──────────── unresolved
+    │                           ╰──────────── built-in
     │                                   │    
     │                                   ╰──── ref: 25
 ────╯

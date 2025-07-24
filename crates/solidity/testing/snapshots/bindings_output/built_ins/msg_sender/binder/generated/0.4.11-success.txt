@@ -10,12 +10,12 @@ Definitions (3):
 References (9):
 - Ref: ["msg" @ input.sol:4:9] -> built-in
 - Ref: ["sender" @ input.sol:4:13] -> built-in
-- Ref: ["transfer" @ input.sol:4:20] -> unresolved
+- Ref: ["transfer" @ input.sol:4:20] -> built-in
 - Ref: ["amount" @ input.sol:4:29] -> #3
 - Ref: ["require" @ input.sol:5:9] -> built-in
 - Ref: ["msg" @ input.sol:5:17] -> built-in
 - Ref: ["sender" @ input.sol:5:21] -> built-in
-- Ref: ["send" @ input.sol:5:28] -> unresolved
+- Ref: ["send" @ input.sol:5:28] -> built-in
 - Ref: ["amount" @ input.sol:5:33] -> #3
 
 ------------------------------------------------------------------------
@@ -42,7 +42,7 @@ Bindings:
    │                │       │       │    
    │                ╰──────────────────── built-in
    │                        │       │    
-   │                        ╰──────────── unresolved
+   │                        ╰──────────── built-in
    │                                │    
    │                                ╰──── ref: 3
  5 │         require(msg.sender.send(amount));
@@ -53,7 +53,7 @@ Bindings:
    │                        │     │     │    
    │                        ╰──────────────── built-in
    │                              │     │    
-   │                              ╰────────── unresolved
+   │                              ╰────────── built-in
    │                                    │    
    │                                    ╰──── ref: 3
 ───╯

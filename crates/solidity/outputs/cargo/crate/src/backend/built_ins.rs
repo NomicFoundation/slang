@@ -14,10 +14,18 @@ pub enum BuiltIn {
     AbiEncodeWithSelector,
     AbiEncodeWithSignature,
     Addmod,
+    AddressBalance,
+    AddressCall,
+    AddressCallcode,
+    AddressCode,
+    AddressCodehash,
+    AddressDelegatecall,
+    AddressSend,
+    AddressStaticcall,
+    AddressTransfer,
     ArrayPop,
     ArrayPush(TypeId),
     Assert,
-    Balance,
     Blobhash,
     Blockhash,
     CallOptionValue,
@@ -190,11 +198,28 @@ impl<'a> BuiltInsResolver<'a> {
         symbol: &str,
     ) -> Option<BuiltIn> {
         match parent_type {
-            Type::Address { .. } => match symbol {
-                "balance" => Some(BuiltIn::Balance),
-                // TODO: add the rest of the address (payable) built-ins
-                _ => None,
-            },
+            Type::Address { payable } => {
+                if !payable || self.language_version >= VERSION_0_5_0 {
+                    match symbol {
+                        "balance" => Some(BuiltIn::AddressBalance),
+                        "code" if self.language_version >= VERSION_0_8_0 => {
+                            Some(BuiltIn::AddressCode)
+                        }
+                        "codehash" if self.language_version >= VERSION_0_8_0 => {
+                            Some(BuiltIn::AddressCodehash)
+                        }
+                        "call" => Some(BuiltIn::AddressCall),
+                        "callcode" if !payable => Some(BuiltIn::AddressCallcode),
+                        "delegatecall" => Some(BuiltIn::AddressDelegatecall),
+                        "send" => Some(BuiltIn::AddressSend),
+                        "staticcall" => Some(BuiltIn::AddressStaticcall),
+                        "transfer" => Some(BuiltIn::AddressTransfer),
+                        _ => None,
+                    }
+                } else {
+                    None
+                }
+            }
             Type::Array { element_type, .. } => match symbol {
                 "length" => Some(BuiltIn::Length),
                 "pop" => Some(BuiltIn::ArrayPop),
@@ -268,7 +293,9 @@ impl<'a> BuiltInsResolver<'a> {
     pub(crate) fn typing_of(&self, built_in: &BuiltIn) -> Typing {
         match built_in {
             // variables and members
-            BuiltIn::Balance => Typing::Resolved(self.types.uint256()),
+            BuiltIn::AddressBalance => Typing::Resolved(self.types.uint256()),
+            BuiltIn::AddressCode => Typing::Resolved(self.types.bytes()),
+            BuiltIn::AddressCodehash => Typing::Resolved(self.types.bytes32()),
             BuiltIn::Length => Typing::Resolved(self.types.uint256()),
             BuiltIn::MsgGas => Typing::Resolved(self.types.uint256()),
             BuiltIn::MsgData => Typing::Resolved(self.types.bytes()),
@@ -287,6 +314,12 @@ impl<'a> BuiltInsResolver<'a> {
             | BuiltIn::AbiEncodePacked
             | BuiltIn::AbiEncodeWithSelector
             | BuiltIn::AbiEncodeWithSignature
+            | BuiltIn::AddressCall
+            | BuiltIn::AddressCallcode
+            | BuiltIn::AddressDelegatecall
+            | BuiltIn::AddressSend
+            | BuiltIn::AddressStaticcall
+            | BuiltIn::AddressTransfer
             | BuiltIn::Addmod
             | BuiltIn::ArrayPop
             | BuiltIn::ArrayPush(_)
@@ -333,6 +366,32 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::AbiEncodeWithSelector => Typing::Resolved(self.types.bytes()),
             BuiltIn::AbiEncodeWithSignature => Typing::Resolved(self.types.bytes()),
             BuiltIn::Addmod => Typing::Resolved(self.types.uint256()),
+            BuiltIn::AddressCall => {
+                if self.language_version >= VERSION_0_5_0 {
+                    Typing::Resolved(self.types.boolean_bytes_tuple())
+                } else {
+                    Typing::Resolved(self.types.boolean())
+                }
+            }
+            BuiltIn::AddressCallcode if self.language_version >= VERSION_0_5_0 => {
+                Typing::Resolved(self.types.boolean_bytes_tuple())
+            }
+            BuiltIn::AddressDelegatecall => {
+                if self.language_version >= VERSION_0_5_0 {
+                    Typing::Resolved(self.types.boolean_bytes_tuple())
+                } else {
+                    Typing::Resolved(self.types.boolean())
+                }
+            }
+            BuiltIn::AddressSend if self.language_version < VERSION_0_8_0 => {
+                Typing::Resolved(self.types.boolean())
+            }
+            BuiltIn::AddressStaticcall if self.language_version >= VERSION_0_5_0 => {
+                Typing::Resolved(self.types.boolean_bytes_tuple())
+            }
+            BuiltIn::AddressTransfer if self.language_version < VERSION_0_8_0 => {
+                Typing::Resolved(self.types.void())
+            }
             BuiltIn::ArrayPush(type_id) => {
                 if argument_typings.is_empty() {
                     Typing::Resolved(*type_id)
