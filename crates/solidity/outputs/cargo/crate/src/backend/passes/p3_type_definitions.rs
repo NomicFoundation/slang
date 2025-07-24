@@ -4,7 +4,7 @@ use std::rc::Rc;
 use super::p2_collect_definitions::Output as Input;
 use crate::backend::binder::{
     Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
-    LibraryDefinition, Reference, Resolution, Scope, ScopeId, UsingDirective,
+    LibraryDefinition, Reference, Resolution, Scope, ScopeId, Typing, UsingDirective,
 };
 use crate::backend::built_ins::BuiltIn;
 use crate::backend::l2_flat_contracts::visitor::Visitor;
@@ -266,7 +266,8 @@ impl Pass {
     ) -> Option<TypeId> {
         if let Some(definition) = self.binder.find_definition_by_id(definition_id) {
             match definition {
-                Definition::Contract(_) => {
+                Definition::Contract(_) | Definition::Library(_) => {
+                    // TODO: do we need a separate type for libraries?
                     Some(self.types.register_type(Type::Contract { definition_id }))
                 }
                 Definition::Enum(_) => Some(self.types.register_type(Type::Enum { definition_id })),
@@ -294,7 +295,6 @@ impl Pass {
                 | Definition::Function(_)
                 | Definition::Import(_)
                 | Definition::ImportedSymbol(_)
-                | Definition::Library(_)
                 | Definition::Modifier(_)
                 | Definition::Parameter(_)
                 | Definition::StateVariable(_)
@@ -810,5 +810,19 @@ impl Visitor for Pass {
             self.binder.insert_reference(reference);
         }
         true
+    }
+
+    fn leave_new_expression(&mut self, node: &input_ir::NewExpression) {
+        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
+        let typing = type_id.map_or(Typing::Unresolved, Typing::New);
+        self.binder.set_node_typing(node.node_id, typing);
+    }
+
+    fn leave_type_expression(&mut self, node: &input_ir::TypeExpression) {
+        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
+        let typing = type_id.map_or(Typing::Unresolved, |type_id| {
+            Typing::BuiltIn(BuiltIn::Type(type_id))
+        });
+        self.binder.set_node_typing(node.node_id, typing);
     }
 }

@@ -366,15 +366,12 @@ impl CollectedDefinitionDisplay<'_> {
             Typing::Resolved(type_id) => self.type_display(type_id),
             Typing::This => "this".to_string(),
             Typing::Super => "super".to_string(),
-            Typing::Undetermined(type_ids) => {
-                format!("unresolved {count} overloads", count = type_ids.len())
-            }
             Typing::UserMetaType(node_id) => {
                 assert_eq!(node_id, self.definition.definition_id);
                 "meta-type".to_string()
             }
-            Typing::MetaType(_) | Typing::BuiltIn(_) => {
-                unreachable!("unexpected typing of user definition");
+            _ => {
+                unreachable!("unexpected typing {typing:?} of user definition");
             }
         }
     }

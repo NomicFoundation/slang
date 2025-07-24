@@ -36,7 +36,7 @@ References (24):
 - Ref: ["ISample" @ input.sol:15:33] -> #2
 - Ref: ["name" @ input.sol:15:42] -> built-in
 - Ref: ["ISample" @ input.sol:16:26] -> #2
-- Ref: ["interfaceId" @ input.sol:16:35] -> unresolved
+- Ref: ["interfaceId" @ input.sol:16:35] -> built-in
 - Ref: ["Direction" @ input.sol:18:9] -> #5
 - Ref: ["Direction" @ input.sol:18:29] -> #5
 - Ref: ["min" @ input.sol:18:40] -> unresolved
@@ -126,7 +126,7 @@ Bindings:
     │                             │          │       
     │                             ╰────────────────── ref: 2
     │                                        │       
-    │                                        ╰─────── unresolved
+    │                                        ╰─────── built-in
     │ 
  18 │         Direction v6 = type(Direction).min;
     │         ────┬──── ─┬        ────┬────  ─┬─  

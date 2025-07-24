@@ -16,7 +16,7 @@ References (5):
 - Ref: ["name" @ input.sol:4:34] -> built-in
 - Ref: ["Answer" @ input.sol:5:9] -> #2
 - Ref: ["Answer" @ input.sol:5:29] -> #2
-- Ref: ["min" @ input.sol:5:37] -> unresolved
+- Ref: ["min" @ input.sol:5:37] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -55,5 +55,5 @@ Bindings:
    │                                │     │   
    │                                ╰───────── ref: 2
    │                                      │   
-   │                                      ╰─── unresolved
+   │                                      ╰─── built-in
 ───╯

@@ -168,6 +168,10 @@ impl Pass {
                 // the linearisation information
                 Resolution::Unresolved
             }
+            Typing::New(_type_id) => {
+                // TODO: resolve legacy constructor call options (ie. `(new Lock).value(1)()`)
+                Resolution::Unresolved
+            }
             Typing::MetaType(type_) => {
                 if let Some(built_in) = self
                     .built_ins_resolver()
@@ -930,27 +934,37 @@ impl Visitor for Pass {
                     (Typing::Unresolved, None)
                 }
             }
+            Typing::New(type_id) => {
+                // TODO(validation): check that the given type is actually constructible
+                let type_ = self.types.get_type_by_id(type_id);
+                let definition_id = match type_ {
+                    Type::Contract { definition_id } => Some(*definition_id),
+                    Type::Struct { definition_id, .. } => Some(*definition_id),
+                    _ => None,
+                };
+                (Typing::Resolved(type_id), definition_id)
+            }
             Typing::UserMetaType(node_id) => {
-                if let Some(definition) = self.binder.find_definition_by_id(node_id) {
-                    match definition {
-                        Definition::Contract(_) => {
-                            // TODO: we may want to use to follow up on new() expression
-                            (Typing::Unresolved, Some(node_id))
-                        }
-                        Definition::Struct(_) => {
-                            // struct constructor
-                            (
-                                Typing::Resolved(self.types.register_type(Type::Struct {
-                                    definition_id: node_id,
-                                    location: DataLocation::Memory,
-                                })),
-                                Some(node_id),
-                            )
-                        }
-                        _ => (Typing::Unresolved, None),
+                // Generally this is a cast to the underlying type of the given
+                // definition, except for structs for which we need to construct
+                // the value in memory
+                match self.binder.find_definition_by_id(node_id) {
+                    Some(Definition::Contract(_) | Definition::Interface(_)) => {
+                        // TODO(validation): the type of the first argument should be an address
+                        let type_id = self.types.register_type(Type::Contract {
+                            definition_id: node_id,
+                        });
+                        (Typing::Resolved(type_id), None)
                     }
-                } else {
-                    (Typing::Unresolved, None)
+                    Some(Definition::Struct(_)) => {
+                        // struct construction
+                        let type_id = self.types.register_type(Type::Struct {
+                            definition_id: node_id,
+                            location: DataLocation::Memory,
+                        });
+                        (Typing::Resolved(type_id), Some(node_id))
+                    }
+                    _ => (Typing::Unresolved, None),
                 }
             }
             Typing::BuiltIn(built_in) => {
@@ -976,13 +990,6 @@ impl Visitor for Pass {
         }
     }
 
-    fn leave_new_expression(&mut self, node: &input_ir::NewExpression) {
-        // TODO: this should type to the constructor signature of the given type
-        // name to be able to type a function call expression
-        let typing = Typing::Unresolved;
-        self.binder.set_node_typing(node.node_id, typing);
-    }
-
     fn enter_call_options_expression(&mut self, node: &input_ir::CallOptionsExpression) -> bool {
         for option in &node.options {
             let identifier = &option.name;
@@ -998,13 +1005,6 @@ impl Visitor for Pass {
 
     fn leave_call_options_expression(&mut self, node: &input_ir::CallOptionsExpression) {
         let typing = self.typing_of_expression(&node.operand);
-        self.binder.set_node_typing(node.node_id, typing);
-    }
-
-    fn leave_type_expression(&mut self, node: &input_ir::TypeExpression) {
-        // FIXME: this probably needs a special value to represent the
-        // meta-type
-        let typing = Typing::Unresolved;
         self.binder.set_node_typing(node.node_id, typing);
     }
 

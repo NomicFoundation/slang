@@ -36,15 +36,15 @@ References (24):
 - Ref: ["ISample" @ input.sol:15:33] -> #2
 - Ref: ["name" @ input.sol:15:42] -> built-in
 - Ref: ["ISample" @ input.sol:16:26] -> #2
-- Ref: ["interfaceId" @ input.sol:16:35] -> unresolved
+- Ref: ["interfaceId" @ input.sol:16:35] -> built-in
 - Ref: ["Direction" @ input.sol:18:9] -> #5
 - Ref: ["Direction" @ input.sol:18:29] -> #5
-- Ref: ["min" @ input.sol:18:40] -> unresolved
+- Ref: ["min" @ input.sol:18:40] -> built-in
 - Ref: ["Direction" @ input.sol:19:9] -> #5
 - Ref: ["Direction" @ input.sol:19:29] -> #5
-- Ref: ["max" @ input.sol:19:40] -> unresolved
-- Ref: ["min" @ input.sol:21:30] -> unresolved
-- Ref: ["max" @ input.sol:22:30] -> unresolved
+- Ref: ["max" @ input.sol:19:40] -> built-in
+- Ref: ["min" @ input.sol:21:30] -> built-in
+- Ref: ["max" @ input.sol:22:30] -> built-in
 - Ref: ["Utils" @ input.sol:24:34] -> #3
 - Ref: ["name" @ input.sol:24:41] -> built-in
 - Ref: ["Utils" @ input.sol:25:33] -> #3
@@ -126,7 +126,7 @@ Bindings:
     │                             │          │       
     │                             ╰────────────────── ref: 2
     │                                        │       
-    │                                        ╰─────── unresolved
+    │                                        ╰─────── built-in
     │ 
  18 │         Direction v6 = type(Direction).min;
     │         ────┬──── ─┬        ────┬────  ─┬─  
@@ -136,7 +136,7 @@ Bindings:
     │                                 │       │   
     │                                 ╰─────────── ref: 5
     │                                         │   
-    │                                         ╰─── unresolved
+    │                                         ╰─── built-in
  19 │         Direction v7 = type(Direction).max;
     │         ────┬──── ─┬        ────┬────  ─┬─  
     │             ╰─────────────────────────────── ref: 5
@@ -145,18 +145,18 @@ Bindings:
     │                                 │       │   
     │                                 ╰─────────── ref: 5
     │                                         │   
-    │                                         ╰─── unresolved
+    │                                         ╰─── built-in
     │ 
  21 │         uint v8 = type(uint).min;
     │              ─┬              ─┬─  
     │               ╰─────────────────── name: 18
     │                               │   
-    │                               ╰─── unresolved
+    │                               ╰─── built-in
  22 │         uint v9 = type(uint).max;
     │              ─┬              ─┬─  
     │               ╰─────────────────── name: 19
     │                               │   
-    │                               ╰─── unresolved
+    │                               ╰─── built-in
     │ 
  24 │         string memory v10 = type(Utils).name;
     │                       ─┬─        ──┬──  ──┬─  
