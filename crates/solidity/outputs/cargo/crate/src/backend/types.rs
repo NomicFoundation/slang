@@ -10,6 +10,7 @@ pub struct TypeRegistry {
 
     // Pre-defined core types
     address_type_id: TypeId,
+    address_payable_type_id: TypeId,
     boolean_type_id: TypeId,
     boolean_bytes_tuple_type_id: TypeId,
     byte_type_id: TypeId,
@@ -28,6 +29,7 @@ impl TypeRegistry {
     fn new() -> Self {
         let mut types = IndexSet::new();
         let (address_type, _) = types.insert_full(Type::Address { payable: false });
+        let (address_payable_type, _) = types.insert_full(Type::Address { payable: true });
         let (boolean_type, _) = types.insert_full(Type::Boolean);
         let (byte_type, _) = types.insert_full(Type::Integer {
             signed: false,
@@ -57,6 +59,7 @@ impl TypeRegistry {
             types,
 
             address_type_id: TypeId(address_type),
+            address_payable_type_id: TypeId(address_payable_type),
             boolean_type_id: TypeId(boolean_type),
             boolean_bytes_tuple_type_id: TypeId(boolean_bytes_tuple_type),
             byte_type_id: TypeId(byte_type),
@@ -131,6 +134,9 @@ impl TypeRegistry {
 impl TypeRegistry {
     pub fn address(&self) -> TypeId {
         self.address_type_id
+    }
+    pub fn address_payable(&self) -> TypeId {
+        self.address_payable_type_id
     }
     pub fn boolean(&self) -> TypeId {
         self.boolean_type_id

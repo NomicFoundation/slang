@@ -239,6 +239,16 @@ pub slang_solidity::backend::built_ins::BuiltIn::ArrayPop
 pub slang_solidity::backend::built_ins::BuiltIn::ArrayPush(slang_solidity::backend::types::TypeId)
 pub slang_solidity::backend::built_ins::BuiltIn::Assert
 pub slang_solidity::backend::built_ins::BuiltIn::Blobhash
+pub slang_solidity::backend::built_ins::BuiltIn::Block
+pub slang_solidity::backend::built_ins::BuiltIn::BlockBasefee
+pub slang_solidity::backend::built_ins::BuiltIn::BlockBlobbasefee
+pub slang_solidity::backend::built_ins::BuiltIn::BlockChainid
+pub slang_solidity::backend::built_ins::BuiltIn::BlockCoinbase
+pub slang_solidity::backend::built_ins::BuiltIn::BlockDifficulty
+pub slang_solidity::backend::built_ins::BuiltIn::BlockGaslimit
+pub slang_solidity::backend::built_ins::BuiltIn::BlockNumber
+pub slang_solidity::backend::built_ins::BuiltIn::BlockPrevrandao
+pub slang_solidity::backend::built_ins::BuiltIn::BlockTimestamp
 pub slang_solidity::backend::built_ins::BuiltIn::Blockhash
 pub slang_solidity::backend::built_ins::BuiltIn::CallOptionGas
 pub slang_solidity::backend::built_ins::BuiltIn::CallOptionValue
@@ -7761,6 +7771,7 @@ impl core::marker::StructuralPartialEq for slang_solidity::backend::types::TypeI
 pub struct slang_solidity::backend::types::TypeRegistry
 impl slang_solidity::backend::types::TypeRegistry
 pub fn slang_solidity::backend::types::TypeRegistry::address(&self) -> slang_solidity::backend::types::TypeId
+pub fn slang_solidity::backend::types::TypeRegistry::address_payable(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::boolean(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::boolean_bytes_tuple(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::byte(&self) -> slang_solidity::backend::types::TypeId

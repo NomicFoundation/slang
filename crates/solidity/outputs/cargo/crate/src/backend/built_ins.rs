@@ -27,6 +27,16 @@ pub enum BuiltIn {
     ArrayPush(TypeId),
     Assert,
     Blobhash,
+    Block,
+    BlockBasefee,
+    BlockBlobbasefee,
+    BlockChainid,
+    BlockCoinbase,
+    BlockDifficulty,
+    BlockGaslimit,
+    BlockNumber,
+    BlockPrevrandao,
+    BlockTimestamp,
     Blockhash,
     CallOptionValue,
     CallOptionGas,
@@ -71,8 +81,10 @@ const VERSION_0_4_12: Version = Version::new(0, 4, 12);
 const VERSION_0_4_22: Version = Version::new(0, 4, 22);
 const VERSION_0_5_0: Version = Version::new(0, 5, 0);
 const VERSION_0_8_0: Version = Version::new(0, 8, 0);
+const VERSION_0_8_7: Version = Version::new(0, 8, 7);
 const VERSION_0_8_8: Version = Version::new(0, 8, 8);
 const VERSION_0_8_11: Version = Version::new(0, 8, 11);
+const VERSION_0_8_18: Version = Version::new(0, 8, 18);
 const VERSION_0_8_24: Version = Version::new(0, 8, 24);
 
 pub(crate) struct BuiltInsResolver<'a> {
@@ -100,6 +112,7 @@ impl<'a> BuiltInsResolver<'a> {
             "addmod" => Some(BuiltIn::Addmod),
             "assert" => Some(BuiltIn::Assert),
             "blobhash" if self.language_version >= VERSION_0_8_24 => Some(BuiltIn::Blobhash),
+            "block" => Some(BuiltIn::Block),
             "blockhash" if self.language_version >= VERSION_0_4_22 => Some(BuiltIn::Blockhash),
             "ecrecover" => Some(BuiltIn::Ecrecover),
             "gasleft" => Some(BuiltIn::Gasleft),
@@ -148,6 +161,23 @@ impl<'a> BuiltInsResolver<'a> {
                 "encodeWithSignature" if self.language_version >= VERSION_0_4_22 => {
                     Some(BuiltIn::AbiEncodeWithSignature)
                 }
+                _ => None,
+            },
+            BuiltIn::Block => match symbol {
+                "basefee" if self.language_version >= VERSION_0_8_7 => Some(BuiltIn::BlockBasefee),
+                "blobbasefee" if self.language_version >= VERSION_0_8_24 => {
+                    Some(BuiltIn::BlockBlobbasefee)
+                }
+                "chainid" if self.language_version >= VERSION_0_8_0 => Some(BuiltIn::BlockChainid),
+                "coinbase" => Some(BuiltIn::BlockCoinbase),
+                "difficulty" => Some(BuiltIn::BlockDifficulty),
+                "gaslimit" => Some(BuiltIn::BlockGaslimit),
+                "number" => Some(BuiltIn::BlockNumber),
+                "prevrandao" if self.language_version >= VERSION_0_8_18 => {
+                    Some(BuiltIn::BlockPrevrandao)
+                }
+                "timestamp" => Some(BuiltIn::BlockTimestamp),
+                "blockhash" if self.language_version < VERSION_0_5_0 => Some(BuiltIn::Blockhash),
                 _ => None,
             },
             BuiltIn::Tx => match symbol {
@@ -232,6 +262,7 @@ impl<'a> BuiltInsResolver<'a> {
                 _ => None,
             },
             Type::Bytes { .. } => match symbol {
+                "length" => Some(BuiltIn::Length),
                 "pop" => Some(BuiltIn::ArrayPop),
                 "push" => Some(BuiltIn::ArrayPush(self.types.byte())),
                 _ => None,
@@ -296,6 +327,15 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::AddressBalance => Typing::Resolved(self.types.uint256()),
             BuiltIn::AddressCode => Typing::Resolved(self.types.bytes()),
             BuiltIn::AddressCodehash => Typing::Resolved(self.types.bytes32()),
+            BuiltIn::BlockBasefee => Typing::Resolved(self.types.uint256()),
+            BuiltIn::BlockBlobbasefee => Typing::Resolved(self.types.uint256()),
+            BuiltIn::BlockChainid => Typing::Resolved(self.types.uint256()),
+            BuiltIn::BlockCoinbase => Typing::Resolved(self.types.address_payable()),
+            BuiltIn::BlockDifficulty => Typing::Resolved(self.types.uint256()),
+            BuiltIn::BlockGaslimit => Typing::Resolved(self.types.uint256()),
+            BuiltIn::BlockNumber => Typing::Resolved(self.types.uint256()),
+            BuiltIn::BlockPrevrandao => Typing::Resolved(self.types.uint256()),
+            BuiltIn::BlockTimestamp => Typing::Resolved(self.types.uint256()),
             BuiltIn::Length => Typing::Resolved(self.types.uint256()),
             BuiltIn::MsgGas => Typing::Resolved(self.types.uint256()),
             BuiltIn::MsgData => Typing::Resolved(self.types.bytes()),
@@ -325,6 +365,7 @@ impl<'a> BuiltInsResolver<'a> {
             | BuiltIn::ArrayPush(_)
             | BuiltIn::Assert
             | BuiltIn::Blobhash
+            | BuiltIn::Block
             | BuiltIn::Blockhash
             | BuiltIn::Ecrecover
             | BuiltIn::Gasleft
