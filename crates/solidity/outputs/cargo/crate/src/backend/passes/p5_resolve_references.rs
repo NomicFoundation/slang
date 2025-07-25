@@ -657,10 +657,7 @@ impl Pass {
         function_types
             .filter(|function_type| {
                 if function_type.parameter_types.len() == positional_argument_typings.len() {
-                    let parameter_types = function_type
-                        .parameter_types
-                        .iter()
-                        .map(|type_id| self.types.get_type_by_id(*type_id));
+                    let parameter_types = function_type.parameter_types.iter();
                     self.matches_parameters(parameter_types, positional_argument_typings)
                 } else {
                     false
@@ -671,17 +668,16 @@ impl Pass {
 
     fn matches_parameters<'a>(
         &self,
-        parameter_types: impl Iterator<Item = &'a Type>,
+        parameter_types: impl Iterator<Item = &'a TypeId>,
         positional_argument_typings: &[Typing],
     ) -> bool {
         parameter_types
             .zip(positional_argument_typings)
             .all(|(parameter_type, argument_typing)| {
                 match argument_typing {
-                    Typing::Resolved(type_id) => {
-                        // TODO: implicit casting
-                        parameter_type == self.types.get_type_by_id(*type_id)
-                    }
+                    Typing::Resolved(type_id) => self
+                        .types
+                        .implicitly_convertible_to(*type_id, *parameter_type),
                     _ => false, // TODO: other cases
                 }
             })
@@ -1143,13 +1139,9 @@ impl Visitor for Pass {
                                 input_ir::Expression::MemberAccessExpression(f) => Some(f.node_id),
                                 input_ir::Expression::IndexAccessExpression(f) => Some(f.node_id),
                                 input_ir::Expression::Identifier(f) => Some(f.id()),
-                                _ => {
-                                    println!("{:?}", node.operand);
-                                    None
-                                } // TODO: check all cases
+                                _ => None, // TODO: check all cases
                             };
                             if let Some(node_id) = reference_node_id {
-                                println!("Found ref");
                                 let reference =
                                     self.binder.get_reference_by_identifier_node_id_mut(node_id);
                                 reference.resolution =
