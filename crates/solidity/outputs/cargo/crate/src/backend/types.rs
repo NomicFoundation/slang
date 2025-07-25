@@ -157,19 +157,19 @@ impl TypeRegistry {
                 definition_id: *definition_id,
                 location: DataLocation::Inherited,
             },
-            Type::Function {
+            Type::Function(FunctionType  {
                 parameter_types,
                 return_type,
                 external,
                 kind,
                 ..
-            } => Type::Function {
+            }) => Type::Function(FunctionType {
                 definition_id: None,
                 parameter_types: parameter_types.clone(),
                 return_type: *return_type,
                 external: *external,
                 kind: *kind,
-            },
+            }),
 
             Type::Address { .. }
             | Type::Boolean
@@ -271,13 +271,7 @@ pub enum Type {
         bits: u32,
         precision_bits: u32,
     },
-    Function {
-        definition_id: Option<NodeId>, // this may point to a FunctionDefinition
-        parameter_types: Vec<TypeId>,
-        return_type: TypeId,
-        external: bool,
-        kind: FunctionTypeKind,
-    },
+    Function(FunctionType),
     Integer {
         signed: bool,
         bits: u32,
@@ -304,6 +298,15 @@ pub enum Type {
         definition_id: NodeId,
     },
     Void,
+}
+
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+pub struct FunctionType {
+    pub definition_id: Option<NodeId>, // this may point to a FunctionDefinition
+    pub parameter_types: Vec<TypeId>,
+    pub return_type: TypeId,
+    pub external: bool,
+    pub kind: FunctionTypeKind,
 }
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]

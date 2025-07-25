@@ -3,7 +3,7 @@ use std::fmt::Display;
 
 use slang_solidity::backend::binder::{Definition, Resolution, Typing};
 use slang_solidity::backend::passes::p5_resolve_references::Output;
-use slang_solidity::backend::types::{DataLocation, Type, TypeId};
+use slang_solidity::backend::types::{DataLocation, FunctionType, Type, TypeId};
 use slang_solidity::cst::{Cursor, NodeId, NodeKind, TerminalKindExtensions};
 
 // Types
@@ -265,11 +265,11 @@ impl CollectedDefinitionDisplay<'_> {
                     signed = if *signed { "" } else { "u" }
                 )
             }
-            Type::Function {
+            Type::Function(FunctionType {
                 parameter_types,
                 return_type,
                 ..
-            } => {
+            }) => {
                 format!(
                     "function ({parameters}) returns {returns}",
                     parameters = parameter_types

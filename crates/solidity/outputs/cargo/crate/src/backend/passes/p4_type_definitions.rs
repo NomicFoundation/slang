@@ -11,7 +11,9 @@ use crate::backend::binder::{
 use crate::backend::built_ins::BuiltIn;
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
-use crate::backend::types::{DataLocation, FunctionTypeKind, Type, TypeId, TypeRegistry};
+use crate::backend::types::{
+    DataLocation, FunctionType, FunctionTypeKind, Type, TypeId, TypeRegistry,
+};
 use crate::compilation::CompilationUnit;
 use crate::cst::{NodeId, TerminalKind};
 
@@ -229,13 +231,13 @@ impl Pass {
                         _ => {}
                     }
                 }
-                Some(self.types.register_type(Type::Function {
+                Some(self.types.register_type(Type::Function(FunctionType {
                     definition_id: None,
                     parameter_types,
                     return_type,
                     external,
                     kind,
-                }))
+                })))
             }
             input_ir::TypeName::MappingType(mapping_type) => {
                 let data_location = Some(DataLocation::Storage);
@@ -412,13 +414,13 @@ impl Pass {
                 _ => {}
             }
         }
-        Some(self.types.register_type(Type::Function {
+        Some(self.types.register_type(Type::Function(FunctionType {
             definition_id: Some(function_definition.node_id),
             parameter_types,
             return_type,
             external,
             kind,
-        }))
+        })))
     }
 
     fn find_library_scope_id_for_identifier_path(
@@ -550,13 +552,13 @@ impl Pass {
             }
         }
 
-        let getter_type = Type::Function {
+        let getter_type = Type::Function(FunctionType {
             definition_id: Some(definition_id),
             parameter_types,
             return_type,
             external: true,
             kind: FunctionTypeKind::View,
-        };
+        });
         Some(self.types.register_type(getter_type))
     }
 

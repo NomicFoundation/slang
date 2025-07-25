@@ -226,6 +226,10 @@ impl Binder {
         self.references.get(&node_id)
     }
 
+    pub fn get_reference_by_identifier_node_id_mut(&mut self, node_id: NodeId) -> &mut Reference {
+        self.references.get_mut(&node_id).unwrap()
+    }
+
     pub(crate) fn insert_using_directive_in_scope(
         &mut self,
         directive: UsingDirective,

@@ -11,7 +11,7 @@ use crate::backend::binder::{
 use crate::backend::built_ins::BuiltInsResolver;
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
-use crate::backend::types::{DataLocation, Type, TypeId, TypeRegistry};
+use crate::backend::types::{DataLocation, FunctionType, Type, TypeId, TypeRegistry};
 use crate::compilation::CompilationUnit;
 use crate::cst::{NodeId, TerminalKind, TerminalNode};
 
@@ -648,6 +648,44 @@ impl Pass {
         }
         self.typing_of_resolution(resolution)
     }
+
+    fn filter_functions<'a, T: Iterator<Item = &'a FunctionType>>(
+        &self,
+        function_types: T,
+        positional_argument_typings: &[Typing],
+    ) -> Vec<&'a FunctionType> {
+        function_types
+            .filter(|function_type| {
+                if function_type.parameter_types.len() == positional_argument_typings.len() {
+                    let parameter_types = function_type
+                        .parameter_types
+                        .iter()
+                        .map(|type_id| self.types.get_type_by_id(*type_id));
+                    self.matches_parameters(parameter_types, positional_argument_typings)
+                } else {
+                    false
+                }
+            })
+            .collect()
+    }
+
+    fn matches_parameters<'a>(
+        &self,
+        parameter_types: impl Iterator<Item = &'a Type>,
+        positional_argument_typings: &[Typing],
+    ) -> bool {
+        parameter_types
+            .zip(positional_argument_typings)
+            .all(|(parameter_type, argument_typing)| {
+                match argument_typing {
+                    Typing::Resolved(type_id) => {
+                        // TODO: implicit casting
+                        parameter_type == self.types.get_type_by_id(*type_id)
+                    }
+                    _ => false, // TODO: other cases
+                }
+            })
+    }
 }
 
 impl Visitor for Pass {
@@ -1054,6 +1092,7 @@ impl Visitor for Pass {
         self.binder.set_node_typing(node.node_id, typing);
     }
 
+    #[allow(clippy::too_many_lines)]
     fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {
         let operand_typing = self.typing_of_expression(&node.operand);
         let positional_argument_typings =
@@ -1067,11 +1106,11 @@ impl Visitor for Pass {
             Typing::Resolved(type_id) => {
                 let operand_type = self.types.get_type_by_id(type_id);
                 match operand_type {
-                    Type::Function {
+                    Type::Function(FunctionType {
                         definition_id,
                         return_type,
                         ..
-                    } => (Typing::Resolved(*return_type), *definition_id),
+                    }) => (Typing::Resolved(*return_type), *definition_id),
                     // TODO: support other types that can be called
                     _ => {
                         // TODO(validation): the operand did not resolve to a function
@@ -1079,11 +1118,51 @@ impl Visitor for Pass {
                     }
                 }
             }
-            Typing::Undetermined(_type_ids) => {
+            Typing::Undetermined(type_ids) => {
                 // TODO: resolve argument types and match best overload
                 // TODO: maybe update the typing of the operand?
                 // TODO: return the definition_id used to later resolve named arguments
-                (Typing::Unresolved, None)
+                if let Some(positional_argument_typings) = positional_argument_typings {
+                    let types = type_ids
+                        .iter()
+                        .map(|type_id| self.types.get_type_by_id(*type_id));
+                    let function_types = types.filter_map(|typ| match typ {
+                        Type::Function(function_type) => Some(function_type),
+                        _ => None, // TODO: Other types to consider?
+                                   // TODO: Validation
+                    });
+                    let candidates =
+                        self.filter_functions(function_types, &positional_argument_typings);
+
+                    match candidates.len() {
+                        1 => {
+                            let typ = candidates.first().unwrap();
+                            let reference_node_id = match &node.operand {
+                                input_ir::Expression::FunctionCallExpression(f) => Some(f.node_id),
+                                input_ir::Expression::CallOptionsExpression(f) => Some(f.node_id),
+                                input_ir::Expression::MemberAccessExpression(f) => Some(f.node_id),
+                                input_ir::Expression::IndexAccessExpression(f) => Some(f.node_id),
+                                input_ir::Expression::Identifier(f) => Some(f.id()),
+                                _ => {
+                                    println!("{:?}", node.operand);
+                                    None
+                                } // TODO: check all cases
+                            };
+                            if let Some(node_id) = reference_node_id {
+                                println!("Found ref");
+                                let reference =
+                                    self.binder.get_reference_by_identifier_node_id_mut(node_id);
+                                reference.resolution =
+                                    Resolution::Definition(typ.definition_id.unwrap());
+                            }
+                            (Typing::Resolved(typ.return_type), typ.definition_id)
+                        }
+                        _ => (Typing::Unresolved, None), // TODO: Other cases
+                    }
+                } else {
+                    // TODO: named arguments
+                    (Typing::Unresolved, None)
+                }
             }
             Typing::MetaType(type_) => {
                 // TODO(validation): this is a cast to the given type, but we
