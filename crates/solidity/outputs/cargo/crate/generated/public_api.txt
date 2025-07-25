@@ -6143,9 +6143,6 @@ pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_yul_v
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_yul_variable_declaration_statement(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationStatement)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_yul_variable_declaration_value(&mut self, _node: &slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValue)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::Visitor::leave_yul_variable_names(&mut self, _items: &slang_solidity::backend::l2_flat_contracts::YulVariableNames)
-impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor for slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass
-pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l2_flat_contracts::ContractDefinition)
-pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::leave_interface_definition(&mut self, target: &slang_solidity::backend::l2_flat_contracts::InterfaceDefinition)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_abicoder_pragma(node: &slang_solidity::backend::l2_flat_contracts::AbicoderPragma, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_additive_expression(node: &slang_solidity::backend::l2_flat_contracts::AdditiveExpression, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_address_type(node: &slang_solidity::backend::l2_flat_contracts::AddressType, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
@@ -7689,9 +7686,6 @@ pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::compilation_u
 pub slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::types: slang_solidity::backend::types::TypeRegistry
 impl slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass
 pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::new(compilation_unit: slang_solidity::compilation::CompilationUnit, binder: slang_solidity::backend::binder::Binder, types: slang_solidity::backend::types::TypeRegistry) -> Self
-impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor for slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass
-pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::leave_contract_definition(&mut self, target: &slang_solidity::backend::l2_flat_contracts::ContractDefinition)
-pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::Pass::leave_interface_definition(&mut self, target: &slang_solidity::backend::l2_flat_contracts::InterfaceDefinition)
 pub fn slang_solidity::backend::passes::p3_x_flatten_hierarchy::run(input: slang_solidity::backend::passes::p3_type_definitions::Output) -> slang_solidity::backend::passes::p3_x_flatten_hierarchy::Output
 pub mod slang_solidity::backend::passes::p4_resolve_references
 pub struct slang_solidity::backend::passes::p4_resolve_references::Output

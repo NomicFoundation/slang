@@ -96,7 +96,7 @@ impl Pass {
     // level, or at the file level if there's no contract scope open. It will
     // follow through in contracts/intrefaces/libraries as well as imports and
     // treat them as namespaces.
-    // Returns the last reference.
+    // Returns the resolution of the last reference.
     fn resolve_identifier_path(
         &mut self,
         identifier_path: &input_ir::IdentifierPath,
@@ -148,15 +148,15 @@ impl Pass {
     }
 
     fn resolve_inheritance_types(&mut self, types: &input_ir::InheritanceTypes) -> Vec<NodeId> {
-        let referenced_types =
-            types
-                .iter()
-                .filter_map(|inheritance_type: &Rc<input_ir::InheritanceTypeStruct>| {
-                    self.resolve_identifier_path(&inheritance_type.type_name)
-                        .as_definition_id()
-                });
-
-        referenced_types.collect()
+        // TODO(validation): check that we are able to resolve all bases as
+        // otherwise we end up with a short list saved in the definition
+        types
+            .iter()
+            .filter_map(|inheritance_type| {
+                self.resolve_identifier_path(&inheritance_type.type_name)
+                    .as_definition_id()
+            })
+            .collect()
     }
 
     fn resolve_parameter_types(
