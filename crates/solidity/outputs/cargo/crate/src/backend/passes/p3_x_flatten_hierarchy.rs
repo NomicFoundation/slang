@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use super::p3_type_definitions::Output as Input;
 use crate::backend::binder::{Binder, ContractDefinition, Definition, InterfaceDefinition};
 use crate::backend::c3;
-use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::backend::types::TypeRegistry;
 use crate::compilation::CompilationUnit;
@@ -50,7 +49,24 @@ impl Pass {
     }
 
     fn visit_file(&mut self, source_unit: &input_ir::SourceUnit) {
-        input_ir::visitor::accept_source_unit(source_unit, self);
+        for member in &source_unit.members {
+            let node_id = match member {
+                input_ir::SourceUnitMember::ContractDefinition(contract_definition) => {
+                    contract_definition.node_id
+                }
+                input_ir::SourceUnitMember::InterfaceDefinition(interface_definition) => {
+                    interface_definition.node_id
+                }
+                _ => continue,
+            };
+            let parents = self.find_contract_bases_recursively(node_id);
+            if let Some(linearisation) = c3::linearise(&node_id, &parents) {
+                self.binder.insert_linearised_bases(node_id, linearisation);
+            } else {
+                // TODO(validation): linearisation failed, so emit an error
+                self.binder.insert_linearised_bases(node_id, Vec::new());
+            }
+        }
     }
 
     fn find_contract_bases_recursively(&self, node_id: NodeId) -> HashMap<NodeId, Vec<NodeId>> {
@@ -70,7 +86,7 @@ impl Pass {
                 identifier, bases, ..
             })) = definition
             else {
-                unreachable!("Node {node_id:?} isn't the identifier of a contract");
+                unreachable!("Node {node_id:?} isn't a contract or interface");
             };
             let bases = bases.as_ref().unwrap_or_else(|| {
                 unreachable!("Contract {identifier:?} hasn't got the bases resolved")
@@ -86,23 +102,5 @@ impl Pass {
             result.insert(node_id, parents);
         }
         result
-    }
-}
-
-impl Visitor for Pass {
-    fn leave_contract_definition(&mut self, target: &input_ir::ContractDefinition) {
-        let node_id = target.node_id;
-        let parents = self.find_contract_bases_recursively(node_id);
-        if let Some(linearisation) = c3::linearise(&node_id, &parents) {
-            self.binder.insert_linearised_bases(node_id, linearisation);
-        }
-    }
-
-    fn leave_interface_definition(&mut self, target: &input_ir::InterfaceDefinition) {
-        let node_id = target.node_id;
-        let parents = self.find_contract_bases_recursively(node_id);
-        if let Some(linearisation) = c3::linearise(&node_id, &parents) {
-            self.binder.insert_linearised_bases(node_id, linearisation);
-        }
     }
 }

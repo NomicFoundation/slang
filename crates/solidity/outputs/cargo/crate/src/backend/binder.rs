@@ -1354,13 +1354,16 @@ impl Binder {
 
     pub(crate) fn insert_linearised_bases(
         &mut self,
-        object_id: NodeId,
+        node_id: NodeId,
         linearised_bases: Vec<NodeId>,
     ) {
-        let _ = self
+        if self
             .linearisations
-            .insert(object_id, linearised_bases)
-            .is_none_or(|_| unreachable!("Trying to linearised twice {object_id:?}"));
+            .insert(node_id, linearised_bases)
+            .is_some()
+        {
+            unreachable!("Trying to linearised twice {node_id:?}");
+        }
     }
 
     #[cfg(feature = "__private_backend_api")]
