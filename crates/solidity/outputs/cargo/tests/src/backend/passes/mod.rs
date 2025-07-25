@@ -1,3 +1,3 @@
 mod p1_flatten_contracts;
-mod p3_x_flatten_hierarchy;
+mod p4_linearise_contracts;
 mod pipeline;
