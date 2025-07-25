@@ -34,7 +34,7 @@ fn test_backend_pipeline() -> Result<()> {
     let data = passes::p1_flatten_contracts::run(data);
     let data = passes::p2_collect_definitions::run(data);
     let data = passes::p3_type_definitions::run(data);
-    let data = passes::p3_x_flatten_hierarchy::run(data);
+    let data = passes::p4_linearise_contracts::run(data);
 
     // Create a map relating each contract with its linearised bases (Vec<String>)
     let mut contract_to_bases = std::collections::HashMap::new();

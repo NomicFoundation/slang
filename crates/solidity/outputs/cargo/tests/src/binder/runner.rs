@@ -5,7 +5,7 @@ use infra_utils::paths::PathExtensions;
 use metaslang_bindings::PathResolver;
 use semver::Version;
 use slang_solidity::backend::passes;
-use slang_solidity::backend::passes::p4_resolve_references::Output;
+use slang_solidity::backend::passes::p5_resolve_references::Output;
 use slang_solidity::compilation::{CompilationUnit, InternalCompilationBuilder};
 
 use super::renderer::binder_report;
@@ -92,6 +92,6 @@ fn build_binder(compilation_unit: CompilationUnit) -> Output {
     let data = passes::p1_flatten_contracts::run(data);
     let data = passes::p2_collect_definitions::run(data);
     let data = passes::p3_type_definitions::run(data);
-    let data = passes::p3_x_flatten_hierarchy::run(data);
-    passes::p4_resolve_references::run(data)
+    let data = passes::p4_linearise_contracts::run(data);
+    passes::p5_resolve_references::run(data)
 }
