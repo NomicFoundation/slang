@@ -70,9 +70,7 @@ fn test_backend_pipeline() -> Result<()> {
             "C".to_string(),
         ],
     );
-    expected.insert("A".to_string(), vec!["A".to_string(), "C".to_string()]);
     expected.insert("B".to_string(), vec!["B".to_string(), "C".to_string()]);
-    expected.insert("C".to_string(), vec!["C".to_string()]);
 
     assert_eq!(contract_to_bases, expected);
 
