@@ -121,7 +121,12 @@ impl TypeRegistry {
                 }
             }
 
-            (Type::Rational, Type::Integer { .. }) => true,
+            (Type::Rational, Type::Integer { .. }) => {
+                // TODO(validation): check that the rational can fit in the given integer type
+                true
+            }
+
+            (Type::Integer { .. }, Type::Rational) => false,
 
             // TODO: add more implicit conversion rules
             _ => unimplemented!(

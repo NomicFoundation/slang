@@ -1197,10 +1197,41 @@ impl Binder {
                 Resolution::Definition,
             ),
             Scope::Contract(contract_scope) => {
-                contract_scope.definitions.get(symbol).cloned().map_or_else(
-                    || self.resolve_in_scope_internal(contract_scope.file_scope_id, symbol),
-                    Resolution::from,
-                )
+                // Search for the symbol in the linearised bases *in-order*.
+                let results = if let Some(linearisations) =
+                    self.linearisations.get(&contract_scope.node_id)
+                {
+                    let mut results = Vec::new();
+                    for node_id in linearisations {
+                        let Some(base_scope_id) = self.scope_id_for_node_id(*node_id) else {
+                            continue;
+                        };
+                        let Scope::Contract(base_contract_scope) =
+                            self.get_scope_by_id(base_scope_id)
+                        else {
+                            unreachable!(
+                                "expected the scope of a base contract to be a ContractScope"
+                            );
+                        };
+                        let Some(definitions) = base_contract_scope.definitions.get(symbol) else {
+                            continue;
+                        };
+                        results.extend(definitions);
+                    }
+                    results
+                } else if let Some(definitions) = contract_scope.definitions.get(symbol) {
+                    // This case shouldn't happen for valid Solidity, as all
+                    // contracts should have a proper linearisation
+                    definitions.clone()
+                } else {
+                    Vec::new()
+                };
+                if results.is_empty() {
+                    // Otherwise, delegate to the containing file scope.
+                    self.resolve_in_scope_internal(contract_scope.file_scope_id, symbol)
+                } else {
+                    Resolution::from(results)
+                }
             }
             Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
             Scope::File(file_scope) => self.resolve_in_file_scope(&file_scope.file_id, symbol),

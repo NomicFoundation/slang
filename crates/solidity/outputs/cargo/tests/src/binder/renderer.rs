@@ -182,7 +182,10 @@ fn render_bindings_for_file(
             Resolution::Ambiguous(definitions) => {
                 format!(
                     "refs: {ids:?}",
-                    ids = definitions.iter().map(|id| definitions_by_id.get(id))
+                    ids = definitions
+                        .iter()
+                        .map(|id| definitions_by_id.get(id).unwrap())
+                        .collect::<Vec<_>>()
                 )
             }
         };
@@ -520,7 +523,10 @@ impl Display for CollectedReferenceDisplay<'_> {
                 Resolution::Ambiguous(definitions) => {
                     format!(
                         "refs: {ids:?}",
-                        ids = definitions.iter().map(|id| self.1.get(id))
+                        ids = definitions
+                            .iter()
+                            .map(|id| self.1.get(id).unwrap())
+                            .collect::<Vec<_>>(),
                     )
                 }
             }

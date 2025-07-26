@@ -20,7 +20,7 @@ References (8):
 - Ref: ["_" @ input.sol:10:37] -> built-in
 - Ref: ["B" @ input.sol:13:18] -> #5
 - Ref: ["A" @ input.sol:13:21] -> #3
-- Ref: ["foo" @ input.sol:14:28] -> unresolved
+- Ref: ["foo" @ input.sol:14:28] -> refs: [4, 6, 2]
 
 ------------------------------------------------------------------------
 
@@ -73,5 +73,5 @@ Bindings:
     │              ──┬─          ─┬─  
     │                ╰──────────────── name: 8
     │                             │   
-    │                             ╰─── unresolved
+    │                             ╰─── refs: [4, 6, 2]
 ────╯

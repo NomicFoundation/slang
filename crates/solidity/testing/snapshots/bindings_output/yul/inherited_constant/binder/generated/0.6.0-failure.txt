@@ -14,9 +14,9 @@ Definitions (7):
 References (5):
 - Ref: ["Utils" @ input.sol:5:18] -> #1
 - Ref: ["add" @ input.sol:8:22] -> unresolved
-- Ref: ["_FOO" @ input.sol:8:29] -> unresolved
+- Ref: ["_FOO" @ input.sol:8:29] -> #2
 - Ref: ["add" @ input.sol:11:27] -> unresolved
-- Ref: ["_FOO" @ input.sol:11:34] -> unresolved
+- Ref: ["_FOO" @ input.sol:11:34] -> #2
 
 ------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ Bindings:
     │                       │       │   
     │                       ╰─────────── unresolved
     │                               │   
-    │                               ╰─── unresolved
+    │                               ╰─── ref: 2
     │ 
  10 │             function foo() {
     │                      ─┬─  
@@ -60,5 +60,5 @@ Bindings:
     │                            │       │   
     │                            ╰─────────── unresolved
     │                                    │   
-    │                                    ╰─── unresolved
+    │                                    ╰─── ref: 2
 ────╯

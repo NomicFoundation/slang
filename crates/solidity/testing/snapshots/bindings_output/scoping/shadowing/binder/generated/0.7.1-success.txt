@@ -16,7 +16,7 @@ Definitions (9):
 References (4):
 - Ref: ["Base" @ input.sol:8:18] -> #3
 - Ref: ["foo" @ input.sol:12:9] -> #9
-- Ref: ["bar" @ input.sol:13:9] -> #2
+- Ref: ["bar" @ input.sol:13:9] -> #4
 - Ref: ["x" @ input.sol:14:9] -> #8
 
 ------------------------------------------------------------------------
@@ -61,7 +61,7 @@ Bindings:
     │          ╰─── ref: 9
  13 │         bar();
     │         ─┬─  
-    │          ╰─── ref: 2
+    │          ╰─── ref: 4
  14 │         x;
     │         ┬  
     │         ╰── ref: 8

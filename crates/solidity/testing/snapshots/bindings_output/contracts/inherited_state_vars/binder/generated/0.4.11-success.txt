@@ -13,8 +13,8 @@ Definitions (6):
 References (4):
 - Ref: ["Base" @ input.sol:4:20] -> #1
 - Ref: ["Middle" @ input.sol:7:18] -> #3
-- Ref: ["in_base" @ input.sol:9:9] -> unresolved
-- Ref: ["in_middle" @ input.sol:10:9] -> unresolved
+- Ref: ["in_base" @ input.sol:9:9] -> #2
+- Ref: ["in_middle" @ input.sol:10:9] -> #4
 
 ------------------------------------------------------------------------
 
@@ -51,8 +51,8 @@ Bindings:
     │                ╰─── name: 6
   9 │         in_base;
     │         ───┬───  
-    │            ╰───── unresolved
+    │            ╰───── ref: 2
  10 │         in_middle;
     │         ────┬────  
-    │             ╰────── unresolved
+    │             ╰────── ref: 4
 ────╯

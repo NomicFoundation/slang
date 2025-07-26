@@ -14,7 +14,7 @@ References (5):
 - Ref: ["Base" @ input.sol:5:18] -> #1
 - Ref: ["Base" @ input.sol:6:27] -> #1
 - Ref: ["_" @ input.sol:6:35] -> built-in
-- Ref: ["foo" @ input.sol:7:28] -> #4
+- Ref: ["foo" @ input.sol:7:28] -> refs: [4, 2]
 
 ------------------------------------------------------------------------
 
@@ -50,5 +50,5 @@ Bindings:
    │              ──┬─          ─┬─  
    │                ╰──────────────── name: 5
    │                             │   
-   │                             ╰─── ref: 4
+   │                             ╰─── refs: [4, 2]
 ───╯

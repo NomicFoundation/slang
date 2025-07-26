@@ -12,7 +12,7 @@ Definitions (5):
 References (5):
 - Ref: ["_" @ input.sol:2:20] -> built-in
 - Ref: ["Base" @ input.sol:5:18] -> #1
-- Ref: ["foo" @ input.sol:6:39] -> unresolved
+- Ref: ["foo" @ input.sol:6:39] -> #2
 - Ref: ["Base" @ input.sol:8:37] -> #1
 - Ref: ["foo" @ input.sol:8:42] -> #2
 
@@ -43,7 +43,7 @@ Bindings:
    │              ───────┬───────          ─┬─  
    │                     ╰────────────────────── name: 4
    │                                        │   
-   │                                        ╰─── unresolved
+   │                                        ╰─── ref: 2
    │ 
  8 │     function testQualified() public Base.foo {
    │              ──────┬──────          ──┬─ ─┬─  

@@ -16,7 +16,7 @@ References (5):
 - Ref: ["Base" @ input.sol:8:20] -> #4
 - Ref: ["Lib" @ input.sol:9:11] -> #1
 - Ref: ["Middle" @ input.sol:11:18] -> #6
-- Ref: ["totalSupply" @ input.sol:13:9] -> unresolved
+- Ref: ["totalSupply" @ input.sol:13:9] -> #5
 - Ref: ["nop" @ input.sol:13:21] -> unresolved
 
 ------------------------------------------------------------------------
@@ -63,7 +63,7 @@ Bindings:
     │                ╰─── name: 8
  13 │         totalSupply.nop();
     │         ─────┬───── ─┬─  
-    │              ╰─────────── unresolved
+    │              ╰─────────── ref: 5
     │                      │   
     │                      ╰─── unresolved
 ────╯

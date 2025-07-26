@@ -13,8 +13,8 @@ Definitions (6):
 References (4):
 - Ref: ["Base1" @ input.sol:10:5] -> #1
 - Ref: ["Base2" @ input.sol:11:5] -> #3
-- Ref: ["base1" @ input.sol:14:16] -> unresolved
-- Ref: ["base2" @ input.sol:14:26] -> unresolved
+- Ref: ["base1" @ input.sol:14:16] -> #2
+- Ref: ["base2" @ input.sol:14:26] -> #4
 
 ------------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ Bindings:
     │                ╰─── name: 6
  14 │         return base1() + base2();
     │                ──┬──     ──┬──  
-    │                  ╰────────────── unresolved
+    │                  ╰────────────── ref: 2
     │                            │    
-    │                            ╰──── unresolved
+    │                            ╰──── ref: 4
 ────╯

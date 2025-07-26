@@ -10,7 +10,7 @@ Definitions (4):
 
 References (2):
 - Ref: ["Base" @ input.sol:7:21] -> #1
-- Ref: ["base_func" @ input.sol:9:20] -> unresolved
+- Ref: ["base_func" @ input.sol:9:20] -> #2
 
 ------------------------------------------------------------------------
 
@@ -38,5 +38,5 @@ Bindings:
    │                  ╰────── name: 4
  9 │         return 1 + base_func();
    │                    ────┬────  
-   │                        ╰────── unresolved
+   │                        ╰────── ref: 2
 ───╯

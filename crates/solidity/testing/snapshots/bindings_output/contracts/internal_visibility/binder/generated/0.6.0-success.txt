@@ -12,9 +12,9 @@ Definitions (6):
 
 References (6):
 - Ref: ["Ownable" @ input.sol:6:18] -> #1
-- Ref: ["owner" @ input.sol:8:9] -> unresolved
-- Ref: ["default_visibility" @ input.sol:9:9] -> unresolved
-- Ref: ["_internal_only" @ input.sol:10:9] -> unresolved
+- Ref: ["owner" @ input.sol:8:9] -> #2
+- Ref: ["default_visibility" @ input.sol:9:9] -> #3
+- Ref: ["_internal_only" @ input.sol:10:9] -> #4
 - Ref: ["Ownable" @ input.sol:11:9] -> #1
 - Ref: ["_internal_only" @ input.sol:11:17] -> #4
 
@@ -50,13 +50,13 @@ Bindings:
     │                ╰─── name: 6
   8 │         owner;
     │         ──┬──  
-    │           ╰──── unresolved
+    │           ╰──── ref: 2
   9 │         default_visibility;
     │         ─────────┬────────  
-    │                  ╰────────── unresolved
+    │                  ╰────────── ref: 3
  10 │         _internal_only();
     │         ───────┬──────  
-    │                ╰──────── unresolved
+    │                ╰──────── ref: 4
  11 │         Ownable._internal_only();
     │         ───┬─── ───────┬──────  
     │            ╰──────────────────── ref: 1
