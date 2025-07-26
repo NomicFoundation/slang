@@ -94,9 +94,6 @@ impl Pass {
 
     // This is a "top-level" (ie. not a member access) resolution method
     fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
-        // TODO: we need to do hierarchy lookups for contracts and interfaces if
-        // we're in the scope of a contract/interface/library. This we probably
-        // cannot delegate to the binder.
         let resolution = self.binder.resolve_in_scope(scope_id, symbol);
         if resolution == Resolution::Unresolved {
             self.built_ins_resolver().lookup_global(symbol).into()
@@ -496,9 +493,6 @@ impl Pass {
 
     // This is a "top-level" resolution method for symbols in s Yul context
     fn resolve_symbol_in_yul_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
-        // TODO: we need to do hierarchy lookups for contracts and interfaces if
-        // we're in the scope of a contract/interface/library. This we probably
-        // cannot delegate to the binder.
         let resolution = self.binder.resolve_in_scope(scope_id, symbol);
         if resolution == Resolution::Unresolved {
             self.built_ins_resolver().lookup_yul_global(symbol).into()
