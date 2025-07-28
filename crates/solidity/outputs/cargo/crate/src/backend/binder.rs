@@ -1126,6 +1126,27 @@ impl Binder {
         self.global_using_directives.iter().collect()
     }
 
+    pub(crate) fn get_using_directives_in_scope(&self, scope_id: ScopeId) -> Vec<&UsingDirective> {
+        self.get_scope_by_id(scope_id).get_using_directives()
+    }
+
+    pub(crate) fn get_using_directives_in_scope_including_inherited(
+        &self,
+        scope_id: ScopeId,
+    ) -> Vec<&UsingDirective> {
+        let scope = self.get_scope_by_id(scope_id);
+        if let Scope::Contract(contract_scope) = scope {
+            if let Some(linearisations) = self.linearisations.get(&contract_scope.node_id) {
+                return linearisations
+                    .iter()
+                    .filter_map(|node_id| self.scope_id_for_node_id(*node_id))
+                    .flat_map(|scope_id| self.get_scope_by_id(scope_id).get_using_directives())
+                    .collect();
+            }
+        }
+        scope.get_using_directives()
+    }
+
     pub fn node_typing(&self, node_id: NodeId) -> Typing {
         self.node_typing
             .get(&node_id)
