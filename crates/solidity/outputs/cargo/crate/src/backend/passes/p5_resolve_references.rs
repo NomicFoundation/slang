@@ -117,8 +117,15 @@ impl Pass {
 
         let mut directives = Vec::new();
         for scope_id in self.scope_stack.iter().rev() {
-            let scope = self.binder.get_scope_by_id(*scope_id);
-            let scope_directives = scope.get_using_directives();
+            let scope_directives = if self.language_version < VERSION_0_7_0 {
+                // In Solidity < 0.7.0 using directives are inherited in contracts,
+                // so we need to pull any `using` directives in a contract hierarchy
+                // if there are linearisations
+                self.binder
+                    .get_using_directives_in_scope_including_inherited(*scope_id)
+            } else {
+                self.binder.get_using_directives_in_scope(*scope_id)
+            };
             directives.extend(
                 scope_directives
                     .iter()
