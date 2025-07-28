@@ -1,0 +1,77 @@
+{%- if rendering_in_stubs -%}
+  export abstract class BaseRewriter { }
+{%- else -%} 
+  import { NonterminalKind, NonterminalNode, Node, TerminalNode, TerminalKind, Edge } from "../index.mjs";
+
+  export abstract class BaseRewriter {
+    
+    public rewriteNode(node: Node): Node | undefined {
+      if (node instanceof NonterminalNode) {
+        return this.rewriteNonterminalNode(node);
+      } else {
+        return this.rewriteTerminalNode(node);
+      }
+    }
+
+    public rewriteNonterminalNode(node: NonterminalNode): Node | undefined {
+      switch (node.kind) {
+        {% for nonterminal in model.kinds.nonterminal_kinds %}
+        case NonterminalKind.{{ nonterminal.id }}:
+          return this.rewrite{{- nonterminal.id -}}(node);
+        {% endfor %}
+      }
+    }
+
+    public rewriteTerminalNode(node: TerminalNode): Node | undefined {
+      switch (node.kind) {
+        {% for terminal in model.kinds.terminal_kinds %}
+        case TerminalKind.{{ terminal.id }}:
+          return this.rewrite{{- terminal.id -}}(node);
+        {% endfor %}
+      }
+      // NOTE: this shouldn't be necessary, beacuse the case above should cover all, however
+      // TypeScript for some reason fails to notice the completeness of this switch.
+      throw Error("Unreachable");
+    }
+
+    {% for nonterminal in model.kinds.nonterminal_kinds %}     
+      /** @virtual */
+      public rewrite{{- nonterminal.id -}}(node: NonterminalNode): Node | undefined {
+        return this.rewriteChildren(NonterminalKind.{{- nonterminal.id -}}, node);
+      }
+    {% endfor %}
+    
+    {% for terminal in model.kinds.terminal_kinds %}     
+      /** @virtual */
+      public rewrite{{- terminal.id -}}(node: TerminalNode): Node | undefined {
+        return node;
+      }
+    {% endfor %}
+    
+    // generic implementation that only recreates 'node' if children change:
+    protected rewriteChildren(kind: NonterminalKind, node: NonterminalNode): NonterminalNode {
+      const newChildren: Array<Edge> = new Array<Edge>();
+      var anyChildChanged = false;
+      for (const child of node.children()) {
+        const newChild = this.rewriteNode(child.node);
+        if (newChild == undefined) {
+          // node was removed
+          anyChildChanged = true;
+        } else if (newChild.id != child.node.id) {
+          // node was changed
+          anyChildChanged = true;
+          if (newChild instanceof TerminalNode) {
+            newChildren.push(Edge.createWithTerminal(child.label, newChild));
+          } else {
+            newChildren.push(Edge.createWithNonterminal(child.label, newChild));
+          }
+        }
+      }
+      if (anyChildChanged) {
+        return NonterminalNode.create(kind, newChildren);
+      } else {
+        return node;
+      }
+    }
+  }
+{%- endif -%}
