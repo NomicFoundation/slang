@@ -8,9 +8,7 @@ use itertools::Itertools;
 use metaslang_bindings::PathResolver;
 use semver::Version;
 use slang_solidity::bindings::{self, BindingGraph};
-use slang_solidity::cst::{
-    Cursor, KindTypes, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange,
-};
+use slang_solidity::cst::{Cursor, KindTypes, NodeKind, TerminalKindExtensions, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::parser::{ParseOutput, Parser};
 use slang_solidity::utils::LanguageFacts;
@@ -240,15 +238,6 @@ fn run_bindings_check(
 
     while cursor.go_to_next_terminal() {
         if !matches!(cursor.node().kind(), NodeKind::Terminal(kind) if kind.is_identifier()) {
-            continue;
-        }
-
-        if matches!(
-            cursor.ancestors().next(),
-            Some(ancestor)
-            // ignore identifiers in `pragma experimental` directives, as they are unbound feature names:
-            if ancestor.kind == NonterminalKind::ExperimentalFeature
-        ) {
             continue;
         }
 

@@ -90,29 +90,44 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = Pragma,
                             variants = [
-                                EnumVariant(reference = AbicoderPragma),
-                                EnumVariant(reference = ExperimentalPragma),
+                                EnumVariant(reference = AbicoderPragma, enabled = From("0.7.5")),
+                                EnumVariant(
+                                    reference = ExperimentalPragma,
+                                    enabled = From("0.4.16")
+                                ),
                                 EnumVariant(reference = VersionPragma)
                             ]
                         ),
                         Struct(
                             name = AbicoderPragma,
+                            enabled = From("0.7.5"),
                             fields = (
                                 abicoder_keyword = Required(AbicoderKeyword),
-                                version = Required(Identifier)
+                                version = Required(AbicoderVersion)
                             )
                         ),
                         Struct(
                             name = ExperimentalPragma,
+                            enabled = From("0.4.16"),
                             fields = (
                                 experimental_keyword = Required(ExperimentalKeyword),
                                 feature = Required(ExperimentalFeature)
                             )
                         ),
                         Enum(
-                            name = ExperimentalFeature,
+                            name = AbicoderVersion,
+                            enabled = From("0.7.5"),
                             variants = [
-                                EnumVariant(reference = Identifier),
+                                EnumVariant(reference = Abicoderv1Keyword),
+                                EnumVariant(reference = Abicoderv2Keyword)
+                            ]
+                        ),
+                        Enum(
+                            name = ExperimentalFeature,
+                            enabled = From("0.4.16"),
+                            variants = [
+                                EnumVariant(reference = AbiencoderV2Keyword),
+                                EnumVariant(reference = SmtcheckerKeyword),
                                 EnumVariant(reference = StringLiteral)
                             ]
                         ),
@@ -227,14 +242,43 @@ codegen_language_macros::compile!(Language(
                             name = AbicoderKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
+                                enabled = From("0.7.5"),
                                 reserved = Never,
                                 value = Atom("abicoder")
+                            )]
+                        ),
+                        Keyword(
+                            name = Abicoderv1Keyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.7.5"),
+                                reserved = Never,
+                                value = Atom("v1")
+                            )]
+                        ),
+                        Keyword(
+                            name = Abicoderv2Keyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.7.5"),
+                                reserved = Never,
+                                value = Atom("v2")
+                            )]
+                        ),
+                        Keyword(
+                            name = AbiencoderV2Keyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.16"),
+                                reserved = Never,
+                                value = Atom("ABIEncoderV2")
                             )]
                         ),
                         Keyword(
                             name = ExperimentalKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
+                                enabled = From("0.4.16"),
                                 reserved = Never,
                                 value = Atom("experimental")
                             )]
@@ -245,6 +289,15 @@ codegen_language_macros::compile!(Language(
                             definitions = [KeywordDefinition(
                                 reserved = Never,
                                 value = Atom("solidity")
+                            )]
+                        ),
+                        Keyword(
+                            name = SmtcheckerKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.16"),
+                                reserved = Never,
+                                value = Atom("SMTChecker")
                             )]
                         )
                     ]

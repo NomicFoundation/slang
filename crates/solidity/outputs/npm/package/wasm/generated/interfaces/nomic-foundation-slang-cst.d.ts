@@ -24,11 +24,22 @@ export declare enum NonterminalKind {
    * Represents a node with kind `AbicoderPragma`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.7.5 *)
    * AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
-   *                  (* version: *) IDENTIFIER;
+   *                  (* version: *) AbicoderVersion;
    * ```
    */
   AbicoderPragma = "AbicoderPragma",
+  /**
+   * Represents a node with kind `AbicoderVersion`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.7.5 *)
+   * AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
+   *                 | (* variant: *) ABICODERV_2_KEYWORD;
+   * ```
+   */
+  AbicoderVersion = "AbicoderVersion",
   /**
    * Represents a node with kind `AdditiveExpression`, having the following structure:
    *
@@ -617,7 +628,9 @@ export declare enum NonterminalKind {
    * Represents a node with kind `ExperimentalFeature`, having the following structure:
    *
    * ```ebnf
-   * ExperimentalFeature = (* variant: *) IDENTIFIER
+   * (* Introduced in 0.4.16 *)
+   * ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
+   *                     | (* variant: *) SMTCHECKER_KEYWORD
    *                     | (* variant: *) StringLiteral;
    * ```
    */
@@ -626,6 +639,7 @@ export declare enum NonterminalKind {
    * Represents a node with kind `ExperimentalPragma`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.4.16 *)
    * ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
    *                      (* feature: *) ExperimentalFeature;
    * ```
@@ -1392,8 +1406,8 @@ export declare enum NonterminalKind {
    * Represents a node with kind `Pragma`, having the following structure:
    *
    * ```ebnf
-   * Pragma = (* variant: *) AbicoderPragma
-   *        | (* variant: *) ExperimentalPragma
+   * Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
+   *        | (* variant: *) ExperimentalPragma (* Introduced in 0.4.16 *)
    *        | (* variant: *) VersionPragma;
    * ```
    */
@@ -2498,11 +2512,42 @@ export declare enum TerminalKind {
    * Represents a node with kind `AbicoderKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.7.5 *)
    * (* Never reserved *)
    * ABICODER_KEYWORD = "abicoder";
    * ```
    */
   AbicoderKeyword = "AbicoderKeyword",
+  /**
+   * Represents a node with kind `Abicoderv1Keyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.7.5 *)
+   * (* Never reserved *)
+   * ABICODERV_1_KEYWORD = "v1";
+   * ```
+   */
+  Abicoderv1Keyword = "Abicoderv1Keyword",
+  /**
+   * Represents a node with kind `Abicoderv2Keyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.7.5 *)
+   * (* Never reserved *)
+   * ABICODERV_2_KEYWORD = "v2";
+   * ```
+   */
+  Abicoderv2Keyword = "Abicoderv2Keyword",
+  /**
+   * Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.4.16 *)
+   * (* Never reserved *)
+   * ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
+   * ```
+   */
+  AbiencoderV2Keyword = "AbiencoderV2Keyword",
   /**
    * Represents a node with kind `AbstractKeyword`, having the following structure:
    *
@@ -3041,6 +3086,7 @@ export declare enum TerminalKind {
    * Represents a node with kind `ExperimentalKeyword`, having the following structure:
    *
    * ```ebnf
+   * (* Introduced in 0.4.16 *)
    * (* Never reserved *)
    * EXPERIMENTAL_KEYWORD = "experimental";
    * ```
@@ -3820,6 +3866,16 @@ export declare enum TerminalKind {
    * ```
    */
   SlashEqual = "SlashEqual",
+  /**
+   * Represents a node with kind `SmtcheckerKeyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.4.16 *)
+   * (* Never reserved *)
+   * SMTCHECKER_KEYWORD = "SMTChecker";
+   * ```
+   */
+  SmtcheckerKeyword = "SmtcheckerKeyword",
   /**
    * Represents a node with kind `SolidityKeyword`, having the following structure:
    *

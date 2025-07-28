@@ -699,6 +699,11 @@ pub trait Visitor {
     }
     fn leave_pragma(&mut self, _node: &Pragma) {}
 
+    fn enter_abicoder_version(&mut self, _node: &AbicoderVersion) -> bool {
+        true
+    }
+    fn leave_abicoder_version(&mut self, _node: &AbicoderVersion) {}
+
     fn enter_experimental_feature(&mut self, _node: &ExperimentalFeature) -> bool {
         true
     }
@@ -1165,6 +1170,7 @@ pub fn accept_abicoder_pragma(node: &AbicoderPragma, visitor: &mut impl Visitor)
     if !visitor.enter_abicoder_pragma(node) {
         return;
     }
+    accept_abicoder_version(&node.version, visitor);
     visitor.leave_abicoder_pragma(node);
 }
 
@@ -2484,6 +2490,8 @@ pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
     visitor.leave_pragma(node);
 }
 
+pub fn accept_abicoder_version(_node: &AbicoderVersion, _visitor: &mut impl Visitor) {}
+
 pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut impl Visitor) {
     if !visitor.enter_experimental_feature(node) {
         return;
@@ -2492,7 +2500,7 @@ pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut imp
         ExperimentalFeature::StringLiteral(ref string_literal) => {
             accept_string_literal(string_literal, visitor);
         }
-        ExperimentalFeature::Identifier(_) => {}
+        ExperimentalFeature::AbiencoderV2Keyword | ExperimentalFeature::SmtcheckerKeyword => {}
     }
     visitor.leave_experimental_feature(node);
 }

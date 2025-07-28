@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ pragma abicoder v1;                                                              │ 0..19
+
+Errors: # 1 total
+  - >
+    Error: Expected SolidityKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/PragmaDirective/abi_coder_v1/input.sol:1:8]
+       │
+     1 │ pragma abicoder v1;
+       │        ─────┬─────  
+       │             ╰─────── Error occurred here.
+    ───╯
+
+Tree:
+  - (root꞉ PragmaDirective): # "pragma abicoder v1;\n" (0..20)
+      - (pragma_keyword꞉ PragmaKeyword): "pragma" # (0..6)
+      - (leading_trivia꞉ Whitespace): " " # (6..7)
+      - (unrecognized꞉ UNRECOGNIZED): "abicoder v1" # (7..18)
+      - (semicolon꞉ Semicolon): ";" # (18..19)
+      - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)
