@@ -5,7 +5,7 @@
     "@changesets/changelog-github": "0.5.1",
     "@changesets/cli": "2.29.4",
     "@ignored/slang-jco": "1.9.1-slang.1",
-    "@types/node": "22.15.29",
+    "@types/node": "24.0.8",
     "cspell": "9.1.2",
     "markdown-link-check": "3.12.2",
     "markdownlint-cli": "0.45.0",
