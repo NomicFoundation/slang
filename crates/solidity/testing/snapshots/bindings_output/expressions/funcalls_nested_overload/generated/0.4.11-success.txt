@@ -1,90 +1,54 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 References and definitions: 
-    ╭─[input.sol:1:1]
-    │
-  1 │ contract Test {
-    │          ──┬─  
-    │            ╰─── name: 1
-  2 │   int y;
-    │       ┬  
-    │       ╰── name: 2
-    │ 
-  4 │   function someFunc(int x) returns (int) {
-    │            ────┬───     ┬  
-    │                ╰─────────── name: 3
-    │                         │  
-    │                         ╰── name: 4
-  5 │     int farg = add(x);
-    │         ──┬─   ─┬─ ┬  
-    │           ╰─────────── name: 5
-    │                 │  │  
-    │                 ╰───── refs: 9, 10
-    │                    │  
-    │                    ╰── ref: 4
-  6 │     int literal = add(3);
-    │         ───┬───   ─┬─  
-    │            ╰─────────── name: 6
-    │                    │   
-    │                    ╰─── refs: 9, 10
-  7 │     int farg_2 = add(x, y);
-    │         ───┬──   ─┬─ ┬  ┬  
-    │            ╰─────────────── name: 7
-    │                   │  │  │  
-    │                   ╰──────── refs: 9, 10
-    │                      │  │  
-    │                      ╰───── ref: 4
-    │                         │  
-    │                         ╰── ref: 2
-  8 │     int literal_2 = add(3, 1);
-    │         ────┬────   ─┬─  
-    │             ╰──────────── name: 8
-    │                      │   
-    │                      ╰─── refs: 9, 10
-    │ 
- 11 │   function add(int, int) returns (int);
-    │            ─┬─  
-    │             ╰─── name: 9
-    │ 
- 13 │   function add(int) returns (int);
-    │            ─┬─  
-    │             ╰─── name: 10
-────╯
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │   function someFunc(int64 x) returns (int256) {
+   │            ────┬───       ┬  
+   │                ╰───────────── name: 2
+   │                           │  
+   │                           ╰── name: 3
+ 3 │     return add(add(x), add(3));
+   │            ─┬─ ─┬─ ┬   ─┬─  
+   │             ╰─────────────── refs: 4, 5
+   │                 │  │    │   
+   │                 ╰─────────── refs: 4, 5
+   │                    │    │   
+   │                    ╰──────── ref: 3
+   │                         │   
+   │                         ╰─── refs: 4, 5
+   │ 
+ 6 │   function add(int64, int64) returns (int256);
+   │            ─┬─  
+   │             ╰─── name: 4
+   │ 
+ 8 │   function add(int64) returns (int64);
+   │            ─┬─  
+   │             ╰─── name: 5
+───╯
 Definiens: 
-    ╭─[input.sol:1:1]
-    │
-  1 │ ╭───────▶ contract Test {
-  2 │ │ │         int y;
-    │ │ │       ────┬────  
-    │ │ │           ╰────── definiens: 2
-  3 │ │ ╭─────▶ 
-  4 │ │ │         function someFunc(int x) returns (int) {
-    │ │ │                           ──┬──  
-    │ │ │                             ╰──── definiens: 4
-  5 │ │ │           int farg = add(x);
-    │ │ │       ───────────┬───────────  
-    │ │ │                  ╰───────────── definiens: 5
-  6 │ │ │           int literal = add(3);
-    │ │ │       ─────────────┬────────────  
-    │ │ │                    ╰────────────── definiens: 6
-  7 │ │ │           int farg_2 = add(x, y);
-    │ │ │       ──────────────┬─────────────  
-    │ │ │                     ╰─────────────── definiens: 7
-  8 │ │ │           int literal_2 = add(3, 1);
-    │ │ │       ───────────────┬───────────────  
-    │ │ │                      ╰───────────────── definiens: 8
-  9 │ │ ├─│ ──▶   }
-    │ │ │ │           
-    │ │ ╰───────────── definiens: 3
- 10 │ │   ╭───▶ 
- 11 │ │   ├─│ ▶   function add(int, int) returns (int);
-    │ │   │ │                                             
-    │ │   ╰─────────────────────────────────────────────── definiens: 9
- 12 │ │     ╭─▶ 
- 13 │ │     ├─▶   function add(int) returns (int);
-    │ │     │                                        
-    │ │     ╰──────────────────────────────────────── definiens: 10
- 14 │ ├───────▶ }
-    │ │             
-    │ ╰───────────── definiens: 1
-────╯
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ────▶ contract Test {
+ 2 │ │ ╭─────▶   function someFunc(int64 x) returns (int256) {
+   │ │ │                           ───┬───  
+   │ │ │                              ╰───── definiens: 3
+   ┆ ┆ ┆       
+ 4 │ │ ├─│ ──▶   }
+   │ │ │ │           
+   │ │ ╰───────────── definiens: 2
+ 5 │ │   ╭───▶ 
+ 6 │ │   ├─│ ▶   function add(int64, int64) returns (int256);
+   │ │   │ │                                                    
+   │ │   ╰────────────────────────────────────────────────────── definiens: 4
+ 7 │ │     ╭─▶ 
+ 8 │ │     ├─▶   function add(int64) returns (int64);
+   │ │     │                                            
+   │ │     ╰──────────────────────────────────────────── definiens: 5
+ 9 │ ├───────▶ }
+   │ │             
+   │ ╰───────────── definiens: 1
+───╯
