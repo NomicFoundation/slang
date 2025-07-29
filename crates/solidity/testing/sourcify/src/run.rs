@@ -1,6 +1,8 @@
 use anyhow::{bail, Result};
 use rayon::iter::{ParallelBridge, ParallelIterator};
 use slang_solidity::compilation::{CompilationInitializationError, CompilationUnit};
+use slang_solidity::backend::binder::Resolution;
+use slang_solidity::backend::passes;
 use slang_solidity::cst::{Cursor, NodeKind, TerminalKindExtensions, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::utils::LanguageFacts;
@@ -70,6 +72,14 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
 
             if opts.check_bindings && test_outcome == TestOutcome::Passed {
                 test_outcome = run_bindings_check(contract, &unit, events);
+            }
+
+            if opts.check_old_binder && test_outcome == TestOutcome::Passed {
+                test_outcome = run_old_binder_check(contract, &unit, events);
+            }
+
+            if opts.check_new_binder && test_outcome == TestOutcome::Passed {
+                test_outcome = run_new_binder_check(contract, unit, events);
             }
 
             test_outcome
@@ -217,6 +227,64 @@ fn run_bindings_check(
     }
 
     test_outcome
+}
+
+fn run_old_binder_check(
+    _contract: &Contract,
+    compilation_unit: &CompilationUnit,
+    events: &Events,
+) -> TestOutcome {
+    let binding_graph = compilation_unit.binding_graph();
+    let mut definitions = 0;
+    for definition in binding_graph.all_definitions() {
+        if definition.get_file().is_built_ins() {
+            continue;
+        }
+        definitions += 1;
+    }
+    events.inc_definitions(definitions);
+    let mut references = 0;
+    let mut unresolved = 0;
+    for reference in binding_graph.all_references() {
+        if reference.get_file().is_built_ins() {
+            // skip built-ins
+            continue;
+        }
+        if reference.definitions().is_empty() {
+            unresolved += 1;
+        }
+        references += 1;
+    }
+    events.inc_references(references);
+    events.inc_unresolved_references(unresolved);
+
+    TestOutcome::Passed
+}
+
+fn run_new_binder_check(
+    _contract: &Contract,
+    compilation_unit: CompilationUnit,
+    events: &Events,
+) -> TestOutcome {
+    let data = passes::p0_build_ast::run(compilation_unit);
+    let data = passes::p1_flatten_contracts::run(data);
+    let data = passes::p2_collect_definitions::run(data);
+    let data = passes::p3_type_definitions::run(data);
+    let data = passes::p4_resolve_references::run(data);
+
+    events.inc_definitions(data.binder.definitions().len());
+    let mut references = 0;
+    let mut unresolved = 0;
+    for reference in data.binder.references().values() {
+        references += 1;
+        if let Resolution::Unresolved = reference.resolution {
+            unresolved += 1;
+        }
+    }
+    events.inc_references(references);
+    events.inc_unresolved_references(unresolved);
+
+    TestOutcome::Passed
 }
 
 fn uses_exotic_parser_bug(contract: &Contract) -> bool {

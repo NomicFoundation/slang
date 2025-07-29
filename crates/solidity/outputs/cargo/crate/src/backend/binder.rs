@@ -1079,6 +1079,10 @@ impl Binder {
             .and_then(|definition_id| self.definitions.get(definition_id))
     }
 
+    pub fn definitions(&self) -> &HashMap<NodeId, Definition> {
+        &self.definitions
+    }
+
     pub(crate) fn insert_reference(&mut self, reference: Reference) {
         let node_id = reference.node_id();
         self.references.insert(node_id, reference);
@@ -1086,6 +1090,10 @@ impl Binder {
 
     pub fn find_reference_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Reference> {
         self.references.get(&node_id)
+    }
+
+    pub fn references(&self) -> &HashMap<NodeId, Reference> {
+        &self.references
     }
 
     pub(crate) fn insert_using_directive_in_scope(

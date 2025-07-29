@@ -29,6 +29,10 @@ pub struct Events {
     failed: ProgressBar,
     unresolved: ProgressBar,
     incompatible: ProgressBar,
+
+    definitions: ProgressBar,
+    references: ProgressBar,
+    unresolved_references: ProgressBar,
 }
 
 impl Events {
@@ -52,6 +56,10 @@ impl Events {
         let unresolved = reporter.add_counter("❔ Unresolved", Color::White, 0);
         let incompatible = reporter.add_counter("❕ Incompatible", Color::White, 0);
 
+        let definitions = reporter.add_counter("Definitions", Color::White, 0);
+        let references = reporter.add_counter("References", Color::White, 0);
+        let unresolved_references = reporter.add_counter("Unresolved references", Color::White, 0);
+
         reporter.add_blank();
 
         Self {
@@ -66,6 +74,10 @@ impl Events {
             failed,
             unresolved,
             incompatible,
+
+            definitions,
+            references,
+            unresolved_references,
         }
     }
 
@@ -87,6 +99,18 @@ impl Events {
 
     pub fn inc_files_processed(&self, files_processed: usize) {
         self.source_files.inc(files_processed as u64);
+    }
+
+    pub fn inc_definitions(&self, value: usize) {
+        self.definitions.inc(value as u64);
+    }
+
+    pub fn inc_references(&self, value: usize) {
+        self.references.inc(value as u64);
+    }
+
+    pub fn inc_unresolved_references(&self, value: usize) {
+        self.unresolved_references.inc(value as u64);
     }
 
     pub fn finish_archive(&mut self) {
