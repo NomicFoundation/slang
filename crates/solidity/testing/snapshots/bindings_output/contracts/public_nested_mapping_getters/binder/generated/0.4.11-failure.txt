@@ -14,13 +14,13 @@ Definitions (7):
 References (10):
 - Ref: ["TokenState" @ input.sol:2:19] -> #4
 - Ref: ["tokenState" @ input.sol:3:9] -> #3
-- Ref: ["nested_maps" @ input.sol:3:20] -> unresolved
+- Ref: ["nested_maps" @ input.sol:3:20] -> #5
 - Ref: ["balance" @ input.sol:3:38] -> unresolved
 - Ref: ["tokenState" @ input.sol:4:9] -> #3
-- Ref: ["array_in_map" @ input.sol:4:20] -> unresolved
+- Ref: ["array_in_map" @ input.sol:4:20] -> #6
 - Ref: ["balance" @ input.sol:4:39] -> unresolved
 - Ref: ["tokenState" @ input.sol:5:9] -> #3
-- Ref: ["map_in_array" @ input.sol:5:20] -> unresolved
+- Ref: ["map_in_array" @ input.sol:5:20] -> #7
 - Ref: ["balance" @ input.sol:5:39] -> unresolved
 
 ------------------------------------------------------------------------
@@ -46,21 +46,21 @@ Bindings:
     │         ─────┬──── ─────┬─────       ───┬───  
     │              ╰──────────────────────────────── ref: 3
     │                         │               │     
-    │                         ╰───────────────────── unresolved
+    │                         ╰───────────────────── ref: 5
     │                                         │     
     │                                         ╰───── unresolved
   4 │         tokenState.array_in_map(1, 1).balance;
     │         ─────┬──── ──────┬─────       ───┬───  
     │              ╰───────────────────────────────── ref: 3
     │                          │               │     
-    │                          ╰───────────────────── unresolved
+    │                          ╰───────────────────── ref: 6
     │                                          │     
     │                                          ╰───── unresolved
   5 │         tokenState.map_in_array(1, 1).balance;
     │         ─────┬──── ──────┬─────       ───┬───  
     │              ╰───────────────────────────────── ref: 3
     │                          │               │     
-    │                          ╰───────────────────── unresolved
+    │                          ╰───────────────────── ref: 7
     │                                          │     
     │                                          ╰───── unresolved
     │ 

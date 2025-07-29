@@ -12,7 +12,7 @@ Definitions (5):
 References (4):
 - Ref: ["TokenState" @ input.sol:2:19] -> #4
 - Ref: ["tokenState" @ input.sol:3:9] -> #3
-- Ref: ["owners" @ input.sol:3:20] -> unresolved
+- Ref: ["owners" @ input.sol:3:20] -> #5
 - Ref: ["balance" @ input.sol:3:30] -> unresolved
 
 ------------------------------------------------------------------------
@@ -38,7 +38,7 @@ Bindings:
    │         ─────┬──── ───┬──    ───┬───  
    │              ╰──────────────────────── ref: 3
    │                       │         │     
-   │                       ╰─────────────── unresolved
+   │                       ╰─────────────── ref: 5
    │                                 │     
    │                                 ╰───── unresolved
    │ 

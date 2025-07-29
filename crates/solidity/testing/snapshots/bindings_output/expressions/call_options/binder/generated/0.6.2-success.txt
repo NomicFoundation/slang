@@ -15,10 +15,10 @@ References (7):
 - Ref: ["Data" @ input.sol:3:49] -> #2
 - Ref: ["External" @ input.sol:7:19] -> #1
 - Ref: ["ext" @ input.sol:8:16] -> #7
-- Ref: ["sample" @ input.sol:8:20] -> unresolved
+- Ref: ["sample" @ input.sol:8:20] -> #4
 - Ref: ["value" @ input.sol:8:28] -> built-in
 - Ref: ["gas" @ input.sol:8:39] -> built-in
-- Ref: ["value" @ input.sol:8:51] -> unresolved
+- Ref: ["value" @ input.sol:8:51] -> #3
 
 ------------------------------------------------------------------------
 
@@ -57,11 +57,11 @@ Bindings:
    │                ─┬─ ───┬──  ──┬──      ─┬─         ──┬──  
    │                 ╰──────────────────────────────────────── ref: 7
    │                       │      │         │            │    
-   │                       ╰────────────────────────────────── unresolved
+   │                       ╰────────────────────────────────── ref: 4
    │                              │         │            │    
    │                              ╰─────────────────────────── built-in
    │                                        │            │    
    │                                        ╰───────────────── built-in
    │                                                     │    
-   │                                                     ╰──── unresolved
+   │                                                     ╰──── ref: 3
 ───╯

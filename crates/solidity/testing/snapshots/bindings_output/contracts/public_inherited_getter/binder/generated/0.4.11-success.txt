@@ -13,7 +13,7 @@ Definitions (6):
 References (4):
 - Ref: ["Root" @ input.sol:2:5] -> #4
 - Ref: ["root" @ input.sol:4:9] -> #2
-- Ref: ["controllers" @ input.sol:4:14] -> unresolved
+- Ref: ["controllers" @ input.sol:4:14] -> #6
 - Ref: ["Controllable" @ input.sol:8:18] -> #5
 
 ------------------------------------------------------------------------
@@ -40,7 +40,7 @@ Bindings:
     │         ──┬─ ─────┬─────  
     │           ╰─────────────── ref: 2
     │                   │       
-    │                   ╰─────── unresolved
+    │                   ╰─────── ref: 6
     │ 
   8 │ contract Root is Controllable {}
     │          ──┬─    ──────┬─────  

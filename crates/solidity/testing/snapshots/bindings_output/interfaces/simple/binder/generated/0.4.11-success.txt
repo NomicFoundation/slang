@@ -12,7 +12,7 @@ Definitions (5):
 References (3):
 - Ref: ["Counter" @ input.sol:7:16] -> #1
 - Ref: ["_counter" @ input.sol:7:24] -> #5
-- Ref: ["count" @ input.sol:7:34] -> unresolved
+- Ref: ["count" @ input.sol:7:34] -> #2
 
 ------------------------------------------------------------------------
 
@@ -44,5 +44,5 @@ Bindings:
    │                            │       │    
    │                            ╰──────────── ref: 5
    │                                    │    
-   │                                    ╰──── unresolved
+   │                                    ╰──── ref: 2
 ───╯

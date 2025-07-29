@@ -15,7 +15,7 @@ References (4):
 - Ref: ["Data" @ input.sol:3:49] -> #2
 - Ref: ["External" @ input.sol:7:19] -> #1
 - Ref: ["ext" @ input.sol:8:16] -> #7
-- Ref: ["sample" @ input.sol:8:20] -> unresolved
+- Ref: ["sample" @ input.sol:8:20] -> #4
 
 ------------------------------------------------------------------------
 
@@ -54,5 +54,5 @@ Bindings:
    │                ─┬─ ───┬──  
    │                 ╰────────── ref: 7
    │                       │    
-   │                       ╰──── unresolved
+   │                       ╰──── ref: 4
 ───╯

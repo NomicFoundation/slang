@@ -24,9 +24,9 @@ References (10):
 - Ref: ["MutableCounter" @ input.sol:13:9] -> #6
 - Ref: ["Type" @ input.sol:13:24] -> unresolved
 - Ref: ["m" @ input.sol:14:9] -> #11
-- Ref: ["increment" @ input.sol:14:11] -> unresolved
+- Ref: ["increment" @ input.sol:14:11] -> #7
 - Ref: ["m" @ input.sol:15:16] -> #11
-- Ref: ["count" @ input.sol:15:18] -> unresolved
+- Ref: ["count" @ input.sol:15:18] -> #5
 
 ------------------------------------------------------------------------
 
@@ -88,10 +88,10 @@ Bindings:
     │         ┬ ────┬────  
     │         ╰──────────── ref: 11
     │               │      
-    │               ╰────── unresolved
+    │               ╰────── ref: 7
  15 │         return m.count();
     │                ┬ ──┬──  
     │                ╰──────── ref: 11
     │                    │    
-    │                    ╰──── unresolved
+    │                    ╰──── ref: 5
 ────╯

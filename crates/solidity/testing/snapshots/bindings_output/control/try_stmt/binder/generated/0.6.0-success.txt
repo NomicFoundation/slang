@@ -22,7 +22,7 @@ Definitions (15):
 References (12):
 - Ref: ["DataFeed" @ input.sol:4:5] -> #1
 - Ref: ["feed" @ input.sol:9:13] -> #6
-- Ref: ["getData" @ input.sol:9:18] -> unresolved
+- Ref: ["getData" @ input.sol:9:18] -> #2
 - Ref: ["token" @ input.sol:9:26] -> #10
 - Ref: ["lastValue" @ input.sol:10:13] -> #8
 - Ref: ["v" @ input.sol:10:25] -> #14
@@ -82,7 +82,7 @@ Bindings:
     │             ──┬─ ───┬─── ──┬──                ┬  
     │               ╰────────────────────────────────── ref: 6
     │                     │      │                  │  
-    │                     ╰──────────────────────────── unresolved
+    │                     ╰──────────────────────────── ref: 2
     │                            │                  │  
     │                            ╰───────────────────── ref: 10
     │                                               │  

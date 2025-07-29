@@ -28,7 +28,7 @@ References (11):
 - Ref: ["Book" @ input.sol:10:13] -> #5
 - Ref: ["Example" @ input.sol:12:19] -> #1
 - Ref: ["e" @ input.sol:13:16] -> #13
-- Ref: ["calculate" @ input.sol:13:18] -> unresolved
+- Ref: ["calculate" @ input.sol:13:18] -> #7
 
 ------------------------------------------------------------------------
 
@@ -98,5 +98,5 @@ Bindings:
     │                ┬ ────┬────  
     │                ╰──────────── ref: 13
     │                      │      
-    │                      ╰────── unresolved
+    │                      ╰────── ref: 7
 ────╯

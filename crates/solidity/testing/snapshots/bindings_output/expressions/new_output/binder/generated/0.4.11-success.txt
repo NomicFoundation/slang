@@ -12,8 +12,8 @@ Definitions (6):
 
 References (5):
 - Ref: ["Container" @ input.sol:3:20] -> #3
-- Ref: ["cell" @ input.sol:3:32] -> unresolved
-- Ref: ["value" @ input.sol:3:39] -> unresolved
+- Ref: ["cell" @ input.sol:3:32] -> #6
+- Ref: ["value" @ input.sol:3:39] -> #5
 - Ref: ["Resource" @ input.sol:12:37] -> #4
 - Ref: ["Resource" @ input.sol:13:16] -> #4
 
@@ -36,9 +36,9 @@ Bindings:
     │                    ────┬────   ──┬─   ──┬──  
     │                        ╰───────────────────── ref: 3
     │                                  │      │    
-    │                                  ╰─────────── unresolved
+    │                                  ╰─────────── ref: 6
     │                                         │    
-    │                                         ╰──── unresolved
+    │                                         ╰──── ref: 5
     │ 
   7 │ contract Container {
     │          ────┬────  

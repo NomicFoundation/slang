@@ -27,10 +27,10 @@ References (17):
 - Ref: ["selector" @ input.sol:6:29] -> unresolved
 - Ref: ["Foo" @ input.sol:8:9] -> #10
 - Ref: ["f1" @ input.sol:9:21] -> #6
-- Ref: ["bar" @ input.sol:9:24] -> unresolved
+- Ref: ["bar" @ input.sol:9:24] -> #11
 - Ref: ["selector" @ input.sol:9:28] -> unresolved
 - Ref: ["f1" @ input.sol:10:22] -> #6
-- Ref: ["bar" @ input.sol:10:25] -> unresolved
+- Ref: ["bar" @ input.sol:10:25] -> #11
 - Ref: ["address" @ input.sol:10:29] -> unresolved
 - Ref: ["Baz" @ input.sol:12:21] -> #12
 - Ref: ["quux" @ input.sol:12:25] -> #13
@@ -87,7 +87,7 @@ Bindings:
     │                      │  │      │     
     │                      ╰─────────────── ref: 6
     │                         │      │     
-    │                         ╰──────────── unresolved
+    │                         ╰──────────── ref: 11
     │                                │     
     │                                ╰───── unresolved
  10 │         address v5 = f1.bar.address;
@@ -96,7 +96,7 @@ Bindings:
     │                       │  │     │     
     │                       ╰────────────── ref: 6
     │                          │     │     
-    │                          ╰─────────── unresolved
+    │                          ╰─────────── ref: 11
     │                                │     
     │                                ╰───── unresolved
     │ 

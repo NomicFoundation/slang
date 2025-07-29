@@ -12,7 +12,7 @@ Definitions (5):
 References (4):
 - Ref: ["Base" @ input.sol:5:19] -> #1
 - Ref: ["base" @ input.sol:6:9] -> #5
-- Ref: ["owner" @ input.sol:6:14] -> unresolved
+- Ref: ["owner" @ input.sol:6:14] -> #2
 - Ref: ["balance" @ input.sol:6:22] -> unresolved
 
 ------------------------------------------------------------------------
@@ -45,7 +45,7 @@ Bindings:
    │         ──┬─ ──┬──   ───┬───  
    │           ╰─────────────────── ref: 5
    │                │        │     
-   │                ╰────────────── unresolved
+   │                ╰────────────── ref: 2
    │                         │     
    │                         ╰───── unresolved
 ───╯
