@@ -50,15 +50,21 @@ impl Pass {
 
     fn visit_file(&mut self, source_unit: &input_ir::SourceUnit) {
         for member in &source_unit.members {
-            if let input_ir::SourceUnitMember::ContractDefinition(contract_definition) = member {
-                let node_id = contract_definition.node_id;
-                let parents = self.find_contract_bases_recursively(node_id);
-                if let Some(linearisation) = c3::linearise(&node_id, &parents) {
-                    self.binder.insert_linearised_bases(node_id, linearisation);
-                } else {
-                    // TODO(validation): linearisation failed, so emit an error
-                    self.binder.insert_linearised_bases(node_id, Vec::new());
+            let node_id = match member {
+                input_ir::SourceUnitMember::ContractDefinition(contract_definition) => {
+                    contract_definition.node_id
                 }
+                input_ir::SourceUnitMember::InterfaceDefinition(interface_definition) => {
+                    interface_definition.node_id
+                }
+                _ => continue,
+            };
+            let parents = self.find_contract_bases_recursively(node_id);
+            if let Some(linearisation) = c3::linearise(&node_id, &parents) {
+                self.binder.insert_linearised_bases(node_id, linearisation);
+            } else {
+                // TODO(validation): linearisation failed, so emit an error
+                self.binder.insert_linearised_bases(node_id, Vec::new());
             }
         }
     }
