@@ -1,0 +1,24 @@
+# Slang
+
+> Slang is a modular set of compiler APIs empowering the next generation of Solidity code analysis and developer tooling. Written in Rust and distributed in multiple languages.
+
+Slang analyzes Solidity source code to generate a rich, error-tolerant Concrete Syntax Tree (CST) that can be reasoned about. It provides a powerful API for querying and manipulating Solidity code, and navigating the binding graph of definitions and their references.
+
+Slang supports over 80 versions of Solidity, and an error-tolerant frontend that works even when there are syntax/semantic errors, or missing dependencies. Its primary purpose is to serve as a foundation for tools like linters, IDEs, and static analyzers.
+
+## User Guide & Grammar Reference
+
+- [User Guide](https://nomicfoundation.github.io/slang/latest/user-guide/): The primary user guide to start using Slang.
+- [Core Concepts](https://nomicfoundation.github.io/slang/latest/user-guide/03-concepts/): Detailed explanation of the Parser, CSTs, Cursors, Queries, and the Binding Graph.
+- [Practical Examples](https://nomicfoundation.github.io/slang/latest/user-guide/08-examples/): Code examples for common tasks like finding function usages or listing contract definitions.
+- [Solidity Grammar](https://nomicfoundation.github.io/slang/latest/solidity-grammar/): A comprehensive reference for the Solidity grammar across all supported versions, a unique feature of Slang.
+
+## Key Articles & Tutorials
+
+- [How to Write Your Own Solidity Linter Using Slang](https://blog.nomic.foundation/how-to-write-your-own-solidity-linter-using-slang-356e7565ad1b/): A step-by-step tutorial for a common, practical use case.
+- [Slang v1: A Reliable Way to Analyze Solidity Code](https://blog.nomic.foundation/slang-v1-a-reliable-way-to-analyze-solidity-code/): Provides a high-level overview of Slang's value propositions and key features.
+
+## Source Code & Packages
+
+- [Slang GitHub Repository](https://github.com/NomicFoundation/slang): The main project repository with a developer-focused overview of the project's goals and concepts.
+- [Slang NPM Package](https://www.npmjs.com/package/@nomicfoundation/slang): The official NPM package for Slang, providing easy installation and usage in JavaScript/TypeScript projects.
