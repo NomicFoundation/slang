@@ -9,6 +9,8 @@ import {
   Edge,
   Node,
 } from "@nomicfoundation/slang/cst";
+import { Parser } from "@nomicfoundation/slang/parser";
+import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
 class BasicRewriter extends BaseRewriter {
   insideContract = false;
@@ -36,6 +38,12 @@ class BasicRewriter extends BaseRewriter {
   }
 }
 
+class RemovalRewriter extends BaseRewriter {
+  public override rewriteFunctionDefinition(_node: NonterminalNode): Node | undefined {
+    return undefined;
+  }
+}
+
 test("Rewrite TerminalNode", () => {
   console.log("Testing");
   const terminalNode = TerminalNode.create(TerminalKind.Identifier, "test");
@@ -50,24 +58,52 @@ test("Rewrite TerminalNode", () => {
 });
 
 test("Rewrite NonterminalNode", () => {
-  const edges = [
-    Edge.createWithTerminal(EdgeLabel.ContractKeyword, TerminalNode.create(TerminalKind.ContractKeyword, "contract")),
-
-    Edge.createWithTerminal(EdgeLabel.Name, TerminalNode.create(TerminalKind.Identifier, "AContract")),
-  ];
-  const nonterminalNode = NonterminalNode.create(NonterminalKind.ContractDefinition, edges);
+  const node = parse(NonterminalKind.ContractDefinition, "contract AContract {}");
   const rewriter = new BasicRewriter();
-  const result = rewriter.rewriteNode(nonterminalNode);
+  const result = rewriter.rewriteNode(node);
   assert.ok(result);
   if (result instanceof NonterminalNode) {
-    assert.equal(result.children().length, 2);
-    const resultEdge0 = result.children()[0];
-    const resultEdge1 = result.children()[1];
-    assert.equal(resultEdge0.label, EdgeLabel.ContractKeyword);
-    assert.equal(resultEdge0.node.unparse(), "contract");
-    assert.equal(resultEdge1.label, EdgeLabel.Name);
-    assert.equal(resultEdge1.node.unparse(), "NewName");
+    assert.equal(result.unparse(), "contract NewName {}");
   } else {
     assert.fail(`result's type is expected to be TerminalNode, but it's ${typeof result}`);
   }
 });
+
+test("Rewrite NonterminalNode Deep", () => {
+  const node = parse(NonterminalKind.SourceUnit, "contract AContract {}");
+  const rewriter = new BasicRewriter();
+  const result = rewriter.rewriteNode(node);
+  assert.ok(result);
+  if (result instanceof NonterminalNode) {
+    assert.equal(result.unparse(), "contract NewName {}");
+  } else {
+    assert.fail(`result's type is expected to be TerminalNode, but it's ${typeof result}`);
+  }
+});
+
+test("Remove NonterminalNode", () => {
+  const contract = `
+    contract AContract {
+      function test() {
+      }
+    }
+  `;
+  const expected = `
+    contract AContract {
+    }
+  `;
+  const node = parse(NonterminalKind.ContractDefinition, contract);
+  const rewriter = new RemovalRewriter();
+  const result = rewriter.rewriteNode(node);
+  assert.ok(result);
+  if (result instanceof NonterminalNode) {
+    assert.equal(result.unparse(), expected);
+  } else {
+    assert.fail(`result's type is expected to be TerminalNode, but it's ${typeof result}`);
+  }
+});
+
+function parse(kind: NonterminalKind, input: string): Node {
+  const parser = Parser.create(LanguageFacts.latestVersion());
+  return parser.parseNonterminal(kind, input).tree;
+}
