@@ -97,9 +97,14 @@ export abstract class BaseRewriter {
 
       case TerminalKind.Whitespace:
         return this.rewriteWhitespace(node);
+
+      case TerminalKind.Unrecognized:
+        return this.rewriteUnrecognized(node);
+      case TerminalKind.Unrecognized:
+        return this.rewriteMissing(node);
     }
     // NOTE: this shouldn't be necessary, beacuse the case above should cover all, however
-    // TypeScript for some reason fails to notice the completeness of this switch.
+    // TypeScript isn't helping identifying which one is missing.
     throw Error("Unreachable");
   }
 
@@ -238,27 +243,41 @@ export abstract class BaseRewriter {
     return node;
   }
 
-  // generic implementation that only recreates 'node' if children change:
+  public rewriteUnrecognized(node: TerminalNode): Node | undefined {
+    return node;
+  }
+
+  public rewriteMissing(node: TerminalNode): Node | undefined {
+    return node;
+  }
+
   protected rewriteChildren(kind: NonterminalKind, node: NonterminalNode): NonterminalNode {
     const newChildren: Array<Edge> = new Array<Edge>();
     var anyChildChanged = false;
     for (const child of node.children()) {
       const newChild = this.rewriteNode(child.node);
       if (newChild == undefined) {
-        // node was removed
+        // node was removed, remove (don't push) edge
         anyChildChanged = true;
-      } else if (newChild.id != child.node.id) {
-        // node was changed
-        anyChildChanged = true;
-        if (newChild instanceof TerminalNode) {
-          newChildren.push(Edge.createWithTerminal(child.label, newChild));
+      } else {
+        var edge;
+        if (newChild.id == child.node.id) {
+          edge = child;
         } else {
-          newChildren.push(Edge.createWithNonterminal(child.label, newChild));
+          // node has changed, produce new edge
+          anyChildChanged = true;
+          if (newChild instanceof TerminalNode) {
+            edge = Edge.createWithTerminal(child.label, newChild);
+          } else {
+            edge = Edge.createWithNonterminal(child.label, newChild);
+          }
         }
+        newChildren.push(edge);
       }
     }
     if (anyChildChanged) {
-      return NonterminalNode.create(kind, newChildren);
+      const newNode = NonterminalNode.create(kind, newChildren);
+      return newNode;
     } else {
       return node;
     }
