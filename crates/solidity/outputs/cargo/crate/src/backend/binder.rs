@@ -1017,6 +1017,17 @@ pub struct Binder {
     linearisations: HashMap<NodeId, Vec<NodeId>>,
 }
 
+// This controls how to use the linearisation when performing a contract scope
+// resolution. `Normal` uses all the linearised bases in order; `This(node_id)`
+// starts at `node_id` and proceeds in order; `Super(node_id)` starts at the
+// contract _following_ `node_id` (ie. its parent)
+#[derive(Clone, Copy, Eq, PartialEq)]
+pub(crate) enum ResolveOptions {
+    Normal,
+    This(NodeId),
+    Super(NodeId),
+}
+
 impl Binder {
     pub(crate) fn new() -> Self {
         Self {
@@ -1210,6 +1221,55 @@ impl Binder {
         Resolution::from(found_definitions)
     }
 
+    fn resolve_in_contract_scope_internal(
+        &self,
+        contract_scope: &ContractScope,
+        symbol: &str,
+        options: ResolveOptions,
+    ) -> Resolution {
+        // Search for the symbol in the linearised bases *in-order*.
+        if let Some(linearisations) = self.linearisations.get(&contract_scope.node_id) {
+            let linearisations = match options {
+                ResolveOptions::Normal => linearisations.as_slice(),
+                ResolveOptions::This(node_id) => {
+                    if let Some(index) = linearisations.iter().position(|id| *id == node_id) {
+                        &linearisations[index..]
+                    } else {
+                        return Resolution::Unresolved;
+                    }
+                }
+                ResolveOptions::Super(node_id) => {
+                    if let Some(index) = linearisations.iter().position(|id| *id == node_id) {
+                        &linearisations[index + 1..]
+                    } else {
+                        return Resolution::Unresolved;
+                    }
+                }
+            };
+            let mut results = Vec::new();
+            for node_id in linearisations {
+                let Some(base_scope_id) = self.scope_id_for_node_id(*node_id) else {
+                    continue;
+                };
+                let Scope::Contract(base_contract_scope) = self.get_scope_by_id(base_scope_id)
+                else {
+                    unreachable!("expected the scope of a base contract to be a ContractScope");
+                };
+                let Some(definitions) = base_contract_scope.definitions.get(symbol) else {
+                    continue;
+                };
+                results.extend(definitions);
+            }
+            Resolution::from(results)
+        } else if let Some(definitions) = contract_scope.definitions.get(symbol) {
+            // This case shouldn't happen for valid Solidity, as all
+            // contracts should have a proper linearisation
+            Resolution::from(definitions.clone())
+        } else {
+            Resolution::Unresolved
+        }
+    }
+
     fn resolve_in_scope_internal(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
@@ -1218,41 +1278,15 @@ impl Binder {
                 Resolution::Definition,
             ),
             Scope::Contract(contract_scope) => {
-                // Search for the symbol in the linearised bases *in-order*.
-                let results = if let Some(linearisations) =
-                    self.linearisations.get(&contract_scope.node_id)
-                {
-                    let mut results = Vec::new();
-                    for node_id in linearisations {
-                        let Some(base_scope_id) = self.scope_id_for_node_id(*node_id) else {
-                            continue;
-                        };
-                        let Scope::Contract(base_contract_scope) =
-                            self.get_scope_by_id(base_scope_id)
-                        else {
-                            unreachable!(
-                                "expected the scope of a base contract to be a ContractScope"
-                            );
-                        };
-                        let Some(definitions) = base_contract_scope.definitions.get(symbol) else {
-                            continue;
-                        };
-                        results.extend(definitions);
-                    }
-                    results
-                } else if let Some(definitions) = contract_scope.definitions.get(symbol) {
-                    // This case shouldn't happen for valid Solidity, as all
-                    // contracts should have a proper linearisation
-                    definitions.clone()
-                } else {
-                    Vec::new()
-                };
-                if results.is_empty() {
+                self.resolve_in_contract_scope_internal(
+                    contract_scope,
+                    symbol,
+                    ResolveOptions::Normal,
+                )
+                .or_else(|| {
                     // Otherwise, delegate to the containing file scope.
                     self.resolve_in_scope_internal(contract_scope.file_scope_id, symbol)
-                } else {
-                    Resolution::from(results)
-                }
+                })
             }
             Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
             Scope::File(file_scope) => self.resolve_in_file_scope(&file_scope.file_id, symbol),
@@ -1383,6 +1417,20 @@ impl Binder {
             | Scope::Modifier(_)
             | Scope::YulBlock(_)
             | Scope::YulFunction(_) => Resolution::Unresolved,
+        }
+    }
+
+    pub(crate) fn resolve_in_contract_scope(
+        &self,
+        scope_id: ScopeId,
+        symbol: &str,
+        options: ResolveOptions,
+    ) -> Resolution {
+        let scope = self.get_scope_by_id(scope_id);
+        if let Scope::Contract(contract_scope) = scope {
+            self.resolve_in_contract_scope_internal(contract_scope, symbol, options)
+        } else {
+            Resolution::Unresolved
         }
     }
 
