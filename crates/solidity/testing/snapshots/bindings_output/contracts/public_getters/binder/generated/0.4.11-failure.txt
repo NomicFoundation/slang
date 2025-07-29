@@ -13,7 +13,7 @@ Definitions (6):
 References (5):
 - Ref: ["Foo" @ input.sol:7:5] -> #1
 - Ref: ["y" @ input.sol:10:16] -> #4
-- Ref: ["y" @ input.sol:10:25] -> unresolved
+- Ref: ["y" @ input.sol:10:25] -> #4
 - Ref: ["f" @ input.sol:10:31] -> #5
 - Ref: ["x" @ input.sol:10:33] -> unresolved
 
@@ -52,7 +52,7 @@ Bindings:
     │                ┬        ┬     ┬ ┬  
     │                ╰─────────────────── ref: 4
     │                         │     │ │  
-    │                         ╰────────── unresolved
+    │                         ╰────────── ref: 4
     │                               │ │  
     │                               ╰──── ref: 5
     │                                 │  

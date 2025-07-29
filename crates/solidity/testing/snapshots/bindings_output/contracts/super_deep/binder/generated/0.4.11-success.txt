@@ -12,7 +12,7 @@ Definitions (5):
 References (3):
 - Ref: ["Base" @ input.sol:4:20] -> #1
 - Ref: ["Middle" @ input.sol:5:18] -> #3
-- Ref: ["in_base" @ input.sol:7:15] -> unresolved
+- Ref: ["in_base" @ input.sol:7:15] -> #2
 
 ------------------------------------------------------------------------
 
@@ -45,5 +45,5 @@ Bindings:
    │                 ╰───── name: 5
  7 │         super.in_base();
    │               ───┬───  
-   │                  ╰───── unresolved
+   │                  ╰───── ref: 2
 ───╯

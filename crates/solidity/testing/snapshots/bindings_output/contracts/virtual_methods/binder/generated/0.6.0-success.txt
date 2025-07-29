@@ -20,7 +20,7 @@ References (8):
 - Ref: ["C" @ input.sol:22:18] -> #5
 - Ref: ["B" @ input.sol:24:41] -> #3
 - Ref: ["C" @ input.sol:24:44] -> #5
-- Ref: ["foo" @ input.sol:25:22] -> unresolved
+- Ref: ["foo" @ input.sol:25:22] -> refs: [6, 4, 2]
 
 ------------------------------------------------------------------------
 
@@ -75,5 +75,5 @@ Bindings:
     │                                            ╰── ref: 5
  25 │         return super.foo();
     │                      ─┬─  
-    │                       ╰─── unresolved
+    │                       ╰─── refs: [6, 4, 2]
 ────╯

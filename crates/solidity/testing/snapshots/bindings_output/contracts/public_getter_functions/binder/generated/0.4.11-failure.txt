@@ -8,7 +8,7 @@ Definitions (3):
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["x" @ input.sol:4:14] -> unresolved
+- Ref: ["x" @ input.sol:4:14] -> #2
 - Ref: ["selector" @ input.sol:4:16] -> unresolved
 
 ------------------------------------------------------------------------
@@ -31,7 +31,7 @@ Bindings:
    │                ╰─── name: 3
  4 │         this.x.selector;
    │              ┬ ────┬───  
-   │              ╰─────────── unresolved
+   │              ╰─────────── ref: 2
    │                    │     
    │                    ╰───── unresolved
 ───╯

@@ -5,7 +5,8 @@ use semver::Version;
 
 use super::p4_linearise_contracts::Output as Input;
 use crate::backend::binder::{
-    Binder, Definition, Reference, Resolution, Scope, ScopeId, Typing, UsingDirective,
+    Binder, Definition, Reference, Resolution, ResolveOptions, Scope, ScopeId, Typing,
+    UsingDirective,
 };
 use crate::backend::built_ins::BuiltInsResolver;
 use crate::backend::l2_flat_contracts::visitor::Visitor;
@@ -167,10 +168,28 @@ impl Pass {
                 }
             }
             Typing::This | Typing::Super => {
-                // TODO: restrict lookup to the scope of the enclosing contract,
-                // but extend the search to the bases contracts/interfaces using
-                // the linearisation information
-                Resolution::Unresolved
+                // TODO: the contract scope here is not necessarily the current
+                // lexical scope; for compilation we should set it to the scope
+                // of the contract being compiled, as this will affect the
+                // linearisation and hence the result of this `super`
+                // resolution. This affects the first parameter to
+                // `resolve_in_contract_scope`, not the `node_id` of the
+                // resolution option which is always lexical.
+                if let Some(scope_id) = self.current_contract_scope_id() {
+                    let node_id = self.binder.get_scope_by_id(scope_id).node_id();
+                    let options = if matches!(typing, Typing::This) {
+                        ResolveOptions::This(node_id)
+                    } else {
+                        ResolveOptions::Super(node_id)
+                    };
+                    // TODO(validation): for `this` resolutions we need to check
+                    // that the returned definitions are externally available
+                    // (ie. either `external` or `public`)
+                    self.binder
+                        .resolve_in_contract_scope(scope_id, symbol, options)
+                } else {
+                    Resolution::Unresolved
+                }
             }
             Typing::New(_type_id) => {
                 // TODO: resolve legacy constructor call options (ie. `(new Lock).value(1)()`)
@@ -428,19 +447,19 @@ impl Pass {
         }
     }
 
-    fn current_contract_scope_id(&self) -> ScopeId {
+    fn current_contract_scope_id(&self) -> Option<ScopeId> {
         for scope_id in self.scope_stack.iter().rev() {
             let scope = self.binder.get_scope_by_id(*scope_id);
             if matches!(scope, Scope::Contract(_)) {
-                return *scope_id;
+                return Some(*scope_id);
             }
         }
-        unreachable!("no contract scope found in the stack");
+        None
     }
 
     fn resolve_modifier_invocation(&mut self, modifier_invocation: &input_ir::ModifierInvocation) {
         let identifier_path = &modifier_invocation.name;
-        let mut scope_id = Some(self.current_contract_scope_id());
+        let mut scope_id = self.current_contract_scope_id();
         let mut use_contract_lookup = true;
         for identifier in identifier_path {
             let resolution = if let Some(scope_id) = scope_id {

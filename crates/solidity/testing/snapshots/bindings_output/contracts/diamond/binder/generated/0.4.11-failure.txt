@@ -21,7 +21,7 @@ References (10):
 - Ref: ["C" @ input.sol:14:18] -> #5
 - Ref: ["virtual" @ input.sol:15:27] -> unresolved
 - Ref: ["override" @ input.sol:15:35] -> unresolved
-- Ref: ["foo" @ input.sol:16:15] -> unresolved
+- Ref: ["foo" @ input.sol:16:15] -> refs: [4, 2]
 
 ------------------------------------------------------------------------
 
@@ -76,5 +76,5 @@ Bindings:
     │                                       ╰───── unresolved
  16 │         super.foo();
     │               ─┬─  
-    │                ╰─── unresolved
+    │                ╰─── refs: [4, 2]
 ────╯

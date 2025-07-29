@@ -1,25 +1,22 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Definitions (8):
+Definitions (7):
 - Def: #1 ["A" @ input.sol:1:10] (contract)
 - Def: #2 ["foo" @ input.sol:2:14] (function, type: function () returns void)
-- Def: #3 ["B" @ input.sol:4:10] (contract)
-- Def: #4 ["foo" @ input.sol:5:14] (function, type: function () returns void)
-- Def: #5 ["C" @ input.sol:9:10] (contract)
-- Def: #6 ["foo" @ input.sol:10:14] (function, type: function () returns void)
-- Def: #7 ["D" @ input.sol:14:10] (contract)
-- Def: #8 ["foo" @ input.sol:15:14] (function, type: function () returns void)
+- Def: #3 ["B" @ input.sol:6:10] (contract)
+- Def: #4 ["foo" @ input.sol:7:14] (function, type: function () returns void)
+- Def: #5 ["C" @ input.sol:11:10] (contract)
+- Def: #6 ["D" @ input.sol:14:10] (contract)
+- Def: #7 ["foo" @ input.sol:15:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------
 
-References (7):
-- Ref: ["A" @ input.sol:4:15] -> #1
-- Ref: ["foo" @ input.sol:6:15] -> unresolved
-- Ref: ["A" @ input.sol:9:15] -> #1
-- Ref: ["foo" @ input.sol:11:15] -> unresolved
+References (5):
+- Ref: ["A" @ input.sol:6:15] -> #1
+- Ref: ["A" @ input.sol:11:15] -> #1
 - Ref: ["B" @ input.sol:14:15] -> #3
 - Ref: ["C" @ input.sol:14:18] -> #5
-- Ref: ["foo" @ input.sol:16:15] -> unresolved
+- Ref: ["foo" @ input.sol:16:15] -> refs: [4, 2]
 
 ------------------------------------------------------------------------
 
@@ -33,45 +30,36 @@ Bindings:
   1 │ contract A {
     │          ┬  
     │          ╰── name: 1
-  2 │     function foo() public {}
+  2 │     function foo() public virtual {
     │              ─┬─  
     │               ╰─── name: 2
     │ 
-  4 │ contract B is A {
+  6 │ contract B is A {
     │          ┬    ┬  
     │          ╰─────── name: 3
     │               │  
     │               ╰── ref: 1
-  5 │     function foo() public {
+  7 │     function foo() public virtual override {
     │              ─┬─  
     │               ╰─── name: 4
-  6 │         super.foo();
-    │               ─┬─  
-    │                ╰─── unresolved
     │ 
-  9 │ contract C is A {
+ 11 │ contract C is A {
     │          ┬    ┬  
     │          ╰─────── name: 5
     │               │  
     │               ╰── ref: 1
- 10 │     function foo() public {
-    │              ─┬─  
-    │               ╰─── name: 6
- 11 │         super.foo();
-    │               ─┬─  
-    │                ╰─── unresolved
     │ 
  14 │ contract D is B, C {
     │          ┬    ┬  ┬  
-    │          ╰────────── name: 7
+    │          ╰────────── name: 6
     │               │  │  
     │               ╰───── ref: 3
     │                  │  
     │                  ╰── ref: 5
- 15 │     function foo() public {
+ 15 │     function foo() public virtual override {
     │              ─┬─  
-    │               ╰─── name: 8
+    │               ╰─── name: 7
  16 │         super.foo();
     │               ─┬─  
-    │                ╰─── unresolved
+    │                ╰─── refs: [4, 2]
 ────╯

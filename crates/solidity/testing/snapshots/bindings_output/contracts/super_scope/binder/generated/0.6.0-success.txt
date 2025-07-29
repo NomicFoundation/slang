@@ -11,7 +11,7 @@ Definitions (4):
 References (3):
 - Ref: ["A" @ input.sol:10:15] -> #1
 - Ref: ["A" @ input.sol:12:49] -> #1
-- Ref: ["foo" @ input.sol:13:22] -> unresolved
+- Ref: ["foo" @ input.sol:13:22] -> #2
 
 ------------------------------------------------------------------------
 
@@ -42,5 +42,5 @@ Bindings:
     │                                                 ╰── ref: 1
  13 │         return super.foo();
     │                      ─┬─  
-    │                       ╰─── unresolved
+    │                       ╰─── ref: 2
 ────╯
