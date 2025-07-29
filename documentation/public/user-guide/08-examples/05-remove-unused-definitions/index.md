@@ -9,5 +9,5 @@ In the previous section we've seen how to find unused definitions. Let's now pro
 We can test the functionality on the same Solidity example from last section:
 
 ```ts title="test-find-unused-definitions.mts"
---8<-- "documentation/public/user-guide/08-examples/05-find-unused-definitions/examples/test-remove-unused-definitions.test.mts"
+--8<-- "documentation/public/user-guide/08-examples/05-remove-unused-definitions/examples/test-remove-unused-definitions.test.mts"
 ```
