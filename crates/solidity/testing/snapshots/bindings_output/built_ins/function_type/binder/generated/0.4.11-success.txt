@@ -19,22 +19,22 @@ Definitions (13):
 
 References (17):
 - Ref: ["test" @ input.sol:3:26] -> #2
-- Ref: ["selector" @ input.sol:3:31] -> unresolved
+- Ref: ["selector" @ input.sol:3:31] -> built-in
 - Ref: ["test" @ input.sol:4:27] -> #2
-- Ref: ["address" @ input.sol:4:32] -> unresolved
+- Ref: ["address" @ input.sol:4:32] -> built-in
 - Ref: ["Foo" @ input.sol:6:21] -> #10
 - Ref: ["bar" @ input.sol:6:25] -> #11
-- Ref: ["selector" @ input.sol:6:29] -> unresolved
+- Ref: ["selector" @ input.sol:6:29] -> built-in
 - Ref: ["Foo" @ input.sol:8:9] -> #10
 - Ref: ["f1" @ input.sol:9:21] -> #6
 - Ref: ["bar" @ input.sol:9:24] -> #11
-- Ref: ["selector" @ input.sol:9:28] -> unresolved
+- Ref: ["selector" @ input.sol:9:28] -> built-in
 - Ref: ["f1" @ input.sol:10:22] -> #6
 - Ref: ["bar" @ input.sol:10:25] -> #11
-- Ref: ["address" @ input.sol:10:29] -> unresolved
+- Ref: ["address" @ input.sol:10:29] -> built-in
 - Ref: ["Baz" @ input.sol:12:21] -> #12
 - Ref: ["quux" @ input.sol:12:25] -> #13
-- Ref: ["selector" @ input.sol:12:30] -> unresolved
+- Ref: ["selector" @ input.sol:12:30] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -57,14 +57,14 @@ Bindings:
     │                            │      │     
     │                            ╰──────────── ref: 2
     │                                   │     
-    │                                   ╰───── unresolved
+    │                                   ╰───── built-in
   4 │         address v2 = this.test.address;
     │                 ─┬        ──┬─ ───┬───  
     │                  ╰────────────────────── name: 4
     │                             │     │     
     │                             ╰─────────── ref: 2
     │                                   │     
-    │                                   ╰───── unresolved
+    │                                   ╰───── built-in
     │ 
   6 │         bytes4 v3 = Foo.bar.selector;
     │                ─┬   ─┬─ ─┬─ ────┬───  
@@ -74,7 +74,7 @@ Bindings:
     │                          │      │     
     │                          ╰──────────── ref: 11
     │                                 │     
-    │                                 ╰───── unresolved
+    │                                 ╰───── built-in
     │ 
   8 │         Foo f1;
     │         ─┬─ ─┬  
@@ -89,7 +89,7 @@ Bindings:
     │                         │      │     
     │                         ╰──────────── ref: 11
     │                                │     
-    │                                ╰───── unresolved
+    │                                ╰───── built-in
  10 │         address v5 = f1.bar.address;
     │                 ─┬   ─┬ ─┬─ ───┬───  
     │                  ╰─────────────────── name: 8
@@ -98,7 +98,7 @@ Bindings:
     │                          │     │     
     │                          ╰─────────── ref: 11
     │                                │     
-    │                                ╰───── unresolved
+    │                                ╰───── built-in
     │ 
  12 │         bytes4 v6 = Baz.quux.selector;
     │                ─┬   ─┬─ ──┬─ ────┬───  
@@ -108,7 +108,7 @@ Bindings:
     │                           │      │     
     │                           ╰──────────── ref: 13
     │                                  │     
-    │                                  ╰───── unresolved
+    │                                  ╰───── built-in
     │ 
  16 │ interface Foo {
     │           ─┬─  

@@ -62,7 +62,7 @@ References (36):
 - Ref: ["abi" @ input.sol:38:27] -> built-in
 - Ref: ["encodeWithSelector" @ input.sol:38:31] -> built-in
 - Ref: ["testMath" @ input.sol:38:55] -> #5
-- Ref: ["selector" @ input.sol:38:64] -> unresolved
+- Ref: ["selector" @ input.sol:38:64] -> built-in
 - Ref: ["abi" @ input.sol:40:27] -> built-in
 - Ref: ["encodeWithSignature" @ input.sol:40:31] -> built-in
 - Ref: ["x2" @ input.sol:40:51] -> #24
@@ -219,7 +219,7 @@ Bindings:
     │                                                           │        │     
     │                                                           ╰────────────── ref: 5
     │                                                                    │     
-    │                                                                    ╰───── unresolved
+    │                                                                    ╰───── built-in
  39 │         string memory x2;
     │                       ─┬  
     │                        ╰── name: 24

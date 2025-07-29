@@ -209,7 +209,8 @@ impl Pass {
                 let mut external = false;
                 for attribute in &function_type.attributes {
                     match attribute {
-                        input_ir::FunctionTypeAttribute::ExternalKeyword => external = true,
+                        input_ir::FunctionTypeAttribute::ExternalKeyword
+                        | input_ir::FunctionTypeAttribute::PublicKeyword => external = true,
                         input_ir::FunctionTypeAttribute::PureKeyword => {
                             kind = FunctionTypeKind::Pure;
                         }
@@ -391,7 +392,8 @@ impl Pass {
         let mut external = false;
         for attribute in &function_definition.attributes {
             match attribute {
-                input_ir::FunctionAttribute::ExternalKeyword => external = true,
+                input_ir::FunctionAttribute::ExternalKeyword
+                | input_ir::FunctionAttribute::PublicKeyword => external = true,
                 input_ir::FunctionAttribute::PureKeyword => {
                     kind = FunctionTypeKind::Pure;
                 }

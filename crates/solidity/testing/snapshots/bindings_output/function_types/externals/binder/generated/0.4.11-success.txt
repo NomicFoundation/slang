@@ -9,9 +9,9 @@ Definitions (3):
 
 References (4):
 - Ref: ["v1" @ input.sol:4:9] -> #3
-- Ref: ["selector" @ input.sol:4:12] -> unresolved
+- Ref: ["selector" @ input.sol:4:12] -> built-in
 - Ref: ["v1" @ input.sol:5:9] -> #3
-- Ref: ["address" @ input.sol:5:12] -> unresolved
+- Ref: ["address" @ input.sol:5:12] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -35,10 +35,10 @@ Bindings:
    │         ─┬ ────┬───  
    │          ╰─────────── ref: 3
    │                │     
-   │                ╰───── unresolved
+   │                ╰───── built-in
  5 │         v1.address;
    │         ─┬ ───┬───  
    │          ╰────────── ref: 3
    │               │     
-   │               ╰───── unresolved
+   │               ╰───── built-in
 ───╯
