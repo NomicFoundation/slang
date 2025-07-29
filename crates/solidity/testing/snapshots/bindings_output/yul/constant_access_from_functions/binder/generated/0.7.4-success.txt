@@ -16,16 +16,16 @@ Definitions (11):
 ------------------------------------------------------------------------
 
 References (12):
-- Ref: ["mstore" @ input.sol:7:17] -> unresolved
+- Ref: ["mstore" @ input.sol:7:17] -> built-in
 - Ref: ["emptyPtr" @ input.sol:7:24] -> #5
 - Ref: ["CONTRACT_CONST" @ input.sol:7:34] -> #2
-- Ref: ["mstore" @ input.sol:8:17] -> unresolved
+- Ref: ["mstore" @ input.sol:8:17] -> built-in
 - Ref: ["emptyPtr" @ input.sol:8:24] -> #5
 - Ref: ["TOP_LEVEL_CONST" @ input.sol:8:34] -> #11
-- Ref: ["mstore" @ input.sol:20:17] -> unresolved
+- Ref: ["mstore" @ input.sol:20:17] -> built-in
 - Ref: ["emptyPtr" @ input.sol:20:24] -> #10
 - Ref: ["LIB_CONST" @ input.sol:20:34] -> #7
-- Ref: ["mstore" @ input.sol:21:17] -> unresolved
+- Ref: ["mstore" @ input.sol:21:17] -> built-in
 - Ref: ["emptyPtr" @ input.sol:21:24] -> #10
 - Ref: ["TOP_LEVEL_CONST" @ input.sol:21:34] -> #11
 
@@ -56,14 +56,14 @@ Bindings:
     │                               ╰───── name: 5
   7 │                 mstore(emptyPtr, CONTRACT_CONST)
     │                 ───┬── ────┬───  ───────┬──────  
-    │                    ╰───────────────────────────── unresolved
+    │                    ╰───────────────────────────── built-in
     │                            │            │        
     │                            ╰───────────────────── ref: 5
     │                                         │        
     │                                         ╰──────── ref: 2
   8 │                 mstore(emptyPtr, TOP_LEVEL_CONST)
     │                 ───┬── ────┬───  ───────┬───────  
-    │                    ╰────────────────────────────── unresolved
+    │                    ╰────────────────────────────── built-in
     │                            │            │         
     │                            ╰────────────────────── ref: 5
     │                                         │         
@@ -87,14 +87,14 @@ Bindings:
     │                               ╰───── name: 10
  20 │                 mstore(emptyPtr, LIB_CONST)
     │                 ───┬── ────┬───  ────┬────  
-    │                    ╰──────────────────────── unresolved
+    │                    ╰──────────────────────── built-in
     │                            │         │      
     │                            ╰──────────────── ref: 10
     │                                      │      
     │                                      ╰────── ref: 7
  21 │                 mstore(emptyPtr, TOP_LEVEL_CONST)
     │                 ───┬── ────┬───  ───────┬───────  
-    │                    ╰────────────────────────────── unresolved
+    │                    ╰────────────────────────────── built-in
     │                            │            │         
     │                            ╰────────────────────── ref: 10
     │                                         │         

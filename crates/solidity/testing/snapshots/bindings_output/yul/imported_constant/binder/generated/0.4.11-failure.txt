@@ -8,7 +8,7 @@ Definitions (3):
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["add" @ main.sol:6:22] -> unresolved
+- Ref: ["add" @ main.sol:6:22] -> built-in
 - Ref: ["FOO" @ main.sol:6:26] -> unresolved
 
 ------------------------------------------------------------------------
@@ -35,7 +35,7 @@ Bindings:
    │                 ┬    ─┬─ ─┬─  
    │                 ╰───────────── name: 3
    │                       │   │   
-   │                       ╰─────── unresolved
+   │                       ╰─────── built-in
    │                           │   
    │                           ╰─── unresolved
 ───╯

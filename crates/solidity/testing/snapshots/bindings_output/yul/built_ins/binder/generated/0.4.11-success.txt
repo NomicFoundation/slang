@@ -7,9 +7,9 @@ Definitions (2):
 ------------------------------------------------------------------------
 
 References (3):
-- Ref: ["mstore" @ input.sol:4:13] -> unresolved
-- Ref: ["byte" @ input.sol:4:26] -> unresolved
-- Ref: ["return" @ input.sol:5:13] -> unresolved
+- Ref: ["mstore" @ input.sol:4:13] -> built-in
+- Ref: ["byte" @ input.sol:4:26] -> built-in
+- Ref: ["return" @ input.sol:5:13] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -29,10 +29,10 @@ Bindings:
    │ 
  4 │             mstore(0x80, byte(10, 31))
    │             ───┬──       ──┬─  
-   │                ╰─────────────── unresolved
+   │                ╰─────────────── built-in
    │                            │   
-   │                            ╰─── unresolved
+   │                            ╰─── built-in
  5 │             return (0x80,1)
    │             ───┬──  
-   │                ╰──── unresolved
+   │                ╰──── built-in
 ───╯

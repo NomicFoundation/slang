@@ -10,9 +10,9 @@ Definitions (5):
 ------------------------------------------------------------------------
 
 References (4):
-- Ref: ["sload" @ input.sol:5:22] -> unresolved
+- Ref: ["sload" @ input.sol:5:22] -> built-in
 - Ref: ["data_slot" @ input.sol:5:28] -> unresolved
-- Ref: ["sload" @ input.sol:6:22] -> unresolved
+- Ref: ["sload" @ input.sol:6:22] -> built-in
 - Ref: ["data_offset" @ input.sol:6:28] -> unresolved
 
 ------------------------------------------------------------------------
@@ -38,14 +38,14 @@ Bindings:
    │                 ┬    ──┬── ────┬────  
    │                 ╰───────────────────── name: 4
    │                        │       │      
-   │                        ╰────────────── unresolved
+   │                        ╰────────────── built-in
    │                                │      
    │                                ╰────── unresolved
  6 │             let o := sload(data_offset)
    │                 ┬    ──┬── ─────┬─────  
    │                 ╰─────────────────────── name: 5
    │                        │        │       
-   │                        ╰──────────────── unresolved
+   │                        ╰──────────────── built-in
    │                                 │       
    │                                 ╰─────── unresolved
 ───╯

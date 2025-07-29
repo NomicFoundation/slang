@@ -11,7 +11,7 @@ Definitions (5):
 
 References (3):
 - Ref: ["FOO" @ main.sol:1:9] -> #1
-- Ref: ["add" @ main.sol:6:22] -> unresolved
+- Ref: ["add" @ main.sol:6:22] -> built-in
 - Ref: ["FOO" @ main.sol:6:26] -> #1
 
 ------------------------------------------------------------------------
@@ -50,7 +50,7 @@ Bindings:
    │                 ┬    ─┬─ ─┬─  
    │                 ╰───────────── name: 5
    │                       │   │   
-   │                       ╰─────── unresolved
+   │                       ╰─────── built-in
    │                           │   
    │                           ╰─── ref: 1
 ───╯

@@ -7,11 +7,11 @@ Definitions (2):
 ------------------------------------------------------------------------
 
 References (5):
-- Ref: ["difficulty" @ input.sol:4:13] -> unresolved
-- Ref: ["jump" @ input.sol:5:13] -> built-in
-- Ref: ["jumpi" @ input.sol:6:13] -> built-in
-- Ref: ["sha3" @ input.sol:7:13] -> built-in
-- Ref: ["suicide" @ input.sol:8:13] -> built-in
+- Ref: ["difficulty" @ input.sol:4:13] -> built-in
+- Ref: ["jump" @ input.sol:5:13] -> unresolved
+- Ref: ["jumpi" @ input.sol:6:13] -> unresolved
+- Ref: ["sha3" @ input.sol:7:13] -> unresolved
+- Ref: ["suicide" @ input.sol:8:13] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -31,17 +31,17 @@ Bindings:
    │ 
  4 │             difficulty()
    │             ─────┬────  
-   │                  ╰────── unresolved
+   │                  ╰────── built-in
  5 │             jump()
    │             ──┬─  
-   │               ╰─── built-in
+   │               ╰─── unresolved
  6 │             jumpi()
    │             ──┬──  
-   │               ╰──── built-in
+   │               ╰──── unresolved
  7 │             sha3()
    │             ──┬─  
-   │               ╰─── built-in
+   │               ╰─── unresolved
  8 │             suicide()
    │             ───┬───  
-   │                ╰───── built-in
+   │                ╰───── unresolved
 ───╯

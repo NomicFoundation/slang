@@ -11,7 +11,7 @@ Definitions (4):
 References (4):
 - Ref: ["i" @ input.sol:3:29] -> #3
 - Ref: ["i" @ input.sol:3:37] -> #3
-- Ref: ["add" @ input.sol:5:26] -> unresolved
+- Ref: ["add" @ input.sol:5:26] -> built-in
 - Ref: ["i" @ input.sol:5:30] -> #3
 
 ------------------------------------------------------------------------
@@ -41,7 +41,7 @@ Bindings:
    │                     ┬    ─┬─ ┬  
    │                     ╰─────────── name: 4
    │                           │  │  
-   │                           ╰───── unresolved
+   │                           ╰───── built-in
    │                              │  
    │                              ╰── ref: 3
 ───╯

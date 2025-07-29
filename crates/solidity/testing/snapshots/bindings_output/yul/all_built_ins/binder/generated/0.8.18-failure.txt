@@ -12,7 +12,7 @@ References (80):
 - Ref: ["address" @ input.sol:6:13] -> built-in
 - Ref: ["and" @ input.sol:7:13] -> built-in
 - Ref: ["balance" @ input.sol:8:13] -> built-in
-- Ref: ["basefee" @ input.sol:9:13] -> unresolved
+- Ref: ["basefee" @ input.sol:9:13] -> built-in
 - Ref: ["blobbasefee" @ input.sol:10:13] -> unresolved
 - Ref: ["blobhash" @ input.sol:11:13] -> unresolved
 - Ref: ["blockhash" @ input.sol:12:13] -> built-in
@@ -29,13 +29,13 @@ References (80):
 - Ref: ["codesize" @ input.sol:23:13] -> built-in
 - Ref: ["coinbase" @ input.sol:24:13] -> built-in
 - Ref: ["create" @ input.sol:25:13] -> built-in
-- Ref: ["create2" @ input.sol:26:13] -> unresolved
+- Ref: ["create2" @ input.sol:26:13] -> built-in
 - Ref: ["delegatecall" @ input.sol:27:13] -> built-in
 - Ref: ["div" @ input.sol:28:13] -> built-in
 - Ref: ["eq" @ input.sol:29:13] -> built-in
 - Ref: ["exp" @ input.sol:30:13] -> built-in
 - Ref: ["extcodecopy" @ input.sol:31:13] -> built-in
-- Ref: ["extcodehash" @ input.sol:32:13] -> unresolved
+- Ref: ["extcodehash" @ input.sol:32:13] -> built-in
 - Ref: ["extcodesize" @ input.sol:33:13] -> built-in
 - Ref: ["gas" @ input.sol:34:13] -> built-in
 - Ref: ["gaslimit" @ input.sol:35:13] -> built-in
@@ -43,7 +43,7 @@ References (80):
 - Ref: ["gt" @ input.sol:37:13] -> built-in
 - Ref: ["invalid" @ input.sol:38:13] -> built-in
 - Ref: ["iszero" @ input.sol:39:13] -> built-in
-- Ref: ["keccak256" @ input.sol:40:13] -> unresolved
+- Ref: ["keccak256" @ input.sol:40:13] -> built-in
 - Ref: ["log0" @ input.sol:41:13] -> built-in
 - Ref: ["log1" @ input.sol:42:13] -> built-in
 - Ref: ["log2" @ input.sol:43:13] -> built-in
@@ -63,7 +63,7 @@ References (80):
 - Ref: ["or" @ input.sol:57:13] -> built-in
 - Ref: ["origin" @ input.sol:58:13] -> built-in
 - Ref: ["pop" @ input.sol:59:13] -> built-in
-- Ref: ["prevrandao" @ input.sol:60:13] -> unresolved
+- Ref: ["prevrandao" @ input.sol:60:13] -> built-in
 - Ref: ["return" @ input.sol:61:13] -> built-in
 - Ref: ["returndatacopy" @ input.sol:62:13] -> built-in
 - Ref: ["returndatasize" @ input.sol:63:13] -> built-in
@@ -80,7 +80,7 @@ References (80):
 - Ref: ["slt" @ input.sol:74:13] -> built-in
 - Ref: ["smod" @ input.sol:75:13] -> built-in
 - Ref: ["sstore" @ input.sol:76:13] -> built-in
-- Ref: ["staticcall" @ input.sol:77:13] -> unresolved
+- Ref: ["staticcall" @ input.sol:77:13] -> built-in
 - Ref: ["stop" @ input.sol:78:13] -> built-in
 - Ref: ["sub" @ input.sol:79:13] -> built-in
 - Ref: ["timestamp" @ input.sol:80:13] -> built-in
@@ -121,7 +121,7 @@ Bindings:
     │                ╰───── built-in
   9 │             basefee()
     │             ───┬───  
-    │                ╰───── unresolved
+    │                ╰───── built-in
  10 │             blobbasefee()
     │             ─────┬─────  
     │                  ╰─────── unresolved
@@ -172,7 +172,7 @@ Bindings:
     │                ╰──── built-in
  26 │             create2()
     │             ───┬───  
-    │                ╰───── unresolved
+    │                ╰───── built-in
  27 │             delegatecall()
     │             ──────┬─────  
     │                   ╰─────── built-in
@@ -190,7 +190,7 @@ Bindings:
     │                  ╰─────── built-in
  32 │             extcodehash()
     │             ─────┬─────  
-    │                  ╰─────── unresolved
+    │                  ╰─────── built-in
  33 │             extcodesize()
     │             ─────┬─────  
     │                  ╰─────── built-in
@@ -214,7 +214,7 @@ Bindings:
     │                ╰──── built-in
  40 │             keccak256()
     │             ────┬────  
-    │                 ╰────── unresolved
+    │                 ╰────── built-in
  41 │             log0()
     │             ──┬─  
     │               ╰─── built-in
@@ -274,7 +274,7 @@ Bindings:
     │              ╰─── built-in
  60 │             prevrandao()
     │             ─────┬────  
-    │                  ╰────── unresolved
+    │                  ╰────── built-in
  61 │             return()
     │             ───┬──  
     │                ╰──── built-in
@@ -325,7 +325,7 @@ Bindings:
     │                ╰──── built-in
  77 │             staticcall()
     │             ─────┬────  
-    │                  ╰────── unresolved
+    │                  ╰────── built-in
  78 │             stop()
     │             ──┬─  
     │               ╰─── built-in

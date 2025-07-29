@@ -10,7 +10,7 @@ Definitions (4):
 
 References (3):
 - Ref: ["FOO" @ main.sol:1:9] -> unresolved
-- Ref: ["add" @ main.sol:6:22] -> unresolved
+- Ref: ["add" @ main.sol:6:22] -> built-in
 - Ref: ["FOO" @ main.sol:6:26] -> unresolved
 
 ------------------------------------------------------------------------
@@ -43,7 +43,7 @@ Bindings:
    │                 ┬    ─┬─ ─┬─  
    │                 ╰───────────── name: 4
    │                       │   │   
-   │                       ╰─────── unresolved
+   │                       ╰─────── built-in
    │                           │   
    │                           ╰─── unresolved
 ───╯

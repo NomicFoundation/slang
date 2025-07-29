@@ -13,7 +13,7 @@ Definitions (7):
 
 References (5):
 - Ref: ["a" @ input.sol:8:21] -> #6
-- Ref: ["add" @ input.sol:8:26] -> unresolved
+- Ref: ["add" @ input.sol:8:26] -> built-in
 - Ref: ["FOO" @ input.sol:8:30] -> #2
 - Ref: ["inner1" @ input.sol:10:26] -> #5
 - Ref: ["outer" @ input.sol:12:13] -> #4
@@ -50,7 +50,7 @@ Bindings:
     │                     ┬    ─┬─ ─┬─  
     │                     ╰───────────── ref: 6
     │                           │   │   
-    │                           ╰─────── unresolved
+    │                           ╰─────── built-in
     │                               │   
     │                               ╰─── ref: 2
     │ 

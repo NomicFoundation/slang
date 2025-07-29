@@ -22,21 +22,21 @@ Definitions (16):
 
 References (21):
 - Ref: ["b" @ input.sol:5:17] -> #7
-- Ref: ["add" @ input.sol:5:22] -> unresolved
+- Ref: ["add" @ input.sol:5:22] -> built-in
 - Ref: ["a" @ input.sol:5:26] -> #6
 - Ref: ["r" @ input.sol:9:17] -> #4
-- Ref: ["add" @ input.sol:9:22] -> unresolved
+- Ref: ["add" @ input.sol:9:22] -> built-in
 - Ref: ["outer1" @ input.sol:9:26] -> #5
 - Ref: ["x" @ input.sol:9:33] -> #3
 - Ref: ["inner" @ input.sol:9:37] -> #8
 - Ref: ["x" @ input.sol:9:43] -> #3
 - Ref: ["g" @ input.sol:11:21] -> #10
-- Ref: ["mul" @ input.sol:11:25] -> unresolved
+- Ref: ["mul" @ input.sol:11:25] -> built-in
 - Ref: ["f" @ input.sol:11:29] -> #9
 - Ref: ["outer2" @ input.sol:11:32] -> unresolved
 - Ref: ["f" @ input.sol:11:39] -> #9
 - Ref: ["d" @ input.sol:16:17] -> #13
-- Ref: ["mul" @ input.sol:16:22] -> unresolved
+- Ref: ["mul" @ input.sol:16:22] -> built-in
 - Ref: ["c" @ input.sol:16:26] -> #12
 - Ref: ["outer2_inner" @ input.sol:16:29] -> #14
 - Ref: ["c" @ input.sol:16:42] -> #12
@@ -74,7 +74,7 @@ Bindings:
     │                 ┬    ─┬─ ┬  
     │                 ╰─────────── ref: 7
     │                       │  │  
-    │                       ╰───── unresolved
+    │                       ╰───── built-in
     │                          │  
     │                          ╰── ref: 6
     │ 
@@ -82,7 +82,7 @@ Bindings:
     │                 ┬    ─┬─ ───┬── ┬   ──┬── ┬  
     │                 ╰──────────────────────────── ref: 4
     │                       │     │   │     │   │  
-    │                       ╰────────────────────── unresolved
+    │                       ╰────────────────────── built-in
     │                             │   │     │   │  
     │                             ╰──────────────── ref: 5
     │                                 │     │   │  
@@ -102,7 +102,7 @@ Bindings:
     │                     ┬   ─┬─ ┬  ───┬── ┬  
     │                     ╰──────────────────── ref: 10
     │                          │  │     │   │  
-    │                          ╰─────────────── unresolved
+    │                          ╰─────────────── built-in
     │                             │     │   │  
     │                             ╰──────────── ref: 9
     │                                   │   │  
@@ -121,7 +121,7 @@ Bindings:
     │                 ┬    ─┬─ ┬  ──────┬───── ┬  
     │                 ╰─────────────────────────── ref: 13
     │                       │  │        │      │  
-    │                       ╰───────────────────── unresolved
+    │                       ╰───────────────────── built-in
     │                          │        │      │  
     │                          ╰────────────────── ref: 12
     │                                   │      │  

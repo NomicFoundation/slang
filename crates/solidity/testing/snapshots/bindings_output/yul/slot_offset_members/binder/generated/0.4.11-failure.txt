@@ -10,10 +10,10 @@ Definitions (5):
 ------------------------------------------------------------------------
 
 References (6):
-- Ref: ["sload" @ input.sol:5:22] -> unresolved
+- Ref: ["sload" @ input.sol:5:22] -> built-in
 - Ref: ["data" @ input.sol:5:28] -> #2
 - Ref: ["slot" @ input.sol:5:33] -> unresolved
-- Ref: ["sload" @ input.sol:6:22] -> unresolved
+- Ref: ["sload" @ input.sol:6:22] -> built-in
 - Ref: ["data" @ input.sol:6:28] -> #2
 - Ref: ["offset" @ input.sol:6:33] -> unresolved
 
@@ -40,7 +40,7 @@ Bindings:
    │                 ┬    ──┬── ──┬─ ──┬─  
    │                 ╰───────────────────── name: 4
    │                        │     │    │   
-   │                        ╰────────────── unresolved
+   │                        ╰────────────── built-in
    │                              │    │   
    │                              ╰──────── ref: 2
    │                                   │   
@@ -49,7 +49,7 @@ Bindings:
    │                 ┬    ──┬── ──┬─ ───┬──  
    │                 ╰─────────────────────── name: 5
    │                        │     │     │    
-   │                        ╰──────────────── unresolved
+   │                        ╰──────────────── built-in
    │                              │     │    
    │                              ╰────────── ref: 2
    │                                    │    
