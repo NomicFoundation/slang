@@ -14,6 +14,7 @@ pub enum BuiltIn {
     AbiEncodeWithSelector,
     AbiEncodeWithSignature,
     Addmod,
+    Address,
     AddressBalance,
     AddressCall,
     AddressCallcode,
@@ -337,9 +338,16 @@ impl<'a> BuiltInsResolver<'a> {
             Type::Contract { .. } => None,
             Type::Enum { .. } => None,
             Type::FixedPointNumber { .. } => None,
-            Type::Function { .. } => {
-                // TODO: for external functions, expose `selector`, `address`, etc
-                None
+            Type::Function { external, .. } => {
+                if *external {
+                    match symbol {
+                        "address" => Some(BuiltIn::Address),
+                        "selector" => Some(BuiltIn::Selector),
+                        _ => None,
+                    }
+                } else {
+                    None
+                }
             }
             Type::Integer { .. } => None,
             Type::Interface { .. } => None,
@@ -392,6 +400,7 @@ impl<'a> BuiltInsResolver<'a> {
     pub(crate) fn typing_of(&self, built_in: &BuiltIn) -> Typing {
         match built_in {
             // variables and members
+            BuiltIn::Address => Typing::Resolved(self.types.address()),
             BuiltIn::AddressBalance => Typing::Resolved(self.types.uint256()),
             BuiltIn::AddressCode => Typing::Resolved(self.types.bytes()),
             BuiltIn::AddressCodehash => Typing::Resolved(self.types.bytes32()),

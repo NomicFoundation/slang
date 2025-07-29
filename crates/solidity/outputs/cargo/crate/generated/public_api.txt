@@ -229,6 +229,7 @@ pub slang_solidity::backend::built_ins::BuiltIn::AbiEncodePacked
 pub slang_solidity::backend::built_ins::BuiltIn::AbiEncodeWithSelector
 pub slang_solidity::backend::built_ins::BuiltIn::AbiEncodeWithSignature
 pub slang_solidity::backend::built_ins::BuiltIn::Addmod
+pub slang_solidity::backend::built_ins::BuiltIn::Address
 pub slang_solidity::backend::built_ins::BuiltIn::AddressBalance
 pub slang_solidity::backend::built_ins::BuiltIn::AddressCall
 pub slang_solidity::backend::built_ins::BuiltIn::AddressCallcode
