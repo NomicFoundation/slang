@@ -9,4 +9,3 @@ mod cst;
 
 mod generated;
 mod resolver;
-mod trivia;
