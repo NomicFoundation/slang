@@ -15,7 +15,7 @@ pub fn generate_bindings_output_tests(data_dir: &Path, output_dir: &Path) -> Res
 
     for (group_name, test_names) in &tests {
         generate_unit_test_file(
-            "crate::bindings_output::runner",
+            "crate::bindings::bindings_output::runner",
             &mut fs,
             group_name,
             test_names,

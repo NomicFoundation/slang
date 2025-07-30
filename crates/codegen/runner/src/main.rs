@@ -84,7 +84,7 @@ fn generate_solidity_tests() -> Result<()> {
 
     lang_def.generate_bindings_output_tests(
         &snapshots_crate.join("bindings_output"),
-        &tests_crate.join("src/bindings_output/generated"),
+        &tests_crate.join("src/bindings/bindings_output/generated"),
     )?;
 
     lang_def.generate_cst_output_tests(

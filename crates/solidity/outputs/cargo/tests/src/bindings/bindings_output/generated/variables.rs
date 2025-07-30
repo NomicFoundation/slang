@@ -2,7 +2,7 @@
 
 use anyhow::Result;
 
-use crate::bindings_output::runner::run;
+use crate::bindings::bindings_output::runner::run;
 
 const T: &str = "variables";
 
