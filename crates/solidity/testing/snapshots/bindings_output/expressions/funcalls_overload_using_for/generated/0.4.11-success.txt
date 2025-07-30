@@ -1,0 +1,70 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 1
+  2 │   int y;
+    │       ┬  
+    │       ╰── name: 2
+    │ 
+  4 │   function someFunc(int x) returns (int) {
+    │            ────┬───     ┬  
+    │                ╰─────────── name: 3
+    │                         │  
+    │                         ╰── name: 4
+  5 │     int farg = add(x);
+    │         ──┬─   ─┬─ ┬  
+    │           ╰─────────── name: 5
+    │                 │  │  
+    │                 ╰───── refs: 7, 8
+    │                    │  
+    │                    ╰── ref: 4
+  6 │     int literal = add(3);
+    │         ───┬───   ─┬─  
+    │            ╰─────────── name: 6
+    │                    │   
+    │                    ╰─── refs: 7, 8
+    │ 
+  9 │   function add(int) returns (int);
+    │            ─┬─  
+    │             ╰─── name: 7
+    │ 
+ 11 │   function add(int) returns (int);
+    │            ─┬─  
+    │             ╰─── name: 8
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────▶ contract Test {
+  2 │ │ │         int y;
+    │ │ │       ────┬────  
+    │ │ │           ╰────── definiens: 2
+  3 │ │ ╭─────▶ 
+  4 │ │ │         function someFunc(int x) returns (int) {
+    │ │ │                           ──┬──  
+    │ │ │                             ╰──── definiens: 4
+  5 │ │ │           int farg = add(x);
+    │ │ │       ───────────┬───────────  
+    │ │ │                  ╰───────────── definiens: 5
+  6 │ │ │           int literal = add(3);
+    │ │ │       ─────────────┬────────────  
+    │ │ │                    ╰────────────── definiens: 6
+  7 │ │ ├─│ ──▶   }
+    │ │ │ │           
+    │ │ ╰───────────── definiens: 3
+  8 │ │   ╭───▶ 
+  9 │ │   ├─│ ▶   function add(int) returns (int);
+    │ │   │ │                                        
+    │ │   ╰────────────────────────────────────────── definiens: 7
+ 10 │ │     ╭─▶ 
+ 11 │ │     ├─▶   function add(int) returns (int);
+    │ │     │                                        
+    │ │     ╰──────────────────────────────────────── definiens: 8
+ 12 │ ├───────▶ }
+    │ │             
+    │ ╰───────────── definiens: 1
+────╯

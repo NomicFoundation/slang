@@ -52,6 +52,11 @@ fn funcalls_output() -> Result<()> {
 }
 
 #[test]
+fn funcalls_overload_using_for() -> Result<()> {
+    run(T, "funcalls_overload_using_for")
+}
+
+#[test]
 fn funcalls_simple_overload() -> Result<()> {
     run(T, "funcalls_simple_overload")
 }

@@ -1136,7 +1136,9 @@ impl Visitor for Pass {
                             let reference_node_id = match &node.operand {
                                 input_ir::Expression::FunctionCallExpression(f) => Some(f.node_id),
                                 input_ir::Expression::CallOptionsExpression(f) => Some(f.node_id),
-                                input_ir::Expression::MemberAccessExpression(f) => Some(f.node_id),
+                                input_ir::Expression::MemberAccessExpression(f) => {
+                                    Some(f.member.id())
+                                }
                                 input_ir::Expression::IndexAccessExpression(f) => Some(f.node_id),
                                 input_ir::Expression::Identifier(f) => Some(f.id()),
                                 _ => None, // TODO: check all cases
