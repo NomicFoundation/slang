@@ -52,6 +52,11 @@ fn inheritance_arguments_with_inner_constant() -> Result<()> {
 }
 
 #[test]
+fn inheritance_types() -> Result<()> {
+    run(T, "inheritance_types")
+}
+
+#[test]
 fn inheritance_with_arguments() -> Result<()> {
     run(T, "inheritance_with_arguments")
 }

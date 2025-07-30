@@ -3,6 +3,7 @@
 use metaslang_bindings as _;
 
 mod backend;
+mod binder;
 mod binding_resolver;
 mod binding_rules;
 mod bindings_output;

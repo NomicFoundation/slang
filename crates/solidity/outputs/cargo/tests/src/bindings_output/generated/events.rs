@@ -12,6 +12,11 @@ fn custom_types() -> Result<()> {
 }
 
 #[test]
+fn definitions() -> Result<()> {
+    run(T, "definitions")
+}
+
+#[test]
 fn emit_stmt() -> Result<()> {
     run(T, "emit_stmt")
 }

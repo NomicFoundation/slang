@@ -2381,6 +2381,7 @@ name = "slang_solidity"
 version = "1.2.1"
 dependencies = [
  "ariadne",
+ "indexmap",
  "metaslang_bindings",
  "metaslang_cst",
  "semver",

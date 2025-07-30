@@ -1,0 +1,45 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected ConstantKeyword or OpenBracket.
+   ╭─[input.sol:1:7]
+   │
+ 1 │ error TopLevelError(int x, int y);
+   │       ─────────────┬─────────────  
+   │                    ╰─────────────── Error occurred here.
+───╯
+Error: Expected Equal or Semicolon.
+   ╭─[input.sol:4:24]
+   │
+ 4 │     error ContractError(int x, int y);
+   │                        ───────┬──────  
+   │                               ╰──────── Error occurred here.
+───╯
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ error TopLevelError(int x, int y);
+   │ ──┬──  
+   │   ╰──── unresolved
+   │ 
+ 3 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 4 │     error ContractError(int x, int y);
+   │     ──┬── ──────┬──────  
+   │       ╰────────────────── unresolved
+   │                 │        
+   │                 ╰──────── name: 2
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 2 │ ╭─▶ 
+   ┆ ┆   
+ 4 │ │       error ContractError(int x, int y);
+   │ │   ───────────────────┬───────────────────  
+   │ │                      ╰───────────────────── definiens: 2
+ 5 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+───╯
