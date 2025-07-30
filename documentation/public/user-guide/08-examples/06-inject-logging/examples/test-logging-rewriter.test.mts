@@ -44,6 +44,8 @@ contract Counter is Ownable {
     _count -= 1;
   }
 }
+
+import { log } from "__logging.sol";
     `,
   ],
 ]);
