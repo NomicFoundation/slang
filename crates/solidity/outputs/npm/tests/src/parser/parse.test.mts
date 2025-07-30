@@ -2,13 +2,9 @@ import { Parser } from "@nomicfoundation/slang/parser";
 import { NonterminalKind, TerminalKind, assertNonterminalNode, assertTerminalNode } from "@nomicfoundation/slang/cst";
 import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
-function new_parser(): Parser {
-  return Parser.create(LanguageFacts.latestVersion());
-}
-
 test("parse terminal", () => {
+  const parser = Parser.create(LanguageFacts.latestVersion());
   const source = "about_time";
-  const parser = new_parser();
 
   const tree = parser.parseNonterminal(NonterminalKind.ImportDeconstructionSymbol, source).tree;
   assertNonterminalNode(tree, NonterminalKind.ImportDeconstructionSymbol);
@@ -20,8 +16,8 @@ test("parse terminal", () => {
 });
 
 test("parse nonterminal", () => {
+  const parser = Parser.create(LanguageFacts.latestVersion());
   const source = `contract A {}`;
-  const parser = new_parser();
 
   const tree = parser.parseFileContents(source).tree;
   assertNonterminalNode(tree, NonterminalKind.SourceUnit);
@@ -33,8 +29,8 @@ test("parse nonterminal", () => {
 });
 
 test("parse unicode characters", () => {
+  const parser = Parser.create(LanguageFacts.latestVersion());
   const source = `unicode"some 😁 emoji"`;
-  const parser = new_parser();
 
   const nonTerminal = parser.parseNonterminal(NonterminalKind.UnicodeStringLiteral, source).tree;
   assertNonterminalNode(nonTerminal, NonterminalKind.UnicodeStringLiteral);
