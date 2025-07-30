@@ -435,7 +435,7 @@ impl Visitor for Pass {
                 .insert_definition_in_scope(definition, struct_scope_id);
         }
 
-        false
+        true
     }
 
     fn enter_error_definition(&mut self, node: &input_ir::ErrorDefinition) -> bool {
@@ -517,7 +517,7 @@ impl Visitor for Pass {
         let definition = Definition::new_variable(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
 
-        false
+        true
     }
 
     fn enter_tuple_deconstruction_statement(
@@ -548,7 +548,7 @@ impl Visitor for Pass {
             self.insert_definition_in_current_scope(definition);
         }
 
-        false
+        true
     }
 
     fn enter_block(&mut self, node: &input_ir::Block) -> bool {
@@ -613,7 +613,7 @@ impl Visitor for Pass {
             self.binder.insert_definition_no_scope(definition);
         }
 
-        false
+        true
     }
 
     fn enter_function_type(&mut self, node: &input_ir::FunctionType) -> bool {

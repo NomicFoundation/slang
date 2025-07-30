@@ -1,0 +1,50 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     struct A {
+   │            ┬  
+   │            ╰── name: 2
+ 3 │         mapping(bytes32 value => uint256) positions;
+   │                         ──┬──             ────┬────  
+   │                           ╰────────────────────────── name: 4
+   │                                               │      
+   │                                               ╰────── name: 3
+   │ 
+ 6 │     mapping(address asset0 => mapping(address asset1 => address)) map;
+   │                     ───┬──                    ───┬──              ─┬─  
+   │                        ╰─────────────────────────────────────────────── name: 6
+   │                                                  │                 │   
+   │                                                  ╰───────────────────── name: 7
+   │                                                                    │   
+   │                                                                    ╰─── name: 5
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ──▶ contract Test {
+ 2 │ │ ╭───▶     struct A {
+ 3 │ │ │             mapping(bytes32 value => uint256) positions;
+   │ │ │     ──────────────────────┬───┬──────────────────────────  
+   │ │ │                           ╰──────────────────────────────── definiens: 4
+   │ │ │                               │                            
+   │ │ │                               ╰──────────────────────────── definiens: 3
+ 4 │ │ ├─│ ▶     }
+   │ │ │ │           
+   │ │ ╰───────────── definiens: 2
+ 5 │ │   ╭─▶ 
+ 6 │ │   ├─▶     mapping(address asset0 => mapping(address asset1 => address)) map;
+   │ │   │               ───────┬──────            ───────┬──────                     
+   │ │   │                      ╰───────────────────────────────────────────────────── definiens: 6
+   │ │   │                                                │                           
+   │ │   │                                                ╰─────────────────────────── definiens: 7
+   │ │   │                                                                            
+   │ │   ╰──────────────────────────────────────────────────────────────────────────── definiens: 5
+ 7 │ ├─────▶ }
+   │ │           
+   │ ╰─────────── definiens: 1
+───╯
