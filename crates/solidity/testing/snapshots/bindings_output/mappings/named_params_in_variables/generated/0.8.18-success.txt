@@ -1,0 +1,58 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     mapping(address owner => mapping(uint256 index => uint256)) private _ownedTokens;
+   │                     ──┬──                    ──┬──                      ──────┬─────  
+   │                       ╰─────────────────────────────────────────────────────────────── name: 3
+   │                                                │                              │       
+   │                                                ╰────────────────────────────────────── name: 4
+   │                                                                               │       
+   │                                                                               ╰─────── name: 2
+   │ 
+ 4 │     function test(address from) public {
+   │              ──┬─         ──┬─  
+   │                ╰──────────────── name: 5
+   │                             │   
+   │                             ╰─── name: 6
+ 5 │         mapping(uint256 index => uint256) storage _ownedTokensByOwner = _ownedTokens[from];
+   │                         ──┬──                     ─────────┬─────────   ──────┬───── ──┬─  
+   │                           ╰──────────────────────────────────────────────────────────────── name: 8
+   │                                                            │                  │        │   
+   │                                                            ╰─────────────────────────────── name: 7
+   │                                                                               │        │   
+   │                                                                               ╰──────────── ref: 2
+   │                                                                                        │   
+   │                                                                                        ╰─── ref: 6
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭───▶ contract Test {
+ 2 │ │ │       mapping(address owner => mapping(uint256 index => uint256)) private _ownedTokens;
+   │ │ │   ──────────────────┬────────────────────────┬──────────────────────────────────────────  
+   │ │ │                     ╰───────────────────────────────────────────────────────────────────── definiens: 3
+   │ │ │                                              │                                            
+   │ │ │                                              ╰──────────────────────────────────────────── definiens: 4
+   │ │ │                                              │                                            
+   │ │ │                                              ╰──────────────────────────────────────────── definiens: 2
+ 3 │ │ ╭─▶ 
+ 4 │ │ │       function test(address from) public {
+   │ │ │                     ──────┬─────  
+   │ │ │                           ╰─────── definiens: 6
+ 5 │ │ │           mapping(uint256 index => uint256) storage _ownedTokensByOwner = _ownedTokens[from];
+   │ │ │   ──────────────────────┬───────────────────────┬─────────────────────────────────────────────  
+   │ │ │                         ╰─────────────────────────────────────────────────────────────────────── definiens: 8
+   │ │ │                                                 │                                               
+   │ │ │                                                 ╰─────────────────────────────────────────────── definiens: 7
+ 6 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 5
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯
