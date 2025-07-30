@@ -9,7 +9,6 @@ mod cst;
 
 mod generated;
 mod multi_part_file;
-mod queries;
 mod resolver;
 mod trivia;
 mod utils;
