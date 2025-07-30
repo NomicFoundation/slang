@@ -51,6 +51,7 @@ pub struct ShowCombinedResultsCommand {
     pub results_file: PathBuf,
 }
 
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Parser)]
 pub struct TestOptions {
     /// Run bindings tests.
@@ -68,6 +69,10 @@ pub struct TestOptions {
     /// Run version inference tests.
     #[arg(long, default_value_t = false)]
     pub check_infer_version: bool,
+
+    /// Run comparison between old and new binder.
+    #[arg(long, default_value_t = false)]
+    pub compare_binders: bool,
 }
 
 #[derive(Debug, Parser)]

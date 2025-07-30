@@ -70,16 +70,17 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
                 test_outcome = run_version_inference_check(contract, &unit, events);
             }
 
-            if opts.check_bindings && test_outcome == TestOutcome::Passed {
-                test_outcome = run_bindings_check(contract, &unit, events);
-            }
-
-            if opts.check_old_binder && test_outcome == TestOutcome::Passed {
-                test_outcome = run_old_binder_check(contract, &unit, events);
-            }
-
-            if opts.check_new_binder && test_outcome == TestOutcome::Passed {
-                test_outcome = run_new_binder_check(contract, unit, events);
+            if test_outcome == TestOutcome::Passed {
+                if opts.check_bindings {
+                    test_outcome = run_bindings_check(contract, &unit, events);
+                } else if opts.check_old_binder {
+                    test_outcome = run_old_binder_check(contract, &unit, events);
+                } else if opts.check_new_binder {
+                    test_outcome = run_new_binder_check(contract, unit, events);
+                } else if opts.compare_binders {
+                    test_outcome = run_compare_binders(contract, unit, events);
+                    assert!(test_outcome != TestOutcome::Failed, "fail-fast");
+                }
             }
 
             test_outcome
@@ -287,6 +288,93 @@ fn run_new_binder_check(
     TestOutcome::Passed
 }
 
+fn run_compare_binders(
+    contract: &Contract,
+    compilation_unit: CompilationUnit,
+    events: &Events,
+) -> TestOutcome {
+    let data = passes::p0_build_ast::run(compilation_unit);
+    let data = passes::p1_flatten_contracts::run(data);
+    let data = passes::p2_collect_definitions::run(data);
+    let data = passes::p3_type_definitions::run(data);
+    let data = passes::p4_resolve_references::run(data);
+    let binder = data.binder;
+
+    let binding_graph = data.compilation_unit.binding_graph();
+
+    let mut outcome = TestOutcome::Passed;
+
+    let mut definitions = 0;
+    for definition in binding_graph.all_definitions() {
+        let def_file = definition.get_file();
+        if def_file.is_built_ins() {
+            continue;
+        }
+        definitions += 1;
+
+        if binder.find_definition_by_id(definition.id()).is_none() {
+            // definition doesn't exist in new binder
+            let cursor = definition.get_cursor().to_owned();
+            let source = contract.read_file(def_file.get_path()).unwrap_or_default();
+            let binding_error = BindingError::MissingDefinition(cursor);
+            let msg = slang_solidity::diagnostic::render(
+                &binding_error,
+                def_file.get_path(),
+                &source,
+                true,
+            );
+            events.bindings_error(format!(
+                "[{contract_name} {version}] Binding Error: Definition does not exist in new binder\n{msg}",
+                contract_name = contract.name,
+                version = contract.version,
+            ));
+
+            outcome = TestOutcome::Failed;
+        }
+    }
+    events.inc_definitions(definitions);
+
+    let mut references = 0;
+    let mut unresolved = 0;
+    for reference in binding_graph.all_references() {
+        let ref_file = reference.get_file();
+        if ref_file.is_built_ins() {
+            continue;
+        }
+        if reference.definitions().is_empty() {
+            unresolved += 1;
+        }
+        references += 1;
+
+        if binder
+            .find_reference_by_identifier_node_id(reference.id())
+            .is_none()
+        {
+            // reference doesn't exist in new binder
+            let cursor = reference.get_cursor().to_owned();
+            let source = contract.read_file(ref_file.get_path()).unwrap_or_default();
+            let binding_error = BindingError::MissingReference(cursor);
+            let msg = slang_solidity::diagnostic::render(
+                &binding_error,
+                ref_file.get_path(),
+                &source,
+                true,
+            );
+            events.bindings_error(format!(
+                "[{contract_name} {version}] Binding Error: Reference does not exist in new binder\n{msg}",
+                contract_name = contract.name,
+                version = contract.version,
+            ));
+
+            outcome = TestOutcome::Failed;
+        }
+    }
+    events.inc_references(references);
+    events.inc_unresolved_references(unresolved);
+
+    outcome
+}
+
 fn uses_exotic_parser_bug(contract: &Contract) -> bool {
     static CONTRACTS_WITH_EXOTIC_PARSER_BUGS: &[&str] = &[
         // 0.4.24: // Accepts malformed `* /` in multi-line comments:
@@ -310,13 +398,17 @@ fn uses_exotic_parser_bug(contract: &Contract) -> bool {
 enum BindingError {
     UnresolvedReference(Cursor),
     UnboundIdentifier(Cursor),
+    MissingDefinition(Cursor),
+    MissingReference(Cursor),
 }
 
 impl Diagnostic for BindingError {
     fn text_range(&self) -> TextRange {
         let cursor = match self {
-            Self::UnboundIdentifier(cursor) => cursor,
-            Self::UnresolvedReference(cursor) => cursor,
+            Self::UnboundIdentifier(cursor)
+            | Self::UnresolvedReference(cursor)
+            | Self::MissingDefinition(cursor)
+            | Self::MissingReference(cursor) => cursor,
         };
         cursor.text_range()
     }
@@ -336,6 +428,18 @@ impl Diagnostic for BindingError {
             Self::UnboundIdentifier(cursor) => {
                 format!(
                     "Missing identifier or definition for `{symbol}`",
+                    symbol = cursor.node().unparse()
+                )
+            }
+            Self::MissingDefinition(cursor) => {
+                format!(
+                    "Definition for `{symbol}` not found in new binder",
+                    symbol = cursor.node().unparse()
+                )
+            }
+            Self::MissingReference(cursor) => {
+                format!(
+                    "Reference for `{symbol}` not found in new binder",
                     symbol = cursor.node().unparse()
                 )
             }
