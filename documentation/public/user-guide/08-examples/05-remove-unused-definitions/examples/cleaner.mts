@@ -9,6 +9,7 @@ export class Cleaner extends BaseRewriter {
   removeUnused(node: NonterminalNode): Node | undefined {
     const foundUnused = this.definitions.find((definition) => definition.id == node.id);
     if (foundUnused) {
+      // returning `undefined` signals that the node must be deleted
       return undefined;
     } else {
       return node;
