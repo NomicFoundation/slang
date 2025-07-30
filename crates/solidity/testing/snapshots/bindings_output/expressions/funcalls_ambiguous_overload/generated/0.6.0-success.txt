@@ -1,0 +1,84 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ abstract contract Test {
+    │                   ──┬─  
+    │                     ╰─── name: 1
+  2 │   int y;
+    │       ┬  
+    │       ╰── name: 2
+    │ 
+  4 │   using Lib for int;
+    │         ─┬─  
+    │          ╰─── ref: 8
+    │ 
+  6 │   function someFunc(int x) returns (int) {
+    │            ────┬───     ┬  
+    │                ╰─────────── name: 3
+    │                         │  
+    │                         ╰── name: 4
+  7 │     int here = add(x, 3);
+    │         ──┬─   ─┬─ ┬  
+    │           ╰─────────── name: 5
+    │                 │  │  
+    │                 ╰───── ref: 7
+    │                    │  
+    │                    ╰── ref: 4
+  8 │     int lib = x.add(3);
+    │         ─┬─   ┬ ─┬─  
+    │          ╰─────────── name: 6
+    │               │  │   
+    │               ╰────── ref: 4
+    │                  │   
+    │                  ╰─── ref: 9
+    │ 
+ 11 │   function add(int, int32) returns (int);
+    │            ─┬─  
+    │             ╰─── name: 7
+    │ 
+ 14 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 8
+ 15 │   function add(int, int) returns (int);
+    │            ─┬─  
+    │             ╰─── name: 9
+────╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────▶ abstract contract Test {
+  2 │ │           int y;
+    │ │         ────┬────  
+    │ │             ╰────── definiens: 2
+    ┆ ┆         
+  5 │ │ ╭─────▶ 
+  6 │ │ │         function someFunc(int x) returns (int) {
+    │ │ │                           ──┬──  
+    │ │ │                             ╰──── definiens: 4
+  7 │ │ │           int here = add(x, 3);
+    │ │ │       ─────────────┬────────────  
+    │ │ │                    ╰────────────── definiens: 5
+  8 │ │ │           int lib = x.add(3);
+    │ │ │       ────────────┬───────────  
+    │ │ │                   ╰───────────── definiens: 6
+  9 │ │ ├───│ ▶   }
+    │ │ │   │         
+    │ │ ╰───────────── definiens: 3
+ 10 │ │     ╭─▶ 
+ 11 │ │     ├─▶   function add(int, int32) returns (int);
+    │ │     │                                               
+    │ │     ╰─────────────────────────────────────────────── definiens: 7
+ 12 │ ├───│ ──▶ }
+    │ │   │         
+    │ ╰───────────── definiens: 1
+ 13 │     ╭───▶ 
+    ┆     ┆     
+ 15 │     │       function add(int, int) returns (int);
+    │     │     ────────────────────┬───────────────────  
+    │     │                         ╰───────────────────── definiens: 9
+ 16 │     ├───▶ }
+    │     │         
+    │     ╰───────── definiens: 8
+────╯

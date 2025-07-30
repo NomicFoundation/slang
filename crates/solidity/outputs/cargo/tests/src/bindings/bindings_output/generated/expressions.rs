@@ -37,6 +37,11 @@ fn funcalls() -> Result<()> {
 }
 
 #[test]
+fn funcalls_ambiguous_overload() -> Result<()> {
+    run(T, "funcalls_ambiguous_overload")
+}
+
+#[test]
 fn funcalls_named_args() -> Result<()> {
     run(T, "funcalls_named_args")
 }

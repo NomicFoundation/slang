@@ -1,0 +1,73 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (9):
+- Def: #1 ["Test" @ input.sol:1:19] (contract)
+- Def: #2 ["y" @ input.sol:2:7] (state var, type: int256)
+- Def: #3 ["someFunc" @ input.sol:6:12] (function, type: function (int256) returns int256)
+- Def: #4 ["x" @ input.sol:6:25] (parameter, type: int256)
+- Def: #5 ["here" @ input.sol:7:9] (variable, type: int256)
+- Def: #6 ["lib" @ input.sol:8:9] (variable, type: int256)
+- Def: #7 ["add" @ input.sol:11:12] (function, type: function (int256, int32) returns int256)
+- Def: #8 ["Lib" @ input.sol:14:9] (library)
+- Def: #9 ["add" @ input.sol:15:12] (function, type: function (int256, int256) returns int256)
+
+------------------------------------------------------------------------
+
+References (5):
+- Ref: ["Lib" @ input.sol:4:9] -> #8
+- Ref: ["add" @ input.sol:7:16] -> #7
+- Ref: ["x" @ input.sol:7:20] -> #4
+- Ref: ["x" @ input.sol:8:15] -> #4
+- Ref: ["add" @ input.sol:8:17] -> #9
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ abstract contract Test {
+    │                   ──┬─  
+    │                     ╰─── name: 1
+  2 │   int y;
+    │       ┬  
+    │       ╰── name: 2
+    │ 
+  4 │   using Lib for int;
+    │         ─┬─  
+    │          ╰─── ref: 8
+    │ 
+  6 │   function someFunc(int x) returns (int) {
+    │            ────┬───     ┬  
+    │                ╰─────────── name: 3
+    │                         │  
+    │                         ╰── name: 4
+  7 │     int here = add(x, 3);
+    │         ──┬─   ─┬─ ┬  
+    │           ╰─────────── name: 5
+    │                 │  │  
+    │                 ╰───── ref: 7
+    │                    │  
+    │                    ╰── ref: 4
+  8 │     int lib = x.add(3);
+    │         ─┬─   ┬ ─┬─  
+    │          ╰─────────── name: 6
+    │               │  │   
+    │               ╰────── ref: 4
+    │                  │   
+    │                  ╰─── ref: 9
+    │ 
+ 11 │   function add(int, int32) returns (int);
+    │            ─┬─  
+    │             ╰─── name: 7
+    │ 
+ 14 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 8
+ 15 │   function add(int, int) returns (int);
+    │            ─┬─  
+    │             ╰─── name: 9
+────╯
