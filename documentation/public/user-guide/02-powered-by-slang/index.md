@@ -38,3 +38,10 @@ LintSpec is a tool for finding common errors in Solidity documentation. It is a 
 
 - [Rust Crate](https://crates.io/crates/lintspec)
 - [GitHub Repository](https://github.com/beeb/lintspec)
+
+ ## Slippy
+
+Slippy is a simple and powerful linter for Solidity. Slippy leverages Slang to provide accurate and flexible linting capabilities for Solidity projects.
+
+- [NPM Package](https://www.npmjs.com/package/@slippy-lint/slippy)
+- [GitHub Repository](https://github.com/fvictorio/slippy)
