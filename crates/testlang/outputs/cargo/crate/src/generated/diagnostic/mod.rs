@@ -1,12 +1,16 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
+//! Utilities for defining error diagnostics.
+
 use crate::cst::TextRange;
 
 /// The severity of a diagnostic.
 ///
 /// Explicitly compatible with the [LSP protocol](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#diagnosticSeverity).
+#[allow(dead_code)]
+#[cfg_attr(feature = "__private_ariadne_errors", visibility::make(pub))]
 #[repr(u8)]
-pub enum Severity {
+pub(crate) enum Severity {
     Error = 1,
     Warning = 2,
     Information = 3,
@@ -14,11 +18,14 @@ pub enum Severity {
 }
 
 /// A compiler diagnostic that can be rendered to a user.
-pub trait Diagnostic {
+#[cfg_attr(feature = "__private_ariadne_errors", visibility::make(pub))]
+pub(crate) trait Diagnostic {
     /// The character range of the source that this diagnostic applies to.
     /// at the moment.
+    #[allow(dead_code)]
     fn text_range(&self) -> TextRange;
     /// The severity of this diagnostic.
+    #[allow(dead_code)]
     fn severity(&self) -> Severity;
     /// The primary message associated with this diagnostic.
     fn message(&self) -> String;

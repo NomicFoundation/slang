@@ -2491,7 +2491,7 @@ export declare enum TerminalKind {
    */
   Unrecognized = "Unrecognized",
   /**
-   * This terminal is created when the parser is expecting a certain terminal, but it cannot find it.
+   * This terminal is created when the parser is expecting a certain terminal but does not find it.
    * Adding the missing input in this position may allow the parser to produce a valid tree there.
    */
   Missing = "Missing",

@@ -28,6 +28,7 @@ categories = [
 [[bin]]
 name = "slang_solidity"
 path = "src/main.rs"
+doc = false
 
 [dependencies]
 clap = { workspace = true }

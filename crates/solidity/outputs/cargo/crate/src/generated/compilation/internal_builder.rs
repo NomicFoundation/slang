@@ -10,20 +10,15 @@ use crate::cst::Cursor;
 use crate::extensions::compilation::ImportPathsExtractor;
 use crate::parser::{Parser, ParserInitializationError};
 
+#[doc(hidden)]
 pub struct InternalCompilationBuilder {
     parser: Parser,
     imports: ImportPathsExtractor,
     files: BTreeMap<String, File>,
 }
 
-#[derive(thiserror::Error, Debug)]
-pub enum CompilationInitializationError {
-    #[error(transparent)]
-    ParserInitialization(#[from] ParserInitializationError),
-}
-
 impl InternalCompilationBuilder {
-    pub fn create(language_version: Version) -> Result<Self, CompilationInitializationError> {
+    pub fn create(language_version: Version) -> Result<Self, ParserInitializationError> {
         let parser = Parser::create(language_version)?;
 
         Ok(Self {
@@ -78,11 +73,13 @@ impl InternalCompilationBuilder {
     }
 }
 
+#[doc(hidden)]
 pub struct AddFileResponse {
     pub import_paths: Vec<Cursor>,
 }
 
 #[derive(thiserror::Error, Debug)]
+#[doc(hidden)]
 pub enum ResolveImportError {
     #[error(
         "Source file not found: '{0}'. Make sure to add it first, before resolving its imports."

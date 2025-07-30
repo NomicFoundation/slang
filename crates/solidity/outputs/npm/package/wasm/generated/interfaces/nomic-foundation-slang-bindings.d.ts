@@ -12,8 +12,9 @@ export namespace NomicFoundationSlangBindings {
 import type { Cursor } from "./nomic-foundation-slang-cst.js";
 export { Cursor };
 /**
- * Represents a location of a symbol (definition or reference) in the binding graph.
- * It can either be in a user file, or a built-in in the language.
+ * A `BindingLocation` is used to point the user to a definition or reference in the parse tree.
+ * A `BindingLocation` can either be a `UserFile` or a `BuiltIn`. Only `UserFile`'s give the user
+ * a `Cursor` into a location in the parse tree.
  */
 export type BindingLocation = UserFileLocation | BuiltInLocation;
 
@@ -108,7 +109,9 @@ export class BuiltInLocation {
 }
 
 /**
- * Represents a definition in the binding graph.
+ * A `Definition` represents the location where a symbol is originally defined. From this you
+ * can find more information about the location of this definition in the parse tree, or navigate to
+ * references to this defintion.
  */
 
 export class Definition {
@@ -139,7 +142,13 @@ export class Definition {
 }
 
 /**
- * Represents a reference in the binding graph.
+ * A `Reference` represents a location where a symbol definition is referenced, i.e. anywhere
+ * a symbol is 'used' in a piece of code. From this you can find more information about the location
+ * of the reference in the parse tree, or you can navigate to the `Definition` this
+ * references.
+ *
+ * Note that most references have a single definition, but some have multiple, such as when a symbol
+ * is imported from another file, and renamed (re-defined) in the current file.
  */
 
 export class Reference {
@@ -167,7 +176,8 @@ export class Reference {
 }
 
 /**
- * Represents a location of a user-defined symbol in a user file.
+ * `UserFileLocation` provides a `Cursor` pointing to a `Node` in the
+ * parse tree where the referenced `Definition` or `Reference` is located.
  */
 
 export class UserFileLocation {

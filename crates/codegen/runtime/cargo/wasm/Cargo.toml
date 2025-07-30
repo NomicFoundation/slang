@@ -12,10 +12,7 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-codegen_runtime_cargo_crate = { workspace = true, features = [
-  "__experimental_bindings_api",
-  "__private_compilation_api",
-] }
+codegen_runtime_cargo_crate = { workspace = true, features = ["__private_wasm_apis"] }
 paste = { workspace = true }
 semver = { workspace = true }
 serde_json = { workspace = true }

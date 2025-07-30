@@ -1,7 +1,7 @@
 use anyhow::Result;
 use slang_solidity::backend::l2_flat_contracts;
 use slang_solidity::backend::passes::{p0_build_ast, p1_flatten_contracts};
-use slang_solidity::compilation::InternalCompilationBuilder;
+use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig};
 use slang_solidity::utils::LanguageFacts;
 
 #[test]
@@ -11,9 +11,29 @@ contract Base {}
 contract Test is Base layout at 0 {}
     "###;
 
-    let mut internal_builder = InternalCompilationBuilder::create(LanguageFacts::LATEST_VERSION)?;
-    _ = internal_builder.add_file("main.sol".into(), CONTENTS);
-    let compilation_unit = internal_builder.build();
+    struct Config {}
+    impl CompilationBuilderConfig for Config {
+        type Error = ();
+
+        fn read_file(
+            &mut self,
+            _file_id: &str,
+        ) -> std::result::Result<Option<String>, Self::Error> {
+            Ok(Some(CONTENTS.to_owned()))
+        }
+
+        fn resolve_import(
+            &mut self,
+            _source_file_id: &str,
+            _import_path_cursor: &slang_solidity::cst::Cursor,
+        ) -> std::result::Result<Option<String>, Self::Error> {
+            panic!("No requires to solve");
+        }
+    }
+
+    let mut builder = CompilationBuilder::new(LanguageFacts::LATEST_VERSION, Config {})?;
+    assert!(builder.add_file("main.sol").is_ok());
+    let compilation_unit = builder.build();
 
     let data = p0_build_ast::run(compilation_unit);
     let data = p1_flatten_contracts::run(data);
