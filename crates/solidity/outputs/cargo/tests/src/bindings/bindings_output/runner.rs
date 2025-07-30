@@ -13,8 +13,8 @@ use slang_solidity::parser::{ParseOutput, Parser};
 use super::graph::graphviz::render as render_graphviz_graph;
 use super::graph::mermaid::render as render_mermaid_graph;
 use super::renderer::render_bindings;
+use crate::cst::multi_part_file::{split_multi_file, Part};
 use crate::generated::VERSION_BREAKS;
-use crate::multi_part_file::{split_multi_file, Part};
 use crate::resolver::TestsPathResolver;
 
 pub(crate) struct ParsedPart<'a> {
