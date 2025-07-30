@@ -80,7 +80,7 @@ fn generate_solidity_tests() -> Result<()> {
     let snapshots_crate = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?;
     let tests_crate = CargoWorkspace::locate_source_crate("solidity_cargo_tests")?;
 
-    lang_def.generate_version_breaks(&tests_crate.join("src/generated"))?;
+    lang_def.generate_version_breaks(&tests_crate.join("src/cst/generated"))?;
 
     lang_def.generate_bindings_output_tests(
         &snapshots_crate.join("bindings_output"),

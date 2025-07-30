@@ -9,7 +9,7 @@ use slang_solidity::parser::Parser;
 use strum_macros::Display;
 
 use crate::cst::cst_output::renderer::render;
-use crate::generated::VERSION_BREAKS;
+use crate::cst::generated::VERSION_BREAKS;
 
 #[derive(Display)]
 #[strum(serialize_all = "kebab_case")]

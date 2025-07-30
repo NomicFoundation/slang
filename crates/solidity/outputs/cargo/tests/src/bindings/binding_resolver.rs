@@ -6,7 +6,7 @@ use slang_solidity::bindings::{self, BindingGraph};
 use slang_solidity::cst::{Cursor, Query, TerminalKind};
 use slang_solidity::parser::Parser;
 
-use crate::resolver::TestsPathResolver;
+use crate::compilation::resolver::TestsPathResolver;
 
 const TEST_VERSION: Version = Version::new(0, 8, 26);
 
