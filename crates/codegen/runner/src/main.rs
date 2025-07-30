@@ -89,7 +89,7 @@ fn generate_solidity_tests() -> Result<()> {
 
     lang_def.generate_cst_output_tests(
         &snapshots_crate.join("cst_output"),
-        &tests_crate.join("src/cst_output/generated"),
+        &tests_crate.join("src/cst/cst_output/generated"),
     )?;
 
     Ok(())
