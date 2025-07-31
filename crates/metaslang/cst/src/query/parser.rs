@@ -23,6 +23,7 @@ use crate::text_index::{TextIndex, TextRange};
 // ----------------------------------------------------------------------------
 // Parse errors
 
+/// Error from parsing a query.
 #[derive(Clone, Debug, Error)]
 pub struct QueryError {
     pub message: String,

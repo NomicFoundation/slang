@@ -6,6 +6,7 @@ use crate::cursor::{Cursor, CursorIterator};
 use crate::kinds::{KindTypes, NodeKind, TerminalKindExtensions};
 use crate::text_index::TextIndex;
 
+/// Identifier of each node in a tree.
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 #[repr(transparent)]
 pub struct NodeId(usize);

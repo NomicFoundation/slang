@@ -13,9 +13,8 @@ mod terminal_kind;
 
 pub use edge_label::EdgeLabel;
 pub(crate) use lexical_context::{IsLexicalContext, LexicalContext, LexicalContextType};
-pub use metaslang_cst::kinds::{
-    EdgeLabelExtensions, NonterminalKindExtensions, TerminalKindExtensions,
-};
+pub use metaslang_cst::kinds::TerminalKindExtensions;
+pub(crate) use metaslang_cst::kinds::{EdgeLabelExtensions, NonterminalKindExtensions};
 pub use nonterminal_kind::NonterminalKind;
 pub use terminal_kind::TerminalKind;
 
@@ -42,6 +41,8 @@ impl metaslang_cst::kinds::KindTypes for KindTypes {
 
 /// The super type of terminal and non-terminal kinds.
 pub type NodeKind = metaslang_cst::kinds::NodeKind<KindTypes>;
+
+pub use metaslang_cst::nodes::NodeId;
 
 /// The super type of all nodes in a tree.
 pub type Node = metaslang_cst::nodes::Node<KindTypes>;
@@ -73,10 +74,16 @@ pub type AncestorsIterator = metaslang_cst::cursor::AncestorsIterator<KindTypes>
 /// Please refer to [our documentation](https://nomicfoundation.github.io/slang/latest/user-guide/06-query-language/01-query-syntax/)
 /// for detailed information about the query syntax and how to use queries to find matches.
 pub type Query = metaslang_cst::query::Query<KindTypes>;
+
 pub use metaslang_cst::query::QueryError;
 /// Represents a match found by executing queries on a cursor.
 pub type QueryMatch = metaslang_cst::query::QueryMatch<KindTypes>;
 /// Iterator over query matches in the syntax tree.
 pub type QueryMatchIterator = metaslang_cst::query::QueryMatchIterator<KindTypes>;
 
-pub use metaslang_cst::text_index::{TextIndex, TextRange, TextRangeExtensions};
+/// Representation of a position within text.
+pub type TextIndex = metaslang_cst::text_index::TextIndex;
+/// A [`Range`][`core::ops::Range`] of [`TextIndex`].
+pub type TextRange = metaslang_cst::text_index::TextRange;
+
+pub use metaslang_cst::text_index::TextRangeExtensions;

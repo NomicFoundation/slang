@@ -107,9 +107,13 @@ impl std::iter::Sum for TextIndex {
 
 pub type TextRange = Range<TextIndex>;
 
+/// Extensions to obtain character and line ranges from a [`TextRange`].
 pub trait TextRangeExtensions {
+    /// Returns a range of utf8 characters.
     fn utf8(&self) -> Range<usize>;
+    /// Returns a range of utf16 characters.
     fn utf16(&self) -> Range<usize>;
+    /// Returns a range of lines.
     fn line(&self) -> Range<usize>;
 }
 
