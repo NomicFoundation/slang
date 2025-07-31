@@ -4,6 +4,8 @@
 - [8.2. Find usages](./02-find-usages/index.md)
 - [8.3. Jump to definition](./03-jump-to-definition/index.md)
 - [8.4. Find unused definitions](./04-find-unused-definitions/index.md)
+- [8.5. Remove unused definitions](./05-remove-unused-definitions/index.md)
+- [8.6. Inject logging](./06-inject-logging/index.md)
 
 We need some setup code to [create a `CompilationUnit`](../07-semantic-analysis/01-compilation-units/index.md) with the contents of one or more Solidity files. This will be common to all examples above:
 

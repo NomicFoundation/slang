@@ -1,0 +1,96 @@
+{%- if rendering_in_stubs -%}
+  export abstract class BaseRewriter { }
+{%- else -%} 
+  import { NonterminalKind, NonterminalNode, Node, TerminalNode, TerminalKind, Edge } from "../index.mjs";
+
+  export abstract class BaseRewriter {
+    
+    public rewriteNode(node: Node): Node | undefined {
+      if (node instanceof NonterminalNode) {
+        return this.rewriteNonterminalNode(node);
+      } else {
+        return this.rewriteTerminalNode(node);
+      }
+    }
+
+    public rewriteNonterminalNode(node: NonterminalNode): Node | undefined {
+      switch (node.kind) {
+        {% for nonterminal in model.kinds.nonterminal_kinds %}
+        case NonterminalKind.{{ nonterminal.id }}:
+          return this.rewrite{{- nonterminal.id -}}(node);
+        {% endfor %}
+      }
+    }
+
+    public rewriteTerminalNode(node: TerminalNode): Node | undefined {
+      switch (node.kind) {
+        {% for terminal in model.kinds.terminal_kinds %}
+        case TerminalKind.{{ terminal.id }}:
+          return this.rewrite{{- terminal.id -}}(node);
+        {% endfor %}
+        case TerminalKind.Unrecognized:
+          return this.rewriteUnrecognized(node);
+        case TerminalKind.Unrecognized:
+          return this.rewriteMissing(node);
+      }
+      // NOTE: this shouldn't be necessary, beacuse the case above should cover all, however
+      // TypeScript isn't helping identifying which one is missing.
+      throw Error("Unreachable");
+    }
+
+    {% for nonterminal in model.kinds.nonterminal_kinds %}     
+      /** @virtual */
+      public rewrite{{- nonterminal.id -}}(node: NonterminalNode): Node | undefined {
+        return this.rewriteChildren(NonterminalKind.{{- nonterminal.id -}}, node);
+      }
+    {% endfor %}
+    
+    {% for terminal in model.kinds.terminal_kinds %}     
+      /** @virtual */
+      public rewrite{{- terminal.id -}}(node: TerminalNode): Node | undefined {
+        return node;
+      }
+    {% endfor %}
+    
+    public rewriteUnrecognized(node: TerminalNode): Node | undefined {
+      return node;
+    }
+  
+    public rewriteMissing(node: TerminalNode): Node | undefined {
+      return node;
+    }
+  
+    protected rewriteChildren(kind: NonterminalKind, node: NonterminalNode): NonterminalNode {
+      const newChildren: Array<Edge> = new Array<Edge>();
+      var anyChildChanged = false;
+      for (const child of node.children()) {
+        const newChild = this.rewriteNode(child.node);
+        if (newChild == undefined) {
+          // node was removed, remove (don't push) edge
+          anyChildChanged = true;
+        } else {
+          var edge;
+          if (newChild.id == child.node.id) {
+            edge = child;
+          }
+          else {
+            // node has changed, produce new edge
+            anyChildChanged = true;
+            if (newChild instanceof TerminalNode) {
+              edge = Edge.createWithTerminal(child.label, newChild);
+            } else {
+              edge = Edge.createWithNonterminal(child.label, newChild);
+            }
+          }
+          newChildren.push(edge);
+        }
+      }
+      if (anyChildChanged) {
+        const newNode = NonterminalNode.create(kind, newChildren);
+        return newNode;
+      } else {
+        return node;
+      }
+    }
+  }
+{%- endif -%}
