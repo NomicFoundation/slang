@@ -1129,20 +1129,10 @@ impl Visitor for Pass {
                     });
                     let candidates =
                         self.filter_functions(function_types, &positional_argument_typings);
-
                     match candidates.len() {
                         1 => {
                             let typ = candidates.first().unwrap();
-                            let reference_node_id = match &node.operand {
-                                input_ir::Expression::FunctionCallExpression(f) => Some(f.node_id),
-                                input_ir::Expression::CallOptionsExpression(f) => Some(f.node_id),
-                                input_ir::Expression::MemberAccessExpression(f) => {
-                                    Some(f.member.id())
-                                }
-                                input_ir::Expression::IndexAccessExpression(f) => Some(f.node_id),
-                                input_ir::Expression::Identifier(f) => Some(f.id()),
-                                _ => None, // TODO: check all cases
-                            };
+                            let reference_node_id = node_id_for_typing(&node.operand);
                             if let Some(node_id) = reference_node_id {
                                 let reference =
                                     self.binder.get_reference_by_identifier_node_id_mut(node_id);
@@ -1411,5 +1401,15 @@ impl Visitor for Pass {
                 .and_then(|reference| reference.resolution.as_definition_id());
             self.resolve_named_arguments(named_arguments_declaration, definition_id);
         }
+    }
+}
+
+fn node_id_for_typing(node: &input_ir::Expression) -> Option<metaslang_cst::nodes::NodeId> {
+    match &node {
+        input_ir::Expression::FunctionCallExpression(f) => Some(f.node_id),
+        input_ir::Expression::MemberAccessExpression(f) => Some(f.member.id()),
+        input_ir::Expression::Identifier(f) => Some(f.id()),
+        input_ir::Expression::CallOptionsExpression(f) => node_id_for_typing(&f.operand),
+        _ => None,
     }
 }
