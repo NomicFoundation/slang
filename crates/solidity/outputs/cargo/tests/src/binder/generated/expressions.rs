@@ -57,13 +57,33 @@ fn funcalls_output() -> Result<()> {
 }
 
 #[test]
-fn funcalls_overload_using_for() -> Result<()> {
-    run(T, "funcalls_overload_using_for")
+fn funcalls_overload() -> Result<()> {
+    run(T, "funcalls_overload")
 }
 
 #[test]
-fn funcalls_simple_overload() -> Result<()> {
-    run(T, "funcalls_simple_overload")
+fn funcalls_overload_indexed() -> Result<()> {
+    run(T, "funcalls_overload_indexed")
+}
+
+#[test]
+fn funcalls_overload_member_access() -> Result<()> {
+    run(T, "funcalls_overload_member_access")
+}
+
+#[test]
+fn funcalls_overload_options() -> Result<()> {
+    run(T, "funcalls_overload_options")
+}
+
+#[test]
+fn funcalls_overload_this() -> Result<()> {
+    run(T, "funcalls_overload_this")
+}
+
+#[test]
+fn funcalls_overload_using_for() -> Result<()> {
+    run(T, "funcalls_overload_using_for")
 }
 
 #[test]

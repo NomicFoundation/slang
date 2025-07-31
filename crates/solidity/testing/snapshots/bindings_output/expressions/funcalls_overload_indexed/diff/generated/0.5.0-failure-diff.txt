@@ -1,0 +1,6 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+reference `add` at input.sol:11:12 failed to resolve in new binder
+reference `add` at input.sol:12:12 failed to resolve in new binder
+
+Definitions and/or references from binding graph and new binder DIFFER

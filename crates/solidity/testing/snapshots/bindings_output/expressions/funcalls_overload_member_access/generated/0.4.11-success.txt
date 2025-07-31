@@ -1,0 +1,75 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Overloaded {
+   │          ─────┬────  
+   │               ╰────── name: 1
+ 2 │   function add(int64, int64) returns (Overloaded);
+   │            ─┬─                        ─────┬────  
+   │             ╰───────────────────────────────────── name: 2
+   │                                            │      
+   │                                            ╰────── ref: 1
+   │ 
+ 4 │   function add(int64) returns (Overloaded);
+   │            ─┬─                 ─────┬────  
+   │             ╰────────────────────────────── name: 3
+   │                                     │      
+   │                                     ╰────── ref: 1
+   │ 
+ 7 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 4
+ 8 │   function someFunc(Overloaded x, int64 y) public {
+   │            ────┬─── ─────┬──── ┬        ┬  
+   │                ╰─────────────────────────── name: 5
+   │                          │     │        │  
+   │                          ╰───────────────── ref: 1
+   │                                │        │  
+   │                                ╰─────────── name: 6
+   │                                         │  
+   │                                         ╰── name: 7
+ 9 │     x.add(y).add(y, y);
+   │     ┬ ─┬─ ┬  ─┬─ ┬  ┬  
+   │     ╰────────────────── ref: 6
+   │        │  │   │  │  │  
+   │        ╰─────────────── refs: 2, 3
+   │           │   │  │  │  
+   │           ╰──────────── ref: 7
+   │               │  │  │  
+   │               ╰──────── refs: 2, 3
+   │                  │  │  
+   │                  ╰───── ref: 7
+   │                     │  
+   │                     ╰── ref: 7
+───╯
+Definiens: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ ╭───────▶ contract Overloaded {
+  2 │ │     │     function add(int64, int64) returns (Overloaded);
+    │ │     │   ─────────────────────────┬─────────────────────────  
+    │ │     │                            ╰─────────────────────────── definiens: 2
+  3 │ │     ╭─▶ 
+  4 │ │     ├─▶   function add(int64) returns (Overloaded);
+    │ │     │                                                 
+    │ │     ╰───────────────────────────────────────────────── definiens: 3
+  5 │ ├─│ ────▶ }
+    │ │ │           
+    │ ╰───────────── definiens: 1
+  6 │   ╭─────▶ 
+    ┆   ┆ ┆     
+  8 │   │ ╭───▶   function someFunc(Overloaded x, int64 y) public {
+    │   │ │                         ──────┬───── ────┬───  
+    │   │ │                               ╰──────────────── definiens: 6
+    │   │ │                                          │     
+    │   │ │                                          ╰───── definiens: 7
+    ┆   ┆ ┆     
+ 10 │   │ ├───▶   }
+    │   │ │           
+    │   │ ╰─────────── definiens: 5
+ 11 │   ├─────▶ }
+    │   │           
+    │   ╰─────────── definiens: 4
+────╯
