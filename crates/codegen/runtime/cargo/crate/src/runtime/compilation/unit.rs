@@ -4,7 +4,7 @@ use std::rc::Rc;
 
 use semver::Version;
 
-use crate::bindings::{create_with_resolver, BindingGraph};
+use crate::bindings::{create_with_resolver_internal, BindingGraph};
 use crate::compilation::File;
 use crate::cst::{Cursor, KindTypes};
 
@@ -57,7 +57,7 @@ impl CompilationUnit {
             };
 
             let mut builder =
-                create_with_resolver(self.language_version.clone(), Rc::new(resolver));
+                create_with_resolver_internal(self.language_version.clone(), Rc::new(resolver));
 
             for (id, file) in &self.files {
                 builder.add_user_file(id, file.create_tree_cursor());

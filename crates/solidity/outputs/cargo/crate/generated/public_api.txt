@@ -3,19 +3,25 @@
 pub mod slang_solidity
 pub mod slang_solidity::bindings
 pub type slang_solidity::bindings::BindingGraph = metaslang_bindings::graph::BindingGraph<slang_solidity::cst::KindTypes>
-pub type slang_solidity::bindings::BindingGraphBuilder = metaslang_bindings::builder::BindingGraphBuilder<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::BindingLocation = metaslang_bindings::graph::location::BindingLocation<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::BuiltInLocation = metaslang_bindings::graph::location::BuiltInLocation
 pub type slang_solidity::bindings::Definition = metaslang_bindings::graph::definition::Definition<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::Reference = metaslang_bindings::graph::reference::Reference<slang_solidity::cst::KindTypes>
 pub type slang_solidity::bindings::UserFileLocation = metaslang_bindings::graph::location::UserFileLocation<slang_solidity::cst::KindTypes>
 pub mod slang_solidity::compilation
+pub enum slang_solidity::compilation::CompilationInitializationError
+pub slang_solidity::compilation::CompilationInitializationError::UnsupportedLanguageVersion(semver::Version)
+impl core::error::Error for slang_solidity::compilation::CompilationInitializationError
+impl core::fmt::Debug for slang_solidity::compilation::CompilationInitializationError
+pub fn slang_solidity::compilation::CompilationInitializationError::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
+impl core::fmt::Display for slang_solidity::compilation::CompilationInitializationError
+pub fn slang_solidity::compilation::CompilationInitializationError::fmt(&self, __formatter: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub struct slang_solidity::compilation::CompilationBuilder<E, C: slang_solidity::compilation::CompilationBuilderConfig<Error = E>>
 pub slang_solidity::compilation::CompilationBuilder::config: C
 impl<E, C: slang_solidity::compilation::CompilationBuilderConfig<Error = E>> slang_solidity::compilation::CompilationBuilder<E, C>
 pub fn slang_solidity::compilation::CompilationBuilder<E, C>::add_file(&mut self, file_id: &str) -> core::result::Result<(), E>
 pub fn slang_solidity::compilation::CompilationBuilder<E, C>::build(&self) -> slang_solidity::compilation::CompilationUnit
-pub fn slang_solidity::compilation::CompilationBuilder<E, C>::new(version: semver::Version, config: C) -> core::result::Result<slang_solidity::compilation::CompilationBuilder<E, C>, slang_solidity::generated::compilation::builder::CompilationInitializationError>
+pub fn slang_solidity::compilation::CompilationBuilder<E, C>::new(version: semver::Version, config: C) -> core::result::Result<slang_solidity::compilation::CompilationBuilder<E, C>, slang_solidity::compilation::CompilationInitializationError>
 pub struct slang_solidity::compilation::CompilationUnit
 impl slang_solidity::compilation::CompilationUnit
 pub fn slang_solidity::compilation::CompilationUnit::binding_graph(&self) -> &alloc::rc::Rc<slang_solidity::bindings::BindingGraph>
@@ -35,12 +41,9 @@ pub type slang_solidity::compilation::CompilationBuilderConfig::Error
 pub fn slang_solidity::compilation::CompilationBuilderConfig::read_file(&mut self, file_id: &str) -> core::result::Result<core::option::Option<alloc::string::String>, Self::Error>
 pub fn slang_solidity::compilation::CompilationBuilderConfig::resolve_import(&mut self, source_file_id: &str, import_path_cursor: &slang_solidity::cst::Cursor) -> core::result::Result<core::option::Option<alloc::string::String>, Self::Error>
 pub mod slang_solidity::cst
-pub use slang_solidity::cst::EdgeLabelExtensions
-pub use slang_solidity::cst::NonterminalKindExtensions
+pub use slang_solidity::cst::NodeId
 pub use slang_solidity::cst::QueryError
 pub use slang_solidity::cst::TerminalKindExtensions
-pub use slang_solidity::cst::TextIndex
-pub use slang_solidity::cst::TextRange
 pub use slang_solidity::cst::TextRangeExtensions
 #[repr(u8)] pub enum slang_solidity::cst::EdgeLabel
 pub slang_solidity::cst::EdgeLabel::AbicoderKeyword
@@ -825,7 +828,8 @@ pub type slang_solidity::cst::Query = metaslang_cst::query::model::Query<slang_s
 pub type slang_solidity::cst::QueryMatch = metaslang_cst::query::engine::QueryMatch<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::QueryMatchIterator = metaslang_cst::query::engine::QueryMatchIterator<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::TerminalNode = metaslang_cst::nodes::TerminalNode<slang_solidity::cst::KindTypes>
-pub mod slang_solidity::diagnostic
+pub type slang_solidity::cst::TextIndex = metaslang_cst::text_index::TextIndex
+pub type slang_solidity::cst::TextRange = metaslang_cst::text_index::TextRange
 pub mod slang_solidity::parser
 pub enum slang_solidity::parser::ParserInitializationError
 pub slang_solidity::parser::ParserInitializationError::UnsupportedLanguageVersion(semver::Version)
@@ -837,7 +841,7 @@ pub fn slang_solidity::parser::ParserInitializationError::fmt(&self, __formatter
 pub struct slang_solidity::parser::ParseError
 impl slang_solidity::parser::ParseError
 pub fn slang_solidity::parser::ParseError::message(&self) -> alloc::string::String
-pub fn slang_solidity::parser::ParseError::text_range(&self) -> &metaslang_cst::text_index::TextRange
+pub fn slang_solidity::parser::ParseError::text_range(&self) -> &slang_solidity::cst::TextRange
 impl core::clone::Clone for slang_solidity::parser::ParseError
 pub fn slang_solidity::parser::ParseError::clone(&self) -> slang_solidity::parser::ParseError
 impl core::cmp::Eq for slang_solidity::parser::ParseError
