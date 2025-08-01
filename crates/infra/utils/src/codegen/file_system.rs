@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::panic::Location;
 use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Context, Result};
@@ -7,10 +8,27 @@ use crate::codegen::formatting::{format_source_file, generate_header};
 use crate::github::GitHub;
 use crate::paths::{FileWalker, PathExtensions};
 
-#[derive(Default)]
 pub struct CodegenFileSystem {
+    origin: String,
     generated_dirs: HashSet<PathBuf>,
     generated_files: HashSet<PathBuf>,
+}
+
+impl Default for CodegenFileSystem {
+    #[track_caller]
+    fn default() -> CodegenFileSystem {
+        let location = Location::caller();
+        CodegenFileSystem {
+            origin: format!(
+                "{file}:{line}:{column}",
+                file = location.file(),
+                line = location.line(),
+                column = location.column()
+            ),
+            generated_dirs: HashSet::default(),
+            generated_files: HashSet::default(),
+        }
+    }
 }
 
 impl CodegenFileSystem {
@@ -32,7 +50,7 @@ impl CodegenFileSystem {
         let file_path = file_path.as_ref();
         self.mark_generated_file(file_path)?;
 
-        let contents = if let Some(header) = generate_header(file_path) {
+        let contents = if let Some(header) = generate_header(&self.origin, file_path) {
             format!("{header}\n\n{contents}", contents = contents.as_ref())
         } else {
             contents.as_ref().to_owned()
