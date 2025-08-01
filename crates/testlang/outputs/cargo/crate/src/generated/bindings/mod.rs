@@ -52,9 +52,10 @@ pub type UserFileLocation = metaslang_bindings::UserFileLocation<KindTypes>;
 /// Abstract representation of the location of a built-in object.
 pub type BuiltInLocation = metaslang_bindings::BuiltInLocation;
 
-/// Create a new `BindingGraphBuilder` with the specified language version `version` and the [`PathResolver`]
-/// `resolver`.
 #[cfg(feature = "__private_testing_utils")]
+#[allow(missing_docs)]
+// Create a new `BindingGraphBuilder` with the specified language version and resolver.
+// Exposed to test the functionality, but users should use the `CompilationBuilder` instead.
 pub fn create_with_resolver(
     version: Version,
     resolver: Rc<dyn metaslang_bindings::PathResolver<KindTypes>>,
