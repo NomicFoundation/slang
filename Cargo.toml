@@ -98,9 +98,9 @@ ariadne = { version = "0.2.0" }
 bencher_cli = { git = "https://github.com/bencherdev/bencher", branch = "main" }
 cargo-edit = { version = "0.12.3" }
 cargo-nextest = { version = "0.9.72" }
-clap = { version = "4.5.40", features = ["derive", "wrap_help"] }
-clap_complete = { version = "4.5.54" }
-console = { version = "0.15.11" }
+clap = { version = "4.5.42", features = ["derive", "wrap_help"] }
+clap_complete = { version = "4.5.55" }
+console = { version = "0.16.0" }
 derive-new = { version = "0.6.0" }
 env_logger = { version = "0.11.6" }
 iai-callgrind = { version = "0.12.3" }
@@ -121,11 +121,11 @@ public-api = { version = "0.47.1" }
 quote = { version = "1.0.40" }
 rayon = { version = "1.10.0" }
 regex = { version = "1.11.1" }
-reqwest = { version = "0.12.21", features = ["blocking"] }
+reqwest = { version = "0.12.22", features = ["blocking"] }
 rustdoc-json = { version = "0.9.5" }
 semver = { version = "1.0.26", features = ["serde"] }
 serde = { version = "1.0.219", features = ["derive", "rc"] }
-serde_json = { version = "1.0.140", features = ["preserve_order"] }
+serde_json = { version = "1.0.142", features = ["preserve_order"] }
 similar-asserts = { version = "1.7.0" }
 smallvec = { version = "1.15.0", features = ["union"] }
 stack-graphs = { git = "https://github.com/NomicFoundation/stack-graphs", branch = "nomic" }
@@ -148,7 +148,7 @@ tempfile = { version = "3.19.1" }
 tera = { version = "1.20.0" }
 thiserror = { version = "2.0.12" }
 toml = { version = "0.8.20" }
-trybuild = { version = "1.0.104" }
+trybuild = { version = "1.0.110" }
 url = { version = "2.5.4", features = ["serde"] }
 wasm-tools = { version = "1.216.0" }
 wit-bindgen = { version = "0.30.0" }
