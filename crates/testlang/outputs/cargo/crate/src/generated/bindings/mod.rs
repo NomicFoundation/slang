@@ -11,8 +11,9 @@ use semver::Version;
 
 use crate::cst::KindTypes;
 
-/// An utility for building a [`BindingGraph`] for a collection of source files.
-pub type BindingGraphBuilder = metaslang_bindings::BindingGraphBuilder<KindTypes>;
+// A utility for building a [`BindingGraph`] for a collection of source files.
+pub(crate) type BindingGraphBuilder = metaslang_bindings::BindingGraphBuilder<KindTypes>;
+
 /// A graph that contains name binding information for all source files within the compilation unit.
 /// It stores cursors to all definitions and references, and can resolve the edges between them.
 ///
