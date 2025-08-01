@@ -4,7 +4,7 @@ use std::rc::Rc;
 
 use semver::Version;
 
-use crate::bindings::{create_with_resolver, BindingGraph, PathResolver};
+use crate::bindings::{create_with_resolver, BindingGraph};
 use crate::compilation::File;
 use crate::cst::{Cursor, KindTypes};
 
@@ -72,7 +72,7 @@ struct Resolver {
     files: BTreeMap<String, Rc<File>>,
 }
 
-impl PathResolver<KindTypes> for Resolver {
+impl metaslang_bindings::PathResolver<KindTypes> for Resolver {
     fn resolve_path(&self, context_path: &str, path_to_resolve: &Cursor) -> Option<String> {
         self.files
             .get(context_path)?

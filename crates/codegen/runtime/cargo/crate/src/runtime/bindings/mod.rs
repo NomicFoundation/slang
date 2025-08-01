@@ -51,15 +51,19 @@ pub type UserFileLocation = metaslang_bindings::UserFileLocation<KindTypes>;
 /// Abstract representation of the location of a built-in object.
 pub type BuiltInLocation = metaslang_bindings::BuiltInLocation;
 
-#[cfg_attr(feature = "__private_testing_utils", visibility::make(pub))]
-pub(crate) use metaslang_bindings::PathResolver;
-
 /// Create a new `BindingGraphBuilder` with the specified language version `version` and the [`PathResolver`]
 /// `resolver`.
-#[cfg_attr(feature = "__private_testing_utils", visibility::make(pub))]
-pub(crate) fn create_with_resolver(
+#[cfg(feature = "__private_testing_utils")]
+pub fn create_with_resolver(
     version: Version,
-    resolver: Rc<dyn PathResolver<KindTypes>>,
+    resolver: Rc<dyn metaslang_bindings::PathResolver<KindTypes>>,
+) -> BindingGraphBuilder {
+    create_with_resolver_internal(version, resolver)
+}
+
+pub(crate) fn create_with_resolver_internal(
+    version: Version,
+    resolver: Rc<dyn metaslang_bindings::PathResolver<KindTypes>>,
 ) -> BindingGraphBuilder {
     let mut binding_graph = BindingGraphBuilder::create(
         version.clone(),
