@@ -8,8 +8,7 @@
     "@solidity-parser/parser": "^0.20.1",
     "command-line-args": "^6.0.1",
     "command-line-usage": "^7.0.3",
-    "solc": "^0.8.29",
-    "ts-node": "10.9.2"
+    "solc": "^0.8.29"
   },
   "devDependencies": {
     "@types/command-line-args": "^5.2.3",
