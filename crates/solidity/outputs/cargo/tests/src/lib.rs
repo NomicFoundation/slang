@@ -6,3 +6,5 @@ mod backend;
 mod bindings;
 mod compilation;
 mod cst;
+mod parser;
+mod utils;
