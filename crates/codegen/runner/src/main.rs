@@ -92,6 +92,11 @@ fn generate_solidity_tests() -> Result<()> {
         &tests_crate.join("src/cst/cst_output/generated"),
     )?;
 
+    lang_def.generate_binder_tests(
+        &snapshots_crate.join("bindings_output"),
+        &tests_crate.join("src/binder/generated"),
+    )?;
+
     Ok(())
 }
 

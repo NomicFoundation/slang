@@ -24,9 +24,6 @@ enum BinaryName {
     /// Runs the public `slang_solidity` crate shipped to Cargo users.
     #[clap(name = "slang_solidity")]
     SlangSolidity,
-    /// Runs the Solidity parser against source files from the Sanctuary repositories.
-    #[clap(name = "solidity_testing_sanctuary")]
-    SolidityTestingSanctuary,
     /// Runs compatibility tests between our language definition and 'solc' actual output.
     #[clap(name = "solidity_testing_solc")]
     SolidityTestingSolc,

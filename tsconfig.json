@@ -43,6 +43,7 @@
     "useUnknownInCatchVariables": true,
 
     /* Modules */
+    "lib": ["DOM", "ESNext", "DOM.Iterable"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
 

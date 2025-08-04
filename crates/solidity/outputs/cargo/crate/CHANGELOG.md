@@ -1,5 +1,59 @@
 # changelog
 
+## 1.2.1
+
+### Patch Changes
+
+- [#1377](https://github.com/NomicFoundation/slang/pull/1377) [`f3b51be`](https://github.com/NomicFoundation/slang/commit/f3b51be7ea341be62ef8c6d8a7847765a24af9c6) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Bind untyped tuple deconstruction elements as references, not declarations
+
+- [#1335](https://github.com/NomicFoundation/slang/pull/1335) [`6c3ad5d`](https://github.com/NomicFoundation/slang/commit/6c3ad5de83536df763feb5bfa0b4835279aeb1e6) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Top-level `ConstantDefinition`s now bind to their type and resolve extension functions called on them
+
+- [#1338](https://github.com/NomicFoundation/slang/pull/1338) [`18be0bc`](https://github.com/NomicFoundation/slang/commit/18be0bc1915107dcb9f86402bd7e0b69ec5c7f53) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Make try/catch parameters and vars in for loop initialization available in Yul
+
+- [#1339](https://github.com/NomicFoundation/slang/pull/1339) [`f16e4b5`](https://github.com/NomicFoundation/slang/commit/f16e4b5ab458fccf64fa897b096d668e7ca00c69) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Fixes to the binding rules in Solidity:
+
+    - Make the `.length` member available in all static-size byte arrays
+    - Allow assembly blocks (and nested Yul functions) to access inherited state variables
+    - Allow assembly blocks access to constructor/modifier/fallback parameters
+    - `msg.sender` is of `address` type (not `payable`) until 0.5.0
+    - Top-level constants need to be visible from assembly blocks in files that import them
+    - Resolve named arguments when calling an extension function
+    - Imported symbols using deconstruction syntax can be bound in assembly blocks
+
+- [#1353](https://github.com/NomicFoundation/slang/pull/1353) [`8e718dd`](https://github.com/NomicFoundation/slang/commit/8e718dd31e98604330dc2345d73d19bdcaed43ec) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Fixes to the binding rules in Solidity:
+
+    - Values of the deprecated `byte` type have a `length` member until 0.8.0
+    - Bind a qualified identifier in the same contract, ie. `Foo.x` in a method body of `Foo`
+    - Correctly bind external constants and built-ins in nested functions in assembly blocks
+    - Literal boolean values should bind to the `bool` type to chain extension functions
+    - Public state variables the generate getters should have members of external functions (such as `.selector`)
+    - Event types have a `selector` member
+
+- [#1326](https://github.com/NomicFoundation/slang/pull/1326) [`045179b`](https://github.com/NomicFoundation/slang/commit/045179b80f18efa4a8b75e528f475da37d948077) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Fixes to binding rules:
+
+    - Update `TupleDeconstructionStatement` so that their definiens is the `TypedTupleMember`/`UntypedTupleMember` for each variable declared.
+    - Update `YulVariableDeclarationStatement` so that their definiens is the `YulIdentifier` for each variable declared.
+
+- [#1350](https://github.com/NomicFoundation/slang/pull/1350) [`0594fe8`](https://github.com/NomicFoundation/slang/commit/0594fe89afda88a801db669af05bd33a27cd6fe4) Thanks [@ggiraldez](https://github.com/ggiraldez)! - Fixes to bindings rules in Solidity:
+
+    - Allow binding of `using` directives inside interfaces in Solidity < 0.7.1
+    - Bind literal fixed arrays types
+    - Fix generating binding graph for built-ins: remove the `memory` location specifier from types so they bind properly
+    - Fix return type of `value()` and `gas()` legacy call options to allow chaining them
+    - Bind legacy call options in the result of `new` expressions
+    - Bind output type of public getters when the state variable is a nested mapping or array
+    - A `using` directive with the `global` modifier should impact the source unit's lexical scope
+    - Relax the Solidity version where the `transfer()` method works for non-payable addresses; this is a workaround for a Solidity quirk that makes it possible to do `address(uint160(to)).transfer(amount)` even after 0.5.0
+    - Fix bound return types of `wrap()` and `unwrap()` methods of a user value defined type
+    - Resolve the type of `min()` and `max()` of `type()` expressions for integer types to the integer type given in the expression operand
+    - Fix binding of fully qualified modifier invocations
+    - Fix #1321: `min()` and `max()` for `type()` expressions on `enum` types should bind only after Solidity 0.8.8
+    - Bound type for literal number expressions is `uint256` by default; this allows correctly binding extension methods operating on literal values
+    - The type `bytes` is an array type and should bind the `push()` and `pop()` methods
+    - Contract or interface reference values implicitly inherit from the `address` type on Solidity < 0.5.0
+    - Modifiers are allowed inside interfaces until Solidity 0.8.8 and thus should properly bind and be accessible from inheriting contracts
+    - Libraries before Solidity 0.5.0 allowed `this` in function methods and work as an `address` type
+
 ## 1.2.0
 
 ### Minor Changes

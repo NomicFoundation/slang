@@ -1,7 +1,6 @@
 contract Test {
-    struct Value { int x; }
-    function test(Value memory value) public {
-        var v = value;
-        v.x;
+    function test() public {
+        var v = 1;
+        v;
     }
 }
