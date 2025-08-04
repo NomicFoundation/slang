@@ -15,7 +15,7 @@ pub fn generate_cst_output_tests(data_dir: &Path, output_dir: &Path) -> Result<(
 
     for (parser_name, test_names) in &parser_tests {
         generate_unit_test_file(
-            "crate::cst_output::runner",
+            "crate::cst::cst_output::runner",
             &mut fs,
             parser_name,
             test_names,

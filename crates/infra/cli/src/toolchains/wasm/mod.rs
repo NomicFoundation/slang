@@ -14,7 +14,6 @@ pub const WASM_TARGET: &str = "wasm32-wasip1";
 pub enum WasmPackage {
     Codegen,
     Solidity,
-    Testlang,
 }
 
 impl WasmPackage {
@@ -182,7 +181,6 @@ impl WasmPackage {
         match self {
             Self::Codegen => "codegen_runtime_cargo_wasm",
             Self::Solidity => "solidity_cargo_wasm",
-            Self::Testlang => "testlang_cargo_wasm",
         }
     }
 
@@ -190,14 +188,13 @@ impl WasmPackage {
         match self {
             Self::Codegen => "codegen_runtime_npm_package",
             Self::Solidity => "solidity_npm_package",
-            Self::Testlang => "testlang_npm_package",
         }
     }
 
     fn runtime_dir(self) -> &'static str {
         match self {
             Self::Codegen => "src/runtime",
-            Self::Solidity | Self::Testlang => "src/generated",
+            Self::Solidity => "src/generated",
         }
     }
 }

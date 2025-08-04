@@ -9,7 +9,6 @@ use infra_utils::cargo::CargoWorkspace;
 use infra_utils::codegen::CodegenFileSystem;
 use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
 use solidity_language::SolidityDefinition;
-use testlang_language::TestlangDefinition;
 
 use crate::passes::generate_passes;
 
@@ -63,30 +62,6 @@ fn main() {
                 "solidity_npm_package",
             )
         },
-        || {
-            generate_product(
-                &mut CodegenFileSystem::default(),
-                &TestlangDefinition::create(),
-                "codegen_runtime_cargo_crate",
-                "slang_testlang",
-            )
-        },
-        || {
-            generate_product(
-                &mut CodegenFileSystem::default(),
-                &TestlangDefinition::create(),
-                "codegen_runtime_cargo_wasm",
-                "testlang_cargo_wasm",
-            )
-        },
-        || {
-            generate_product(
-                &mut CodegenFileSystem::default(),
-                &TestlangDefinition::create(),
-                "codegen_runtime_npm_package",
-                "testlang_npm_package",
-            )
-        },
     ]
     .par_iter()
     .for_each(|op| op().unwrap());
@@ -105,16 +80,16 @@ fn generate_solidity_tests() -> Result<()> {
     let snapshots_crate = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?;
     let tests_crate = CargoWorkspace::locate_source_crate("solidity_cargo_tests")?;
 
-    lang_def.generate_version_breaks(&tests_crate.join("src/generated"))?;
+    lang_def.generate_version_breaks(&tests_crate.join("src/cst/generated"))?;
 
     lang_def.generate_bindings_output_tests(
         &snapshots_crate.join("bindings_output"),
-        &tests_crate.join("src/bindings_output/generated"),
+        &tests_crate.join("src/bindings/bindings_output/generated"),
     )?;
 
     lang_def.generate_cst_output_tests(
         &snapshots_crate.join("cst_output"),
-        &tests_crate.join("src/cst_output/generated"),
+        &tests_crate.join("src/cst/cst_output/generated"),
     )?;
 
     lang_def.generate_binder_tests(

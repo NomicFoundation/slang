@@ -10,9 +10,9 @@ use slang_solidity::backend::passes::p4_resolve_references::Output;
 use slang_solidity::compilation::{CompilationUnit, InternalCompilationBuilder};
 
 use super::renderer::binder_report;
-use crate::generated::VERSION_BREAKS;
-use crate::multi_part_file::{split_multi_file, MultiPart};
-use crate::resolver::TestsPathResolver;
+use crate::bindings::multi_part_file::{split_multi_file, MultiPart};
+use crate::compilation::resolver::TestsPathResolver;
+use crate::cst::generated::VERSION_BREAKS;
 
 pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
     let test_dir = CargoWorkspace::locate_source_crate("solidity_testing_snapshots")?
