@@ -2,7 +2,7 @@ import { Parser } from "@nomicfoundation/slang/parser";
 import { NonterminalKind, TerminalKind, assertNonterminalNode, assertTerminalNode } from "@nomicfoundation/slang/cst";
 import { LanguageFacts } from "@nomicfoundation/slang/utils";
 
-test("parse terminal", () => {
+test("parse nonterminal", () => {
   const parser = Parser.create(LanguageFacts.latestVersion());
   const source = "about_time";
 
@@ -15,7 +15,7 @@ test("parse terminal", () => {
   assertTerminalNode(children[0].node, TerminalKind.Identifier, "about_time");
 });
 
-test("parse nonterminal", () => {
+test("parse file contents", () => {
   const parser = Parser.create(LanguageFacts.latestVersion());
   const source = `contract A {}`;
 
