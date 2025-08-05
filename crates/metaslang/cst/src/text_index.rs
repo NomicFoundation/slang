@@ -6,23 +6,8 @@
 //! - The line number (`line`)
 //! - The column number (`column`)
 //!
-//! This structure is useful for mapping between different text representations and for
+//! This structure is used for mapping between different text representations and for
 //! reporting precise locations in source code (e.g., for diagnostics, highlighting, etc.).
-//!
-//! # Examples
-//! ```
-//! use crate::TextIndex;
-//!
-//! let mut idx = TextIndex::ZERO;
-//! idx.advance_str("hello\nworld");
-//! assert_eq!(idx.line, 1);
-//! assert_eq!(idx.column, 5);
-//! ```
-//!
-//! # Notes
-//! - The `advance` and `advance_str` methods update the index as you process characters or strings.
-//! - Line breaks are recognized as LF (`\n`), CR (`\r`), Line Separator (`\u{2028}`), or Paragraph Separator (`\u{2029}`).
-//! - Handles CRLF (`\r\n`) as a single line break.
 
 use std::fmt::Display;
 use std::ops::{Add, AddAssign, Range};
