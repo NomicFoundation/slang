@@ -1,5 +1,5 @@
 [workspace.package]
-version = "1.2.0"
+version = "1.2.1"
 rust-version = "1.87.0" # __RUST_STABLE_VERSION_MARKER__ (keep in sync)
 edition = "2021"
 publish = false
@@ -35,60 +35,46 @@ members = [
     "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/spec",
     "crates/solidity/testing/perf",
-    "crates/solidity/testing/sanctuary",
     "crates/solidity/testing/snapshots",
     "crates/solidity/testing/solc",
     "crates/solidity/testing/sourcify",
-
-    "crates/testlang/inputs/language",
-    "crates/testlang/outputs/cargo/crate",
-    "crates/testlang/outputs/cargo/tests",
-    "crates/testlang/outputs/cargo/wasm",
-    "crates/testlang/outputs/npm/package",
 ]
 
 [workspace.dependencies]
 #
 # Internal
 #
-codegen_ebnf = { path = "crates/codegen/ebnf", version = "1.2.0" }
-codegen_language_definition = { path = "crates/codegen/language/definition", version = "1.2.0" }
-codegen_language_internal_macros = { path = "crates/codegen/language/internal_macros", version = "1.2.0" }
-codegen_language_macros = { path = "crates/codegen/language/macros", version = "1.2.0" }
-codegen_language_tests = { path = "crates/codegen/language/tests", version = "1.2.0" }
-codegen_runner = { path = "crates/codegen/runner", version = "1.2.0" }
-codegen_runtime_cargo_crate = { path = "crates/codegen/runtime/cargo/crate", version = "1.2.0" }
-codegen_runtime_cargo_wasm = { path = "crates/codegen/runtime/cargo/wasm", version = "1.2.0" }
-codegen_runtime_generator = { path = "crates/codegen/runtime/generator", version = "1.2.0" }
-codegen_runtime_npm_package = { path = "crates/codegen/runtime/npm/package", version = "1.2.0" }
-codegen_spec = { path = "crates/codegen/spec", version = "1.2.0" }
-codegen_testing = { path = "crates/codegen/testing", version = "1.2.0" }
+codegen_ebnf = { path = "crates/codegen/ebnf", version = "1.2.1" }
+codegen_language_definition = { path = "crates/codegen/language/definition", version = "1.2.1" }
+codegen_language_internal_macros = { path = "crates/codegen/language/internal_macros", version = "1.2.1" }
+codegen_language_macros = { path = "crates/codegen/language/macros", version = "1.2.1" }
+codegen_language_tests = { path = "crates/codegen/language/tests", version = "1.2.1" }
+codegen_runner = { path = "crates/codegen/runner", version = "1.2.1" }
+codegen_runtime_cargo_crate = { path = "crates/codegen/runtime/cargo/crate", version = "1.2.1" }
+codegen_runtime_cargo_wasm = { path = "crates/codegen/runtime/cargo/wasm", version = "1.2.1" }
+codegen_runtime_generator = { path = "crates/codegen/runtime/generator", version = "1.2.1" }
+codegen_runtime_npm_package = { path = "crates/codegen/runtime/npm/package", version = "1.2.1" }
+codegen_spec = { path = "crates/codegen/spec", version = "1.2.1" }
+codegen_testing = { path = "crates/codegen/testing", version = "1.2.1" }
 
-infra_cli = { path = "crates/infra/cli", version = "1.2.0" }
-infra_utils = { path = "crates/infra/utils", version = "1.2.0" }
+infra_cli = { path = "crates/infra/cli", version = "1.2.1" }
+infra_utils = { path = "crates/infra/utils", version = "1.2.1" }
 
-metaslang_bindings = { path = "crates/metaslang/bindings", version = "1.2.0" }
-metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "1.2.0" }
-metaslang_cst = { path = "crates/metaslang/cst", version = "1.2.0" }
+metaslang_bindings = { path = "crates/metaslang/bindings", version = "1.2.1" }
+metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "1.2.1" }
+metaslang_cst = { path = "crates/metaslang/cst", version = "1.2.1" }
 
-slang_solidity = { path = "crates/solidity/outputs/cargo/crate", version = "1.2.0" }
-slang_solidity_cli = { path = "crates/solidity/outputs/cargo/cli", version = "1.2.0" }
-solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "1.2.0" }
-solidity_cargo_wasm = { path = "crates/solidity/outputs/cargo/wasm", version = "1.2.0" }
-solidity_language = { path = "crates/solidity/inputs/language", version = "1.2.0" }
-solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "1.2.0" }
-solidity_spec = { path = "crates/solidity/outputs/spec", version = "1.2.0" }
-solidity_testing_perf = { path = "crates/solidity/testing/perf", version = "1.2.0" }
-solidity_testing_sanctuary = { path = "crates/solidity/testing/sanctuary", version = "1.2.0" }
-solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "1.2.0" }
-solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "1.2.0" }
-solidity_testing_sourcify = { path = "crates/solidity/testing/sourcify", version = "1.2.0" }
-
-slang_testlang = { path = "crates/testlang/outputs/cargo/crate", version = "1.2.0" }
-testlang_cargo_tests = { path = "crates/testlang/outputs/cargo/tests", version = "1.2.0" }
-testlang_cargo_wasm = { path = "crates/testlang/outputs/cargo/wasm", version = "1.2.0" }
-testlang_language = { path = "crates/testlang/inputs/language", version = "1.2.0" }
-testlang_npm_package = { path = "crates/testlang/outputs/npm/package", version = "1.2.0" }
+slang_solidity = { path = "crates/solidity/outputs/cargo/crate", version = "1.2.1" }
+slang_solidity_cli = { path = "crates/solidity/outputs/cargo/cli", version = "1.2.1" }
+solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "1.2.1" }
+solidity_cargo_wasm = { path = "crates/solidity/outputs/cargo/wasm", version = "1.2.1" }
+solidity_language = { path = "crates/solidity/inputs/language", version = "1.2.1" }
+solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "1.2.1" }
+solidity_spec = { path = "crates/solidity/outputs/spec", version = "1.2.1" }
+solidity_testing_perf = { path = "crates/solidity/testing/perf", version = "1.2.1" }
+solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "1.2.1" }
+solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "1.2.1" }
+solidity_testing_sourcify = { path = "crates/solidity/testing/sourcify", version = "1.2.1" }
 
 #
 # External
@@ -187,6 +173,7 @@ must_use_candidate = { level = "allow", priority = 1 }                 # Overzea
 needless_continue = { level = "allow", priority = 1 }                  # The `continue` keyword serves to communicate intention, let's keep them
 needless_raw_string_hashes = { level = "allow", priority = 1 }         # It is easier to use hashes consistently on all tests/examples in a file
 redundant_closure_for_method_calls = { level = "allow", priority = 1 } # Not always clearer, let's not pepper `allow`s whenever needed
+unnecessary_debug_formatting = { level = "allow", priority = 1 }       # `Path::display()` doesn't produce the same output as the debug fmt
 # Nursery
 collection_is_never_read = "warn" # Lint against collections not used after creation
 equatable_if_let = "warn"         # Prefer regular `==` checks over Yoda `if let $pat = $value`

@@ -18,8 +18,7 @@ pub(crate) fn collect_snapshot_tests(
         if let Ok(generated_dir) = file.generated_dir() {
             assert!(
                 generated_dir.unwrap_parent().join("input.sol").exists(),
-                "Each snapshot should have a matching input.sol test file: {file}",
-                file = file.display()
+                "Each snapshot should have a matching input.sol test file: {file:?}",
             );
 
             // skip generated files

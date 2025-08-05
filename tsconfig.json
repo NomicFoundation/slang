@@ -8,8 +8,6 @@
     { "path": "./crates/codegen/runtime/npm/package/tsconfig.json" },
     { "path": "./crates/solidity/outputs/npm/package/tsconfig.json" },
     { "path": "./crates/solidity/outputs/npm/tests/tsconfig.json" },
-    { "path": "./crates/testlang/outputs/npm/package/tsconfig.json" },
-    { "path": "./crates/testlang/outputs/npm/tests/tsconfig.json" },
     { "path": "./documentation/public/assets/javascripts/tsconfig.json" },
     { "path": "./documentation/public/user-guide/tsconfig.json" }
   ],
@@ -45,6 +43,7 @@
     "useUnknownInCatchVariables": true,
 
     /* Modules */
+    "lib": ["DOM", "ESNext", "DOM.Iterable"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
 

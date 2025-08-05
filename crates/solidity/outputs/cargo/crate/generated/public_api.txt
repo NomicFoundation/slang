@@ -41,7 +41,6 @@ pub type slang_solidity::compilation::CompilationBuilderConfig::Error
 pub fn slang_solidity::compilation::CompilationBuilderConfig::read_file(&mut self, file_id: &str) -> core::result::Result<core::option::Option<alloc::string::String>, Self::Error>
 pub fn slang_solidity::compilation::CompilationBuilderConfig::resolve_import(&mut self, source_file_id: &str, import_path_cursor: &slang_solidity::cst::Cursor) -> core::result::Result<core::option::Option<alloc::string::String>, Self::Error>
 pub mod slang_solidity::cst
-pub use slang_solidity::cst::NodeId
 pub use slang_solidity::cst::QueryError
 pub use slang_solidity::cst::TerminalKindExtensions
 pub use slang_solidity::cst::TextRangeExtensions
@@ -822,6 +821,7 @@ pub type slang_solidity::cst::Cursor = metaslang_cst::cursor::Cursor<slang_solid
 pub type slang_solidity::cst::CursorIterator = metaslang_cst::cursor::CursorIterator<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Edge = metaslang_cst::nodes::Edge<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Node = metaslang_cst::nodes::Node<slang_solidity::cst::KindTypes>
+pub type slang_solidity::cst::NodeId = metaslang_cst::nodes::NodeId
 pub type slang_solidity::cst::NodeKind = metaslang_cst::kinds::NodeKind<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::NonterminalNode = metaslang_cst::nodes::NonterminalNode<slang_solidity::cst::KindTypes>
 pub type slang_solidity::cst::Query = metaslang_cst::query::model::Query<slang_solidity::cst::KindTypes>

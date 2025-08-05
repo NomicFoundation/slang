@@ -29,15 +29,14 @@ categories = [
 [features]
 default = []
 __private_ariadne_errors = ["dep:ariadne"]
-__private_backend_api = []
+__private_backend_api = ["dep:indexmap"]
 __private_wasm_apis = []
 __private_testing_utils = ["metaslang_bindings/__private_testing_utils"]
 
 [dependencies]
 ariadne = { workspace = true, optional = true }
-metaslang_bindings = { workspace = true, features = [
-  "__metaslang_graph_builder",
-] }
+indexmap = { workspace = true, optional = true }
+metaslang_bindings = { workspace = true }
 metaslang_cst = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }

@@ -58,4 +58,12 @@ impl File {
     pub(super) fn resolved_import(&self, import_path: &Cursor) -> Option<&String> {
         self.resolved_imports.get(&import_path.node().id())
     }
+
+    #[allow(dead_code)]
+    pub(crate) fn resolved_import_by_node_id(
+        &self,
+        import_path_node_id: NodeId,
+    ) -> Option<&String> {
+        self.resolved_imports.get(&import_path_node_id)
+    }
 }
