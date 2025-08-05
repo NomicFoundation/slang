@@ -12,7 +12,7 @@ Definitions (6):
 
 References (5):
 - Ref: ["Lib" @ input.sol:2:11] -> #4
-- Ref: ["balance" @ input.sol:5:23] -> unresolved
+- Ref: ["balance" @ input.sol:5:23] -> built-in
 - Ref: ["a" @ input.sol:6:17] -> #3
 - Ref: ["call" @ input.sol:6:20] -> built-in
 - Ref: ["noop" @ input.sol:7:18] -> #5
@@ -40,7 +40,7 @@ Bindings:
     │                           ╰── name: 3
   5 │         address(this).balance;
     │                       ───┬───  
-    │                          ╰───── unresolved
+    │                          ╰───── built-in
   6 │         payable(a).call("");
     │                 ┬  ──┬─  
     │                 ╰──────── ref: 3

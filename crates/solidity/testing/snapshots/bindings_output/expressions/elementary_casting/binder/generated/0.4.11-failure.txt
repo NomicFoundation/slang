@@ -12,7 +12,7 @@ Definitions (6):
 
 References (2):
 - Ref: ["Lib" @ input.sol:2:11] -> #4
-- Ref: ["balance" @ input.sol:5:23] -> unresolved
+- Ref: ["balance" @ input.sol:5:23] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ Bindings:
     │                           ╰── name: 3
   5 │         address(this).balance;
     │                       ───┬───  
-    │                          ╰───── unresolved
+    │                          ╰───── built-in
     │ 
  11 │ library Lib {
     │         ─┬─  

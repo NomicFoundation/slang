@@ -185,8 +185,21 @@ impl Pass {
                     // TODO(validation): for `this` resolutions we need to check
                     // that the returned definitions are externally available
                     // (ie. either `external` or `public`)
-                    self.binder
-                        .resolve_in_contract_scope(scope_id, symbol, options)
+                    let resolution = self
+                        .binder
+                        .resolve_in_contract_scope(scope_id, symbol, options);
+
+                    if self.language_version < VERSION_0_5_0 && resolution == Resolution::Unresolved
+                    {
+                        // In Solidity < 0.5.0, `this` can be used as an address
+                        let address_type = self.types.get_type_by_id(self.types.address());
+                        Resolution::from(
+                            self.built_ins_resolver()
+                                .lookup_member_of_type(address_type, symbol),
+                        )
+                    } else {
+                        resolution
+                    }
                 } else {
                     Resolution::Unresolved
                 }
@@ -547,6 +560,24 @@ impl Pass {
             }
         }
     }
+
+    fn collect_positional_arguments_typings(
+        &self,
+        arguments: &input_ir::ArgumentsDeclaration,
+    ) -> Option<Vec<Typing>> {
+        if let input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(arguments) = arguments
+        {
+            Some(
+                arguments
+                    .arguments
+                    .iter()
+                    .map(|argument| self.typing_of_expression(argument))
+                    .collect::<Vec<_>>(),
+            )
+        } else {
+            None
+        }
+    }
 }
 
 impl Visitor for Pass {
@@ -899,19 +930,7 @@ impl Visitor for Pass {
     fn leave_function_call_expression(&mut self, node: &input_ir::FunctionCallExpression) {
         let operand_typing = self.typing_of_expression(&node.operand);
         let positional_argument_typings =
-            if let input_ir::ArgumentsDeclaration::PositionalArgumentsDeclaration(arguments) =
-                &node.arguments
-            {
-                Some(
-                    arguments
-                        .arguments
-                        .iter()
-                        .map(|argument| self.typing_of_expression(argument))
-                        .collect::<Vec<_>>(),
-                )
-            } else {
-                None
-            };
+            self.collect_positional_arguments_typings(&node.arguments);
 
         let (typing, definition_id) = match operand_typing {
             Typing::Unresolved | Typing::This | Typing::Super => {
@@ -942,18 +961,27 @@ impl Visitor for Pass {
             Typing::MetaType(type_) => {
                 // TODO(validation): this is a cast to the given type, but we
                 // need to verify that the (single) argument is convertible
-                if let Some(type_id_of_first_argument) = positional_argument_typings
-                    .and_then(|arguments| arguments.first().cloned())
-                    .and_then(|typing| typing.as_type_id())
+                if let Some(typing_of_first_argument) =
+                    positional_argument_typings.and_then(|arguments| arguments.first().cloned())
                 {
-                    let data_location = self
-                        .types
-                        .get_type_by_id(type_id_of_first_argument)
-                        .data_location();
-                    let type_id = self
-                        .types
-                        .register_type(type_.with_data_location(data_location));
-                    (Typing::Resolved(type_id), None)
+                    match typing_of_first_argument {
+                        Typing::Resolved(type_id) => {
+                            let data_location = self.types.get_type_by_id(type_id).data_location();
+                            let type_id = self
+                                .types
+                                .register_type(type_.with_data_location(data_location));
+                            (Typing::Resolved(type_id), None)
+                        }
+                        Typing::This => {
+                            // special case: "this" can be cast to an address
+                            if let Type::Address { .. } = type_ {
+                                (Typing::Resolved(self.types.address()), None)
+                            } else {
+                                (Typing::Unresolved, None)
+                            }
+                        }
+                        _ => (Typing::Unresolved, None),
+                    }
                 } else {
                     (Typing::Unresolved, None)
                 }

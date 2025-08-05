@@ -7,7 +7,7 @@ Definitions (2):
 ------------------------------------------------------------------------
 
 References (1):
-- Ref: ["balance" @ input.sol:3:30] -> unresolved
+- Ref: ["balance" @ input.sol:3:30] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -26,5 +26,5 @@ Bindings:
    │                ╰─── name: 2
  3 │         return address(this).balance;
    │                              ───┬───  
-   │                                 ╰───── unresolved
+   │                                 ╰───── built-in
 ───╯
