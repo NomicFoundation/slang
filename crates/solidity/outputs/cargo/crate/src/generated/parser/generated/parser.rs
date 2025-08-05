@@ -9394,14 +9394,56 @@ impl Lexer for Parser {
                     longest_terminal.filter(|tok| [TerminalKind::Identifier].contains(tok))
                 {
                     let kw_scan = match input.next() {
-                        Some('a') => match input.next() {
-                            Some('b') => {
-                                if scan_chars!(input, 's', 't', 'r', 'a', 'c', 't') {
-                                    KeywordScan::Reserved(TerminalKind::AbstractKeyword)
+                        Some('A') => {
+                            if scan_chars!(
+                                input, 'B', 'I', 'E', 'n', 'c', 'o', 'd', 'e', 'r', 'V', '2'
+                            ) {
+                                if self.version_is_at_least_0_4_16 {
+                                    KeywordScan::Present(TerminalKind::AbiencoderV2Keyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
+                            } else {
+                                KeywordScan::Absent
                             }
+                        }
+                        Some('S') => {
+                            if scan_chars!(input, 'M', 'T', 'C', 'h', 'e', 'c', 'k', 'e', 'r') {
+                                if self.version_is_at_least_0_4_16 {
+                                    KeywordScan::Present(TerminalKind::SmtcheckerKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            } else {
+                                KeywordScan::Absent
+                            }
+                        }
+                        Some('a') => match input.next() {
+                            Some('b') => match input.next() {
+                                Some('i') => {
+                                    if scan_chars!(input, 'c', 'o', 'd', 'e', 'r') {
+                                        if self.version_is_at_least_0_7_5 {
+                                            KeywordScan::Present(TerminalKind::AbicoderKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('s') => {
+                                    if scan_chars!(input, 't', 'r', 'a', 'c', 't') {
+                                        KeywordScan::Reserved(TerminalKind::AbstractKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
+                                    KeywordScan::Absent
+                                }
+                                None => KeywordScan::Absent,
+                            },
                             Some('d') => {
                                 if scan_chars!(input, 'd', 'r', 'e', 's', 's') {
                                     KeywordScan::Present(TerminalKind::AddressKeyword)
@@ -9742,13 +9784,33 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
-                            Some('x') => {
-                                if scan_chars!(input, 't', 'e', 'r', 'n', 'a', 'l') {
-                                    KeywordScan::Reserved(TerminalKind::ExternalKeyword)
-                                } else {
+                            Some('x') => match input.next() {
+                                Some('p') => {
+                                    if scan_chars!(
+                                        input, 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
+                                    ) {
+                                        if self.version_is_at_least_0_4_16 {
+                                            KeywordScan::Present(TerminalKind::ExperimentalKeyword)
+                                        } else {
+                                            KeywordScan::Absent
+                                        }
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some('t') => {
+                                    if scan_chars!(input, 'e', 'r', 'n', 'a', 'l') {
+                                        KeywordScan::Reserved(TerminalKind::ExternalKeyword)
+                                    } else {
+                                        KeywordScan::Absent
+                                    }
+                                }
+                                Some(_) => {
+                                    input.undo();
                                     KeywordScan::Absent
                                 }
-                            }
+                                None => KeywordScan::Absent,
+                            },
                             Some(_) => {
                                 input.undo();
                                 KeywordScan::Absent
@@ -10355,6 +10417,13 @@ impl Lexer for Parser {
                                     KeywordScan::Absent
                                 }
                             }
+                            Some('o') => {
+                                if scan_chars!(input, 'l', 'i', 'd', 'i', 't', 'y') {
+                                    KeywordScan::Present(TerminalKind::SolidityKeyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
                             Some('t') => match input.next() {
                                 Some('a') => {
                                     if scan_chars!(input, 't', 'i', 'c') {
@@ -10579,6 +10648,20 @@ impl Lexer for Parser {
                             None => KeywordScan::Absent,
                         },
                         Some('v') => match input.next() {
+                            Some('1') => {
+                                if self.version_is_at_least_0_7_5 {
+                                    KeywordScan::Present(TerminalKind::Abicoderv1Keyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
+                            Some('2') => {
+                                if self.version_is_at_least_0_7_5 {
+                                    KeywordScan::Present(TerminalKind::Abicoderv2Keyword)
+                                } else {
+                                    KeywordScan::Absent
+                                }
+                            }
                             Some('a') => {
                                 if scan_chars!(input, 'r') {
                                     KeywordScan::Reserved(TerminalKind::VarKeyword)

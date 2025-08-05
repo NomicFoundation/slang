@@ -2,6 +2,30 @@
 
 # 1.6. Keywords
 
+```{ .ebnf #AbicoderKeyword }
+
+```
+
+<pre ebnf-snippet="AbicoderKeyword" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"abicoder"</span><span class="o">;</span></pre>
+
+```{ .ebnf #Abicoderv1Keyword }
+
+```
+
+<pre ebnf-snippet="Abicoderv1Keyword" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#Abicoderv1Keyword"><span class="k">ABICODERV_1_KEYWORD</span></a><span class="o"> = </span><span class="s2">"v1"</span><span class="o">;</span></pre>
+
+```{ .ebnf #Abicoderv2Keyword }
+
+```
+
+<pre ebnf-snippet="Abicoderv2Keyword" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#Abicoderv2Keyword"><span class="k">ABICODERV_2_KEYWORD</span></a><span class="o"> = </span><span class="s2">"v2"</span><span class="o">;</span></pre>
+
+```{ .ebnf #AbiencoderV2Keyword }
+
+```
+
+<pre ebnf-snippet="AbiencoderV2Keyword" style="display: none;"><span class="cm">(* Introduced in 0.4.16 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#AbiencoderV2Keyword"><span class="k">ABIENCODER_V2_KEYWORD</span></a><span class="o"> = </span><span class="s2">"ABIEncoderV2"</span><span class="o">;</span></pre>
+
 ```{ .ebnf #AbstractKeyword }
 
 ```
@@ -199,6 +223,12 @@
 ```
 
 <pre ebnf-snippet="EventKeyword" style="display: none;"><a href="#EventKeyword"><span class="k">EVENT_KEYWORD</span></a><span class="o"> = </span><span class="s2">"event"</span><span class="o">;</span></pre>
+
+```{ .ebnf #ExperimentalKeyword }
+
+```
+
+<pre ebnf-snippet="ExperimentalKeyword" style="display: none;"><span class="cm">(* Introduced in 0.4.16 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#ExperimentalKeyword"><span class="k">EXPERIMENTAL_KEYWORD</span></a><span class="o"> = </span><span class="s2">"experimental"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #ExternalKeyword }
 
@@ -523,6 +553,18 @@
 ```
 
 <pre ebnf-snippet="SizeOfKeyword" style="display: none;"><span class="cm">(* Reserved in 0.5.0 *)</span><br /><a href="#SizeOfKeyword"><span class="k">SIZE_OF_KEYWORD</span></a><span class="o"> = </span><span class="s2">"sizeof"</span><span class="o">;</span></pre>
+
+```{ .ebnf #SmtcheckerKeyword }
+
+```
+
+<pre ebnf-snippet="SmtcheckerKeyword" style="display: none;"><span class="cm">(* Introduced in 0.4.16 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#SmtcheckerKeyword"><span class="k">SMTCHECKER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"SMTChecker"</span><span class="o">;</span></pre>
+
+```{ .ebnf #SolidityKeyword }
+
+```
+
+<pre ebnf-snippet="SolidityKeyword" style="display: none;"><span class="cm">(* Never reserved *)</span><br /><a href="#SolidityKeyword"><span class="k">SOLIDITY_KEYWORD</span></a><span class="o"> = </span><span class="s2">"solidity"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #StaticKeyword }
 

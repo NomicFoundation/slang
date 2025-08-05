@@ -237,68 +237,6 @@ codegen_language_macros::compile!(Language(
                                 Atom("X"),
                                 Atom("*")
                             ]))
-                        ),
-                        Keyword(
-                            name = AbicoderKeyword,
-                            identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.7.5"),
-                                reserved = Never,
-                                value = Atom("abicoder")
-                            )]
-                        ),
-                        Keyword(
-                            name = Abicoderv1Keyword,
-                            identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.7.5"),
-                                reserved = Never,
-                                value = Atom("v1")
-                            )]
-                        ),
-                        Keyword(
-                            name = Abicoderv2Keyword,
-                            identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.7.5"),
-                                reserved = Never,
-                                value = Atom("v2")
-                            )]
-                        ),
-                        Keyword(
-                            name = AbiencoderV2Keyword,
-                            identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.4.16"),
-                                reserved = Never,
-                                value = Atom("ABIEncoderV2")
-                            )]
-                        ),
-                        Keyword(
-                            name = ExperimentalKeyword,
-                            identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.4.16"),
-                                reserved = Never,
-                                value = Atom("experimental")
-                            )]
-                        ),
-                        Keyword(
-                            name = SolidityKeyword,
-                            identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                reserved = Never,
-                                value = Atom("solidity")
-                            )]
-                        ),
-                        Keyword(
-                            name = SmtcheckerKeyword,
-                            identifier = Identifier,
-                            definitions = [KeywordDefinition(
-                                enabled = From("0.4.16"),
-                                reserved = Never,
-                                value = Atom("SMTChecker")
-                            )]
                         )
                     ]
                 ),
@@ -523,6 +461,42 @@ codegen_language_macros::compile!(Language(
                 Topic(
                     title = "Keywords",
                     items = [
+                        Keyword(
+                            name = AbicoderKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.7.5"),
+                                reserved = Never,
+                                value = Atom("abicoder")
+                            )]
+                        ),
+                        Keyword(
+                            name = Abicoderv1Keyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.7.5"),
+                                reserved = Never,
+                                value = Atom("v1")
+                            )]
+                        ),
+                        Keyword(
+                            name = Abicoderv2Keyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.7.5"),
+                                reserved = Never,
+                                value = Atom("v2")
+                            )]
+                        ),
+                        Keyword(
+                            name = AbiencoderV2Keyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.16"),
+                                reserved = Never,
+                                value = Atom("ABIEncoderV2")
+                            )]
+                        ),
                         Keyword(
                             name = AbstractKeyword,
                             identifier = Identifier,
@@ -778,6 +752,15 @@ codegen_language_macros::compile!(Language(
                             name = EventKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(value = Atom("event"))]
+                        ),
+                        Keyword(
+                            name = ExperimentalKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.16"),
+                                reserved = Never,
+                                value = Atom("experimental")
+                            )]
                         ),
                         Keyword(
                             name = ExternalKeyword,
@@ -1435,6 +1418,23 @@ codegen_language_macros::compile!(Language(
                                 enabled = Never,
                                 reserved = From("0.5.0"),
                                 value = Atom("sizeof")
+                            )]
+                        ),
+                        Keyword(
+                            name = SmtcheckerKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                enabled = From("0.4.16"),
+                                reserved = Never,
+                                value = Atom("SMTChecker")
+                            )]
+                        ),
+                        Keyword(
+                            name = SolidityKeyword,
+                            identifier = Identifier,
+                            definitions = [KeywordDefinition(
+                                reserved = Never,
+                                value = Atom("solidity")
                             )]
                         ),
                         Keyword(

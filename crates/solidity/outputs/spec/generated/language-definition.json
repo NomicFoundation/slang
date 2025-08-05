@@ -406,105 +406,6 @@
                   }
                 }
               }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "AbicoderKeyword",
-                  "identifier": "Identifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.7.5" } },
-                      "reserved": "Never",
-                      "value": { "Atom": { "atom": "abicoder" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "Abicoderv1Keyword",
-                  "identifier": "Identifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.7.5" } },
-                      "reserved": "Never",
-                      "value": { "Atom": { "atom": "v1" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "Abicoderv2Keyword",
-                  "identifier": "Identifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.7.5" } },
-                      "reserved": "Never",
-                      "value": { "Atom": { "atom": "v2" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "AbiencoderV2Keyword",
-                  "identifier": "Identifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.4.16" } },
-                      "reserved": "Never",
-                      "value": { "Atom": { "atom": "ABIEncoderV2" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "ExperimentalKeyword",
-                  "identifier": "Identifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.4.16" } },
-                      "reserved": "Never",
-                      "value": { "Atom": { "atom": "experimental" } }
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "SolidityKeyword",
-                  "identifier": "Identifier",
-                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "solidity" } } }]
-                }
-              }
-            },
-            {
-              "Keyword": {
-                "item": {
-                  "name": "SmtcheckerKeyword",
-                  "identifier": "Identifier",
-                  "definitions": [
-                    {
-                      "enabled": { "From": { "from": "0.4.16" } },
-                      "reserved": "Never",
-                      "value": { "Atom": { "atom": "SMTChecker" } }
-                    }
-                  ]
-                }
-              }
             }
           ]
         },
@@ -882,6 +783,66 @@
         {
           "title": "Keywords",
           "items": [
+            {
+              "Keyword": {
+                "item": {
+                  "name": "AbicoderKeyword",
+                  "identifier": "Identifier",
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.7.5" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "abicoder" } }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
+                  "name": "Abicoderv1Keyword",
+                  "identifier": "Identifier",
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.7.5" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "v1" } }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
+                  "name": "Abicoderv2Keyword",
+                  "identifier": "Identifier",
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.7.5" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "v2" } }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
+                  "name": "AbiencoderV2Keyword",
+                  "identifier": "Identifier",
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.4.16" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "ABIEncoderV2" } }
+                    }
+                  ]
+                }
+              }
+            },
             {
               "Keyword": {
                 "item": {
@@ -1294,6 +1255,21 @@
                   "name": "EventKeyword",
                   "identifier": "Identifier",
                   "definitions": [{ "value": { "Atom": { "atom": "event" } } }]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
+                  "name": "ExperimentalKeyword",
+                  "identifier": "Identifier",
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.4.16" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "experimental" } }
+                    }
+                  ]
                 }
               }
             },
@@ -2241,6 +2217,30 @@
                       "value": { "Atom": { "atom": "sizeof" } }
                     }
                   ]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
+                  "name": "SmtcheckerKeyword",
+                  "identifier": "Identifier",
+                  "definitions": [
+                    {
+                      "enabled": { "From": { "from": "0.4.16" } },
+                      "reserved": "Never",
+                      "value": { "Atom": { "atom": "SMTChecker" } }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "Keyword": {
+                "item": {
+                  "name": "SolidityKeyword",
+                  "identifier": "Identifier",
+                  "definitions": [{ "reserved": "Never", "value": { "Atom": { "atom": "solidity" } } }]
                 }
               }
             },

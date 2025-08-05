@@ -90,33 +90,6 @@ DOUBLE_QUOTED_VERSION_LITERAL = '"' «VERSION_SPECIFIER_FRAGMENT» ("." «VERSIO
 
 «VERSION_SPECIFIER_FRAGMENT» = ("0"…"9" | "x" | "X" | "*")+;
 
-(* Introduced in 0.7.5 *)
-(* Never reserved *)
-ABICODER_KEYWORD = "abicoder";
-
-(* Introduced in 0.7.5 *)
-(* Never reserved *)
-ABICODERV_1_KEYWORD = "v1";
-
-(* Introduced in 0.7.5 *)
-(* Never reserved *)
-ABICODERV_2_KEYWORD = "v2";
-
-(* Introduced in 0.4.16 *)
-(* Never reserved *)
-ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
-
-(* Introduced in 0.4.16 *)
-(* Never reserved *)
-EXPERIMENTAL_KEYWORD = "experimental";
-
-(* Never reserved *)
-SOLIDITY_KEYWORD = "solidity";
-
-(* Introduced in 0.4.16 *)
-(* Never reserved *)
-SMTCHECKER_KEYWORD = "SMTChecker";
-
 (* 1.3. Import Directives: *)
 
 ImportDirective = (* import_keyword: *) IMPORT_KEYWORD
@@ -213,6 +186,22 @@ MULTI_LINE_NAT_SPEC_COMMENT = "/**" (?!"/") (!"*" | ("*" (?!"/")))* "*/";
 
 (* 1.6. Keywords: *)
 
+(* Introduced in 0.7.5 *)
+(* Never reserved *)
+ABICODER_KEYWORD = "abicoder";
+
+(* Introduced in 0.7.5 *)
+(* Never reserved *)
+ABICODERV_1_KEYWORD = "v1";
+
+(* Introduced in 0.7.5 *)
+(* Never reserved *)
+ABICODERV_2_KEYWORD = "v2";
+
+(* Introduced in 0.4.16 *)
+(* Never reserved *)
+ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
+
 (* Introduced in 0.6.0 *)
 ABSTRACT_KEYWORD = "abstract";
 
@@ -297,6 +286,10 @@ ERROR_KEYWORD = "error";
 ETHER_KEYWORD = "ether";
 
 EVENT_KEYWORD = "event";
+
+(* Introduced in 0.4.16 *)
+(* Never reserved *)
+EXPERIMENTAL_KEYWORD = "experimental";
 
 EXTERNAL_KEYWORD = "external";
 
@@ -441,6 +434,13 @@ SECONDS_KEYWORD = "seconds";
 
 (* Reserved in 0.5.0 *)
 SIZE_OF_KEYWORD = "sizeof";
+
+(* Introduced in 0.4.16 *)
+(* Never reserved *)
+SMTCHECKER_KEYWORD = "SMTChecker";
+
+(* Never reserved *)
+SOLIDITY_KEYWORD = "solidity";
 
 STATIC_KEYWORD = "static";
 
