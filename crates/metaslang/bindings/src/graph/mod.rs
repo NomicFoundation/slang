@@ -18,6 +18,7 @@ use resolver::Resolver;
 
 use crate::builder::{ExtendedStackGraph, FileDescriptor, GraphHandle};
 
+/// Represents the binding graph for Slang.
 pub struct BindingGraph<KT: KindTypes + 'static> {
     graph: ExtendedStackGraph<KT>,
     resolver: Rc<RefCell<Resolver>>,
@@ -86,6 +87,7 @@ impl<KT: KindTypes + 'static> BindingGraph<KT> {
 }
 
 #[cfg(feature = "__private_testing_utils")]
+#[allow(missing_docs)]
 impl<KT: KindTypes + 'static> BindingGraph<KT> {
     pub fn all_definitions(self: &Rc<Self>) -> impl Iterator<Item = Definition<KT>> + '_ {
         self.graph.iter_definitions().map(|handle| Definition {

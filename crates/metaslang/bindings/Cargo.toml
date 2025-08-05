@@ -31,6 +31,7 @@ thiserror = { workspace = true }
 [features]
 default = []
 __private_testing_utils = []
+__metaslang_graph_builder = []
 
 [lints]
 workspace = true

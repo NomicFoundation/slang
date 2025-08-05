@@ -11,6 +11,7 @@ use crate::kinds::{KindTypes, NodeKind, TerminalKindExtensions};
 use crate::query::CaptureQuantifier;
 
 impl<T: KindTypes + 'static> Cursor<T> {
+    /// Returns an iterator over all matches of the given queries in the syntax tree.
     pub fn query(self, queries: Vec<Query<T>>) -> QueryMatchIterator<T> {
         QueryMatchIterator::new(self, queries)
     }
@@ -144,10 +145,13 @@ impl<T: KindTypes + 'static> ASTNode<T> {
 
 /// Represents a match found by executing queries on a cursor.
 pub struct QueryMatch<T: KindTypes> {
+    /// The queries that were matched.
     pub queries: Rc<Vec<Query<T>>>,
+    /// The index of the matched query within the list of queries.
     pub query_index: usize,
+    /// The cursor that was used to find the match.
     pub root_cursor: Cursor<T>,
-    // These correspond to the capture definitions in the query
+    /// The capture definitions in the query
     pub captures: BTreeMap<String, Vec<Cursor<T>>>,
 }
 

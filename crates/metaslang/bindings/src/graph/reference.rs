@@ -9,6 +9,7 @@ use super::{BindingGraph, BindingLocation, Definition};
 use crate::builder::{FileDescriptor, GraphHandle};
 use crate::graph::DisplayCursor;
 
+/// Represents a reference to a node in the binding graph.
 #[derive(Clone)]
 pub struct Reference<KT: KindTypes + 'static> {
     pub(crate) owner: Rc<BindingGraph<KT>>,
@@ -57,6 +58,7 @@ impl<KT: KindTypes + 'static> Reference<KT> {
 }
 
 #[cfg(feature = "__private_testing_utils")]
+#[allow(missing_docs)]
 impl<KT: KindTypes + 'static> Reference<KT> {
     pub fn get_cursor(&self) -> &Cursor<KT> {
         self.internal_get_cursor()

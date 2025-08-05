@@ -26,7 +26,9 @@ use crate::text_index::{TextIndex, TextRange};
 /// Error from parsing a query.
 #[derive(Clone, Debug, Error)]
 pub struct QueryError {
+    /// The error message describing the parsing issue.
     pub message: String,
+    /// The range of text where the error occurred.
     pub text_range: TextRange,
 }
 
@@ -299,11 +301,16 @@ fn parse_node_selector<T: KindTypes>(
     .parse(input)
 }
 
+/// Represents a quantifier for captures in queries.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum CaptureQuantifier {
+    /// Matches exactly one occurrence.
     One, // allows quantification to generalise to 'unquantified'
+    /// Matches zero or one occurrence.
     ZeroOrOne,
+    /// Matches zero or more occurrences.
     ZeroOrMore,
+    /// Matches one or more occurrences.
     OneOrMore,
 }
 

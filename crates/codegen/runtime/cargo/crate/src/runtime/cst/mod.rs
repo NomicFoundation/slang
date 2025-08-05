@@ -39,14 +39,14 @@ impl metaslang_cst::kinds::KindTypes for KindTypes {
     type EdgeLabel = EdgeLabel;
 }
 
-/// The super type of terminal and non-terminal kinds.
+/// The super type of terminal and nonterminal kinds.
 pub type NodeKind = metaslang_cst::kinds::NodeKind<KindTypes>;
 
 pub use metaslang_cst::nodes::NodeId;
 
 /// The super type of all nodes in a tree.
 pub type Node = metaslang_cst::nodes::Node<KindTypes>;
-/// Represents a non-terminal node in the syntax tree.
+/// Represents a nonterminal node in the syntax tree.
 /// These nodes can have child nodes and represent language constructs.
 pub type NonterminalNode = metaslang_cst::nodes::NonterminalNode<KindTypes>;
 /// Represents a terminal node in the syntax tree.

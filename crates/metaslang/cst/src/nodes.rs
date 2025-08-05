@@ -1,3 +1,5 @@
+//! Nodes of the CST.
+
 use std::rc::Rc;
 
 use serde::Serialize;
@@ -29,20 +31,25 @@ impl TryFrom<NodeId> for u32 {
 /// These are leaf nodes that represent actual tokens from the source code.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct TerminalNode<T: KindTypes> {
+    /// The kind of the node.
     pub kind: T::TerminalKind,
+    /// The actual text of the terminal.
     pub text: String,
 }
 
-/// Represents a non-terminal node in the syntax tree.
+/// Represents a nonterminal node in the syntax tree.
 /// These nodes can have child nodes and represent language constructs.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct NonterminalNode<T: KindTypes> {
+    /// The kind of the node.
     pub kind: T::NonterminalKind,
 
+    /// The length of the text as a `TextIndex`.
     // skip serde since this doesn't exist on `TerminalNode`. We can add to both in the future if found useful.
     #[serde(skip)]
     pub text_len: TextIndex,
 
+    /// The edges attached to this nonterminal.
     pub children: Vec<Edge<T>>,
 }
 
@@ -50,14 +57,18 @@ pub struct NonterminalNode<T: KindTypes> {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[serde(untagged)]
 pub enum Node<T: KindTypes> {
+    /// The node is a nonterminal.
     Nonterminal(Rc<NonterminalNode<T>>),
+    /// The node is a terminal.
     Terminal(Rc<TerminalNode<T>>),
 }
 
 /// Represents a connection between nodes in the syntax tree.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct Edge<T: KindTypes> {
+    /// The edge label, which can be thought of as the field where this node is connected to its parent.
     pub label: T::EdgeLabel,
+    /// The actual node.
     pub node: Node<T>,
 }
 
@@ -70,6 +81,7 @@ impl<T: KindTypes> Edge<T> {
         }
     }
 
+    /// Returns if the edge is the root node.
     pub fn has_default_label(&self) -> bool {
         self.label == T::EdgeLabel::default()
     }
@@ -84,10 +96,12 @@ impl<T: KindTypes> std::ops::Deref for Edge<T> {
 }
 
 impl<T: KindTypes> Node<T> {
+    /// Creates a nonterminal node.
     pub fn nonterminal(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Self {
         Self::Nonterminal(NonterminalNode::create(kind, children))
     }
 
+    /// Creates a terminal node.
     pub fn terminal(kind: T::TerminalKind, text: String) -> Self {
         Self::Terminal(TerminalNode::create(kind, text))
     }
@@ -101,6 +115,7 @@ impl<T: KindTypes> Node<T> {
         }
     }
 
+    /// The kind of the node.
     pub fn kind(&self) -> NodeKind<T> {
         match self {
             Self::Nonterminal(node) => NodeKind::Nonterminal(node.kind),
@@ -108,6 +123,7 @@ impl<T: KindTypes> Node<T> {
         }
     }
 
+    /// The length of the node, as a `TextIndex`.
     pub fn text_len(&self) -> TextIndex {
         match self {
             Self::Nonterminal(node) => node.text_len,
@@ -141,6 +157,7 @@ impl<T: KindTypes> Node<T> {
         }
     }
 
+    /// Converts the node into a `NonterminalNode`, if possible.
     pub fn into_nonterminal(self) -> Option<Rc<NonterminalNode<T>>> {
         match self {
             Self::Nonterminal(nonterminal) => Some(nonterminal),
@@ -148,10 +165,12 @@ impl<T: KindTypes> Node<T> {
         }
     }
 
+    /// Returns if the node is a nonterminal.
     pub fn is_nonterminal(&self) -> bool {
         self.as_nonterminal().is_some()
     }
 
+    /// Converts the node into a `NonterminalNode`, if possible.
     pub fn as_nonterminal(&self) -> Option<&Rc<NonterminalNode<T>>> {
         match self {
             Self::Nonterminal(nonterminal) => Some(nonterminal),
@@ -159,10 +178,13 @@ impl<T: KindTypes> Node<T> {
         }
     }
 
+    /// Returns if this node is a nonterminal with the given nonterminal kind.
     pub fn is_nonterminal_with_kind(&self, kind: T::NonterminalKind) -> bool {
         self.as_nonterminal_with_kind(kind).is_some()
     }
 
+    /// Returns the `NonterminalNode` with the specific `kind`, or `None` if it is not a nonterminal or it doesn't have
+    /// the specific kind.
     pub fn as_nonterminal_with_kind(
         &self,
         kind: T::NonterminalKind,
@@ -170,10 +192,13 @@ impl<T: KindTypes> Node<T> {
         self.as_nonterminal().filter(|node| node.kind == kind)
     }
 
+    /// Returns if this node is a nonterminal with the given nonterminal kinds.
     pub fn is_nonterminal_with_kinds(&self, kinds: &[T::NonterminalKind]) -> bool {
         self.as_nonterminal_with_kinds(kinds).is_some()
     }
 
+    /// Returns the `NonterminalNode` with the specific `kinds`, or `None` if it is not a nonterminal or it doesn't
+    /// have any of the specific kinds.
     pub fn as_nonterminal_with_kinds(
         &self,
         kinds: &[T::NonterminalKind],
@@ -182,6 +207,7 @@ impl<T: KindTypes> Node<T> {
             .filter(|nonterminal| kinds.contains(&nonterminal.kind))
     }
 
+    /// Returns the node as a `TerminalNode`, if it's a terminal node.
     pub fn into_terminal(self) -> Option<Rc<TerminalNode<T>>> {
         match self {
             Self::Terminal(terminal) => Some(terminal),
@@ -189,10 +215,12 @@ impl<T: KindTypes> Node<T> {
         }
     }
 
+    /// Returns if the node is a terminal node.
     pub fn is_terminal(&self) -> bool {
         self.as_terminal().is_some()
     }
 
+    /// Returns the node as a `TerminalNode`, if it's a terminal node.
     pub fn as_terminal(&self) -> Option<&Rc<TerminalNode<T>>> {
         match self {
             Self::Terminal(terminal) => Some(terminal),
@@ -200,18 +228,24 @@ impl<T: KindTypes> Node<T> {
         }
     }
 
+    /// Returns if this node is a terminal node with the given terminal kind.
     pub fn is_terminal_with_kind(&self, kind: T::TerminalKind) -> bool {
         self.as_terminal_with_kind(kind).is_some()
     }
 
+    /// Returns the `TerminalNode` with the specific `kind`, or `None` if it is a nonterminal node or it doesn't
+    /// have the specific kind.
     pub fn as_terminal_with_kind(&self, kind: T::TerminalKind) -> Option<&Rc<TerminalNode<T>>> {
         self.as_terminal().filter(|terminal| terminal.kind == kind)
     }
 
+    /// Returns if this node is a terminal node with the given terminal kinds.
     pub fn is_terminal_with_kinds(&self, kinds: &[T::TerminalKind]) -> bool {
         self.as_terminal_with_kinds(kinds).is_some()
     }
 
+    /// Returns the `TerminalNode` with the specific `kinds`, or `None` if it is a nonterminal node or it doesn't
+    /// have any of the specific kinds.
     pub fn as_terminal_with_kinds(
         &self,
         kinds: &[T::TerminalKind],
@@ -220,6 +254,7 @@ impl<T: KindTypes> Node<T> {
             .filter(|terminal| kinds.contains(&terminal.kind))
     }
 
+    /// Returns if this node is a terminal node with the trivia kind.
     pub fn is_trivia(&self) -> bool {
         match self {
             Self::Nonterminal(_) => false,
@@ -227,6 +262,8 @@ impl<T: KindTypes> Node<T> {
         }
     }
 
+    /// Returns true if this node is a nonterminal, or if it's a temrinal with a valid kind (that is, any valid token of
+    /// the language).
     pub fn is_valid(&self) -> bool {
         match self {
             Self::Nonterminal(_) => true,
@@ -248,6 +285,7 @@ impl<T: KindTypes> From<Rc<TerminalNode<T>>> for Node<T> {
 }
 
 impl<T: KindTypes> NonterminalNode<T> {
+    /// Creates a `NonterminalNode` with the given `kind` and `children`.
     pub fn create(kind: T::NonterminalKind, children: Vec<Edge<T>>) -> Rc<Self> {
         let text_len = children.iter().map(|edge| edge.text_len()).sum();
 
@@ -297,6 +335,7 @@ impl<T: KindTypes> NonterminalNode<T> {
 }
 
 impl<T: KindTypes> TerminalNode<T> {
+    /// Creates a `TerminalNode` with the given `kind` and `text`.
     pub fn create(kind: T::TerminalKind, text: String) -> Rc<Self> {
         Rc::new(Self { kind, text })
     }

@@ -35,7 +35,9 @@ __private_testing_utils = ["metaslang_bindings/__private_testing_utils"]
 
 [dependencies]
 ariadne = { workspace = true, optional = true }
-metaslang_bindings = { workspace = true }
+metaslang_bindings = { workspace = true, features = [
+  "__metaslang_graph_builder",
+] }
 metaslang_cst = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }

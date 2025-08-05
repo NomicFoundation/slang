@@ -1,5 +1,10 @@
+//! The base types for every node in the CST.
+
+/// Convertion methods from kinds to/from `str`.
 pub trait BaseKind: Sized + std::fmt::Debug + Copy + PartialEq + Eq + serde::Serialize {
+    /// Returns the `&str` representation of `self`.
     fn as_static_str(&self) -> &'static str;
+    /// Returns a `Self` given the `str`.
     fn try_from_str(str: &str) -> Result<Self, String>;
 }
 
@@ -46,16 +51,23 @@ pub trait TerminalKindExtensions: BaseKind {
     }
 }
 
+/// Extensions for `Nonterminal`.
 pub trait NonterminalKindExtensions: BaseKind {}
 
+/// Extensions for `EdgeLabel`.
 pub trait EdgeLabelExtensions: BaseKind + Default {}
 
+/// The base type of all nonterminals, terminals, and edges.
 pub trait KindTypes: std::fmt::Debug + Clone + PartialEq {
+    #[allow(missing_docs)]
     type NonterminalKind: NonterminalKindExtensions;
+    #[allow(missing_docs)]
     type TerminalKind: TerminalKindExtensions;
+    #[allow(missing_docs)]
     type EdgeLabel: EdgeLabelExtensions;
 }
 
+/// The kinds for nodes.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum NodeKind<T: KindTypes> {
     /// Represents different kinds of nonterminal nodes in the syntax tree.

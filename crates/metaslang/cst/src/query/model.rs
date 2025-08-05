@@ -17,7 +17,9 @@ use crate::text_index::TextIndex;
 /// for detailed information about the query syntax and how to use queries to find matches.
 #[derive(Clone, Debug)]
 pub struct Query<T: KindTypes> {
+    /// The abstract syntax tree (AST) representation of the query.
     pub ast_node: ASTNode<T>,
+    /// A map of capture names to their quantifiers, used to define how many times a capture can occur.
     pub capture_quantifiers: BTreeMap<String, CaptureQuantifier>,
 }
 
