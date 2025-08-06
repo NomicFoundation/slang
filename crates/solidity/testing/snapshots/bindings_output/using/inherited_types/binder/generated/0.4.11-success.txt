@@ -8,7 +8,7 @@ Definitions (10):
 - Def: #5 ["nop" @ input.sol:7:14] (function, type: function (uint256) returns void)
 - Def: #6 ["x" @ input.sol:7:26] (parameter, type: uint256)
 - Def: #7 ["Test" @ input.sol:9:10] (contract)
-- Def: #8 ["infos" @ input.sol:10:30] (state var, type: unresolved)
+- Def: #8 ["infos" @ input.sol:10:30] (state var, type: uint256 => Info storage)
 - Def: #9 ["test" @ input.sol:12:14] (function, type: function (uint256) returns void)
 - Def: #10 ["x" @ input.sol:12:27] (parameter, type: uint256)
 
@@ -16,12 +16,12 @@ Definitions (10):
 
 References (7):
 - Ref: ["IPool" @ input.sol:9:18] -> #1
-- Ref: ["Info" @ input.sol:10:24] -> unresolved
+- Ref: ["Info" @ input.sol:10:24] -> #2
 - Ref: ["Math" @ input.sol:11:11] -> #4
 - Ref: ["infos" @ input.sol:13:9] -> #8
 - Ref: ["x" @ input.sol:13:15] -> #10
-- Ref: ["amount" @ input.sol:13:18] -> unresolved
-- Ref: ["nop" @ input.sol:13:25] -> unresolved
+- Ref: ["amount" @ input.sol:13:18] -> #3
+- Ref: ["nop" @ input.sol:13:25] -> #5
 
 ------------------------------------------------------------------------
 
@@ -58,7 +58,7 @@ Bindings:
     │                    ╰──── ref: 1
  10 │     mapping(uint256 => Info) infos;
     │                        ──┬─  ──┬──  
-    │                          ╰────────── unresolved
+    │                          ╰────────── ref: 2
     │                                │    
     │                                ╰──── name: 8
  11 │     using Math for uint256;
@@ -75,7 +75,7 @@ Bindings:
     │               │     │    │   
     │               ╰────────────── ref: 10
     │                     │    │   
-    │                     ╰──────── unresolved
+    │                     ╰──────── ref: 3
     │                          │   
-    │                          ╰─── unresolved
+    │                          ╰─── ref: 5
 ────╯

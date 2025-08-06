@@ -12,7 +12,7 @@ Definitions (12):
 - Def: #9 ["test" @ input.sol:11:14] (function, type: function (address) returns uint256)
 - Def: #10 ["_counter" @ input.sol:11:27] (parameter, type: address)
 - Def: #11 ["m" @ input.sol:12:24] (variable, type: MutableCounter)
-- Def: #12 ["t" @ input.sol:13:29] (variable, type: unresolved)
+- Def: #12 ["t" @ input.sol:13:29] (variable, type: Type)
 
 ------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ References (10):
 - Ref: ["MutableCounter" @ input.sol:12:28] -> #6
 - Ref: ["_counter" @ input.sol:12:43] -> #10
 - Ref: ["MutableCounter" @ input.sol:13:9] -> #6
-- Ref: ["Type" @ input.sol:13:24] -> unresolved
+- Ref: ["Type" @ input.sol:13:24] -> #2
 - Ref: ["m" @ input.sol:14:9] -> #11
 - Ref: ["increment" @ input.sol:14:11] -> #7
 - Ref: ["m" @ input.sol:15:16] -> #11
@@ -81,7 +81,7 @@ Bindings:
     │         ───────┬────── ──┬─ ┬  
     │                ╰─────────────── ref: 6
     │                          │  │  
-    │                          ╰───── unresolved
+    │                          ╰───── ref: 2
     │                             │  
     │                             ╰── name: 12
  14 │         m.increment();
