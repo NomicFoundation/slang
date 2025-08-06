@@ -33,7 +33,7 @@ References (21):
 - Ref: ["g" @ input.sol:11:21] -> #10
 - Ref: ["mul" @ input.sol:11:25] -> built-in
 - Ref: ["f" @ input.sol:11:29] -> #9
-- Ref: ["outer2" @ input.sol:11:32] -> unresolved
+- Ref: ["outer2" @ input.sol:11:32] -> #11
 - Ref: ["f" @ input.sol:11:39] -> #9
 - Ref: ["d" @ input.sol:16:17] -> #13
 - Ref: ["mul" @ input.sol:16:22] -> built-in
@@ -106,7 +106,7 @@ Bindings:
     │                             │     │   │  
     │                             ╰──────────── ref: 9
     │                                   │   │  
-    │                                   ╰────── unresolved
+    │                                   ╰────── ref: 11
     │                                       │  
     │                                       ╰── ref: 9
     │ 

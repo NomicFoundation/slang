@@ -97,17 +97,6 @@ impl Pass {
         file_scope
     }
 
-    fn current_non_yul_scope_id(&self) -> ScopeId {
-        // look for the first non-yul scope in the stack
-        for scope_id in self.scope_stack.iter().rev() {
-            match self.binder.get_scope_by_id(*scope_id) {
-                Scope::YulBlock(_) | Scope::YulFunction(_) => continue,
-                _ => return *scope_id,
-            }
-        }
-        unreachable!("cannot find a non Yul scope in the current scope stack");
-    }
-
     fn insert_definition_in_current_scope(&mut self, definition: Definition) {
         self.binder
             .insert_definition_in_scope(definition, self.current_scope_id());
@@ -650,8 +639,7 @@ impl Visitor for Pass {
         let definition = Definition::new_yul_function(node.node_id, &node.name);
         self.insert_definition_in_current_scope(definition);
 
-        let enclosing_scope_id = self.current_non_yul_scope_id();
-        let scope = Scope::new_yul_function(node.node_id, enclosing_scope_id);
+        let scope = Scope::new_yul_function(node.node_id, self.current_scope_id());
         let scope_id = self.enter_scope(scope);
 
         for parameter in &node.parameters.parameters {
