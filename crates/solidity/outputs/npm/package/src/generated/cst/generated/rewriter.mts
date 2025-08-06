@@ -1,13 +1,14 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-import { NonterminalKind, NonterminalNode, Node, TerminalNode, TerminalKind, Edge } from "../index.mjs";
+import { NonterminalKind, NonterminalNode, Node, NodeType, TerminalNode, TerminalKind, Edge } from "../index.mjs";
 
 export abstract class BaseRewriter {
   public rewriteNode(node: Node): Node | undefined {
-    if (node instanceof NonterminalNode) {
-      return this.rewriteNonterminalNode(node);
-    } else {
-      return this.rewriteTerminalNode(node);
+    switch (node.type) {
+      case NodeType.TerminalNode:
+        return this.rewriteTerminalNode(node);
+      case NodeType.NonterminalNode:
+        return this.rewriteNonterminalNode(node);
     }
   }
 
@@ -1558,12 +1559,9 @@ export abstract class BaseRewriter {
 
       case TerminalKind.Unrecognized:
         return this.rewriteUnrecognized(node);
-      case TerminalKind.Unrecognized:
+      case TerminalKind.Missing:
         return this.rewriteMissing(node);
     }
-    // NOTE: this shouldn't be necessary, beacuse the case above should cover all, however
-    // TypeScript isn't helping identifying which one is missing.
-    throw Error("Unreachable");
   }
 
   /** @virtual */
@@ -4140,31 +4138,47 @@ export abstract class BaseRewriter {
   }
 
   protected rewriteChildren(kind: NonterminalKind, node: NonterminalNode): NonterminalNode {
-    const newChildren: Array<Edge> = new Array<Edge>();
-    var anyChildChanged = false;
-    for (const child of node.children()) {
+    let newChildren: Map<number, Edge | "delete"> | undefined = undefined;
+    const children = node.children();
+    children.forEach((child, index) => {
       const newChild = this.rewriteNode(child.node);
       if (newChild == undefined) {
-        // node was removed, remove (don't push) edge
-        anyChildChanged = true;
+        // node was removed, mark the removal
+        newChildren = newChildren || new Map<number, Edge | "delete">();
+        newChildren.set(index, "delete");
       } else {
-        var edge;
+        let edge;
         if (newChild.id == child.node.id) {
           edge = child;
         } else {
           // node has changed, produce new edge
-          anyChildChanged = true;
-          if (newChild instanceof TerminalNode) {
-            edge = Edge.createWithTerminal(child.label, newChild);
-          } else {
-            edge = Edge.createWithNonterminal(child.label, newChild);
+          switch (newChild.type) {
+            case NodeType.TerminalNode:
+              edge = Edge.createWithTerminal(child.label, newChild);
+              break;
+            case NodeType.NonterminalNode:
+              edge = Edge.createWithNonterminal(child.label, newChild);
+              break;
           }
         }
-        newChildren.push(edge);
+        newChildren = newChildren || new Map<number, Edge | "delete">();
+        newChildren.set(index, edge);
       }
-    }
-    if (anyChildChanged) {
-      const newNode = NonterminalNode.create(kind, newChildren);
+    });
+
+    if (newChildren != undefined) {
+      let deleted = 0;
+      const map = newChildren as Map<number, Edge | "delete">;
+      for (const [index, edge] of map) {
+        if (edge == "delete") {
+          children.splice(index - deleted, 1);
+          deleted += 1;
+        } else {
+          children[index + deleted] = edge;
+        }
+      }
+
+      const newNode = NonterminalNode.create(kind, children);
       return newNode;
     } else {
       return node;
