@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use semver::Version;
 
-use super::p4_linearise_contracts::Output as Input;
+use super::p4_type_definitions::Output as Input;
 use crate::backend::binder::{
     Binder, Definition, Reference, Resolution, ResolveOptions, Scope, ScopeId, Typing,
     UsingDirective,
