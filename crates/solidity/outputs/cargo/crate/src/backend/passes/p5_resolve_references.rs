@@ -591,12 +591,25 @@ impl Visitor for Pass {
     }
 
     fn enter_contract_definition(&mut self, node: &input_ir::ContractDefinition) -> bool {
+        // Push the contract scope to visit the contract members
         self.enter_scope_for_node_id(node.node_id);
-        true
-    }
-
-    fn leave_contract_definition(&mut self, node: &input_ir::ContractDefinition) {
+        for member in &node.members {
+            input_ir::visitor::accept_contract_member(member, self);
+        }
         self.leave_scope_for_node_id(node.node_id);
+
+        // But any reference in the inheritance types and the storage layout
+        // specifier should resolve in the parent scope
+        for inheritance_type in &node.inheritance_types {
+            input_ir::visitor::accept_inheritance_type(inheritance_type, self);
+        }
+        if let Some(ref storage_layout) = node.storage_layout {
+            input_ir::visitor::accept_storage_layout_specifier(storage_layout, self);
+        }
+
+        // We already visited the contract definition's children above to be
+        // able to better control the scope stack, so don't recurse again
+        false
     }
 
     fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {

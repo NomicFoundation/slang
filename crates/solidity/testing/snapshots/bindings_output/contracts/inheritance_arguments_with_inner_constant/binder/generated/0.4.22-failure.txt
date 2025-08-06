@@ -9,7 +9,7 @@ Definitions (3):
 
 References (2):
 - Ref: ["Base" @ input.sol:5:21] -> #1
-- Ref: ["OTHER" @ input.sol:5:26] -> #3
+- Ref: ["OTHER" @ input.sol:5:26] -> unresolved
 
 ------------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ Bindings:
    │                       │    │    
    │                       ╰───────── ref: 1
    │                            │    
-   │                            ╰──── ref: 3
+   │                            ╰──── unresolved
  6 │     uint constant OTHER = 33;
    │                   ──┬──  
    │                     ╰──── name: 3
