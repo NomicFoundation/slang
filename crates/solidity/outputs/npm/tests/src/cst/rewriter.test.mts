@@ -71,7 +71,7 @@ test("Rewrite NonterminalNode Deep", () => {
 
     public override rewriteContractDefinition(node: NonterminalNode): Node | undefined {
       this.insideContract = true;
-      return this.rewriteChildren(node.kind, node);
+      return this.rewriteChildren(node);
     }
   }
 

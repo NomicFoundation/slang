@@ -28,7 +28,7 @@ export class LoggingRewriter extends BaseRewriter {
 
     this.functionName = name.node.unparse().trim();
     // in the recursion is were the injection of code is actually performed
-    const recurse = this.rewriteChildren(NonterminalKind.FunctionDefinition, node);
+    const recurse = this.rewriteChildren(node);
     this.functionName = undefined;
     return recurse;
   }
@@ -67,8 +67,8 @@ export class LoggingRewriter extends BaseRewriter {
     newChildren.push(Edge.createWithNonterminal(EdgeLabel.Item, importMember));
     const newNode = NonterminalNode.create(NonterminalKind.SourceUnitMembers, newChildren);
 
-    // NOTE: We should check that the unit actuall contained a function where the call to `log` was injected.
-    return this.rewriteChildren(NonterminalKind.SourceUnitMembers, newNode);
+    // NOTE: We should check that the unit actual contained a function where the call to `log` was injected.
+    return this.rewriteChildren(newNode);
   }
 
   // traverse the node's children, collecting the first trivia nodes found along the way and placing them in `edges`.

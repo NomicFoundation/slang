@@ -2,7 +2,10 @@
 
 import { NonterminalKind, NonterminalNode, Node, NodeType, TerminalNode, TerminalKind, Edge } from "../index.mjs";
 
+/** Abstract class to rewrite a CST. */
 export abstract class BaseRewriter {
+  /** Replaces the `node` with a new node. If the result is `undefined`, the node is removed from the tree.
+        This function typically the entry point of the rewrite operation. */
   public rewriteNode(node: Node): Node | undefined {
     switch (node.type) {
       case NodeType.TerminalNode:
@@ -12,6 +15,7 @@ export abstract class BaseRewriter {
     }
   }
 
+  /** Rewrites a non-terminal node. Typically called from `rewriteNode`. */
   public rewriteNonterminalNode(node: NonterminalNode): Node | undefined {
     switch (node.kind) {
       case NonterminalKind.AbicoderPragma:
@@ -673,6 +677,7 @@ export abstract class BaseRewriter {
     }
   }
 
+  /** Rewrites a terminal node. Typically called from `rewriteNode`. */
   public rewriteTerminalNode(node: TerminalNode): Node | undefined {
     switch (node.kind) {
       case TerminalKind.AbicoderKeyword:
@@ -1564,2580 +1569,2583 @@ export abstract class BaseRewriter {
     }
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AbicoderPragma` node, recursively traversing the children (unless overriden). */
   public rewriteAbicoderPragma(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.AbicoderPragma, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AdditiveExpression` node, recursively traversing the children (unless overriden). */
   public rewriteAdditiveExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.AdditiveExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AddressType` node, recursively traversing the children (unless overriden). */
   public rewriteAddressType(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.AddressType, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AndExpression` node, recursively traversing the children (unless overriden). */
   public rewriteAndExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.AndExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ArgumentsDeclaration` node, recursively traversing the children (unless overriden). */
   public rewriteArgumentsDeclaration(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ArgumentsDeclaration, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ArrayExpression` node, recursively traversing the children (unless overriden). */
   public rewriteArrayExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ArrayExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ArrayTypeName` node, recursively traversing the children (unless overriden). */
   public rewriteArrayTypeName(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ArrayTypeName, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ArrayValues` node, recursively traversing the children (unless overriden). */
   public rewriteArrayValues(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ArrayValues, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AssemblyFlags` node, recursively traversing the children (unless overriden). */
   public rewriteAssemblyFlags(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.AssemblyFlags, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AssemblyFlagsDeclaration` node, recursively traversing the children (unless overriden). */
   public rewriteAssemblyFlagsDeclaration(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.AssemblyFlagsDeclaration, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AssemblyStatement` node, recursively traversing the children (unless overriden). */
   public rewriteAssemblyStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.AssemblyStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AssignmentExpression` node, recursively traversing the children (unless overriden). */
   public rewriteAssignmentExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.AssignmentExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `BitwiseAndExpression` node, recursively traversing the children (unless overriden). */
   public rewriteBitwiseAndExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.BitwiseAndExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `BitwiseOrExpression` node, recursively traversing the children (unless overriden). */
   public rewriteBitwiseOrExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.BitwiseOrExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `BitwiseXorExpression` node, recursively traversing the children (unless overriden). */
   public rewriteBitwiseXorExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.BitwiseXorExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Block` node, recursively traversing the children (unless overriden). */
   public rewriteBlock(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.Block, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `BreakStatement` node, recursively traversing the children (unless overriden). */
   public rewriteBreakStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.BreakStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CallOptions` node, recursively traversing the children (unless overriden). */
   public rewriteCallOptions(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.CallOptions, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CallOptionsExpression` node, recursively traversing the children (unless overriden). */
   public rewriteCallOptionsExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.CallOptionsExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CatchClause` node, recursively traversing the children (unless overriden). */
   public rewriteCatchClause(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.CatchClause, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CatchClauseError` node, recursively traversing the children (unless overriden). */
   public rewriteCatchClauseError(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.CatchClauseError, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CatchClauses` node, recursively traversing the children (unless overriden). */
   public rewriteCatchClauses(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.CatchClauses, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ConditionalExpression` node, recursively traversing the children (unless overriden). */
   public rewriteConditionalExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ConditionalExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ConstantDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteConstantDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ConstantDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ConstructorAttribute` node, recursively traversing the children (unless overriden). */
   public rewriteConstructorAttribute(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ConstructorAttribute, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ConstructorAttributes` node, recursively traversing the children (unless overriden). */
   public rewriteConstructorAttributes(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ConstructorAttributes, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ConstructorDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteConstructorDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ConstructorDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ContinueStatement` node, recursively traversing the children (unless overriden). */
   public rewriteContinueStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ContinueStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ContractDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteContractDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ContractDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ContractMember` node, recursively traversing the children (unless overriden). */
   public rewriteContractMember(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ContractMember, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ContractMembers` node, recursively traversing the children (unless overriden). */
   public rewriteContractMembers(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ContractMembers, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ContractSpecifier` node, recursively traversing the children (unless overriden). */
   public rewriteContractSpecifier(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ContractSpecifier, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ContractSpecifiers` node, recursively traversing the children (unless overriden). */
   public rewriteContractSpecifiers(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ContractSpecifiers, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DecimalNumberExpression` node, recursively traversing the children (unless overriden). */
   public rewriteDecimalNumberExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.DecimalNumberExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DoWhileStatement` node, recursively traversing the children (unless overriden). */
   public rewriteDoWhileStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.DoWhileStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ElementaryType` node, recursively traversing the children (unless overriden). */
   public rewriteElementaryType(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ElementaryType, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ElseBranch` node, recursively traversing the children (unless overriden). */
   public rewriteElseBranch(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ElseBranch, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EmitStatement` node, recursively traversing the children (unless overriden). */
   public rewriteEmitStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.EmitStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EnumDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteEnumDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.EnumDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EnumMembers` node, recursively traversing the children (unless overriden). */
   public rewriteEnumMembers(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.EnumMembers, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EqualityExpression` node, recursively traversing the children (unless overriden). */
   public rewriteEqualityExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.EqualityExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ErrorDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteErrorDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ErrorDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ErrorParameter` node, recursively traversing the children (unless overriden). */
   public rewriteErrorParameter(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ErrorParameter, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ErrorParameters` node, recursively traversing the children (unless overriden). */
   public rewriteErrorParameters(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ErrorParameters, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ErrorParametersDeclaration` node, recursively traversing the children (unless overriden). */
   public rewriteErrorParametersDeclaration(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ErrorParametersDeclaration, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EventDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteEventDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.EventDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EventParameter` node, recursively traversing the children (unless overriden). */
   public rewriteEventParameter(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.EventParameter, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EventParameters` node, recursively traversing the children (unless overriden). */
   public rewriteEventParameters(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.EventParameters, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EventParametersDeclaration` node, recursively traversing the children (unless overriden). */
   public rewriteEventParametersDeclaration(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.EventParametersDeclaration, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ExperimentalFeature` node, recursively traversing the children (unless overriden). */
   public rewriteExperimentalFeature(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ExperimentalFeature, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ExperimentalPragma` node, recursively traversing the children (unless overriden). */
   public rewriteExperimentalPragma(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ExperimentalPragma, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ExponentiationExpression` node, recursively traversing the children (unless overriden). */
   public rewriteExponentiationExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ExponentiationExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Expression` node, recursively traversing the children (unless overriden). */
   public rewriteExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.Expression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ExpressionStatement` node, recursively traversing the children (unless overriden). */
   public rewriteExpressionStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ExpressionStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FallbackFunctionAttribute` node, recursively traversing the children (unless overriden). */
   public rewriteFallbackFunctionAttribute(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FallbackFunctionAttribute, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FallbackFunctionAttributes` node, recursively traversing the children (unless overriden). */
   public rewriteFallbackFunctionAttributes(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FallbackFunctionAttributes, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FallbackFunctionDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteFallbackFunctionDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FallbackFunctionDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ForStatement` node, recursively traversing the children (unless overriden). */
   public rewriteForStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ForStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ForStatementCondition` node, recursively traversing the children (unless overriden). */
   public rewriteForStatementCondition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ForStatementCondition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ForStatementInitialization` node, recursively traversing the children (unless overriden). */
   public rewriteForStatementInitialization(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ForStatementInitialization, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FunctionAttribute` node, recursively traversing the children (unless overriden). */
   public rewriteFunctionAttribute(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FunctionAttribute, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FunctionAttributes` node, recursively traversing the children (unless overriden). */
   public rewriteFunctionAttributes(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FunctionAttributes, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FunctionBody` node, recursively traversing the children (unless overriden). */
   public rewriteFunctionBody(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FunctionBody, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FunctionCallExpression` node, recursively traversing the children (unless overriden). */
   public rewriteFunctionCallExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FunctionCallExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FunctionDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteFunctionDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FunctionDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FunctionName` node, recursively traversing the children (unless overriden). */
   public rewriteFunctionName(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FunctionName, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FunctionType` node, recursively traversing the children (unless overriden). */
   public rewriteFunctionType(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FunctionType, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FunctionTypeAttribute` node, recursively traversing the children (unless overriden). */
   public rewriteFunctionTypeAttribute(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FunctionTypeAttribute, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FunctionTypeAttributes` node, recursively traversing the children (unless overriden). */
   public rewriteFunctionTypeAttributes(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.FunctionTypeAttributes, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `HexNumberExpression` node, recursively traversing the children (unless overriden). */
   public rewriteHexNumberExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.HexNumberExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `HexStringLiteral` node, recursively traversing the children (unless overriden). */
   public rewriteHexStringLiteral(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.HexStringLiteral, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `HexStringLiterals` node, recursively traversing the children (unless overriden). */
   public rewriteHexStringLiterals(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.HexStringLiterals, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `IdentifierPath` node, recursively traversing the children (unless overriden). */
   public rewriteIdentifierPath(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.IdentifierPath, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `IfStatement` node, recursively traversing the children (unless overriden). */
   public rewriteIfStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.IfStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ImportAlias` node, recursively traversing the children (unless overriden). */
   public rewriteImportAlias(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ImportAlias, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ImportClause` node, recursively traversing the children (unless overriden). */
   public rewriteImportClause(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ImportClause, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ImportDeconstruction` node, recursively traversing the children (unless overriden). */
   public rewriteImportDeconstruction(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ImportDeconstruction, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ImportDeconstructionSymbol` node, recursively traversing the children (unless overriden). */
   public rewriteImportDeconstructionSymbol(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ImportDeconstructionSymbol, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ImportDeconstructionSymbols` node, recursively traversing the children (unless overriden). */
   public rewriteImportDeconstructionSymbols(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ImportDeconstructionSymbols, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ImportDirective` node, recursively traversing the children (unless overriden). */
   public rewriteImportDirective(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ImportDirective, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `IndexAccessEnd` node, recursively traversing the children (unless overriden). */
   public rewriteIndexAccessEnd(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.IndexAccessEnd, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `IndexAccessExpression` node, recursively traversing the children (unless overriden). */
   public rewriteIndexAccessExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.IndexAccessExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `InequalityExpression` node, recursively traversing the children (unless overriden). */
   public rewriteInequalityExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.InequalityExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `InheritanceSpecifier` node, recursively traversing the children (unless overriden). */
   public rewriteInheritanceSpecifier(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.InheritanceSpecifier, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `InheritanceType` node, recursively traversing the children (unless overriden). */
   public rewriteInheritanceType(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.InheritanceType, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `InheritanceTypes` node, recursively traversing the children (unless overriden). */
   public rewriteInheritanceTypes(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.InheritanceTypes, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `InterfaceDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteInterfaceDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.InterfaceDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `InterfaceMembers` node, recursively traversing the children (unless overriden). */
   public rewriteInterfaceMembers(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.InterfaceMembers, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `LibraryDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteLibraryDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.LibraryDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `LibraryMembers` node, recursively traversing the children (unless overriden). */
   public rewriteLibraryMembers(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.LibraryMembers, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MappingKey` node, recursively traversing the children (unless overriden). */
   public rewriteMappingKey(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.MappingKey, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MappingKeyType` node, recursively traversing the children (unless overriden). */
   public rewriteMappingKeyType(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.MappingKeyType, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MappingType` node, recursively traversing the children (unless overriden). */
   public rewriteMappingType(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.MappingType, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MappingValue` node, recursively traversing the children (unless overriden). */
   public rewriteMappingValue(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.MappingValue, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MemberAccessExpression` node, recursively traversing the children (unless overriden). */
   public rewriteMemberAccessExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.MemberAccessExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ModifierAttribute` node, recursively traversing the children (unless overriden). */
   public rewriteModifierAttribute(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ModifierAttribute, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ModifierAttributes` node, recursively traversing the children (unless overriden). */
   public rewriteModifierAttributes(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ModifierAttributes, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ModifierDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteModifierDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ModifierDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ModifierInvocation` node, recursively traversing the children (unless overriden). */
   public rewriteModifierInvocation(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ModifierInvocation, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MultiplicativeExpression` node, recursively traversing the children (unless overriden). */
   public rewriteMultiplicativeExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.MultiplicativeExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `NamedArgument` node, recursively traversing the children (unless overriden). */
   public rewriteNamedArgument(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.NamedArgument, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `NamedArgumentGroup` node, recursively traversing the children (unless overriden). */
   public rewriteNamedArgumentGroup(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.NamedArgumentGroup, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `NamedArguments` node, recursively traversing the children (unless overriden). */
   public rewriteNamedArguments(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.NamedArguments, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `NamedArgumentsDeclaration` node, recursively traversing the children (unless overriden). */
   public rewriteNamedArgumentsDeclaration(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.NamedArgumentsDeclaration, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `NamedImport` node, recursively traversing the children (unless overriden). */
   public rewriteNamedImport(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.NamedImport, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `NewExpression` node, recursively traversing the children (unless overriden). */
   public rewriteNewExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.NewExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `NumberUnit` node, recursively traversing the children (unless overriden). */
   public rewriteNumberUnit(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.NumberUnit, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `OrExpression` node, recursively traversing the children (unless overriden). */
   public rewriteOrExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.OrExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `OverridePaths` node, recursively traversing the children (unless overriden). */
   public rewriteOverridePaths(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.OverridePaths, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `OverridePathsDeclaration` node, recursively traversing the children (unless overriden). */
   public rewriteOverridePathsDeclaration(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.OverridePathsDeclaration, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `OverrideSpecifier` node, recursively traversing the children (unless overriden). */
   public rewriteOverrideSpecifier(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.OverrideSpecifier, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Parameter` node, recursively traversing the children (unless overriden). */
   public rewriteParameter(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.Parameter, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Parameters` node, recursively traversing the children (unless overriden). */
   public rewriteParameters(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.Parameters, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ParametersDeclaration` node, recursively traversing the children (unless overriden). */
   public rewriteParametersDeclaration(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ParametersDeclaration, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PathImport` node, recursively traversing the children (unless overriden). */
   public rewritePathImport(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.PathImport, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PositionalArguments` node, recursively traversing the children (unless overriden). */
   public rewritePositionalArguments(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.PositionalArguments, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PositionalArgumentsDeclaration` node, recursively traversing the children (unless overriden). */
   public rewritePositionalArgumentsDeclaration(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.PositionalArgumentsDeclaration, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PostfixExpression` node, recursively traversing the children (unless overriden). */
   public rewritePostfixExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.PostfixExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Pragma` node, recursively traversing the children (unless overriden). */
   public rewritePragma(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.Pragma, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PragmaDirective` node, recursively traversing the children (unless overriden). */
   public rewritePragmaDirective(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.PragmaDirective, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PrefixExpression` node, recursively traversing the children (unless overriden). */
   public rewritePrefixExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.PrefixExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ReceiveFunctionAttribute` node, recursively traversing the children (unless overriden). */
   public rewriteReceiveFunctionAttribute(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ReceiveFunctionAttribute, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ReceiveFunctionAttributes` node, recursively traversing the children (unless overriden). */
   public rewriteReceiveFunctionAttributes(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ReceiveFunctionAttributes, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ReceiveFunctionDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteReceiveFunctionDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ReceiveFunctionDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ReturnStatement` node, recursively traversing the children (unless overriden). */
   public rewriteReturnStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ReturnStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ReturnsDeclaration` node, recursively traversing the children (unless overriden). */
   public rewriteReturnsDeclaration(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ReturnsDeclaration, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `RevertStatement` node, recursively traversing the children (unless overriden). */
   public rewriteRevertStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.RevertStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ShiftExpression` node, recursively traversing the children (unless overriden). */
   public rewriteShiftExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ShiftExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SimpleVersionLiteral` node, recursively traversing the children (unless overriden). */
   public rewriteSimpleVersionLiteral(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.SimpleVersionLiteral, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SourceUnit` node, recursively traversing the children (unless overriden). */
   public rewriteSourceUnit(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.SourceUnit, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SourceUnitMember` node, recursively traversing the children (unless overriden). */
   public rewriteSourceUnitMember(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.SourceUnitMember, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SourceUnitMembers` node, recursively traversing the children (unless overriden). */
   public rewriteSourceUnitMembers(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.SourceUnitMembers, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StateVariableAttribute` node, recursively traversing the children (unless overriden). */
   public rewriteStateVariableAttribute(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StateVariableAttribute, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StateVariableAttributes` node, recursively traversing the children (unless overriden). */
   public rewriteStateVariableAttributes(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StateVariableAttributes, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StateVariableDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteStateVariableDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StateVariableDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StateVariableDefinitionValue` node, recursively traversing the children (unless overriden). */
   public rewriteStateVariableDefinitionValue(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StateVariableDefinitionValue, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Statement` node, recursively traversing the children (unless overriden). */
   public rewriteStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.Statement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Statements` node, recursively traversing the children (unless overriden). */
   public rewriteStatements(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.Statements, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StorageLayoutSpecifier` node, recursively traversing the children (unless overriden). */
   public rewriteStorageLayoutSpecifier(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StorageLayoutSpecifier, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StorageLocation` node, recursively traversing the children (unless overriden). */
   public rewriteStorageLocation(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StorageLocation, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StringExpression` node, recursively traversing the children (unless overriden). */
   public rewriteStringExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StringExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StringLiteral` node, recursively traversing the children (unless overriden). */
   public rewriteStringLiteral(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StringLiteral, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StringLiterals` node, recursively traversing the children (unless overriden). */
   public rewriteStringLiterals(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StringLiterals, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StructDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteStructDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StructDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StructMember` node, recursively traversing the children (unless overriden). */
   public rewriteStructMember(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StructMember, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StructMembers` node, recursively traversing the children (unless overriden). */
   public rewriteStructMembers(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.StructMembers, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ThrowStatement` node, recursively traversing the children (unless overriden). */
   public rewriteThrowStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.ThrowStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TryStatement` node, recursively traversing the children (unless overriden). */
   public rewriteTryStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.TryStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TupleDeconstructionElement` node, recursively traversing the children (unless overriden). */
   public rewriteTupleDeconstructionElement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.TupleDeconstructionElement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TupleDeconstructionElements` node, recursively traversing the children (unless overriden). */
   public rewriteTupleDeconstructionElements(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.TupleDeconstructionElements, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TupleDeconstructionStatement` node, recursively traversing the children (unless overriden). */
   public rewriteTupleDeconstructionStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.TupleDeconstructionStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TupleExpression` node, recursively traversing the children (unless overriden). */
   public rewriteTupleExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.TupleExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TupleMember` node, recursively traversing the children (unless overriden). */
   public rewriteTupleMember(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.TupleMember, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TupleValue` node, recursively traversing the children (unless overriden). */
   public rewriteTupleValue(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.TupleValue, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TupleValues` node, recursively traversing the children (unless overriden). */
   public rewriteTupleValues(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.TupleValues, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TypeExpression` node, recursively traversing the children (unless overriden). */
   public rewriteTypeExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.TypeExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TypeName` node, recursively traversing the children (unless overriden). */
   public rewriteTypeName(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.TypeName, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TypedTupleMember` node, recursively traversing the children (unless overriden). */
   public rewriteTypedTupleMember(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.TypedTupleMember, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UncheckedBlock` node, recursively traversing the children (unless overriden). */
   public rewriteUncheckedBlock(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UncheckedBlock, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UnicodeStringLiteral` node, recursively traversing the children (unless overriden). */
   public rewriteUnicodeStringLiteral(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UnicodeStringLiteral, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UnicodeStringLiterals` node, recursively traversing the children (unless overriden). */
   public rewriteUnicodeStringLiterals(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UnicodeStringLiterals, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UnnamedFunctionAttribute` node, recursively traversing the children (unless overriden). */
   public rewriteUnnamedFunctionAttribute(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UnnamedFunctionAttribute, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UnnamedFunctionAttributes` node, recursively traversing the children (unless overriden). */
   public rewriteUnnamedFunctionAttributes(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UnnamedFunctionAttributes, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UnnamedFunctionDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteUnnamedFunctionDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UnnamedFunctionDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UntypedTupleMember` node, recursively traversing the children (unless overriden). */
   public rewriteUntypedTupleMember(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UntypedTupleMember, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UserDefinedValueTypeDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteUserDefinedValueTypeDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UserDefinedValueTypeDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UsingAlias` node, recursively traversing the children (unless overriden). */
   public rewriteUsingAlias(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UsingAlias, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UsingClause` node, recursively traversing the children (unless overriden). */
   public rewriteUsingClause(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UsingClause, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UsingDeconstruction` node, recursively traversing the children (unless overriden). */
   public rewriteUsingDeconstruction(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UsingDeconstruction, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UsingDeconstructionSymbol` node, recursively traversing the children (unless overriden). */
   public rewriteUsingDeconstructionSymbol(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UsingDeconstructionSymbol, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UsingDeconstructionSymbols` node, recursively traversing the children (unless overriden). */
   public rewriteUsingDeconstructionSymbols(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UsingDeconstructionSymbols, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UsingDirective` node, recursively traversing the children (unless overriden). */
   public rewriteUsingDirective(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UsingDirective, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UsingOperator` node, recursively traversing the children (unless overriden). */
   public rewriteUsingOperator(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UsingOperator, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UsingTarget` node, recursively traversing the children (unless overriden). */
   public rewriteUsingTarget(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.UsingTarget, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VariableDeclarationStatement` node, recursively traversing the children (unless overriden). */
   public rewriteVariableDeclarationStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.VariableDeclarationStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VariableDeclarationType` node, recursively traversing the children (unless overriden). */
   public rewriteVariableDeclarationType(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.VariableDeclarationType, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VariableDeclarationValue` node, recursively traversing the children (unless overriden). */
   public rewriteVariableDeclarationValue(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.VariableDeclarationValue, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VersionExpression` node, recursively traversing the children (unless overriden). */
   public rewriteVersionExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.VersionExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VersionExpressionSet` node, recursively traversing the children (unless overriden). */
   public rewriteVersionExpressionSet(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.VersionExpressionSet, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VersionExpressionSets` node, recursively traversing the children (unless overriden). */
   public rewriteVersionExpressionSets(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.VersionExpressionSets, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VersionLiteral` node, recursively traversing the children (unless overriden). */
   public rewriteVersionLiteral(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.VersionLiteral, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VersionOperator` node, recursively traversing the children (unless overriden). */
   public rewriteVersionOperator(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.VersionOperator, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VersionPragma` node, recursively traversing the children (unless overriden). */
   public rewriteVersionPragma(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.VersionPragma, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VersionRange` node, recursively traversing the children (unless overriden). */
   public rewriteVersionRange(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.VersionRange, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VersionTerm` node, recursively traversing the children (unless overriden). */
   public rewriteVersionTerm(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.VersionTerm, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `WhileStatement` node, recursively traversing the children (unless overriden). */
   public rewriteWhileStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.WhileStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulArguments` node, recursively traversing the children (unless overriden). */
   public rewriteYulArguments(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulArguments, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulAssignmentOperator` node, recursively traversing the children (unless overriden). */
   public rewriteYulAssignmentOperator(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulAssignmentOperator, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulBlock` node, recursively traversing the children (unless overriden). */
   public rewriteYulBlock(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulBlock, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulBreakStatement` node, recursively traversing the children (unless overriden). */
   public rewriteYulBreakStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulBreakStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulColonAndEqual` node, recursively traversing the children (unless overriden). */
   public rewriteYulColonAndEqual(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulColonAndEqual, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulContinueStatement` node, recursively traversing the children (unless overriden). */
   public rewriteYulContinueStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulContinueStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulDefaultCase` node, recursively traversing the children (unless overriden). */
   public rewriteYulDefaultCase(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulDefaultCase, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulEqualAndColon` node, recursively traversing the children (unless overriden). */
   public rewriteYulEqualAndColon(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulEqualAndColon, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulExpression` node, recursively traversing the children (unless overriden). */
   public rewriteYulExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulForStatement` node, recursively traversing the children (unless overriden). */
   public rewriteYulForStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulForStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulFunctionCallExpression` node, recursively traversing the children (unless overriden). */
   public rewriteYulFunctionCallExpression(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulFunctionCallExpression, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulFunctionDefinition` node, recursively traversing the children (unless overriden). */
   public rewriteYulFunctionDefinition(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulFunctionDefinition, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulIfStatement` node, recursively traversing the children (unless overriden). */
   public rewriteYulIfStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulIfStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulLabel` node, recursively traversing the children (unless overriden). */
   public rewriteYulLabel(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulLabel, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulLeaveStatement` node, recursively traversing the children (unless overriden). */
   public rewriteYulLeaveStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulLeaveStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulLiteral` node, recursively traversing the children (unless overriden). */
   public rewriteYulLiteral(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulLiteral, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulParameters` node, recursively traversing the children (unless overriden). */
   public rewriteYulParameters(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulParameters, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulParametersDeclaration` node, recursively traversing the children (unless overriden). */
   public rewriteYulParametersDeclaration(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulParametersDeclaration, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulPath` node, recursively traversing the children (unless overriden). */
   public rewriteYulPath(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulPath, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulPaths` node, recursively traversing the children (unless overriden). */
   public rewriteYulPaths(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulPaths, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulReturnsDeclaration` node, recursively traversing the children (unless overriden). */
   public rewriteYulReturnsDeclaration(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulReturnsDeclaration, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulStackAssignmentOperator` node, recursively traversing the children (unless overriden). */
   public rewriteYulStackAssignmentOperator(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulStackAssignmentOperator, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulStackAssignmentStatement` node, recursively traversing the children (unless overriden). */
   public rewriteYulStackAssignmentStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulStackAssignmentStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulStatement` node, recursively traversing the children (unless overriden). */
   public rewriteYulStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulStatements` node, recursively traversing the children (unless overriden). */
   public rewriteYulStatements(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulStatements, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulSwitchCase` node, recursively traversing the children (unless overriden). */
   public rewriteYulSwitchCase(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulSwitchCase, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulSwitchCases` node, recursively traversing the children (unless overriden). */
   public rewriteYulSwitchCases(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulSwitchCases, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulSwitchStatement` node, recursively traversing the children (unless overriden). */
   public rewriteYulSwitchStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulSwitchStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulValueCase` node, recursively traversing the children (unless overriden). */
   public rewriteYulValueCase(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulValueCase, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulVariableAssignmentStatement` node, recursively traversing the children (unless overriden). */
   public rewriteYulVariableAssignmentStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulVariableAssignmentStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulVariableDeclarationStatement` node, recursively traversing the children (unless overriden). */
   public rewriteYulVariableDeclarationStatement(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulVariableDeclarationStatement, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulVariableDeclarationValue` node, recursively traversing the children (unless overriden). */
   public rewriteYulVariableDeclarationValue(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulVariableDeclarationValue, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulVariableNames` node, recursively traversing the children (unless overriden). */
   public rewriteYulVariableNames(node: NonterminalNode): Node | undefined {
-    return this.rewriteChildren(NonterminalKind.YulVariableNames, node);
+    return this.rewriteChildren(node);
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AbicoderKeyword` node. */
   public rewriteAbicoderKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AbstractKeyword` node. */
   public rewriteAbstractKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AddressKeyword` node. */
   public rewriteAddressKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AfterKeyword` node. */
   public rewriteAfterKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AliasKeyword` node. */
   public rewriteAliasKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Ampersand` node. */
   public rewriteAmpersand(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AmpersandAmpersand` node. */
   public rewriteAmpersandAmpersand(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AmpersandEqual` node. */
   public rewriteAmpersandEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AnonymousKeyword` node. */
   public rewriteAnonymousKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ApplyKeyword` node. */
   public rewriteApplyKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AsKeyword` node. */
   public rewriteAsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AssemblyKeyword` node. */
   public rewriteAssemblyKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Asterisk` node. */
   public rewriteAsterisk(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AsteriskAsterisk` node. */
   public rewriteAsteriskAsterisk(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AsteriskEqual` node. */
   public rewriteAsteriskEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AtKeyword` node. */
   public rewriteAtKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `AutoKeyword` node. */
   public rewriteAutoKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Bang` node. */
   public rewriteBang(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `BangEqual` node. */
   public rewriteBangEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Bar` node. */
   public rewriteBar(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `BarBar` node. */
   public rewriteBarBar(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `BarEqual` node. */
   public rewriteBarEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `BoolKeyword` node. */
   public rewriteBoolKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `BreakKeyword` node. */
   public rewriteBreakKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ByteKeyword` node. */
   public rewriteByteKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `BytesKeyword` node. */
   public rewriteBytesKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CallDataKeyword` node. */
   public rewriteCallDataKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Caret` node. */
   public rewriteCaret(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CaretEqual` node. */
   public rewriteCaretEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CaseKeyword` node. */
   public rewriteCaseKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CatchKeyword` node. */
   public rewriteCatchKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CloseBrace` node. */
   public rewriteCloseBrace(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CloseBracket` node. */
   public rewriteCloseBracket(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CloseParen` node. */
   public rewriteCloseParen(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Colon` node. */
   public rewriteColon(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ColonEqual` node. */
   public rewriteColonEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Comma` node. */
   public rewriteComma(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ConstantKeyword` node. */
   public rewriteConstantKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ConstructorKeyword` node. */
   public rewriteConstructorKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ContinueKeyword` node. */
   public rewriteContinueKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ContractKeyword` node. */
   public rewriteContractKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `CopyOfKeyword` node. */
   public rewriteCopyOfKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DaysKeyword` node. */
   public rewriteDaysKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DecimalLiteral` node. */
   public rewriteDecimalLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DefaultKeyword` node. */
   public rewriteDefaultKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DefineKeyword` node. */
   public rewriteDefineKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DeleteKeyword` node. */
   public rewriteDeleteKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DoKeyword` node. */
   public rewriteDoKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DoubleQuotedHexStringLiteral` node. */
   public rewriteDoubleQuotedHexStringLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DoubleQuotedStringLiteral` node. */
   public rewriteDoubleQuotedStringLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DoubleQuotedUnicodeStringLiteral` node. */
   public rewriteDoubleQuotedUnicodeStringLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `DoubleQuotedVersionLiteral` node. */
   public rewriteDoubleQuotedVersionLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ElseKeyword` node. */
   public rewriteElseKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EmitKeyword` node. */
   public rewriteEmitKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EndOfLine` node. */
   public rewriteEndOfLine(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EnumKeyword` node. */
   public rewriteEnumKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Equal` node. */
   public rewriteEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EqualColon` node. */
   public rewriteEqualColon(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EqualEqual` node. */
   public rewriteEqualEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EqualGreaterThan` node. */
   public rewriteEqualGreaterThan(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ErrorKeyword` node. */
   public rewriteErrorKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EtherKeyword` node. */
   public rewriteEtherKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `EventKeyword` node. */
   public rewriteEventKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ExperimentalKeyword` node. */
   public rewriteExperimentalKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ExternalKeyword` node. */
   public rewriteExternalKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FallbackKeyword` node. */
   public rewriteFallbackKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FalseKeyword` node. */
   public rewriteFalseKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FinalKeyword` node. */
   public rewriteFinalKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FinneyKeyword` node. */
   public rewriteFinneyKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FixedKeyword` node. */
   public rewriteFixedKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ForKeyword` node. */
   public rewriteForKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FromKeyword` node. */
   public rewriteFromKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `FunctionKeyword` node. */
   public rewriteFunctionKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `GlobalKeyword` node. */
   public rewriteGlobalKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `GreaterThan` node. */
   public rewriteGreaterThan(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `GreaterThanEqual` node. */
   public rewriteGreaterThanEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `GreaterThanGreaterThan` node. */
   public rewriteGreaterThanGreaterThan(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `GreaterThanGreaterThanEqual` node. */
   public rewriteGreaterThanGreaterThanEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `GreaterThanGreaterThanGreaterThan` node. */
   public rewriteGreaterThanGreaterThanGreaterThan(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `GreaterThanGreaterThanGreaterThanEqual` node. */
   public rewriteGreaterThanGreaterThanGreaterThanEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `GweiKeyword` node. */
   public rewriteGweiKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `HexKeyword` node. */
   public rewriteHexKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `HexLiteral` node. */
   public rewriteHexLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `HoursKeyword` node. */
   public rewriteHoursKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Identifier` node. */
   public rewriteIdentifier(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `IfKeyword` node. */
   public rewriteIfKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ImmutableKeyword` node. */
   public rewriteImmutableKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ImplementsKeyword` node. */
   public rewriteImplementsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ImportKeyword` node. */
   public rewriteImportKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `InKeyword` node. */
   public rewriteInKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `IndexedKeyword` node. */
   public rewriteIndexedKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `InlineKeyword` node. */
   public rewriteInlineKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `IntKeyword` node. */
   public rewriteIntKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `InterfaceKeyword` node. */
   public rewriteInterfaceKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `InternalKeyword` node. */
   public rewriteInternalKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `IsKeyword` node. */
   public rewriteIsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `LayoutKeyword` node. */
   public rewriteLayoutKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `LessThan` node. */
   public rewriteLessThan(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `LessThanEqual` node. */
   public rewriteLessThanEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `LessThanLessThan` node. */
   public rewriteLessThanLessThan(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `LessThanLessThanEqual` node. */
   public rewriteLessThanLessThanEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `LetKeyword` node. */
   public rewriteLetKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `LibraryKeyword` node. */
   public rewriteLibraryKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MacroKeyword` node. */
   public rewriteMacroKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MappingKeyword` node. */
   public rewriteMappingKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MatchKeyword` node. */
   public rewriteMatchKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MemoryKeyword` node. */
   public rewriteMemoryKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Minus` node. */
   public rewriteMinus(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MinusEqual` node. */
   public rewriteMinusEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MinusGreaterThan` node. */
   public rewriteMinusGreaterThan(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MinusMinus` node. */
   public rewriteMinusMinus(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MinutesKeyword` node. */
   public rewriteMinutesKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ModifierKeyword` node. */
   public rewriteModifierKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MultiLineComment` node. */
   public rewriteMultiLineComment(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MultiLineNatSpecComment` node. */
   public rewriteMultiLineNatSpecComment(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `MutableKeyword` node. */
   public rewriteMutableKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `NewKeyword` node. */
   public rewriteNewKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `NullKeyword` node. */
   public rewriteNullKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `OfKeyword` node. */
   public rewriteOfKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `OpenBrace` node. */
   public rewriteOpenBrace(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `OpenBracket` node. */
   public rewriteOpenBracket(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `OpenParen` node. */
   public rewriteOpenParen(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `OverrideKeyword` node. */
   public rewriteOverrideKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PartialKeyword` node. */
   public rewritePartialKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PayableKeyword` node. */
   public rewritePayableKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Percent` node. */
   public rewritePercent(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PercentEqual` node. */
   public rewritePercentEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Period` node. */
   public rewritePeriod(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Plus` node. */
   public rewritePlus(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PlusEqual` node. */
   public rewritePlusEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PlusPlus` node. */
   public rewritePlusPlus(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PragmaKeyword` node. */
   public rewritePragmaKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PrivateKeyword` node. */
   public rewritePrivateKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PromiseKeyword` node. */
   public rewritePromiseKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PublicKeyword` node. */
   public rewritePublicKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `PureKeyword` node. */
   public rewritePureKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `QuestionMark` node. */
   public rewriteQuestionMark(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ReceiveKeyword` node. */
   public rewriteReceiveKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ReferenceKeyword` node. */
   public rewriteReferenceKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `RelocatableKeyword` node. */
   public rewriteRelocatableKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ReturnKeyword` node. */
   public rewriteReturnKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ReturnsKeyword` node. */
   public rewriteReturnsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `RevertKeyword` node. */
   public rewriteRevertKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SealedKeyword` node. */
   public rewriteSealedKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SecondsKeyword` node. */
   public rewriteSecondsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Semicolon` node. */
   public rewriteSemicolon(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SingleLineComment` node. */
   public rewriteSingleLineComment(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SingleLineNatSpecComment` node. */
   public rewriteSingleLineNatSpecComment(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SingleQuotedHexStringLiteral` node. */
   public rewriteSingleQuotedHexStringLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SingleQuotedStringLiteral` node. */
   public rewriteSingleQuotedStringLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SingleQuotedUnicodeStringLiteral` node. */
   public rewriteSingleQuotedUnicodeStringLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SingleQuotedVersionLiteral` node. */
   public rewriteSingleQuotedVersionLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SizeOfKeyword` node. */
   public rewriteSizeOfKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Slash` node. */
   public rewriteSlash(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SlashEqual` node. */
   public rewriteSlashEqual(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SolidityKeyword` node. */
   public rewriteSolidityKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StaticKeyword` node. */
   public rewriteStaticKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StorageKeyword` node. */
   public rewriteStorageKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StringKeyword` node. */
   public rewriteStringKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `StructKeyword` node. */
   public rewriteStructKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SuperKeyword` node. */
   public rewriteSuperKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SupportsKeyword` node. */
   public rewriteSupportsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SwitchKeyword` node. */
   public rewriteSwitchKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `SzaboKeyword` node. */
   public rewriteSzaboKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ThisKeyword` node. */
   public rewriteThisKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ThrowKeyword` node. */
   public rewriteThrowKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Tilde` node. */
   public rewriteTilde(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TransientKeyword` node. */
   public rewriteTransientKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TrueKeyword` node. */
   public rewriteTrueKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TryKeyword` node. */
   public rewriteTryKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TypeDefKeyword` node. */
   public rewriteTypeDefKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TypeKeyword` node. */
   public rewriteTypeKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `TypeOfKeyword` node. */
   public rewriteTypeOfKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UfixedKeyword` node. */
   public rewriteUfixedKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UintKeyword` node. */
   public rewriteUintKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UncheckedKeyword` node. */
   public rewriteUncheckedKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `UsingKeyword` node. */
   public rewriteUsingKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VarKeyword` node. */
   public rewriteVarKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VersionSpecifier` node. */
   public rewriteVersionSpecifier(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `ViewKeyword` node. */
   public rewriteViewKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `VirtualKeyword` node. */
   public rewriteVirtualKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `WeeksKeyword` node. */
   public rewriteWeeksKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `WeiKeyword` node. */
   public rewriteWeiKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `WhileKeyword` node. */
   public rewriteWhileKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `Whitespace` node. */
   public rewriteWhitespace(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YearsKeyword` node. */
   public rewriteYearsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulAbstractKeyword` node. */
   public rewriteYulAbstractKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulAfterKeyword` node. */
   public rewriteYulAfterKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulAliasKeyword` node. */
   public rewriteYulAliasKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulAnonymousKeyword` node. */
   public rewriteYulAnonymousKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulApplyKeyword` node. */
   public rewriteYulApplyKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulAsKeyword` node. */
   public rewriteYulAsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulAssemblyKeyword` node. */
   public rewriteYulAssemblyKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulAutoKeyword` node. */
   public rewriteYulAutoKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulBoolKeyword` node. */
   public rewriteYulBoolKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulBreakKeyword` node. */
   public rewriteYulBreakKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulBytesKeyword` node. */
   public rewriteYulBytesKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulCallDataKeyword` node. */
   public rewriteYulCallDataKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulCaseKeyword` node. */
   public rewriteYulCaseKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulCatchKeyword` node. */
   public rewriteYulCatchKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulConstantKeyword` node. */
   public rewriteYulConstantKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulConstructorKeyword` node. */
   public rewriteYulConstructorKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulContinueKeyword` node. */
   public rewriteYulContinueKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulContractKeyword` node. */
   public rewriteYulContractKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulCopyOfKeyword` node. */
   public rewriteYulCopyOfKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulDaysKeyword` node. */
   public rewriteYulDaysKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulDecimalLiteral` node. */
   public rewriteYulDecimalLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulDefaultKeyword` node. */
   public rewriteYulDefaultKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulDefineKeyword` node. */
   public rewriteYulDefineKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulDeleteKeyword` node. */
   public rewriteYulDeleteKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulDoKeyword` node. */
   public rewriteYulDoKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulElseKeyword` node. */
   public rewriteYulElseKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulEmitKeyword` node. */
   public rewriteYulEmitKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulEnumKeyword` node. */
   public rewriteYulEnumKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulEtherKeyword` node. */
   public rewriteYulEtherKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulEventKeyword` node. */
   public rewriteYulEventKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulExternalKeyword` node. */
   public rewriteYulExternalKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulFallbackKeyword` node. */
   public rewriteYulFallbackKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulFalseKeyword` node. */
   public rewriteYulFalseKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulFinalKeyword` node. */
   public rewriteYulFinalKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulFinneyKeyword` node. */
   public rewriteYulFinneyKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulFixedKeyword` node. */
   public rewriteYulFixedKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulForKeyword` node. */
   public rewriteYulForKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulFunctionKeyword` node. */
   public rewriteYulFunctionKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulGweiKeyword` node. */
   public rewriteYulGweiKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulHexKeyword` node. */
   public rewriteYulHexKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulHexLiteral` node. */
   public rewriteYulHexLiteral(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulHoursKeyword` node. */
   public rewriteYulHoursKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulIdentifier` node. */
   public rewriteYulIdentifier(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulIfKeyword` node. */
   public rewriteYulIfKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulImmutableKeyword` node. */
   public rewriteYulImmutableKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulImplementsKeyword` node. */
   public rewriteYulImplementsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulImportKeyword` node. */
   public rewriteYulImportKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulInKeyword` node. */
   public rewriteYulInKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulIndexedKeyword` node. */
   public rewriteYulIndexedKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulInlineKeyword` node. */
   public rewriteYulInlineKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulIntKeyword` node. */
   public rewriteYulIntKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulInterfaceKeyword` node. */
   public rewriteYulInterfaceKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulInternalKeyword` node. */
   public rewriteYulInternalKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulIsKeyword` node. */
   public rewriteYulIsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulLeaveKeyword` node. */
   public rewriteYulLeaveKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulLetKeyword` node. */
   public rewriteYulLetKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulLibraryKeyword` node. */
   public rewriteYulLibraryKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulMacroKeyword` node. */
   public rewriteYulMacroKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulMappingKeyword` node. */
   public rewriteYulMappingKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulMatchKeyword` node. */
   public rewriteYulMatchKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulMemoryKeyword` node. */
   public rewriteYulMemoryKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulMinutesKeyword` node. */
   public rewriteYulMinutesKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulModifierKeyword` node. */
   public rewriteYulModifierKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulMutableKeyword` node. */
   public rewriteYulMutableKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulNewKeyword` node. */
   public rewriteYulNewKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulNullKeyword` node. */
   public rewriteYulNullKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulOfKeyword` node. */
   public rewriteYulOfKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulOverrideKeyword` node. */
   public rewriteYulOverrideKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulPartialKeyword` node. */
   public rewriteYulPartialKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulPayableKeyword` node. */
   public rewriteYulPayableKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulPragmaKeyword` node. */
   public rewriteYulPragmaKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulPrivateKeyword` node. */
   public rewriteYulPrivateKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulPromiseKeyword` node. */
   public rewriteYulPromiseKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulPublicKeyword` node. */
   public rewriteYulPublicKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulPureKeyword` node. */
   public rewriteYulPureKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulReceiveKeyword` node. */
   public rewriteYulReceiveKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulReferenceKeyword` node. */
   public rewriteYulReferenceKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulRelocatableKeyword` node. */
   public rewriteYulRelocatableKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulReturnsKeyword` node. */
   public rewriteYulReturnsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulSealedKeyword` node. */
   public rewriteYulSealedKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulSecondsKeyword` node. */
   public rewriteYulSecondsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulSizeOfKeyword` node. */
   public rewriteYulSizeOfKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulStaticKeyword` node. */
   public rewriteYulStaticKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulStorageKeyword` node. */
   public rewriteYulStorageKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulStringKeyword` node. */
   public rewriteYulStringKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulStructKeyword` node. */
   public rewriteYulStructKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulSuperKeyword` node. */
   public rewriteYulSuperKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulSupportsKeyword` node. */
   public rewriteYulSupportsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulSwitchKeyword` node. */
   public rewriteYulSwitchKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulSzaboKeyword` node. */
   public rewriteYulSzaboKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulThisKeyword` node. */
   public rewriteYulThisKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulThrowKeyword` node. */
   public rewriteYulThrowKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulTrueKeyword` node. */
   public rewriteYulTrueKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulTryKeyword` node. */
   public rewriteYulTryKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulTypeDefKeyword` node. */
   public rewriteYulTypeDefKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulTypeKeyword` node. */
   public rewriteYulTypeKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulTypeOfKeyword` node. */
   public rewriteYulTypeOfKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulUfixedKeyword` node. */
   public rewriteYulUfixedKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulUintKeyword` node. */
   public rewriteYulUintKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulUncheckedKeyword` node. */
   public rewriteYulUncheckedKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulUsingKeyword` node. */
   public rewriteYulUsingKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulVarKeyword` node. */
   public rewriteYulVarKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulViewKeyword` node. */
   public rewriteYulViewKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulVirtualKeyword` node. */
   public rewriteYulVirtualKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulWeeksKeyword` node. */
   public rewriteYulWeeksKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulWeiKeyword` node. */
   public rewriteYulWeiKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulWhileKeyword` node. */
   public rewriteYulWhileKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  /** @virtual */
+  /** @virtual Rewrites a `YulYearsKeyword` node. */
   public rewriteYulYearsKeyword(node: TerminalNode): Node | undefined {
     return node;
   }
 
+  /** @virtual Rewrites an `Unrecognized` node. */
   public rewriteUnrecognized(node: TerminalNode): Node | undefined {
     return node;
   }
 
+  /** @virtual Rewrites a `Missing` node. */
   public rewriteMissing(node: TerminalNode): Node | undefined {
     return node;
   }
 
-  protected rewriteChildren(kind: NonterminalKind, node: NonterminalNode): NonterminalNode {
+  /** Rewrites all the children of a given non-terminal node. */
+  protected rewriteChildren(node: NonterminalNode): NonterminalNode {
     let newChildren: Map<number, Edge | "delete"> | undefined = undefined;
     const children = node.children();
     children.forEach((child, index) => {
@@ -4178,7 +4186,7 @@ export abstract class BaseRewriter {
         }
       }
 
-      const newNode = NonterminalNode.create(kind, children);
+      const newNode = NonterminalNode.create(node.kind, children);
       return newNode;
     } else {
       return node;
