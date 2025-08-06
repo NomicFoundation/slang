@@ -44,14 +44,14 @@ pub(crate) fn run(group_name: &str, test_name: &str) -> Result<()> {
 
         let binder_data = build_binder(compilation_unit);
 
-        let report = binder_report(&binder_data, compare_with_binding_graph)?;
+        let (report, all_resolved) = binder_report(&binder_data, compare_with_binding_graph)?;
 
         match last_report {
             Some(ref last) if last == &report => (),
             _ => {
                 let snapshot_path = target_dir.join(format!(
                     "{version}-{status}.txt",
-                    status = if has_parse_errors {
+                    status = if has_parse_errors || !all_resolved {
                         "failure"
                     } else {
                         "success"
