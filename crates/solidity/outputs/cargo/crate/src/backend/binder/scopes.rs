@@ -298,15 +298,15 @@ impl YulBlockScope {
 
 pub(crate) struct YulFunctionScope {
     pub node_id: NodeId,
-    pub enclosing_scope_id: ScopeId,
+    pub parent_scope_id: ScopeId,
     pub definitions: HashMap<String, NodeId>,
 }
 
 impl YulFunctionScope {
-    fn new(node_id: NodeId, enclosing_scope_id: ScopeId) -> Self {
+    fn new(node_id: NodeId, parent_scope_id: ScopeId) -> Self {
         Self {
             node_id,
-            enclosing_scope_id,
+            parent_scope_id,
             definitions: HashMap::new(),
         }
     }

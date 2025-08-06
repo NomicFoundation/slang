@@ -391,19 +391,23 @@ impl Binder {
                     || self.resolve_in_scope_internal(yul_block_scope.parent_scope_id, symbol),
                     Resolution::Definition,
                 ),
-            Scope::YulFunction(yul_function_scope) => yul_function_scope
-                .definitions
-                .get(symbol)
-                .copied()
-                .map_or_else(
-                    || {
-                        self.resolve_in_scope_internal(
-                            yul_function_scope.enclosing_scope_id,
-                            symbol,
-                        )
-                    },
-                    Resolution::Definition,
-                ),
+            Scope::YulFunction(yul_function_scope) => {
+                // TODO(validation): when delegating to the parent scope, we
+                // cannot resolve to a Yul variable defined in a parent block
+                yul_function_scope
+                    .definitions
+                    .get(symbol)
+                    .copied()
+                    .map_or_else(
+                        || {
+                            self.resolve_in_scope_internal(
+                                yul_function_scope.parent_scope_id,
+                                symbol,
+                            )
+                        },
+                        Resolution::Definition,
+                    )
+            }
         }
     }
 
