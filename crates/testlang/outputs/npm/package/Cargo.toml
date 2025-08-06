@@ -1,9 +1,0 @@
-[package]
-name = "testlang_npm_package"
-version.workspace = true
-rust-version.workspace = true
-edition.workspace = true
-publish = false
-
-[lints]
-workspace = true

@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected AddressKeyword or BoolKeyword or BytesKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedKeyword or FunctionKeyword or Identifier or ImportKeyword or IntKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PragmaKeyword or StringKeyword or StructKeyword or TypeKeyword or UfixedKeyword or UintKeyword or UsingKeyword.
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ event TopLevelEvent(int indexed x, int y);
+   ┆ ┆   
+ 5 │ ├─▶ }
+   │ │       
+   │ ╰─────── Error occurred here.
+───╯
+References and definitions: 
+Definiens: 
