@@ -464,11 +464,11 @@ impl Binder {
     ) -> Resolution {
         let scope = self.get_scope_by_id(scope_id);
         match scope {
-            Scope::Contract(contract_scope) => contract_scope
-                .definitions
-                .get(symbol)
-                .cloned()
-                .map_or(Resolution::Unresolved, Resolution::from),
+            Scope::Contract(contract_scope) => self.resolve_in_contract_scope_internal(
+                contract_scope,
+                symbol,
+                ResolveOptions::Normal,
+            ),
             Scope::Enum(enum_scope) => enum_scope.definitions.get(symbol).into(),
             Scope::Struct(struct_scope) => struct_scope.definitions.get(symbol).into(),
             Scope::Using(using_scope) => using_scope
