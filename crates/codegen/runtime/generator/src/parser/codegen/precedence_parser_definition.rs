@@ -20,10 +20,9 @@ pub trait PrecedenceParserDefinitionCodegen {
 
 impl PrecedenceParserDefinitionCodegen for PrecedenceParserDefinitionRef {
     fn to_parser_code(&self) -> TokenStream {
-        let code = self.node().to_parser_code(
-            self.context(),
-            format_ident!("{name}", name = self.name().to_pascal_case()),
-        );
+        let code = self
+            .node()
+            .to_parser_code(self.context(), format_ident!("{}", self.name()));
 
         let nonterminal_kind = format_ident!("{}", self.name());
         quote! { #code.with_kind(NonterminalKind::#nonterminal_kind) }
@@ -31,10 +30,10 @@ impl PrecedenceParserDefinitionCodegen for PrecedenceParserDefinitionRef {
 
     fn to_precedence_expression_parser_code(&self) -> Vec<(Identifier, TokenStream)> {
         let parser_name = format_ident!("{}", self.name().to_snake_case());
-        let nonterminal_name = format_ident!("{}", self.name().to_pascal_case());
+        let nonterminal_name = format_ident!("{}", self.name());
 
         self.node().precedence_expression_names.iter().map(|name| {
-            let op_nonterminal_name = format_ident!("{}", name.to_pascal_case());
+            let op_nonterminal_name = format_ident!("{name}");
 
             // Ensure that the parser correctly identifies a single node of the expected type,
             // which contains a single child node representing the expected precedence operator.
