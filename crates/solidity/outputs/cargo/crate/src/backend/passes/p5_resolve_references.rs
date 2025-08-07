@@ -880,9 +880,19 @@ impl Visitor for Pass {
     }
 
     fn leave_exponentiation_expression(&mut self, node: &input_ir::ExponentiationExpression) {
-        let type_id = self.typing_of_expression(&node.left_operand).as_type_id();
+        let mut type_id = self.typing_of_expression(&node.left_operand).as_type_id();
         // TODO(validation): check that the left operand is an integer and the
         // right operand is an _unsigned_ integer
+        if type_id.is_some_and(|type_id| type_id == self.types.rational()) {
+            // if the base is a rational but the exponent is not, then the result is uint256
+            if self
+                .typing_of_expression(&node.right_operand)
+                .as_type_id()
+                .is_none_or(|exponent_type| exponent_type != self.types.rational())
+            {
+                type_id = Some(self.types.uint256());
+            }
+        }
         self.binder.set_node_type(node.node_id, type_id);
     }
 

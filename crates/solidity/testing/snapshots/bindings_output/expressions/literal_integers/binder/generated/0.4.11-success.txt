@@ -11,8 +11,8 @@ Definitions (5):
 
 References (3):
 - Ref: ["Lib" @ input.sol:5:11] -> #1
-- Ref: ["nop" @ input.sol:7:28] -> unresolved
-- Ref: ["nop" @ input.sol:8:26] -> unresolved
+- Ref: ["nop" @ input.sol:7:28] -> #2
+- Ref: ["nop" @ input.sol:8:26] -> #2
 
 ------------------------------------------------------------------------
 
@@ -43,8 +43,8 @@ Bindings:
    │                ╰─── name: 5
  7 │         (50 * 10**uint(4)).nop();
    │                            ─┬─  
-   │                             ╰─── unresolved
+   │                             ╰─── ref: 2
  8 │         (10 ** uint8(2)).nop();
    │                          ─┬─  
-   │                           ╰─── unresolved
+   │                           ╰─── ref: 2
 ───╯
