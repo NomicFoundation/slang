@@ -13,6 +13,6 @@ Tree:
           - (abicoder_keyword꞉ AbicoderKeyword): "abicoder" # (7..15)
           - (version꞉ AbicoderVersion): # " v2" (15..18)
               - (leading_trivia꞉ Whitespace): " " # (15..16)
-              - (variant꞉ Abicoderv2Keyword): "v2" # (16..18)
+              - (variant꞉ AbicoderV2Keyword): "v2" # (16..18)
       - (semicolon꞉ Semicolon): ";" # (18..19)
       - (trailing_trivia꞉ EndOfLine): "\n" # (19..20)

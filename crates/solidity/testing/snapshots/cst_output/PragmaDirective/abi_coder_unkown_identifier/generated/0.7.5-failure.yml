@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Abicoderv1Keyword or Abicoderv2Keyword.
+    Error: Expected AbicoderV1Keyword or AbicoderV2Keyword.
        ╭─[crates/solidity/testing/snapshots/cst_output/PragmaDirective/abi_coder_unkown_identifier/input.sol:1:17]
        │
      1 │ pragma abicoder foo;

@@ -13,6 +13,6 @@ Tree:
           - (experimental_keyword꞉ ExperimentalKeyword): "experimental" # (7..19)
           - (feature꞉ ExperimentalFeature): # " SMTChecker" (19..30)
               - (leading_trivia꞉ Whitespace): " " # (19..20)
-              - (variant꞉ SmtcheckerKeyword): "SMTChecker" # (20..30)
+              - (variant꞉ SMTCheckerKeyword): "SMTChecker" # (20..30)
       - (semicolon꞉ Semicolon): ";" # (30..31)
       - (trailing_trivia꞉ EndOfLine): "\n" # (31..32)
