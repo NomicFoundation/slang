@@ -1,3 +1,5 @@
+//! Query module.
+
 mod engine;
 mod model;
 mod parser;

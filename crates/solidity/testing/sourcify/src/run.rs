@@ -1,6 +1,6 @@
 use anyhow::{bail, Result};
 use rayon::iter::{ParallelBridge, ParallelIterator};
-use slang_solidity::compilation::CompilationUnit;
+use slang_solidity::compilation::{CompilationInitializationError, CompilationUnit};
 use slang_solidity::cst::{Cursor, NodeKind, NonterminalKind, TerminalKindExtensions, TextRange};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::utils::LanguageFacts;
@@ -75,12 +75,19 @@ fn run_test(contract: &Contract, events: &Events, opts: &TestOptions) {
             test_outcome
         }
         Err(e) => {
-            events.trace(format!(
-                "Failed to compile contract {}: {e}\n{}",
-                contract.name,
-                e.backtrace()
-            ));
-            TestOutcome::Unresolved
+            if let Some(CompilationInitializationError::UnsupportedLanguageVersion(_)) =
+                e.downcast_ref::<CompilationInitializationError>()
+            {
+                TestOutcome::Incompatible
+            } else {
+                events.trace(format!(
+                    "Failed to compile contract {}: {e}\n{}",
+                    contract.name,
+                    e.backtrace()
+                ));
+
+                TestOutcome::Unresolved
+            }
         }
     };
 
@@ -92,21 +99,19 @@ fn run_parser_check(contract: &Contract, unit: &CompilationUnit, events: &Events
     let mut test_outcome = TestOutcome::Passed;
     for file in unit.files() {
         if !file.errors().is_empty() {
-            if let Ok(source) = contract.read_file(file.id()) {
-                let source_name = contract
-                    .import_resolver
-                    .get_virtual_path(file.id())
-                    .unwrap_or(file.id().into());
+            let source = contract.read_file(file.id()).unwrap();
+            let source_name = contract
+                .import_resolver
+                .get_virtual_path(file.id())
+                .unwrap_or(file.id().into());
 
-                for error in file.errors() {
-                    let msg =
-                        slang_solidity::diagnostic::render(error, &source_name, &source, true);
-                    events.parse_error(format!(
-                        "[{contract_name} {version}] Parse error\n{msg}",
-                        contract_name = contract.name,
-                        version = contract.version
-                    ));
-                }
+            for error in file.errors() {
+                let msg = slang_solidity::diagnostic::render(error, &source_name, &source, true);
+                events.parse_error(format!(
+                    "[{contract_name} {version}] Parse error\n{msg}",
+                    contract_name = contract.name,
+                    version = contract.version
+                ));
             }
 
             test_outcome = TestOutcome::Failed;
@@ -123,20 +128,17 @@ fn run_version_inference_check(
 ) -> TestOutcome {
     let mut did_fail = false;
     for file in unit.files() {
-        if let Ok(source) = contract.read_file(file.id()) {
-            if !LanguageFacts::infer_language_versions(&source).any(|v| *v == contract.version) {
-                let source_name = contract
-                    .import_resolver
-                    .get_source_id(file.id())
-                    .unwrap_or(file.id().into());
-                events.version_error(format!(
-                    "[{contract_name} {version}] Could not infer correct version in file {source_name}",
-                    version = contract.version,
-                    contract_name = contract.name,
-                ));
-                did_fail = true;
-            }
-        } else {
+        let source = contract.read_file(file.id()).unwrap();
+        if !LanguageFacts::infer_language_versions(&source).any(|v| *v == contract.version) {
+            let source_name = contract
+                .import_resolver
+                .get_source_id(file.id())
+                .unwrap_or(file.id().into());
+            events.version_error(format!(
+                "[{contract_name} {version}] Could not infer correct version in file {source_name}",
+                version = contract.version,
+                contract_name = contract.name,
+            ));
             did_fail = true;
         }
     }
@@ -168,7 +170,7 @@ fn run_bindings_check(
         if reference.definitions().is_empty() {
             let cursor = reference.get_cursor().to_owned();
 
-            let source = contract.read_file(ref_file.get_path()).unwrap_or_default();
+            let source = contract.read_file(ref_file.get_path()).unwrap();
 
             let binding_error = BindingError::UnresolvedReference(cursor);
             let msg = slang_solidity::diagnostic::render(
@@ -211,19 +213,14 @@ fn run_bindings_check(
             {
                 let binding_error = BindingError::UnboundIdentifier(cursor.clone());
 
-                if let Ok(source) = contract.read_file(file.id()) {
-                    let msg = slang_solidity::diagnostic::render(
-                        &binding_error,
-                        file.id(),
-                        &source,
-                        true,
-                    );
-                    events.bindings_error(format!(
-                        "[{contract_name} {version}] Binding Error: No definition or reference\n{msg}",
-                        contract_name = contract.name,
-                        version = contract.version,
-                    ));
-                }
+                let source = contract.read_file(file.id()).unwrap();
+                let msg =
+                    slang_solidity::diagnostic::render(&binding_error, file.id(), &source, true);
+                events.bindings_error(format!(
+                    "[{contract_name} {version}] Binding Error: No definition or reference\n{msg}",
+                    contract_name = contract.name,
+                    version = contract.version,
+                ));
 
                 test_outcome = TestOutcome::Failed;
             }

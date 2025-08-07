@@ -1,7 +1,6 @@
 {# This needs to stay in sync with the wit-bindgen output #}
-#[allow(clippy::doc_markdown)]
-#[allow(clippy::doc_link_with_quotes)]
-
+/// Represents different kinds of nonterminal nodes in the syntax tree.
+/// These are nodes that can have child nodes and represent higher-level language constructs.
 {% if model.kinds.nonterminal_kinds|length <= 256 %} #[repr(u8)] {% else %} #[repr(u16)] {% endif %}
 #[derive(
     Debug,
@@ -17,6 +16,8 @@
     strum_macros::IntoStaticStr,
 )]
 #[derive(Clone, Copy)] 
+#[allow(clippy::doc_markdown)]
+#[allow(clippy::doc_link_with_quotes)]
 pub enum NonterminalKind {
     {%- if rendering_in_stubs -%}
         Stub1,

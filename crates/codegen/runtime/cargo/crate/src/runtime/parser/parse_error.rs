@@ -1,6 +1,7 @@
 use std::fmt;
 
 use crate::cst::{TerminalKind, TextRange};
+#[cfg(feature = "__private_ariadne_errors")]
 use crate::diagnostic::{self, Diagnostic};
 
 /// Represents an error that occurred during parsing.
@@ -20,7 +21,8 @@ impl ParseError {
 
     /// Renders the message for this error.
     pub fn message(&self) -> String {
-        Diagnostic::message(self)
+        // Uses the impl from `Display` above.
+        self.to_string()
     }
 }
 
@@ -64,6 +66,7 @@ impl fmt::Display for ParseError {
     }
 }
 
+#[cfg(feature = "__private_ariadne_errors")]
 impl Diagnostic for ParseError {
     fn text_range(&self) -> TextRange {
         self.text_range.clone()

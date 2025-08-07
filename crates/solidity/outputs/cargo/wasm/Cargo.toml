@@ -15,10 +15,7 @@ crate-type = ["cdylib"]
 paste = { workspace = true }
 semver = { workspace = true }
 serde_json = { workspace = true }
-slang_solidity = { workspace = true, features = [
-  "__experimental_bindings_api",
-  "__private_compilation_api",
-] }
+slang_solidity = { workspace = true, features = ["__private_wasm_apis"] }
 wit-bindgen = { workspace = true }
 
 [lints]

@@ -1,13 +1,29 @@
+//! Represents a position within a text document, tracking multiple coordinate systems.
+//!
+//! `TextIndex` keeps track of:
+//! - The number of UTF-8 bytes (`utf8`)
+//! - The number of UTF-16 code units (`utf16`)
+//! - The line number (`line`)
+//! - The column number (`column`)
+//!
+//! This structure is used for mapping between different text representations and for
+//! reporting precise locations in source code (e.g., for diagnostics, highlighting, etc.).
+
 use std::fmt::Display;
 use std::ops::{Add, AddAssign, Range};
 
 use serde::Serialize;
 
+/// Represents a position within a text document, tracking multiple coordinate systems.
 #[derive(Default, Hash, Copy, Clone, PartialEq, Eq, Debug, Serialize)]
 pub struct TextIndex {
+    /// Offset in UTF-8 bytes from the start of the text.
     pub utf8: usize,
+    /// Offset in UTF-16 code units from the start of the text.
     pub utf16: usize,
+    /// Zero-based line number.
     pub line: usize,
+    /// Zero-based column number within the line.
     pub column: usize,
 }
 
@@ -29,7 +45,7 @@ impl TextIndex {
         self.utf16 += c.len_utf16();
         match (c, next) {
             ('\r', Some('\n')) => {
-                // Ignore for now, we will increment the line number whe we process the \n
+                // Ignore for now, we will increment the line number when we process the \n
             }
             ('\n' | '\r' | '\u{2028}' | '\u{2029}', _) => {
                 self.line += 1;
@@ -41,6 +57,7 @@ impl TextIndex {
         }
     }
 
+    /// Advances the index by processing a string character by character.
     pub fn advance_str(&mut self, text: &str) {
         let mut iter = text.chars().peekable();
         while let Some(c) = iter.next() {
@@ -105,11 +122,16 @@ impl std::iter::Sum for TextIndex {
     }
 }
 
+/// Represents a range of text indices, useful for defining spans in text documents.
 pub type TextRange = Range<TextIndex>;
 
+/// Extensions to obtain character and line ranges from a [`TextRange`].
 pub trait TextRangeExtensions {
+    /// Returns a range of utf8 characters.
     fn utf8(&self) -> Range<usize>;
+    /// Returns a range of utf16 characters.
     fn utf16(&self) -> Range<usize>;
+    /// Returns a range of lines.
     fn line(&self) -> Range<usize>;
 }
 
