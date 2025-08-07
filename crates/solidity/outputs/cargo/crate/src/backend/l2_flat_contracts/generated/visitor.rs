@@ -2475,14 +2475,14 @@ pub fn accept_pragma(node: &Pragma, visitor: &mut impl Visitor) {
         return;
     }
     match node {
+        Pragma::VersionPragma(ref version_pragma) => {
+            accept_version_pragma(version_pragma, visitor);
+        }
         Pragma::AbicoderPragma(ref abicoder_pragma) => {
             accept_abicoder_pragma(abicoder_pragma, visitor);
         }
         Pragma::ExperimentalPragma(ref experimental_pragma) => {
             accept_experimental_pragma(experimental_pragma, visitor);
-        }
-        Pragma::VersionPragma(ref version_pragma) => {
-            accept_version_pragma(version_pragma, visitor);
         }
     }
     visitor.leave_pragma(node);
@@ -2498,7 +2498,7 @@ pub fn accept_experimental_feature(node: &ExperimentalFeature, visitor: &mut imp
         ExperimentalFeature::StringLiteral(ref string_literal) => {
             accept_string_literal(string_literal, visitor);
         }
-        ExperimentalFeature::AbiencoderV2Keyword | ExperimentalFeature::SmtcheckerKeyword => {}
+        ExperimentalFeature::ABIEncoderV2Keyword | ExperimentalFeature::SMTCheckerKeyword => {}
     }
     visitor.leave_experimental_feature(node);
 }

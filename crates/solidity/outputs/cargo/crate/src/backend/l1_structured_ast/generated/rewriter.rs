@@ -1738,14 +1738,14 @@ pub trait Rewriter {
 
     fn default_rewrite_pragma(&mut self, source: &Pragma) -> Pragma {
         match source {
+            Pragma::VersionPragma(ref version_pragma) => {
+                Pragma::VersionPragma(self.rewrite_version_pragma(version_pragma))
+            }
             Pragma::AbicoderPragma(ref abicoder_pragma) => {
                 Pragma::AbicoderPragma(self.rewrite_abicoder_pragma(abicoder_pragma))
             }
             Pragma::ExperimentalPragma(ref experimental_pragma) => {
                 Pragma::ExperimentalPragma(self.rewrite_experimental_pragma(experimental_pragma))
-            }
-            Pragma::VersionPragma(ref version_pragma) => {
-                Pragma::VersionPragma(self.rewrite_version_pragma(version_pragma))
             }
         }
     }
@@ -1755,8 +1755,8 @@ pub trait Rewriter {
 
     fn default_rewrite_abicoder_version(&mut self, source: &AbicoderVersion) -> AbicoderVersion {
         match source {
-            AbicoderVersion::Abicoderv1Keyword => AbicoderVersion::Abicoderv1Keyword,
-            AbicoderVersion::Abicoderv2Keyword => AbicoderVersion::Abicoderv2Keyword,
+            AbicoderVersion::AbicoderV1Keyword => AbicoderVersion::AbicoderV1Keyword,
+            AbicoderVersion::AbicoderV2Keyword => AbicoderVersion::AbicoderV2Keyword,
         }
     }
     fn rewrite_abicoder_version(&mut self, source: &AbicoderVersion) -> AbicoderVersion {
@@ -1771,8 +1771,8 @@ pub trait Rewriter {
             ExperimentalFeature::StringLiteral(ref string_literal) => {
                 ExperimentalFeature::StringLiteral(self.rewrite_string_literal(string_literal))
             }
-            ExperimentalFeature::AbiencoderV2Keyword => ExperimentalFeature::AbiencoderV2Keyword,
-            ExperimentalFeature::SmtcheckerKeyword => ExperimentalFeature::SmtcheckerKeyword,
+            ExperimentalFeature::ABIEncoderV2Keyword => ExperimentalFeature::ABIEncoderV2Keyword,
+            ExperimentalFeature::SMTCheckerKeyword => ExperimentalFeature::SMTCheckerKeyword,
         }
     }
     fn rewrite_experimental_feature(

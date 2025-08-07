@@ -90,12 +90,12 @@ codegen_language_macros::compile!(Language(
                         Enum(
                             name = Pragma,
                             variants = [
+                                EnumVariant(reference = VersionPragma),
                                 EnumVariant(reference = AbicoderPragma, enabled = From("0.7.5")),
                                 EnumVariant(
                                     reference = ExperimentalPragma,
                                     enabled = From("0.4.16")
-                                ),
-                                EnumVariant(reference = VersionPragma)
+                                )
                             ]
                         ),
                         Struct(
@@ -118,16 +118,16 @@ codegen_language_macros::compile!(Language(
                             name = AbicoderVersion,
                             enabled = From("0.7.5"),
                             variants = [
-                                EnumVariant(reference = Abicoderv1Keyword),
-                                EnumVariant(reference = Abicoderv2Keyword)
+                                EnumVariant(reference = AbicoderV1Keyword),
+                                EnumVariant(reference = AbicoderV2Keyword)
                             ]
                         ),
                         Enum(
                             name = ExperimentalFeature,
                             enabled = From("0.4.16"),
                             variants = [
-                                EnumVariant(reference = AbiencoderV2Keyword),
-                                EnumVariant(reference = SmtcheckerKeyword),
+                                EnumVariant(reference = ABIEncoderV2Keyword),
+                                EnumVariant(reference = SMTCheckerKeyword),
                                 EnumVariant(reference = StringLiteral)
                             ]
                         ),
@@ -471,7 +471,7 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
-                            name = Abicoderv1Keyword,
+                            name = AbicoderV1Keyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
                                 enabled = From("0.7.5"),
@@ -480,7 +480,7 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
-                            name = Abicoderv2Keyword,
+                            name = AbicoderV2Keyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
                                 enabled = From("0.7.5"),
@@ -489,7 +489,7 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
-                            name = AbiencoderV2Keyword,
+                            name = ABIEncoderV2Keyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
                                 enabled = From("0.4.16"),
@@ -1421,7 +1421,7 @@ codegen_language_macros::compile!(Language(
                             )]
                         ),
                         Keyword(
-                            name = SmtcheckerKeyword,
+                            name = SMTCheckerKeyword,
                             identifier = Identifier,
                             definitions = [KeywordDefinition(
                                 enabled = From("0.4.16"),

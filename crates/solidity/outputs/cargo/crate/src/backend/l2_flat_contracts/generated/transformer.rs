@@ -1897,6 +1897,9 @@ pub trait Transformer {
     fn default_transform_pragma(&mut self, source: &input::Pragma) -> output::Pragma {
         #[allow(clippy::match_wildcard_for_single_variants)]
         match source {
+            input::Pragma::VersionPragma(ref version_pragma) => {
+                output::Pragma::VersionPragma(self.transform_version_pragma(version_pragma))
+            }
             input::Pragma::AbicoderPragma(ref abicoder_pragma) => {
                 output::Pragma::AbicoderPragma(self.transform_abicoder_pragma(abicoder_pragma))
             }
@@ -1904,9 +1907,6 @@ pub trait Transformer {
                 output::Pragma::ExperimentalPragma(
                     self.transform_experimental_pragma(experimental_pragma),
                 )
-            }
-            input::Pragma::VersionPragma(ref version_pragma) => {
-                output::Pragma::VersionPragma(self.transform_version_pragma(version_pragma))
             }
         }
     }
@@ -1920,8 +1920,8 @@ pub trait Transformer {
     ) -> output::AbicoderVersion {
         #[allow(clippy::match_wildcard_for_single_variants)]
         match source {
-            input::AbicoderVersion::Abicoderv1Keyword => output::AbicoderVersion::Abicoderv1Keyword,
-            input::AbicoderVersion::Abicoderv2Keyword => output::AbicoderVersion::Abicoderv2Keyword,
+            input::AbicoderVersion::AbicoderV1Keyword => output::AbicoderVersion::AbicoderV1Keyword,
+            input::AbicoderVersion::AbicoderV2Keyword => output::AbicoderVersion::AbicoderV2Keyword,
         }
     }
     fn transform_abicoder_version(
@@ -1942,11 +1942,11 @@ pub trait Transformer {
                     self.transform_string_literal(string_literal),
                 )
             }
-            input::ExperimentalFeature::AbiencoderV2Keyword => {
-                output::ExperimentalFeature::AbiencoderV2Keyword
+            input::ExperimentalFeature::ABIEncoderV2Keyword => {
+                output::ExperimentalFeature::ABIEncoderV2Keyword
             }
-            input::ExperimentalFeature::SmtcheckerKeyword => {
-                output::ExperimentalFeature::SmtcheckerKeyword
+            input::ExperimentalFeature::SMTCheckerKeyword => {
+                output::ExperimentalFeature::SMTCheckerKeyword
             }
         }
     }

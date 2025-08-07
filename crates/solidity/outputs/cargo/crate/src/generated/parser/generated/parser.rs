@@ -574,12 +574,12 @@ impl Parser {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TerminalKind::Abicoderv1Keyword,
+                    TerminalKind::AbicoderV1Keyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TerminalKind::Abicoderv2Keyword,
+                    TerminalKind::AbicoderV2Keyword,
                 );
                 choice.consider(input, result)?;
                 choice.finish(input)
@@ -1952,12 +1952,12 @@ impl Parser {
             ChoiceHelper::run(input, |mut choice, input| {
                 let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TerminalKind::AbiencoderV2Keyword,
+                    TerminalKind::ABIEncoderV2Keyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.parse_terminal_with_trivia::<LexicalContextType::Pragma>(
                     input,
-                    TerminalKind::SmtcheckerKeyword,
+                    TerminalKind::SMTCheckerKeyword,
                 );
                 choice.consider(input, result)?;
                 let result = self.string_literal(input);
@@ -4422,6 +4422,8 @@ impl Parser {
     #[allow(unused_assignments, unused_parens)]
     fn pragma(&self, input: &mut ParserContext<'_>) -> ParserResult {
         ChoiceHelper::run(input, |mut choice, input| {
+            let result = self.version_pragma(input);
+            choice.consider(input, result)?;
             if self.version_is_at_least_0_7_5 {
                 let result = self.abicoder_pragma(input);
                 choice.consider(input, result)?;
@@ -4430,8 +4432,6 @@ impl Parser {
                 let result = self.experimental_pragma(input);
                 choice.consider(input, result)?;
             }
-            let result = self.version_pragma(input);
-            choice.consider(input, result)?;
             choice.finish(input)
         })
         .with_label(EdgeLabel::Variant)
@@ -9399,7 +9399,7 @@ impl Lexer for Parser {
                                 input, 'B', 'I', 'E', 'n', 'c', 'o', 'd', 'e', 'r', 'V', '2'
                             ) {
                                 if self.version_is_at_least_0_4_16 {
-                                    KeywordScan::Present(TerminalKind::AbiencoderV2Keyword)
+                                    KeywordScan::Present(TerminalKind::ABIEncoderV2Keyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -9410,7 +9410,7 @@ impl Lexer for Parser {
                         Some('S') => {
                             if scan_chars!(input, 'M', 'T', 'C', 'h', 'e', 'c', 'k', 'e', 'r') {
                                 if self.version_is_at_least_0_4_16 {
-                                    KeywordScan::Present(TerminalKind::SmtcheckerKeyword)
+                                    KeywordScan::Present(TerminalKind::SMTCheckerKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10650,14 +10650,14 @@ impl Lexer for Parser {
                         Some('v') => match input.next() {
                             Some('1') => {
                                 if self.version_is_at_least_0_7_5 {
-                                    KeywordScan::Present(TerminalKind::Abicoderv1Keyword)
+                                    KeywordScan::Present(TerminalKind::AbicoderV1Keyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('2') => {
                                 if self.version_is_at_least_0_7_5 {
-                                    KeywordScan::Present(TerminalKind::Abicoderv2Keyword)
+                                    KeywordScan::Present(TerminalKind::AbicoderV2Keyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10840,7 +10840,7 @@ impl Lexer for Parser {
                                 input, 'B', 'I', 'E', 'n', 'c', 'o', 'd', 'e', 'r', 'V', '2'
                             ) {
                                 if self.version_is_at_least_0_4_16 {
-                                    KeywordScan::Present(TerminalKind::AbiencoderV2Keyword)
+                                    KeywordScan::Present(TerminalKind::ABIEncoderV2Keyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10851,7 +10851,7 @@ impl Lexer for Parser {
                         Some('S') => {
                             if scan_chars!(input, 'M', 'T', 'C', 'h', 'e', 'c', 'k', 'e', 'r') {
                                 if self.version_is_at_least_0_4_16 {
-                                    KeywordScan::Present(TerminalKind::SmtcheckerKeyword)
+                                    KeywordScan::Present(TerminalKind::SMTCheckerKeyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
@@ -10900,14 +10900,14 @@ impl Lexer for Parser {
                         Some('v') => match input.next() {
                             Some('1') => {
                                 if self.version_is_at_least_0_7_5 {
-                                    KeywordScan::Present(TerminalKind::Abicoderv1Keyword)
+                                    KeywordScan::Present(TerminalKind::AbicoderV1Keyword)
                                 } else {
                                     KeywordScan::Absent
                                 }
                             }
                             Some('2') => {
                                 if self.version_is_at_least_0_7_5 {
-                                    KeywordScan::Present(TerminalKind::Abicoderv2Keyword)
+                                    KeywordScan::Present(TerminalKind::AbicoderV2Keyword)
                                 } else {
                                     KeywordScan::Absent
                                 }

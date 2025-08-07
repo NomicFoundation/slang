@@ -31,8 +31,8 @@ pub enum NonterminalKind {
     ///
     /// ```ebnf
     /// (* Introduced in 0.7.5 *)
-    /// AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
-    ///                 | (* variant: *) ABICODERV_2_KEYWORD;
+    /// AbicoderVersion = (* variant: *) ABICODER_V1_KEYWORD
+    ///                 | (* variant: *) ABICODER_V2_KEYWORD;
     /// ```
     AbicoderVersion,
     /// Represents a node with kind `AdditiveExpression`, having the following structure:
@@ -527,8 +527,8 @@ pub enum NonterminalKind {
     ///
     /// ```ebnf
     /// (* Introduced in 0.4.16 *)
-    /// ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
-    ///                     | (* variant: *) SMTCHECKER_KEYWORD
+    /// ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
+    ///                     | (* variant: *) SMT_CHECKER_KEYWORD
     ///                     | (* variant: *) StringLiteral;
     /// ```
     ExperimentalFeature,
@@ -1166,9 +1166,9 @@ pub enum NonterminalKind {
     /// Represents a node with kind `Pragma`, having the following structure:
     ///
     /// ```ebnf
-    /// Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
-    ///        | (* variant: *) ExperimentalPragma (* Introduced in 0.4.16 *)
-    ///        | (* variant: *) VersionPragma;
+    /// Pragma = (* variant: *) VersionPragma
+    ///        | (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
+    ///        | (* variant: *) ExperimentalPragma; (* Introduced in 0.4.16 *)
     /// ```
     Pragma,
     /// Represents a node with kind `PragmaDirective`, having the following structure:

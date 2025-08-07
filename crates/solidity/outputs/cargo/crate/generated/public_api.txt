@@ -1340,8 +1340,8 @@ pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_yul_variable_
 pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_yul_variable_declaration_statement(node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationStatement, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l1_structured_ast::visitor::accept_yul_variable_declaration_value(node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationValue, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub enum slang_solidity::backend::l1_structured_ast::AbicoderVersion
-pub slang_solidity::backend::l1_structured_ast::AbicoderVersion::Abicoderv1Keyword
-pub slang_solidity::backend::l1_structured_ast::AbicoderVersion::Abicoderv2Keyword
+pub slang_solidity::backend::l1_structured_ast::AbicoderVersion::AbicoderV1Keyword
+pub slang_solidity::backend::l1_structured_ast::AbicoderVersion::AbicoderV2Keyword
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::AbicoderVersion
 pub fn slang_solidity::backend::l1_structured_ast::AbicoderVersion::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1_structured_ast::ArgumentsDeclaration
@@ -1392,8 +1392,8 @@ pub slang_solidity::backend::l1_structured_ast::ElementaryType::UintKeyword(allo
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::ElementaryType
 pub fn slang_solidity::backend::l1_structured_ast::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l1_structured_ast::ExperimentalFeature
-pub slang_solidity::backend::l1_structured_ast::ExperimentalFeature::AbiencoderV2Keyword
-pub slang_solidity::backend::l1_structured_ast::ExperimentalFeature::SmtcheckerKeyword
+pub slang_solidity::backend::l1_structured_ast::ExperimentalFeature::ABIEncoderV2Keyword
+pub slang_solidity::backend::l1_structured_ast::ExperimentalFeature::SMTCheckerKeyword
 pub slang_solidity::backend::l1_structured_ast::ExperimentalFeature::StringLiteral(slang_solidity::backend::l1_structured_ast::StringLiteral)
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::ExperimentalFeature
 pub fn slang_solidity::backend::l1_structured_ast::ExperimentalFeature::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -3788,8 +3788,8 @@ pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_yul_va
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_yul_variable_declaration_statement(node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationStatement, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::input::visitor::accept_yul_variable_declaration_value(node: &slang_solidity::backend::l1_structured_ast::YulVariableDeclarationValue, visitor: &mut impl slang_solidity::backend::l1_structured_ast::visitor::Visitor)
 pub enum slang_solidity::backend::l2_flat_contracts::input::AbicoderVersion
-pub slang_solidity::backend::l2_flat_contracts::input::AbicoderVersion::Abicoderv1Keyword
-pub slang_solidity::backend::l2_flat_contracts::input::AbicoderVersion::Abicoderv2Keyword
+pub slang_solidity::backend::l2_flat_contracts::input::AbicoderVersion::AbicoderV1Keyword
+pub slang_solidity::backend::l2_flat_contracts::input::AbicoderVersion::AbicoderV2Keyword
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::AbicoderVersion
 pub fn slang_solidity::backend::l1_structured_ast::AbicoderVersion::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::input::ArgumentsDeclaration
@@ -3840,8 +3840,8 @@ pub slang_solidity::backend::l2_flat_contracts::input::ElementaryType::UintKeywo
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::ElementaryType
 pub fn slang_solidity::backend::l1_structured_ast::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature
-pub slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature::AbiencoderV2Keyword
-pub slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature::SmtcheckerKeyword
+pub slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature::ABIEncoderV2Keyword
+pub slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature::SMTCheckerKeyword
 pub slang_solidity::backend::l2_flat_contracts::input::ExperimentalFeature::StringLiteral(slang_solidity::backend::l1_structured_ast::StringLiteral)
 impl core::fmt::Debug for slang_solidity::backend::l1_structured_ast::ExperimentalFeature
 pub fn slang_solidity::backend::l1_structured_ast::ExperimentalFeature::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -6274,8 +6274,8 @@ pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_yul_variable_
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_yul_variable_declaration_statement(node: &slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationStatement, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
 pub fn slang_solidity::backend::l2_flat_contracts::visitor::accept_yul_variable_declaration_value(node: &slang_solidity::backend::l2_flat_contracts::YulVariableDeclarationValue, visitor: &mut impl slang_solidity::backend::l2_flat_contracts::visitor::Visitor)
 pub enum slang_solidity::backend::l2_flat_contracts::AbicoderVersion
-pub slang_solidity::backend::l2_flat_contracts::AbicoderVersion::Abicoderv1Keyword
-pub slang_solidity::backend::l2_flat_contracts::AbicoderVersion::Abicoderv2Keyword
+pub slang_solidity::backend::l2_flat_contracts::AbicoderVersion::AbicoderV1Keyword
+pub slang_solidity::backend::l2_flat_contracts::AbicoderVersion::AbicoderV2Keyword
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::AbicoderVersion
 pub fn slang_solidity::backend::l2_flat_contracts::AbicoderVersion::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::ArgumentsDeclaration
@@ -6326,8 +6326,8 @@ pub slang_solidity::backend::l2_flat_contracts::ElementaryType::UintKeyword(allo
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::ElementaryType
 pub fn slang_solidity::backend::l2_flat_contracts::ElementaryType::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
 pub enum slang_solidity::backend::l2_flat_contracts::ExperimentalFeature
-pub slang_solidity::backend::l2_flat_contracts::ExperimentalFeature::AbiencoderV2Keyword
-pub slang_solidity::backend::l2_flat_contracts::ExperimentalFeature::SmtcheckerKeyword
+pub slang_solidity::backend::l2_flat_contracts::ExperimentalFeature::ABIEncoderV2Keyword
+pub slang_solidity::backend::l2_flat_contracts::ExperimentalFeature::SMTCheckerKeyword
 pub slang_solidity::backend::l2_flat_contracts::ExperimentalFeature::StringLiteral(slang_solidity::backend::l2_flat_contracts::StringLiteral)
 impl core::fmt::Debug for slang_solidity::backend::l2_flat_contracts::ExperimentalFeature
 pub fn slang_solidity::backend::l2_flat_contracts::ExperimentalFeature::fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result
@@ -8245,10 +8245,10 @@ pub fn slang_solidity::cst::NonterminalKind::serialize<__S>(&self, __serializer:
 impl<'_derivative_strum> core::convert::From<&'_derivative_strum slang_solidity::cst::NonterminalKind> for &'static str
 pub fn &'static str::from(x: &'_derivative_strum slang_solidity::cst::NonterminalKind) -> &'static str
 #[repr(u16)] pub enum slang_solidity::cst::TerminalKind
+pub slang_solidity::cst::TerminalKind::ABIEncoderV2Keyword
 pub slang_solidity::cst::TerminalKind::AbicoderKeyword
-pub slang_solidity::cst::TerminalKind::Abicoderv1Keyword
-pub slang_solidity::cst::TerminalKind::Abicoderv2Keyword
-pub slang_solidity::cst::TerminalKind::AbiencoderV2Keyword
+pub slang_solidity::cst::TerminalKind::AbicoderV1Keyword
+pub slang_solidity::cst::TerminalKind::AbicoderV2Keyword
 pub slang_solidity::cst::TerminalKind::AbstractKeyword
 pub slang_solidity::cst::TerminalKind::AddressKeyword
 pub slang_solidity::cst::TerminalKind::AfterKeyword
@@ -8392,6 +8392,7 @@ pub slang_solidity::cst::TerminalKind::RelocatableKeyword
 pub slang_solidity::cst::TerminalKind::ReturnKeyword
 pub slang_solidity::cst::TerminalKind::ReturnsKeyword
 pub slang_solidity::cst::TerminalKind::RevertKeyword
+pub slang_solidity::cst::TerminalKind::SMTCheckerKeyword
 pub slang_solidity::cst::TerminalKind::SealedKeyword
 pub slang_solidity::cst::TerminalKind::SecondsKeyword
 pub slang_solidity::cst::TerminalKind::Semicolon
@@ -8404,7 +8405,6 @@ pub slang_solidity::cst::TerminalKind::SingleQuotedVersionLiteral
 pub slang_solidity::cst::TerminalKind::SizeOfKeyword
 pub slang_solidity::cst::TerminalKind::Slash
 pub slang_solidity::cst::TerminalKind::SlashEqual
-pub slang_solidity::cst::TerminalKind::SmtcheckerKeyword
 pub slang_solidity::cst::TerminalKind::SolidityKeyword
 pub slang_solidity::cst::TerminalKind::StaticKeyword
 pub slang_solidity::cst::TerminalKind::StorageKeyword

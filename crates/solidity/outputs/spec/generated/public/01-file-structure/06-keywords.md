@@ -8,23 +8,23 @@
 
 <pre ebnf-snippet="AbicoderKeyword" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#AbicoderKeyword"><span class="k">ABICODER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"abicoder"</span><span class="o">;</span></pre>
 
-```{ .ebnf #Abicoderv1Keyword }
+```{ .ebnf #AbicoderV1Keyword }
 
 ```
 
-<pre ebnf-snippet="Abicoderv1Keyword" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#Abicoderv1Keyword"><span class="k">ABICODERV_1_KEYWORD</span></a><span class="o"> = </span><span class="s2">"v1"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="AbicoderV1Keyword" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#AbicoderV1Keyword"><span class="k">ABICODER_V1_KEYWORD</span></a><span class="o"> = </span><span class="s2">"v1"</span><span class="o">;</span></pre>
 
-```{ .ebnf #Abicoderv2Keyword }
-
-```
-
-<pre ebnf-snippet="Abicoderv2Keyword" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#Abicoderv2Keyword"><span class="k">ABICODERV_2_KEYWORD</span></a><span class="o"> = </span><span class="s2">"v2"</span><span class="o">;</span></pre>
-
-```{ .ebnf #AbiencoderV2Keyword }
+```{ .ebnf #AbicoderV2Keyword }
 
 ```
 
-<pre ebnf-snippet="AbiencoderV2Keyword" style="display: none;"><span class="cm">(* Introduced in 0.4.16 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#AbiencoderV2Keyword"><span class="k">ABIENCODER_V2_KEYWORD</span></a><span class="o"> = </span><span class="s2">"ABIEncoderV2"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="AbicoderV2Keyword" style="display: none;"><span class="cm">(* Introduced in 0.7.5 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#AbicoderV2Keyword"><span class="k">ABICODER_V2_KEYWORD</span></a><span class="o"> = </span><span class="s2">"v2"</span><span class="o">;</span></pre>
+
+```{ .ebnf #ABIEncoderV2Keyword }
+
+```
+
+<pre ebnf-snippet="ABIEncoderV2Keyword" style="display: none;"><span class="cm">(* Introduced in 0.4.16 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#ABIEncoderV2Keyword"><span class="k">ABI_ENCODER_V2_KEYWORD</span></a><span class="o"> = </span><span class="s2">"ABIEncoderV2"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #AbstractKeyword }
 
@@ -554,11 +554,11 @@
 
 <pre ebnf-snippet="SizeOfKeyword" style="display: none;"><span class="cm">(* Reserved in 0.5.0 *)</span><br /><a href="#SizeOfKeyword"><span class="k">SIZE_OF_KEYWORD</span></a><span class="o"> = </span><span class="s2">"sizeof"</span><span class="o">;</span></pre>
 
-```{ .ebnf #SmtcheckerKeyword }
+```{ .ebnf #SMTCheckerKeyword }
 
 ```
 
-<pre ebnf-snippet="SmtcheckerKeyword" style="display: none;"><span class="cm">(* Introduced in 0.4.16 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#SmtcheckerKeyword"><span class="k">SMTCHECKER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"SMTChecker"</span><span class="o">;</span></pre>
+<pre ebnf-snippet="SMTCheckerKeyword" style="display: none;"><span class="cm">(* Introduced in 0.4.16 *)</span><br /><span class="cm">(* Never reserved *)</span><br /><a href="#SMTCheckerKeyword"><span class="k">SMT_CHECKER_KEYWORD</span></a><span class="o"> = </span><span class="s2">"SMTChecker"</span><span class="o">;</span></pre>
 
 ```{ .ebnf #SolidityKeyword }
 

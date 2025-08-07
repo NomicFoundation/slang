@@ -16,8 +16,8 @@ interface cst {
                 ///
                 /// ```ebnf
                 /// (* Introduced in 0.7.5 *)
-                /// AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
-                ///                 | (* variant: *) ABICODERV_2_KEYWORD;
+                /// AbicoderVersion = (* variant: *) ABICODER_V1_KEYWORD
+                ///                 | (* variant: *) ABICODER_V2_KEYWORD;
                 /// ```
                 %abicoder-version,
                 /// Represents a node with kind `AdditiveExpression`, having the following structure:
@@ -512,8 +512,8 @@ interface cst {
                 ///
                 /// ```ebnf
                 /// (* Introduced in 0.4.16 *)
-                /// ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
-                ///                     | (* variant: *) SMTCHECKER_KEYWORD
+                /// ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
+                ///                     | (* variant: *) SMT_CHECKER_KEYWORD
                 ///                     | (* variant: *) StringLiteral;
                 /// ```
                 %experimental-feature,
@@ -1151,9 +1151,9 @@ interface cst {
                 /// Represents a node with kind `Pragma`, having the following structure:
                 ///
                 /// ```ebnf
-                /// Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
-                ///        | (* variant: *) ExperimentalPragma (* Introduced in 0.4.16 *)
-                ///        | (* variant: *) VersionPragma;
+                /// Pragma = (* variant: *) VersionPragma
+                ///        | (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
+                ///        | (* variant: *) ExperimentalPragma; (* Introduced in 0.4.16 *)
                 /// ```
                 %pragma,
                 /// Represents a node with kind `PragmaDirective`, having the following structure:
@@ -2047,6 +2047,14 @@ interface cst {
         /// This terminal is created when the parser is expecting a certain terminal, but it cannot find it.
         /// Adding the missing input in this position may allow the parser to produce a valid tree there.
         missing,
+                /// Represents a node with kind `ABIEncoderV2Keyword`, having the following structure:
+                ///
+                /// ```ebnf
+                /// (* Introduced in 0.4.16 *)
+                /// (* Never reserved *)
+                /// ABI_ENCODER_V2_KEYWORD = "ABIEncoderV2";
+                /// ```
+                %abiencoder-v2-keyword,
                 /// Represents a node with kind `AbicoderKeyword`, having the following structure:
                 ///
                 /// ```ebnf
@@ -2055,30 +2063,22 @@ interface cst {
                 /// ABICODER_KEYWORD = "abicoder";
                 /// ```
                 %abicoder-keyword,
-                /// Represents a node with kind `Abicoderv1Keyword`, having the following structure:
+                /// Represents a node with kind `AbicoderV1Keyword`, having the following structure:
                 ///
                 /// ```ebnf
                 /// (* Introduced in 0.7.5 *)
                 /// (* Never reserved *)
-                /// ABICODERV_1_KEYWORD = "v1";
+                /// ABICODER_V1_KEYWORD = "v1";
                 /// ```
-                %abicoderv1-keyword,
-                /// Represents a node with kind `Abicoderv2Keyword`, having the following structure:
+                %abicoder-v1-keyword,
+                /// Represents a node with kind `AbicoderV2Keyword`, having the following structure:
                 ///
                 /// ```ebnf
                 /// (* Introduced in 0.7.5 *)
                 /// (* Never reserved *)
-                /// ABICODERV_2_KEYWORD = "v2";
+                /// ABICODER_V2_KEYWORD = "v2";
                 /// ```
-                %abicoderv2-keyword,
-                /// Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.4.16 *)
-                /// (* Never reserved *)
-                /// ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
-                /// ```
-                %abiencoder-v2-keyword,
+                %abicoder-v2-keyword,
                 /// Represents a node with kind `AbstractKeyword`, having the following structure:
                 ///
                 /// ```ebnf
@@ -3008,6 +3008,14 @@ interface cst {
                 /// REVERT_KEYWORD = "revert";
                 /// ```
                 %revert-keyword,
+                /// Represents a node with kind `SMTCheckerKeyword`, having the following structure:
+                ///
+                /// ```ebnf
+                /// (* Introduced in 0.4.16 *)
+                /// (* Never reserved *)
+                /// SMT_CHECKER_KEYWORD = "SMTChecker";
+                /// ```
+                %smtchecker-keyword,
                 /// Represents a node with kind `SealedKeyword`, having the following structure:
                 ///
                 /// ```ebnf
@@ -3089,14 +3097,6 @@ interface cst {
                 /// SLASH_EQUAL = "/=";
                 /// ```
                 %slash-equal,
-                /// Represents a node with kind `SmtcheckerKeyword`, having the following structure:
-                ///
-                /// ```ebnf
-                /// (* Introduced in 0.4.16 *)
-                /// (* Never reserved *)
-                /// SMTCHECKER_KEYWORD = "SMTChecker";
-                /// ```
-                %smtchecker-keyword,
                 /// Represents a node with kind `SolidityKeyword`, having the following structure:
                 ///
                 /// ```ebnf

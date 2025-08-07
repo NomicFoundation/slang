@@ -30,9 +30,9 @@ PragmaDirective = (* pragma_keyword: *) PRAGMA_KEYWORD
                   (* pragma: *) Pragma
                   (* semicolon: *) SEMICOLON;
 
-Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
-       | (* variant: *) ExperimentalPragma (* Introduced in 0.4.16 *)
-       | (* variant: *) VersionPragma;
+Pragma = (* variant: *) VersionPragma
+       | (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
+       | (* variant: *) ExperimentalPragma; (* Introduced in 0.4.16 *)
 
 (* Introduced in 0.7.5 *)
 AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
@@ -43,12 +43,12 @@ ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
                      (* feature: *) ExperimentalFeature;
 
 (* Introduced in 0.7.5 *)
-AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
-                | (* variant: *) ABICODERV_2_KEYWORD;
+AbicoderVersion = (* variant: *) ABICODER_V1_KEYWORD
+                | (* variant: *) ABICODER_V2_KEYWORD;
 
 (* Introduced in 0.4.16 *)
-ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
-                    | (* variant: *) SMTCHECKER_KEYWORD
+ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
+                    | (* variant: *) SMT_CHECKER_KEYWORD
                     | (* variant: *) StringLiteral;
 
 VersionPragma = (* solidity_keyword: *) SOLIDITY_KEYWORD
@@ -192,15 +192,15 @@ ABICODER_KEYWORD = "abicoder";
 
 (* Introduced in 0.7.5 *)
 (* Never reserved *)
-ABICODERV_1_KEYWORD = "v1";
+ABICODER_V1_KEYWORD = "v1";
 
 (* Introduced in 0.7.5 *)
 (* Never reserved *)
-ABICODERV_2_KEYWORD = "v2";
+ABICODER_V2_KEYWORD = "v2";
 
 (* Introduced in 0.4.16 *)
 (* Never reserved *)
-ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
+ABI_ENCODER_V2_KEYWORD = "ABIEncoderV2";
 
 (* Introduced in 0.6.0 *)
 ABSTRACT_KEYWORD = "abstract";
@@ -437,7 +437,7 @@ SIZE_OF_KEYWORD = "sizeof";
 
 (* Introduced in 0.4.16 *)
 (* Never reserved *)
-SMTCHECKER_KEYWORD = "SMTChecker";
+SMT_CHECKER_KEYWORD = "SMTChecker";
 
 (* Never reserved *)
 SOLIDITY_KEYWORD = "solidity";

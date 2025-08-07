@@ -180,9 +180,9 @@
                 "item": {
                   "name": "Pragma",
                   "variants": [
+                    { "reference": "VersionPragma" },
                     { "reference": "AbicoderPragma", "enabled": { "From": { "from": "0.7.5" } } },
-                    { "reference": "ExperimentalPragma", "enabled": { "From": { "from": "0.4.16" } } },
-                    { "reference": "VersionPragma" }
+                    { "reference": "ExperimentalPragma", "enabled": { "From": { "from": "0.4.16" } } }
                   ]
                 }
               }
@@ -216,7 +216,7 @@
                 "item": {
                   "name": "AbicoderVersion",
                   "enabled": { "From": { "from": "0.7.5" } },
-                  "variants": [{ "reference": "Abicoderv1Keyword" }, { "reference": "Abicoderv2Keyword" }]
+                  "variants": [{ "reference": "AbicoderV1Keyword" }, { "reference": "AbicoderV2Keyword" }]
                 }
               }
             },
@@ -226,8 +226,8 @@
                   "name": "ExperimentalFeature",
                   "enabled": { "From": { "from": "0.4.16" } },
                   "variants": [
-                    { "reference": "AbiencoderV2Keyword" },
-                    { "reference": "SmtcheckerKeyword" },
+                    { "reference": "ABIEncoderV2Keyword" },
+                    { "reference": "SMTCheckerKeyword" },
                     { "reference": "StringLiteral" }
                   ]
                 }
@@ -801,7 +801,7 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "Abicoderv1Keyword",
+                  "name": "AbicoderV1Keyword",
                   "identifier": "Identifier",
                   "definitions": [
                     {
@@ -816,7 +816,7 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "Abicoderv2Keyword",
+                  "name": "AbicoderV2Keyword",
                   "identifier": "Identifier",
                   "definitions": [
                     {
@@ -831,7 +831,7 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "AbiencoderV2Keyword",
+                  "name": "ABIEncoderV2Keyword",
                   "identifier": "Identifier",
                   "definitions": [
                     {
@@ -2223,7 +2223,7 @@
             {
               "Keyword": {
                 "item": {
-                  "name": "SmtcheckerKeyword",
+                  "name": "SMTCheckerKeyword",
                   "identifier": "Identifier",
                   "definitions": [
                     {

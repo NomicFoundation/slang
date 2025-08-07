@@ -36,8 +36,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * (* Introduced in 0.7.5 *)
-   * AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
-   *                 | (* variant: *) ABICODERV_2_KEYWORD;
+   * AbicoderVersion = (* variant: *) ABICODER_V1_KEYWORD
+   *                 | (* variant: *) ABICODER_V2_KEYWORD;
    * ```
    */
   AbicoderVersion = "AbicoderVersion",
@@ -630,8 +630,8 @@ export declare enum NonterminalKind {
    *
    * ```ebnf
    * (* Introduced in 0.4.16 *)
-   * ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
-   *                     | (* variant: *) SMTCHECKER_KEYWORD
+   * ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
+   *                     | (* variant: *) SMT_CHECKER_KEYWORD
    *                     | (* variant: *) StringLiteral;
    * ```
    */
@@ -1407,9 +1407,9 @@ export declare enum NonterminalKind {
    * Represents a node with kind `Pragma`, having the following structure:
    *
    * ```ebnf
-   * Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
-   *        | (* variant: *) ExperimentalPragma (* Introduced in 0.4.16 *)
-   *        | (* variant: *) VersionPragma;
+   * Pragma = (* variant: *) VersionPragma
+   *        | (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
+   *        | (* variant: *) ExperimentalPragma; (* Introduced in 0.4.16 *)
    * ```
    */
   Pragma = "Pragma",
@@ -2510,6 +2510,16 @@ export declare enum TerminalKind {
    */
   Missing = "Missing",
   /**
+   * Represents a node with kind `ABIEncoderV2Keyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.4.16 *)
+   * (* Never reserved *)
+   * ABI_ENCODER_V2_KEYWORD = "ABIEncoderV2";
+   * ```
+   */
+  AbiencoderV2Keyword = "AbiencoderV2Keyword",
+  /**
    * Represents a node with kind `AbicoderKeyword`, having the following structure:
    *
    * ```ebnf
@@ -2520,35 +2530,25 @@ export declare enum TerminalKind {
    */
   AbicoderKeyword = "AbicoderKeyword",
   /**
-   * Represents a node with kind `Abicoderv1Keyword`, having the following structure:
+   * Represents a node with kind `AbicoderV1Keyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.7.5 *)
    * (* Never reserved *)
-   * ABICODERV_1_KEYWORD = "v1";
+   * ABICODER_V1_KEYWORD = "v1";
    * ```
    */
-  Abicoderv1Keyword = "Abicoderv1Keyword",
+  AbicoderV1Keyword = "AbicoderV1Keyword",
   /**
-   * Represents a node with kind `Abicoderv2Keyword`, having the following structure:
+   * Represents a node with kind `AbicoderV2Keyword`, having the following structure:
    *
    * ```ebnf
    * (* Introduced in 0.7.5 *)
    * (* Never reserved *)
-   * ABICODERV_2_KEYWORD = "v2";
+   * ABICODER_V2_KEYWORD = "v2";
    * ```
    */
-  Abicoderv2Keyword = "Abicoderv2Keyword",
-  /**
-   * Represents a node with kind `AbiencoderV2Keyword`, having the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.4.16 *)
-   * (* Never reserved *)
-   * ABIENCODER_V2_KEYWORD = "ABIEncoderV2";
-   * ```
-   */
-  AbiencoderV2Keyword = "AbiencoderV2Keyword",
+  AbicoderV2Keyword = "AbicoderV2Keyword",
   /**
    * Represents a node with kind `AbstractKeyword`, having the following structure:
    *
@@ -3763,6 +3763,16 @@ export declare enum TerminalKind {
    */
   RevertKeyword = "RevertKeyword",
   /**
+   * Represents a node with kind `SMTCheckerKeyword`, having the following structure:
+   *
+   * ```ebnf
+   * (* Introduced in 0.4.16 *)
+   * (* Never reserved *)
+   * SMT_CHECKER_KEYWORD = "SMTChecker";
+   * ```
+   */
+  SmtcheckerKeyword = "SmtcheckerKeyword",
+  /**
    * Represents a node with kind `SealedKeyword`, having the following structure:
    *
    * ```ebnf
@@ -3867,16 +3877,6 @@ export declare enum TerminalKind {
    * ```
    */
   SlashEqual = "SlashEqual",
-  /**
-   * Represents a node with kind `SmtcheckerKeyword`, having the following structure:
-   *
-   * ```ebnf
-   * (* Introduced in 0.4.16 *)
-   * (* Never reserved *)
-   * SMTCHECKER_KEYWORD = "SMTChecker";
-   * ```
-   */
-  SmtcheckerKeyword = "SmtcheckerKeyword",
   /**
    * Represents a node with kind `SolidityKeyword`, having the following structure:
    *

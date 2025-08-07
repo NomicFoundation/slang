@@ -1192,22 +1192,22 @@ pub enum SourceUnitMember {
 
 #[derive(Debug)]
 pub enum Pragma {
+    VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
     ExperimentalPragma(ExperimentalPragma),
-    VersionPragma(VersionPragma),
 }
 
 #[derive(Debug)]
 pub enum AbicoderVersion {
-    Abicoderv1Keyword,
-    Abicoderv2Keyword,
+    AbicoderV1Keyword,
+    AbicoderV2Keyword,
 }
 
 #[derive(Debug)]
 pub enum ExperimentalFeature {
     StringLiteral(StringLiteral),
-    AbiencoderV2Keyword,
-    SmtcheckerKeyword,
+    ABIEncoderV2Keyword,
+    SMTCheckerKeyword,
 }
 
 #[derive(Debug)]

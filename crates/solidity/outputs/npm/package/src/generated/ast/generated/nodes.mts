@@ -7564,22 +7564,22 @@ export class SourceUnitMember {
  * This node represents a `Pragma` nonterminal, with the following structure:
  *
  * ```ebnf
- * Pragma = (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
- *        | (* variant: *) ExperimentalPragma (* Introduced in 0.4.16 *)
- *        | (* variant: *) VersionPragma;
+ * Pragma = (* variant: *) VersionPragma
+ *        | (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
+ *        | (* variant: *) ExperimentalPragma; (* Introduced in 0.4.16 *)
  * ```
  */
 export class Pragma {
-  private readonly fetch: () => AbicoderPragma | ExperimentalPragma | VersionPragma = once(() => {
+  private readonly fetch: () => VersionPragma | AbicoderPragma | ExperimentalPragma = once(() => {
     const variant = wasm.ast.Selectors.choice(this.cst);
 
     switch (variant.kind) {
+      case NonterminalKind.VersionPragma:
+        return new VersionPragma(variant as NonterminalNode);
       case NonterminalKind.AbicoderPragma:
         return new AbicoderPragma(variant as NonterminalNode);
       case NonterminalKind.ExperimentalPragma:
         return new ExperimentalPragma(variant as NonterminalNode);
-      case NonterminalKind.VersionPragma:
-        return new VersionPragma(variant as NonterminalNode);
 
       default:
         throw new Error(`Unexpected variant: '${variant.kind}'.`);
@@ -7601,7 +7601,7 @@ export class Pragma {
   /**
    * Returns the child node that has the label `variant`.
    */
-  public get variant(): AbicoderPragma | ExperimentalPragma | VersionPragma {
+  public get variant(): VersionPragma | AbicoderPragma | ExperimentalPragma {
     return this.fetch();
   }
 }
@@ -7611,8 +7611,8 @@ export class Pragma {
  *
  * ```ebnf
  * (* Introduced in 0.7.5 *)
- * AbicoderVersion = (* variant: *) ABICODERV_1_KEYWORD
- *                 | (* variant: *) ABICODERV_2_KEYWORD;
+ * AbicoderVersion = (* variant: *) ABICODER_V1_KEYWORD
+ *                 | (* variant: *) ABICODER_V2_KEYWORD;
  * ```
  */
 export class AbicoderVersion {
@@ -7647,8 +7647,8 @@ export class AbicoderVersion {
  *
  * ```ebnf
  * (* Introduced in 0.4.16 *)
- * ExperimentalFeature = (* variant: *) ABIENCODER_V2_KEYWORD
- *                     | (* variant: *) SMTCHECKER_KEYWORD
+ * ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
+ *                     | (* variant: *) SMT_CHECKER_KEYWORD
  *                     | (* variant: *) StringLiteral;
  * ```
  */
