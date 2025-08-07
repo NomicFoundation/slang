@@ -350,8 +350,14 @@ impl Pass {
             input_ir::Expression::ArrayExpression(array_expression) => {
                 self.binder.node_typing(array_expression.node_id)
             }
-            input_ir::Expression::HexNumberExpression(_)
-            | input_ir::Expression::DecimalNumberExpression(_) => {
+            input_ir::Expression::HexNumberExpression(hex_number_expression) => {
+                if Self::hex_number_is_address_literal(hex_number_expression) {
+                    Typing::Resolved(self.types.address())
+                } else {
+                    Typing::Resolved(self.types.rational())
+                }
+            }
+            input_ir::Expression::DecimalNumberExpression(_) => {
                 Typing::Resolved(self.types.rational())
             }
             input_ir::Expression::StringExpression(_) => Typing::Resolved(self.types.string()),
@@ -365,6 +371,18 @@ impl Pass {
             input_ir::Expression::ThisKeyword => Typing::This,
             input_ir::Expression::SuperKeyword => Typing::Super,
         }
+    }
+
+    fn hex_number_is_address_literal(
+        hex_number_expression: &input_ir::HexNumberExpression,
+    ) -> bool {
+        if hex_number_expression.unit.is_some() {
+            return false;
+        }
+        let hex_number = hex_number_expression.literal.unparse();
+        // TODO(validation): verify the address is valid (ie. has a valid checksum)
+        // We need at least an implementation of SHA3 to compute the checksum
+        hex_number.len() == 42
     }
 
     fn type_of_elementary_type(elementary_type: &input_ir::ElementaryType) -> Type {
