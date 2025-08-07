@@ -27,6 +27,9 @@ pub fn run(input: Input) -> Output {
     for source_unit in files.values() {
         pass.visit_file(source_unit);
     }
+    for source_unit in files.values() {
+        pass.visit_file_type_getters(source_unit);
+    }
     let binder = pass.binder;
     let types = pass.types;
 
@@ -422,7 +425,48 @@ impl Pass {
         self.binder.scope_id_for_node_id(definition_id)
     }
 
-    fn compute_getter_type(&mut self, definition_id: NodeId, type_id: TypeId) -> TypeId {
+    // This is a short second pass to compute and register the types of the
+    // getter functions for public state variables. Computing the type of the
+    // getter requires all struct fields to be typed already thus why this
+    // cannot happen concurrently with the typing of the definitions in the main
+    // pass.
+    fn visit_file_type_getters(&mut self, source_unit: &input_ir::SourceUnit) {
+        for source_unit_member in &source_unit.members {
+            let input_ir::SourceUnitMember::ContractDefinition(contract_definition) =
+                source_unit_member
+            else {
+                continue;
+            };
+            for contract_member in &contract_definition.members {
+                let input_ir::ContractMember::StateVariableDefinition(state_var_definition) =
+                    contract_member
+                else {
+                    continue;
+                };
+                if state_var_definition.attributes.iter().all(|attribute| {
+                    !matches!(attribute, input_ir::StateVariableAttribute::PublicKeyword)
+                }) {
+                    continue;
+                }
+
+                let node_id = state_var_definition.node_id;
+                let Some(type_id) = self.binder.node_typing(node_id).as_type_id() else {
+                    continue;
+                };
+
+                let Some(getter_type_id) = self.compute_getter_type(node_id, type_id) else {
+                    continue;
+                };
+                let Definition::StateVariable(definition) = self.binder.get_definition_mut(node_id)
+                else {
+                    unreachable!("definition is not a state variable");
+                };
+                definition.getter_type_id = Some(getter_type_id);
+            }
+        }
+    }
+
+    fn compute_getter_type(&mut self, definition_id: NodeId, type_id: TypeId) -> Option<TypeId> {
         let mut return_type = type_id;
         let mut parameter_types = Vec::new();
 
@@ -440,8 +484,36 @@ impl Pass {
                 | Type::Integer { .. }
                 | Type::Interface { .. }
                 | Type::String { .. }
-                | Type::Struct { .. }
                 | Type::UserDefinedValue { .. } => break,
+
+                Type::Struct { definition_id, .. } => {
+                    // For structs there is a special case: if it has a single
+                    // member, the getter will return the value of that field.
+                    // This special case is the reason why we cannot type
+                    // getters concurrently with the state variables.
+
+                    // To retrieve that field we need to go through the
+                    // scope associated to the struct...
+                    let scope_id = self
+                        .binder
+                        .scope_id_for_node_id(*definition_id)
+                        .expect("definition in struct type has no associated scope");
+                    let Scope::Struct(struct_scope) = self.binder.get_scope_by_id(scope_id) else {
+                        unreachable!("definition in struct type has no invalid scope");
+                    };
+                    if struct_scope.definitions.len() == 1 {
+                        let member_definition_id =
+                            struct_scope.definitions.values().next().unwrap();
+                        if let Some(member_type_id) =
+                            self.binder.node_typing(*member_definition_id).as_type_id()
+                        {
+                            return_type = member_type_id;
+                        } else {
+                            return None;
+                        }
+                    }
+                    break;
+                }
 
                 // non-scalar types
                 Type::Array { element_type, .. } => {
@@ -470,7 +542,7 @@ impl Pass {
             external: true,
             kind: FunctionTypeKind::View,
         };
-        self.types.register_type(getter_type)
+        Some(self.types.register_type(getter_type))
     }
 }
 
@@ -614,20 +686,8 @@ impl Visitor for Pass {
     fn leave_state_variable_definition(&mut self, node: &input_ir::StateVariableDefinition) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Storage));
         self.binder.set_node_type(node.node_id, type_id);
-
-        let is_public = node
-            .attributes
-            .iter()
-            .any(|attribute| matches!(attribute, input_ir::StateVariableAttribute::PublicKeyword));
-        if is_public && type_id.is_some() {
-            let getter_type_id = self.compute_getter_type(node.node_id, type_id.unwrap());
-            let Definition::StateVariable(definition) =
-                self.binder.get_definition_mut(node.node_id)
-            else {
-                unreachable!("definition is not a state variable");
-            };
-            definition.getter_type_id = Some(getter_type_id);
-        }
+        // if required, we will compute the type of the getter after all
+        // definitions have been typed
     }
 
     fn leave_constant_definition(&mut self, node: &input_ir::ConstantDefinition) {

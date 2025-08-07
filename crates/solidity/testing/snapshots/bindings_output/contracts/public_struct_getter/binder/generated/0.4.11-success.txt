@@ -16,7 +16,7 @@ References (5):
 - Ref: ["Base" @ input.sol:6:19] -> #1
 - Ref: ["base" @ input.sol:7:9] -> #7
 - Ref: ["owner" @ input.sol:7:14] -> #4
-- Ref: ["balance" @ input.sol:7:22] -> unresolved
+- Ref: ["balance" @ input.sol:7:22] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -57,5 +57,5 @@ Bindings:
    │                │        │     
    │                ╰────────────── ref: 4
    │                         │     
-   │                         ╰───── unresolved
+   │                         ╰───── built-in
 ───╯
