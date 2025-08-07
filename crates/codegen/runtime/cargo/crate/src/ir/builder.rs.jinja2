@@ -74,18 +74,18 @@
       let variant = helper.accept_label(EdgeLabel::Variant)?;
       let item = match variant.kind() {
         {% for type in choice.nonterminal_types -%}
-          NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ parent_type }}::{{ type | pascal_case }}(build_{{ type | snake_case }}(nonterminal_node(variant))?),
+          NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ parent_type }}::{{ type }}(build_{{ type | snake_case }}(nonterminal_node(variant))?),
         {%- endfor -%}
 
         {% for type in choice.non_unique_terminal_types -%}
           NodeKind::Terminal(TerminalKind::{{ type }}) => {
-            {{ parent_type }}::{{ type | pascal_case }}(terminal_node_cloned(variant))
+            {{ parent_type }}::{{ type }}(terminal_node_cloned(variant))
           },
         {%- endfor -%}
 
         {% for type in choice.unique_terminal_types -%}
           NodeKind::Terminal(TerminalKind::{{ type }}) => {
-            {{ parent_type }}::{{ type | pascal_case }}
+            {{ parent_type }}::{{ type }}
           },
         {%- endfor -%}
 

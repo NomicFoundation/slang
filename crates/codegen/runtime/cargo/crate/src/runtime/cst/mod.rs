@@ -36,6 +36,7 @@ impl metaslang_cst::kinds::KindTypes for KindTypes {
 }
 
 pub type NodeKind = metaslang_cst::kinds::NodeKind<KindTypes>;
+pub type NodeId = metaslang_cst::nodes::NodeId;
 
 pub type Node = metaslang_cst::nodes::Node<KindTypes>;
 pub type NonterminalNode = metaslang_cst::nodes::NonterminalNode<KindTypes>;

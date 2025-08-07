@@ -70,6 +70,16 @@
         "as_typescript_enum": true
       }
     },
+    "nomic-foundation:slang:cst:edge.label()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
+    "nomic-foundation:slang:cst:edge.node()": {
+      "Function": {
+        "as_getter": true
+      }
+    },
     "nomic-foundation:slang:cst:edge-label": {
       "Enum": {
         "as_typescript_enum": true

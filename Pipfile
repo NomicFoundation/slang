@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 # Installed first, and used to install/run other dependencies:
-pipenv = "==2024.4.1"
+pipenv = "==2025.0.4"
 
 # Used for the published GitHub pages site:
 mike = "==2.1.3"

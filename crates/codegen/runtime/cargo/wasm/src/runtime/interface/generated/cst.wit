@@ -82,6 +82,8 @@ interface cst {
     /// Represents a non-terminal node in the syntax tree.
     /// These nodes can have child nodes and represent language constructs.
     resource nonterminal-node {
+        /// Creates a new nonterminal node with the specified `kind` and `children`.
+        create: static func(kind: nonterminal-kind, children: list<edge>) -> nonterminal-node;
         /// Returns a unique numerical identifier of the node.
         /// It is only valid for the lifetime of the enclosing tree.
         /// It can change between multiple parses, even for the same source code input.
@@ -108,6 +110,8 @@ interface cst {
     /// Represents a terminal node in the syntax tree.
     /// These are leaf nodes that represent actual tokens from the source code.
     resource terminal-node {
+        /// Creates a new terminal node with the specified `kind` and `text`.
+        create: static func(kind: terminal-kind, text: string) -> terminal-node;
         /// Returns a unique numerical identifier of the node.
         /// It is only valid for the lifetime of the enclosing tree.
         /// It can change between multiple parses, even for the same source code input.
@@ -129,11 +133,16 @@ interface cst {
     }
 
     /// Represents a connection between nodes in the syntax tree.
-    record edge {
+    resource edge {
+        /// Creates a new edge connecting a terminal node `node` with the label `label`.
+        create-with-terminal: static func(label: edge-label, node: terminal-node) -> edge;
+        /// Creates a new edge connecting a nonterminal node `node` with the label `label`.
+        create-with-nonterminal: static func(label: edge-label, node: nonterminal-node) -> edge;
+
         /// Describes the relationship between this node and its parent.
-        label: edge-label,
+        label: func() -> edge-label;
         /// The target node of this edge.
-        node: node,
+        node: func() -> node;
     }
 
     /// Provides navigation and traversal capabilities over the syntax tree.

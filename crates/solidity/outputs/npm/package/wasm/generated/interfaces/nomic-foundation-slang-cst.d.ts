@@ -4,6 +4,7 @@ export namespace NomicFoundationSlangCst {
   export { TerminalKindExtensions };
   export { NonterminalNode };
   export { TerminalNode };
+  export { Edge };
   export { Cursor };
   export { CursorIterator };
   export { AncestorsIterator };
@@ -5718,19 +5719,6 @@ export enum NodeType {
   TerminalNode = "TerminalNode",
 }
 /**
- * Represents a connection between nodes in the syntax tree.
- */
-export interface Edge {
-  /**
-   * Describes the relationship between this node and its parent.
-   */
-  label: EdgeLabel;
-  /**
-   * The target node of this edge.
-   */
-  node: Node;
-}
-/**
  * Represents a match found by executing queries on a cursor.
  */
 export interface QueryMatch {
@@ -5980,6 +5968,33 @@ export class CursorIterator {
 }
 
 /**
+ * Represents a connection between nodes in the syntax tree.
+ */
+
+export class Edge {
+  /**
+   * This type does not have a public constructor.
+   */
+  private constructor();
+  /**
+   * Creates a new edge connecting a terminal node `node` with the label `label`.
+   */
+  static createWithTerminal(label: EdgeLabel, node: TerminalNode): Edge;
+  /**
+   * Creates a new edge connecting a nonterminal node `node` with the label `label`.
+   */
+  static createWithNonterminal(label: EdgeLabel, node: NonterminalNode): Edge;
+  /**
+   * Describes the relationship between this node and its parent.
+   */
+  get label(): EdgeLabel;
+  /**
+   * The target node of this edge.
+   */
+  get node(): Node;
+}
+
+/**
  * Represents a non-terminal node in the syntax tree.
  * These nodes can have child nodes and represent language constructs.
  */
@@ -6015,6 +6030,10 @@ export class NonterminalNode {
    */
   isTerminalNode(): false;
 
+  /**
+   * Creates a new nonterminal node with the specified `kind` and `children`.
+   */
+  static create(kind: NonterminalKind, children: Array<Edge>): NonterminalNode;
   /**
    * Returns a unique numerical identifier of the node.
    * It is only valid for the lifetime of the enclosing tree.
@@ -6147,6 +6166,10 @@ export class TerminalNode {
    */
   isNonterminalNode(): false;
 
+  /**
+   * Creates a new terminal node with the specified `kind` and `text`.
+   */
+  static create(kind: TerminalKind, text: string): TerminalNode;
   /**
    * Returns a unique numerical identifier of the node.
    * It is only valid for the lifetime of the enclosing tree.

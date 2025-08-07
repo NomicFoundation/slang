@@ -1,6 +1,7 @@
 import * as wasm from "../../../wasm/index.mjs";
 
 export * from "./assertions.mjs";
+export * from "./extensions.mjs";
 
 /** {@inheritDoc wasm.cst.NonterminalKind} */
 export const NonterminalKind = wasm.cst.NonterminalKind;
@@ -40,6 +41,8 @@ export const TerminalNode = wasm.cst.TerminalNode;
 /** {@inheritDoc wasm.cst.TerminalNode} */
 export type TerminalNode = wasm.cst.TerminalNode;
 
+/** {@inheritDoc wasm.cst.Edge} */
+export const Edge = wasm.cst.Edge;
 /** {@inheritDoc wasm.cst.Edge} */
 export type Edge = wasm.cst.Edge;
 

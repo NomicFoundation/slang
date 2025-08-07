@@ -15,7 +15,6 @@ codegen_testing = { workspace = true }
 infra_utils = { workspace = true }
 rayon = { workspace = true }
 solidity_language = { workspace = true }
-testlang_language = { workspace = true }
 
 [lints]
 workspace = true

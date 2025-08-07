@@ -448,7 +448,6 @@ dependencies = [
  "infra_utils",
  "rayon",
  "solidity_language",
- "testlang_language",
 ]
 
 [[package]]
@@ -2381,6 +2380,7 @@ name = "slang_solidity"
 version = "1.2.1"
 dependencies = [
  "ariadne",
+ "indexmap",
  "metaslang_bindings",
  "metaslang_cst",
  "semver",
@@ -2398,20 +2398,6 @@ dependencies = [
  "semver",
  "serde_json",
  "slang_solidity",
-]
-
-[[package]]
-name = "slang_testlang"
-version = "1.2.1"
-dependencies = [
- "ariadne",
- "metaslang_bindings",
- "metaslang_cst",
- "semver",
- "serde",
- "strum",
- "strum_macros",
- "thiserror 2.0.12",
 ]
 
 [[package]]
@@ -2496,27 +2482,6 @@ dependencies = [
  "metaslang_bindings",
  "semver",
  "slang_solidity",
-]
-
-[[package]]
-name = "solidity_testing_sanctuary"
-version = "1.2.1"
-dependencies = [
- "anyhow",
- "clap",
- "console 0.15.11",
- "indicatif",
- "infra_utils",
- "itertools 0.13.0",
- "metaslang_bindings",
- "rayon",
- "regex",
- "semver",
- "serde",
- "serde_json",
- "slang_solidity",
- "strum_macros",
- "url",
 ]
 
 [[package]]
@@ -2778,39 +2743,6 @@ dependencies = [
  "rustix",
  "windows-sys 0.59.0",
 ]
-
-[[package]]
-name = "testlang_cargo_tests"
-version = "1.2.1"
-dependencies = [
- "metaslang_graph_builder",
- "semver",
- "slang_testlang",
-]
-
-[[package]]
-name = "testlang_cargo_wasm"
-version = "1.2.1"
-dependencies = [
- "paste",
- "semver",
- "serde_json",
- "slang_testlang",
- "wit-bindgen",
-]
-
-[[package]]
-name = "testlang_language"
-version = "1.2.1"
-dependencies = [
- "codegen_language_definition",
- "codegen_language_macros",
- "semver",
-]
-
-[[package]]
-name = "testlang_npm_package"
-version = "1.2.1"
 
 [[package]]
 name = "thiserror"

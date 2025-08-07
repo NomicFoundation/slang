@@ -35,16 +35,9 @@ members = [
     "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/spec",
     "crates/solidity/testing/perf",
-    "crates/solidity/testing/sanctuary",
     "crates/solidity/testing/snapshots",
     "crates/solidity/testing/solc",
     "crates/solidity/testing/sourcify",
-
-    "crates/testlang/inputs/language",
-    "crates/testlang/outputs/cargo/crate",
-    "crates/testlang/outputs/cargo/tests",
-    "crates/testlang/outputs/cargo/wasm",
-    "crates/testlang/outputs/npm/package",
 ]
 
 [workspace.dependencies]
@@ -79,16 +72,9 @@ solidity_language = { path = "crates/solidity/inputs/language", version = "1.2.1
 solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "1.2.1" }
 solidity_spec = { path = "crates/solidity/outputs/spec", version = "1.2.1" }
 solidity_testing_perf = { path = "crates/solidity/testing/perf", version = "1.2.1" }
-solidity_testing_sanctuary = { path = "crates/solidity/testing/sanctuary", version = "1.2.1" }
 solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "1.2.1" }
 solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "1.2.1" }
 solidity_testing_sourcify = { path = "crates/solidity/testing/sourcify", version = "1.2.1" }
-
-slang_testlang = { path = "crates/testlang/outputs/cargo/crate", version = "1.2.1" }
-testlang_cargo_tests = { path = "crates/testlang/outputs/cargo/tests", version = "1.2.1" }
-testlang_cargo_wasm = { path = "crates/testlang/outputs/cargo/wasm", version = "1.2.1" }
-testlang_language = { path = "crates/testlang/inputs/language", version = "1.2.1" }
-testlang_npm_package = { path = "crates/testlang/outputs/npm/package", version = "1.2.1" }
 
 #
 # External
