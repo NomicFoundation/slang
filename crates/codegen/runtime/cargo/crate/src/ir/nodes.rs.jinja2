@@ -26,9 +26,9 @@
           {%- endif -%}
         {%- else -%}
           {%- if field.is_optional -%}
-            Option<{{ field.type | pascal_case }}>,
+            Option<{{ field.type }}>,
           {%- else -%}
-            {{ field.type | pascal_case }},
+            {{ field.type }},
           {%- endif -%}
         {%- endif -%}
       {% endfor -%}
@@ -44,7 +44,7 @@
     #[derive(Debug)]
     pub enum {{ parent_type }} {
       {% for nonterminal in choice.nonterminal_types -%}
-        {{ nonterminal }}({{ nonterminal | pascal_case }}),
+        {{ nonterminal }}({{ nonterminal }}),
       {%- endfor -%}
       {% for terminal in choice.non_unique_terminal_types -%}
         {{ terminal }}(Rc<TerminalNode>),
@@ -64,7 +64,7 @@
       {%- if collection.is_terminal -%}
         Rc<TerminalNode>
       {%- else -%}
-        {{ collection.item_type | pascal_case }}
+        {{ collection.item_type }}
       {%- endif -%}
     >;
   {% endfor %}
