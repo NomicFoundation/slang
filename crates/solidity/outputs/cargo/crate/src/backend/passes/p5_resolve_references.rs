@@ -263,17 +263,16 @@ impl Pass {
     fn resolve_symbol_in_type(&self, type_id: TypeId, symbol: &str) -> Resolution {
         let type_ = self.types.get_type_by_id(type_id);
         match type_ {
-            Type::Contract { definition_id, .. } => {
+            Type::Contract { definition_id, .. } | Type::Interface { definition_id, .. } => {
                 // TODO(validation): check that the found definitions are public
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
                 self.binder
                     .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::Normal)
-            }
-            Type::Interface { definition_id, .. } => {
-                // TODO(validation): check that the found definitions are public
-                let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();
-                self.binder
-                    .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::Normal)
+                    .or_else(|| {
+                        self.built_ins_resolver()
+                            .lookup_member_of_type(type_, symbol)
+                            .into()
+                    })
             }
             Type::Struct { definition_id, .. } => {
                 let scope_id = self.binder.scope_id_for_node_id(*definition_id).unwrap();

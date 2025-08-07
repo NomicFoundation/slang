@@ -456,34 +456,34 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
+    fn lookup_member_of_address(&self, symbol: &str, payable: bool) -> Option<BuiltIn> {
+        if !payable || self.language_version >= VERSION_0_5_0 {
+            match symbol {
+                "balance" => Some(BuiltIn::AddressBalance),
+                "code" if self.language_version >= VERSION_0_8_0 => Some(BuiltIn::AddressCode),
+                "codehash" if self.language_version >= VERSION_0_8_0 => {
+                    Some(BuiltIn::AddressCodehash)
+                }
+                "call" => Some(BuiltIn::AddressCall),
+                "callcode" if !payable => Some(BuiltIn::AddressCallcode),
+                "delegatecall" => Some(BuiltIn::AddressDelegatecall),
+                "send" => Some(BuiltIn::AddressSend),
+                "staticcall" => Some(BuiltIn::AddressStaticcall),
+                "transfer" => Some(BuiltIn::AddressTransfer),
+                _ => None,
+            }
+        } else {
+            None
+        }
+    }
+
     pub(crate) fn lookup_member_of_type(
         &self,
         parent_type: &Type,
         symbol: &str,
     ) -> Option<BuiltIn> {
         match parent_type {
-            Type::Address { payable } => {
-                if !payable || self.language_version >= VERSION_0_5_0 {
-                    match symbol {
-                        "balance" => Some(BuiltIn::AddressBalance),
-                        "code" if self.language_version >= VERSION_0_8_0 => {
-                            Some(BuiltIn::AddressCode)
-                        }
-                        "codehash" if self.language_version >= VERSION_0_8_0 => {
-                            Some(BuiltIn::AddressCodehash)
-                        }
-                        "call" => Some(BuiltIn::AddressCall),
-                        "callcode" if !payable => Some(BuiltIn::AddressCallcode),
-                        "delegatecall" => Some(BuiltIn::AddressDelegatecall),
-                        "send" => Some(BuiltIn::AddressSend),
-                        "staticcall" => Some(BuiltIn::AddressStaticcall),
-                        "transfer" => Some(BuiltIn::AddressTransfer),
-                        _ => None,
-                    }
-                } else {
-                    None
-                }
-            }
+            Type::Address { payable } => self.lookup_member_of_address(symbol, *payable),
             Type::Array { element_type, .. } => match symbol {
                 "length" => Some(BuiltIn::Length),
                 "pop" => Some(BuiltIn::ArrayPop),
@@ -501,7 +501,13 @@ impl<'a> BuiltInsResolver<'a> {
                 "push" => Some(BuiltIn::ArrayPush(self.types.uint8())),
                 _ => None,
             },
-            Type::Contract { .. } => None,
+            Type::Contract { .. } | Type::Interface { .. } => {
+                if self.language_version < VERSION_0_5_0 {
+                    self.lookup_member_of_address(symbol, false)
+                } else {
+                    None
+                }
+            }
             Type::Enum { .. } => None,
             Type::FixedPointNumber { .. } => None,
             Type::Function { external, .. } => {
@@ -516,7 +522,6 @@ impl<'a> BuiltInsResolver<'a> {
                 }
             }
             Type::Integer { .. } => None,
-            Type::Interface { .. } => None,
             Type::Mapping { .. } => None,
             Type::Rational => None,
             Type::String { .. } => match symbol {
