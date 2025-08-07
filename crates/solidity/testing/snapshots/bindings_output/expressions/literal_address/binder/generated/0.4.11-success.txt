@@ -8,7 +8,7 @@ Definitions (3):
 ------------------------------------------------------------------------
 
 References (2):
-- Ref: ["delegatecall" @ input.sol:3:52] -> unresolved
+- Ref: ["delegatecall" @ input.sol:3:52] -> built-in
 - Ref: ["data" @ input.sol:3:65] -> #3
 
 ------------------------------------------------------------------------
@@ -30,7 +30,7 @@ Bindings:
    │                                  ╰─── name: 3
  3 │         0x2d3fC875de7Fe7Da43AD0afa0E7023c9B91D06b1.delegatecall(data);
    │                                                    ──────┬───── ──┬─  
-   │                                                          ╰──────────── unresolved
+   │                                                          ╰──────────── built-in
    │                                                                   │   
    │                                                                   ╰─── ref: 3
 ───╯
