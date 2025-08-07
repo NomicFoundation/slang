@@ -68,6 +68,11 @@ impl Pass {
         scope_id
     }
 
+    fn enter_scope_for_node_id(&mut self, node_id: NodeId) {
+        let scope_id = self.binder.scope_id_for_node_id(node_id).unwrap();
+        self.scope_stack.push(scope_id);
+    }
+
     fn leave_scope_for_node_id(&mut self, node_id: NodeId) {
         let Some(current_scope_id) = self.scope_stack.pop() else {
             unreachable!("attempt to pop an empty scope stack");
@@ -681,6 +686,22 @@ impl Visitor for Pass {
         // where we insert label and function definitions, since those are
         // hoisted in the block.
 
+        false
+    }
+
+    fn enter_yul_for_statement(&mut self, node: &input_ir::YulForStatement) -> bool {
+        // Visit the initialization block first
+        input_ir::visitor::accept_yul_block(&node.initialization, self);
+
+        // Visit the rest of the children, but in the scope of the
+        // initialization block such that iterator and body blocks link to it
+        self.enter_scope_for_node_id(node.initialization.node_id);
+        input_ir::visitor::accept_yul_expression(&node.condition, self);
+        input_ir::visitor::accept_yul_block(&node.iterator, self);
+        input_ir::visitor::accept_yul_block(&node.body, self);
+        self.leave_scope_for_node_id(node.initialization.node_id);
+
+        // We already visited our children
         false
     }
 }

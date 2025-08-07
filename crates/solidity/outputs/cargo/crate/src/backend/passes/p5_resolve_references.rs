@@ -1141,6 +1141,24 @@ impl Visitor for Pass {
         false
     }
 
+    fn enter_yul_for_statement(&mut self, node: &input_ir::YulForStatement) -> bool {
+        // Visit the initialization block first
+        input_ir::visitor::accept_yul_block(&node.initialization, self);
+
+        // Visit the rest of the children, but in the scope of the
+        // initialization block. This is mainly so references in the condition
+        // can resolve against the initialization block. The iterator and body
+        // should be already properly linked from construction.
+        self.enter_scope_for_node_id(node.initialization.node_id);
+        input_ir::visitor::accept_yul_expression(&node.condition, self);
+        input_ir::visitor::accept_yul_block(&node.iterator, self);
+        input_ir::visitor::accept_yul_block(&node.body, self);
+        self.leave_scope_for_node_id(node.initialization.node_id);
+
+        // We already visited our children
+        false
+    }
+
     fn enter_tuple_deconstruction_statement(
         &mut self,
         node: &input_ir::TupleDeconstructionStatement,
