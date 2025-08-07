@@ -98,6 +98,7 @@ pub struct ParameterDefinition {
 pub struct StateVariableDefinition {
     pub node_id: NodeId,
     pub identifier: Rc<TerminalNode>,
+    pub getter_type_id: Option<TypeId>,
 }
 
 #[derive(Debug)]
@@ -364,6 +365,7 @@ impl Definition {
         Self::StateVariable(StateVariableDefinition {
             node_id,
             identifier: Rc::clone(identifier),
+            getter_type_id: None,
         })
     }
 

@@ -7,9 +7,9 @@ Definitions (10):
 - Def: #4 ["SOUTH" @ input.sol:2:29] (enum member of Direction)
 - Def: #5 ["EAST" @ input.sol:2:36] (enum member of Direction)
 - Def: #6 ["WEST" @ input.sol:2:42] (enum member of Direction)
-- Def: #7 ["MY_ADDRESS" @ input.sol:4:29] (constant, type: address)
-- Def: #8 ["MY_UINT" @ input.sol:5:29] (constant, type: uint256)
-- Def: #9 ["MY_DIRECTION" @ input.sol:6:31] (constant, type: Direction)
+- Def: #7 ["MY_ADDRESS" @ input.sol:4:29] (state var, type: address)
+- Def: #8 ["MY_UINT" @ input.sol:5:29] (state var, type: uint256)
+- Def: #9 ["MY_DIRECTION" @ input.sol:6:31] (state var, type: Direction)
 - Def: #10 ["test" @ input.sol:8:14] (function, type: function () returns void)
 
 ------------------------------------------------------------------------

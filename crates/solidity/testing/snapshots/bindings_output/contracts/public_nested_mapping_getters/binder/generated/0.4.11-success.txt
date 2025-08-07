@@ -15,13 +15,13 @@ References (10):
 - Ref: ["TokenState" @ input.sol:2:19] -> #4
 - Ref: ["tokenState" @ input.sol:3:9] -> #3
 - Ref: ["nested_maps" @ input.sol:3:20] -> #5
-- Ref: ["balance" @ input.sol:3:38] -> unresolved
+- Ref: ["balance" @ input.sol:3:38] -> built-in
 - Ref: ["tokenState" @ input.sol:4:9] -> #3
 - Ref: ["array_in_map" @ input.sol:4:20] -> #6
-- Ref: ["balance" @ input.sol:4:39] -> unresolved
+- Ref: ["balance" @ input.sol:4:39] -> built-in
 - Ref: ["tokenState" @ input.sol:5:9] -> #3
 - Ref: ["map_in_array" @ input.sol:5:20] -> #7
-- Ref: ["balance" @ input.sol:5:39] -> unresolved
+- Ref: ["balance" @ input.sol:5:39] -> built-in
 
 ------------------------------------------------------------------------
 
@@ -48,21 +48,21 @@ Bindings:
     │                         │               │     
     │                         ╰───────────────────── ref: 5
     │                                         │     
-    │                                         ╰───── unresolved
+    │                                         ╰───── built-in
   4 │         tokenState.array_in_map(1, 1).balance;
     │         ─────┬──── ──────┬─────       ───┬───  
     │              ╰───────────────────────────────── ref: 3
     │                          │               │     
     │                          ╰───────────────────── ref: 6
     │                                          │     
-    │                                          ╰───── unresolved
+    │                                          ╰───── built-in
   5 │         tokenState.map_in_array(1, 1).balance;
     │         ─────┬──── ──────┬─────       ───┬───  
     │              ╰───────────────────────────────── ref: 3
     │                          │               │     
     │                          ╰───────────────────── ref: 7
     │                                          │     
-    │                                          ╰───── unresolved
+    │                                          ╰───── built-in
     │ 
   8 │ contract TokenState {
     │          ─────┬────  

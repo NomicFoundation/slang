@@ -3,7 +3,7 @@
 Definitions (6):
 - Def: #1 ["Lib" @ input.sol:1:9] (library)
 - Def: #2 ["X" @ input.sol:2:27] (constant, type: uint256)
-- Def: #3 ["Y" @ input.sol:3:26] (constant, type: uint256)
+- Def: #3 ["Y" @ input.sol:3:26] (state var, type: uint256)
 - Def: #4 ["test" @ input.sol:5:14] (function, type: function () returns uint256)
 - Def: #5 ["Test" @ input.sol:10:10] (contract)
 - Def: #6 ["test" @ input.sol:11:14] (function, type: function () returns void)
