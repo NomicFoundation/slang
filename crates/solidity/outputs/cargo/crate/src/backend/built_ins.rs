@@ -259,7 +259,7 @@ impl<'a> BuiltInsResolver<'a> {
             "create" => Some(BuiltIn::YulCreate),
             "create2" if self.language_version >= VERSION_0_4_12 => Some(BuiltIn::YulCreate2),
             "delegatecall" => Some(BuiltIn::YulDelegatecall),
-            "difficulty" if self.language_version >= VERSION_0_8_18 => Some(BuiltIn::YulDifficulty),
+            "difficulty" if self.language_version < VERSION_0_8_18 => Some(BuiltIn::YulDifficulty),
             "div" => Some(BuiltIn::YulDiv),
             "eq" => Some(BuiltIn::YulEq),
             "exp" => Some(BuiltIn::YulExp),

@@ -7,7 +7,7 @@ Definitions (2):
 ------------------------------------------------------------------------
 
 References (5):
-- Ref: ["difficulty" @ input.sol:4:13] -> built-in
+- Ref: ["difficulty" @ input.sol:4:13] -> unresolved
 - Ref: ["jump" @ input.sol:5:13] -> unresolved
 - Ref: ["jumpi" @ input.sol:6:13] -> unresolved
 - Ref: ["sha3" @ input.sol:7:13] -> unresolved
@@ -31,7 +31,7 @@ Bindings:
    │ 
  4 │             difficulty()
    │             ─────┬────  
-   │                  ╰────── built-in
+   │                  ╰────── unresolved
  5 │             jump()
    │             ──┬─  
    │               ╰─── unresolved
