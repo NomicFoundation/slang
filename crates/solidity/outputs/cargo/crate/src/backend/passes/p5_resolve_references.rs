@@ -578,6 +578,30 @@ impl Pass {
             None
         }
     }
+
+    fn typing_is_contract_reference(&self, typing: &Typing) -> bool {
+        match typing {
+            Typing::This => true,
+            Typing::Resolved(type_id) => matches!(
+                self.types.get_type_by_id(*type_id),
+                Type::Contract { .. } | Type::Interface { .. }
+            ),
+            _ => false,
+        }
+    }
+
+    fn typing_of_resolution_as_getter(&self, resolution: &Resolution) -> Typing {
+        if let Resolution::Definition(definition_id) = resolution {
+            if let Definition::StateVariable(state_var_definition) =
+                self.binder.find_definition_by_id(*definition_id).unwrap()
+            {
+                if let Some(getter_type_id) = state_var_definition.getter_type_id {
+                    return Typing::Resolved(getter_type_id);
+                }
+            }
+        }
+        self.typing_of_resolution(resolution)
+    }
 }
 
 impl Visitor for Pass {
@@ -906,7 +930,13 @@ impl Visitor for Pass {
         let operand_typing = self.typing_of_expression(&node.operand);
         let resolution = self.resolve_symbol_in_typing(&operand_typing, &node.member.unparse());
 
-        let typing = self.typing_of_resolution(&resolution);
+        // Special case: if the operand is either `this` or a contract/interface
+        // reference type, then try to type the member as a getter
+        let typing = if self.typing_is_contract_reference(&operand_typing) {
+            self.typing_of_resolution_as_getter(&resolution)
+        } else {
+            self.typing_of_resolution(&resolution)
+        };
         self.binder.set_node_typing(node.node_id, typing);
 
         let reference = Reference::new(Rc::clone(&node.member), resolution);

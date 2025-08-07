@@ -421,6 +421,57 @@ impl Pass {
         };
         self.binder.scope_id_for_node_id(definition_id)
     }
+
+    fn compute_getter_type(&mut self, definition_id: NodeId, type_id: TypeId) -> TypeId {
+        let mut return_type = type_id;
+        let mut parameter_types = Vec::new();
+
+        loop {
+            match self.types.get_type_by_id(return_type) {
+                // scalar types
+                Type::Address { .. }
+                | Type::Boolean
+                | Type::ByteArray { .. }
+                | Type::Bytes { .. }
+                | Type::Contract { .. }
+                | Type::Enum { .. }
+                | Type::FixedPointNumber { .. }
+                | Type::Function { .. }
+                | Type::Integer { .. }
+                | Type::Interface { .. }
+                | Type::String { .. }
+                | Type::Struct { .. }
+                | Type::UserDefinedValue { .. } => break,
+
+                // non-scalar types
+                Type::Array { element_type, .. } => {
+                    return_type = *element_type;
+                    parameter_types.push(self.types.uint256());
+                }
+                Type::Mapping {
+                    key_type_id,
+                    value_type_id,
+                } => {
+                    return_type = *value_type_id;
+                    parameter_types.push(*key_type_id);
+                }
+
+                // invalid types
+                Type::Rational | Type::Tuple { .. } | Type::Void => {
+                    unreachable!("cannot compute the getter type for {type_id:?}")
+                }
+            }
+        }
+
+        let getter_type = Type::Function {
+            definition_id: Some(definition_id),
+            parameter_types,
+            return_type,
+            external: true,
+            kind: FunctionTypeKind::View,
+        };
+        self.types.register_type(getter_type)
+    }
 }
 
 impl Visitor for Pass {
@@ -563,6 +614,20 @@ impl Visitor for Pass {
     fn leave_state_variable_definition(&mut self, node: &input_ir::StateVariableDefinition) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Storage));
         self.binder.set_node_type(node.node_id, type_id);
+
+        let is_public = node
+            .attributes
+            .iter()
+            .any(|attribute| matches!(attribute, input_ir::StateVariableAttribute::PublicKeyword));
+        if is_public && type_id.is_some() {
+            let getter_type_id = self.compute_getter_type(node.node_id, type_id.unwrap());
+            let Definition::StateVariable(definition) =
+                self.binder.get_definition_mut(node.node_id)
+            else {
+                unreachable!("definition is not a state variable");
+            };
+            definition.getter_type_id = Some(getter_type_id);
+        }
     }
 
     fn leave_constant_definition(&mut self, node: &input_ir::ConstantDefinition) {

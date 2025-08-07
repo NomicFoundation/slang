@@ -473,7 +473,13 @@ impl Visitor for Pass {
         let is_constant = node.attributes.iter().any(|attribute| {
             matches!(attribute, input_ir::StateVariableAttribute::ConstantKeyword)
         });
-        let definition = if is_constant {
+        let is_public = node
+            .attributes
+            .iter()
+            .any(|attribute| matches!(attribute, input_ir::StateVariableAttribute::PublicKeyword));
+        // Public state variables define a getter, so we don't register them as
+        // constants here
+        let definition = if is_constant && !is_public {
             Definition::new_constant(node.node_id, &node.name)
         } else {
             Definition::new_state_variable(node.node_id, &node.name)
