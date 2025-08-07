@@ -1071,9 +1071,16 @@ impl Visitor for Pass {
                 // definition, except for structs for which we need to construct
                 // the value in memory
                 match self.binder.find_definition_by_id(node_id) {
-                    Some(Definition::Contract(_) | Definition::Interface(_)) => {
+                    Some(Definition::Contract(_)) => {
                         // TODO(validation): the type of the first argument should be an address
                         let type_id = self.types.register_type(Type::Contract {
+                            definition_id: node_id,
+                        });
+                        (Typing::Resolved(type_id), None)
+                    }
+                    Some(Definition::Interface(_)) => {
+                        // TODO(validation): the type of the first argument should be an address
+                        let type_id = self.types.register_type(Type::Interface {
                             definition_id: node_id,
                         });
                         (Typing::Resolved(type_id), None)
