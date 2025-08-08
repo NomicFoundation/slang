@@ -1,4 +1,4 @@
-name: "benchmark"
+name: "benchmark_npm"
 
 on:
   # Run using manual triggers from GitHub UI:
@@ -10,6 +10,11 @@ on:
         type: "boolean"
         required: true
         default: true
+
+      bencherProject:
+        description: "Bencher project:"
+        type: "string"
+        default: "slang-dashboard-npm"
 
   # Run on pushes to 'main' branch:
   push:
@@ -35,17 +40,17 @@ jobs:
       - name: "Restore Cache"
         uses: "./.github/actions/cache/restore"
 
+      - name: "Set bencher project"
+        run: |
+          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
+
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
 
-      - name: "infra perf benchmark"
-        run: "./scripts/bin/infra perf benchmark ${{ inputs.dryRun == true && '--dry-run' || '' }}"
+      - name: "infra check npm"
+        run: "./scripts/bin/infra check npm"
+
+      - name: "infra perf npm"
+        run: "./scripts/bin/infra perf npm ${{ inputs.dryRun == true && '--dry-run' || '' }}"
         env:
           BENCHER_API_TOKEN: "${{ secrets.BENCHER_API_TOKEN }}"
-
-      - name: "Upload Benchmarking Data"
-        uses: "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
-        with:
-          name: "benchmarking-data"
-          path: "target/iai"
-          if-no-files-found: "error"
