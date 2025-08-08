@@ -74,15 +74,10 @@ impl Drop for CodegenFileSystem {
                 }
 
                 if GitHub::is_running_in_ci() {
-                    panic!(
-                        "File was not generated in this context: {}",
-                        file_path.display()
-                    );
+                    panic!("File was not generated in this context: {file_path:?}");
                 } else {
                     std::fs::remove_file(&file_path)
-                        .with_context(|| {
-                            format!("Failed to delete source file: {}", file_path.display())
-                        })
+                        .with_context(|| format!("Failed to delete source file: {file_path:?}"))
                         .unwrap();
                 }
             }
@@ -92,7 +87,7 @@ impl Drop for CodegenFileSystem {
 
 fn write_contents(file_path: &Path, contents: &str) -> Result<()> {
     std::fs::create_dir_all(file_path.unwrap_parent())
-        .with_context(|| format!("Cannot create parent directory of: {}", file_path.display()))?;
+        .with_context(|| format!("Cannot create parent directory of: {file_path:?}"))?;
 
     // To respect Cargo incrementability, don't touch the file if it is already up to date.
     if file_path.exists() && contents == file_path.read_to_string()? {

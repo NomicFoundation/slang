@@ -1,0 +1,40 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         var (x, y) = (1, 2);
+   │              ┬  ┬  
+   │              ╰───── name: 3
+   │                 │  
+   │                 ╰── name: 4
+ 4 │         x + y;
+   │         ┬   ┬  
+   │         ╰────── ref: 3
+   │             │  
+   │             ╰── ref: 4
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public {
+ 3 │ │ │           var (x, y) = (1, 2);
+   │ │ │                ┬ ─┬  
+   │ │ │                ╰───── definiens: 3
+   │ │ │                   │  
+   │ │ │                   ╰── definiens: 4
+   ┆ ┆ ┆   
+ 5 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

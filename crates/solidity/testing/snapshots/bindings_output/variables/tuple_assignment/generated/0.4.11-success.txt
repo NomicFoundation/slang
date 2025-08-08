@@ -1,0 +1,42 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract C {
+   │          ┬  
+   │          ╰── name: 1
+ 2 │     function f() public {
+   │              ┬  
+   │              ╰── name: 2
+ 3 │         uint x;
+   │              ┬  
+   │              ╰── name: 3
+ 4 │         uint y;
+   │              ┬  
+   │              ╰── name: 4
+ 5 │         (x, y) = (1, 2);
+   │          ┬  ┬  
+   │          ╰───── ref: 3
+   │             │  
+   │             ╰── ref: 4
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract C {
+ 2 │ │ ╭─▶     function f() public {
+ 3 │ │ │           uint x;
+   │ │ │   ────────┬───────  
+   │ │ │           ╰───────── definiens: 3
+ 4 │ │ │           uint y;
+   │ │ │   ────────┬───────  
+   │ │ │           ╰───────── definiens: 4
+   ┆ ┆ ┆   
+ 6 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 7 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯
