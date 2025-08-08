@@ -14,7 +14,6 @@ on:
       bencherProject:
         description: "Bencher project:"
         type: "string"
-        default: "slang-dashboard-npm"
 
   # Run on pushes to 'main' branch:
   push:
@@ -42,7 +41,7 @@ jobs:
 
       - name: "Set bencher project"
         run: |
-          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
+          echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject || 'slang-dashboard-npm' }}" >> $GITHUB_ENV
 
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
