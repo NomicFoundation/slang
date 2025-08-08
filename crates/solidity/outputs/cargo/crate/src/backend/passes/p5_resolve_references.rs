@@ -113,8 +113,10 @@ impl Pass {
         // `using L for *`)
         // - If the type is a function type, it may have an associated
         // definition ID from the function definition where it is derived from.
-        let canonical_type = self.types.get_type_by_id(type_id).canonicalize();
-        let type_id = self.types.find_type(&canonical_type).unwrap_or(type_id);
+        let type_id = self
+            .types
+            .find_canonical_type_id(type_id)
+            .unwrap_or(type_id);
 
         let mut directives = Vec::new();
         for scope_id in self.scope_stack.iter().rev() {
@@ -992,7 +994,20 @@ impl Visitor for Pass {
         let typing = if node.items.is_empty() {
             Typing::Unresolved
         } else {
-            self.typing_of_expression(node.items.first().unwrap())
+            // TODO(validation): all expressions in the array should have the
+            // same (or implicitly convertible) types
+            if let Some(element_type) = self
+                .typing_of_expression(node.items.first().unwrap())
+                .as_type_id()
+            {
+                let type_id = self.types.register_type(Type::Array {
+                    element_type,
+                    location: DataLocation::Memory,
+                });
+                Typing::Resolved(type_id)
+            } else {
+                Typing::Unresolved
+            }
         };
         self.binder.set_node_typing(node.node_id, typing);
     }

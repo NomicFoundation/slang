@@ -10,7 +10,7 @@ Definitions (4):
 
 References (2):
 - Ref: ["ArrayHelper" @ input.sol:5:7] -> #1
-- Ref: ["asArray" @ input.sol:8:13] -> unresolved
+- Ref: ["asArray" @ input.sol:8:13] -> #2
 
 ------------------------------------------------------------------------
 
@@ -39,5 +39,5 @@ Bindings:
    │            ╰─── name: 4
  8 │     ["foo"].asArray();
    │             ───┬───  
-   │                ╰───── unresolved
+   │                ╰───── ref: 2
 ───╯

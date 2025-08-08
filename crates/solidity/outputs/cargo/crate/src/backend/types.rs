@@ -134,6 +134,56 @@ impl TypeRegistry {
             ),
         }
     }
+
+    pub fn find_canonical_type_id(&self, type_id: TypeId) -> Option<TypeId> {
+        let canonical_type = match self.get_type_by_id(type_id) {
+            Type::Array { element_type, .. } => {
+                let element_type = self.find_canonical_type_id(*element_type)?;
+                Type::Array {
+                    element_type,
+                    location: DataLocation::Inherited,
+                }
+            }
+            Type::Bytes { .. } => Type::Bytes {
+                location: DataLocation::Inherited,
+            },
+            Type::String { .. } => Type::String {
+                location: DataLocation::Inherited,
+            },
+            Type::Struct { definition_id, .. } => Type::Struct {
+                definition_id: *definition_id,
+                location: DataLocation::Inherited,
+            },
+            Type::Function {
+                parameter_types,
+                return_type,
+                external,
+                kind,
+                ..
+            } => Type::Function {
+                definition_id: None,
+                parameter_types: parameter_types.clone(),
+                return_type: *return_type,
+                external: *external,
+                kind: *kind,
+            },
+
+            Type::Address { .. }
+            | Type::Boolean
+            | Type::ByteArray { .. }
+            | Type::Contract { .. }
+            | Type::Enum { .. }
+            | Type::FixedPointNumber { .. }
+            | Type::Integer { .. }
+            | Type::Interface { .. }
+            | Type::Mapping { .. }
+            | Type::Rational
+            | Type::Tuple { .. }
+            | Type::UserDefinedValue { .. }
+            | Type::Void => return Some(type_id),
+        };
+        self.find_type(&canonical_type)
+    }
 }
 
 impl TypeRegistry {
@@ -306,53 +356,6 @@ impl Type {
                 location: data_location.unwrap_or(*location),
             },
             _ => self.clone(),
-        }
-    }
-
-    #[must_use]
-    pub fn canonicalize(&self) -> Self {
-        match self {
-            Type::Array { element_type, .. } => Type::Array {
-                element_type: *element_type,
-                location: DataLocation::Inherited,
-            },
-            Type::Bytes { .. } => Type::Bytes {
-                location: DataLocation::Inherited,
-            },
-            Type::String { .. } => Type::String {
-                location: DataLocation::Inherited,
-            },
-            Type::Struct { definition_id, .. } => Type::Struct {
-                definition_id: *definition_id,
-                location: DataLocation::Inherited,
-            },
-            Type::Function {
-                parameter_types,
-                return_type,
-                external,
-                kind,
-                ..
-            } => Type::Function {
-                definition_id: None,
-                parameter_types: parameter_types.clone(),
-                return_type: *return_type,
-                external: *external,
-                kind: *kind,
-            },
-
-            Type::Address { .. }
-            | Type::Boolean
-            | Type::ByteArray { .. }
-            | Type::Contract { .. }
-            | Type::Enum { .. }
-            | Type::FixedPointNumber { .. }
-            | Type::Integer { .. }
-            | Type::Interface { .. }
-            | Type::Mapping { .. }
-            | Type::Rational
-            | Type::Tuple { .. }
-            | Type::UserDefinedValue { .. }
-            | Type::Void => self.clone(),
         }
     }
 }
