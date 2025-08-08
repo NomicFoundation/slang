@@ -1,5 +1,5 @@
 use std::collections::{HashMap, VecDeque};
-use std::fmt::{Debug, Display};
+use std::fmt::Debug;
 use std::hash::Hash;
 
 /// Produces a linearisation of a hierarchy of items using the C3 linearisation
@@ -13,7 +13,7 @@ use std::hash::Hash;
 /// vectors.
 /// NOTE: parents are considered left-to-right as in the traditional C3
 /// linearisation algorithm, ie. Python style.
-pub(crate) fn linearise<Item: Clone + Debug + Display + Eq + Hash + PartialEq>(
+pub(crate) fn linearise<Item: Clone + Debug + Eq + Hash + PartialEq>(
     target: &Item,
     parents: &HashMap<Item, Vec<Item>>,
 ) -> Option<Vec<Item>> {

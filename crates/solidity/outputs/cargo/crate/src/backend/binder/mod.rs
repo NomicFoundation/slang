@@ -165,7 +165,7 @@ impl Binder {
             .insert(node_id, linearised_bases)
             .is_some()
         {
-            unreachable!("Trying to linearised twice {node_id}");
+            unreachable!("linearisations for {node_id:?} already registered");
         }
     }
 
