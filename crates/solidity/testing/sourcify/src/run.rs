@@ -1,9 +1,13 @@
+use std::rc::Rc;
+
 use anyhow::{bail, Result};
 use rayon::iter::{ParallelBridge, ParallelIterator};
-use slang_solidity::compilation::{CompilationInitializationError, CompilationUnit};
 use slang_solidity::backend::binder::Resolution;
 use slang_solidity::backend::passes;
-use slang_solidity::cst::{Cursor, NodeKind, TerminalKindExtensions, TextRange};
+use slang_solidity::compilation::{CompilationInitializationError, CompilationUnit};
+use slang_solidity::cst::{
+    Cursor, NodeKind, TerminalKind, TerminalKindExtensions, TerminalNode, TextRange,
+};
 use slang_solidity::diagnostic::{Diagnostic, Severity};
 use slang_solidity::utils::LanguageFacts;
 
@@ -196,7 +200,7 @@ fn run_bindings_check(
                 version = contract.version,
             ));
 
-            test_outcome = TestOutcome::Failed;
+            test_outcome = TestOutcome::Unresolved;
         }
     }
 
@@ -222,7 +226,7 @@ fn run_bindings_check(
                     version = contract.version,
                 ));
 
-                test_outcome = TestOutcome::Failed;
+                test_outcome = TestOutcome::Unresolved;
             }
         }
     }
@@ -263,7 +267,7 @@ fn run_old_binder_check(
 }
 
 fn run_new_binder_check(
-    _contract: &Contract,
+    contract: &Contract,
     compilation_unit: CompilationUnit,
     events: &Events,
 ) -> TestOutcome {
@@ -273,19 +277,64 @@ fn run_new_binder_check(
     let data = passes::p3_type_definitions::run(data);
     let data = passes::p4_resolve_references::run(data);
 
+    let mut test_outcome = TestOutcome::Passed;
+
     events.inc_definitions(data.binder.definitions().len());
     let mut references = 0;
     let mut unresolved = 0;
     for reference in data.binder.references().values() {
         references += 1;
-        if let Resolution::Unresolved = reference.resolution {
-            unresolved += 1;
+        if !matches!(reference.resolution, Resolution::Unresolved) {
+            continue;
         }
+        unresolved += 1;
+        test_outcome = TestOutcome::Unresolved;
+
+        let Some((cursor, ref_file_path)) =
+            find_cursor_for_identifier(&data.compilation_unit, &reference.identifier)
+        else {
+            events.bindings_error(format!(
+                "[{contract_name} {version}] ERROR: cannot find Cursor pointing to {identifier:?}",
+                identifier = reference.identifier,
+                contract_name = contract.name,
+                version = contract.version,
+            ));
+            panic!("this shouldn't happen");
+        };
+
+        let source = contract.read_file(&ref_file_path).unwrap_or_default();
+
+        let binding_error = BindingError::UnresolvedReference(cursor);
+        let msg = slang_solidity::diagnostic::render(&binding_error, &ref_file_path, &source, true);
+        events.bindings_error(format!(
+            "[{contract_name} {version}] Binding Error: Reference has no definitions\n{msg}",
+            contract_name = contract.name,
+            version = contract.version,
+        ));
     }
     events.inc_references(references);
     events.inc_unresolved_references(unresolved);
 
-    TestOutcome::Passed
+    test_outcome
+}
+
+fn find_cursor_for_identifier(
+    compilation_unit: &CompilationUnit,
+    identifier: &Rc<TerminalNode>,
+) -> Option<(Cursor, String)> {
+    let node_id = identifier.id();
+    for file in &compilation_unit.files() {
+        let mut cursor = file.create_tree_cursor();
+        while cursor.go_to_next_terminal_with_kinds(&[
+            TerminalKind::Identifier,
+            TerminalKind::YulIdentifier,
+        ]) {
+            if cursor.node().id() == node_id {
+                return Some((cursor, file.id().to_string()));
+            }
+        }
+    }
+    None
 }
 
 fn run_compare_binders(
