@@ -42,7 +42,7 @@ jobs:
       - name: "Set bencher project"
         run: |
           echo "SLANG_BENCHER_PROJECT=${{ inputs.bencherProject }}" >> $GITHUB_ENV
-        if: inputs.bencherProject
+        if: "${{ inputs.bencherProject }}"
 
       - name: "infra setup"
         run: "./scripts/bin/infra setup"
