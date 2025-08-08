@@ -37,7 +37,7 @@ pub trait Transformer {
         &mut self,
         source: &input::AbicoderPragma,
     ) -> output::AbicoderPragma {
-        let version = Rc::clone(&source.version);
+        let version = self.transform_abicoder_version(&source.version);
 
         Rc::new(output::AbicoderPragmaStruct {
             node_id: source.node_id,
@@ -1897,6 +1897,9 @@ pub trait Transformer {
     fn default_transform_pragma(&mut self, source: &input::Pragma) -> output::Pragma {
         #[allow(clippy::match_wildcard_for_single_variants)]
         match source {
+            input::Pragma::VersionPragma(ref version_pragma) => {
+                output::Pragma::VersionPragma(self.transform_version_pragma(version_pragma))
+            }
             input::Pragma::AbicoderPragma(ref abicoder_pragma) => {
                 output::Pragma::AbicoderPragma(self.transform_abicoder_pragma(abicoder_pragma))
             }
@@ -1905,13 +1908,27 @@ pub trait Transformer {
                     self.transform_experimental_pragma(experimental_pragma),
                 )
             }
-            input::Pragma::VersionPragma(ref version_pragma) => {
-                output::Pragma::VersionPragma(self.transform_version_pragma(version_pragma))
-            }
         }
     }
     fn transform_pragma(&mut self, source: &input::Pragma) -> output::Pragma {
         self.default_transform_pragma(source)
+    }
+
+    fn default_transform_abicoder_version(
+        &mut self,
+        source: &input::AbicoderVersion,
+    ) -> output::AbicoderVersion {
+        #[allow(clippy::match_wildcard_for_single_variants)]
+        match source {
+            input::AbicoderVersion::AbicoderV1Keyword => output::AbicoderVersion::AbicoderV1Keyword,
+            input::AbicoderVersion::AbicoderV2Keyword => output::AbicoderVersion::AbicoderV2Keyword,
+        }
+    }
+    fn transform_abicoder_version(
+        &mut self,
+        source: &input::AbicoderVersion,
+    ) -> output::AbicoderVersion {
+        self.default_transform_abicoder_version(source)
     }
 
     fn default_transform_experimental_feature(
@@ -1925,8 +1942,11 @@ pub trait Transformer {
                     self.transform_string_literal(string_literal),
                 )
             }
-            input::ExperimentalFeature::Identifier(node) => {
-                output::ExperimentalFeature::Identifier(Rc::clone(node))
+            input::ExperimentalFeature::ABIEncoderV2Keyword => {
+                output::ExperimentalFeature::ABIEncoderV2Keyword
+            }
+            input::ExperimentalFeature::SMTCheckerKeyword => {
+                output::ExperimentalFeature::SMTCheckerKeyword
             }
         }
     }

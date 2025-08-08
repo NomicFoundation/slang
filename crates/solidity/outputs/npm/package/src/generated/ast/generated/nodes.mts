@@ -101,8 +101,9 @@ export class PragmaDirective {
  * This node represents a `AbicoderPragma` nonterminal, with the following structure:
  *
  * ```ebnf
+ * (* Introduced in 0.7.5 *)
  * AbicoderPragma = (* abicoder_keyword: *) ABICODER_KEYWORD
- *                  (* version: *) IDENTIFIER;
+ *                  (* version: *) AbicoderVersion;
  * ```
  */
 export class AbicoderPragma {
@@ -111,7 +112,7 @@ export class AbicoderPragma {
 
     return {
       abicoderKeyword: $abicoderKeyword as TerminalNode,
-      version: $version as TerminalNode,
+      version: new AbicoderVersion($version as NonterminalNode),
     };
   });
 
@@ -137,7 +138,7 @@ export class AbicoderPragma {
   /**
    * Returns the child node that has the label `version`.
    */
-  public get version(): TerminalNode {
+  public get version(): AbicoderVersion {
     return this.fetch().version;
   }
 }
@@ -146,6 +147,7 @@ export class AbicoderPragma {
  * This node represents a `ExperimentalPragma` nonterminal, with the following structure:
  *
  * ```ebnf
+ * (* Introduced in 0.4.16 *)
  * ExperimentalPragma = (* experimental_keyword: *) EXPERIMENTAL_KEYWORD
  *                      (* feature: *) ExperimentalFeature;
  * ```
@@ -7562,22 +7564,22 @@ export class SourceUnitMember {
  * This node represents a `Pragma` nonterminal, with the following structure:
  *
  * ```ebnf
- * Pragma = (* variant: *) AbicoderPragma
- *        | (* variant: *) ExperimentalPragma
- *        | (* variant: *) VersionPragma;
+ * Pragma = (* variant: *) VersionPragma
+ *        | (* variant: *) AbicoderPragma (* Introduced in 0.7.5 *)
+ *        | (* variant: *) ExperimentalPragma; (* Introduced in 0.4.16 *)
  * ```
  */
 export class Pragma {
-  private readonly fetch: () => AbicoderPragma | ExperimentalPragma | VersionPragma = once(() => {
+  private readonly fetch: () => VersionPragma | AbicoderPragma | ExperimentalPragma = once(() => {
     const variant = wasm.ast.Selectors.choice(this.cst);
 
     switch (variant.kind) {
+      case NonterminalKind.VersionPragma:
+        return new VersionPragma(variant as NonterminalNode);
       case NonterminalKind.AbicoderPragma:
         return new AbicoderPragma(variant as NonterminalNode);
       case NonterminalKind.ExperimentalPragma:
         return new ExperimentalPragma(variant as NonterminalNode);
-      case NonterminalKind.VersionPragma:
-        return new VersionPragma(variant as NonterminalNode);
 
       default:
         throw new Error(`Unexpected variant: '${variant.kind}'.`);
@@ -7599,7 +7601,43 @@ export class Pragma {
   /**
    * Returns the child node that has the label `variant`.
    */
-  public get variant(): AbicoderPragma | ExperimentalPragma | VersionPragma {
+  public get variant(): VersionPragma | AbicoderPragma | ExperimentalPragma {
+    return this.fetch();
+  }
+}
+
+/**
+ * This node represents a `AbicoderVersion` nonterminal, with the following structure:
+ *
+ * ```ebnf
+ * (* Introduced in 0.7.5 *)
+ * AbicoderVersion = (* variant: *) ABICODER_V1_KEYWORD
+ *                 | (* variant: *) ABICODER_V2_KEYWORD;
+ * ```
+ */
+export class AbicoderVersion {
+  private readonly fetch: () => TerminalNode = once(() => {
+    const variant = wasm.ast.Selectors.choice(this.cst);
+
+    return variant as TerminalNode;
+  });
+
+  /**
+   * Constructs a new AST node of type `AbicoderVersion`, given a nonterminal CST node of the same kind.
+   */
+  public constructor(
+    /**
+     * The underlying nonterminal CST node of kind `AbicoderVersion`.
+     */
+    public readonly cst: NonterminalNode,
+  ) {
+    assertKind(this.cst.kind, NonterminalKind.AbicoderVersion);
+  }
+
+  /**
+   * Returns the child node that has the label `variant`.
+   */
+  public get variant(): TerminalNode {
     return this.fetch();
   }
 }
@@ -7608,7 +7646,9 @@ export class Pragma {
  * This node represents a `ExperimentalFeature` nonterminal, with the following structure:
  *
  * ```ebnf
- * ExperimentalFeature = (* variant: *) IDENTIFIER
+ * (* Introduced in 0.4.16 *)
+ * ExperimentalFeature = (* variant: *) ABI_ENCODER_V2_KEYWORD
+ *                     | (* variant: *) SMT_CHECKER_KEYWORD
  *                     | (* variant: *) StringLiteral;
  * ```
  */

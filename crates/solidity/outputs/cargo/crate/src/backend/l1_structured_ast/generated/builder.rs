@@ -49,7 +49,8 @@ pub fn build_abicoder_pragma(node: &Rc<NonterminalNode>) -> Option<AbicoderPragm
     assert_nonterminal_kind(node, NonterminalKind::AbicoderPragma);
     let mut helper = ChildrenHelper::new(&node.children);
     _ = helper.accept_label(EdgeLabel::AbicoderKeyword)?;
-    let version = terminal_node_cloned(helper.accept_label(EdgeLabel::Version)?);
+    let version =
+        build_abicoder_version(nonterminal_node(helper.accept_label(EdgeLabel::Version)?))?;
     if !helper.finalize() {
         return None;
     }
@@ -2620,15 +2621,35 @@ pub fn build_pragma(node: &Rc<NonterminalNode>) -> Option<Pragma> {
     let mut helper = ChildrenHelper::new(&node.children);
     let variant = helper.accept_label(EdgeLabel::Variant)?;
     let item = match variant.kind() {
+        NodeKind::Nonterminal(NonterminalKind::VersionPragma) => {
+            Pragma::VersionPragma(build_version_pragma(nonterminal_node(variant))?)
+        }
         NodeKind::Nonterminal(NonterminalKind::AbicoderPragma) => {
             Pragma::AbicoderPragma(build_abicoder_pragma(nonterminal_node(variant))?)
         }
         NodeKind::Nonterminal(NonterminalKind::ExperimentalPragma) => {
             Pragma::ExperimentalPragma(build_experimental_pragma(nonterminal_node(variant))?)
         }
-        NodeKind::Nonterminal(NonterminalKind::VersionPragma) => {
-            Pragma::VersionPragma(build_version_pragma(nonterminal_node(variant))?)
+        NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
+            unreachable!(
+                "unexpected variant node of kind {kind}",
+                kind = variant.kind()
+            );
         }
+    };
+    if !helper.finalize() {
+        return None;
+    }
+    Some(item)
+}
+
+pub fn build_abicoder_version(node: &Rc<NonterminalNode>) -> Option<AbicoderVersion> {
+    assert_nonterminal_kind(node, NonterminalKind::AbicoderVersion);
+    let mut helper = ChildrenHelper::new(&node.children);
+    let variant = helper.accept_label(EdgeLabel::Variant)?;
+    let item = match variant.kind() {
+        NodeKind::Terminal(TerminalKind::AbicoderV1Keyword) => AbicoderVersion::AbicoderV1Keyword,
+        NodeKind::Terminal(TerminalKind::AbicoderV2Keyword) => AbicoderVersion::AbicoderV2Keyword,
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             unreachable!(
                 "unexpected variant node of kind {kind}",
@@ -2650,8 +2671,11 @@ pub fn build_experimental_feature(node: &Rc<NonterminalNode>) -> Option<Experime
         NodeKind::Nonterminal(NonterminalKind::StringLiteral) => {
             ExperimentalFeature::StringLiteral(build_string_literal(nonterminal_node(variant))?)
         }
-        NodeKind::Terminal(TerminalKind::Identifier) => {
-            ExperimentalFeature::Identifier(terminal_node_cloned(variant))
+        NodeKind::Terminal(TerminalKind::ABIEncoderV2Keyword) => {
+            ExperimentalFeature::ABIEncoderV2Keyword
+        }
+        NodeKind::Terminal(TerminalKind::SMTCheckerKeyword) => {
+            ExperimentalFeature::SMTCheckerKeyword
         }
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
             unreachable!(

@@ -32,7 +32,7 @@ pub type AbicoderPragma = Rc<AbicoderPragmaStruct>;
 #[derive(Debug)]
 pub struct AbicoderPragmaStruct {
     pub node_id: NodeId,
-    pub version: Rc<TerminalNode>,
+    pub version: AbicoderVersion,
 }
 
 pub type ExperimentalPragma = Rc<ExperimentalPragmaStruct>;
@@ -1192,15 +1192,22 @@ pub enum SourceUnitMember {
 
 #[derive(Debug)]
 pub enum Pragma {
+    VersionPragma(VersionPragma),
     AbicoderPragma(AbicoderPragma),
     ExperimentalPragma(ExperimentalPragma),
-    VersionPragma(VersionPragma),
+}
+
+#[derive(Debug)]
+pub enum AbicoderVersion {
+    AbicoderV1Keyword,
+    AbicoderV2Keyword,
 }
 
 #[derive(Debug)]
 pub enum ExperimentalFeature {
     StringLiteral(StringLiteral),
-    Identifier(Rc<TerminalNode>),
+    ABIEncoderV2Keyword,
+    SMTCheckerKeyword,
 }
 
 #[derive(Debug)]
