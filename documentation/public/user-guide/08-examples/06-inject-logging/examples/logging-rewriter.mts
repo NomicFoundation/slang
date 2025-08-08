@@ -79,12 +79,10 @@ export class LoggingRewriter extends BaseRewriter {
   collectLeadingTrivia(node: Node): Array<Edge> {
     let edges = new Array<Edge>();
     let currentNode: Node | undefined = node;
-    let debug = [];
     while (currentNode && currentNode.children().length > 0) {
       const children: Edge[] = currentNode.children();
       currentNode = undefined;
       for (const edge of children) {
-        debug.push(`"Label": "${edge.label.toString()}", "Node": ${edge.node.toJson()},`);
         if (edge.node.isTerminalNode()) {
           if (edge.node.kind == TerminalKind.Whitespace) {
             // Just place whitespaces and tabs
