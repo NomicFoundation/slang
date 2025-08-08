@@ -569,6 +569,7 @@ impl<'a> BuiltInsResolver<'a> {
                 "length" => Some(BuiltIn::YulLengthField),
                 "offset" => Some(BuiltIn::YulOffset),
                 "selector" => Some(BuiltIn::YulSelector),
+                "slot" => Some(BuiltIn::YulSlot),
                 _ => None,
             },
             _ => None,
