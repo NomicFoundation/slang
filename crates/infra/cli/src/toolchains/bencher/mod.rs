@@ -6,14 +6,7 @@ use infra_utils::github::GitHub;
 // Source: https://github.com/bencherdev/bencher/blob/aa31a002842cfb0da9d6c60569396fc5261f5111/tasks/test_api/src/task/test/smoke_test.rs#L20
 const BENCHER_TEST_TOKEN: &str = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhcGlfa2V5IiwiZXhwIjo1OTkzNjQyMTU2LCJpYXQiOjE2OTg2NzQ4NjEsImlzcyI6Imh0dHBzOi8vZGV2ZWwtLWJlbmNoZXIubmV0bGlmeS5hcHAvIiwic3ViIjoibXVyaWVsLmJhZ2dlQG5vd2hlcmUuY29tIiwib3JnIjpudWxsfQ.9z7jmM53TcVzc1inDxTeX9_OR0PQPpZAsKsCE7lWHfo";
 
-// Default bencher project. Can be overriden with the env var SLANG_BENCHER_PROJECT
-const BENCHER_PROJECT: &str = "slang-extended-dashboard";
-
-fn get_bencher_project() -> String {
-    std::env::var("SLANG_BENCHER_PROJECT").unwrap_or(String::from(BENCHER_PROJECT))
-}
-
-pub(crate) fn run_bench(dry_run: bool, adapter: &str, test_runner: &str) {
+pub(crate) fn run_bench(dry_run: bool, project: &str, adapter: &str, test_runner: &str) {
     let token = if dry_run {
         BENCHER_TEST_TOKEN.to_string()
     } else {
@@ -28,7 +21,7 @@ pub(crate) fn run_bench(dry_run: bool, adapter: &str, test_runner: &str) {
         "dev"
     };
 
-    let project = get_bencher_project();
+    let project = std::env::var("SLANG_BENCHER_PROJECT").unwrap_or(project.to_owned());
 
     let mut command = Command::new("bencher")
         .arg("run")
