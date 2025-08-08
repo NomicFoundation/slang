@@ -3,18 +3,18 @@
   "private": true,
   "devDependencies": {
     "@changesets/changelog-github": "0.5.1",
-    "@changesets/cli": "2.29.4",
+    "@changesets/cli": "2.29.5",
     "@ignored/slang-jco": "1.9.1-slang.1",
-    "@types/node": "24.0.8",
-    "cspell": "9.1.2",
+    "@types/node": "24.2.0",
+    "cspell": "9.2.0",
     "markdown-link-check": "3.12.2",
     "markdownlint-cli": "0.45.0",
-    "prettier-plugin-sh": "0.17.4",
-    "prettier": "3.5.3",
+    "prettier-plugin-sh": "0.18.0",
+    "prettier": "3.6.2",
     "remark-parse": "11.0.0",
     "remark-stringify": "11.0.0",
-    "typedoc": "0.28.5",
-    "typescript": "5.8.3",
+    "typedoc": "0.28.9",
+    "typescript": "5.9.2",
     "unified": "11.0.5"
   }
 }
