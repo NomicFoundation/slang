@@ -47,6 +47,9 @@ pub enum BuiltIn {
     ErrorOrPanic,
     Gasleft,
     Keccak256,
+    LegacyCallOptionGas(Option<TypeId>),
+    LegacyCallOptionValue(Option<TypeId>),
+    LegacyCallOptionValueNew(TypeId),
     Length,
     Log(u8),
     ModifierUnderscore,
@@ -172,8 +175,10 @@ const VERSION_0_4_22: Version = Version::new(0, 4, 22);
 const VERSION_0_5_0: Version = Version::new(0, 5, 0);
 const VERSION_0_5_3: Version = Version::new(0, 5, 3);
 const VERSION_0_6_0: Version = Version::new(0, 6, 0);
+const VERSION_0_6_2: Version = Version::new(0, 6, 2);
 const VERSION_0_6_7: Version = Version::new(0, 6, 7);
 const VERSION_0_6_8: Version = Version::new(0, 6, 8);
+const VERSION_0_7_0: Version = Version::new(0, 7, 0);
 const VERSION_0_8_0: Version = Version::new(0, 8, 0);
 const VERSION_0_8_4: Version = Version::new(0, 8, 4);
 const VERSION_0_8_7: Version = Version::new(0, 8, 7);
@@ -408,6 +413,11 @@ impl<'a> BuiltInsResolver<'a> {
                 "value" => Some(BuiltIn::MsgValue),
                 _ => None,
             },
+            BuiltIn::AddressCall if self.language_version < VERSION_0_7_0 => match symbol {
+                "gas" => Some(BuiltIn::LegacyCallOptionGas(None)),
+                "value" => Some(BuiltIn::LegacyCallOptionValue(None)),
+                _ => None,
+            },
             _ => None,
         }
     }
@@ -477,12 +487,13 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
-    pub(crate) fn lookup_member_of_type(
+    pub(crate) fn lookup_member_of_type_id(
         &self,
-        parent_type: &Type,
+        type_id: TypeId,
         symbol: &str,
     ) -> Option<BuiltIn> {
-        match parent_type {
+        let type_ = self.types.get_type_by_id(type_id);
+        match type_ {
             Type::Address { payable } => self.lookup_member_of_address(symbol, *payable),
             Type::Array { element_type, .. } => match symbol {
                 "length" => Some(BuiltIn::Length),
@@ -515,6 +526,12 @@ impl<'a> BuiltInsResolver<'a> {
                     match symbol {
                         "address" => Some(BuiltIn::Address),
                         "selector" => Some(BuiltIn::Selector),
+                        "gas" if self.language_version < VERSION_0_7_0 => {
+                            Some(BuiltIn::LegacyCallOptionGas(Some(type_id)))
+                        }
+                        "value" if self.language_version < VERSION_0_7_0 => {
+                            Some(BuiltIn::LegacyCallOptionValue(Some(type_id)))
+                        }
                         _ => None,
                     }
                 } else {
@@ -558,12 +575,24 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
-    #[allow(clippy::unused_self)]
     pub(crate) fn lookup_call_option(&self, symbol: &str) -> Option<BuiltIn> {
         match symbol {
             "gas" => Some(BuiltIn::CallOptionGas),
-            "salt" => Some(BuiltIn::CallOptionSalt),
+            "salt" if self.language_version >= VERSION_0_6_2 => Some(BuiltIn::CallOptionSalt),
             "value" => Some(BuiltIn::CallOptionValue),
+            _ => None,
+        }
+    }
+
+    pub(crate) fn lookup_member_of_new_type_id(
+        &self,
+        type_id: TypeId,
+        symbol: &str,
+    ) -> Option<BuiltIn> {
+        match symbol {
+            "value" if self.language_version < VERSION_0_7_0 => {
+                Some(BuiltIn::LegacyCallOptionValueNew(type_id))
+            }
             _ => None,
         }
     }
@@ -634,6 +663,9 @@ impl<'a> BuiltInsResolver<'a> {
             | BuiltIn::Block
             | BuiltIn::Blockhash
             | BuiltIn::BytesConcat
+            | BuiltIn::LegacyCallOptionGas(_)
+            | BuiltIn::LegacyCallOptionValue(_)
+            | BuiltIn::LegacyCallOptionValueNew(_)
             | BuiltIn::Ecrecover
             | BuiltIn::Gasleft
             | BuiltIn::Keccak256
@@ -658,6 +690,7 @@ impl<'a> BuiltInsResolver<'a> {
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     pub(crate) fn typing_of_function_call(
         &self,
         built_in: &BuiltIn,
@@ -722,6 +755,16 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Ecrecover => Typing::Resolved(self.types.address()),
             BuiltIn::Gasleft => Typing::Resolved(self.types.uint256()),
             BuiltIn::Keccak256 => Typing::Resolved(self.types.bytes32()),
+            BuiltIn::LegacyCallOptionGas(type_id) | BuiltIn::LegacyCallOptionValue(type_id) => {
+                if let Some(type_id) = type_id {
+                    Typing::Resolved(*type_id)
+                } else if self.language_version < VERSION_0_7_0 {
+                    Typing::BuiltIn(BuiltIn::AddressCall)
+                } else {
+                    Typing::Unresolved
+                }
+            }
+            BuiltIn::LegacyCallOptionValueNew(type_id) => Typing::New(*type_id),
             BuiltIn::Log(_) => Typing::Resolved(self.types.void()),
             BuiltIn::Mulmod => Typing::Resolved(self.types.uint256()),
             BuiltIn::Require => Typing::Resolved(self.types.void()),

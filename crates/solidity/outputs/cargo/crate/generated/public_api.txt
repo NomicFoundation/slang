@@ -162,6 +162,9 @@ pub slang_solidity::backend::built_ins::BuiltIn::Ecrecover
 pub slang_solidity::backend::built_ins::BuiltIn::ErrorOrPanic
 pub slang_solidity::backend::built_ins::BuiltIn::Gasleft
 pub slang_solidity::backend::built_ins::BuiltIn::Keccak256
+pub slang_solidity::backend::built_ins::BuiltIn::LegacyCallOptionGas(core::option::Option<slang_solidity::backend::types::TypeId>)
+pub slang_solidity::backend::built_ins::BuiltIn::LegacyCallOptionValue(core::option::Option<slang_solidity::backend::types::TypeId>)
+pub slang_solidity::backend::built_ins::BuiltIn::LegacyCallOptionValueNew(slang_solidity::backend::types::TypeId)
 pub slang_solidity::backend::built_ins::BuiltIn::Length
 pub slang_solidity::backend::built_ins::BuiltIn::Log(u8)
 pub slang_solidity::backend::built_ins::BuiltIn::ModifierUnderscore

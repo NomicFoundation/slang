@@ -147,28 +147,7 @@ impl Pass {
     fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
         match typing {
             Typing::Unresolved | Typing::Undetermined(_) => Resolution::Unresolved,
-            Typing::Resolved(type_id) => {
-                let resolution = self.resolve_symbol_in_type(*type_id, symbol);
-                if resolution == Resolution::Unresolved {
-                    // Consider active `using` directives in the current context
-                    let active_directives = self.active_using_directives_for_type(*type_id);
-                    let mut definition_ids = Vec::new();
-                    for directive in &active_directives {
-                        let scope_id = directive.get_scope_id();
-                        let ids = self
-                            .binder
-                            .resolve_in_scope_as_namespace(scope_id, symbol)
-                            .get_definition_ids();
-                        // TODO: filter the resolved definitions to only include
-                        // functions whose first parameter is of our type (or
-                        // implicitly convertible to it)
-                        definition_ids.extend(ids);
-                    }
-                    Resolution::from(definition_ids)
-                } else {
-                    resolution
-                }
-            }
+            Typing::Resolved(type_id) => self.resolve_symbol_in_type(*type_id, symbol),
             Typing::This | Typing::Super => {
                 // TODO: the contract scope here is not necessarily the current
                 // lexical scope; for compilation we should set it to the scope
@@ -194,10 +173,9 @@ impl Pass {
                     if self.language_version < VERSION_0_5_0 && resolution == Resolution::Unresolved
                     {
                         // In Solidity < 0.5.0, `this` can be used as an address
-                        let address_type = self.types.get_type_by_id(self.types.address());
                         Resolution::from(
                             self.built_ins_resolver()
-                                .lookup_member_of_type(address_type, symbol),
+                                .lookup_member_of_type_id(self.types.address(), symbol),
                         )
                     } else {
                         resolution
@@ -206,9 +184,17 @@ impl Pass {
                     Resolution::Unresolved
                 }
             }
-            Typing::New(_type_id) => {
-                // TODO: resolve legacy constructor call options (ie. `(new Lock).value(1)()`)
-                Resolution::Unresolved
+            Typing::New(type_id) => {
+                // Special case: resolve legacy constructor call options (ie.
+                // `(new Lock).value(1)()`)
+                if self.language_version < VERSION_0_7_0 {
+                    Resolution::from(
+                        self.built_ins_resolver()
+                            .lookup_member_of_new_type_id(*type_id, symbol),
+                    )
+                } else {
+                    Resolution::Unresolved
+                }
             }
             Typing::MetaType(type_) => {
                 if let Some(built_in) = self
@@ -272,7 +258,7 @@ impl Pass {
                     .resolve_in_contract_scope(scope_id, symbol, ResolveOptions::Normal)
                     .or_else(|| {
                         self.built_ins_resolver()
-                            .lookup_member_of_type(type_, symbol)
+                            .lookup_member_of_type_id(type_id, symbol)
                             .into()
                     })
             }
@@ -282,9 +268,26 @@ impl Pass {
             }
             _ => self
                 .built_ins_resolver()
-                .lookup_member_of_type(type_, symbol)
+                .lookup_member_of_type_id(type_id, symbol)
                 .into(),
         }
+        .or_else(|| {
+            // Consider active `using` directives in the current context
+            let active_directives = self.active_using_directives_for_type(type_id);
+            let mut definition_ids = Vec::new();
+            for directive in &active_directives {
+                let scope_id = directive.get_scope_id();
+                let ids = self
+                    .binder
+                    .resolve_in_scope_as_namespace(scope_id, symbol)
+                    .get_definition_ids();
+                // TODO: filter the resolved definitions to only include
+                // functions whose first parameter is of our type (or
+                // implicitly convertible to it)
+                definition_ids.extend(ids);
+            }
+            Resolution::from(definition_ids)
+        })
     }
 
     fn typing_of_expression(&self, node: &input_ir::Expression) -> Typing {
@@ -453,16 +456,6 @@ impl Pass {
         } else {
             None
         }
-    }
-
-    fn types_of_tuple(&self, items: &[input_ir::TupleValue]) -> Option<Vec<TypeId>> {
-        let mut result = Vec::new();
-        for item in items {
-            let expression = item.expression.as_ref()?;
-            let type_id = self.typing_of_expression(expression).as_type_id()?;
-            result.push(type_id);
-        }
-        Some(result)
     }
 
     fn typing_of_resolution(&self, resolution: &Resolution) -> Typing {
@@ -942,15 +935,29 @@ impl Visitor for Pass {
     }
 
     fn leave_tuple_expression(&mut self, node: &input_ir::TupleExpression) {
-        let types = self.types_of_tuple(&node.items);
-        let type_id = types.map(|types| {
-            if types.len() == 1 {
-                types.first().copied().unwrap()
-            } else {
-                self.types.register_type(Type::Tuple { types })
+        let typing = if node.items.len() == 1 {
+            node.items
+                .first()
+                .unwrap()
+                .expression
+                .as_ref()
+                .map_or(Typing::Unresolved, |expression| {
+                    self.typing_of_expression(expression)
+                })
+        } else {
+            let mut types = Vec::new();
+            for item in &node.items {
+                let type_id = item
+                    .expression
+                    .as_ref()
+                    .and_then(|expression| self.typing_of_expression(expression).as_type_id())
+                    .unwrap_or(self.types.void());
+                types.push(type_id);
             }
-        });
-        self.binder.set_node_type(node.node_id, type_id);
+            let type_id = self.types.register_type(Type::Tuple { types });
+            Typing::Resolved(type_id)
+        };
+        self.binder.set_node_typing(node.node_id, typing);
     }
 
     fn leave_member_access_expression(&mut self, node: &input_ir::MemberAccessExpression) {
