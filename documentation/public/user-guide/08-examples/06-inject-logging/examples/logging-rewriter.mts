@@ -75,7 +75,7 @@ export class LoggingRewriter extends BaseRewriter {
     return NonterminalNode.create(NonterminalKind.SourceUnitMembers, newChildren);
   }
 
-  // Traverse the node's children, collecting the first trivia nodes found along the way and placing them in `edges`.
+  // Traverse the node's children, collecting the first trivia nodes found along the way.
   collectLeadingTrivia(node: Node): Array<Edge> {
     let edges = new Array<Edge>();
     let currentNode: Node | undefined = node;
@@ -91,10 +91,10 @@ export class LoggingRewriter extends BaseRewriter {
             edge.node.kind == TerminalKind.MultiLineComment ||
             edge.node.kind == TerminalKind.SingleLineComment
           ) {
-            // If there are spaces saved and now found some comment, reset them.
+            // If there are spaces saved and now found comments, clean the spaces.
             edges.length = 0;
           } else {
-            // Reached a keyword, identifier, etc. Done.
+            // Reached a keyword, identifier, etc. Job's done.
             break;
           }
         } else if (edges.length == 0) {
