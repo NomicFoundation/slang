@@ -7750,7 +7750,6 @@ pub slang_solidity::backend::types::Type::UserDefinedValue
 pub slang_solidity::backend::types::Type::UserDefinedValue::definition_id: metaslang_cst::nodes::NodeId
 pub slang_solidity::backend::types::Type::Void
 impl slang_solidity::backend::types::Type
-pub fn slang_solidity::backend::types::Type::canonicalize(&self) -> Self
 pub fn slang_solidity::backend::types::Type::data_location(&self) -> core::option::Option<slang_solidity::backend::types::DataLocation>
 pub fn slang_solidity::backend::types::Type::with_data_location(&self, data_location: core::option::Option<slang_solidity::backend::types::DataLocation>) -> Self
 impl slang_solidity::backend::types::Type
@@ -7797,6 +7796,7 @@ pub fn slang_solidity::backend::types::TypeRegistry::uint256(&self) -> slang_sol
 pub fn slang_solidity::backend::types::TypeRegistry::uint8(&self) -> slang_solidity::backend::types::TypeId
 pub fn slang_solidity::backend::types::TypeRegistry::void(&self) -> slang_solidity::backend::types::TypeId
 impl slang_solidity::backend::types::TypeRegistry
+pub fn slang_solidity::backend::types::TypeRegistry::find_canonical_type_id(&self, type_id: slang_solidity::backend::types::TypeId) -> core::option::Option<slang_solidity::backend::types::TypeId>
 pub fn slang_solidity::backend::types::TypeRegistry::find_type(&self, type_: &slang_solidity::backend::types::Type) -> core::option::Option<slang_solidity::backend::types::TypeId>
 pub fn slang_solidity::backend::types::TypeRegistry::get_type_by_id(&self, type_id: slang_solidity::backend::types::TypeId) -> &slang_solidity::backend::types::Type
 pub fn slang_solidity::backend::types::TypeRegistry::implicitly_convertible_to(&self, from_type_id: slang_solidity::backend::types::TypeId, to_type_id: slang_solidity::backend::types::TypeId) -> bool
