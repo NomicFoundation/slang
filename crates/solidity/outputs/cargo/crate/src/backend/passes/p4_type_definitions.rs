@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use super::p2_collect_definitions::Output as Input;
+use super::p3_linearise_contracts::Output as Input;
 use crate::backend::binder::{
     Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
-    LibraryDefinition, Reference, Resolution, Scope, ScopeId, UsingDirective,
+    LibraryDefinition, Reference, Resolution, Scope, ScopeId, Typing, UsingDirective,
 };
+use crate::backend::built_ins::BuiltIn;
 use crate::backend::l2_flat_contracts::visitor::Visitor;
 use crate::backend::l2_flat_contracts::{self as input_ir};
 use crate::backend::types::{DataLocation, FunctionTypeKind, Type, TypeId, TypeRegistry};
@@ -25,6 +26,9 @@ pub fn run(input: Input) -> Output {
     let mut pass = Pass::new(input.binder);
     for source_unit in files.values() {
         pass.visit_file(source_unit);
+    }
+    for source_unit in files.values() {
+        pass.visit_file_type_getters(source_unit);
     }
     let binder = pass.binder;
     let types = pass.types;
@@ -95,11 +99,16 @@ impl Pass {
     // level, or at the file level if there's no contract scope open. It will
     // follow through in contracts/intrefaces/libraries as well as imports and
     // treat them as namespaces.
-    fn resolve_identifier_path(&mut self, identifier_path: &input_ir::IdentifierPath) {
+    // Returns the resolution of the last reference.
+    fn resolve_identifier_path(
+        &mut self,
+        identifier_path: &input_ir::IdentifierPath,
+    ) -> Resolution {
         // start resolution from the current contract (or file if there's no
         // contract scope open)
         let mut scope_id = Some(self.current_contract_or_file_scope_id());
         let mut use_lexical_resolution = true;
+        let mut last_resolution: Resolution = Resolution::Unresolved;
 
         for identifier in identifier_path {
             let symbol = identifier.unparse();
@@ -114,7 +123,7 @@ impl Pass {
             };
             let definition_id = resolution.as_definition_id();
 
-            let reference = Reference::new(Rc::clone(identifier), resolution);
+            let reference = Reference::new(Rc::clone(identifier), resolution.clone());
             self.binder.insert_reference(reference);
 
             // recurse into file scopes pointed by the resolved definition
@@ -135,15 +144,10 @@ impl Pass {
                     }
                     _ => None,
                 });
-        }
-    }
 
-    fn resolve_inheritance_types(&mut self, types: &input_ir::InheritanceTypes) {
-        for inheritance_type in types {
-            self.resolve_identifier_path(&inheritance_type.type_name);
+            last_resolution = resolution;
         }
-        // TODO: return the resolved types (ie. the definition for the last
-        // identifier in each path)?
+        last_resolution
     }
 
     fn resolve_parameter_types(
@@ -196,7 +200,8 @@ impl Pass {
                 let mut external = false;
                 for attribute in &function_type.attributes {
                     match attribute {
-                        input_ir::FunctionTypeAttribute::ExternalKeyword => external = true,
+                        input_ir::FunctionTypeAttribute::ExternalKeyword
+                        | input_ir::FunctionTypeAttribute::PublicKeyword => external = true,
                         input_ir::FunctionTypeAttribute::PureKeyword => {
                             kind = FunctionTypeKind::Pure;
                         }
@@ -210,6 +215,7 @@ impl Pass {
                     }
                 }
                 Some(self.types.register_type(Type::Function {
+                    definition_id: None,
                     parameter_types,
                     return_type,
                     external,
@@ -264,7 +270,8 @@ impl Pass {
     ) -> Option<TypeId> {
         if let Some(definition) = self.binder.find_definition_by_id(definition_id) {
             match definition {
-                Definition::Contract(_) => {
+                Definition::Contract(_) | Definition::Library(_) => {
+                    // TODO: do we need a separate type for libraries?
                     Some(self.types.register_type(Type::Contract { definition_id }))
                 }
                 Definition::Enum(_) => Some(self.types.register_type(Type::Enum { definition_id })),
@@ -292,7 +299,6 @@ impl Pass {
                 | Definition::Function(_)
                 | Definition::Import(_)
                 | Definition::ImportedSymbol(_)
-                | Definition::Library(_)
                 | Definition::Modifier(_)
                 | Definition::Parameter(_)
                 | Definition::StateVariable(_)
@@ -320,75 +326,25 @@ impl Pass {
                 }))
             }
             input_ir::ElementaryType::BytesKeyword(bytes_keyword) => {
-                let width = bytes_keyword
-                    .unparse()
-                    .strip_prefix("bytes")
-                    .unwrap()
-                    .parse::<u32>();
-                if let Ok(width) = width {
-                    Some(self.types.register_type(Type::ByteArray { width }))
-                } else {
-                    data_location.map(|data_location| {
-                        self.types.register_type(Type::Bytes {
-                            location: data_location,
-                        })
-                    })
-                }
+                Type::from_bytes_keyword(&bytes_keyword.unparse(), data_location)
+                    .map(|type_| self.types.register_type(type_))
             }
-            input_ir::ElementaryType::IntKeyword(int_keyword) => {
-                let bits = int_keyword
-                    .unparse()
-                    .strip_prefix("int")
-                    .unwrap()
-                    .parse::<u32>()
-                    .unwrap_or(256);
-                Some(
-                    self.types
-                        .register_type(Type::Integer { signed: true, bits }),
-                )
-            }
-            input_ir::ElementaryType::UintKeyword(uint_keyword) => {
-                let bits = uint_keyword
-                    .unparse()
-                    .strip_prefix("uint")
-                    .unwrap()
-                    .parse::<u32>()
-                    .unwrap_or(256);
-                Some(self.types.register_type(Type::Integer {
-                    signed: false,
-                    bits,
-                }))
-            }
-            input_ir::ElementaryType::FixedKeyword(fixed_keyword) => {
-                let fixed_keyword = fixed_keyword.unparse();
-                let mut parts = fixed_keyword
-                    .strip_prefix("fixed")
-                    .unwrap()
-                    .split('x')
-                    .map(|part| part.parse::<u32>().unwrap());
-                let bits = parts.next().unwrap();
-                let precision_bits = parts.next().unwrap_or(0);
-                Some(self.types.register_type(Type::FixedPointNumber {
-                    signed: true,
-                    bits,
-                    precision_bits,
-                }))
-            }
-            input_ir::ElementaryType::UfixedKeyword(ufixed_keyword) => {
-                let ufixed_keyword = ufixed_keyword.unparse();
-                let mut parts = ufixed_keyword
-                    .strip_prefix("ufixed")
-                    .unwrap()
-                    .split('x')
-                    .map(|part| part.parse::<u32>().unwrap());
-                let bits = parts.next().unwrap();
-                let precision_bits = parts.next().unwrap_or(0);
-                Some(self.types.register_type(Type::FixedPointNumber {
-                    signed: false,
-                    bits,
-                    precision_bits,
-                }))
-            }
+            input_ir::ElementaryType::IntKeyword(int_keyword) => Some(
+                self.types
+                    .register_type(Type::from_int_keyword(&int_keyword.unparse())),
+            ),
+            input_ir::ElementaryType::UintKeyword(uint_keyword) => Some(
+                self.types
+                    .register_type(Type::from_uint_keyword(&uint_keyword.unparse())),
+            ),
+            input_ir::ElementaryType::FixedKeyword(fixed_keyword) => Some(
+                self.types
+                    .register_type(Type::from_fixed_keyword(&fixed_keyword.unparse())),
+            ),
+            input_ir::ElementaryType::UfixedKeyword(ufixed_keyword) => Some(
+                self.types
+                    .register_type(Type::from_ufixed_keyword(&ufixed_keyword.unparse())),
+            ),
             input_ir::ElementaryType::BoolKeyword => Some(self.types.boolean()),
             input_ir::ElementaryType::ByteKeyword => {
                 Some(self.types.register_type(Type::ByteArray { width: 1 }))
@@ -427,7 +383,8 @@ impl Pass {
         let mut external = false;
         for attribute in &function_definition.attributes {
             match attribute {
-                input_ir::FunctionAttribute::ExternalKeyword => external = true,
+                input_ir::FunctionAttribute::ExternalKeyword
+                | input_ir::FunctionAttribute::PublicKeyword => external = true,
                 input_ir::FunctionAttribute::PureKeyword => {
                     kind = FunctionTypeKind::Pure;
                 }
@@ -441,6 +398,7 @@ impl Pass {
             }
         }
         Some(self.types.register_type(Type::Function {
+            definition_id: Some(function_definition.node_id),
             parameter_types,
             return_type,
             external,
@@ -466,6 +424,126 @@ impl Pass {
         };
         self.binder.scope_id_for_node_id(definition_id)
     }
+
+    // This is a short second pass to compute and register the types of the
+    // getter functions for public state variables. Computing the type of the
+    // getter requires all struct fields to be typed already thus why this
+    // cannot happen concurrently with the typing of the definitions in the main
+    // pass.
+    fn visit_file_type_getters(&mut self, source_unit: &input_ir::SourceUnit) {
+        for source_unit_member in &source_unit.members {
+            let input_ir::SourceUnitMember::ContractDefinition(contract_definition) =
+                source_unit_member
+            else {
+                continue;
+            };
+            for contract_member in &contract_definition.members {
+                let input_ir::ContractMember::StateVariableDefinition(state_var_definition) =
+                    contract_member
+                else {
+                    continue;
+                };
+                if state_var_definition.attributes.iter().all(|attribute| {
+                    !matches!(attribute, input_ir::StateVariableAttribute::PublicKeyword)
+                }) {
+                    continue;
+                }
+
+                let node_id = state_var_definition.node_id;
+                let Some(type_id) = self.binder.node_typing(node_id).as_type_id() else {
+                    continue;
+                };
+
+                let Some(getter_type_id) = self.compute_getter_type(node_id, type_id) else {
+                    continue;
+                };
+                let Definition::StateVariable(definition) = self.binder.get_definition_mut(node_id)
+                else {
+                    unreachable!("definition is not a state variable");
+                };
+                definition.getter_type_id = Some(getter_type_id);
+            }
+        }
+    }
+
+    fn compute_getter_type(&mut self, definition_id: NodeId, type_id: TypeId) -> Option<TypeId> {
+        let mut return_type = type_id;
+        let mut parameter_types = Vec::new();
+
+        loop {
+            match self.types.get_type_by_id(return_type) {
+                // scalar types
+                Type::Address { .. }
+                | Type::Boolean
+                | Type::ByteArray { .. }
+                | Type::Bytes { .. }
+                | Type::Contract { .. }
+                | Type::Enum { .. }
+                | Type::FixedPointNumber { .. }
+                | Type::Function { .. }
+                | Type::Integer { .. }
+                | Type::Interface { .. }
+                | Type::String { .. }
+                | Type::UserDefinedValue { .. } => break,
+
+                Type::Struct { definition_id, .. } => {
+                    // For structs there is a special case: if it has a single
+                    // member, the getter will return the value of that field.
+                    // This special case is the reason why we cannot type
+                    // getters concurrently with the state variables.
+
+                    // To retrieve that field we need to go through the
+                    // scope associated to the struct...
+                    let scope_id = self
+                        .binder
+                        .scope_id_for_node_id(*definition_id)
+                        .expect("definition in struct type has no associated scope");
+                    let Scope::Struct(struct_scope) = self.binder.get_scope_by_id(scope_id) else {
+                        unreachable!("definition in struct type has no invalid scope");
+                    };
+                    if struct_scope.definitions.len() == 1 {
+                        let member_definition_id =
+                            struct_scope.definitions.values().next().unwrap();
+                        if let Some(member_type_id) =
+                            self.binder.node_typing(*member_definition_id).as_type_id()
+                        {
+                            return_type = member_type_id;
+                        } else {
+                            return None;
+                        }
+                    }
+                    break;
+                }
+
+                // non-scalar types
+                Type::Array { element_type, .. } => {
+                    return_type = *element_type;
+                    parameter_types.push(self.types.uint256());
+                }
+                Type::Mapping {
+                    key_type_id,
+                    value_type_id,
+                } => {
+                    return_type = *value_type_id;
+                    parameter_types.push(*key_type_id);
+                }
+
+                // invalid types
+                Type::Rational | Type::Tuple { .. } | Type::Void => {
+                    unreachable!("cannot compute the getter type for {type_id:?}")
+                }
+            }
+        }
+
+        let getter_type = Type::Function {
+            definition_id: Some(definition_id),
+            parameter_types,
+            return_type,
+            external: true,
+            kind: FunctionTypeKind::View,
+        };
+        Some(self.types.register_type(getter_type))
+    }
 }
 
 impl Visitor for Pass {
@@ -479,8 +557,6 @@ impl Visitor for Pass {
     }
 
     fn enter_contract_definition(&mut self, node: &input_ir::ContractDefinition) -> bool {
-        self.resolve_inheritance_types(&node.inheritance_types);
-        // TODO: save the resolved types as bases of the contract
         self.enter_scope_for_node_id(node.node_id);
 
         true
@@ -489,14 +565,10 @@ impl Visitor for Pass {
     fn leave_contract_definition(&mut self, node: &input_ir::ContractDefinition) {
         self.leave_scope_for_node_id(node.node_id);
 
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn enter_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) -> bool {
-        if let Some(inheritance) = &node.inheritance {
-            self.resolve_inheritance_types(&inheritance.types);
-            // TODO: save the resolved types as bases of the interface
-        }
         self.enter_scope_for_node_id(node.node_id);
 
         true
@@ -505,7 +577,7 @@ impl Visitor for Pass {
     fn leave_interface_definition(&mut self, node: &input_ir::InterfaceDefinition) {
         self.leave_scope_for_node_id(node.node_id);
 
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn enter_library_definition(&mut self, node: &input_ir::LibraryDefinition) -> bool {
@@ -516,17 +588,35 @@ impl Visitor for Pass {
     fn leave_library_definition(&mut self, node: &input_ir::LibraryDefinition) {
         self.leave_scope_for_node_id(node.node_id);
 
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn leave_path_import(&mut self, node: &input_ir::PathImport) {
         if node.alias.is_some() {
-            self.binder.mark_meta_type_node(node.node_id);
+            self.binder.mark_user_meta_type_node(node.node_id);
         }
     }
 
     fn leave_named_import(&mut self, node: &input_ir::NamedImport) {
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
+    }
+
+    fn enter_import_deconstruction(&mut self, node: &input_ir::ImportDeconstruction) -> bool {
+        for symbol in &node.symbols {
+            let target_symbol = if let Some(alias) = &symbol.alias {
+                &alias.identifier
+            } else {
+                &symbol.name
+            };
+            let resolution = self.binder.resolve_in_scope(
+                self.current_contract_or_file_scope_id(),
+                &target_symbol.unparse(),
+            );
+            let reference = Reference::new(Rc::clone(&symbol.name), resolution);
+            self.binder.insert_reference(reference);
+        }
+
+        false
     }
 
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
@@ -552,6 +642,13 @@ impl Visitor for Pass {
         }
     }
 
+    fn enter_override_paths(&mut self, items: &input_ir::OverridePaths) -> bool {
+        for identifier_path in items {
+            self.resolve_identifier_path(identifier_path);
+        }
+        false
+    }
+
     fn leave_parameter(&mut self, node: &input_ir::Parameter) {
         let type_id = self.resolve_type_name(
             &node.type_name,
@@ -563,7 +660,7 @@ impl Visitor for Pass {
     }
 
     fn leave_event_definition(&mut self, node: &input_ir::EventDefinition) {
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn leave_event_parameter(&mut self, node: &input_ir::EventParameter) {
@@ -575,7 +672,7 @@ impl Visitor for Pass {
     }
 
     fn leave_error_definition(&mut self, node: &input_ir::ErrorDefinition) {
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn leave_error_parameter(&mut self, node: &input_ir::ErrorParameter) {
@@ -589,6 +686,8 @@ impl Visitor for Pass {
     fn leave_state_variable_definition(&mut self, node: &input_ir::StateVariableDefinition) {
         let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Storage));
         self.binder.set_node_type(node.node_id, type_id);
+        // if required, we will compute the type of the getter after all
+        // definitions have been typed
     }
 
     fn leave_constant_definition(&mut self, node: &input_ir::ConstantDefinition) {
@@ -626,8 +725,30 @@ impl Visitor for Pass {
         self.binder.set_node_type(node.node_id, type_id);
     }
 
+    fn leave_tuple_deconstruction_statement(
+        &mut self,
+        node: &input_ir::TupleDeconstructionStatement,
+    ) {
+        if node.var_keyword.is_none() {
+            return;
+        }
+        // this handles adding type information to the `var` declarations in Solidity < 0.5.0
+        for element in &node.elements {
+            let Some(member) = &element.member else {
+                continue;
+            };
+            if let input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) = member {
+                // TODO: the variables cannot be typed at this point, but we
+                // should be able to infer their type in p4 after computing the
+                // value type
+                self.binder
+                    .set_node_type(untyped_tuple_member.node_id, None);
+            }
+        }
+    }
+
     fn leave_struct_definition(&mut self, node: &input_ir::StructDefinition) {
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn leave_struct_member(&mut self, node: &input_ir::StructMember) {
@@ -643,15 +764,21 @@ impl Visitor for Pass {
             self.binder.set_node_type(member.id(), Some(type_id));
         }
 
-        self.binder.mark_meta_type_node(node.node_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
     }
 
     fn leave_user_defined_value_type_definition(
         &mut self,
         node: &input_ir::UserDefinedValueTypeDefinition,
     ) {
-        let type_id = self.type_of_elementary_type(&node.value_type, None);
-        self.binder.set_node_type(node.node_id, type_id);
+        self.binder.mark_user_meta_type_node(node.node_id);
+
+        let target_type_id = self.type_of_elementary_type(&node.value_type, None);
+        let Definition::UserDefinedValueType(udvt) = self.binder.get_definition_mut(node.node_id)
+        else {
+            unreachable!("definition in UDVT node is not a UDVT");
+        };
+        udvt.target_type_id = target_type_id;
     }
 
     fn enter_using_directive(&mut self, node: &input_ir::UsingDirective) -> bool {
@@ -768,5 +895,55 @@ impl Visitor for Pass {
             self.binder
                 .insert_using_directive_in_scope(directive, current_scope_id);
         }
+    }
+
+    fn enter_revert_statement(&mut self, node: &input_ir::RevertStatement) -> bool {
+        if let Some(identifier_path) = &node.error {
+            self.resolve_identifier_path(identifier_path);
+        }
+        true
+    }
+
+    fn leave_revert_statement(&mut self, node: &input_ir::RevertStatement) {
+        if let Some(identifier_path) = &node.error {
+            let type_id = self.type_of_identifier_path(identifier_path, None);
+            self.binder.set_node_type(node.node_id, type_id);
+        }
+    }
+
+    fn enter_emit_statement(&mut self, node: &input_ir::EmitStatement) -> bool {
+        self.resolve_identifier_path(&node.event);
+        true
+    }
+
+    fn leave_emit_statement(&mut self, node: &input_ir::EmitStatement) {
+        let type_id = self.type_of_identifier_path(&node.event, None);
+        self.binder.set_node_type(node.node_id, type_id);
+    }
+
+    fn enter_catch_clause_error(&mut self, node: &input_ir::CatchClauseError) -> bool {
+        if let Some(name) = &node.name {
+            let resolution = match name.unparse().as_str() {
+                "Error" | "Panic" => Resolution::BuiltIn(BuiltIn::ErrorOrPanic),
+                _ => Resolution::Unresolved,
+            };
+            let reference = Reference::new(Rc::clone(name), resolution);
+            self.binder.insert_reference(reference);
+        }
+        true
+    }
+
+    fn leave_new_expression(&mut self, node: &input_ir::NewExpression) {
+        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
+        let typing = type_id.map_or(Typing::Unresolved, Typing::New);
+        self.binder.set_node_typing(node.node_id, typing);
+    }
+
+    fn leave_type_expression(&mut self, node: &input_ir::TypeExpression) {
+        let type_id = self.resolve_type_name(&node.type_name, Some(DataLocation::Memory));
+        let typing = type_id.map_or(Typing::Unresolved, |type_id| {
+            Typing::BuiltIn(BuiltIn::Type(type_id))
+        });
+        self.binder.set_node_typing(node.node_id, typing);
     }
 }

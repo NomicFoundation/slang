@@ -27,6 +27,11 @@ fn named_parameters() -> Result<()> {
 }
 
 #[test]
+fn named_params_in_variables() -> Result<()> {
+    run(T, "named_params_in_variables")
+}
+
+#[test]
 fn nested() -> Result<()> {
     run(T, "nested")
 }
@@ -34,4 +39,9 @@ fn nested() -> Result<()> {
 #[test]
 fn nested_custom() -> Result<()> {
     run(T, "nested_custom")
+}
+
+#[test]
+fn nested_named_params() -> Result<()> {
+    run(T, "nested_named_params")
 }
