@@ -3,11 +3,8 @@
 
   "include": ["./src/**/*.mts"],
 
-  "noImplicitAny": false,
-
   "compilerOptions": {
-    "target": "es2017",
-    "typeRoots": ["@types", "./node_modules/@types", "../../../../../node_modules/@types"],
+    "target": "es2017", // for top-level awaits
     /* Projects */
     "composite": true,
     "incremental": true,

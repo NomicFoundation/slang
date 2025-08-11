@@ -181,17 +181,14 @@ impl TryFrom<serde_json::Value> for ImportResolver {
             .get("settings")
             .and_then(|settings| settings.get("remappings"))
             .and_then(|remappings| remappings.as_array())
-            .ok_or(Error::msg(
-                "Could not find settings.remappings array entry.",
-            ))
-            .map(|mappings| {
+            .map_or(vec![], |mappings| {
                 mappings
                     .iter()
                     .filter_map(|mapping| mapping.as_str())
                     .filter_map(|m| ImportRemap::new(m).ok())
                     .filter(|remap| !remap.has_known_bug())
                     .collect()
-            })?;
+            });
 
         let source_maps: Vec<SourceMap> = value
             .get("sources")

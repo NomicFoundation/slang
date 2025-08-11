@@ -31,7 +31,7 @@
   ],
   "files": [
     {
-      "name": "largest_file_trivia_oslf",
+      "name": "largest_file_trivia_one_step_leverage_f",
       "hash": "0x00aB290CC289F818a9E80eBaF18685E353DF16F0",
       "file": "contracts/OneStepLeverage.f.sol"
     },

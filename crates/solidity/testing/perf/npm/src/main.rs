@@ -118,8 +118,7 @@ impl NpmController {
         sut: Subject,
     ) -> Result<Timings, anyhow::Error> {
         let perf_crate = CargoWorkspace::locate_source_crate("solidity_testing_perf_npm")?;
-        let mut command = Command::new("npx")
-            .arg("tsx")
+        let mut command = Command::new("tsx")
             .flag("--trace-uncaught")
             .flag("--expose-gc")
             .arg(perf_crate.join("src/benchmarks/main.mts").unwrap_str())

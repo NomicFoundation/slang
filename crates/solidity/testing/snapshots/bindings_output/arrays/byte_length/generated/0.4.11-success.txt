@@ -1,0 +1,36 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() public {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         byte data;
+   │              ──┬─  
+   │                ╰─── name: 3
+ 4 │         data.length;  // .length should bind in Solidity < 0.8.0
+   │         ──┬─ ───┬──  
+   │           ╰────────── ref: 3
+   │                 │    
+   │                 ╰──── ref: built-in
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() public {
+ 3 │ │ │           byte data;
+   │ │ │   ─────────┬─────────  
+   │ │ │            ╰─────────── definiens: 3
+   ┆ ┆ ┆   
+ 5 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 6 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

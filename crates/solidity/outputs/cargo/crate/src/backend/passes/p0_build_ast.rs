@@ -8,13 +8,15 @@ pub struct Output {
     pub files: HashMap<String, SourceUnit>,
 }
 
-pub fn run(input: CompilationUnit) -> Result<Output, String> {
+pub fn run(input: CompilationUnit) -> Output {
     let mut files = HashMap::new();
     for file in &input.files() {
-        files.insert(file.id().into(), builder::build_source_unit(file.tree())?);
+        if let Some(source_unit) = builder::build_source_unit(file.tree()) {
+            files.insert(file.id().into(), source_unit);
+        }
     }
-    Ok(Output {
+    Output {
         compilation_unit: input,
         files,
-    })
+    }
 }

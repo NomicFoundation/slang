@@ -1,4 +1,4 @@
-use anyhow::{anyhow, Result};
+use anyhow::Result;
 use slang_solidity::backend::l1_structured_ast;
 use slang_solidity::backend::l1_structured_ast::visitor::Visitor;
 use slang_solidity::parser::Parser;
@@ -86,8 +86,7 @@ contract Counter is Ownable {
     );
     assert!(output.is_valid());
 
-    let ast =
-        l1_structured_ast::builder::build_source_unit(output.tree()).map_err(|s| anyhow!(s))?;
+    let ast = l1_structured_ast::builder::build_source_unit(output.tree()).unwrap();
 
     let mut visitor = CounterVisitor::new(true);
     l1_structured_ast::visitor::accept_source_unit(&ast, &mut visitor);

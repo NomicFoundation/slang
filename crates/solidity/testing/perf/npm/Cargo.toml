@@ -8,10 +8,10 @@ publish = false
 [dependencies]
 serde_json = { workspace = true }
 infra_utils = { workspace = true }
-solidity_testing_perf_utils = { workspace = true }
 anyhow = { workspace = true }
 regex = { workspace = true }
 clap = { workspace = true }
+solidity_testing_perf_utils = { workspace = true }
 strum = { workspace = true }
 strum_macros = { workspace = true }
 

@@ -1,0 +1,38 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Parse errors:
+Error: Expected CloseBrace or OpenBrace or ReturnsKeyword or Semicolon.
+   ╭─[input.sol:4:5]
+   │
+ 4 │ ╭─▶     function test() internal pure {
+   ┆ ┆   
+ 6 │ ├─▶     }
+   │ │           
+   │ ╰─────────── Error occurred here.
+───╯
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ library Utils {
+   │         ──┬──  
+   │           ╰──── name: 1
+ 2 │     event Foo(uint x);
+   │           ─┬─      ┬  
+   │            ╰────────── name: 2
+   │                    │  
+   │                    ╰── name: 3
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─▶ library Utils {
+ 2 │ │       event Foo(uint x);
+   │ │   ───────────┬─────┬─────  
+   │ │              ╰───────────── definiens: 2
+   │ │                    │       
+   │ │                    ╰─────── definiens: 3
+   ┆ ┆   
+ 7 │ ├─▶ }
+   │ │       
+   │ ╰─────── definiens: 1
+───╯

@@ -39,12 +39,7 @@ fn generate_public_api(crate_name: UserFacingCrate) -> Result<()> {
         .omit_auto_trait_impls(true)
         .omit_blanket_impls(true)
         .build()
-        .with_context(|| {
-            format!(
-                "Failed to generate public API from {}",
-                rustdoc_json.display()
-            )
-        })?;
+        .with_context(|| format!("Failed to generate public API from {rustdoc_json:?}"))?;
 
     let output_path = crate_dir.join("generated/public_api.txt");
 

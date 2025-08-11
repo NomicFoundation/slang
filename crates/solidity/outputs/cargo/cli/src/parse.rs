@@ -29,7 +29,7 @@ impl ParseCommand {
 
         let file_path = file_path
             .canonicalize()
-            .unwrap_or_else(|_| panic!("File not found: {}", file_path.display()));
+            .unwrap_or_else(|_| panic!("File not found: {file_path:?}"));
 
         let input = fs::read_to_string(&file_path).unwrap();
         let parser = Parser::create(version).unwrap();

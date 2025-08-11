@@ -19,41 +19,39 @@
 
   {% for parent_type, sequence in builder.sequences %}
     {% if not sequence.has_added_fields %}
-      pub fn build_{{ parent_type | snake_case }}(node: &Rc<NonterminalNode>) -> Result<{{ parent_type }}>
+      pub fn build_{{ parent_type | snake_case }}(node: &Rc<NonterminalNode>) -> Option<{{ parent_type }}>
       {
-        expect_nonterminal_kind(node, NonterminalKind::{{ parent_type }})?;
+        assert_nonterminal_kind(node, NonterminalKind::{{ parent_type }});
         let mut helper = ChildrenHelper::new(&node.children);
         {% for field in sequence.fields %}
           {%- if field.is_removed -%}
             _ = helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?;
           {%- elif field.is_optional -%}
-            let {{ field.label }} = if helper.at_label(EdgeLabel::{{ field.label | pascal_case }}) {
+            let {{ field.label }} =
               {%- if field.is_terminal -%}
-                Some(terminal_node_cloned(
-                  helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?
-                )?)
+                helper.accept_label(EdgeLabel::{{ field.label | pascal_case }}).map(terminal_node_cloned)
               {%- else -%}
-                Some(build_{{ field.type | snake_case }}(nonterminal_node(
-                  helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?
-                )?)?)
+                helper.accept_label(EdgeLabel::{{ field.label | pascal_case }}).and_then(|node|
+                  build_{{ field.type | snake_case }}(nonterminal_node(node))
+                )
               {%- endif -%}
-            } else {
-              None
-            };
+            ;
           {%- else -%}
             let {{ field.label }} =
             {%- if field.is_terminal -%}
-              terminal_node_cloned(helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?)?;
+              terminal_node_cloned(helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?);
             {%- else -%}
               build_{{ field.type | snake_case }}(
-                nonterminal_node(helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?)?,
+                nonterminal_node(helper.accept_label(EdgeLabel::{{ field.label | pascal_case }})?),
               )?;
             {%- endif -%}
           {%- endif -%}
         {%- endfor %}
-        helper.finalize()?;
+        if !helper.finalize() {
+          return None;
+        }
 
-        Ok(Rc::new({{ parent_type }}Struct {
+        Some(Rc::new({{ parent_type }}Struct {
           node_id: node.id(),
           {%- for field in sequence.fields -%}
             {%- if not field.is_removed -%}
@@ -70,33 +68,35 @@
   //
 
   {% for parent_type, choice in builder.choices %}
-    pub fn build_{{ parent_type | snake_case }}(node: &Rc<NonterminalNode>) -> Result<{{ parent_type }}> {
-      expect_nonterminal_kind(node, NonterminalKind::{{ parent_type }})?;
+    pub fn build_{{ parent_type | snake_case }}(node: &Rc<NonterminalNode>) -> Option<{{ parent_type }}> {
+      assert_nonterminal_kind(node, NonterminalKind::{{ parent_type }});
       let mut helper = ChildrenHelper::new(&node.children);
       let variant = helper.accept_label(EdgeLabel::Variant)?;
       let item = match variant.kind() {
         {% for type in choice.nonterminal_types -%}
-          NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ parent_type }}::{{ type | pascal_case }}(build_{{ type | snake_case }}(nonterminal_node(variant)?)?),
+          NodeKind::Nonterminal(NonterminalKind::{{ type }}) => {{ parent_type }}::{{ type }}(build_{{ type | snake_case }}(nonterminal_node(variant))?),
         {%- endfor -%}
 
         {% for type in choice.non_unique_terminal_types -%}
           NodeKind::Terminal(TerminalKind::{{ type }}) => {
-            {{ parent_type }}::{{ type | pascal_case }}(terminal_node_cloned(variant)?)
+            {{ parent_type }}::{{ type }}(terminal_node_cloned(variant))
           },
         {%- endfor -%}
 
         {% for type in choice.unique_terminal_types -%}
           NodeKind::Terminal(TerminalKind::{{ type }}) => {
-            {{ parent_type }}::{{ type | pascal_case }}
+            {{ parent_type }}::{{ type }}
           },
         {%- endfor -%}
 
         NodeKind::Nonterminal(_) | NodeKind::Terminal(_) => {
-          return Err(format!("Unexpected variant node of kind {:?}", variant.kind()));
+          unreachable!("unexpected variant node of kind {kind}", kind = variant.kind());
         }
       };
-      helper.finalize()?;
-      Ok(item)
+      if !helper.finalize() {
+        return None;
+      }
+      Some(item)
     }
 
   {% endfor %}
@@ -106,24 +106,24 @@
   //
 
   {% for parent_type, collection in builder.collections %}
-    pub fn build_{{ parent_type | snake_case }}(node: &Rc<NonterminalNode>) -> Result<{{ parent_type }}> {
-      expect_nonterminal_kind(node, NonterminalKind::{{ parent_type }})?;
+    pub fn build_{{ parent_type | snake_case }}(node: &Rc<NonterminalNode>) -> Option<{{ parent_type }}> {
+      assert_nonterminal_kind(node, NonterminalKind::{{ parent_type }});
       let mut items = {{ parent_type }}::new();
       let mut helper = ChildrenHelper::new(&node.children);
-      while helper.at_label(EdgeLabel::Item) {
-        let child = helper.accept_label(EdgeLabel::Item)?;
+      while let Some(child) = helper.accept_label(EdgeLabel::Item) {
         {%- if collection.is_terminal -%}
-          let item = terminal_node_cloned(child)?;
+          items.push(terminal_node_cloned(child));
         {%- else -%}
-          let item = build_{{ collection.item_type | snake_case }}(nonterminal_node(child)?)?;
+          if let Some(item) = build_{{ collection.item_type | snake_case }}(nonterminal_node(child)) {
+            items.push(item);
+          }
         {%- endif -%}
-        items.push(item);
-        if helper.at_label(EdgeLabel::Separator) {
-          _ = helper.accept_label(EdgeLabel::Separator)?;
-        }
+        _ = helper.accept_label(EdgeLabel::Separator);
       }
-      helper.finalize()?;
-      Ok(items)
+      if !helper.finalize() {
+        return None;
+      }
+      Some(items)
     }
   {% endfor %}
 
@@ -131,33 +131,22 @@
   // Common:
   //
 
-  type Result<T> = std::result::Result<T, String>;
-
   #[allow(dead_code)]
   #[inline]
-  fn expect_nonterminal_kind(node: &Rc<NonterminalNode>, kind: NonterminalKind) -> Result<()> {
-    if node.kind == kind {
-      Ok(())
-    } else {
-      Err(format!("Expected {kind:?} node, but got {:?} instead", node.kind))
-    }
+  fn assert_nonterminal_kind(node: &Rc<NonterminalNode>, kind: NonterminalKind) {
+    assert_eq!(node.kind, kind, "expected non-terminal of kind {kind}, got {node:?}");
   }
 
   #[allow(dead_code)]
   #[inline]
-  fn terminal_node_cloned(node: &Node) -> Result<Rc<TerminalNode>> {
-    node
-      .as_terminal()
-      .map(Rc::clone)
-      .ok_or(format!("Expected terminal node, got {:?} instead", node.kind()))
+  fn terminal_node_cloned(node: &Node) -> Rc<TerminalNode> {
+    node.as_terminal().map(Rc::clone).expect("expected terminal node")
   }
 
   #[allow(dead_code)]
   #[inline]
-  fn nonterminal_node(node: &Node) -> Result<&Rc<NonterminalNode>> {
-    node
-      .as_nonterminal()
-      .ok_or(format!("Expected non-terminal node, got {:?} instead", node.kind()))
+  fn nonterminal_node(node: &Node) -> &Rc<NonterminalNode> {
+    node.as_nonterminal().expect("expected non-terminal node")
   }
 
   struct ChildrenHelper<'a> {
@@ -169,7 +158,7 @@
     fn new(children: &'a Vec<Edge>) -> Self {
       let mut index = 0;
       while index < children.len() {
-        if !children[index].is_trivia() {
+        if !children[index].is_trivia() && children[index].is_valid() {
           break;
         }
         index += 1;
@@ -177,36 +166,31 @@
       Self { children, index }
     }
 
-    fn at_label(&self, label: EdgeLabel) -> bool {
-      self.index < self.children.len() && self.children[self.index].label == label
-    }
-
-    fn accept_label(&mut self, label: EdgeLabel) -> Result<&Node> {
-      if self.index >= self.children.len() {
-        return Err(format!("Expected more sibling nodes, looking for label {label:?}"));
+    fn accept_label(&mut self, label: EdgeLabel) -> Option<&Node> {
+      if self.index >= self.children.len() || self.children[self.index].label != label {
+        return None;
       }
-      if self.children[self.index].label == label {
-        let node = &self.children[self.index].node;
-        loop {
-          self.index += 1;
-          if self.index >= self.children.len() || !self.children[self.index].is_trivia() {
-            break;
-          }
+
+      let node = &self.children[self.index].node;
+      loop {
+        self.index += 1;
+        if self.index >= self.children.len() ||
+          (!self.children[self.index].is_trivia() && self.children[self.index].is_valid()) {
+          break;
         }
-        Ok(node)
-      } else {
-        Err(format!("Expected node with label {label:?}, got {:?}", self.children[self.index].label))
       }
+      Some(node)
     }
 
-    fn finalize(mut self) -> Result<()> {
+    fn finalize(mut self) -> bool {
+      // skip over trailing trivia and unrecognized nodes
       while self.index < self.children.len() {
-        if !self.children[self.index].is_trivia() {
-          return Err("Unexpected non-trivia node".into());
+        if !self.children[self.index].is_trivia() && self.children[self.index].is_valid() {
+          return false;
         }
         self.index += 1;
       }
-      Ok(())
+      true
     }
   }
 

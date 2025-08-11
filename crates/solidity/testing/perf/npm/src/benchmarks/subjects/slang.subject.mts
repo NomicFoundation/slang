@@ -27,11 +27,11 @@ function createBuilder(project: SolidityProject): CompilationBuilder {
 export class SlangSubject implements Subject {
   public name = "slang";
 
-  async test(project: SolidityProject, file: string): Promise<Timings> {
+  async test(project: SolidityProject, mainFile: string): Promise<Timings> {
     const startTime = performance.now();
     const builder = createBuilder(project);
 
-    await builder.addFile(file);
+    await builder.addFile(mainFile);
 
     const unit = builder.build();
     const parsedAllFilesTime = performance.now();
@@ -44,7 +44,10 @@ export class SlangSubject implements Subject {
     assert(typeof unit.bindingGraph.definitionAt == "function");
     const builtGraphTime = performance.now();
 
+    let mainFileTime = 0;
+
     unit.files().forEach((file) => {
+      const fileResolveTimeStart = performance.now();
       let cursor = file.createTreeCursor();
       let emptyDefList = [];
       let neitherDefNorRefs = new Array<string>();
@@ -66,6 +69,9 @@ export class SlangSubject implements Subject {
         }
       }
 
+      if (file.id == mainFile) {
+        mainFileTime = performance.now() - fileResolveTimeStart;
+      }
       assert.deepStrictEqual(neitherDefNorRefs, []);
       assert.deepStrictEqual(emptyDefList, []);
     });
@@ -75,6 +81,7 @@ export class SlangSubject implements Subject {
     return new Map([
       ["slang_parse_all_files_duration", parsedAllFilesTime - startTime],
       ["slang_init_bindings_graph_duration", builtGraphTime - parsedAllFilesTime],
+      ["slang_resolve_main_file_duration", mainFileTime],
       ["slang_resolve_all_bindings_duration", resolutionTime],
       ["slang_total", performance.now() - startTime],
     ]);

@@ -1,7 +1,7 @@
 import assert from "assert";
 import { promisify } from "node:util";
 import * as solc from "solc";
-import { log, Subject, SolidityProject, Timings } from "../common.mjs";
+import { Subject, SolidityProject, Timings } from "../common.mjs";
 
 export class SolcSubject implements Subject {
   public name = "solc";
@@ -30,7 +30,6 @@ export class SolcSubject implements Subject {
         });
 
         const parsing_result = JSON.parse(solcSnapshot.compile(options, { import: findImports(project) }));
-        log(parsing_result);
         assert(parsing_result["sources"] != undefined);
         if (parsing_result["errors"] && !parsing_result["errors"].every((value: any) => value["type"] == "Warning")) {
           console.log(parsing_result["errors"]);

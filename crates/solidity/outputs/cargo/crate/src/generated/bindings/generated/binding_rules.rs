@@ -426,6 +426,12 @@ inherit .star_extension
   edge @contract.ns -> modifier
   edge modifier -> @contract.modifiers
 
+  ;; Qualified access to members of the contract itself (eg. `Foo.x` in a function body in `Foo`)
+  node self
+  attr (self) pop_symbol = (source-text @name)
+  edge @contract.lexical_scope -> self
+  edge self -> member
+
   ; There may be attached functions to our type. For the general case of
   ; variables of our type, that's already handled via normal lexical scope
   ; resolution. But for casting/`new` invocations that we resolve through the
@@ -2022,7 +2028,9 @@ inherit .star_extension
   node @tuple_decon.defs
 }
 
-@tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
+;; Tuple deconstruction statements with no types and a `var` keyword are
+;; declarations (only valid in Solidity < 0.5.0)
+@tuple_decon [TupleDeconstructionStatement [VarKeyword] [TupleDeconstructionElements
     [TupleDeconstructionElement
         [TupleMember @tuple_member variant: [UntypedTupleMember
             @name name: [Identifier]]
@@ -2034,6 +2042,20 @@ inherit .star_extension
   attr (def) definiens_node = @tuple_member
 
   edge @tuple_decon.defs -> def
+}
+
+;; Tuple deconstruction statements with no types and no `var` keyword are assignments
+@tuple_decon [TupleDeconstructionStatement . [OpenParen] [TupleDeconstructionElements
+    [TupleDeconstructionElement
+        [TupleMember variant: [UntypedTupleMember
+            @name name: [Identifier]]
+        ]
+    ]
+]] {
+  node ref
+  attr (ref) node_reference = @name
+
+  edge ref -> @tuple_decon.lexical_scope
 }
 
 @tuple_decon [TupleDeconstructionStatement [TupleDeconstructionElements
@@ -2308,6 +2330,15 @@ inherit .star_extension
   edge @state_var.def -> call
   edge call -> @state_var.typeof
 
+  ; When used as a member of the container contract, the variable symbol refers
+  ; to an external function, and as such, we can obtain its address and
+  ; selector. Caveat: this will also bind in the case where the var is _not_ being
+  ; used as a function, but that's not valid Solidity.
+  node external_function
+  attr (external_function) push_symbol = "%ExternalFunction"
+  edge @state_var.typeof -> external_function
+  edge external_function -> @state_var.lexical_scope
+
   ; Some complex types generate special getters (ie. arrays and mappings index
   ; their contents, structs flatten most of their fields and return a tuple)
   node getter
@@ -2472,6 +2503,15 @@ inherit .star_extension
   node @event.params
   attr (@event.params) pop_symbol = "@param_names"
   edge @event.def -> @event.params
+
+  ; Bind to built-in %EventType for accessing built-in member `.selector`
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node event_type
+  attr (event_type) push_symbol = "%EventType"
+  edge @event.def -> typeof
+  edge typeof -> event_type
+  edge event_type -> @event.lexical_scope
 }
 
 @event [EventDefinition [EventParametersDeclaration [EventParameters
@@ -3000,6 +3040,19 @@ inherit .star_extension
 }
 
 
+;;; Literal booleans
+@expr [Expression ([TrueKeyword] | [FalseKeyword])] {
+  node typeof
+  attr (typeof) push_symbol = "@typeof"
+  node bool
+  attr (bool) push_symbol = "bool"
+
+  edge @expr.output -> typeof
+  edge typeof -> bool
+  edge bool -> @expr.lexical_scope
+}
+
+
 ;;; String expressions
 @expr [Expression [StringExpression]] {
   node typeof
@@ -3126,7 +3179,13 @@ inherit .star_extension
   ; assembly statement to link to constants and built-ins.
   node yul_function_guard
   attr (yul_function_guard) push_symbol = "@in_yul_function"
+  node yul_function_pop
+  attr (yul_function_pop) pop_symbol = "@in_yul_function"
   edge @fundef.lexical_scope -> yul_function_guard
+  edge @fundef.lexical_scope -> yul_function_pop
+  ; pops an existing guard to avoid duplicating it if we're resolving from a
+  ; nested Yul function
+  edge yul_function_pop -> yul_function_guard
   edge yul_function_guard -> @block.lexical_scope
 }
 

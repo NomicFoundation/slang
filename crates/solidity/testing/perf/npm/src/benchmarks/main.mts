@@ -1,4 +1,4 @@
-import { checkCI, Subject, round2, Timings, SolidityProject, verboseOption } from "./common.mjs";
+import { Subject, round2, Timings, SolidityProject } from "./common.mjs";
 import commandLineArgs from "command-line-args";
 import commandLineUsage from "command-line-usage";
 import { AntlrSubject, SlangSubject, SolcSubject } from "./subjects/subjects.mjs";
@@ -13,7 +13,7 @@ async function run(
   dir: string,
   name: string,
   file: string | undefined,
-  runner: Subject,
+  subject: Subject,
   cold: number,
   hot: number,
 ): Promise<Timings> {
@@ -22,14 +22,14 @@ async function run(
 
   // cold runs
   for (let i = 0; i < cold; i++) {
-    await runner.test(project, file);
+    await subject.test(project, file);
   }
 
   const timesMap: Timings = new Map();
 
   // hot runs
   for (let i = 0; i < hot; i++) {
-    let timings = await runner.test(project, file);
+    let timings = await subject.test(project, file);
 
     for (const [component, measured] of timings) {
       const accutime = timesMap.get(component) || 0;
@@ -46,8 +46,6 @@ async function run(
   return timings;
 }
 
-checkCI();
-
 const dirOption = "dir";
 const nameOption = "name";
 const fileOption = "file";
@@ -62,7 +60,6 @@ const optionDefinitions = [
   { name: subjectOption, type: (input: string) => subjects.get(input) },
   { name: coldOption, type: Number, defaultValue: 2 },
   { name: hotOption, type: Number, defaultValue: 5 },
-  { name: verboseOption, type: Boolean, defaultValue: false },
 ];
 
 const options = commandLineArgs(optionDefinitions);
