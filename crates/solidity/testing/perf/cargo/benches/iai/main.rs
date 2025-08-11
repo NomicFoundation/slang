@@ -16,8 +16,9 @@ use solidity_testing_perf_cargo::tests::bindings_resolve::BuiltBindingGraph;
 
 mod __dependencies_used_in_lib__ {
     use {
-        anyhow as _, infra_utils as _, semver as _, serde_json as _, slang_solidity as _,
-        solar as _, solidity_testing_perf_utils as _, tree_sitter as _, tree_sitter_solidity as _,
+        anyhow as _, infra_utils as _, semver as _, serde as _, serde_json as _,
+        slang_solidity as _, solar as _, solidity_testing_perf_utils as _, tree_sitter as _,
+        tree_sitter_solidity as _,
     };
 }
 
