@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # usage: bencher-plot-cargo project branch testbed benchmarks title type
+# Example of usage to build plots in batch:
+# $  jq "[.projects,.files] | add | map(.name) | .[]" crates/solidity/testing/perf/projects.json | xargs -L1 -I{} bash ./scripts/bin/bencher-plot-cargo slang-dashboard-cargo main ci {} "{}"
 
 set -e
 shopt -s inherit_errexit

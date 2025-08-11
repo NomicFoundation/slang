@@ -4,7 +4,7 @@
 
   __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
 */
-// fails with parsing error
+// fails with parsing error (requires Solidity 0.6)
 // solar_define_payload_test!(flat_imports_mooniswap, "flat_imports_mooniswap");
 solar_define_payload_test!(
     circular_imports_weighted_pool,

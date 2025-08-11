@@ -9,6 +9,40 @@ use solidity_testing_perf_utils::{config, fetch};
 
 type ProjectMap = HashMap<String, SolidityProject>;
 
+pub fn load_projects() -> &'static ProjectMap {
+    static CACHE: OnceLock<ProjectMap> = OnceLock::new();
+
+    CACHE.get_or_init(|| load_projects_internal().unwrap())
+}
+
+fn load_projects_internal() -> Result<ProjectMap> {
+    let mut map = ProjectMap::new();
+    let config = config::read_config()?;
+    let working_directory_path = config::working_dir_path();
+
+    for file in config.files {
+        fetch::fetch(&file.hash, &working_directory_path)?;
+
+        let mut project =
+            SolidityProject::build(&working_directory_path.join(format!("{}.json", file.hash)))?;
+        // override the entrypoint with the path given
+        project.compilation.set_entrypoint(&file.file);
+        // Solar doesn't support easy crawling of imports like Slang does, so we remove all the files
+        // that are not the entrypoint. That means that the files must be self-contained.
+        project.sources.retain(|k, _| k == &file.file);
+        map.insert(file.name, project);
+    }
+
+    for project in config.projects {
+        fetch::fetch(&project.hash, &working_directory_path)?;
+
+        let sol_project =
+            SolidityProject::build(&working_directory_path.join(format!("{}.json", project.hash)))?;
+        map.insert(project.name, sol_project);
+    }
+    Ok(map)
+}
+
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SolidityCompilation {
@@ -80,7 +114,7 @@ impl SolidityProject {
     /// Returns the relative path of the imported file.
     pub fn resolve_import(&self, source_file: &str, import_string: &str) -> Result<String> {
         let source_file_dir = Path::new(source_file).parent().unwrap();
-        let file = normalize_path(source_file_dir.join(import_string));
+        let file = Self::normalize_path(source_file_dir.join(import_string));
 
         if self.sources.contains_key(&file) {
             Ok(file)
@@ -95,60 +129,22 @@ impl SolidityProject {
             ))
         }
     }
-}
 
-fn normalize_path<P: AsRef<Path>>(path: P) -> String {
-    let mut components = Vec::new();
-    for comp in path.as_ref().components() {
-        match comp {
-            Component::ParentDir => {
-                components.pop();
+    fn normalize_path<P: AsRef<Path>>(path: P) -> String {
+        let mut components = Vec::new();
+        for comp in path.as_ref().components() {
+            match comp {
+                Component::ParentDir => {
+                    components.pop();
+                }
+                Component::CurDir => {}
+                other => components.push(other.as_os_str()),
             }
-            Component::CurDir => {}
-            other => components.push(other.as_os_str()),
         }
+        let mut normalized = PathBuf::new();
+        for c in &components {
+            normalized = normalized.join(c);
+        }
+        normalized.to_string_lossy().into_owned()
     }
-    let mut normalized = PathBuf::new();
-    for c in &components {
-        normalized = normalized.join(c);
-    }
-    normalized.to_string_lossy().into_owned()
-}
-
-fn load_projects_internal() -> Result<ProjectMap> {
-    let mut map = ProjectMap::new();
-    let config = config::read_config()?;
-    let working_directory_path = config::working_dir_path();
-
-    let mut insert = |key: String, project: SolidityProject| {
-        map.insert(key, project);
-    };
-
-    for file in config.files {
-        fetch::fetch(&file.hash, &working_directory_path)?;
-
-        let mut project =
-            SolidityProject::build(&working_directory_path.join(format!("{}.json", file.hash)))?;
-        // override the entrypoint with the path given
-        project.compilation.set_entrypoint(&file.file);
-        // Solar doesn't support easy crawling of imports like Slang does, so we remove all the files
-        // that are not the entrypoint. That means that the files must be self-contained.
-        project.sources.retain(|k, _| k == &file.file);
-        insert(file.name, project);
-    }
-
-    for project in config.projects {
-        fetch::fetch(&project.hash, &working_directory_path)?;
-
-        let sol_project =
-            SolidityProject::build(&working_directory_path.join(format!("{}.json", project.hash)))?;
-        insert(project.name, sol_project);
-    }
-    Ok(map)
-}
-
-pub fn load_projects() -> &'static ProjectMap {
-    static CACHE: OnceLock<ProjectMap> = OnceLock::new();
-
-    CACHE.get_or_init(|| load_projects_internal().unwrap())
 }

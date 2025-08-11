@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # usage: bencher-plot-npm project branch testbed benchmarks title
+# Example of usage to build plots in batch:
+# $  jq "[.projects,.files] | add | map(.name) | .[]" crates/solidity/testing/perf/projects.json | xargs -L1 -I{} bash ./scripts/bin/bencher-plot-npm slang-dashboard-npm main ci {} "{}"
 
 set -e
 shopt -s inherit_errexit

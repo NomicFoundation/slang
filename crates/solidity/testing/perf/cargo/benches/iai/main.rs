@@ -21,9 +21,9 @@ mod __dependencies_used_in_lib__ {
     };
 }
 
-// *Note:* Unfortunately, the bencher macros doesn't allow for modularization: it creates modules that are private, so
-// they are inaccessible to the main function below when created insida a module. So we have to create here every
-// benchmark for every library.
+// NOTE: Unfortunately, the bencher macros doesn't allow for modularization: it creates modules that are private, so
+// they are inaccessible to the main function below when created inside a module. So we have to create in this file
+// every benchmark for every library.
 
 //
 // Slang benchmarks
@@ -184,7 +184,7 @@ main!(
         // Let's disable this behavior to be able to execute our infra utilities:
         .env_clear(false);
 
-    // Note: the trailing comma is required: without it, it won't test the last one
+    // NOTE: the trailing comma is required: without it, it won't test the last one
     // __SLANG_INFRA_PROJECT_LIST__ (keep in sync)
     library_benchmark_groups = slang_circular_imports_weighted_pool_group,slang_three_quarters_file_merkle_proof_group,slang_flat_imports_mooniswap,slang_circular_imports_weighted_pool,slang_protocol_uniswap,slang_protocol_multicall3,slang_protocol_create_x,slang_protocol_ui_pool_data_provider_v3,slang_deep_nesting_cooldogs,slang_largest_file_trivia_oslf,slang_median_file_safe_math,slang_three_quarters_file_merkle_proof,solar_circular_imports_weighted_pool_group,solar_protocol_uniswap_group,solar_protocol_multicall3_group,solar_protocol_create_x_group,solar_protocol_ui_pool_data_provider_v3_group,solar_deep_nesting_cooldogs_group,solar_largest_file_trivia_oslf_group,solar_median_file_safe_math_group,solar_three_quarters_file_merkle_proof_group,tree_sitter_flat_imports_mooniswap_group,tree_sitter_circular_imports_weighted_pool_group,tree_sitter_protocol_uniswap_group,tree_sitter_protocol_multicall3_group,tree_sitter_protocol_ui_pool_data_provider_v3_group,tree_sitter_deep_nesting_cooldogs_group,tree_sitter_largest_file_trivia_oslf_group,tree_sitter_median_file_safe_math_group,tree_sitter_three_quarters_file_merkle_proof_group,
 );

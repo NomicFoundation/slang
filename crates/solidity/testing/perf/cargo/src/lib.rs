@@ -11,32 +11,33 @@ mod __dependencies_used_in_benches__ {
 
 #[cfg(test)]
 mod unit_tests {
-    macro_rules! slang_define_payload_test {
-        ($name:ident, $prj:expr) => {
-            #[test]
-            fn $name() {
-                let payload = crate::tests::$name::setup($prj);
-                crate::tests::$name::run(payload);
-            }
-        };
-    }
-    /*
-     * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
-     */
-    macro_rules! slang_define_payload_tests {
-        ($prj:ident, $name:tt) => {
-            mod $prj {
-                slang_define_payload_test!(parser, $name);
-                slang_define_payload_test!(cursor, $name);
-                slang_define_payload_test!(query, $name);
-                slang_define_payload_test!(bindings_build, $name);
-                slang_define_payload_test!(bindings_resolve, $name);
-            }
-        };
-    }
+    mod slang {
+        macro_rules! slang_define_payload_test {
+            ($name:ident, $prj:expr) => {
+                #[test]
+                fn $name() {
+                    let payload = crate::tests::$name::setup($prj);
+                    crate::tests::$name::run(payload);
+                }
+            };
+        }
+        /*
+         * __SLANG_INFRA_BENCHMARKS_LIST__ (keep in sync)
+         */
+        macro_rules! slang_define_payload_tests {
+            ($prj:ident, $name:tt) => {
+                mod $prj {
+                    slang_define_payload_test!(parser, $name);
+                    slang_define_payload_test!(cursor, $name);
+                    slang_define_payload_test!(query, $name);
+                    slang_define_payload_test!(bindings_build, $name);
+                    slang_define_payload_test!(bindings_resolve, $name);
+                }
+            };
+        }
 
-    include!("slang_benches_list.rs");
-
+        include!("slang_benches_list.rs");
+    }
     mod solar {
         macro_rules! solar_define_payload_test {
             ($name:ident, $prj:expr) => {

@@ -22,10 +22,6 @@ export class SolidityCompilation {
   public entrypoint(): string {
     return this.fullyQualifiedName.substring(0, this.fullyQualifiedName.lastIndexOf(":"));
   }
-
-  public projectName(): string {
-    return this.fullyQualifiedName.substring(this.fullyQualifiedName.lastIndexOf(":") + 1);
-  }
 }
 
 /* Interfaces for JSON deserealization */
