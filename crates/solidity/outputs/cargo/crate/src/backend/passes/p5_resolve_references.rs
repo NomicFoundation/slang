@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
 use semver::Version;
@@ -290,6 +290,7 @@ impl Pass {
             // Consider active `using` directives in the current context
             let active_directives = self.active_using_directives_for_type(type_id);
             let mut definition_ids = Vec::new();
+            let mut seen_ids = HashSet::new();
             for directive in &active_directives {
                 let scope_id = directive.get_scope_id();
                 let ids = self
@@ -299,7 +300,14 @@ impl Pass {
                 // TODO: filter the resolved definitions to only include
                 // functions whose first parameter is of our type (or
                 // implicitly convertible to it)
-                definition_ids.extend(ids);
+                for id in &ids {
+                    // Avoid returning duplicate definition IDs. That may happen
+                    // if equivalent `using` directives are active at some point
+                    // (eg. inherited through a base in older Solidity)
+                    if seen_ids.insert(*id) {
+                        definition_ids.push(*id);
+                    }
+                }
             }
             Resolution::from(definition_ids)
         })
