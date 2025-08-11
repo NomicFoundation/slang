@@ -60,6 +60,7 @@ pub enum BuiltIn {
     MsgSig,
     MsgValue,
     Mulmod,
+    Now,
     Require,
     Revert,
     Ripemd160,
@@ -224,6 +225,7 @@ impl<'a> BuiltInsResolver<'a> {
             }
             "msg" => Some(BuiltIn::Msg),
             "mulmod" => Some(BuiltIn::Mulmod),
+            "now" if self.language_version < VERSION_0_7_0 => Some(BuiltIn::Now),
             "require" => Some(BuiltIn::Require),
             "revert" => Some(BuiltIn::Revert),
             "ripemd160" => Some(BuiltIn::Ripemd160),
@@ -626,6 +628,7 @@ impl<'a> BuiltInsResolver<'a> {
             }
             BuiltIn::MsgSig => Typing::Resolved(self.types.bytes4()),
             BuiltIn::MsgValue => Typing::Resolved(self.types.uint256()),
+            BuiltIn::Now => Typing::Resolved(self.types.uint256()),
             BuiltIn::Selector => Typing::Resolved(self.types.bytes4()),
             BuiltIn::TxGasPrice => Typing::Resolved(self.types.uint256()),
             BuiltIn::TxOrigin => {
