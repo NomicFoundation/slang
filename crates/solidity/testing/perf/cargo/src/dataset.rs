@@ -4,80 +4,66 @@ use std::path::{Component, Path, PathBuf};
 use std::sync::OnceLock;
 
 use anyhow::{anyhow, Result};
+use serde::Deserialize;
 use solidity_testing_perf_utils::{config, fetch};
 
 type ProjectMap = HashMap<String, SolidityProject>;
 
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct SolidityCompilation {
     pub compiler_version: String,
-    pub entrypoint: String,
-    pub project_name: String,
+    pub fully_qualified_name: String,
 }
 
 impl SolidityCompilation {
-    /// `fully_qualified_name` format is that of sourcify: `entrypoint:project`
-    pub fn new(compiler_version: &str, fully_qualified_name: &str) -> Self {
-        let idx = fully_qualified_name.rfind(':').unwrap();
+    pub fn get_entrypoint(&self) -> String {
+        let idx = self.fully_qualified_name.rfind(':').unwrap();
+        self.fully_qualified_name[..idx].to_string()
+    }
 
-        Self {
-            compiler_version: compiler_version.to_string(),
-            entrypoint: fully_qualified_name[..idx].to_string(),
-            project_name: fully_qualified_name[idx + 1..].to_string(),
-        }
+    pub fn project_name(&self) -> String {
+        let idx = self.fully_qualified_name.rfind(':').unwrap();
+        self.fully_qualified_name[idx + 1..].to_string()
     }
 
     pub fn set_entrypoint(&mut self, new_entry_point: &str) {
-        self.entrypoint = new_entry_point.to_string();
+        let pn = self.project_name();
+
+        self.fully_qualified_name = format!("{new_entry_point}:{pn}");
     }
 }
 
+#[derive(Deserialize)]
 pub struct SolidityProject {
+    #[serde(deserialize_with = "sources_map_deserializer")]
     pub sources: HashMap<String, String>,
     pub compilation: SolidityCompilation,
 }
 
-impl SolidityProject {
-    fn new(sources: HashMap<String, String>, compilation: SolidityCompilation) -> Self {
-        Self {
-            sources,
-            compilation,
-        }
+fn sources_map_deserializer<'de, D>(deserializer: D) -> Result<HashMap<String, String>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let raw: HashMap<String, serde_json::Value> = HashMap::deserialize(deserializer)?;
+    let mut result = HashMap::new();
+    for (file, value) in raw {
+        let content = value
+            .get("content")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| {
+                serde::de::Error::custom(format!("Missing or invalid content for file {file}"))
+            })?;
+        result.insert(file, content.to_string());
     }
+    Ok(result)
+}
 
+impl SolidityProject {
     pub fn build(json_file: &Path) -> Result<Self> {
         let json_str = fs::read_to_string(json_file)?;
-        let json: serde_json::Value = serde_json::from_str(&json_str)?;
-
-        let mut sources = HashMap::new();
-        if let Some(srcs) = json.get("sources").and_then(|v| v.as_object()) {
-            for (file, data) in srcs {
-                if let Some(content) = data.get("content") {
-                    sources.insert(file.clone(), content.as_str().unwrap().to_owned());
-                } else {
-                    return Err(anyhow!("Invalid source in json"));
-                }
-            }
-        } else {
-            return Err(anyhow!("No sources in json"));
-        }
-
-        let compilation_json = json
-            .get("compilation")
-            .ok_or(anyhow!("No compilation data in json"))?;
-
-        let compiler_version = compilation_json
-            .get("compilerVersion")
-            .and_then(|v| v.as_str())
-            .ok_or(anyhow!("No proper version in json"))?;
-
-        let fully_qualified_name = compilation_json
-            .get("fullyQualifiedName")
-            .and_then(|v| v.as_str())
-            .ok_or(anyhow!("No proper fullyQualifiedName in json"))?;
-
-        let compilation = SolidityCompilation::new(compiler_version, fully_qualified_name);
-
-        Ok(SolidityProject::new(sources, compilation))
+        let sself: Self = serde_json::from_str(&json_str)?;
+        Ok(sself)
     }
 
     pub fn file_contents(&self, file: &str) -> Result<&str> {
@@ -132,7 +118,7 @@ fn normalize_path<P: AsRef<Path>>(path: P) -> String {
 fn load_projects_internal() -> Result<ProjectMap> {
     let mut map = ProjectMap::new();
     let config = config::read_config()?;
-    let working_directory_path = config::working_dir_path()?;
+    let working_directory_path = config::working_dir_path();
 
     let mut insert = |key: String, project: SolidityProject| {
         map.insert(key, project);

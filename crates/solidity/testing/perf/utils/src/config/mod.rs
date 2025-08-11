@@ -1,8 +1,9 @@
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use anyhow::Result;
 use infra_utils::cargo::CargoWorkspace;
+use infra_utils::paths::PathExtensions;
 use serde::{Deserialize, Serialize};
 
 /*
@@ -29,9 +30,8 @@ pub struct File {
     pub name: String,
 }
 
-pub fn working_dir_path() -> Result<PathBuf> {
-    let config_path = CargoWorkspace::locate_source_crate("solidity_testing_perf_utils")?;
-    Ok(config_path.join("../benchmarks-inputs"))
+pub fn working_dir_path() -> PathBuf {
+    Path::repo_path("target/benchmarks-inputs")
 }
 
 pub fn config_file_path() -> Result<PathBuf> {

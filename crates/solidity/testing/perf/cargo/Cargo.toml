@@ -14,6 +14,7 @@ solidity_testing_perf_utils = { workspace = true }
 anyhow = { workspace = true }
 infra_utils = { workspace = true }
 semver = { workspace = true }
+serde = { workspace = true }
 serde_json = { workspace = true }
 iai-callgrind = { workspace = true }
 paste = { workspace = true }

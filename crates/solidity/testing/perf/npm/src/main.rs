@@ -59,7 +59,7 @@ impl NpmController {
     }
 
     fn run_benchmarks(&self, name: &str, hash: &str, file: Option<&str>) -> Result<Timings> {
-        let working_dir = config::working_dir_path()?;
+        let working_dir = config::working_dir_path();
         fetch(hash, &working_dir)?;
         let path = working_dir.join(hash);
 
