@@ -5,6 +5,8 @@ use infra_utils::cargo::CargoWorkspace;
 use crate::toolchains::bencher::run_bench;
 use crate::utils::DryRun;
 
+const DEFAULT_BENCHER_PROJECT: &str = "slang-dashboard-npm";
+
 #[derive(Clone, Debug, Parser)]
 pub struct NpmController {
     #[arg(short, long, default_value_t = String::from(".*"))]
@@ -38,7 +40,12 @@ impl NpmController {
             hot = &self.hot,
         );
 
-        run_bench(self.dry_run.get(), "json", &test_runner);
+        run_bench(
+            self.dry_run.get(),
+            DEFAULT_BENCHER_PROJECT,
+            "json",
+            &test_runner,
+        );
     }
 
     #[allow(clippy::unnecessary_wraps)]

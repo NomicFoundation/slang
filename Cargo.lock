@@ -2485,6 +2485,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "solidity_testing_perf_npm"
+version = "1.2.1"
+dependencies = [
+ "anyhow",
+ "clap",
+ "infra_utils",
+ "regex",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "strum",
+ "strum_macros",
+]
+
+[[package]]
 name = "solidity_testing_snapshots"
 version = "1.2.1"
 

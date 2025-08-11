@@ -10,6 +10,8 @@ use infra_utils::paths::PathExtensions;
 use crate::toolchains::bencher::run_bench;
 use crate::utils::DryRun;
 
+const DEFAULT_BENCHER_PROJECT: &str = "slang-dashboard-cargo";
+
 #[derive(Clone, Debug, Parser)]
 pub struct CargoController {
     #[command(flatten)]
@@ -70,7 +72,12 @@ impl CargoController {
     fn run_iai_bench(&self, package_name: &str, bench_name: &str) {
         let test_runner = format!("cargo bench --package {package_name} --bench {bench_name}");
 
-        run_bench(self.dry_run.get(), "rust_iai_callgrind", &test_runner);
+        run_bench(
+            self.dry_run.get(),
+            DEFAULT_BENCHER_PROJECT,
+            "rust_iai_callgrind",
+            &test_runner,
+        );
 
         let reports_dir = Path::repo_path("target/iai")
             .join(package_name)

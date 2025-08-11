@@ -35,6 +35,7 @@ members = [
     "crates/solidity/outputs/npm/package",
     "crates/solidity/outputs/spec",
     "crates/solidity/testing/perf",
+    "crates/solidity/testing/perf/npm",
     "crates/solidity/testing/snapshots",
     "crates/solidity/testing/solc",
     "crates/solidity/testing/sourcify",
@@ -64,23 +65,18 @@ metaslang_bindings = { path = "crates/metaslang/bindings", version = "1.2.1" }
 metaslang_graph_builder = { path = "crates/metaslang/graph_builder", version = "1.2.1" }
 metaslang_cst = { path = "crates/metaslang/cst", version = "1.2.1" }
 
-slang_solidity = { path = "crates/solidity/outputs/cargo/crate", version = "1.2.0" }
-slang_solidity_cli = { path = "crates/solidity/outputs/cargo/cli", version = "1.2.0" }
-solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "1.2.0" }
-solidity_cargo_wasm = { path = "crates/solidity/outputs/cargo/wasm", version = "1.2.0" }
-solidity_language = { path = "crates/solidity/inputs/language", version = "1.2.0" }
-solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "1.2.0" }
-solidity_spec = { path = "crates/solidity/outputs/spec", version = "1.2.0" }
-solidity_testing_perf = { path = "crates/solidity/testing/perf", version = "1.2.0" }
-solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "1.2.0" }
-solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "1.2.0" }
-solidity_testing_sourcify = { path = "crates/solidity/testing/sourcify", version = "1.2.0" }
-
-slang_testlang = { path = "crates/testlang/outputs/cargo/crate", version = "1.2.0" }
-testlang_cargo_tests = { path = "crates/testlang/outputs/cargo/tests", version = "1.2.0" }
-testlang_cargo_wasm = { path = "crates/testlang/outputs/cargo/wasm", version = "1.2.0" }
-testlang_language = { path = "crates/testlang/inputs/language", version = "1.2.0" }
-testlang_npm_package = { path = "crates/testlang/outputs/npm/package", version = "1.2.0" }
+slang_solidity = { path = "crates/solidity/outputs/cargo/crate", version = "1.2.1" }
+slang_solidity_cli = { path = "crates/solidity/outputs/cargo/cli", version = "1.2.1" }
+solidity_cargo_tests = { path = "crates/solidity/outputs/cargo/tests", version = "1.2.1" }
+solidity_cargo_wasm = { path = "crates/solidity/outputs/cargo/wasm", version = "1.2.1" }
+solidity_language = { path = "crates/solidity/inputs/language", version = "1.2.1" }
+solidity_npm_package = { path = "crates/solidity/outputs/npm/package", version = "1.2.1" }
+solidity_spec = { path = "crates/solidity/outputs/spec", version = "1.2.1" }
+solidity_testing_perf = { path = "crates/solidity/testing/perf", version = "1.2.1" }
+solidity_testing_perf_npm = { path = "crates/solidity/testing/perf/npm", version = "1.2.1" }
+solidity_testing_snapshots = { path = "crates/solidity/testing/snapshots", version = "1.2.1" }
+solidity_testing_solc = { path = "crates/solidity/testing/solc", version = "1.2.1" }
+solidity_testing_sourcify = { path = "crates/solidity/testing/sourcify", version = "1.2.1" }
 
 #
 # External
