@@ -1,0 +1,28 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+References and definitions: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ contract Test {
+   │          ──┬─  
+   │            ╰─── name: 1
+ 2 │     function test() internal {
+   │              ──┬─  
+   │                ╰─── name: 2
+ 3 │         now; // deprecated in 0.7.0 in favor of block.timestamp
+   │         ─┬─  
+   │          ╰─── unresolved
+───╯
+Definiens: 
+   ╭─[input.sol:1:1]
+   │
+ 1 │ ╭─│ ▶ contract Test {
+ 2 │ │ ╭─▶     function test() internal {
+   ┆ ┆ ┆   
+ 4 │ │ ├─▶     }
+   │ │ │           
+   │ │ ╰─────────── definiens: 2
+ 5 │ ├───▶ }
+   │ │         
+   │ ╰───────── definiens: 1
+───╯

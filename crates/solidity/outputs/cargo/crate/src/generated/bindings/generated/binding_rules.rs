@@ -2301,6 +2301,7 @@ inherit .star_extension
 @state_var [StateVariableDefinition] {
   node @state_var.lexical_scope
   node @state_var.def
+  node @state_var.typeof
 }
 
 @state_var [StateVariableDefinition
@@ -2312,7 +2313,6 @@ inherit .star_extension
 
   edge @type_name.type_ref -> @state_var.lexical_scope
 
-  node @state_var.typeof
   attr (@state_var.typeof) push_symbol = "@typeof"
 
   edge @state_var.def -> @state_var.typeof

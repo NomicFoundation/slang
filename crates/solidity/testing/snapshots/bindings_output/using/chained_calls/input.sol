@@ -3,7 +3,7 @@ library Foo {
         uint value;
     }
     function noop(uint x) public returns (uint) {}
-    function bar(uint x) public returns (Bar) {}
+    function bar(uint x) public returns (Bar memory) {}
 }
 
 contract Test {

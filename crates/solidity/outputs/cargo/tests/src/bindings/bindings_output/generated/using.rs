@@ -42,6 +42,11 @@ fn deconstruction() -> Result<()> {
 }
 
 #[test]
+fn duplicate_directives() -> Result<()> {
+    run(T, "duplicate_directives")
+}
+
+#[test]
 fn elementary() -> Result<()> {
     run(T, "elementary")
 }
