@@ -57,6 +57,11 @@ fn msg_sender() -> Result<()> {
 }
 
 #[test]
+fn now() -> Result<()> {
+    run(T, "now")
+}
+
+#[test]
 fn shadowing() -> Result<()> {
     run(T, "shadowing")
 }

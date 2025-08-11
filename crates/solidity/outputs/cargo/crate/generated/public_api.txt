@@ -175,6 +175,7 @@ pub slang_solidity::backend::built_ins::BuiltIn::MsgSender
 pub slang_solidity::backend::built_ins::BuiltIn::MsgSig
 pub slang_solidity::backend::built_ins::BuiltIn::MsgValue
 pub slang_solidity::backend::built_ins::BuiltIn::Mulmod
+pub slang_solidity::backend::built_ins::BuiltIn::Now
 pub slang_solidity::backend::built_ins::BuiltIn::Require
 pub slang_solidity::backend::built_ins::BuiltIn::Revert
 pub slang_solidity::backend::built_ins::BuiltIn::Ripemd160
