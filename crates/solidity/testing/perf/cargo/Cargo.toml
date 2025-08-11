@@ -1,0 +1,30 @@
+[package]
+name = "solidity_testing_perf_cargo"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+publish = false
+
+[dependencies]
+slang_solidity = { workspace = true, features = [
+  "__experimental_bindings_api",
+  "__private_compilation_api",
+] }
+solidity_testing_perf_utils = { workspace = true }
+anyhow = { workspace = true }
+infra_utils = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+iai-callgrind = { workspace = true }
+paste = { workspace = true }
+solar = { version = "=0.1.3", package = "solar-compiler" }
+tree-sitter-solidity = { version = "1.2.11" }
+tree-sitter = { version = "0.24" }
+
+[[bench]]
+name = "iai"
+harness = false
+
+[lints]
+workspace = true
