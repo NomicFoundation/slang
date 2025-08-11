@@ -161,7 +161,15 @@ impl Pass {
 
     fn resolve_symbol_in_typing(&self, typing: &Typing, symbol: &str) -> Resolution {
         match typing {
-            Typing::Unresolved | Typing::Undetermined(_) => Resolution::Unresolved,
+            Typing::Unresolved => Resolution::Unresolved,
+            Typing::Undetermined(type_ids) => {
+                // We cannot use argument-type disambiguation here, so we will
+                // use the first result
+                // TODO(validation): check that the types are consistent (eg.
+                // they are all function types) and that it makes sense to use
+                // the first one
+                self.resolve_symbol_in_type(type_ids[0], symbol)
+            }
             Typing::Resolved(type_id) => self.resolve_symbol_in_type(*type_id, symbol),
             Typing::This | Typing::Super => {
                 // TODO: the contract scope here is not necessarily the current
@@ -487,7 +495,6 @@ impl Pass {
             Resolution::BuiltIn(built_in) => self.built_ins_resolver().typing_of(built_in),
             Resolution::Definition(definition_id) => self.binder.node_typing(*definition_id),
             Resolution::Ambiguous(definitions) => {
-                // TODO: we need some sort of link between the definition_id and the resulting type
                 let mut type_ids = Vec::new();
                 for definition_id in definitions {
                     if let Typing::Resolved(type_id) = self.binder.node_typing(*definition_id) {
