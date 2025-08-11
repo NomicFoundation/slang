@@ -96,10 +96,25 @@ impl Pass {
     // This is a "top-level" (ie. not a member access) resolution method
     fn resolve_symbol_in_scope(&self, scope_id: ScopeId, symbol: &str) -> Resolution {
         let resolution = self.binder.resolve_in_scope(scope_id, symbol);
-        if resolution == Resolution::Unresolved {
-            self.built_ins_resolver().lookup_global(symbol).into()
-        } else {
-            resolution
+        match &resolution {
+            Resolution::Unresolved => self.built_ins_resolver().lookup_global(symbol).into(),
+            Resolution::Ambiguous(definition_ids) => {
+                // Try to disambiguate known cases
+                let first_id = definition_ids.first().copied().unwrap();
+                let first_definition = self.binder.find_definition_by_id(first_id).unwrap();
+
+                if let Definition::StateVariable(_) = first_definition {
+                    // TODO(validation): the state variable should have the
+                    // `override` attribute and the rest of the definitions
+                    // should be functions with the correct signature
+                    Resolution::Definition(first_id)
+                } else {
+                    // TODO(validation): check that the returned definitions are
+                    // all functions (or maybe modifiers?)
+                    resolution
+                }
+            }
+            Resolution::Definition(_) | Resolution::BuiltIn(_) => resolution,
         }
     }
 

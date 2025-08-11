@@ -15,8 +15,8 @@ Definitions (8):
 References (4):
 - Ref: ["IFoo" @ input.sol:5:18] -> #1
 - Ref: ["Bar" @ input.sol:10:5] -> #4
-- Ref: ["foo" @ input.sol:13:9] -> refs: [7, 2]
-- Ref: ["x" @ input.sol:13:13] -> unresolved
+- Ref: ["foo" @ input.sol:13:9] -> #7
+- Ref: ["x" @ input.sol:13:13] -> #5
 
 ------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ Bindings:
     │                ╰─── name: 8
  13 │         foo.x;
     │         ─┬─ ┬  
-    │          ╰───── refs: [7, 2]
+    │          ╰───── ref: 7
     │             │  
-    │             ╰── unresolved
+    │             ╰── ref: 5
 ────╯
