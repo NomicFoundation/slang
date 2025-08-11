@@ -6,7 +6,7 @@ Definitions (7):
 - Def: #3 ["Yes" @ input.sol:2:19] (enum member of Answer)
 - Def: #4 ["No" @ input.sol:2:24] (enum member of Answer)
 - Def: #5 ["testFunc" @ input.sol:3:14] (function, type: function () returns void)
-- Def: #6 ["name" @ input.sol:4:16] (variable, type: string storage)
+- Def: #6 ["name" @ input.sol:4:16] (variable, type: unresolved)
 - Def: #7 ["first" @ input.sol:5:16] (variable, type: Answer)
 
 ------------------------------------------------------------------------

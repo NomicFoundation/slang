@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 use std::rc::Rc;
 
+use semver::Version;
+
 use super::p3_linearise_contracts::Output as Input;
 use crate::backend::binder::{
     Binder, ContractDefinition, Definition, ImportDefinition, InterfaceDefinition,
@@ -23,7 +25,7 @@ pub struct Output {
 pub fn run(input: Input) -> Output {
     let files = input.files;
     let compilation_unit = input.compilation_unit;
-    let mut pass = Pass::new(input.binder);
+    let mut pass = Pass::new(input.binder, compilation_unit.language_version());
     for source_unit in files.values() {
         pass.visit_file(source_unit);
     }
@@ -49,15 +51,19 @@ fn storage_location_to_data_location(storage_location: &input_ir::StorageLocatio
     }
 }
 
+const VERSION_0_5_0: Version = Version::new(0, 5, 0);
+
 struct Pass {
+    language_version: Version,
     scope_stack: Vec<ScopeId>,
     binder: Binder,
     types: TypeRegistry,
 }
 
 impl Pass {
-    fn new(binder: Binder) -> Self {
+    fn new(binder: Binder, language_version: &Version) -> Self {
         Self {
+            language_version: language_version.clone(),
             scope_stack: Vec::new(),
             binder,
             types: TypeRegistry::default(),
@@ -544,6 +550,24 @@ impl Pass {
         };
         Some(self.types.register_type(getter_type))
     }
+
+    fn visit_parameters(
+        &mut self,
+        parameters: &input_ir::Parameters,
+        default_location: Option<DataLocation>,
+    ) {
+        for parameter in parameters {
+            let type_id = self.resolve_type_name(
+                &parameter.type_name,
+                parameter
+                    .storage_location
+                    .as_ref()
+                    .map(storage_location_to_data_location)
+                    .or(default_location),
+            );
+            self.binder.set_node_type(parameter.node_id, type_id);
+        }
+    }
 }
 
 impl Visitor for Pass {
@@ -620,8 +644,88 @@ impl Visitor for Pass {
     }
 
     fn leave_function_definition(&mut self, node: &input_ir::FunctionDefinition) {
+        let default_location = if self.language_version < VERSION_0_5_0 {
+            if node.attributes.iter().any(|attribute| {
+                matches!(
+                    attribute,
+                    input_ir::FunctionAttribute::ExternalKeyword
+                        | input_ir::FunctionAttribute::PublicKeyword
+                )
+            }) {
+                Some(DataLocation::Calldata)
+            } else {
+                Some(DataLocation::Memory)
+            }
+        } else {
+            None
+        };
+
+        // type parameters and return variables
+        self.visit_parameters(&node.parameters.parameters, default_location);
+        if let Some(returns) = &node.returns {
+            self.visit_parameters(&returns.variables.parameters, default_location);
+        }
+
+        // now we can compute the function type
         let type_id = self.type_of_function_definition(node);
         self.binder.set_node_type(node.node_id, type_id);
+    }
+
+    fn leave_function_type(&mut self, node: &input_ir::FunctionType) {
+        self.visit_parameters(&node.parameters.parameters, None);
+        if let Some(returns) = &node.returns {
+            self.visit_parameters(&returns.variables.parameters, None);
+        }
+    }
+
+    fn leave_constructor_definition(&mut self, node: &input_ir::ConstructorDefinition) {
+        let default_location = if self.language_version < VERSION_0_5_0 {
+            Some(DataLocation::Calldata)
+        } else {
+            None
+        };
+        self.visit_parameters(&node.parameters.parameters, default_location);
+    }
+
+    fn leave_unnamed_function_definition(&mut self, node: &input_ir::UnnamedFunctionDefinition) {
+        let default_location = if self.language_version < VERSION_0_5_0 {
+            Some(DataLocation::Calldata)
+        } else {
+            None
+        };
+        self.visit_parameters(&node.parameters.parameters, default_location);
+    }
+
+    fn leave_fallback_function_definition(&mut self, node: &input_ir::FallbackFunctionDefinition) {
+        self.visit_parameters(&node.parameters.parameters, None);
+        if let Some(returns) = &node.returns {
+            self.visit_parameters(&returns.variables.parameters, None);
+        }
+    }
+
+    fn leave_receive_function_definition(&mut self, node: &input_ir::ReceiveFunctionDefinition) {
+        self.visit_parameters(&node.parameters.parameters, None);
+    }
+
+    fn leave_modifier_definition(&mut self, node: &input_ir::ModifierDefinition) {
+        if let Some(parameters) = &node.parameters {
+            let default_location = if self.language_version < VERSION_0_5_0 {
+                Some(DataLocation::Memory)
+            } else {
+                None
+            };
+            self.visit_parameters(&parameters.parameters, default_location);
+        }
+    }
+
+    fn leave_try_statement(&mut self, node: &input_ir::TryStatement) {
+        if let Some(returns) = &node.returns {
+            self.visit_parameters(&returns.variables.parameters, None);
+        }
+    }
+
+    fn leave_catch_clause_error(&mut self, node: &input_ir::CatchClauseError) {
+        self.visit_parameters(&node.parameters.parameters, None);
     }
 
     fn enter_type_name(&mut self, node: &input_ir::TypeName) -> bool {
@@ -647,16 +751,6 @@ impl Visitor for Pass {
             self.resolve_identifier_path(identifier_path);
         }
         false
-    }
-
-    fn leave_parameter(&mut self, node: &input_ir::Parameter) {
-        let type_id = self.resolve_type_name(
-            &node.type_name,
-            node.storage_location
-                .as_ref()
-                .map(storage_location_to_data_location),
-        );
-        self.binder.set_node_type(node.node_id, type_id);
     }
 
     fn leave_event_definition(&mut self, node: &input_ir::EventDefinition) {
@@ -705,7 +799,15 @@ impl Visitor for Pass {
                     type_name,
                     node.storage_location
                         .as_ref()
-                        .map(storage_location_to_data_location),
+                        .map(storage_location_to_data_location)
+                        .or_else(|| {
+                            if self.language_version < VERSION_0_5_0 {
+                                // default data location is storage for variables
+                                Some(DataLocation::Storage)
+                            } else {
+                                None
+                            }
+                        }),
                 )
             } else {
                 // this is for `var` variables (in Solidity < 0.5.0)
@@ -720,7 +822,15 @@ impl Visitor for Pass {
             &node.type_name,
             node.storage_location
                 .as_ref()
-                .map(storage_location_to_data_location),
+                .map(storage_location_to_data_location)
+                .or_else(|| {
+                    if self.language_version < VERSION_0_5_0 {
+                        // default data location is storage for variables
+                        Some(DataLocation::Storage)
+                    } else {
+                        None
+                    }
+                }),
         );
         self.binder.set_node_type(node.node_id, type_id);
     }

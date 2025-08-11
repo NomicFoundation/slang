@@ -16,7 +16,7 @@ Definitions (19):
 - Def: #13 ["v8" @ input.sol:15:14] (variable, type: uint256)
 - Def: #14 ["v9" @ input.sol:16:14] (variable, type: uint256)
 - Def: #15 ["testMsg" @ input.sol:19:14] (function, type: function () returns void)
-- Def: #16 ["v1" @ input.sol:20:15] (variable, type: bytes storage)
+- Def: #16 ["v1" @ input.sol:20:15] (variable, type: unresolved)
 - Def: #17 ["v2" @ input.sol:21:17] (variable, type: address)
 - Def: #18 ["v3" @ input.sol:22:16] (variable, type: bytes4)
 - Def: #19 ["v4" @ input.sol:23:14] (variable, type: uint256)
