@@ -1,8 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-reference `rcpt` at input.sol:3:19 failed to resolve in new binder
-reference `qty` at input.sol:3:36 failed to resolve in new binder
-reference `symbol` at input.sol:4:19 failed to resolve in new binder
-reference `qty` at input.sol:4:34 failed to resolve in new binder
-
-Definitions and/or references from binding graph and new binder DIFFER

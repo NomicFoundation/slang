@@ -264,7 +264,14 @@ impl Visitor for Pass {
         self.collect_parameters(&node.parameters.parameters, parameters_scope_id);
 
         if let input_ir::FunctionName::Identifier(name) = &node.name {
-            let definition = Definition::new_function(node.node_id, name, parameters_scope_id);
+            let parameter_names = node
+                .parameters
+                .parameters
+                .iter()
+                .map(|parameter| parameter.name.as_ref().map(|name| name.unparse()))
+                .collect();
+            let definition =
+                Definition::new_function(node.node_id, name, parameters_scope_id, parameter_names);
             self.insert_definition_in_current_scope(definition);
 
             // For Solidity < 0.5.0, check if we need to register the

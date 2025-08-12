@@ -1,0 +1,8 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ref: ["process" @ input.sol:3:9] -> #3 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["qty" @ input.sol:3:36] -> #4 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["process" @ input.sol:4:9] -> #6 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["qty" @ input.sol:4:34] -> #8 resolved uniquely but resolved ambiguously in stack graph output
+
+Definitions and/or references from binding graph and new binder DIFFER

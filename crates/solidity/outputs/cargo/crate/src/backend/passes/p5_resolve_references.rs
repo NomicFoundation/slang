@@ -808,6 +808,91 @@ impl Pass {
         }
     }
 
+    fn lookup_function_matching_named_arguments<'a>(
+        &'a self,
+        type_ids: &[TypeId],
+        argument_typings: &[(String, Typing)],
+        receiver_type_id: Option<TypeId>,
+    ) -> Option<&'a FunctionType> {
+        // get types and filter non-function types
+        let mut function_types = type_ids.iter().filter_map(|type_id| {
+            if let Type::Function(function_type) = self.types.get_type_by_id(*type_id) {
+                Some(function_type)
+            } else {
+                None
+            }
+        });
+        function_types.find(|function_type| {
+            let Some(definition_id) = function_type.definition_id else {
+                return false;
+            };
+            let definition = self.binder.find_definition_by_id(definition_id).unwrap();
+            let Definition::Function(function_definition) = definition else {
+                unreachable!("the definition associated to a function type is not a function");
+            };
+            let parameter_types = &function_type.parameter_types;
+            let parameter_names = &function_definition.parameter_names;
+            assert_eq!(
+                parameter_types.len(),
+                parameter_names.len(),
+                "length of types and names of parameters should match"
+            );
+            if parameter_names.iter().any(|name| name.is_none()) {
+                // function has an unnamed parameter and we cannot use it for
+                // matching named arguments
+                return false;
+            }
+
+            if parameter_types.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
+                self.matches_named_arguments(parameter_names, parameter_types, argument_typings)
+            } else if let Some(receiver_type_id) = receiver_type_id {
+                // we have a receiver type, so check the first parameter type
+                // against it and then the rest, if the counts match
+                if parameter_types.len() == argument_typings.len() + 1
+                    && parameter_types.first().is_some_and(|type_id| {
+                        self.types
+                            .implicitly_convertible_to(receiver_type_id, *type_id)
+                    })
+                {
+                    self.matches_named_arguments(
+                        &parameter_names[1..],
+                        &parameter_types[1..],
+                        argument_typings,
+                    )
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        })
+    }
+
+    fn matches_named_arguments(
+        &self,
+        parameter_names: &[Option<String>],
+        parameter_types: &[TypeId],
+        argument_typings: &[(String, Typing)],
+    ) -> bool {
+        argument_typings
+            .iter()
+            .all(|(argument_name, argument_typing)| {
+                let Some(type_id) = argument_typing.as_type_id() else {
+                    return false;
+                };
+                let Some(index) = parameter_names
+                    .iter()
+                    .position(|name| name.as_ref().is_some_and(|name| name == argument_name))
+                else {
+                    return false;
+                };
+                let parameter_type = parameter_types[index];
+                self.types
+                    .implicitly_convertible_to(type_id, parameter_type)
+            })
+    }
+
     fn typing_of_function_call_with_named_arguments(
         &mut self,
         node: &input_ir::FunctionCallExpression,
@@ -833,11 +918,41 @@ impl Pass {
                     (Typing::Unresolved, None)
                 }
             }
-            Typing::Undetermined(_type_ids) => {
+            Typing::Undetermined(type_ids) => {
                 // TODO: resolve argument types and match best overload
                 // TODO: maybe update the typing of the operand?
                 // TODO: return the definition_id used to later resolve named arguments
-                (Typing::Unresolved, None)
+                let receiver_type_id = self.type_id_of_receiver(&node.operand);
+                let argument_typings = arguments
+                    .iter()
+                    .map(|argument| {
+                        (
+                            argument.name.unparse(),
+                            self.typing_of_expression(&argument.value),
+                        )
+                    })
+                    .collect::<Vec<_>>();
+                let candidate = self.lookup_function_matching_named_arguments(
+                    &type_ids,
+                    &argument_typings,
+                    receiver_type_id,
+                );
+
+                if let Some(candidate) = candidate {
+                    let return_type = candidate.return_type;
+
+                    let reference_node_id = reference_node_id_for_expression(&node.operand);
+                    let definition_id = candidate.definition_id;
+                    if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
+                    {
+                        self.binder
+                            .fixup_reference(node_id, Resolution::Definition(definition_id));
+                    }
+
+                    (Typing::Resolved(return_type), definition_id)
+                } else {
+                    (Typing::Unresolved, None)
+                }
             }
             Typing::MetaType(_) => {
                 // This is a cast to the given type and is not valid with named arguments

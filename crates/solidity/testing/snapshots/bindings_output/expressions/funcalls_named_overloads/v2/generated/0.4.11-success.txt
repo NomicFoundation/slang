@@ -13,14 +13,14 @@ Definitions (8):
 ------------------------------------------------------------------------
 
 References (8):
-- Ref: ["process" @ input.sol:3:9] -> refs: [3, 6]
-- Ref: ["rcpt" @ input.sol:3:19] -> unresolved
+- Ref: ["process" @ input.sol:3:9] -> #3
+- Ref: ["rcpt" @ input.sol:3:19] -> #5
 - Ref: ["tx" @ input.sol:3:25] -> built-in
 - Ref: ["origin" @ input.sol:3:28] -> built-in
-- Ref: ["qty" @ input.sol:3:36] -> unresolved
-- Ref: ["process" @ input.sol:4:9] -> refs: [3, 6]
-- Ref: ["symbol" @ input.sol:4:19] -> unresolved
-- Ref: ["qty" @ input.sol:4:34] -> unresolved
+- Ref: ["qty" @ input.sol:3:36] -> #4
+- Ref: ["process" @ input.sol:4:9] -> #6
+- Ref: ["symbol" @ input.sol:4:19] -> #7
+- Ref: ["qty" @ input.sol:4:34] -> #8
 
 ------------------------------------------------------------------------
 
@@ -39,22 +39,22 @@ Bindings:
    │                ╰─── name: 2
  3 │         process({ rcpt: tx.origin, qty: 1 });
    │         ───┬───   ──┬─  ─┬ ───┬──  ─┬─  
-   │            ╰──────────────────────────── refs: [3, 6]
+   │            ╰──────────────────────────── ref: 3
    │                     │    │    │     │   
-   │                     ╰─────────────────── unresolved
+   │                     ╰─────────────────── ref: 5
    │                          │    │     │   
    │                          ╰────────────── built-in
    │                               │     │   
    │                               ╰───────── built-in
    │                                     │   
-   │                                     ╰─── unresolved
+   │                                     ╰─── ref: 4
  4 │         process({ symbol: "foo", qty: 2 });
    │         ───┬───   ───┬──         ─┬─  
-   │            ╰────────────────────────── refs: [3, 6]
+   │            ╰────────────────────────── ref: 6
    │                      │            │   
-   │                      ╰──────────────── unresolved
+   │                      ╰──────────────── ref: 7
    │                                   │   
-   │                                   ╰─── unresolved
+   │                                   ╰─── ref: 8
    │ 
  7 │     function process(uint256 qty, address rcpt) internal {}
    │              ───┬───         ─┬─          ──┬─  
