@@ -6,33 +6,38 @@ References and definitions:
   1 │ contract Test {
     │          ──┬─  
     │            ╰─── name: 1
-  2 │   int y;
-    │       ┬  
-    │       ╰── name: 2
+  2 │   using Lib for int;
+    │         ─┬─  
+    │          ╰─── ref: 7
     │ 
   4 │   function someFunc(int x) returns (int) {
     │            ────┬───     ┬  
-    │                ╰─────────── name: 3
+    │                ╰─────────── name: 2
     │                         │  
-    │                         ╰── name: 4
-  5 │     int farg = add(x);
+    │                         ╰── name: 3
+  5 │     int here = add(x, 3);
     │         ──┬─   ─┬─ ┬  
-    │           ╰─────────── name: 5
+    │           ╰─────────── name: 4
     │                 │  │  
-    │                 ╰───── refs: 7, 8
+    │                 ╰───── ref: 6
     │                    │  
-    │                    ╰── ref: 4
-  6 │     int literal = add(3);
-    │         ───┬───   ─┬─  
-    │            ╰─────────── name: 6
-    │                    │   
-    │                    ╰─── refs: 7, 8
+    │                    ╰── ref: 3
+  6 │     int lib = x.add(3);
+    │         ─┬─   ┬ ─┬─  
+    │          ╰─────────── name: 5
+    │               │  │   
+    │               ╰────── ref: 3
+    │                  │   
+    │                  ╰─── ref: 8
     │ 
-  9 │   function add(int) returns (int);
+  9 │   function add(int, int32) returns (int);
     │            ─┬─  
-    │             ╰─── name: 7
+    │             ╰─── name: 6
     │ 
- 11 │   function add(int) returns (int);
+ 12 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 7
+ 13 │   function add(int, int) returns (int);
     │            ─┬─  
     │             ╰─── name: 8
 ────╯
@@ -40,31 +45,33 @@ Definiens:
     ╭─[input.sol:1:1]
     │
   1 │ ╭───────▶ contract Test {
-  2 │ │ │         int y;
-    │ │ │       ────┬────  
-    │ │ │           ╰────── definiens: 2
+    ┆ ┆ ┆       
   3 │ │ ╭─────▶ 
   4 │ │ │         function someFunc(int x) returns (int) {
     │ │ │                           ──┬──  
-    │ │ │                             ╰──── definiens: 4
-  5 │ │ │           int farg = add(x);
-    │ │ │       ───────────┬───────────  
-    │ │ │                  ╰───────────── definiens: 5
-  6 │ │ │           int literal = add(3);
+    │ │ │                             ╰──── definiens: 3
+  5 │ │ │           int here = add(x, 3);
     │ │ │       ─────────────┬────────────  
-    │ │ │                    ╰────────────── definiens: 6
-  7 │ │ ├─│ ──▶   }
-    │ │ │ │           
-    │ │ ╰───────────── definiens: 3
-  8 │ │   ╭───▶ 
-  9 │ │   ├─│ ▶   function add(int) returns (int);
-    │ │   │ │                                        
-    │ │   ╰────────────────────────────────────────── definiens: 7
- 10 │ │     ╭─▶ 
- 11 │ │     ├─▶   function add(int) returns (int);
-    │ │     │                                        
-    │ │     ╰──────────────────────────────────────── definiens: 8
- 12 │ ├───────▶ }
-    │ │             
+    │ │ │                    ╰────────────── definiens: 4
+  6 │ │ │           int lib = x.add(3);
+    │ │ │       ────────────┬───────────  
+    │ │ │                   ╰───────────── definiens: 5
+  7 │ │ ├───│ ▶   }
+    │ │ │   │         
+    │ │ ╰───────────── definiens: 2
+  8 │ │     ╭─▶ 
+  9 │ │     ├─▶   function add(int, int32) returns (int);
+    │ │     │                                               
+    │ │     ╰─────────────────────────────────────────────── definiens: 6
+ 10 │ ├───│ ──▶ }
+    │ │   │         
     │ ╰───────────── definiens: 1
+ 11 │     ╭───▶ 
+    ┆     ┆     
+ 13 │     │       function add(int, int) returns (int);
+    │     │     ────────────────────┬───────────────────  
+    │     │                         ╰───────────────────── definiens: 8
+ 14 │     ├───▶ }
+    │     │         
+    │     ╰───────── definiens: 7
 ────╯
