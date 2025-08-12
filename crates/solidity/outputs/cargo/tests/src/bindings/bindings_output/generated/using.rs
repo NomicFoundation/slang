@@ -137,6 +137,11 @@ fn on_super_calls() -> Result<()> {
 }
 
 #[test]
+fn overloaded_functions_attached() -> Result<()> {
+    run(T, "overloaded_functions_attached")
+}
+
+#[test]
 fn qualified_type() -> Result<()> {
     run(T, "qualified_type")
 }

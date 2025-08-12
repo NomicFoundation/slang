@@ -1,0 +1,160 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Definitions (16):
+- Def: #1 ["Lib" @ input.sol:1:9] (library)
+- Def: #2 ["add" @ input.sol:2:14] (function, type: function (uint256, uint256) returns uint256)
+- Def: #3 ["x" @ input.sol:2:26] (parameter, type: uint256)
+- Def: #4 ["y" @ input.sol:2:37] (parameter, type: uint256)
+- Def: #5 ["add" @ input.sol:3:14] (function, type: function (int256, int256) returns int256)
+- Def: #6 ["x" @ input.sol:3:25] (parameter, type: int256)
+- Def: #7 ["y" @ input.sol:3:35] (parameter, type: int256)
+- Def: #8 ["Test" @ input.sol:6:10] (contract)
+- Def: #9 ["testUsing" @ input.sol:11:14] (function, type: function (uint256, uint256, int256, int256) returns void)
+- Def: #10 ["ux" @ input.sol:11:32] (parameter, type: uint256)
+- Def: #11 ["uy" @ input.sol:11:44] (parameter, type: uint256)
+- Def: #12 ["ix" @ input.sol:11:55] (parameter, type: int256)
+- Def: #13 ["iy" @ input.sol:11:66] (parameter, type: int256)
+- Def: #14 ["testConvertible" @ input.sol:16:14] (function, type: function (uint160, uint160) returns void)
+- Def: #15 ["ux" @ input.sol:16:38] (parameter, type: uint160)
+- Def: #16 ["uy" @ input.sol:16:50] (parameter, type: uint160)
+
+------------------------------------------------------------------------
+
+References (26):
+- Ref: ["x" @ input.sol:2:76] -> #3
+- Ref: ["y" @ input.sol:2:80] -> #4
+- Ref: ["x" @ input.sol:3:73] -> #6
+- Ref: ["y" @ input.sol:3:77] -> #7
+- Ref: ["Lib" @ input.sol:7:11] -> #1
+- Ref: ["Lib" @ input.sol:8:11] -> #1
+- Ref: ["Lib" @ input.sol:9:11] -> #1
+- Ref: ["ux" @ input.sol:12:9] -> #10
+- Ref: ["add" @ input.sol:12:12] -> refs: [2, 5]
+- Ref: ["uy" @ input.sol:12:16] -> #11
+- Ref: ["add" @ input.sol:12:20] -> unresolved
+- Ref: ["ux" @ input.sol:12:24] -> #10
+- Ref: ["ix" @ input.sol:13:9] -> #12
+- Ref: ["add" @ input.sol:13:12] -> refs: [2, 5]
+- Ref: ["iy" @ input.sol:13:16] -> #13
+- Ref: ["add" @ input.sol:13:20] -> unresolved
+- Ref: ["ix" @ input.sol:13:24] -> #12
+- Ref: ["Lib" @ input.sol:17:9] -> #1
+- Ref: ["add" @ input.sol:17:13] -> #2
+- Ref: ["ux" @ input.sol:17:17] -> #15
+- Ref: ["uy" @ input.sol:17:21] -> #16
+- Ref: ["ux" @ input.sol:18:9] -> #15
+- Ref: ["add" @ input.sol:18:12] -> refs: [2, 5]
+- Ref: ["uy" @ input.sol:18:16] -> #16
+- Ref: ["add" @ input.sol:18:20] -> unresolved
+- Ref: ["ux" @ input.sol:18:24] -> #15
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
+    ╭─[input.sol:1:1]
+    │
+  1 │ library Lib {
+    │         ─┬─  
+    │          ╰─── name: 1
+  2 │     function add(uint256 x, uint256 y) internal returns (uint256) { return x + y; }
+    │              ─┬─         ┬          ┬                                      ┬   ┬  
+    │               ╰─────────────────────────────────────────────────────────────────── name: 2
+    │                          │          │                                      │   │  
+    │                          ╰──────────────────────────────────────────────────────── name: 3
+    │                                     │                                      │   │  
+    │                                     ╰───────────────────────────────────────────── name: 4
+    │                                                                            │   │  
+    │                                                                            ╰────── ref: 3
+    │                                                                                │  
+    │                                                                                ╰── ref: 4
+  3 │     function add(int256 x, int256 y) internal returns (int256) { return x + y; }
+    │              ─┬─        ┬         ┬                                     ┬   ┬  
+    │               ╰──────────────────────────────────────────────────────────────── name: 5
+    │                         │         │                                     │   │  
+    │                         ╰────────────────────────────────────────────────────── name: 6
+    │                                   │                                     │   │  
+    │                                   ╰──────────────────────────────────────────── name: 7
+    │                                                                         │   │  
+    │                                                                         ╰────── ref: 6
+    │                                                                             │  
+    │                                                                             ╰── ref: 7
+    │ 
+  6 │ contract Test {
+    │          ──┬─  
+    │            ╰─── name: 8
+  7 │     using Lib for uint256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+  8 │     using Lib for int256;
+    │           ─┬─  
+    │            ╰─── ref: 1
+  9 │     using Lib for uint160;
+    │           ─┬─  
+    │            ╰─── ref: 1
+    │ 
+ 11 │     function testUsing(uint256 ux, uint256 uy, int256 ix, int256 iy) internal {
+    │              ────┬────         ─┬          ─┬         ─┬         ─┬  
+    │                  ╰─────────────────────────────────────────────────── name: 9
+    │                                 │           │          │          │  
+    │                                 ╰──────────────────────────────────── name: 10
+    │                                             │          │          │  
+    │                                             ╰──────────────────────── name: 11
+    │                                                        │          │  
+    │                                                        ╰───────────── name: 12
+    │                                                                   │  
+    │                                                                   ╰── name: 13
+ 12 │         ux.add(uy).add(ux);
+    │         ─┬ ─┬─ ─┬  ─┬─ ─┬  
+    │          ╰───────────────── ref: 10
+    │             │   │   │   │  
+    │             ╰────────────── refs: [2, 5]
+    │                 │   │   │  
+    │                 ╰────────── ref: 11
+    │                     │   │  
+    │                     ╰────── unresolved
+    │                         │  
+    │                         ╰── ref: 10
+ 13 │         ix.add(iy).add(ix);
+    │         ─┬ ─┬─ ─┬  ─┬─ ─┬  
+    │          ╰───────────────── ref: 12
+    │             │   │   │   │  
+    │             ╰────────────── refs: [2, 5]
+    │                 │   │   │  
+    │                 ╰────────── ref: 13
+    │                     │   │  
+    │                     ╰────── unresolved
+    │                         │  
+    │                         ╰── ref: 12
+    │ 
+ 16 │     function testConvertible(uint160 ux, uint160 uy) internal {
+    │              ───────┬───────         ─┬          ─┬  
+    │                     ╰──────────────────────────────── name: 14
+    │                                       │           │  
+    │                                       ╰────────────── name: 15
+    │                                                   │  
+    │                                                   ╰── name: 16
+ 17 │         Lib.add(ux, uy);
+    │         ─┬─ ─┬─ ─┬  ─┬  
+    │          ╰────────────── ref: 1
+    │              │   │   │  
+    │              ╰────────── ref: 2
+    │                  │   │  
+    │                  ╰────── ref: 15
+    │                      │  
+    │                      ╰── ref: 16
+ 18 │         ux.add(uy).add(ux);
+    │         ─┬ ─┬─ ─┬  ─┬─ ─┬  
+    │          ╰───────────────── ref: 15
+    │             │   │   │   │  
+    │             ╰────────────── refs: [2, 5]
+    │                 │   │   │  
+    │                 ╰────────── ref: 16
+    │                     │   │  
+    │                     ╰────── unresolved
+    │                         │  
+    │                         ╰── ref: 15
+────╯
