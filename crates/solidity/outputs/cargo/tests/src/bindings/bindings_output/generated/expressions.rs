@@ -47,6 +47,11 @@ fn funcalls_named_args() -> Result<()> {
 }
 
 #[test]
+fn funcalls_named_overloads() -> Result<()> {
+    run(T, "funcalls_named_overloads")
+}
+
+#[test]
 fn funcalls_nested_overload() -> Result<()> {
     run(T, "funcalls_nested_overload")
 }
