@@ -157,7 +157,7 @@ impl TypeRegistry {
                 definition_id: *definition_id,
                 location: DataLocation::Inherited,
             },
-            Type::Function(FunctionType  {
+            Type::Function(FunctionType {
                 parameter_types,
                 return_type,
                 external,
