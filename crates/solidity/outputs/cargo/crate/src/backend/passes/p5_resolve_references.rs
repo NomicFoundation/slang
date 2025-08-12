@@ -628,7 +628,9 @@ impl Pass {
         &'a self,
         type_ids: &[TypeId],
         argument_typings: &[Typing],
+        receiver_type_id: Option<TypeId>,
     ) -> Option<&'a FunctionType> {
+        // get types and filter non-function types
         let mut function_types = type_ids.iter().filter_map(|type_id| {
             if let Type::Function(function_type) = self.types.get_type_by_id(*type_id) {
                 Some(function_type)
@@ -637,9 +639,23 @@ impl Pass {
             }
         });
         function_types.find(|function_type| {
-            if function_type.parameter_types.len() == argument_typings.len() {
-                let parameter_types = &function_type.parameter_types;
+            let parameter_types = &function_type.parameter_types;
+            if parameter_types.len() == argument_typings.len() {
+                // argument count matches, check that all types are implicitly convertible
                 self.matches_positional_arguments(parameter_types, argument_typings)
+            } else if let Some(receiver_type_id) = receiver_type_id {
+                // we have a receiver type, so check the first parameter type
+                // against it and then the rest, if the counts match
+                if parameter_types.len() == argument_typings.len() + 1
+                    && parameter_types.first().is_some_and(|type_id| {
+                        self.types
+                            .implicitly_convertible_to(receiver_type_id, *type_id)
+                    })
+                {
+                    self.matches_positional_arguments(&parameter_types[1..], argument_typings)
+                } else {
+                    false
+                }
             } else {
                 false
             }
@@ -660,6 +676,15 @@ impl Pass {
                         .implicitly_convertible_to(type_id, *parameter_type)
                 })
             })
+    }
+
+    fn type_id_of_receiver(&self, operand: &input_ir::Expression) -> Option<TypeId> {
+        if let input_ir::Expression::MemberAccessExpression(member_access_expression) = operand {
+            self.typing_of_expression(&member_access_expression.operand)
+                .as_type_id()
+        } else {
+            None
+        }
     }
 
     fn typing_of_function_call_with_positional_arguments(
@@ -690,8 +715,12 @@ impl Pass {
             }
             Typing::Undetermined(type_ids) => {
                 // TODO: maybe update the typing of the operand as well?
-                let candidate = self
-                    .lookup_function_matching_positional_arguments(&type_ids, &argument_typings);
+                let receiver_type_id = self.type_id_of_receiver(&node.operand);
+                let candidate = self.lookup_function_matching_positional_arguments(
+                    &type_ids,
+                    &argument_typings,
+                    receiver_type_id,
+                );
 
                 if let Some(candidate) = candidate {
                     let return_type = candidate.return_type;

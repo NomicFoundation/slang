@@ -29,23 +29,23 @@ References (26):
 - Ref: ["Lib" @ input.sol:8:11] -> #1
 - Ref: ["Lib" @ input.sol:9:11] -> #1
 - Ref: ["ux" @ input.sol:12:9] -> #10
-- Ref: ["add" @ input.sol:12:12] -> refs: [2, 5]
+- Ref: ["add" @ input.sol:12:12] -> #2
 - Ref: ["uy" @ input.sol:12:16] -> #11
-- Ref: ["add" @ input.sol:12:20] -> unresolved
+- Ref: ["add" @ input.sol:12:20] -> #2
 - Ref: ["ux" @ input.sol:12:24] -> #10
 - Ref: ["ix" @ input.sol:13:9] -> #12
-- Ref: ["add" @ input.sol:13:12] -> refs: [2, 5]
+- Ref: ["add" @ input.sol:13:12] -> #5
 - Ref: ["iy" @ input.sol:13:16] -> #13
-- Ref: ["add" @ input.sol:13:20] -> unresolved
+- Ref: ["add" @ input.sol:13:20] -> #5
 - Ref: ["ix" @ input.sol:13:24] -> #12
 - Ref: ["Lib" @ input.sol:17:9] -> #1
 - Ref: ["add" @ input.sol:17:13] -> #2
 - Ref: ["ux" @ input.sol:17:17] -> #15
 - Ref: ["uy" @ input.sol:17:21] -> #16
 - Ref: ["ux" @ input.sol:18:9] -> #15
-- Ref: ["add" @ input.sol:18:12] -> refs: [2, 5]
+- Ref: ["add" @ input.sol:18:12] -> #2
 - Ref: ["uy" @ input.sol:18:16] -> #16
-- Ref: ["add" @ input.sol:18:20] -> unresolved
+- Ref: ["add" @ input.sol:18:20] -> #2
 - Ref: ["ux" @ input.sol:18:24] -> #15
 
 ------------------------------------------------------------------------
@@ -111,22 +111,22 @@ Bindings:
     │         ─┬ ─┬─ ─┬  ─┬─ ─┬  
     │          ╰───────────────── ref: 10
     │             │   │   │   │  
-    │             ╰────────────── refs: [2, 5]
+    │             ╰────────────── ref: 2
     │                 │   │   │  
     │                 ╰────────── ref: 11
     │                     │   │  
-    │                     ╰────── unresolved
+    │                     ╰────── ref: 2
     │                         │  
     │                         ╰── ref: 10
  13 │         ix.add(iy).add(ix);
     │         ─┬ ─┬─ ─┬  ─┬─ ─┬  
     │          ╰───────────────── ref: 12
     │             │   │   │   │  
-    │             ╰────────────── refs: [2, 5]
+    │             ╰────────────── ref: 5
     │                 │   │   │  
     │                 ╰────────── ref: 13
     │                     │   │  
-    │                     ╰────── unresolved
+    │                     ╰────── ref: 5
     │                         │  
     │                         ╰── ref: 12
     │ 
@@ -150,11 +150,11 @@ Bindings:
     │         ─┬ ─┬─ ─┬  ─┬─ ─┬  
     │          ╰───────────────── ref: 15
     │             │   │   │   │  
-    │             ╰────────────── refs: [2, 5]
+    │             ╰────────────── ref: 2
     │                 │   │   │  
     │                 ╰────────── ref: 16
     │                     │   │  
-    │                     ╰────── unresolved
+    │                     ╰────── ref: 2
     │                         │  
     │                         ╰── ref: 15
 ────╯

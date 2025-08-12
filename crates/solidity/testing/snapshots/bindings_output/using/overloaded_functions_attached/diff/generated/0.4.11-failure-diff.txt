@@ -1,8 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-reference `add` at input.sol:12:20 failed to resolve in new binder
-reference `add` at input.sol:13:20 failed to resolve in new binder
-Ref: ["add" @ input.sol:17:13] -> #2 resolved uniquely but resolved ambiguously in stack graph output
-reference `add` at input.sol:18:20 failed to resolve in new binder
-
-Definitions and/or references from binding graph and new binder DIFFER

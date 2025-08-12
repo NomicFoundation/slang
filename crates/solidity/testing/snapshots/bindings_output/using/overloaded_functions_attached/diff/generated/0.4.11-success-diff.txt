@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Ref: ["add" @ input.sol:12:20] -> #2 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["add" @ input.sol:12:12] -> #2 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["add" @ input.sol:13:20] -> #5 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["add" @ input.sol:13:12] -> #5 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["add" @ input.sol:17:13] -> #2 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["add" @ input.sol:18:20] -> #2 resolved uniquely but resolved ambiguously in stack graph output
+Ref: ["add" @ input.sol:18:12] -> #2 resolved uniquely but resolved ambiguously in stack graph output
+
+Definitions and/or references from binding graph and new binder DIFFER
