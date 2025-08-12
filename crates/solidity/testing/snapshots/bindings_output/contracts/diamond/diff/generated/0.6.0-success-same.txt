@@ -1,3 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-No differences between binding graph and new binder definitions or references

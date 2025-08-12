@@ -222,12 +222,13 @@ impl Binder {
         self.references.insert(node_id, reference);
     }
 
-    pub fn find_reference_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Reference> {
-        self.references.get(&node_id)
+    pub(crate) fn fixup_reference(&mut self, node_id: NodeId, resolution: Resolution) {
+        let reference = self.references.get_mut(&node_id).unwrap();
+        reference.resolution = resolution;
     }
 
-    pub fn get_reference_by_identifier_node_id_mut(&mut self, node_id: NodeId) -> &mut Reference {
-        self.references.get_mut(&node_id).unwrap()
+    pub fn find_reference_by_identifier_node_id(&self, node_id: NodeId) -> Option<&Reference> {
+        self.references.get(&node_id)
     }
 
     pub(crate) fn insert_using_directive_in_scope(

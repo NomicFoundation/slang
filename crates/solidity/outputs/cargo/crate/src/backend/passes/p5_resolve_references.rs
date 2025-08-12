@@ -624,37 +624,41 @@ impl Pass {
         self.typing_of_resolution(resolution)
     }
 
-    fn filter_functions<'a, T: Iterator<Item = &'a FunctionType>>(
-        &self,
-        function_types: T,
-        positional_argument_typings: &[Typing],
-    ) -> Vec<&'a FunctionType> {
-        function_types
-            .filter(|function_type| {
-                if function_type.parameter_types.len() == positional_argument_typings.len() {
-                    let parameter_types = function_type.parameter_types.iter();
-                    self.matches_parameters(parameter_types, positional_argument_typings)
-                } else {
-                    false
-                }
-            })
-            .collect()
+    fn lookup_function_matching_positional_arguments<'a>(
+        &'a self,
+        type_ids: &[TypeId],
+        argument_typings: &[Typing],
+    ) -> Option<&'a FunctionType> {
+        let mut function_types = type_ids.iter().filter_map(|type_id| {
+            if let Type::Function(function_type) = self.types.get_type_by_id(*type_id) {
+                Some(function_type)
+            } else {
+                None
+            }
+        });
+        function_types.find(|function_type| {
+            if function_type.parameter_types.len() == argument_typings.len() {
+                let parameter_types = &function_type.parameter_types;
+                self.matches_positional_arguments(parameter_types, argument_typings)
+            } else {
+                false
+            }
+        })
     }
 
-    fn matches_parameters<'a>(
+    fn matches_positional_arguments(
         &self,
-        parameter_types: impl Iterator<Item = &'a TypeId>,
-        positional_argument_typings: &[Typing],
+        parameter_types: &[TypeId],
+        argument_typings: &[Typing],
     ) -> bool {
         parameter_types
-            .zip(positional_argument_typings)
+            .iter()
+            .zip(argument_typings)
             .all(|(parameter_type, argument_typing)| {
-                match argument_typing {
-                    Typing::Resolved(type_id) => self
-                        .types
-                        .implicitly_convertible_to(*type_id, *parameter_type),
-                    _ => false, // TODO: other cases
-                }
+                argument_typing.as_type_id().is_some_and(|type_id| {
+                    self.types
+                        .implicitly_convertible_to(type_id, *parameter_type)
+                })
             })
     }
 
@@ -685,30 +689,24 @@ impl Pass {
                 }
             }
             Typing::Undetermined(type_ids) => {
-                // TODO: resolve argument types and match best overload
                 // TODO: maybe update the typing of the operand as well?
-                let types = type_ids
-                    .iter()
-                    .map(|type_id| self.types.get_type_by_id(*type_id));
-                let function_types = types.filter_map(|typ| match typ {
-                    Type::Function(function_type) => Some(function_type),
-                    _ => None, // TODO: Other types to consider?
-                               // TODO: Validation
-                });
-                let candidates = self.filter_functions(function_types, &argument_typings);
-                match candidates.len() {
-                    1 => {
-                        let typ = candidates.first().unwrap();
-                        let reference_node_id = reference_node_id_for_expression(&node.operand);
-                        if let Some(node_id) = reference_node_id {
-                            let reference =
-                                self.binder.get_reference_by_identifier_node_id_mut(node_id);
-                            reference.resolution =
-                                Resolution::Definition(typ.definition_id.unwrap());
-                        }
-                        Typing::Resolved(typ.return_type)
+                let candidate = self
+                    .lookup_function_matching_positional_arguments(&type_ids, &argument_typings);
+
+                if let Some(candidate) = candidate {
+                    let return_type = candidate.return_type;
+
+                    let reference_node_id = reference_node_id_for_expression(&node.operand);
+                    let definition_id = candidate.definition_id;
+                    if let (Some(node_id), Some(definition_id)) = (reference_node_id, definition_id)
+                    {
+                        self.binder
+                            .fixup_reference(node_id, Resolution::Definition(definition_id));
                     }
-                    _ => Typing::Unresolved, // TODO: Other cases
+
+                    Typing::Resolved(return_type)
+                } else {
+                    Typing::Unresolved
                 }
             }
             Typing::MetaType(type_) => {
@@ -853,6 +851,9 @@ impl Pass {
     }
 }
 
+// Given an expression node that resolves to a reference, return the node ID of
+// the identifier of the reference. If the expression cannot be traced back to a
+// single reference, return `None`.
 fn reference_node_id_for_expression(node: &input_ir::Expression) -> Option<NodeId> {
     match &node {
         input_ir::Expression::MemberAccessExpression(f) => Some(f.member.id()),
