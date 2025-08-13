@@ -821,8 +821,8 @@ impl Visitor for Pass {
                         }),
                 )
             } else {
-                // this is for `var` variables (in Solidity < 0.5.0)
-                // we cannot resolve the type at this point
+                // this is for `var` variables (in Solidity < 0.5.0) we cannot
+                // resolve the type at this point (will fixup in p5)
                 None
             };
         self.binder.set_node_type(node.node_id, type_id);
@@ -859,9 +859,9 @@ impl Visitor for Pass {
                 continue;
             };
             if let input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) = member {
-                // TODO: the variables cannot be typed at this point, but we
-                // should be able to infer their type in p4 after computing the
-                // value type
+                // the variable types cannot be typed at this point, but we
+                // should be able to infer it after typing the initialization
+                // value
                 self.binder
                     .set_node_type(untyped_tuple_member.node_id, None);
             }

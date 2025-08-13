@@ -1613,4 +1613,53 @@ impl Visitor for Pass {
             }
         }
     }
+
+    fn leave_variable_declaration_statement(
+        &mut self,
+        node: &input_ir::VariableDeclarationStatement,
+    ) {
+        if matches!(
+            node.variable_type,
+            input_ir::VariableDeclarationType::VarKeyword
+        ) {
+            // update the type of the variable with the type of the expression (if available)
+            if let Some(value) = &node.value {
+                let typing = self.typing_of_expression(&value.expression);
+                self.binder.fixup_node_typing(node.node_id, typing);
+            }
+        }
+    }
+
+    fn leave_tuple_deconstruction_statement(
+        &mut self,
+        node: &input_ir::TupleDeconstructionStatement,
+    ) {
+        if node.var_keyword.is_none() {
+            return;
+        }
+
+        let typing = self.typing_of_expression(&node.expression);
+        let Typing::Resolved(tuple_type_id) = typing else {
+            // we can't fixup typing if the expression failed to type
+            return;
+        };
+        let types = if let Type::Tuple { types } = self.types.get_type_by_id(tuple_type_id) {
+            types.as_slice()
+        } else {
+            // the resolved type is not a tuple
+            &[tuple_type_id]
+        };
+
+        // fixup typing of `var` declarations
+        for (element, element_type_id) in node.elements.iter().zip(types) {
+            let Some(member) = &element.member else {
+                continue;
+            };
+            if let input_ir::TupleMember::UntypedTupleMember(untyped_tuple_member) = member {
+                let typing = Typing::Resolved(*element_type_id);
+                self.binder
+                    .fixup_node_typing(untyped_tuple_member.node_id, typing);
+            }
+        }
+    }
 }

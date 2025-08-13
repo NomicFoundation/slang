@@ -662,10 +662,10 @@ impl<'a> BuiltInsResolver<'a> {
             BuiltIn::Selector => Typing::Resolved(self.types.bytes4()),
             BuiltIn::TxGasPrice => Typing::Resolved(self.types.uint256()),
             BuiltIn::TxOrigin => {
-                if self.language_version >= VERSION_0_8_0 {
-                    Typing::Resolved(self.types.address())
-                } else {
+                if self.language_version >= VERSION_0_5_0 && self.language_version < VERSION_0_8_0 {
                     Typing::Resolved(self.types.address_payable())
+                } else {
+                    Typing::Resolved(self.types.address())
                 }
             }
             BuiltIn::TypeName => Typing::Resolved(self.types.string()),

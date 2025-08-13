@@ -305,6 +305,14 @@ impl Binder {
         }
     }
 
+    pub(crate) fn fixup_node_typing(&mut self, node_id: NodeId, typing: Typing) {
+        assert!(
+            self.node_typing.contains_key(&node_id),
+            "typing information for node {node_id:?} not set"
+        );
+        self.node_typing.insert(node_id, typing);
+    }
+
     // File scope resolution context
 
     fn get_file_scope(&self, file_id: &str) -> &FileScope {

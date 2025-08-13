@@ -3,8 +3,8 @@
 Definitions (4):
 - Def: #1 ["Test" @ input.sol:1:10] (contract)
 - Def: #2 ["test" @ input.sol:2:14] (function, type: function () returns void)
-- Def: #3 ["x" @ input.sol:3:14] (variable, type: unresolved)
-- Def: #4 ["y" @ input.sol:3:17] (variable, type: unresolved)
+- Def: #3 ["x" @ input.sol:3:14] (variable, type: rational)
+- Def: #4 ["y" @ input.sol:3:17] (variable, type: rational)
 
 ------------------------------------------------------------------------
 
