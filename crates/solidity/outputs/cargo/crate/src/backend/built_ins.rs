@@ -549,7 +549,8 @@ impl<'a> BuiltInsResolver<'a> {
             Type::Enum { .. } => None,
             Type::FixedPointNumber { .. } => None,
             Type::Function(FunctionType { external, .. }) => {
-                if *external {
+                // Solidity < 0.5.0 didn't require explicit visibility attributes
+                if *external || self.language_version < VERSION_0_5_0 {
                     match symbol {
                         "address" if self.language_version >= VERSION_0_8_2 => {
                             Some(BuiltIn::Address)

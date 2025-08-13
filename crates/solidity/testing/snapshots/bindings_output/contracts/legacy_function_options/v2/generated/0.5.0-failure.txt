@@ -1,6 +1,31 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-References and definitions: 
+Definitions (6):
+- Def: #1 ["RefundVault" @ input.sol:1:10] (contract)
+- Def: #2 ["deposit" @ input.sol:2:14] (function, type: function () returns void)
+- Def: #3 ["deposit2" @ input.sol:3:14] (function, type: function () returns void)
+- Def: #4 ["Test" @ input.sol:5:10] (contract)
+- Def: #5 ["test" @ input.sol:6:14] (function, type: function (RefundVault) returns void)
+- Def: #6 ["vault" @ input.sol:6:31] (parameter, type: RefundVault)
+
+------------------------------------------------------------------------
+
+References (7):
+- Ref: ["RefundVault" @ input.sol:6:19] -> #1
+- Ref: ["vault" @ input.sol:7:9] -> #6
+- Ref: ["deposit" @ input.sol:7:15] -> #2
+- Ref: ["value" @ input.sol:7:23] -> built-in
+- Ref: ["vault" @ input.sol:8:9] -> #6
+- Ref: ["deposit2" @ input.sol:8:15] -> #3
+- Ref: ["value" @ input.sol:8:24] -> unresolved
+
+------------------------------------------------------------------------
+
+Unbound identifiers (0):
+
+------------------------------------------------------------------------
+
+Bindings: 
    ╭─[input.sol:1:1]
    │
  1 │ contract RefundVault {
@@ -29,37 +54,12 @@ References and definitions:
    │                  │      │    
    │                  ╰─────────── ref: 2
    │                         │    
-   │                         ╰──── ref: built-in
+   │                         ╰──── built-in
  8 │         vault.deposit2.value(1)();
    │         ──┬── ────┬─── ──┬──  
    │           ╰─────────────────── ref: 6
    │                   │      │    
    │                   ╰─────────── ref: 3
    │                          │    
-   │                          ╰──── ref: built-in
+   │                          ╰──── unresolved
 ───╯
-Definiens: 
-    ╭─[input.sol:1:1]
-    │
-  1 │   ╭───▶ contract RefundVault {
-  2 │   │         function deposit() public payable;
-    │   │     ───────────────────┬───────────────────  
-    │   │                        ╰───────────────────── definiens: 2
-  3 │   │         function deposit2() payable; // valid in Solidity < 0.5.0
-    │   │     ───────────────────────────────┬──────────────────────────────  
-    │   │                                    ╰──────────────────────────────── definiens: 3
-  4 │ │ ├───▶ }
-    │ │ │         
-    │ │ ╰───────── definiens: 1
-  5 │ ╭───│ ▶ contract Test {
-  6 │ │   ╭─▶     function test(RefundVault vault) internal {
-    │ │   │                     ────────┬────────  
-    │ │   │                             ╰────────── definiens: 6
-    ┆ ┆   ┆   
-  9 │ │   ├─▶     }
-    │ │   │           
-    │ │   ╰─────────── definiens: 5
- 10 │ ├─────▶ }
-    │ │           
-    │ ╰─────────── definiens: 4
-────╯
