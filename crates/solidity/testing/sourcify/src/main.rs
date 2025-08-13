@@ -35,7 +35,7 @@ fn main() -> Result<()> {
 fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     Terminal::step(format!("Initialize chain {chain}", chain = cmd.chain_id,));
 
-    let manifest = Manifest::new(cmd.chain_id, &cmd.sharding_options)
+    let manifest = Manifest::new(cmd.chain_id, &cmd.sharding_options, &cmd.archive_options)
         .inspect_err(|e| eprintln!("Error fetching chain manifest: {e}"))?;
 
     if let Some(contract) = &cmd.contract {
@@ -50,11 +50,6 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     let testing_thread = std::thread::spawn(move || -> Events {
         let mut events = Events::new(archive_count, 0);
         for archive in rx {
-            println!(
-                "Display path: {} | Len: {}",
-                archive.display_path(),
-                archive.display_path().len()
-            );
             Terminal::step(archive.display_path());
 
             events.start_archive(archive.contract_count());
@@ -65,9 +60,7 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
             }
             events.finish_archive();
 
-            if !cmd.save {
-                archive.clean();
-            }
+            archive.clean();
         }
 
         events
@@ -77,7 +70,7 @@ fn run_test_command(cmd: command::TestCommand) -> Result<()> {
     // The sender needs to be dropped so that process_thread can finish
     let fetcher = |t: std::sync::mpsc::Sender<ContractArchive>| {
         for archive_desc in manifest.archives() {
-            match ContractArchive::fetch(archive_desc) {
+            match ContractArchive::fetch(archive_desc, &cmd.archive_options) {
                 Ok(archive) => t.send(archive).unwrap(),
                 Err(e) => eprintln!("Failed to fetch archive {}:\n{e}", archive_desc.url),
             }

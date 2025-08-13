@@ -1,6 +1,7 @@
-use std::fs;
+use std::fs::{self, File};
 use std::io::BufReader;
 use std::path::{Path, PathBuf};
+use std::time::{Duration, SystemTime};
 
 use anyhow::{anyhow, bail, Error, Result};
 use infra_utils::cargo::CargoWorkspace;
@@ -10,7 +11,7 @@ use semver::{BuildMetadata, Prerelease, Version};
 use slang_solidity::compilation::{CompilationBuilder, CompilationBuilderConfig, CompilationUnit};
 use tar::Archive;
 
-use crate::command::{ChainId, ShardingOptions};
+use crate::command::{ArchiveOptions, ChainId, ShardingOptions};
 use crate::import_resolver::ImportResolver;
 
 pub struct Manifest {
@@ -19,18 +20,12 @@ pub struct Manifest {
 }
 
 impl Manifest {
-    pub fn new(chain_id: ChainId, options: &ShardingOptions) -> Result<Manifest> {
-        let client = Client::new();
-        let res = client
-            .get("https://repo-backup.sourcify.dev/manifest.json")
-            .send()?;
-
-        let status = res.status();
-        if !status.is_success() {
-            bail!("Error fetching manifest.json");
-        }
-
-        let obj: serde_json::Value = res.json()?;
+    pub fn new(
+        chain_id: ChainId,
+        options: &ShardingOptions,
+        archive_options: &ArchiveOptions,
+    ) -> Result<Manifest> {
+        let obj = Self::obtain_manifest(archive_options)?;
         let mut archive_descriptors: Vec<_> = obj
             .get("files")
             .and_then(|files| files.as_array())
@@ -59,15 +54,41 @@ impl Manifest {
         })
     }
 
+    fn obtain_manifest(options: &ArchiveOptions) -> Result<serde_json::Value> {
+        let manifest_path = CargoWorkspace::locate_source_crate("solidity_testing_sourcify")
+            .unwrap_or_default()
+            .join("target/manifest.json");
+
+        if !options.offline && !file_exists_and_is_fresh(&manifest_path) {
+            let manifest_url = "https://repo-backup.sourcify.dev/manifest.json";
+            println!("Downloading manifest from {manifest_url}");
+            let client = Client::new();
+            let mut res = client.get(manifest_url).send()?;
+
+            let status = res.status();
+            if !status.is_success() {
+                bail!("Error fetching manifest.json");
+            }
+            let mut writer = File::create(&manifest_path)?;
+            res.copy_to(&mut writer)?;
+        }
+
+        Ok(serde_json::from_reader(File::open(manifest_path)?)?)
+    }
+
     /// Search for a specific contract and return it if found. Returns `None` if the contract can not
     /// be fetched for any reason (including if the `contract_id` is not parseable).
     pub fn fetch_contract(&self, contract_id: &str) -> Option<Contract> {
+        let options = ArchiveOptions {
+            offline: true,
+            save: true,
+        };
         u8::from_str_radix(contract_id.get(2..4).unwrap(), 16)
             .ok()
             .and_then(|contract_prefix| {
                 self.archives()
                     .filter(|desc| desc.prefix == contract_prefix)
-                    .flat_map(ContractArchive::fetch)
+                    .flat_map(|path| ContractArchive::fetch(path, &options))
                     .find_map(|archive| archive.get_contract(contract_id).ok())
             })
     }
@@ -184,25 +205,37 @@ pub struct ContractArchive {
     /// Path to the directory inside this archive which contains all of the contracts.
     /// Iterate over the entries at this path to read the contracts.
     contracts_path: PathBuf,
+
+    /// Should remove the archive and contracts at the end
+    delete_files: bool,
 }
 
 impl ContractArchive {
-    pub fn fetch(desc: &ArchiveDescriptor) -> Result<ContractArchive> {
-        let client = Client::new();
-        let res = client.get(&desc.url).send()?;
+    pub fn fetch(desc: &ArchiveDescriptor, options: &ArchiveOptions) -> Result<ContractArchive> {
+        let contracts_path = desc.contracts_dir();
+        if !options.offline && !file_exists_and_is_fresh(&contracts_path) {
+            println!("Downloading shard archive from {url}", url = desc.url);
+            let client = Client::new();
+            let res = client.get(&desc.url).send()?;
 
-        let status = res.status();
-        if !status.is_success() {
-            bail!("Could not fetch source tarball");
+            let status = res.status();
+            if !status.is_success() {
+                bail!("Could not fetch source tarball");
+            }
+
+            let archive_dir = desc.archive_dir();
+
+            let mut archive = Archive::new(res);
+            archive.unpack(&archive_dir)?;
+
+            // explicitly touch the contracts path mtime to avoid downloading
+            // again if sufficiently up-to-date
+            fs::File::open(&contracts_path)?.set_modified(SystemTime::now())?;
         }
 
-        let archive_dir = desc.archive_dir();
-
-        let mut archive = Archive::new(res);
-        archive.unpack(&archive_dir)?;
-
         Ok(ContractArchive {
-            contracts_path: desc.contracts_dir(),
+            contracts_path,
+            delete_files: !options.save && !options.offline,
         })
     }
 
@@ -229,7 +262,9 @@ impl ContractArchive {
     }
 
     pub fn clean(self) {
-        fs::remove_dir_all(&self.contracts_path).unwrap();
+        if self.delete_files {
+            fs::remove_dir_all(&self.contracts_path).unwrap();
+        }
     }
 
     pub fn display_path(&self) -> String {
@@ -360,4 +395,21 @@ impl CompilationBuilderConfig for ContractConfig<'_> {
             .import_resolver
             .resolve_import(source_file_id, import_path))
     }
+}
+
+fn file_exists_and_is_fresh<P: AsRef<Path>>(path: P) -> bool {
+    if let Ok(metadata) = fs::metadata(path) {
+        if let Ok(modified) = metadata.modified() {
+            // Sourcify updates archives once a day, so anything updated updated
+            // in the last 24 hours is considered fresh
+            if SystemTime::now()
+                .duration_since(modified)
+                .unwrap_or(Duration::MAX)
+                <= Duration::from_secs(24 * 3600)
+            {
+                return true;
+            }
+        }
+    }
+    false
 }
